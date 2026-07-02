@@ -1,25 +1,29 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { type MetadataFlatEntityAndRelatedFlatEntityMapsForSideEffect } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-side-effect.type';
-import { type AllFlatEntityOperationIndexByMetadataName } from 'src/engine/metadata-modules/metadata-side-effect/types/all-flat-entity-operation-index-by-metadata-name.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 export const resolveParentFlatObjectMetadataForFieldSideEffect = ({
   objectMetadataUniversalIdentifier,
-  allFlatEntityOperationIndexByMetadataName,
+  allFlatEntityOperationRecordByMetadataName,
   relatedFlatEntityMaps,
 }: {
   objectMetadataUniversalIdentifier: string;
-  allFlatEntityOperationIndexByMetadataName: AllFlatEntityOperationIndexByMetadataName;
+  allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
   relatedFlatEntityMaps: MetadataFlatEntityAndRelatedFlatEntityMapsForSideEffect<'fieldMetadata'>;
 }): UniversalFlatObjectMetadata | undefined => {
+  // Resolve optimistically: an object created OR updated in the same batch is the
+  // caller's current intent and must win over the stale workspace-cache version.
+  // Otherwise a field flipped to `isUnique` while its object is renamed in the
+  // same batch would build the backing index from the pre-rename object, yielding
+  // the wrong table name and therefore the wrong deterministic identifier. Both
+  // in-batch buckets are resolved in O(1) via the per-operation record.
   const pendingFlatObjectMetadata =
-    allFlatEntityOperationIndexByMetadataName.objectMetadata?.flatEntityToUpdate.get(
-      objectMetadataUniversalIdentifier,
-    ) ??
-    allFlatEntityOperationIndexByMetadataName.objectMetadata?.flatEntityToCreate.get(
-      objectMetadataUniversalIdentifier,
-    );
+    allFlatEntityOperationRecordByMetadataName.objectMetadata
+      ?.flatEntityToUpdate[objectMetadataUniversalIdentifier] ??
+    allFlatEntityOperationRecordByMetadataName.objectMetadata
+      ?.flatEntityToCreate[objectMetadataUniversalIdentifier];
 
   if (isDefined(pendingFlatObjectMetadata)) {
     return pendingFlatObjectMetadata;

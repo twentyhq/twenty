@@ -4,7 +4,7 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
+import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { type MetadataFlatEntityAndRelatedFlatEntityMapsForSideEffect } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-side-effect.type';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -12,7 +12,6 @@ import { getMetadataManyToOneRelatedNames } from 'src/engine/metadata-modules/fl
 import { getMetadataSideEffectCompanionNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-side-effect-companion-names.util';
 import { isSystemSideEffectFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/is-system-side-effect-flat-entity.util';
 import { MetadataSideEffectHandlerRegistryService } from 'src/engine/metadata-modules/metadata-side-effect/registry/metadata-side-effect-handler-registry.service';
-import { type AllFlatEntityOperationIndexByMetadataName } from 'src/engine/metadata-modules/metadata-side-effect/types/all-flat-entity-operation-index-by-metadata-name.type';
 import { type MetadataSideEffectContext } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-context.type';
 import { type MetadataSideEffectExpansionResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-expansion-result.type';
 import {
@@ -26,43 +25,33 @@ import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/
 import { pushToOrchestratorFailureReport } from 'src/engine/workspace-manager/workspace-migration/utils/merge-orchestrator-failure-reports.util';
 
 type GenericUniversalFlatEntity = { universalIdentifier: string };
-type GenericFlatEntityOperation = {
-  flatEntityToCreate: GenericUniversalFlatEntity[];
-  flatEntityToUpdate: GenericUniversalFlatEntity[];
-  flatEntityToDelete: GenericUniversalFlatEntity[];
+type GenericFlatEntityOperationRecord = {
+  flatEntityToCreate: Record<string, GenericUniversalFlatEntity>;
+  flatEntityToUpdate: Record<string, GenericUniversalFlatEntity>;
+  flatEntityToDelete: Record<string, GenericUniversalFlatEntity>;
 };
-type GenericAllFlatEntityOperationByMetadataName = Record<
+type GenericAllFlatEntityOperationRecordByMetadataName = Record<
   string,
-  GenericFlatEntityOperation | undefined
+  GenericFlatEntityOperationRecord | undefined
 >;
 
-type GenericPartialFlatEntityOperation = {
-  flatEntityToCreate?: GenericUniversalFlatEntity[];
-  flatEntityToUpdate?: GenericUniversalFlatEntity[];
-  flatEntityToDelete?: GenericUniversalFlatEntity[];
+type GenericPartialFlatEntityOperationRecord = {
+  flatEntityToCreate?: Record<string, GenericUniversalFlatEntity>;
+  flatEntityToUpdate?: Record<string, GenericUniversalFlatEntity>;
+  flatEntityToDelete?: Record<string, GenericUniversalFlatEntity>;
 };
 type GenericMetadataSideEffectOperationsByMetadataName = Record<
   string,
-  GenericPartialFlatEntityOperation | undefined
+  GenericPartialFlatEntityOperationRecord | undefined
 >;
 
-type SeenFlatEntityByUniversalIdentifierByOperation = {
-  flatEntityToCreate: Map<string, GenericUniversalFlatEntity>;
-  flatEntityToUpdate: Map<string, GenericUniversalFlatEntity>;
-  flatEntityToDelete: Map<string, GenericUniversalFlatEntity>;
-};
-type SeenFlatEntityByUniversalIdentifierByMetadataName = Record<
-  string,
-  SeenFlatEntityByUniversalIdentifierByOperation | undefined
->;
-
-const OPERATION_TO_FLAT_ENTITY_LIST_KEY = {
+const OPERATION_TO_FLAT_ENTITY_RECORD_KEY = {
   create: 'flatEntityToCreate',
   update: 'flatEntityToUpdate',
   delete: 'flatEntityToDelete',
 } as const satisfies Record<
   MetadataSideEffectOperation,
-  keyof GenericFlatEntityOperation
+  keyof GenericFlatEntityOperationRecord
 >;
 
 @Injectable()
@@ -95,24 +84,28 @@ export class MetadataSideEffectEngineService {
   }
 
   expandWithSideEffects({
-    allFlatEntityOperationByMetadataName,
+    allFlatEntityOperationRecordByMetadataName,
     sideEffectRelatedFlatEntityMaps,
     context,
   }: {
-    allFlatEntityOperationByMetadataName: AllFlatEntityOperationByMetadataName;
+    allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
     sideEffectRelatedFlatEntityMaps: Partial<AllFlatEntityMaps>;
     context: MetadataSideEffectContext;
   }): MetadataSideEffectExpansionResult {
-    const expandedMatrix: GenericAllFlatEntityOperationByMetadataName =
-      this.cloneMatrix(allFlatEntityOperationByMetadataName);
-    const seenFlatEntityByUniversalIdentifier =
-      this.buildSeenFlatEntityByUniversalIdentifier(expandedMatrix);
+    // The expanded matrix doubles as the seen-index: since it is keyed by
+    // universalIdentifier, parent resolution and deduplication are O(1) lookups
+    // with no separate Map to keep in sync.
+    const expandedMatrix = this.cloneMatrix(
+      allFlatEntityOperationRecordByMetadataName,
+    );
     const systemSideEffectUniversalIdentifierCollisions: SystemSideEffectUniversalIdentifierCollision[] =
       [];
     const sideEffectFailures: MetadataSideEffectFailure[] = [];
 
+    // Triggers come from the original caller input, not the expanded matrix, so a
+    // side effect never triggers another side effect (non-recursion is structural).
     const triggerMatrix =
-      allFlatEntityOperationByMetadataName as unknown as GenericAllFlatEntityOperationByMetadataName;
+      allFlatEntityOperationRecordByMetadataName as unknown as GenericAllFlatEntityOperationRecordByMetadataName;
 
     for (const {
       operation,
@@ -128,18 +121,19 @@ export class MetadataSideEffectEngineService {
         continue;
       }
 
-      const triggerFlatEntities =
+      const triggerFlatEntities = Object.values(
         triggerMatrix[metadataName]?.[
-          OPERATION_TO_FLAT_ENTITY_LIST_KEY[operation]
-        ] ?? [];
+          OPERATION_TO_FLAT_ENTITY_RECORD_KEY[operation]
+        ] ?? {},
+      );
 
       for (const triggerFlatEntity of triggerFlatEntities) {
         for (const handler of handlers) {
           const sideEffectResult = handler.buildSideEffects({
             flatEntity:
               triggerFlatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
-            allFlatEntityOperationIndexByMetadataName:
-              seenFlatEntityByUniversalIdentifier as unknown as AllFlatEntityOperationIndexByMetadataName,
+            allFlatEntityOperationRecordByMetadataName:
+              expandedMatrix as unknown as AllFlatEntityOperationRecordByMetadataName,
             relatedFlatEntityMaps:
               sideEffectRelatedFlatEntityMaps as unknown as MetadataFlatEntityAndRelatedFlatEntityMapsForSideEffect<AllMetadataName>,
             context,
@@ -156,7 +150,6 @@ export class MetadataSideEffectEngineService {
 
           this.mergeSideEffectsIntoMatrix({
             expandedMatrix,
-            seenFlatEntityByUniversalIdentifier,
             sideEffectOperations:
               sideEffectResult.operations as unknown as GenericMetadataSideEffectOperationsByMetadataName,
             systemSideEffectUniversalIdentifierCollisions,
@@ -194,19 +187,17 @@ export class MetadataSideEffectEngineService {
 
     return {
       status: 'success',
-      allFlatEntityOperationByMetadataName:
-        expandedMatrix as unknown as AllFlatEntityOperationByMetadataName,
+      allFlatEntityOperationRecordByMetadataName:
+        expandedMatrix as unknown as AllFlatEntityOperationRecordByMetadataName,
     };
   }
 
   private mergeSideEffectsIntoMatrix({
     expandedMatrix,
-    seenFlatEntityByUniversalIdentifier,
     sideEffectOperations,
     systemSideEffectUniversalIdentifierCollisions,
   }: {
-    expandedMatrix: GenericAllFlatEntityOperationByMetadataName;
-    seenFlatEntityByUniversalIdentifier: SeenFlatEntityByUniversalIdentifierByMetadataName;
+    expandedMatrix: GenericAllFlatEntityOperationRecordByMetadataName;
     sideEffectOperations: GenericMetadataSideEffectOperationsByMetadataName;
     systemSideEffectUniversalIdentifierCollisions: SystemSideEffectUniversalIdentifierCollision[];
   }): void {
@@ -218,13 +209,14 @@ export class MetadataSideEffectEngineService {
       }
 
       for (const operation of METADATA_SIDE_EFFECT_OPERATIONS) {
-        const sideEffectFlatEntities =
-          operationBuckets[OPERATION_TO_FLAT_ENTITY_LIST_KEY[operation]] ?? [];
+        const sideEffectFlatEntities = Object.values(
+          operationBuckets[OPERATION_TO_FLAT_ENTITY_RECORD_KEY[operation]] ??
+            {},
+        );
 
         for (const sideEffectFlatEntity of sideEffectFlatEntities) {
           this.addToOperationIfAbsent({
             expandedMatrix,
-            seenFlatEntityByUniversalIdentifier,
             operation,
             metadataName,
             flatEntity: sideEffectFlatEntity,
@@ -236,11 +228,11 @@ export class MetadataSideEffectEngineService {
   }
 
   private cloneMatrix(
-    allFlatEntityOperationByMetadataName: AllFlatEntityOperationByMetadataName,
-  ): GenericAllFlatEntityOperationByMetadataName {
+    allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName,
+  ): GenericAllFlatEntityOperationRecordByMetadataName {
     const genericMatrix =
-      allFlatEntityOperationByMetadataName as unknown as GenericAllFlatEntityOperationByMetadataName;
-    const clonedMatrix: GenericAllFlatEntityOperationByMetadataName = {};
+      allFlatEntityOperationRecordByMetadataName as unknown as GenericAllFlatEntityOperationRecordByMetadataName;
+    const clonedMatrix: GenericAllFlatEntityOperationRecordByMetadataName = {};
 
     for (const metadataName of Object.keys(genericMatrix)) {
       const operations = genericMatrix[metadataName];
@@ -249,90 +241,41 @@ export class MetadataSideEffectEngineService {
         continue;
       }
 
+      // Shallow-clone each bucket so merged side effects don't leak into the
+      // caller's input; the flat entities themselves are never mutated.
       clonedMatrix[metadataName] = {
-        flatEntityToCreate: [...operations.flatEntityToCreate],
-        flatEntityToUpdate: [...operations.flatEntityToUpdate],
-        flatEntityToDelete: [...operations.flatEntityToDelete],
+        flatEntityToCreate: { ...operations.flatEntityToCreate },
+        flatEntityToUpdate: { ...operations.flatEntityToUpdate },
+        flatEntityToDelete: { ...operations.flatEntityToDelete },
       };
     }
 
     return clonedMatrix;
   }
 
-  private buildSeenFlatEntityByUniversalIdentifier(
-    expandedMatrix: GenericAllFlatEntityOperationByMetadataName,
-  ): SeenFlatEntityByUniversalIdentifierByMetadataName {
-    const seenFlatEntityByUniversalIdentifier: SeenFlatEntityByUniversalIdentifierByMetadataName =
-      {};
-
-    for (const metadataName of Object.keys(expandedMatrix)) {
-      const operations = expandedMatrix[metadataName];
-
-      if (!isDefined(operations)) {
-        continue;
-      }
-
-      seenFlatEntityByUniversalIdentifier[metadataName] = {
-        flatEntityToCreate: this.toFlatEntityByUniversalIdentifierMap(
-          operations.flatEntityToCreate,
-        ),
-        flatEntityToUpdate: this.toFlatEntityByUniversalIdentifierMap(
-          operations.flatEntityToUpdate,
-        ),
-        flatEntityToDelete: this.toFlatEntityByUniversalIdentifierMap(
-          operations.flatEntityToDelete,
-        ),
-      };
-    }
-
-    return seenFlatEntityByUniversalIdentifier;
-  }
-
-  private toFlatEntityByUniversalIdentifierMap(
-    flatEntities: GenericUniversalFlatEntity[],
-  ): Map<string, GenericUniversalFlatEntity> {
-    return new Map(
-      flatEntities.map((flatEntity) => [
-        flatEntity.universalIdentifier,
-        flatEntity,
-      ]),
-    );
-  }
-
   private addToOperationIfAbsent({
     expandedMatrix,
-    seenFlatEntityByUniversalIdentifier,
     operation,
     metadataName,
     flatEntity,
     systemSideEffectUniversalIdentifierCollisions,
   }: {
-    expandedMatrix: GenericAllFlatEntityOperationByMetadataName;
-    seenFlatEntityByUniversalIdentifier: SeenFlatEntityByUniversalIdentifierByMetadataName;
+    expandedMatrix: GenericAllFlatEntityOperationRecordByMetadataName;
     operation: MetadataSideEffectOperation;
     metadataName: string;
     flatEntity: GenericUniversalFlatEntity;
     systemSideEffectUniversalIdentifierCollisions: SystemSideEffectUniversalIdentifierCollision[];
   }): void {
     const operations = (expandedMatrix[metadataName] ??= {
-      flatEntityToCreate: [],
-      flatEntityToUpdate: [],
-      flatEntityToDelete: [],
-    });
-    const seenByOperation = (seenFlatEntityByUniversalIdentifier[
-      metadataName
-    ] ??= {
-      flatEntityToCreate: new Map(),
-      flatEntityToUpdate: new Map(),
-      flatEntityToDelete: new Map(),
+      flatEntityToCreate: {},
+      flatEntityToUpdate: {},
+      flatEntityToDelete: {},
     });
 
-    const flatEntityListKey = OPERATION_TO_FLAT_ENTITY_LIST_KEY[operation];
-    const seenInOperation = seenByOperation[flatEntityListKey];
+    const flatEntityRecordKey = OPERATION_TO_FLAT_ENTITY_RECORD_KEY[operation];
+    const flatEntityRecord = operations[flatEntityRecordKey];
 
-    const existingFlatEntity = seenInOperation.get(
-      flatEntity.universalIdentifier,
-    );
+    const existingFlatEntity = flatEntityRecord[flatEntity.universalIdentifier];
 
     if (isDefined(existingFlatEntity)) {
       this.recordUniversalIdentifierCollisionIfNeeded({
@@ -346,8 +289,7 @@ export class MetadataSideEffectEngineService {
       return;
     }
 
-    operations[flatEntityListKey].push(flatEntity);
-    seenInOperation.set(flatEntity.universalIdentifier, flatEntity);
+    flatEntityRecord[flatEntity.universalIdentifier] = flatEntity;
   }
 
   private recordUniversalIdentifierCollisionIfNeeded({

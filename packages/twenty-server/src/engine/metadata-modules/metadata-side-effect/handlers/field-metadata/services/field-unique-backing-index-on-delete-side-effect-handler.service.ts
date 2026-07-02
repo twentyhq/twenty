@@ -24,7 +24,7 @@ export class FieldUniqueBackingIndexOnDeleteSideEffectHandlerService extends Met
 ) {
   buildSideEffects({
     flatEntity: flatFieldMetadata,
-    allFlatEntityOperationIndexByMetadataName,
+    allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectResult {
     if (
@@ -38,7 +38,7 @@ export class FieldUniqueBackingIndexOnDeleteSideEffectHandlerService extends Met
       resolveParentFlatObjectMetadataForFieldSideEffect({
         objectMetadataUniversalIdentifier:
           flatFieldMetadata.objectMetadataUniversalIdentifier,
-        allFlatEntityOperationIndexByMetadataName,
+        allFlatEntityOperationRecordByMetadataName,
         relatedFlatEntityMaps,
       });
 
@@ -69,7 +69,10 @@ export class FieldUniqueBackingIndexOnDeleteSideEffectHandlerService extends Met
       status: 'success',
       operations: {
         index: {
-          flatEntityToDelete: [flatIndexMetadataToDelete],
+          flatEntityToDelete: {
+            [flatIndexMetadataToDelete.universalIdentifier]:
+              flatIndexMetadataToDelete,
+          },
         },
       },
     };

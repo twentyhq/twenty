@@ -15,12 +15,14 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getFlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entity-maps-exception-context.util';
 import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names-for-validation.util';
 import { getSubAllFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-all-flat-entity-maps-by-application-ids-or-throw.util';
+import { transpileFlatEntityOperationArrayToRecord } from 'src/engine/metadata-modules/flat-entity/utils/transpile-flat-entity-operation-array-to-record.util';
 import { MetadataSideEffectEngineService } from 'src/engine/metadata-modules/metadata-side-effect/services/metadata-side-effect-engine.service';
 import { MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -51,6 +53,14 @@ type ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs = {
   dryRun?: boolean;
 };
 
+type ValidateBuildAndRunWorkspaceMigrationFromRecordArgs = {
+  workspaceId: string;
+  allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
+  isSystemBuild?: boolean;
+  applicationUniversalIdentifier: string;
+  dryRun?: boolean;
+};
+
 @Injectable()
 export class WorkspaceMigrationValidateBuildAndRunService {
   private readonly isDebugEnabled: boolean;
@@ -70,13 +80,14 @@ export class WorkspaceMigrationValidateBuildAndRunService {
   }
 
   private computeAllInvolvedApplicationIds({
-    allFlatEntityOperationByMetadataName,
+    allFlatEntityOperationRecordByMetadataName,
     flatApplicationMaps,
     applicationUniversalIdentifier,
     allRelatedFlatEntityMaps,
   }: Pick<
-    ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs,
-    'allFlatEntityOperationByMetadataName' | 'applicationUniversalIdentifier'
+    ValidateBuildAndRunWorkspaceMigrationFromRecordArgs,
+    | 'allFlatEntityOperationRecordByMetadataName'
+    | 'applicationUniversalIdentifier'
   > & {
     flatApplicationMaps: FlatApplicationCacheMaps;
     allRelatedFlatEntityMaps: Partial<AllFlatEntityMaps>;
@@ -111,10 +122,10 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     }
 
     for (const metadataName of Object.keys(
-      allFlatEntityOperationByMetadataName,
+      allFlatEntityOperationRecordByMetadataName,
     ) as AllMetadataName[]) {
       const flatEntityOperations =
-        allFlatEntityOperationByMetadataName[metadataName];
+        allFlatEntityOperationRecordByMetadataName[metadataName];
 
       if (!isDefined(flatEntityOperations)) {
         continue;
@@ -126,9 +137,9 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       const relations = ALL_MANY_TO_ONE_METADATA_RELATIONS[metadataName];
 
       for (const flatEntity of [
-        ...flatEntityToCreate,
-        ...flatEntityToUpdate,
-        ...flatEntityToDelete,
+        ...Object.values(flatEntityToCreate),
+        ...Object.values(flatEntityToUpdate),
+        ...Object.values(flatEntityToDelete),
       ]) {
         const entityApplicationId =
           flatApplicationMaps.idByUniversalIdentifier[
@@ -186,12 +197,12 @@ export class WorkspaceMigrationValidateBuildAndRunService {
   }
 
   private async computeAllRelatedFlatEntityMaps({
-    allFlatEntityOperationByMetadataName,
+    allFlatEntityOperationRecordByMetadataName,
     workspaceId,
     applicationUniversalIdentifier,
-  }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs) {
+  }: ValidateBuildAndRunWorkspaceMigrationFromRecordArgs) {
     const allMetadataNameToCompare = Object.keys(
-      allFlatEntityOperationByMetadataName,
+      allFlatEntityOperationRecordByMetadataName,
     ) as AllMetadataName[];
     const allMetadataNameCacheToCompute = [
       ...new Set([
@@ -212,7 +223,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       ]);
 
     const applicationIds = this.computeAllInvolvedApplicationIds({
-      allFlatEntityOperationByMetadataName,
+      allFlatEntityOperationRecordByMetadataName,
       flatApplicationMaps,
       applicationUniversalIdentifier,
       allRelatedFlatEntityMaps,
@@ -245,10 +256,10 @@ export class WorkspaceMigrationValidateBuildAndRunService {
   }
 
   private async computeFromToAllFlatEntityMapsAndBuildOptions({
-    allFlatEntityOperationByMetadataName,
+    allFlatEntityOperationRecordByMetadataName,
     workspaceId,
     applicationUniversalIdentifier,
-  }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<{
+  }: ValidateBuildAndRunWorkspaceMigrationFromRecordArgs): Promise<{
     fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps;
     inferDeletionFromMissingEntities: InferDeletionFromMissingEntities;
     dependencyAllFlatEntityMaps: Partial<AllFlatEntityMaps>;
@@ -260,7 +271,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       dependencyAllFlatEntityMaps,
       additionalCacheDataMaps,
     } = await this.computeAllRelatedFlatEntityMaps({
-      allFlatEntityOperationByMetadataName,
+      allFlatEntityOperationRecordByMetadataName,
       workspaceId,
       applicationUniversalIdentifier,
     });
@@ -271,12 +282,12 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     const inferDeletionFromMissingEntities: InferDeletionFromMissingEntities =
       {};
     const allMetadataNameToCompare = Object.keys(
-      allFlatEntityOperationByMetadataName,
+      allFlatEntityOperationRecordByMetadataName,
     ) as AllMetadataName[];
 
     for (const metadataName of allMetadataNameToCompare) {
       const flatEntityOperations =
-        allFlatEntityOperationByMetadataName[metadataName];
+        allFlatEntityOperationRecordByMetadataName[metadataName];
 
       if (!isDefined(flatEntityOperations)) {
         throw new FlatEntityMapsException(
@@ -284,8 +295,18 @@ export class WorkspaceMigrationValidateBuildAndRunService {
           FlatEntityMapsExceptionCode.INTERNAL_SERVER_ERROR,
         );
       }
-      const { flatEntityToCreate, flatEntityToDelete, flatEntityToUpdate } =
-        flatEntityOperations;
+
+      // The record matrix is the canonical form; the from/to mutation helper still
+      // consumes arrays, so we flatten each bucket at this boundary only.
+      const flatEntityToCreate = Object.values(
+        flatEntityOperations.flatEntityToCreate,
+      );
+      const flatEntityToUpdate = Object.values(
+        flatEntityOperations.flatEntityToUpdate,
+      );
+      const flatEntityToDelete = Object.values(
+        flatEntityOperations.flatEntityToDelete,
+      );
 
       const idByUniversalIdentifier = Object.fromEntries(
         flatEntityToCreate
@@ -431,12 +452,36 @@ export class WorkspaceMigrationValidateBuildAndRunService {
   }
 
   public async validateBuildAndRunWorkspaceMigration({
-    allFlatEntityOperationByMetadataName: allFlatEntities,
+    allFlatEntityOperationByMetadataName,
     workspaceId,
     isSystemBuild = false,
     applicationUniversalIdentifier,
     dryRun,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
+    | WorkspaceMigrationOrchestratorFailedResult
+    | (WorkspaceMigrationOrchestratorSuccessfulResult & {
+        hasSchemaMetadataChanged: boolean;
+      })
+  > {
+    return await this.validateBuildAndRunWorkspaceMigrationFromRecord({
+      allFlatEntityOperationRecordByMetadataName:
+        transpileFlatEntityOperationArrayToRecord(
+          allFlatEntityOperationByMetadataName,
+        ),
+      workspaceId,
+      isSystemBuild,
+      applicationUniversalIdentifier,
+      dryRun,
+    });
+  }
+
+  public async validateBuildAndRunWorkspaceMigrationFromRecord({
+    allFlatEntityOperationRecordByMetadataName,
+    workspaceId,
+    isSystemBuild = false,
+    applicationUniversalIdentifier,
+    dryRun,
+  }: ValidateBuildAndRunWorkspaceMigrationFromRecordArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
     | (WorkspaceMigrationOrchestratorSuccessfulResult & {
         hasSchemaMetadataChanged: boolean;
@@ -450,7 +495,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
 
     const sideEffectExpansionResult =
       this.metadataSideEffectEngineService.expandWithSideEffects({
-        allFlatEntityOperationByMetadataName: allFlatEntities,
+        allFlatEntityOperationRecordByMetadataName,
         sideEffectRelatedFlatEntityMaps,
         context: {
           buildOptions: { isSystemBuild, applicationUniversalIdentifier },
@@ -461,8 +506,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       return sideEffectExpansionResult;
     }
 
-    const expandedAllFlatEntityOperationByMetadataName =
-      sideEffectExpansionResult.allFlatEntityOperationByMetadataName;
+    const expandedAllFlatEntityOperationRecordByMetadataName =
+      sideEffectExpansionResult.allFlatEntityOperationRecordByMetadataName;
 
     const {
       fromToAllFlatEntityMaps,
@@ -471,8 +516,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       additionalCacheDataMaps,
       idByUniversalIdentifierByMetadataName,
     } = await this.computeFromToAllFlatEntityMapsAndBuildOptions({
-      allFlatEntityOperationByMetadataName:
-        expandedAllFlatEntityOperationByMetadataName,
+      allFlatEntityOperationRecordByMetadataName:
+        expandedAllFlatEntityOperationRecordByMetadataName,
       workspaceId,
       applicationUniversalIdentifier,
     });
