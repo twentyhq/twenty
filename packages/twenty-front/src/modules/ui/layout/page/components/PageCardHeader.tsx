@@ -23,6 +23,9 @@ type PageCardHeaderProps = {
   titleColor?: string;
 };
 
+// The action column must be the flexible (1fr) track, not the title, so the
+// pinned command-menu buttons (a flex: 1 1 0 wrapper that measures its own
+// available width) have room to render inline instead of collapsing to zero.
 const StyledHeader = styled.div<{ centerTitle?: boolean }>`
   align-items: center;
   background-color: ${themeCssVariables.background.secondary};
@@ -31,7 +34,9 @@ const StyledHeader = styled.div<{ centerTitle?: boolean }>`
   column-gap: ${themeCssVariables.spacing[2]};
   display: grid;
   grid-template-columns: ${({ centerTitle }) =>
-    centerTitle ? 'minmax(0, 1fr) auto minmax(0, 1fr)' : 'minmax(0, 1fr) auto'};
+    centerTitle
+      ? 'minmax(0, 1fr) auto minmax(0, 1fr)'
+      : 'minmax(0, auto) minmax(0, 1fr)'};
   min-height: ${SIDE_PANEL_TOP_BAR_HEIGHT}px;
   padding: 0 ${themeCssVariables.spacing[3]};
   width: 100%;
