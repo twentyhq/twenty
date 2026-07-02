@@ -1,4 +1,4 @@
-import { PageLayoutType } from 'twenty-shared/types';
+import { type PageLayoutType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 export const getPageLayoutBaseFile = ({
