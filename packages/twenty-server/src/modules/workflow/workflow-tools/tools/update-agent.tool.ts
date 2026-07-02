@@ -59,7 +59,6 @@ const updateAgentSchema = z.object({
     ),
 });
 
-
 const resyncAiAgentStepOutputSchemas = async (
   deps: Pick<
     WorkflowToolDependencies,
@@ -155,8 +154,6 @@ To find the agentId, look at the AI_AGENT step's settings.input.agentId field.`,
         try {
           await resyncAiAgentStepOutputSchemas(deps, { workspaceId, agentId });
         } catch (resyncError) {
-
-
           return {
             success: true,
             message: `Successfully updated agent ${agentId}, but failed to resync workflow step output schema: ${resyncError.message}`,
