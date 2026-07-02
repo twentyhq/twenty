@@ -6,9 +6,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { IsNull, Repository } from 'typeorm';
 
-import { EnterpriseExceptionFilter } from 'src/engine/core-modules/enterprise/enterprise-exception.filter';
 import { EnterpriseLicenseInfoDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-license-info.dto';
 import { EnterpriseSubscriptionStatusDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-subscription-status.dto';
+import { EnterpriseExceptionFilter } from 'src/engine/core-modules/enterprise/enterprise-exception.filter';
 import {
   EnterpriseException,
   EnterpriseExceptionCode,
@@ -101,6 +101,25 @@ export class EnterpriseResolver {
     AdminPanelGuard,
     NoPermissionGuard,
   )
+  async releaseEnterpriseServerBinding(): Promise<EnterpriseLicenseInfoDTO> {
+    await this.enterprisePlanService.releaseServerBinding();
+
+    await this.enterprisePlanService.refreshValidityToken();
+
+    const seatCount = await this.getActiveUserWorkspaceCount();
+
+    await this.enterprisePlanService.reportSeats(seatCount);
+
+    return this.enterprisePlanService.getLicenseInfo();
+  }
+
+  @Mutation(() => EnterpriseLicenseInfoDTO)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    BillingDisabledGuard,
+    AdminPanelGuard,
+    NoPermissionGuard,
+  )
   async setEnterpriseKey(
     @Args('enterpriseKey') enterpriseKey: string,
   ): Promise<EnterpriseLicenseInfoDTO> {
@@ -117,6 +136,16 @@ export class EnterpriseResolver {
       await this.enterprisePlanService.setEnterpriseKey(enterpriseKey);
 
       await this.enterprisePlanService.refreshValidityToken();
+
+      if (
+        this.enterprisePlanService.getLastRefreshRejectionCode() ===
+        EnterpriseExceptionCode.ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER
+      ) {
+        throw new EnterpriseException(
+          'Enterprise key is bound to another server instance',
+          EnterpriseExceptionCode.ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER,
+        );
+      }
 
       const seatCount = await this.getActiveUserWorkspaceCount();
 
