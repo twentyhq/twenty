@@ -1,0 +1,20 @@
+packages/twenty-client-sdk/src/metadata/generated/schema.ts
+  s_da5c4fe767d6bc::t_63d6ee834333d6 2755
+  s_da5c4fe767d6bc::t_101d23b5d587da 9269-9270
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "4969a554c16620f675a2fa9f147b3bbe8d8ee3f8",
+  "prompts": {},
+  "sessions": {
+    "s_da5c4fe767d6bc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8e35158f-9ec9-46ba-a75d-86652103d4ff",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
