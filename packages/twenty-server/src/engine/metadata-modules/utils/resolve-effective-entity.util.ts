@@ -42,8 +42,7 @@ export type EffectiveEntityI18nContext = {
 // - otherwise a non-translatable property (icon/color) takes the direct override;
 // - a translatable property takes translations[locale], then the flat override;
 // - finally the Lingui/catalog fallback (translateStandardLabel).
-// Without an i18nContext it reduces to the flat override-or-base spread used by
-// the registry-driven entities.
+// The whole-entity flat override-or-base spread lives in resolveEffectiveEntity.
 export const resolveEffectiveEntityProperty = ({
   baseValue,
   overrides,
@@ -55,15 +54,11 @@ export const resolveEffectiveEntityProperty = ({
   overrides: MetadataPresentationOverrides | null | undefined;
   property: string;
   isTranslatable: boolean;
-  i18nContext?: EffectiveEntityI18nContext;
+  i18nContext: EffectiveEntityI18nContext;
 }): string => {
   const overrideValue = (
     overrides as Record<string, unknown> | null | undefined
   )?.[property];
-
-  if (!isDefined(i18nContext)) {
-    return (overrideValue !== undefined ? overrideValue : baseValue) as string;
-  }
 
   const { locale, i18nInstance, isStandardApp, applicationCatalog } =
     i18nContext;

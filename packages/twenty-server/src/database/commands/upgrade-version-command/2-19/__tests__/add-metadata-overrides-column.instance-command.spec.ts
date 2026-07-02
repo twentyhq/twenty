@@ -32,7 +32,7 @@ describe('AddMetadataOverridesColumnFastInstanceCommand', () => {
   });
 
   describe('down', () => {
-    it('drops only the overrides column', async () => {
+    it('copies overrides back into standardOverrides before dropping the column', async () => {
       const query = jest.fn().mockResolvedValue(undefined);
       const queryRunner = { query } as unknown as QueryRunner;
 
@@ -41,7 +41,9 @@ describe('AddMetadataOverridesColumnFastInstanceCommand', () => {
       const statements = query.mock.calls.map((call) => call[0] as string);
 
       expect(statements).toEqual([
+        'UPDATE "core"."objectMetadata" SET "standardOverrides" = "overrides" WHERE "overrides" IS NOT NULL',
         'ALTER TABLE "core"."objectMetadata" DROP COLUMN IF EXISTS "overrides"',
+        'UPDATE "core"."fieldMetadata" SET "standardOverrides" = "overrides" WHERE "overrides" IS NOT NULL',
         'ALTER TABLE "core"."fieldMetadata" DROP COLUMN IF EXISTS "overrides"',
       ]);
     });
