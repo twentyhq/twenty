@@ -8,6 +8,9 @@ import { ValidatedStorageDriver } from 'src/engine/core-modules/file-storage/dri
 const createMockDriver = (): jest.Mocked<StorageDriver> => ({
   readFile: jest.fn().mockResolvedValue(Readable.from([])),
   writeFile: jest.fn().mockResolvedValue(undefined),
+  writeFileStream: jest.fn().mockResolvedValue(undefined),
+  getFileMetadata: jest.fn().mockResolvedValue(null),
+  getPresignedUploadUrl: jest.fn().mockResolvedValue(null),
   downloadFolder: jest.fn().mockResolvedValue(undefined),
   uploadFolder: jest.fn().mockResolvedValue(undefined),
   downloadFile: jest.fn().mockResolvedValue(undefined),
