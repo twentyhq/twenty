@@ -144,14 +144,67 @@ export class NormalizeLegacyIndexNamesCommand extends ActiveOrSuspendedWorkspace
 
       for (const operation of operations) {
         if (operation.type === 'rename') {
-          await this.workspaceSchemaManagerService.indexManager.renameIndexWithoutRebuild(
-            {
-              queryRunner,
-              schemaName,
-              fromIndexName: operation.fromName,
-              toIndexName: operation.toName,
-            },
-          );
+          // Metadata can drift from the physical schema: the index may already
+          // sit under the target name (past targeted rebuilds) or be missing
+          // entirely. Only rename when the source exists and the target slot is
+          // free; in every case reconcile the metadata name.
+          const targetIndexExists =
+            await this.workspaceSchemaManagerService.indexManager.doesIndexExist(
+              {
+                queryRunner,
+                schemaName,
+                indexName: operation.toName,
+              },
+            );
+
+          if (targetIndexExists) {
+            const sourceIndexExists =
+              await this.workspaceSchemaManagerService.indexManager.doesIndexExist(
+                {
+                  queryRunner,
+                  schemaName,
+                  indexName: operation.fromName,
+                },
+              );
+
+            if (sourceIndexExists) {
+              this.logger.warn(
+                `Index ${operation.toName} already exists physically alongside ${operation.fromName}; leaving ${operation.fromName} in place and pointing metadata at ${operation.toName} (workspace ${workspaceId})`,
+              );
+            } else {
+              this.logger.log(
+                `Index already physically named ${operation.toName}, reconciling metadata only (was ${operation.fromName}) (workspace ${workspaceId})`,
+              );
+            }
+          } else {
+            const sourceIndexExists =
+              await this.workspaceSchemaManagerService.indexManager.doesIndexExist(
+                {
+                  queryRunner,
+                  schemaName,
+                  indexName: operation.fromName,
+                },
+              );
+
+            if (sourceIndexExists) {
+              await this.workspaceSchemaManagerService.indexManager.renameIndexWithoutRebuild(
+                {
+                  queryRunner,
+                  schemaName,
+                  fromIndexName: operation.fromName,
+                  toIndexName: operation.toName,
+                },
+              );
+
+              this.logger.log(
+                `Renamed index ${operation.fromName} -> ${operation.toName} (workspace ${workspaceId})`,
+              );
+            } else {
+              this.logger.warn(
+                `Neither ${operation.fromName} nor ${operation.toName} exists physically; updating metadata name so a future rebuild uses the expected name (workspace ${workspaceId})`,
+              );
+            }
+          }
 
           await queryRunner.query(
             `UPDATE "core"."indexMetadata"
@@ -159,10 +212,6 @@ export class NormalizeLegacyIndexNamesCommand extends ActiveOrSuspendedWorkspace
               WHERE "id" = $2
                 AND "workspaceId" = $3`,
             [operation.toName, operation.indexMetadataId, workspaceId],
-          );
-
-          this.logger.log(
-            `Renamed index ${operation.fromName} -> ${operation.toName} (workspace ${workspaceId})`,
           );
         } else {
           await dropIndexFromWorkspaceSchema({

@@ -102,8 +102,30 @@ export class WorkspaceSchemaIndexManagerService {
     fromIndexName: string;
     toIndexName: string;
   }): Promise<void> {
-    const sql = `ALTER INDEX ${escapeIdentifier(schemaName)}.${escapeIdentifier(fromIndexName)} RENAME TO ${escapeIdentifier(toIndexName)}`;
+    // IF EXISTS: metadata can drift from the physical schema, and a missing
+    // source index must not abort the caller's transaction.
+    const sql = `ALTER INDEX IF EXISTS ${escapeIdentifier(schemaName)}.${escapeIdentifier(fromIndexName)} RENAME TO ${escapeIdentifier(toIndexName)}`;
 
     await queryRunner.query(sql);
+  }
+
+  async doesIndexExist({
+    queryRunner,
+    schemaName,
+    indexName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    indexName: string;
+  }): Promise<boolean> {
+    const result: { exists: boolean }[] = await queryRunner.query(
+      `SELECT EXISTS (
+        SELECT 1 FROM pg_indexes
+        WHERE schemaname = $1 AND indexname = $2
+      ) AS "exists"`,
+      [schemaName, indexName],
+    );
+
+    return result[0]?.exists === true;
   }
 }
