@@ -15,6 +15,6 @@ export const ONBOARDING_INSTALLABLE_APPS: OnboardingInstallableApp[] = [
   {
     universalIdentifier: '66a504cc-0a75-410e-a43f-cdeae1db1522',
     label: msg`Last contact`,
-    description: msg`Track when you last contacted each person`,
+    description: msg`Get last contact date with relations`,
   },
 ];
