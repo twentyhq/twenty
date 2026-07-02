@@ -38,7 +38,10 @@ export class AgentChatEventPublisherService {
       await redis.expire(key, STREAM_CHUNKS_TTL_SECONDS);
 
       publishedEvent = { ...event, seq };
-    } else if (event.type === 'message-persisted') {
+    } else if (
+      event.type === 'message-persisted' ||
+      event.type === 'credits-exhausted'
+    ) {
       const redis = this.redisClientService.getClient();
       await redis.del(this.getStreamChunksKey(threadId));
     }

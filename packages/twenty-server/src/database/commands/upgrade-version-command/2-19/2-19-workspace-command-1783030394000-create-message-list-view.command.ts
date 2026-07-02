@@ -11,7 +11,9 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { type TwentyStandardAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/types/twenty-standard-all-flat-entity-maps.type';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+import { type WorkspaceCacheDataMap } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -24,7 +26,7 @@ const LIST_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = Object.values(
   LIST.views.allMessageLists.viewFields,
 ).map((viewField) => viewField.universalIdentifier);
 
-@RegisteredWorkspaceCommand('2.19.0', 1821000012000)
+@RegisteredWorkspaceCommand('2.19.0', 1783030394000)
 @Command({
   name: 'upgrade:2-19:create-message-list-view',
   description:
@@ -79,26 +81,10 @@ export class CreateMessageListViewCommand extends ActiveOrSuspendedWorkspaceComm
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
-    const viewsToCreate = isDefined(
-      flatViewMaps.byUniversalIdentifier[LIST_VIEW_UNIVERSAL_IDENTIFIER],
-    )
-      ? []
-      : [
-          (() => {
-            const standardView = findFlatEntityByUniversalIdentifier<FlatView>({
-              flatEntityMaps: standardAllFlatEntityMaps.flatViewMaps,
-              universalIdentifier: LIST_VIEW_UNIVERSAL_IDENTIFIER,
-            });
-
-            if (!isDefined(standardView)) {
-              throw new Error(
-                `Standard application is missing messageList view ${LIST_VIEW_UNIVERSAL_IDENTIFIER}`,
-              );
-            }
-
-            return standardView;
-          })(),
-        ];
+    const viewsToCreate = this.resolveViewsToCreate({
+      flatViewMaps,
+      standardAllFlatEntityMaps,
+    });
 
     const viewFieldsToCreate = LIST_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.filter(
       (universalIdentifier) =>
@@ -168,5 +154,34 @@ export class CreateMessageListViewCommand extends ActiveOrSuspendedWorkspaceComm
     }
 
     this.logger.log(`Created messageList view for workspace ${workspaceId}`);
+  }
+
+  private resolveViewsToCreate({
+    flatViewMaps,
+    standardAllFlatEntityMaps,
+  }: {
+    flatViewMaps: WorkspaceCacheDataMap['flatViewMaps'];
+    standardAllFlatEntityMaps: TwentyStandardAllFlatEntityMaps;
+  }): FlatView[] {
+    if (
+      isDefined(
+        flatViewMaps.byUniversalIdentifier[LIST_VIEW_UNIVERSAL_IDENTIFIER],
+      )
+    ) {
+      return [];
+    }
+
+    const standardView = findFlatEntityByUniversalIdentifier<FlatView>({
+      flatEntityMaps: standardAllFlatEntityMaps.flatViewMaps,
+      universalIdentifier: LIST_VIEW_UNIVERSAL_IDENTIFIER,
+    });
+
+    if (!isDefined(standardView)) {
+      throw new Error(
+        `Standard application is missing messageList view ${LIST_VIEW_UNIVERSAL_IDENTIFIER}`,
+      );
+    }
+
+    return [standardView];
   }
 }

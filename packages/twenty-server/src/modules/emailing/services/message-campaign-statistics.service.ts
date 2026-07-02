@@ -12,7 +12,11 @@ export class MessageCampaignStatisticsService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
-  async refreshAllCampaignCounts(workspaceId: string): Promise<void> {
+  async refreshAllCampaignCounts({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<void> {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const campaignRepository =
         await this.globalWorkspaceOrmManager.getRepository(
@@ -26,15 +30,21 @@ export class MessageCampaignStatisticsService {
       });
 
       for (const campaign of campaigns) {
-        await this.refreshCampaignCounts(workspaceId, campaign.id);
+        await this.refreshCampaignCounts({
+          workspaceId,
+          campaignId: campaign.id,
+        });
       }
     }, buildSystemAuthContext(workspaceId));
   }
 
-  async refreshCampaignCounts(
-    workspaceId: string,
-    campaignId: string,
-  ): Promise<void> {
+  async refreshCampaignCounts({
+    workspaceId,
+    campaignId,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+  }): Promise<void> {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageRepository =
         await this.globalWorkspaceOrmManager.getRepository(

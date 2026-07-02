@@ -35,6 +35,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
@@ -102,6 +103,7 @@ export class MessageCampaignService {
     private readonly messageSuppressionService: MessageSuppressionService,
     private readonly userRoleService: UserRoleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
+    private readonly emailBillingService: EmailBillingService,
   ) {}
 
   private getUserRepository<T extends ObjectLiteral>(
@@ -359,6 +361,17 @@ export class MessageCampaignService {
       const fromAddress = campaign.fromAddress?.primaryEmail ?? '';
       const unsubscribeTopicId = campaign.unsubscribeTopicId ?? undefined;
 
+      const hasEmailCredits =
+        await this.emailBillingService.hasEmailCredits(workspaceId);
+
+      if (!hasEmailCredits) {
+        await messageRepository.update(messageId, {
+          deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED,
+        });
+
+        return;
+      }
+
       try {
         let result: EmailingDomainSendEmailResult;
 
@@ -417,6 +430,11 @@ export class MessageCampaignService {
           text,
         });
 
+        await this.emailBillingService.billSentEmails({
+          workspaceId,
+          sentEmailCount: 1,
+        });
+
         const associationRepository = await this.getSystemRepository(
           workspaceId,
           MessageChannelMessageAssociationWorkspaceEntity,
@@ -467,10 +485,10 @@ export class MessageCampaignService {
 
       await messageRepository.update(message.id, { deliveryStatus });
 
-      await this.messageCampaignStatisticsService.refreshCampaignCounts(
+      await this.messageCampaignStatisticsService.refreshCampaignCounts({
         workspaceId,
-        message.messageCampaignId,
-      );
+        campaignId: message.messageCampaignId,
+      });
     }, buildSystemAuthContext(workspaceId));
   }
 
@@ -659,10 +677,10 @@ export class MessageCampaignService {
       },
     );
 
-    await this.messageCampaignStatisticsService.refreshCampaignCounts(
+    await this.messageCampaignStatisticsService.refreshCampaignCounts({
       workspaceId,
       campaignId,
-    );
+    });
   }
 
   async previewAudience({

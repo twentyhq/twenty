@@ -4,6 +4,7 @@ import {
   isObject,
   isString,
 } from '@sniptt/guards';
+import { Temporal } from 'temporal-polyfill';
 import {
   type StepFilter,
   type StepFilterGroup,
@@ -13,6 +14,8 @@ import {
 import {
   convertViewFilterOperandToCoreOperand as convertViewFilterOperandDeprecated,
   isDefined,
+  isSamePlainDate,
+  parseToInstantOrThrow,
 } from 'twenty-shared/utils';
 import { parseBooleanFromStringValue } from 'twenty-shared/workflow';
 
@@ -214,8 +217,23 @@ function evaluateBooleanFilter(filter: ResolvedFilter): boolean {
   }
 }
 
+function parseDateOperandToInstant(value: unknown): Temporal.Instant | null {
+  try {
+    if (value instanceof Date && !Number.isNaN(value.getTime())) {
+      return Temporal.Instant.fromEpochMilliseconds(value.getTime());
+    }
+
+    return parseToInstantOrThrow(String(value));
+  } catch {
+    return null;
+  }
+}
+
+function toUtcPlainDate(instant: Temporal.Instant): Temporal.PlainDate {
+  return instant.toZonedDateTimeISO('UTC').toPlainDate();
+}
+
 function evaluateDateFilter(filter: ResolvedFilter): boolean {
-  // TODO: refactor this with Temporal
   if (filter.operand === ViewFilterOperand.IS_EMPTY) {
     return !isDefined(filter.leftOperand) || filter.leftOperand === '';
   }
@@ -224,42 +242,58 @@ function evaluateDateFilter(filter: ResolvedFilter): boolean {
     return isDefined(filter.leftOperand) && filter.leftOperand !== '';
   }
 
-  const dateLeftValue = new Date(String(filter.leftOperand));
+  const leftInstant = parseDateOperandToInstant(filter.leftOperand);
 
-  if (Number.isNaN(dateLeftValue.getTime())) {
+  if (!isDefined(leftInstant)) {
     return false;
   }
 
   switch (filter.operand) {
-    case ViewFilterOperand.IS:
+    case ViewFilterOperand.IS: {
+      const rightInstant = parseDateOperandToInstant(filter.rightOperand);
+
       return (
-        dateLeftValue.getDate() ===
-        new Date(String(filter.rightOperand)).getDate()
+        isDefined(rightInstant) &&
+        isSamePlainDate(
+          toUtcPlainDate(leftInstant),
+          toUtcPlainDate(rightInstant),
+        )
       );
+    }
+
     case ViewFilterOperand.IS_IN_PAST:
-      return dateLeftValue.getTime() < Date.now();
+      return Temporal.Instant.compare(leftInstant, Temporal.Now.instant()) < 0;
 
     case ViewFilterOperand.IS_IN_FUTURE:
-      return dateLeftValue.getTime() > Date.now();
+      return Temporal.Instant.compare(leftInstant, Temporal.Now.instant()) > 0;
 
     case ViewFilterOperand.IS_TODAY:
-      return dateLeftValue.toDateString() === new Date().toDateString();
-
-    case ViewFilterOperand.IS_BEFORE:
-      return (
-        dateLeftValue.getTime() <
-        new Date(String(filter.rightOperand)).getTime()
+      return isSamePlainDate(
+        toUtcPlainDate(leftInstant),
+        Temporal.Now.zonedDateTimeISO('UTC').toPlainDate(),
       );
 
-    case ViewFilterOperand.IS_AFTER:
+    case ViewFilterOperand.IS_BEFORE: {
+      const rightInstant = parseDateOperandToInstant(filter.rightOperand);
+
       return (
-        dateLeftValue.getTime() >
-        new Date(String(filter.rightOperand)).getTime()
+        isDefined(rightInstant) &&
+        Temporal.Instant.compare(leftInstant, rightInstant) < 0
       );
+    }
+
+    case ViewFilterOperand.IS_AFTER: {
+      const rightInstant = parseDateOperandToInstant(filter.rightOperand);
+
+      return (
+        isDefined(rightInstant) &&
+        Temporal.Instant.compare(leftInstant, rightInstant) > 0
+      );
+    }
 
     case ViewFilterOperand.IS_RELATIVE:
       return parseAndEvaluateRelativeDateFilter({
-        dateToCheck: dateLeftValue,
+        dateToCheck: new Date(leftInstant.epochMilliseconds),
         relativeDateString: String(filter.rightOperand),
       });
 

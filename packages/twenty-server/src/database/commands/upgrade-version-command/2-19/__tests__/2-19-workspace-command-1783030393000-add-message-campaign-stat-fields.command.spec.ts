@@ -1,11 +1,12 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { CreateMessageListViewCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-workspace-command-1821000012000-create-message-list-view.command';
+import { AddMessageCampaignStatFieldsCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-workspace-command-1783030393000-add-message-campaign-stat-fields.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { type MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 
 jest.mock(
   'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant',
@@ -20,11 +21,17 @@ const STANDARD_APPLICATION = {
   universalIdentifier: '20202020-0000-0000-0000-0000000000bb',
 };
 
-const LIST = STANDARD_OBJECTS.messageList;
-const LIST_VIEW_UNIVERSAL_IDENTIFIER =
-  LIST.views.allMessageLists.universalIdentifier;
-const LIST_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = Object.values(
-  LIST.views.allMessageLists.viewFields,
+const CAMPAIGN = STANDARD_OBJECTS.messageCampaign;
+const STAT_FIELD_UNIVERSAL_IDENTIFIERS = [
+  CAMPAIGN.fields.sentCount.universalIdentifier,
+  CAMPAIGN.fields.failedCount.universalIdentifier,
+  CAMPAIGN.fields.bouncedCount.universalIdentifier,
+  CAMPAIGN.fields.complainedCount.universalIdentifier,
+];
+const CAMPAIGN_VIEW_UNIVERSAL_IDENTIFIER =
+  CAMPAIGN.views.allMessageCampaigns.universalIdentifier;
+const CAMPAIGN_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = Object.values(
+  CAMPAIGN.views.allMessageCampaigns.viewFields,
 ).map((viewField) => viewField.universalIdentifier);
 
 const buildByUniversalIdentifierMap = (universalIdentifiers: string[]) => ({
@@ -36,11 +43,12 @@ const buildByUniversalIdentifierMap = (universalIdentifiers: string[]) => ({
   ),
 });
 
-describe('CreateMessageListViewCommand', () => {
-  let command: CreateMessageListViewCommand;
+describe('AddMessageCampaignStatFieldsCommand', () => {
+  let command: AddMessageCampaignStatFieldsCommand;
   let findApplicationMock: jest.Mock;
   let getOrRecomputeMock: jest.Mock;
   let validateBuildAndRunWorkspaceMigrationMock: jest.Mock;
+  let refreshAllCampaignCountsMock: jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -52,19 +60,23 @@ describe('CreateMessageListViewCommand', () => {
     validateBuildAndRunWorkspaceMigrationMock = jest
       .fn()
       .mockResolvedValue({ status: 'success' });
+    refreshAllCampaignCountsMock = jest.fn();
 
     computeTwentyStandardApplicationAllFlatEntityMapsMock.mockReturnValue({
       allFlatEntityMaps: {
+        flatFieldMetadataMaps: buildByUniversalIdentifierMap(
+          STAT_FIELD_UNIVERSAL_IDENTIFIERS,
+        ),
         flatViewMaps: buildByUniversalIdentifierMap([
-          LIST_VIEW_UNIVERSAL_IDENTIFIER,
+          CAMPAIGN_VIEW_UNIVERSAL_IDENTIFIER,
         ]),
         flatViewFieldMaps: buildByUniversalIdentifierMap(
-          LIST_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
+          CAMPAIGN_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
         ),
       },
     });
 
-    command = new CreateMessageListViewCommand(
+    command = new AddMessageCampaignStatFieldsCommand(
       {} as WorkspaceIteratorService,
       {
         findWorkspaceTwentyStandardAndCustomApplicationOrThrow:
@@ -77,6 +89,9 @@ describe('CreateMessageListViewCommand', () => {
         validateBuildAndRunWorkspaceMigration:
           validateBuildAndRunWorkspaceMigrationMock,
       } as unknown as WorkspaceMigrationValidateBuildAndRunService,
+      {
+        refreshAllCampaignCounts: refreshAllCampaignCountsMock,
+      } as unknown as MessageCampaignStatisticsService,
     );
   });
 
@@ -89,22 +104,25 @@ describe('CreateMessageListViewCommand', () => {
     });
 
   const mockWorkspaceCache = ({
+    existingFields = [],
     existingViews = [],
     existingViewFields = [],
   }: {
+    existingFields?: string[];
     existingViews?: string[];
     existingViewFields?: string[];
   }) => {
     getOrRecomputeMock.mockResolvedValue({
       flatObjectMetadataMaps: buildByUniversalIdentifierMap([
-        LIST.universalIdentifier,
+        CAMPAIGN.universalIdentifier,
       ]),
+      flatFieldMetadataMaps: buildByUniversalIdentifierMap(existingFields),
       flatViewMaps: buildByUniversalIdentifierMap(existingViews),
       flatViewFieldMaps: buildByUniversalIdentifierMap(existingViewFields),
     });
   };
 
-  it('creates the message list view and all view fields when missing', async () => {
+  it('creates missing stat fields, the campaign view, all campaign view fields, then backfills counts', async () => {
     mockWorkspaceCache({});
 
     await runOnWorkspace();
@@ -114,10 +132,19 @@ describe('CreateMessageListViewCommand', () => {
       workspaceId: WORKSPACE_ID,
       applicationUniversalIdentifier: STANDARD_APPLICATION.universalIdentifier,
       allFlatEntityOperationByMetadataName: {
+        fieldMetadata: {
+          flatEntityToCreate: expect.arrayContaining(
+            STAT_FIELD_UNIVERSAL_IDENTIFIERS.map((universalIdentifier) =>
+              expect.objectContaining({ universalIdentifier }),
+            ),
+          ),
+          flatEntityToDelete: [],
+          flatEntityToUpdate: [],
+        },
         view: {
           flatEntityToCreate: [
             expect.objectContaining({
-              universalIdentifier: LIST_VIEW_UNIVERSAL_IDENTIFIER,
+              universalIdentifier: CAMPAIGN_VIEW_UNIVERSAL_IDENTIFIER,
             }),
           ],
           flatEntityToDelete: [],
@@ -125,8 +152,9 @@ describe('CreateMessageListViewCommand', () => {
         },
         viewField: {
           flatEntityToCreate: expect.arrayContaining(
-            LIST_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.map((universalIdentifier) =>
-              expect.objectContaining({ universalIdentifier }),
+            CAMPAIGN_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.map(
+              (universalIdentifier) =>
+                expect.objectContaining({ universalIdentifier }),
             ),
           ),
           flatEntityToDelete: [],
@@ -136,15 +164,22 @@ describe('CreateMessageListViewCommand', () => {
     });
     expect(
       validateBuildAndRunWorkspaceMigrationMock.mock.calls[0][0]
+        .allFlatEntityOperationByMetadataName.fieldMetadata.flatEntityToCreate,
+    ).toHaveLength(STAT_FIELD_UNIVERSAL_IDENTIFIERS.length);
+    expect(
+      validateBuildAndRunWorkspaceMigrationMock.mock.calls[0][0]
         .allFlatEntityOperationByMetadataName.viewField.flatEntityToCreate,
-    ).toHaveLength(LIST_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.length);
+    ).toHaveLength(CAMPAIGN_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.length);
+    expect(refreshAllCampaignCountsMock).toHaveBeenCalledWith({ workspaceId: WORKSPACE_ID });
   });
 
-  it('creates missing view fields when the view already exists', async () => {
+  it('creates only missing pieces when rerun against a partially migrated workspace', async () => {
     mockWorkspaceCache({
-      existingViews: [LIST_VIEW_UNIVERSAL_IDENTIFIER],
+      existingFields: [CAMPAIGN.fields.sentCount.universalIdentifier],
+      existingViews: [CAMPAIGN_VIEW_UNIVERSAL_IDENTIFIER],
       existingViewFields: [
-        LIST.views.allMessageLists.viewFields.name.universalIdentifier,
+        CAMPAIGN.views.allMessageCampaigns.viewFields.subject
+          .universalIdentifier,
       ],
     });
 
@@ -154,42 +189,47 @@ describe('CreateMessageListViewCommand', () => {
       validateBuildAndRunWorkspaceMigrationMock.mock.calls[0][0]
         .allFlatEntityOperationByMetadataName;
 
-    expect(payload.view.flatEntityToCreate).toEqual([]);
-    expect(payload.viewField.flatEntityToCreate).toEqual(
+    expect(payload.fieldMetadata.flatEntityToCreate).toEqual(
       expect.arrayContaining(
-        LIST_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.slice(1).map(
-          (universalIdentifier) =>
-            expect.objectContaining({ universalIdentifier }),
+        STAT_FIELD_UNIVERSAL_IDENTIFIERS.slice(1).map((universalIdentifier) =>
+          expect.objectContaining({ universalIdentifier }),
         ),
       ),
     );
+    expect(payload.fieldMetadata.flatEntityToCreate).toHaveLength(3);
+    expect(payload.view.flatEntityToCreate).toEqual([]);
     expect(payload.viewField.flatEntityToCreate).toHaveLength(
-      LIST_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.length - 1,
+      CAMPAIGN_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.length - 1,
     );
+    expect(refreshAllCampaignCountsMock).toHaveBeenCalledWith({ workspaceId: WORKSPACE_ID });
   });
 
-  it('does nothing when the view and view fields already exist', async () => {
+  it('skips the metadata migration but still backfills counts when everything already exists', async () => {
     mockWorkspaceCache({
-      existingViews: [LIST_VIEW_UNIVERSAL_IDENTIFIER],
-      existingViewFields: LIST_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
+      existingFields: STAT_FIELD_UNIVERSAL_IDENTIFIERS,
+      existingViews: [CAMPAIGN_VIEW_UNIVERSAL_IDENTIFIER],
+      existingViewFields: CAMPAIGN_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
     });
 
     await runOnWorkspace();
 
     expect(validateBuildAndRunWorkspaceMigrationMock).not.toHaveBeenCalled();
+    expect(refreshAllCampaignCountsMock).toHaveBeenCalledWith({ workspaceId: WORKSPACE_ID });
   });
 
-  it('does not write metadata in dry-run mode', async () => {
+  it('does not write metadata or backfill counts in dry-run mode', async () => {
     mockWorkspaceCache({});
 
     await runOnWorkspace(true);
 
     expect(validateBuildAndRunWorkspaceMigrationMock).not.toHaveBeenCalled();
+    expect(refreshAllCampaignCountsMock).not.toHaveBeenCalled();
   });
 
-  it('skips workspaces where the messageList object is absent', async () => {
+  it('skips workspaces where the messageCampaign object is absent', async () => {
     getOrRecomputeMock.mockResolvedValue({
       flatObjectMetadataMaps: buildByUniversalIdentifierMap([]),
+      flatFieldMetadataMaps: buildByUniversalIdentifierMap([]),
       flatViewMaps: buildByUniversalIdentifierMap([]),
       flatViewFieldMaps: buildByUniversalIdentifierMap([]),
     });
@@ -198,5 +238,6 @@ describe('CreateMessageListViewCommand', () => {
 
     expect(findApplicationMock).not.toHaveBeenCalled();
     expect(validateBuildAndRunWorkspaceMigrationMock).not.toHaveBeenCalled();
+    expect(refreshAllCampaignCountsMock).not.toHaveBeenCalled();
   });
 });
