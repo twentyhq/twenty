@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ApplicationExceptionFilter response error format should surface an install conflict as APPLICATION_INSTALLATION_FAILED with a human message 1`] = `
+{
+  "extensions": {
+    "code": "APPLICATION_INSTALLATION_FAILED",
+    "subCode": "APPLICATION_INSTALLATION_FAILED",
+    "userFriendlyMessage": "We couldn't install "Test Application". Its object "Invoice" could not be applied to your workspace.",
+  },
+  "message": "Installing application 'Test Application' failed [object: Invoice]: addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow: flat entity to add already exists (universalIdentifier: b1b2c3d4-0003-4000-a000-000000000003)",
+  "name": "GraphQLError",
+}
+`;

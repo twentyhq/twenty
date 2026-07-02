@@ -47,7 +47,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       namePlural: 'defaultflatObjectMetadataNamePlural',
       nameSingular: 'defaultflatObjectMetadataNameSingular',
       shortcut: 'shortcut',
-      standardOverrides: null,
+      overrides: null,
       targetTableName: '',
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
@@ -86,7 +86,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       isUIEditable: true,
       isLabelSyncedWithName: false,
       isSystem: false,
-      standardOverrides: null,
+      overrides: null,
       relationTargetObjectMetadataUniversalIdentifier: null,
       relationTargetFieldMetadataUniversalIdentifier: null,
     };
