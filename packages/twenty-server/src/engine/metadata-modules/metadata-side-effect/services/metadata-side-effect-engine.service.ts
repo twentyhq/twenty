@@ -3,17 +3,27 @@ import { Injectable } from '@nestjs/common';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
+import { type MetadataFlatEntityAndRelatedFlatEntityMapsForSideEffect } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-side-effect.type';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { getMetadataManyToOneRelatedNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-many-to-one-related-names.util';
+import { getMetadataSideEffectCompanionNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-side-effect-companion-names.util';
 import { isSystemSideEffectFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/is-system-side-effect-flat-entity.util';
 import { MetadataSideEffectHandlerRegistryService } from 'src/engine/metadata-modules/metadata-side-effect/registry/metadata-side-effect-handler-registry.service';
 import { type AllFlatEntityOperationIndexByMetadataName } from 'src/engine/metadata-modules/metadata-side-effect/types/all-flat-entity-operation-index-by-metadata-name.type';
 import { type MetadataSideEffectContext } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-context.type';
+import { type MetadataSideEffectExpansionResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-expansion-result.type';
 import {
   METADATA_SIDE_EFFECT_OPERATIONS,
   type MetadataSideEffectOperation,
 } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-operation.type';
+import { type MetadataSideEffectFailure } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
 import { type SystemSideEffectUniversalIdentifierCollision } from 'src/engine/metadata-modules/metadata-side-effect/types/system-side-effect-universal-identifier-collision.type';
+import { mapSystemSideEffectCollisionToFailure } from 'src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util';
+import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
+import { pushToOrchestratorFailureReport } from 'src/engine/workspace-manager/workspace-migration/utils/merge-orchestrator-failure-reports.util';
 
 type GenericUniversalFlatEntity = { universalIdentifier: string };
 type GenericFlatEntityOperation = {
@@ -61,22 +71,45 @@ export class MetadataSideEffectEngineService {
     private readonly metadataSideEffectHandlerRegistryService: MetadataSideEffectHandlerRegistryService,
   ) {}
 
+  // The union of flat entity maps every registered handler needs, derived from
+  // the side-effect registry. The caller loads exactly these before expansion so
+  // each handler receives its typed, non-optional related-maps bundle.
+  getRequiredFlatEntityMapsCacheKeys(): (keyof AllFlatEntityMaps)[] {
+    const cacheKeys = new Set<keyof AllFlatEntityMaps>();
+
+    for (const {
+      metadataName,
+    } of this.metadataSideEffectHandlerRegistryService.getRegisteredHandlerKeys()) {
+      const relatedMetadataNames = [
+        metadataName,
+        ...getMetadataManyToOneRelatedNames(metadataName),
+        ...getMetadataSideEffectCompanionNames(metadataName),
+      ];
+
+      for (const relatedMetadataName of relatedMetadataNames) {
+        cacheKeys.add(getMetadataFlatEntityMapsKey(relatedMetadataName));
+      }
+    }
+
+    return [...cacheKeys];
+  }
+
   expandWithSideEffects({
     allFlatEntityOperationByMetadataName,
+    sideEffectRelatedFlatEntityMaps,
     context,
   }: {
     allFlatEntityOperationByMetadataName: AllFlatEntityOperationByMetadataName;
+    sideEffectRelatedFlatEntityMaps: Partial<AllFlatEntityMaps>;
     context: MetadataSideEffectContext;
-  }): {
-    allFlatEntityOperationByMetadataName: AllFlatEntityOperationByMetadataName;
-    systemSideEffectUniversalIdentifierCollisions: SystemSideEffectUniversalIdentifierCollision[];
-  } {
+  }): MetadataSideEffectExpansionResult {
     const expandedMatrix: GenericAllFlatEntityOperationByMetadataName =
       this.cloneMatrix(allFlatEntityOperationByMetadataName);
     const seenFlatEntityByUniversalIdentifier =
       this.buildSeenFlatEntityByUniversalIdentifier(expandedMatrix);
     const systemSideEffectUniversalIdentifierCollisions: SystemSideEffectUniversalIdentifierCollision[] =
       [];
+    const sideEffectFailures: MetadataSideEffectFailure[] = [];
 
     const triggerMatrix =
       allFlatEntityOperationByMetadataName as unknown as GenericAllFlatEntityOperationByMetadataName;
@@ -118,28 +151,63 @@ export class MetadataSideEffectEngineService {
         }
 
         for (const handler of handlers) {
-          const sideEffectOperations = handler.buildSideEffects({
+          const sideEffectResult = handler.buildSideEffects({
             flatEntity:
               triggerFlatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
             allFlatEntityOperationIndexByMetadataName:
               seenFlatEntityByUniversalIdentifier as unknown as AllFlatEntityOperationIndexByMetadataName,
+            relatedFlatEntityMaps:
+              sideEffectRelatedFlatEntityMaps as unknown as MetadataFlatEntityAndRelatedFlatEntityMapsForSideEffect<AllMetadataName>,
             context,
-          }) as unknown as GenericMetadataSideEffectOperationsByMetadataName;
+          });
+
+          if (sideEffectResult.status === 'fail') {
+            sideEffectFailures.push(sideEffectResult);
+            continue;
+          }
 
           this.mergeSideEffectsIntoMatrix({
             expandedMatrix,
             seenFlatEntityByUniversalIdentifier,
-            sideEffectOperations,
+            sideEffectOperations:
+              sideEffectResult.operations as unknown as GenericMetadataSideEffectOperationsByMetadataName,
             systemSideEffectUniversalIdentifierCollisions,
           });
         }
       }
     }
 
+    // Merge both failure sources (reserved-identifier collisions and handler
+    // failures) into a single OrchestratorFailureReport, using the same contract
+    // as the builder so callers handle every failure through one channel.
+    const allSideEffectFailures: MetadataSideEffectFailure[] = [
+      ...sideEffectFailures,
+      ...systemSideEffectUniversalIdentifierCollisions.map(
+        mapSystemSideEffectCollisionToFailure,
+      ),
+    ];
+
+    if (allSideEffectFailures.length > 0) {
+      const report = EMPTY_ORCHESTRATOR_FAILURE_REPORT();
+
+      for (const sideEffectFailure of allSideEffectFailures) {
+        pushToOrchestratorFailureReport({
+          report,
+          metadataName: sideEffectFailure.metadataName,
+          items: [sideEffectFailure],
+        });
+      }
+
+      return {
+        status: 'fail',
+        report,
+      };
+    }
+
     return {
+      status: 'success',
       allFlatEntityOperationByMetadataName:
         expandedMatrix as unknown as AllFlatEntityOperationByMetadataName,
-      systemSideEffectUniversalIdentifierCollisions,
     };
   }
 
