@@ -9,6 +9,7 @@ import { AppDevOnceCommand } from './dev-once';
 import { registerDevFunctionCommands } from './function';
 import { AppGenerateClientCommand } from './generate-client';
 import { AppI18nExtractCommand } from './i18n-extract';
+import { AppPullCommand } from './pull';
 import { AppTypecheckCommand } from './typecheck';
 
 export const registerDevCommands = (program: Command): void => {
@@ -19,6 +20,7 @@ export const registerDevCommands = (program: Command): void => {
   const addCommand = new EntityAddCommand();
   const generateClientCommand = new AppGenerateClientCommand();
   const i18nExtractCommand = new AppI18nExtractCommand();
+  const pullCommand = new AppPullCommand();
 
   const devAction = async (
     appPath: string | undefined,
@@ -121,6 +123,32 @@ export const registerDevCommands = (program: Command): void => {
           appPath: formatPath(appPath),
           verbose: options.verbose,
           apply: true,
+          force: options.force,
+        });
+      },
+    );
+
+  program
+    .command('pull [appPath]')
+    .description(
+      'Pull an installed application from the active remote into local source files',
+    )
+    .option(
+      '-u, --universal-identifier <id>',
+      'Universal identifier of the application to pull',
+    )
+    .option(
+      '-f, --force',
+      'Overwrite an existing app directory without confirmation',
+    )
+    .action(
+      async (
+        appPath: string | undefined,
+        options: { universalIdentifier?: string; force?: boolean },
+      ) => {
+        await pullCommand.execute({
+          appPath: formatPath(appPath),
+          universalIdentifier: options.universalIdentifier,
           force: options.force,
         });
       },

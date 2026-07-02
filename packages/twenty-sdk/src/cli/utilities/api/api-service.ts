@@ -91,6 +91,17 @@ export class ApiService {
     return this.applicationApi.syncApplication(manifest, options);
   }
 
+  exportApplication(
+    universalIdentifier: string,
+  ): Promise<
+    ApiResponse<{
+      applicationUniversalIdentifier: string;
+      manifest: Manifest;
+    }>
+  > {
+    return this.applicationApi.exportApplication(universalIdentifier);
+  }
+
   uninstallApplication(universalIdentifier: string): Promise<ApiResponse> {
     return this.applicationApi.uninstallApplication(universalIdentifier);
   }

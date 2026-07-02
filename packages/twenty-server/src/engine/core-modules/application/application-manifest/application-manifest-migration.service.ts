@@ -14,6 +14,8 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -200,6 +202,8 @@ export class ApplicationManifestMigrationService {
       fromAllFlatEntityMaps: existingAllFlatEntityMaps,
     });
 
+    this.excludeNonAgentRoleTargets(fromAllFlatEntityMaps);
+
     const toAllUniversalFlatEntityMaps =
       this.computeManifestFlatEntityMapsService.compute({
         manifest,
@@ -268,6 +272,24 @@ export class ApplicationManifestMigrationService {
       workspaceMigration: validateAndBuildResult.workspaceMigration,
       hasSchemaMetadataChanged: validateAndBuildResult.hasSchemaMetadataChanged,
     };
+  }
+
+  private excludeNonAgentRoleTargets(
+    fromAllFlatEntityMaps: AllFlatEntityMaps,
+  ): void {
+    const nonAgentFlatRoleTargets = Object.values(
+      fromAllFlatEntityMaps.flatRoleTargetMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter((flatRoleTarget) => !isDefined(flatRoleTarget.agentId));
+
+    for (const flatRoleTarget of nonAgentFlatRoleTargets) {
+      deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
+        metadataName: 'roleTarget',
+        flatEntity: flatRoleTarget,
+        flatEntityAndRelatedMapsToMutate: fromAllFlatEntityMaps,
+      });
+    }
   }
 
   private async syncDefaultRole({

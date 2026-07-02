@@ -24,7 +24,7 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
     standardOverrides: null,
     targetTableName: 'DEPRECATED',
     isRemote: false,
-    isActive: true,
+    isActive: objectManifest.isActive ?? true,
     isSystem: false,
     isUIEditable: objectManifest.isUIEditable ?? true,
     isUICreatable: objectManifest.isUICreatable ?? true,

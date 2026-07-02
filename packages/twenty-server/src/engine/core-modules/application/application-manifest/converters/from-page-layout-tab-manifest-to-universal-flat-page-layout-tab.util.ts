@@ -23,7 +23,7 @@ export const fromPageLayoutTabManifestToUniversalFlatPageLayoutTab = ({
     icon: pageLayoutTabManifest.icon ?? null,
     layoutMode:
       pageLayoutTabManifest.layoutMode ?? PageLayoutTabLayoutMode.GRID,
-    isActive: true,
+    isActive: pageLayoutTabManifest.isActive ?? true,
     isSystemSideEffect: false,
     widgetUniversalIdentifiers: [],
     createdAt: now,

@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { ApplicationManifestExportResolver } from 'src/engine/core-modules/application/application-manifest/application-manifest-export.resolver';
+import { ApplicationManifestExportService } from 'src/engine/core-modules/application/application-manifest/application-manifest-export.service';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { ApplicationManifestResolver } from 'src/engine/core-modules/application/application-manifest/application-manifest.resolver';
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
@@ -30,6 +32,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationRunnerModule,
   ],
   providers: [
+    ApplicationManifestExportResolver,
+    ApplicationManifestExportService,
     ApplicationManifestMigrationService,
     ApplicationManifestResolver,
     ApplicationSyncService,

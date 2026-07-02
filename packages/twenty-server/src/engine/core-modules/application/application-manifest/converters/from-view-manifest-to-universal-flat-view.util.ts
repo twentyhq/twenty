@@ -42,7 +42,7 @@ export const fromViewManifestToUniversalFlatView = ({
     kanbanColumnWidth: viewManifest.kanbanColumnWidth ?? null,
     anyFieldFilterValue: viewManifest.anyFieldFilterValue ?? null,
     createdByUserWorkspaceId: null,
-    isActive: true,
+    isActive: viewManifest.isActive ?? true,
     isSystemSideEffect: false,
     universalOverrides: null,
     viewFieldUniversalIdentifiers: [],

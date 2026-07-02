@@ -40,6 +40,7 @@ export type RegularFieldManifest<
    * field still works but will be removed in a future release.
    */
   isUnique?: boolean;
+  isActive?: boolean;
   objectUniversalIdentifier: string;
 };
 

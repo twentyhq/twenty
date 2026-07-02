@@ -75,6 +75,15 @@ export class ApplicationService {
     return application.defaultRoleId;
   }
 
+  async getWorkspaceDefaultRoleId(workspaceId: string): Promise<string | null> {
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+      select: ['id', 'defaultRoleId'],
+    });
+
+    return workspace?.defaultRoleId ?? null;
+  }
+
   async findWorkspaceTwentyStandardAndCustomApplicationOrThrow({
     workspace: workspaceInput,
     workspaceId,

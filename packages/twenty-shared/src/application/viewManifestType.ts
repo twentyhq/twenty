@@ -25,6 +25,7 @@ export type ViewFieldManifest = SyncableEntityOptions & {
   position: number;
   aggregateOperation?: AggregateOperations;
   viewFieldGroupUniversalIdentifier?: string;
+  isActive?: boolean;
 };
 
 export type StandaloneViewFieldManifest = ViewFieldManifest & {
@@ -81,6 +82,7 @@ export type ViewManifest = SyncableEntityOptions & {
   kanbanAggregateOperationFieldMetadataUniversalIdentifier?: string;
   calendarLayout?: ViewCalendarLayout;
   calendarFieldMetadataUniversalIdentifier?: string;
+  isActive?: boolean;
   fields?: ViewFieldManifest[];
   filters?: ViewFilterManifest[];
   filterGroups?: ViewFilterGroupManifest[];

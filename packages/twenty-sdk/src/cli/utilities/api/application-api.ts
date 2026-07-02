@@ -326,6 +326,58 @@ export class ApplicationApi {
     }
   }
 
+  async exportApplication(
+    universalIdentifier: string,
+  ): Promise<
+    ApiResponse<{
+      applicationUniversalIdentifier: string;
+      manifest: Manifest;
+    }>
+  > {
+    try {
+      const query = `
+        query ExportApplication($universalIdentifier: String!) {
+          exportApplication(universalIdentifier: $universalIdentifier) {
+            applicationUniversalIdentifier
+            manifest
+          }
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query,
+          variables: { universalIdentifier },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0]?.extensions,
+          message: response.data.errors[0]?.message,
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.exportApplication,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: serializeError(error),
+      };
+    }
+  }
+
   async uninstallApplication(
     universalIdentifier: string,
   ): Promise<ApiResponse> {

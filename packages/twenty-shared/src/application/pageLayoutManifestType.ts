@@ -13,6 +13,7 @@ export type PageLayoutWidgetManifest = SyncableEntityOptions & {
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay;
   gridPosition?: GridPosition;
   configuration: PageLayoutWidgetUniversalConfiguration;
+  isActive?: boolean;
 };
 
 export type PageLayoutTabManifest = SyncableEntityOptions & {
@@ -22,6 +23,7 @@ export type PageLayoutTabManifest = SyncableEntityOptions & {
   layoutMode?: PageLayoutTabLayoutMode;
   widgets?: PageLayoutWidgetManifest[];
   pageLayoutUniversalIdentifier?: string;
+  isActive?: boolean;
 };
 
 export type PageLayoutManifest = SyncableEntityOptions & {
