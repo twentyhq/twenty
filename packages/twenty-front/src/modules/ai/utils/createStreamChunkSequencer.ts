@@ -2,10 +2,6 @@ import { type UIMessageChunk } from 'ai';
 
 type StreamChunkSequencer = {
   push: (chunk: UIMessageChunk, seq: number | undefined) => void;
-  // Applies everything buffered in ascending seq order, skipping the gap.
-  // Degraded escape hatch for a gap no replay can fill (expired chunk list):
-  // the mid-stream adapter downstream synthesizes the missing part starts.
-  flushPending: () => void;
   reset: () => void;
 };
 
@@ -14,8 +10,11 @@ const GAP_STALL_TIMEOUT_IN_MS = 2_000;
 // Chunks reach the client on two unsynchronized paths (live SSE events and
 // catchup replay), so arrival order is not sequence order. The sequencer
 // applies chunks strictly by their server-assigned seq: early arrivals wait
-// in a buffer, duplicates from catchup overlap are dropped, and a gap that
-// nothing fills triggers onGapStalled (a refetch replays the missing range).
+// in a buffer and duplicates from catchup overlap are dropped. A gap nothing
+// fills first triggers onGapStalled (a refetch replays the missing range);
+// if the gap still stands after another timeout, the buffer flushes in order
+// — the mid-stream adapter downstream synthesizes the missing part starts,
+// so an unfillable gap (expired chunk list) degrades instead of wedging.
 export const createStreamChunkSequencer = ({
   onApply,
   onGapStalled,
@@ -26,6 +25,7 @@ export const createStreamChunkSequencer = ({
   gapStallTimeoutInMs?: number;
 }): StreamChunkSequencer => {
   let lastAppliedSeq = 0;
+  let gapStallCount = 0;
   const pendingBySeq = new Map<number, UIMessageChunk>();
   let gapTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -48,6 +48,52 @@ export const createStreamChunkSequencer = ({
 
     if (pendingBySeq.size === 0) {
       clearGapTimer();
+      gapStallCount = 0;
+    }
+  };
+
+  const flushPending = () => {
+    const orderedSeqs = [...pendingBySeq.keys()].sort(
+      (seqA, seqB) => seqA - seqB,
+    );
+
+    for (const seq of orderedSeqs) {
+      const pendingChunk = pendingBySeq.get(seq);
+
+      pendingBySeq.delete(seq);
+      lastAppliedSeq = seq;
+
+      if (pendingChunk !== undefined) {
+        onApply(pendingChunk);
+      }
+    }
+
+    clearGapTimer();
+    gapStallCount = 0;
+  };
+
+  const handleGapStall = () => {
+    gapTimer = null;
+
+    if (pendingBySeq.size === 0) {
+      return;
+    }
+
+    gapStallCount += 1;
+
+    if (gapStallCount === 1) {
+      onGapStalled();
+      armGapTimer();
+
+      return;
+    }
+
+    flushPending();
+  };
+
+  const armGapTimer = () => {
+    if (gapTimer === null) {
+      gapTimer = setTimeout(handleGapStall, gapStallTimeoutInMs);
     }
   };
 
@@ -74,35 +120,11 @@ export const createStreamChunkSequencer = ({
       }
 
       pendingBySeq.set(seq, chunk);
-
-      if (gapTimer === null) {
-        gapTimer = setTimeout(() => {
-          gapTimer = null;
-
-          if (pendingBySeq.size > 0) {
-            onGapStalled();
-          }
-        }, gapStallTimeoutInMs);
-      }
-    },
-    flushPending: () => {
-      const orderedSeqs = [...pendingBySeq.keys()].sort((a, b) => a - b);
-
-      for (const seq of orderedSeqs) {
-        const pendingChunk = pendingBySeq.get(seq);
-
-        pendingBySeq.delete(seq);
-        lastAppliedSeq = seq;
-
-        if (pendingChunk !== undefined) {
-          onApply(pendingChunk);
-        }
-      }
-
-      clearGapTimer();
+      armGapTimer();
     },
     reset: () => {
       lastAppliedSeq = 0;
+      gapStallCount = 0;
       pendingBySeq.clear();
       clearGapTimer();
     },

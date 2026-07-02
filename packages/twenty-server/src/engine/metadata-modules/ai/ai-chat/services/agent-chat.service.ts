@@ -408,6 +408,19 @@ export class AgentChatService {
     } as AgentMessageEntity;
   }
 
+  async hasQueuedMessages({
+    threadId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    return this.messageRepository.existsBy(workspaceId, {
+      threadId,
+      status: AgentMessageStatus.QUEUED,
+    });
+  }
+
   async getQueuedMessages({
     threadId,
     workspaceId,

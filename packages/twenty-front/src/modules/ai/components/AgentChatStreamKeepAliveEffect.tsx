@@ -12,6 +12,7 @@ import { agentChatStreamLastEventTimestampState } from '@/ai/states/agentChatStr
 import { agentChatStreamResubscribeNonceState } from '@/ai/states/agentChatStreamResubscribeNonceState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { createAiChatCodedError } from '@/ai/utils/createAiChatCodedError';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
@@ -56,13 +57,13 @@ export const AgentChatStreamKeepAliveEffect = () => {
     if (recoveryAttemptsRef.current >= MAX_SILENT_RECOVERY_ATTEMPTS) {
       // The connection stayed silent through every resubscribe: stop the
       // spinner and say so instead of recovering forever.
-      const connectionError = new Error(
-        'Connection to the assistant was lost. Reload to see the response.',
-      ) as Error & { code?: string };
-
-      connectionError.code = AiChatErrorCode.CONNECTION_LOST;
-
-      store.set(errorFamilyCallback(familyKey), connectionError);
+      store.set(
+        errorFamilyCallback(familyKey),
+        createAiChatCodedError(
+          'Connection to the assistant was lost. Reload to see the response.',
+          AiChatErrorCode.CONNECTION_LOST,
+        ),
+      );
       store.set(isStreamingFamilyCallback(familyKey), false);
       store.set(isAwaitingFirstChunkFamilyCallback(familyKey), false);
       recoveryAttemptsRef.current = 0;

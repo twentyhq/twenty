@@ -24,6 +24,7 @@ import { agentChatStreamResubscribeNonceState } from '@/ai/states/agentChatStrea
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { createAiChatCodedError } from '@/ai/utils/createAiChatCodedError';
 import { createStreamChunkSequencer } from '@/ai/utils/createStreamChunkSequencer';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
@@ -316,23 +317,20 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     };
 
     // Live SSE events and catchup replay race each other; the sequencer
-    // applies chunks strictly in server order (dedup + gap buffering), and a
-    // gap nothing fills first triggers a refetch, then degrades to flushing.
-    let gapStallCount = 0;
+    // applies chunks strictly in server order (dedup + gap buffering) and
+    // asks for a refetch when a gap stalls.
     const chunkSequencer = createStreamChunkSequencer({
       onApply: applyChunk,
-      onGapStalled: () => {
-        gapStallCount += 1;
-
-        if (gapStallCount === 1) {
-          dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
-
-          return;
-        }
-
-        chunkSequencer.flushPending();
-      },
+      onGapStalled: () =>
+        dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME),
     });
+
+    // Shared teardown for every terminal stream event.
+    const resetStreamProcessing = () => {
+      chunkSequencer.reset();
+      closeWriter();
+      store.set(isAwaitingFirstChunkAtom, false);
+    };
 
     const handleEvent = (event: AgentChatSubscriptionEvent) => {
       switch (event.type) {
@@ -350,10 +348,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         }
 
         case 'message-persisted': {
-          chunkSequencer.reset();
-          gapStallCount = 0;
-          closeWriter();
-          store.set(isAwaitingFirstChunkAtom, false);
+          resetStreamProcessing();
           store.set(isAwaitingPersistedRefetchAtom, true);
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
           break;
@@ -369,17 +364,12 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         }
 
         case 'stream-error': {
-          const streamError = new Error(event.message) as Error & {
-            code?: string;
-          };
+          store.set(
+            errorAtom,
+            createAiChatCodedError(event.message, event.code),
+          );
 
-          streamError.code = event.code;
-          store.set(errorAtom, streamError);
-
-          chunkSequencer.reset();
-          gapStallCount = 0;
-          closeWriter();
-          store.set(isAwaitingFirstChunkAtom, false);
+          resetStreamProcessing();
           store.set(isStreamingAtom, false);
           break;
         }
@@ -414,17 +404,15 @@ export const useAgentChatSubscription = (threadId: string | null) => {
             };
           });
 
-          const noMoreCreditsError = new Error(
-            'Chat stopped: no more available credits.',
-          ) as Error & { code?: string };
+          store.set(
+            errorAtom,
+            createAiChatCodedError(
+              'Chat stopped: no more available credits.',
+              AiChatErrorCode.BILLING_CREDITS_EXHAUSTED,
+            ),
+          );
 
-          noMoreCreditsError.code = AiChatErrorCode.BILLING_CREDITS_EXHAUSTED;
-          store.set(errorAtom, noMoreCreditsError);
-
-          chunkSequencer.reset();
-          gapStallCount = 0;
-          closeWriter();
-          store.set(isAwaitingFirstChunkAtom, false);
+          resetStreamProcessing();
           store.set(isAwaitingPersistedRefetchAtom, true);
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
           store.set(isStreamingAtom, false);

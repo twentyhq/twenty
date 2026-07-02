@@ -34,6 +34,9 @@ describe('AgentChatStreamingService claim & reap', () => {
       notifyThreadActivityUpdated: jest.fn().mockResolvedValue(undefined),
       getMessagesForThread: jest.fn().mockResolvedValue([]),
       getQueuedMessages: jest.fn().mockResolvedValue(queuedMessages),
+      hasQueuedMessages: jest
+        .fn()
+        .mockImplementation(() => Promise.resolve(queuedMessages.length > 0)),
       queueMessage: jest.fn().mockResolvedValue({ id: 'queued-message-id' }),
       promoteQueuedMessage: jest.fn().mockResolvedValue('turn-id'),
       deleteQueuedMessage: jest.fn().mockResolvedValue(true),
@@ -155,7 +158,7 @@ describe('AgentChatStreamingService claim & reap', () => {
         workspaceId: 'workspace-id',
       });
 
-      expect(reaped).toBe(false);
+      expect(reaped).toBeNull();
       expect(threadRepository.update).not.toHaveBeenCalled();
     });
 
@@ -172,7 +175,9 @@ describe('AgentChatStreamingService claim & reap', () => {
         workspaceId: 'workspace-id',
       });
 
-      expect(reaped).toBe(true);
+      expect(reaped).toEqual(
+        expect.objectContaining({ code: STREAM_INTERRUPTED_CODE }),
+      );
       expect(threadRepository.update).toHaveBeenCalledWith(
         'workspace-id',
         { id: 'thread-id', activeStreamId: 'stream-id' },
@@ -205,7 +210,7 @@ describe('AgentChatStreamingService claim & reap', () => {
         workspaceId: 'workspace-id',
       });
 
-      expect(reaped).toBe(false);
+      expect(reaped).toBeNull();
       expect(threadRepository.update).toHaveBeenCalledTimes(1);
       expect(publishedEvents).toHaveLength(0);
     });

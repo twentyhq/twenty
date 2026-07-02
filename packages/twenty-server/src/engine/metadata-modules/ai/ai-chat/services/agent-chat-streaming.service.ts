@@ -8,7 +8,7 @@ import {
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, IsNull, Like, Not } from 'typeorm';
+import { type FindOptionsWhere, In, IsNull, Like, Not } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -24,6 +24,7 @@ import {
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
@@ -73,33 +74,29 @@ export class AgentChatStreamingService {
   }: {
     thread: Pick<AgentChatThreadEntity, 'id' | 'activeStreamId'>;
     workspaceId: string;
-  }): Promise<boolean> {
+  }): Promise<AgentChatThreadLastStreamError | null> {
     if (!isDefined(thread.activeStreamId)) {
-      return false;
+      return null;
     }
 
     if (await this.streamHeartbeatService.isAlive(thread.activeStreamId)) {
-      return false;
+      return null;
     }
 
-    const interruptedMessage =
-      'The response was interrupted before it could finish.';
+    const interruptedError: AgentChatThreadLastStreamError = {
+      code: STREAM_INTERRUPTED_CODE,
+      message: 'The response was interrupted before it could finish.',
+      failedAt: new Date().toISOString(),
+    };
 
     const reap = await this.threadRepository.update(
       workspaceId,
       { id: thread.id, activeStreamId: thread.activeStreamId },
-      {
-        activeStreamId: null,
-        lastStreamError: {
-          code: STREAM_INTERRUPTED_CODE,
-          message: interruptedMessage,
-          failedAt: new Date().toISOString(),
-        },
-      },
+      { activeStreamId: null, lastStreamError: interruptedError },
     );
 
     if (!reap.affected) {
-      return false;
+      return null;
     }
 
     await this.eventPublisherService.resetStreamState(thread.id);
@@ -109,11 +106,39 @@ export class AgentChatStreamingService {
         workspaceId,
         event: {
           type: 'stream-error',
-          code: STREAM_INTERRUPTED_CODE,
-          message: interruptedMessage,
+          code: interruptedError.code,
+          message: interruptedError.message,
         },
       })
       .catch(() => {});
+
+    return interruptedError;
+  }
+
+  // The idle→streaming transition: a conditional UPDATE so exactly one caller
+  // wins, paired with the heartbeat mark the reaper relies on.
+  private async tryClaimStream({
+    threadId,
+    workspaceId,
+    streamId,
+    where,
+  }: {
+    threadId: string;
+    workspaceId: string;
+    streamId: string;
+    where: FindOptionsWhere<AgentChatThreadEntity>;
+  }): Promise<boolean> {
+    const claim = await this.threadRepository.update(
+      workspaceId,
+      { id: threadId, activeStreamId: IsNull(), ...where },
+      { activeStreamId: streamId, lastStreamError: null },
+    );
+
+    if (!claim.affected) {
+      return false;
+    }
+
+    await this.streamHeartbeatService.markClaimed(streamId);
 
     return true;
   }
@@ -147,29 +172,23 @@ export class AgentChatStreamingService {
 
     // A halted queue (after a failure or stop) must drain front-first: a new
     // send joins the back and kicks the drain instead of jumping ahead.
-    const queuedMessages = await this.agentChatService.getQueuedMessages({
+    const hasQueuedBacklog = await this.agentChatService.hasQueuedMessages({
       threadId,
       workspaceId: workspace.id,
     });
-    const hasQueuedBacklog = queuedMessages.length > 0;
 
     const streamId = generateId();
 
-    // Conditional claim: only one caller can move the thread from idle to
-    // streaming, no matter how requests interleave.
-    const claim = hasQueuedBacklog
-      ? { affected: 0 }
-      : await this.threadRepository.update(
-          workspace.id,
-          {
-            id: threadId,
-            activeStreamId: IsNull(),
-            pendingQuestionMessageId: IsNull(),
-          },
-          { activeStreamId: streamId, lastStreamError: null },
-        );
+    const claimed =
+      !hasQueuedBacklog &&
+      (await this.tryClaimStream({
+        threadId,
+        workspaceId: workspace.id,
+        streamId,
+        where: { pendingQuestionMessageId: IsNull() },
+      }));
 
-    if (!claim.affected) {
+    if (!claimed) {
       const queuedMessage = await this.agentChatService.queueMessage({
         threadId,
         text,
@@ -190,8 +209,6 @@ export class AgentChatStreamingService {
 
       return { queued: true, messageId: queuedMessage.id };
     }
-
-    await this.streamHeartbeatService.markClaimed(streamId);
 
     try {
       const fileParts = await this.buildFilePartsFromAttachments(
@@ -285,26 +302,19 @@ export class AgentChatStreamingService {
 
     const streamId = generateId();
 
-    // Conditional claim: a concurrent retry, send, or queue flush loses the
-    // race instead of double-enqueueing the turn.
-    const claim = await this.threadRepository.update(
-      workspace.id,
-      {
-        id: threadId,
-        activeStreamId: IsNull(),
-        lastStreamError: Not(IsNull()),
-      },
-      { activeStreamId: streamId, lastStreamError: null },
-    );
+    const claimed = await this.tryClaimStream({
+      threadId,
+      workspaceId: workspace.id,
+      streamId,
+      where: { lastStreamError: Not(IsNull()) },
+    });
 
-    if (!claim.affected) {
+    if (!claimed) {
       throw new AiException(
         'There is no failed turn to retry on this thread',
         AiExceptionCode.NO_FAILED_TURN_TO_RETRY,
       );
     }
-
-    await this.streamHeartbeatService.markClaimed(streamId);
 
     try {
       const lastUserMessage =
@@ -364,13 +374,9 @@ export class AgentChatStreamingService {
 
       return { streamId, messageId: lastUserMessage.id };
     } catch (error) {
-      await this.threadRepository
-        .update(
-          workspace.id,
-          { id: threadId, activeStreamId: streamId },
-          { activeStreamId: null, lastStreamError: thread.lastStreamError },
-        )
-        .catch(() => {});
+      await this.releaseStreamClaim(threadId, workspace.id, streamId, {
+        lastStreamError: thread.lastStreamError,
+      });
       throw error;
     }
   }
@@ -477,23 +483,16 @@ export class AgentChatStreamingService {
 
     const streamId = generateId();
 
-    // Conditional claim: a send or retry racing this drain loses or wins the
-    // idle→streaming transition atomically; the loser leaves the queue alone.
-    const claim = await this.threadRepository.update(
+    const claimed = await this.tryClaimStream({
+      threadId,
       workspaceId,
-      {
-        id: threadId,
-        activeStreamId: IsNull(),
-        pendingQuestionMessageId: IsNull(),
-      },
-      { activeStreamId: streamId, lastStreamError: null },
-    );
+      streamId,
+      where: { pendingQuestionMessageId: IsNull() },
+    });
 
-    if (!claim.affected) {
+    if (!claimed) {
       return;
     }
-
-    await this.streamHeartbeatService.markClaimed(streamId);
 
     try {
       const turnId = await this.agentChatService.promoteQueuedMessage({
@@ -560,12 +559,13 @@ export class AgentChatStreamingService {
     threadId: string,
     workspaceId: string,
     streamId: string,
+    restore?: { lastStreamError: AgentChatThreadLastStreamError | null },
   ): Promise<void> {
     await this.threadRepository
       .update(
         workspaceId,
         { id: threadId, activeStreamId: streamId },
-        { activeStreamId: null },
+        { activeStreamId: null, ...restore },
       )
       .catch(() => {});
   }

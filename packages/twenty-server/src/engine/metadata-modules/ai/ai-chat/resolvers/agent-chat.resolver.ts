@@ -104,23 +104,21 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    let thread = await this.agentChatService.getThreadById({
+    const thread = await this.agentChatService.getThreadById({
       threadId,
       userWorkspaceId,
       workspaceId,
     });
 
-    const reaped = await this.agentChatStreamingService.reapDeadStream({
-      thread,
-      workspaceId,
-    });
-
-    if (reaped) {
-      thread = await this.agentChatService.getThreadById({
-        threadId,
-        userWorkspaceId,
+    const interruptedError =
+      await this.agentChatStreamingService.reapDeadStream({
+        thread,
         workspaceId,
       });
+
+    if (interruptedError) {
+      thread.activeStreamId = null;
+      thread.lastStreamError = interruptedError;
     }
 
     const { chunks, maxSeq } =
@@ -202,13 +200,15 @@ export class AgentChatResolver {
     }
 
     if (isDefined(thread.activeStreamId)) {
-      const reaped = await this.agentChatStreamingService.reapDeadStream({
-        thread,
-        workspaceId: workspace.id,
-      });
+      const interruptedError =
+        await this.agentChatStreamingService.reapDeadStream({
+          thread,
+          workspaceId: workspace.id,
+        });
 
-      if (reaped) {
+      if (interruptedError) {
         thread.activeStreamId = null;
+        thread.lastStreamError = interruptedError;
       }
     }
 

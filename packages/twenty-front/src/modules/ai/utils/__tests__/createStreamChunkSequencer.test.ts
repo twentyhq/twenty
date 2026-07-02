@@ -98,13 +98,19 @@ describe('createStreamChunkSequencer', () => {
     expect(applied).toEqual(['a', 'b', 'x']);
   });
 
-  it('flushes the buffer in order when asked to skip an unfillable gap', () => {
-    const { sequencer, applied } = build();
+  it('degrades to an in-order flush when the gap survives a second stall', () => {
+    const { sequencer, applied, onGapStalled } = build();
 
     sequencer.push(chunk('d'), 4);
     sequencer.push(chunk('c'), 3);
 
-    sequencer.flushPending();
+    // first stall: ask for a refetch, keep waiting
+    jest.advanceTimersByTime(2_100);
+    expect(onGapStalled).toHaveBeenCalledTimes(1);
+    expect(applied).toEqual([]);
+
+    // second stall: nothing filled the gap — flush in order and move on
+    jest.advanceTimersByTime(2_100);
     expect(applied).toEqual(['c', 'd']);
 
     // ordering continues from the flushed high-water mark
