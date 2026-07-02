@@ -83,7 +83,6 @@ export const SettingsApiWebhooks = () => {
     (useSettingsActiveTabId(
       SETTINGS_API_WEBHOOKS_TABS.COMPONENT_INSTANCE_ID,
       tabs.map((tab) => tab.id),
-      SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
     ) as TabKey) ?? SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.MCP;
 
   const isMcpTab = activeTab === SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.MCP;
@@ -95,7 +94,6 @@ export const SettingsApiWebhooks = () => {
         <SettingsTabBar
           tabs={tabs}
           componentInstanceId={SETTINGS_API_WEBHOOKS_TABS.COMPONENT_INSTANCE_ID}
-          defaultTabId={SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API}
         />
       }
       links={[

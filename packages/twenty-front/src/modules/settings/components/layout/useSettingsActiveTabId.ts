@@ -9,7 +9,6 @@ import { isDefined } from 'twenty-shared/utils';
 export const useSettingsActiveTabId = (
   componentInstanceId: string,
   tabIds: string[],
-  defaultTabId?: string,
 ): string | null => {
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
@@ -24,10 +23,6 @@ export const useSettingsActiveTabId = (
 
   if (isDefined(activeTabId) && tabIds.includes(activeTabId)) {
     return activeTabId;
-  }
-
-  if (isDefined(defaultTabId) && tabIds.includes(defaultTabId)) {
-    return defaultTabId;
   }
 
   return tabIds[0] ?? null;
