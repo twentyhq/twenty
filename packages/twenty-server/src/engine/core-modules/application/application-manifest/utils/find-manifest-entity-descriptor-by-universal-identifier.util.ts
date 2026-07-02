@@ -32,10 +32,6 @@ const toCandidates = <T extends { universalIdentifier?: string }>(
       label: getLabel(entity),
     }));
 
-// Keyed by every metadata name so a newly added metadata kind fails to compile
-// until it declares how (and whether) it is resolvable from the manifest.
-// Metadata kinds that have no manifest representation (derived/internal join
-// entities) declare NO_MANIFEST_CANDIDATES.
 const MANIFEST_ENTITY_REGISTRY: Record<
   AllMetadataName,
   ManifestEntityRegistryEntry
@@ -225,7 +221,6 @@ const MANIFEST_ENTITY_REGISTRY: Record<
         toCandidates(role.rowLevelPermissionPredicateGroups, () => undefined),
       ),
   },
-  // No manifest representation: derived, internal join, or non-syncable kinds.
   roleTarget: {
     entityKind: 'role target',
     getCandidates: () => NO_MANIFEST_CANDIDATES,
@@ -248,8 +243,6 @@ const MANIFEST_ENTITY_REGISTRY: Record<
   },
 };
 
-// Resolution priority: labeled top-level kinds are declared first so a
-// meaningful label wins when an identifier is (illegally) shared across kinds.
 const MANIFEST_ENTITY_REGISTRY_ENTRIES = Object.values(
   MANIFEST_ENTITY_REGISTRY,
 );
