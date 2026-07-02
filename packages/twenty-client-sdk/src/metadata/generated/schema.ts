@@ -435,6 +435,7 @@ export interface Application {
     name: Scalars['String']
     description?: Scalars['String']
     logo?: Scalars['String']
+    logoFileId?: Scalars['UUID']
     version?: Scalars['String']
     universalIdentifier: Scalars['String']
     packageJsonChecksum?: Scalars['String']
@@ -3460,6 +3461,7 @@ export interface ApplicationGenqlSelection{
     name?: boolean | number
     description?: boolean | number
     logo?: boolean | number
+    logoFileId?: boolean | number
     version?: boolean | number
     universalIdentifier?: boolean | number
     packageJsonChecksum?: boolean | number

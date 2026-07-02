@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { promises as fs } from 'fs';
-import { resolve } from 'path';
+import { isAbsolute, relative, resolve } from 'path';
 
 import semver from 'semver';
 import { Manifest } from 'twenty-shared/application';
@@ -221,6 +221,23 @@ export class ApplicationInstallService {
         universalIdentifier,
         params.workspaceId,
       );
+
+      const logoFileId = await this.importLogoFile({
+        extractedDir: resolvedPackage.extractedDir,
+        manifest: resolvedPackage.manifest,
+        applicationUniversalIdentifier: universalIdentifier,
+        workspaceId: params.workspaceId,
+      });
+
+      // Sync in both directions so an upgrade that drops the logo (removed,
+      // switched to an absolute URL, or a declared-but-missing file) clears the
+      // stale reference instead of leaving the old logo showing.
+      if (application.logoFileId !== logoFileId) {
+        await this.applicationService.update(application.id, {
+          logoFileId: logoFileId ?? null,
+          workspaceId: params.workspaceId,
+        });
+      }
 
       await this.runPreInstallHook({
         manifest: resolvedPackage.manifest,
@@ -462,6 +479,27 @@ export class ApplicationInstallService {
     }
   }
 
+  // Resolves a package-relative path and guarantees it stays inside the
+  // extracted directory. A plain `startsWith` prefix check is unsafe because a
+  // sibling directory can share the prefix (e.g. "/tmp/app" vs "/tmp/app-evil"),
+  // so compare the normalized relative path instead.
+  private resolveWithinDirOrThrow(
+    extractedDir: string,
+    relativePath: string,
+  ): string {
+    const absolutePath = resolve(extractedDir, relativePath);
+    const relativeToDir = relative(extractedDir, absolutePath);
+
+    if (relativeToDir.startsWith('..') || isAbsolute(relativeToDir)) {
+      throw new ApplicationException(
+        `Path traversal detected for file: ${relativePath}`,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    return absolutePath;
+  }
+
   private async writeFilesToStorage(
     extractedDir: string,
     manifest: Manifest,
@@ -471,14 +509,10 @@ export class ApplicationInstallService {
     const filesToWrite = this.buildFileList(manifest);
 
     for (const { relativePath, fileFolder } of filesToWrite) {
-      const absolutePath = resolve(extractedDir, relativePath);
-
-      if (!absolutePath.startsWith(extractedDir)) {
-        throw new ApplicationException(
-          `Path traversal detected for file: ${relativePath}`,
-          ApplicationExceptionCode.INVALID_INPUT,
-        );
-      }
+      const absolutePath = this.resolveWithinDirOrThrow(
+        extractedDir,
+        relativePath,
+      );
 
       let content: Buffer;
 
@@ -500,6 +534,58 @@ export class ApplicationInstallService {
         settings: { isTemporaryFile: false, toDelete: false },
       });
     }
+  }
+
+  // Best-effort import of the application logo into file storage so it can be
+  // served via the public-assets endpoint. Absolute URLs (e.g. marketplace CDN
+  // logos) are served as-is and need no import. A manifest may reference a logo
+  // path without shipping the file, so a missing file is logged and skipped
+  // rather than failing the whole install.
+  private async importLogoFile({
+    extractedDir,
+    manifest,
+    applicationUniversalIdentifier,
+    workspaceId,
+  }: {
+    extractedDir: string;
+    manifest: Manifest;
+    applicationUniversalIdentifier: string;
+    workspaceId: string;
+  }): Promise<string | null> {
+    const logoUrl = manifest.application.logoUrl;
+
+    if (
+      !isDefined(logoUrl) ||
+      logoUrl.startsWith('http://') ||
+      logoUrl.startsWith('https://')
+    ) {
+      return null;
+    }
+
+    const absolutePath = this.resolveWithinDirOrThrow(extractedDir, logoUrl);
+
+    let content: Buffer;
+
+    try {
+      content = await fs.readFile(absolutePath);
+    } catch {
+      this.logger.warn(
+        `Logo "${logoUrl}" declared in manifest but not found in package for ${applicationUniversalIdentifier}; skipping logo import`,
+      );
+
+      return null;
+    }
+
+    const file = await this.fileStorageService.writeFile({
+      sourceFile: content,
+      fileFolder: FileFolder.PublicAsset,
+      applicationUniversalIdentifier,
+      workspaceId,
+      resourcePath: logoUrl,
+      settings: { isTemporaryFile: false, toDelete: false },
+    });
+
+    return file.id;
   }
 
   private buildFileList(

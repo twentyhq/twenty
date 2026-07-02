@@ -60,6 +60,20 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   })
   logo: string | null;
 
+  // First-class reference to the logo imported into file storage at install
+  // time. Lets the logo be served reliably regardless of source (npm/tarball),
+  // instead of relying on a relative path that may never have been imported.
+  @Column({ nullable: true, type: 'uuid' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddLogoFileIdToApplicationFastInstanceCommand_1820000001000',
+  })
+  logoFileId: string | null;
+
+  @OneToOne(() => FileEntity, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'logoFileId' })
+  logoFile: Relation<FileEntity> | null;
+
   // TODO should not be nullable
   @Column({ nullable: true, type: 'text' })
   version: string | null;
