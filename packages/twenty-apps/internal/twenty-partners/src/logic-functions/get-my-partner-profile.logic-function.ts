@@ -3,6 +3,7 @@ import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
 import { PROFILE_OPTIONS, type ProfileOptions } from 'src/constants/my-profile.constants';
 
+import { isCaseStudy } from './content-type';
 import { firstFileUrl } from './profile-picture';
 import { errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
 
@@ -112,6 +113,7 @@ const queryMyPartnerProfile = (client: CoreApiClient, partnerId: string) =>
                 coverImage: { url: true },
                 caseStudyLink: { primaryLinkUrl: true },
                 status: true,
+                contentType: true,
               },
             },
           },
@@ -157,16 +159,18 @@ export const mapMyProfilePayload = (node: PartnerNode): MyProfilePayload => ({
     description: e.node.description ?? null,
     sortOrder: e.node.sortOrder ?? null,
   })),
-  caseStudies: (node.partnerContents?.edges ?? []).map((e) => ({
-    id: e.node.id,
-    name: e.node.name ?? null,
-    clientName: e.node.clientName ?? null,
-    headline: e.node.headline ?? null,
-    bodyMarkdown: e.node.body?.markdown ?? null,
-    coverImageUrl: firstFileUrl(e.node.coverImage) ?? null,
-    caseStudyLink: e.node.caseStudyLink?.primaryLinkUrl ?? null,
-    status: e.node.status ?? null,
-  })),
+  caseStudies: (node.partnerContents?.edges ?? [])
+    .filter((e) => isCaseStudy(e.node.contentType))
+    .map((e) => ({
+      id: e.node.id,
+      name: e.node.name ?? null,
+      clientName: e.node.clientName ?? null,
+      headline: e.node.headline ?? null,
+      bodyMarkdown: e.node.body?.markdown ?? null,
+      coverImageUrl: firstFileUrl(e.node.coverImage) ?? null,
+      caseStudyLink: e.node.caseStudyLink?.primaryLinkUrl ?? null,
+      status: e.node.status ?? null,
+    })),
 });
 
 export const handler = async (

@@ -2,6 +2,7 @@ import { CoreApiClient, type CoreSchema } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { z } from 'zod';
 
+import { isCaseStudy } from './content-type';
 import { buildReconcilePlan } from './reconcile-children';
 import { firstFileUrl } from './profile-picture';
 import { errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
@@ -78,10 +79,12 @@ const queryExistingContentIds = async (
   const result = await client.query({
     partnerContents: {
       __args: { filter: { partnerId: { eq: partnerId } } },
-      edges: { node: { id: true } },
+      edges: { node: { id: true, contentType: true } },
     },
   });
-  return (result.partnerContents?.edges ?? []).map((edge) => edge.node.id);
+  return (result.partnerContents?.edges ?? [])
+    .filter((edge) => isCaseStudy(edge.node.contentType))
+    .map((edge) => edge.node.id);
 };
 
 const queryContentRows = async (
@@ -101,20 +104,23 @@ const queryContentRows = async (
           coverImage: { url: true },
           caseStudyLink: { primaryLinkUrl: true },
           status: true,
+          contentType: true,
         },
       },
     },
   });
-  return (result.partnerContents?.edges ?? []).map((edge) => ({
-    id: edge.node.id,
-    name: edge.node.name ?? null,
-    clientName: edge.node.clientName ?? null,
-    headline: edge.node.headline ?? null,
-    bodyMarkdown: edge.node.body?.markdown ?? null,
-    coverImageUrl: firstFileUrl(edge.node.coverImage) ?? null,
-    caseStudyLink: edge.node.caseStudyLink?.primaryLinkUrl ?? null,
-    status: edge.node.status ?? null,
-  }));
+  return (result.partnerContents?.edges ?? [])
+    .filter((edge) => isCaseStudy(edge.node.contentType))
+    .map((edge) => ({
+      id: edge.node.id,
+      name: edge.node.name ?? null,
+      clientName: edge.node.clientName ?? null,
+      headline: edge.node.headline ?? null,
+      bodyMarkdown: edge.node.body?.markdown ?? null,
+      coverImageUrl: firstFileUrl(edge.node.coverImage) ?? null,
+      caseStudyLink: edge.node.caseStudyLink?.primaryLinkUrl ?? null,
+      status: edge.node.status ?? null,
+    }));
 };
 
 export const handler = async (event: RoutePayload<unknown>): Promise<SaveContentResult> => {

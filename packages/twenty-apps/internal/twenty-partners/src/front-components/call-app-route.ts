@@ -20,10 +20,14 @@ export const callAppRoute = async (
   path: string,
   body: Record<string, unknown>,
 ): Promise<unknown> => {
-  const apiUrl = process.env.TWENTY_API_URL;
   const token = process.env.TWENTY_APP_ACCESS_TOKEN;
 
-  const response = await fetch(`${apiUrl}/s${path}`, {
+  const functionsUrl = process.env.TWENTY_FUNCTIONS_URL;
+  const apiUrl = process.env.TWENTY_API_URL ?? '';
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  const url = functionsUrl ? `${functionsUrl}${normalizedPath}` : `${apiUrl}/s${normalizedPath}`;
+
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -59,6 +59,7 @@ const makeNode = (overrides: Partial<PartnerNode> = {}): PartnerNode =>
             coverImage: [{ url: 'https://images.example.com/case-study.png' }],
             caseStudyLink: { primaryLinkUrl: 'https://example.com/case-study' },
             status: 'APPROVED',
+            contentType: ['CASE_STUDY'],
           },
         },
       ],
@@ -98,6 +99,42 @@ describe('mapMyProfilePayload', () => {
     expect(mapped.caseStudies[0].coverImageUrl).toBe(
       'https://images.example.com/case-study.png',
     );
+  });
+
+  it('filters partnerContents to only CASE_STUDY rows, excluding quotes/logos', () => {
+    const mapped = mapMyProfilePayload(
+      makeNode({
+        partnerContents: {
+          edges: [
+            {
+              node: {
+                id: 'content-1',
+                name: 'Acme case study',
+                clientName: 'Acme Corp',
+                headline: 'CRM migration',
+                body: { markdown: 'Moved 12 teams to Twenty.' },
+                coverImage: [{ url: 'https://images.example.com/case-study.png' }],
+                caseStudyLink: { primaryLinkUrl: 'https://example.com/case-study' },
+                status: 'APPROVED',
+                contentType: ['CASE_STUDY'],
+              },
+            },
+            {
+              node: {
+                id: 'content-2',
+                name: 'Nine Dots quote',
+                clientName: 'Sunrise APAC',
+                status: 'WIP',
+                contentType: ['PARTNER_QUOTE'],
+              },
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(mapped.caseStudies).toHaveLength(1);
+    expect(mapped.caseStudies[0].id).toBe('content-1');
   });
 
   it('maps links, services, and caseStudies edges to plain arrays', () => {
