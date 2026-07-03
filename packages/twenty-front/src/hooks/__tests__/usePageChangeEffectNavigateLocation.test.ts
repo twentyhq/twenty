@@ -85,12 +85,16 @@ const setupMockState = (
   calendarBookingPageId?: string | null,
   returnToPath?: string,
   currentWorkspace: object | null = { id: 'mock-workspace-id' },
+  isBillingEnabled: boolean = true,
+  isMinimalMetadataReady: boolean = true,
 ) => {
   jest
     .mocked(useAtomStateValue)
     .mockReturnValueOnce(currentWorkspace)
     .mockReturnValueOnce(calendarBookingPageId ?? 'mock-calendar-id')
+    .mockReturnValueOnce({ isBillingEnabled })
     .mockReturnValueOnce([{ namePlural: objectNamePlural ?? '' }])
+    .mockReturnValueOnce(isMinimalMetadataReady)
     .mockReturnValueOnce(verifyEmailRedirectPath)
     .mockReturnValueOnce(returnToPath ?? '');
 };
@@ -109,6 +113,8 @@ const testCases: {
   returnToPath?: string;
   pageLayoutId?: string;
   useQueryResult?: { data?: unknown; loading?: boolean };
+  isBillingEnabled?: boolean;
+  isMinimalMetadataReady?: boolean;
 }[] = [
   { loc: AppPath.Verify, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.Verify, hasAccessTokenPair: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
@@ -311,6 +317,7 @@ const testCases: {
   { loc: AppPath.RecordIndexPage, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
   { loc: AppPath.RecordIndexPage, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined, objectNamePluralFromParams: 'existing-object', objectNamePluralFromMetadata: 'existing-object' },
   { loc: AppPath.RecordIndexPage, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: AppPath.NotFound, objectNamePluralFromParams: 'non-existing-object', objectNamePluralFromMetadata: 'existing-object' },
+  { loc: AppPath.RecordIndexPage, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined, objectNamePluralFromParams: 'non-existing-object', objectNamePluralFromMetadata: 'existing-object', isMinimalMetadataReady: false },
 
   { loc: AppPath.RecordShowPage, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.RecordShowPage, hasAccessTokenPair: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
@@ -393,6 +400,12 @@ const testCases: {
   { loc: AppPath.NotFound, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_ONBOARDING, res: AppPath.BookCallDecision },
   { loc: AppPath.NotFound, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
 
+  // isBillingEnabled:false — no post-invite-team upgrade interception on billing-disabled instances
+  { loc: AppPath.InviteTeam, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isBillingEnabled: false, res: defaultHomePagePath },
+  { loc: AppPath.InviteTeam, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_ONBOARDING, isBillingEnabled: false, res: AppPath.BookCallDecision },
+  { loc: AppPath.PlanRequired, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isBillingEnabled: false, res: defaultHomePagePath },
+  { loc: AppPath.PlanRequired, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_ONBOARDING, isBillingEnabled: false, res: AppPath.BookCallDecision },
+
   // returnToPath: should redirect to saved path instead of defaultHomePagePath
   { loc: AppPath.Verify, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/authorize?clientId=abc', res: '/authorize?clientId=abc' },
   { loc: AppPath.SignInUp, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/objects/tasks', res: '/objects/tasks' },
@@ -418,6 +431,8 @@ describe('usePageChangeEffectNavigateLocation', () => {
       returnToPath,
       pageLayoutId,
       useQueryResult,
+      isBillingEnabled,
+      isMinimalMetadataReady,
       res,
     }) => {
       setupMockIsMatchingLocation(loc);
@@ -432,6 +447,9 @@ describe('usePageChangeEffectNavigateLocation', () => {
         verifyEmailRedirectPath,
         undefined,
         returnToPath,
+        undefined,
+        isBillingEnabled ?? true,
+        isMinimalMetadataReady ?? true,
       );
 
       expect(usePageChangeEffectNavigateLocation()).toEqual(res);
@@ -446,6 +464,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
             ['isWorkspaceSuspended:true', 'isWorkspaceSuspended:false']
               .length) +
           ['nonExistingObjectInParam', 'existingObjectInParam:false'].length +
+          ['nonExistingObjectInParam:metadataNotReady'].length +
           ['caseWithRedirectionToVerifyEmailRedirectPath', 'caseWithout']
             .length +
           [
@@ -456,7 +475,13 @@ describe('usePageChangeEffectNavigateLocation', () => {
           ].length +
           ['returnToPath:verify', 'returnToPath:signInUp', 'returnToPath:index']
             .length +
-          ['notOnWorkspace:verify', 'notOnWorkspace:signInUp'].length,
+          ['notOnWorkspace:verify', 'notOnWorkspace:signInUp'].length +
+          [
+            'billingDisabled:inviteTeamCompleted',
+            'billingDisabled:inviteTeamBookOnboarding',
+            'billingDisabled:planRequiredCompleted',
+            'billingDisabled:planRequiredBookOnboarding',
+          ].length,
       );
     });
   });

@@ -167,14 +167,6 @@ export const InstallAppsContent = ({
                   </StyledAppDescription>
                 </StyledAppText>
                 <IconButton
-                  Icon={() => (
-                    <AnimatedIconCrossfade
-                      isActive={isSelected}
-                      ActiveIcon={IconCheck}
-                      InactiveIcon={IconPlus}
-                      size={theme.icon.size.md}
-                    />
-                  )}
                   size="small"
                   variant="secondary"
                   accent={isSelected ? 'blue' : 'default'}
@@ -184,7 +176,14 @@ export const InstallAppsContent = ({
                       : t`Select ${labelText}`
                   }
                   onClick={() => onToggleApp(app.universalIdentifier)}
-                />
+                >
+                  <AnimatedIconCrossfade
+                    isActive={isSelected}
+                    ActiveIcon={IconCheck}
+                    InactiveIcon={IconPlus}
+                    size={theme.icon.size.md}
+                  />
+                </IconButton>
               </StyledAppRow>
             );
           })}

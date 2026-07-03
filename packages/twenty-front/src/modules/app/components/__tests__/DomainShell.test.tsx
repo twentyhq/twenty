@@ -41,6 +41,10 @@ jest.mock('~/loading/components/UserOrMetadataLoader', () => ({
   UserOrMetadataLoader: () => <div>LOADER</div>,
 }));
 
+jest.mock('@/onboarding/components/OnboardingPageLoader', () => ({
+  OnboardingPageLoader: () => <div>ONBOARDING_LOADER</div>,
+}));
+
 jest.mock('@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain', () => ({
   useIsCurrentLocationOnDefaultDomain: () => ({
     isDefaultDomain: isDefaultDomainValue,
@@ -67,6 +71,7 @@ describe('DomainShell', () => {
   beforeEach(() => {
     resetJotaiStore();
     isDefaultDomainValue = true;
+    window.history.pushState({}, '', '/');
   });
 
   it('shows the loader until the client config has loaded', () => {
@@ -76,6 +81,16 @@ describe('DomainShell', () => {
     renderShell();
 
     expect(screen.getByText('LOADER')).toBeInTheDocument();
+  });
+
+  it('shows the onboarding loader on onboarding paths until the client config has loaded', () => {
+    setClientConfigLoaded(false);
+    jotaiStore.set(isMultiWorkspaceEnabledState.atom, true);
+    window.history.pushState({}, '', '/welcome');
+
+    renderShell();
+
+    expect(screen.getByText('ONBOARDING_LOADER')).toBeInTheDocument();
   });
 
   it('mounts the workspace app directly in single-workspace mode', () => {

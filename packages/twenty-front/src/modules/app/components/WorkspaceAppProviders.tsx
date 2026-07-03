@@ -2,12 +2,15 @@ import { StrictMode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
+import { TrackPageViewEffect } from '@/analytics/components/TrackPageViewEffect';
 import { SharedAppProviders } from '@/app/components/SharedAppProviders';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
+import { InitializeQueryParamStateEffect } from '@/app/effect-components/InitializeQueryParamStateEffect';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
 import { SignOutOnOtherTabSignOutEffect } from '@/auth/effect-components/SignOutOnOtherTabSignOutEffect';
 import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
+import { RequestFreshCaptchaTokenEffect } from '@/captcha/components/RequestFreshCaptchaTokenEffect';
 import { CommandMenuConfirmationModalManager } from '@/command-menu-item/confirmation-modal/components/CommandMenuConfirmationModalManager';
 import { CommandRunner } from '@/command-menu-item/engine-command/components/CommandRunner';
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
@@ -73,6 +76,9 @@ export const WorkspaceAppProviders = () => {
                   </SnackBarProvider>
                   <MainContextStoreProvider />
                   <SupportChatEffect />
+                  <InitializeQueryParamStateEffect />
+                  <TrackPageViewEffect />
+                  <RequestFreshCaptchaTokenEffect />
                   <PageChangeEffect />
                   <SignOutOnOtherTabSignOutEffect />
                 </SSEProvider>

@@ -1,7 +1,6 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { ModalContent } from 'twenty-ui/surfaces';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Link } from 'react-router-dom';
@@ -10,6 +9,17 @@ import { LightButton, MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import { SkipBookOnboardingStepDocument } from '~/generated-metadata/graphql';
+
+const StyledPage = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[8]};
+  justify-content: center;
+  min-height: 0;
+  width: 100%;
+`;
 
 const StyledCoverImage = styled.img`
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -53,7 +63,7 @@ export const BookCallDecision = () => {
   };
 
   return (
-    <ModalContent gap={8} isVerticallyCentered isHorizontallyCentered>
+    <StyledPage>
       <StyledTitleContainer>
         <Title noMarginTop>
           <Trans>Book your onboarding</Trans>
@@ -74,6 +84,6 @@ export const BookCallDecision = () => {
         </StyledLinkContainer>
         <LightButton title={t`Finish`} onClick={handleFinish} />
       </StyledButtonContainer>
-    </ModalContent>
+    </StyledPage>
   );
 };

@@ -57,8 +57,8 @@ export class LoginPage {
     this.previewImageButton = page.locator('.css-1qzw107'); // TODO: fix
     this.uploadImageButton = page.getByRole('button', { name: 'Upload' });
     this.deleteImageButton = page.getByRole('button', { name: 'Remove' });
-    this.workspaceNameField = page.getByPlaceholder('Apple', { exact: true });
-    this.subdomainField = page.getByPlaceholder('apple', { exact: true });
+    this.workspaceNameField = page.getByLabel('Name', { exact: true });
+    this.subdomainField = page.getByLabel('Subdomain', { exact: true });
     this.createWorkspaceButton = page.getByRole('button', {
       name: 'Create workspace',
     });
@@ -66,8 +66,8 @@ export class LoginPage {
       name: 'Skip',
       exact: true,
     });
-    this.firstNameField = page.getByPlaceholder('Tim');
-    this.lastNameField = page.getByPlaceholder('Apple', { exact: true });
+    this.firstNameField = page.getByLabel('First Name', { exact: true });
+    this.lastNameField = page.getByLabel('Last name', { exact: true });
     this.syncEverythingWithGoogleRadio = page.locator(
       'input[value="SHARE_EVERYTHING"]',
     );
