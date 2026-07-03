@@ -110,6 +110,17 @@ export class AgentChatResolver {
       workspaceId,
     });
 
+    const interruptedError =
+      await this.agentChatStreamingService.reapDeadStream({
+        thread,
+        workspaceId,
+      });
+
+    if (interruptedError) {
+      thread.activeStreamId = null;
+      thread.lastStreamError = interruptedError;
+    }
+
     const { chunks, maxSeq } =
       await this.eventPublisherService.getAccumulatedChunks(threadId);
 
@@ -188,6 +199,19 @@ export class AgentChatResolver {
       });
     }
 
+    if (isDefined(thread.activeStreamId)) {
+      const interruptedError =
+        await this.agentChatStreamingService.reapDeadStream({
+          thread,
+          workspaceId: workspace.id,
+        });
+
+      if (interruptedError) {
+        thread.activeStreamId = null;
+        thread.lastStreamError = interruptedError;
+      }
+    }
+
     if (
       isDefined(thread.activeStreamId) ||
       isDefined(thread.pendingQuestionMessageId)
@@ -220,6 +244,16 @@ export class AgentChatResolver {
       messageId,
       fileAttachments: fileAttachments ?? undefined,
     });
+
+    if (result.queued) {
+      await this.eventPublisherService.publish({
+        threadId,
+        workspaceId: workspace.id,
+        event: { type: 'queue-updated' },
+      });
+
+      return { messageId: result.messageId, queued: true };
+    }
 
     return {
       messageId: result.messageId,
@@ -304,13 +338,22 @@ export class AgentChatResolver {
 
     const streamId = generateId();
 
-    const { turnId } = await this.agentChatService.resolvePendingQuestion({
-      threadId,
-      messageId,
-      answers,
-      streamId,
-      workspaceId: workspace.id,
-    });
+    const { turnId, rollback } =
+      await this.agentChatService.resolvePendingQuestion({
+        threadId,
+        messageId,
+        answers,
+        streamId,
+        workspaceId: workspace.id,
+      });
+
+    await this.eventPublisherService
+      .publish({
+        threadId,
+        workspaceId: workspace.id,
+        event: { type: 'question-answered' },
+      })
+      .catch(() => {});
 
     try {
       await this.agentChatStreamingService.enqueueResumeStream({
@@ -322,14 +365,13 @@ export class AgentChatResolver {
         modelId,
       });
     } catch (error) {
-      // Roll back the streaming claim so the thread isn't stuck "streaming".
-      await this.threadRepository
-        .update(
-          workspace.id,
-          { id: threadId, activeStreamId: streamId },
-          { activeStreamId: null },
-        )
-        .catch(() => {});
+      await this.agentChatService.restorePendingQuestion({
+        threadId,
+        messageId,
+        streamId,
+        workspaceId: workspace.id,
+        rollback,
+      });
       throw error;
     }
 
@@ -352,11 +394,14 @@ export class AgentChatResolver {
 
     const redis = this.redisClientService.getClient();
 
-    await redis.publish(getCancelChannel(threadId), 'cancel');
+    await redis.publish(
+      getCancelChannel(threadId, thread.activeStreamId),
+      'cancel',
+    );
 
     await this.threadRepository.update(
       workspaceId,
-      { id: threadId, userWorkspaceId },
+      { id: threadId, userWorkspaceId, activeStreamId: thread.activeStreamId },
       { activeStreamId: null },
     );
 
@@ -438,7 +483,10 @@ export class AgentChatResolver {
 
     const redis = this.redisClientService.getClient();
 
-    await redis.publish(getCancelChannel(threadId), 'cancel');
+    await redis.publish(
+      getCancelChannel(threadId, thread.activeStreamId),
+      'cancel',
+    );
   }
 
   @Mutation(() => Boolean)

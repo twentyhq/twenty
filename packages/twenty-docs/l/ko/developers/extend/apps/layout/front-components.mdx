@@ -377,6 +377,8 @@ export default defineFrontComponent({
 비밀 변수(`isSecret: true`)는 프론트 컴포넌트에 **노출되지 않습니다**. 이 변수들은 서버 측에서 실행되는 [로직 함수](/l/ko/developers/extend/apps/logic/logic-functions)에서만 사용할 수 있습니다. 이는 API 키와 같은 민감한 값이 브라우저로 전송되는 것을 방지합니다.
 </Warning>
 
+`getApplicationVariable`은(는) 변수에 선언된 `type`과 관계없이 항상 **문자열**(또는 `undefined`)을 반환합니다. 문자열은 타입에 따라 일관되게 직렬화됩니다(불리언은 `"true"` / `"false"`, 숫자는 10진수 문자열, 배열/객체는 JSON). 이는 로직 함수 `process.env`에 사용되는 것과 동일한 형식이므로, 직접 파싱해야 합니다(`Number(...)`, `JSON.parse(...)`, `=== 'true'`). [변수 타입](/l/ko/developers/extend/apps/config/application#variable-types)을(를) 참조하세요.
+
 다음 시스템 변수는 항상 `process.env`를 통해 사용할 수 있습니다:
 
 | 변수                        | 설명                         |

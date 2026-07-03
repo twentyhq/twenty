@@ -377,6 +377,8 @@ export default defineFrontComponent({
 Le variabili segrete (`isSecret: true`) **non** sono esposte ai componenti front-end. Sono disponibili solo nelle [funzioni logiche](/l/it/developers/extend/apps/logic/logic-functions), che vengono eseguite lato server. Questo impedisce che valori sensibili come le chiavi API vengano inviati al browser.
 </Warning>
 
+`getApplicationVariable` restituisce sempre una **stringa** (o `undefined`), indipendentemente dal `type` dichiarato della variabile. La stringa viene serializzata in modo coerente in base al tipo (booleani come `"true"` / `"false"`, numeri come stringhe decimali, array / oggetti come JSON), lo stesso formato usato per la logic-function `process.env` — esegui il parsing manualmente (`Number(...)`, `JSON.parse(...)`, `=== 'true'`). Vedi [Tipi di variabili](/l/it/developers/extend/apps/config/application#variable-types).
+
 Le seguenti variabili di sistema sono sempre disponibili tramite `process.env`:
 
 | Variabile                 | Descrizione                                                                 |

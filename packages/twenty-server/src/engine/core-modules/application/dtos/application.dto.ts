@@ -41,6 +41,11 @@ export class ApplicationDTO {
   logo?: string;
 
   @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  logoFileId?: string;
+
+  @IsOptional()
   @IsString()
   @Field({ nullable: true })
   version?: string;

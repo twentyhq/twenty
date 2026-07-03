@@ -21,9 +21,14 @@ import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execut
 import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
+import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
@@ -58,39 +63,36 @@ export class StreamAgentChatJob {
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly cancelSubscriberService: AgentChatCancelSubscriberService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
+    private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
   async handle(data: StreamAgentChatJobData): Promise<void> {
     await this.eventPublisherService.resetStreamState(data.threadId);
 
-    const workspace = await this.workspaceRepository.findOne({
-      where: { id: data.workspaceId },
-    });
-
-    if (!workspace) {
-      this.logger.error(`Workspace ${data.workspaceId} not found`);
-      await this.eventPublisherService.publish({
-        threadId: data.threadId,
-        workspaceId: data.workspaceId,
-        event: {
-          type: 'stream-error',
-          code: 'WORKSPACE_NOT_FOUND',
-          message: `Workspace ${data.workspaceId} not found`,
-        },
-      });
-
-      return;
-    }
-
     const abortController = new AbortController();
-    const cancelChannel = getCancelChannel(data.threadId);
+    const cancelChannel = getCancelChannel(data.threadId, data.streamId);
+
+    const stopHeartbeat = this.streamHeartbeatService.startRunning(
+      data.streamId,
+    );
 
     await this.cancelSubscriberService.subscribe(cancelChannel, () => {
       abortController.abort();
     });
 
     try {
+      const workspace = await this.workspaceRepository.findOne({
+        where: { id: data.workspaceId },
+      });
+
+      if (!workspace) {
+        throw new AiException(
+          `Workspace ${data.workspaceId} not found`,
+          AiExceptionCode.WORKSPACE_NOT_FOUND,
+        );
+      }
+
       await this.executeStream(data, workspace, abortController.signal);
     } catch (error) {
       this.logger.error(
@@ -126,8 +128,18 @@ export class StreamAgentChatJob {
           },
         })
         .catch(() => {});
+
+      await this.eventPublisherService
+        .publish({
+          threadId: data.threadId,
+          workspaceId: data.workspaceId,
+          event: { type: 'queue-updated' },
+        })
+        .catch(() => {});
       throw error;
     } finally {
+      stopHeartbeat();
+      await this.streamHeartbeatService.clear(data.streamId);
       await this.cancelSubscriberService.unsubscribe(cancelChannel);
       await this.threadRepository
         .update(

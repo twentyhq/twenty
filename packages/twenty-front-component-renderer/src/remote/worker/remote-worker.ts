@@ -15,6 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { installStyleBridge } from '@/polyfills/installStyleBridge';
 import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementSetAttribute } from '@/remote/utils/patchRemoteElementSetAttribute';
+import { installErrorEventBridge } from './utils/installErrorEventBridge';
 import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 import { frontComponentHostCommunicationApi } from '@/constants/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToRemoteComponent';
@@ -31,6 +32,7 @@ import { setWorkerEnv } from './utils/setWorkerEnv';
 
 installStylePropertyOnRemoteElements();
 patchRemoteElementSetAttribute();
+installErrorEventBridge();
 
 exposeGlobals({
   __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
