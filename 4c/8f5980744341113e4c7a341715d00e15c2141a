@@ -1,0 +1,25 @@
+packages/twenty-server/src/modules/connected-account/email-alias-manager/services/email-alias-manager.service.ts
+  s_c843e704760faf::t_ba0c02f6b01dbc 35-40
+packages/twenty-server/src/modules/connected-account/email-alias-manager/services/email-alias-manager.service.spec.ts
+  s_c843e704760faf::t_d173a72bf3cc12 48-50
+  s_c843e704760faf::t_16be908e7211ee 7
+  s_c843e704760faf::t_0be5b7be1f6f6f 23-29
+  s_c843e704760faf::t_640353420954e1 117-142
+  s_c843e704760faf::t_c56ad921a1b50c 47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "4c8f5980744341113e4c7a341715d00e15c2141a",
+  "prompts": {},
+  "sessions": {
+    "s_c843e704760faf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a5a7e1a3-e6cf-4585-b35e-59b6404ce389",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
