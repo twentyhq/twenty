@@ -5,7 +5,7 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 
 const TABLES = ['objectMetadata', 'fieldMetadata'] as const;
 
-@RegisteredInstanceCommand('2.19.0', 1820000100000)
+@RegisteredInstanceCommand('2.19.0', 1782986475000)
 export class AddMetadataOverridesColumnFastInstanceCommand
   implements FastInstanceCommand
 {

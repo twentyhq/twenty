@@ -66,6 +66,37 @@ describe('shouldCompleteCallRecordingIngestion', () => {
     ).toBe(false);
   });
 
+  it('completes when a missing media file is marked too large', () => {
+    expect(
+      shouldCompleteCallRecordingIngestion({
+        current: {
+          status: CallRecordingStatus.PROCESSING,
+          startedAt: '2026-06-10T09:00:00.000Z',
+          endedAt: '2026-06-10T10:00:00.000Z',
+          transcript: filledTranscript,
+          audio: filledAudio,
+        },
+        updateData: {
+          callRecorderFailureReason: 'video_file_too_large',
+        },
+      }),
+    ).toBe(true);
+
+    expect(
+      shouldCompleteCallRecordingIngestion({
+        current: {
+          status: CallRecordingStatus.PROCESSING,
+          startedAt: '2026-06-10T09:00:00.000Z',
+          endedAt: '2026-06-10T10:00:00.000Z',
+          transcript: filledTranscript,
+          audio: filledAudio,
+          callRecorderFailureReason: 'video_file_too_large',
+        },
+        updateData: {},
+      }),
+    ).toBe(true);
+  });
+
   it('does not complete a persisted failed recording', () => {
     expect(
       shouldCompleteCallRecordingIngestion({
