@@ -8,6 +8,16 @@ export interface StorageDriver {
     mimeType: string | undefined;
   }): Promise<void>;
 
+  writeFileStream(params: {
+    filePath: string;
+    stream: Readable;
+    mimeType: string | undefined;
+  }): Promise<void>;
+
+  getFileMetadata(params: {
+    filePath: string;
+  }): Promise<{ size: number } | null>;
+
   downloadFolder(params: {
     onStoragePath: string;
     localPath: string;
@@ -41,5 +51,12 @@ export interface StorageDriver {
     responseContentType?: string;
     responseContentDisposition?: string;
     responseCacheControl?: string;
+  }): Promise<string | null>;
+
+  getPresignedUploadUrl(params: {
+    filePath: string;
+    contentType: string;
+    contentLength: number;
+    expiresInSeconds?: number;
   }): Promise<string | null>;
 }
