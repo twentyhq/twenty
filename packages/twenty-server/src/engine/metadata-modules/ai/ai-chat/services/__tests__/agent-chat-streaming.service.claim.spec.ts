@@ -1,4 +1,5 @@
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { STREAM_INTERRUPTED_CODE } from 'src/engine/metadata-modules/ai/ai-chat/constants/stream-interrupted-code.constant';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 
 describe('AgentChatStreamingService claim & reap', () => {
@@ -17,6 +18,7 @@ describe('AgentChatStreamingService claim & reap', () => {
     thread = idleThread,
     claimAffected = 1,
     queuedMessages = [] as unknown[],
+    heartbeatAlive = true,
   } = {}) => {
     const publishedEvents: Array<{ type: string }> = [];
     const threadRepository = {
@@ -47,6 +49,12 @@ describe('AgentChatStreamingService claim & reap', () => {
       }),
       resetStreamState: jest.fn().mockResolvedValue(undefined),
     };
+    const streamHeartbeatService = {
+      markClaimed: jest.fn().mockResolvedValue(undefined),
+      isAlive: jest.fn().mockResolvedValue(heartbeatAlive),
+      clear: jest.fn().mockResolvedValue(undefined),
+    };
+
     const service = new AgentChatStreamingService(
       threadRepository as never,
       { find: jest.fn().mockResolvedValue([]) } as never,
@@ -54,6 +62,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       agentChatService as never,
       eventPublisherService as never,
       { signFileByIdUrl: jest.fn() } as never,
+      streamHeartbeatService as never,
     );
 
     return {
@@ -62,6 +71,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       messageQueueService,
       agentChatService,
       eventPublisherService,
+      streamHeartbeatService,
       publishedEvents,
     };
   };
@@ -76,7 +86,8 @@ describe('AgentChatStreamingService claim & reap', () => {
 
   describe('streamAgentChat', () => {
     it('claims the thread conditionally before enqueueing', async () => {
-      const { service, threadRepository } = buildService();
+      const { service, threadRepository, streamHeartbeatService } =
+        buildService();
 
       const result = await service.streamAgentChat(sendArguments);
 
@@ -86,6 +97,7 @@ describe('AgentChatStreamingService claim & reap', () => {
         expect.objectContaining({ id: 'thread-id' }),
         expect.objectContaining({ lastStreamError: null }),
       );
+      expect(streamHeartbeatService.markClaimed).toHaveBeenCalled();
     });
 
     it('queues the message when another stream wins the claim race', async () => {
@@ -133,6 +145,73 @@ describe('AgentChatStreamingService claim & reap', () => {
         { id: 'thread-id', activeStreamId: expect.any(String) },
         { activeStreamId: null },
       );
+    });
+  });
+
+  describe('reapDeadStream', () => {
+    it('leaves a live stream alone', async () => {
+      const { service, threadRepository } = buildService();
+
+      const reaped = await service.reapDeadStream({
+        thread: { id: 'thread-id', activeStreamId: 'stream-id' },
+        workspaceId: 'workspace-id',
+      });
+
+      expect(reaped).toBeNull();
+      expect(threadRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('converts a heartbeat-less claim into a retryable interrupted error', async () => {
+      const {
+        service,
+        threadRepository,
+        eventPublisherService,
+        publishedEvents,
+      } = buildService({ heartbeatAlive: false });
+
+      const reaped = await service.reapDeadStream({
+        thread: { id: 'thread-id', activeStreamId: 'stream-id' },
+        workspaceId: 'workspace-id',
+      });
+
+      expect(reaped).toEqual(
+        expect.objectContaining({ code: STREAM_INTERRUPTED_CODE }),
+      );
+      expect(threadRepository.update).toHaveBeenCalledWith(
+        'workspace-id',
+        { id: 'thread-id', activeStreamId: 'stream-id' },
+        expect.objectContaining({
+          activeStreamId: null,
+          lastStreamError: expect.objectContaining({
+            code: STREAM_INTERRUPTED_CODE,
+          }),
+        }),
+      );
+      expect(eventPublisherService.resetStreamState).toHaveBeenCalledWith(
+        'thread-id',
+      );
+      expect(publishedEvents).toContainEqual(
+        expect.objectContaining({
+          type: 'stream-error',
+          code: STREAM_INTERRUPTED_CODE,
+        }),
+      );
+    });
+
+    it('does nothing when the claim moved to a newer stream mid-check', async () => {
+      const { service, publishedEvents, threadRepository } = buildService({
+        heartbeatAlive: false,
+        claimAffected: 0,
+      });
+
+      const reaped = await service.reapDeadStream({
+        thread: { id: 'thread-id', activeStreamId: 'stream-id' },
+        workspaceId: 'workspace-id',
+      });
+
+      expect(reaped).toBeNull();
+      expect(threadRepository.update).toHaveBeenCalledTimes(1);
+      expect(publishedEvents).toHaveLength(0);
     });
   });
 });

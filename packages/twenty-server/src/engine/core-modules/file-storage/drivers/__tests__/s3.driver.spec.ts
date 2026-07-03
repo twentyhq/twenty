@@ -51,6 +51,7 @@ describe('S3Driver.getPresignedUrl', () => {
       filePath: 'file.png',
       responseContentType: 'image/png',
       responseContentDisposition: 'inline',
+      responseCacheControl: 'private, max-age=86400, immutable',
     });
 
     expect(result).toBe(
@@ -60,6 +61,12 @@ describe('S3Driver.getPresignedUrl', () => {
       expect.anything(),
       expect.any(GetObjectCommand),
       { expiresIn: 900 },
+    );
+
+    const command = (getSignedUrl as jest.Mock).mock.calls[0][1];
+
+    expect(command.input.ResponseCacheControl).toBe(
+      'private, max-age=86400, immutable',
     );
   });
 

@@ -86,38 +86,42 @@ describe('setFileResponseHeaders', () => {
     );
   });
 
-  it('should set an immutable Cache-Control for the CorePicture folder', () => {
-    const res = createMockResponse();
-
-    setFileResponseHeaders(res as any, 'image/png', FileFolder.CorePicture);
-
-    expect(res.setHeader).toHaveBeenCalledWith(
-      'Cache-Control',
-      'private, max-age=86400, immutable',
-    );
-  });
-
   it.each([
-    FileFolder.ProfilePicture,
-    FileFolder.WorkspaceLogo,
-    FileFolder.PersonPicture,
+    FileFolder.CorePicture,
     FileFolder.FilesField,
-    FileFolder.Attachment,
     FileFolder.Workflow,
-    FileFolder.PublicAsset,
+    FileFolder.AgentChat,
+    FileFolder.EmailAttachment,
+    FileFolder.Dpa,
   ])(
-    'should not set Cache-Control for non-cacheable folder %s',
+    'should set an immutable Cache-Control for immutable folder %s',
     (fileFolder) => {
       const res = createMockResponse();
 
       setFileResponseHeaders(res as any, 'image/png', fileFolder);
 
-      expect(res.setHeader).not.toHaveBeenCalledWith(
+      expect(res.setHeader).toHaveBeenCalledWith(
         'Cache-Control',
-        expect.anything(),
+        'private, max-age=86400, immutable',
       );
     },
   );
+
+  it.each([
+    FileFolder.PublicAsset,
+    FileFolder.AppTarball,
+    FileFolder.Source,
+    FileFolder.BuiltFrontComponent,
+  ])('should not set Cache-Control for mutable folder %s', (fileFolder) => {
+    const res = createMockResponse();
+
+    setFileResponseHeaders(res as any, 'image/png', fileFolder);
+
+    expect(res.setHeader).not.toHaveBeenCalledWith(
+      'Cache-Control',
+      expect.anything(),
+    );
+  });
 });
 
 describe('getContentDisposition', () => {

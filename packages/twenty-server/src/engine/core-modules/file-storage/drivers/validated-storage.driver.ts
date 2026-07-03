@@ -122,6 +122,7 @@ export class ValidatedStorageDriver implements StorageDriver {
     expiresInSeconds?: number;
     responseContentType?: string;
     responseContentDisposition?: string;
+    responseCacheControl?: string;
   }): Promise<string | null> {
     assertStoragePathIsSafe(params.filePath);
 

@@ -13,6 +13,10 @@ import {
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import {
+  fileFolderConfigs,
+  IMMUTABLE_FILE_CACHE_CONTROL,
+} from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
@@ -213,6 +217,9 @@ export class FileService {
       ),
       responseContentType: mimeType,
       responseContentDisposition: getContentDisposition(mimeType),
+      responseCacheControl: fileFolderConfigs[fileFolder].immutable
+        ? IMMUTABLE_FILE_CACHE_CONTROL
+        : undefined,
     });
 
     if (presignedUrl) {

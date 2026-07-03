@@ -286,6 +286,7 @@ export class FileStorageService {
       expiresInSeconds?: number;
       responseContentType?: string;
       responseContentDisposition?: string;
+      responseCacheControl?: string;
     },
   ): Promise<string | null> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
@@ -297,6 +298,7 @@ export class FileStorageService {
       expiresInSeconds: params.expiresInSeconds,
       responseContentType: params.responseContentType,
       responseContentDisposition: params.responseContentDisposition,
+      responseCacheControl: params.responseCacheControl,
     });
   }
 
@@ -322,28 +324,33 @@ export class FileStorageService {
     });
   }
 
-  async deleteApplicationFiles({
+  async deleteApplicationFileRows({
+    applicationId,
+    workspaceId,
+    queryRunner,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+    queryRunner?: QueryRunner;
+  }) {
+    const fileRepository = queryRunner
+      ? this.fileRepository.withManager(queryRunner.manager)
+      : this.fileRepository;
+
+    await fileRepository.delete(workspaceId, { applicationId });
+  }
+
+  async deleteApplicationFilesFromStorage({
     applicationUniversalIdentifier,
     workspaceId,
   }: {
     applicationUniversalIdentifier: string;
     workspaceId: string;
   }) {
-    const application = await this.applicationRepository.findOneOrFail({
-      where: {
-        universalIdentifier: applicationUniversalIdentifier,
-        workspaceId: workspaceId,
-      },
-    });
-
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
     await driver.delete({
       folderPath: `${workspaceId}/${applicationUniversalIdentifier}/`,
-    });
-
-    await this.fileRepository.delete(workspaceId, {
-      applicationId: application.id,
     });
   }
 

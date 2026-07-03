@@ -427,6 +427,7 @@ export class S3Driver implements StorageDriver {
     expiresInSeconds?: number;
     responseContentType?: string;
     responseContentDisposition?: string;
+    responseCacheControl?: string;
   }): Promise<string | null> {
     if (!this.presignClient) {
       return null;
@@ -437,6 +438,7 @@ export class S3Driver implements StorageDriver {
       Key: params.filePath,
       ResponseContentType: params.responseContentType,
       ResponseContentDisposition: params.responseContentDisposition,
+      ResponseCacheControl: params.responseCacheControl,
     });
 
     return getSignedUrl(this.presignClient, command, {
