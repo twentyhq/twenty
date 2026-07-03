@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { areIndexDefinitionsEquivalent } from 'src/database/commands/upgrade-version-command/2-18/utils/are-index-definitions-equivalent.util';
 import {
   type FlatIndexNameStatus,
   planIndexNameNormalization,
@@ -168,9 +169,50 @@ export class NormalizeLegacyIndexNamesCommand extends ActiveOrSuspendedWorkspace
               );
 
             if (sourceIndexExists) {
-              this.logger.warn(
-                `Index ${operation.toName} already exists physically alongside ${operation.fromName}; leaving ${operation.fromName} in place and pointing metadata at ${operation.toName} (workspace ${workspaceId})`,
-              );
+              // Metadata stops referencing the legacy index below, so nothing
+              // would ever clean it up: drop it when it is a true duplicate of
+              // the target, keep it only when the definitions differ.
+              const sourceIndexDefinition =
+                await this.workspaceSchemaManagerService.indexManager.getIndexDefinition(
+                  {
+                    queryRunner,
+                    schemaName,
+                    indexName: operation.fromName,
+                  },
+                );
+              const targetIndexDefinition =
+                await this.workspaceSchemaManagerService.indexManager.getIndexDefinition(
+                  {
+                    queryRunner,
+                    schemaName,
+                    indexName: operation.toName,
+                  },
+                );
+
+              if (
+                isDefined(sourceIndexDefinition) &&
+                isDefined(targetIndexDefinition) &&
+                areIndexDefinitionsEquivalent({
+                  indexDefinitionA: sourceIndexDefinition,
+                  indexDefinitionB: targetIndexDefinition,
+                })
+              ) {
+                await this.workspaceSchemaManagerService.indexManager.dropIndex(
+                  {
+                    queryRunner,
+                    schemaName,
+                    indexName: operation.fromName,
+                  },
+                );
+
+                this.logger.log(
+                  `Dropped duplicate legacy index ${operation.fromName} (identical definition already exists as ${operation.toName}) (workspace ${workspaceId})`,
+                );
+              } else {
+                this.logger.warn(
+                  `Index ${operation.toName} already exists physically alongside ${operation.fromName} with a different definition; leaving ${operation.fromName} in place and pointing metadata at ${operation.toName} (workspace ${workspaceId})`,
+                );
+              }
             } else {
               this.logger.log(
                 `Index already physically named ${operation.toName}, reconciling metadata only (was ${operation.fromName}) (workspace ${workspaceId})`,

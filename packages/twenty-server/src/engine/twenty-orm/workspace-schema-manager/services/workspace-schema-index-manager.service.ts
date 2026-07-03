@@ -128,4 +128,22 @@ export class WorkspaceSchemaIndexManagerService {
 
     return result[0]?.exists === true;
   }
+
+  async getIndexDefinition({
+    queryRunner,
+    schemaName,
+    indexName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    indexName: string;
+  }): Promise<string | null> {
+    const result: { indexdef: string }[] = await queryRunner.query(
+      `SELECT indexdef FROM pg_indexes
+      WHERE schemaname = $1 AND indexname = $2`,
+      [schemaName, indexName],
+    );
+
+    return result[0]?.indexdef ?? null;
+  }
 }

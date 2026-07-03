@@ -59,4 +59,37 @@ describe('WorkspaceSchemaIndexManagerService', () => {
       expect(result).toBe(false);
     });
   });
+
+  describe('getIndexDefinition', () => {
+    it('should return the index definition when the index exists', async () => {
+      const indexDefinition =
+        'CREATE UNIQUE INDEX "IDX_existing" ON workspace_test.company USING btree (name)';
+
+      queryMock.mockResolvedValue([{ indexdef: indexDefinition }]);
+
+      const result = await service.getIndexDefinition({
+        queryRunner,
+        schemaName: 'workspace_test',
+        indexName: 'IDX_existing',
+      });
+
+      expect(result).toBe(indexDefinition);
+      expect(queryMock).toHaveBeenCalledWith(
+        expect.stringContaining('pg_indexes'),
+        ['workspace_test', 'IDX_existing'],
+      );
+    });
+
+    it('should return null when the index does not exist', async () => {
+      queryMock.mockResolvedValue([]);
+
+      const result = await service.getIndexDefinition({
+        queryRunner,
+        schemaName: 'workspace_test',
+        indexName: 'IDX_missing',
+      });
+
+      expect(result).toBeNull();
+    });
+  });
 });

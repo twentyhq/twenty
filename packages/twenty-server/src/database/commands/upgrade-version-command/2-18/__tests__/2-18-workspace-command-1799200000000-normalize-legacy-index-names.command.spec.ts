@@ -101,6 +101,7 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
   let renameIndexMock: jest.Mock;
   let dropIndexMock: jest.Mock;
   let doesIndexExistMock: jest.Mock;
+  let getIndexDefinitionMock: jest.Mock;
   let getOrRecomputeMock: jest.Mock;
   let invalidateAndRecomputeMock: jest.Mock;
 
@@ -111,12 +112,22 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     );
   };
 
+  const setPhysicalIndexDefinitions = (
+    definitionsByName: Record<string, string>,
+  ) => {
+    getIndexDefinitionMock.mockImplementation(
+      ({ indexName }: { indexName: string }) =>
+        Promise.resolve(definitionsByName[indexName] ?? null),
+    );
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
 
     renameIndexMock = jest.fn();
     dropIndexMock = jest.fn();
     doesIndexExistMock = jest.fn();
+    getIndexDefinitionMock = jest.fn();
     getOrRecomputeMock = jest.fn();
     invalidateAndRecomputeMock = jest.fn();
 
@@ -130,6 +141,7 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
         renameIndexWithoutRebuild: renameIndexMock,
         dropIndex: dropIndexMock,
         doesIndexExist: doesIndexExistMock,
+        getIndexDefinition: getIndexDefinitionMock,
       },
     } as unknown as WorkspaceSchemaManagerService;
 
@@ -339,7 +351,7 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     expect(commit).toHaveBeenCalled();
   });
 
-  it('leaves the orphan source index in place when both source and target exist physically', async () => {
+  it('drops the duplicate legacy index when both source and target exist with the same definition', async () => {
     getOrRecomputeMock.mockResolvedValue(
       buildFlatEntityMaps([
         {
@@ -352,6 +364,12 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     );
 
     setPhysicalIndexes(['legacyhash', 'IDX_UNIQUE_new']);
+    setPhysicalIndexDefinitions({
+      legacyhash:
+        'CREATE UNIQUE INDEX legacyhash ON workspace_test."myObject" USING btree (name)',
+      IDX_UNIQUE_new:
+        'CREATE UNIQUE INDEX "IDX_UNIQUE_new" ON workspace_test."myObject" USING btree (name)',
+    });
 
     const { queryRunner, query, commit } = buildQueryRunner();
     const dataSource = {
@@ -361,6 +379,46 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     await runOnWorkspace(dataSource);
 
     expect(renameIndexMock).not.toHaveBeenCalled();
+    expect(dropIndexMock).toHaveBeenCalledWith(
+      expect.objectContaining({ indexName: 'legacyhash' }),
+    );
+    expect(query).toHaveBeenCalledWith(expect.stringContaining('UPDATE'), [
+      'IDX_UNIQUE_new',
+      'index-1',
+      WORKSPACE_ID,
+    ]);
+    expect(commit).toHaveBeenCalled();
+  });
+
+  it('leaves the orphan source index in place when both exist but with different definitions', async () => {
+    getOrRecomputeMock.mockResolvedValue(
+      buildFlatEntityMaps([
+        {
+          universalIdentifier: 'idx-uid',
+          id: 'index-1',
+          name: 'legacyhash',
+          expectedName: 'IDX_UNIQUE_new',
+        },
+      ]),
+    );
+
+    setPhysicalIndexes(['legacyhash', 'IDX_UNIQUE_new']);
+    setPhysicalIndexDefinitions({
+      legacyhash:
+        'CREATE INDEX legacyhash ON workspace_test."myObject" USING btree ("createdAt")',
+      IDX_UNIQUE_new:
+        'CREATE UNIQUE INDEX "IDX_UNIQUE_new" ON workspace_test."myObject" USING btree (name)',
+    });
+
+    const { queryRunner, query, commit } = buildQueryRunner();
+    const dataSource = {
+      createQueryRunner: () => queryRunner,
+    } as unknown as DataSource;
+
+    await runOnWorkspace(dataSource);
+
+    expect(renameIndexMock).not.toHaveBeenCalled();
+    expect(dropIndexMock).not.toHaveBeenCalled();
     expect(dropIndexFromWorkspaceSchemaMock).not.toHaveBeenCalled();
     expect(query).toHaveBeenCalledWith(expect.stringContaining('UPDATE'), [
       'IDX_UNIQUE_new',
