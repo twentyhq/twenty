@@ -22,7 +22,7 @@ Each chapter adds one capability. By the end you'll have touched most of the SDK
 | Chapter | Capability | Reference |
 |---|---|---|
 | [1. Data model](/developers/extend/apps/tutorials/document-generator/data-model) | Objects, fields, and a relation | [Data](/developers/extend/apps/data/overview) |
-| [2. Generating documents](/developers/extend/apps/tutorials/document-generator/generating-documents) | A logic function as an AI tool + workflow action | [Logic functions](/developers/extend/apps/logic/logic-functions) |
+| [2. Generating documents](/developers/extend/apps/tutorials/document-generator/generating-documents) | A logic function (AI tool + workflow action) that generates a PDF file | [Logic functions](/developers/extend/apps/logic/logic-functions) |
 | [3. HTTP routes](/developers/extend/apps/tutorials/document-generator/http-routes) | Serving JSON and HTML from routes | [Logic functions](/developers/extend/apps/logic/logic-functions) |
 | [4. Building the UI](/developers/extend/apps/tutorials/document-generator/building-the-ui) | Views, navigation, command menu, front component | [Layout](/developers/extend/apps/layout/overview) |
 | [5. An AI agent](/developers/extend/apps/tutorials/document-generator/ai-agent) | Agent + skill | [Skills & agents](/developers/extend/apps/logic/skills-and-agents) |
@@ -54,6 +54,7 @@ documentTemplate ──1─────*── document
    name                      name
    body  {{placeholders}}    content   (rendered)
    target (Person/Company)   status
+                             file      (generated PDF)
                              template ──► the template it came from
 
 generate-document (logic function)

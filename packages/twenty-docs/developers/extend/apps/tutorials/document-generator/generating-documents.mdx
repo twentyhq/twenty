@@ -135,14 +135,82 @@ export default defineApplicationRole({
   canUpdateAllObjectRecords: true,
   canAccessAllTools: true,
   canBeAssignedToAgents: true,
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.UPLOAD_FILE],
 });
 ```
 
+`UPLOAD_FILE` lets the function upload the generated PDF in the next section.
 See [Roles](/developers/extend/apps/config/roles) for finer-grained permissions.
 
-**After this step:** the generation logic exists and is exposed as a tool and a
-workflow action. But nothing can *call* it from the UI yet — for that we need an
-HTTP route.
+## Attach a real PDF file
+
+A rendered text field is useful, but users want a real document. Let's generate a
+**PDF** and store it on the record as a downloadable file.
+
+First, give the `document` object a `FILES` field to hold the PDF. Apps upload
+into their **own** files fields, so this field is what routes the upload:
+
+```ts filename="src/objects/document.object.ts"
+{
+  universalIdentifier: DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.FILES,
+  name: 'file',
+  label: 'File',
+  icon: 'IconFileTypePdf',
+  universalSettings: { maxNumberOfValues: 1 },
+}
+```
+
+Generate the PDF bytes. Logic functions are bundled and run in a sandbox, so for
+plain-text output a small **dependency-free** writer beats pulling a PDF library
+(no install at cold start). The full helper is
+[`generate-document-pdf.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/document-generator/src/logic-functions/utils/generate-document-pdf.ts);
+it emits a valid multi-page PDF using the built-in Courier fonts.
+
+Then upload it and store the reference on the record. `uploadFile` routes bytes
+to your app-owned files field; the returned `id` is what you save:
+
+```ts filename="src/logic-functions/handlers/generate-document-handler.ts"
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { generateDocumentPdf } from 'src/logic-functions/utils/generate-document-pdf';
+
+const bytes = generateDocumentPdf(documentName, content);
+const fileName = 'proposal.pdf';
+
+const uploaded = await new MetadataApiClient().uploadFile(
+  Buffer.from(bytes),
+  fileName,
+  'application/pdf',
+  DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+);
+
+await client.mutation({
+  updateDocument: {
+    __args: {
+      id: documentId,
+      data: { file: [{ fileId: uploaded.id, label: fileName }] },
+    },
+    id: true,
+  },
+});
+```
+
+The generated document now carries a downloadable PDF:
+
+<Frame caption="The generated PDF, stored on the document's File field.">
+  <img src="/images/docs/developers/extends/apps/document-generator/08-document-with-pdf.png" alt="A document record with a generated PDF file" />
+</Frame>
+
+<Note>
+`uploadFile` only targets **app-owned** files fields (so uploads always require an
+app that owns the field, plus the `UPLOAD_FILE` role flag). That's why the PDF
+lands on the record's own `file` field — the same pattern the
+[call-recorder app](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/public/call-recorder)
+uses for recordings.
+</Note>
+
+**After this step:** each generated document has a real, downloadable PDF. But
+nothing can *call* the generator from the UI yet — for that we need an HTTP route.
 
 <Card title="Next: HTTP routes →" icon="globe" href="/developers/extend/apps/tutorials/document-generator/http-routes">
   Serve the function over HTTP and render documents as web pages.

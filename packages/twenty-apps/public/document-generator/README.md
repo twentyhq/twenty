@@ -12,6 +12,7 @@ documents using the data already in your CRM. It is the app built in the
   Company record, in one click.
 - **Generate anywhere** — from the command menu on a record, from an AI agent,
   or as a step in a workflow.
+- **Real PDF** — every generated document carries a downloadable PDF file.
 - **Share** — open any generated document as a printable web page.
 
 ## Capabilities used
@@ -19,6 +20,7 @@ documents using the data already in your CRM. It is the app built in the
 | Capability | Files |
 | --- | --- |
 | Objects, fields & relations | `src/objects/`, `src/fields/` |
+| PDF generation + file upload | `src/logic-functions/utils/generate-document-pdf.ts`, `src/logic-functions/handlers/generate-document-handler.ts` |
 | Logic function (AI tool + workflow action) | `src/logic-functions/generate-document.ts` |
 | HTTP routes | `src/logic-functions/generate-document-route.ts`, `src/logic-functions/view-document.ts` |
 | Front component + command menu | `src/front-components/`, `src/command-menu-items/` |

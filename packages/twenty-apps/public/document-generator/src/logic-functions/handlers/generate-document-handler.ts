@@ -1,11 +1,56 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
-import { DOCUMENT_STATUS_GENERATED } from 'src/constants/universal-identifiers';
+import {
+  DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+  DOCUMENT_STATUS_GENERATED,
+} from 'src/constants/universal-identifiers';
+import { generateDocumentPdf } from 'src/logic-functions/utils/generate-document-pdf';
 import {
   isSupportedTarget,
   loadRecordValues,
 } from 'src/logic-functions/utils/load-record-values';
 import { renderTemplate } from 'src/logic-functions/utils/render-template';
+
+// Builds a filesystem-safe PDF filename from the document name.
+const toPdfFileName = (documentName: string): string => {
+  const slug = documentName
+    .normalize('NFKD')
+    .replace(/[^a-z0-9]+/gi, '-')
+    .replace(/^-+|-+$/g, '')
+    .toLowerCase();
+
+  return `${slug || 'document'}.pdf`;
+};
+
+// Generates the PDF, uploads it to the app-owned `file` field, and stores the
+// reference on the document so the record shows a downloadable PDF.
+const attachGeneratedPdf = async (
+  client: CoreApiClient,
+  documentId: string,
+  documentName: string,
+  content: string,
+): Promise<void> => {
+  const bytes = generateDocumentPdf(documentName, content);
+  const fileName = toPdfFileName(documentName);
+
+  const uploaded = await new MetadataApiClient().uploadFile(
+    Buffer.from(bytes),
+    fileName,
+    'application/pdf',
+    DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+  );
+
+  await client.mutation({
+    updateDocument: {
+      __args: {
+        id: documentId,
+        data: { file: [{ fileId: uploaded.id, label: fileName }] },
+      },
+      id: true,
+    },
+  });
+};
 
 export type GenerateDocumentInput = {
   templateId: string;
@@ -113,9 +158,26 @@ export const generateDocumentHandler = async (
     };
   }
 
+  // Best-effort: the document already exists, so a PDF/upload failure shouldn't
+  // discard it — surface a warning instead.
+  let message = `Generated "${createDocument.name}".`;
+
+  try {
+    await attachGeneratedPdf(
+      client,
+      createDocument.id,
+      createDocument.name ?? documentName,
+      content,
+    );
+  } catch (error) {
+    message += ` (PDF attachment failed: ${
+      error instanceof Error ? error.message : 'unknown error'
+    })`;
+  }
+
   return {
     success: true,
-    message: `Generated "${createDocument.name}".`,
+    message,
     documentId: createDocument.id,
     content,
     missingTokens,

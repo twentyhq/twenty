@@ -2,6 +2,7 @@ import { defineObject, FieldType } from 'twenty-sdk/define';
 
 import {
   DOCUMENT_CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
+  DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
   DOCUMENT_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   DOCUMENT_OBJECT_UNIVERSAL_IDENTIFIER,
   DOCUMENT_STATUS_DRAFT,
@@ -62,6 +63,15 @@ export default defineObject({
           position: 1,
         },
       ],
+    },
+    {
+      universalIdentifier: DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.FILES,
+      name: 'file',
+      label: 'File',
+      description: 'The generated document as a downloadable PDF.',
+      icon: 'IconFileTypePdf',
+      universalSettings: { maxNumberOfValues: 1 },
     },
   ],
 });

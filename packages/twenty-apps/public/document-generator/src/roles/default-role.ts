@@ -1,4 +1,4 @@
-import { defineApplicationRole } from 'twenty-sdk/define';
+import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';
 
 import {
   APP_DISPLAY_NAME,
@@ -6,8 +6,8 @@ import {
 } from 'src/constants/universal-identifiers';
 
 // The role the app's logic functions and agent run as. Scoped to least
-// privilege: it only needs to read templates and CRM records and to create
-// documents — it never deletes records, so delete capabilities stay off.
+// privilege: it reads templates and CRM records, creates documents, and uploads
+// the generated PDF — it never deletes records, so delete capabilities stay off.
 export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: `${APP_DISPLAY_NAME} default role`,
@@ -18,4 +18,5 @@ export default defineApplicationRole({
   canDestroyAllObjectRecords: false,
   canAccessAllTools: true,
   canBeAssignedToAgents: true,
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.UPLOAD_FILE],
 });
