@@ -1,0 +1,125 @@
+---
+title: 3. HTTP routes
+icon: "globe"
+description: Trigger the function over HTTP and render documents as web pages.
+---
+
+The same handler can also answer HTTP requests. We'll add two routes:
+
+- a **POST** endpoint the UI calls to generate a document, and
+- a public **GET** endpoint that renders a document as a printable web page.
+
+Both use `httpRouteTriggerSettings`. App routes are served under `/s` on your
+Twenty server (e.g. `http://localhost:2020/s/documents/generate`).
+
+## POST route — generate on demand
+
+This reuses `generateDocumentHandler`, so there's no logic to repeat — just a thin
+adapter that reads the request body.
+
+```ts filename="src/logic-functions/generate-document-route.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { generateDocumentHandler } from 'src/logic-functions/handlers/generate-document-handler';
+
+const handler = async (event: RoutePayload) => {
+  const body = event.body as Record<string, unknown> | null;
+  return generateDocumentHandler({
+    templateId: (body?.templateId as string) ?? '',
+    recordId: (body?.recordId as string) ?? '',
+  });
+};
+
+export default defineLogicFunction({
+  universalIdentifier: GENERATE_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'generate-document-route',
+  timeoutSeconds: 30,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/generate',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+`isAuthRequired: true` means the caller must present a valid token — the front
+component in the next chapter passes the user's access token automatically.
+
+## GET route — render as a web page
+
+To return HTML instead of JSON, wrap the body in a `Response` with a
+`Content-Type` header. This route is public (`isAuthRequired: false`) so a
+generated document can be shared as a link.
+
+```ts filename="src/logic-functions/view-document.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { renderDocumentHtml } from 'src/logic-functions/utils/render-document-html';
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const documentId = event.queryStringParameters?.id;
+  const client = new CoreApiClient();
+  const { document } = await client.query({
+    document: {
+      __args: { filter: { id: { eq: documentId } } },
+      id: true, name: true, content: true,
+    },
+  });
+
+  return new Response(renderDocumentHtml(document?.name ?? '', document?.content ?? ''), {
+    status: document?.id ? 200 : 404,
+    headers: { 'Content-Type': 'text/html; charset=utf-8' },
+  });
+};
+
+export default defineLogicFunction({
+  universalIdentifier: VIEW_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'view-document',
+  timeoutSeconds: 15,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/view',
+    httpMethod: 'GET',
+    isAuthRequired: false,
+  },
+});
+```
+
+`renderDocumentHtml` just escapes the text and drops it into a styled page —
+[see the helper](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/document-generator/src/logic-functions/utils/render-document-html.ts).
+
+## Try it
+
+With a template and a Person in your workspace, call the route (grab a token from
+**Settings → APIs & Webhooks**):
+
+```bash filename="Terminal"
+curl -X POST http://localhost:2020/s/documents/generate \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"templateId":"<templateId>","recordId":"<personId>"}'
+# → {"success":true,"documentId":"...","content":"Dear Jeffery Griffin, ..."}
+```
+
+Open the returned document in your browser:
+
+```
+http://localhost:2020/s/documents/view?id=<documentId>
+```
+
+<Frame caption="The public GET route renders the document as a printable page.">
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="A rendered document web page" />
+</Frame>
+
+<Tip>
+You can also stream a function's logs while testing with
+`yarn twenty dev:function:logs`, or invoke it directly with
+`yarn twenty dev:function:exec`.
+</Tip>
+
+**After this step:** the app can generate documents over HTTP and serve them as
+web pages. Now let's make it usable without `curl`.
+
+<Card title="Next: building the UI →" icon="table-columns" href="/developers/extend/apps/tutorials/document-generator/building-the-ui">
+  Views, navigation, a command, and a front component.
+</Card>

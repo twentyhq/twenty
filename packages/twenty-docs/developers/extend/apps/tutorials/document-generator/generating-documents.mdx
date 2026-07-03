@@ -1,0 +1,145 @@
+---
+title: 2. Generating documents
+icon: "bolt"
+description: One logic function, exposed as an AI tool and a workflow action.
+---
+
+Now the core: a [logic function](/developers/extend/apps/logic/logic-functions)
+that loads a template and a record, fills the placeholders, and saves a new
+document.
+
+We'll write the business logic once as a **handler**, then expose it through
+several triggers. This chapter wires up two of them — an **AI tool** and a
+**workflow action**.
+
+## The rendering helper
+
+Keep pure logic in its own file so it's easy to unit-test. This flattens a record
+into `{{dot.path}}` tokens and substitutes them.
+
+```ts filename="src/logic-functions/utils/render-template.ts"
+const PLACEHOLDER_PATTERN = /\{\{\s*([\w.]+)\s*\}\}/g;
+
+export const renderTemplate = (body: string, values: Record<string, string>) => {
+  const missingTokens = new Set<string>();
+  const content = body.replace(PLACEHOLDER_PATTERN, (_m, token: string) => {
+    const value = values[token];
+    if (value === undefined || value === '') { missingTokens.add(token); return ''; }
+    return value;
+  });
+  return { content, missingTokens: [...missingTokens] };
+};
+```
+
+<Tip>
+Because this file has no side effects, you can cover it with fast unit tests
+(`yarn test:unit`). See [Testing](/developers/extend/apps/operations/testing).
+</Tip>
+
+## The handler
+
+The handler uses the generated [`CoreApiClient`](/developers/extend/apps/logic/logic-functions)
+to read and write CRM data. It loads the template, loads the target record, fills
+the body, and creates a `document`.
+
+```ts filename="src/logic-functions/handlers/generate-document-handler.ts"
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { loadRecordValues } from 'src/logic-functions/utils/load-record-values';
+import { renderTemplate } from 'src/logic-functions/utils/render-template';
+
+export const generateDocumentHandler = async (
+  input: { templateId: string; recordId: string },
+) => {
+  const client = new CoreApiClient();
+
+  const { documentTemplate } = await client.query({
+    documentTemplate: {
+      __args: { filter: { id: { eq: input.templateId } } },
+      id: true, name: true, body: true, target: true,
+    },
+  });
+  if (!documentTemplate?.id) return { success: false, message: 'Template not found.' };
+
+  const record = await loadRecordValues(client, documentTemplate.target, input.recordId);
+  if (!record.found) return { success: false, message: 'Record not found.' };
+
+  const { content, missingTokens } = renderTemplate(documentTemplate.body ?? '', record.values);
+
+  const { createDocument } = await client.mutation({
+    createDocument: {
+      __args: { data: {
+        name: `${documentTemplate.name} — ${record.displayName}`,
+        content, status: 'GENERATED', templateId: documentTemplate.id,
+      } },
+      id: true, name: true,
+    },
+  });
+
+  return { success: true, documentId: createDocument.id, content, missingTokens };
+};
+```
+
+`loadRecordValues` runs a different query for a Person vs. a Company and flattens
+the result — see
+[`load-record-values.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/document-generator/src/logic-functions/utils/load-record-values.ts).
+
+## Expose it as a tool and a workflow action
+
+A single `defineLogicFunction` can carry several triggers. Here, `toolTriggerSettings`
+makes it callable by AI agents, and `workflowActionTriggerSettings` turns it into a
+step in the visual workflow builder. Both describe their input with a JSON schema.
+
+```ts filename="src/logic-functions/generate-document.ts"
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema } from 'twenty-sdk/logic-function';
+import { generateDocumentHandler } from 'src/logic-functions/handlers/generate-document-handler';
+import { generateDocumentInputSchema } from 'src/logic-functions/schemas/generate-document-input.schema';
+
+export default defineLogicFunction({
+  universalIdentifier: GENERATE_DOCUMENT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  name: 'generate-document',
+  description: 'Generate a document from a template and a CRM record.',
+  timeoutSeconds: 30,
+  toolTriggerSettings: {
+    inputSchema: generateDocumentInputSchema,
+  },
+  workflowActionTriggerSettings: {
+    label: 'Generate Document',
+    icon: 'IconFileText',
+    inputSchema: jsonSchemaToInputSchema(generateDocumentInputSchema),
+    outputSchema: [{ type: 'object', properties: {
+      success: { type: 'boolean' }, documentId: { type: 'string' },
+    } }],
+  },
+  handler: generateDocumentHandler,
+});
+```
+
+The input schema is a plain JSON schema describing `templateId` and `recordId` —
+see [`generate-document-input.schema.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/document-generator/src/logic-functions/schemas/generate-document-input.schema.ts).
+
+## Grant it access
+
+Logic functions run as the app's role. It needs to read templates and records
+and create documents, so allow that in `src/roles/default-role.ts`:
+
+```ts
+export default defineApplicationRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Document Generator default role',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: true,
+  canAccessAllTools: true,
+  canBeAssignedToAgents: true,
+});
+```
+
+See [Roles](/developers/extend/apps/config/roles) for finer-grained permissions.
+
+**After this step:** the generation logic exists and is exposed as a tool and a
+workflow action. But nothing can *call* it from the UI yet — for that we need an
+HTTP route.
+
+<Card title="Next: HTTP routes →" icon="globe" href="/developers/extend/apps/tutorials/document-generator/http-routes">
+  Serve the function over HTTP and render documents as web pages.
+</Card>
