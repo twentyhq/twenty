@@ -10,12 +10,10 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
-import { EmailingModule } from 'src/modules/emailing/emailing.module';
 
 @Module({
   imports: [
     ApplicationModule,
-    EmailingModule,
     TypeOrmModule.forFeature([WorkspaceEntity, ApplicationEntity]),
     WorkspaceCacheModule,
     WorkspaceIteratorModule,

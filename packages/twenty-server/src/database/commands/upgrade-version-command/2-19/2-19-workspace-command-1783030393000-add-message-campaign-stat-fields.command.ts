@@ -17,7 +17,6 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 import { type WorkspaceCacheDataMap } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 
 const CAMPAIGN = STANDARD_OBJECTS.messageCampaign;
 
@@ -42,7 +41,7 @@ const CAMPAIGN_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = Object.values(
 @Command({
   name: 'upgrade:2-19:add-message-campaign-stat-fields',
   description:
-    'Add the MessageCampaign delivery-stat fields (sent/failed/bounced/complained) and their view columns, and backfill counts on existing workspaces',
+    'Add the MessageCampaign delivery-stat fields (sent/failed/bounced/complained) and their view columns on existing workspaces',
 })
 export class AddMessageCampaignStatFieldsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
@@ -50,7 +49,6 @@ export class AddMessageCampaignStatFieldsCommand extends ActiveOrSuspendedWorksp
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
-    private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
   ) {
     super(workspaceIteratorService);
   }
@@ -152,7 +150,7 @@ export class AddMessageCampaignStatFieldsCommand extends ActiveOrSuspendedWorksp
 
     if (isDryRun) {
       this.logger.log(
-        `[DRY RUN] Workspace ${workspaceId}: ${fieldsToCreate.length} field(s), ${viewsToCreate.length} view(s), ${viewFieldsToCreate.length} view column(s), then backfill campaign counts`,
+        `[DRY RUN] Workspace ${workspaceId}: ${fieldsToCreate.length} field(s), ${viewsToCreate.length} view(s), ${viewFieldsToCreate.length} view column(s)`,
       );
 
       return;
@@ -197,12 +195,8 @@ export class AddMessageCampaignStatFieldsCommand extends ActiveOrSuspendedWorksp
       }
     }
 
-    await this.messageCampaignStatisticsService.refreshAllCampaignCounts({
-      workspaceId,
-    });
-
     this.logger.log(
-      `Applied messageCampaign stat fields and backfilled counts for workspace ${workspaceId}`,
+      `Applied messageCampaign stat fields for workspace ${workspaceId}`,
     );
   }
 

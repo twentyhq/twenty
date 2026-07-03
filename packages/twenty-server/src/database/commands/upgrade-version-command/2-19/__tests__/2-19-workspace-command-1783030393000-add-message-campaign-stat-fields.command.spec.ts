@@ -6,7 +6,6 @@ import { type ApplicationService } from 'src/engine/core-modules/application/app
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { type MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 
 jest.mock(
   'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant',
@@ -48,7 +47,6 @@ describe('AddMessageCampaignStatFieldsCommand', () => {
   let findApplicationMock: jest.Mock;
   let getOrRecomputeMock: jest.Mock;
   let validateBuildAndRunWorkspaceMigrationMock: jest.Mock;
-  let refreshAllCampaignCountsMock: jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -60,7 +58,6 @@ describe('AddMessageCampaignStatFieldsCommand', () => {
     validateBuildAndRunWorkspaceMigrationMock = jest
       .fn()
       .mockResolvedValue({ status: 'success' });
-    refreshAllCampaignCountsMock = jest.fn();
 
     computeTwentyStandardApplicationAllFlatEntityMapsMock.mockReturnValue({
       allFlatEntityMaps: {
@@ -89,9 +86,6 @@ describe('AddMessageCampaignStatFieldsCommand', () => {
         validateBuildAndRunWorkspaceMigration:
           validateBuildAndRunWorkspaceMigrationMock,
       } as unknown as WorkspaceMigrationValidateBuildAndRunService,
-      {
-        refreshAllCampaignCounts: refreshAllCampaignCountsMock,
-      } as unknown as MessageCampaignStatisticsService,
     );
   });
 
@@ -122,7 +116,7 @@ describe('AddMessageCampaignStatFieldsCommand', () => {
     });
   };
 
-  it('creates missing stat fields, the campaign view, all campaign view fields, then backfills counts', async () => {
+  it('creates missing stat fields, the campaign view, and all campaign view fields', async () => {
     mockWorkspaceCache({});
 
     await runOnWorkspace();
@@ -170,7 +164,6 @@ describe('AddMessageCampaignStatFieldsCommand', () => {
       validateBuildAndRunWorkspaceMigrationMock.mock.calls[0][0]
         .allFlatEntityOperationByMetadataName.viewField.flatEntityToCreate,
     ).toHaveLength(CAMPAIGN_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.length);
-    expect(refreshAllCampaignCountsMock).toHaveBeenCalledWith({ workspaceId: WORKSPACE_ID });
   });
 
   it('creates only missing pieces when rerun against a partially migrated workspace', async () => {
@@ -201,10 +194,9 @@ describe('AddMessageCampaignStatFieldsCommand', () => {
     expect(payload.viewField.flatEntityToCreate).toHaveLength(
       CAMPAIGN_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.length - 1,
     );
-    expect(refreshAllCampaignCountsMock).toHaveBeenCalledWith({ workspaceId: WORKSPACE_ID });
   });
 
-  it('skips the metadata migration but still backfills counts when everything already exists', async () => {
+  it('skips the metadata migration when everything already exists', async () => {
     mockWorkspaceCache({
       existingFields: STAT_FIELD_UNIVERSAL_IDENTIFIERS,
       existingViews: [CAMPAIGN_VIEW_UNIVERSAL_IDENTIFIER],
@@ -214,16 +206,14 @@ describe('AddMessageCampaignStatFieldsCommand', () => {
     await runOnWorkspace();
 
     expect(validateBuildAndRunWorkspaceMigrationMock).not.toHaveBeenCalled();
-    expect(refreshAllCampaignCountsMock).toHaveBeenCalledWith({ workspaceId: WORKSPACE_ID });
   });
 
-  it('does not write metadata or backfill counts in dry-run mode', async () => {
+  it('does not write metadata in dry-run mode', async () => {
     mockWorkspaceCache({});
 
     await runOnWorkspace(true);
 
     expect(validateBuildAndRunWorkspaceMigrationMock).not.toHaveBeenCalled();
-    expect(refreshAllCampaignCountsMock).not.toHaveBeenCalled();
   });
 
   it('skips workspaces where the messageCampaign object is absent', async () => {
@@ -238,6 +228,5 @@ describe('AddMessageCampaignStatFieldsCommand', () => {
 
     expect(findApplicationMock).not.toHaveBeenCalled();
     expect(validateBuildAndRunWorkspaceMigrationMock).not.toHaveBeenCalled();
-    expect(refreshAllCampaignCountsMock).not.toHaveBeenCalled();
   });
 });
