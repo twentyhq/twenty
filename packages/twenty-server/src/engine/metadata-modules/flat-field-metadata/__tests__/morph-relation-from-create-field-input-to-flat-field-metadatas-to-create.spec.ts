@@ -26,6 +26,7 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   name: 'Workspace Custom Application',
   description: null,
   logo: null,
+  logoFileId: null,
   workspaceId: 'workspace-id',
   version: null,
   sourceType: ApplicationRegistrationSourceType.LOCAL,
