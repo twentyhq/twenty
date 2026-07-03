@@ -17,6 +17,7 @@ export class PendingFileCleanupService {
   private readonly logger = new Logger(PendingFileCleanupService.name);
 
   constructor(
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository -- the reaper runs in a cron with no workspace context and must sweep stale PENDING files across every workspace
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
     private readonly fileStorageService: FileStorageService,
