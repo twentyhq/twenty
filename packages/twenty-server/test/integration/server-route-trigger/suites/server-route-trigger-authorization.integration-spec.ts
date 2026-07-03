@@ -13,11 +13,6 @@ const resolverNotFoundMessage = (universalIdentifier: string) =>
 const requiresAuthenticationMessage = (universalIdentifier: string) =>
   `Server resolver function ${universalIdentifier} requires authentication and cannot be dispatched through the public server route`;
 
-// Emitted once a resolver has passed the authorization boundary and been
-// dispatched to the executor. A raw-seeded function is absent from the
-// flat-entity cache the executor reads, so execution stops here — this message
-// is the proof of acceptance. Genuine 200 execution is covered by the
-// logic-function-execution integration suite, which builds real sources.
 const DISPATCHED_TO_EXECUTOR_MESSAGE = 'Logic function not found';
 
 type SeededLogicFunction = { id: string; universalIdentifier: string };
@@ -143,12 +138,6 @@ describe('ServerRouteTrigger authorization (integration)', () => {
         .post(`/webhooks/server/${exposedFunction.universalIdentifier}`)
         .send({ any: 'payload' });
 
-      // The exposed resolver must reach the executor, not be rejected at the
-      // authorization boundary. A boundary rejection would carry the
-      // resolver-not-found message (404), the auth guard would answer 403, and
-      // a genuine platform/invalid-result failure would carry a different
-      // message — asserting the exact dispatched-to-executor outcome rules all
-      // of those out.
       expect(response.status).toBe(404);
       expect(response.body?.messages).toEqual([DISPATCHED_TO_EXECUTOR_MESSAGE]);
       expect(response.body?.messages).not.toContain(
