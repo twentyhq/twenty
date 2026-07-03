@@ -325,7 +325,7 @@ export class LambdaToolFunctionsService {
     ]);
 
     this.commonLayerName = computeHashedLambdaResourceName({
-      prefix: COMMON_LAYER_NAME_PREFIX,
+      resourceNamePrefix: COMMON_LAYER_NAME_PREFIX,
       namespace: this.options.resourceNamespace,
       contents: [packageJson, yarnLock],
     });
@@ -344,7 +344,7 @@ export class LambdaToolFunctionsService {
     );
 
     this.yarnInstallFunctionName = computeHashedLambdaResourceName({
-      prefix: YARN_INSTALL_FUNCTION_NAME_PREFIX,
+      resourceNamePrefix: YARN_INSTALL_FUNCTION_NAME_PREFIX,
       namespace: this.options.resourceNamespace,
       contents: [handlerContent],
     });
@@ -360,7 +360,7 @@ export class LambdaToolFunctionsService {
     const handlerContent = await fs.readFile(BUILDER_HANDLER_PATH, 'utf-8');
 
     this.builderFunctionName = computeHashedLambdaResourceName({
-      prefix: BUILDER_FUNCTION_NAME_PREFIX,
+      resourceNamePrefix: BUILDER_FUNCTION_NAME_PREFIX,
       namespace: this.options.resourceNamespace,
       contents: [handlerContent],
     });

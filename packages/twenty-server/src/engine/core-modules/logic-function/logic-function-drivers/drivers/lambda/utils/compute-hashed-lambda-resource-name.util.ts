@@ -1,15 +1,15 @@
 import { createHash } from 'crypto';
 
-import { isNonEmptyString } from '@sniptt/guards';
+import { buildLambdaResourceName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-lambda-resource-name.util';
 
 const RESOURCE_NAME_CHECKSUM_LENGTH = 12;
 
 export const computeHashedLambdaResourceName = ({
-  prefix,
+  resourceNamePrefix,
   namespace,
   contents,
 }: {
-  prefix: string;
+  resourceNamePrefix: string;
   namespace?: string;
   contents: ReadonlyArray<string>;
 }): string => {
@@ -21,7 +21,5 @@ export const computeHashedLambdaResourceName = ({
 
   const checksum = hash.digest('hex').slice(0, RESOURCE_NAME_CHECKSUM_LENGTH);
 
-  return isNonEmptyString(namespace)
-    ? `${prefix}-${namespace}-${checksum}`
-    : `${prefix}-${checksum}`;
+  return buildLambdaResourceName({ resourceNamePrefix, namespace, checksum });
 };

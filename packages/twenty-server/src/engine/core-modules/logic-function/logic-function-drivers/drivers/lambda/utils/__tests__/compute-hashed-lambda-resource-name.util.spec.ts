@@ -3,7 +3,7 @@ import { computeHashedLambdaResourceName } from 'src/engine/core-modules/logic-f
 describe('computeHashedLambdaResourceName', () => {
   it('returns prefix concatenated with a 12-character sha256 hex checksum of the contents', () => {
     const name = computeHashedLambdaResourceName({
-      prefix: 'twenty-builder',
+      resourceNamePrefix: 'twenty-builder',
       contents: ['handler-code'],
     });
 
@@ -12,7 +12,7 @@ describe('computeHashedLambdaResourceName', () => {
 
   it('inserts the namespace as a distinct segment before the checksum', () => {
     const name = computeHashedLambdaResourceName({
-      prefix: 'twenty-builder',
+      resourceNamePrefix: 'twenty-builder',
       namespace: 'abc123def0',
       contents: ['handler-code'],
     });
@@ -22,11 +22,11 @@ describe('computeHashedLambdaResourceName', () => {
 
   it('keeps the checksum stable and only prepends the namespace', () => {
     const withoutNamespace = computeHashedLambdaResourceName({
-      prefix: 'twenty-builder',
+      resourceNamePrefix: 'twenty-builder',
       contents: ['handler-code'],
     });
     const withNamespace = computeHashedLambdaResourceName({
-      prefix: 'twenty-builder',
+      resourceNamePrefix: 'twenty-builder',
       namespace: 'abc123def0',
       contents: ['handler-code'],
     });
@@ -38,7 +38,7 @@ describe('computeHashedLambdaResourceName', () => {
 
   it('omits the namespace segment when it is an empty string', () => {
     const name = computeHashedLambdaResourceName({
-      prefix: 'twenty-builder',
+      resourceNamePrefix: 'twenty-builder',
       namespace: '',
       contents: ['handler-code'],
     });

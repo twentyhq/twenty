@@ -1,6 +1,7 @@
-import { isNonEmptyString } from '@sniptt/guards';
-
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { buildLambdaResourceName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-lambda-resource-name.util';
+
+const DEPS_LAYER_NAME_PREFIX = 'deps';
 
 export const getLambdaDepsLayerName = ({
   flatApplication,
@@ -8,10 +9,9 @@ export const getLambdaDepsLayerName = ({
 }: {
   flatApplication: FlatApplication;
   namespace?: string;
-}): string => {
-  const checksum = flatApplication.yarnLockChecksum ?? 'default';
-
-  return isNonEmptyString(namespace)
-    ? `deps-${namespace}-${checksum}`
-    : `deps-${checksum}`;
-};
+}): string =>
+  buildLambdaResourceName({
+    resourceNamePrefix: DEPS_LAYER_NAME_PREFIX,
+    namespace,
+    checksum: flatApplication.yarnLockChecksum ?? 'default',
+  });
