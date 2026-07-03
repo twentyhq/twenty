@@ -342,6 +342,81 @@ describe('StreamAgentChatJob', () => {
     );
   });
 
+  it('persists the interrupted error and publishes the terminal sequence when aborted by a worker shutdown', async () => {
+    let triggerShutdown: (() => void) | undefined;
+
+    const {
+      job,
+      publishedEvents,
+      threadRepository,
+      agentChatStreamingService,
+    } = buildJob({
+      chatStream: createFakeChatStream({
+        onFirstChunk: () => triggerShutdown?.(),
+      }),
+    });
+
+    const shutdownController = new AbortController();
+
+    triggerShutdown = () => shutdownController.abort();
+
+    await expect(
+      job.handle(jobData, { abortSignal: shutdownController.signal }),
+    ).rejects.toMatchObject({ code: AiExceptionCode.STREAM_INTERRUPTED });
+
+    const eventTypes = publishedEvents.map((event) => event.type);
+    const streamErrorIndex = eventTypes.indexOf('stream-error');
+    const queueUpdatedIndex = eventTypes.indexOf('queue-updated');
+
+    expect(publishedEvents[streamErrorIndex]).toMatchObject({
+      type: 'stream-error',
+      code: AiExceptionCode.STREAM_INTERRUPTED,
+    });
+    expect(queueUpdatedIndex).toBeGreaterThan(streamErrorIndex);
+    expect(eventTypes).not.toContain('message-persisted');
+    expect(threadRepository.update).toHaveBeenCalledWith(
+      'workspace-id',
+      { id: 'thread-id' },
+      {
+        lastStreamError: expect.objectContaining({
+          code: AiExceptionCode.STREAM_INTERRUPTED,
+        }),
+      },
+    );
+    expect(threadRepository.update).toHaveBeenCalledWith(
+      'workspace-id',
+      { id: 'thread-id', activeStreamId: 'stream-id' },
+      { activeStreamId: null },
+    );
+    expect(
+      agentChatStreamingService.flushNextQueuedMessage,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('keeps user-cancel semantics when a shutdown signal is wired but never aborted', async () => {
+    let triggerUserCancel: (() => void) | undefined;
+
+    const { job, publishedEvents, agentChatStreamingService, cancelCallbacks } =
+      buildJob({
+        chatStream: createFakeChatStream({
+          onFirstChunk: () => triggerUserCancel?.(),
+        }),
+      });
+
+    triggerUserCancel = () => cancelCallbacks.forEach((callback) => callback());
+
+    const shutdownController = new AbortController();
+
+    await job.handle(jobData, { abortSignal: shutdownController.signal });
+
+    expect(publishedEvents.map((event) => event.type)).not.toContain(
+      'stream-error',
+    );
+    expect(
+      agentChatStreamingService.flushNextQueuedMessage,
+    ).not.toHaveBeenCalled();
+  });
+
   it('resolves without flushing the queue when the stream is cancelled', async () => {
     let triggerCancel: (() => void) | undefined;
 

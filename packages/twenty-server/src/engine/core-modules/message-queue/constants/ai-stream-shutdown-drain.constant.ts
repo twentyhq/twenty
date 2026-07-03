@@ -1,0 +1,1 @@
+export const AI_STREAM_SHUTDOWN_DRAIN_MS = 60 * 1000;

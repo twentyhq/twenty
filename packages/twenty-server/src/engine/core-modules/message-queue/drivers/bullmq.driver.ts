@@ -47,6 +47,9 @@ export class BullMQDriver
     MessageQueue,
     Worker
   >;
+  private workerOptionsMap: Partial<
+    Record<MessageQueue, MessageQueueWorkerOptions>
+  > = {};
 
   constructor(
     private options: BullMQDriverOptions,
@@ -89,13 +92,54 @@ export class BullMQDriver
   }
 
   async onModuleDestroy() {
-    const workers = Object.values(this.workerMap);
+    const workers = Object.entries(this.workerMap) as [MessageQueue, Worker][];
     const queues = Object.values(this.queueMap);
 
-    await Promise.all([
-      ...queues.map((q) => q.close()),
-      ...workers.map((w) => w.close()),
-    ]);
+    if (workers.length > 0) {
+      this.logger.log(
+        `Draining active jobs on queues: ${workers.map(([queueName]) => queueName).join(', ')}`,
+      );
+    }
+
+    // Workers close first so jobs finishing during the drain can still
+    // enqueue follow-up jobs through the queue instances
+    await Promise.all(
+      workers.map(([queueName, worker]) => this.closeWorker(queueName, worker)),
+    );
+    await Promise.all(queues.map((queue) => queue.close()));
+
+    this.logger.log('Message queue shutdown complete');
+  }
+
+  // close() waits for active jobs with no upper bound; queues that declare a
+  // shutdownTimeoutMs get their remaining jobs aborted through the abort
+  // signal handed to the processor, so the process exits within the pod's
+  // termination grace period instead of being SIGKILLed mid-job
+  private async closeWorker(
+    queueName: MessageQueue,
+    worker: Worker,
+  ): Promise<void> {
+    const shutdownTimeoutMs =
+      this.workerOptionsMap[queueName]?.shutdownTimeoutMs;
+
+    if (!isDefined(shutdownTimeoutMs)) {
+      await worker.close();
+
+      return;
+    }
+
+    const abortTimer = setTimeout(() => {
+      this.logger.warn(
+        `Queue ${queueName} still has active jobs after draining for ${shutdownTimeoutMs}ms, aborting them`,
+      );
+      worker.cancelAllJobs('worker shutdown');
+    }, shutdownTimeoutMs);
+
+    try {
+      await worker.close();
+    } finally {
+      clearTimeout(abortTimer);
+    }
   }
 
   work<T>(
@@ -117,9 +161,13 @@ export class BullMQDriver
       },
     };
 
+    this.workerOptionsMap[queueName] = options;
+
+    // BullMQ only creates per-job abort controllers when the processor
+    // declares the signal parameter (processor.length >= 3)
     this.workerMap[queueName] = new Worker(
       queueName,
-      async (job) =>
+      async (job, _token, abortSignal) =>
         Sentry.withIsolationScope(async () => {
           applyWorkspaceSentryContextFromJobData(job.data);
 
@@ -142,7 +190,12 @@ export class BullMQDriver
           this.logger.log(
             `Processing job ${job.id} with name ${job.name} on queue ${queueName}${workspaceSuffix}`,
           );
-          await handler({ data: job.data, id: job.id ?? '', name: job.name });
+          await handler({
+            data: job.data,
+            id: job.id ?? '',
+            name: job.name,
+            abortSignal,
+          });
           const timeEnd = performance.now();
           const executionTime = timeEnd - timeStart;
 

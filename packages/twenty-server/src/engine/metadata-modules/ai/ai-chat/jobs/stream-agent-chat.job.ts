@@ -12,6 +12,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v5 as uuidv5 } from 'uuid';
 
+import { type MessageQueueJobContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
+
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -67,7 +69,10 @@ export class StreamAgentChatJob {
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
-  async handle(data: StreamAgentChatJobData): Promise<void> {
+  async handle(
+    data: StreamAgentChatJobData,
+    context?: MessageQueueJobContext,
+  ): Promise<void> {
     await this.eventPublisherService.resetStreamState(data.threadId);
 
     const abortController = new AbortController();
@@ -80,6 +85,22 @@ export class StreamAgentChatJob {
     await this.cancelSubscriberService.subscribe(cancelChannel, () => {
       abortController.abort();
     });
+
+    // A worker-shutdown abort carries an AiException reason so the stream
+    // terminates as a retryable failure, unlike a user cancel which resolves
+    // cleanly
+    context?.abortSignal?.addEventListener(
+      'abort',
+      () => {
+        abortController.abort(
+          new AiException(
+            'The response was interrupted before it could finish.',
+            AiExceptionCode.STREAM_INTERRUPTED,
+          ),
+        );
+      },
+      { once: true },
+    );
 
     try {
       const workspace = await this.workspaceRepository.findOne({
@@ -248,7 +269,17 @@ export class StreamAgentChatJob {
         resolveStreamFinished = res;
       });
 
-      abortSignal.addEventListener('abort', () => resolve(), { once: true });
+      abortSignal.addEventListener(
+        'abort',
+        () => {
+          if (abortSignal.reason instanceof AiException) {
+            reject(abortSignal.reason);
+          } else {
+            resolve();
+          }
+        },
+        { once: true },
+      );
 
       const uiStream = createUIMessageStream<ExtendedUIMessage>({
         execute: async ({ writer }) => {
