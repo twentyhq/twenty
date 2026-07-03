@@ -7005,6 +7005,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fontsource/dm-mono@npm:^5.2.7":
+  version: 5.2.7
+  resolution: "@fontsource/dm-mono@npm:5.2.7"
+  checksum: 10c0/028843c26545e86ad01219786daabe18386ed5e19ebefd6bc00fd799f8dc33df0c3d679fe942bf9355696d21903459282d97cd671ee8b2e05cd876560f9bb441
+  languageName: node
+  linkType: hard
+
+"@fontsource/inter@npm:^5.2.8":
+  version: 5.2.8
+  resolution: "@fontsource/inter@npm:5.2.8"
+  checksum: 10c0/f737dd50005e4809887ba55ae0c9b7174216d6d14875d17a4fbb9a0ad75dec4265928b805a43fe16a23f14a878f1974a398bbfc84ad65c79fc4d4b9c3ea154e1
+  languageName: node
+  linkType: hard
+
 "@gar/promise-retry@npm:^1.0.0, @gar/promise-retry@npm:^1.0.2":
   version: 1.0.3
   resolution: "@gar/promise-retry@npm:1.0.3"
@@ -52817,6 +52831,8 @@ __metadata:
     "@dnd-kit/react": "npm:^0.3.2"
     "@dr.pogodin/react-helmet": "npm:^3.2.2"
     "@floating-ui/react": "npm:^0.24.3"
+    "@fontsource/dm-mono": "npm:^5.2.7"
+    "@fontsource/inter": "npm:^5.2.8"
     "@graphiql/plugin-explorer": "npm:^5.1.2"
     "@graphiql/react": "npm:^0.37.6"
     "@graphql-codegen/cli": "npm:^6.3.1"
