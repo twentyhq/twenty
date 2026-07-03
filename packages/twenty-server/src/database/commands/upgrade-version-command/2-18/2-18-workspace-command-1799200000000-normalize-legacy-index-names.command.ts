@@ -6,6 +6,8 @@ import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/c
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { areIndexDefinitionsEquivalent } from 'src/database/commands/upgrade-version-command/2-18/utils/are-index-definitions-equivalent.util';
+import { doesPhysicalIndexExist } from 'src/database/commands/upgrade-version-command/2-18/utils/does-physical-index-exist.util';
+import { getPhysicalIndexDefinition } from 'src/database/commands/upgrade-version-command/2-18/utils/get-physical-index-definition.util';
 import {
   type FlatIndexNameStatus,
   type IndexNameNormalizationOperation,
@@ -208,12 +210,11 @@ export class NormalizeLegacyIndexNamesCommand extends ActiveOrSuspendedWorkspace
     workspaceId: string;
   }): Promise<void> {
     if (operation.type === 'rename') {
-      const targetIndexExists =
-        await this.workspaceSchemaManagerService.indexManager.doesIndexExist({
-          queryRunner,
-          schemaName,
-          indexName: operation.toName,
-        });
+      const targetIndexExists = await doesPhysicalIndexExist({
+        queryRunner,
+        schemaName,
+        indexName: operation.toName,
+      });
 
       if (targetIndexExists) {
         await this.reconcileRenameWithExistingTargetIndex({
@@ -273,12 +274,11 @@ export class NormalizeLegacyIndexNamesCommand extends ActiveOrSuspendedWorkspace
     operation: RenameIndexNameOperation;
     workspaceId: string;
   }): Promise<void> {
-    const sourceIndexExists =
-      await this.workspaceSchemaManagerService.indexManager.doesIndexExist({
-        queryRunner,
-        schemaName,
-        indexName: operation.fromName,
-      });
+    const sourceIndexExists = await doesPhysicalIndexExist({
+      queryRunner,
+      schemaName,
+      indexName: operation.fromName,
+    });
 
     if (!sourceIndexExists) {
       this.logger.log(
@@ -288,18 +288,16 @@ export class NormalizeLegacyIndexNamesCommand extends ActiveOrSuspendedWorkspace
       return;
     }
 
-    const sourceIndexDefinition =
-      await this.workspaceSchemaManagerService.indexManager.getIndexDefinition({
-        queryRunner,
-        schemaName,
-        indexName: operation.fromName,
-      });
-    const targetIndexDefinition =
-      await this.workspaceSchemaManagerService.indexManager.getIndexDefinition({
-        queryRunner,
-        schemaName,
-        indexName: operation.toName,
-      });
+    const sourceIndexDefinition = await getPhysicalIndexDefinition({
+      queryRunner,
+      schemaName,
+      indexName: operation.fromName,
+    });
+    const targetIndexDefinition = await getPhysicalIndexDefinition({
+      queryRunner,
+      schemaName,
+      indexName: operation.toName,
+    });
 
     if (
       isDefined(sourceIndexDefinition) &&
@@ -339,12 +337,11 @@ export class NormalizeLegacyIndexNamesCommand extends ActiveOrSuspendedWorkspace
     operation: RenameIndexNameOperation;
     workspaceId: string;
   }): Promise<void> {
-    const sourceIndexExists =
-      await this.workspaceSchemaManagerService.indexManager.doesIndexExist({
-        queryRunner,
-        schemaName,
-        indexName: operation.fromName,
-      });
+    const sourceIndexExists = await doesPhysicalIndexExist({
+      queryRunner,
+      schemaName,
+      indexName: operation.fromName,
+    });
 
     if (!sourceIndexExists) {
       this.logger.warn(

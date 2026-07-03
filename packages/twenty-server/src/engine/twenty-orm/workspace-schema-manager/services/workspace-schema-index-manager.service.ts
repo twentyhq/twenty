@@ -106,46 +106,4 @@ export class WorkspaceSchemaIndexManagerService {
 
     await queryRunner.query(sql);
   }
-
-  async doesIndexExist({
-    queryRunner,
-    schemaName,
-    indexName,
-  }: {
-    queryRunner: QueryRunner;
-    schemaName: string;
-    indexName: string;
-  }): Promise<boolean> {
-    const result: { exists: boolean }[] = await queryRunner.query(
-      `SELECT EXISTS (
-        SELECT 1
-        FROM pg_class c
-        JOIN pg_namespace n ON n.oid = c.relnamespace
-        WHERE c.relname = $2 AND n.nspname = $1 AND c.relkind IN ('i', 'I')
-      ) AS "exists"`,
-      [schemaName, indexName],
-    );
-
-    return result[0]?.exists === true;
-  }
-
-  async getIndexDefinition({
-    queryRunner,
-    schemaName,
-    indexName,
-  }: {
-    queryRunner: QueryRunner;
-    schemaName: string;
-    indexName: string;
-  }): Promise<string | null> {
-    const result: { indexdef: string }[] = await queryRunner.query(
-      `SELECT pg_get_indexdef(c.oid) AS "indexdef"
-      FROM pg_class c
-      JOIN pg_namespace n ON n.oid = c.relnamespace
-      WHERE c.relname = $2 AND n.nspname = $1 AND c.relkind IN ('i', 'I')`,
-      [schemaName, indexName],
-    );
-
-    return result[0]?.indexdef ?? null;
-  }
 }

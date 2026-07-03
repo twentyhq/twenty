@@ -1,6 +1,8 @@
 import { type DataSource, type QueryRunner } from 'typeorm';
 
 import { NormalizeLegacyIndexNamesCommand } from 'src/database/commands/upgrade-version-command/2-18/2-18-workspace-command-1799200000000-normalize-legacy-index-names.command';
+import { doesPhysicalIndexExist } from 'src/database/commands/upgrade-version-command/2-18/utils/does-physical-index-exist.util';
+import { getPhysicalIndexDefinition } from 'src/database/commands/upgrade-version-command/2-18/utils/get-physical-index-definition.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
@@ -16,11 +18,19 @@ jest.mock(
 jest.mock(
   'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils',
 );
+jest.mock(
+  'src/database/commands/upgrade-version-command/2-18/utils/does-physical-index-exist.util',
+);
+jest.mock(
+  'src/database/commands/upgrade-version-command/2-18/utils/get-physical-index-definition.util',
+);
 
 const generateFlatIndexMetadataWithNameOrThrowMock =
   generateFlatIndexMetadataWithNameOrThrow as jest.Mock;
 const deleteIndexMetadataMock = deleteIndexMetadata as jest.Mock;
 const dropIndexFromWorkspaceSchemaMock = dropIndexFromWorkspaceSchema as jest.Mock;
+const doesPhysicalIndexExistMock = doesPhysicalIndexExist as jest.Mock;
+const getPhysicalIndexDefinitionMock = getPhysicalIndexDefinition as jest.Mock;
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 
@@ -100,13 +110,11 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
   let command: NormalizeLegacyIndexNamesCommand;
   let renameIndexMock: jest.Mock;
   let dropIndexMock: jest.Mock;
-  let doesIndexExistMock: jest.Mock;
-  let getIndexDefinitionMock: jest.Mock;
   let getOrRecomputeMock: jest.Mock;
   let invalidateAndRecomputeMock: jest.Mock;
 
   const setPhysicalIndexes = (physicalIndexNames: string[]) => {
-    doesIndexExistMock.mockImplementation(
+    doesPhysicalIndexExistMock.mockImplementation(
       ({ indexName }: { indexName: string }) =>
         Promise.resolve(physicalIndexNames.includes(indexName)),
     );
@@ -115,7 +123,7 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
   const setPhysicalIndexDefinitions = (
     definitionsByName: Record<string, string>,
   ) => {
-    getIndexDefinitionMock.mockImplementation(
+    getPhysicalIndexDefinitionMock.mockImplementation(
       ({ indexName }: { indexName: string }) =>
         Promise.resolve(definitionsByName[indexName] ?? null),
     );
@@ -126,8 +134,6 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
 
     renameIndexMock = jest.fn();
     dropIndexMock = jest.fn();
-    doesIndexExistMock = jest.fn();
-    getIndexDefinitionMock = jest.fn();
     getOrRecomputeMock = jest.fn();
     invalidateAndRecomputeMock = jest.fn();
 
@@ -140,8 +146,6 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
       indexManager: {
         renameIndexWithoutRebuild: renameIndexMock,
         dropIndex: dropIndexMock,
-        doesIndexExist: doesIndexExistMock,
-        getIndexDefinition: getIndexDefinitionMock,
       },
     } as unknown as WorkspaceSchemaManagerService;
 
