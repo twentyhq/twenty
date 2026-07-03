@@ -20,7 +20,7 @@ const buildConnection = (
 });
 
 describe('findCallRecordingIdsMissingSummary', () => {
-  it('targets app-created completed recordings with a transcript outside the grace window', async () => {
+  it('targets app-created completed recordings with a transcript', async () => {
     let capturedFilter: unknown;
     const query = vi.fn(async (queryArg: any) => {
       capturedFilter = queryArg.callRecordings.__args.filter;
@@ -28,14 +28,11 @@ describe('findCallRecordingIdsMissingSummary', () => {
       return buildConnection([], { hasNextPage: false, endCursor: null });
     });
 
-    await findCallRecordingIdsMissingSummary({ query } as never, {
-      updatedBefore: '2026-07-02T11:30:00.000Z',
-    });
+    await findCallRecordingIdsMissingSummary({ query } as never);
 
     expect(capturedFilter).toEqual({
       status: { eq: 'COMPLETED' },
       transcript: { is: 'NOT_NULL' },
-      updatedAt: { lte: '2026-07-02T11:30:00.000Z' },
       createdBy: {
         source: { eq: 'APPLICATION' },
         name: { eq: 'Call Recorder' },
@@ -79,10 +76,9 @@ describe('findCallRecordingIdsMissingSummary', () => {
         ),
       );
 
-    const callRecordingIds = await findCallRecordingIdsMissingSummary(
-      { query } as never,
-      { updatedBefore: '2026-07-02T11:30:00.000Z' },
-    );
+    const callRecordingIds = await findCallRecordingIdsMissingSummary({
+      query,
+    } as never);
 
     expect(callRecordingIds).toEqual([
       'call-recording-new',
@@ -123,10 +119,9 @@ describe('findCallRecordingIdsMissingSummary', () => {
       ),
     );
 
-    const callRecordingIds = await findCallRecordingIdsMissingSummary(
-      { query } as never,
-      { updatedBefore: '2026-07-02T11:30:00.000Z' },
-    );
+    const callRecordingIds = await findCallRecordingIdsMissingSummary({
+      query,
+    } as never);
 
     expect(callRecordingIds).toEqual(['call-recording-valid']);
   });

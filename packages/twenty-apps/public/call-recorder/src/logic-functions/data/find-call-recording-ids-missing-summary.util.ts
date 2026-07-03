@@ -21,7 +21,6 @@ type CallRecordingSummaryStateNode = {
 
 export const findCallRecordingIdsMissingSummary = async (
   client: CoreApiClient,
-  { updatedBefore }: { updatedBefore: string },
 ): Promise<string[]> => {
   const callRecordingNodes = await fetchAllNodes<CallRecordingSummaryStateNode>(
     async (afterCursor) => {
@@ -31,7 +30,6 @@ export const findCallRecordingIdsMissingSummary = async (
             filter: {
               status: { eq: CallRecordingStatus.COMPLETED },
               transcript: { is: 'NOT_NULL' },
-              updatedAt: { lte: updatedBefore },
               // Never sweep recordings another app or a user created — agent
               // runs are billed, so the unattended path only spends on ours.
               createdBy: {

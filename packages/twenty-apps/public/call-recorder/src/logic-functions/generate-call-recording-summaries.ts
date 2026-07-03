@@ -11,7 +11,6 @@ import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.
 
 const TIMEOUT_SECONDS = 900;
 const CONTINUATION_RESERVE_MS = 30_000;
-const RECENT_UPDATE_GRACE_MINUTES = 30;
 
 type GenerateCallRecordingSummariesRouteBody = {
   callRecordingIds?: string[];
@@ -75,11 +74,7 @@ export const generateCallRecordingSummariesHandler = async (
   const isSweep = !hasRequestedIds;
 
   if (isSweep) {
-    callRecordingIds = await findCallRecordingIdsMissingSummary(client, {
-      updatedBefore: new Date(
-        startedAtMs - RECENT_UPDATE_GRACE_MINUTES * 60 * 1000,
-      ).toISOString(),
-    });
+    callRecordingIds = await findCallRecordingIdsMissingSummary(client);
 
     if (callRecordingIds.length === 0) {
       return { outcome: 'nothing-to-summarize' };

@@ -142,7 +142,6 @@ describe('generateCallRecordingSummariesHandler', () => {
 
     expect(findCallRecordingIdsMissingSummaryMock).toHaveBeenCalledWith(
       expect.anything(),
-      { updatedBefore: expect.any(String) },
     );
     expect(generateMissingCallRecordingSummariesMock).toHaveBeenCalledWith(
       expect.objectContaining({
