@@ -134,7 +134,9 @@ const expandWebhookMappingInputs = (
     record: payload.record,
   };
 
-  if (payload.table !== 'orders' || !hasOrderPaymentFields(payload.record)) {
+  // DELETE on orders: always produce a payment mapping for tombstoning,
+  // even if old_record lacks payment fields (they may have been nulled before deletion).
+  if (payload.table !== 'orders' || (payload.type !== 'DELETE' && !hasOrderPaymentFields(payload.record))) {
     return [baseInput];
   }
 
@@ -261,10 +263,10 @@ export const handleSupabaseSyncWebhook = async (
 
       tombstoned += 1;
 
-      console.info('xopure_supabase_sync_row_tombstoned', {
-        sourceTable: mappedRecord.sourceTable,
-        sourceRecordId: mappedRecord.sourceRecordId,
-        targetObject: mappedRecord.targetObject,
+      console.info('xopure_sync_transaction', {
+        syncId: mappedRecord.syncKey,
+        action: 'deleted',
+        hashStatus: 'deleted',
       });
     }
 
