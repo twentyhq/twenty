@@ -10,7 +10,9 @@ import type {
   MyProfilePayload,
   ProfileOptions,
 } from './my-profile/types';
+import { LinksSection } from './my-profile/LinksSection';
 import { ProfileSection } from './my-profile/ProfileSection';
+import { ServicesSection } from './my-profile/ServicesSection';
 
 const MyProfile = () => {
   const userId = useUserId();
@@ -80,12 +82,20 @@ const MyProfile = () => {
 
       <section style={{ marginBottom: 32 }}>
         <h2 style={{ fontSize: 16, marginBottom: 12 }}>Links</h2>
-        <p style={{ opacity: 0.5, fontSize: 13 }}>Coming soon.</p>
+        <LinksSection
+          links={profile.links}
+          onSaved={(links) => setProfile((previous) => (previous ? { ...previous, links } : previous))}
+        />
       </section>
 
       <section style={{ marginBottom: 32 }}>
         <h2 style={{ fontSize: 16, marginBottom: 12 }}>Services</h2>
-        <p style={{ opacity: 0.5, fontSize: 13 }}>Coming soon.</p>
+        <ServicesSection
+          services={profile.services}
+          onSaved={(services) =>
+            setProfile((previous) => (previous ? { ...previous, services } : previous))
+          }
+        />
       </section>
 
       <section style={{ marginBottom: 32 }}>

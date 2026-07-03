@@ -210,6 +210,29 @@ export const UrlField = ({ label, value, onChange, placeholder }: UrlFieldProps)
   </label>
 );
 
+type NumberFieldProps = {
+  label: string;
+  value: number | null;
+  onChange: (value: number | null) => void;
+  placeholder?: string;
+};
+
+export const NumberField = ({ label, value, onChange, placeholder }: NumberFieldProps) => (
+  <label style={fieldWrapperStyle}>
+    <span style={labelTextStyle}>{label}</span>
+    <input
+      type="number"
+      value={value ?? ''}
+      placeholder={placeholder}
+      onChange={(event: ChangeEvent<HTMLInputElement>) => {
+        const next = event.target.value;
+        onChange(next.trim() === '' ? null : Number(next));
+      }}
+      style={inputStyle}
+    />
+  </label>
+);
+
 type ReadOnlyChipsProps = {
   label: string;
   values: string[] | null;
