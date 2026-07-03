@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ExtendedUIMessage } from 'twenty-shared/ai';
-import { In, IsNull, Not, Repository } from 'typeorm';
+import { In, IsNull, Not, QueryFailedError, Repository } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
@@ -155,13 +155,25 @@ export class AgentChatService {
   }
 
   async getLastMessageAtForThread(threadId: string): Promise<Date | null> {
-    const result = await this.messageRepository
-      .createQueryBuilder('message')
-      .select('MAX(message.createdAt)', 'last_message_at')
-      .where('message.threadId = :threadId', { threadId })
-      .getRawOne<{ last_message_at: Date | null }>();
+    try {
+      const result = await this.messageRepository
+        .createQueryBuilder('message')
+        .select('MAX(message.createdAt)', 'last_message_at')
+        .where('message.threadId = :threadId', { threadId })
+        .getRawOne<{ last_message_at: Date | null }>();
 
-    return result?.last_message_at ?? null;
+      return result?.last_message_at ?? null;
+    } catch (error) {
+      if (error instanceof QueryFailedError) {
+        this.logger.warn(
+          `getLastMessageAtForThread timed out for thread ${threadId}`,
+        );
+
+        return null;
+      }
+
+      throw error;
+    }
   }
 
   async addMessage({
@@ -192,13 +204,15 @@ export class AgentChatService {
       actualTurnId = turnInsertResult.identifiers[0].id as string;
     }
 
+    const processedAt = new Date();
+
     const messageValues = {
       ...(id ? { id } : {}),
       threadId,
       turnId: actualTurnId,
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
-      processedAt: new Date(),
+      processedAt,
       workspaceId,
     };
 
@@ -224,7 +238,7 @@ export class AgentChatService {
       turnId: actualTurnId,
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
-      processedAt: new Date(),
+      processedAt,
       workspaceId,
     } as AgentMessageEntity;
   }
@@ -543,9 +557,11 @@ export class AgentChatService {
   async notifyThreadUsageUpdated({
     threadId,
     userWorkspaceId,
+    lastMessageAt,
   }: {
     threadId: string;
     userWorkspaceId: string;
+    lastMessageAt?: Date;
   }): Promise<void> {
     const thread = await this.getThreadById(threadId, userWorkspaceId);
 
@@ -560,6 +576,7 @@ export class AgentChatService {
         'contextWindowTokens',
       ],
       userWorkspaceId,
+      lastMessageAt,
     );
   }
 
@@ -567,8 +584,10 @@ export class AgentChatService {
     thread: AgentChatThreadEntity,
     updatedFields: (keyof AgentChatThreadDTO)[],
     userWorkspaceId: string,
+    lastMessageAtOverride?: Date,
   ): Promise<void> {
-    const lastMessageAt = await this.getLastMessageAtForThread(thread.id);
+    const lastMessageAt =
+      lastMessageAtOverride ?? (await this.getLastMessageAtForThread(thread.id));
 
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId: thread.workspaceId,

@@ -473,7 +473,7 @@ export class StreamAgentChatJob {
 
     const userMessage = await userMessagePromise;
 
-    await this.agentChatService.addMessage({
+    const assistantMessage = await this.agentChatService.addMessage({
       threadId,
       uiMessage: responseMessage,
       turnId: userMessage.turnId ?? undefined,
@@ -499,6 +499,7 @@ export class StreamAgentChatJob {
     await this.agentChatService.notifyThreadUsageUpdated({
       threadId,
       userWorkspaceId,
+      lastMessageAt: assistantMessage.processedAt,
     });
   }
 }
