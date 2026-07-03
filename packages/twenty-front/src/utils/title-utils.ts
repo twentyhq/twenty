@@ -3,6 +3,7 @@ import { AppBasePath, AppPath, SettingsPath } from 'twenty-shared/types';
 
 enum SettingsPathPrefixes {
   Accounts = `${AppBasePath.Settings}/${SettingsPath.Accounts}`,
+  Billing = `${AppBasePath.Settings}/${SettingsPath.Billing}`,
   Experience = `${AppBasePath.Settings}/${SettingsPath.Experience}`,
   Profile = `${AppBasePath.Settings}/${SettingsPath.ProfilePage}`,
   Objects = `${AppBasePath.Settings}/${SettingsPath.Objects}`,
@@ -43,6 +44,8 @@ export const getPageTitleFromPath = (pathname: string): string => {
       return t`Experience - Settings`;
     case SettingsPathPrefixes.Accounts:
       return t`Account - Settings`;
+    case SettingsPathPrefixes.Billing:
+      return t`Billing - Settings`;
     case SettingsPathPrefixes.Profile:
       return t`Profile - Settings`;
     case SettingsPathPrefixes.Members:
