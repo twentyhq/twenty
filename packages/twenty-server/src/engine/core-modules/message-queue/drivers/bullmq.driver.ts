@@ -89,13 +89,40 @@ export class BullMQDriver
   }
 
   async onModuleDestroy() {
-    const workers = Object.values(this.workerMap);
+    const workers = Object.entries(this.workerMap);
     const queues = Object.values(this.queueMap);
 
-    await Promise.all([
-      ...queues.map((q) => q.close()),
-      ...workers.map((w) => w.close()),
-    ]);
+    if (workers.length > 0) {
+      this.logger.log(
+        `Draining active jobs on queues: ${workers.map(([queueName]) => queueName).join(', ')}`,
+      );
+    }
+
+    let workerCloseError: unknown;
+
+    try {
+      await Promise.all(workers.map(([, worker]) => worker.close()));
+    } catch (error) {
+      workerCloseError = error;
+    }
+
+    try {
+      await Promise.all(queues.map((queue) => queue.close()));
+    } catch (error) {
+      if (!isDefined(workerCloseError)) {
+        throw error;
+      }
+
+      this.logger.error(
+        `Failed to close queues during shutdown: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+
+    if (isDefined(workerCloseError)) {
+      throw workerCloseError;
+    }
+
+    this.logger.log('Message queue shutdown complete');
   }
 
   work<T>(
