@@ -13,6 +13,7 @@ describe('isCallRecordingIngestionComplete', () => {
         transcript: TRANSCRIPT_CONTENT,
         audio: AUDIO_VALUE,
         video: VIDEO_VALUE,
+        callRecorderFailureReason: undefined,
       }),
     ).toBe(true);
   });
@@ -26,6 +27,7 @@ describe('isCallRecordingIngestionComplete', () => {
         },
         audio: AUDIO_VALUE,
         video: VIDEO_VALUE,
+        callRecorderFailureReason: undefined,
       }),
     ).toBe(false);
   });
@@ -36,6 +38,7 @@ describe('isCallRecordingIngestionComplete', () => {
         transcript: null,
         audio: AUDIO_VALUE,
         video: VIDEO_VALUE,
+        callRecorderFailureReason: undefined,
       }),
     ).toBe(false);
   });
@@ -46,6 +49,7 @@ describe('isCallRecordingIngestionComplete', () => {
         transcript: TRANSCRIPT_CONTENT,
         audio: undefined,
         video: VIDEO_VALUE,
+        callRecorderFailureReason: undefined,
       }),
     ).toBe(false);
     expect(
@@ -53,6 +57,56 @@ describe('isCallRecordingIngestionComplete', () => {
         transcript: TRANSCRIPT_CONTENT,
         audio: AUDIO_VALUE,
         video: [],
+        callRecorderFailureReason: undefined,
+      }),
+    ).toBe(false);
+  });
+
+  it('treats a media file skipped for size as resolved', () => {
+    expect(
+      isCallRecordingIngestionComplete({
+        transcript: TRANSCRIPT_CONTENT,
+        audio: AUDIO_VALUE,
+        video: undefined,
+        callRecorderFailureReason: 'video_file_too_large',
+      }),
+    ).toBe(true);
+    expect(
+      isCallRecordingIngestionComplete({
+        transcript: TRANSCRIPT_CONTENT,
+        audio: undefined,
+        video: VIDEO_VALUE,
+        callRecorderFailureReason: 'audio_file_too_large',
+      }),
+    ).toBe(true);
+    expect(
+      isCallRecordingIngestionComplete({
+        transcript: TRANSCRIPT_CONTENT,
+        audio: undefined,
+        video: undefined,
+        callRecorderFailureReason: 'video_file_too_large,audio_file_too_large',
+      }),
+    ).toBe(true);
+  });
+
+  it('does not let a size marker excuse the other missing artifact', () => {
+    expect(
+      isCallRecordingIngestionComplete({
+        transcript: TRANSCRIPT_CONTENT,
+        audio: undefined,
+        video: VIDEO_VALUE,
+        callRecorderFailureReason: 'video_file_too_large',
+      }),
+    ).toBe(false);
+  });
+
+  it('ignores unrelated failure reasons', () => {
+    expect(
+      isCallRecordingIngestionComplete({
+        transcript: TRANSCRIPT_CONTENT,
+        audio: AUDIO_VALUE,
+        video: undefined,
+        callRecorderFailureReason: 'recall_bot_not_found',
       }),
     ).toBe(false);
   });

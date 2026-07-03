@@ -65,7 +65,7 @@ export const SettingsWorkspaceEmail = () => {
                   onClick={() =>
                     navigateSettings(
                       isBillingEnabled
-                        ? SettingsPath.Billing
+                        ? SettingsPath.BillingPlans
                         : SettingsPath.AdminPanelEnterprise,
                     )
                   }

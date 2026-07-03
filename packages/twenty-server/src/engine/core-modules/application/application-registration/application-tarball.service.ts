@@ -9,6 +9,7 @@ import semver from 'semver';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -17,6 +18,7 @@ import {
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
 import { readJsonFile } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
@@ -169,6 +171,7 @@ export class ApplicationTarballService {
           name: manifest.application?.displayName ?? 'Unknown App',
           sourceType: ApplicationRegistrationSourceType.TARBALL,
           manifest,
+          ...fromManifestApplicationToDisplayFields(manifest.application),
           latestAvailableVersion: packageJson?.version ?? null,
           isListed: false,
           isFeatured: false,
@@ -206,11 +209,12 @@ export class ApplicationTarballService {
         tarballFileId: savedFile.id,
         name: manifest.application?.displayName ?? 'Unknown App',
         manifest,
+        ...fromManifestApplicationToDisplayFields(manifest.application),
         latestAvailableVersion: packageJson?.version ?? null,
         isListed: false,
         isFeatured: false,
         ownerWorkspaceId: params.ownerWorkspaceId,
-      });
+      } as QueryDeepPartialEntity<ApplicationRegistrationEntity>);
 
       if (manifest.application?.serverVariables) {
         await this.applicationRegistrationVariableService.syncVariableSchemas(

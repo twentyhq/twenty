@@ -25,6 +25,7 @@ import {
   type UpdateApplicationRegistrationPayload,
 } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -32,6 +33,49 @@ import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/
 import { MARKETPLACE_CURATED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-curated-applications.constant';
 
 const BCRYPT_SALT_ROUNDS = 10;
+
+const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegistrationEntity)[] =
+  [
+    'id',
+    'universalIdentifier',
+    'name',
+    'oAuthClientId',
+    'oAuthRedirectUris',
+    'oAuthScopes',
+    'createdByUserId',
+    'ownerWorkspaceId',
+    'sourceType',
+    'sourcePackage',
+    'tarballFileId',
+    'latestAvailableVersion',
+    'isListed',
+    'isFeatured',
+    'isPreInstalled',
+    'logo',
+    'description',
+    'author',
+    'category',
+    'websiteUrl',
+    'aboutDescription',
+    'termsUrl',
+    'emailSupport',
+    'issueReportUrl',
+    'screenshots',
+    'createdAt',
+    'updatedAt',
+  ];
+
+export type ApplicationRegistrationCatalogCard = {
+  id: string;
+  universalIdentifier: string;
+  name: string;
+  sourcePackage: string | null;
+  isFeatured: boolean;
+  description: string | null;
+  author: string | null;
+  category: string | null;
+  logoUrl: string | null;
+};
 
 @Injectable()
 export class ApplicationRegistrationService {
@@ -49,6 +93,7 @@ export class ApplicationRegistrationService {
     ownerWorkspaceId: string,
   ): Promise<ApplicationRegistrationEntity[]> {
     return this.applicationRegistrationRepository.find({
+      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
       where: { ownerWorkspaceId },
       order: { createdAt: 'DESC' },
     });
@@ -56,6 +101,7 @@ export class ApplicationRegistrationService {
 
   async findAll(): Promise<ApplicationRegistrationEntity[]> {
     return this.applicationRegistrationRepository.find({
+      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
       order: { createdAt: 'DESC' },
     });
   }
@@ -65,6 +111,7 @@ export class ApplicationRegistrationService {
     ownerWorkspaceId: string,
   ): Promise<ApplicationRegistrationEntity> {
     const registration = await this.applicationRegistrationRepository.findOne({
+      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
       where: { id, ownerWorkspaceId },
     });
 
@@ -80,6 +127,7 @@ export class ApplicationRegistrationService {
 
   async findOneByIdGlobal(id: string): Promise<ApplicationRegistrationEntity> {
     const registration = await this.applicationRegistrationRepository.findOne({
+      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
       where: { id },
     });
 
@@ -108,7 +156,7 @@ export class ApplicationRegistrationService {
   ): Promise<PublicApplicationRegistrationDTO | null> {
     const registration = await this.applicationRegistrationRepository.findOne({
       where: { oAuthClientId: clientId },
-      select: ['id', 'name', 'manifest', 'oAuthScopes'],
+      select: ['id', 'name', 'logo', 'websiteUrl', 'oAuthScopes'],
     });
 
     if (!registration) {
@@ -118,8 +166,8 @@ export class ApplicationRegistrationService {
     return {
       id: registration.id,
       name: registration.name,
-      logoUrl: registration.manifest?.application?.logoUrl ?? null,
-      websiteUrl: registration.manifest?.application?.websiteUrl ?? null,
+      logoUrl: registration.logo,
+      websiteUrl: registration.websiteUrl,
       oAuthScopes: registration.oAuthScopes,
     };
   }
@@ -251,6 +299,7 @@ export class ApplicationRegistrationService {
       ...existing,
       name: manifest.application.displayName,
       manifest,
+      ...fromManifestApplicationToDisplayFields(manifest.application),
       ...(sourceType !== undefined && { sourceType }),
     });
   }
@@ -320,6 +369,7 @@ export class ApplicationRegistrationService {
         sourcePackage: params.sourcePackage,
         latestAvailableVersion: params.latestAvailableVersion,
         manifest: params.manifest,
+        ...fromManifestApplicationToDisplayFields(params.manifest?.application),
         isFeatured,
       });
     } else {
@@ -332,6 +382,7 @@ export class ApplicationRegistrationService {
         isListed: true,
         isFeatured,
         manifest: params.manifest,
+        ...fromManifestApplicationToDisplayFields(params.manifest?.application),
         oAuthClientId: v4(),
         oAuthRedirectUris: [],
         oAuthScopes: [],
@@ -384,13 +435,38 @@ export class ApplicationRegistrationService {
     return this.applicationRegistrationRepository.save(registration);
   }
 
-  async findManyListed(): Promise<ApplicationRegistrationEntity[]> {
-    return this.applicationRegistrationRepository.find({
+  async findManyListedCatalogCards(): Promise<
+    ApplicationRegistrationCatalogCard[]
+  > {
+    const registrations = await this.applicationRegistrationRepository.find({
+      select: [
+        'id',
+        'universalIdentifier',
+        'name',
+        'sourcePackage',
+        'isFeatured',
+        'logo',
+        'description',
+        'author',
+        'category',
+      ],
       where: {
         isListed: true,
         sourceType: ApplicationRegistrationSourceType.NPM,
       },
     });
+
+    return registrations.map((registration) => ({
+      id: registration.id,
+      universalIdentifier: registration.universalIdentifier,
+      name: registration.name,
+      sourcePackage: registration.sourcePackage,
+      isFeatured: registration.isFeatured,
+      description: registration.description,
+      author: registration.author,
+      category: registration.category,
+      logoUrl: registration.logo,
+    }));
   }
 
   async getStats(

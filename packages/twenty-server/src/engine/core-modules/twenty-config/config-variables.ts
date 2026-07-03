@@ -565,7 +565,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.STORAGE_CONFIG,
     description:
-      'When enabled, file downloads are 302-redirected to S3 presigned URLs instead of being proxied through the server. Reduces server load and bandwidth.',
+      'When enabled, file downloads are 302-redirected to S3 presigned URLs and direct uploads go straight to S3 via presigned PUT URLs instead of being proxied through the server. Reduces server load and bandwidth. Requires a bucket CORS policy allowing PUT from the frontend origin.',
     type: ConfigVariableType.BOOLEAN,
   })
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
@@ -1958,6 +1958,25 @@ export class ConfigVariables {
   })
   @IsOptional()
   SES_SNS_TOPIC_ARN_ALLOWLIST: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AWS_SES_SETTINGS,
+    description:
+      'Tatami Monitor ingest webhook URL (SNS HTTPS subscription target for deliverability observability).',
+    type: ConfigVariableType.STRING,
+    isSensitive: true,
+  })
+  @IsOptional()
+  TATAMI_SES_WEBHOOK_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AWS_SES_SETTINGS,
+    description:
+      'SNS topic ARN that fans out SES events to Tatami Monitor. When set, an SNS event destination is added to each workspace SES configuration set.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  TATAMI_SNS_TOPIC_ARN: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,

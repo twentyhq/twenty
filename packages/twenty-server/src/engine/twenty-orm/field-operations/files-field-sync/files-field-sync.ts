@@ -19,6 +19,7 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
@@ -486,7 +487,7 @@ export class FilesFieldSync {
         id: In([...allFileIdsToFetch, ...allFileIds.toRemove]),
         workspaceId,
       },
-      select: ['id', 'path', 'settings'],
+      select: ['id', 'path', 'settings', 'status'],
     });
 
     const existingFileMap = new Map(
@@ -519,6 +520,21 @@ export class FilesFieldSync {
               TwentyORMExceptionCode.INVALID_INPUT,
               {
                 userFriendlyMessage: msg`File ${fileId} is already associated with a permanent files field. Please re-upload the file.`,
+              },
+            );
+          }
+
+          // Direct uploads stay PENDING until the client confirms the bytes
+          // landed in storage (completeFileUpload): only confirmed files can
+          // be attached to a record.
+          if (fileEntity.status !== FILE_STATUS.UPLOADED) {
+            const fileId = file.fileId;
+
+            throw new TwentyORMException(
+              `File ${fileId} upload has not been completed`,
+              TwentyORMExceptionCode.INVALID_INPUT,
+              {
+                userFriendlyMessage: msg`File ${fileId} upload has not been completed. Please retry the upload.`,
               },
             );
           }

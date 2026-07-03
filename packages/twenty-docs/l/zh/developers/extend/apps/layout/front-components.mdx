@@ -377,6 +377,8 @@ export default defineFrontComponent({
 机密变量（`isSecret: true`）**不会**暴露给前端组件。 它们仅在服务器端运行的 [逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions) 中可用。 这可以防止诸如 API 密钥之类的敏感值被发送到浏览器。
 </Warning>
 
+无论变量声明的 `type` 为何，`getApplicationVariable` 始终返回一个 **string**（或 `undefined`）。 该字符串会按照类型被一致地序列化（布尔值为 `"true"` / `"false"`，数字为十进制字符串，数组 / 对象为 JSON），与逻辑函数 `process.env` 使用的格式相同 —— 需要你自行解析（`Number(...)`、`JSON.parse(...)`、`=== 'true'`）。 参见[变量类型](/l/zh/developers/extend/apps/config/application#variable-types)。
+
 以下系统变量始终可以通过 `process.env` 获取：
 
 | 变量                        | 描述                     |

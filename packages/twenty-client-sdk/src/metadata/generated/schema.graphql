@@ -29,10 +29,17 @@ type ApplicationRegistrationVariable {
   description: String!
   isSecret: Boolean!
   isRequired: Boolean!
+  type: String!
+  options: JSON
   isFilled: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
 
 type ApplicationRegistration {
   id: UUID!
@@ -113,11 +120,6 @@ enum RowLevelPermissionPredicateOperand {
   IS_TODAY
   VECTOR_SEARCH
 }
-
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON
 
 type ObjectPermission {
   objectMetadataId: UUID!
@@ -297,6 +299,8 @@ type ApplicationVariable {
   value: String!
   description: String!
   isSecret: Boolean!
+  type: String!
+  options: JSON
 }
 
 type AuthToken {
@@ -665,6 +669,7 @@ type Application {
   name: String!
   description: String
   logo: String
+  logoFileId: UUID
   version: String
   universalIdentifier: String!
   packageJsonChecksum: String
@@ -888,6 +893,7 @@ type Workspace {
   updatedAt: DateTime!
   allowImpersonation: Boolean!
   isPublicInviteLinkEnabled: Boolean!
+  workspaceDiscoverability: WorkspaceDiscoverability!
   trashRetentionDays: Float!
   eventLogRetentionDays: Float!
   workspaceMembersCount: Float
@@ -930,6 +936,12 @@ type Workspace {
   hasValidEnterpriseValidityToken: Boolean!
   workspaceUrls: WorkspaceUrls!
   workspaceCustomApplicationId: String!
+}
+
+enum WorkspaceDiscoverability {
+  PUBLIC
+  MEMBERS_AND_INVITEES
+  HIDDEN
 }
 
 enum WorkspaceActivationStatus {
@@ -1425,6 +1437,13 @@ type FileWithSignedUrl {
   url: String!
 }
 
+type FileUploadTarget {
+  fileId: UUID!
+  uploadUrl: String!
+  contentType: String!
+  expiresAt: DateTime!
+}
+
 type BillingSubscriptionSchedulePhaseItem {
   price: String!
   quantity: Float
@@ -1756,6 +1775,8 @@ type ApplicationRegistrationVariableDTO {
   isSecret: Boolean!
   isRequired: Boolean!
   isFilled: Boolean!
+  type: String!
+  options: JSON
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2824,9 +2845,15 @@ type AiSystemPromptPreview {
   estimatedTokenCount: Int!
 }
 
+type ChatStreamError {
+  code: String!
+  message: String!
+}
+
 type ChatStreamCatchupChunks {
   chunks: [JSON!]!
   maxSeq: Int!
+  error: ChatStreamError
 }
 
 type SendChatMessageResult {
@@ -3214,6 +3241,7 @@ enum UsageOperationType {
   CODE_EXECUTION
   WEB_SEARCH
   CALL_RECORDING
+  EMAIL_SEND
 }
 
 type Mutation {
@@ -3225,9 +3253,11 @@ type Mutation {
   updateNavigationMenuItem(input: UpdateOneNavigationMenuItemInput!): NavigationMenuItem!
   deleteManyNavigationMenuItems(ids: [UUID!]!): [NavigationMenuItem!]!
   deleteNavigationMenuItem(id: UUID!): NavigationMenuItem!
-  uploadEmailAttachmentFile(file: Upload!): FileWithSignedUrl!
+  createFileUpload(filename: String!, size: Float!, fileFolder: FileFolder!, fieldMetadataId: String, fieldMetadataUniversalIdentifier: String): FileUploadTarget!
+  completeFileUpload(fileId: String!): FileWithSignedUrl!
   refreshEnterpriseValidityToken: Boolean!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
+  uploadEmailAttachmentFile(file: Upload!): FileWithSignedUrl!
   uploadAiChatFile(file: Upload!): FileWithSignedUrl!
   uploadWorkflowFile(file: Upload!): FileWithSignedUrl!
   uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
@@ -3373,6 +3403,8 @@ type Mutation {
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
+  retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
+  answerAgentChatQuestion(threadId: UUID!, messageId: UUID!, answers: [AgentChatQuestionAnswerInput!]!, modelId: String): SendChatMessageResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
   renameChatThread(id: UUID!, title: String!): AgentChatThread!
   archiveChatThread(id: UUID!): AgentChatThread!
@@ -3484,6 +3516,22 @@ input UpdateNavigationMenuItemInput {
   icon: String
   color: String
   pageLayoutId: UUID
+}
+
+enum FileFolder {
+  CorePicture
+  AgentChat
+  BuiltLogicFunction
+  BuiltFrontComponent
+  PublicAsset
+  Source
+  FilesField
+  Dependencies
+  Workflow
+  EmailAttachment
+  AppTarball
+  GeneratedSdkClient
+  Dpa
 }
 
 """The `Upload` scalar type represents a file upload."""
@@ -4101,6 +4149,7 @@ input UpdateWorkspaceInput {
   logo: String
   inviteHash: String
   isPublicInviteLinkEnabled: Boolean
+  workspaceDiscoverability: WorkspaceDiscoverability
   allowImpersonation: Boolean
   isGoogleAuthEnabled: Boolean
   isMicrosoftAuthEnabled: Boolean
@@ -4479,6 +4528,12 @@ input FileAttachmentInput {
   filename: String!
 }
 
+input AgentChatQuestionAnswerInput {
+  questionIndex: Int!
+  selectedOptionIndices: [Int!]!
+  freeText: String
+}
+
 input CreateSkillInput {
   id: UUID
   name: String!
@@ -4600,27 +4655,6 @@ input CreateOneAppTokenInput {
 
 input CreateAppTokenInput {
   expiresAt: DateTime!
-}
-
-enum FileFolder {
-  ProfilePicture
-  WorkspaceLogo
-  Attachment
-  PersonPicture
-  CorePicture
-  File
-  AgentChat
-  BuiltLogicFunction
-  BuiltFrontComponent
-  PublicAsset
-  Source
-  FilesField
-  Dependencies
-  Workflow
-  EmailAttachment
-  AppTarball
-  GeneratedSdkClient
-  Dpa
 }
 
 type Subscription {
