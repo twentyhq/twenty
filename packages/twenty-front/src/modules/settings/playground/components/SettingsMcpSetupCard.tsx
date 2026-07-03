@@ -121,15 +121,10 @@ const StyledInstallActionButton = styled.button`
   ${StyledInstallActionStyles}
   color: ${themeCssVariables.font.color.light};
   cursor: not-allowed;
-  pointer-events: none;
 
-  &:disabled {
+  &[aria-disabled='true'] {
     color: ${themeCssVariables.font.color.light};
   }
-`;
-
-const StyledDisabledActionTooltipAnchor = styled.span`
-  display: inline-flex;
 `;
 
 type SettingsMcpSetupCardActionProps = {
@@ -144,12 +139,14 @@ const SettingsMcpSetupCardAction = ({
   if (card.isDisabled && card.disabledTooltip && card.tooltipId) {
     return (
       <>
-        <StyledDisabledActionTooltipAnchor data-tooltip-id={card.tooltipId}>
-          <StyledInstallActionButton disabled type="button">
-            <IconExternalLink size={theme.icon.size.sm} />
-            {card.ctaLabel}
-          </StyledInstallActionButton>
-        </StyledDisabledActionTooltipAnchor>
+        <StyledInstallActionButton
+          aria-disabled="true"
+          data-tooltip-id={card.tooltipId}
+          type="button"
+        >
+          <IconExternalLink size={theme.icon.size.sm} />
+          {card.ctaLabel}
+        </StyledInstallActionButton>
         <AppTooltip
           anchorSelect={`[data-tooltip-id='${card.tooltipId}']`}
           content={card.disabledTooltip}

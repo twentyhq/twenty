@@ -26,8 +26,8 @@ const StyledMcpEditorHeaderTitle = styled.div`
 const StyledMcpIcon = styled(ModelContextProtocolLogo)`
   color: inherit;
   flex-shrink: 0;
-  height: ${themeCssVariables.icon.size.md};
-  width: ${themeCssVariables.icon.size.md};
+  height: calc(${themeCssVariables.icon.size.md} * 1px);
+  width: calc(${themeCssVariables.icon.size.md} * 1px);
 `;
 
 const StyledMcpSetupContainer = styled.div`
