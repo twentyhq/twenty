@@ -6,6 +6,7 @@ import { findCallRecordingForSummary } from 'src/logic-functions/data/find-call-
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { buildCallRecordingSummaryPrompt } from 'src/logic-functions/domain/build-call-recording-summary-prompt.util';
 import { extractCallRecordingSummaryMarkdown } from 'src/logic-functions/domain/extract-call-recording-summary-markdown.util';
+import { isCallRecordingCreatedByCallRecorder } from 'src/logic-functions/domain/is-call-recording-created-by-call-recorder.util';
 import { isRealTranscript } from 'src/logic-functions/domain/is-real-transcript.util';
 import { type GenerateCallRecordingSummaryResult } from 'src/logic-functions/flows/generate-call-recording-summary-result.type';
 import { getCallRecorderAdditionalSummaryPrompt } from 'src/logic-functions/utils/get-call-recorder-additional-summary-prompt.util';
@@ -13,7 +14,10 @@ import { isCallRecordingSummaryEnabled } from 'src/logic-functions/utils/is-call
 
 export const generateCallRecordingSummary = async (
   client: CoreApiClient,
-  { callRecordingId }: { callRecordingId: string },
+  {
+    callRecordingId,
+    requireCreatedByCallRecorder = false,
+  }: { callRecordingId: string; requireCreatedByCallRecorder?: boolean },
 ): Promise<GenerateCallRecordingSummaryResult> => {
   if (!isCallRecordingSummaryEnabled()) {
     return { outcome: 'disabled' };
@@ -28,6 +32,13 @@ export const generateCallRecordingSummary = async (
     !isRealTranscript(callRecording.transcript)
   ) {
     return { outcome: 'no-transcript' };
+  }
+
+  if (
+    requireCreatedByCallRecorder &&
+    !isCallRecordingCreatedByCallRecorder(callRecording.createdBy)
+  ) {
+    return { outcome: 'not-app-recording' };
   }
 
   if (callRecording.summaryMarkdown !== undefined) {

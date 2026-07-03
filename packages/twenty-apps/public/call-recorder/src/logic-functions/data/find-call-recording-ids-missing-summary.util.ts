@@ -1,6 +1,8 @@
 import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { APP_DISPLAY_NAME } from 'src/constants/app-display-name';
+import { CALL_RECORDER_CREATED_BY_SOURCE } from 'src/logic-functions/constants/call-recorder-created-by-source';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import {
@@ -30,6 +32,12 @@ export const findCallRecordingIdsMissingSummary = async (
               status: { eq: CallRecordingStatus.COMPLETED },
               transcript: { is: 'NOT_NULL' },
               updatedAt: { lte: updatedBefore },
+              // Never sweep recordings another app or a user created — agent
+              // runs are billed, so the unattended path only spends on ours.
+              createdBy: {
+                source: { eq: CALL_RECORDER_CREATED_BY_SOURCE },
+                name: { eq: APP_DISPLAY_NAME },
+              },
             },
             first: TWENTY_PAGE_SIZE,
             ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),

@@ -20,7 +20,7 @@ const buildConnection = (
 });
 
 describe('findCallRecordingIdsMissingSummary', () => {
-  it('targets completed recordings with a transcript outside the grace window', async () => {
+  it('targets app-created completed recordings with a transcript outside the grace window', async () => {
     let capturedFilter: unknown;
     const query = vi.fn(async (queryArg: any) => {
       capturedFilter = queryArg.callRecordings.__args.filter;
@@ -36,6 +36,10 @@ describe('findCallRecordingIdsMissingSummary', () => {
       status: { eq: 'COMPLETED' },
       transcript: { is: 'NOT_NULL' },
       updatedAt: { lte: '2026-07-02T11:30:00.000Z' },
+      createdBy: {
+        source: { eq: 'APPLICATION' },
+        name: { eq: 'Call Recorder' },
+      },
     });
   });
 

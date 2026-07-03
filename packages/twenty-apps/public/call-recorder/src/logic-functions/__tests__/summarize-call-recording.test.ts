@@ -89,7 +89,10 @@ describe('summarize-call-recording logic function', () => {
 
     expect(generateCallRecordingSummaryMock).toHaveBeenCalledWith(
       expect.anything(),
-      { callRecordingId: 'call-recording-1' },
+      {
+        callRecordingId: 'call-recording-1',
+        requireCreatedByCallRecorder: true,
+      },
     );
     expect(result).toEqual({
       callRecordingId: 'call-recording-1',

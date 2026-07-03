@@ -37,6 +37,7 @@ export const summarizeCallRecordingHandler = async (
   const client = new CoreApiClient();
   const result = await generateCallRecordingSummary(client, {
     callRecordingId: event.recordId,
+    requireCreatedByCallRecorder: true,
   });
 
   return { callRecordingId: event.recordId, ...result };

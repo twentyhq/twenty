@@ -64,6 +64,7 @@ describe('generateCallRecordingSummary', () => {
       title: 'Weekly sync',
       transcript: TRANSCRIPT,
       summaryMarkdown: undefined,
+      createdBy: { source: 'APPLICATION', name: 'Call Recorder' },
     });
     updateCallRecordingMock.mockResolvedValue(undefined);
     runAgentMock.mockResolvedValue({
@@ -115,6 +116,49 @@ describe('generateCallRecordingSummary', () => {
 
     expect(result).toEqual({ outcome: 'already-summarized' });
     expect(runAgentMock).not.toHaveBeenCalled();
+  });
+
+  it('skips recordings another actor created when the app-created gate is on', async () => {
+    findCallRecordingForSummaryMock.mockResolvedValue({
+      id: 'call-recording-1',
+      title: undefined,
+      transcript: TRANSCRIPT,
+      summaryMarkdown: undefined,
+      createdBy: { source: 'MANUAL', name: 'Alex' },
+    });
+
+    const result = await generateCallRecordingSummary(CLIENT, {
+      callRecordingId: 'call-recording-1',
+      requireCreatedByCallRecorder: true,
+    });
+
+    expect(result).toEqual({ outcome: 'not-app-recording' });
+    expect(runAgentMock).not.toHaveBeenCalled();
+  });
+
+  it('generates for app-created recordings when the app-created gate is on', async () => {
+    const result = await generateCallRecordingSummary(CLIENT, {
+      callRecordingId: 'call-recording-1',
+      requireCreatedByCallRecorder: true,
+    });
+
+    expect(result).toEqual({ outcome: 'generated' });
+  });
+
+  it('generates for recordings another actor created when explicitly requested', async () => {
+    findCallRecordingForSummaryMock.mockResolvedValue({
+      id: 'call-recording-1',
+      title: undefined,
+      transcript: TRANSCRIPT,
+      summaryMarkdown: undefined,
+      createdBy: { source: 'MANUAL', name: 'Alex' },
+    });
+
+    const result = await generateCallRecordingSummary(CLIENT, {
+      callRecordingId: 'call-recording-1',
+    });
+
+    expect(result).toEqual({ outcome: 'generated' });
   });
 
   it('runs the agent and stores the summary markdown on the happy path', async () => {

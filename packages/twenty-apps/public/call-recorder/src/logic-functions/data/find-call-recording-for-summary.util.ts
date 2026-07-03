@@ -8,6 +8,7 @@ type CallRecordingForSummary = {
   title: string | undefined;
   transcript: unknown;
   summaryMarkdown: string | undefined;
+  createdBy: { source: string | undefined; name: string | undefined };
 };
 
 export const findCallRecordingForSummary = async (
@@ -26,6 +27,7 @@ export const findCallRecordingForSummary = async (
           title: true,
           transcript: true,
           summary: { markdown: true },
+          createdBy: { source: true, name: true },
         },
       },
     },
@@ -42,5 +44,9 @@ export const findCallRecordingForSummary = async (
     title: getString(node.title),
     transcript: node.transcript ?? undefined,
     summaryMarkdown: getString(node.summary?.markdown),
+    createdBy: {
+      source: getString(node.createdBy?.source),
+      name: getString(node.createdBy?.name),
+    },
   };
 };
