@@ -175,7 +175,10 @@ export class WorkflowSchemaWorkspaceService {
     workspaceId: string;
     workflowVersionId: string;
   }): Promise<WorkflowAction> {
-    const BACKEND_ENRICHED_TYPES = [WorkflowActionType.ITERATOR];
+    const BACKEND_ENRICHED_TYPES = [
+      WorkflowActionType.ITERATOR,
+      WorkflowActionType.AI_AGENT,
+    ];
 
     if (!BACKEND_ENRICHED_TYPES.includes(step.type)) {
       return step;

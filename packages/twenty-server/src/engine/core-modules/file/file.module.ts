@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileAiChatModule } from 'src/engine/core-modules/file/file-ai-chat/file-ai-chat.module';
-import { FilePathGuard } from 'src/engine/core-modules/file/guards/file-path-guard';
 import { FileDeletionJob } from 'src/engine/core-modules/file/jobs/file-deletion.job';
 import { FileWorkspaceFolderDeletionJob } from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
@@ -38,7 +37,6 @@ import { FileService } from './services/file.service';
   ],
   providers: [
     FileService,
-    FilePathGuard,
     FileByIdGuard,
     FileWorkspaceFolderDeletionJob,
     FileDeletionJob,
