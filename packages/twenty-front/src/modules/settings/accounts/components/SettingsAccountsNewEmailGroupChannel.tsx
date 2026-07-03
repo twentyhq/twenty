@@ -80,6 +80,11 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
             placeholder="support@mycompany.com"
             value={handle}
             onChange={setHandle}
+            onInputEnter={() => {
+              if (canSave) {
+                handleSave();
+              }
+            }}
             disabled={loading}
           />
         </Section>
