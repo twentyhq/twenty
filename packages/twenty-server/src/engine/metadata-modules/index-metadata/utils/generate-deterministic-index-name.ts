@@ -13,7 +13,7 @@ type GenerateDeterministicIndexNameArgs = {
   // coexist; the unique-name constraint must not block that).
   indexWhereClause?: string | null;
 };
-export const generateDeterministicIndexNameV2 = ({
+export const generateDeterministicIndexName = ({
   orderedIndexColumnNames,
   flatObjectMetadata,
   isUnique = false,

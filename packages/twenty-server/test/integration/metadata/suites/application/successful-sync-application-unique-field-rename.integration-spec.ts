@@ -11,7 +11,7 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
-import { generateDeterministicIndexNameV2 } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name-v2';
+import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 const TEST_APP_ID = uuidv4();
@@ -54,7 +54,7 @@ const buildManifest = (fields: FieldManifest[]) =>
 // Mirrors the engine's derivation so the test asserts the exact backing index
 // the side-effect engine is expected to own for a given field name.
 const computeExpectedUniqueIndexName = (fieldName: string): string =>
-  generateDeterministicIndexNameV2({
+  generateDeterministicIndexName({
     flatObjectMetadata: {
       nameSingular: TEST_OBJECT.nameSingular,
       applicationUniversalIdentifier: TEST_APP_ID,

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { generateDeterministicIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-deterministic-index-for-flat-field-metadata.util';
+import { generateDeterministicIndexForFlatFieldMetadataOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-deterministic-index-for-flat-field-metadata-or-throw.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { buildFieldSideEffectParentNotFoundFailure } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-field-side-effect-parent-not-found-failure.util';
 import {
@@ -44,7 +44,7 @@ export class FieldUniqueBackingIndexOnDeleteSideEffectHandlerService extends Met
     }
 
     const flatIndexMetadataToDelete =
-      generateDeterministicIndexForFlatFieldMetadata({
+      generateDeterministicIndexForFlatFieldMetadataOrThrow({
         flatFieldMetadata,
         flatObjectMetadata: parentFlatObjectMetadata,
       });

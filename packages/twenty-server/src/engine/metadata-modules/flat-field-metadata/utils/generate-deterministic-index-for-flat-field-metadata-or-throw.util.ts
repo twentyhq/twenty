@@ -4,15 +4,15 @@ import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/wo
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
-type GenerateDeterministicIndexForFlatFieldMetadataArgs = {
+type GenerateDeterministicIndexForFlatFieldMetadataOrThrowArgs = {
   flatFieldMetadata: UniversalFlatFieldMetadata;
   flatObjectMetadata: UniversalFlatObjectMetadata;
 };
 
-export const generateDeterministicIndexForFlatFieldMetadata = ({
+export const generateDeterministicIndexForFlatFieldMetadataOrThrow = ({
   flatFieldMetadata,
   flatObjectMetadata,
-}: GenerateDeterministicIndexForFlatFieldMetadataArgs): UniversalFlatIndexMetadata => {
+}: GenerateDeterministicIndexForFlatFieldMetadataOrThrowArgs): UniversalFlatIndexMetadata => {
   const createdAt = new Date().toISOString();
 
   return generateDeterministicFlatIndexMetadataOrThrow({

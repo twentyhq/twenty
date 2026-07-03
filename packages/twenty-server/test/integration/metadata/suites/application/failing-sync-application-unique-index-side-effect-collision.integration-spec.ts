@@ -11,7 +11,7 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
-import { generateDeterministicIndexNameV2 } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name-v2';
+import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 const TEST_APP_ID = uuidv4();
@@ -23,7 +23,7 @@ const UNIQUE_FIELD_NAME = 'externalId';
 const computeSystemUniqueIndexUniversalIdentifier = (
   objectUniversalIdentifier: string,
 ): string => {
-  const name = generateDeterministicIndexNameV2({
+  const name = generateDeterministicIndexName({
     flatObjectMetadata: {
       nameSingular: OBJECT_NAME_SINGULAR,
       applicationUniversalIdentifier: TEST_APP_ID,
