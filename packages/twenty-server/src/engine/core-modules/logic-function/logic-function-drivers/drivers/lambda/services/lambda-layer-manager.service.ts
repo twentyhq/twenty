@@ -43,10 +43,10 @@ export class LambdaLayerManagerService {
   ) {}
 
   async ensureDepsLayer(context: LayerAppContext): Promise<string> {
-    const layerName = getLambdaDepsLayerName(
-      context.flatApplication,
-      this.options.resourceNamespace,
-    );
+    const layerName = getLambdaDepsLayerName({
+      flatApplication: context.flatApplication,
+      namespace: this.options.resourceNamespace,
+    });
 
     const existingArn = await this.awsClient.getExistingLayerArn(layerName);
 
@@ -134,10 +134,10 @@ export class LambdaLayerManagerService {
       return false;
     }
 
-    const depsLayerName = getLambdaDepsLayerName(
+    const depsLayerName = getLambdaDepsLayerName({
       flatApplication,
-      this.options.resourceNamespace,
-    );
+      namespace: this.options.resourceNamespace,
+    });
     const sdkLayerName = getLambdaSdkLayerName({
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
