@@ -15,7 +15,11 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { shouldRefreshApplicationRegistrationOnInstall } from 'src/engine/core-modules/application/application-install/utils/should-refresh-application-registration-on-install.util';
+import { buildRegistryCdnUrl } from 'src/engine/core-modules/application/application-marketplace/utils/build-registry-cdn-url.util';
+import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
@@ -34,6 +38,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 
@@ -55,6 +60,7 @@ export class ApplicationInstallService {
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly applicationService: ApplicationService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly applicationSyncService: ApplicationSyncService,
@@ -65,6 +71,7 @@ export class ApplicationInstallService {
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async installApplication(params: {
@@ -270,6 +277,12 @@ export class ApplicationInstallService {
         universalIdentifier,
       });
 
+      await this.refreshRegistrationFromInstall({
+        appRegistration,
+        manifest: resolvedPackage.manifest,
+        installedVersion: newVersion,
+      });
+
       this.logger.log(
         `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
       );
@@ -295,6 +308,65 @@ export class ApplicationInstallService {
         );
       }
     }
+  }
+
+  private async refreshRegistrationFromInstall(params: {
+    appRegistration: ApplicationRegistrationEntity;
+    manifest: Manifest;
+    installedVersion: string;
+  }): Promise<void> {
+    const { appRegistration, manifest, installedVersion } = params;
+
+    if (
+      !shouldRefreshApplicationRegistrationOnInstall({
+        installedVersion,
+        latestAvailableVersion: appRegistration.latestAvailableVersion,
+      })
+    ) {
+      this.logger.log(
+        `Skipping registration refresh for ${appRegistration.universalIdentifier}: installed version ${installedVersion} is older than latest available version ${appRegistration.latestAvailableVersion}`,
+      );
+
+      return;
+    }
+
+    await this.applicationRegistrationService.updateFromManifest({
+      applicationRegistrationId: appRegistration.id,
+      manifest: this.resolveRegistrationManifestAssetUrls({
+        appRegistration,
+        manifest,
+        installedVersion,
+      }),
+      latestAvailableVersion: installedVersion,
+    });
+  }
+
+  private resolveRegistrationManifestAssetUrls(params: {
+    appRegistration: ApplicationRegistrationEntity;
+    manifest: Manifest;
+    installedVersion: string;
+  }): Manifest {
+    const { appRegistration, manifest, installedVersion } = params;
+
+    const sourcePackage = appRegistration.sourcePackage;
+
+    if (
+      appRegistration.sourceType !== ApplicationRegistrationSourceType.NPM ||
+      !isDefined(sourcePackage)
+    ) {
+      return manifest;
+    }
+
+    const cdnBaseUrl = this.twentyConfigService.get('APP_REGISTRY_CDN_URL');
+
+    return resolveManifestAssetUrls(manifest, (filePath) =>
+      buildRegistryCdnUrl({
+        cdnBaseUrl,
+        packageName: sourcePackage,
+        version: installedVersion,
+        filePath,
+      }),
+    );
   }
 
   private async runPreInstallHook(params: {

@@ -286,10 +286,12 @@ export class ApplicationRegistrationService {
     applicationRegistrationId,
     manifest,
     sourceType,
+    latestAvailableVersion,
   }: {
     applicationRegistrationId: string;
     manifest: Manifest;
     sourceType?: ApplicationRegistrationSourceType;
+    latestAvailableVersion?: string;
   }): Promise<void> {
     const existing = await this.applicationRegistrationRepository.findOneOrFail(
       { where: { id: applicationRegistrationId } },
@@ -301,6 +303,7 @@ export class ApplicationRegistrationService {
       manifest,
       ...fromManifestApplicationToDisplayFields(manifest.application),
       ...(sourceType !== undefined && { sourceType }),
+      ...(latestAvailableVersion !== undefined && { latestAvailableVersion }),
     });
   }
 
