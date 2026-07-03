@@ -1,0 +1,23 @@
+packages/twenty-ui/src/icon/components/TablerIcons.ts
+  s_77f08f6b2d9277::t_5f35606474b1d6 105
+packages/twenty-ui/src/icon/index.ts
+  s_77f08f6b2d9277::t_a10b3377934fcc 338
+packages/twenty-front/src/modules/settings/hooks/useSettingsNavigationItems.tsx
+  s_77f08f6b2d9277::t_6199932ed2f57a 31,177-179
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "fc1daaf26a8801bd4b9265c7ce9a0b79bdebf1a3",
+  "prompts": {},
+  "sessions": {
+    "s_77f08f6b2d9277": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "899823dc-36d1-4e97-ab39-2243a5e5154b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
