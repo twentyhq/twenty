@@ -1,0 +1,19 @@
+packages/twenty-front/src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
+  s_77f08f6b2d9277::t_4f97d9416feea2 83-87
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "e7c8fe70cccc90ccf30cad91d2ab69bba08c2aac",
+  "prompts": {},
+  "sessions": {
+    "s_77f08f6b2d9277": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "899823dc-36d1-4e97-ab39-2243a5e5154b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
