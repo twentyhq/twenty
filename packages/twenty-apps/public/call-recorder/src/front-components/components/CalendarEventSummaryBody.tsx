@@ -1,20 +1,20 @@
 import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SummaryMarkdown } from 'src/front-components/components/SummaryMarkdown';
 import { TranscriptErrorBox } from 'src/front-components/components/TranscriptErrorBox';
-import { recordingThemeCssVariables } from 'src/front-components/constants/recording-theme-css-variables';
 
 const StyledCenteredState = styled.div`
   align-items: center;
   box-sizing: border-box;
-  color: ${recordingThemeCssVariables.font.colorTertiary};
+  color: ${() => themeCssVariables.font.color.tertiary};
   display: flex;
-  font-family: ${recordingThemeCssVariables.font.family};
-  font-size: ${recordingThemeCssVariables.font.sizeSm};
+  font-family: ${() => themeCssVariables.font.family};
+  font-size: ${() => themeCssVariables.font.size.sm};
   justify-content: center;
   min-height: 240px;
-  padding: ${recordingThemeCssVariables.spacing[4]};
+  padding: ${() => themeCssVariables.spacing[4]};
 `;
 
 type CalendarEventSummaryBodyProps = {
