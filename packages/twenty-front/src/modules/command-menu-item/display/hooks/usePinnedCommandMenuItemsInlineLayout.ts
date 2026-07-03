@@ -1,9 +1,11 @@
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
 import { commandMenuPinnedInlineLayoutState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutState';
 import { getVisibleCommandMenuItemCountForContainerWidth } from '@/command-menu-item/display/utils/getVisibleCommandMenuItemCountForContainerWidth';
+import { isSidePanelAnimatingState } from '@/side-panel/states/isSidePanelAnimatingState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNumber } from '@sniptt/guards';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 type ElementDimensions = {
@@ -59,14 +61,28 @@ export const usePinnedCommandMenuItemsInlineLayout = ({
     ],
   );
 
+  const isSidePanelAnimating = useAtomStateValue(isSidePanelAnimatingState);
+
+  const lastStableVisibleCountRef = useRef(visiblePinnedCommandMenuItemCount);
+
+  if (!isSidePanelAnimating) {
+    lastStableVisibleCountRef.current = visiblePinnedCommandMenuItemCount;
+  }
+
+  const stableVisiblePinnedCommandMenuItemCount = isSidePanelAnimating
+    ? lastStableVisibleCountRef.current
+    : visiblePinnedCommandMenuItemCount;
+
   const pinnedInlineCommandMenuItems = useMemo(
-    () => pinnedCommandMenuItems.slice(0, visiblePinnedCommandMenuItemCount),
-    [pinnedCommandMenuItems, visiblePinnedCommandMenuItemCount],
+    () =>
+      pinnedCommandMenuItems.slice(0, stableVisiblePinnedCommandMenuItemCount),
+    [pinnedCommandMenuItems, stableVisiblePinnedCommandMenuItemCount],
   );
 
   const pinnedOverflowCommandMenuItems = useMemo(
-    () => pinnedCommandMenuItems.slice(visiblePinnedCommandMenuItemCount),
-    [pinnedCommandMenuItems, visiblePinnedCommandMenuItemCount],
+    () =>
+      pinnedCommandMenuItems.slice(stableVisiblePinnedCommandMenuItemCount),
+    [pinnedCommandMenuItems, stableVisiblePinnedCommandMenuItemCount],
   );
 
   const onContainerDimensionChange = useCallback(

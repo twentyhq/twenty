@@ -3,7 +3,9 @@ import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuCont
 import { PinnedCommandMenuItemsInlineMeasurements } from '@/command-menu-item/display/components/PinnedCommandMenuItemsInlineMeasurements';
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
 import { usePinnedCommandMenuItemsInlineLayout } from '@/command-menu-item/display/hooks/usePinnedCommandMenuItemsInlineLayout';
+import { isSidePanelAnimatingState } from '@/side-panel/states/isSidePanelAnimatingState';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useContext, useMemo } from 'react';
@@ -39,6 +41,7 @@ const StyledItemsContainer = styled.div`
 export const PinnedCommandMenuItemButtons = () => {
   const { theme } = useContext(ThemeContext);
   const { commandMenuItems } = useContext(CommandMenuContext);
+  const isSidePanelAnimating = useAtomStateValue(isSidePanelAnimatingState);
 
   const pinnedCommandMenuItems = useMemo(
     () => commandMenuItems.filter((item) => item.isPinned === true),
@@ -72,7 +75,7 @@ export const PinnedCommandMenuItemButtons = () => {
               {pinnedInlineCommandMenuItems.map((item) => (
                 <StyledCommandMenuItemContainer
                   key={item.id}
-                  layout
+                  layout={!isSidePanelAnimating}
                   initial={{ width: 0, opacity: 0 }}
                   animate={{ width: 'unset', opacity: 1 }}
                   exit={{ width: 0, opacity: 0 }}

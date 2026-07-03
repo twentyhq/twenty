@@ -1,8 +1,6 @@
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
-import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
-import { commandMenuPinnedInlineLayoutState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutState';
-import { getVisibleCommandMenuItemCountForContainerWidth } from '@/command-menu-item/display/utils/getVisibleCommandMenuItemCountForContainerWidth';
+import { usePinnedCommandMenuItemsInlineLayout } from '@/command-menu-item/display/hooks/usePinnedCommandMenuItemsInlineLayout';
 import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -10,7 +8,6 @@ import { useFilterCommandMenuItemsWithSidePanelSearch } from '@/side-panel/pages
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { isNumber } from '@sniptt/guards';
 import { useContext, useMemo } from 'react';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
@@ -20,10 +17,6 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
   const { commandMenuItems, commandMenuContextApi } =
     useContext(CommandMenuContext);
-
-  const commandMenuPinnedInlineLayout = useAtomStateValue(
-    commandMenuPinnedInlineLayoutState,
-  );
 
   const { filterCommandMenuItemsWithSidePanelSearch } =
     useFilterCommandMenuItemsWithSidePanelSearch({
@@ -52,32 +45,10 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     [nonPinnedCommandMenuItems],
   );
 
-  const pinnedCommandMenuItemKeysInDisplayOrder = pinnedCommandMenuItems.map(
-    (item) => item.id,
-  );
-
-  const visiblePinnedCommandMenuItemCount =
-    getVisibleCommandMenuItemCountForContainerWidth({
-      commandMenuItemKeysInDisplayOrder:
-        pinnedCommandMenuItemKeysInDisplayOrder,
-      commandMenuItemWidthsByKey:
-        commandMenuPinnedInlineLayout.commandMenuItemWidthsByKey,
-      commandMenuItemsContainerWidth:
-        commandMenuPinnedInlineLayout.containerWidth,
-      commandMenuItemsGapWidth: PINNED_COMMAND_MENU_ITEMS_GAP,
+  const { pinnedOverflowCommandMenuItems } =
+    usePinnedCommandMenuItemsInlineLayout({
+      pinnedCommandMenuItems,
     });
-
-  const hasKnownPinnedInlineLayout =
-    commandMenuPinnedInlineLayout.containerWidth > 0 &&
-    pinnedCommandMenuItemKeysInDisplayOrder.every((itemKey) =>
-      isNumber(
-        commandMenuPinnedInlineLayout.commandMenuItemWidthsByKey[itemKey],
-      ),
-    );
-
-  const pinnedOverflowCommandMenuItems = hasKnownPinnedInlineLayout
-    ? pinnedCommandMenuItems.slice(visiblePinnedCommandMenuItemCount)
-    : pinnedCommandMenuItems;
 
   const pinnedItemsToFilter =
     sidePanelSearch.length > 0

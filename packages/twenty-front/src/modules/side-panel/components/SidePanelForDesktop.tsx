@@ -5,6 +5,7 @@ import { SIDE_PANEL_CLICK_OUTSIDE_ID } from '@/side-panel/constants/SidePanelCli
 import { SIDE_PANEL_CONSTRAINTS } from '@/side-panel/constants/SidePanelConstraints';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { isSidePanelAnimatingState } from '@/side-panel/states/isSidePanelAnimatingState';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import {
@@ -44,7 +45,7 @@ const StyledSidePanel = styled.aside`
   height: 100%;
   overflow: hidden;
   position: relative;
-  width: 100%;
+  width: var(${SIDE_PANEL_WIDTH_VAR});
 `;
 
 const StyledModalContainer = styled.div`
@@ -75,10 +76,22 @@ export const SidePanelForDesktop = () => {
   const setTableWidthResizeIsActive = useSetAtomState(
     tableWidthResizeIsActiveState,
   );
+  const setIsSidePanelAnimating = useSetAtomState(isSidePanelAnimatingState);
 
   const shouldShowContent = isSidePanelOpened || shouldRenderContent;
 
-  const handleTransitionEnd = () => {
+  const handleTransitionEnd = (
+    event: React.TransitionEvent<HTMLDivElement>,
+  ) => {
+    if (
+      event.target !== event.currentTarget ||
+      event.propertyName !== 'width'
+    ) {
+      return;
+    }
+
+    setIsSidePanelAnimating(false);
+
     if (isSidePanelOpened) {
       // Open animation completed - ensure content persists for close animation
       setShouldRenderContent(true);

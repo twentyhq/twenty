@@ -4,6 +4,7 @@ import { useResetRecordIndexSelection } from '@/object-record/record-index/hooks
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
+import { isSidePanelAnimatingState } from '@/side-panel/states/isSidePanelAnimatingState';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -49,6 +50,7 @@ export const useSidePanelMenu = () => {
     store.set(sidePanelNavigationStackState.atom, []);
     store.set(isSidePanelOpenedState.atom, false);
     store.set(isSidePanelClosingState.atom, true);
+    store.set(isSidePanelAnimatingState.atom, true);
     closeAnyOpenDropdown();
     removeFocusItemFromFocusStackById({
       focusId: SIDE_PANEL_FOCUS_ID,

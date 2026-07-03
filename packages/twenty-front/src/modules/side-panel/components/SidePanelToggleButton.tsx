@@ -10,11 +10,13 @@ import { PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useContext } from 'react';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/input';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledButtonWrapper = styled.div<{ alignToTop: boolean }>`
   align-items: ${({ alignToTop }) => (alignToTop ? 'center' : 'initial')};
@@ -32,7 +34,10 @@ const StyledTooltipWrapper = styled.div`
   font-size: ${themeCssVariables.font.size.md};
 `;
 
+const MotionButtonWrapper = motion.create(StyledButtonWrapper);
+
 export const SidePanelToggleButton = () => {
+  const { theme } = useContext(ThemeContext);
   const { openSidePanelMenu } = useSidePanelMenu();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
@@ -59,39 +64,58 @@ export const SidePanelToggleButton = () => {
     isCommandMenuOpened ||
     (isSidePanelOpened && hasCommandMenuPageInNavigationStack);
 
-  if (shouldHideButton) {
-    return null;
-  }
-
   const ariaLabel = t`Command Menu`;
 
   return (
-    <StyledButtonWrapper alignToTop={alignWithSidePanelTopBar}>
-      <div
-        id="toggle-side-panel-button"
-        data-click-outside-id={PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID}
-      >
-        <IconButton
-          Icon={IconDotsVertical}
-          dataTestId="page-header-side-panel-button"
-          size={isMobile ? 'medium' : 'small'}
-          variant="secondary"
-          accent="default"
-          ariaLabel={ariaLabel}
-          onClick={openSidePanelMenu}
-        />
-      </div>
+    <AnimatePresence initial={false}>
+      {!shouldHideButton && (
+        <MotionButtonWrapper
+          alignToTop={alignWithSidePanelTopBar}
+          initial={{ width: 0, opacity: 0 }}
+          animate={{
+            width: 'unset',
+            opacity: 1,
+            transition: {
+              duration: theme.animation.duration.normal,
+              ease: 'easeInOut',
+            },
+          }}
+          exit={{
+            width: 0,
+            opacity: 0,
+            transition: {
+              duration: theme.animation.duration.instant,
+              ease: 'easeInOut',
+            },
+          }}
+        >
+          <div
+            id="toggle-side-panel-button"
+            data-click-outside-id={PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID}
+          >
+            <IconButton
+              Icon={IconDotsVertical}
+              dataTestId="page-header-side-panel-button"
+              size={isMobile ? 'medium' : 'small'}
+              variant="secondary"
+              accent="default"
+              ariaLabel={ariaLabel}
+              onClick={openSidePanelMenu}
+            />
+          </div>
 
-      <StyledTooltipWrapper>
-        <AppTooltip
-          anchorSelect="#toggle-side-panel-button"
-          content={ariaLabel}
-          delay={TooltipDelay.longDelay}
-          place={TooltipPosition.Bottom}
-          offset={5}
-          noArrow
-        />
-      </StyledTooltipWrapper>
-    </StyledButtonWrapper>
+          <StyledTooltipWrapper>
+            <AppTooltip
+              anchorSelect="#toggle-side-panel-button"
+              content={ariaLabel}
+              delay={TooltipDelay.longDelay}
+              place={TooltipPosition.Bottom}
+              offset={5}
+              noArrow
+            />
+          </StyledTooltipWrapper>
+        </MotionButtonWrapper>
+      )}
+    </AnimatePresence>
   );
 };

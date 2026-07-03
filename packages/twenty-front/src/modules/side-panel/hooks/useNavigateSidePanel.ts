@@ -2,6 +2,7 @@ import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePan
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
 import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
+import { isSidePanelAnimatingState } from '@/side-panel/states/isSidePanelAnimatingState';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
@@ -59,6 +60,7 @@ export const useNavigateSidePanel = () => {
     }
 
     store.set(isSidePanelOpenedState.atom, true);
+    store.set(isSidePanelAnimatingState.atom, true);
     store.set(hasUserSelectedSidePanelListItemState.atom, false);
   }, [
     sidePanelCloseAnimationCompleteCleanup,
