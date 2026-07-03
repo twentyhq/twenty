@@ -228,6 +228,36 @@ describe('direct file upload (createFileUpload / completeFileUpload)', () => {
     );
   });
 
+  it('should reject completing an upload whose content contradicts its extension', async () => {
+    // A .png name but plain-text bytes: the content sniff at completion must
+    // reject it, and the record must stay PENDING (never become downloadable).
+    const spoofedContent = Buffer.from('this is not really a png image');
+
+    const createResponse = await createFileUpload({
+      filename: 'actually-text.png',
+      size: spoofedContent.length,
+      fileFolder: 'FilesField',
+      fieldMetadataId: createdFieldMetadataId,
+    });
+
+    const uploadTarget = createResponse.body.data.createFileUpload;
+
+    uploadedFileIds.push(uploadTarget.fileId);
+
+    const putResponse = await putFileToUploadUrl(
+      uploadTarget.uploadUrl,
+      uploadTarget.contentType,
+      spoofedContent,
+    );
+
+    expect(putResponse.status).toBe(204);
+
+    const completeResponse = await completeFileUpload(uploadTarget.fileId);
+
+    expect(completeResponse.body.errors).toBeDefined();
+    expect(completeResponse.body.errors[0].message).toContain('match');
+  });
+
   it('should refuse a PUT larger than the declared size', async () => {
     const declaredSize = 10;
     const oversizedContent = Buffer.from(
