@@ -31,4 +31,16 @@ describe('getLambdaDepsLayerName', () => {
       ),
     ).toBe('deps-default');
   });
+
+  it('inserts the namespace segment when provided', () => {
+    expect(getLambdaDepsLayerName(buildFlatApplication(), 'ns123')).toBe(
+      'deps-ns123-abc123',
+    );
+  });
+
+  it('omits the namespace segment when it is an empty string', () => {
+    expect(getLambdaDepsLayerName(buildFlatApplication(), '')).toBe(
+      'deps-abc123',
+    );
+  });
 });

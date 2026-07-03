@@ -4,12 +4,14 @@ import { join } from 'path';
 import {
   CreateFunctionCommand,
   type CreateFunctionCommandInput,
+  DeleteFunctionCommand,
   GetFunctionCommand,
   InvokeCommand,
   LogType,
   PublishLayerVersionCommand,
   ResourceNotFoundException,
 } from '@aws-sdk/client-lambda';
+import { Logger } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -47,12 +49,17 @@ import {
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
 export class LambdaToolFunctionsService {
+  private readonly logger = new Logger(LambdaToolFunctionsService.name);
+
   private commonLayerName: string | undefined;
   private yarnInstallFunctionName: string | undefined;
   private builderFunctionName: string | undefined;
 
   constructor(
-    private readonly options: Pick<LambdaDriverOptions, 'lambdaRole'>,
+    private readonly options: Pick<
+      LambdaDriverOptions,
+      'lambdaRole' | 'resourceNamespace'
+    >,
     private readonly awsClient: LambdaAwsClientService,
   ) {}
 
@@ -209,20 +216,14 @@ export class LambdaToolFunctionsService {
 
   private async ensureYarnInstallLambdaExists(): Promise<void> {
     const yarnInstallFunctionName = await this.getYarnInstallFunctionName();
-    const lambdaClient = await this.awsClient.getLambdaClient();
 
-    try {
-      await lambdaClient.send(
-        new GetFunctionCommand({ FunctionName: yarnInstallFunctionName }),
-      );
-
+    if (
+      await this.toolFunctionExistsWithExpectedRole(yarnInstallFunctionName)
+    ) {
       return;
-    } catch (error) {
-      if (!(error instanceof ResourceNotFoundException)) {
-        throw error;
-      }
     }
 
+    const lambdaClient = await this.awsClient.getLambdaClient();
     const commonLayerArn = await this.ensureCommonLayerExists();
 
     const temporaryDirManager = new TemporaryDirManager();
@@ -258,20 +259,12 @@ export class LambdaToolFunctionsService {
 
   private async ensureBuilderLambdaExists(): Promise<void> {
     const builderFunctionName = await this.getBuilderFunctionName();
-    const lambdaClient = await this.awsClient.getLambdaClient();
 
-    try {
-      await lambdaClient.send(
-        new GetFunctionCommand({ FunctionName: builderFunctionName }),
-      );
-
+    if (await this.toolFunctionExistsWithExpectedRole(builderFunctionName)) {
       return;
-    } catch (error) {
-      if (!(error instanceof ResourceNotFoundException)) {
-        throw error;
-      }
     }
 
+    const lambdaClient = await this.awsClient.getLambdaClient();
     const commonLayerArn = await this.ensureCommonLayerExists();
 
     const temporaryDirManager = new TemporaryDirManager();
@@ -305,6 +298,45 @@ export class LambdaToolFunctionsService {
     await this.awsClient.waitFunctionActive(builderFunctionName);
   }
 
+  // Shared tool functions are namespaced per instance (see
+  // getLambdaResourceNamespace), but a name can still resolve to a function
+  // created by a prior instance whose execution role was since deleted — invokes
+  // then fail with "The role defined for the function cannot be assumed by
+  // Lambda". Treat a role mismatch as unhealthy: delete it so the caller
+  // recreates it with the configured role.
+  private async toolFunctionExistsWithExpectedRole(
+    functionName: string,
+  ): Promise<boolean> {
+    const lambdaClient = await this.awsClient.getLambdaClient();
+
+    try {
+      const existingFunction = await lambdaClient.send(
+        new GetFunctionCommand({ FunctionName: functionName }),
+      );
+
+      if (existingFunction.Configuration?.Role === this.options.lambdaRole) {
+        return true;
+      }
+
+      this.logger.warn(
+        `Lambda function ${functionName} is bound to role ${existingFunction.Configuration?.Role ?? 'unknown'} instead of ${this.options.lambdaRole}; deleting to recreate with the configured role`,
+      );
+
+      await lambdaClient.send(
+        new DeleteFunctionCommand({ FunctionName: functionName }),
+      );
+      await this.awsClient.waitFunctionDeleted(functionName);
+
+      return false;
+    } catch (error) {
+      if (error instanceof ResourceNotFoundException) {
+        return false;
+      }
+
+      throw error;
+    }
+  }
+
   private async getCommonLayerName(): Promise<string> {
     if (isDefined(this.commonLayerName)) {
       return this.commonLayerName;
@@ -323,6 +355,7 @@ export class LambdaToolFunctionsService {
 
     this.commonLayerName = computeHashedLambdaResourceName({
       prefix: COMMON_LAYER_NAME_PREFIX,
+      namespace: this.options.resourceNamespace,
       contents: [packageJson, yarnLock],
     });
 
@@ -341,6 +374,7 @@ export class LambdaToolFunctionsService {
 
     this.yarnInstallFunctionName = computeHashedLambdaResourceName({
       prefix: YARN_INSTALL_FUNCTION_NAME_PREFIX,
+      namespace: this.options.resourceNamespace,
       contents: [handlerContent],
     });
 
@@ -356,6 +390,7 @@ export class LambdaToolFunctionsService {
 
     this.builderFunctionName = computeHashedLambdaResourceName({
       prefix: BUILDER_FUNCTION_NAME_PREFIX,
+      namespace: this.options.resourceNamespace,
       contents: [handlerContent],
     });
 

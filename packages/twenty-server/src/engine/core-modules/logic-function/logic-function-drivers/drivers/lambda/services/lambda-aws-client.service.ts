@@ -1,6 +1,8 @@
 import {
+  GetFunctionCommand,
   Lambda,
   ListLayerVersionsCommand,
+  ResourceNotFoundException,
   waitUntilFunctionActiveV2,
   waitUntilFunctionUpdatedV2,
 } from '@aws-sdk/client-lambda';
@@ -79,6 +81,39 @@ export class LambdaAwsClientService {
       { client: await this.getLambdaClient(), maxWaitTime },
       { FunctionName: functionName },
     );
+  }
+
+  // No waitUntilFunctionNotExists helper exists in this SDK version, so poll
+  // GetFunction until it reports the function is gone before recreating it.
+  async waitFunctionDeleted(
+    functionName: string,
+    maxWaitTime: number = UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS,
+  ): Promise<void> {
+    const lambdaClient = await this.getLambdaClient();
+    const deadline = Date.now() + maxWaitTime * 1000;
+    const pollIntervalMs = 1000;
+
+    for (;;) {
+      try {
+        await lambdaClient.send(
+          new GetFunctionCommand({ FunctionName: functionName }),
+        );
+      } catch (error) {
+        if (error instanceof ResourceNotFoundException) {
+          return;
+        }
+
+        throw error;
+      }
+
+      if (Date.now() >= deadline) {
+        throw new Error(
+          `Timed out waiting for Lambda function ${functionName} to be deleted`,
+        );
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
+    }
   }
 
   async getExistingLayerArn(layerName: string): Promise<string | undefined> {

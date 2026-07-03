@@ -1,9 +1,14 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 
 export const getLambdaDepsLayerName = (
   flatApplication: FlatApplication,
+  namespace?: string,
 ): string => {
   const checksum = flatApplication.yarnLockChecksum ?? 'default';
 
-  return `deps-${checksum}`;
+  return isNonEmptyString(namespace)
+    ? `deps-${namespace}-${checksum}`
+    : `deps-${checksum}`;
 };
