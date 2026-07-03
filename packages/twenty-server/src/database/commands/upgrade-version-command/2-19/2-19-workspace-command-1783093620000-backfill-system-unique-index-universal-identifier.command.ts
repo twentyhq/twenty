@@ -20,7 +20,7 @@ import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-@RegisteredWorkspaceCommand('2.19.0', 1801000030000)
+@RegisteredWorkspaceCommand('2.19.0', 1783093620000)
 @Command({
   name: 'upgrade:2-19:backfill-system-unique-index-universal-identifier',
   description:
