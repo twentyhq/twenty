@@ -16,7 +16,7 @@ describe('WorkspaceSchemaIndexManagerService', () => {
   });
 
   describe('renameIndexWithoutRebuild', () => {
-    it('should rename with IF EXISTS so a missing source index does not abort the transaction', async () => {
+    it('should rename the index with escaped identifiers', async () => {
       await service.renameIndexWithoutRebuild({
         queryRunner,
         schemaName: 'workspace_test',
@@ -25,7 +25,7 @@ describe('WorkspaceSchemaIndexManagerService', () => {
       });
 
       expect(queryMock).toHaveBeenCalledWith(
-        'ALTER INDEX IF EXISTS "workspace_test"."IDX_legacy" RENAME TO "IDX_new"',
+        'ALTER INDEX "workspace_test"."IDX_legacy" RENAME TO "IDX_new"',
       );
     });
   });

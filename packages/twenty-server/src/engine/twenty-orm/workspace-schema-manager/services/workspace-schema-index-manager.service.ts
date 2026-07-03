@@ -102,9 +102,7 @@ export class WorkspaceSchemaIndexManagerService {
     fromIndexName: string;
     toIndexName: string;
   }): Promise<void> {
-    // IF EXISTS: metadata can drift from the physical schema, and a missing
-    // source index must not abort the caller's transaction.
-    const sql = `ALTER INDEX IF EXISTS ${escapeIdentifier(schemaName)}.${escapeIdentifier(fromIndexName)} RENAME TO ${escapeIdentifier(toIndexName)}`;
+    const sql = `ALTER INDEX ${escapeIdentifier(schemaName)}.${escapeIdentifier(fromIndexName)} RENAME TO ${escapeIdentifier(toIndexName)}`;
 
     await queryRunner.query(sql);
   }
