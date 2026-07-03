@@ -47,6 +47,12 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       getMessagesForThread: jest.fn().mockResolvedValue(threadMessages),
     };
 
+    const streamHeartbeatService = {
+      markClaimed: jest.fn().mockResolvedValue(undefined),
+      isAlive: jest.fn().mockResolvedValue(true),
+      clear: jest.fn().mockResolvedValue(undefined),
+    };
+
     const service = new AgentChatStreamingService(
       threadRepository as never,
       { find: jest.fn() } as never,
@@ -54,6 +60,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       agentChatService as never,
       { publish: jest.fn() } as never,
       { signFileByIdUrl: jest.fn() } as never,
+      streamHeartbeatService as never,
     );
 
     return { service, threadRepository, messageQueueService, agentChatService };

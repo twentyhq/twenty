@@ -144,6 +144,11 @@ describe('StreamAgentChatJob', () => {
     const agentChatStreamingService = {
       flushNextQueuedMessage: jest.fn().mockResolvedValue(undefined),
     };
+    const streamHeartbeatService = {
+      startRunning: jest.fn().mockReturnValue(() => {}),
+      markClaimed: jest.fn().mockResolvedValue(undefined),
+      clear: jest.fn().mockResolvedValue(undefined),
+    };
     const job = new StreamAgentChatJob(
       threadRepository as never,
       workspaceRepository as never,
@@ -152,6 +157,7 @@ describe('StreamAgentChatJob', () => {
       eventPublisherService as never,
       cancelSubscriberService as never,
       agentChatStreamingService as never,
+      streamHeartbeatService as never,
     );
 
     return {

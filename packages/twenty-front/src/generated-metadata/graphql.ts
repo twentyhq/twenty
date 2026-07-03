@@ -304,6 +304,7 @@ export type Application = {
   id: Scalars['UUID']['output'];
   logicFunctions: Array<LogicFunction>;
   logo?: Maybe<Scalars['String']['output']>;
+  logoFileId?: Maybe<Scalars['UUID']['output']>;
   name: Scalars['String']['output'];
   objects: Array<Object>;
   packageJsonChecksum?: Maybe<Scalars['String']['output']>;
@@ -1910,23 +1911,26 @@ export type FileAttachmentInput = {
 export enum FileFolder {
   AgentChat = 'AgentChat',
   AppTarball = 'AppTarball',
-  Attachment = 'Attachment',
   BuiltFrontComponent = 'BuiltFrontComponent',
   BuiltLogicFunction = 'BuiltLogicFunction',
   CorePicture = 'CorePicture',
   Dependencies = 'Dependencies',
   Dpa = 'Dpa',
   EmailAttachment = 'EmailAttachment',
-  File = 'File',
   FilesField = 'FilesField',
   GeneratedSdkClient = 'GeneratedSdkClient',
-  PersonPicture = 'PersonPicture',
-  ProfilePicture = 'ProfilePicture',
   PublicAsset = 'PublicAsset',
   Source = 'Source',
-  Workflow = 'Workflow',
-  WorkspaceLogo = 'WorkspaceLogo'
+  Workflow = 'Workflow'
 }
+
+export type FileUploadTarget = {
+  __typename?: 'FileUploadTarget';
+  contentType: Scalars['String']['output'];
+  expiresAt: Scalars['DateTime']['output'];
+  fileId: Scalars['UUID']['output'];
+  uploadUrl: Scalars['String']['output'];
+};
 
 export type FileWithSignedUrl = {
   __typename?: 'FileWithSignedUrl';
@@ -2477,6 +2481,7 @@ export type Mutation = {
   checkCustomDomainValidRecords?: Maybe<DomainValidRecords>;
   checkPublicDomainValidRecords?: Maybe<DomainValidRecords>;
   checkoutSession: BillingSession;
+  completeFileUpload: FileWithSignedUrl;
   createApiKey: ApiKey;
   createApplicationRegistration: CreateApplicationRegistration;
   createApplicationRegistrationVariable: ApplicationRegistrationVariable;
@@ -2488,6 +2493,7 @@ export type Mutation = {
   createDevelopmentApplication: DevelopmentApplication;
   createEmailGroupChannel: CreateEmailGroupChannelOutput;
   createEmailingDomain: EmailingDomain;
+  createFileUpload: FileUploadTarget;
   createFrontComponent: FrontComponent;
   createManyNavigationMenuItems: Array<NavigationMenuItem>;
   createManyViewFieldGroups: Array<ViewFieldGroup>;
@@ -2753,6 +2759,11 @@ export type MutationCheckoutSessionArgs = {
 };
 
 
+export type MutationCompleteFileUploadArgs = {
+  fileId: Scalars['String']['input'];
+};
+
+
 export type MutationCreateApiKeyArgs = {
   input: CreateApiKeyInput;
 };
@@ -2796,6 +2807,15 @@ export type MutationCreateEmailGroupChannelArgs = {
 
 export type MutationCreateEmailingDomainArgs = {
   input: CreateEmailingDomainInput;
+};
+
+
+export type MutationCreateFileUploadArgs = {
+  fieldMetadataId?: InputMaybe<Scalars['String']['input']>;
+  fieldMetadataUniversalIdentifier?: InputMaybe<Scalars['String']['input']>;
+  fileFolder: FileFolder;
+  filename: Scalars['String']['input'];
+  size: Scalars['Float']['input'];
 };
 
 

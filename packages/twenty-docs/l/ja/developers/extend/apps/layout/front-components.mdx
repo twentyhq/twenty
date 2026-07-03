@@ -377,6 +377,8 @@ export default defineFrontComponent({
 シークレット変数（`isSecret: true`）はフロントコンポーネントには公開**されません**。 それらは、サーバーサイドで実行される[ロジック関数](/l/ja/developers/extend/apps/logic/logic-functions)でのみ利用できます。 これにより、API キーなどの機密値がブラウザーに送信されるのを防ぎます。
 </Warning>
 
+`getApplicationVariable` は、変数に宣言されている `type` に関係なく、常に **string**（または `undefined`）を返します。 文字列は型に応じて一貫した方法でシリアライズされます（boolean は `"true"` / `"false"`、number は 10 進数の文字列、配列 / オブジェクトは JSON）。これはロジック関数の `process.env` で使用されているのと同じ形式です。各自でパースしてください（`Number(...)`、`JSON.parse(...)`、`=== 'true'` など）。 [Variable types](/l/ja/developers/extend/apps/config/application#variable-types) を参照してください。
+
 次のシステム変数は、常に `process.env` 経由で利用できます。
 
 | 変数                        | 説明                            |
