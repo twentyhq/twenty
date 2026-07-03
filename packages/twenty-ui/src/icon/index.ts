@@ -107,6 +107,7 @@ export {
   IconBrandLinkedin,
   IconBrandNpm,
   IconBrandOpenai,
+  IconBrandWhatsapp,
   IconBrandX,
   IconBriefcase,
   IconBroadcast,

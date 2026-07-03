@@ -1,34 +1,56 @@
+import { useApolloClient, useQuery } from '@apollo/client/react';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
-import { billingState } from '@/client-config/states/billingState';
-import { isEmailingDomainInDemoModeState } from '@/client-config/states/isEmailingDomainInDemoModeState';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
-import { SettingsWorkspaceUnsubscribeTopicSection } from '@/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection';
+import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
+import { GET_UNSUBSCRIBE_PAGE_PREVIEW_URL } from '@/settings/unsubscribe-topics/graphql/queries/getUnsubscribePagePreviewUrl';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconArrowUp, IconLock } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Card } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import {
+  IconBrandWhatsapp,
+  IconMail,
+  IconMailX,
+  IconPhone,
+} from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/layout';
+import coverDark from '~/pages/settings/email/assets/cover-dark.png';
+import coverLight from '~/pages/settings/email/assets/cover-light.png';
+import { SettingsCard } from '@/settings/components/SettingsCard';
+import { useContext } from 'react';
+import { ThemeContext } from 'twenty-ui/theme-constants';
+
+const COMMUNICATIONS_TABS_INSTANCE_ID = 'settings-communications-tabs';
+
+const StyledCardLink = styled.a`
+  display: block;
+  min-width: 0;
+  text-decoration: none;
+`;
 
 export const SettingsWorkspaceEmail = () => {
-  const { t } = useLingui();
-  const navigateSettings = useNavigateSettings();
+  const { theme } = useContext(ThemeContext);
 
-  const isEmailingDomainInDemoMode = useAtomStateValue(
-    isEmailingDomainInDemoModeState,
-  );
-  const billing = useAtomStateValue(billingState);
-  const isBillingEnabled = billing?.isBillingEnabled ?? false;
+  const { t } = useLingui();
+
   const isEmailGroupFeatureEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
   );
+
+  const apolloClient = useApolloClient();
+
+  const { data: unsubscribePreviewData } = useQuery<{
+    unsubscribePagePreviewUrl: string;
+  }>(GET_UNSUBSCRIBE_PAGE_PREVIEW_URL, {
+    client: apolloClient,
+  });
+
+  const unsubscribePageUrl = unsubscribePreviewData?.unsubscribePagePreviewUrl;
 
   if (!isEmailGroupFeatureEnabled) {
     return null;
@@ -36,46 +58,66 @@ export const SettingsWorkspaceEmail = () => {
 
   return (
     <SettingsPageLayout
-      title={t`Email`}
+      title={t`Emails`}
       links={[
         {
           children: t`Workspace`,
           href: getSettingsPath(SettingsPath.General),
         },
-        { children: t`Email` },
+        { children: t`Emails` },
       ]}
     >
       <SettingsPageContainer>
-        {isEmailingDomainInDemoMode && (
-          <Card
-            rounded
-            backgroundColor={themeCssVariables.background.secondary}
+        <TabList
+          componentInstanceId={COMMUNICATIONS_TABS_INSTANCE_ID}
+          tabs={[
+            { id: 'emails', title: t`Emails`, Icon: IconMail },
+            {
+              id: 'whatsapp',
+              title: t`Whatsapp`,
+              Icon: IconBrandWhatsapp,
+              disabled: true,
+              pill: t`Soon`,
+            },
+            {
+              id: 'calls',
+              title: t`Calls`,
+              Icon: IconPhone,
+              disabled: true,
+              pill: t`Soon`,
+            },
+          ]}
+        />
+        <Section>
+          <SettingsDiscoveryHeroCard
+            lightSrc={coverLight}
+            darkSrc={coverDark}
+            instanceIdPrefix="settings-communications-hero"
+            tabs={[]}
+          />
+        </Section>
+        <SettingsWorkspaceEmailGroupSection />
+        <Section>
+          <H2Title
+            title={t`Unsubscribe`}
+            description={t`The page your users will get redirected to to unsubscribe from your emails`}
+          />
+          <StyledCardLink
+            href={unsubscribePageUrl}
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            <SettingsOptionCardContentButton
-              Icon={IconLock}
-              title={t`Emailing is in demo mode`}
-              description={t`Emails are logged, not sent. Sending requires the AWS SES driver with an Enterprise license, or Twenty Cloud.`}
-              Button={
-                <Button
-                  title={t`Upgrade`}
-                  variant="primary"
-                  accent="blue"
-                  size="small"
-                  Icon={IconArrowUp}
-                  onClick={() =>
-                    navigateSettings(
-                      isBillingEnabled
-                        ? SettingsPath.Billing
-                        : SettingsPath.AdminPanelEnterprise,
-                    )
-                  }
+            <SettingsCard
+              Icon={
+                <IconMailX
+                  size={theme.icon.size.lg}
+                  stroke={theme.icon.stroke.md}
                 />
               }
+              title={t`See unsubscribe page`}
             />
-          </Card>
-        )}
-        <SettingsWorkspaceEmailGroupSection />
-        <SettingsWorkspaceUnsubscribeTopicSection />
+          </StyledCardLink>
+        </Section>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

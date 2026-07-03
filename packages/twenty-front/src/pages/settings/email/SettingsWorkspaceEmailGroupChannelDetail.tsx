@@ -1,13 +1,14 @@
-import { useQuery } from '@apollo/client/react';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 
-import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { useDeleteEmailGroupChannel } from '@/settings/accounts/hooks/useDeleteEmailGroupChannel';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
+import { UPDATE_MESSAGE_CHANNEL } from '@/settings/accounts/graphql/mutations/updateMessageChannel';
 import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannelDomain';
 import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecordsTable';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SettingsEmailingDomainVerifyButton } from '@/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -16,14 +17,17 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
 import { Status } from 'twenty-ui/data-display';
-import { IconCopy, IconTrash } from 'twenty-ui/icon';
+import { IconBriefcase, IconCopy, IconTrash, IconUsers } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
+import { InlineBanner } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
+import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { getColorByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusColor';
@@ -43,6 +47,21 @@ const StyledForwardingInputContainer = styled.div`
   margin-right: ${themeCssVariables.spacing[2]};
 `;
 
+const StyledDomainStatusRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: space-between;
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+`;
+
+const StyledDomainName = styled.div`
+  color: ${themeCssVariables.font.color.secondary};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 export const SettingsWorkspaceEmailGroupChannelDetail = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
@@ -54,6 +73,7 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
   const { deleteEmailGroupChannel, loading: deleting } =
     useDeleteEmailGroupChannel();
   const { data: emailingDomainsData } = useQuery(GetEmailingDomainsDocument);
+  const [updateMessageChannel] = useMutation(UPDATE_MESSAGE_CHANNEL);
 
   if (loading) {
     return <SettingsSkeletonLoader />;
@@ -88,6 +108,16 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
     }
   };
 
+  const handleExcludeChange = (
+    update:
+      | { excludeGroupEmails: boolean }
+      | { excludeNonProfessionalEmails: boolean },
+  ) => {
+    updateMessageChannel({
+      variables: { input: { id: channel.id, update } },
+    });
+  };
+
   return (
     <SettingsPageLayout
       title={sourceHandle}
@@ -97,10 +127,9 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
           href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: t`Email`,
+          children: t`Emails`,
           href: getSettingsPath(SettingsPath.WorkspaceEmail),
         },
-        { children: sourceHandle },
       ]}
       actionButton={
         <Button
@@ -115,32 +144,22 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
       }
     >
       <SettingsPageContainer>
-        {isDefined(emailingDomain) && (
-          <Section>
-            <H2Title
-              title={t`Sending domain`}
-              description={t`Outbound mail from this channel is sent through this domain. It must be verified before email can be delivered.`}
-              adornment={
-                <SettingsEmailingDomainVerifyButton
-                  emailingDomainId={emailingDomain.id}
-                />
-              }
-            />
-            <Status
-              color={getColorByEmailingDomainStatus(emailingDomain.status)}
-              text={getTextByEmailingDomainStatus(emailingDomain.status)}
-            />
-            {isDefined(emailingDomain.verificationRecords) && (
-              <SettingsDnsRecordsTable
-                records={emailingDomain.verificationRecords}
-              />
-            )}
-          </Section>
-        )}
+        <InlineBanner
+          message={t`Need help to configure your shared mailbox?`}
+          button={{
+            title: t`Go to documentation`,
+            onClick: () =>
+              window.open(
+                getDocumentationUrl({}),
+                '_blank',
+                'noopener,noreferrer',
+              ),
+          }}
+        />
         <Section>
           <H2Title
-            title={t`Source address`}
-            description={t`The address your workspace sends and receives email from.`}
+            title={t`Shared email`}
+            description={t`The shared email you want to use.`}
           />
           <SettingsTextInput
             instanceId="email-group-source"
@@ -175,7 +194,65 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
             />
           </StyledForwardingRow>
         </Section>
-        <SettingsAccountsMessageChannelDetails messageChannel={channel} />
+        {isDefined(emailingDomain) && (
+          <Section>
+            <H2Title
+              title={t`Sending domain`}
+              description={t`Outbound mail from this channel is sent through this domain. It must be verified before email can be delivered.`}
+              adornment={
+                <SettingsEmailingDomainVerifyButton
+                  emailingDomainId={emailingDomain.id}
+                />
+              }
+            />
+            {isDefined(emailingDomain.verificationRecords) && (
+              <SettingsDnsRecordsTable
+                records={emailingDomain.verificationRecords}
+              />
+            )}
+            <Card rounded>
+              <StyledDomainStatusRow>
+                <StyledDomainName>{emailingDomain.domain}</StyledDomainName>
+                <Status
+                  color={getColorByEmailingDomainStatus(emailingDomain.status)}
+                  text={getTextByEmailingDomainStatus(emailingDomain.status)}
+                />
+              </StyledDomainStatusRow>
+            </Card>
+          </Section>
+        )}
+        <Section>
+          <H2Title
+            title={t`Advanced`}
+            description={t`Configure what emails should get synced`}
+          />
+          <Card rounded>
+            <SettingsOptionCardContentToggle
+              Icon={IconUsers}
+              title={t`Exclude group emails`}
+              description={t`Don't import emails from team@ support@ noreply@...`}
+              checked={channel.excludeGroupEmails}
+              divider
+              onChange={() =>
+                handleExcludeChange({
+                  excludeGroupEmails: !channel.excludeGroupEmails,
+                })
+              }
+            />
+            <SettingsOptionCardContentToggle
+              Icon={IconBriefcase}
+              title={t`Exclude non-professional emails`}
+              description={t`Don't create contacts from/to Gmail, Outlook emails`}
+              checked={channel.excludeNonProfessionalEmails}
+              onChange={() =>
+                handleExcludeChange({
+                  excludeNonProfessionalEmails:
+                    !channel.excludeNonProfessionalEmails,
+                })
+              }
+            />
+          </Card>
+        </Section>
       </SettingsPageContainer>
       <ConfirmationModal
         modalInstanceId={DELETE_EMAIL_GROUP_MODAL_ID}

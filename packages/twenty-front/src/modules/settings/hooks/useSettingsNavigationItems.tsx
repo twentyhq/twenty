@@ -173,7 +173,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !permissionMap[PermissionFlagType.AI_SETTINGS],
         },
         {
-          label: t`Email`,
+          label: t`Emails`,
           path: SettingsPath.WorkspaceEmail,
           Icon: IconMail,
           isHidden:
