@@ -179,7 +179,7 @@ export const SettingsLogs = () => {
             onClick={() =>
               navigateSettings(
                 isBillingEnabled
-                  ? SettingsPath.Billing
+                  ? SettingsPath.BillingPlans
                   : SettingsPath.AdminPanelEnterprise,
               )
             }

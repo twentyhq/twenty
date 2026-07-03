@@ -38,7 +38,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
   } = {}) => {
     const threadRepository = {
       findOne: jest.fn().mockResolvedValue(thread),
-      update: jest.fn().mockResolvedValue(undefined),
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
     };
     const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
     const agentChatService = {
@@ -91,13 +91,13 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
-  it('rejects without clearing state when a newer message exists', async () => {
+  it('rejects and restores the error state when a newer message exists', async () => {
     const newerAssistantMessage = {
       ...userMessageEntity,
       id: 'newer-message-id',
       role: AgentMessageRole.ASSISTANT,
     } as unknown as AgentMessageEntity;
-    const { service, threadRepository } = buildService({
+    const { service, threadRepository, messageQueueService } = buildService({
       threadMessages: [userMessageEntity, newerAssistantMessage],
     });
 
@@ -106,7 +106,15 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     ).rejects.toMatchObject({
       code: AiExceptionCode.NO_FAILED_TURN_TO_RETRY,
     });
-    expect(threadRepository.update).not.toHaveBeenCalled();
+    expect(messageQueueService.add).not.toHaveBeenCalled();
+    expect(threadRepository.update).toHaveBeenLastCalledWith(
+      'workspace-id',
+      { id: 'thread-id', activeStreamId: expect.any(String) },
+      {
+        activeStreamId: null,
+        lastStreamError: failedThread.lastStreamError,
+      },
+    );
   });
 
   it('drops the failed output, re-enqueues the turn, and clears the error', async () => {
@@ -134,7 +142,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     );
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
-      { id: 'thread-id' },
+      expect.objectContaining({ id: 'thread-id' }),
       { activeStreamId: result.streamId, lastStreamError: null },
     );
     expect(result.messageId).toBe('user-message-id');
