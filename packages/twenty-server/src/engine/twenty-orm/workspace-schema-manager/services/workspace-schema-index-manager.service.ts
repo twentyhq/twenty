@@ -107,11 +107,6 @@ export class WorkspaceSchemaIndexManagerService {
     await queryRunner.query(sql);
   }
 
-  // Query pg_class/pg_namespace directly instead of the pg_indexes view: the
-  // view joins pg_index against pg_class twice and derives schemaname from the
-  // table's namespace, which prevents an index lookup and can scan the whole
-  // catalog on large multi-tenant clusters. This lookup hits the unique
-  // (relname, relnamespace) index on pg_class.
   async doesIndexExist({
     queryRunner,
     schemaName,
