@@ -49,64 +49,6 @@ describe('computeSubscriptionUpdateOptions', () => {
     });
   });
 
-  it('returns proration and plan metadata for PLAN_AND_INTERVAL update type when interval is unchanged', () => {
-    const result = computeSubscriptionUpdateOptions(
-      {
-        type: SubscriptionUpdateType.PLAN_AND_INTERVAL,
-        newPlan: BillingPlanKey.ENTERPRISE,
-        newInterval: SubscriptionInterval.Year,
-      },
-      { currentInterval: SubscriptionInterval.Year },
-    );
-
-    expect(result).toEqual({
-      proration: 'always_invoice',
-      metadata: {
-        plan: BillingPlanKey.ENTERPRISE,
-      },
-    });
-  });
-
-  it('returns proration, anchor, and plan metadata for PLAN_AND_INTERVAL update type when interval changes', () => {
-    const result = computeSubscriptionUpdateOptions(
-      {
-        type: SubscriptionUpdateType.PLAN_AND_INTERVAL,
-        newPlan: BillingPlanKey.ENTERPRISE,
-        newInterval: SubscriptionInterval.Year,
-      },
-      { currentInterval: SubscriptionInterval.Month },
-    );
-
-    expect(result).toEqual({
-      proration: 'always_invoice',
-      anchor: 'now',
-      metadata: {
-        plan: BillingPlanKey.ENTERPRISE,
-      },
-    });
-  });
-
-  it('returns no proration, no anchor, and plan metadata for PLAN_AND_INTERVAL update type during trial', () => {
-    const result = computeSubscriptionUpdateOptions(
-      {
-        type: SubscriptionUpdateType.PLAN_AND_INTERVAL,
-        newPlan: BillingPlanKey.ENTERPRISE,
-        newInterval: SubscriptionInterval.Year,
-      },
-      {
-        currentInterval: SubscriptionInterval.Month,
-        isTrialing: true,
-      },
-    );
-
-    expect(result).toEqual({
-      proration: 'none',
-      metadata: {
-        plan: BillingPlanKey.ENTERPRISE,
-      },
-    });
-  });
-
   it('returns proration and anchor for INTERVAL update type', () => {
     const result = computeSubscriptionUpdateOptions({
       type: SubscriptionUpdateType.INTERVAL,

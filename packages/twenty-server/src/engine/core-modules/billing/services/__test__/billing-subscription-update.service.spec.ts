@@ -1565,18 +1565,5 @@ describe('BillingSubscriptionUpdateService', () => {
         ),
       ).resolves.toBe(false);
     });
-
-    it('should update plan and interval changes immediately during trial', async () => {
-      await expect(
-        service.shouldUpdateAtSubscriptionPeriodEnd(
-          { status: SubscriptionStatus.Trialing } as BillingSubscriptionEntity,
-          {
-            type: SubscriptionUpdateType.PLAN_AND_INTERVAL,
-            newPlan: BillingPlanKey.ENTERPRISE,
-            newInterval: SubscriptionInterval.Month,
-          },
-        ),
-      ).resolves.toBe(false);
-    });
   });
 });

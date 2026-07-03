@@ -1,14 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const SWITCH_BILLING_PLAN = gql`
-  mutation SwitchBillingPlan(
-    $targetPlanKey: BillingPlanKey!
-    $targetInterval: SubscriptionInterval!
-  ) {
-    switchBillingPlan(
-      targetPlanKey: $targetPlanKey
-      targetInterval: $targetInterval
-    ) {
+  mutation SwitchBillingPlan {
+    switchBillingPlan {
       currentBillingSubscription {
         ...CurrentBillingSubscriptionFragment
       }

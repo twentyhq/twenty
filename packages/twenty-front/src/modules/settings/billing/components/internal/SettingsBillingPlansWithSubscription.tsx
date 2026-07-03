@@ -32,7 +32,7 @@ export const SettingsBillingPlansWithSubscription = ({
     confirmationModalSwitchToProMessage,
   } = useBillingWording();
   const { isSwitchingPlan, planActions, switchBillingPlan } =
-    useBillingPlanActions({ billingInterval, currentPlanKey });
+    useBillingPlanActions({ currentPlanKey });
 
   return (
     <SettingsPageContainer overflow="visible">
