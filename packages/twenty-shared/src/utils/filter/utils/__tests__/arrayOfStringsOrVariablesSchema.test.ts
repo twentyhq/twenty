@@ -80,6 +80,27 @@ describe('arrayOfStringsOrVariablesSchema', () => {
       }
     });
 
+    it('should normalize scalar value to single-item array', () => {
+      const result = arrayOfStringsOrVariablesSchema.safeParse('SALES');
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data).toEqual(['SALES']);
+      }
+    });
+
+    it('should normalize JSON scalar string to single-item array', () => {
+      const result = arrayOfStringsOrVariablesSchema.safeParse('"SALES"');
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data).toEqual(['SALES']);
+      }
+    });
+
+    it('should reject malformed JSON arrays', () => {
+      const result = arrayOfStringsOrVariablesSchema.safeParse('["SALES",]');
+      expect(result.success).toBe(false);
+    });
+
     it('should handle empty array in JSON', () => {
       const result = arrayOfStringsOrVariablesSchema.safeParse('[]');
       expect(result.success).toBe(true);
