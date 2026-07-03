@@ -613,7 +613,10 @@ export class ApplicationService {
 
       await queryRunner.commitTransaction();
     } catch (error) {
-      await queryRunner.rollbackTransaction();
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
+
       throw error;
     } finally {
       await queryRunner.release();
