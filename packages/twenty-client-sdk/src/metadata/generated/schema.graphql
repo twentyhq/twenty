@@ -4633,12 +4633,7 @@ input CreateAppTokenInput {
 }
 
 enum FileFolder {
-  ProfilePicture
-  WorkspaceLogo
-  Attachment
-  PersonPicture
   CorePicture
-  File
   AgentChat
   BuiltLogicFunction
   BuiltFrontComponent
