@@ -47,9 +47,11 @@
   width: 28px;
 }
 
+// Grouped edges stay concentric with the FloatingIconButtonGroup container:
+// its md radius minus the 2px padding.
 .button[data-position='left'] {
-  --floating-icon-button-radius: var(--t-border-radius-md) 0px 0px
-    var(--t-border-radius-md);
+  --floating-icon-button-radius: calc(var(--t-border-radius-md) - 2px) 0px 0px
+    calc(var(--t-border-radius-md) - 2px);
 }
 
 .button[data-position='middle'] {
@@ -57,8 +59,8 @@
 }
 
 .button[data-position='right'] {
-  --floating-icon-button-radius: 0px var(--t-border-radius-md)
-    var(--t-border-radius-md) 0px;
+  --floating-icon-button-radius: 0px calc(var(--t-border-radius-md) - 2px)
+    calc(var(--t-border-radius-md) - 2px) 0px;
 }
 
 .button[data-apply-blur] {
