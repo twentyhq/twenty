@@ -1,7 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 import { FileFolder } from 'twenty-shared/types';
-import { type KebabCase } from 'type-fest';
 
 registerEnumType(FileFolder, {
   name: 'FileFolder',
@@ -15,29 +14,9 @@ export type FileFolderConfig = {
 export const IMMUTABLE_FILE_CACHE_CONTROL = 'private, max-age=86400, immutable';
 
 export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
-  [FileFolder.ProfilePicture]: {
-    ignoreExpirationToken: true,
-    immutable: false,
-  },
-  [FileFolder.WorkspaceLogo]: {
-    ignoreExpirationToken: true,
-    immutable: false,
-  },
-  [FileFolder.Attachment]: {
-    ignoreExpirationToken: false,
-    immutable: false,
-  },
-  [FileFolder.PersonPicture]: {
-    ignoreExpirationToken: false,
-    immutable: false,
-  },
   [FileFolder.CorePicture]: {
     ignoreExpirationToken: true,
     immutable: true,
-  },
-  [FileFolder.File]: {
-    ignoreExpirationToken: false,
-    immutable: false,
   },
   [FileFolder.AgentChat]: {
     ignoreExpirationToken: false,
@@ -88,5 +67,3 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
     immutable: true,
   },
 };
-
-export type AllowedFolders = KebabCase<keyof typeof FileFolder>;

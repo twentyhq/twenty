@@ -1911,22 +1911,17 @@ export type FileAttachmentInput = {
 export enum FileFolder {
   AgentChat = 'AgentChat',
   AppTarball = 'AppTarball',
-  Attachment = 'Attachment',
   BuiltFrontComponent = 'BuiltFrontComponent',
   BuiltLogicFunction = 'BuiltLogicFunction',
   CorePicture = 'CorePicture',
   Dependencies = 'Dependencies',
   Dpa = 'Dpa',
   EmailAttachment = 'EmailAttachment',
-  File = 'File',
   FilesField = 'FilesField',
   GeneratedSdkClient = 'GeneratedSdkClient',
-  PersonPicture = 'PersonPicture',
-  ProfilePicture = 'ProfilePicture',
   PublicAsset = 'PublicAsset',
   Source = 'Source',
-  Workflow = 'Workflow',
-  WorkspaceLogo = 'WorkspaceLogo'
+  Workflow = 'Workflow'
 }
 
 export type FileWithSignedUrl = {

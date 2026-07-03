@@ -108,12 +108,10 @@ describe('setFileResponseHeaders', () => {
   );
 
   it.each([
-    FileFolder.ProfilePicture,
-    FileFolder.WorkspaceLogo,
-    FileFolder.PersonPicture,
-    FileFolder.Attachment,
     FileFolder.PublicAsset,
     FileFolder.AppTarball,
+    FileFolder.Source,
+    FileFolder.BuiltFrontComponent,
   ])('should not set Cache-Control for mutable folder %s', (fileFolder) => {
     const res = createMockResponse();
 
