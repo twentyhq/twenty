@@ -29,7 +29,7 @@ export const getSubAllFlatEntityMapsByApplicationIdsOrThrow = ({
     if (!isDefined(fromFlatEntityMaps)) {
       throw new FlatEntityMapsException(
         `Missing flat entity maps for metadata "${metadataName}" while building application-scoped slice`,
-        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+        FlatEntityMapsExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }
 
