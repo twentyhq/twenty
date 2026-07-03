@@ -1,0 +1,24 @@
+packages/twenty-front/src/modules/settings/components/SettingsDnsRecordsTable.tsx
+  s_c175d3fe58a362::t_7b6906edb8b4f1 88
+packages/twenty-front/src/pages/settings/email/SettingsWorkspaceEmail.tsx
+  s_c175d3fe58a362::t_c8d530ef3f6ead 51
+packages/twenty-front/src/pages/settings/email/SettingsWorkspaceEmailGroupChannelDetail.tsx
+  s_c175d3fe58a362::t_3e573323be0ae3 245-246
+  s_c175d3fe58a362::t_df98d6156e12f0 236-237
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "f3a6dcbef432e5b556c54ebc48057dd074180a7a",
+  "prompts": {},
+  "sessions": {
+    "s_c175d3fe58a362": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8281f503-1e35-47d7-8ac7-3d59a5110016",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
