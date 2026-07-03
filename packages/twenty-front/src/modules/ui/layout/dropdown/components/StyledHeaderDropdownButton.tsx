@@ -13,7 +13,7 @@ export const StyledHeaderDropdownButton = styled.button<StyledDropdownButtonProp
       ? themeCssVariables.background.transparent.light
       : themeCssVariables.background.primary};
   border: none;
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.md};
   color: ${({ isActive }) =>
     isActive
       ? themeCssVariables.color.blue
@@ -34,5 +34,10 @@ export const StyledHeaderDropdownButton = styled.button<StyledDropdownButtonProp
       isUnfolded
         ? themeCssVariables.background.transparent.medium
         : themeCssVariables.background.transparent.light};
+  }
+
+  @supports (corner-shape: squircle) {
+    border-radius: ${themeCssVariables.border.radius.lg};
+    corner-shape: squircle;
   }
 `;

@@ -9,7 +9,7 @@
   align-items: center;
   background: transparent;
   border: var(--light-icon-button-border, none);
-  border-radius: var(--t-border-radius-sm);
+  border-radius: var(--t-border-radius-md);
   box-shadow: var(--light-icon-button-box-shadow, none);
   color: var(--light-icon-button-color);
   cursor: pointer;
@@ -45,6 +45,13 @@
 
   &[data-disabled] {
     cursor: not-allowed;
+  }
+}
+
+@supports (corner-shape: squircle) {
+  .button {
+    border-radius: var(--t-border-radius-lg);
+    corner-shape: squircle;
   }
 }
 

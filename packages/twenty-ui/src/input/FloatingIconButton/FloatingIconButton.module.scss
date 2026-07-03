@@ -9,7 +9,7 @@
   backdrop-filter: none;
   background: var(--t-background-primary);
   border: 1px solid var(--t-border-color-strong);
-  border-radius: var(--floating-icon-button-radius, var(--t-border-radius-sm));
+  border-radius: var(--floating-icon-button-radius, var(--t-border-radius-md));
   box-shadow: none;
   box-sizing: border-box;
   color: var(--t-font-color-tertiary);
@@ -24,6 +24,16 @@
   position: relative;
   transition: background calc(var(--t-animation-duration-instant) * 1s) ease;
   white-space: nowrap;
+}
+
+@supports (corner-shape: squircle) {
+  .button {
+    border-radius: var(
+      --floating-icon-button-radius,
+      var(--t-border-radius-lg)
+    );
+    corner-shape: squircle;
+  }
 }
 
 .small {

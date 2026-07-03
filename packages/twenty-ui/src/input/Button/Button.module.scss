@@ -30,7 +30,7 @@ $gray-scale-light-gray1: color(display-p3 1 1 1);
   align-items: center;
   background: var(--btn-bg, transparent);
   border-color: var(--btn-border-color, transparent);
-  border-radius: var(--btn-radius, var(--t-border-radius-sm));
+  border-radius: var(--btn-radius, var(--t-border-radius-md));
   border-style: solid;
   border-width: var(--btn-border-width, 1px 1px 1px 1px);
   box-shadow: var(--btn-box-shadow, none);
@@ -66,6 +66,13 @@ $gray-scale-light-gray1: color(display-p3 1 1 1);
 
   &[data-disabled] {
     cursor: not-allowed;
+  }
+}
+
+@supports (corner-shape: squircle) {
+  .button {
+    border-radius: var(--btn-radius, var(--t-border-radius-lg));
+    corner-shape: squircle;
   }
 }
 
@@ -107,8 +114,8 @@ $gray-scale-light-gray1: color(display-p3 1 1 1);
 // danger keep the focus border even when disabled.
 $primary-accents: (
   'default': (
-    bg: var(--t-background-secondary),
-    bg-disabled: var(--t-background-secondary),
+    bg: var(--t-background-transparent-lighter),
+    bg-disabled: var(--t-background-transparent-lighter),
     border: var(--t-background-transparent-light),
     border-focus: var(--t-color-blue),
     focus-needs-enabled: true,

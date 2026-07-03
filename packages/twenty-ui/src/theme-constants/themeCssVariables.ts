@@ -174,6 +174,7 @@ export const themeCssVariables = {
       xs: 'var(--t-border-radius-xs)',
       sm: 'var(--t-border-radius-sm)',
       md: 'var(--t-border-radius-md)',
+      lg: 'var(--t-border-radius-lg)',
       xl: 'var(--t-border-radius-xl)',
       xxl: 'var(--t-border-radius-xxl)',
       pill: 'var(--t-border-radius-pill)',

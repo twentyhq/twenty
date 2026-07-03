@@ -5,7 +5,7 @@
   align-items: center;
   background: transparent;
   border: none;
-  border-radius: var(--t-border-radius-sm);
+  border-radius: var(--t-border-radius-md);
   box-shadow: none;
   color: var(--t-font-color-secondary);
   cursor: pointer;
@@ -57,6 +57,13 @@
 
   &[data-active] {
     color: var(--t-color-blue);
+  }
+}
+
+@supports (corner-shape: squircle) {
+  .button {
+    border-radius: var(--t-border-radius-lg);
+    corner-shape: squircle;
   }
 }
 
