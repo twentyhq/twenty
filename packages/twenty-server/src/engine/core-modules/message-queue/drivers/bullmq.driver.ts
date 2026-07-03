@@ -98,8 +98,6 @@ export class BullMQDriver
       );
     }
 
-    // Workers close first so jobs finishing during the drain can still
-    // enqueue follow-up jobs through the queue instances
     await Promise.all(workers.map(([, worker]) => worker.close()));
     await Promise.all(queues.map((queue) => queue.close()));
 

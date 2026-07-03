@@ -21,7 +21,6 @@ async function bootstrap() {
     // Inject our logger
     app.useLogger(loggerService ?? false);
 
-    // SIGTERM triggers onModuleDestroy so the queue driver drains active jobs
     app.enableShutdownHooks();
   } catch (err) {
     loggerService?.error(err?.message, err?.name);
