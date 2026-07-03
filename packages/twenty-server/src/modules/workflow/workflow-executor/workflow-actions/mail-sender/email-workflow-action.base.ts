@@ -57,13 +57,6 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
       return resolvedInput;
     }
 
-    // Sender-as-variable (a workspace member id resolved to a connected
-    // account) is only supported for drafts for now; send-email keeps the
-    // configured value as a plain connected account id.
-    if (this.getMode() !== 'DRAFT') {
-      return resolvedInput;
-    }
-
     const connectedAccountId = await this.resolveSenderConnectedAccountId(
       resolvedInput.connectedAccountId,
       workspaceId,

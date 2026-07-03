@@ -13,11 +13,9 @@ import {
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import {
-  fileFolderConfigs,
-  IMMUTABLE_FILE_CACHE_CONTROL,
-} from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -66,6 +64,7 @@ export class FileService {
       where: {
         path: `${fileFolder}/${filepath}`,
         applicationId,
+        status: FILE_STATUS.UPLOADED,
       },
     });
 
@@ -94,6 +93,7 @@ export class FileService {
     const file = await this.fileRepository.findOne(workspaceId, {
       where: {
         id: fileId,
+        status: FILE_STATUS.UPLOADED,
       },
     });
 
@@ -155,6 +155,7 @@ export class FileService {
       where: {
         id: params.fileId,
         path: Like(`${params.fileFolder}/%`),
+        status: FILE_STATUS.UPLOADED,
       },
     });
 
@@ -213,9 +214,8 @@ export class FileService {
       ),
       responseContentType: mimeType,
       responseContentDisposition: getContentDisposition(mimeType),
-      responseCacheControl: fileFolderConfigs[fileFolder].immutable
-        ? IMMUTABLE_FILE_CACHE_CONTROL
-        : undefined,
+      responseCacheControl:
+        fileFolderConfigs[fileFolder].cacheControl ?? undefined,
     });
 
     if (presignedUrl) {
@@ -251,6 +251,7 @@ export class FileService {
       where: {
         id: fileId,
         path: Like(`${fileFolder}/%`),
+        status: FILE_STATUS.UPLOADED,
       },
     });
 

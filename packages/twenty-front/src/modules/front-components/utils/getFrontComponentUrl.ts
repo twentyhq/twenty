@@ -9,6 +9,6 @@ export const getFrontComponentUrl = ({
   checksum?: string;
 }): string => {
   return isDefined(checksum)
-    ? `${REST_API_BASE_URL}/front-components/${frontComponentId}?checksum=${checksum}`
+    ? `${REST_API_BASE_URL}/front-components/${frontComponentId}/${checksum}.js`
     : `${REST_API_BASE_URL}/front-components/${frontComponentId}`;
 };
