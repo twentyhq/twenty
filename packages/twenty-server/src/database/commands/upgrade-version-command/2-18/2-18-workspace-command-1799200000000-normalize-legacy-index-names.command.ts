@@ -49,6 +49,91 @@ export class NormalizeLegacyIndexNamesCommand extends ActiveOrSuspendedWorkspace
       return;
     }
 
+    const operations =
+      await this.computeIndexNameNormalizationOperations(workspaceId);
+
+    if (operations.length === 0) {
+      this.logger.log(
+        `No legacy index names to normalize for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
+
+    if (options.dryRun) {
+      for (const operation of operations) {
+        if (operation.type === 'rename') {
+          this.logger.log(
+            `[DRY RUN] Would rename index ${operation.fromName} -> ${operation.toName} (workspace ${workspaceId})`,
+          );
+        } else {
+          this.logger.log(
+            `[DRY RUN] Would drop redundant duplicate index ${operation.redundantName} (kept ${operation.keptName}) (workspace ${workspaceId})`,
+          );
+        }
+      }
+
+      return;
+    }
+
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+    const queryRunner = dataSource.createQueryRunner();
+    let isQueryRunnerConnected = false;
+    let isTransactionStarted = false;
+
+    try {
+      await queryRunner.connect();
+      isQueryRunnerConnected = true;
+
+      await queryRunner.startTransaction();
+      isTransactionStarted = true;
+
+      for (const [operationIndex, operation] of operations.entries()) {
+        const savepointName = `index_name_normalization_${operationIndex}`;
+
+        await queryRunner.query(`SAVEPOINT "${savepointName}"`);
+
+        try {
+          await this.applyIndexNameNormalizationOperation({
+            queryRunner,
+            schemaName,
+            operation,
+            workspaceId,
+          });
+
+          await queryRunner.query(`RELEASE SAVEPOINT "${savepointName}"`);
+        } catch (error) {
+          await queryRunner.query(`ROLLBACK TO SAVEPOINT "${savepointName}"`);
+
+          this.logger.warn(
+            `Skipping index name normalization for ${operation.type === 'rename' ? operation.fromName : operation.redundantName} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+          );
+        }
+      }
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      if (isTransactionStarted) {
+        await queryRunner.rollbackTransaction();
+      }
+
+      throw error;
+    } finally {
+      if (isQueryRunnerConnected) {
+        await queryRunner.release();
+      }
+    }
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatIndexMaps',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+    ]);
+  }
+
+  private async computeIndexNameNormalizationOperations(
+    workspaceId: string,
+  ): Promise<IndexNameNormalizationOperation[]> {
     const { flatIndexMaps, flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatIndexMaps',
@@ -108,88 +193,7 @@ export class NormalizeLegacyIndexNamesCommand extends ActiveOrSuspendedWorkspace
       }
     }
 
-    const operations = planIndexNameNormalization(indexStatuses);
-
-    if (operations.length === 0) {
-      this.logger.log(
-        `No legacy index names to normalize for workspace ${workspaceId}, skipping`,
-      );
-
-      return;
-    }
-
-    if (options.dryRun) {
-      for (const operation of operations) {
-        if (operation.type === 'rename') {
-          this.logger.log(
-            `[DRY RUN] Would rename index ${operation.fromName} -> ${operation.toName} (workspace ${workspaceId})`,
-          );
-        } else {
-          this.logger.log(
-            `[DRY RUN] Would drop redundant duplicate index ${operation.redundantName} (kept ${operation.keptName}) (workspace ${workspaceId})`,
-          );
-        }
-      }
-
-      return;
-    }
-
-    const schemaName = getWorkspaceSchemaName(workspaceId);
-    const queryRunner = dataSource.createQueryRunner();
-    let isQueryRunnerConnected = false;
-    let isTransactionStarted = false;
-
-    try {
-      await queryRunner.connect();
-      isQueryRunnerConnected = true;
-
-      await queryRunner.startTransaction();
-      isTransactionStarted = true;
-
-      for (const [operationIndex, operation] of operations.entries()) {
-        const savepointName = `index_name_normalization_${operationIndex}`;
-
-        await queryRunner.query(`SAVEPOINT "${savepointName}"`);
-
-        try {
-          await this.applyIndexNameNormalizationOperation({
-            queryRunner,
-            schemaName,
-            operation,
-            workspaceId,
-          });
-
-          await queryRunner.query(`RELEASE SAVEPOINT "${savepointName}"`);
-        } catch (error) {
-          // A failed statement aborts the whole Postgres transaction; rolling
-          // back to the savepoint keeps prior operations committable and lets
-          // the loop skip only the offending index.
-          await queryRunner.query(`ROLLBACK TO SAVEPOINT "${savepointName}"`);
-
-          this.logger.warn(
-            `Skipping index name normalization for ${operation.type === 'rename' ? operation.fromName : operation.redundantName} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
-          );
-        }
-      }
-
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      if (isTransactionStarted) {
-        await queryRunner.rollbackTransaction();
-      }
-
-      throw error;
-    } finally {
-      if (isQueryRunnerConnected) {
-        await queryRunner.release();
-      }
-    }
-
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'flatIndexMaps',
-      'flatObjectMetadataMaps',
-      'flatFieldMetadataMaps',
-    ]);
+    return planIndexNameNormalization(indexStatuses);
   }
 
   private async applyIndexNameNormalizationOperation({
