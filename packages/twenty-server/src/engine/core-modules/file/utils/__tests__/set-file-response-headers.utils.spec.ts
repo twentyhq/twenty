@@ -124,16 +124,20 @@ describe('setFileResponseHeaders', () => {
     FileFolder.Source,
     FileFolder.BuiltLogicFunction,
     FileFolder.Dependencies,
-  ])('should not set Cache-Control for mutable folder %s', (fileFolder) => {
-    const res = createMockResponse();
+    FileFolder.GeneratedSdkClient,
+  ])(
+    'should not set Cache-Control for non-cacheable folder %s',
+    (fileFolder) => {
+      const res = createMockResponse();
 
-    setFileResponseHeaders(res as any, 'image/png', fileFolder);
+      setFileResponseHeaders(res as any, 'image/png', fileFolder);
 
-    expect(res.setHeader).not.toHaveBeenCalledWith(
-      'Cache-Control',
-      expect.anything(),
-    );
-  });
+      expect(res.setHeader).not.toHaveBeenCalledWith(
+        'Cache-Control',
+        expect.anything(),
+      );
+    },
+  );
 });
 
 describe('getContentDisposition', () => {
