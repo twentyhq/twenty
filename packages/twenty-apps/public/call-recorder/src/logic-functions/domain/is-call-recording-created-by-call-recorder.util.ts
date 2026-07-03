@@ -6,4 +6,7 @@ export const isCallRecordingCreatedByCallRecorder = (createdBy: {
   name?: string;
 }): boolean =>
   createdBy.source === CALL_RECORDER_CREATED_BY_SOURCE &&
+  // TODO: Replace this display-name coupling with typed app provenance after a
+  // core actor change stamps the application universal identifier on app-created
+  // records.
   createdBy.name === APP_DISPLAY_NAME;
