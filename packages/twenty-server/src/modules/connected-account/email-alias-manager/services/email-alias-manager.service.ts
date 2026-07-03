@@ -32,9 +32,12 @@ export class EmailAliasManagerService {
       where: { connectedAccountId: connectedAccount.id, workspaceId },
     });
 
-    const handleAliases = accountHasMailbox
-      ? await this.getHandleAliasesFromProvider(connectedAccount)
-      : [];
+    if (!accountHasMailbox) {
+      return connectedAccount.handleAliases ?? [];
+    }
+
+    const handleAliases =
+      await this.getHandleAliasesFromProvider(connectedAccount);
 
     const authContext = buildSystemAuthContext(workspaceId);
 
