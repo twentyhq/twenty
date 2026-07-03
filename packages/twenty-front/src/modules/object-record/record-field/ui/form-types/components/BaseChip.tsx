@@ -43,6 +43,7 @@ const StyledDelete = styled.button<{ danger: boolean }>`
   box-sizing: border-box;
   color: ${({ danger }) =>
     danger ? themeCssVariables.color.red : themeCssVariables.color.blue};
+  corner-shape: round;
   cursor: pointer;
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
