@@ -78,13 +78,8 @@ export class ApplicationInstallResolver {
     version: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
-    const registration =
-      await this.marketplaceQueryService.findRegistrationByUniversalIdentifier(
-        universalIdentifier,
-      );
-
-    await this.applicationInstallService.installApplication({
-      appRegistrationId: registration.id,
+    await this.installRegisteredApplication({
+      universalIdentifier,
       version,
       workspaceId: workspace.id,
     });
@@ -100,13 +95,8 @@ export class ApplicationInstallResolver {
     version: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    const registration =
-      await this.marketplaceQueryService.findRegistrationByUniversalIdentifier(
-        universalIdentifier,
-      );
-
-    await this.applicationInstallService.installApplication({
-      appRegistrationId: registration.id,
+    await this.installRegisteredApplication({
+      universalIdentifier,
       version,
       workspaceId: workspace.id,
     });
@@ -114,6 +104,23 @@ export class ApplicationInstallResolver {
     return this.applicationService.findOneApplicationOrThrow({
       universalIdentifier,
       workspaceId: workspace.id,
+    });
+  }
+
+  private async installRegisteredApplication(params: {
+    universalIdentifier: string;
+    version: string | undefined;
+    workspaceId: string;
+  }): Promise<void> {
+    const registration =
+      await this.marketplaceQueryService.findRegistrationByUniversalIdentifier(
+        params.universalIdentifier,
+      );
+
+    await this.applicationInstallService.installApplication({
+      appRegistrationId: registration.id,
+      version: params.version,
+      workspaceId: params.workspaceId,
     });
   }
 

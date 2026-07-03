@@ -125,6 +125,11 @@ export class ApplicationDevelopmentResolver {
         },
       );
 
+    await this.throttlePerApplication(
+      workspaceCustomFlatApplication.universalIdentifier,
+      workspaceId,
+    );
+
     const workspaceMigration = enrichCreateWorkspaceMigrationActionsWithIds({
       workspaceMigration: {
         actions: actions as AllUniversalWorkspaceMigrationAction[],
