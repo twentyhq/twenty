@@ -1,5 +1,7 @@
 import request from 'supertest';
 import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/delete-one-role-operation-factory.util';
+import { assignRoleToApiKey } from 'test/integration/metadata/suites/developers/utils/assign-role-to-api-key.util';
+import { createApiKey } from 'test/integration/metadata/suites/developers/utils/create-api-key.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -114,118 +116,84 @@ describe('API key role privilege escalation', () => {
 
   describe('createApiKey', () => {
     it('should deny minting an API key bound to a role that exceeds the caller permissions', async () => {
-      const createApiKeyQuery = {
-        query: `
-          mutation CreateApiKey {
-            createApiKey(input: {
-              name: "escalation-key"
-              expiresAt: "2027-01-01T00:00:00.000Z"
-              roleId: "${adminRoleId}"
-            }) {
-              id
-            }
-          }
-        `,
-      };
+      const { data, errors } = await createApiKey({
+        input: {
+          name: 'escalation-key',
+          expiresAt: '2027-01-01T00:00:00.000Z',
+          roleId: adminRoleId,
+        },
+        gqlFields: 'id',
+        expectToFail: true,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
 
-      const response = await client
-        .post('/metadata')
-        .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
-        .send(createApiKeyQuery);
-
-      if (response.body?.data?.createApiKey?.id) {
-        createdApiKeyIds.push(response.body.data.createApiKey.id);
+      if (data?.createApiKey?.id) {
+        createdApiKeyIds.push(data.createApiKey.id);
       }
 
-      expect(response.status).toBe(200);
-      expect(response.body.data).toBeNull();
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toBe(
+      expect(data).toBeNull();
+      expect(errors).toBeDefined();
+      expect(errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
-      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      expect(errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
     });
 
     it('should allow minting an API key bound to a role within the caller permissions', async () => {
-      const createApiKeyQuery = {
-        query: `
-          mutation CreateApiKey {
-            createApiKey(input: {
-              name: "legit-key"
-              expiresAt: "2027-01-01T00:00:00.000Z"
-              roleId: "${customRoleId}"
-            }) {
-              id
-            }
-          }
-        `,
-      };
+      const { data, errors } = await createApiKey({
+        input: {
+          name: 'legit-key',
+          expiresAt: '2027-01-01T00:00:00.000Z',
+          roleId: customRoleId,
+        },
+        gqlFields: 'id',
+        expectToFail: false,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
 
-      const response = await client
-        .post('/metadata')
-        .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
-        .send(createApiKeyQuery);
-
-      const createdApiKeyId = response.body?.data?.createApiKey?.id;
+      const createdApiKeyId = data?.createApiKey?.id;
 
       if (createdApiKeyId) {
         createdApiKeyIds.push(createdApiKeyId);
       }
 
-      expect(response.status).toBe(200);
-      expect(response.body.errors).toBeUndefined();
+      expect(errors).toBeUndefined();
       expect(createdApiKeyId).toBeDefined();
     });
   });
 
   describe('assignRoleToApiKey', () => {
     it('should deny re-assigning an API key to a role that exceeds the caller permissions', async () => {
-      const createApiKeyQuery = {
-        query: `
-          mutation CreateApiKey {
-            createApiKey(input: {
-              name: "assign-escalation-key"
-              expiresAt: "2027-01-01T00:00:00.000Z"
-              roleId: "${customRoleId}"
-            }) {
-              id
-            }
-          }
-        `,
-      };
+      const { data: createData } = await createApiKey({
+        input: {
+          name: 'assign-escalation-key',
+          expiresAt: '2027-01-01T00:00:00.000Z',
+          roleId: customRoleId,
+        },
+        gqlFields: 'id',
+        expectToFail: false,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
 
-      const createResponse = await client
-        .post('/metadata')
-        .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
-        .send(createApiKeyQuery);
-
-      const apiKeyId = createResponse.body.data.createApiKey.id;
+      const apiKeyId = createData.createApiKey.id;
 
       createdApiKeyIds.push(apiKeyId);
 
-      const assignRoleQuery = {
-        query: `
-          mutation AssignRoleToApiKey {
-            assignRoleToApiKey(
-              apiKeyId: "${apiKeyId}"
-              roleId: "${adminRoleId}"
-            )
-          }
-        `,
-      };
+      const { data, errors } = await assignRoleToApiKey({
+        input: {
+          apiKeyId,
+          roleId: adminRoleId,
+        },
+        expectToFail: true,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
 
-      const response = await client
-        .post('/metadata')
-        .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
-        .send(assignRoleQuery);
-
-      expect(response.status).toBe(200);
-      expect(response.body.data).toBeNull();
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toBe(
+      expect(data).toBeNull();
+      expect(errors).toBeDefined();
+      expect(errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
-      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      expect(errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
     });
   });
 });
