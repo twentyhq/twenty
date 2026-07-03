@@ -11,12 +11,10 @@ import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const SUBSCRIPTION_CONFIRMATION_POLL_INTERVAL_MS = 2000;
 const SUBSCRIPTION_CONFIRMATION_MAX_ATTEMPTS = 30;
@@ -27,7 +25,6 @@ const StyledRetryButtonContainer = styled.div`
 `;
 
 export const PaymentSuccess = () => {
-  const navigate = useNavigateApp();
   const subscriptionStatus = useSubscriptionStatus();
   const [getCurrentUser] = useLazyQuery(GetCurrentUserDocument, {
     fetchPolicy: 'network-only',
@@ -42,20 +39,12 @@ export const PaymentSuccess = () => {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
     let cancelled = false;
 
-    const continueOnboarding = () => {
-      if (cancelled) {
-        return;
-      }
-      navigate(AppPath.WorkspaceActivation);
-    };
-
     const confirmSubscription = async () => {
       if (cancelled) {
         return;
       }
 
       if (isDefined(subscriptionStatus)) {
-        continueOnboarding();
         return;
       }
 
@@ -71,7 +60,6 @@ export const PaymentSuccess = () => {
 
       if (isDefined(currentUser) && isDefined(refreshedSubscriptionStatus)) {
         setCurrentUser(currentUser);
-        continueOnboarding();
         return;
       }
 
