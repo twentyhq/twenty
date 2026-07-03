@@ -227,12 +227,6 @@ export class StreamAgentChatJob {
       ASSISTANT_MESSAGE_ID_NAMESPACE,
     );
 
-    const assistantMessageExistedAtStart =
-      await this.agentChatService.hasMessageById({
-        id: assistantMessageId,
-        workspaceId: data.workspaceId,
-      });
-
     return new Promise<void>((resolve, reject) => {
       let streamUsage = {
         inputTokens: 0,
@@ -271,7 +265,13 @@ export class StreamAgentChatJob {
         resolveStreamFinished = res;
       });
 
-      abortSignal.addEventListener('abort', () => resolve(), { once: true });
+      abortSignal.addEventListener(
+        'abort',
+        () => {
+          void streamFinishedPromise.then(() => resolve());
+        },
+        { once: true },
+      );
 
       const uiStream = createUIMessageStream<ExtendedUIMessage>({
         execute: async ({ writer }) => {
@@ -352,7 +352,7 @@ export class StreamAgentChatJob {
                   await persistChain;
                   await this.handleStreamFinish({
                     assistantMessageId,
-                    assistantMessageExistedAtStart,
+                    streamId: data.streamId,
                     responseMessage,
                     isAborted,
                     streamError,
@@ -572,7 +572,7 @@ export class StreamAgentChatJob {
 
   private async handleStreamFinish({
     assistantMessageId,
-    assistantMessageExistedAtStart,
+    streamId,
     responseMessage,
     isAborted,
     streamError,
@@ -587,7 +587,7 @@ export class StreamAgentChatJob {
     userMessagePromise,
   }: {
     assistantMessageId: string;
-    assistantMessageExistedAtStart: boolean;
+    streamId: string;
     responseMessage: Omit<ExtendedUIMessage, 'id'>;
     isAborted: boolean;
     streamError: unknown;
@@ -649,7 +649,7 @@ export class StreamAgentChatJob {
         parts: responseMessage.parts,
         workspaceId,
       });
-    } else if (!assistantMessageExistedAtStart) {
+    } else {
       await this.agentChatService.addMessage({
         threadId,
         uiMessage: responseMessage,
@@ -658,13 +658,9 @@ export class StreamAgentChatJob {
       });
     }
 
-    if (assistantMessageExistedAtStart) {
-      return;
-    }
-
-    await this.threadRepository.update(
+    const totalsUpdate = await this.threadRepository.update(
       workspaceId,
-      { id: threadId },
+      { id: threadId, activeStreamId: streamId },
       {
         totalInputTokens: () =>
           `"totalInputTokens" + ${streamUsage.inputTokens}`,
@@ -686,6 +682,10 @@ export class StreamAgentChatJob {
         lastStreamError: null,
       },
     );
+
+    if (!totalsUpdate.affected) {
+      return;
+    }
 
     await this.agentChatService.notifyThreadUsageUpdated({
       threadId,
