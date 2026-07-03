@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { type RoleManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -15,6 +16,7 @@ import {
 import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
+import { MarketplaceAppRoleDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-role.dto';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -115,7 +117,54 @@ export class MarketplaceQueryService {
       latestAvailableVersion: registration.latestAvailableVersion ?? undefined,
       isListed: registration.isListed,
       isFeatured: registration.isFeatured,
+      description: registration.description ?? undefined,
+      author: registration.author ?? undefined,
+      category: registration.category ?? undefined,
+      logo: registration.logoUrl ?? undefined,
+      websiteUrl: registration.websiteUrl ?? undefined,
+      aboutDescription: registration.aboutDescription ?? undefined,
+      termsUrl: registration.termsUrl ?? undefined,
+      emailSupport: registration.emailSupport ?? undefined,
+      issueReportUrl: registration.issueReportUrl ?? undefined,
+      screenshots: registration.screenshots ?? [],
+      defaultRoleUniversalIdentifier:
+        registration.manifest?.application?.defaultRoleUniversalIdentifier,
+      roles: registration.manifest?.roles?.map((role) =>
+        this.toMarketplaceAppRoleDTO(role),
+      ),
       manifest: registration.manifest ?? undefined,
+    };
+  }
+
+  private toMarketplaceAppRoleDTO(role: RoleManifest): MarketplaceAppRoleDTO {
+    return {
+      universalIdentifier: role.universalIdentifier,
+      label: role.label,
+      description: role.description,
+      icon: role.icon,
+      canUpdateAllSettings: role.canUpdateAllSettings,
+      canAccessAllTools: role.canAccessAllTools,
+      canReadAllObjectRecords: role.canReadAllObjectRecords,
+      canUpdateAllObjectRecords: role.canUpdateAllObjectRecords,
+      canSoftDeleteAllObjectRecords: role.canSoftDeleteAllObjectRecords,
+      canDestroyAllObjectRecords: role.canDestroyAllObjectRecords,
+      permissionFlagUniversalIdentifiers:
+        role.permissionFlagUniversalIdentifiers,
+      objectPermissions: role.objectPermissions?.map((permission) => ({
+        universalIdentifier: permission.universalIdentifier,
+        objectUniversalIdentifier: permission.objectUniversalIdentifier,
+        canReadObjectRecords: permission.canReadObjectRecords,
+        canUpdateObjectRecords: permission.canUpdateObjectRecords,
+        canSoftDeleteObjectRecords: permission.canSoftDeleteObjectRecords,
+        canDestroyObjectRecords: permission.canDestroyObjectRecords,
+      })),
+      fieldPermissions: role.fieldPermissions?.map((permission) => ({
+        universalIdentifier: permission.universalIdentifier,
+        objectUniversalIdentifier: permission.objectUniversalIdentifier,
+        fieldUniversalIdentifier: permission.fieldUniversalIdentifier,
+        canReadFieldValue: permission.canReadFieldValue,
+        canUpdateFieldValue: permission.canUpdateFieldValue,
+      })),
     };
   }
 }

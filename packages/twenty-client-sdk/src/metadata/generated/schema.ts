@@ -2096,6 +2096,42 @@ export interface MarketplaceApp {
     __typename: 'MarketplaceApp'
 }
 
+export interface MarketplaceAppRoleObjectPermission {
+    universalIdentifier: Scalars['String']
+    objectUniversalIdentifier: Scalars['String']
+    canReadObjectRecords?: Scalars['Boolean']
+    canUpdateObjectRecords?: Scalars['Boolean']
+    canSoftDeleteObjectRecords?: Scalars['Boolean']
+    canDestroyObjectRecords?: Scalars['Boolean']
+    __typename: 'MarketplaceAppRoleObjectPermission'
+}
+
+export interface MarketplaceAppRoleFieldPermission {
+    universalIdentifier: Scalars['String']
+    objectUniversalIdentifier: Scalars['String']
+    fieldUniversalIdentifier: Scalars['String']
+    canReadFieldValue?: Scalars['Boolean']
+    canUpdateFieldValue?: Scalars['Boolean']
+    __typename: 'MarketplaceAppRoleFieldPermission'
+}
+
+export interface MarketplaceAppRole {
+    universalIdentifier: Scalars['String']
+    label: Scalars['String']
+    description?: Scalars['String']
+    icon?: Scalars['String']
+    canUpdateAllSettings?: Scalars['Boolean']
+    canAccessAllTools?: Scalars['Boolean']
+    canReadAllObjectRecords?: Scalars['Boolean']
+    canUpdateAllObjectRecords?: Scalars['Boolean']
+    canSoftDeleteAllObjectRecords?: Scalars['Boolean']
+    canDestroyAllObjectRecords?: Scalars['Boolean']
+    permissionFlagUniversalIdentifiers?: Scalars['String'][]
+    objectPermissions?: MarketplaceAppRoleObjectPermission[]
+    fieldPermissions?: MarketplaceAppRoleFieldPermission[]
+    __typename: 'MarketplaceAppRole'
+}
+
 export interface MarketplaceAppDetail {
     universalIdentifier: Scalars['String']
     id: Scalars['String']
@@ -2105,6 +2141,19 @@ export interface MarketplaceAppDetail {
     latestAvailableVersion?: Scalars['String']
     isListed: Scalars['Boolean']
     isFeatured: Scalars['Boolean']
+    description?: Scalars['String']
+    author?: Scalars['String']
+    category?: Scalars['String']
+    logo?: Scalars['String']
+    websiteUrl?: Scalars['String']
+    aboutDescription?: Scalars['String']
+    termsUrl?: Scalars['String']
+    emailSupport?: Scalars['String']
+    issueReportUrl?: Scalars['String']
+    screenshots: Scalars['String'][]
+    defaultRoleUniversalIdentifier?: Scalars['String']
+    roles?: MarketplaceAppRole[]
+    /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
     manifest?: Scalars['JSON']
     __typename: 'MarketplaceAppDetail'
 }
@@ -5213,6 +5262,45 @@ export interface MarketplaceAppGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface MarketplaceAppRoleObjectPermissionGenqlSelection{
+    universalIdentifier?: boolean | number
+    objectUniversalIdentifier?: boolean | number
+    canReadObjectRecords?: boolean | number
+    canUpdateObjectRecords?: boolean | number
+    canSoftDeleteObjectRecords?: boolean | number
+    canDestroyObjectRecords?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MarketplaceAppRoleFieldPermissionGenqlSelection{
+    universalIdentifier?: boolean | number
+    objectUniversalIdentifier?: boolean | number
+    fieldUniversalIdentifier?: boolean | number
+    canReadFieldValue?: boolean | number
+    canUpdateFieldValue?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MarketplaceAppRoleGenqlSelection{
+    universalIdentifier?: boolean | number
+    label?: boolean | number
+    description?: boolean | number
+    icon?: boolean | number
+    canUpdateAllSettings?: boolean | number
+    canAccessAllTools?: boolean | number
+    canReadAllObjectRecords?: boolean | number
+    canUpdateAllObjectRecords?: boolean | number
+    canSoftDeleteAllObjectRecords?: boolean | number
+    canDestroyAllObjectRecords?: boolean | number
+    permissionFlagUniversalIdentifiers?: boolean | number
+    objectPermissions?: MarketplaceAppRoleObjectPermissionGenqlSelection
+    fieldPermissions?: MarketplaceAppRoleFieldPermissionGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface MarketplaceAppDetailGenqlSelection{
     universalIdentifier?: boolean | number
     id?: boolean | number
@@ -5222,6 +5310,19 @@ export interface MarketplaceAppDetailGenqlSelection{
     latestAvailableVersion?: boolean | number
     isListed?: boolean | number
     isFeatured?: boolean | number
+    description?: boolean | number
+    author?: boolean | number
+    category?: boolean | number
+    logo?: boolean | number
+    websiteUrl?: boolean | number
+    aboutDescription?: boolean | number
+    termsUrl?: boolean | number
+    emailSupport?: boolean | number
+    issueReportUrl?: boolean | number
+    screenshots?: boolean | number
+    defaultRoleUniversalIdentifier?: boolean | number
+    roles?: MarketplaceAppRoleGenqlSelection
+    /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
     manifest?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -8151,6 +8252,30 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isMarketplaceApp = (obj?: { __typename?: any } | null): obj is MarketplaceApp => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceApp"')
       return MarketplaceApp_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MarketplaceAppRoleObjectPermission_possibleTypes: string[] = ['MarketplaceAppRoleObjectPermission']
+    export const isMarketplaceAppRoleObjectPermission = (obj?: { __typename?: any } | null): obj is MarketplaceAppRoleObjectPermission => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppRoleObjectPermission"')
+      return MarketplaceAppRoleObjectPermission_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MarketplaceAppRoleFieldPermission_possibleTypes: string[] = ['MarketplaceAppRoleFieldPermission']
+    export const isMarketplaceAppRoleFieldPermission = (obj?: { __typename?: any } | null): obj is MarketplaceAppRoleFieldPermission => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppRoleFieldPermission"')
+      return MarketplaceAppRoleFieldPermission_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MarketplaceAppRole_possibleTypes: string[] = ['MarketplaceAppRole']
+    export const isMarketplaceAppRole = (obj?: { __typename?: any } | null): obj is MarketplaceAppRole => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppRole"')
+      return MarketplaceAppRole_possibleTypes.includes(obj.__typename)
     }
     
 
