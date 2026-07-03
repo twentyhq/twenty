@@ -98,8 +98,11 @@ export class BullMQDriver
       );
     }
 
-    await Promise.all(workers.map(([, worker]) => worker.close()));
-    await Promise.all(queues.map((queue) => queue.close()));
+    try {
+      await Promise.all(workers.map(([, worker]) => worker.close()));
+    } finally {
+      await Promise.all(queues.map((queue) => queue.close()));
+    }
 
     this.logger.log('Message queue shutdown complete');
   }
