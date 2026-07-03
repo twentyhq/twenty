@@ -47,7 +47,12 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
   } = useCreditUpgradeAction();
 
   if (!hasPermissionToManageBilling) {
-    return null;
+    return (
+      <AiChatBanner
+        message={t`Your workspace hit its AI usage limit. Ask an admin to upgrade the plan.`}
+        variant="warning"
+      />
+    );
   }
 
   const message = isTrialing

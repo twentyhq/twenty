@@ -13,6 +13,7 @@ type PersistCallRecordingProgressCurrent = {
   transcript?: unknown;
   audio?: FilesFieldValue;
   video?: FilesFieldValue;
+  callRecorderFailureReason?: string | null;
 };
 
 export const persistCallRecordingProgress = async (
@@ -42,7 +43,6 @@ export const persistCallRecordingProgress = async (
   const nonStatusUpdate: CallRecordingUpdateFields = { ...updateData };
 
   delete nonStatusUpdate.status;
-  delete nonStatusUpdate.callRecorderFailureReason;
 
   if (Object.keys(nonStatusUpdate).length > 0) {
     await updateCallRecording(client, { id, data: nonStatusUpdate });

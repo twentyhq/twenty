@@ -22,5 +22,13 @@ export const AiChatErrorRenderer = ({
     return <AiChatApiKeyNotConfiguredMessage />;
   }
 
+  if (isGraphqlErrorOfType(error, AiChatErrorCode.CONTEXT_WINDOW_EXCEEDED)) {
+    return <AiChatErrorMessage error={error} />;
+  }
+
+  if (isGraphqlErrorOfType(error, AiChatErrorCode.CONNECTION_LOST)) {
+    return <AiChatErrorMessage error={error} />;
+  }
+
   return <AiChatErrorMessage error={error} onRetry={onRetry} />;
 };
