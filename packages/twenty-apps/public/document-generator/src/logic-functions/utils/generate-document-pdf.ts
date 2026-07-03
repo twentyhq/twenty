@@ -242,22 +242,27 @@ const drawBlocks = (ctx: Ctx, tokens: Token[], indent = 0) => {
         const startY = ctx.y;
         drawBlocks(ctx, (token as Tokens.Blockquote).tokens, indent + 20);
         const barX = MARGIN + indent;
-        if (ctx.page === startPage) {
-          ctx.page.drawRectangle({ x: barX, y: ctx.y, width: 3, height: startY - ctx.y, color: ACCENT });
-        } else {
-          // The quote spilled onto a later page: draw the bar from its start
-          // down to the bottom margin on the first page, and from the top
-          // margin down to the current position on the final page. Drawing with
-          // the previous page's `startY` on the new page would give a wrong /
-          // negative height.
-          startPage.drawRectangle({ x: barX, y: MARGIN, width: 3, height: startY - MARGIN, color: ACCENT });
-          ctx.page.drawRectangle({
-            x: barX,
-            y: ctx.y,
-            width: 3,
-            height: PAGE_HEIGHT - MARGIN - ctx.y,
-            color: ACCENT,
-          });
+
+        // Draw the accent bar on every page the quote occupies. On the first
+        // page it starts at `startY`; on later pages at the top margin. It ends
+        // at the final position on the last page, and at the bottom margin on
+        // earlier pages. Deriving each page's own coordinates avoids the
+        // cross-page/negative-height bug of reusing `startY` on a new page.
+        const pages = ctx.pdf.getPages();
+        const startIndex = pages.indexOf(startPage);
+        const endIndex = pages.indexOf(ctx.page);
+        for (let index = startIndex; index <= endIndex; index += 1) {
+          const barTop = index === startIndex ? startY : PAGE_HEIGHT - MARGIN;
+          const barBottom = index === endIndex ? ctx.y : MARGIN;
+          if (barTop > barBottom) {
+            pages[index].drawRectangle({
+              x: barX,
+              y: barBottom,
+              width: 3,
+              height: barTop - barBottom,
+              color: ACCENT,
+            });
+          }
         }
         break;
       }
