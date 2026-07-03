@@ -1,25 +1,22 @@
-import { ModalContent } from 'twenty-ui/surfaces';
-import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
-import { ChooseYourPlanContent } from '~/pages/onboarding/internal/ChooseYourPlanContent';
 import { billingState } from '@/client-config/states/billingState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { OnboardingPageLoader } from '@/onboarding/components/OnboardingPageLoader';
 import { usePlans } from '@/settings/billing/hooks/usePlans';
-
-const StyledChooseYourPlanPlaceholder = styled.div`
-  height: 566px;
-`;
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isDefined } from 'twenty-shared/utils';
+import { UpgradeFreeTrial } from '~/pages/onboarding/UpgradeFreeTrial';
 
 export const ChooseYourPlan = () => {
   const { isPlansLoaded } = usePlans();
   const billing = useAtomStateValue(billingState);
-  return (
-    <ModalContent isVerticallyCentered>
-      {isDefined(billing) && isPlansLoaded ? (
-        <ChooseYourPlanContent billing={billing} />
-      ) : (
-        <StyledChooseYourPlanPlaceholder />
-      )}
-    </ModalContent>
+  const onboardingConfig = useAtomStateValue(onboardingConfigState);
+
+  return isDefined(billing) && isPlansLoaded ? (
+    <UpgradeFreeTrial
+      billing={billing}
+      creditsReward={onboardingConfig?.upgradeCreditsReward}
+    />
+  ) : (
+    <OnboardingPageLoader />
   );
 };

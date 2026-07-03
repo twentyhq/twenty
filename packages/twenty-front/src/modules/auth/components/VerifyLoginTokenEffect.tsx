@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
@@ -21,17 +21,21 @@ export const VerifyLoginTokenEffect = () => {
     clientConfigApiStatusState,
   );
 
+  // oxlint-disable-next-line twenty/no-state-useref
+  const hasVerifiedRef = useRef(false);
+
   useEffect(() => {
-    if (!clientConfigLoaded) {
+    if (!clientConfigLoaded || hasVerifiedRef.current) {
       return;
     }
+
+    hasVerifiedRef.current = true;
 
     if (isDefined(loginToken)) {
       verifyLoginToken(loginToken);
     } else if (!hasAccessTokenPair) {
       navigate(AppPath.SignInUp);
     }
-    // Verify only needs to run once at mount
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [clientConfigLoaded]);
 

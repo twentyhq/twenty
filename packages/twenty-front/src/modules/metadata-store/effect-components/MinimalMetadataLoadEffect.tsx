@@ -1,4 +1,5 @@
 import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
+import { useIsOnAuthOrOnboardingPage } from '@/auth/hooks/useIsOnAuthOrOnboardingPage';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
@@ -21,8 +22,11 @@ export const MinimalMetadataLoadEffect = () => {
   const { loadMinimalMetadata } = useLoadMinimalMetadata();
   const { loadStaleMetadataEntities } = useLoadStaleMetadataEntities();
 
+  const isOnAuthOrOnboardingPage = useIsOnAuthOrOnboardingPage();
+
   const isActiveWorkspace = isWorkspaceActiveOrSuspended(currentWorkspace);
-  const shouldLoadRealMetadata = hasAccessTokenPair && isActiveWorkspace;
+  const shouldLoadRealMetadata =
+    hasAccessTokenPair && isActiveWorkspace && !isOnAuthOrOnboardingPage;
 
   useEffect(() => {
     if (!isCurrentUserLoaded && !isDefined(currentUser)) {

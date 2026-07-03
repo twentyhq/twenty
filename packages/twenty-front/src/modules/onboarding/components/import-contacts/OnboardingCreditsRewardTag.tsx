@@ -7,7 +7,7 @@ const StyledTag = styled.div`
   align-items: center;
   background-color: ${themeCssVariables.color.green3};
   border: 1px solid ${themeCssVariables.color.green4};
-  border-radius: ${themeCssVariables.border.radius.pill};
+  border-radius: ${themeCssVariables.border.radius.xxl};
   box-sizing: border-box;
   color: ${themeCssVariables.color.green9};
   display: flex;
@@ -20,11 +20,13 @@ const StyledTag = styled.div`
 const StyledLabel = styled.span`
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
+  line-height: 1.4;
 `;
 
 const StyledSuffix = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.regular};
+  line-height: 1.4;
 `;
 
 type OnboardingCreditsRewardTagProps = {

@@ -1,5 +1,3 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
@@ -17,7 +15,6 @@ import { type SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { GetInviteSuggestionsDocument } from '~/generated-metadata/graphql';
-import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { z } from 'zod';
 
 const validationSchema = z.object({
@@ -28,15 +25,11 @@ type InviteTeamFormInput = z.infer<typeof validationSchema>;
 
 export const useInviteTeam = () => {
   const { t } = useLingui();
-  const { copyToClipboard } = useCopyToClipboard();
   const { enqueueSuccessSnackBar } = useSnackBar();
   const { sendInvitation } = useCreateWorkspaceInvitation();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
-  const hasCalendarBooking = isDefined(calendarBookingPageId);
 
   const {
     control,
@@ -125,13 +118,6 @@ export const useInviteTeam = () => {
     return 'craig@apple.com';
   };
 
-  const copyInviteLink = () => {
-    if (isDefined(currentWorkspace?.inviteHash)) {
-      const inviteLink = `${window.location.origin}/invite/${currentWorkspace?.inviteHash}`;
-      copyToClipboard(inviteLink, t`Link copied to clipboard`);
-    }
-  };
-
   const onSubmit: SubmitHandler<InviteTeamFormInput> = useCallback(
     async (data) => {
       const emails = Array.from(
@@ -197,12 +183,8 @@ export const useInviteTeam = () => {
     handleSubmit,
     onSubmit,
     handleSkip,
-    copyInviteLink,
     getPlaceholder,
-    hasPrefilledSuggestions,
-    hasCalendarBooking,
     isValid,
     isSubmitting,
-    currentWorkspace,
   };
 };
