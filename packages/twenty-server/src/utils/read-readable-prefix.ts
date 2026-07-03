@@ -1,9 +1,5 @@
 import { type Readable } from 'stream';
 
-// Reads at most `maxBytes` from the start of a Readable, then stops and tears
-// the stream down. Unlike streamToBuffer this never rejects on a large source:
-// it is meant to sample a bounded prefix (e.g. to sniff a content type) without
-// buffering the whole object into memory.
 export const readReadablePrefix = async (
   stream: Readable,
   maxBytes: number,
@@ -25,8 +21,6 @@ export const readReadablePrefix = async (
         settled = true;
         stream.off('data', onData);
         stream.off('end', onEnd);
-        // The error listener stays attached so the destroy() teardown below
-        // never surfaces as an unhandled 'error' event.
         stream.destroy();
         resolve(Buffer.concat(chunks).subarray(0, maxBytes));
       }

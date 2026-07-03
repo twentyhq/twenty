@@ -229,8 +229,6 @@ describe('direct file upload (createFileUpload / completeFileUpload)', () => {
   });
 
   it('should reject completing an upload whose content contradicts its extension', async () => {
-    // A .png name but plain-text bytes: the content sniff at completion must
-    // reject it, and the record must stay PENDING (never become downloadable).
     const spoofedContent = Buffer.from('this is not really a png image');
 
     const createResponse = await createFileUpload({

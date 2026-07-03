@@ -17,7 +17,6 @@ describe('readReadablePrefix', () => {
 
     const stream = new Readable({
       read() {
-        // Keep emitting 1 KiB chunks; the reader must tear us down early.
         producedBytes += 1024;
         this.push(Buffer.alloc(1024, 0x61));
 
@@ -31,7 +30,6 @@ describe('readReadablePrefix', () => {
 
     expect(prefix.length).toBe(4096);
     expect(stream.destroyed).toBe(true);
-    // The reader stopped well before draining the 1 MiB source.
     expect(producedBytes).toBeLessThan(1024 * 1024);
   });
 

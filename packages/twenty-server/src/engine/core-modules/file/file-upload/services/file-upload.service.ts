@@ -101,12 +101,6 @@ export class FileUploadService {
     }
 
     const { ext } = buildFileInfo(filename);
-    // A pending file is opaque: its bytes have not been content-sniffed yet, so
-    // the mime type stays octet-stream (enforced by the
-    // CHK_FILE_PENDING_MIME_OCTET_STREAM constraint). The real mime type is only
-    // set from server-side detection at completeFileUpload time. The extension
-    // is still kept on the stored object name so that detection can validate the
-    // content against the declared extension.
     const mimeType = 'application/octet-stream';
 
     const fileId = v4();
@@ -361,11 +355,6 @@ export class FileUploadService {
       );
     }
 
-    // The bytes are only trustworthy now that they are in storage. Sniff a
-    // bounded prefix to detect the real mime type and reject any file whose
-    // content does not match its declared extension. Until this succeeds the
-    // record stays PENDING (octet-stream), so it can never be served or
-    // attached, and gets reaped by the pending-file cleanup cron.
     const mimeType = await this.detectUploadedMimeTypeOrThrow({
       fileFolder: fileFolder as FileFolder,
       applicationUniversalIdentifier: application.universalIdentifier,
@@ -387,9 +376,6 @@ export class FileUploadService {
     });
   }
 
-  // Reads a bounded prefix of the stored object and derives its mime type from
-  // the content (falling back to the declared extension). Throws when the
-  // content contradicts the extension.
   private async detectUploadedMimeTypeOrThrow({
     fileFolder,
     applicationUniversalIdentifier,

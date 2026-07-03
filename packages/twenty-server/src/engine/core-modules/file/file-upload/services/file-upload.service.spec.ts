@@ -156,7 +156,6 @@ describe('FileUploadService', () => {
         expect.objectContaining({
           fileId: 'mocked-file-id',
           size: 1024,
-          // A pending file is opaque until its content is sniffed at completion.
           mimeType: 'application/octet-stream',
           resourcePath: 'field-metadata-uid/mocked-file-id.pdf',
           settings: { isTemporaryFile: true, toDelete: false },
@@ -197,17 +196,13 @@ describe('FileUploadService', () => {
       path: 'files-field/field-metadata-uid/file-id.pdf',
       size: 1024,
       applicationId: 'application-id',
-      // A pending file is always octet-stream until its content is sniffed.
       mimeType: 'application/octet-stream',
       status: FILE_STATUS.PENDING,
       settings: { isTemporaryFile: true, toDelete: false },
       createdAt: new Date(),
     };
 
-    // Real magic-byte samples so the content sniffer resolves a concrete type.
     const PDF_BYTES = Buffer.from('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n', 'latin1');
-    // A complete 1x1 transparent PNG (the sniffer seeks past the signature to
-    // rule out APNG, so a full image is needed rather than just the header).
     const PNG_BYTES = Buffer.from(
       'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
       'base64',
@@ -287,7 +282,6 @@ describe('FileUploadService', () => {
         path: 'files-field/field-metadata-uid/file-id.pdf',
       });
       fileStorageService.getFileMetadata.mockResolvedValueOnce({ size: 1024 });
-      // A .pdf file whose bytes are actually a PNG: the sniffer wins.
       fileStorageService.readFile.mockResolvedValueOnce(
         Readable.from(PNG_BYTES),
       );
@@ -310,7 +304,6 @@ describe('FileUploadService', () => {
         path: 'files-field/field-metadata-uid/file-id.png',
       });
       fileStorageService.getFileMetadata.mockResolvedValueOnce({ size: 1024 });
-      // Undetectable bytes under a .png extension: content does not match.
       fileStorageService.readFile.mockResolvedValueOnce(
         Readable.from(Buffer.from('not-an-image-just-text')),
       );
