@@ -1,4 +1,5 @@
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
+import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
 import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
 import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnboardingStepSubtitle';
@@ -64,43 +65,53 @@ export const ImportContacts = ({
   return (
     <StyledOnboardingStep>
       <StyledOnboardingStepHeading>
-        <StyledOnboardingStepTitle>{t`Import your contacts`}</StyledOnboardingStepTitle>
-        <StyledSubtitle>
-          {t`Connect your email and calendar to see your entire network instantly. Takes only 30 seconds.`}
-        </StyledSubtitle>
+        <OnboardingStepAnimatedItem index={0}>
+          <StyledOnboardingStepTitle>{t`Import your contacts`}</StyledOnboardingStepTitle>
+        </OnboardingStepAnimatedItem>
+        <OnboardingStepAnimatedItem index={1}>
+          <StyledSubtitle>
+            {t`Connect your email and calendar to see your entire network instantly. Takes only 30 seconds.`}
+          </StyledSubtitle>
+        </OnboardingStepAnimatedItem>
         {isDefined(creditsReward) && (
-          <StyledOnboardingStepTagsRow>
-            <OnboardingCreditsRewardTag amount={creditsReward} />
-          </StyledOnboardingStepTagsRow>
+          <OnboardingStepAnimatedItem index={2}>
+            <StyledOnboardingStepTagsRow>
+              <OnboardingCreditsRewardTag amount={creditsReward} />
+            </StyledOnboardingStepTagsRow>
+          </OnboardingStepAnimatedItem>
         )}
       </StyledOnboardingStepHeading>
 
-      <StyledMiddle>
-        <OnboardingTrustBadges />
-        <OnboardingImportPreview />
-      </StyledMiddle>
+      <OnboardingStepAnimatedItem index={3}>
+        <StyledMiddle>
+          <OnboardingTrustBadges />
+          <OnboardingImportPreview />
+        </StyledMiddle>
+      </OnboardingStepAnimatedItem>
 
-      <StyledFooter>
-        <StyledButtons>
-          {isDefined(onContinueWithMicrosoft) && (
-            <MainButton
-              title={t`Continue with Microsoft`}
-              fullWidth
-              onClick={onContinueWithMicrosoft}
-              Icon={() => <IconMicrosoft size={theme.icon.size.md} />}
-            />
-          )}
-          {isDefined(onContinueWithGoogle) && (
-            <MainButton
-              title={t`Continue with Google`}
-              fullWidth
-              onClick={onContinueWithGoogle}
-              Icon={() => <IconGoogle size={theme.icon.size.md} />}
-            />
-          )}
-        </StyledButtons>
-        {isDefined(onSkip) && <OnboardingSkipButton onClick={onSkip} />}
-      </StyledFooter>
+      <OnboardingStepAnimatedItem index={4}>
+        <StyledFooter>
+          <StyledButtons>
+            {isDefined(onContinueWithMicrosoft) && (
+              <MainButton
+                title={t`Continue with Microsoft`}
+                fullWidth
+                onClick={onContinueWithMicrosoft}
+                Icon={() => <IconMicrosoft size={theme.icon.size.md} />}
+              />
+            )}
+            {isDefined(onContinueWithGoogle) && (
+              <MainButton
+                title={t`Continue with Google`}
+                fullWidth
+                onClick={onContinueWithGoogle}
+                Icon={() => <IconGoogle size={theme.icon.size.md} />}
+              />
+            )}
+          </StyledButtons>
+          {isDefined(onSkip) && <OnboardingSkipButton onClick={onSkip} />}
+        </StyledFooter>
+      </OnboardingStepAnimatedItem>
     </StyledOnboardingStep>
   );
 };

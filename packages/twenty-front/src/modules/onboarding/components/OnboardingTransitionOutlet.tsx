@@ -1,8 +1,8 @@
+import { ONBOARDING_MOTION_SLIDE_OFFSET } from '@/onboarding/constants/OnboardingMotionSlideOffset';
+import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
 import { styled } from '@linaria/react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { useContext } from 'react';
 import { useLocation, useOutlet } from 'react-router-dom';
-import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledTransitionContainer = styled.div`
   display: flex;
@@ -25,28 +25,21 @@ export const OnboardingTransitionOutlet = () => {
   const { pathname } = useLocation();
   const outlet = useOutlet();
   const shouldReduceMotion = useReducedMotion();
-  const { theme } = useContext(ThemeContext);
+  const transition = useOnboardingMotionTransition();
 
   return (
     <StyledTransitionContainer>
-      <AnimatePresence initial={false}>
+      <AnimatePresence>
         <StyledTransitionPage
           key={pathname}
-          initial={{ opacity: 0, y: theme.spacingMultiplicator }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           exit={{
             opacity: 0,
-            y: -theme.spacingMultiplicator,
+            y: shouldReduceMotion ? 0 : -ONBOARDING_MOTION_SLIDE_OFFSET,
             pointerEvents: 'none',
           }}
-          transition={
-            shouldReduceMotion
-              ? { duration: 0 }
-              : {
-                  duration: theme.animation.duration.normal,
-                  ease: 'easeInOut',
-                }
-          }
+          transition={transition}
         >
           {outlet}
         </StyledTransitionPage>

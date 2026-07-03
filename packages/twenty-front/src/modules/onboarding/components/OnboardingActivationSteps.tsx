@@ -1,10 +1,9 @@
 import { SubTitle } from '@/auth/components/SubTitle';
+import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
 import { styled } from '@linaria/react';
 import { type MessageDescriptor } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
-import { motion, useReducedMotion } from 'framer-motion';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { motion } from 'framer-motion';
 
 const STEP_OPACITIES = [1, 0.4, 0.12];
 const VISIBLE_STEP_COUNT = STEP_OPACITIES.length;
@@ -36,8 +35,7 @@ export const OnboardingActivationSteps = ({
   messageIndex,
 }: OnboardingActivationStepsProps) => {
   const { i18n } = useLingui();
-  const { theme } = useContext(ThemeContext);
-  const shouldReduceMotion = useReducedMotion();
+  const transition = useOnboardingMotionTransition();
 
   const translatedMessages = messages.map((message) => i18n._(message));
 
@@ -55,14 +53,7 @@ export const OnboardingActivationSteps = ({
               opacity: isVisible ? STEP_OPACITIES[stepOffset] : 0,
               y: stepOffset * STEP_HEIGHT_IN_PX,
             }}
-            transition={
-              shouldReduceMotion
-                ? { duration: 0 }
-                : {
-                    duration: theme.animation.duration.normal,
-                    ease: 'easeInOut',
-                  }
-            }
+            transition={transition}
           >
             <SubTitle>{message}</SubTitle>
           </StyledStep>

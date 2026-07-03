@@ -7,6 +7,7 @@ import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardi
 import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnboardingStepSubtitle';
 import { StyledOnboardingStepTagsRow } from '@/onboarding/components/StyledOnboardingStepTagsRow';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
+import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
 import { OnboardingPlanCard } from '@/onboarding/components/upgrade-free-trial/OnboardingPlanCard';
 import { OnboardingTrialExtensionTag } from '@/onboarding/components/upgrade-free-trial/OnboardingTrialExtensionTag';
@@ -165,77 +166,81 @@ const UpgradeFreeTrialContent = ({
 
   return (
     <>
-      <StyledCards>
-        <OnboardingPlanCard
-          title={t`Upgraded`}
-          titleSuffix={t`· FREE`}
-          note={t`No charge will be made. You'll receive an email reminder 7 days before it ends.`}
-          selected={requirePaymentMethod}
-          onSelect={selectTrialPeriod(true)}
-        >
-          {requirePaymentMethod &&
-            (isPaymentAvailable ? (
-              <PaymentElement
-                options={{
-                  layout: 'tabs',
-                  defaultValues: isDefined(customerEmail)
-                    ? { billingDetails: { email: customerEmail } }
-                    : undefined,
-                  terms: { card: 'never' },
-                }}
+      <OnboardingStepAnimatedItem index={3}>
+        <StyledCards>
+          <OnboardingPlanCard
+            title={t`Upgraded`}
+            titleSuffix={t`· FREE`}
+            note={t`No charge will be made. You'll receive an email reminder 7 days before it ends.`}
+            selected={requirePaymentMethod}
+            onSelect={selectTrialPeriod(true)}
+          >
+            {requirePaymentMethod &&
+              (isPaymentAvailable ? (
+                <PaymentElement
+                  options={{
+                    layout: 'tabs',
+                    defaultValues: isDefined(customerEmail)
+                      ? { billingDetails: { email: customerEmail } }
+                      : undefined,
+                    terms: { card: 'never' },
+                  }}
+                />
+              ) : (
+                <Info
+                  accent="danger"
+                  text={t`Card payment is currently unavailable. Please verify your Stripe configuration or contact your workspace admin.`}
+                />
+              ))}
+          </OnboardingPlanCard>
+
+          {isDefined(withoutCreditCardTrialPeriod) && (
+            <OnboardingPlanCard
+              title={t`Basic`}
+              titleSuffix={t`without credit card`}
+              badge={t`${withoutCreditCardTrialPeriod.duration} days`}
+              selected={!requirePaymentMethod}
+              onSelect={selectTrialPeriod(false)}
+            />
+          )}
+        </StyledCards>
+      </OnboardingStepAnimatedItem>
+
+      <OnboardingStepAnimatedItem index={4}>
+        <StyledFooter>
+          {requirePaymentMethod ? (
+            isPaymentAvailable ? (
+              <UpgradeFreeTrialSubmitButton
+                plan={billingCheckoutSession.plan}
+                recurringInterval={billingCheckoutSession.interval}
               />
             ) : (
-              <Info
-                accent="danger"
-                text={t`Card payment is currently unavailable. Please verify your Stripe configuration or contact your workspace admin.`}
-              />
-            ))}
-        </OnboardingPlanCard>
-
-        {isDefined(withoutCreditCardTrialPeriod) && (
-          <OnboardingPlanCard
-            title={t`Basic`}
-            titleSuffix={t`without credit card`}
-            badge={t`${withoutCreditCardTrialPeriod.duration} days`}
-            selected={!requirePaymentMethod}
-            onSelect={selectTrialPeriod(false)}
-          />
-        )}
-      </StyledCards>
-
-      <StyledFooter>
-        {requirePaymentMethod ? (
-          isPaymentAvailable ? (
-            <UpgradeFreeTrialSubmitButton
-              plan={billingCheckoutSession.plan}
-              recurringInterval={billingCheckoutSession.interval}
-            />
+              <MainButton title={t`Continue`} fullWidth disabled />
+            )
           ) : (
-            <MainButton title={t`Continue`} fullWidth disabled />
-          )
-        ) : (
-          <MainButton
-            title={t`Continue`}
-            onClick={handleCheckoutSession}
-            fullWidth
-            Icon={() => (isCheckoutSubmitting ? <Loader /> : null)}
-            disabled={isCheckoutSubmitting}
-          />
-        )}
-        <StyledLinkGroup>
-          <ClickToActionLink onClick={signOut}>
-            <Trans>Log out</Trans>
-          </ClickToActionLink>
-          <span />
-          <ClickToActionLink
-            href={calendarBookingPageId ? AppPath.BookCall : CAL_LINK}
-            target={calendarBookingPageId ? '_self' : '_blank'}
-            rel={calendarBookingPageId ? '' : 'noreferrer'}
-          >
-            <Trans>Book a Call</Trans>
-          </ClickToActionLink>
-        </StyledLinkGroup>
-      </StyledFooter>
+            <MainButton
+              title={t`Continue`}
+              onClick={handleCheckoutSession}
+              fullWidth
+              Icon={() => (isCheckoutSubmitting ? <Loader /> : null)}
+              disabled={isCheckoutSubmitting}
+            />
+          )}
+          <StyledLinkGroup>
+            <ClickToActionLink onClick={signOut}>
+              <Trans>Log out</Trans>
+            </ClickToActionLink>
+            <span />
+            <ClickToActionLink
+              href={calendarBookingPageId ? AppPath.BookCall : CAL_LINK}
+              target={calendarBookingPageId ? '_self' : '_blank'}
+              rel={calendarBookingPageId ? '' : 'noreferrer'}
+            >
+              <Trans>Book a Call</Trans>
+            </ClickToActionLink>
+          </StyledLinkGroup>
+        </StyledFooter>
+      </OnboardingStepAnimatedItem>
     </>
   );
 };
@@ -274,20 +279,26 @@ export const UpgradeFreeTrial = ({
   return (
     <StyledPage>
       <StyledHeading>
-        <StyledOnboardingStepTitle>{t`Upgrade your free trial`}</StyledOnboardingStepTitle>
-        <StyledOnboardingStepSubtitle>
-          {isDefined(trialDuration)
-            ? t`Insert your billing details to get a ${trialDuration}-day free trial and more AI credits`
-            : t`Insert your billing details to get a free trial and more AI credits`}
-        </StyledOnboardingStepSubtitle>
-        <StyledOnboardingStepTagsRow>
-          {isDefined(trialDuration) && (
-            <OnboardingTrialExtensionTag duration={trialDuration} />
-          )}
-          {isDefined(creditsReward) && (
-            <OnboardingCreditsRewardTag amount={creditsReward} />
-          )}
-        </StyledOnboardingStepTagsRow>
+        <OnboardingStepAnimatedItem index={0}>
+          <StyledOnboardingStepTitle>{t`Upgrade your free trial`}</StyledOnboardingStepTitle>
+        </OnboardingStepAnimatedItem>
+        <OnboardingStepAnimatedItem index={1}>
+          <StyledOnboardingStepSubtitle>
+            {isDefined(trialDuration)
+              ? t`Insert your billing details to get a ${trialDuration}-day free trial and more AI credits`
+              : t`Insert your billing details to get a free trial and more AI credits`}
+          </StyledOnboardingStepSubtitle>
+        </OnboardingStepAnimatedItem>
+        <OnboardingStepAnimatedItem index={2}>
+          <StyledOnboardingStepTagsRow>
+            {isDefined(trialDuration) && (
+              <OnboardingTrialExtensionTag duration={trialDuration} />
+            )}
+            {isDefined(creditsReward) && (
+              <OnboardingCreditsRewardTag amount={creditsReward} />
+            )}
+          </StyledOnboardingStepTagsRow>
+        </OnboardingStepAnimatedItem>
       </StyledHeading>
 
       {isDefined(stripePromise) && isDefined(baseProductPrice) ? (

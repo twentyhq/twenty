@@ -1,4 +1,5 @@
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
+import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { useWorkspaceSubdomainField } from '@/auth/sign-in-up/hooks/useWorkspaceSubdomainField';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
@@ -233,106 +234,120 @@ export const SignInUpWorkspaceCreationForm = () => {
   return (
     <StyledContentContainer>
       <StyledHeading>
-        <StyledTitle>{t`Create your workspace`}</StyledTitle>
-        <StyledSubtitle>
-          {t`Move work forward across teams and agents`}
-        </StyledSubtitle>
+        <OnboardingStepAnimatedItem index={0}>
+          <StyledTitle>{t`Create your workspace`}</StyledTitle>
+        </OnboardingStepAnimatedItem>
+        <OnboardingStepAnimatedItem index={1}>
+          <StyledSubtitle>
+            {t`Move work forward across teams and agents`}
+          </StyledSubtitle>
+        </OnboardingStepAnimatedItem>
       </StyledHeading>
       <StyledFormSection>
-        <StyledLogoRow>
-          <StyledLogoAvatar
-            avatarUrl={logoPreviewUrl}
-            placeholder={isNonEmptyString(workspaceName) ? workspaceName : '?'}
-            placeholderColorSeed={workspaceName}
-            type="squared"
-            size="xl"
-            onClick={openFilePicker}
-          />
-          <StyledHiddenFileInput
-            type="file"
-            ref={hiddenFileInputRef}
-            accept="image/jpeg, image/png, image/gif"
-            onChange={(event) => {
-              const file = event.target.files?.[0];
-              if (isDefined(file)) {
-                handleLogoUpload(file);
+        <OnboardingStepAnimatedItem index={2}>
+          <StyledLogoRow>
+            <StyledLogoAvatar
+              avatarUrl={logoPreviewUrl}
+              placeholder={
+                isNonEmptyString(workspaceName) ? workspaceName : '?'
               }
-              event.target.value = '';
-            }}
-          />
-          <StyledLogoButtons>
-            <Button
-              Icon={IconUpload}
-              title={t`Upload logo`}
-              variant="secondary"
+              placeholderColorSeed={workspaceName}
+              type="squared"
+              size="xl"
               onClick={openFilePicker}
             />
-            <LightIconButton
-              Icon={IconTrash}
-              accent="tertiary"
-              size="medium"
-              onClick={handleLogoRemove}
-              disabled={!isDefined(logoPreviewUrl)}
-              aria-label={t`Remove logo`}
+            <StyledHiddenFileInput
+              type="file"
+              ref={hiddenFileInputRef}
+              accept="image/jpeg, image/png, image/gif"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (isDefined(file)) {
+                  handleLogoUpload(file);
+                }
+                event.target.value = '';
+              }}
             />
-          </StyledLogoButtons>
-        </StyledLogoRow>
-        <TextInput
-          autoFocus
-          label={t`Name`}
-          value={workspaceName}
-          placeholder={t`Apple`}
-          onChange={handleWorkspaceNameChange}
-          onKeyDown={handleKeyDown}
-          fullWidth
-        />
+            <StyledLogoButtons>
+              <Button
+                Icon={IconUpload}
+                title={t`Upload logo`}
+                variant="secondary"
+                onClick={openFilePicker}
+              />
+              <LightIconButton
+                Icon={IconTrash}
+                accent="tertiary"
+                size="medium"
+                onClick={handleLogoRemove}
+                disabled={!isDefined(logoPreviewUrl)}
+                aria-label={t`Remove logo`}
+              />
+            </StyledLogoButtons>
+          </StyledLogoRow>
+        </OnboardingStepAnimatedItem>
+        <OnboardingStepAnimatedItem index={3}>
+          <TextInput
+            autoFocus
+            label={t`Name`}
+            value={workspaceName}
+            placeholder={t`Apple`}
+            onChange={handleWorkspaceNameChange}
+            onKeyDown={handleKeyDown}
+            fullWidth
+          />
+        </OnboardingStepAnimatedItem>
         {isMultiWorkspaceEnabled && (
-          <StyledSubdomainSection>
-            <TextInput
-              label={t`Subdomain`}
-              value={subdomain}
-              placeholder={t`apple`}
-              onChange={handleSubdomainChange}
-              onKeyDown={handleKeyDown}
-              rightAdornment={
-                isNonEmptyString(frontDomain) ? `.${frontDomain}` : undefined
-              }
-              error={subdomainError}
-              noErrorHelper={
-                status === 'unavailable' || !isDefined(subdomainError)
-              }
-              fullWidth
-            />
-            {status === 'unavailable' && (
-              <StyledAlternativesBox>
-                <StyledAlternativesLabel>
-                  {t`Subdomain already in use, here are some alternatives:`}
-                </StyledAlternativesLabel>
-                <StyledAlternativeRows>
-                  {suggestions.map((alternative) => (
-                    <StyledAlternativeRow
-                      key={alternative}
-                      type="button"
-                      onClick={() => applySuggestionValue(alternative)}
-                    >
-                      <StyledAvailabilityDotBox>
-                        <StyledAvailabilityDot />
-                      </StyledAvailabilityDotBox>
-                      {alternative}
-                    </StyledAlternativeRow>
-                  ))}
-                </StyledAlternativeRows>
-              </StyledAlternativesBox>
-            )}
-          </StyledSubdomainSection>
+          <OnboardingStepAnimatedItem index={4}>
+            <StyledSubdomainSection>
+              <TextInput
+                label={t`Subdomain`}
+                value={subdomain}
+                placeholder={t`apple`}
+                onChange={handleSubdomainChange}
+                onKeyDown={handleKeyDown}
+                rightAdornment={
+                  isNonEmptyString(frontDomain) ? `.${frontDomain}` : undefined
+                }
+                error={subdomainError}
+                noErrorHelper={
+                  status === 'unavailable' || !isDefined(subdomainError)
+                }
+                fullWidth
+              />
+              {status === 'unavailable' && (
+                <StyledAlternativesBox>
+                  <StyledAlternativesLabel>
+                    {t`Subdomain already in use, here are some alternatives:`}
+                  </StyledAlternativesLabel>
+                  <StyledAlternativeRows>
+                    {suggestions.map((alternative) => (
+                      <StyledAlternativeRow
+                        key={alternative}
+                        type="button"
+                        onClick={() => applySuggestionValue(alternative)}
+                      >
+                        <StyledAvailabilityDotBox>
+                          <StyledAvailabilityDot />
+                        </StyledAvailabilityDotBox>
+                        {alternative}
+                      </StyledAlternativeRow>
+                    ))}
+                  </StyledAlternativeRows>
+                </StyledAlternativesBox>
+              )}
+            </StyledSubdomainSection>
+          </OnboardingStepAnimatedItem>
         )}
       </StyledFormSection>
-      <MainButton
-        title={t`Create workspace`}
-        onClick={handleSubmit}
-        disabled={isContinueDisabled}
-        fullWidth
-      />
+      <OnboardingStepAnimatedItem index={5}>
+        <MainButton
+          title={t`Create workspace`}
+          onClick={handleSubmit}
+          disabled={isContinueDisabled}
+          fullWidth
+        />
+      </OnboardingStepAnimatedItem>
     </StyledContentContainer>
   );
 };

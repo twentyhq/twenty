@@ -7,6 +7,7 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
+import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { onboardingActivationFailedState } from '@/onboarding/states/onboardingActivationFailedState';
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
@@ -123,31 +124,40 @@ export const WorkspaceActivation = () => {
 
   return (
     <StyledContainer>
-      <Logo
-        primaryLogo={
-          isNonEmptyString(currentWorkspace?.logo)
-            ? currentWorkspace?.logo
-            : undefined
-        }
-      />
-      <Title>
-        <Trans>Workspace creation failed</Trans>
-      </Title>
-      <SubTitle>
-        <Trans>
-          Something went wrong while creating your workspace. Please try again.
-        </Trans>
-      </SubTitle>
-      <StyledButtonContainer>
-        <MainButton
-          title={t`Retry`}
-          onClick={() => {
-            void activate();
-          }}
-          disabled={isActivating}
-          fullWidth
+      <OnboardingStepAnimatedItem index={0}>
+        <Logo
+          primaryLogo={
+            isNonEmptyString(currentWorkspace?.logo)
+              ? currentWorkspace?.logo
+              : undefined
+          }
         />
-      </StyledButtonContainer>
+      </OnboardingStepAnimatedItem>
+      <OnboardingStepAnimatedItem index={1}>
+        <Title>
+          <Trans>Workspace creation failed</Trans>
+        </Title>
+      </OnboardingStepAnimatedItem>
+      <OnboardingStepAnimatedItem index={2}>
+        <SubTitle>
+          <Trans>
+            Something went wrong while creating your workspace. Please try
+            again.
+          </Trans>
+        </SubTitle>
+      </OnboardingStepAnimatedItem>
+      <OnboardingStepAnimatedItem index={3}>
+        <StyledButtonContainer>
+          <MainButton
+            title={t`Retry`}
+            onClick={() => {
+              void activate();
+            }}
+            disabled={isActivating}
+            fullWidth
+          />
+        </StyledButtonContainer>
+      </OnboardingStepAnimatedItem>
     </StyledContainer>
   );
 };

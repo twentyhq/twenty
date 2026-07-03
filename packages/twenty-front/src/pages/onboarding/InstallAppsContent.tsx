@@ -1,4 +1,5 @@
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
+import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
 import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
 import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnboardingStepSubtitle';
@@ -13,7 +14,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';
 import { IconButton, MainButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { AnimatedIconCrossfade } from 'twenty-ui/layout';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledTitleRow = styled.div`
@@ -111,75 +113,95 @@ export const InstallAppsContent = ({
   onSkip,
 }: InstallAppsContentProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
 
   return (
     <StyledOnboardingStepPage>
       <StyledOnboardingStepHeading>
-        <StyledTitleRow>
-          <StyledOnboardingStepTitle>{t`Install your first apps`}</StyledOnboardingStepTitle>
-          <StyledBetaTag>{t`Beta`}</StyledBetaTag>
-        </StyledTitleRow>
-        <StyledOnboardingStepSubtitle>
-          {t`Get the most out of your CRM by installing some apps`}
-        </StyledOnboardingStepSubtitle>
+        <OnboardingStepAnimatedItem index={0}>
+          <StyledTitleRow>
+            <StyledOnboardingStepTitle>{t`Install your first apps`}</StyledOnboardingStepTitle>
+            <StyledBetaTag>{t`Beta`}</StyledBetaTag>
+          </StyledTitleRow>
+        </OnboardingStepAnimatedItem>
+        <OnboardingStepAnimatedItem index={1}>
+          <StyledOnboardingStepSubtitle>
+            {t`Get the most out of your CRM by installing some apps`}
+          </StyledOnboardingStepSubtitle>
+        </OnboardingStepAnimatedItem>
         {isDefined(creditsRewardPerApp) && (
-          <StyledOnboardingStepTagsRow>
-            <OnboardingCreditsRewardTag
-              amount={creditsRewardPerApp * apps.length}
-              suffix={t`free credits (${creditsRewardPerApp} per tool)`}
-            />
-          </StyledOnboardingStepTagsRow>
+          <OnboardingStepAnimatedItem index={2}>
+            <StyledOnboardingStepTagsRow>
+              <OnboardingCreditsRewardTag
+                amount={creditsRewardPerApp * apps.length}
+                suffix={t`free credits (${creditsRewardPerApp} per tool)`}
+              />
+            </StyledOnboardingStepTagsRow>
+          </OnboardingStepAnimatedItem>
         )}
       </StyledOnboardingStepHeading>
 
-      <StyledCard>
-        {apps.map((app) => {
-          const labelText = t(app.label);
-          const isSelected = selectedUniversalIdentifiers.includes(
-            app.universalIdentifier,
-          );
+      <OnboardingStepAnimatedItem index={3}>
+        <StyledCard>
+          {apps.map((app) => {
+            const labelText = t(app.label);
+            const isSelected = selectedUniversalIdentifiers.includes(
+              app.universalIdentifier,
+            );
 
-          return (
-            <StyledAppRow key={app.universalIdentifier}>
-              <Avatar
-                avatarUrl={getAbsoluteImageUrl(app.logo)}
-                placeholder={labelText}
-                placeholderColorSeed={app.universalIdentifier}
-                size="lg"
-                type="squared"
-              />
-              <StyledAppText>
-                <StyledAppLabel>{labelText}</StyledAppLabel>
-                <StyledAppDescription>
-                  {t(app.description)}
-                </StyledAppDescription>
-              </StyledAppText>
-              <IconButton
-                Icon={isSelected ? IconCheck : IconPlus}
-                size="small"
-                variant="secondary"
-                accent={isSelected ? 'blue' : 'default'}
-                ariaLabel={
-                  isSelected ? t`Deselect ${labelText}` : t`Select ${labelText}`
-                }
-                onClick={() => onToggleApp(app.universalIdentifier)}
-              />
-            </StyledAppRow>
-          );
-        })}
-      </StyledCard>
+            return (
+              <StyledAppRow key={app.universalIdentifier}>
+                <Avatar
+                  avatarUrl={getAbsoluteImageUrl(app.logo)}
+                  placeholder={labelText}
+                  placeholderColorSeed={app.universalIdentifier}
+                  size="lg"
+                  type="squared"
+                />
+                <StyledAppText>
+                  <StyledAppLabel>{labelText}</StyledAppLabel>
+                  <StyledAppDescription>
+                    {t(app.description)}
+                  </StyledAppDescription>
+                </StyledAppText>
+                <IconButton
+                  Icon={() => (
+                    <AnimatedIconCrossfade
+                      isActive={isSelected}
+                      ActiveIcon={IconCheck}
+                      InactiveIcon={IconPlus}
+                      size={theme.icon.size.md}
+                    />
+                  )}
+                  size="small"
+                  variant="secondary"
+                  accent={isSelected ? 'blue' : 'default'}
+                  ariaLabel={
+                    isSelected
+                      ? t`Deselect ${labelText}`
+                      : t`Select ${labelText}`
+                  }
+                  onClick={() => onToggleApp(app.universalIdentifier)}
+                />
+              </StyledAppRow>
+            );
+          })}
+        </StyledCard>
+      </OnboardingStepAnimatedItem>
 
-      <StyledFooter>
-        <StyledInstallButton>
-          <MainButton
-            title={t`Install`}
-            onClick={onInstall}
-            disabled={isCompleting}
-            fullWidth
-          />
-        </StyledInstallButton>
-        <OnboardingSkipButton onClick={onSkip} disabled={isCompleting} />
-      </StyledFooter>
+      <OnboardingStepAnimatedItem index={4}>
+        <StyledFooter>
+          <StyledInstallButton>
+            <MainButton
+              title={t`Install`}
+              onClick={onInstall}
+              disabled={isCompleting}
+              fullWidth
+            />
+          </StyledInstallButton>
+          <OnboardingSkipButton onClick={onSkip} disabled={isCompleting} />
+        </StyledFooter>
+      </OnboardingStepAnimatedItem>
     </StyledOnboardingStepPage>
   );
 };

@@ -16,7 +16,9 @@ export const OnboardingActivationStepsProgress = () => {
   );
 
   useEffect(() => {
-    setMessageIndex(isActivating ? WORKSPACE_ACTIVATION_FIRST_MESSAGE_INDEX : 0);
+    setMessageIndex(
+      isActivating ? WORKSPACE_ACTIVATION_FIRST_MESSAGE_INDEX : 0,
+    );
   }, [isActivating]);
 
   return (

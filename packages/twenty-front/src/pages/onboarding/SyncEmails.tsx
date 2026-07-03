@@ -4,6 +4,7 @@ import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMe
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { OnboardingPageLoader } from '@/onboarding/components/OnboardingPageLoader';
 import { SyncEmailsAutoSkipEffect } from '@/onboarding/effect-components/SyncEmailsAutoSkipEffect';
 import { useSkipSyncEmailOnboardingStep } from '@/onboarding/hooks/useSkipSyncEmailOnboardingStep';
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
@@ -85,11 +86,16 @@ export const SyncEmails = () => {
   }, []);
 
   if (!isClientConfigLoaded) {
-    return null;
+    return <OnboardingPageLoader />;
   }
 
   if (!hasProviderEnabled && !hasAutoSkipFailed) {
-    return <SyncEmailsAutoSkipEffect onError={handleAutoSkipError} />;
+    return (
+      <>
+        <SyncEmailsAutoSkipEffect onError={handleAutoSkipError} />
+        <OnboardingPageLoader />
+      </>
+    );
   }
 
   return (
