@@ -110,17 +110,8 @@ export const deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOr
         )
       ) {
         throw new FlatEntityMapsException(
-          `Should never occur, invalid flat entity typing. flat ${relatedMetadataName} should contain ${flatEntityForeignKeyAggregator} (metadataName: ${metadataName}, universalIdentifier: ${flatEntity.universalIdentifier})`,
+          `Should never occur, invalid flat entity typing. flat ${relatedMetadataName} should contain ${flatEntityForeignKeyAggregator}`,
           FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
-          {
-            context: {
-              id: flatEntity.id,
-              universalIdentifier: flatEntity.universalIdentifier,
-              metadataName,
-              relatedMetadataName,
-              operation: 'delete',
-            },
-          },
         );
       }
 

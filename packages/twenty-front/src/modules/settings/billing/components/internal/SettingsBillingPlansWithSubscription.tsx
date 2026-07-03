@@ -13,7 +13,7 @@ import { BillingPlanKey } from '~/generated-metadata/graphql';
 
 type SettingsBillingPlansWithSubscriptionProps = {
   billingInterval: SettingsBillingPlanInterval;
-  currentPlanKey?: BillingPlanKey;
+  currentPlanKey: BillingPlanKey;
   onBillingIntervalChange: (
     billingInterval: SettingsBillingPlanInterval,
   ) => void;
@@ -45,7 +45,7 @@ export const SettingsBillingPlansWithSubscription = ({
       <ConfirmationModal
         modalInstanceId={BILLING_MODAL_IDS.switchBillingPlanToEnterprise}
         title={t`Change to Organization Plan?`}
-        subtitle={confirmationModalSwitchToOrganizationMessage(billingInterval)}
+        subtitle={confirmationModalSwitchToOrganizationMessage()}
         onConfirmClick={() => switchBillingPlan(BillingPlanKey.ENTERPRISE)}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
@@ -54,7 +54,7 @@ export const SettingsBillingPlansWithSubscription = ({
       <ConfirmationModal
         modalInstanceId={BILLING_MODAL_IDS.switchBillingPlanToPro}
         title={t`Change to Pro Plan?`}
-        subtitle={confirmationModalSwitchToProMessage(billingInterval)}
+        subtitle={confirmationModalSwitchToProMessage()}
         onConfirmClick={() => switchBillingPlan(BillingPlanKey.PRO)}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"

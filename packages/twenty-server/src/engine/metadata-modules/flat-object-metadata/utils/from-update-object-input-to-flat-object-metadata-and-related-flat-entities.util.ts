@@ -66,7 +66,7 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
     const isStandardObject = belongsToTwentyStandardApp(
       existingFlatObjectMetadata,
     );
-    const { overrides, updatedEditableObjectProperties } =
+    const { standardOverrides, updatedEditableObjectProperties } =
       sanitizeRawUpdateObjectInput({
         existingFlatObjectMetadata,
         rawUpdateObjectInput,
@@ -81,7 +81,7 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
           ],
         update: updatedEditableObjectProperties,
       }),
-      overrides,
+      standardOverrides,
     };
 
     if (

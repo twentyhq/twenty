@@ -91,7 +91,7 @@ export const createStandardObjectFlatMetadata = <
     isUIEditable,
     isUICreatable,
     isLabelSyncedWithName: false,
-    overrides: null,
+    standardOverrides: null,
     duplicateCriteria,
     shortcut,
     labelIdentifierFieldMetadataId:

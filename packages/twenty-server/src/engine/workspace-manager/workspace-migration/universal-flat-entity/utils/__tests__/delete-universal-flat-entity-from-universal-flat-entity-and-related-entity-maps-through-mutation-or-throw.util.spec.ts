@@ -43,7 +43,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       namePlural: 'defaultflatObjectMetadataNamePlural',
       nameSingular: 'defaultflatObjectMetadataNameSingular',
       shortcut: 'shortcut',
-      overrides: null,
+      standardOverrides: null,
       targetTableName: '',
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
@@ -82,7 +82,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       isUIEditable: true,
       isLabelSyncedWithName: false,
       isSystem: false,
-      overrides: null,
+      standardOverrides: null,
       relationTargetObjectMetadataUniversalIdentifier: null,
       relationTargetFieldMetadataUniversalIdentifier: null,
     };

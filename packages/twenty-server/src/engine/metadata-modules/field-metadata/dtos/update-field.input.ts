@@ -27,7 +27,7 @@ export class UpdateFieldInput extends OmitType(
     'type',
     'createdAt',
     'updatedAt',
-    'overrides',
+    'standardOverrides',
     'applicationId',
     'morphId',
   ] as const,

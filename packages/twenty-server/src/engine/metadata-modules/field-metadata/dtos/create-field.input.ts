@@ -15,7 +15,7 @@ export class CreateFieldInput extends OmitType(
     'id',
     'createdAt',
     'updatedAt',
-    'overrides',
+    'standardOverrides',
     'applicationId',
     'morphId',
     'universalIdentifier',

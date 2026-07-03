@@ -20,7 +20,6 @@ import { FlatEntityToCreateDeleteUpdate } from 'src/engine/metadata-modules/flat
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { getFlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entity-maps-exception-context.util';
 import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names-for-validation.util';
 import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
 import { MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
@@ -381,7 +380,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
           throw new WorkspaceMigrationV2Exception(
             error.message,
             WorkspaceMigrationV2ExceptionCode.BUILDER_INTERNAL_SERVER_ERROR,
-            { context: getFlatEntityMapsExceptionContext(error) },
           );
         });
     const buildMs = performance.now() - buildStart;

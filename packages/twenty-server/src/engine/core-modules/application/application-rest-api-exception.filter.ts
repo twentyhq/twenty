@@ -42,7 +42,6 @@ const applicationExceptionCodeToHttpStatus = (
     case ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED:
     case ApplicationExceptionCode.UPGRADE_FAILED:
     case ApplicationExceptionCode.INVALID_SERVER_VERSION:
-    case ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED:
       return 500;
     default:
       return assertUnreachable(code);

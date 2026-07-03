@@ -36,7 +36,7 @@ type Assertions = [
       | 'description'
       | 'isActive'
       | 'defaultValue'
-      | 'overrides'
+      | 'standardOverrides'
       | 'options'
       | 'isUnique'
       | 'isLabelSyncedWithName'

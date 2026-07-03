@@ -36,7 +36,7 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
     updatedAt: new Date().toISOString(),
     shortcut: null,
     description: null,
-    overrides: null,
+    standardOverrides: null,
     isUIEditable: true,
     isUICreatable: true,
     labelIdentifierFieldMetadataId: null,

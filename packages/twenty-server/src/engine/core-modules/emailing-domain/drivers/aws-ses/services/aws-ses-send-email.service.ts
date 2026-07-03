@@ -80,7 +80,6 @@ export class AwsSesSendEmailService {
           EmailTags: [
             { Name: 'workspace', Value: input.workspaceId },
             { Name: 'domain', Value: input.domain },
-            { Name: 'tenant_id', Value: input.workspaceId },
           ],
         }),
       );

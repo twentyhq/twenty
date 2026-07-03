@@ -2,18 +2,20 @@
 
 import { ArgsType, Field } from '@nestjs/graphql';
 
-import { IsEnum } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 
 @ArgsType()
 export class BillingSwitchPlanInput {
-  @Field(() => BillingPlanKey)
+  @Field(() => BillingPlanKey, { nullable: true })
   @IsEnum(BillingPlanKey)
-  targetPlanKey: BillingPlanKey;
+  @IsOptional()
+  targetPlanKey?: BillingPlanKey;
 
-  @Field(() => SubscriptionInterval)
+  @Field(() => SubscriptionInterval, { nullable: true })
   @IsEnum(SubscriptionInterval)
-  targetInterval: SubscriptionInterval;
+  @IsOptional()
+  targetInterval?: SubscriptionInterval;
 }

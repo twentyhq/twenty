@@ -4,7 +4,7 @@ import { SettingsBillingPlansWithoutSubscription } from '@/settings/billing/comp
 import { useFormatPrices } from '@/settings/billing/hooks/useFormatPrices';
 import { type SettingsBillingPlanInterval } from '@/settings/billing/types/settingsBillingPlanComparison.type';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   BillingPlanKey,
@@ -19,43 +19,20 @@ const parseCurrentPlanKey = (plan: unknown): BillingPlanKey | undefined => {
   return undefined;
 };
 
-const parseBillingInterval = (
-  interval: unknown,
-): SettingsBillingPlanInterval | undefined => {
-  if (
-    interval === SubscriptionInterval.Month ||
-    interval === SubscriptionInterval.Year
-  ) {
-    return interval;
-  }
-
-  return undefined;
-};
-
 export const SettingsBillingPlansContent = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { formatPrices: planPrices } = useFormatPrices();
-  const currentSubscriptionInterval = parseBillingInterval(
-    currentWorkspace?.currentBillingSubscription?.interval,
-  );
   const [billingInterval, setBillingInterval] =
-    useState<SettingsBillingPlanInterval>(
-      currentSubscriptionInterval ?? SubscriptionInterval.Year,
-    );
+    useState<SettingsBillingPlanInterval>(SubscriptionInterval.Year);
 
-  useEffect(() => {
-    setBillingInterval(
-      currentSubscriptionInterval ?? SubscriptionInterval.Year,
-    );
-  }, [currentSubscriptionInterval]);
-
-  const currentBillingSubscription =
-    currentWorkspace?.currentBillingSubscription;
   const currentPlanKey = parseCurrentPlanKey(
-    currentBillingSubscription?.metadata?.['plan'],
+    currentWorkspace?.currentBillingSubscription?.metadata?.['plan'],
   );
 
-  if (!isDefined(currentBillingSubscription)) {
+  if (
+    !isDefined(currentPlanKey) ||
+    !isDefined(currentWorkspace?.currentBillingSubscription)
+  ) {
     return (
       <SettingsBillingPlansWithoutSubscription
         billingInterval={billingInterval}

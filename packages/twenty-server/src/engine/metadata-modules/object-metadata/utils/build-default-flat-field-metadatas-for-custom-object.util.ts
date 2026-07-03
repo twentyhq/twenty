@@ -139,7 +139,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
           createdAt: now,
           updatedAt: now,
           options: null,
-          overrides: null,
+          standardOverrides: null,
           morphId: null,
           applicationUniversalIdentifier,
           objectMetadataUniversalIdentifier,

@@ -20,7 +20,6 @@ export interface WorkspaceInternalContext {
   objectIdByNameSingular: Record<string, string>;
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
-  apiKeyRoleMap: Record<string, string>;
   eventEmitterService: WorkspaceEventEmitter;
   coreDataSource: DataSource;
 }

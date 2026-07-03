@@ -5,7 +5,6 @@ import { join, relative } from 'path';
 import { SyncableEntity } from 'twenty-shared/application';
 import {
   FieldMetadataType,
-  PageLayoutType,
   RelationOnDeleteAction,
   RelationType,
   ViewType,
@@ -218,20 +217,8 @@ export class EntityAddCommand {
       case SyncableEntity.PageLayout: {
         const name = await this.getEntityName(entity);
 
-        const { type } = await inquirer.prompt<{
-          type: PageLayoutType;
-        }>([
-          {
-            type: 'select',
-            name: 'type',
-            message: 'Select the page layout type:',
-            choices: Object.values(PageLayoutType),
-          },
-        ]);
-
         const file = getPageLayoutBaseFile({
           name,
-          type,
         });
         return { name, file };
       }

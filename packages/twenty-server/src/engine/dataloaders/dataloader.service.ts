@@ -13,11 +13,11 @@ import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/applicati
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
+import { FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-standard-overrides-properties.constant';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-overridable-properties-by-metadata-name.constant';
-import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
+import { resolveFieldMetadataStandardOverride } from 'src/engine/metadata-modules/field-metadata/utils/resolve-field-metadata-standard-override.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -419,24 +419,23 @@ export class DataloaderService {
                     )
                   : undefined;
 
-                const overrides = flatFieldMetadata.overrides ?? undefined;
-                const i18nContext = {
-                  locale,
-                  i18nInstance,
-                  isStandardApp: belongsToTwentyStandardApp(flatFieldMetadata),
-                  applicationCatalog,
-                };
-
-                return ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME.fieldMetadata.reduce(
+                return FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES.reduce(
                   (acc, property) => ({
                     ...acc,
-                    [property]: resolveEffectiveEntityProperty({
-                      metadataName: 'fieldMetadata',
-                      baseValue: flatFieldMetadata[property],
-                      overrides,
+                    [property]: resolveFieldMetadataStandardOverride(
+                      {
+                        label: flatFieldMetadata.label,
+                        description: flatFieldMetadata.description ?? undefined,
+                        icon: flatFieldMetadata.icon ?? undefined,
+                        standardOverrides:
+                          flatFieldMetadata.standardOverrides ?? undefined,
+                      },
                       property,
-                      i18nContext,
-                    }),
+                      locale,
+                      i18nInstance,
+                      belongsToTwentyStandardApp(flatFieldMetadata),
+                      applicationCatalog,
+                    ),
                   }),
                   flatFieldMetadata,
                 );

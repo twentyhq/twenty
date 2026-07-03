@@ -106,7 +106,7 @@ export const createStandardRelationFieldFlatMetadata = <
     isUnique: false,
     isUIEditable,
     isLabelSyncedWithName: false,
-    overrides: null,
+    standardOverrides: null,
     defaultValue,
     settings,
     options: fieldOptions,

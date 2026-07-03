@@ -88,7 +88,7 @@ export const createStandardFieldFlatMetadata = <
     isUnique,
     isUIEditable,
     isLabelSyncedWithName: false,
-    overrides: null,
+    standardOverrides: null,
     defaultValue: defaultValue ?? null,
     settings: settings ?? null,
     options: fieldOptions ?? null,

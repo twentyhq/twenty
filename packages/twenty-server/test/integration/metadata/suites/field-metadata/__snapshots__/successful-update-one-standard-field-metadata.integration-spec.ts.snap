@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Standard field metadata update should succeed Atomic update test suite when setting isActive to false 1`] = `
 {
@@ -46,6 +46,7 @@ exports[`Standard field metadata update should succeed Atomic update test suite 
       "value": "CUSTOMER",
     },
   ],
+  "standardOverrides": null,
 }
 `;
 
@@ -95,6 +96,7 @@ exports[`Standard field metadata update should succeed Atomic update test suite 
       "value": "CUSTOMER",
     },
   ],
+  "standardOverrides": null,
 }
 `;
 
@@ -144,6 +146,11 @@ exports[`Standard field metadata update should succeed Atomic update test suite 
       "value": "CUSTOMER",
     },
   ],
+  "standardOverrides": {
+    "description": "Updated test description for company name field",
+    "icon": null,
+    "label": null,
+  },
 }
 `;
 
@@ -193,6 +200,11 @@ exports[`Standard field metadata update should succeed Atomic update test suite 
       "value": "CUSTOMER",
     },
   ],
+  "standardOverrides": {
+    "description": null,
+    "icon": "IconBuildingFactory",
+    "label": null,
+  },
 }
 `;
 
@@ -242,6 +254,11 @@ exports[`Standard field metadata update should succeed Atomic update test suite 
       "value": "CUSTOMER",
     },
   ],
+  "standardOverrides": {
+    "description": null,
+    "icon": null,
+    "label": "Business Name",
+  },
 }
 `;
 
@@ -298,5 +315,6 @@ exports[`Standard field metadata update should succeed Atomic update test suite 
       "value": "CLOSED",
     },
   ],
+  "standardOverrides": null,
 }
 `;

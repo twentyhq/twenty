@@ -12,16 +12,11 @@ import {
   RemoteRootRenderer,
 } from '@remote-dom/react/host';
 import { useMemo, useState } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 import { FrontComponentWorkerEffect } from '../../remote/components/FrontComponentWorkerEffect';
 import { componentRegistry } from '../generated/host-component-registry';
-import { createFallbackComponentRegistry } from '../utils/createFallbackComponentRegistry';
-
-const fallbackComponentRegistry =
-  createFallbackComponentRegistry(componentRegistry);
 
 type FrontComponentContentProps = {
   componentUrl: string;
@@ -133,17 +128,10 @@ export const FrontComponentRenderer = ({
 
       {isDefined(receiver) && isExecutionContextInitialized && (
         <ThemeProvider colorScheme={colorScheme}>
-          <ErrorBoundary
-            onError={setError}
-            onReset={() => setError(null)}
-            resetKeys={[componentUrl]}
-            fallbackRender={() => null}
-          >
-            <RemoteRootRenderer
-              receiver={receiver}
-              components={fallbackComponentRegistry}
-            />
-          </ErrorBoundary>
+          <RemoteRootRenderer
+            receiver={receiver}
+            components={componentRegistry}
+          />
         </ThemeProvider>
       )}
     </>

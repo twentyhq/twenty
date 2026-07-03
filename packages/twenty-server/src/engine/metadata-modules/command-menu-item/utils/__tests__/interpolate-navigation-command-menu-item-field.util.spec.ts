@@ -20,7 +20,7 @@ const mockObjectMetadata = {
   labelSingular: 'Person',
   description: 'A person',
   icon: 'IconUser',
-  overrides: undefined,
+  standardOverrides: undefined,
 } as unknown as ObjectMetadataDTO;
 
 const baseCommandMenuItem = {

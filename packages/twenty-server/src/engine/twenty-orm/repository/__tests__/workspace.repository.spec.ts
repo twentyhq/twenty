@@ -87,7 +87,7 @@ describe('WorkspaceRepository', () => {
       options: null,
       settings: null,
       morphId: null,
-      overrides: null,
+      standardOverrides: null,
       applicationId: 'application-id',
       relationTargetFieldMetadataId: null,
       relationTargetObjectMetadataId: null,

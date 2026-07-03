@@ -7,8 +7,6 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import {
-  BaseGraphQLError,
-  ErrorCode,
   ForbiddenError,
   InternalServerError,
   NotFoundError,
@@ -43,19 +41,6 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
       case ApplicationExceptionCode.UPGRADE_FAILED:
       case ApplicationExceptionCode.INVALID_SERVER_VERSION:
         throw new InternalServerError(exception);
-      case ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED: {
-        const installationError = new BaseGraphQLError(
-          exception,
-          ErrorCode.APPLICATION_INSTALLATION_FAILED,
-        );
-
-        Object.defineProperty(installationError, 'context', {
-          value: exception.context,
-          enumerable: false,
-        });
-
-        throw installationError;
-      }
       default: {
         assertUnreachable(exception.code);
       }

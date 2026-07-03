@@ -11,7 +11,7 @@ type SimplifiedFlatObjectMetadata = {
   universalIdentifier: string;
   applicationId: string | null;
   dataSourceId: string | null;
-  overrides: null;
+  standardOverrides: null;
   isCustom: boolean;
   isRemote: boolean;
   isActive: boolean;

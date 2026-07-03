@@ -18,5 +18,4 @@ export type StreamAgentChatJobData = {
   hasTitle: boolean;
   existingTurnId?: string;
   conversationSizeTokens: number;
-  isResume?: boolean;
 };

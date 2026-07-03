@@ -43,9 +43,7 @@ export const getMockFieldMetadataEntity = <
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadata: null,
     relationTargetObjectMetadataId: null,
-    overrides: null,
-    standardOverrides:
-      null as unknown as FieldMetadataEntity['standardOverrides'],
+    standardOverrides: null,
     id: faker.string.uuid(),
     name: 'defaultFieldMetadataName',
     label: 'Default field metadata entity label',

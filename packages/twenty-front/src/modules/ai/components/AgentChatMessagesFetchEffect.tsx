@@ -14,7 +14,6 @@ import { agentChatQueuedMessagesComponentFamilyState } from '@/ai/states/agentCh
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
-import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import { useQueryWithCallbacks } from '@/apollo/hooks/useQueryWithCallbacks';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
@@ -88,7 +87,7 @@ export const AgentChatMessagesFetchEffect = () => {
 
       const catchup = data.chatStreamCatchupChunks;
 
-      if (!isDefined(catchup)) {
+      if (!isDefined(catchup) || catchup.chunks.length === 0) {
         return;
       }
 
@@ -121,15 +120,6 @@ export const AgentChatMessagesFetchEffect = () => {
           type: 'stream-chunk',
           chunk: catchup.chunks[index],
           seq: chunkSeq,
-        } as AgentChatSubscriptionEvent);
-      }
-
-      // Never replay a persisted error into an active live stream.
-      if (isDefined(catchup.error) && firstLiveSeq === null) {
-        handleEvent({
-          type: 'stream-error',
-          code: catchup.error.code,
-          message: catchup.error.message,
         } as AgentChatSubscriptionEvent);
       }
     },
@@ -175,12 +165,6 @@ export const AgentChatMessagesFetchEffect = () => {
 
   useListenToBrowserEvent({
     eventName: AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME,
-    onBrowserEvent: handleRefetchMessages,
-  });
-
-  // Replay events missed while the SSE connection was down.
-  useListenToBrowserEvent({
-    eventName: SSE_CLIENT_RECONNECTED_EVENT_NAME,
     onBrowserEvent: handleRefetchMessages,
   });
 

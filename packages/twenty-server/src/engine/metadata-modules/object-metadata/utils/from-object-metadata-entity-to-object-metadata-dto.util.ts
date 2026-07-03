@@ -15,7 +15,7 @@ export const fromObjectMetadataEntityToObjectMetadataDto = (
   icon: entity.icon ?? undefined,
   color: entity.color ?? undefined,
   shortcut: entity.shortcut ?? undefined,
-  overrides: entity.overrides ?? undefined,
+  standardOverrides: entity.standardOverrides ?? undefined,
   isRemote: entity.isRemote,
   isActive: entity.isActive,
   isSystem: entity.isSystem,

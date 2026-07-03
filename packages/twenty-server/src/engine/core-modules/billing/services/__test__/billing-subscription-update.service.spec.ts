@@ -11,7 +11,6 @@ import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entit
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
@@ -1543,40 +1542,6 @@ describe('BillingSubscriptionUpdateService', () => {
   });
 
   describe('shouldUpdateAtSubscriptionPeriodEnd', () => {
-    const buildSubscriptionForPeriodEndCheck = ({
-      interval,
-      isMeteredItemFirst = false,
-      planKey,
-    }: {
-      interval: SubscriptionInterval;
-      isMeteredItemFirst?: boolean;
-      planKey: BillingPlanKey;
-    }) => {
-      const licensedSubscriptionItem = {
-        billingProduct: {
-          metadata: {
-            planKey,
-            priceUsageBased: BillingUsageType.LICENSED,
-          },
-        },
-      };
-      const meteredSubscriptionItem = {
-        billingProduct: {
-          metadata: {
-            priceUsageBased: BillingUsageType.METERED,
-          },
-        },
-      };
-
-      return {
-        interval,
-        status: SubscriptionStatus.Active,
-        billingSubscriptionItems: isMeteredItemFirst
-          ? [meteredSubscriptionItem, licensedSubscriptionItem]
-          : [licensedSubscriptionItem, meteredSubscriptionItem],
-      } as BillingSubscriptionEntity;
-    };
-
     it('should update plan changes immediately during trial', async () => {
       await expect(
         service.shouldUpdateAtSubscriptionPeriodEnd(
@@ -1612,110 +1577,6 @@ describe('BillingSubscriptionUpdateService', () => {
           },
         ),
       ).resolves.toBe(false);
-    });
-
-    it('should update plan upgrades immediately when combined with interval downgrades', async () => {
-      await expect(
-        service.shouldUpdateAtSubscriptionPeriodEnd(
-          buildSubscriptionForPeriodEndCheck({
-            interval: SubscriptionInterval.Year,
-            planKey: BillingPlanKey.PRO,
-          }),
-          {
-            type: SubscriptionUpdateType.PLAN_AND_INTERVAL,
-            newPlan: BillingPlanKey.ENTERPRISE,
-            newInterval: SubscriptionInterval.Month,
-          },
-        ),
-      ).resolves.toBe(false);
-    });
-
-    it('should schedule plan downgrades at period end when combined with interval downgrades', async () => {
-      await expect(
-        service.shouldUpdateAtSubscriptionPeriodEnd(
-          buildSubscriptionForPeriodEndCheck({
-            interval: SubscriptionInterval.Year,
-            planKey: BillingPlanKey.ENTERPRISE,
-          }),
-          {
-            type: SubscriptionUpdateType.PLAN_AND_INTERVAL,
-            newPlan: BillingPlanKey.PRO,
-            newInterval: SubscriptionInterval.Month,
-          },
-        ),
-      ).resolves.toBe(true);
-    });
-
-    it('should schedule combined plan downgrades when the licensed item is not first', async () => {
-      await expect(
-        service.shouldUpdateAtSubscriptionPeriodEnd(
-          buildSubscriptionForPeriodEndCheck({
-            interval: SubscriptionInterval.Year,
-            isMeteredItemFirst: true,
-            planKey: BillingPlanKey.ENTERPRISE,
-          }),
-          {
-            type: SubscriptionUpdateType.PLAN_AND_INTERVAL,
-            newPlan: BillingPlanKey.PRO,
-            newInterval: SubscriptionInterval.Month,
-          },
-        ),
-      ).resolves.toBe(true);
-    });
-
-    it('should schedule interval downgrades at period end when plan is unchanged', async () => {
-      await expect(
-        service.shouldUpdateAtSubscriptionPeriodEnd(
-          buildSubscriptionForPeriodEndCheck({
-            interval: SubscriptionInterval.Year,
-            planKey: BillingPlanKey.ENTERPRISE,
-          }),
-          {
-            type: SubscriptionUpdateType.PLAN_AND_INTERVAL,
-            newPlan: BillingPlanKey.ENTERPRISE,
-            newInterval: SubscriptionInterval.Month,
-          },
-        ),
-      ).resolves.toBe(true);
-    });
-  });
-
-  describe('cancelSwitchPlan', () => {
-    it('should cancel scheduled plan and interval changes', async () => {
-      billingSubscriptionService.getCurrentBillingSubscriptionOrThrow = jest
-        .fn()
-        .mockResolvedValue({
-          id: 'billing-subscription-id',
-          interval: SubscriptionInterval.Year,
-          billingSubscriptionItems: [
-            {
-              billingProduct: {
-                metadata: {
-                  planKey: BillingPlanKey.ENTERPRISE,
-                  priceUsageBased: BillingUsageType.LICENSED,
-                },
-              },
-            },
-          ],
-        } as BillingSubscriptionEntity);
-
-      const updateSubscriptionSpy = jest
-        .spyOn(service, 'updateSubscription')
-        .mockResolvedValue(undefined);
-
-      await service.cancelSwitchPlan('workspace-id');
-
-      expect(updateSubscriptionSpy).toHaveBeenCalledWith(
-        'workspace-id',
-        'billing-subscription-id',
-        {
-          type: SubscriptionUpdateType.PLAN_AND_INTERVAL,
-          newPlan: BillingPlanKey.ENTERPRISE,
-          newInterval: SubscriptionInterval.Year,
-        },
-      );
-
-      updateSubscriptionSpy.mockRestore();
     });
   });
 });

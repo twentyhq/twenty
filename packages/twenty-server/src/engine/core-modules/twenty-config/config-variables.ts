@@ -1960,25 +1960,6 @@ export class ConfigVariables {
   SES_SNS_TOPIC_ARN_ALLOWLIST: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.AWS_SES_SETTINGS,
-    description:
-      'Tatami Monitor ingest webhook URL (SNS HTTPS subscription target for deliverability observability).',
-    type: ConfigVariableType.STRING,
-    isSensitive: true,
-  })
-  @IsOptional()
-  TATAMI_SES_WEBHOOK_URL: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.AWS_SES_SETTINGS,
-    description:
-      'SNS topic ARN that fans out SES events to Tatami Monitor. When set, an SNS event destination is added to each workspace SES configuration set.',
-    type: ConfigVariableType.STRING,
-  })
-  @IsOptional()
-  TATAMI_SNS_TOPIC_ARN: string;
-
-  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Timeout in milliseconds for primary database queries',
     type: ConfigVariableType.NUMBER,

@@ -53,7 +53,7 @@ export const getRelationTargetFlatFieldMetadataMock = ({
     isUIEditable: true,
     isLabelSyncedWithName: false,
     isSystem: false,
-    overrides: null,
+    standardOverrides: null,
     workspaceId: faker.string.uuid(),
     objectMetadataId,
     type,

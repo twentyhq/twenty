@@ -54,7 +54,7 @@ export function Footer() {
     <FooterRoot data-menu-surface="" data-scheme="dark">
       <StageContainer>
         <FooterBackdrop />
-        <Card data-scheme="light">
+        <Card>
           <NotchedCardShape />
           <TwentyLogo sizePx={40} />
           <FooterNav />

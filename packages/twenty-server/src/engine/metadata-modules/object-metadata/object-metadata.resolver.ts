@@ -32,7 +32,7 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { ObjectRecordCountService } from 'src/engine/metadata-modules/object-metadata/object-record-count.service';
 import { SearchFieldMetadataDTO } from 'src/engine/metadata-modules/search-field-metadata/dtos/search-field-metadata.dto';
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
-import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
+import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
@@ -92,18 +92,14 @@ export class ObjectMetadataResolver {
         locale: context.req.locale,
       });
 
-    return resolveEffectiveEntityProperty({
-      metadataName: 'objectMetadata',
-      baseValue: objectMetadata[labelKey],
-      overrides: objectMetadata.overrides,
-      property: labelKey,
-      i18nContext: {
-        locale: context.req.locale,
-        i18nInstance: i18n,
-        isStandardApp,
-        applicationCatalog,
-      },
-    });
+    return resolveObjectMetadataStandardOverride(
+      objectMetadata,
+      labelKey,
+      context.req.locale,
+      i18n,
+      isStandardApp,
+      applicationCatalog,
+    );
   }
 
   @ResolveField(() => String, { nullable: true })

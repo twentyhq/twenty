@@ -175,7 +175,6 @@ export {
   NumberDataType,
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
-  PageLayoutType,
   ViewCalendarLayout,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,

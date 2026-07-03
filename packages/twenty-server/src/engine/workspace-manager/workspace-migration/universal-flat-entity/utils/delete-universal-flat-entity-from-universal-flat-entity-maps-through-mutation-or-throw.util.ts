@@ -27,14 +27,8 @@ export const deleteUniversalFlatEntityFromUniversalFlatEntityMapsThroughMutation
 
     if (!isDefined(entityToDelete)) {
       throw new FlatEntityMapsException(
-        `deleteUniversalFlatEntityFromUniversalFlatEntityMapsThroughMutationOrThrow: entity to delete not found (universalIdentifierToDelete: ${universalIdentifierToDelete})`,
+        'deleteUniversalFlatEntityFromUniversalFlatEntityMapsThroughMutationOrThrow: entity to delete not found',
         FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-        {
-          context: {
-            universalIdentifier: universalIdentifierToDelete,
-            operation: 'delete',
-          },
-        },
       );
     }
 

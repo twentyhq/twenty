@@ -28,16 +28,8 @@ export const addFlatEntityToFlatEntityMapsThroughMutationOrThrow = <
     )
   ) {
     throw new FlatEntityMapsException(
-      `addFlatEntityToFlatEntityMapsThroughMutationOrThrow: flat entity to add already exists (universalIdentifier: ${flatEntity.universalIdentifier})`,
+      'addFlatEntityToFlatEntityMapsThroughMutationOrThrow: flat entity to add already exists',
       FlatEntityMapsExceptionCode.ENTITY_ALREADY_EXISTS,
-      {
-        context: {
-          universalIdentifier: flatEntity.universalIdentifier,
-          id: flatEntity.id,
-          applicationId: flatEntity.applicationId,
-          operation: 'add',
-        },
-      },
     );
   }
 

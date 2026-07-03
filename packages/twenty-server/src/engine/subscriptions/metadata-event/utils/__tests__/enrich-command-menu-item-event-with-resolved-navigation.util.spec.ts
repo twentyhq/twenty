@@ -32,7 +32,7 @@ const makeFlatObjectMetadata = (
     labelPlural: 'People',
     labelSingular: 'Person',
     icon: 'IconUser',
-    overrides: null,
+    standardOverrides: null,
     ...overrides,
   }) as unknown as FlatObjectMetadata;
 
@@ -148,10 +148,10 @@ describe('enrichCommandMenuItemEventWithResolvedNavigation', () => {
     const flatObjectMetadata = makeFlatObjectMetadata({
       labelPlural: 'People',
       icon: 'IconUser',
-      overrides: {
+      standardOverrides: {
         labelPlural: 'Contacts',
         icon: 'IconContacts',
-      } as unknown as FlatObjectMetadata['overrides'],
+      } as unknown as FlatObjectMetadata['standardOverrides'],
     });
     const flatObjectMetadataMaps =
       makeFlatObjectMetadataMaps(flatObjectMetadata);
@@ -174,7 +174,7 @@ describe('enrichCommandMenuItemEventWithResolvedNavigation', () => {
     const flatObjectMetadata = makeFlatObjectMetadata({
       labelPlural: 'Companies',
       icon: 'IconBuilding',
-      overrides: null,
+      standardOverrides: null,
     });
     const flatObjectMetadataMaps =
       makeFlatObjectMetadataMaps(flatObjectMetadata);

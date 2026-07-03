@@ -6,13 +6,9 @@ import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 type AiChatErrorRendererProps = {
   error: AiChatError;
-  onRetry?: () => void;
 };
 
-export const AiChatErrorRenderer = ({
-  error,
-  onRetry,
-}: AiChatErrorRendererProps) => {
+export const AiChatErrorRenderer = ({ error }: AiChatErrorRendererProps) => {
   if (isGraphqlErrorOfType(error, AiChatErrorCode.BILLING_CREDITS_EXHAUSTED)) {
     //Handle by AIChatNoMoreBillingCreditsBanner
     return null;
@@ -22,5 +18,5 @@ export const AiChatErrorRenderer = ({
     return <AiChatApiKeyNotConfiguredMessage />;
   }
 
-  return <AiChatErrorMessage error={error} onRetry={onRetry} />;
+  return <AiChatErrorMessage error={error} />;
 };

@@ -5,7 +5,9 @@ type FlatEntityWithOverrides = {
   overrides: Record<string, unknown> | null;
 };
 
-export const resolveEffectiveEntity = <T extends FlatEntityWithOverrides>(
+export const resolveFlatEntityOverridableProperties = <
+  T extends FlatEntityWithOverrides,
+>(
   flatEntity: T,
 ): T => {
   if (!isDefined(flatEntity.overrides)) {

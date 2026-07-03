@@ -89,7 +89,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       namePlural: createObjectInput.namePlural,
       nameSingular: createObjectInput.nameSingular,
       shortcut: createObjectInput.shortcut ?? null,
-      overrides: null,
+      standardOverrides: null,
       targetTableName: 'DEPRECATED',
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
       fieldUniversalIdentifiers: [],

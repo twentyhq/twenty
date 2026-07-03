@@ -1,6 +1,5 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { z } from 'zod';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
@@ -15,19 +14,6 @@ export const FlatEntityMapsExceptionCode = appendCommonExceptionCode({
   ENTITY_NOT_FOUND: 'ENTITY_NOT_FOUND',
   ENTITY_MALFORMED: 'ENTITY_MALFORMED',
 } as const);
-
-export const flatEntityMapsExceptionContextSchema = z.strictObject({
-  universalIdentifier: z.string().optional(),
-  id: z.string().optional(),
-  applicationId: z.string().optional(),
-  metadataName: z.string().optional(),
-  relatedMetadataName: z.string().optional(),
-  operation: z.enum(['add', 'delete']).optional(),
-});
-
-export type FlatEntityMapsExceptionContext = z.infer<
-  typeof flatEntityMapsExceptionContextSchema
->;
 
 const getFlatEntityMapsExceptionUserFriendlyMessage = (
   code: keyof typeof FlatEntityMapsExceptionCode,
@@ -47,25 +33,15 @@ const getFlatEntityMapsExceptionUserFriendlyMessage = (
 export class FlatEntityMapsException extends CustomException<
   keyof typeof FlatEntityMapsExceptionCode
 > {
-  context?: FlatEntityMapsExceptionContext;
-
   constructor(
     message: string,
     code: keyof typeof FlatEntityMapsExceptionCode,
-    {
-      userFriendlyMessage,
-      context,
-    }: {
-      userFriendlyMessage?: MessageDescriptor;
-      context?: FlatEntityMapsExceptionContext;
-    } = {},
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ??
         getFlatEntityMapsExceptionUserFriendlyMessage(code),
     });
-
-    this.context = context;
   }
 }

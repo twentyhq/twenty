@@ -3,11 +3,8 @@ import { EditorContent } from '@tiptap/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { AiChatBanner } from '@/ai/components/AiChatBanner';
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
-import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
 import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBillingCreditsBanner';
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
@@ -21,10 +18,8 @@ import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
-import { agentChatPendingQuestionComponentSelector } from '@/ai/states/selectors/agentChatPendingQuestionComponentSelector';
 import { Select } from '@/ui/input/components/Select';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { hasReachedCurrentBillingPeriodCapSelector } from '@/workspace/states/hasReachedCurrentBillingPeriodCapSelector';
@@ -142,10 +137,6 @@ export const AiChatEditorSection = () => {
 
   const { editor, handleSendAndClear } = useAiChatEditor();
 
-  const pendingQuestion = useAtomComponentSelectorValue(
-    agentChatPendingQuestionComponentSelector,
-  );
-
   return (
     <>
       <AiChatEditorFocusEffect editor={editor} />
@@ -164,39 +155,35 @@ export const AiChatEditorSection = () => {
         {hasReachedCurrentBillingPeriodCap && (
           <AIChatNoMoreBillingCreditsBanner />
         )}
-        {isDefined(pendingQuestion) ? (
-          <AiChatQuestionCard pendingQuestion={pendingQuestion} />
-        ) : (
-          <StyledInputBox>
-            <StyledEditorWrapper>
-              <EditorContent editor={editor} />
-            </StyledEditorWrapper>
-            <StyledButtonsContainer>
-              <StyledLeftButtonsContainer>
-                <AgentChatFileUploadButton />
-                <AiChatContextUsageButton />
-              </StyledLeftButtonsContainer>
-              <StyledRightButtonsContainer>
-                <Select
-                  dropdownId="ai-chat-smart-model-select"
-                  value={selectedModelId}
-                  onChange={setAgentChatUserSelectedModel}
-                  options={smartModelOptions}
-                  pinnedOption={defaultPinnedOption}
-                  disabled={hasNoEnabledModels}
-                  selectSizeVariant="small"
-                  showContextualTextInControl={false}
-                  withSearchInput
-                  dropdownOffset={{ x: 0, y: 8 }}
-                />
-                <SendMessageButton
-                  onSend={handleSendAndClear}
-                  isDisabled={hasNoEnabledModels}
-                />
-              </StyledRightButtonsContainer>
-            </StyledButtonsContainer>
-          </StyledInputBox>
-        )}
+        <StyledInputBox>
+          <StyledEditorWrapper>
+            <EditorContent editor={editor} />
+          </StyledEditorWrapper>
+          <StyledButtonsContainer>
+            <StyledLeftButtonsContainer>
+              <AgentChatFileUploadButton />
+              <AiChatContextUsageButton />
+            </StyledLeftButtonsContainer>
+            <StyledRightButtonsContainer>
+              <Select
+                dropdownId="ai-chat-smart-model-select"
+                value={selectedModelId}
+                onChange={setAgentChatUserSelectedModel}
+                options={smartModelOptions}
+                pinnedOption={defaultPinnedOption}
+                disabled={hasNoEnabledModels}
+                selectSizeVariant="small"
+                showContextualTextInControl={false}
+                withSearchInput
+                dropdownOffset={{ x: 0, y: 8 }}
+              />
+              <SendMessageButton
+                onSend={handleSendAndClear}
+                isDisabled={hasNoEnabledModels}
+              />
+            </StyledRightButtonsContainer>
+          </StyledButtonsContainer>
+        </StyledInputBox>
       </StyledInputArea>
     </>
   );

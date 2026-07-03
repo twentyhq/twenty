@@ -115,15 +115,3 @@ Within a given version of Twenty, the upgrade pipeline runs commands in this ord
 3. **Workspace commands**
 
 Workspace commands are executed sequentially across all active/suspended workspaces.
-
-## Shipping a command for a future version (deferred drops)
-
-You can write a command for a version listed in `TWENTY_NEXT_VERSIONS` — typically the second half of a zero-downtime migration, e.g. dropping a column one release after its replacement ships. Pass the target version to the generator:
-
-```bash
-npx nx run twenty-server:database:migrate:generate --name <name> --type fast --version 2.20.0
-```
-
-It registers and boots (versions are validated against `TWENTY_ALL_VERSIONS`) but stays **dormant** — the sequence only runs `TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS` (previous + current). It activates automatically when `nx version:bump` promotes the version to current.
-
-**Caveat:** `@WasRemovedInUpgrade` / `@WasIntroducedInUpgrade` are validated against the active sequence, so a decorator pointing at a still-dormant next-version command fails boot with `unknown-step-name`. For a deferred drop, keep the entity's `WasRemovedInUpgrade<T>` type wrapper now and add the decorator only once the version is current.
