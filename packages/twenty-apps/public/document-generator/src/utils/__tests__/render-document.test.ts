@@ -22,6 +22,21 @@ describe('documentContentToHtml', () => {
 
     expect(html).not.toContain('javascript:');
   });
+
+  it('should drop images so no external <img> is emitted', () => {
+    const html = documentContentToHtml('![alt](https://evil.example/x.png)');
+
+    expect(html).not.toContain('<img');
+    expect(html).not.toContain('evil.example');
+  });
+
+  it('should escape link href and text', () => {
+    const html = documentContentToHtml('[a"b](https://example.com/?x="y"&z=1)');
+
+    expect(html).not.toContain('="y"');
+    expect(html).toContain('&quot;');
+    expect(html).toContain('&amp;');
+  });
 });
 
 describe('documentHtmlPage', () => {

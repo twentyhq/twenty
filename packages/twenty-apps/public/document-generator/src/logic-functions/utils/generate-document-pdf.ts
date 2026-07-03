@@ -116,6 +116,26 @@ const drawRuns = (
 
   type Word = { text: string; font: PDFFont; color: ReturnType<typeof rgb> };
   const words: (Word | 'break')[] = [];
+  const lineWidth = maxRight - left;
+
+  // Break a token that is wider than a whole line into chunks that fit, so long
+  // URLs or identifiers wrap instead of overflowing the right margin.
+  const pushWord = (text: string, font: PDFFont, color: ReturnType<typeof rgb>) => {
+    if (text.length <= 1 || font.widthOfTextAtSize(text, size) <= lineWidth) {
+      words.push({ text, font, color });
+      return;
+    }
+    let chunk = '';
+    for (const char of text) {
+      if (chunk !== '' && font.widthOfTextAtSize(chunk + char, size) > lineWidth) {
+        words.push({ text: chunk, font, color });
+        chunk = char;
+      } else {
+        chunk += char;
+      }
+    }
+    if (chunk !== '') words.push({ text: chunk, font, color });
+  };
 
   for (const run of runs) {
     const font = pickFont(ctx.fonts, run);
@@ -128,7 +148,11 @@ const drawRuns = (
       if (index > 0) words.push('break');
       for (const word of toWinAnsi(segment).split(/(\s+)/)) {
         if (word === '') continue;
-        words.push({ text: word, font, color });
+        if (/^\s+$/.test(word)) {
+          words.push({ text: word, font, color });
+        } else {
+          pushWord(word, font, color);
+        }
       }
     });
   }
@@ -214,15 +238,27 @@ const drawBlocks = (ctx: Ctx, tokens: Token[], indent = 0) => {
         break;
       }
       case 'blockquote': {
-        const top = ctx.y;
+        const startPage = ctx.page;
+        const startY = ctx.y;
         drawBlocks(ctx, (token as Tokens.Blockquote).tokens, indent + 20);
-        ctx.page.drawRectangle({
-          x: MARGIN + indent,
-          y: ctx.y,
-          width: 3,
-          height: top - ctx.y,
-          color: ACCENT,
-        });
+        const barX = MARGIN + indent;
+        if (ctx.page === startPage) {
+          ctx.page.drawRectangle({ x: barX, y: ctx.y, width: 3, height: startY - ctx.y, color: ACCENT });
+        } else {
+          // The quote spilled onto a later page: draw the bar from its start
+          // down to the bottom margin on the first page, and from the top
+          // margin down to the current position on the final page. Drawing with
+          // the previous page's `startY` on the new page would give a wrong /
+          // negative height.
+          startPage.drawRectangle({ x: barX, y: MARGIN, width: 3, height: startY - MARGIN, color: ACCENT });
+          ctx.page.drawRectangle({
+            x: barX,
+            y: ctx.y,
+            width: 3,
+            height: PAGE_HEIGHT - MARGIN - ctx.y,
+            color: ACCENT,
+          });
+        }
         break;
       }
       case 'code': {

@@ -62,6 +62,10 @@ const DocumentViewer = () => {
       setLoading(false);
       return;
     }
+    // Reset while the newly-selected document loads, so the previous one isn't
+    // shown against the new record.
+    setLoading(true);
+    setDocument(null);
     let cancelled = false;
     const load = async () => {
       const { documents } = await new CoreApiClient().query({

@@ -78,6 +78,10 @@ const TemplateEditor = () => {
       setLoading(false);
       return;
     }
+    // Reset while the newly-selected template loads, so a Save can't write the
+    // previous record's body onto this one.
+    setLoading(true);
+    setBody('');
     let cancelled = false;
     const load = async () => {
       const { documentTemplates } = await new CoreApiClient().query({

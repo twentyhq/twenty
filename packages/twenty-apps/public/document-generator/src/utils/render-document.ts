@@ -3,6 +3,13 @@ import { Marked } from 'marked';
 // A Markdown renderer hardened for untrusted template content: raw HTML is
 // dropped and only http(s)/mailto links survive, so the output is safe to
 // inject into the page or the front-end viewer.
+const escapeHtml = (value: string): string =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+
 const markdown = new Marked({ async: false, gfm: true, breaks: true });
 
 markdown.use({
@@ -10,25 +17,26 @@ markdown.use({
     html() {
       return '';
     },
+    // Drop images entirely — they would emit <img> tags pointing at arbitrary
+    // external URLs, which the "no raw HTML" contract is meant to prevent.
+    image() {
+      return '';
+    },
     link({ href, text }: { href: string; text: string }) {
       const isSafe = /^(https?:|mailto:)/i.test(href ?? '');
+      // Escape both values: href lands in an attribute and text in element
+      // content, so unescaped input would otherwise inject markup.
+      const safeText = escapeHtml(text ?? '');
 
       return isSafe
-        ? `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`
-        : text;
+        ? `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${safeText}</a>`
+        : safeText;
     },
   },
 });
 
 export const documentContentToHtml = (content: string): string =>
   markdown.parse(content) as string;
-
-const escapeHtml = (value: string): string =>
-  value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
 
 // The "paper" styling only (no `body` rules), so it is safe to inject inside a
 // front component without leaking styles onto the host page.

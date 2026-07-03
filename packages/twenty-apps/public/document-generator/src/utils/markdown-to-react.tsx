@@ -44,6 +44,16 @@ const styles: Record<string, CSSProperties> = {
   },
 };
 
+const BLOCK_TOKEN_TYPES = new Set([
+  'list',
+  'paragraph',
+  'code',
+  'blockquote',
+  'heading',
+  'hr',
+  'space',
+]);
+
 const renderInline = (tokens: Token[] | undefined, keyPrefix: string): ReactNode[] => {
   if (!tokens) return [];
 
@@ -86,7 +96,7 @@ const renderBlocks = (tokens: Token[]): ReactNode[] =>
     switch (token.type) {
       case 'heading': {
         const heading = token as Tokens.Heading;
-        const Tag = (['h1', 'h1', 'h2', 'h3'][heading.depth - 1] ?? 'h3') as 'h1' | 'h2' | 'h3';
+        const Tag = (['h1', 'h2', 'h3', 'h3'][heading.depth - 1] ?? 'h3') as 'h1' | 'h2' | 'h3';
         return (
           <Tag key={key} style={styles[Tag]}>
             {renderInline(heading.tokens, key)}
@@ -97,11 +107,18 @@ const renderBlocks = (tokens: Token[]): ReactNode[] =>
         return <p key={key} style={styles.p}>{renderInline((token as Tokens.Paragraph).tokens, key)}</p>;
       case 'list': {
         const list = token as Tokens.List;
-        const items = list.items.map((item, itemIndex) => (
-          <li key={`${key}-${itemIndex}`} style={styles.li}>
-            {renderInline(item.tokens, `${key}-${itemIndex}`)}
-          </li>
-        ));
+        const items = list.items.map((item, itemIndex) => {
+          // List items can hold block-level tokens (nested lists, extra
+          // paragraphs, code). Render those as blocks; keep simple items inline.
+          const hasBlock = item.tokens?.some((child) => BLOCK_TOKEN_TYPES.has(child.type));
+          return (
+            <li key={`${key}-${itemIndex}`} style={styles.li}>
+              {hasBlock
+                ? renderBlocks(item.tokens)
+                : renderInline(item.tokens, `${key}-${itemIndex}`)}
+            </li>
+          );
+        });
         return list.ordered ? (
           <ol key={key} style={styles.ol}>{items}</ol>
         ) : (
@@ -120,6 +137,18 @@ const renderBlocks = (tokens: Token[]): ReactNode[] =>
         return <hr key={key} style={styles.hr} />;
       case 'space':
         return null;
+      case 'text': {
+        // Loose list items expose their content as a `text` block token with
+        // nested inline tokens — render those so bold/italic/links survive.
+        const textToken = token as Tokens.Text;
+        return (
+          <span key={key}>
+            {textToken.tokens
+              ? renderInline(textToken.tokens, key)
+              : textToken.text}
+          </span>
+        );
+      }
       default: {
         const text = (token as { text?: string }).text;
         return text ? <p key={key} style={styles.p}>{text}</p> : null;
