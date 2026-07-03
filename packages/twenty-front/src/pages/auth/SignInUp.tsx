@@ -75,10 +75,20 @@ export const SignInUp = () => {
   const { workspaceInviteHash, workspace: workspaceFromInviteHash } =
     useWorkspaceFromInviteHash();
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const onClickOnLogo = () => {
     setSignInUpStep(SignInUpStep.Init);
+  };
+
+  const onBackFromWorkspaceCreation = () => {
+    if (searchParams.has('action')) {
+      const nextSearchParams = new URLSearchParams(searchParams);
+      nextSearchParams.delete('action');
+      setSearchParams(nextSearchParams, { replace: true });
+    }
+
+    setSignInUpStep(SignInUpStep.WorkspaceSelection);
   };
 
   const isGlobalScope = isDefaultDomain && isMultiWorkspaceEnabled;
@@ -191,7 +201,9 @@ export const SignInUp = () => {
   ]);
 
   return signInUpStep === SignInUpStep.WorkspaceCreation ? (
-    <OnboardingLayout onBack={!isCreatingWorkspace ? onClickOnLogo : undefined}>
+    <OnboardingLayout
+      onBack={!isCreatingWorkspace ? onBackFromWorkspaceCreation : undefined}
+    >
       <StyledOnboardingStepPage>{signInUpForm}</StyledOnboardingStepPage>
     </OnboardingLayout>
   ) : (
