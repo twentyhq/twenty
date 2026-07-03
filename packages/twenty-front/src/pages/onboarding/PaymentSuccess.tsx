@@ -1,10 +1,10 @@
+import { SubTitle } from '@/auth/components/SubTitle';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { OnboardingPulsingLogo } from '@/onboarding/components/OnboardingPulsingLogo';
+import { OnboardingVerifyLayout } from '@/onboarding/components/OnboardingVerifyLayout';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLazyQuery } from '@apollo/client/react';
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { AppPath } from 'twenty-shared/types';
@@ -14,15 +14,6 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const SUBSCRIPTION_CONFIRMATION_POLL_INTERVAL_MS = 2000;
 const SUBSCRIPTION_CONFIRMATION_MAX_ATTEMPTS = 30;
-
-const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: center;
-  width: 100%;
-`;
 
 export const PaymentSuccess = () => {
   const navigate = useNavigateApp();
@@ -98,8 +89,8 @@ export const PaymentSuccess = () => {
   }, []);
 
   return (
-    <StyledContainer>
-      <OnboardingPulsingLogo />
-    </StyledContainer>
+    <OnboardingVerifyLayout>
+      <SubTitle>{t`Confirming your payment`}</SubTitle>
+    </OnboardingVerifyLayout>
   );
 };
