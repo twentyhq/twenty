@@ -1,12 +1,15 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { OnboardingAnimatedReveal } from '@/onboarding/components/OnboardingAnimatedReveal';
 import { OnboardingVerifyLayout } from '@/onboarding/components/OnboardingVerifyLayout';
+import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLazyQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -104,18 +107,30 @@ export const PaymentSuccess = () => {
     setConfirmationRunIndex((previous) => previous + 1);
   };
 
+  const transition = useOnboardingMotionTransition();
+
   return (
     <OnboardingVerifyLayout>
-      <SubTitle>
-        {hasTimedOut
-          ? t`We're still waiting for the payment confirmation`
-          : t`Confirming your payment`}
-      </SubTitle>
-      {hasTimedOut && (
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={hasTimedOut ? 'timed-out' : 'confirming'}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={transition}
+        >
+          <SubTitle>
+            {hasTimedOut
+              ? t`We're still waiting for the payment confirmation`
+              : t`Confirming your payment`}
+          </SubTitle>
+        </motion.div>
+      </AnimatePresence>
+      <OnboardingAnimatedReveal isVisible={hasTimedOut}>
         <StyledRetryButtonContainer>
           <MainButton title={t`Retry`} onClick={handleRetry} fullWidth />
         </StyledRetryButtonContainer>
-      )}
+      </OnboardingAnimatedReveal>
     </OnboardingVerifyLayout>
   );
 };

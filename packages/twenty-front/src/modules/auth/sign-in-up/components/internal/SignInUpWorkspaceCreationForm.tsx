@@ -1,4 +1,5 @@
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
+import { OnboardingAnimatedReveal } from '@/onboarding/components/OnboardingAnimatedReveal';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { useWorkspaceSubdomainField } from '@/auth/sign-in-up/hooks/useWorkspaceSubdomainField';
@@ -316,7 +317,7 @@ export const SignInUpWorkspaceCreationForm = () => {
                 }
                 fullWidth
               />
-              {status === 'unavailable' && (
+              <OnboardingAnimatedReveal isVisible={status === 'unavailable'}>
                 <StyledAlternativesBox>
                   <StyledAlternativesLabel>
                     {t`Subdomain already in use, here are some alternatives:`}
@@ -336,7 +337,7 @@ export const SignInUpWorkspaceCreationForm = () => {
                     ))}
                   </StyledAlternativeRows>
                 </StyledAlternativesBox>
-              )}
+              </OnboardingAnimatedReveal>
             </StyledSubdomainSection>
           </OnboardingStepAnimatedItem>
         )}
