@@ -66,30 +66,32 @@ generated document can be shared as a link.
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { Response } from 'twenty-sdk/logic-function';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { renderDocumentHtml } from 'src/logic-functions/utils/render-document-html';
+import { documentHtmlPage } from 'src/utils/render-document';
+
+const htmlResponse = (html: string, status = 200): Response =>
+  new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
 
 const handler = async (event: RoutePayload): Promise<Response> => {
   const documentId = event.queryStringParameters?.id;
 
   if (!documentId) {
-    return new Response(renderDocumentHtml('Missing document id', 'Provide ?id=<documentId>.'), {
-      status: 400,
-      headers: { 'Content-Type': 'text/html; charset=utf-8' },
-    });
+    return htmlResponse(documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'), 400);
   }
 
-  const client = new CoreApiClient();
-  const { document } = await client.query({
-    document: {
-      __args: { filter: { id: { eq: documentId } } },
-      id: true, name: true, content: true,
+  // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
+  const { documents } = await new CoreApiClient().query({
+    documents: {
+      __args: { filter: { id: { eq: documentId } }, first: 1 },
+      edges: { node: { id: true, name: true, content: true } },
     },
   });
 
-  return new Response(renderDocumentHtml(document?.name ?? '', document?.content ?? ''), {
-    status: document?.id ? 200 : 404,
-    headers: { 'Content-Type': 'text/html; charset=utf-8' },
-  });
+  const document = documents?.edges?.[0]?.node;
+  if (!document?.id) {
+    return htmlResponse(documentHtmlPage('Document not found', `No document with id ${documentId}.`), 404);
+  }
+
+  return htmlResponse(documentHtmlPage(document.name ?? 'Document', document.content ?? ''));
 };
 
 export default defineLogicFunction({
@@ -105,8 +107,9 @@ export default defineLogicFunction({
 });
 ```
 
-`renderDocumentHtml` just escapes the text and drops it into a styled page —
-[see the helper](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/document-generator/src/logic-functions/utils/render-document-html.ts).
+`documentHtmlPage` renders the Markdown body to HTML (with [marked](https://marked.js.org/),
+sanitized) and drops it into a styled, printable page — the same polished look as
+the PDF. [See the helper](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/document-generator/src/utils/render-document.ts).
 
 ## Try it
 

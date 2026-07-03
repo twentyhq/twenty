@@ -37,7 +37,7 @@ export default defineObject({
       name: 'body',
       label: 'Body',
       description:
-        'Template text. Use {{placeholders}} such as {{name.firstName}} or {{jobTitle}}; they are replaced with values from the selected record.',
+        'Template written in Markdown. Use {{placeholders}} such as {{name.firstName}} or {{jobTitle}}; they are replaced with values from the selected record.',
       icon: 'IconFileText',
     },
     {

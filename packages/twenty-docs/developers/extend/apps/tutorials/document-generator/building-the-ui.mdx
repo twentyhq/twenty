@@ -1,12 +1,13 @@
 ---
 title: 4. Building the UI
 icon: "table-columns"
-description: Views, sidebar navigation, a command, and a front component.
+description: Views, sidebar navigation, a command, and front components.
 ---
 
 Right now the objects are only reachable through Settings. Let's give the app a
-real presence in the UI: list views, sidebar entries, and a one-click
-**Generate document** command backed by a React front component.
+real presence in the UI: list views, sidebar entries, a one-click
+**Generate document** command, and two record-page front components — one to
+**preview** a document, one to **edit** a template in Markdown.
 
 ## Views and navigation
 
@@ -162,8 +163,121 @@ Every generated document records your app as its author:
   <img src="/images/docs/developers/extends/apps/document-generator/05-document-record.png" alt="A generated document record" />
 </Frame>
 
-**After this step:** anyone can generate a document in two clicks. Next, let an AI
-agent do it from a chat.
+## Preview a document on its record page
+
+A front component isn't only for command menus — you can mount one as a **tab on a
+record page**. Let's add a *Preview* tab to the document record that renders the
+Markdown body as a polished, printable page.
+
+The component reads the current record id from its execution context, loads the
+document, and renders it. Front components run in a **sandbox** that only allows a
+whitelist of HTML tags — raw HTML injection (`dangerouslySetInnerHTML`) and
+`<style>` are blocked — so we render the Markdown as React elements with inline
+styles via a small [`Markdown`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/document-generator/src/utils/markdown-to-react.tsx)
+helper.
+
+```tsx filename="src/front-components/document-viewer.front-component.tsx"
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useFrontComponentExecutionContext } from 'twenty-sdk/front-component';
+import { Markdown } from 'src/utils/markdown-to-react';
+
+const DocumentViewer = () => {
+  const recordId = useFrontComponentExecutionContext((c) => c.recordId ?? null);
+  // ...load { name, content, file } for recordId, then render:
+  return (
+    <div style={styles.paper}>
+      <div style={styles.band} />
+      <div style={styles.title}>{document.name}</div>
+      <Markdown content={document.content} />
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: DOCUMENT_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+  name: 'document-viewer',
+  component: DocumentViewer,
+});
+```
+
+Mount it with a [page layout](/developers/extend/apps/layout/page-layouts). A
+`RECORD_PAGE` layout adds tabs to an object's record view; a `FRONT_COMPONENT`
+widget in a `CANVAS` tab hosts the component:
+
+```ts filename="src/page-layouts/document-record.page-layout.ts"
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+
+export default definePageLayout({
+  universalIdentifier: DOCUMENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  name: 'Document record page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: DOCUMENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [{
+    universalIdentifier: DOCUMENT_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
+    title: 'Preview',
+    icon: 'IconEye',
+    position: 50,
+    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    widgets: [{
+      universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
+      title: 'Document preview',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier: DOCUMENT_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    }],
+  }],
+});
+```
+
+Open any document — a **Preview** tab renders it beautifully, with links to the
+shareable web page and the PDF:
+
+<Frame caption="The Preview tab renders the document with inline styles, plus quick links.">
+  <img src="/images/docs/developers/extends/apps/document-generator/09-document-viewer.png" alt="Document viewer front component in a record-page tab" />
+</Frame>
+
+## Edit a template in Markdown
+
+The same pattern gives templates an **Editor** tab: a Markdown textarea on the
+left, a live preview on the right. Editing and saving writes straight back to the
+record with `CoreApiClient`.
+
+```tsx filename="src/front-components/template-editor.front-component.tsx"
+const TemplateEditor = () => {
+  const recordId = useFrontComponentExecutionContext((c) => c.recordId ?? null);
+  const [body, setBody] = useState('');
+  // ...load the template body for recordId
+
+  const save = async () => {
+    await new CoreApiClient().mutation({
+      updateDocumentTemplate: { __args: { id: recordId, data: { body } }, id: true },
+    });
+    await enqueueSnackbar({ message: 'Template saved.', variant: 'success' });
+  };
+
+  return (
+    <div style={styles.split}>
+      <textarea value={body} onChange={(e) => setBody(e.target.value)} />
+      <div style={styles.preview}><Markdown content={body} /></div>
+    </div>
+  );
+};
+```
+
+Mount it with a `RECORD_PAGE` page layout on `documentTemplate`, exactly like the
+viewer — see
+[`template-record.page-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/document-generator/src/page-layouts/template-record.page-layout.ts).
+Now editors write templates with instant feedback:
+
+<Frame caption="The Editor tab: Markdown on the left, live preview on the right.">
+  <img src="/images/docs/developers/extends/apps/document-generator/10-template-editor.png" alt="Template editor front component with live Markdown preview" />
+</Frame>
+
+**After this step:** documents preview beautifully and templates are editable
+in-app. Next, let an AI agent generate them from a chat.
 
 <Card title="Next: an AI agent →" icon="robot" href="/developers/extend/apps/tutorials/document-generator/ai-agent">
   Add an agent and a skill that call your tool.

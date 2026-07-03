@@ -7,10 +7,14 @@ description: Model documents and templates with objects, fields, and a relation.
 Our app needs two custom objects: **document templates** (what to write) and
 **documents** (the generated result). Let's define them.
 
-<Tip>
-Scaffold entity files with `yarn twenty dev:add object` — it generates a valid
-UUID and the right folder for you. Below we show the finished files.
-</Tip>
+Scaffold each entity file with the CLI — it generates a valid UUID and the right
+folder for you:
+
+```bash filename="Terminal"
+yarn twenty dev:add object
+```
+
+Below we show the finished files.
 
 <Note>
 Every `*_UNIVERSAL_IDENTIFIER` constant lives in

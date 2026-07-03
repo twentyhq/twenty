@@ -33,5 +33,9 @@
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^4.0.0"
+  },
+  "dependencies": {
+    "marked": "^18.0.5",
+    "pdf-lib": "^1.17.1"
   }
 }

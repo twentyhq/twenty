@@ -31,7 +31,7 @@ const attachGeneratedPdf = async (
   documentName: string,
   content: string,
 ): Promise<void> => {
-  const bytes = generateDocumentPdf(documentName, content);
+  const bytes = await generateDocumentPdf(documentName, content);
   const fileName = toPdfFileName(documentName);
 
   const uploaded = await new MetadataApiClient().uploadFile(
@@ -170,9 +170,10 @@ export const generateDocumentHandler = async (
       content,
     );
   } catch (error) {
-    message += ` (PDF attachment failed: ${
-      error instanceof Error ? error.message : 'unknown error'
-    })`;
+    // Log the real cause server-side, but keep the caller-facing message
+    // generic — this handler is exposed via HTTP, AI tool, and workflow action.
+    console.warn('[document-generator] PDF attachment failed:', error);
+    message += ' (PDF file could not be attached)';
   }
 
   return {

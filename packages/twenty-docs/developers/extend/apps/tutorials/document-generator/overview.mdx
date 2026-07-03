@@ -22,9 +22,9 @@ Each chapter adds one capability. By the end you'll have touched most of the SDK
 | Chapter | Capability | Reference |
 |---|---|---|
 | [1. Data model](/developers/extend/apps/tutorials/document-generator/data-model) | Objects, fields, and a relation | [Data](/developers/extend/apps/data/overview) |
-| [2. Generating documents](/developers/extend/apps/tutorials/document-generator/generating-documents) | A logic function (AI tool + workflow action) that generates a PDF file | [Logic functions](/developers/extend/apps/logic/logic-functions) |
-| [3. HTTP routes](/developers/extend/apps/tutorials/document-generator/http-routes) | Serving JSON and HTML from routes | [Logic functions](/developers/extend/apps/logic/logic-functions) |
-| [4. Building the UI](/developers/extend/apps/tutorials/document-generator/building-the-ui) | Views, navigation, command menu, front component | [Layout](/developers/extend/apps/layout/overview) |
+| [2. Generating documents](/developers/extend/apps/tutorials/document-generator/generating-documents) | A logic function (AI tool + workflow action) that fills a Markdown template and attaches a polished PDF | [Logic functions](/developers/extend/apps/logic/logic-functions) |
+| [3. HTTP routes](/developers/extend/apps/tutorials/document-generator/http-routes) | Serving JSON and a shareable HTML page from routes | [Logic functions](/developers/extend/apps/logic/logic-functions) |
+| [4. Building the UI](/developers/extend/apps/tutorials/document-generator/building-the-ui) | Views, navigation, command menu, and front components that preview a document and edit a template | [Layout](/developers/extend/apps/layout/overview) |
 | [5. An AI agent](/developers/extend/apps/tutorials/document-generator/ai-agent) | Agent + skill | [Skills & agents](/developers/extend/apps/logic/skills-and-agents) |
 | [6. Publishing](/developers/extend/apps/tutorials/document-generator/publishing) | Ship it to the marketplace | [Publishing](/developers/extend/apps/operations/publishing) |
 
@@ -49,23 +49,15 @@ Every snippet below is copied from it.
 
 ## How the app fits together
 
-```
-documentTemplate ──1─────*── document
-   name                      name
-   body  {{placeholders}}    content   (rendered)
-   target (Person/Company)   status
-                             file      (generated PDF)
-                             template ──► the template it came from
+<Frame>
+  <img src="/images/docs/developers/extends/apps/document-generator/how-it-fits.svg" alt="A template with placeholders is generated into a polished document with a PDF, triggered from the command menu, an AI agent, a workflow, or a shareable link" />
+</Frame>
 
-generate-document (logic function)
-   ├─ AI tool            → agents can call it
-   ├─ workflow action    → drop it into a workflow
-   └─ HTTP route         → the front component calls it
-```
-
-The reader picks a template and a record; the logic function fills the
-placeholders and stores a new `document`. Everything else — the command menu, the
-agent, the workflow step — is just a different way to trigger that one function.
+You write a **template** once in Markdown, with `{{placeholders}}`. Picking a
+template and a CRM record fills the placeholders and stores a polished
+**document** (with a PDF file). Everything else — the command menu, the AI agent,
+the workflow step, the shareable link — is just a different way to trigger that
+one generator.
 
 ## Keep this loop running
 

@@ -1,166 +1,303 @@
-// A tiny, dependency-free PDF writer for simple text documents.
-//
-// Logic functions are bundled and run in a sandbox, so pulling a large PDF
-// library (and installing it at cold start) is overkill for plain-text output.
-// This emits a valid multi-page PDF using the built-in Courier fonts — no
-// embedding, no dependencies — which any PDF viewer can open.
+import { marked, type Token, type Tokens } from 'marked';
+import {
+  type PDFFont,
+  type PDFPage,
+  PDFDocument,
+  rgb,
+  StandardFonts,
+} from 'pdf-lib';
 
-const PAGE_WIDTH = 595.28; // A4, in points
+// Renders a document (title + Markdown body) into a marketable, multi-page A4
+// PDF using pdf-lib: a coloured header band, real typography, bold/italic runs,
+// headings and lists.
+
+const PAGE_WIDTH = 595.28; // A4
 const PAGE_HEIGHT = 841.89;
-const MARGIN = 56;
-const TITLE_SIZE = 18;
+const MARGIN = 64;
 const BODY_SIZE = 11;
-const LINE_HEIGHT = 15;
-const COURIER_ADVANCE = 0.6; // Courier glyph advance, in ems
+const LINE_HEIGHT = 16;
 
-// Courier is fixed-width, so a line fits if its character count stays under this.
-const charsPerLine = (fontSize: number): number =>
-  Math.floor((PAGE_WIDTH - MARGIN * 2) / (fontSize * COURIER_ADVANCE));
+const ACCENT = rgb(0.098, 0.38, 0.929); // #1961ED
+const INK = rgb(0.06, 0.08, 0.16);
+const MUTED = rgb(0.28, 0.31, 0.42);
 
-// Reduce text to the printable ASCII the standard Courier encoding can render.
-const toAscii = (text: string): string =>
+type Fonts = {
+  regular: PDFFont;
+  bold: PDFFont;
+  italic: PDFFont;
+  boldItalic: PDFFont;
+  mono: PDFFont;
+};
+
+type Ctx = {
+  pdf: PDFDocument;
+  page: PDFPage;
+  y: number;
+  fonts: Fonts;
+};
+
+type Run = { text: string; bold: boolean; italic: boolean; code: boolean; link: boolean };
+
+// The built-in fonts use WinAnsi encoding and throw on characters they can't
+// encode. Map common punctuation and drop anything outside Latin-1 so the PDF
+// never fails (HTML surfaces still render the full text). Non-Latin scripts
+// (CJK, Arabic, Cyrillic) would need an embedded Unicode font.
+const toWinAnsi = (text: string): string =>
   text
-    .normalize('NFKD')
     .replace(/[‐-―]/g, '-')
     .replace(/[‘’]/g, "'")
     .replace(/[“”]/g, '"')
-    .replace(/[^\x20-\x7e]/g, '');
+    .replace(/…/g, '...')
+    .replace(/[^ -~ -ÿ]/g, '');
 
-// Escape the characters that are special inside a PDF literal string.
-const escapePdfString = (text: string): string =>
-  text.replace(/([\\()])/g, '\\$1');
+const pickFont = (fonts: Fonts, run: Run): PDFFont => {
+  if (run.code) return fonts.mono;
+  if (run.bold && run.italic) return fonts.boldItalic;
+  if (run.bold) return fonts.bold;
+  if (run.italic) return fonts.italic;
+  return fonts.regular;
+};
 
-const wrap = (line: string, maxChars: number): string[] => {
-  if (line.length <= maxChars) {
-    return [line];
+// Flatten marked inline tokens into styled runs.
+const toRuns = (
+  tokens: Token[] | undefined,
+  style: Omit<Run, 'text'>,
+): Run[] => {
+  if (!tokens) return [];
+
+  return tokens.flatMap((token): Run[] => {
+    switch (token.type) {
+      case 'strong':
+        return toRuns((token as Tokens.Strong).tokens, { ...style, bold: true });
+      case 'em':
+        return toRuns((token as Tokens.Em).tokens, { ...style, italic: true });
+      case 'link':
+        return toRuns((token as Tokens.Link).tokens, { ...style, link: true });
+      case 'codespan':
+        return [{ ...style, code: true, text: (token as Tokens.Codespan).text }];
+      case 'br':
+        return [{ ...style, text: '\n' }];
+      default: {
+        // List items (and other block wrappers) expose their inline formatting
+        // via nested `.tokens`; recurse so bold/italic inside them still render.
+        const nested = (token as Tokens.Text).tokens;
+        if (Array.isArray(nested) && nested.length > 0) {
+          return toRuns(nested, style);
+        }
+        const text = (token as Tokens.Text).text ?? (token as { raw?: string }).raw ?? '';
+        return text ? [{ ...style, text }] : [];
+      }
+    }
+  });
+};
+
+const EMPTY_STYLE = { bold: false, italic: false, code: false, link: false };
+
+const newPage = (ctx: Ctx) => {
+  ctx.page = ctx.pdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
+  ctx.y = PAGE_HEIGHT - MARGIN;
+};
+
+const ensureSpace = (ctx: Ctx, needed: number) => {
+  if (ctx.y - needed < MARGIN) newPage(ctx);
+};
+
+// Word-wraps styled runs across lines, switching font per run, and draws them.
+const drawRuns = (
+  ctx: Ctx,
+  runs: Run[],
+  options: { size: number; indent?: number; lineHeight?: number },
+) => {
+  const { size } = options;
+  const indent = options.indent ?? 0;
+  const lineHeight = options.lineHeight ?? LINE_HEIGHT;
+  const left = MARGIN + indent;
+  const maxRight = PAGE_WIDTH - MARGIN;
+
+  type Word = { text: string; font: PDFFont; color: ReturnType<typeof rgb> };
+  const words: (Word | 'break')[] = [];
+
+  for (const run of runs) {
+    const font = pickFont(ctx.fonts, run);
+    const color = run.link ? ACCENT : run.code ? MUTED : INK;
+    // Split on newlines first: `toWinAnsi` drops the `\n`, so sanitizing before
+    // splitting would swallow explicit line breaks.
+    const segments = run.text.split('\n');
+
+    segments.forEach((segment, index) => {
+      if (index > 0) words.push('break');
+      for (const word of toWinAnsi(segment).split(/(\s+)/)) {
+        if (word === '') continue;
+        words.push({ text: word, font, color });
+      }
+    });
   }
 
-  const words = line.split(' ');
-  const lines: string[] = [];
-  let current = '';
+  ensureSpace(ctx, lineHeight);
+  let cursorX = left;
+
+  const wrap = () => {
+    ctx.y -= lineHeight;
+    ensureSpace(ctx, 0);
+    if (ctx.y < MARGIN) newPage(ctx);
+    cursorX = left;
+  };
 
   for (const word of words) {
-    const candidate = current ? `${current} ${word}` : word;
-
-    if (candidate.length <= maxChars || current === '') {
-      current = candidate;
-    } else {
-      lines.push(current);
-      current = word;
-    }
-  }
-
-  lines.push(current);
-
-  return lines.flatMap((wrapped) =>
-    wrapped.length <= maxChars
-      ? [wrapped]
-      : (wrapped.match(new RegExp(`.{1,${maxChars}}`, 'g')) ?? [wrapped]),
-  );
-};
-
-type RenderedLine = { text: string; size: number; font: 'F1' | 'F2' };
-
-const layout = (title: string, content: string): RenderedLine[] => {
-  const lines: RenderedLine[] = [];
-
-  for (const wrapped of wrap(toAscii(title), charsPerLine(TITLE_SIZE))) {
-    lines.push({ text: wrapped, size: TITLE_SIZE, font: 'F2' });
-  }
-  lines.push({ text: '', size: BODY_SIZE, font: 'F1' });
-
-  // Split on newlines first — toAscii() would otherwise strip them as control
-  // characters and collapse every paragraph onto a single line.
-  for (const rawLine of content.split('\n')) {
-    const asciiLine = toAscii(rawLine);
-    if (asciiLine.trim() === '') {
-      lines.push({ text: '', size: BODY_SIZE, font: 'F1' });
+    if (word === 'break') {
+      wrap();
       continue;
     }
-    for (const wrapped of wrap(asciiLine, charsPerLine(BODY_SIZE))) {
-      lines.push({ text: wrapped, size: BODY_SIZE, font: 'F1' });
+    const isSpace = /^\s+$/.test(word.text);
+    const width = word.font.widthOfTextAtSize(word.text, size);
+
+    if (!isSpace && cursorX + width > maxRight && cursorX > left) {
+      wrap();
     }
+    if (isSpace && cursorX === left) continue;
+
+    if (!isSpace) {
+      ctx.page.drawText(word.text, {
+        x: cursorX,
+        y: ctx.y,
+        size,
+        font: word.font,
+        color: word.color,
+      });
+    }
+    cursorX += width;
   }
 
-  return lines;
+  ctx.y -= lineHeight;
 };
 
-// Splits the rendered lines into pages, each a PDF content stream.
-const buildPageStreams = (lines: RenderedLine[]): string[] => {
-  const pages: string[] = [];
-  let stream = '';
-  let cursorY = PAGE_HEIGHT - MARGIN;
-
-  for (const line of lines) {
-    if (cursorY < MARGIN) {
-      pages.push(stream);
-      stream = '';
-      cursorY = PAGE_HEIGHT - MARGIN;
+const drawBlocks = (ctx: Ctx, tokens: Token[], indent = 0) => {
+  for (const token of tokens) {
+    switch (token.type) {
+      case 'heading': {
+        const heading = token as Tokens.Heading;
+        const size = heading.depth === 1 ? 18 : heading.depth === 2 ? 15 : 13;
+        ctx.y -= 8;
+        drawRuns(
+          ctx,
+          toRuns(heading.tokens, { ...EMPTY_STYLE, bold: true }),
+          { size, indent, lineHeight: size + 6 },
+        );
+        break;
+      }
+      case 'paragraph': {
+        drawRuns(ctx, toRuns((token as Tokens.Paragraph).tokens, EMPTY_STYLE), {
+          size: BODY_SIZE,
+          indent,
+        });
+        ctx.y -= 6;
+        break;
+      }
+      case 'list': {
+        const list = token as Tokens.List;
+        list.items.forEach((item, index) => {
+          const marker = list.ordered ? `${(list.start || 1) + index}.` : '•';
+          ensureSpace(ctx, LINE_HEIGHT);
+          ctx.page.drawText(marker, {
+            x: MARGIN + indent + 8,
+            y: ctx.y,
+            size: BODY_SIZE,
+            font: ctx.fonts.regular,
+            color: MUTED,
+          });
+          drawRuns(ctx, toRuns(item.tokens, EMPTY_STYLE), {
+            size: BODY_SIZE,
+            indent: indent + 28,
+          });
+        });
+        ctx.y -= 6;
+        break;
+      }
+      case 'blockquote': {
+        const top = ctx.y;
+        drawBlocks(ctx, (token as Tokens.Blockquote).tokens, indent + 20);
+        ctx.page.drawRectangle({
+          x: MARGIN + indent,
+          y: ctx.y,
+          width: 3,
+          height: top - ctx.y,
+          color: ACCENT,
+        });
+        break;
+      }
+      case 'code': {
+        for (const line of (token as Tokens.Code).text.split('\n')) {
+          drawRuns(ctx, [{ ...EMPTY_STYLE, code: true, text: line || ' ' }], {
+            size: BODY_SIZE - 1,
+            indent: indent + 8,
+            lineHeight: 14,
+          });
+        }
+        ctx.y -= 6;
+        break;
+      }
+      case 'hr': {
+        ensureSpace(ctx, 20);
+        ctx.y -= 8;
+        ctx.page.drawLine({
+          start: { x: MARGIN, y: ctx.y },
+          end: { x: PAGE_WIDTH - MARGIN, y: ctx.y },
+          thickness: 1,
+          color: rgb(0.9, 0.92, 0.96),
+        });
+        ctx.y -= 16;
+        break;
+      }
+      case 'space':
+        ctx.y -= 8;
+        break;
+      default: {
+        const text = (token as { text?: string }).text;
+        if (text) {
+          drawRuns(ctx, [{ ...EMPTY_STYLE, text }], { size: BODY_SIZE, indent });
+        }
+      }
     }
-    if (line.text !== '') {
-      stream +=
-        `BT /${line.font} ${line.size} Tf ` +
-        `1 0 0 1 ${MARGIN} ${cursorY.toFixed(2)} Tm ` +
-        `(${escapePdfString(line.text)}) Tj ET\n`;
-    }
-    cursorY -= line.size >= TITLE_SIZE ? line.size + 8 : LINE_HEIGHT;
   }
-
-  pages.push(stream);
-
-  return pages;
 };
 
-// Renders a title + plain-text body into a paginated A4 PDF. Pure and
-// dependency-free, so it can be unit-tested directly.
-export const generateDocumentPdf = (title: string, content: string): Uint8Array => {
-  const pageStreams = buildPageStreams(layout(title, content));
+export const generateDocumentPdf = async (
+  title: string,
+  content: string,
+): Promise<Uint8Array> => {
+  const pdf = await PDFDocument.create();
+  const fonts: Fonts = {
+    regular: await pdf.embedFont(StandardFonts.Helvetica),
+    bold: await pdf.embedFont(StandardFonts.HelveticaBold),
+    italic: await pdf.embedFont(StandardFonts.HelveticaOblique),
+    boldItalic: await pdf.embedFont(StandardFonts.HelveticaBoldOblique),
+    mono: await pdf.embedFont(StandardFonts.Courier),
+  };
 
-  const objects: string[] = [];
-  const pageCount = pageStreams.length;
+  const ctx: Ctx = { pdf, page: pdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]), y: 0, fonts };
 
-  // Object 1: catalog, 2: pages tree, 3/4: fonts, then page + content pairs.
-  const firstPageObjectNumber = 5;
-  const kids = pageStreams
-    .map((_stream, index) => `${firstPageObjectNumber + index * 2} 0 R`)
-    .join(' ');
-
-  objects[1] = '<< /Type /Catalog /Pages 2 0 R >>';
-  objects[2] = `<< /Type /Pages /Kids [${kids}] /Count ${pageCount} >>`;
-  objects[3] = '<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>';
-  objects[4] = '<< /Type /Font /Subtype /Type1 /BaseFont /Courier-Bold >>';
-
-  pageStreams.forEach((stream, index) => {
-    const pageNumber = firstPageObjectNumber + index * 2;
-    const contentNumber = pageNumber + 1;
-
-    objects[pageNumber] =
-      `<< /Type /Page /Parent 2 0 R ` +
-      `/MediaBox [0 0 ${PAGE_WIDTH.toFixed(2)} ${PAGE_HEIGHT.toFixed(2)}] ` +
-      `/Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> ` +
-      `/Contents ${contentNumber} 0 R >>`;
-    objects[contentNumber] =
-      `<< /Length ${stream.length} >>\nstream\n${stream}endstream`;
+  // Header band with the document title.
+  const bandHeight = 96;
+  ctx.page.drawRectangle({
+    x: 0,
+    y: PAGE_HEIGHT - bandHeight,
+    width: PAGE_WIDTH,
+    height: bandHeight,
+    color: ACCENT,
   });
+  ctx.page.drawText(toWinAnsi(title), {
+    x: MARGIN,
+    y: PAGE_HEIGHT - 58,
+    size: 22,
+    font: fonts.bold,
+    color: rgb(1, 1, 1),
+    maxWidth: PAGE_WIDTH - MARGIN * 2,
+  });
+  ctx.y = PAGE_HEIGHT - bandHeight - 40;
 
-  let pdf = '%PDF-1.4\n';
-  const offsets: number[] = [];
+  // Match the HTML renderer (breaks: true) so a single newline in a template
+  // becomes a line break in the PDF too.
+  drawBlocks(ctx, marked.lexer(content, { breaks: true, gfm: true }));
 
-  for (let number = 1; number < objects.length; number++) {
-    offsets[number] = pdf.length;
-    pdf += `${number} 0 obj\n${objects[number]}\nendobj\n`;
-  }
-
-  const xrefOffset = pdf.length;
-  const total = objects.length; // objects are 1-indexed, index 0 unused
-
-  pdf += `xref\n0 ${total}\n0000000000 65535 f \n`;
-  for (let number = 1; number < total; number++) {
-    pdf += `${String(offsets[number]).padStart(10, '0')} 00000 n \n`;
-  }
-  pdf +=
-    `trailer\n<< /Size ${total} /Root 1 0 R >>\n` +
-    `startxref\n${xrefOffset}\n%%EOF`;
-
-  return Uint8Array.from(Buffer.from(pdf, 'latin1'));
+  return pdf.save();
 };

@@ -3,7 +3,7 @@ import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { Response } from 'twenty-sdk/logic-function';
 
 import { VIEW_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { renderDocumentHtml } from 'src/logic-functions/utils/render-document-html';
+import { documentHtmlPage } from 'src/utils/render-document';
 
 const htmlResponse = (html: string, status = 200): Response =>
   new Response(html, {
@@ -18,7 +18,7 @@ const handler = async (event: RoutePayload): Promise<Response> => {
 
   if (!documentId) {
     return htmlResponse(
-      renderDocumentHtml('Missing document id', 'Provide ?id=<documentId>.'),
+      documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'),
       400,
     );
   }
@@ -40,13 +40,13 @@ const handler = async (event: RoutePayload): Promise<Response> => {
 
   if (!document?.id) {
     return htmlResponse(
-      renderDocumentHtml('Document not found', `No document with id ${documentId}.`),
+      documentHtmlPage('Document not found', `No document with id ${documentId}.`),
       404,
     );
   }
 
   return htmlResponse(
-    renderDocumentHtml(document.name ?? 'Document', document.content ?? ''),
+    documentHtmlPage(document.name ?? 'Document', document.content ?? ''),
   );
 };
 

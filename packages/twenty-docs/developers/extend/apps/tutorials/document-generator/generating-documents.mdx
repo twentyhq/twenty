@@ -161,11 +161,32 @@ into their **own** files fields, so this field is what routes the upload:
 }
 ```
 
-Generate the PDF bytes. Logic functions are bundled and run in a sandbox, so for
-plain-text output a small **dependency-free** writer beats pulling a PDF library
-(no install at cold start). The full helper is
-[`generate-document-pdf.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/document-generator/src/logic-functions/utils/generate-document-pdf.ts);
-it emits a valid multi-page PDF using the built-in Courier fonts.
+Now render that PDF. An app is a real Node project, so you can add any npm
+package you need and import it like anywhere else. We use **[pdf-lib](https://pdf-lib.js.org/)**
+to draw the PDF and **[marked](https://marked.js.org/)** to parse the Markdown
+body — the CLI installs them into the function's runtime for you:
+
+```bash filename="Terminal"
+yarn add pdf-lib marked
+```
+
+The full helper is
+[`generate-document-pdf.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/document-generator/src/logic-functions/utils/generate-document-pdf.ts).
+It parses the Markdown into tokens with `marked.lexer`, then lays them out with
+pdf-lib: a coloured header band with the title, real headings, **bold**/*italic*
+runs, bullet and numbered lists, blockquotes and rules — a polished, multi-page
+A4 document rather than a wall of text.
+
+<Frame caption="The generated PDF: a coloured header band, real typography, and Markdown formatting.">
+  <img src="/images/docs/developers/extends/apps/document-generator/07b-generated-pdf.png" alt="A polished, marketable generated PDF" />
+</Frame>
+
+<Note>
+pdf-lib's built-in fonts use WinAnsi encoding, so Western-European accents render
+out of the box; the helper maps smart quotes and dashes and drops characters it
+can't encode. Rendering non-Latin scripts (Chinese, Arabic, Cyrillic) would mean
+embedding a Unicode font.
+</Note>
 
 Then upload it and store the reference on the record. `uploadFile` routes bytes
 to your app-owned files field; the returned `id` is what you save:
@@ -174,7 +195,8 @@ to your app-owned files field; the returned `id` is what you save:
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { generateDocumentPdf } from 'src/logic-functions/utils/generate-document-pdf';
 
-const bytes = generateDocumentPdf(documentName, content);
+const documentName = `${documentTemplate.name} — ${record.displayName}`;
+const bytes = await generateDocumentPdf(documentName, content);
 const fileName = 'proposal.pdf';
 
 const uploaded = await new MetadataApiClient().uploadFile(
