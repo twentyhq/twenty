@@ -191,10 +191,12 @@ const GenerateDocumentForm = () => {
       });
 
       const list: Template[] =
-        documentTemplates?.edges?.map((edge) => ({
-          id: edge.node.id,
-          name: edge.node.name ?? 'Untitled template',
-        })) ?? [];
+        documentTemplates?.edges?.map(
+          (edge: { node: { id: string; name?: string | null } }) => ({
+            id: edge.node.id,
+            name: edge.node.name ?? 'Untitled template',
+          }),
+        ) ?? [];
 
       setTemplates(list);
 
