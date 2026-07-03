@@ -265,7 +265,13 @@ export class StreamAgentChatJob {
         resolveStreamFinished = res;
       });
 
-      abortSignal.addEventListener('abort', () => resolve(), { once: true });
+      abortSignal.addEventListener(
+        'abort',
+        () => {
+          void streamFinishedPromise.then(() => resolve());
+        },
+        { once: true },
+      );
 
       const uiStream = createUIMessageStream<ExtendedUIMessage>({
         execute: async ({ writer }) => {

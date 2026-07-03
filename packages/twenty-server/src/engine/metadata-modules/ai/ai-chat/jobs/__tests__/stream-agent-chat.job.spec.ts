@@ -391,12 +391,17 @@ describe('StreamAgentChatJob', () => {
   it('resolves without flushing the queue when the stream is cancelled', async () => {
     let triggerCancel: (() => void) | undefined;
 
-    const { job, publishedEvents, agentChatStreamingService, cancelCallbacks } =
-      buildJob({
-        chatStream: createFakeChatStream({
-          onFirstChunk: () => triggerCancel?.(),
-        }),
-      });
+    const {
+      job,
+      publishedEvents,
+      agentChatService,
+      agentChatStreamingService,
+      cancelCallbacks,
+    } = buildJob({
+      chatStream: createFakeChatStream({
+        onFirstChunk: () => triggerCancel?.(),
+      }),
+    });
 
     triggerCancel = () => cancelCallbacks.forEach((callback) => callback());
 
@@ -408,5 +413,6 @@ describe('StreamAgentChatJob', () => {
     expect(
       agentChatStreamingService.flushNextQueuedMessage,
     ).not.toHaveBeenCalled();
+    expect(agentChatService.notifyThreadUsageUpdated).toHaveBeenCalled();
   });
 });
