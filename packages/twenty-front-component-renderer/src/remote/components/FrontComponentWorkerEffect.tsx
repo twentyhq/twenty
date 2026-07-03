@@ -7,13 +7,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { createHostFetch } from '@/host/utils/createHostFetch';
 import { FRONT_COMPONENT_SANDBOX_MESSAGE } from '@/remote/sandbox/frontComponentSandboxMessages';
+import { buildFrontComponentSandboxDocument } from '@/remote/sandbox/utils/buildFrontComponentSandboxDocument';
 import { createFrontComponentSandboxIframe } from '@/remote/sandbox/utils/createFrontComponentSandboxIframe';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type FrontComponentHostThreadExports } from '../../types/FrontComponentHostThreadExports';
 import { type SdkClientUrls } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
-// @ts-expect-error - Vite asset URL import
-import sandboxDocumentUrl from '@/remote/sandbox/front-component-sandbox.html?url';
 
 // Must match COMMAND_MENU_ITEM_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME in twenty-front
 const COMMAND_MENU_ITEM_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME =
@@ -79,7 +78,7 @@ export const FrontComponentWorkerEffect = ({
     const newReceiver = new RemoteReceiver({ retain, release });
 
     const sandboxIframe = createFrontComponentSandboxIframe(
-      sandboxDocumentUrl as string,
+      buildFrontComponentSandboxDocument(),
     );
     document.body.append(sandboxIframe);
 

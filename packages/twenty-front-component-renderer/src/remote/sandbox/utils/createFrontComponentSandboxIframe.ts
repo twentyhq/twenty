@@ -1,7 +1,7 @@
 const FRONT_COMPONENT_SANDBOX_IFRAME_PERMISSIONS = 'allow-scripts';
 
 export const createFrontComponentSandboxIframe = (
-  sandboxDocumentUrl: string,
+  sandboxDocument: string,
 ): HTMLIFrameElement => {
   const sandboxIframe = document.createElement('iframe');
   sandboxIframe.setAttribute(
@@ -10,7 +10,7 @@ export const createFrontComponentSandboxIframe = (
   );
   sandboxIframe.setAttribute('aria-hidden', 'true');
   sandboxIframe.style.display = 'none';
-  sandboxIframe.src = sandboxDocumentUrl;
+  sandboxIframe.srcdoc = sandboxDocument;
 
   return sandboxIframe;
 };
