@@ -1,38 +1,29 @@
 import { useLingui } from '@lingui/react/macro';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SettingsBillingCreditsSection } from '@/settings/billing/components/SettingsBillingCreditsSection';
 import { SettingsBillingSubscriptionInfo } from '@/settings/billing/components/SettingsBillingSubscriptionInfo';
 import { SettingsBillingTrialNoPaymentMethodBanner } from '@/settings/billing/components/SettingsBillingTrialNoPaymentMethodBanner';
+import { useBillingPortalSession } from '@/settings/billing/hooks/useBillingPortalSession';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { useQuery } from '@apollo/client/react';
-import { isDefined } from 'twenty-shared/utils';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconCircleX, IconCreditCard } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import {
-  BillingPortalSessionDocument,
-  SubscriptionStatus,
-} from '~/generated-metadata/graphql';
+import { SubscriptionStatus } from '~/generated-metadata/graphql';
 export const SettingsBillingContent = () => {
   const { t } = useLingui();
-
-  const { redirect } = useRedirect();
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const currentBillingSubscription =
     currentWorkspace?.currentBillingSubscription;
-
-  const subscriptions = currentWorkspace?.billingSubscriptions;
-
-  const hasSubscriptions = (subscriptions?.length ?? 0) > 0;
 
   const subscriptionStatus = useSubscriptionStatus();
   const billingHasPaymentMethod = useAtomStateValue(
@@ -55,21 +46,8 @@ export const SettingsBillingContent = () => {
   const canCancelCurrentSubscription =
     hasNotCanceledCurrentSubscription && !hasScheduledCancellation;
 
-  const { data, loading } = useQuery(BillingPortalSessionDocument, {
-    variables: {
-      returnUrlPath: '/settings/billing',
-    },
-    skip: !hasSubscriptions,
-  });
-
-  const billingPortalButtonDisabled =
-    loading || !isDefined(data) || !isDefined(data.billingPortalSession.url);
-
-  const openBillingPortal = () => {
-    if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
-      redirect(data.billingPortalSession.url);
-    }
-  };
+  const { isBillingPortalSessionDisabled, openBillingPortal } =
+    useBillingPortalSession(getSettingsPath(SettingsPath.Billing));
 
   return (
     <SettingsPageContainer>
@@ -85,7 +63,7 @@ export const SettingsBillingContent = () => {
             currentWorkspace={currentWorkspace}
             currentBillingSubscription={currentBillingSubscription}
             onUpdatePayment={openBillingPortal}
-            isUpdatePaymentDisabled={billingPortalButtonDisabled}
+            isUpdatePaymentDisabled={isBillingPortalSessionDisabled}
           />
         )}
       {hasNotCanceledCurrentSubscription &&
@@ -95,7 +73,7 @@ export const SettingsBillingContent = () => {
           <SettingsBillingCreditsSection
             currentBillingSubscription={currentBillingSubscription}
             onUpdatePayment={openBillingPortal}
-            isUpdatePaymentDisabled={billingPortalButtonDisabled}
+            isUpdatePaymentDisabled={isBillingPortalSessionDisabled}
           />
         )}
       <Section>
@@ -108,7 +86,7 @@ export const SettingsBillingContent = () => {
           title={t`View billing details`}
           variant="secondary"
           onClick={openBillingPortal}
-          disabled={billingPortalButtonDisabled}
+          disabled={isBillingPortalSessionDisabled}
         />
       </Section>
       {canCancelCurrentSubscription && (
@@ -123,7 +101,7 @@ export const SettingsBillingContent = () => {
             variant="secondary"
             accent="danger"
             onClick={openBillingPortal}
-            disabled={billingPortalButtonDisabled}
+            disabled={isBillingPortalSessionDisabled}
           />
         </Section>
       )}
