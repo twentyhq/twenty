@@ -95,9 +95,11 @@ describe('StreamAgentChatJob', () => {
     const publishedEvents: PublishedEvent[] = [];
 
     const threadRepository = {
-      findOne: jest
-        .fn()
-        .mockResolvedValue({ id: 'thread-id', deletedAt: null }),
+      findOne: jest.fn().mockResolvedValue({
+        id: 'thread-id',
+        deletedAt: null,
+        activeStreamId: 'stream-id',
+      }),
       update: jest.fn().mockResolvedValue({ affected: 1 }),
     };
     const workspaceRepository = {
@@ -340,6 +342,44 @@ describe('StreamAgentChatJob', () => {
       { id: 'thread-id', activeStreamId: 'stream-id' },
       { activeStreamId: null },
     );
+  });
+
+  it('bails out without streaming when the thread no longer holds the claim for this stream', async () => {
+    const {
+      job,
+      publishedEvents,
+      threadRepository,
+      eventPublisherService,
+      agentChatStreamingService,
+    } = buildJob();
+
+    threadRepository.findOne.mockResolvedValueOnce({
+      id: 'thread-id',
+      deletedAt: null,
+      activeStreamId: 'newer-stream-id',
+    });
+
+    await job.handle(jobData);
+
+    expect(publishedEvents).toHaveLength(0);
+    expect(eventPublisherService.resetStreamState).not.toHaveBeenCalled();
+    expect(threadRepository.update).not.toHaveBeenCalled();
+    expect(
+      agentChatStreamingService.flushNextQueuedMessage,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('bails out without streaming when the thread was deleted', async () => {
+    const { job, publishedEvents, threadRepository, eventPublisherService } =
+      buildJob();
+
+    threadRepository.findOne.mockResolvedValueOnce(null);
+
+    await job.handle(jobData);
+
+    expect(publishedEvents).toHaveLength(0);
+    expect(eventPublisherService.resetStreamState).not.toHaveBeenCalled();
+    expect(threadRepository.update).not.toHaveBeenCalled();
   });
 
   it('persists the interrupted error and publishes the terminal sequence when aborted by a worker shutdown', async () => {
