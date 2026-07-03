@@ -4,9 +4,7 @@ import { FrontComponentUpdateContextEffect } from '@/remote/components/FrontComp
 import { FrontComponentUpdateHostCommunicationApiEffect } from '@/remote/components/FrontComponentUpdateHostCommunicationApiEffect';
 import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 import { type SdkClientUrls } from '@/types/HostToWorkerRenderContext';
-import { type WorkerExports } from '@/types/WorkerExports';
 import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
-import { type ThreadWebWorker } from '@quilted/threads';
 import {
   type RemoteReceiver,
   RemoteRootRenderer,
@@ -16,7 +14,10 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ThemeProvider } from 'twenty-ui/theme-constants';
-import { FrontComponentWorkerEffect } from '../../remote/components/FrontComponentWorkerEffect';
+import {
+  FrontComponentWorkerEffect,
+  type FrontComponentThread,
+} from '../../remote/components/FrontComponentWorkerEffect';
 import { componentRegistry } from '../generated/host-component-registry';
 import { createFallbackComponentRegistry } from '../utils/createFallbackComponentRegistry';
 
@@ -49,10 +50,7 @@ export const FrontComponentRenderer = ({
   colorScheme,
 }: FrontComponentContentProps) => {
   const [receiver, setReceiver] = useState<RemoteReceiver | null>(null);
-  const [thread, setThread] = useState<ThreadWebWorker<
-    WorkerExports,
-    FrontComponentHostCommunicationApi
-  > | null>(null);
+  const [thread, setThread] = useState<FrontComponentThread | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const [isExecutionContextInitialized, setIsExecutionContextInitialized] =
     useState(false);

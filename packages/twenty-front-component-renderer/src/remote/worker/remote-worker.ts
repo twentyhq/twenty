@@ -3,7 +3,7 @@ import '@remote-dom/react/polyfill';
 
 import '../generated/remote-elements';
 
-import { ThreadWebWorker } from '@quilted/threads';
+import { ThreadMessagePort } from '@quilted/threads';
 import {
   BatchingRemoteConnection,
   type RemoteConnection,
@@ -153,10 +153,18 @@ const render: WorkerExports['render'] = async (
   }
 };
 
+let hostThread: ThreadMessagePort<
+  FrontComponentHostCommunicationApi,
+  WorkerExports
+> | null = null;
+
 const initializeHostCommunicationApi: WorkerExports['initializeHostCommunicationApi'] =
   async () => {
-    const hostApi =
-      ThreadWebWorker.self.import<FrontComponentHostCommunicationApi>();
+    if (!isDefined(hostThread)) {
+      return;
+    }
+
+    const hostApi = hostThread.imports;
 
     frontComponentHostCommunicationApi.navigate = hostApi.navigate;
     frontComponentHostCommunicationApi.requestAccessTokenRefresh =
@@ -186,9 +194,24 @@ const updateContext: WorkerExports['updateContext'] = async (
   setFrontComponentExecutionContext(context);
 };
 
-ThreadWebWorker.self.export({
-  render,
-  initializeHostCommunicationApi,
-  onConfirmationModalResult,
-  updateContext,
+self.addEventListener('message', (event) => {
+  const [transferredPort] = event.ports;
+
+  if (isDefined(hostThread) || !isDefined(transferredPort)) {
+    return;
+  }
+
+  hostThread = new ThreadMessagePort<
+    FrontComponentHostCommunicationApi,
+    WorkerExports
+  >(transferredPort, {
+    exports: {
+      render,
+      initializeHostCommunicationApi,
+      onConfirmationModalResult,
+      updateContext,
+    },
+  });
+
+  transferredPort.start();
 });
