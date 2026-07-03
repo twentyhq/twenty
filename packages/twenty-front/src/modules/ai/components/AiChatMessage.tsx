@@ -144,12 +144,14 @@ type AiChatMessageProps = {
   messageId: string;
   isLastMessageStreaming?: boolean;
   error?: AiChatError | undefined;
+  onRetry?: () => void;
 };
 
 export const AiChatMessage = ({
   messageId,
   isLastMessageStreaming = false,
   error,
+  onRetry,
 }: AiChatMessageProps) => {
   const agentChatMessage = useAtomComponentFamilySelectorValue(
     agentChatMessageComponentFamilySelector,
@@ -187,7 +189,7 @@ export const AiChatMessage = ({
           </StyledFilesContainer>
         )}
         {shouldShowError && isDefined(error) && (
-          <AiChatErrorRenderer error={error} />
+          <AiChatErrorRenderer error={error} onRetry={onRetry} />
         )}
       </StyledMessageContainer>
       {agentChatMessage.parts.length > 0 && (

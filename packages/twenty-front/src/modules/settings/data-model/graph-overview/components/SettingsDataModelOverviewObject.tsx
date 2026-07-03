@@ -3,6 +3,7 @@ import { type Node, type NodeProps } from '@xyflow/react';
 import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
@@ -14,7 +15,7 @@ import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { ObjectFieldRowWithoutRelation } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewFieldWithoutRelation';
 import '@xyflow/react/dist/style.css';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -108,6 +109,7 @@ export const SettingsDataModelOverviewObject = ({
   data: objectMetadataItem,
 }: SettingsDataModelOverviewObjectProps) => {
   const { theme } = useContext(ThemeContext);
+  const { formatNumber } = useNumberFormat();
   const [otherFieldsExpanded, setOtherFieldsExpanded] = useState(false);
 
   const { totalCount } = useFindManyRecords({
@@ -139,7 +141,10 @@ export const SettingsDataModelOverviewObject = ({
               {objectMetadataItem.labelPlural}
             </Link>
           </StyledObjectLinkContainer>
-          <StyledObjectInstanceCount> · {totalCount}</StyledObjectInstanceCount>
+          <StyledObjectInstanceCount>
+            {' '}
+            · {isDefined(totalCount) ? formatNumber(totalCount) : totalCount}
+          </StyledObjectInstanceCount>
         </StyledObjectName>
         <SettingsItemTypeTag item={objectMetadataItem} />
       </StyledHeader>

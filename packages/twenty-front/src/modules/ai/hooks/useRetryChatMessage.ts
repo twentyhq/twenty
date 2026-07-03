@@ -9,6 +9,7 @@ import { RETRY_CHAT_MESSAGE } from '@/ai/graphql/mutations/retryChatMessage';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
+import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 
 export const useRetryChatMessage = () => {
@@ -27,9 +28,15 @@ export const useRetryChatMessage = () => {
       instanceId: AGENT_CHAT_INSTANCE_ID,
       familyKey: { threadId },
     });
+    const isAwaitingFirstChunkAtom =
+      agentChatIsAwaitingFirstChunkComponentFamilyState.atomFamily({
+        instanceId: AGENT_CHAT_INSTANCE_ID,
+        familyKey: { threadId },
+      });
     const previousError = store.get(errorAtom);
 
     store.set(errorAtom, null);
+    store.set(isAwaitingFirstChunkAtom, true);
 
     try {
       await apolloClient.mutate({
@@ -42,6 +49,7 @@ export const useRetryChatMessage = () => {
 
       dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
     } catch (retryError) {
+      store.set(isAwaitingFirstChunkAtom, false);
       store.set(
         errorAtom,
         retryError instanceof Error ? retryError : previousError,
