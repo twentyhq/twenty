@@ -8,12 +8,23 @@ import {
 import { AnalyticsType } from '~/generated-metadata/graphql';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
+const PAGEVIEW_TRACKING_DELAY_IN_MS = 500;
+
+const stripQueryAndHash = (url: string): string => {
+  try {
+    const { origin, pathname } = new URL(url);
+    return `${origin}${pathname}`;
+  } catch {
+    return '';
+  }
+};
+
 export const TrackPageViewEffect = () => {
   const location = useLocation();
   const eventTracker = useEventTracker();
 
   useEffect(() => {
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       setSessionId();
       eventTracker(AnalyticsType['PAGEVIEW'], {
         name: getPageTitleFromPath(location.pathname),
@@ -21,12 +32,14 @@ export const TrackPageViewEffect = () => {
           pathname: location.pathname,
           locale: navigator.language,
           userAgent: window.navigator.userAgent,
-          href: window.location.href,
-          referrer: document.referrer,
+          href: stripQueryAndHash(window.location.href),
+          referrer: stripQueryAndHash(document.referrer),
           timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
       });
-    }, 500);
+    }, PAGEVIEW_TRACKING_DELAY_IN_MS);
+
+    return () => clearTimeout(timeoutId);
   }, [eventTracker, location.pathname]);
 
   return null;

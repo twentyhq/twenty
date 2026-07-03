@@ -97,7 +97,7 @@ export const PaymentSuccess = () => {
       }
     };
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [confirmationRunIndex]);
+  }, [confirmationRunIndex, subscriptionStatus]);
 
   const handleRetry = () => {
     setHasTimedOut(false);
