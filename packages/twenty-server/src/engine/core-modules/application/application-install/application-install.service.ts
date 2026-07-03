@@ -317,28 +317,35 @@ export class ApplicationInstallService {
   }): Promise<void> {
     const { appRegistration, manifest, installedVersion } = params;
 
-    if (
-      !shouldRefreshApplicationRegistrationOnInstall({
-        installedVersion,
-        latestAvailableVersion: appRegistration.latestAvailableVersion,
-      })
-    ) {
-      this.logger.log(
-        `Skipping registration refresh for ${appRegistration.universalIdentifier}: installed version ${installedVersion} is older than latest available version ${appRegistration.latestAvailableVersion}`,
-      );
+    await this.cacheLockService.withLock(async () => {
+      const currentRegistration =
+        await this.appRegistrationRepository.findOneOrFail({
+          where: { id: appRegistration.id },
+        });
 
-      return;
-    }
+      if (
+        !shouldRefreshApplicationRegistrationOnInstall({
+          installedVersion,
+          latestAvailableVersion: currentRegistration.latestAvailableVersion,
+        })
+      ) {
+        this.logger.log(
+          `Skipping registration refresh for ${appRegistration.universalIdentifier}: installed version ${installedVersion} is older than latest available version ${currentRegistration.latestAvailableVersion}`,
+        );
 
-    await this.applicationRegistrationService.updateFromManifest({
-      applicationRegistrationId: appRegistration.id,
-      manifest: this.resolveRegistrationManifestAssetUrls({
-        appRegistration,
-        manifest,
-        installedVersion,
-      }),
-      latestAvailableVersion: installedVersion,
-    });
+        return;
+      }
+
+      await this.applicationRegistrationService.updateFromManifest({
+        applicationRegistrationId: appRegistration.id,
+        manifest: this.resolveRegistrationManifestAssetUrls({
+          appRegistration,
+          manifest,
+          installedVersion,
+        }),
+        latestAvailableVersion: installedVersion,
+      });
+    }, `app-registration-refresh:${appRegistration.id}`);
   }
 
   private resolveRegistrationManifestAssetUrls(params: {
