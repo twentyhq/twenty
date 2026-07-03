@@ -448,7 +448,60 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     ]);
   });
 
-  it('rolls back the transaction when an operation fails', async () => {
+  it('rolls back to the savepoint and continues with remaining operations when one fails', async () => {
+    getOrRecomputeMock.mockResolvedValue(
+      buildFlatEntityMaps([
+        {
+          universalIdentifier: 'idx-a',
+          id: 'index-a',
+          name: 'legacyA',
+          expectedName: 'IDX_UNIQUE_newA',
+        },
+        {
+          universalIdentifier: 'idx-b',
+          id: 'index-b',
+          name: 'legacyB',
+          expectedName: 'IDX_UNIQUE_newB',
+        },
+      ]),
+    );
+
+    setPhysicalIndexes(['legacyA', 'legacyB']);
+
+    renameIndexMock.mockRejectedValueOnce(new Error('boom'));
+
+    const { queryRunner, query, commit, rollback } = buildQueryRunner();
+    const dataSource = {
+      createQueryRunner: () => queryRunner,
+    } as unknown as DataSource;
+
+    await runOnWorkspace(dataSource);
+
+    expect(query).toHaveBeenCalledWith(
+      expect.stringContaining('ROLLBACK TO SAVEPOINT'),
+    );
+    // The failed operation's metadata update is rolled back with its savepoint.
+    expect(query).not.toHaveBeenCalledWith(expect.stringContaining('UPDATE'), [
+      'IDX_UNIQUE_newA',
+      'index-a',
+      WORKSPACE_ID,
+    ]);
+    expect(renameIndexMock).toHaveBeenCalledTimes(2);
+    expect(query).toHaveBeenCalledWith(expect.stringContaining('UPDATE'), [
+      'IDX_UNIQUE_newB',
+      'index-b',
+      WORKSPACE_ID,
+    ]);
+    expect(rollback).not.toHaveBeenCalled();
+    expect(commit).toHaveBeenCalled();
+    expect(invalidateAndRecomputeMock).toHaveBeenCalledWith(WORKSPACE_ID, [
+      'flatIndexMaps',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+    ]);
+  });
+
+  it('rolls back the whole transaction when savepoint recovery itself fails', async () => {
     getOrRecomputeMock.mockResolvedValue(
       buildFlatEntityMaps([
         {
@@ -464,12 +517,21 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
 
     renameIndexMock.mockRejectedValueOnce(new Error('boom'));
 
-    const { queryRunner, commit, rollback } = buildQueryRunner();
+    const { queryRunner, query, commit, rollback } = buildQueryRunner();
+
+    query.mockImplementation((sql: string) =>
+      sql.startsWith('ROLLBACK TO SAVEPOINT')
+        ? Promise.reject(new Error('savepoint recovery failed'))
+        : Promise.resolve(),
+    );
+
     const dataSource = {
       createQueryRunner: () => queryRunner,
     } as unknown as DataSource;
 
-    await expect(runOnWorkspace(dataSource)).rejects.toThrow('boom');
+    await expect(runOnWorkspace(dataSource)).rejects.toThrow(
+      'savepoint recovery failed',
+    );
 
     expect(rollback).toHaveBeenCalled();
     expect(commit).not.toHaveBeenCalled();

@@ -8,6 +8,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { areIndexDefinitionsEquivalent } from 'src/database/commands/upgrade-version-command/2-18/utils/are-index-definitions-equivalent.util';
 import {
   type FlatIndexNameStatus,
+  type IndexNameNormalizationOperation,
   planIndexNameNormalization,
   type RenameIndexNameOperation,
 } from 'src/database/commands/upgrade-version-command/2-18/utils/plan-index-name-normalization.util';
@@ -145,56 +146,28 @@ export class NormalizeLegacyIndexNamesCommand extends ActiveOrSuspendedWorkspace
       await queryRunner.startTransaction();
       isTransactionStarted = true;
 
-      for (const operation of operations) {
-        if (operation.type === 'rename') {
-          const targetIndexExists =
-            await this.workspaceSchemaManagerService.indexManager.doesIndexExist(
-              {
-                queryRunner,
-                schemaName,
-                indexName: operation.toName,
-              },
-            );
+      for (const [operationIndex, operation] of operations.entries()) {
+        const savepointName = `index_name_normalization_${operationIndex}`;
 
-          if (targetIndexExists) {
-            await this.reconcileRenameWithExistingTargetIndex({
-              queryRunner,
-              schemaName,
-              operation,
-              workspaceId,
-            });
-          } else {
-            await this.renameIndexToExpectedName({
-              queryRunner,
-              schemaName,
-              operation,
-              workspaceId,
-            });
-          }
+        await queryRunner.query(`SAVEPOINT "${savepointName}"`);
 
-          await queryRunner.query(
-            `UPDATE "core"."indexMetadata"
-                SET "name" = $1
-              WHERE "id" = $2
-                AND "workspaceId" = $3`,
-            [operation.toName, operation.indexMetadataId, workspaceId],
-          );
-        } else {
-          await dropIndexFromWorkspaceSchema({
-            indexName: operation.redundantName,
-            workspaceSchemaManagerService: this.workspaceSchemaManagerService,
+        try {
+          await this.applyIndexNameNormalizationOperation({
             queryRunner,
             schemaName,
-          });
-
-          await deleteIndexMetadata({
-            entityId: operation.indexMetadataId,
-            queryRunner,
+            operation,
             workspaceId,
           });
 
-          this.logger.log(
-            `Dropped redundant duplicate index ${operation.redundantName} (kept ${operation.keptName}) (workspace ${workspaceId})`,
+          await queryRunner.query(`RELEASE SAVEPOINT "${savepointName}"`);
+        } catch (error) {
+          // A failed statement aborts the whole Postgres transaction; rolling
+          // back to the savepoint keeps prior operations committable and lets
+          // the loop skip only the offending index.
+          await queryRunner.query(`ROLLBACK TO SAVEPOINT "${savepointName}"`);
+
+          this.logger.warn(
+            `Skipping index name normalization for ${operation.type === 'rename' ? operation.fromName : operation.redundantName} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
           );
         }
       }
@@ -217,6 +190,68 @@ export class NormalizeLegacyIndexNamesCommand extends ActiveOrSuspendedWorkspace
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
     ]);
+  }
+
+  private async applyIndexNameNormalizationOperation({
+    queryRunner,
+    schemaName,
+    operation,
+    workspaceId,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    operation: IndexNameNormalizationOperation;
+    workspaceId: string;
+  }): Promise<void> {
+    if (operation.type === 'rename') {
+      const targetIndexExists =
+        await this.workspaceSchemaManagerService.indexManager.doesIndexExist({
+          queryRunner,
+          schemaName,
+          indexName: operation.toName,
+        });
+
+      if (targetIndexExists) {
+        await this.reconcileRenameWithExistingTargetIndex({
+          queryRunner,
+          schemaName,
+          operation,
+          workspaceId,
+        });
+      } else {
+        await this.renameIndexToExpectedName({
+          queryRunner,
+          schemaName,
+          operation,
+          workspaceId,
+        });
+      }
+
+      await queryRunner.query(
+        `UPDATE "core"."indexMetadata"
+            SET "name" = $1
+          WHERE "id" = $2
+            AND "workspaceId" = $3`,
+        [operation.toName, operation.indexMetadataId, workspaceId],
+      );
+    } else {
+      await dropIndexFromWorkspaceSchema({
+        indexName: operation.redundantName,
+        workspaceSchemaManagerService: this.workspaceSchemaManagerService,
+        queryRunner,
+        schemaName,
+      });
+
+      await deleteIndexMetadata({
+        entityId: operation.indexMetadataId,
+        queryRunner,
+        workspaceId,
+      });
+
+      this.logger.log(
+        `Dropped redundant duplicate index ${operation.redundantName} (kept ${operation.keptName}) (workspace ${workspaceId})`,
+      );
+    }
   }
 
   // Target index already exists physically: the legacy index cannot be
