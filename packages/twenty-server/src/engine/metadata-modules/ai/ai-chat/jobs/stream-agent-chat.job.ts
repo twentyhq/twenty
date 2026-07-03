@@ -28,6 +28,7 @@ import {
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
+import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
@@ -62,6 +63,7 @@ export class StreamAgentChatJob {
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly cancelSubscriberService: AgentChatCancelSubscriberService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
+    private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -70,6 +72,10 @@ export class StreamAgentChatJob {
 
     const abortController = new AbortController();
     const cancelChannel = getCancelChannel(data.threadId, data.streamId);
+
+    const stopHeartbeat = this.streamHeartbeatService.startRunning(
+      data.streamId,
+    );
 
     await this.cancelSubscriberService.subscribe(cancelChannel, () => {
       abortController.abort();
@@ -132,6 +138,8 @@ export class StreamAgentChatJob {
         .catch(() => {});
       throw error;
     } finally {
+      stopHeartbeat();
+      await this.streamHeartbeatService.clear(data.streamId);
       await this.cancelSubscriberService.unsubscribe(cancelChannel);
       await this.threadRepository
         .update(
