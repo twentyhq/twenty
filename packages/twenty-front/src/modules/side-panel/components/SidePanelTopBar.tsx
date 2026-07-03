@@ -6,9 +6,10 @@ import { COMMAND_MENU_SIDE_PANEL_PAGES } from '@/side-panel/constants/CommandMen
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
 import { SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE } from '@/side-panel/constants/SidePanelTopBarHeightMobile';
+import { useHandleSidePanelBackspace } from '@/side-panel/hooks/useHandleSidePanelBackspace';
+import { useHandleSidePanelEscape } from '@/side-panel/hooks/useHandleSidePanelEscape';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useSidePanelContextChips } from '@/side-panel/hooks/useSidePanelContextChips';
-import { useSidePanelKeyboardNavigation } from '@/side-panel/hooks/useSidePanelKeyboardNavigation';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -112,11 +113,8 @@ export const SidePanelTopBar = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
-  const {
-    canGoBackOneSidePanelStep,
-    handleSidePanelBackspace,
-    handleSidePanelEscape,
-  } = useSidePanelKeyboardNavigation();
+  const handleSidePanelBackspace = useHandleSidePanelBackspace();
+  const handleSidePanelEscape = useHandleSidePanelEscape();
 
   const handleInputFocus = () => {
     pushFocusItemToFocusStack({
@@ -153,16 +151,10 @@ export const SidePanelTopBar = () => {
       return;
     }
 
-    if (
-      event.key === Key.Backspace &&
-      sidePanelSearch === '' &&
-      canGoBackOneSidePanelStep
-    ) {
+    if (event.key === Key.Backspace && handleSidePanelBackspace()) {
       event.preventDefault();
       event.stopPropagation();
       event.nativeEvent.stopImmediatePropagation();
-
-      handleSidePanelBackspace();
     }
   };
 
