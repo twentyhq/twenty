@@ -6994,7 +6994,7 @@ export default {
                         "String!"
                     ],
                     "size": [
-                        11,
+                        12,
                         "Float!"
                     ],
                     "fileFolder": [
