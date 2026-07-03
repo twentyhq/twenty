@@ -377,6 +377,8 @@ export default defineFrontComponent({
 Gizli değişkenler (`isSecret: true`) ön uç bileşenlere açıklanmaz. Bunlar yalnızca sunucu tarafında çalışan [mantık işlevlerinde](/l/tr/developers/extend/apps/logic/logic-functions) kullanılabilir. Bu, API anahtarları gibi hassas değerlerin tarayıcıya gönderilmesini engeller.
 </Warning>
 
+`getApplicationVariable`, değişkenin bildirilen `type` değerinden bağımsız olarak her zaman bir **string** (veya `undefined`) döndürür. String, türe göre tutarlı bir şekilde serileştirilir (boolean değerler `"true"` / `"false"`, sayılar ondalık dizeler olarak, diziler/nesneler JSON olarak) ve bu, `process.env` mantık işlevi için kullanılan formatla aynıdır — veriyi kendiniz ayrıştırın (`Number(...)`, `JSON.parse(...)`, `=== 'true'`). [Değişken türleri](/l/tr/developers/extend/apps/config/application#variable-types) bölümüne bakın.
+
 Aşağıdaki sistem değişkenleri her zaman `process.env` aracılığıyla kullanılabilir:
 
 | Değişken                  | Açıklama                                                       |

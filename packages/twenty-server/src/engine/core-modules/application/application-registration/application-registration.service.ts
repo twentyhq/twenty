@@ -33,6 +33,41 @@ import { MARKETPLACE_CURATED_APPLICATIONS } from 'src/engine/core-modules/applic
 
 const BCRYPT_SALT_ROUNDS = 10;
 
+const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegistrationEntity)[] =
+  [
+    'id',
+    'universalIdentifier',
+    'name',
+    'oAuthClientId',
+    'oAuthRedirectUris',
+    'oAuthScopes',
+    'createdByUserId',
+    'ownerWorkspaceId',
+    'sourceType',
+    'sourcePackage',
+    'tarballFileId',
+    'latestAvailableVersion',
+    'isListed',
+    'isFeatured',
+    'isPreInstalled',
+    'logo',
+    'createdAt',
+    'updatedAt',
+  ];
+
+export type ApplicationRegistrationCatalogCard = {
+  id: string;
+  universalIdentifier: string;
+  name: string;
+  sourcePackage: string | null;
+  isFeatured: boolean;
+  displayName: string | null;
+  description: string | null;
+  author: string | null;
+  category: string | null;
+  logoUrl: string | null;
+};
+
 @Injectable()
 export class ApplicationRegistrationService {
   constructor(
@@ -49,6 +84,7 @@ export class ApplicationRegistrationService {
     ownerWorkspaceId: string,
   ): Promise<ApplicationRegistrationEntity[]> {
     return this.applicationRegistrationRepository.find({
+      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
       where: { ownerWorkspaceId },
       order: { createdAt: 'DESC' },
     });
@@ -56,6 +92,7 @@ export class ApplicationRegistrationService {
 
   async findAll(): Promise<ApplicationRegistrationEntity[]> {
     return this.applicationRegistrationRepository.find({
+      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
       order: { createdAt: 'DESC' },
     });
   }
@@ -65,6 +102,7 @@ export class ApplicationRegistrationService {
     ownerWorkspaceId: string,
   ): Promise<ApplicationRegistrationEntity> {
     const registration = await this.applicationRegistrationRepository.findOne({
+      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
       where: { id, ownerWorkspaceId },
     });
 
@@ -80,6 +118,7 @@ export class ApplicationRegistrationService {
 
   async findOneByIdGlobal(id: string): Promise<ApplicationRegistrationEntity> {
     const registration = await this.applicationRegistrationRepository.findOne({
+      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
       where: { id },
     });
 
@@ -251,6 +290,7 @@ export class ApplicationRegistrationService {
       ...existing,
       name: manifest.application.displayName,
       manifest,
+      logo: manifest.application.logoUrl ?? null,
       ...(sourceType !== undefined && { sourceType }),
     });
   }
@@ -320,6 +360,7 @@ export class ApplicationRegistrationService {
         sourcePackage: params.sourcePackage,
         latestAvailableVersion: params.latestAvailableVersion,
         manifest: params.manifest,
+        logo: params.manifest?.application?.logoUrl ?? null,
         isFeatured,
       });
     } else {
@@ -332,6 +373,7 @@ export class ApplicationRegistrationService {
         isListed: true,
         isFeatured,
         manifest: params.manifest,
+        logo: params.manifest?.application?.logoUrl ?? null,
         oAuthClientId: v4(),
         oAuthRedirectUris: [],
         oAuthScopes: [],
@@ -384,13 +426,31 @@ export class ApplicationRegistrationService {
     return this.applicationRegistrationRepository.save(registration);
   }
 
-  async findManyListed(): Promise<ApplicationRegistrationEntity[]> {
-    return this.applicationRegistrationRepository.find({
+  async findManyListedCatalogCards(): Promise<
+    ApplicationRegistrationCatalogCard[]
+  > {
+    const registrations = await this.applicationRegistrationRepository.find({
       where: {
         isListed: true,
         sourceType: ApplicationRegistrationSourceType.NPM,
       },
     });
+
+    return registrations.map((registration) => ({
+      id: registration.id,
+      universalIdentifier: registration.universalIdentifier,
+      name: registration.name,
+      sourcePackage: registration.sourcePackage,
+      isFeatured: registration.isFeatured,
+      displayName: registration.manifest?.application?.displayName ?? null,
+      description: registration.manifest?.application?.description ?? null,
+      author: registration.manifest?.application?.author ?? null,
+      category: registration.manifest?.application?.category ?? null,
+      logoUrl:
+        registration.logo ??
+        registration.manifest?.application?.logoUrl ??
+        null,
+    }));
   }
 
   async getStats(

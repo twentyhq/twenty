@@ -48,6 +48,7 @@ const buildApplication = (variableValue: string): Application => ({
       value: variableValue,
       description: '',
       isSecret: false,
+      type: 'TEXT',
     },
   ],
   agents: [],

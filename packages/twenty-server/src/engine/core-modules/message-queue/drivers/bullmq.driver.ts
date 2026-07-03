@@ -101,8 +101,6 @@ export class BullMQDriver
       );
     }
 
-    // Workers close first so jobs finishing during the drain can still
-    // enqueue follow-up jobs through the queue instances
     await Promise.all(
       workers.map(([queueName, worker]) => this.closeWorker(queueName, worker)),
     );
@@ -111,10 +109,6 @@ export class BullMQDriver
     this.logger.log('Message queue shutdown complete');
   }
 
-  // close() waits for active jobs with no upper bound; queues that declare a
-  // shutdownTimeoutMs get their remaining jobs aborted through the abort
-  // signal handed to the processor, so the process exits within the pod's
-  // termination grace period instead of being SIGKILLed mid-job
   private async closeWorker(
     queueName: MessageQueue,
     worker: Worker,
@@ -166,8 +160,6 @@ export class BullMQDriver
 
     this.workerOptionsMap[queueName] = options;
 
-    // BullMQ only creates per-job abort controllers when the processor
-    // declares the signal parameter (processor.length >= 3)
     this.workerMap[queueName] = new Worker(
       queueName,
       async (job, _token, abortSignal) =>
