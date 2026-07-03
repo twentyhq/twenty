@@ -83,7 +83,9 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
           this.twentyConfigService.get(
             'LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET_REGION',
           ) ?? region;
-        const resourceNamespace = getLambdaResourceNamespace(lambdaRole);
+        const resourceNamespace = getLambdaResourceNamespace({
+          lambdaRoleArn: lambdaRole,
+        });
 
         return new LambdaDriver({
           logicFunctionResourceService: this.logicFunctionResourceService,
