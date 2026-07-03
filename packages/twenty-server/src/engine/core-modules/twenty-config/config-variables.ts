@@ -714,18 +714,6 @@ export class ConfigVariables {
   LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET_REGION?: AwsRegion;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
-    description:
-      'Namespace segment for shared Lambda resources (builder, yarn-install, common/deps layers), isolating instances that share one AWS account and region. Defaults to a hash of LOGIC_FUNCTION_LAMBDA_ROLE when unset.',
-    type: ConfigVariableType.STRING,
-  })
-  @ValidateIf(
-    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
-  )
-  @IsOptional()
-  LOGIC_FUNCTION_LAMBDA_RESOURCE_NAMESPACE?: string;
-
-  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
     description:
       'Code interpreter driver type - LOCAL for development (unsafe), E2B for sandboxed execution',

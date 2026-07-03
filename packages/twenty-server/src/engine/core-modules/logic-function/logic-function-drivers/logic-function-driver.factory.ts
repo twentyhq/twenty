@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
-import { isNonEmptyString } from '@sniptt/guards';
 
 import {
   type LogicFunctionDriver,
@@ -84,12 +83,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
           this.twentyConfigService.get(
             'LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET_REGION',
           ) ?? region;
-        const configuredNamespace = this.twentyConfigService
-          .get('LOGIC_FUNCTION_LAMBDA_RESOURCE_NAMESPACE')
-          ?.trim();
-        const resourceNamespace = isNonEmptyString(configuredNamespace)
-          ? configuredNamespace
-          : getLambdaResourceNamespace(lambdaRole);
+        const resourceNamespace = getLambdaResourceNamespace(lambdaRole);
 
         return new LambdaDriver({
           logicFunctionResourceService: this.logicFunctionResourceService,
