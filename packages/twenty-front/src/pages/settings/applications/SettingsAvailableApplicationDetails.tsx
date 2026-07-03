@@ -53,7 +53,7 @@ export const SettingsAvailableApplicationDetails = () => {
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
   const canInstallMarketplaceApps = useHasPermissionFlag(
-    PermissionFlagType.MARKETPLACE_APPS,
+    PermissionFlagType.APPLICATIONS,
   );
 
   const { data: applicationData } = useQuery(

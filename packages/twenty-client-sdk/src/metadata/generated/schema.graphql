@@ -2192,6 +2192,29 @@ type DeletedWorkspaceMember {
   userWorkspaceId: UUID
 }
 
+type MarketplaceApp {
+  id: String!
+  name: String!
+  description: String!
+  author: String!
+  category: String!
+  logo: String
+  sourcePackage: String
+  isFeatured: Boolean!
+}
+
+type MarketplaceAppDetail {
+  universalIdentifier: String!
+  id: String!
+  name: String!
+  sourceType: ApplicationRegistrationSourceType!
+  sourcePackage: String
+  latestAvailableVersion: String
+  isListed: Boolean!
+  isFeatured: Boolean!
+  manifest: JSON
+}
+
 type BillingEntitlement {
   key: BillingEntitlementKey!
   value: Boolean!
@@ -2410,29 +2433,6 @@ type File {
   path: String!
   size: Float!
   createdAt: DateTime!
-}
-
-type MarketplaceApp {
-  id: String!
-  name: String!
-  description: String!
-  author: String!
-  category: String!
-  logo: String
-  sourcePackage: String
-  isFeatured: Boolean!
-}
-
-type MarketplaceAppDetail {
-  universalIdentifier: String!
-  id: String!
-  name: String!
-  sourceType: ApplicationRegistrationSourceType!
-  sourcePackage: String
-  latestAvailableVersion: String
-  isListed: Boolean!
-  isFeatured: Boolean!
-  manifest: JSON
 }
 
 type PublicDomain {
@@ -3106,7 +3106,8 @@ type Query {
   getViewGroup(id: String!): ViewGroup
   findManyApplications: [Application!]!
   findOneApplication(id: UUID, universalIdentifier: UUID): Application!
-  getRoles: [Role!]!
+  findManyMarketplaceApps: [MarketplaceApp!]!
+  findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
   findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
   findManyApplicationRegistrations: [ApplicationRegistration!]!
@@ -3114,6 +3115,7 @@ type Query {
   findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
   findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariableDTO!]!
   applicationRegistrationTarballUrl(id: String!): String
+  getRoles: [Role!]!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   unsubscribeTopics: [UnsubscribeTopic!]!
   unsubscribePagePreviewUrl: String!
@@ -3155,8 +3157,6 @@ type Query {
   getAddressDetails(placeId: String!, token: String!): PlaceDetailsResult!
   getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   findManyPublicDomains: [PublicDomain!]!
-  findManyMarketplaceApps: [MarketplaceApp!]!
-  findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
 }
 
 input GetApiKeyInput {
@@ -3361,8 +3361,19 @@ type Mutation {
   updateManyViewGroups(inputs: [UpdateViewGroupInput!]!): [ViewGroup!]!
   deleteViewGroup(input: DeleteViewGroupInput!): ViewGroup!
   destroyViewGroup(input: DestroyViewGroupInput!): ViewGroup!
-  runWorkspaceMigration(workspaceMigration: WorkspaceMigrationInput!): Boolean!
+  installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
+  installApplication(universalIdentifier: String!, version: String): Application!
   uninstallApplication(universalIdentifier: String!): Boolean!
+  syncMarketplaceCatalog: Boolean!
+  createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
+  updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
+  deleteApplicationRegistration(id: String!): Boolean!
+  rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
+  createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
+  updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
+  deleteApplicationRegistrationVariable(id: String!): Boolean!
+  uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration!
+  transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!
   createOneRole(createRoleInput: CreateRoleInput!): Role!
   updateOneRole(updateRoleInput: UpdateRoleInput!): Role!
@@ -3373,15 +3384,6 @@ type Mutation {
   upsertRowLevelPermissionPredicates(input: UpsertRowLevelPermissionPredicatesInput!): UpsertRowLevelPermissionPredicatesResult!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   removeRoleFromAgent(agentId: UUID!): Boolean!
-  createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
-  updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
-  deleteApplicationRegistration(id: String!): Boolean!
-  rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
-  createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
-  updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
-  deleteApplicationRegistrationVariable(id: String!): Boolean!
-  uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration!
-  transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
   createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
@@ -3462,14 +3464,12 @@ type Mutation {
   deletePublicDomain(domain: String!): Boolean!
   checkPublicDomainValidRecords(domain: String!): DomainValidRecords
   createOneAppToken(input: CreateOneAppTokenInput!): AppToken!
-  installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
-  installApplication(universalIdentifier: String!, version: String): Application!
-  syncMarketplaceCatalog: Boolean!
   createDevelopmentApplication(universalIdentifier: String!, name: String!): DevelopmentApplication!
-  generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
+  runWorkspaceMigration(workspaceMigration: WorkspaceMigrationInput!): Boolean!
   syncApplication(manifest: JSON!, dryRun: Boolean): WorkspaceMigration!
   uploadApplicationFile(file: Upload!, applicationUniversalIdentifier: String!, fileFolder: FileFolder!, filePath: String!): File!
   upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
+  generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
 }
 
@@ -4263,20 +4263,43 @@ input DestroyViewGroupInput {
   id: UUID!
 }
 
-input WorkspaceMigrationInput {
-  actions: [WorkspaceMigrationDeleteActionInput!]!
+input CreateApplicationRegistrationInput {
+  name: String!
+  universalIdentifier: String
+  oAuthRedirectUris: [String!]
+  oAuthScopes: [String!]
 }
 
-input WorkspaceMigrationDeleteActionInput {
-  type: WorkspaceMigrationActionType!
-  metadataName: AllMetadataName!
-  universalIdentifier: String!
+input UpdateApplicationRegistrationInput {
+  id: String!
+  update: UpdateApplicationRegistrationPayload!
 }
 
-enum WorkspaceMigrationActionType {
-  delete
-  create
-  update
+input UpdateApplicationRegistrationPayload {
+  name: String
+  oAuthRedirectUris: [String!]
+  oAuthScopes: [String!]
+  isListed: Boolean
+  isPreInstalled: Boolean
+}
+
+input CreateApplicationRegistrationVariableInput {
+  applicationRegistrationId: String!
+  key: String!
+  value: String!
+  description: String
+  isSecret: Boolean
+}
+
+input UpdateApplicationRegistrationVariableInput {
+  id: String!
+  update: UpdateApplicationRegistrationVariablePayload!
+}
+
+input UpdateApplicationRegistrationVariablePayload {
+  value: String
+  resetValue: Boolean
+  description: String
 }
 
 input CreateRoleInput {
@@ -4372,45 +4395,6 @@ input RowLevelPermissionPredicateGroupInput {
   parentRowLevelPermissionPredicateGroupId: UUID
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
   positionInRowLevelPermissionPredicateGroup: Float
-}
-
-input CreateApplicationRegistrationInput {
-  name: String!
-  universalIdentifier: String
-  oAuthRedirectUris: [String!]
-  oAuthScopes: [String!]
-}
-
-input UpdateApplicationRegistrationInput {
-  id: String!
-  update: UpdateApplicationRegistrationPayload!
-}
-
-input UpdateApplicationRegistrationPayload {
-  name: String
-  oAuthRedirectUris: [String!]
-  oAuthScopes: [String!]
-  isListed: Boolean
-  isPreInstalled: Boolean
-}
-
-input CreateApplicationRegistrationVariableInput {
-  applicationRegistrationId: String!
-  key: String!
-  value: String!
-  description: String
-  isSecret: Boolean
-}
-
-input UpdateApplicationRegistrationVariableInput {
-  id: String!
-  update: UpdateApplicationRegistrationVariablePayload!
-}
-
-input UpdateApplicationRegistrationVariablePayload {
-  value: String
-  resetValue: Boolean
-  description: String
 }
 
 input SendEmailViaDomainInput {
@@ -4655,6 +4639,22 @@ input CreateOneAppTokenInput {
 
 input CreateAppTokenInput {
   expiresAt: DateTime!
+}
+
+input WorkspaceMigrationInput {
+  actions: [WorkspaceMigrationDeleteActionInput!]!
+}
+
+input WorkspaceMigrationDeleteActionInput {
+  type: WorkspaceMigrationActionType!
+  metadataName: AllMetadataName!
+  universalIdentifier: String!
+}
+
+enum WorkspaceMigrationActionType {
+  delete
+  create
+  update
 }
 
 type Subscription {

@@ -104,7 +104,7 @@ export const SettingsApplicationDetails = () => {
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
   const canInstallMarketplaceApps = useHasPermissionFlag(
-    PermissionFlagType.MARKETPLACE_APPS,
+    PermissionFlagType.APPLICATIONS,
   );
 
   const sourceType = application?.applicationRegistration?.sourceType;
