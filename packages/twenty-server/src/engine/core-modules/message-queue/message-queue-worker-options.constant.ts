@@ -9,9 +9,6 @@ export const QUEUE_WORKER_OPTIONS: Partial<
   [MessageQueue.aiStreamQueue]: {
     concurrency: 20,
     lockDuration: AI_STREAM_LOCK_DURATION_MS,
-    // A hard-killed stream job must fail, never silently re-run: a re-run
-    // re-executes tools with real side effects and re-bills the turn, and
-    // the heartbeat reap owns recovery
     maxStalledCount: 0,
     shutdownTimeoutMs: AI_STREAM_SHUTDOWN_DRAIN_MS,
   },
