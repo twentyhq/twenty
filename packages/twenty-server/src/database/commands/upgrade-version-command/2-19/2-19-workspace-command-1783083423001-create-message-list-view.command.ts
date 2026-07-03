@@ -26,7 +26,7 @@ const LIST_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = Object.values(
   LIST.views.allMessageLists.viewFields,
 ).map((viewField) => viewField.universalIdentifier);
 
-@RegisteredWorkspaceCommand('2.19.0', 1783030394000)
+@RegisteredWorkspaceCommand('2.19.0', 1783083423001)
 @Command({
   name: 'upgrade:2-19:create-message-list-view',
   description:
