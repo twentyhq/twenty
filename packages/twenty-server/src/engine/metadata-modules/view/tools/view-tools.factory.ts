@@ -18,6 +18,7 @@ import { ViewFieldService } from 'src/engine/metadata-modules/view-field/service
 import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
 
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
+import { CompleteViewUpsertService } from 'src/engine/metadata-modules/view/services/complete-view-upsert.service';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -277,6 +278,7 @@ type UpsertCompleteViewIdentifiers = {
 export class ViewToolsFactory {
   constructor(
     private readonly viewService: ViewService,
+    private readonly completeViewUpsertService: CompleteViewUpsertService,
     private readonly viewFieldService: ViewFieldService,
     private readonly viewQueryParamsService: ViewQueryParamsService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
@@ -701,24 +703,25 @@ VIEW TYPES: TABLE (default), KANBAN (requires mainGroupByFieldName, a SELECT fie
                 )
               : undefined;
 
-            const view = await this.viewService.upsertCompleteView({
-              workspaceId,
-              userWorkspaceId,
-              existingViewId,
-              objectMetadataId,
-              name: parameters.name,
-              icon: parameters.icon,
-              type: parameters.type,
-              visibility: parameters.visibility,
-              mainGroupByFieldMetadataId,
-              kanbanAggregateOperation: parameters.kanbanAggregateOperation,
-              kanbanAggregateOperationFieldMetadataId,
-              calendarLayout: parameters.calendarLayout,
-              calendarFieldMetadataId,
-              fields,
-              filters,
-              sorts,
-            });
+            const view =
+              await this.completeViewUpsertService.upsertCompleteView({
+                workspaceId,
+                userWorkspaceId,
+                existingViewId,
+                objectMetadataId,
+                name: parameters.name,
+                icon: parameters.icon,
+                type: parameters.type,
+                visibility: parameters.visibility,
+                mainGroupByFieldMetadataId,
+                kanbanAggregateOperation: parameters.kanbanAggregateOperation,
+                kanbanAggregateOperationFieldMetadataId,
+                calendarLayout: parameters.calendarLayout,
+                calendarFieldMetadataId,
+                fields,
+                filters,
+                sorts,
+              });
 
             return {
               id: view.id,

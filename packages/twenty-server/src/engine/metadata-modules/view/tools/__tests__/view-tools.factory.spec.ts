@@ -12,6 +12,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
+import { CompleteViewUpsertService } from 'src/engine/metadata-modules/view/services/complete-view-upsert.service';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewToolsFactory } from 'src/engine/metadata-modules/view/tools/view-tools.factory';
@@ -19,6 +20,7 @@ import { ViewToolsFactory } from 'src/engine/metadata-modules/view/tools/view-to
 describe('ViewToolsFactory', () => {
   let viewToolsFactory: ViewToolsFactory;
   let viewService: jest.Mocked<ViewService>;
+  let completeViewUpsertService: jest.Mocked<CompleteViewUpsertService>;
   let viewFieldService: jest.Mocked<ViewFieldService>;
   let viewQueryParamsService: jest.Mocked<ViewQueryParamsService>;
 
@@ -104,6 +106,11 @@ describe('ViewToolsFactory', () => {
             createOne: jest.fn(),
             updateOne: jest.fn(),
             deleteOne: jest.fn(),
+          },
+        },
+        {
+          provide: CompleteViewUpsertService,
+          useValue: {
             upsertCompleteView: jest.fn(),
           },
         },
@@ -151,6 +158,7 @@ describe('ViewToolsFactory', () => {
 
     viewToolsFactory = module.get<ViewToolsFactory>(ViewToolsFactory);
     viewService = module.get(ViewService);
+    completeViewUpsertService = module.get(CompleteViewUpsertService);
     viewFieldService = module.get(ViewFieldService);
     viewQueryParamsService = module.get(ViewQueryParamsService);
   });
@@ -608,7 +616,7 @@ describe('ViewToolsFactory', () => {
       });
 
       it('should create a view with fields, filters, and sorts referenced by name in a single upsert call', async () => {
-        viewService.upsertCompleteView.mockResolvedValue({
+        completeViewUpsertService.upsertCompleteView.mockResolvedValue({
           id: 'new-view-id',
           name: 'Pipeline',
           objectMetadataId: mockObjectMetadataId,
@@ -635,7 +643,7 @@ describe('ViewToolsFactory', () => {
         });
 
         expect(viewService.createOne).not.toHaveBeenCalled();
-        expect(viewService.upsertCompleteView).toHaveBeenCalledWith(
+        expect(completeViewUpsertService.upsertCompleteView).toHaveBeenCalledWith(
           expect.objectContaining({
             workspaceId: mockWorkspaceId,
             userWorkspaceId: mockUserWorkspaceId,
@@ -682,7 +690,7 @@ describe('ViewToolsFactory', () => {
       });
 
       it('should accept a field referenced by fieldMetadataId without name resolution', async () => {
-        viewService.upsertCompleteView.mockResolvedValue({
+        completeViewUpsertService.upsertCompleteView.mockResolvedValue({
           id: 'new-view-id',
           name: 'By Id',
           objectMetadataId: mockObjectMetadataId,
@@ -703,7 +711,7 @@ describe('ViewToolsFactory', () => {
           fields: [{ fieldMetadataId: mockStageFieldMetadataId }],
         });
 
-        expect(viewService.upsertCompleteView).toHaveBeenCalledWith(
+        expect(completeViewUpsertService.upsertCompleteView).toHaveBeenCalledWith(
           expect.objectContaining({
             fields: [
               {
@@ -737,7 +745,7 @@ describe('ViewToolsFactory', () => {
         };
 
         viewService.findById.mockResolvedValue(existingView as any);
-        viewService.upsertCompleteView.mockResolvedValue({
+        completeViewUpsertService.upsertCompleteView.mockResolvedValue({
           ...existingView,
           viewFilters: [{}],
         } as any);
@@ -752,7 +760,7 @@ describe('ViewToolsFactory', () => {
           filters: [{ fieldName: 'stage', operand: 'IS', value: ['WON'] }],
         });
 
-        expect(viewService.upsertCompleteView).toHaveBeenCalledWith(
+        expect(completeViewUpsertService.upsertCompleteView).toHaveBeenCalledWith(
           expect.objectContaining({
             existingViewId: mockViewId,
             objectMetadataId: mockObjectMetadataId,
@@ -776,7 +784,7 @@ describe('ViewToolsFactory', () => {
         };
 
         viewService.findById.mockResolvedValue(existingView as any);
-        viewService.upsertCompleteView.mockResolvedValue({
+        completeViewUpsertService.upsertCompleteView.mockResolvedValue({
           ...existingView,
           viewSorts: [],
         } as any);
@@ -791,7 +799,7 @@ describe('ViewToolsFactory', () => {
           sorts: [],
         });
 
-        expect(viewService.upsertCompleteView).toHaveBeenCalledWith(
+        expect(completeViewUpsertService.upsertCompleteView).toHaveBeenCalledWith(
           expect.objectContaining({
             existingViewId: mockViewId,
             sorts: [],
