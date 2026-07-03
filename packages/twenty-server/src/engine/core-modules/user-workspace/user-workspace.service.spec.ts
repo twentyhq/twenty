@@ -19,6 +19,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -654,6 +655,7 @@ describe('UserWorkspaceService', () => {
         displayName: 'Workspace 2',
         logo: 'logo2.png',
         workspaceSSOIdentityProviders: [],
+        workspaceDiscoverability: WorkspaceDiscoverability.PUBLIC,
       } as unknown as WorkspaceEntity;
 
       const user = {
@@ -714,6 +716,7 @@ describe('UserWorkspaceService', () => {
         displayName: 'Workspace 1',
         logo: 'logo1.png',
         workspaceSSOIdentityProviders: [],
+        workspaceDiscoverability: WorkspaceDiscoverability.PUBLIC,
       } as unknown as WorkspaceEntity;
 
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);

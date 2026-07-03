@@ -10,6 +10,7 @@ export enum SettingsPath {
   NewImapSmtpCaldavConnection = 'accounts/new-imap-smtp-caldav-connection',
   EditImapSmtpCaldavConnection = 'accounts/edit-imap-smtp-caldav-connection/:connectedAccountId',
   Billing = 'billing',
+  BillingPlans = 'billing/plans',
   Usage = 'billing/usage',
   UsageUserDetail = 'billing/usage/user/:userWorkspaceId',
   Enterprise = 'enterprise',
@@ -54,7 +55,6 @@ export enum SettingsPath {
   ApplicationPageLayoutDetail = 'applications/:applicationId/pageLayouts/:pageLayoutUniversalIdentifier',
   AvailableApplicationDetail = 'applications/available/:availableApplicationId',
   ApplicationRegistrationDetail = 'applications/registrations/:applicationRegistrationId',
-  ApplicationRegistrationConfigVariableDetails = 'applications/registrations/:applicationRegistrationId/config-variables/:variableKey',
   LogicFunctions = 'functions',
   NewLogicFunction = 'functions/new',
   LogicFunctionDetail = 'functions/:logicFunctionId',
@@ -85,7 +85,6 @@ export enum SettingsPath {
   AdminPanelUserDetail = 'admin-panel/users/:userId',
   AdminPanelWorkspaceDetail = 'admin-panel/workspaces/:workspaceId',
   AdminPanelApplicationRegistrationDetail = 'admin-panel/applications/registrations/:applicationRegistrationId',
-  AdminPanelApplicationRegistrationConfigVariableDetails = 'admin-panel/applications/registrations/:applicationRegistrationId/config-variables/:variableKey',
   AdminPanelWorkspaceChatThread = 'admin-panel/workspaces/:workspaceId/threads/:threadId',
 
   Roles = 'members/roles',

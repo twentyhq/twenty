@@ -38,7 +38,6 @@ import {
   PermissionFlagType,
   SubscriptionInterval,
   SubscriptionStatus,
-  SwitchBillingPlanDocument,
   SwitchSubscriptionIntervalDocument,
 } from '~/generated-metadata/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
@@ -69,7 +68,7 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const { currentResourceCreditBillingPrice } = useCurrentResourceCredit();
 
-  const { currentPlan, oppositPlan } = useCurrentPlan();
+  const { currentPlan } = useCurrentPlan();
   const { isEnterprisePlan, isYearlyPlan, isMonthlyPlan, isProPlan } =
     useCurrentBillingFlags();
   const { splitedPhaseItemsInPrices } = useSplitPhaseItemsInPrices();
@@ -91,8 +90,6 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const {
     getIntervalLabelAsAdjectiveCapitalize,
-    confirmationModalSwitchToProMessage,
-    confirmationModalSwitchToOrganizationMessage,
     confirmationModalSwitchToMonthlyMessage,
     confirmationModalSwitchToYearlyMessage,
     confirmationModalCancelPlanSwitchingMessage,
@@ -103,8 +100,6 @@ export const SettingsBillingSubscriptionInfo = ({
   const [switchSubscriptionIntervalMutation] = useMutation(
     SwitchSubscriptionIntervalDocument,
   );
-
-  const [switchBillingPlan] = useMutation(SwitchBillingPlanDocument);
 
   const [cancelSwitchBillingInterval] = useMutation(
     CancelSwitchBillingIntervalDocument,
@@ -277,13 +272,12 @@ export const SettingsBillingSubscriptionInfo = ({
     !shouldUpdatePayment &&
     isYearlyPlan &&
     (!nextInterval || currentInterval === nextInterval);
-  const canSwitchToOrganizationPlan =
-    isProPlan && (!nextPlan || currentPlan.planKey === nextPlan.planKey);
+  const canComparePlans =
+    (isProPlan || isEnterprisePlan) &&
+    (!nextPlan || currentPlan.planKey === nextPlan.planKey);
   const canCancelIntervalSwitch =
     isDefined(nextInterval) && currentInterval !== nextInterval;
   const canStartSubscription = isTrialPeriod && hasPermissionToEndTrialPeriod;
-  const canSwitchToProPlan =
-    isEnterprisePlan && (!nextPlan || currentPlan.planKey === nextPlan.planKey);
   const canCancelPlanSwitch =
     isDefined(nextPlan) && currentPlan.planKey !== nextPlan.planKey;
 
@@ -325,7 +319,6 @@ export const SettingsBillingSubscriptionInfo = ({
       : []),
   ];
   const [isSwitchingInterval, setIsSwitchingInterval] = useState(false);
-  const [isSwitchingPlan, setIsSwitchingPlan] = useState(false);
   const [isCancellingPlanSwitch, setIsCancellingPlanSwitch] = useState(false);
   const [isCancellingIntervalSwitch, setIsCancellingIntervalSwitch] =
     useState(false);
@@ -334,7 +327,6 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const isAnyActionLoading =
     isSwitchingInterval ||
-    isSwitchingPlan ||
     isCancellingPlanSwitch ||
     isCancellingIntervalSwitch ||
     isCancellingMeteredSwitch ||
@@ -413,26 +405,6 @@ export const SettingsBillingSubscriptionInfo = ({
     });
   };
 
-  const switchPlan = async () => {
-    await runBillingAction({
-      action: async () => {
-        const { data } = await switchBillingPlan();
-        if (isDefined(data?.switchBillingPlan.currentBillingSubscription)) {
-          applyBillingUpdate(data.switchBillingPlan);
-        }
-      },
-      getErrorMessage: () =>
-        t`Error while switching subscription to ${oppositPlan} Plan.`,
-      getSuccessMessage: () => {
-        return oppositPlan === BillingPlanKey.ENTERPRISE || isTrialPeriod
-          ? t`Subscription has been switched to ${oppositPlan} Plan.`
-          : t`Subscription will be switched to ${oppositPlan} Plan the ${getBeautifiedRenewDate()}.`;
-      },
-      isLoading: isSwitchingPlan,
-      setIsLoading: setIsSwitchingPlan,
-    });
-  };
-
   const cancelPlanSwitching = async () => {
     await runBillingAction({
       action: async () => {
@@ -504,15 +476,14 @@ export const SettingsBillingSubscriptionInfo = ({
           <SettingsBillingSubscriptionInfoCardHeaderActions
             canCancelIntervalSwitch={canCancelIntervalSwitch}
             canCancelPlanSwitch={canCancelPlanSwitch}
+            canComparePlans={canComparePlans}
             canStartSubscription={canStartSubscription}
-            canSwitchToOrganizationPlan={canSwitchToOrganizationPlan}
-            canSwitchToProPlan={canSwitchToProPlan}
+            isComparePlansActionPrimary={isProPlan && !isTrialPeriod}
             isCancellationScheduled={isCancellationScheduled}
             isEndTrialPeriodDisabled={
               isEndTrialPeriodLoading || isAnyActionLoading
             }
             isSubscriptionActionDisabled={isSubscriptionActionDisabled}
-            isTrialPeriod={isTrialPeriod}
             isUpdatePaymentDisabled={isUpdatePaymentDisabled}
             onCancelIntervalSwitch={() =>
               openModal(BILLING_MODAL_IDS.cancelSwitchBillingInterval)
@@ -521,12 +492,6 @@ export const SettingsBillingSubscriptionInfo = ({
               openModal(BILLING_MODAL_IDS.cancelSwitchBillingPlan)
             }
             onEndTrialPeriod={() => openModal(BILLING_MODAL_IDS.endTrialPeriod)}
-            onSwitchToOrganization={() =>
-              openModal(BILLING_MODAL_IDS.switchBillingPlanToEnterprise)
-            }
-            onSwitchToPro={() =>
-              openModal(BILLING_MODAL_IDS.switchBillingPlanToPro)
-            }
             onUpdatePayment={onUpdatePayment}
             shouldUpdatePayment={shouldUpdatePayment}
           />
@@ -559,17 +524,13 @@ export const SettingsBillingSubscriptionInfo = ({
         isCancellingPlanSwitch={isCancellingPlanSwitch}
         isEndTrialPeriodLoading={isEndTrialPeriodLoading}
         isSwitchingInterval={isSwitchingInterval}
-        isSwitchingPlan={isSwitchingPlan}
         onCancelIntervalSwitching={cancelIntervalSwitching}
         onCancelPlanSwitching={cancelPlanSwitching}
         onCancelResourceCreditSwitching={cancelResourceCreditSwitching}
         onEndTrialPeriod={endTrialPeriod}
         onSwitchInterval={switchInterval}
-        onSwitchPlan={switchPlan}
         startSubscriptionSubtitle={startSubscriptionSubtitle}
         switchToMonthlySubtitle={confirmationModalSwitchToMonthlyMessage()}
-        switchToOrganizationSubtitle={confirmationModalSwitchToOrganizationMessage()}
-        switchToProSubtitle={confirmationModalSwitchToProMessage()}
         switchToYearlySubtitle={confirmationModalSwitchToYearlyMessage()}
       />
     </Section>

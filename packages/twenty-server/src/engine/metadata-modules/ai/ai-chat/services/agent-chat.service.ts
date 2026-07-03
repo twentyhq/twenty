@@ -408,6 +408,19 @@ export class AgentChatService {
     } as AgentMessageEntity;
   }
 
+  async hasQueuedMessages({
+    threadId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    return this.messageRepository.existsBy(workspaceId, {
+      threadId,
+      status: AgentMessageStatus.QUEUED,
+    });
+  }
+
   async getQueuedMessages({
     threadId,
     workspaceId,
@@ -499,7 +512,10 @@ export class AgentChatService {
     answers: AskQuestionAnswer[];
     streamId: string;
     workspaceId: string;
-  }): Promise<{ turnId: string | null }> {
+  }): Promise<{
+    turnId: string | null;
+    rollback: { partId: string; previousOutput: Record<string, unknown> };
+  }> {
     const message = await this.messageRepository.findOne(workspaceId, {
       where: { id: messageId, threadId },
       relations: ['parts'],
@@ -576,7 +592,40 @@ export class AgentChatService {
       throw error;
     }
 
-    return { turnId: message.turnId };
+    return {
+      turnId: message.turnId,
+      rollback: { partId: pendingPart.id, previousOutput },
+    };
+  }
+
+  async restorePendingQuestion({
+    threadId,
+    messageId,
+    streamId,
+    workspaceId,
+    rollback,
+  }: {
+    threadId: string;
+    messageId: string;
+    streamId: string;
+    workspaceId: string;
+    rollback: { partId: string; previousOutput: Record<string, unknown> };
+  }): Promise<void> {
+    await this.messagePartRepository
+      .update(
+        workspaceId,
+        { id: rollback.partId },
+        { toolOutput: rollback.previousOutput },
+      )
+      .catch(() => {});
+
+    await this.threadRepository
+      .update(
+        workspaceId,
+        { id: threadId, activeStreamId: streamId },
+        { pendingQuestionMessageId: messageId, activeStreamId: null },
+      )
+      .catch(() => {});
   }
 
   private validateQuestionAnswers(
