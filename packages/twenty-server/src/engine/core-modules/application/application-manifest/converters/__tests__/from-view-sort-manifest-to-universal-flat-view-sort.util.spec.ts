@@ -29,8 +29,6 @@ describe('fromViewSortManifestToUniversalFlatViewSort', () => {
     expect(result.createdAt).toBe(now);
     expect(result.updatedAt).toBe(now);
     expect(result.deletedAt).toBeNull();
-    // Must be null, not undefined, to match the flat entity computed from the
-    // database and keep successive syncs idempotent
     expect(result.subFieldName).toBeNull();
   });
 
