@@ -98,11 +98,9 @@ describe('setFileResponseHeaders', () => {
   });
 
   it.each([
-    // Deprecated picture folders, no longer served by this endpoint
     FileFolder.ProfilePicture,
     FileFolder.WorkspaceLogo,
     FileFolder.PersonPicture,
-    // Folders holding mutable / non-picture files
     FileFolder.FilesField,
     FileFolder.Attachment,
     FileFolder.Workflow,
