@@ -10,6 +10,16 @@ const OWNER_WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
 const resolverNotFoundMessage = (universalIdentifier: string) =>
   `Server resolver function ${universalIdentifier} not found`;
 
+const requiresAuthenticationMessage = (universalIdentifier: string) =>
+  `Server resolver function ${universalIdentifier} requires authentication and cannot be dispatched through the public server route`;
+
+// Emitted once a resolver has passed the authorization boundary and been
+// dispatched to the executor. A raw-seeded function is absent from the
+// flat-entity cache the executor reads, so execution stops here — this message
+// is the proof of acceptance. Genuine 200 execution is covered by the
+// logic-function-execution integration suite, which builds real sources.
+const DISPATCHED_TO_EXECUTOR_MESSAGE = 'Logic function not found';
+
 type SeededLogicFunction = { id: string; universalIdentifier: string };
 
 describe('ServerRouteTrigger authorization (integration)', () => {
@@ -21,12 +31,15 @@ describe('ServerRouteTrigger authorization (integration)', () => {
   let applicationId: string;
 
   let nonExposedFunction: SeededLogicFunction;
-  let serverRouteExposedFunction: SeededLogicFunction;
+  let exposedFunction: SeededLogicFunction;
+  let authRequiredExposedFunction: SeededLogicFunction;
 
   const insertLogicFunction = async ({
     serverRouteExposed,
+    authRequired,
   }: {
     serverRouteExposed: boolean;
+    authRequired: boolean;
   }): Promise<SeededLogicFunction> => {
     const id = crypto.randomUUID();
     const universalIdentifier = crypto.randomUUID();
@@ -36,16 +49,16 @@ describe('ServerRouteTrigger authorization (integration)', () => {
         (id, name, "workspaceId", "universalIdentifier", "applicationId",
          "sourceHandlerPath", "builtHandlerPath", "handlerName",
          "httpRouteTriggerSettings", "serverRouteTriggerSettings")
-       VALUES ($1, $2, $3, $4, $5, 'src/handler.ts', 'dist/handler.js', 'main',
-         '{"path":"/proof","httpMethod":"POST","isAuthRequired":true}'::jsonb, $6)`,
+       VALUES ($1, $2, $3, $4, $5, 'src/handler.ts', 'dist/handler.js', 'main', $6, $7)`,
       [
         id,
-        serverRouteExposed
-          ? 'Server Route Auth - exposed resolver'
-          : 'Server Route Auth - non-exposed function',
+        `Server Route Auth - ${serverRouteExposed ? 'exposed' : 'non-exposed'}${authRequired ? ' auth-required' : ''}`,
         OWNER_WORKSPACE_ID,
         universalIdentifier,
         applicationId,
+        authRequired
+          ? '{"path":"/proof","httpMethod":"POST","isAuthRequired":true}'
+          : null,
         serverRouteExposed ? '{"forwardedRequestHeaders":[]}' : null,
       ],
     );
@@ -86,9 +99,15 @@ describe('ServerRouteTrigger authorization (integration)', () => {
 
     nonExposedFunction = await insertLogicFunction({
       serverRouteExposed: false,
+      authRequired: true,
     });
-    serverRouteExposedFunction = await insertLogicFunction({
+    exposedFunction = await insertLogicFunction({
       serverRouteExposed: true,
+      authRequired: false,
+    });
+    authRequiredExposedFunction = await insertLogicFunction({
+      serverRouteExposed: true,
+      authRequired: true,
     });
   });
 
@@ -113,21 +132,44 @@ describe('ServerRouteTrigger authorization (integration)', () => {
         .send({ any: 'payload' });
 
       expect(response.status).toBe(404);
+      expect(response.body?.code).toBe('LOGIC_FUNCTION_NOT_FOUND');
       expect(response.body?.messages).toEqual([
         resolverNotFoundMessage(nonExposedFunction.universalIdentifier),
       ]);
     });
 
-    it('still accepts a legitimately server-route-exposed resolver at the authorization boundary', async () => {
+    it('dispatches a server-route-exposed resolver to the executor instead of rejecting it', async () => {
+      const response = await request(baseUrl)
+        .post(`/webhooks/server/${exposedFunction.universalIdentifier}`)
+        .send({ any: 'payload' });
+
+      // The exposed resolver must reach the executor, not be rejected at the
+      // authorization boundary. A boundary rejection would carry the
+      // resolver-not-found message (404), the auth guard would answer 403, and
+      // a genuine platform/invalid-result failure would carry a different
+      // message — asserting the exact dispatched-to-executor outcome rules all
+      // of those out.
+      expect(response.status).toBe(404);
+      expect(response.body?.messages).toEqual([DISPATCHED_TO_EXECUTOR_MESSAGE]);
+      expect(response.body?.messages).not.toContain(
+        resolverNotFoundMessage(exposedFunction.universalIdentifier),
+      );
+    });
+
+    it('rejects a server-route-exposed resolver that requires authentication before executing it', async () => {
       const response = await request(baseUrl)
         .post(
-          `/webhooks/server/${serverRouteExposedFunction.universalIdentifier}`,
+          `/webhooks/server/${authRequiredExposedFunction.universalIdentifier}`,
         )
         .send({ any: 'payload' });
 
-      expect(response.body?.messages ?? []).not.toContain(
-        resolverNotFoundMessage(serverRouteExposedFunction.universalIdentifier),
-      );
+      expect(response.status).toBe(403);
+      expect(response.body?.code).toBe('RESOLVER_REQUIRES_AUTHENTICATION');
+      expect(response.body?.messages).toEqual([
+        requiresAuthenticationMessage(
+          authRequiredExposedFunction.universalIdentifier,
+        ),
+      ]);
     });
   });
 });

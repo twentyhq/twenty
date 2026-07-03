@@ -57,6 +57,13 @@ export class ServerRouteTriggerService {
       );
     }
 
+    if (resolver.httpRouteTriggerSettings?.isAuthRequired === true) {
+      throw new ServerRouteTriggerException(
+        `Server resolver function ${resolverLogicFunctionUniversalIdentifier} requires authentication and cannot be dispatched through the public server route`,
+        ServerRouteTriggerExceptionCode.RESOLVER_REQUIRES_AUTHENTICATION,
+      );
+    }
+
     const applicationRegistrationId =
       resolver.application?.applicationRegistration?.id;
 

@@ -193,6 +193,18 @@ describe('ServerRouteTriggerService', () => {
     expect(logicFunctionExecutorService.execute).not.toHaveBeenCalled();
   });
 
+  it('rejects and executes nothing when the resolver requires authentication', async () => {
+    resolverRow = {
+      ...buildResolverRow(),
+      httpRouteTriggerSettings: { isAuthRequired: true },
+    };
+
+    await expect(handle()).rejects.toMatchObject({
+      code: ServerRouteTriggerExceptionCode.RESOLVER_REQUIRES_AUTHENTICATION,
+    });
+    expect(logicFunctionExecutorService.execute).not.toHaveBeenCalled();
+  });
+
   it('throws RESOLVER_INVALID_RESULT when the resolver does not return a workspaceId', async () => {
     logicFunctionExecutorService.execute.mockReset();
     logicFunctionExecutorService.execute.mockResolvedValueOnce(
