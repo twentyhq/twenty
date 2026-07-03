@@ -48,6 +48,7 @@ export const SettingsWorkspaceEmail = () => {
     unsubscribePagePreviewUrl: string;
   }>(GET_UNSUBSCRIBE_PAGE_PREVIEW_URL, {
     client: apolloClient,
+    skip: !isEmailGroupFeatureEnabled,
   });
 
   const unsubscribePageUrl = unsubscribePreviewData?.unsubscribePagePreviewUrl;

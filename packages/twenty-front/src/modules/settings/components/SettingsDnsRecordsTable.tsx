@@ -85,7 +85,7 @@ export const SettingsDnsRecordsTable = ({
 
       {records.map((record, index) => (
         <StyledRecordTableRow
-          key={record.value}
+          key={`${index}-${record.type}-${record.key}`}
           gridAutoColumns={gridAutoColumns}
         >
           <TableCell>

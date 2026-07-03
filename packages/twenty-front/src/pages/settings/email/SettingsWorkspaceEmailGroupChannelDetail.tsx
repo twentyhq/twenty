@@ -233,10 +233,8 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
               description={t`Don't import emails from team@ support@ noreply@...`}
               checked={channel.excludeGroupEmails}
               divider
-              onChange={() =>
-                handleExcludeChange({
-                  excludeGroupEmails: !channel.excludeGroupEmails,
-                })
+              onChange={(checked) =>
+                handleExcludeChange({ excludeGroupEmails: checked })
               }
             />
             <SettingsOptionCardContentToggle
@@ -244,11 +242,8 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
               title={t`Exclude non-professional emails`}
               description={t`Don't create contacts from/to Gmail, Outlook emails`}
               checked={channel.excludeNonProfessionalEmails}
-              onChange={() =>
-                handleExcludeChange({
-                  excludeNonProfessionalEmails:
-                    !channel.excludeNonProfessionalEmails,
-                })
+              onChange={(checked) =>
+                handleExcludeChange({ excludeNonProfessionalEmails: checked })
               }
             />
           </Card>
