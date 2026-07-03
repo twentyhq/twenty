@@ -2,7 +2,7 @@ import { Logger, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { createUIMessageStream } from 'ai';
+import { createUIMessageStream, readUIMessageStream } from 'ai';
 import type {
   CodeExecutionData,
   ExtendedUIMessage,
@@ -33,6 +33,7 @@ import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-cha
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { findPendingQuestionPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-pending-question-part.util';
+import { AGENT_CHAT_CHECKPOINT_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-checkpoint-interval-ms.constant';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
 import type { AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
@@ -221,12 +222,18 @@ export class StreamAgentChatJob {
     titlePromise: Promise<string | null>;
     abortSignal: AbortSignal;
   }): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      const assistantMessageId = uuidv5(
-        data.streamId,
-        ASSISTANT_MESSAGE_ID_NAMESPACE,
-      );
+    const assistantMessageId = uuidv5(
+      data.streamId,
+      ASSISTANT_MESSAGE_ID_NAMESPACE,
+    );
 
+    const assistantMessageExistedAtStart =
+      await this.agentChatService.hasMessageById({
+        id: assistantMessageId,
+        workspaceId: data.workspaceId,
+      });
+
+    return new Promise<void>((resolve, reject) => {
       let streamUsage = {
         inputTokens: 0,
         outputTokens: 0,
@@ -239,6 +246,22 @@ export class StreamAgentChatJob {
       let streamError: unknown;
       let streamFinishError: unknown;
       let checkHasNoMoreAvailableCredits: () => boolean = () => false;
+
+      let persistChain: Promise<void> = Promise.resolve();
+      let lastCheckpointAt = 0;
+      let isFinalizingPersist = false;
+
+      const enqueueAssistantPersist = (
+        persist: () => Promise<void>,
+      ): Promise<void> => {
+        persistChain = persistChain.then(persist).catch((error) => {
+          this.logger.warn(
+            `Failed to checkpoint assistant message for stream ${data.streamId}: ${error instanceof Error ? error.message : String(error)}`,
+          );
+        });
+
+        return persistChain;
+      };
 
       // onFinish fires before the uiStream is fully drained. We use this
       // promise to coordinate: the IIFE waits for DB persist to complete
@@ -325,8 +348,11 @@ export class StreamAgentChatJob {
               onFinish: async ({ responseMessage, isAborted }) => {
                 // Rejecting here would race chunks still draining.
                 try {
+                  isFinalizingPersist = true;
+                  await persistChain;
                   await this.handleStreamFinish({
                     assistantMessageId,
+                    assistantMessageExistedAtStart,
                     responseMessage,
                     isAborted,
                     streamError,
@@ -360,11 +386,57 @@ export class StreamAgentChatJob {
         },
       });
 
+      const [publishStream, checkpointStream] = uiStream.tee();
+
+      void (async () => {
+        try {
+          for await (const message of readUIMessageStream<ExtendedUIMessage>({
+            stream: checkpointStream,
+            terminateOnError: false,
+          })) {
+            if (isFinalizingPersist || message.parts.length === 0) {
+              continue;
+            }
+
+            const now = Date.now();
+
+            if (now - lastCheckpointAt < AGENT_CHAT_CHECKPOINT_INTERVAL_MS) {
+              continue;
+            }
+
+            lastCheckpointAt = now;
+            const parts = message.parts;
+
+            void enqueueAssistantPersist(async () => {
+              if (isFinalizingPersist) {
+                return;
+              }
+
+              const { turnId } = await userMessagePromise;
+
+              if (!isDefined(turnId)) {
+                return;
+              }
+
+              await this.agentChatService.upsertAssistantMessage({
+                id: assistantMessageId,
+                threadId: data.threadId,
+                turnId,
+                parts,
+                workspaceId: data.workspaceId,
+              });
+            });
+          }
+        } catch {
+          // best-effort; the authoritative persist runs onFinish
+        }
+      })();
+
       // Publish all chunks first, then signal completion. This guarantees
       // message-persisted arrives after every stream-chunk on the client.
       void (async () => {
         try {
-          for await (const chunk of uiStream) {
+          for await (const chunk of publishStream) {
             if ((chunk as { type?: string }).type === 'error') {
               continue;
             }
@@ -500,6 +572,7 @@ export class StreamAgentChatJob {
 
   private async handleStreamFinish({
     assistantMessageId,
+    assistantMessageExistedAtStart,
     responseMessage,
     isAborted,
     streamError,
@@ -514,6 +587,7 @@ export class StreamAgentChatJob {
     userMessagePromise,
   }: {
     assistantMessageId: string;
+    assistantMessageExistedAtStart: boolean;
     responseMessage: Omit<ExtendedUIMessage, 'id'>;
     isAborted: boolean;
     streamError: unknown;
@@ -567,26 +641,26 @@ export class StreamAgentChatJob {
 
     const userMessage = await userMessagePromise;
 
-    // Idempotent per stream: assistantMessageId is derived from the streamId,
-    // so a retried job for this stream is skipped here while each distinct
-    // resume in the turn persists its own message.
-    const assistantMessageAlreadyPersisted =
-      await this.agentChatService.hasMessageById({
+    if (isDefined(userMessage.turnId)) {
+      await this.agentChatService.upsertAssistantMessage({
+        id: assistantMessageId,
+        threadId,
+        turnId: userMessage.turnId,
+        parts: responseMessage.parts,
+        workspaceId,
+      });
+    } else if (!assistantMessageExistedAtStart) {
+      await this.agentChatService.addMessage({
+        threadId,
+        uiMessage: responseMessage,
         id: assistantMessageId,
         workspaceId,
       });
-
-    if (assistantMessageAlreadyPersisted) {
-      return;
     }
 
-    await this.agentChatService.addMessage({
-      threadId,
-      uiMessage: responseMessage,
-      id: assistantMessageId,
-      turnId: userMessage.turnId ?? undefined,
-      workspaceId,
-    });
+    if (assistantMessageExistedAtStart) {
+      return;
+    }
 
     await this.threadRepository.update(
       workspaceId,
