@@ -16,8 +16,10 @@ const TRUSTED_BY_LOGOS = [
 const StyledRow = styled.div`
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: center;
+  max-width: 100%;
 `;
 
 const StyledBadge = styled.div<{ hasClusterLeading: boolean }>`

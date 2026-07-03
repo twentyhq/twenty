@@ -17,6 +17,7 @@ const StyledCard = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[3]};
+  max-width: 100%;
   overflow: hidden;
   padding-bottom: ${themeCssVariables.spacing[3]};
   width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;

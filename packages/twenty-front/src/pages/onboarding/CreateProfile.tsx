@@ -35,6 +35,7 @@ const StyledForm = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[8]};
+  max-width: 100%;
   padding-bottom: ${themeCssVariables.spacing[4]};
   width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
@@ -53,6 +54,7 @@ const StyledNameField = styled.div`
 
 const StyledButtonContainer = styled.div`
   display: flex;
+  max-width: 100%;
   width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
 

@@ -43,6 +43,7 @@ const StyledHeading = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
+  max-width: 100%;
   width: ${UPGRADE_STEP_CONTENT_WIDTH}px;
 `;
 
@@ -50,6 +51,7 @@ const StyledCards = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing['1.5']};
+  max-width: 100%;
   width: ${UPGRADE_STEP_CONTENT_WIDTH}px;
 `;
 
@@ -58,6 +60,7 @@ const StyledFooter = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing['1.5']};
+  max-width: 100%;
   width: ${UPGRADE_STEP_CONTENT_WIDTH}px;
 `;
 

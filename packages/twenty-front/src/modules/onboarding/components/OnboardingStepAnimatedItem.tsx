@@ -1,8 +1,15 @@
+import { styled } from '@linaria/react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { type ReactNode } from 'react';
 import { ONBOARDING_MOTION_SLIDE_OFFSET } from '@/onboarding/constants/OnboardingMotionSlideOffset';
 import { ONBOARDING_MOTION_STAGGER_DELAY } from '@/onboarding/constants/OnboardingMotionStaggerDelay';
 import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
+
+const StyledAnimatedItemBase = styled.div`
+  max-width: 100%;
+`;
+
+const StyledAnimatedItem = motion.create(StyledAnimatedItemBase);
 
 type OnboardingStepAnimatedItemProps = {
   index: number;
@@ -19,7 +26,7 @@ export const OnboardingStepAnimatedItem = ({
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <motion.div
+    <StyledAnimatedItem
       className={className}
       initial={{
         opacity: 0,
@@ -32,6 +39,6 @@ export const OnboardingStepAnimatedItem = ({
       }}
     >
       {children}
-    </motion.div>
+    </StyledAnimatedItem>
   );
 };

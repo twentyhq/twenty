@@ -14,6 +14,7 @@ import { SkipBookOnboardingStepDocument } from '~/generated-metadata/graphql';
 const StyledCoverImage = styled.img`
   border-radius: ${themeCssVariables.border.radius.sm};
   height: 204px;
+  max-width: 100%;
   object-fit: cover;
   width: 320px;
 `;
