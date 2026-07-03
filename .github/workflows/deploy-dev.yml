@@ -1,0 +1,77 @@
+name: Deploy to ECS (dev)
+
+# main → dev: build the Twenty image and roll the twenty-server / twenty-worker ECS services in
+# the momentum dev account (240037737452, cluster `main`, ECR momentum/twenty). Auth is OIDC via
+# the `twenty-publish` role. Other environments will get their own accounts; this deploys dev only.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# OIDC: the job assumes the `twenty-publish` IAM role via a short-lived token — no stored keys.
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  AWS_ACCOUNT_ID: "240037737452"
+  ECR_NAMESPACE: momentum
+  ECR_REPO: twenty
+  ECS_CLUSTER: main
+  SERVER_SERVICE: twenty-server
+  WORKER_SERVICE: twenty-worker
+
+jobs:
+  deploy:
+    name: Build & deploy Twenty
+    # arm64 runner: the image is built linux/arm64 to match the Fargate task platform.
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/twenty-publish
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        run: |
+          aws ecr get-login-password --region "$AWS_REGION" \
+            | docker login --username AWS --password-stdin "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
+
+      - name: Build, push, and deploy
+        run: |
+          set -euo pipefail
+          IMAGE="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_NAMESPACE/$ECR_REPO"
+          APP_VERSION="$(node -p "require('./package.json').version")"
+          SHA_TAG="regie-${GITHUB_SHA:0:10}"
+
+          # The ECS task definitions reference the mutable `regie-dev-latest` tag, so pushing it and
+          # forcing a new deployment rolls the services onto this build. The SHA tag is for traceability.
+          docker buildx build \
+            --platform=linux/arm64 \
+            --target twenty \
+            -f packages/twenty-docker/twenty/Dockerfile \
+            --build-arg APP_VERSION="$APP_VERSION" \
+            -t "$IMAGE:regie-dev-latest" \
+            -t "$IMAGE:$SHA_TAG" \
+            --push \
+            --progress=plain \
+            .
+
+          # Trigger the rollout on both services and return — don't block on services-stable (a slow
+          # or crash-looping task would otherwise hang the job until the waiter times out).
+          for svc in "$SERVER_SERVICE" "$WORKER_SERVICE"; do
+            echo "Forcing new deployment on $svc"
+            aws ecs update-service \
+              --cluster "$ECS_CLUSTER" \
+              --service "$svc" \
+              --force-new-deployment \
+              --query 'service.deployments[0].{status:status,taskDefinition:taskDefinition}' \
+              --output table
+          done
