@@ -93,7 +93,7 @@ export class MarketplaceQueryService {
   ): MarketplaceAppDTO {
     return {
       id: catalogCard.universalIdentifier,
-      name: catalogCard.displayName ?? catalogCard.name,
+      name: catalogCard.name,
       description: catalogCard.description ?? '',
       author: catalogCard.author ?? 'Unknown',
       category: catalogCard.category ?? '',

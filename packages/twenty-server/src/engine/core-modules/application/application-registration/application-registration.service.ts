@@ -51,6 +51,15 @@ const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegist
     'isFeatured',
     'isPreInstalled',
     'logo',
+    'description',
+    'author',
+    'category',
+    'websiteUrl',
+    'aboutDescription',
+    'termsUrl',
+    'emailSupport',
+    'issueReportUrl',
+    'screenshots',
     'createdAt',
     'updatedAt',
   ];
@@ -61,7 +70,6 @@ export type ApplicationRegistrationCatalogCard = {
   name: string;
   sourcePackage: string | null;
   isFeatured: boolean;
-  displayName: string | null;
   description: string | null;
   author: string | null;
   category: string | null;
@@ -147,7 +155,7 @@ export class ApplicationRegistrationService {
   ): Promise<PublicApplicationRegistrationDTO | null> {
     const registration = await this.applicationRegistrationRepository.findOne({
       where: { oAuthClientId: clientId },
-      select: ['id', 'name', 'manifest', 'oAuthScopes'],
+      select: ['id', 'name', 'logo', 'websiteUrl', 'oAuthScopes'],
     });
 
     if (!registration) {
@@ -157,8 +165,8 @@ export class ApplicationRegistrationService {
     return {
       id: registration.id,
       name: registration.name,
-      logoUrl: registration.manifest?.application?.logoUrl ?? null,
-      websiteUrl: registration.manifest?.application?.websiteUrl ?? null,
+      logoUrl: registration.logo,
+      websiteUrl: registration.websiteUrl,
       oAuthScopes: registration.oAuthScopes,
     };
   }
@@ -291,6 +299,15 @@ export class ApplicationRegistrationService {
       name: manifest.application.displayName,
       manifest,
       logo: manifest.application.logoUrl ?? null,
+      description: manifest.application.description ?? null,
+      author: manifest.application.author ?? null,
+      category: manifest.application.category ?? null,
+      websiteUrl: manifest.application.websiteUrl ?? null,
+      aboutDescription: manifest.application.aboutDescription ?? null,
+      termsUrl: manifest.application.termsUrl ?? null,
+      emailSupport: manifest.application.emailSupport ?? null,
+      issueReportUrl: manifest.application.issueReportUrl ?? null,
+      screenshots: manifest.application.screenshots ?? [],
       ...(sourceType !== undefined && { sourceType }),
     });
   }
@@ -361,6 +378,16 @@ export class ApplicationRegistrationService {
         latestAvailableVersion: params.latestAvailableVersion,
         manifest: params.manifest,
         logo: params.manifest?.application?.logoUrl ?? null,
+        description: params.manifest?.application?.description ?? null,
+        author: params.manifest?.application?.author ?? null,
+        category: params.manifest?.application?.category ?? null,
+        websiteUrl: params.manifest?.application?.websiteUrl ?? null,
+        aboutDescription:
+          params.manifest?.application?.aboutDescription ?? null,
+        termsUrl: params.manifest?.application?.termsUrl ?? null,
+        emailSupport: params.manifest?.application?.emailSupport ?? null,
+        issueReportUrl: params.manifest?.application?.issueReportUrl ?? null,
+        screenshots: params.manifest?.application?.screenshots ?? [],
         isFeatured,
       });
     } else {
@@ -374,6 +401,16 @@ export class ApplicationRegistrationService {
         isFeatured,
         manifest: params.manifest,
         logo: params.manifest?.application?.logoUrl ?? null,
+        description: params.manifest?.application?.description ?? null,
+        author: params.manifest?.application?.author ?? null,
+        category: params.manifest?.application?.category ?? null,
+        websiteUrl: params.manifest?.application?.websiteUrl ?? null,
+        aboutDescription:
+          params.manifest?.application?.aboutDescription ?? null,
+        termsUrl: params.manifest?.application?.termsUrl ?? null,
+        emailSupport: params.manifest?.application?.emailSupport ?? null,
+        issueReportUrl: params.manifest?.application?.issueReportUrl ?? null,
+        screenshots: params.manifest?.application?.screenshots ?? [],
         oAuthClientId: v4(),
         oAuthRedirectUris: [],
         oAuthScopes: [],
@@ -430,6 +467,17 @@ export class ApplicationRegistrationService {
     ApplicationRegistrationCatalogCard[]
   > {
     const registrations = await this.applicationRegistrationRepository.find({
+      select: [
+        'id',
+        'universalIdentifier',
+        'name',
+        'sourcePackage',
+        'isFeatured',
+        'logo',
+        'description',
+        'author',
+        'category',
+      ],
       where: {
         isListed: true,
         sourceType: ApplicationRegistrationSourceType.NPM,
@@ -442,14 +490,10 @@ export class ApplicationRegistrationService {
       name: registration.name,
       sourcePackage: registration.sourcePackage,
       isFeatured: registration.isFeatured,
-      displayName: registration.manifest?.application?.displayName ?? null,
-      description: registration.manifest?.application?.description ?? null,
-      author: registration.manifest?.application?.author ?? null,
-      category: registration.manifest?.application?.category ?? null,
-      logoUrl:
-        registration.logo ??
-        registration.manifest?.application?.logoUrl ??
-        null,
+      description: registration.description,
+      author: registration.author,
+      category: registration.category,
+      logoUrl: registration.logo,
     }));
   }
 
