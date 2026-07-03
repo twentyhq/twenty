@@ -175,6 +175,10 @@ export const useGraphQLErrorHandlerHook = <
                 const status = error.extensions?.http?.status as number;
 
                 metricKey = statusToMetricKey[status];
+
+                if (!metricKey) {
+                  metricKey = MetricsKeys.GraphqlOperation500;
+                }
               }
 
               if (metricKey) {
@@ -189,9 +193,22 @@ export const useGraphQLErrorHandlerHook = <
             });
 
             // Step 2: Send errors to monitoring service (with stack traces)
-            const errorsToCapture = processedErrors.filter(
-              shouldCaptureException,
-            );
+            const seenCaptureFingerprints = new Set<string>();
+            const errorsToCapture = processedErrors.filter((error) => {
+              if (!shouldCaptureException(error)) {
+                return false;
+              }
+
+              const captureFingerprint = `${error.name}:${error.message}:${error.stack}`;
+
+              if (seenCaptureFingerprints.has(captureFingerprint)) {
+                return false;
+              }
+
+              seenCaptureFingerprints.add(captureFingerprint);
+
+              return true;
+            });
 
             if (errorsToCapture.length > 0) {
               const eventIds = exceptionHandlerService.captureExceptions(
