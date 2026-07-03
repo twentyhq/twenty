@@ -89,13 +89,21 @@ export class BullMQDriver
   }
 
   async onModuleDestroy() {
-    const workers = Object.values(this.workerMap);
+    const workers = Object.entries(this.workerMap);
     const queues = Object.values(this.queueMap);
 
-    await Promise.all([
-      ...queues.map((q) => q.close()),
-      ...workers.map((w) => w.close()),
-    ]);
+    if (workers.length > 0) {
+      this.logger.log(
+        `Draining active jobs on queues: ${workers.map(([queueName]) => queueName).join(', ')}`,
+      );
+    }
+
+    // Workers close first so jobs finishing during the drain can still
+    // enqueue follow-up jobs through the queue instances
+    await Promise.all(workers.map(([, worker]) => worker.close()));
+    await Promise.all(queues.map((queue) => queue.close()));
+
+    this.logger.log('Message queue shutdown complete');
   }
 
   work<T>(
