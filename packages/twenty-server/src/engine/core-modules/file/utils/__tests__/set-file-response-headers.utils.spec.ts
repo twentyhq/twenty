@@ -1,3 +1,5 @@
+import { FileFolder } from 'twenty-shared/types';
+
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
 import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.utils';
 
@@ -69,6 +71,50 @@ describe('setFileResponseHeaders', () => {
       expect(res.setHeader).toHaveBeenCalledWith(
         'Content-Disposition',
         'attachment',
+      );
+    },
+  );
+
+  it('should not set Cache-Control when no fileFolder is provided', () => {
+    const res = createMockResponse();
+
+    setFileResponseHeaders(res as any, 'image/png');
+
+    expect(res.setHeader).not.toHaveBeenCalledWith(
+      'Cache-Control',
+      expect.anything(),
+    );
+  });
+
+  it('should set an immutable Cache-Control for the CorePicture folder', () => {
+    const res = createMockResponse();
+
+    setFileResponseHeaders(res as any, 'image/png', FileFolder.CorePicture);
+
+    expect(res.setHeader).toHaveBeenCalledWith(
+      'Cache-Control',
+      'private, max-age=86400, immutable',
+    );
+  });
+
+  it.each([
+    FileFolder.ProfilePicture,
+    FileFolder.WorkspaceLogo,
+    FileFolder.PersonPicture,
+    FileFolder.FilesField,
+    FileFolder.Attachment,
+    FileFolder.Workflow,
+    FileFolder.PublicAsset,
+  ])(
+    'should not set Cache-Control for non-cacheable folder %s',
+    (fileFolder) => {
+      const res = createMockResponse();
+
+      setFileResponseHeaders(res as any, 'image/png', fileFolder);
+
+      expect(res.setHeader).not.toHaveBeenCalledWith(
+        'Cache-Control',
+        expect.anything(),
       );
     },
   );
