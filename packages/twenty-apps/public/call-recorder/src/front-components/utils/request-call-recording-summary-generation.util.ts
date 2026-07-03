@@ -7,6 +7,7 @@ type GenerateSummariesResponse = {
   outcome?: string;
   generatedCallRecordingIds?: string[];
   failedCallRecordingIds?: string[];
+  erroredCallRecordingIds?: string[];
 };
 
 const buildSnackbarForResponse = (
@@ -14,8 +15,9 @@ const buildSnackbarForResponse = (
 ): { message: string; variant: 'success' | 'error' } => {
   const generatedCallRecordingCount = (response.generatedCallRecordingIds ?? [])
     .length;
-  const failedCallRecordingCount = (response.failedCallRecordingIds ?? [])
-    .length;
+  const failedCallRecordingCount =
+    (response.failedCallRecordingIds ?? []).length +
+    (response.erroredCallRecordingIds ?? []).length;
 
   if (response.outcome === 'disabled') {
     return {

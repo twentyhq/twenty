@@ -43,6 +43,8 @@ export const findCallRecordingForSummary = async (
     id: node.id,
     title: getString(node.title),
     transcript: node.transcript ?? undefined,
+    // Blank summaries are not usable; normalize them as missing so generation
+    // can repair blank summary records.
     summaryMarkdown: getString(node.summary?.markdown),
     createdBy: {
       source: getString(node.createdBy?.source),

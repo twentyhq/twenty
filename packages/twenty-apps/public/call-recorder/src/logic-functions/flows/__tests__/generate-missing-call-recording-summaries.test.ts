@@ -64,6 +64,7 @@ describe('generateMissingCallRecordingSummaries', () => {
     expect(result).toEqual({
       generatedCallRecordingIds: ['call-recording-1', 'call-recording-2'],
       failedCallRecordingIds: [],
+      erroredCallRecordingIds: [],
       skippedCallRecordingIds: [],
       remainingCallRecordingIds: [],
       continuationRequested: false,
@@ -115,7 +116,7 @@ describe('generateMissingCallRecordingSummaries', () => {
     });
   });
 
-  it('keeps failed ids out of the continuation payload', async () => {
+  it('separates empty summaries from thrown generation errors', async () => {
     generateCallRecordingSummaryMock
       .mockResolvedValueOnce({ outcome: 'empty-summary' })
       .mockRejectedValueOnce(new Error('agent exploded'))
@@ -134,7 +135,8 @@ describe('generateMissingCallRecordingSummaries', () => {
 
     expect(result).toEqual({
       generatedCallRecordingIds: ['call-recording-3'],
-      failedCallRecordingIds: ['call-recording-1', 'call-recording-2'],
+      failedCallRecordingIds: ['call-recording-1'],
+      erroredCallRecordingIds: ['call-recording-2'],
       skippedCallRecordingIds: [],
       remainingCallRecordingIds: [],
       continuationRequested: false,
@@ -158,6 +160,7 @@ describe('generateMissingCallRecordingSummaries', () => {
       'call-recording-2',
     ]);
     expect(result.failedCallRecordingIds).toEqual([]);
+    expect(result.erroredCallRecordingIds).toEqual([]);
   });
 
   it('stops spending immediately when summaries get disabled mid-run', async () => {

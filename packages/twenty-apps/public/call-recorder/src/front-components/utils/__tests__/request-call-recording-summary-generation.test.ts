@@ -25,6 +25,7 @@ describe('requestCallRecordingSummaryGeneration', () => {
       outcome: 'processed',
       generatedCallRecordingIds: ['call-recording-1'],
       failedCallRecordingIds: [],
+      erroredCallRecordingIds: [],
     });
   });
 
@@ -40,6 +41,7 @@ describe('requestCallRecordingSummaryGeneration', () => {
       outcome: 'processed',
       generatedCallRecordingIds: ['call-recording-1'],
       failedCallRecordingIds: ['call-recording-2'],
+      erroredCallRecordingIds: [],
     });
 
     await requestCallRecordingSummaryGeneration({
@@ -52,6 +54,24 @@ describe('requestCallRecordingSummaryGeneration', () => {
     );
     expect(enqueueSnackbarMock).toHaveBeenCalledWith({
       message: 'Some summaries generated, some failed.',
+      variant: 'error',
+    });
+  });
+
+  it('reports generation errors as failed summaries', async () => {
+    postMock.mockResolvedValue({
+      outcome: 'processed',
+      generatedCallRecordingIds: [],
+      failedCallRecordingIds: [],
+      erroredCallRecordingIds: ['call-recording-1'],
+    });
+
+    await requestCallRecordingSummaryGeneration({
+      calendarEventIds: ['calendar-event-1'],
+    });
+
+    expect(enqueueSnackbarMock).toHaveBeenCalledWith({
+      message: 'Summary generation failed.',
       variant: 'error',
     });
   });

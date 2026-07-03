@@ -59,6 +59,7 @@ const buildRoutePayload = (
 const BATCH_RESULT = {
   generatedCallRecordingIds: ['call-recording-1'],
   failedCallRecordingIds: [],
+  erroredCallRecordingIds: [],
   skippedCallRecordingIds: [],
   remainingCallRecordingIds: [],
   continuationRequested: false,

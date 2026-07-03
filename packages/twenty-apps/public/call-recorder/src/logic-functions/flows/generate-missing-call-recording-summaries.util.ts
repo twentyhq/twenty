@@ -2,7 +2,12 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { requestCallRecordingSummariesContinuation } from 'src/logic-functions/data/request-call-recording-summaries-continuation.util';
 import { generateCallRecordingSummary } from 'src/logic-functions/flows/generate-call-recording-summary.util';
+import { type GenerateCallRecordingSummaryResult } from 'src/logic-functions/flows/generate-call-recording-summary-result.type';
 import { type GenerateMissingCallRecordingSummariesResult } from 'src/logic-functions/flows/generate-missing-call-recording-summaries-result.type';
+
+type BatchSummaryOutcome =
+  | GenerateCallRecordingSummaryResult['outcome']
+  | 'generation-error';
 
 export const generateMissingCallRecordingSummaries = async ({
   client,
@@ -18,6 +23,7 @@ export const generateMissingCallRecordingSummaries = async ({
   const remainingCallRecordingIds = [...callRecordingIds];
   const generatedCallRecordingIds: string[] = [];
   const failedCallRecordingIds: string[] = [];
+  const erroredCallRecordingIds: string[] = [];
   const skippedCallRecordingIds: string[] = [];
   let slowestItemMs = 0;
 
@@ -28,14 +34,14 @@ export const generateMissingCallRecordingSummaries = async ({
     const callRecordingId = remainingCallRecordingIds[0];
     const itemStartedAtMs = getNowMs();
 
-    let outcome: string;
+    let outcome: BatchSummaryOutcome;
 
     try {
       ({ outcome } = await generateCallRecordingSummary(client, {
         callRecordingId,
       }));
     } catch {
-      outcome = 'empty-summary';
+      outcome = 'generation-error';
     }
 
     remainingCallRecordingIds.shift();
@@ -46,6 +52,7 @@ export const generateMissingCallRecordingSummaries = async ({
       return {
         generatedCallRecordingIds,
         failedCallRecordingIds,
+        erroredCallRecordingIds,
         skippedCallRecordingIds,
         remainingCallRecordingIds,
         continuationRequested: false,
@@ -56,6 +63,8 @@ export const generateMissingCallRecordingSummaries = async ({
       generatedCallRecordingIds.push(callRecordingId);
     } else if (outcome === 'empty-summary') {
       failedCallRecordingIds.push(callRecordingId);
+    } else if (outcome === 'generation-error') {
+      erroredCallRecordingIds.push(callRecordingId);
     } else {
       skippedCallRecordingIds.push(callRecordingId);
     }
@@ -75,6 +84,7 @@ export const generateMissingCallRecordingSummaries = async ({
   return {
     generatedCallRecordingIds,
     failedCallRecordingIds,
+    erroredCallRecordingIds,
     skippedCallRecordingIds,
     remainingCallRecordingIds,
     continuationRequested,
