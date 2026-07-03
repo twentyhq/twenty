@@ -192,6 +192,7 @@ export class FileStorageService {
       expiresInSeconds?: number;
       responseContentType?: string;
       responseContentDisposition?: string;
+      responseCacheControl?: string;
     },
   ): Promise<string | null> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
@@ -203,6 +204,7 @@ export class FileStorageService {
       expiresInSeconds: params.expiresInSeconds,
       responseContentType: params.responseContentType,
       responseContentDisposition: params.responseContentDisposition,
+      responseCacheControl: params.responseCacheControl,
     });
   }
 
