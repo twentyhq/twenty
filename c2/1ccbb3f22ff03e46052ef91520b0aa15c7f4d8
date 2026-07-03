@@ -1,0 +1,22 @@
+packages/twenty-front/src/pages/settings/email/SettingsWorkspaceEmail.tsx
+  s_c175d3fe58a362::t_8e35fa620c48f2 106
+  s_c175d3fe58a362::t_1c56736f2f62b1 1
+  s_c175d3fe58a362::t_07ecdad18897a2 45,47-51,53
+  s_c175d3fe58a362::t_31eaaaa3b30614 13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "c21ccbb3f22ff03e46052ef91520b0aa15c7f4d8",
+  "prompts": {},
+  "sessions": {
+    "s_c175d3fe58a362": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8281f503-1e35-47d7-8ac7-3d59a5110016",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
