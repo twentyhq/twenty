@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import {
   Navigate,
+  type Params,
   Route,
   Routes,
   useLocation,
@@ -38,22 +39,39 @@ const LEGACY_API_WEBHOOKS_SETTINGS_PATHS = {
   WebhookDetail: 'api-webhooks/webhooks/:webhookId',
 } as const;
 
-type LegacySettingsPathRedirectProps<T extends SettingsPath> = {
-  to: T;
+type LegacySettingsPathRedirectProps = {
+  to:
+    | SettingsPath.ApiWebhooks
+    | SettingsPath.NewApiKey
+    | SettingsPath.ApiKeyDetail
+    | SettingsPath.NewWebhook
+    | SettingsPath.WebhookDetail;
 };
 
-function LegacySettingsPathRedirect<T extends SettingsPath>({
-  to,
-}: LegacySettingsPathRedirectProps<T>) {
+const getLegacySettingsPathRedirectPathname = (
+  to: LegacySettingsPathRedirectProps['to'],
+  params: Readonly<Params<string>>,
+) => {
+  switch (to) {
+    case SettingsPath.ApiKeyDetail:
+      return getSettingsPath(SettingsPath.ApiKeyDetail, {
+        apiKeyId: params.apiKeyId ?? null,
+      });
+    case SettingsPath.WebhookDetail:
+      return getSettingsPath(SettingsPath.WebhookDetail, {
+        webhookId: params.webhookId ?? null,
+      });
+    case SettingsPath.ApiWebhooks:
+    case SettingsPath.NewApiKey:
+    case SettingsPath.NewWebhook:
+      return getSettingsPath(to);
+  }
+};
+
+function LegacySettingsPathRedirect({ to }: LegacySettingsPathRedirectProps) {
   const location = useLocation();
   const params = useParams();
-  const hasParams = Object.keys(params).length > 0;
-  const pathname = getSettingsPath(
-    to,
-    (hasParams ? params : undefined) as Parameters<
-      typeof getSettingsPath<T>
-    >[1],
-  );
+  const pathname = getLegacySettingsPathRedirectPathname(to, params);
 
   return (
     <Navigate to={`${pathname}${location.search}${location.hash}`} replace />

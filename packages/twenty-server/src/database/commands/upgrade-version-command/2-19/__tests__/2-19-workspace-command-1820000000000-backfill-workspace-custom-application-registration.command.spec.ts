@@ -1,7 +1,7 @@
 import { type Repository } from 'typeorm';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { BackfillWorkspaceCustomApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-workspace-command-1782853718000-backfill-workspace-custom-application-registration.command';
+import { BackfillWorkspaceCustomApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-workspace-command-1820000000000-backfill-workspace-custom-application-registration.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
