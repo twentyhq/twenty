@@ -14,8 +14,8 @@ const pillClassName = css`
   background: ${themeCssVariables.background.secondary};
   border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.pill};
-  corner-shape: round;
   color: ${themeCssVariables.font.color.tertiary};
+  corner-shape: round;
   display: inline-flex;
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[1]};

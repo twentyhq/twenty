@@ -80,8 +80,8 @@ const StyledStatusPill = styled.span<{ tone: BillingStatusTone }>`
   align-items: center;
   background-color: ${({ tone }) => STATUS_PILL_COLORS[tone].background};
   border-radius: ${themeCssVariables.border.radius.pill};
-  corner-shape: round;
   color: ${({ tone }) => STATUS_PILL_COLORS[tone].color};
+  corner-shape: round;
   display: inline-flex;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};

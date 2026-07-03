@@ -50,9 +50,9 @@ const StyledBetaTag = styled.span`
   background-color: ${themeCssVariables.background.tertiary};
   border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.pill};
-  corner-shape: round;
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.tertiary};
+  corner-shape: round;
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};

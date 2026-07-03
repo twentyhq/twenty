@@ -8,9 +8,9 @@ const StyledTag = styled.div`
   background-color: ${themeCssVariables.color.green3};
   border: 1px solid ${themeCssVariables.color.green4};
   border-radius: ${themeCssVariables.border.radius.pill};
-  corner-shape: round;
   box-sizing: border-box;
   color: ${themeCssVariables.color.green9};
+  corner-shape: round;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[6]};

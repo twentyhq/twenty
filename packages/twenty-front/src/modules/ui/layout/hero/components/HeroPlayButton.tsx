@@ -14,9 +14,9 @@ const StyledButton = styled.button`
   background: ${themeCssVariables.background.primary};
   border: none;
   border-radius: 50%;
-  corner-shape: round;
   box-shadow: ${themeCssVariables.boxShadow.strong};
   color: ${themeCssVariables.font.color.tertiary};
+  corner-shape: round;
   cursor: pointer;
   display: inline-flex;
   height: 44px;

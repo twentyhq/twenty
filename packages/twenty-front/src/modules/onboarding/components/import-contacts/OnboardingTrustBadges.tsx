@@ -25,9 +25,9 @@ const StyledBadge = styled.div`
   background-color: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.pill};
-  corner-shape: round;
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.light};
+  corner-shape: round;
   display: flex;
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.semiBold};

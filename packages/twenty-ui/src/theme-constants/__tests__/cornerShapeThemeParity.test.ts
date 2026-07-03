@@ -14,6 +14,12 @@ const DIST_DIR = path.resolve(__dirname, '../../../dist');
 
 const CORNER_RADIUS_TOKENS = ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'] as const;
 const MAXED_RADIUS_TOKENS = ['pill', 'rounded'] as const;
+// Shape-independent radii for elements that keep corner-shape: round
+// (checkboxes, chips, tags): same visual size in both modes.
+const ROUND_RADIUS_TOKENS = [
+  { token: 'sm-round', matchesBaseToken: 'sm' },
+  { token: 'md-round', matchesBaseToken: 'md' },
+] as const;
 
 const readThemeCss = (fileName: string) =>
   fs.readFileSync(path.join(THEME_CONSTANTS_DIR, fileName), 'utf-8');
@@ -70,6 +76,16 @@ describe.each(['theme-light.css', 'theme-dark.css'])(
       'does not redefine the %s token, which is already at its geometric maximum',
       (token) => {
         expect(squircleBlock).not.toContain(`--t-border-radius-${token}`);
+      },
+    );
+
+    it.each(ROUND_RADIUS_TOKENS)(
+      'keeps the shape-independent $token token undoubled and equal to the base $matchesBaseToken value',
+      ({ token, matchesBaseToken }) => {
+        expect(squircleBlock).not.toContain(`--t-border-radius-${token}`);
+        expect(extractRadiusPx(baseCss, token)).toBe(
+          extractRadiusPx(baseCss, matchesBaseToken),
+        );
       },
     );
 

@@ -54,7 +54,9 @@ const StyledSeparator = styled.div`
 
 const StyledButtonContainer = styled.div`
   align-items: center;
-  border-radius: ${themeCssVariables.border.radius.md};
+  border-radius: calc(
+    ${themeCssVariables.border.radius.md} - ${themeCssVariables.spacing[1]}
+  );
   box-sizing: border-box;
   cursor: pointer;
   display: flex;

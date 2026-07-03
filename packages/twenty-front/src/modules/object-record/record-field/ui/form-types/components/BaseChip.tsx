@@ -9,11 +9,12 @@ const StyledChip = styled.div<{ deletable: boolean; danger: boolean }>`
     danger ? themeCssVariables.color.red3 : themeCssVariables.color.blue3};
   border-color: ${({ danger }) =>
     danger ? themeCssVariables.color.red5 : themeCssVariables.color.blue5};
-  border-radius: ${themeCssVariables.border.radius.md};
+  border-radius: ${themeCssVariables.border.radius.smRound};
   border-style: solid;
   border-width: 1px;
   box-sizing: border-box;
   column-gap: ${themeCssVariables.spacing[1]};
+  corner-shape: round;
   cursor: ${({ deletable }) => (deletable ? 'pointer' : 'default')};
   display: inline-flex;
   flex-direction: row;
@@ -37,8 +38,8 @@ const StyledDelete = styled.button<{ danger: boolean }>`
   align-items: center;
   background: none;
   border: none;
-  border-bottom-right-radius: ${themeCssVariables.border.radius.md};
-  border-top-right-radius: ${themeCssVariables.border.radius.md};
+  border-bottom-right-radius: ${themeCssVariables.border.radius.smRound};
+  border-top-right-radius: ${themeCssVariables.border.radius.smRound};
   box-sizing: border-box;
   color: ${({ danger }) =>
     danger ? themeCssVariables.color.red : themeCssVariables.color.blue};

@@ -20,9 +20,9 @@ const StyledUploader = styled.button`
   background: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.rounded};
-  corner-shape: round;
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.light};
+  corner-shape: round;
   cursor: pointer;
   display: flex;
   flex-shrink: 0;

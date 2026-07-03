@@ -26,9 +26,9 @@ const StyledStepCircleBase = styled.div<{ isInNextSteps: boolean }>`
       ? themeCssVariables.border.color.medium
       : themeCssVariables.border.color.inverted} !important;
   border-radius: 50%;
-  corner-shape: round;
   border-style: solid;
   border-width: 1px;
+  corner-shape: round;
   display: flex;
   flex-basis: auto;
   flex-shrink: 0;

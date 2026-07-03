@@ -72,8 +72,8 @@ const StyledBadge = styled.span`
   align-items: center;
   background-color: ${themeCssVariables.background.tertiary};
   border-radius: ${themeCssVariables.border.radius.pill};
-  corner-shape: round;
   color: ${themeCssVariables.font.color.tertiary};
+  corner-shape: round;
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
