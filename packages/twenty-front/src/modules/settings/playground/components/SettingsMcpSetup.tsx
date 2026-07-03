@@ -11,7 +11,7 @@ import GeminiCliLogo from '@/settings/playground/assets/mcp-clients/gemini-cli.s
 import GooseLogo from '@/settings/playground/assets/mcp-clients/goose.svg';
 import JetBrainsLogo from '@/settings/playground/assets/mcp-clients/jetbrains.svg';
 import LibreChatLogo from '@/settings/playground/assets/mcp-clients/librechat.svg';
-import LmStudioLogo from '@/settings/playground/assets/mcp-clients/lm-studio.svg';
+import LmStudioLogo from '@/settings/playground/assets/mcp-clients/lm-studio.png';
 import RaycastLogo from '@/settings/playground/assets/mcp-clients/raycast.svg';
 import ReplitLogo from '@/settings/playground/assets/mcp-clients/replit.svg';
 import VsCodeLogo from '@/settings/playground/assets/mcp-clients/vs-code.svg';
@@ -449,7 +449,7 @@ export const SettingsMcpSetup = () => {
           description: t`Add the Twenty remote server with LM Studio's install link.`,
           ctaLabel: t`Install`,
           href: buildLmStudioInstallLink(mcpServerUrl),
-          logo: renderLogoImage(LmStudioLogo, { invertInDarkMode: true }),
+          logo: renderLogoImage(LmStudioLogo),
         },
       ],
     },
