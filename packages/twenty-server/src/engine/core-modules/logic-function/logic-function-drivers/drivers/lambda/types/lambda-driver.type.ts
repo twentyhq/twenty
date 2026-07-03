@@ -44,8 +44,6 @@ export interface LambdaDriverOptions extends LambdaClientConfig {
   subhostingRole?: string;
   layerBucket: string;
   layerBucketRegion: string;
-  // Isolates shared Lambda resources (builder/yarn-install/common-layer/deps)
-  // per instance so co-located instances in one account+region don't collide.
   resourceNamespace: string;
 }
 

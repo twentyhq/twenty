@@ -20,4 +20,10 @@ describe('getLambdaResourceNamespace', () => {
 
     expect(namespaceA).not.toBe(namespaceB);
   });
+
+  it.each([undefined, ''])('throws when the role is missing (%p)', (role) => {
+    expect(() => getLambdaResourceNamespace(role as unknown as string)).toThrow(
+      'LOGIC_FUNCTION_LAMBDA_ROLE is required',
+    );
+  });
 });

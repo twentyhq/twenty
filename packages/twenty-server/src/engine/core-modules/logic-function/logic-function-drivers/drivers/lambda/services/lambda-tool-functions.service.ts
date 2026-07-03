@@ -9,6 +9,7 @@ import {
   InvokeCommand,
   LogType,
   PublishLayerVersionCommand,
+  ResourceConflictException,
   ResourceNotFoundException,
 } from '@aws-sdk/client-lambda';
 import { Logger } from '@nestjs/common';
@@ -249,7 +250,13 @@ export class LambdaToolFunctionsService {
         EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
       };
 
-      await lambdaClient.send(new CreateFunctionCommand(params));
+      try {
+        await lambdaClient.send(new CreateFunctionCommand(params));
+      } catch (error) {
+        if (!(error instanceof ResourceConflictException)) {
+          throw error;
+        }
+      }
     } finally {
       await temporaryDirManager.clean();
     }
@@ -290,7 +297,13 @@ export class LambdaToolFunctionsService {
         EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
       };
 
-      await lambdaClient.send(new CreateFunctionCommand(params));
+      try {
+        await lambdaClient.send(new CreateFunctionCommand(params));
+      } catch (error) {
+        if (!(error instanceof ResourceConflictException)) {
+          throw error;
+        }
+      }
     } finally {
       await temporaryDirManager.clean();
     }
@@ -298,12 +311,6 @@ export class LambdaToolFunctionsService {
     await this.awsClient.waitFunctionActive(builderFunctionName);
   }
 
-  // Shared tool functions are namespaced per instance (see
-  // getLambdaResourceNamespace), but a name can still resolve to a function
-  // created by a prior instance whose execution role was since deleted — invokes
-  // then fail with "The role defined for the function cannot be assumed by
-  // Lambda". Treat a role mismatch as unhealthy: delete it so the caller
-  // recreates it with the configured role.
   private async toolFunctionExistsWithExpectedRole(
     functionName: string,
   ): Promise<boolean> {

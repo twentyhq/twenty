@@ -83,8 +83,6 @@ export class LambdaAwsClientService {
     );
   }
 
-  // No waitUntilFunctionNotExists helper exists in this SDK version, so poll
-  // GetFunction until it reports the function is gone before recreating it.
   async waitFunctionDeleted(
     functionName: string,
     maxWaitTime: number = UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS,
