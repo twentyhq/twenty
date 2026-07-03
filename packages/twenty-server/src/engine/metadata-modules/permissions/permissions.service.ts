@@ -238,6 +238,90 @@ export class PermissionsService {
     );
   }
 
+  public async validateUserWorkspaceCanAssignRoleOrThrow({
+    userWorkspaceId,
+    workspaceId,
+    roleId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+    roleId: string;
+  }): Promise<void> {
+    const roleToAssign = await this.roleRepository.findOne(workspaceId, {
+      where: { id: roleId },
+      relations: ['rolePermissionFlags', 'rolePermissionFlags.permissionFlag'],
+    });
+
+    if (!isDefined(roleToAssign)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.ROLE_NOT_FOUND,
+        PermissionsExceptionCode.ROLE_NOT_FOUND,
+      );
+    }
+
+    const callerRoles = await this.userRoleService
+      .getRolesByUserWorkspaces({
+        userWorkspaceIds: [userWorkspaceId],
+        workspaceId,
+      })
+      .then(
+        (rolesByUserWorkspace) =>
+          rolesByUserWorkspace.get(userWorkspaceId) ?? [],
+      );
+
+    if (callerRoles.length === 0) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+        PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+      );
+    }
+
+    if (!this.callerRolesCoverRolePermissions({ callerRoles, roleToAssign })) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+  }
+
+  private callerRolesCoverRolePermissions({
+    callerRoles,
+    roleToAssign,
+  }: {
+    callerRoles: RoleEntity[];
+    roleToAssign: RoleEntity;
+  }): boolean {
+    // canUpdateAllSettings / canAccessAllTools are intentionally omitted here:
+    // they are fully expanded into the per-flag check below (a role with
+    // canUpdateAllSettings grants every settings flag).
+    const objectRecordPermissions = [
+      'canReadAllObjectRecords',
+      'canUpdateAllObjectRecords',
+      'canSoftDeleteAllObjectRecords',
+      'canDestroyAllObjectRecords',
+    ] as const;
+
+    const callerCoversObjectRecordPermissions = objectRecordPermissions.every(
+      (objectRecordPermission) =>
+        !roleToAssign[objectRecordPermission] ||
+        callerRoles.some((callerRole) => callerRole[objectRecordPermission]),
+    );
+
+    if (!callerCoversObjectRecordPermissions) {
+      return false;
+    }
+
+    return Object.values(PermissionFlagType).every((flag) => {
+      if (!this.checkRolePermissions(roleToAssign, flag)) {
+        return true;
+      }
+
+      return callerRoles.some((callerRole) =>
+        this.checkRolePermissions(callerRole, flag),
+      );
+    });
+  }
+
   public checkRolePermissions(
     role: RoleEntity,
     setting: PermissionFlagType,

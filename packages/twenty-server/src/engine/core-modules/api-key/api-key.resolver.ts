@@ -14,10 +14,12 @@ import { RevokeApiKeyInput } from 'src/engine/core-modules/api-key/dtos/revoke-a
 import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.input';
 import { apiKeyGraphqlApiExceptionHandler } from 'src/engine/core-modules/api-key/utils/api-key-graphql-api-exception-handler.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequireAccessTokenGuard } from 'src/engine/guards/require-access-token.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 
@@ -34,6 +36,7 @@ export class ApiKeyResolver {
   constructor(
     private readonly apiKeyService: ApiKeyService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   @Query(() => [ApiKeyEntity])
@@ -68,8 +71,15 @@ export class ApiKeyResolver {
   @Mutation(() => ApiKeyEntity)
   async createApiKey(
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('input') input: CreateApiKeyInput,
   ): Promise<ApiKeyEntity> {
+    await this.permissionsService.validateUserWorkspaceCanAssignRoleOrThrow({
+      userWorkspaceId,
+      workspaceId: workspace.id,
+      roleId: input.roleId,
+    });
+
     return this.apiKeyService.create({
       name: input.name,
       expiresAt: new Date(input.expiresAt),
@@ -110,10 +120,17 @@ export class ApiKeyResolver {
   @Mutation(() => Boolean)
   async assignRoleToApiKey(
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('apiKeyId', { type: () => UUIDScalarType }) apiKeyId: string,
     @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
   ): Promise<boolean> {
     try {
+      await this.permissionsService.validateUserWorkspaceCanAssignRoleOrThrow({
+        userWorkspaceId,
+        workspaceId: workspace.id,
+        roleId,
+      });
+
       await this.apiKeyRoleService.assignRoleToApiKey({
         apiKeyId,
         roleId,
