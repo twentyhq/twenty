@@ -318,14 +318,6 @@ const SettingsAdminApplicationRegistrationDetail = lazy(() =>
   ),
 );
 
-const SettingsAdminApplicationRegistrationConfigVariableDetail = lazy(() =>
-  import('~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigVariableDetail').then(
-    (module) => ({
-      default: module.SettingsAdminApplicationRegistrationConfigVariableDetail,
-    }),
-  ),
-);
-
 const SettingsAvailableApplicationDetails = lazy(() =>
   import('~/pages/settings/applications/SettingsAvailableApplicationDetails').then(
     (module) => ({
@@ -338,14 +330,6 @@ const SettingsApplicationRegistrationDetails = lazy(() =>
   import('~/pages/settings/applications/SettingsApplicationRegistrationDetails').then(
     (module) => ({
       default: module.SettingsApplicationRegistrationDetails,
-    }),
-  ),
-);
-
-const SettingsApplicationRegistrationConfigVariableDetail = lazy(() =>
-  import('~/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail').then(
-    (module) => ({
-      default: module.SettingsApplicationRegistrationConfigVariableDetail,
     }),
   ),
 );
@@ -433,6 +417,12 @@ const SettingsAccountsCalendars = lazy(() =>
 const SettingsBilling = lazy(() =>
   import('~/pages/settings/billing/SettingsBilling').then((module) => ({
     default: module.SettingsBilling,
+  })),
+);
+
+const SettingsBillingPlans = lazy(() =>
+  import('~/pages/settings/billing/SettingsBillingPlans').then((module) => ({
+    default: module.SettingsBillingPlans,
   })),
 );
 
@@ -731,6 +721,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsWorkspaceUnsubscribeTopicDetail />}
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
+        <Route
+          path={SettingsPath.BillingPlans}
+          element={<SettingsBillingPlans />}
+        />
         <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
         <Route
           path={SettingsPath.UsageUserDetail}
@@ -993,10 +987,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.ApplicationPageLayoutDetail}
           element={<SettingsLayoutPageLayoutDetail />}
         />
-        <Route
-          path={SettingsPath.ApplicationRegistrationConfigVariableDetails}
-          element={<SettingsApplicationRegistrationConfigVariableDetail />}
-        />
       </Route>
 
       <Route
@@ -1083,14 +1073,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           <Route
             path={SettingsPath.AdminPanelApplicationRegistrationDetail}
             element={<SettingsAdminApplicationRegistrationDetail />}
-          />
-          <Route
-            path={
-              SettingsPath.AdminPanelApplicationRegistrationConfigVariableDetails
-            }
-            element={
-              <SettingsAdminApplicationRegistrationConfigVariableDetail />
-            }
           />
           <Route
             path={SettingsPath.AdminPanelWorkspaceChatThread}

@@ -20,6 +20,10 @@
     border-radius: 50%;
   }
 
+  &[data-clickable] {
+    cursor: pointer;
+  }
+
   &[data-clickable]:hover {
     box-shadow: 0 0 0 4px var(--t-background-transparent-light);
   }

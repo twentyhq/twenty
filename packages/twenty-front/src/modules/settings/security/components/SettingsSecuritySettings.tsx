@@ -178,7 +178,7 @@ export const SettingsSecuritySettings = () => {
     hasBypassProviderAvailable;
 
   const hasEnterpriseAccess =
-    currentWorkspace?.hasValidSignedEnterpriseKey === true;
+    currentWorkspace?.hasValidEnterpriseValidityToken === true;
   const isEventLogsEnabled = hasEnterpriseAccess && isClickHouseConfigured;
 
   return (

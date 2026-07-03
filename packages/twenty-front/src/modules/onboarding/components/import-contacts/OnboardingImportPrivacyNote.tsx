@@ -13,6 +13,10 @@ const StyledNote = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
+const StyledNoteText = styled.span`
+  line-height: 1.4;
+`;
+
 export const OnboardingImportPrivacyNote = () => {
   const { t } = useLingui();
 
@@ -22,7 +26,9 @@ export const OnboardingImportPrivacyNote = () => {
         size={PRIVACY_NOTE_ICON_SIZE}
         color={themeCssVariables.font.color.tertiary}
       />
-      {t`Only you will be able to see your emails and events`}
+      <StyledNoteText>
+        {t`Only you will be able to see your emails and events`}
+      </StyledNoteText>
     </StyledNote>
   );
 };

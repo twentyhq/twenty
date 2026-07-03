@@ -1,4 +1,4 @@
-import { AppRouter } from '@/app/components/AppRouter';
+import { DomainShell } from '@/app/components/DomainShell';
 import { I18nActivationGate } from '@/app/components/I18nActivationGate';
 import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
@@ -35,7 +35,7 @@ export const App = () => {
                     <ClickOutsideListenerContext.Provider
                       value={{ excludedClickOutsideId: undefined }}
                     >
-                      <AppRouter />
+                      <DomainShell />
                     </ClickOutsideListenerContext.Provider>
                   </HelmetProvider>
                 </ExceptionHandlerProvider>

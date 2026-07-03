@@ -377,6 +377,8 @@ export default defineFrontComponent({
 Tajné proměnné (`isSecret: true`) **nejsou** zpřístupněny front-endovým komponentám. Jsou k dispozici pouze v [logických funkcích](/l/cs/developers/extend/apps/logic/logic-functions), které běží na straně serveru. Tím se zabrání odesílání citlivých hodnot, jako jsou API klíče, do prohlížeče.
 </Warning>
 
+`getApplicationVariable` vždy vrací **string** (nebo `undefined`), bez ohledu na deklarovaný `type` proměnné. Řetězec je serializován konzistentně podle typu (logické hodnoty jako `"true"` / `"false"`, čísla jako desetinné řetězce, pole / objekty jako JSON), ve stejném formátu, jaký používá `process.env` v logických funkcích — zpracujte jej sami (`Number(...)`, `JSON.parse(...)`, `=== 'true'`). Viz [Typy proměnných](/l/cs/developers/extend/apps/config/application#variable-types).
+
 Následující systémové proměnné jsou vždy dostupné přes `process.env`:
 
 | Proměnná                  | Popis                                                                                          |

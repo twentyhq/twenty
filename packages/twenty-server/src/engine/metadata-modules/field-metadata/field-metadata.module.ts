@@ -47,6 +47,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
     TokenModule,
     WorkspaceCacheStorageModule,
     FeatureFlagModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature([
