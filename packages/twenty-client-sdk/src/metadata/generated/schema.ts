@@ -2997,7 +2997,7 @@ export type WorkspaceMigrationActionType = 'delete' | 'create' | 'update'
 
 export type AnalyticsType = 'PAGEVIEW' | 'TRACK'
 
-export type FileFolder = 'ProfilePicture' | 'WorkspaceLogo' | 'Attachment' | 'PersonPicture' | 'CorePicture' | 'File' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'AppTarball' | 'GeneratedSdkClient' | 'Dpa'
+export type FileFolder = 'CorePicture' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'AppTarball' | 'GeneratedSdkClient' | 'Dpa'
 
 export interface Subscription {
     onEventSubscription?: EventSubscription
@@ -9306,12 +9306,7 @@ export const enumAnalyticsType = {
 }
 
 export const enumFileFolder = {
-   ProfilePicture: 'ProfilePicture' as const,
-   WorkspaceLogo: 'WorkspaceLogo' as const,
-   Attachment: 'Attachment' as const,
-   PersonPicture: 'PersonPicture' as const,
    CorePicture: 'CorePicture' as const,
-   File: 'File' as const,
    AgentChat: 'AgentChat' as const,
    BuiltLogicFunction: 'BuiltLogicFunction' as const,
    BuiltFrontComponent: 'BuiltFrontComponent' as const,
