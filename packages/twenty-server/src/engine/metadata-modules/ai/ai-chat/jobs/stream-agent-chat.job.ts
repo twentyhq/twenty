@@ -86,9 +86,6 @@ export class StreamAgentChatJob {
       abortController.abort();
     });
 
-    // A worker-shutdown abort carries an AiException reason so the stream
-    // terminates as a retryable failure, unlike a user cancel which resolves
-    // cleanly
     context?.abortSignal?.addEventListener(
       'abort',
       () => {
