@@ -25,6 +25,7 @@ import {
   type UpdateApplicationRegistrationPayload,
 } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -51,6 +52,15 @@ const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegist
     'isFeatured',
     'isPreInstalled',
     'logo',
+    'description',
+    'author',
+    'category',
+    'websiteUrl',
+    'aboutDescription',
+    'termsUrl',
+    'emailSupport',
+    'issueReportUrl',
+    'screenshots',
     'createdAt',
     'updatedAt',
   ];
@@ -61,7 +71,6 @@ export type ApplicationRegistrationCatalogCard = {
   name: string;
   sourcePackage: string | null;
   isFeatured: boolean;
-  displayName: string | null;
   description: string | null;
   author: string | null;
   category: string | null;
@@ -147,7 +156,7 @@ export class ApplicationRegistrationService {
   ): Promise<PublicApplicationRegistrationDTO | null> {
     const registration = await this.applicationRegistrationRepository.findOne({
       where: { oAuthClientId: clientId },
-      select: ['id', 'name', 'manifest', 'oAuthScopes'],
+      select: ['id', 'name', 'logo', 'websiteUrl', 'oAuthScopes'],
     });
 
     if (!registration) {
@@ -157,8 +166,8 @@ export class ApplicationRegistrationService {
     return {
       id: registration.id,
       name: registration.name,
-      logoUrl: registration.manifest?.application?.logoUrl ?? null,
-      websiteUrl: registration.manifest?.application?.websiteUrl ?? null,
+      logoUrl: registration.logo,
+      websiteUrl: registration.websiteUrl,
       oAuthScopes: registration.oAuthScopes,
     };
   }
@@ -290,7 +299,7 @@ export class ApplicationRegistrationService {
       ...existing,
       name: manifest.application.displayName,
       manifest,
-      logo: manifest.application.logoUrl ?? null,
+      ...fromManifestApplicationToDisplayFields(manifest.application),
       ...(sourceType !== undefined && { sourceType }),
     });
   }
@@ -360,7 +369,7 @@ export class ApplicationRegistrationService {
         sourcePackage: params.sourcePackage,
         latestAvailableVersion: params.latestAvailableVersion,
         manifest: params.manifest,
-        logo: params.manifest?.application?.logoUrl ?? null,
+        ...fromManifestApplicationToDisplayFields(params.manifest?.application),
         isFeatured,
       });
     } else {
@@ -373,7 +382,7 @@ export class ApplicationRegistrationService {
         isListed: true,
         isFeatured,
         manifest: params.manifest,
-        logo: params.manifest?.application?.logoUrl ?? null,
+        ...fromManifestApplicationToDisplayFields(params.manifest?.application),
         oAuthClientId: v4(),
         oAuthRedirectUris: [],
         oAuthScopes: [],
@@ -430,6 +439,17 @@ export class ApplicationRegistrationService {
     ApplicationRegistrationCatalogCard[]
   > {
     const registrations = await this.applicationRegistrationRepository.find({
+      select: [
+        'id',
+        'universalIdentifier',
+        'name',
+        'sourcePackage',
+        'isFeatured',
+        'logo',
+        'description',
+        'author',
+        'category',
+      ],
       where: {
         isListed: true,
         sourceType: ApplicationRegistrationSourceType.NPM,
@@ -442,14 +462,10 @@ export class ApplicationRegistrationService {
       name: registration.name,
       sourcePackage: registration.sourcePackage,
       isFeatured: registration.isFeatured,
-      displayName: registration.manifest?.application?.displayName ?? null,
-      description: registration.manifest?.application?.description ?? null,
-      author: registration.manifest?.application?.author ?? null,
-      category: registration.manifest?.application?.category ?? null,
-      logoUrl:
-        registration.logo ??
-        registration.manifest?.application?.logoUrl ??
-        null,
+      description: registration.description,
+      author: registration.author,
+      category: registration.category,
+      logoUrl: registration.logo,
     }));
   }
 
