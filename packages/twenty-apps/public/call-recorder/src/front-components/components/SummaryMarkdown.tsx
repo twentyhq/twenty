@@ -1,31 +1,31 @@
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SummaryInlineSegments } from 'src/front-components/components/SummaryInlineSegments';
-import { recordingThemeCssVariables } from 'src/front-components/constants/recording-theme-css-variables';
 import { parseSummaryMarkdownBlocks } from 'src/front-components/utils/parse-summary-markdown-blocks.util';
 
 const TOP_LEVEL_HEADING_MAX = 2;
 
 const StyledSummary = styled.div`
-  color: ${recordingThemeCssVariables.font.colorSecondary};
+  color: ${() => themeCssVariables.font.color.secondary};
   display: flex;
   flex-direction: column;
-  font-family: ${recordingThemeCssVariables.font.family};
-  font-size: ${recordingThemeCssVariables.font.sizeSm};
-  gap: ${recordingThemeCssVariables.spacing[2]};
+  font-family: ${() => themeCssVariables.font.family};
+  font-size: ${() => themeCssVariables.font.size.sm};
+  gap: ${() => themeCssVariables.spacing[2]};
   line-height: 1.5;
 `;
 
 const StyledHeading = styled.h3<{ $isTopLevel: boolean }>`
-  color: ${recordingThemeCssVariables.font.colorPrimary};
+  color: ${() => themeCssVariables.font.color.primary};
   font-size: ${({ $isTopLevel }) =>
     $isTopLevel
-      ? recordingThemeCssVariables.font.sizeMd
-      : recordingThemeCssVariables.font.sizeSm};
-  font-weight: ${recordingThemeCssVariables.font.weightMedium};
+      ? themeCssVariables.font.size.md
+      : themeCssVariables.font.size.sm};
+  font-weight: ${() => themeCssVariables.font.weight.medium};
   margin: 0;
-  margin-top: ${recordingThemeCssVariables.spacing[1]};
+  margin-top: ${() => themeCssVariables.spacing[1]};
 `;
 
 const StyledParagraph = styled.p`
@@ -35,9 +35,9 @@ const StyledParagraph = styled.p`
 const StyledList = styled.ul`
   display: flex;
   flex-direction: column;
-  gap: ${recordingThemeCssVariables.spacing[1]};
+  gap: ${() => themeCssVariables.spacing[1]};
   margin: 0;
-  padding-left: ${recordingThemeCssVariables.spacing[3]};
+  padding-left: ${() => themeCssVariables.spacing[3]};
 `;
 
 type SummaryMarkdownProps = {
