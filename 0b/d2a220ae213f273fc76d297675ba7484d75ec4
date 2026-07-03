@@ -1,0 +1,27 @@
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
+  s_77f08f6b2d9277::t_6263475bce69ac 23-24
+  s_77f08f6b2d9277::t_2147964423fd6e 37
+packages/twenty-front/src/modules/app/components/SettingsRoutes.tsx
+  s_77f08f6b2d9277::t_f6285d48628c1e 661
+  s_77f08f6b2d9277::t_20a553d7f7d7eb 130,146,154
+  s_77f08f6b2d9277::t_889c7beff96c5c 129,132-134,137
+  s_77f08f6b2d9277::t_a3d5df71acde2e 653
+  s_77f08f6b2d9277::t_e85e1e55cc1a14 138,140
+  s_77f08f6b2d9277::t_d999f56cbfea9f 131
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "0bd2a220ae213f273fc76d297675ba7484d75ec4",
+  "prompts": {},
+  "sessions": {
+    "s_77f08f6b2d9277": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "899823dc-36d1-4e97-ab39-2243a5e5154b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
