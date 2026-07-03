@@ -11,20 +11,20 @@ import { type CalendarEventRecordingParticipant } from 'src/front-components/typ
 const StyledCenteredState = styled.div`
   align-items: center;
   box-sizing: border-box;
-  color: ${themeCssVariables.font.color.tertiary};
+  color: ${() => themeCssVariables.font.color.tertiary};
   display: flex;
-  font-family: ${themeCssVariables.font.family};
-  font-size: ${themeCssVariables.font.size.sm};
+  font-family: ${() => themeCssVariables.font.family};
+  font-size: ${() => themeCssVariables.font.size.sm};
   justify-content: center;
   min-height: 240px;
-  padding: ${themeCssVariables.spacing[4]};
+  padding: ${() => themeCssVariables.spacing[4]};
 `;
 
 const StyledRecordingContainer = styled.div<{
   $hasVideo?: boolean;
 }>`
   display: grid;
-  gap: ${themeCssVariables.spacing[2]};
+  gap: ${() => themeCssVariables.spacing[2]};
   grid-template-rows: ${({ $hasVideo }) =>
     $hasVideo ? 'auto minmax(0, 1fr)' : 'minmax(0, 1fr)'};
   min-height: 0;

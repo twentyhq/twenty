@@ -13,7 +13,7 @@ const StyledTranscriptContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
+  gap: ${() => themeCssVariables.spacing[2]};
   min-height: 0;
 `;
 

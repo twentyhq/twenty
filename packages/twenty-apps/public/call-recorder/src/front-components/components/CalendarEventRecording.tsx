@@ -8,13 +8,13 @@ import { CalendarEventRecordingContent } from 'src/front-components/components/C
 const StyledCenteredState = styled.div`
   align-items: center;
   box-sizing: border-box;
-  color: ${themeCssVariables.font.color.tertiary};
+  color: ${() => themeCssVariables.font.color.tertiary};
   display: flex;
-  font-family: ${themeCssVariables.font.family};
-  font-size: ${themeCssVariables.font.size.sm};
+  font-family: ${() => themeCssVariables.font.family};
+  font-size: ${() => themeCssVariables.font.size.sm};
   height: 100%;
   justify-content: center;
-  padding: ${themeCssVariables.spacing[4]};
+  padding: ${() => themeCssVariables.spacing[4]};
 `;
 
 export const CalendarEventRecording = () => {

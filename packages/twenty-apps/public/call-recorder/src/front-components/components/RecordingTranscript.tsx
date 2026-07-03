@@ -12,10 +12,10 @@ import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.
 
 const StyledTranscriptCenteredState = styled.div`
   align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
+  color: ${() => themeCssVariables.font.color.tertiary};
   display: flex;
   flex: 1;
-  font-size: ${themeCssVariables.font.size.sm};
+  font-size: ${() => themeCssVariables.font.size.sm};
   justify-content: center;
 `;
 

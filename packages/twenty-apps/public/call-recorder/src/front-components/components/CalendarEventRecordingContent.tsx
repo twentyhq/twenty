@@ -9,13 +9,13 @@ import { useCalendarEventRecording } from 'src/front-components/hooks/use-calend
 const TRANSCRIPT_TIME_UPDATE_INTERVAL_SECONDS = 0.25;
 
 const StyledRecordingShell = styled.div`
-  background: ${themeCssVariables.background.primary};
+  background: ${() => themeCssVariables.background.primary};
   border: 1px solid transparent;
   border-bottom: 1px solid transparent;
-  border-radius: ${themeCssVariables.border.radius.md};
+  border-radius: ${() => themeCssVariables.border.radius.md};
   box-sizing: border-box;
-  font-family: ${themeCssVariables.font.family};
-  padding: ${themeCssVariables.spacing[4]};
+  font-family: ${() => themeCssVariables.font.family};
+  padding: ${() => themeCssVariables.spacing[4]};
   position: relative;
   width: 100%;
 `;
@@ -24,31 +24,31 @@ const StyledRecordingHeader = styled.div`
   align-items: center;
   box-sizing: border-box;
   display: flex;
-  height: ${themeCssVariables.spacing[6]};
+  height: ${() => themeCssVariables.spacing[6]};
 `;
 
 const StyledRecordingTitle = styled.h2`
-  color: ${themeCssVariables.font.color.primary};
+  color: ${() => themeCssVariables.font.color.primary};
   flex: 1;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
+  font-size: ${() => themeCssVariables.font.size.md};
+  font-weight: ${() => themeCssVariables.font.weight.medium};
   margin: 0;
   overflow: hidden;
-  padding-inline: ${themeCssVariables.spacing[1]};
+  padding-inline: ${() => themeCssVariables.spacing[1]};
   user-select: none;
 `;
 
 const StyledRecordingBody = styled.div`
   box-sizing: border-box;
-  margin-top: ${themeCssVariables.spacing[2]};
+  margin-top: ${() => themeCssVariables.spacing[2]};
 `;
 
 const StyledRecordingContentFrame = styled.div`
-  background-color: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
+  background-color: ${() => themeCssVariables.background.secondary};
+  border: 1px solid ${() => themeCssVariables.border.color.medium};
+  border-radius: ${() => themeCssVariables.border.radius.md};
   box-sizing: border-box;
-  padding: ${themeCssVariables.spacing[2]};
+  padding: ${() => themeCssVariables.spacing[2]};
 `;
 
 type CalendarEventRecordingContentProps = {

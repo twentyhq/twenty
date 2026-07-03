@@ -6,15 +6,15 @@ const DEFAULT_VIDEO_ASPECT_RATIO = '16 / 9';
 
 const StyledVideoViewport = styled.div`
   aspect-ratio: ${DEFAULT_VIDEO_ASPECT_RATIO};
-  background: ${themeCssVariables.background.primary};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  background: ${() => themeCssVariables.background.primary};
+  border-radius: ${() => themeCssVariables.border.radius.sm};
   overflow: hidden;
   width: 100%;
 `;
 
 const StyledVideo = styled.video`
-  accent-color: ${themeCssVariables.accent.accent9};
-  background: ${themeCssVariables.background.primary};
+  accent-color: ${() => themeCssVariables.accent.accent9};
+  background: ${() => themeCssVariables.background.primary};
   color-scheme: light dark;
   display: block;
   height: 100%;
