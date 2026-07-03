@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
 const CLAIM_TTL_SECONDS = 600;
-const RUNNING_TTL_SECONDS = 60;
-const REFRESH_INTERVAL_MS = 15_000;
+const RUNNING_TTL_SECONDS = 30;
+const REFRESH_INTERVAL_MS = 5_000;
 
 @Injectable()
 export class AgentChatStreamHeartbeatService {
@@ -35,11 +35,15 @@ export class AgentChatStreamHeartbeatService {
   }
 
   async isAlive(streamId: string): Promise<boolean> {
-    const exists = await this.redisClientService
-      .getClient()
-      .exists(this.getKey(streamId));
+    try {
+      const exists = await this.redisClientService
+        .getClient()
+        .exists(this.getKey(streamId));
 
-    return exists === 1;
+      return exists === 1;
+    } catch {
+      return true;
+    }
   }
 
   async clear(streamId: string): Promise<void> {
