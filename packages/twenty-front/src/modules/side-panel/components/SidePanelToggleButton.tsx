@@ -64,6 +64,7 @@ export const SidePanelToggleButton = () => {
   }
 
   const ariaLabel = t`Command Menu`;
+  const tooltipContent = t`Command menu | ⌘K`;
 
   return (
     <StyledButtonWrapper alignToTop={alignWithSidePanelTopBar}>
@@ -85,7 +86,7 @@ export const SidePanelToggleButton = () => {
       <StyledTooltipWrapper>
         <AppTooltip
           anchorSelect="#toggle-side-panel-button"
-          content={ariaLabel}
+          content={tooltipContent}
           delay={TooltipDelay.longDelay}
           place={TooltipPosition.Bottom}
           offset={5}
