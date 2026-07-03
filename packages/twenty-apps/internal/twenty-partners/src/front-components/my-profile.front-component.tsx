@@ -10,6 +10,7 @@ import type {
   MyProfilePayload,
   ProfileOptions,
 } from './my-profile/types';
+import { CaseStudiesSection } from './my-profile/CaseStudiesSection';
 import { LinksSection } from './my-profile/LinksSection';
 import { ProfileSection } from './my-profile/ProfileSection';
 import { ServicesSection } from './my-profile/ServicesSection';
@@ -100,7 +101,12 @@ const MyProfile = () => {
 
       <section style={{ marginBottom: 32 }}>
         <h2 style={{ fontSize: 16, marginBottom: 12 }}>Case studies</h2>
-        <p style={{ opacity: 0.5, fontSize: 13 }}>Coming soon.</p>
+        <CaseStudiesSection
+          caseStudies={profile.caseStudies}
+          onSaved={(caseStudies) =>
+            setProfile((previous) => (previous ? { ...previous, caseStudies } : previous))
+          }
+        />
       </section>
     </div>
   );
