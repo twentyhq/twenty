@@ -1,0 +1,60 @@
+packages/twenty-front/src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
+  s_c175d3fe58a362::t_b47c7e8acfc8cf 10,24-26
+  s_c175d3fe58a362::t_60ddd654d1906f 9
+  s_c175d3fe58a362::t_c74849aad6d140 29,36-37
+packages/twenty-front/src/modules/settings/components/SettingsDnsRecordsTable.tsx
+  s_c175d3fe58a362::t_5ca228735e4a59 112
+  s_c175d3fe58a362::t_b5b8d1b0bb5de6 28
+  s_49d78d16bed80f::t_b98b321b1195cd 1,13,19-20,27,38,41-51,55-66,69-101,103-111,114
+  s_c175d3fe58a362::t_97c45566fea87b 11
+  s_c175d3fe58a362::t_f0803cc8d57112 68
+  s_49d78d16bed80f::t_56e6e1ef0ad2d5 67
+packages/twenty-front/src/pages/settings/email/SettingsWorkspaceEmailGroupChannelDetail.tsx
+  s_c175d3fe58a362::t_7a0138c6cb29ed 25,28
+  s_c175d3fe58a362::t_d31c73ba96e0dd 132-143
+  s_c175d3fe58a362::t_5f24f95db59787 1,8,11,20,30,61,96-105,115,146-147,182-235
+packages/twenty-ui/src/icon/components/TablerIcons.ts
+  s_3c350f4d696643::t_e4714787193be2 56
+packages/twenty-front/src/modules/settings/components/SettingsTableListSection.tsx
+  s_c175d3fe58a362::t_df6457a0ccb561 9,56,71,75-85,87-138
+packages/twenty-front/src/modules/settings/hooks/useSettingsNavigationItems.tsx
+  s_c175d3fe58a362::t_8c502e864b311a 176
+packages/twenty-front/src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
+  s_c175d3fe58a362::t_c349ad75657da4 3-4,6,8,14-15,17-19,28-32,34-36,38-71,75-77,81,86,96,102
+packages/twenty-front/src/pages/settings/email/SettingsWorkspaceEmail.tsx
+  s_c175d3fe58a362::t_3802722a1860e4 1-2,6,8,11,14-21,23-32,41-62,69,75,79-113,115-116,118-120,122,126-127
+packages/twenty-ui/src/icon/index.ts
+  s_c175d3fe58a362::t_4ad3a242fe88fe 110
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "741878e706cf1a12d2fd163e2d48aaa786ae5777",
+  "prompts": {},
+  "sessions": {
+    "s_3c350f4d696643": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b8b44b7d-d255-4a0a-adf1-b9be320b2f49",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_49d78d16bed80f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8466951a-afec-4ad6-834d-6d09bc36c309",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_c175d3fe58a362": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8281f503-1e35-47d7-8ac7-3d59a5110016",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
