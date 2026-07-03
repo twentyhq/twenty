@@ -1,17 +1,14 @@
 import { NextResponse } from 'next/server';
 
 import {
-  BOUND_SERVER_ID_KEY,
-  BOUND_SERVER_LAST_SEEN_AT_KEY,
-  DEV_SERVER_ID_KEY,
-  DEV_SERVER_LAST_SEEN_AT_KEY,
   ENTERPRISE_INSTANCE_TYPE,
-  ENTERPRISE_RELEASE_RATE_LIMITED_CODE,
+  ENTERPRISE_RATE_LIMIT_CODE,
   evaluateReleaseRateLimit,
   getEnterpriseConfigError,
   getReleaseLimitPerWindow,
   getStripeClient,
   parseInstanceType,
+  STRIPE_METADATA_KEY,
   verifyEnterpriseKey,
 } from '@/platform/enterprise';
 
@@ -66,8 +63,8 @@ export async function POST(request: Request) {
     if (!rateLimit.allowed) {
       return NextResponse.json(
         {
-          error: `The release limit of ${getReleaseLimitPerWindow()} per month has been reached for this enterprise key.`,
-          code: ENTERPRISE_RELEASE_RATE_LIMITED_CODE,
+          error: `The release limit of ${getReleaseLimitPerWindow()} in the last 30 days has been reached for this enterprise key.`,
+          code: ENTERPRISE_RATE_LIMIT_CODE.RELEASE,
           retryAfter: rateLimit.retryAfter.toISOString(),
         },
         { status: 429 },
@@ -79,12 +76,12 @@ export async function POST(request: Request) {
     const metadataPatch: Record<string, string> =
       instanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT
         ? {
-            [DEV_SERVER_ID_KEY]: '', // removes the key on stripe metadata
-            [DEV_SERVER_LAST_SEEN_AT_KEY]: '',
+            [STRIPE_METADATA_KEY.DEV_SERVER_ID]: '', // removes the key on stripe metadata
+            [STRIPE_METADATA_KEY.DEV_SERVER_LAST_SEEN_AT]: '',
           }
         : {
-            [BOUND_SERVER_ID_KEY]: '',
-            [BOUND_SERVER_LAST_SEEN_AT_KEY]: '',
+            [STRIPE_METADATA_KEY.BOUND_SERVER_ID]: '',
+            [STRIPE_METADATA_KEY.BOUND_SERVER_LAST_SEEN_AT]: '',
           };
 
     await stripe.subscriptions.update(payload.sub, {
@@ -97,10 +94,10 @@ export async function POST(request: Request) {
       instanceType,
     });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Enterprise binding release failed', error);
 
     return NextResponse.json(
-      { error: `Release error: ${message}` },
+      { error: 'Internal server error' },
       { status: 500 },
     );
   }

@@ -1,16 +1,12 @@
 import {
-  BOUND_SERVER_ID_KEY,
-  BOUND_SERVER_LAST_SEEN_AT_KEY,
-  DEV_SERVER_ID_KEY,
-  DEV_SERVER_LAST_SEEN_AT_KEY,
   evaluateReleaseRateLimit,
   evaluateValidityTokenEmissionRateLimit,
   isBillableSeatReporter,
   parseInstanceType,
-  RELEASE_TIMESTAMPS_KEY,
   resolveServerBinding,
+  STRIPE_METADATA_KEY,
   VALIDITY_TOKEN_EMISSIONS_KEY_BY_INSTANCE_TYPE,
-} from './resolve-server-binding';
+} from '.';
 
 const NOW = new Date('2026-06-30T12:00:00.000Z');
 const AUTO_RELEASE_DAYS = 14;
@@ -32,8 +28,8 @@ describe('resolveServerBinding', () => {
       outcome: 'allowed',
       isBillable: true,
       metadataPatch: {
-        [BOUND_SERVER_ID_KEY]: 'server-a',
-        [BOUND_SERVER_LAST_SEEN_AT_KEY]: NOW.toISOString(),
+        [STRIPE_METADATA_KEY.BOUND_SERVER_ID]: 'server-a',
+        [STRIPE_METADATA_KEY.BOUND_SERVER_LAST_SEEN_AT]: NOW.toISOString(),
       },
     });
   });
@@ -41,8 +37,8 @@ describe('resolveServerBinding', () => {
   it('allows the already-bound production server (refreshes lastSeenAt)', () => {
     const decision = resolveServerBinding({
       stripeMetadata: {
-        [BOUND_SERVER_ID_KEY]: 'server-a',
-        [BOUND_SERVER_LAST_SEEN_AT_KEY]: daysAgoIso(1),
+        [STRIPE_METADATA_KEY.BOUND_SERVER_ID]: 'server-a',
+        [STRIPE_METADATA_KEY.BOUND_SERVER_LAST_SEEN_AT]: daysAgoIso(1),
       },
       serverId: 'server-a',
       instanceType: 'production',
@@ -53,17 +49,17 @@ describe('resolveServerBinding', () => {
     expect(decision.outcome).toBe('allowed');
     if (decision.outcome === 'allowed') {
       expect(decision.isBillable).toBe(true);
-      expect(decision.metadataPatch[BOUND_SERVER_LAST_SEEN_AT_KEY]).toBe(
-        NOW.toISOString(),
-      );
+      expect(
+        decision.metadataPatch[STRIPE_METADATA_KEY.BOUND_SERVER_LAST_SEEN_AT],
+      ).toBe(NOW.toISOString());
     }
   });
 
   it('rejects a foreign production server while the binding is fresh', () => {
     const decision = resolveServerBinding({
       stripeMetadata: {
-        [BOUND_SERVER_ID_KEY]: 'server-a',
-        [BOUND_SERVER_LAST_SEEN_AT_KEY]: daysAgoIso(1),
+        [STRIPE_METADATA_KEY.BOUND_SERVER_ID]: 'server-a',
+        [STRIPE_METADATA_KEY.BOUND_SERVER_LAST_SEEN_AT]: daysAgoIso(1),
       },
       serverId: 'server-b',
       instanceType: 'production',
@@ -72,13 +68,18 @@ describe('resolveServerBinding', () => {
     });
 
     expect(decision.outcome).toBe('rejected');
+    if (decision.outcome === 'rejected') {
+      expect(decision.code).toBe('ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER');
+    }
   });
 
   it('auto-releases a stale binding to a new production server', () => {
     const decision = resolveServerBinding({
       stripeMetadata: {
-        [BOUND_SERVER_ID_KEY]: 'server-a',
-        [BOUND_SERVER_LAST_SEEN_AT_KEY]: daysAgoIso(AUTO_RELEASE_DAYS + 1),
+        [STRIPE_METADATA_KEY.BOUND_SERVER_ID]: 'server-a',
+        [STRIPE_METADATA_KEY.BOUND_SERVER_LAST_SEEN_AT]: daysAgoIso(
+          AUTO_RELEASE_DAYS + 1,
+        ),
       },
       serverId: 'server-b',
       instanceType: 'production',
@@ -88,15 +89,17 @@ describe('resolveServerBinding', () => {
 
     expect(decision.outcome).toBe('allowed');
     if (decision.outcome === 'allowed') {
-      expect(decision.metadataPatch[BOUND_SERVER_ID_KEY]).toBe('server-b');
+      expect(decision.metadataPatch[STRIPE_METADATA_KEY.BOUND_SERVER_ID]).toBe(
+        'server-b',
+      );
     }
   });
 
   it('binds a development instance into the dev slot as non-billable', () => {
     const decision = resolveServerBinding({
       stripeMetadata: {
-        [BOUND_SERVER_ID_KEY]: 'server-a',
-        [BOUND_SERVER_LAST_SEEN_AT_KEY]: daysAgoIso(1),
+        [STRIPE_METADATA_KEY.BOUND_SERVER_ID]: 'server-a',
+        [STRIPE_METADATA_KEY.BOUND_SERVER_LAST_SEEN_AT]: daysAgoIso(1),
       },
       serverId: 'server-dev',
       instanceType: 'development',
@@ -108,8 +111,8 @@ describe('resolveServerBinding', () => {
       outcome: 'allowed',
       isBillable: false,
       metadataPatch: {
-        [DEV_SERVER_ID_KEY]: 'server-dev',
-        [DEV_SERVER_LAST_SEEN_AT_KEY]: NOW.toISOString(),
+        [STRIPE_METADATA_KEY.DEV_SERVER_ID]: 'server-dev',
+        [STRIPE_METADATA_KEY.DEV_SERVER_LAST_SEEN_AT]: NOW.toISOString(),
       },
     });
   });
@@ -117,10 +120,10 @@ describe('resolveServerBinding', () => {
   it('rejects a second development instance while the dev slot is fresh', () => {
     const decision = resolveServerBinding({
       stripeMetadata: {
-        [BOUND_SERVER_ID_KEY]: 'server-a',
-        [BOUND_SERVER_LAST_SEEN_AT_KEY]: daysAgoIso(1),
-        [DEV_SERVER_ID_KEY]: 'server-dev',
-        [DEV_SERVER_LAST_SEEN_AT_KEY]: daysAgoIso(1),
+        [STRIPE_METADATA_KEY.BOUND_SERVER_ID]: 'server-a',
+        [STRIPE_METADATA_KEY.BOUND_SERVER_LAST_SEEN_AT]: daysAgoIso(1),
+        [STRIPE_METADATA_KEY.DEV_SERVER_ID]: 'server-dev',
+        [STRIPE_METADATA_KEY.DEV_SERVER_LAST_SEEN_AT]: daysAgoIso(1),
       },
       serverId: 'server-dev-2',
       instanceType: 'development',
@@ -129,13 +132,42 @@ describe('resolveServerBinding', () => {
     });
 
     expect(decision.outcome).toBe('rejected');
+    if (decision.outcome === 'rejected') {
+      expect(decision.code).toBe('ENTERPRISE_DEV_SLOT_IN_USE');
+    }
+  });
+
+  it('auto-releases a stale dev slot to a new development server', () => {
+    const decision = resolveServerBinding({
+      stripeMetadata: {
+        [STRIPE_METADATA_KEY.BOUND_SERVER_ID]: 'server-a',
+        [STRIPE_METADATA_KEY.BOUND_SERVER_LAST_SEEN_AT]: daysAgoIso(1),
+        [STRIPE_METADATA_KEY.DEV_SERVER_ID]: 'server-dev',
+        [STRIPE_METADATA_KEY.DEV_SERVER_LAST_SEEN_AT]: daysAgoIso(
+          AUTO_RELEASE_DAYS + 1,
+        ),
+      },
+      serverId: 'server-dev-2',
+      instanceType: 'development',
+      autoReleaseDays: AUTO_RELEASE_DAYS,
+      now: NOW,
+    });
+
+    expect(decision).toEqual({
+      outcome: 'allowed',
+      isBillable: false,
+      metadataPatch: {
+        [STRIPE_METADATA_KEY.DEV_SERVER_ID]: 'server-dev-2',
+        [STRIPE_METADATA_KEY.DEV_SERVER_LAST_SEEN_AT]: NOW.toISOString(),
+      },
+    });
   });
 
   it('rejects a development instance that does not report a serverId', () => {
     const decision = resolveServerBinding({
       stripeMetadata: {
-        [BOUND_SERVER_ID_KEY]: 'server-a',
-        [BOUND_SERVER_LAST_SEEN_AT_KEY]: daysAgoIso(1),
+        [STRIPE_METADATA_KEY.BOUND_SERVER_ID]: 'server-a',
+        [STRIPE_METADATA_KEY.BOUND_SERVER_LAST_SEEN_AT]: daysAgoIso(1),
       },
       serverId: null,
       instanceType: 'development',
@@ -144,6 +176,9 @@ describe('resolveServerBinding', () => {
     });
 
     expect(decision.outcome).toBe('rejected');
+    if (decision.outcome === 'rejected') {
+      expect(decision.code).toBe('ENTERPRISE_MISSING_SERVER_ID');
+    }
   });
 
   it('rejects a development instance when there is no production binding', () => {
@@ -156,13 +191,18 @@ describe('resolveServerBinding', () => {
     });
 
     expect(decision.outcome).toBe('rejected');
+    if (decision.outcome === 'rejected') {
+      expect(decision.code).toBe('ENTERPRISE_DEV_REQUIRES_ACTIVE_PRODUCTION');
+    }
   });
 
   it('rejects a development instance when the production binding is stale', () => {
     const decision = resolveServerBinding({
       stripeMetadata: {
-        [BOUND_SERVER_ID_KEY]: 'server-a',
-        [BOUND_SERVER_LAST_SEEN_AT_KEY]: daysAgoIso(AUTO_RELEASE_DAYS + 1),
+        [STRIPE_METADATA_KEY.BOUND_SERVER_ID]: 'server-a',
+        [STRIPE_METADATA_KEY.BOUND_SERVER_LAST_SEEN_AT]: daysAgoIso(
+          AUTO_RELEASE_DAYS + 1,
+        ),
       },
       serverId: 'server-dev',
       instanceType: 'development',
@@ -171,13 +211,16 @@ describe('resolveServerBinding', () => {
     });
 
     expect(decision.outcome).toBe('rejected');
+    if (decision.outcome === 'rejected') {
+      expect(decision.code).toBe('ENTERPRISE_DEV_REQUIRES_ACTIVE_PRODUCTION');
+    }
   });
 
   it('rejects a production instance that lost its serverId while a binding exists', () => {
     const decision = resolveServerBinding({
       stripeMetadata: {
-        [BOUND_SERVER_ID_KEY]: 'server-a',
-        [BOUND_SERVER_LAST_SEEN_AT_KEY]: daysAgoIso(1),
+        [STRIPE_METADATA_KEY.BOUND_SERVER_ID]: 'server-a',
+        [STRIPE_METADATA_KEY.BOUND_SERVER_LAST_SEEN_AT]: daysAgoIso(1),
       },
       serverId: null,
       instanceType: 'production',
@@ -186,6 +229,9 @@ describe('resolveServerBinding', () => {
     });
 
     expect(decision.outcome).toBe('rejected');
+    if (decision.outcome === 'rejected') {
+      expect(decision.code).toBe('ENTERPRISE_MISSING_SERVER_ID');
+    }
   });
 
   it('allows legacy instances without a serverId without binding', () => {
@@ -203,13 +249,65 @@ describe('resolveServerBinding', () => {
       metadataPatch: {},
     });
   });
+
+  it('rejects a production instance sending an empty serverId while a binding exists', () => {
+    const decision = resolveServerBinding({
+      stripeMetadata: {
+        [STRIPE_METADATA_KEY.BOUND_SERVER_ID]: 'server-a',
+        [STRIPE_METADATA_KEY.BOUND_SERVER_LAST_SEEN_AT]: daysAgoIso(1),
+      },
+      serverId: '   ',
+      instanceType: 'production',
+      autoReleaseDays: AUTO_RELEASE_DAYS,
+      now: NOW,
+    });
+
+    expect(decision.outcome).toBe('rejected');
+    if (decision.outcome === 'rejected') {
+      expect(decision.code).toBe('ENTERPRISE_MISSING_SERVER_ID');
+    }
+  });
+
+  it('does not let an empty serverId claim a free key as the bound id', () => {
+    const decision = resolveServerBinding({
+      stripeMetadata: {},
+      serverId: '',
+      instanceType: 'production',
+      autoReleaseDays: AUTO_RELEASE_DAYS,
+      now: NOW,
+    });
+
+    expect(decision).toEqual({
+      outcome: 'allowed',
+      isBillable: true,
+      metadataPatch: {},
+    });
+  });
+
+  it('rejects a development instance sending a whitespace serverId', () => {
+    const decision = resolveServerBinding({
+      stripeMetadata: {
+        [STRIPE_METADATA_KEY.BOUND_SERVER_ID]: 'server-a',
+        [STRIPE_METADATA_KEY.BOUND_SERVER_LAST_SEEN_AT]: daysAgoIso(1),
+      },
+      serverId: '  ',
+      instanceType: 'development',
+      autoReleaseDays: AUTO_RELEASE_DAYS,
+      now: NOW,
+    });
+
+    expect(decision.outcome).toBe('rejected');
+    if (decision.outcome === 'rejected') {
+      expect(decision.code).toBe('ENTERPRISE_MISSING_SERVER_ID');
+    }
+  });
 });
 
 describe('isBillableSeatReporter', () => {
   it('bills the bound production server', () => {
     expect(
       isBillableSeatReporter({
-        stripeMetadata: { [BOUND_SERVER_ID_KEY]: 'server-a' },
+        stripeMetadata: { [STRIPE_METADATA_KEY.BOUND_SERVER_ID]: 'server-a' },
         serverId: 'server-a',
       }),
     ).toBe(true);
@@ -218,7 +316,7 @@ describe('isBillableSeatReporter', () => {
   it('does not bill a foreign server', () => {
     expect(
       isBillableSeatReporter({
-        stripeMetadata: { [BOUND_SERVER_ID_KEY]: 'server-a' },
+        stripeMetadata: { [STRIPE_METADATA_KEY.BOUND_SERVER_ID]: 'server-a' },
         serverId: 'server-b',
       }),
     ).toBe(false);
@@ -227,7 +325,7 @@ describe('isBillableSeatReporter', () => {
   it('does not bill a development instance (no production binding)', () => {
     expect(
       isBillableSeatReporter({
-        stripeMetadata: { [DEV_SERVER_ID_KEY]: 'server-dev' },
+        stripeMetadata: { [STRIPE_METADATA_KEY.DEV_SERVER_ID]: 'server-dev' },
         serverId: 'server-dev',
       }),
     ).toBe(false);
@@ -237,6 +335,15 @@ describe('isBillableSeatReporter', () => {
     expect(
       isBillableSeatReporter({ stripeMetadata: {}, serverId: undefined }),
     ).toBe(true);
+  });
+
+  it('does not bill an empty serverId against a bound production server', () => {
+    expect(
+      isBillableSeatReporter({
+        stripeMetadata: { [STRIPE_METADATA_KEY.BOUND_SERVER_ID]: 'server-a' },
+        serverId: '   ',
+      }),
+    ).toBe(false);
   });
 });
 
@@ -257,7 +364,10 @@ describe('evaluateReleaseRateLimit', () => {
   it('allows a release under the limit and records the new timestamp', () => {
     const decision = evaluateReleaseRateLimit({
       stripeMetadata: {
-        [RELEASE_TIMESTAMPS_KEY]: [msDaysAgo(1), msDaysAgo(2)].join(','),
+        [STRIPE_METADATA_KEY.RELEASE_TIMESTAMPS]: [
+          msDaysAgo(1),
+          msDaysAgo(2),
+        ].join(','),
       },
       limit: 10,
       windowDays: RELEASE_WINDOW_DAYS,
@@ -266,8 +376,11 @@ describe('evaluateReleaseRateLimit', () => {
 
     expect(decision.allowed).toBe(true);
     if (decision.allowed) {
-      const recorded =
-        decision.metadataPatch[RELEASE_TIMESTAMPS_KEY].split(',').map(Number);
+      const recorded = decision.metadataPatch[
+        STRIPE_METADATA_KEY.RELEASE_TIMESTAMPS
+      ]
+        .split(',')
+        .map(Number);
       expect(recorded).toHaveLength(3);
       expect(recorded).toContain(NOW.getTime());
     }
@@ -283,9 +396,9 @@ describe('evaluateReleaseRateLimit', () => {
 
     expect(decision.allowed).toBe(true);
     if (decision.allowed) {
-      expect(decision.metadataPatch[RELEASE_TIMESTAMPS_KEY]).toBe(
-        String(NOW.getTime()),
-      );
+      expect(
+        decision.metadataPatch[STRIPE_METADATA_KEY.RELEASE_TIMESTAMPS],
+      ).toBe(String(NOW.getTime()));
     }
   });
 
@@ -295,7 +408,9 @@ describe('evaluateReleaseRateLimit', () => {
     );
 
     const decision = evaluateReleaseRateLimit({
-      stripeMetadata: { [RELEASE_TIMESTAMPS_KEY]: timestamps.join(',') },
+      stripeMetadata: {
+        [STRIPE_METADATA_KEY.RELEASE_TIMESTAMPS]: timestamps.join(','),
+      },
       limit: 10,
       windowDays: RELEASE_WINDOW_DAYS,
       now: NOW,
@@ -320,7 +435,9 @@ describe('evaluateReleaseRateLimit', () => {
     ];
 
     const decision = evaluateReleaseRateLimit({
-      stripeMetadata: { [RELEASE_TIMESTAMPS_KEY]: timestamps.join(',') },
+      stripeMetadata: {
+        [STRIPE_METADATA_KEY.RELEASE_TIMESTAMPS]: timestamps.join(','),
+      },
       limit: 10,
       windowDays: RELEASE_WINDOW_DAYS,
       now: NOW,
@@ -328,8 +445,11 @@ describe('evaluateReleaseRateLimit', () => {
 
     expect(decision.allowed).toBe(true);
     if (decision.allowed) {
-      const recorded =
-        decision.metadataPatch[RELEASE_TIMESTAMPS_KEY].split(',').map(Number);
+      const recorded = decision.metadataPatch[
+        STRIPE_METADATA_KEY.RELEASE_TIMESTAMPS
+      ]
+        .split(',')
+        .map(Number);
       expect(recorded).toHaveLength(10);
       expect(recorded).not.toContain(msDaysAgo(40));
       expect(recorded).not.toContain(msDaysAgo(45));
@@ -443,9 +563,7 @@ describe('evaluateValidityTokenEmissionRateLimit', () => {
       expect(developmentDecision.metadataPatch[DEVELOPMENT_KEY]).toBe(
         String(NOW.getTime()),
       );
-      expect(
-        developmentDecision.metadataPatch[PRODUCTION_KEY],
-      ).toBeUndefined();
+      expect(developmentDecision.metadataPatch[PRODUCTION_KEY]).toBeUndefined();
     }
   });
 });

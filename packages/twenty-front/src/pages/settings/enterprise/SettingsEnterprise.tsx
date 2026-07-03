@@ -127,8 +127,8 @@ export const SettingsEnterprise = ({
     enterprisePortalSession: string | null;
   }>(ENTERPRISE_PORTAL_SESSION);
   const [isRefreshingToken, setIsRefreshingToken] = useState(false);
-  const [isBoundToAnotherServer, setIsBoundToAnotherServer] = useState(false);
   const [isReleasing, setIsReleasing] = useState(false);
+  const [isBoundToAnotherServer, setIsBoundToAnotherServer] = useState(false);
   const { openModal } = useModal();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const { loadCurrentUser } = useLoadCurrentUser();
@@ -259,10 +259,19 @@ export const SettingsEnterprise = ({
         });
       }
     } catch (error) {
-      if (
-        isGraphqlErrorOfType(error, 'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER')
-      ) {
-        setIsBoundToAnotherServer(true);
+      const isServerBindingRejection =
+        isGraphqlErrorOfType(error, 'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER') ||
+        isGraphqlErrorOfType(error, 'ENTERPRISE_MISSING_SERVER_ID') ||
+        isGraphqlErrorOfType(
+          error,
+          'ENTERPRISE_DEV_REQUIRES_ACTIVE_PRODUCTION',
+        ) ||
+        isGraphqlErrorOfType(error, 'ENTERPRISE_DEV_SLOT_IN_USE');
+
+      if (isServerBindingRejection) {
+        setIsBoundToAnotherServer(
+          isGraphqlErrorOfType(error, 'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER'),
+        );
         await loadCurrentUser();
         enqueueErrorSnackBar({
           apolloError: error,
@@ -330,6 +339,7 @@ export const SettingsEnterprise = ({
       const { data } = await refreshValidityTokenMutation();
 
       if (data?.refreshEnterpriseValidityToken === true) {
+        setIsBoundToAnotherServer(false);
         enqueueSuccessSnackBar({
           message: t`Validity token refreshed successfully`,
         });
@@ -341,10 +351,26 @@ export const SettingsEnterprise = ({
       }
     } catch (error) {
       if (
+        isGraphqlErrorOfType(error, 'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER')
+      ) {
+        setIsBoundToAnotherServer(true);
+        await loadCurrentUser();
+        enqueueErrorSnackBar({
+          apolloError: error,
+          options: { duration: 10000 },
+        });
+      } else if (
+        isGraphqlErrorOfType(error, 'ENTERPRISE_MISSING_SERVER_ID') ||
+        isGraphqlErrorOfType(
+          error,
+          'ENTERPRISE_DEV_REQUIRES_ACTIVE_PRODUCTION',
+        ) ||
+        isGraphqlErrorOfType(error, 'ENTERPRISE_DEV_SLOT_IN_USE') ||
         isGraphqlErrorOfType(error, 'ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED')
       ) {
         enqueueErrorSnackBar({
-          message: t`You have reached the maximum number of license refreshes allowed today for this enterprise key. Please try again later.`,
+          apolloError: error,
+          options: { duration: 10000 },
         });
       } else {
         enqueueErrorSnackBar({
@@ -369,10 +395,10 @@ export const SettingsEnterprise = ({
       const result = await releaseServerBindingMutation();
 
       if (result.data?.releaseEnterpriseServerBinding.isValid === true) {
+        setIsBoundToAnotherServer(false);
         enqueueSuccessSnackBar({
           message: t`Enterprise key transferred to this server`,
         });
-        setIsBoundToAnotherServer(false);
         const { data: statusData } = await fetchSubscriptionStatus();
 
         setSubscriptionStatus(statusData?.enterpriseSubscriptionStatus ?? null);
@@ -385,7 +411,7 @@ export const SettingsEnterprise = ({
     } catch (error) {
       if (isGraphqlErrorOfType(error, 'ENTERPRISE_RELEASE_RATE_LIMITED')) {
         enqueueErrorSnackBar({
-          message: t`You have reached the maximum number of server transfers allowed this month for this enterprise key. Please try again later or contact support.`,
+          message: t`You have reached the maximum number of server transfers allowed in the last 30 days for this enterprise key. Please try again later or contact support.`,
         });
       } else {
         enqueueErrorSnackBar({
@@ -415,7 +441,6 @@ export const SettingsEnterprise = ({
         );
         setInstanceType(nextInstanceType);
         setIsInstanceTypeFromDb(true);
-        await refreshValidityTokenMutation();
         await loadCurrentUser();
 
         enqueueSuccessSnackBar({
@@ -430,6 +455,12 @@ export const SettingsEnterprise = ({
         });
       } finally {
         setIsUpdatingInstanceType(false);
+        try {
+          await refreshValidityTokenMutation();
+        } catch {
+          // Best-effort refresh after switching instance type; the manual
+          // reload button surfaces any binding or rate-limit error.
+        }
       }
     },
     [
@@ -629,7 +660,7 @@ export const SettingsEnterprise = ({
               )}
             </SubscriptionInfoContainer>
           </Section>
-          {transferSection}
+          {isBoundToAnotherServer && transferSection}
           <Section>
             <H2Title
               title={t`Manage billing information`}
@@ -880,7 +911,6 @@ export const SettingsEnterprise = ({
   const innerContent = (
     <>
       <EnterprisePlanModal />
-      {isBoundToAnotherServer && transferSection}
       {renderContent()}
       {hasEnterpriseLicense && instanceTypeSection}
     </>

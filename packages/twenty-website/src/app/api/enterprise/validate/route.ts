@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import {
-  ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER_CODE,
-  ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED_CODE,
+  ENTERPRISE_RATE_LIMIT_CODE,
   EnterpriseInstanceType,
   evaluateValidityTokenEmissionRateLimit,
   getAutoReleaseDays,
@@ -87,7 +86,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error: binding.reason,
-          code: ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER_CODE,
+          code: binding.code,
         },
         { status: 403 },
       );
@@ -102,7 +101,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error: 'Validity token emission rate limit exceeded',
-          code: ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED_CODE,
+          code: ENTERPRISE_RATE_LIMIT_CODE.VALIDITY_TOKEN,
           retryAfter: emissionRateLimit.retryAfter.toISOString(),
         },
         { status: 429 },
@@ -142,10 +141,10 @@ export async function POST(request: Request) {
       isBillable: binding.isBillable,
     });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Enterprise key validation failed', error);
 
     return NextResponse.json(
-      { error: `Validation error: ${message}` },
+      { error: 'Internal server error' },
       { status: 500 },
     );
   }

@@ -7039,6 +7039,9 @@ export default {
             "refreshEnterpriseValidityToken": [
                 6
             ],
+            "releaseEnterpriseServerBinding": [
+                128
+            ],
             "setEnterpriseKey": [
                 128,
                 {
