@@ -1,0 +1,91 @@
+// Central registry of the app's universal identifiers.
+// Every entity in a Twenty app carries a stable UUID (its `universalIdentifier`).
+// Keeping them in one file makes cross-references (relations, views, layouts)
+// easy to follow and guarantees they stay stable across syncs and versions.
+
+export const APP_DISPLAY_NAME = 'Document Generator';
+export const APP_DESCRIPTION =
+  'Create reusable document templates and generate personalized documents from your CRM records.';
+
+export const APPLICATION_UNIVERSAL_IDENTIFIER =
+  '10812367-41ef-42a3-814b-ee12d69bb88c';
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  '9f13095f-7448-415e-bd85-f4e65d684fb0';
+
+// Document template object + fields
+export const DOCUMENT_TEMPLATE_OBJECT_UNIVERSAL_IDENTIFIER =
+  '79a17fab-7846-401e-b5b0-968d30a9e8da';
+export const TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER =
+  '5964460e-8b27-4e24-9285-21837d63c51c';
+export const TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER =
+  'e17cbc62-b6e0-4606-adeb-029d25c33b60';
+export const TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER =
+  '29a89aec-4f75-4e5a-aee7-f23ab6a91b1c';
+export const TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER =
+  '21cb2f05-d35e-41f8-95ab-470f55e6eaa4';
+export const TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER =
+  'dbea00f7-66cd-43d5-995e-d7731a761a72';
+export const TEMPLATE_DOCUMENTS_FIELD_UNIVERSAL_IDENTIFIER =
+  'dddf334c-7e0c-4282-851d-d4447556e467';
+
+// Document object + fields
+export const DOCUMENT_OBJECT_UNIVERSAL_IDENTIFIER =
+  '052930e6-57bb-4ff5-b996-04a27e6d36fc';
+export const DOCUMENT_NAME_FIELD_UNIVERSAL_IDENTIFIER =
+  'be732f60-c301-4202-a45b-ecbc4dad36eb';
+export const DOCUMENT_CONTENT_FIELD_UNIVERSAL_IDENTIFIER =
+  '602d7dfd-a2e1-48c0-8f20-257fdb5c69ab';
+export const DOCUMENT_STATUS_FIELD_UNIVERSAL_IDENTIFIER =
+  '93b3ee71-f8a1-4eb5-8c6e-842b95f5db04';
+export const DOCUMENT_STATUS_OPTION_DRAFT_UNIVERSAL_IDENTIFIER =
+  '6724f4a5-ee81-4c81-8fe3-06a3ffd075db';
+export const DOCUMENT_STATUS_OPTION_GENERATED_UNIVERSAL_IDENTIFIER =
+  'e11ae1bd-834d-438e-a26d-a74026250619';
+export const DOCUMENT_TEMPLATE_FIELD_UNIVERSAL_IDENTIFIER =
+  'b6da07ba-60d4-426b-b28f-17020e94d777';
+
+// Logic functions
+export const GENERATE_DOCUMENT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER =
+  'e2f80832-07a4-408f-b9d4-55f47e188516';
+export const GENERATE_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER =
+  'c88bf870-df0c-4b27-96b9-290b1b257cf6';
+export const VIEW_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER =
+  'b7d2eff6-d150-4f49-b0e6-9a1952a5928b';
+
+// Front component + command
+export const GENERATE_DOCUMENT_FORM_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
+  'd6a82a87-f44b-4a12-9ea6-6da91b32f023';
+export const GENERATE_DOCUMENT_COMMAND_UNIVERSAL_IDENTIFIER =
+  'e98f0501-68ee-4fd4-9af7-c741026189fe';
+
+// Views + view fields
+export const TEMPLATES_VIEW_UNIVERSAL_IDENTIFIER =
+  'b7fa76ab-0e68-4792-9ef1-597d5644fcbf';
+export const TEMPLATES_VIEW_NAME_FIELD_UNIVERSAL_IDENTIFIER =
+  'c42b9ad3-d018-4a6f-979d-1d764937ddbe';
+export const TEMPLATES_VIEW_TARGET_FIELD_UNIVERSAL_IDENTIFIER =
+  'e09e0f92-912d-4239-a64f-f26c0282e725';
+export const DOCUMENTS_VIEW_UNIVERSAL_IDENTIFIER =
+  '4373afdc-0cc8-4875-bd00-f444b4eb7601';
+export const DOCUMENTS_VIEW_NAME_FIELD_UNIVERSAL_IDENTIFIER =
+  '929a17d1-6328-4506-90b0-8cb8fd5113d3';
+export const DOCUMENTS_VIEW_STATUS_FIELD_UNIVERSAL_IDENTIFIER =
+  'b0e995a3-2778-4f59-b0e0-bbcdb762e508';
+export const DOCUMENTS_VIEW_TEMPLATE_FIELD_UNIVERSAL_IDENTIFIER =
+  '18c8a6df-4d34-40b4-a35c-ee246a62fa1d';
+
+// Navigation menu items
+export const TEMPLATES_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER =
+  '3f771e0b-389a-4d6a-9cca-0cd5cc80f794';
+export const DOCUMENTS_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER =
+  '3249fdb2-8edb-41ac-b3ae-510fe4d0a099';
+
+// Agent + skill
+export const DOCUMENT_AGENT_UNIVERSAL_IDENTIFIER =
+  '08eaaa8c-2f70-45e6-bfd1-403d5c24850e';
+export const DOCUMENT_SKILL_UNIVERSAL_IDENTIFIER =
+  'b2e2d896-d76d-4012-b2f3-7bb1809a450c';
+
+// Select option values must be UPPER_CASE.
+export const TEMPLATE_TARGET_PERSON = 'PERSON';
+export const TEMPLATE_TARGET_COMPANY = 'COMPANY';
