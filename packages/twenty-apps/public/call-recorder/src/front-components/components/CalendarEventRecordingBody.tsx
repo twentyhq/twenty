@@ -38,6 +38,7 @@ type CalendarEventRecordingBodyProps = {
   currentTimeSeconds: number;
   calendarEventParticipants: CalendarEventRecordingParticipant[];
   onVideoTimeUpdate: (videoCurrentTimeSeconds: number) => void;
+  onVideoRetry: () => void;
 };
 
 export const CalendarEventRecordingBody = ({
@@ -48,6 +49,7 @@ export const CalendarEventRecordingBody = ({
   currentTimeSeconds,
   calendarEventParticipants,
   onVideoTimeUpdate,
+  onVideoRetry,
 }: CalendarEventRecordingBodyProps) => {
   const hasVideo = !isUndefined(videoFileUrl);
 
@@ -78,6 +80,7 @@ export const CalendarEventRecordingBody = ({
         <RecordingVideoPlayer
           src={videoFileUrl}
           onTimeUpdate={onVideoTimeUpdate}
+          onRetry={onVideoRetry}
         />
       )}
       <RecordingTranscript

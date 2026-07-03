@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CalendarEventRecordingBody } from 'src/front-components/components/CalendarEventRecordingBody';
@@ -59,30 +59,34 @@ export const CalendarEventRecordingContent = ({
   calendarEventId,
 }: CalendarEventRecordingContentProps) => {
   const [currentTimeSeconds, setCurrentTimeSeconds] = useState(0);
-  const updateCurrentTimeSeconds = useCallback(
-    (videoCurrentTimeSeconds: number) => {
-      const nextCurrentTimeSeconds =
-        Math.floor(
-          videoCurrentTimeSeconds / TRANSCRIPT_TIME_UPDATE_INTERVAL_SECONDS,
-        ) * TRANSCRIPT_TIME_UPDATE_INTERVAL_SECONDS;
 
-      setCurrentTimeSeconds((previousCurrentTimeSeconds) =>
-        previousCurrentTimeSeconds === nextCurrentTimeSeconds
-          ? previousCurrentTimeSeconds
-          : nextCurrentTimeSeconds,
-      );
-    },
-    [],
-  );
+  const updateCurrentTimeSeconds = (videoCurrentTimeSeconds: number) => {
+    const nextCurrentTimeSeconds =
+      Math.floor(
+        videoCurrentTimeSeconds / TRANSCRIPT_TIME_UPDATE_INTERVAL_SECONDS,
+      ) * TRANSCRIPT_TIME_UPDATE_INTERVAL_SECONDS;
+
+    setCurrentTimeSeconds((previousCurrentTimeSeconds) =>
+      previousCurrentTimeSeconds === nextCurrentTimeSeconds
+        ? previousCurrentTimeSeconds
+        : nextCurrentTimeSeconds,
+    );
+  };
 
   const {
     transcript,
     videoFile,
     isCalendarEventRecordingQueryLoading,
     errorMessage,
+    refetchCalendarEventRecording,
   } = useCalendarEventRecording(calendarEventId);
   const { calendarEventParticipants } =
     useCalendarEventParticipants(calendarEventId);
+
+  const handleVideoRetry = () => {
+    setCurrentTimeSeconds(0);
+    refetchCalendarEventRecording();
+  };
 
   const videoFileUrl = videoFile?.url ?? undefined;
 
@@ -103,6 +107,7 @@ export const CalendarEventRecordingContent = ({
             currentTimeSeconds={currentTimeSeconds}
             calendarEventParticipants={calendarEventParticipants}
             onVideoTimeUpdate={updateCurrentTimeSeconds}
+            onVideoRetry={handleVideoRetry}
           />
         </StyledRecordingContentFrame>
       </StyledRecordingBody>
