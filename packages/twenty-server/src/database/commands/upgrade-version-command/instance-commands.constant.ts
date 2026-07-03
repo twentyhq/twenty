@@ -89,7 +89,7 @@ import { AddFolderImportToMessageFolderPendingSyncActionFastInstanceCommand } fr
 import { AddViewKanbanColumnWidthFastInstanceCommand } from './2-15/2-15-instance-command-fast-1781900000000-add-view-kanban-column-width';
 import { AddPendingQuestionMessageIdToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1782999138000-add-pending-question-to-agent-chat-thread';
 import { AddWorkspaceDiscoverabilityToWorkspaceFastInstanceCommand } from './2-19/2-19-instance-command-fast-1783004140000-add-workspace-discoverability-to-workspace';
-import { AddStatusToFileFastInstanceCommand } from './2-19/2-19-instance-command-fast-1822000000000-add-status-to-file';
+import { AddStatusToFileFastInstanceCommand } from './2-19/2-19-instance-command-fast-1783005000000-add-status-to-file';
 import { DropMetadataStandardOverridesColumnFastInstanceCommand } from './2-20/2-20-instance-command-fast-1825000000000-drop-metadata-standard-overrides-column';
 
 export const INSTANCE_COMMANDS = [
