@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
 
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
+import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { ApplicationTranslationSyncService } from 'src/engine/core-modules/application/application-translation/application-translation-sync.service';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
@@ -65,13 +66,24 @@ export class ApplicationSyncService {
           applicationRegistrationId,
         });
 
-    const syncResult =
-      await this.applicationManifestMigrationService.syncMetadataFromManifest({
-        manifest,
-        workspaceId,
-        ownerFlatApplication,
-        dryRun,
-      });
+    let syncResult: {
+      workspaceMigration: WorkspaceMigration;
+      hasSchemaMetadataChanged: boolean;
+    };
+
+    try {
+      syncResult =
+        await this.applicationManifestMigrationService.syncMetadataFromManifest(
+          {
+            manifest,
+            workspaceId,
+            ownerFlatApplication,
+            dryRun,
+          },
+        );
+    } catch (error) {
+      throw enrichApplicationManifestSyncError({ error, manifest });
+    }
 
     if (!dryRun && isDefined(ownerFlatApplication.applicationRegistrationId)) {
       // Translation sync runs after the metadata migration is already applied

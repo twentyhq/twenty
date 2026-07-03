@@ -52785,6 +52785,7 @@ __metadata:
     prettier: "npm:^3.1.1"
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"
+    react-error-boundary: "npm:^4.0.11"
     storybook: "npm:^10.4.6"
     styled-components: "npm:^6.1.0"
     ts-morph: "npm:^25.0.0"

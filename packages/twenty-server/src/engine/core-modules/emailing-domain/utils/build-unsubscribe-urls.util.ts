@@ -2,16 +2,16 @@ import { UNSUBSCRIBE_MAILBOX_LOCAL_PART } from 'src/engine/core-modules/emailing
 import { type UnsubscribeUrls } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-urls.type';
 
 type BuildUnsubscribeUrlsArgs = {
-  unsubscribeHostname: string;
+  unsubscribeBaseUrl: string;
   domain: string;
   token: string;
 };
 
 export const buildUnsubscribeUrls = ({
-  unsubscribeHostname,
+  unsubscribeBaseUrl,
   domain,
   token,
 }: BuildUnsubscribeUrlsArgs): UnsubscribeUrls => ({
-  httpsUrl: `https://${unsubscribeHostname}/emailing/unsubscribe?t=${token}`,
+  webUrl: `${unsubscribeBaseUrl}/emailing/unsubscribe?t=${token}`,
   mailtoUrl: `mailto:${UNSUBSCRIBE_MAILBOX_LOCAL_PART}@${domain}?subject=${token}`,
 });
