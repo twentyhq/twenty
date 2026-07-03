@@ -7,8 +7,30 @@ import {
   type ConnectionPage,
 } from 'src/logic-functions/data/fetch-all-nodes.util';
 
+const CALENDAR_EVENT_ID_BATCH_SIZE = TWENTY_PAGE_SIZE;
+
 type CallRecordingIdNode = {
   id: string;
+};
+
+const getCalendarEventIdBatches = (calendarEventIds: string[]): string[][] => {
+  const uniqueCalendarEventIds = [...new Set(calendarEventIds)];
+  const calendarEventIdBatches: string[][] = [];
+
+  for (
+    let batchStartIndex = 0;
+    batchStartIndex < uniqueCalendarEventIds.length;
+    batchStartIndex += CALENDAR_EVENT_ID_BATCH_SIZE
+  ) {
+    calendarEventIdBatches.push(
+      uniqueCalendarEventIds.slice(
+        batchStartIndex,
+        batchStartIndex + CALENDAR_EVENT_ID_BATCH_SIZE,
+      ),
+    );
+  }
+
+  return calendarEventIdBatches;
 };
 
 export const findCallRecordingIdsForCalendarEvents = async (
@@ -19,34 +41,44 @@ export const findCallRecordingIdsForCalendarEvents = async (
     return [];
   }
 
-  const callRecordingNodes = await fetchAllNodes<CallRecordingIdNode>(
-    async (afterCursor) => {
-      const queryResult = await client.query({
-        callRecordings: {
-          __args: {
-            filter: {
-              calendarEventId: { in: calendarEventIds },
-            },
-            first: TWENTY_PAGE_SIZE,
-            ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
-          },
-          pageInfo: {
-            hasNextPage: true,
-            endCursor: true,
-          },
-          edges: {
-            node: {
-              id: true,
-            },
-          },
-        },
-      });
+  const callRecordingIds: string[] = [];
 
-      return queryResult.callRecordings as
-        | ConnectionPage<CallRecordingIdNode>
-        | undefined;
-    },
-  );
+  for (const calendarEventIdBatch of getCalendarEventIdBatches(
+    calendarEventIds,
+  )) {
+    const callRecordingNodes = await fetchAllNodes<CallRecordingIdNode>(
+      async (afterCursor) => {
+        const queryResult = await client.query({
+          callRecordings: {
+            __args: {
+              filter: {
+                calendarEventId: { in: calendarEventIdBatch },
+              },
+              first: TWENTY_PAGE_SIZE,
+              ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
+            },
+            pageInfo: {
+              hasNextPage: true,
+              endCursor: true,
+            },
+            edges: {
+              node: {
+                id: true,
+              },
+            },
+          },
+        });
 
-  return callRecordingNodes.map((callRecording) => callRecording.id);
+        return queryResult.callRecordings as
+          | ConnectionPage<CallRecordingIdNode>
+          | undefined;
+      },
+    );
+
+    for (const callRecordingNode of callRecordingNodes) {
+      callRecordingIds.push(callRecordingNode.id);
+    }
+  }
+
+  return [...new Set(callRecordingIds)];
 };

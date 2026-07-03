@@ -143,6 +143,8 @@ describe('generateCallRecordingSummary', () => {
     });
 
     expect(result).toEqual({ outcome: 'generated' });
+    expect(runAgentMock).toHaveBeenCalledTimes(1);
+    expect(updateCallRecordingMock).toHaveBeenCalledTimes(1);
   });
 
   it('generates for recordings another actor created when explicitly requested', async () => {

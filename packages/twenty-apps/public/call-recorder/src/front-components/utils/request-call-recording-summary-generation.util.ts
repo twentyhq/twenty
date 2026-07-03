@@ -12,6 +12,12 @@ type GenerateSummariesResponse = {
 const buildSnackbarForResponse = (
   response: GenerateSummariesResponse,
 ): { message: string; variant: 'success' | 'error' } => {
+  const generatedCallRecordingCount = (
+    response.generatedCallRecordingIds ?? []
+  ).length;
+  const failedCallRecordingCount = (response.failedCallRecordingIds ?? [])
+    .length;
+
   if (response.outcome === 'disabled') {
     return {
       message: 'Call summaries are disabled for this workspace.',
@@ -26,11 +32,18 @@ const buildSnackbarForResponse = (
     };
   }
 
-  if ((response.generatedCallRecordingIds ?? []).length > 0) {
+  if (generatedCallRecordingCount > 0 && failedCallRecordingCount > 0) {
+    return {
+      message: 'Some summaries generated, some failed.',
+      variant: 'error',
+    };
+  }
+
+  if (generatedCallRecordingCount > 0) {
     return { message: 'Summary generated.', variant: 'success' };
   }
 
-  if ((response.failedCallRecordingIds ?? []).length > 0) {
+  if (failedCallRecordingCount > 0) {
     return { message: 'Summary generation failed.', variant: 'error' };
   }
 
@@ -45,6 +58,10 @@ export const requestCallRecordingSummaryGeneration = async ({
 }: {
   calendarEventIds: string[];
 }): Promise<void> => {
+  if (calendarEventIds.length === 0) {
+    return;
+  }
+
   try {
     const client = new RestApiClient();
 

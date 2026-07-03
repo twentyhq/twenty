@@ -37,4 +37,10 @@ describe('requestCallRecordingSummariesBackfill', () => {
 
     await expect(requestCallRecordingSummariesBackfill()).resolves.toBe(true);
   });
+
+  it('returns false when the kickoff request fails before flushing', async () => {
+    postMock.mockRejectedValue(new Error('Network failed'));
+
+    await expect(requestCallRecordingSummariesBackfill()).resolves.toBe(false);
+  });
 });

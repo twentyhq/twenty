@@ -48,4 +48,15 @@ describe('start-call-recording-summary-backfill-on-install', () => {
     expect(result).toEqual({ outcome: 'backfill-requested' });
     expect(requestCallRecordingSummariesBackfillMock).toHaveBeenCalledTimes(1);
   });
+
+  it('reports failed backfill kickoff requests', async () => {
+    requestCallRecordingSummariesBackfillMock.mockResolvedValue(false);
+
+    const result = await startCallRecordingSummaryBackfillOnInstallHandler({
+      previousVersion: '1.0.5',
+      newVersion: '1.0.6',
+    });
+
+    expect(result).toEqual({ outcome: 'backfill-request-failed' });
+  });
 });
