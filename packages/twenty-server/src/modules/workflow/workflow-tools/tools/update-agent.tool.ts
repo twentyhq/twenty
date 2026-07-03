@@ -1,8 +1,13 @@
 import { isDefined } from 'twenty-shared/utils';
+import { WorkflowActionType } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import { type AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
+import {
+  WorkflowVersionStatus,
+  type WorkflowVersionWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
@@ -53,8 +58,64 @@ const updateAgentSchema = z.object({
     ),
 });
 
+const resyncAiAgentStepOutputSchemas = async (
+  deps: Pick<
+    WorkflowToolDependencies,
+    | 'workflowVersionStepService'
+    | 'globalWorkspaceOrmManager'
+    | 'flatEntityMapsCacheService'
+  >,
+  { workspaceId, agentId }: { workspaceId: string; agentId: string },
+): Promise<void> => {
+  await deps.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+    workspaceId,
+    flatMapsKeys: ['flatAgentMaps'],
+  });
+
+  const workflowVersionRepository =
+    await deps.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      workspaceId,
+      'workflowVersion',
+      { shouldBypassPermissionChecks: true },
+    );
+
+  const draftVersions = await workflowVersionRepository.find({
+    where: { status: WorkflowVersionStatus.DRAFT },
+  });
+
+  for (const version of draftVersions) {
+    const steps = version.steps;
+
+    if (!isDefined(steps)) {
+      continue;
+    }
+
+    const matchingStep = steps.find(
+      (step) =>
+        step.type === WorkflowActionType.AI_AGENT &&
+        step.settings?.input?.agentId === agentId,
+    );
+
+    if (!isDefined(matchingStep)) {
+      continue;
+    }
+
+    await deps.workflowVersionStepService.updateWorkflowVersionStep({
+      workspaceId,
+      workflowVersionId: version.id,
+      step: matchingStep,
+    });
+  }
+};
+
 export const createUpdateAgentTool = (
-  deps: Pick<WorkflowToolDependencies, 'agentService'>,
+  deps: Pick<
+    WorkflowToolDependencies,
+    | 'agentService'
+    | 'workflowVersionStepService'
+    | 'globalWorkspaceOrmManager'
+    | 'flatEntityMapsCacheService'
+  >,
   context: WorkflowToolContext,
 ) => ({
   name: 'update_agent' as const,
@@ -87,6 +148,18 @@ To find the agentId, look at the AI_AGENT step's settings.input.agentId field.`,
         },
         workspaceId,
       });
+
+      if (isDefined(responseFormat)) {
+        try {
+          await resyncAiAgentStepOutputSchemas(deps, { workspaceId, agentId });
+        } catch (resyncError) {
+          return {
+            success: true,
+            message: `Successfully updated agent ${agentId}, but failed to resync workflow step output schema: ${resyncError.message}`,
+            agentId: updatedAgent.id,
+          };
+        }
+      }
 
       return {
         success: true,

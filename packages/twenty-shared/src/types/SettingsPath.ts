@@ -55,7 +55,6 @@ export enum SettingsPath {
   ApplicationPageLayoutDetail = 'applications/:applicationId/pageLayouts/:pageLayoutUniversalIdentifier',
   AvailableApplicationDetail = 'applications/available/:availableApplicationId',
   ApplicationRegistrationDetail = 'applications/registrations/:applicationRegistrationId',
-  ApplicationRegistrationConfigVariableDetails = 'applications/registrations/:applicationRegistrationId/config-variables/:variableKey',
   LogicFunctions = 'functions',
   NewLogicFunction = 'functions/new',
   LogicFunctionDetail = 'functions/:logicFunctionId',
@@ -86,7 +85,6 @@ export enum SettingsPath {
   AdminPanelUserDetail = 'admin-panel/users/:userId',
   AdminPanelWorkspaceDetail = 'admin-panel/workspaces/:workspaceId',
   AdminPanelApplicationRegistrationDetail = 'admin-panel/applications/registrations/:applicationRegistrationId',
-  AdminPanelApplicationRegistrationConfigVariableDetails = 'admin-panel/applications/registrations/:applicationRegistrationId/config-variables/:variableKey',
   AdminPanelWorkspaceChatThread = 'admin-panel/workspaces/:workspaceId/threads/:threadId',
 
   Roles = 'members/roles',

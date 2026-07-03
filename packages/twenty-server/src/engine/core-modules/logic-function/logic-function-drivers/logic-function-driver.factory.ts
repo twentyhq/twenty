@@ -11,6 +11,7 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { DisabledDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/disabled.driver';
 import { LambdaDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda.driver';
 import { LocalDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local.driver';
+import { getLambdaResourceNamespace } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-resource-namespace.util';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
@@ -82,6 +83,9 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
           this.twentyConfigService.get(
             'LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET_REGION',
           ) ?? region;
+        const resourceNamespace = getLambdaResourceNamespace({
+          lambdaRoleArn: lambdaRole,
+        });
 
         return new LambdaDriver({
           logicFunctionResourceService: this.logicFunctionResourceService,
@@ -95,6 +99,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
           subhostingRole,
           layerBucket,
           layerBucketRegion,
+          resourceNamespace,
           sdkClientArchiveService: this.sdkClientArchiveService,
         });
       }

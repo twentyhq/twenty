@@ -9,6 +9,7 @@ import semver from 'semver';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -210,7 +211,7 @@ export class ApplicationTarballService {
         isListed: false,
         isFeatured: false,
         ownerWorkspaceId: params.ownerWorkspaceId,
-      });
+      } as QueryDeepPartialEntity<ApplicationRegistrationEntity>);
 
       if (manifest.application?.serverVariables) {
         await this.applicationRegistrationVariableService.syncVariableSchemas(

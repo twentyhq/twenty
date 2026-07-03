@@ -40,5 +40,6 @@ export interface StorageDriver {
     expiresInSeconds?: number;
     responseContentType?: string;
     responseContentDisposition?: string;
+    responseCacheControl?: string;
   }): Promise<string | null>;
 }
