@@ -1,6 +1,6 @@
 import { type DataSource } from 'typeorm';
 
-import { BackfillMetadataOverridesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-slow-1820000110000-backfill-metadata-overrides';
+import { BackfillMetadataOverridesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-slow-1782986476000-backfill-metadata-overrides';
 
 describe('BackfillMetadataOverridesSlowInstanceCommand', () => {
   let command: BackfillMetadataOverridesSlowInstanceCommand;
