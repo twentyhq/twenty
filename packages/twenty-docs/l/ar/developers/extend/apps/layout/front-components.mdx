@@ -377,6 +377,8 @@ export default defineFrontComponent({
 المتغيرات السرّية (`isSecret: true`) **لا** يتم كشفها لمكوّنات الواجهة. هي متاحة فقط في [دوال المنطق](/l/ar/developers/extend/apps/logic/logic-functions)، التي تعمل على جهة الخادم. هذا يمنع إرسال القيم الحساسة مثل مفاتيح API إلى المتصفح.
 </Warning>
 
+تُرجِع الدالة `getApplicationVariable` دائمًا **سلسلة نصية** (أو `undefined`)، بغضّ النظر عن `type` المُعلَن للمتغيّر. تُسلسَل السلسلة النصية بشكل متسق حسب النوع (القيم المنطقية على هيئة "true" / "false"، الأعداد كسلاسل عشرية، والمصفوفات/الكائنات كـ JSON)، وهو نفس التنسيق المستخدم مع `process.env` في وظائف المنطق — قم بتحليلها بنفسك (`Number(...)`، ‏`JSON.parse(...)`، ‏`=== 'true'`). انظر قسم [أنواع المتغيرات](/l/ar/developers/extend/apps/config/application#variable-types).
+
 متغيرات النظام التالية تكون متاحة دائمًا عبر `process.env`:
 
 | المتغيّر                  | الوصف                                                            |
