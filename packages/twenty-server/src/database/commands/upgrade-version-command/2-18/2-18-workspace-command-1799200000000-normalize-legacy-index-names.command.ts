@@ -16,6 +16,8 @@ import {
 } from 'src/database/commands/upgrade-version-command/2-18/utils/plan-index-name-normalization.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -126,11 +128,18 @@ export class NormalizeLegacyIndexNamesCommand extends ActiveOrSuspendedWorkspace
       }
     }
 
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'flatIndexMaps',
-      'flatObjectMetadataMaps',
-      'flatFieldMetadataMaps',
-    ]);
+    const indexRelatedFlatMapsKeys = [
+      ...new Set(
+        ['index' as const, ...getMetadataRelatedMetadataNames('index')].map(
+          getMetadataFlatEntityMapsKey,
+        ),
+      ),
+    ];
+
+    await this.workspaceCacheService.invalidateAndRecompute(
+      workspaceId,
+      indexRelatedFlatMapsKeys,
+    );
   }
 
   private async computeIndexNameNormalizationOperations(

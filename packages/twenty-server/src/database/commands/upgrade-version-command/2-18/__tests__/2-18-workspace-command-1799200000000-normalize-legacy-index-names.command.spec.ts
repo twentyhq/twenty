@@ -202,7 +202,6 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     expect(invalidateAndRecomputeMock).toHaveBeenCalledWith(WORKSPACE_ID, [
       'flatIndexMaps',
       'flatObjectMetadataMaps',
-      'flatFieldMetadataMaps',
     ]);
   });
 
@@ -326,7 +325,6 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     expect(invalidateAndRecomputeMock).toHaveBeenCalledWith(WORKSPACE_ID, [
       'flatIndexMaps',
       'flatObjectMetadataMaps',
-      'flatFieldMetadataMaps',
     ]);
   });
 
@@ -361,7 +359,6 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     expect(invalidateAndRecomputeMock).toHaveBeenCalledWith(WORKSPACE_ID, [
       'flatIndexMaps',
       'flatObjectMetadataMaps',
-      'flatFieldMetadataMaps',
     ]);
   });
 
@@ -405,7 +402,6 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     expect(invalidateAndRecomputeMock).toHaveBeenCalledWith(WORKSPACE_ID, [
       'flatIndexMaps',
       'flatObjectMetadataMaps',
-      'flatFieldMetadataMaps',
     ]);
   });
 
@@ -448,7 +444,6 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     expect(invalidateAndRecomputeMock).toHaveBeenCalledWith(WORKSPACE_ID, [
       'flatIndexMaps',
       'flatObjectMetadataMaps',
-      'flatFieldMetadataMaps',
     ]);
   });
 
@@ -501,7 +496,6 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
     expect(invalidateAndRecomputeMock).toHaveBeenCalledWith(WORKSPACE_ID, [
       'flatIndexMaps',
       'flatObjectMetadataMaps',
-      'flatFieldMetadataMaps',
     ]);
   });
 
