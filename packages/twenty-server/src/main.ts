@@ -35,7 +35,6 @@ const bootstrap = async () => {
     // resource_metadata pointer on 401. Required by MCP authorization spec.
     cors: { exposedHeaders: ['WWW-Authenticate'] },
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
-    forceCloseConnections: true,
     rawBody: true,
     snapshot: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
     ...(process.env.SSL_KEY_PATH && process.env.SSL_CERT_PATH
@@ -113,8 +112,6 @@ const bootstrap = async () => {
 
   httpServer.keepAliveTimeout = keepAliveTimeout;
   httpServer.headersTimeout = keepAliveTimeout + 1000;
-
-  app.enableShutdownHooks();
 
   await app.listen(twentyConfigService.get('NODE_PORT'));
 };
