@@ -4,15 +4,12 @@ import { join } from 'path';
 import {
   CreateFunctionCommand,
   type CreateFunctionCommandInput,
-  DeleteFunctionCommand,
   GetFunctionCommand,
   InvokeCommand,
   LogType,
   PublishLayerVersionCommand,
-  ResourceConflictException,
   ResourceNotFoundException,
 } from '@aws-sdk/client-lambda';
-import { Logger } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -50,8 +47,6 @@ import {
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
 export class LambdaToolFunctionsService {
-  private readonly logger = new Logger(LambdaToolFunctionsService.name);
-
   private commonLayerName: string | undefined;
   private yarnInstallFunctionName: string | undefined;
   private builderFunctionName: string | undefined;
@@ -217,14 +212,20 @@ export class LambdaToolFunctionsService {
 
   private async ensureYarnInstallLambdaExists(): Promise<void> {
     const yarnInstallFunctionName = await this.getYarnInstallFunctionName();
+    const lambdaClient = await this.awsClient.getLambdaClient();
 
-    if (
-      await this.toolFunctionExistsWithExpectedRole(yarnInstallFunctionName)
-    ) {
+    try {
+      await lambdaClient.send(
+        new GetFunctionCommand({ FunctionName: yarnInstallFunctionName }),
+      );
+
       return;
+    } catch (error) {
+      if (!(error instanceof ResourceNotFoundException)) {
+        throw error;
+      }
     }
 
-    const lambdaClient = await this.awsClient.getLambdaClient();
     const commonLayerArn = await this.ensureCommonLayerExists();
 
     const temporaryDirManager = new TemporaryDirManager();
@@ -250,13 +251,7 @@ export class LambdaToolFunctionsService {
         EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
       };
 
-      try {
-        await lambdaClient.send(new CreateFunctionCommand(params));
-      } catch (error) {
-        if (!(error instanceof ResourceConflictException)) {
-          throw error;
-        }
-      }
+      await lambdaClient.send(new CreateFunctionCommand(params));
     } finally {
       await temporaryDirManager.clean();
     }
@@ -266,12 +261,20 @@ export class LambdaToolFunctionsService {
 
   private async ensureBuilderLambdaExists(): Promise<void> {
     const builderFunctionName = await this.getBuilderFunctionName();
+    const lambdaClient = await this.awsClient.getLambdaClient();
 
-    if (await this.toolFunctionExistsWithExpectedRole(builderFunctionName)) {
+    try {
+      await lambdaClient.send(
+        new GetFunctionCommand({ FunctionName: builderFunctionName }),
+      );
+
       return;
+    } catch (error) {
+      if (!(error instanceof ResourceNotFoundException)) {
+        throw error;
+      }
     }
 
-    const lambdaClient = await this.awsClient.getLambdaClient();
     const commonLayerArn = await this.ensureCommonLayerExists();
 
     const temporaryDirManager = new TemporaryDirManager();
@@ -297,51 +300,12 @@ export class LambdaToolFunctionsService {
         EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
       };
 
-      try {
-        await lambdaClient.send(new CreateFunctionCommand(params));
-      } catch (error) {
-        if (!(error instanceof ResourceConflictException)) {
-          throw error;
-        }
-      }
+      await lambdaClient.send(new CreateFunctionCommand(params));
     } finally {
       await temporaryDirManager.clean();
     }
 
     await this.awsClient.waitFunctionActive(builderFunctionName);
-  }
-
-  private async toolFunctionExistsWithExpectedRole(
-    functionName: string,
-  ): Promise<boolean> {
-    const lambdaClient = await this.awsClient.getLambdaClient();
-
-    try {
-      const existingFunction = await lambdaClient.send(
-        new GetFunctionCommand({ FunctionName: functionName }),
-      );
-
-      if (existingFunction.Configuration?.Role === this.options.lambdaRole) {
-        return true;
-      }
-
-      this.logger.warn(
-        `Lambda function ${functionName} is bound to role ${existingFunction.Configuration?.Role ?? 'unknown'} instead of ${this.options.lambdaRole}; deleting to recreate with the configured role`,
-      );
-
-      await lambdaClient.send(
-        new DeleteFunctionCommand({ FunctionName: functionName }),
-      );
-      await this.awsClient.waitFunctionDeleted(functionName);
-
-      return false;
-    } catch (error) {
-      if (error instanceof ResourceNotFoundException) {
-        return false;
-      }
-
-      throw error;
-    }
   }
 
   private async getCommonLayerName(): Promise<string> {
