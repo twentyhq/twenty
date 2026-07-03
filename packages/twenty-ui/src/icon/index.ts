@@ -335,6 +335,7 @@ export {
   IconMathXy,
   IconMaximize,
   IconMessage,
+  IconMessageCircle,
   IconMessageCirclePlus,
   IconMinus,
   IconMoneybag,

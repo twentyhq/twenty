@@ -28,6 +28,7 @@ import {
   IconLayout,
   IconMail,
   IconMessage,
+  IconMessageCircle,
   IconPlug,
   IconServer,
   IconSettings,
@@ -173,9 +174,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !permissionMap[PermissionFlagType.AI_SETTINGS],
         },
         {
-          label: t`Emails`,
-          path: SettingsPath.WorkspaceEmail,
-          Icon: IconMail,
+          label: t`Communications`,
+          path: SettingsPath.WorkspaceCommunications,
+          Icon: IconMessageCircle,
           isHidden:
             !isEmailGroupFeatureEnabled ||
             !permissionMap[PermissionFlagType.WORKSPACE],

@@ -50,7 +50,7 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
           unsubscribeTopicId,
         });
       } else {
-        navigate(SettingsPath.WorkspaceEmail);
+        navigate(SettingsPath.WorkspaceCommunications);
       }
     } catch {
       enqueueErrorSnackBar({
@@ -81,7 +81,7 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
         },
         {
           children: t`Email`,
-          href: getSettingsPath(SettingsPath.WorkspaceEmail),
+          href: getSettingsPath(SettingsPath.WorkspaceCommunications),
         },
         { children: t`New Unsubscribe Topic` },
       ]}
@@ -90,7 +90,7 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
           isSaveDisabled={!canSave}
           isCancelDisabled={loading}
           isLoading={loading}
-          onCancel={() => navigate(SettingsPath.WorkspaceEmail)}
+          onCancel={() => navigate(SettingsPath.WorkspaceCommunications)}
           onSave={handleSave}
         />
       }

@@ -102,6 +102,7 @@ export {
   IconColumnInsertRight,
   IconColumns,
   IconCommand,
+  IconMessageCircle,
   IconMessageCircle as IconComment,
   IconCopy,
   IconCopyPlus,

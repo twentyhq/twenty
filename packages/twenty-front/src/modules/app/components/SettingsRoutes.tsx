@@ -647,7 +647,7 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
       >
         <Route path={SettingsPath.General} element={<SettingsGeneral />} />
         <Route
-          path={SettingsPath.WorkspaceEmail}
+          path={SettingsPath.WorkspaceCommunications}
           element={<SettingsWorkspaceEmail />}
         />
         <Route

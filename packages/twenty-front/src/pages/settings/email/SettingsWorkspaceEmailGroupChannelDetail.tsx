@@ -100,7 +100,7 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
   const handleDelete = async () => {
     try {
       await deleteEmailGroupChannel(channel.id);
-      navigateSettings(SettingsPath.WorkspaceEmail);
+      navigateSettings(SettingsPath.WorkspaceCommunications);
     } catch {
       enqueueErrorSnackBar({
         message: t`Failed to delete email channel.`,
@@ -128,7 +128,7 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
         },
         {
           children: t`Emails`,
-          href: getSettingsPath(SettingsPath.WorkspaceEmail),
+          href: getSettingsPath(SettingsPath.WorkspaceCommunications),
         },
       ]}
       actionButton={
