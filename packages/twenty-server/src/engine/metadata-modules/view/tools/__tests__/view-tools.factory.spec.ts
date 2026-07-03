@@ -643,7 +643,9 @@ describe('ViewToolsFactory', () => {
         });
 
         expect(viewService.createOne).not.toHaveBeenCalled();
-        expect(completeViewUpsertService.upsertCompleteView).toHaveBeenCalledWith(
+        expect(
+          completeViewUpsertService.upsertCompleteView,
+        ).toHaveBeenCalledWith(
           expect.objectContaining({
             workspaceId: mockWorkspaceId,
             userWorkspaceId: mockUserWorkspaceId,
@@ -711,7 +713,9 @@ describe('ViewToolsFactory', () => {
           fields: [{ fieldMetadataId: mockStageFieldMetadataId }],
         });
 
-        expect(completeViewUpsertService.upsertCompleteView).toHaveBeenCalledWith(
+        expect(
+          completeViewUpsertService.upsertCompleteView,
+        ).toHaveBeenCalledWith(
           expect.objectContaining({
             fields: [
               {
@@ -760,7 +764,9 @@ describe('ViewToolsFactory', () => {
           filters: [{ fieldName: 'stage', operand: 'IS', value: ['WON'] }],
         });
 
-        expect(completeViewUpsertService.upsertCompleteView).toHaveBeenCalledWith(
+        expect(
+          completeViewUpsertService.upsertCompleteView,
+        ).toHaveBeenCalledWith(
           expect.objectContaining({
             existingViewId: mockViewId,
             objectMetadataId: mockObjectMetadataId,
@@ -799,7 +805,9 @@ describe('ViewToolsFactory', () => {
           sorts: [],
         });
 
-        expect(completeViewUpsertService.upsertCompleteView).toHaveBeenCalledWith(
+        expect(
+          completeViewUpsertService.upsertCompleteView,
+        ).toHaveBeenCalledWith(
           expect.objectContaining({
             existingViewId: mockViewId,
             sorts: [],
