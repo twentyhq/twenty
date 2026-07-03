@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type RoleManifest } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
@@ -117,16 +117,42 @@ export class MarketplaceQueryService {
       latestAvailableVersion: registration.latestAvailableVersion ?? undefined,
       isListed: registration.isListed,
       isFeatured: registration.isFeatured,
-      description: registration.description ?? undefined,
-      author: registration.author ?? undefined,
-      category: registration.category ?? undefined,
+      description:
+        registration.description ??
+        registration.manifest?.application?.description ??
+        undefined,
+      author:
+        registration.author ??
+        registration.manifest?.application?.author ??
+        undefined,
+      category:
+        registration.category ??
+        registration.manifest?.application?.category ??
+        undefined,
       logo: registration.logoUrl ?? undefined,
-      websiteUrl: registration.websiteUrl ?? undefined,
-      aboutDescription: registration.aboutDescription ?? undefined,
-      termsUrl: registration.termsUrl ?? undefined,
-      emailSupport: registration.emailSupport ?? undefined,
-      issueReportUrl: registration.issueReportUrl ?? undefined,
-      screenshots: registration.screenshots ?? [],
+      websiteUrl:
+        registration.websiteUrl ??
+        registration.manifest?.application?.websiteUrl ??
+        undefined,
+      aboutDescription:
+        registration.aboutDescription ??
+        registration.manifest?.application?.aboutDescription ??
+        undefined,
+      termsUrl:
+        registration.termsUrl ??
+        registration.manifest?.application?.termsUrl ??
+        undefined,
+      emailSupport:
+        registration.emailSupport ??
+        registration.manifest?.application?.emailSupport ??
+        undefined,
+      issueReportUrl:
+        registration.issueReportUrl ??
+        registration.manifest?.application?.issueReportUrl ??
+        undefined,
+      screenshots: isNonEmptyArray(registration.screenshots)
+        ? registration.screenshots
+        : (registration.manifest?.application?.screenshots ?? []),
       defaultRoleUniversalIdentifier:
         registration.manifest?.application?.defaultRoleUniversalIdentifier,
       roles: registration.manifest?.roles?.map((role) =>
