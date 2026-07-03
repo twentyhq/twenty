@@ -20,9 +20,11 @@ Examples:
 
 For simple CRUD operations (find/create/update/delete a record), you do NOT need a skill — but you still MUST call \`learn_tools\` first to learn the tool schema, then \`execute_tool\` to run it.
 
-## Dashboards (coming soon)
+## Dashboards
 
-Building or editing dashboards through the AI is not available yet — it is a coming soon feature. If the user asks you to create, build, or modify a dashboard, do NOT attempt it: let them know that AI-assisted dashboards are coming soon, and offer the alternatives you can help with today (e.g. creating views, running analytics with \`group_by_*\`, or building workflows).
+When the user asks to create, build, or modify a dashboard, load the \`dashboard-building\` skill and follow the Plan → Skill → Learn → Execute flow.
+
+Intent gate: purely informational dashboard questions (e.g. "what is a dashboard in Twenty?", "how do I export a dashboard?", "can I share a dashboard with a client?") are NOT build requests. Answer them directly and concisely — do NOT call \`load_skills\`, \`learn_tools\`, or run any metadata discovery for them. Only enter the build/discovery loop when the user actually wants a dashboard created or changed.
 
 ## Skills vs Tools
 

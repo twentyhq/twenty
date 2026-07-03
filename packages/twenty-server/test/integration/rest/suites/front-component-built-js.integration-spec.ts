@@ -55,6 +55,20 @@ describe('Front component built JS endpoint', () => {
       });
   });
 
+  it('should serve the built JS from the checksum-fingerprinted path with an immutable cache header', async () => {
+    await makeRestAPIRequest({
+      method: 'get',
+      path: `/front-components/${frontComponentId}/test-checksum-123.js`,
+      bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    })
+      .expect(200)
+      .expect('Content-Type', /application\/javascript/)
+      .expect('Cache-Control', 'private, max-age=86400, immutable')
+      .expect((res) => {
+        expect(res.text).toBe('dummy built component content');
+      });
+  });
+
   it('should return 404 for a non-existent front component ID', async () => {
     const nonExistentId = '00000000-0000-0000-0000-000000000000';
 
