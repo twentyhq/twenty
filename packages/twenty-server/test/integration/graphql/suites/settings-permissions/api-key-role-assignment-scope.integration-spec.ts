@@ -12,11 +12,10 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 
 const client = request(`http://localhost:${APP_PORT}`);
 
-// A workspace member whose role only carries the API_KEYS_AND_WEBHOOKS flag must
-// not be able to mint (or re-assign) an API key bound to a role that grants more
-// permissions than the member itself holds. Otherwise the member could escalate
-// to Admin through the API key token.
-describe('API key role privilege escalation', () => {
+// The role bound to an API key must stay within the caller's own permission
+// scope: a member can bind a role equal to or narrower than what they hold, but
+// not one that grants more permissions than they have.
+describe('API key role assignment scope', () => {
   let customRoleId: string;
   let originalMemberRoleId: string;
   let adminRoleId: string;
@@ -118,7 +117,7 @@ describe('API key role privilege escalation', () => {
     it('should deny minting an API key bound to a role that exceeds the caller permissions', async () => {
       const { data, errors } = await createApiKey({
         input: {
-          name: 'escalation-key',
+          name: 'above-scope-key',
           expiresAt: '2027-01-01T00:00:00.000Z',
           roleId: adminRoleId,
         },
@@ -166,7 +165,7 @@ describe('API key role privilege escalation', () => {
     it('should deny re-assigning an API key to a role that exceeds the caller permissions', async () => {
       const { data: createData } = await createApiKey({
         input: {
-          name: 'assign-escalation-key',
+          name: 'above-scope-reassign-key',
           expiresAt: '2027-01-01T00:00:00.000Z',
           roleId: customRoleId,
         },
