@@ -73,6 +73,23 @@ export class StreamAgentChatJob {
     data: StreamAgentChatJobData,
     context?: MessageQueueJobContext,
   ): Promise<void> {
+    // A re-delivered job whose thread has moved on (stalled re-run, ops
+    // replay of a failed job) must not become a second writer: it would
+    // re-execute tools with real side effects, re-bill the turn and
+    // interleave chunks with the live stream
+    const thread = await this.threadRepository.findOne(data.workspaceId, {
+      where: { id: data.threadId },
+      select: ['id', 'activeStreamId'],
+    });
+
+    if (thread?.activeStreamId !== data.streamId) {
+      this.logger.warn(
+        `Skipping stream ${data.streamId} for thread ${data.threadId}: the thread no longer holds this claim`,
+      );
+
+      return;
+    }
+
     await this.eventPublisherService.resetStreamState(data.threadId);
 
     const abortController = new AbortController();
