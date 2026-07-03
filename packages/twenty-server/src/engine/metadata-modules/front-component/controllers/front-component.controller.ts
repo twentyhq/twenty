@@ -46,7 +46,7 @@ export class FrontComponentController {
 
   constructor(private readonly frontComponentService: FrontComponentService) {}
 
-  @Get(':frontComponentId')
+  @Get([':frontComponentId', ':frontComponentId/:cacheKey'])
   @UseGuards(NoPermissionGuard)
   async getBuiltJs(
     @Res() res: Response,
