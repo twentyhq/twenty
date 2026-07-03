@@ -62,11 +62,11 @@
 }
 
 // position only reshapes the border radius; standalone keeps the .button
-// fallback radius. Grouped edges stay concentric with the IconButtonGroup
-// container: its md radius minus the 2px padding and 1px border.
+// fallback radius. Grouped IconButtons abut flush (no framing container), so
+// their outer corners share the standalone md radius.
 .button[data-position='left'] {
-  --icon-button-radius: calc(var(--t-border-radius-md) - 3px) 0px 0px
-    calc(var(--t-border-radius-md) - 3px);
+  --icon-button-radius: var(--t-border-radius-md) 0px 0px
+    var(--t-border-radius-md);
 }
 
 .button[data-position='middle'] {
@@ -74,8 +74,8 @@
 }
 
 .button[data-position='right'] {
-  --icon-button-radius: 0px calc(var(--t-border-radius-md) - 3px)
-    calc(var(--t-border-radius-md) - 3px) 0px;
+  --icon-button-radius: 0px var(--t-border-radius-md) var(--t-border-radius-md)
+    0px;
 }
 
 // Default border widths: tertiary is borderless and middle collapses the
