@@ -107,6 +107,11 @@ export class WorkspaceSchemaIndexManagerService {
     await queryRunner.query(sql);
   }
 
+  // Query pg_class/pg_namespace directly instead of the pg_indexes view: the
+  // view joins pg_index against pg_class twice and derives schemaname from the
+  // table's namespace, which prevents an index lookup and can scan the whole
+  // catalog on large multi-tenant clusters. This lookup hits the unique
+  // (relname, relnamespace) index on pg_class.
   async doesIndexExist({
     queryRunner,
     schemaName,
@@ -118,8 +123,10 @@ export class WorkspaceSchemaIndexManagerService {
   }): Promise<boolean> {
     const result: { exists: boolean }[] = await queryRunner.query(
       `SELECT EXISTS (
-        SELECT 1 FROM pg_indexes
-        WHERE schemaname = $1 AND indexname = $2
+        SELECT 1
+        FROM pg_class c
+        JOIN pg_namespace n ON n.oid = c.relnamespace
+        WHERE c.relname = $2 AND n.nspname = $1 AND c.relkind IN ('i', 'I')
       ) AS "exists"`,
       [schemaName, indexName],
     );
@@ -137,8 +144,10 @@ export class WorkspaceSchemaIndexManagerService {
     indexName: string;
   }): Promise<string | null> {
     const result: { indexdef: string }[] = await queryRunner.query(
-      `SELECT indexdef FROM pg_indexes
-      WHERE schemaname = $1 AND indexname = $2`,
+      `SELECT pg_get_indexdef(c.oid) AS "indexdef"
+      FROM pg_class c
+      JOIN pg_namespace n ON n.oid = c.relnamespace
+      WHERE c.relname = $2 AND n.nspname = $1 AND c.relkind IN ('i', 'I')`,
       [schemaName, indexName],
     );
 

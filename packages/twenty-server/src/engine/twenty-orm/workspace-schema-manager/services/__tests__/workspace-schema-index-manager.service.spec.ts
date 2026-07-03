@@ -42,7 +42,7 @@ describe('WorkspaceSchemaIndexManagerService', () => {
 
       expect(result).toBe(true);
       expect(queryMock).toHaveBeenCalledWith(
-        expect.stringContaining('pg_indexes'),
+        expect.stringContaining('pg_class'),
         ['workspace_test', 'IDX_existing'],
       );
     });
@@ -75,7 +75,7 @@ describe('WorkspaceSchemaIndexManagerService', () => {
 
       expect(result).toBe(indexDefinition);
       expect(queryMock).toHaveBeenCalledWith(
-        expect.stringContaining('pg_indexes'),
+        expect.stringContaining('pg_class'),
         ['workspace_test', 'IDX_existing'],
       );
     });
