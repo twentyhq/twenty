@@ -1,11 +1,11 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
 import { PROFILE_OPTIONS, type ProfileOptions } from 'src/constants/my-profile.constants';
 
 import { isCaseStudy } from './content-type';
 import { firstFileUrl } from './profile-picture';
-import { errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
+import { buildAppClient, errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
 
 export const GET_MY_PARTNER_PROFILE_ID = 'eacfd95b-de02-4f03-aa38-3cae31bb30a9';
 
@@ -20,8 +20,8 @@ export type MyProfilePayload = {
   skills: string[] | null;
   typeOfTeam: string | null;
   availability: string | null;
-  hourlyRate: { amountMicros: string | null; currencyCode: string | null } | null;
-  projectBudgetMin: { amountMicros: string | null; currencyCode: string | null } | null;
+  hourlyRate: { amountMicros: number | null; currencyCode: string | null } | null;
+  projectBudgetMin: { amountMicros: number | null; currencyCode: string | null } | null;
   website: string | null;
   linkedin: string | null;
   calendarLink: string | null;
@@ -180,7 +180,7 @@ export const handler = async (
   if ('error' in resolved) return errorResponse(resolved.error);
 
   try {
-    const client = new CoreApiClient();
+    const client = buildAppClient();
     const result = await queryMyPartnerProfile(client, resolved.partnerId);
     const node = result.partners?.edges?.[0]?.node;
 

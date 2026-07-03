@@ -1,9 +1,9 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { z } from 'zod';
 
 import { buildReconcilePlan } from './reconcile-children';
-import { errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
+import { buildAppClient, errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
 
 export const SAVE_MY_PARTNER_LINKS_ID = 'b56d1158-4e79-4fdb-a7c4-e0f8871b2d42';
 
@@ -74,7 +74,7 @@ export const handler = async (event: RoutePayload<unknown>): Promise<SaveLinksRe
   }
 
   try {
-    const client = new CoreApiClient();
+    const client = buildAppClient();
     const existingIds = await queryExistingLinkIds(client, resolved.partnerId);
 
     const plan = buildReconcilePlan(existingIds, parsed.data.links);

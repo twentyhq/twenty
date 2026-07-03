@@ -1,10 +1,10 @@
-import { CoreApiClient, type CoreSchema } from 'twenty-client-sdk/core';
+import { type CoreSchema } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { z } from 'zod';
 
 import { PROFILE_OPTIONS } from 'src/constants/my-profile.constants';
 
-import { errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
+import { buildAppClient, errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
 
 export const SAVE_MY_PARTNER_PROFILE_ID = 'de21e2a6-f4b4-4186-90d9-645015e856a1';
 
@@ -20,11 +20,11 @@ export const saveProfileSchema = z
     typeOfTeam: z.enum(['SOLO', 'AGENCY']).optional(),
     availability: z.enum(['AVAILABLE', 'UNAVAILABLE']).optional(),
     hourlyRate: z
-      .object({ amountMicros: z.string(), currencyCode: z.string() })
+      .object({ amountMicros: z.number(), currencyCode: z.string() })
       .nullable()
       .optional(),
     projectBudgetMin: z
-      .object({ amountMicros: z.string(), currencyCode: z.string() })
+      .object({ amountMicros: z.number(), currencyCode: z.string() })
       .nullable()
       .optional(),
     website: z.string().url().nullable().optional(),
@@ -126,7 +126,7 @@ export const handler = async (event: RoutePayload<unknown>): Promise<SaveResult>
   const data = buildPartnerUpdateData(input);
 
   try {
-    const client = new CoreApiClient();
+    const client = buildAppClient();
     await client.mutation({
       updatePartner: { __args: { id: resolved.partnerId, data }, id: true },
     });

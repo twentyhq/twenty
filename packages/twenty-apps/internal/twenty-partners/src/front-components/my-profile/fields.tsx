@@ -29,7 +29,7 @@ const chipStyle: CSSProperties = {
   background: 'rgba(0, 0, 0, 0.06)',
 };
 
-export type CurrencyValue = { amountMicros: string; currencyCode: string };
+export type CurrencyValue = { amountMicros: number; currencyCode: string };
 
 type TextFieldProps = {
   label: string;
@@ -149,14 +149,15 @@ type CurrencyFieldProps = {
 };
 
 export const CurrencyField = ({ label, value, onChange }: CurrencyFieldProps) => {
-  const amountMicros = value?.amountMicros ?? '';
+  const amountText = value?.amountMicros != null ? String(value.amountMicros) : '';
   const currencyCode = value?.currencyCode ?? '';
 
-  const emitChange = (nextAmountMicros: string, nextCurrencyCode: string) => {
-    if (nextAmountMicros.trim() === '' && nextCurrencyCode.trim() === '') {
+  const emitChange = (nextAmountText: string, nextCurrencyCode: string) => {
+    if (nextAmountText.trim() === '' && nextCurrencyCode.trim() === '') {
       onChange(null);
       return;
     }
+    const nextAmountMicros = nextAmountText.trim() === '' ? 0 : Number(nextAmountText);
     onChange({ amountMicros: nextAmountMicros, currencyCode: nextCurrencyCode });
   };
 
@@ -166,7 +167,7 @@ export const CurrencyField = ({ label, value, onChange }: CurrencyFieldProps) =>
       <div style={{ display: 'flex', gap: 8 }}>
         <input
           type="text"
-          value={amountMicros}
+          value={amountText}
           placeholder="Amount (micros)"
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
             emitChange(event.target.value, currencyCode)
@@ -178,7 +179,7 @@ export const CurrencyField = ({ label, value, onChange }: CurrencyFieldProps) =>
           value={currencyCode}
           placeholder="USD"
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            emitChange(amountMicros, event.target.value)
+            emitChange(amountText, event.target.value)
           }
           style={{ ...inputStyle, maxWidth: 80 }}
         />

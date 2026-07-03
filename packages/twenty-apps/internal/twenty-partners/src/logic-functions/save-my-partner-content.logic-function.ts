@@ -1,11 +1,11 @@
-import { CoreApiClient, type CoreSchema } from 'twenty-client-sdk/core';
+import { type CoreApiClient, type CoreSchema } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { z } from 'zod';
 
 import { isCaseStudy } from './content-type';
 import { buildReconcilePlan } from './reconcile-children';
 import { firstFileUrl } from './profile-picture';
-import { errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
+import { buildAppClient, errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
 
 export const SAVE_MY_PARTNER_CONTENT_ID = 'e574fc61-6d9e-48db-9e98-a9b8160188cc';
 
@@ -133,7 +133,7 @@ export const handler = async (event: RoutePayload<unknown>): Promise<SaveContent
   }
 
   try {
-    const client = new CoreApiClient();
+    const client = buildAppClient();
     const existingIds = await queryExistingContentIds(client, resolved.partnerId);
 
     const plan = buildReconcilePlan(existingIds, parsed.data.caseStudies);

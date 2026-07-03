@@ -92,12 +92,12 @@ describe('buildPartnerUpdateData', () => {
 
   it('passes CURRENCY fields through as { amountMicros, currencyCode }', () => {
     const data = buildPartnerUpdateData({
-      hourlyRate: { amountMicros: '150000000', currencyCode: 'USD' },
-      projectBudgetMin: { amountMicros: '1000000000', currencyCode: 'USD' },
+      hourlyRate: { amountMicros: 150000000, currencyCode: 'USD' },
+      projectBudgetMin: { amountMicros: 1000000000, currencyCode: 'USD' },
     });
 
-    expect(data.hourlyRate).toEqual({ amountMicros: '150000000', currencyCode: 'USD' });
-    expect(data.projectBudgetMin).toEqual({ amountMicros: '1000000000', currencyCode: 'USD' });
+    expect(data.hourlyRate).toEqual({ amountMicros: 150000000, currencyCode: 'USD' });
+    expect(data.projectBudgetMin).toEqual({ amountMicros: 1000000000, currencyCode: 'USD' });
   });
 
   it('maps a null CURRENCY field to null (clearing it)', () => {

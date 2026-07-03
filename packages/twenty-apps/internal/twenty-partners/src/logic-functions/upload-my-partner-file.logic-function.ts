@@ -1,4 +1,3 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { z } from 'zod';
 
@@ -7,7 +6,7 @@ import {
   PROFILE_PICTURE_FILE_FIELD_ID,
 } from 'src/constants/my-profile.constants';
 
-import { errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
+import { buildAppClient, errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
 
 export const UPLOAD_MY_PARTNER_FILE_ID = '912dcc24-5182-4ecb-b640-5f7e577a4347';
 
@@ -52,7 +51,7 @@ export const handler = async (event: RoutePayload<unknown>): Promise<UploadFileR
   const fieldId = fieldIdForTarget(input.target);
 
   try {
-    const client = new CoreApiClient();
+    const client = buildAppClient();
 
     if (input.target === 'caseStudyCover') {
       const recordId = input.recordId;

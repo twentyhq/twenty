@@ -191,7 +191,7 @@ describe('save-my-partner-profile', () => {
         city: 'Berlin',
         country: 'GERMANY',
         typeOfTeam: 'AGENCY',
-        hourlyRate: { amountMicros: '150000000', currencyCode: 'USD' },
+        hourlyRate: { amountMicros: 150000000, currencyCode: 'USD' },
         website: 'https://updated.example.com',
       }),
     );
@@ -203,7 +203,7 @@ describe('save-my-partner-profile', () => {
     expect(partner.city).toBe('Berlin');
     expect(partner.country).toBe('GERMANY');
     expect(partner.typeOfTeam).toBe('AGENCY');
-    expect(partner.hourlyRate).toEqual({ amountMicros: '150000000', currencyCode: 'USD' });
+    expect(partner.hourlyRate).toEqual({ amountMicros: 150000000, currencyCode: 'USD' });
     expect(partner.website?.primaryLinkUrl).toBe('https://updated.example.com');
 
     // Admin-only fields are never in the editable schema, so they must survive untouched.

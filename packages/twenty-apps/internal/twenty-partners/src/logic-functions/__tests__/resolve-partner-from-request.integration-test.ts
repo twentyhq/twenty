@@ -87,7 +87,7 @@ describe('resolvePartnerByUserId', () => {
   });
 
   it('returns null for a userId with no matching workspace member', async () => {
-    const result = await resolvePartnerByUserId(client, '00000000-0000-0000-0000-000000000000');
+    const result = await resolvePartnerByUserId(client, '11111111-1111-4111-8111-111111111111');
 
     expect(result).toBeNull();
   });

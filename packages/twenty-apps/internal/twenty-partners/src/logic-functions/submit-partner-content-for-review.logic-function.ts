@@ -1,8 +1,8 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { z } from 'zod';
 
-import { errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
+import { buildAppClient, errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
 
 export const SUBMIT_PARTNER_CONTENT_FOR_REVIEW_ID = '6d722484-bbe9-4ffc-b017-5164e3a5a03c';
 
@@ -49,7 +49,7 @@ export const handler = async (
   }
 
   try {
-    const client = new CoreApiClient();
+    const client = buildAppClient();
     const content = await queryContentOwnerAndStatus(client, parsed.data.recordId);
 
     if (!content || content.partnerId !== resolved.partnerId) {

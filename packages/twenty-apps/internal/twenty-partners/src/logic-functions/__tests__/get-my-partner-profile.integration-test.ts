@@ -180,7 +180,7 @@ describe('get-my-partner-profile', () => {
   it('returns NO_PARTNER when the token userId matches no workspace member', async () => {
     const userWorkspaceId = `uw-test-nomember-${Date.now()}`;
     process.env.TWENTY_APP_ACCESS_TOKEN = makeToken({
-      userId: '00000000-0000-0000-0000-000000000000',
+      userId: '11111111-1111-4111-8111-111111111111',
       userWorkspaceId,
     });
 
