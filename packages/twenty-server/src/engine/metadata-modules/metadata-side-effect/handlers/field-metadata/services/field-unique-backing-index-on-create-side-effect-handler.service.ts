@@ -54,10 +54,11 @@ export class FieldUniqueBackingIndexOnCreateSideEffectHandlerService extends Met
       });
     }
 
-    const flatIndexMetadata = generateDeterministicIndexForFlatFieldMetadataOrThrow({
-      flatFieldMetadata,
-      flatObjectMetadata: parentFlatObjectMetadata,
-    });
+    const flatIndexMetadata =
+      generateDeterministicIndexForFlatFieldMetadataOrThrow({
+        flatFieldMetadata,
+        flatObjectMetadata: parentFlatObjectMetadata,
+      });
 
     return {
       status: 'success',
