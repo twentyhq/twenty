@@ -1,4 +1,4 @@
-import { lazy } from 'react';
+import { lazy, useMemo } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -133,7 +133,7 @@ const preloadOnboardingPages = () => {
   return null;
 };
 
-export const useCreateWorkspaceAppRouter = (
+const createWorkspaceAppRouter = (
   isFunctionSettingsEnabled?: boolean,
   isAdminPageEnabled?: boolean,
 ) =>
@@ -327,4 +327,14 @@ export const useCreateWorkspaceAppRouter = (
         </Route>
       </Route>,
     ),
+  );
+
+export const useCreateWorkspaceAppRouter = (
+  isFunctionSettingsEnabled?: boolean,
+  isAdminPageEnabled?: boolean,
+) =>
+  useMemo(
+    () =>
+      createWorkspaceAppRouter(isFunctionSettingsEnabled, isAdminPageEnabled),
+    [isFunctionSettingsEnabled, isAdminPageEnabled],
   );

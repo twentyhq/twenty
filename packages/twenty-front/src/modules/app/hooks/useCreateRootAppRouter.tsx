@@ -1,4 +1,4 @@
-import { lazy } from 'react';
+import { lazy, useState } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -27,7 +27,7 @@ const PasswordReset = lazy(() =>
   })),
 );
 
-export const useCreateRootAppRouter = () =>
+const createRootAppRouter = () =>
   createBrowserRouter(
     createRoutesFromElements(
       <Route element={<RootAppProviders />} loader={async () => null}>
@@ -69,3 +69,9 @@ export const useCreateRootAppRouter = () =>
       </Route>,
     ),
   );
+
+export const useCreateRootAppRouter = () => {
+  const [router] = useState(createRootAppRouter);
+
+  return router;
+};
