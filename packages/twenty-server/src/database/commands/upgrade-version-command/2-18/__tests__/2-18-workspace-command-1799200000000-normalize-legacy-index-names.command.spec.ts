@@ -319,6 +319,11 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
       WORKSPACE_ID,
     ]);
     expect(commit).toHaveBeenCalled();
+    expect(invalidateAndRecomputeMock).toHaveBeenCalledWith(WORKSPACE_ID, [
+      'flatIndexMaps',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+    ]);
   });
 
   it('skips the physical rename but still reconciles metadata when neither source nor target index exists', async () => {
@@ -349,6 +354,11 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
       WORKSPACE_ID,
     ]);
     expect(commit).toHaveBeenCalled();
+    expect(invalidateAndRecomputeMock).toHaveBeenCalledWith(WORKSPACE_ID, [
+      'flatIndexMaps',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+    ]);
   });
 
   it('drops the duplicate legacy index when both source and target exist with the same definition', async () => {
@@ -388,6 +398,11 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
       WORKSPACE_ID,
     ]);
     expect(commit).toHaveBeenCalled();
+    expect(invalidateAndRecomputeMock).toHaveBeenCalledWith(WORKSPACE_ID, [
+      'flatIndexMaps',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+    ]);
   });
 
   it('leaves the orphan source index in place when both exist but with different definitions', async () => {
@@ -426,6 +441,11 @@ describe('NormalizeLegacyIndexNamesCommand', () => {
       WORKSPACE_ID,
     ]);
     expect(commit).toHaveBeenCalled();
+    expect(invalidateAndRecomputeMock).toHaveBeenCalledWith(WORKSPACE_ID, [
+      'flatIndexMaps',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+    ]);
   });
 
   it('rolls back the transaction when an operation fails', async () => {
