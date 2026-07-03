@@ -1,24 +1,27 @@
-import crypto from 'crypto';
-
 import request from 'supertest';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
+import { expectOneNotInternalServerErrorHttpResponseSnapshot } from 'test/integration/utils/expect-one-not-internal-server-error-http-response-snapshot.util';
 import { type LogicFunctionManifest } from 'twenty-shared/application';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const OWNER_WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
 
-const APP_UNIVERSAL_IDENTIFIER = crypto.randomUUID();
-const ROLE_UNIVERSAL_IDENTIFIER = crypto.randomUUID();
+const APP_UNIVERSAL_IDENTIFIER = 'd41340eb-6cc9-4383-8b04-9be7dc794bb1';
+const ROLE_UNIVERSAL_IDENTIFIER = 'e5b19f77-3e1c-4a10-9c2e-56d6b0f8a3d2';
 
-const NON_EXPOSED_FUNCTION_UNIVERSAL_IDENTIFIER = crypto.randomUUID();
-const EXPOSED_RESOLVER_UNIVERSAL_IDENTIFIER = crypto.randomUUID();
-const AUTH_REQUIRED_RESOLVER_UNIVERSAL_IDENTIFIER = crypto.randomUUID();
-const TARGET_FUNCTION_UNIVERSAL_IDENTIFIER = crypto.randomUUID();
+const NON_EXPOSED_FUNCTION_UNIVERSAL_IDENTIFIER =
+  '1a1f983f-5c1a-4c60-a3c8-7d0e2a4a11a1';
+const EXPOSED_RESOLVER_UNIVERSAL_IDENTIFIER =
+  '2b2f983f-5c1a-4c60-a3c8-7d0e2a4a22b2';
+const AUTH_REQUIRED_RESOLVER_UNIVERSAL_IDENTIFIER =
+  '3c3f983f-5c1a-4c60-a3c8-7d0e2a4a33c3';
+const TARGET_FUNCTION_UNIVERSAL_IDENTIFIER =
+  '4d4f983f-5c1a-4c60-a3c8-7d0e2a4a44d4';
 
 const TARGET_FUNCTION_RESPONSE = { greeting: 'hello from target function' };
 
@@ -34,12 +37,6 @@ const TARGET_BUILT_HANDLER_CODE = `export const main = async () => (${JSON.strin
   TARGET_FUNCTION_RESPONSE,
 )});
 `;
-
-const resolverNotFoundMessage = (universalIdentifier: string) =>
-  `Server resolver function ${universalIdentifier} not found`;
-
-const requiresAuthenticationMessage = (universalIdentifier: string) =>
-  `Server resolver function ${universalIdentifier} requires authentication and cannot be dispatched through the public server route`;
 
 const buildLogicFunctionManifest = ({
   universalIdentifier,
@@ -105,6 +102,16 @@ describe('ServerRouteTrigger authorization (integration)', () => {
       sourcePath: 'server-route-auth-test-app',
     });
 
+    await uploadBuiltHandlerFile({
+      builtHandlerPath: 'dist/exposed-resolver.mjs',
+      builtHandlerCode: RESOLVER_BUILT_HANDLER_CODE,
+    });
+
+    await uploadBuiltHandlerFile({
+      builtHandlerPath: 'dist/target-function.mjs',
+      builtHandlerCode: TARGET_BUILT_HANDLER_CODE,
+    });
+
     await syncApplication({
       manifest: buildBaseManifest({
         appId: APP_UNIVERSAL_IDENTIFIER,
@@ -124,8 +131,7 @@ describe('ServerRouteTrigger authorization (integration)', () => {
               authRequired: false,
             }),
             buildLogicFunctionManifest({
-              universalIdentifier:
-                AUTH_REQUIRED_RESOLVER_UNIVERSAL_IDENTIFIER,
+              universalIdentifier: AUTH_REQUIRED_RESOLVER_UNIVERSAL_IDENTIFIER,
               name: 'auth-required-resolver',
               serverRouteExposed: true,
               authRequired: true,
@@ -140,16 +146,6 @@ describe('ServerRouteTrigger authorization (integration)', () => {
         },
       }),
       expectToFail: false,
-    });
-
-    await uploadBuiltHandlerFile({
-      builtHandlerPath: 'dist/exposed-resolver.mjs',
-      builtHandlerCode: RESOLVER_BUILT_HANDLER_CODE,
-    });
-
-    await uploadBuiltHandlerFile({
-      builtHandlerPath: 'dist/target-function.mjs',
-      builtHandlerCode: TARGET_BUILT_HANDLER_CODE,
     });
   }, 60000);
 
@@ -166,10 +162,10 @@ describe('ServerRouteTrigger authorization (integration)', () => {
         .send({ any: 'payload' });
 
       expect(response.status).toBe(404);
-      expect(response.body?.code).toBe('LOGIC_FUNCTION_NOT_FOUND');
-      expect(response.body?.messages).toEqual([
-        resolverNotFoundMessage(NON_EXPOSED_FUNCTION_UNIVERSAL_IDENTIFIER),
-      ]);
+      expectOneNotInternalServerErrorHttpResponseSnapshot({
+        status: response.status,
+        body: response.body,
+      });
     });
 
     it('dispatches a server-route-exposed resolver and returns the target function response', async () => {
@@ -183,18 +179,14 @@ describe('ServerRouteTrigger authorization (integration)', () => {
 
     it('rejects a server-route-exposed resolver that requires authentication before executing it', async () => {
       const response = await request(baseUrl)
-        .post(
-          `/webhooks/server/${AUTH_REQUIRED_RESOLVER_UNIVERSAL_IDENTIFIER}`,
-        )
+        .post(`/webhooks/server/${AUTH_REQUIRED_RESOLVER_UNIVERSAL_IDENTIFIER}`)
         .send({ any: 'payload' });
 
       expect(response.status).toBe(403);
-      expect(response.body?.code).toBe('RESOLVER_REQUIRES_AUTHENTICATION');
-      expect(response.body?.messages).toEqual([
-        requiresAuthenticationMessage(
-          AUTH_REQUIRED_RESOLVER_UNIVERSAL_IDENTIFIER,
-        ),
-      ]);
+      expectOneNotInternalServerErrorHttpResponseSnapshot({
+        status: response.status,
+        body: response.body,
+      });
     });
   });
 });
