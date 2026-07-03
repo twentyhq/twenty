@@ -1,5 +1,6 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
+import { DOCUMENT_STATUS_GENERATED } from 'src/constants/universal-identifiers';
 import {
   isSupportedTarget,
   loadRecordValues,
@@ -14,6 +15,9 @@ export type GenerateDocumentInput = {
 export type GenerateDocumentResult = {
   success: boolean;
   message: string;
+  // Suggested HTTP status for the route trigger. Ignored by the tool and
+  // workflow-action triggers, which only care about `success`.
+  status?: number;
   documentId?: string;
   content?: string;
   missingTokens?: string[];
@@ -30,25 +34,31 @@ export const generateDocumentHandler = async (
   if (!templateId || !recordId) {
     return {
       success: false,
+      status: 400,
       message: 'Both templateId and recordId are required.',
     };
   }
 
   const client = new CoreApiClient();
 
-  const { documentTemplate } = await client.query({
-    documentTemplate: {
-      __args: { filter: { id: { eq: templateId } } },
-      id: true,
-      name: true,
-      body: true,
-      target: true,
+  // Use a filtered list query rather than the singular lookup: the singular
+  // query throws when no record matches, which would surface as a 500 instead
+  // of our intended 404.
+  const { documentTemplates } = await client.query({
+    documentTemplates: {
+      __args: { filter: { id: { eq: templateId } }, first: 1 },
+      edges: {
+        node: { id: true, name: true, body: true, target: true },
+      },
     },
   });
+
+  const documentTemplate = documentTemplates?.edges?.[0]?.node;
 
   if (!documentTemplate?.id) {
     return {
       success: false,
+      status: 404,
       message: `No document template found with id ${templateId}.`,
     };
   }
@@ -58,6 +68,7 @@ export const generateDocumentHandler = async (
   if (!isSupportedTarget(target)) {
     return {
       success: false,
+      status: 400,
       message: `Template target "${target}" is not supported.`,
     };
   }
@@ -67,6 +78,7 @@ export const generateDocumentHandler = async (
   if (!record.found) {
     return {
       success: false,
+      status: 404,
       message: `No ${target} found with id ${recordId}.`,
     };
   }
@@ -84,7 +96,7 @@ export const generateDocumentHandler = async (
         data: {
           name: documentName,
           content,
-          status: 'GENERATED',
+          status: DOCUMENT_STATUS_GENERATED,
           templateId: documentTemplate.id,
         },
       },
@@ -94,7 +106,11 @@ export const generateDocumentHandler = async (
   });
 
   if (!createDocument?.id) {
-    return { success: false, message: 'Failed to create the document.' };
+    return {
+      success: false,
+      status: 500,
+      message: 'Failed to create the document.',
+    };
   }
 
   return {

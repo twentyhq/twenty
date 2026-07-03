@@ -25,14 +25,18 @@ const handler = async (event: RoutePayload): Promise<Response> => {
 
   const client = new CoreApiClient();
 
-  const { document } = await client.query({
-    document: {
-      __args: { filter: { id: { eq: documentId } } },
-      id: true,
-      name: true,
-      content: true,
+  // Filtered list query so an unknown id renders a clean 404 page instead of
+  // throwing.
+  const { documents } = await client.query({
+    documents: {
+      __args: { filter: { id: { eq: documentId } }, first: 1 },
+      edges: {
+        node: { id: true, name: true, content: true },
+      },
     },
   });
+
+  const document = documents?.edges?.[0]?.node;
 
   if (!document?.id) {
     return htmlResponse(

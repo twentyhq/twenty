@@ -19,17 +19,25 @@ export const loadRecordValues = async (
   target: string,
   recordId: string,
 ): Promise<LoadedRecord> => {
+  // Filtered list queries (not the singular lookup) so a missing record
+  // returns empty instead of throwing, letting the caller answer 404.
   if (target === TEMPLATE_TARGET_COMPANY) {
-    const { company } = await client.query({
-      company: {
-        __args: { filter: { id: { eq: recordId } } },
-        id: true,
-        name: true,
-        employees: true,
-        domainName: { primaryLinkUrl: true },
-        address: { addressCity: true, addressCountry: true },
+    const { companies } = await client.query({
+      companies: {
+        __args: { filter: { id: { eq: recordId } }, first: 1 },
+        edges: {
+          node: {
+            id: true,
+            name: true,
+            employees: true,
+            domainName: { primaryLinkUrl: true },
+            address: { addressCity: true, addressCountry: true },
+          },
+        },
       },
     });
+
+    const company = companies?.edges?.[0]?.node;
 
     if (!company?.id) {
       return { found: false, displayName: '', values: {} };
@@ -44,19 +52,25 @@ export const loadRecordValues = async (
     };
   }
 
-  const { person } = await client.query({
-    person: {
-      __args: { filter: { id: { eq: recordId } } },
-      id: true,
-      jobTitle: true,
-      city: true,
-      name: { firstName: true, lastName: true },
-      emails: { primaryEmail: true },
-      phones: { primaryPhoneNumber: true },
-      linkedinLink: { primaryLinkUrl: true },
-      company: { name: true },
+  const { people } = await client.query({
+    people: {
+      __args: { filter: { id: { eq: recordId } }, first: 1 },
+      edges: {
+        node: {
+          id: true,
+          jobTitle: true,
+          city: true,
+          name: { firstName: true, lastName: true },
+          emails: { primaryEmail: true },
+          phones: { primaryPhoneNumber: true },
+          linkedinLink: { primaryLinkUrl: true },
+          company: { name: true },
+        },
+      },
     },
   });
+
+  const person = people?.edges?.[0]?.node;
 
   if (!person?.id) {
     return { found: false, displayName: '', values: {} };

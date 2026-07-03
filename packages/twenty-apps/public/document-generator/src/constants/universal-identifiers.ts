@@ -86,6 +86,10 @@ export const DOCUMENT_AGENT_UNIVERSAL_IDENTIFIER =
 export const DOCUMENT_SKILL_UNIVERSAL_IDENTIFIER =
   'b2e2d896-d76d-4012-b2f3-7bb1809a450c';
 
-// Select option values must be UPPER_CASE.
+// Select option values must be UPPER_CASE. Centralized so the object metadata
+// and the handler that writes them can never drift apart.
 export const TEMPLATE_TARGET_PERSON = 'PERSON';
 export const TEMPLATE_TARGET_COMPANY = 'COMPANY';
+
+export const DOCUMENT_STATUS_DRAFT = 'DRAFT';
+export const DOCUMENT_STATUS_GENERATED = 'GENERATED';

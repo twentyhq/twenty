@@ -20,7 +20,7 @@ documents using the data already in your CRM. It is the app built in the
 | --- | --- |
 | Objects, fields & relations | `src/objects/`, `src/fields/` |
 | Logic function (AI tool + workflow action) | `src/logic-functions/generate-document.ts` |
-| HTTP routes | `src/logic-functions/generate-document-route.ts`, `view-document.ts` |
+| HTTP routes | `src/logic-functions/generate-document-route.ts`, `src/logic-functions/view-document.ts` |
 | Front component + command menu | `src/front-components/`, `src/command-menu-items/` |
 | Views & navigation | `src/views/`, `src/navigation-menu-items/` |
 | Agent & skill | `src/agents/`, `src/skills/` |

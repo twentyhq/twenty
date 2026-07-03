@@ -29,6 +29,7 @@ export default defineLogicFunction({
           message: { type: 'string' },
           documentId: { type: 'string' },
           content: { type: 'string' },
+          missingTokens: { type: 'array', items: { type: 'string' } },
         },
       },
     ],

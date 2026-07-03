@@ -19,13 +19,22 @@ adapter that reads the request body.
 
 ```ts filename="src/logic-functions/generate-document-route.ts"
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
 import { generateDocumentHandler } from 'src/logic-functions/handlers/generate-document-handler';
 
-const handler = async (event: RoutePayload) => {
+const handler = async (event: RoutePayload): Promise<Response> => {
   const body = event.body as Record<string, unknown> | null;
-  return generateDocumentHandler({
+
+  const result = await generateDocumentHandler({
     templateId: (body?.templateId as string) ?? '',
     recordId: (body?.recordId as string) ?? '',
+  });
+
+  // Map the handler's failure reason onto a real HTTP status (400/404/500)
+  // instead of always returning 200.
+  return new Response(JSON.stringify(result), {
+    status: result.success ? 200 : (result.status ?? 400),
+    headers: { 'Content-Type': 'application/json' },
   });
 };
 
@@ -42,8 +51,10 @@ export default defineLogicFunction({
 });
 ```
 
-`isAuthRequired: true` means the caller must present a valid token — the front
-component in the next chapter passes the user's access token automatically.
+The shared handler returns a suggested `status` on failure, so the route can
+answer with a proper `4xx`/`5xx` code. `isAuthRequired: true` means the caller
+must present a valid token — the front component in the next chapter passes the
+user's access token automatically.
 
 ## GET route — render as a web page
 
@@ -59,6 +70,14 @@ import { renderDocumentHtml } from 'src/logic-functions/utils/render-document-ht
 
 const handler = async (event: RoutePayload): Promise<Response> => {
   const documentId = event.queryStringParameters?.id;
+
+  if (!documentId) {
+    return new Response(renderDocumentHtml('Missing document id', 'Provide ?id=<documentId>.'), {
+      status: 400,
+      headers: { 'Content-Type': 'text/html; charset=utf-8' },
+    });
+  }
+
   const client = new CoreApiClient();
   const { document } = await client.query({
     document: {

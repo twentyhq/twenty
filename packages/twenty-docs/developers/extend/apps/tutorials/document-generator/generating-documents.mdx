@@ -52,16 +52,19 @@ export const generateDocumentHandler = async (
 ) => {
   const client = new CoreApiClient();
 
-  const { documentTemplate } = await client.query({
-    documentTemplate: {
-      __args: { filter: { id: { eq: input.templateId } } },
-      id: true, name: true, body: true, target: true,
+  // Use a filtered list query, not the singular lookup: the singular query
+  // throws when nothing matches, which would become a 500 instead of a 404.
+  const { documentTemplates } = await client.query({
+    documentTemplates: {
+      __args: { filter: { id: { eq: input.templateId } }, first: 1 },
+      edges: { node: { id: true, name: true, body: true, target: true } },
     },
   });
-  if (!documentTemplate?.id) return { success: false, message: 'Template not found.' };
+  const documentTemplate = documentTemplates?.edges?.[0]?.node;
+  if (!documentTemplate?.id) return { success: false, status: 404, message: 'Template not found.' };
 
   const record = await loadRecordValues(client, documentTemplate.target, input.recordId);
-  if (!record.found) return { success: false, message: 'Record not found.' };
+  if (!record.found) return { success: false, status: 404, message: 'Record not found.' };
 
   const { content, missingTokens } = renderTemplate(documentTemplate.body ?? '', record.values);
 
@@ -92,6 +95,7 @@ step in the visual workflow builder. Both describe their input with a JSON schem
 ```ts filename="src/logic-functions/generate-document.ts"
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { jsonSchemaToInputSchema } from 'twenty-sdk/logic-function';
+import { GENERATE_DOCUMENT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { generateDocumentHandler } from 'src/logic-functions/handlers/generate-document-handler';
 import { generateDocumentInputSchema } from 'src/logic-functions/schemas/generate-document-input.schema';
 

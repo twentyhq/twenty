@@ -84,7 +84,13 @@ const callAppRoute = async <TResponse,>(
   });
 
   if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}.`);
+    const errorBody = (await response.json().catch(() => null)) as {
+      message?: string;
+    } | null;
+
+    throw new Error(
+      errorBody?.message ?? `Request failed with status ${response.status}.`,
+    );
   }
 
   return response.json() as Promise<TResponse>;

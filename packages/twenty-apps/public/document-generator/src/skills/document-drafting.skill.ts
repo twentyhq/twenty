@@ -17,6 +17,7 @@ export default defineSkill({
     '',
     'Guidelines:',
     '- If the user names a template or a person/company instead of an id, first find the matching record, then pass its id.',
+    '- If more than one record matches the name, list the candidates and ask the user to pick one before generating — never guess.',
     '- Make sure the template target (person or company) matches the record type.',
     '- After generating, report the document name and share that it can be opened from the Documents view.',
   ].join('\n'),

@@ -12,6 +12,12 @@ Scaffold entity files with `yarn twenty dev:add object` — it generates a valid
 UUID and the right folder for you. Below we show the finished files.
 </Tip>
 
+<Note>
+Every `*_UNIVERSAL_IDENTIFIER` constant lives in
+`src/constants/universal-identifiers.ts` and is imported where used. The snippets
+below omit those imports for brevity — keep them in your own files.
+</Note>
+
 ## The template object
 
 A template has a `name`, a `body` with `{{placeholders}}`, and a `target` that

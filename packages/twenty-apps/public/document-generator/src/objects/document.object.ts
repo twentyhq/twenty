@@ -4,7 +4,9 @@ import {
   DOCUMENT_CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
   DOCUMENT_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   DOCUMENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  DOCUMENT_STATUS_DRAFT,
   DOCUMENT_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+  DOCUMENT_STATUS_GENERATED,
   DOCUMENT_STATUS_OPTION_DRAFT_UNIVERSAL_IDENTIFIER,
   DOCUMENT_STATUS_OPTION_GENERATED_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
@@ -43,18 +45,18 @@ export default defineObject({
       label: 'Status',
       description: 'Where this document is in its lifecycle.',
       icon: 'IconProgress',
-      defaultValue: `'DRAFT'`,
+      defaultValue: `'${DOCUMENT_STATUS_DRAFT}'`,
       options: [
         {
           id: DOCUMENT_STATUS_OPTION_DRAFT_UNIVERSAL_IDENTIFIER,
-          value: 'DRAFT',
+          value: DOCUMENT_STATUS_DRAFT,
           label: 'Draft',
           color: 'gray',
           position: 0,
         },
         {
           id: DOCUMENT_STATUS_OPTION_GENERATED_UNIVERSAL_IDENTIFIER,
-          value: 'GENERATED',
+          value: DOCUMENT_STATUS_GENERATED,
           label: 'Generated',
           color: 'green',
           position: 1,
