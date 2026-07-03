@@ -10,11 +10,12 @@ import type {
   MyProfilePayload,
   ProfileOptions,
 } from './my-profile/types';
+import { ProfileSection } from './my-profile/ProfileSection';
 
 const MyProfile = () => {
   const userId = useUserId();
   const [profile, setProfile] = useState<MyProfilePayload | null>(null);
-  const [, setOptions] = useState<ProfileOptions | null>(null);
+  const [options, setOptions] = useState<ProfileOptions | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -56,19 +57,41 @@ const MyProfile = () => {
   }, [userId]);
 
   if (loading) return <div style={{ padding: 24 }}>Loading…</div>;
-  if (!profile) return <div style={{ padding: 24 }}>No partner profile found for your account.</div>;
+  if (!profile || !options) {
+    return <div style={{ padding: 24 }}>No partner profile found for your account.</div>;
+  }
 
   return (
     <div style={{ padding: 24, maxWidth: 880, margin: '0 auto' }}>
       <h1 style={{ marginBottom: 8 }}>{profile.name ?? 'My Profile'}</h1>
-      {profile.introduction ? <p style={{ opacity: 0.8 }}>{profile.introduction}</p> : null}
-      <p style={{ opacity: 0.6, fontSize: 13 }}>
-        {[profile.city, profile.country].filter(Boolean).join(' · ')}
-      </p>
-      <p style={{ opacity: 0.6, fontSize: 13 }}>
+      <p style={{ opacity: 0.6, fontSize: 13, marginBottom: 24 }}>
         Links: {profile.links.length} · Services: {profile.services.length} · Case studies:{' '}
         {profile.caseStudies.length}
       </p>
+
+      <section style={{ marginBottom: 32 }}>
+        <h2 style={{ fontSize: 16, marginBottom: 12 }}>Profile</h2>
+        <ProfileSection
+          profile={profile}
+          options={options}
+          onSaved={(patch) => setProfile((previous) => (previous ? { ...previous, ...patch } : previous))}
+        />
+      </section>
+
+      <section style={{ marginBottom: 32 }}>
+        <h2 style={{ fontSize: 16, marginBottom: 12 }}>Links</h2>
+        <p style={{ opacity: 0.5, fontSize: 13 }}>Coming soon.</p>
+      </section>
+
+      <section style={{ marginBottom: 32 }}>
+        <h2 style={{ fontSize: 16, marginBottom: 12 }}>Services</h2>
+        <p style={{ opacity: 0.5, fontSize: 13 }}>Coming soon.</p>
+      </section>
+
+      <section style={{ marginBottom: 32 }}>
+        <h2 style={{ fontSize: 16, marginBottom: 12 }}>Case studies</h2>
+        <p style={{ opacity: 0.5, fontSize: 13 }}>Coming soon.</p>
+      </section>
     </div>
   );
 };
