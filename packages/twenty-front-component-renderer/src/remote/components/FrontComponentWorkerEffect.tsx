@@ -5,9 +5,11 @@ import { type CommandConfirmationModalResult } from 'twenty-sdk/front-component'
 import { type ConfirmationModalCaller } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { createHostFetch } from '@/host/utils/createHostFetch';
 import { FRONT_COMPONENT_SANDBOX_MESSAGE } from '@/remote/sandbox/frontComponentSandboxMessages';
 import { createFrontComponentSandboxIframe } from '@/remote/sandbox/utils/createFrontComponentSandboxIframe';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
+import { type FrontComponentHostThreadExports } from '../../types/FrontComponentHostThreadExports';
 import { type SdkClientUrls } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
 // @ts-expect-error - Vite asset URL import
@@ -39,7 +41,7 @@ const HOST_COMMUNICATION_API_NOOP_INITIALIZATION: FrontComponentHostCommunicatio
 
 export type FrontComponentThread = ThreadMessagePort<
   WorkerExports,
-  FrontComponentHostCommunicationApi
+  FrontComponentHostThreadExports
 >;
 
 type FrontComponentWorkerEffectProps = {
@@ -83,11 +85,15 @@ export const FrontComponentWorkerEffect = ({
 
     const channel = new MessageChannel();
 
+    const hostFetch = createHostFetch(
+      [apiUrl, functionsBaseUrl, componentUrl].filter(isDefined),
+    );
+
     const thread = new ThreadMessagePort<
       WorkerExports,
-      FrontComponentHostCommunicationApi
+      FrontComponentHostThreadExports
     >(channel.port1, {
-      exports: { ...HOST_COMMUNICATION_API_NOOP_INITIALIZATION },
+      exports: { ...HOST_COMMUNICATION_API_NOOP_INITIALIZATION, hostFetch },
     });
     channel.port1.start();
 

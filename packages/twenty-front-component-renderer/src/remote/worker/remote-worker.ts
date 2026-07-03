@@ -15,12 +15,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { installStyleBridge } from '@/polyfills/installStyleBridge';
 import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementSetAttribute } from '@/remote/utils/patchRemoteElementSetAttribute';
+import { installHostFetchProxy } from './utils/installHostFetchProxy';
 import { installErrorEventBridge } from './utils/installErrorEventBridge';
 import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 import { frontComponentHostCommunicationApi } from '@/constants/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToRemoteComponent';
 import { setFrontComponentExecutionContext } from './utils/setFrontComponentExecutionContext';
-import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
+import { type FrontComponentHostThreadExports } from '../../types/FrontComponentHostThreadExports';
 import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
 import { exposeGlobals } from '../utils/exposeGlobals';
@@ -81,10 +82,45 @@ const rewriteSdkImports = (
   return rewritten;
 };
 
+let hostThread: ThreadMessagePort<
+  FrontComponentHostThreadExports,
+  WorkerExports
+> | null = null;
+
+const toOriginOrNull = (value: string | undefined): string | null => {
+  if (!isDefined(value) || value.length === 0) {
+    return null;
+  }
+
+  try {
+    return new URL(value).origin;
+  } catch {
+    return null;
+  }
+};
+
+const toProxiedHostFetchOrigins = (
+  renderContext: HostToWorkerRenderContext,
+): string[] =>
+  [
+    renderContext.apiUrl,
+    renderContext.functionsBaseUrl,
+    renderContext.componentUrl,
+  ]
+    .map(toOriginOrNull)
+    .filter(isDefined);
+
 const render: WorkerExports['render'] = async (
   connection: RemoteConnection,
   renderContext: HostToWorkerRenderContext,
 ) => {
+  if (isDefined(hostThread)) {
+    installHostFetchProxy(
+      hostThread.imports.hostFetch,
+      toProxiedHostFetchOrigins(renderContext),
+    );
+  }
+
   const batchedConnection = new BatchingRemoteConnection(connection);
   const root = document.createElement('remote-root') as RemoteRootElement;
   const renderContainer = document.createElement('remote-fragment');
@@ -153,11 +189,6 @@ const render: WorkerExports['render'] = async (
   }
 };
 
-let hostThread: ThreadMessagePort<
-  FrontComponentHostCommunicationApi,
-  WorkerExports
-> | null = null;
-
 const initializeHostCommunicationApi: WorkerExports['initializeHostCommunicationApi'] =
   async () => {
     if (!isDefined(hostThread)) {
@@ -202,7 +233,7 @@ self.addEventListener('message', (event) => {
   }
 
   hostThread = new ThreadMessagePort<
-    FrontComponentHostCommunicationApi,
+    FrontComponentHostThreadExports,
     WorkerExports
   >(transferredPort, {
     exports: {
