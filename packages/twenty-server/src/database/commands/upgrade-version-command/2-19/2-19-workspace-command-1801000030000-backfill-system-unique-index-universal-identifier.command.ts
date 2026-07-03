@@ -88,13 +88,13 @@ export class BackfillSystemUniqueIndexUniversalIdentifierCommand extends ActiveO
 
         if (
           !isDefined(flatObjectMetadata) ||
-          !isDefined(flatObjectMetadata.applicationId)
+          !isDefined(flatFieldMetadata.applicationId)
         ) {
           return [];
         }
 
         const applicationUniversalIdentifier =
-          flatApplicationMaps.byId[flatObjectMetadata.applicationId]
+          flatApplicationMaps.byId[flatFieldMetadata.applicationId]
             ?.universalIdentifier;
 
         if (!isDefined(applicationUniversalIdentifier)) {

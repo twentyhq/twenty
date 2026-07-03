@@ -36,8 +36,7 @@ export const generateDeterministicFlatIndexMetadataOrThrow = ({
   });
 
   const universalIdentifier = getIndexUniversalIdentifier({
-    applicationUniversalIdentifier:
-      flatObjectMetadata.applicationUniversalIdentifier,
+    applicationUniversalIdentifier: flatIndex.applicationUniversalIdentifier,
     objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
     name,
   });

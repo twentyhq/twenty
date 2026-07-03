@@ -38,7 +38,7 @@ export const generateDeterministicIndexForFlatFieldMetadata = ({
       objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       updatedAt: createdAt,
       applicationUniversalIdentifier:
-        flatObjectMetadata.applicationUniversalIdentifier,
+        flatFieldMetadata.applicationUniversalIdentifier,
     },
   });
 };
