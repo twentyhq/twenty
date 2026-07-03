@@ -5,6 +5,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { IsNull, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { EnterpriseLicenseInfoDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-license-info.dto';
 import { EnterpriseSubscriptionStatusDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-subscription-status.dto';
@@ -23,6 +24,15 @@ import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
+// Server-binding rejections that should surface as an activation failure with
+// their own user-facing message (rather than being silently swallowed).
+const SERVER_BINDING_REJECTION_CODES: EnterpriseExceptionCode[] = [
+  EnterpriseExceptionCode.ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER,
+  EnterpriseExceptionCode.ENTERPRISE_MISSING_SERVER_ID,
+  EnterpriseExceptionCode.ENTERPRISE_DEV_REQUIRES_ACTIVE_PRODUCTION,
+  EnterpriseExceptionCode.ENTERPRISE_DEV_SLOT_IN_USE,
+];
+
 @Resolver()
 @UsePipes(ResolverValidationPipe)
 @UseFilters(EnterpriseExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
@@ -39,6 +49,26 @@ export class EnterpriseResolver {
     });
 
     return Math.max(1, count);
+  }
+
+  // Turn a server-binding rejection from the last refresh into a user-facing
+  // error, so activation and manual refresh surface the real reason instead of
+  // silently failing.
+  private throwIfServerBindingRejected(): void {
+    const rejectionCode =
+      this.enterprisePlanService.getLastRefreshRejectionCode();
+
+    if (
+      isDefined(rejectionCode) &&
+      SERVER_BINDING_REJECTION_CODES.includes(
+        rejectionCode as EnterpriseExceptionCode,
+      )
+    ) {
+      throw new EnterpriseException(
+        `Enterprise key rejected: ${rejectionCode}`,
+        rejectionCode as EnterpriseExceptionCode,
+      );
+    }
   }
 
   @Query(() => String, { nullable: true })
@@ -91,7 +121,11 @@ export class EnterpriseResolver {
     NoPermissionGuard,
   )
   async refreshEnterpriseValidityToken(): Promise<boolean> {
-    return this.enterprisePlanService.refreshValidityToken();
+    const refreshed = await this.enterprisePlanService.refreshValidityToken();
+
+    this.throwIfServerBindingRejected();
+
+    return refreshed;
   }
 
   @Mutation(() => EnterpriseLicenseInfoDTO)
@@ -137,15 +171,7 @@ export class EnterpriseResolver {
 
       await this.enterprisePlanService.refreshValidityToken();
 
-      if (
-        this.enterprisePlanService.getLastRefreshRejectionCode() ===
-        EnterpriseExceptionCode.ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER
-      ) {
-        throw new EnterpriseException(
-          'Enterprise key is bound to another server instance',
-          EnterpriseExceptionCode.ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER,
-        );
-      }
+      this.throwIfServerBindingRejected();
 
       const seatCount = await this.getActiveUserWorkspaceCount();
 

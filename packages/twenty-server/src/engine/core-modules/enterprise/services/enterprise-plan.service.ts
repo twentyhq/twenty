@@ -282,18 +282,29 @@ export class EnterprisePlanService implements OnModuleInit {
 
         if (
           errorData.code ===
-          EnterprisePlanService.ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER_CODE
-        ) {
-          this.lastRefreshRejectionCode = errorData.code;
-          await this.revokeStoredValidityToken();
-        } else if (
-          errorData.code ===
           EnterprisePlanService.ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED_CODE
         ) {
+          // Rate limited: the existing token stays valid, surface the reason so
+          // callers (e.g. the manual refresh button) can tell the user.
           throw new EnterpriseException(
             'Validity token refresh rate limit exceeded',
             EnterpriseExceptionCode.ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED,
           );
+        }
+
+        if (isNonEmptyString(errorData.code)) {
+          this.lastRefreshRejectionCode = errorData.code;
+        }
+
+        // Only a key claimed by a different server means this instance is
+        // definitively displaced, so revoke its stored license. Other
+        // rejections (missing SERVER_ID, dev-needs-prod, dev-slot-taken) are
+        // recoverable: the existing token simply expires without reissue.
+        if (
+          errorData.code ===
+          EnterprisePlanService.ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER_CODE
+        ) {
+          await this.revokeStoredValidityToken();
         }
 
         return false;
