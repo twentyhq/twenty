@@ -425,9 +425,45 @@ describe('computeStepOutputSchema', () => {
   });
 
   describe('SEND_EMAIL step', () => {
-    it('should return success boolean schema', () => {
+    it('should return success and sent message identifier schema', () => {
       const result = computeStepOutputSchema({
         step: { type: 'SEND_EMAIL', settings: {} } as any,
+        objectMetadataItems: [],
+      });
+
+      expect(result).toEqual({
+        success: {
+          isLeaf: true,
+          type: FieldMetadataType.BOOLEAN,
+          label: 'Success',
+          value: true,
+        },
+        headerMessageId: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Message-ID header',
+          value: '',
+        },
+        messageId: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Message record ID',
+          value: '',
+        },
+        messageThreadId: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Message thread ID',
+          value: '',
+        },
+      });
+    });
+  });
+
+  describe('DRAFT_EMAIL step', () => {
+    it('should return success boolean schema', () => {
+      const result = computeStepOutputSchema({
+        step: { type: 'DRAFT_EMAIL', settings: {} } as any,
         objectMetadataItems: [],
       });
 

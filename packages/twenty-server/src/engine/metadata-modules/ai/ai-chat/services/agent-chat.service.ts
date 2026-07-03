@@ -266,6 +266,47 @@ export class AgentChatService {
     } as AgentMessageEntity;
   }
 
+  async upsertAssistantMessage({
+    id,
+    threadId,
+    turnId,
+    parts,
+    workspaceId,
+  }: {
+    id: string;
+    threadId: string;
+    turnId: string;
+    parts: ExtendedUIMessage['parts'];
+    workspaceId: string;
+  }): Promise<void> {
+    await this.messageRepository.upsert(
+      workspaceId,
+      {
+        id,
+        threadId,
+        turnId,
+        role: AgentMessageRole.ASSISTANT,
+        processedAt: new Date(),
+      },
+      ['id'],
+    );
+
+    await this.messagePartRepository.delete(workspaceId, { messageId: id });
+
+    const dbParts = mapUIMessagePartsToDBParts(
+      finalizeDanglingToolParts(parts),
+      id,
+      workspaceId,
+    );
+
+    if (dbParts.length > 0) {
+      await this.messagePartRepository.insert(
+        workspaceId,
+        dbParts as QueryDeepPartialEntity<AgentMessagePartEntity>[],
+      );
+    }
+  }
+
   async findLatestSentUserMessage({
     threadId,
     workspaceId,

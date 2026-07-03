@@ -101,10 +101,33 @@ export class BullMQDriver
       );
     }
 
-    await Promise.all(
-      workers.map(([queueName, worker]) => this.closeWorker(queueName, worker)),
-    );
-    await Promise.all(queues.map((queue) => queue.close()));
+    let workerCloseError: unknown;
+
+    try {
+      await Promise.all(
+        workers.map(([queueName, worker]) =>
+          this.closeWorker(queueName, worker),
+        ),
+      );
+    } catch (error) {
+      workerCloseError = error;
+    }
+
+    try {
+      await Promise.all(queues.map((queue) => queue.close()));
+    } catch (error) {
+      if (!isDefined(workerCloseError)) {
+        throw error;
+      }
+
+      this.logger.error(
+        `Failed to close queues during shutdown: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+
+    if (isDefined(workerCloseError)) {
+      throw workerCloseError;
+    }
 
     this.logger.log('Message queue shutdown complete');
   }

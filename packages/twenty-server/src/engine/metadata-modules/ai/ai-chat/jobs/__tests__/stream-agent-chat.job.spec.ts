@@ -86,11 +86,15 @@ describe('StreamAgentChatJob', () => {
     chatStream = createFakeChatStream(),
     streamChatRejection,
     addMessageRejection,
+    assistantPersistRejection,
+    assistantMessageExistedAtStart = false,
   }: {
     workspaceFound?: boolean;
     chatStream?: ReturnType<typeof createFakeChatStream>;
     streamChatRejection?: Error;
     addMessageRejection?: Error;
+    assistantPersistRejection?: Error;
+    assistantMessageExistedAtStart?: boolean;
   } = {}) => {
     const publishedEvents: PublishedEvent[] = [];
 
@@ -109,7 +113,12 @@ describe('StreamAgentChatJob', () => {
       addMessage: addMessageRejection
         ? jest.fn().mockRejectedValue(addMessageRejection)
         : jest.fn().mockResolvedValue({ id: 'assistant-message-id' }),
-      hasMessageById: jest.fn().mockResolvedValue(false),
+      upsertAssistantMessage: assistantPersistRejection
+        ? jest.fn().mockRejectedValue(assistantPersistRejection)
+        : jest.fn().mockResolvedValue(undefined),
+      hasMessageById: jest
+        .fn()
+        .mockResolvedValue(assistantMessageExistedAtStart),
       generateTitleIfNeeded: jest.fn().mockResolvedValue(null),
       notifyThreadUsageUpdated: jest.fn().mockResolvedValue(undefined),
     };
@@ -192,8 +201,14 @@ describe('StreamAgentChatJob', () => {
     expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
       type: 'message-persisted',
     });
-    expect(agentChatService.addMessage).toHaveBeenCalledWith(
-      expect.objectContaining({ turnId: 'turn-id' }),
+    expect(agentChatService.upsertAssistantMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: expect.any(String),
+        turnId: 'turn-id',
+        parts: expect.arrayContaining([
+          expect.objectContaining({ type: 'text' }),
+        ]),
+      }),
     );
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
@@ -206,6 +221,28 @@ describe('StreamAgentChatJob', () => {
       { activeStreamId: null },
     );
     expect(agentChatStreamingService.flushNextQueuedMessage).toHaveBeenCalled();
+  });
+
+  it('persists the assistant message but does not re-apply thread totals when a prior execution already persisted it', async () => {
+    const { job, agentChatService, threadRepository } = buildJob({
+      assistantMessageExistedAtStart: true,
+    });
+
+    await job.handle(jobData);
+
+    expect(agentChatService.upsertAssistantMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ turnId: 'turn-id' }),
+    );
+    // The thread-totals accumulation must not run twice for the same stream.
+    const totalsUpdate = threadRepository.update.mock.calls.find(
+      ([, criteria]) =>
+        criteria &&
+        typeof criteria === 'object' &&
+        !('activeStreamId' in criteria),
+    );
+
+    expect(totalsUpdate).toBeUndefined();
+    expect(agentChatService.notifyThreadUsageUpdated).not.toHaveBeenCalled();
   });
 
   it('never publishes the opaque error chunk to subscribers', async () => {
@@ -291,7 +328,7 @@ describe('StreamAgentChatJob', () => {
 
   it('terminates the stream with an error when assistant persistence fails after draining chunks', async () => {
     const { job, publishedEvents } = buildJob({
-      addMessageRejection: new Error('insert failed'),
+      assistantPersistRejection: new Error('insert failed'),
     });
 
     await expect(job.handle(jobData)).rejects.toThrow('insert failed');
