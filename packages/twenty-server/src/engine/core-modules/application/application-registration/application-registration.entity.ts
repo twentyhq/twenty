@@ -22,6 +22,7 @@ import { type Manifest } from 'twenty-shared/application';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -133,9 +134,16 @@ export class ApplicationRegistrationEntity {
   @Column({ type: 'jsonb', nullable: true })
   manifest: Manifest | null;
 
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddLogoToApplicationRegistrationFastInstanceCommand_1783069672191',
+  })
+  logo: string | null;
+
   @Field(() => String, { nullable: true })
   get logoUrl(): string | null {
-    return this.manifest?.application?.logoUrl ?? null;
+    return this.logo ?? this.manifest?.application?.logoUrl ?? null;
   }
 
   @OneToMany(
