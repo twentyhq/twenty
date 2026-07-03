@@ -11,6 +11,7 @@ import {
 import { pipeline } from 'stream/promises';
 
 import { Response } from 'express';
+import { FileFolder } from 'twenty-shared/types';
 
 import {
   FileStorageException,
@@ -87,7 +88,11 @@ export class FrontComponentController {
       return res.redirect(fileResponse.presignedUrl);
     }
 
-    setFileResponseHeaders(res, fileResponse.mimeType);
+    setFileResponseHeaders(
+      res,
+      fileResponse.mimeType,
+      FileFolder.BuiltFrontComponent,
+    );
 
     try {
       await pipeline(fileResponse.stream, res);

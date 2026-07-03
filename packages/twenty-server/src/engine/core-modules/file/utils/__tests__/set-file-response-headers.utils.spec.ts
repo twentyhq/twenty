@@ -93,6 +93,7 @@ describe('setFileResponseHeaders', () => {
     FileFolder.AgentChat,
     FileFolder.EmailAttachment,
     FileFolder.Dpa,
+    FileFolder.BuiltFrontComponent,
   ])(
     'should set an immutable Cache-Control for immutable folder %s',
     (fileFolder) => {
@@ -107,21 +108,36 @@ describe('setFileResponseHeaders', () => {
     },
   );
 
-  it.each([
-    FileFolder.PublicAsset,
-    FileFolder.AppTarball,
-    FileFolder.Source,
-    FileFolder.BuiltFrontComponent,
-  ])('should not set Cache-Control for mutable folder %s', (fileFolder) => {
+  it('should set a bounded public Cache-Control for the PublicAsset folder', () => {
     const res = createMockResponse();
 
-    setFileResponseHeaders(res as any, 'image/png', fileFolder);
+    setFileResponseHeaders(res as any, 'image/png', FileFolder.PublicAsset);
 
-    expect(res.setHeader).not.toHaveBeenCalledWith(
+    expect(res.setHeader).toHaveBeenCalledWith(
       'Cache-Control',
-      expect.anything(),
+      'public, max-age=3600',
     );
   });
+
+  it.each([
+    FileFolder.AppTarball,
+    FileFolder.Source,
+    FileFolder.BuiltLogicFunction,
+    FileFolder.Dependencies,
+    FileFolder.GeneratedSdkClient,
+  ])(
+    'should not set Cache-Control for non-cacheable folder %s',
+    (fileFolder) => {
+      const res = createMockResponse();
+
+      setFileResponseHeaders(res as any, 'image/png', fileFolder);
+
+      expect(res.setHeader).not.toHaveBeenCalledWith(
+        'Cache-Control',
+        expect.anything(),
+      );
+    },
+  );
 });
 
 describe('getContentDisposition', () => {
