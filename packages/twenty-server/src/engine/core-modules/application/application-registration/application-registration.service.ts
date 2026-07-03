@@ -25,6 +25,7 @@ import {
   type UpdateApplicationRegistrationPayload,
 } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -298,16 +299,7 @@ export class ApplicationRegistrationService {
       ...existing,
       name: manifest.application.displayName,
       manifest,
-      logo: manifest.application.logoUrl ?? null,
-      description: manifest.application.description ?? null,
-      author: manifest.application.author ?? null,
-      category: manifest.application.category ?? null,
-      websiteUrl: manifest.application.websiteUrl ?? null,
-      aboutDescription: manifest.application.aboutDescription ?? null,
-      termsUrl: manifest.application.termsUrl ?? null,
-      emailSupport: manifest.application.emailSupport ?? null,
-      issueReportUrl: manifest.application.issueReportUrl ?? null,
-      screenshots: manifest.application.screenshots ?? [],
+      ...fromManifestApplicationToDisplayFields(manifest.application),
       ...(sourceType !== undefined && { sourceType }),
     });
   }
@@ -377,17 +369,7 @@ export class ApplicationRegistrationService {
         sourcePackage: params.sourcePackage,
         latestAvailableVersion: params.latestAvailableVersion,
         manifest: params.manifest,
-        logo: params.manifest?.application?.logoUrl ?? null,
-        description: params.manifest?.application?.description ?? null,
-        author: params.manifest?.application?.author ?? null,
-        category: params.manifest?.application?.category ?? null,
-        websiteUrl: params.manifest?.application?.websiteUrl ?? null,
-        aboutDescription:
-          params.manifest?.application?.aboutDescription ?? null,
-        termsUrl: params.manifest?.application?.termsUrl ?? null,
-        emailSupport: params.manifest?.application?.emailSupport ?? null,
-        issueReportUrl: params.manifest?.application?.issueReportUrl ?? null,
-        screenshots: params.manifest?.application?.screenshots ?? [],
+        ...fromManifestApplicationToDisplayFields(params.manifest?.application),
         isFeatured,
       });
     } else {
@@ -400,17 +382,7 @@ export class ApplicationRegistrationService {
         isListed: true,
         isFeatured,
         manifest: params.manifest,
-        logo: params.manifest?.application?.logoUrl ?? null,
-        description: params.manifest?.application?.description ?? null,
-        author: params.manifest?.application?.author ?? null,
-        category: params.manifest?.application?.category ?? null,
-        websiteUrl: params.manifest?.application?.websiteUrl ?? null,
-        aboutDescription:
-          params.manifest?.application?.aboutDescription ?? null,
-        termsUrl: params.manifest?.application?.termsUrl ?? null,
-        emailSupport: params.manifest?.application?.emailSupport ?? null,
-        issueReportUrl: params.manifest?.application?.issueReportUrl ?? null,
-        screenshots: params.manifest?.application?.screenshots ?? [],
+        ...fromManifestApplicationToDisplayFields(params.manifest?.application),
         oAuthClientId: v4(),
         oAuthRedirectUris: [],
         oAuthScopes: [],
