@@ -4,7 +4,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;
-  background: ${themeCssVariables.background.primary};
+  background: ${themeCssVariables.background.secondary};
   display: flex;
   flex-direction: column;
   height: 100dvh;

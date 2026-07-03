@@ -5,20 +5,46 @@ import { Link } from 'react-router-dom';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { ModalContent, ModalFooter } from 'twenty-ui/surfaces';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath } from 'twenty-shared/types';
 import { IconChevronLeft, IconChevronRightPipe } from 'twenty-ui/icon';
 import { LightButton } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useMutation } from '@apollo/client/react';
 import {
   OnboardingStatus,
   SkipBookOnboardingStepDocument,
 } from '~/generated-metadata/graphql';
+
+const StyledPage = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  width: 100%;
+`;
+
+const StyledContent = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  min-height: 0;
+  overflow: hidden;
+  width: 100%;
+`;
+
+const StyledFooter = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: ${themeCssVariables.spacing[2]};
+  width: 100%;
+`;
 
 export const BookCall = () => {
   const { colorScheme } = useContext(ThemeContext);
@@ -41,15 +67,10 @@ export const BookCall = () => {
   };
 
   return (
-    <>
-      <ModalContent
-        noPadding
-        overflowHidden
-        isHorizontallyCentered
-        isVerticallyCentered
-      >
+    <StyledPage>
+      <StyledContent>
         <ScrollWrapper
-          componentInstanceId="scroll-wrapper-modal-content"
+          componentInstanceId="scroll-wrapper-book-call"
           autoHeight={!isMobile}
         >
           <Cal
@@ -62,8 +83,8 @@ export const BookCall = () => {
             }}
           />
         </ScrollWrapper>
-      </ModalContent>
-      <ModalFooter autoHeight centered smallPadding>
+      </StyledContent>
+      <StyledFooter>
         {isPlanRequired ? (
           <Link to={AppPath.PlanRequired}>
             <LightButton Icon={IconChevronLeft} title={t`Back`} />
@@ -75,7 +96,7 @@ export const BookCall = () => {
             onClick={handleCompleteOnboarding}
           />
         )}
-      </ModalFooter>
-    </>
+      </StyledFooter>
+    </StyledPage>
   );
 };

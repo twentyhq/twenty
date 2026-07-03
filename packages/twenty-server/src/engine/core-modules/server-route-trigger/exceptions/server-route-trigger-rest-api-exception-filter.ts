@@ -63,6 +63,15 @@ export class ServerRouteTriggerRestApiExceptionFilter implements ExceptionFilter
           undefined,
           { shouldBeCapturedBySentry: false },
         );
+      case ServerRouteTriggerExceptionCode.RESOLVER_REQUIRES_AUTHENTICATION:
+        return this.httpExceptionHandlerService.handleError(
+          exception as CustomException,
+          response,
+          403,
+          undefined,
+          undefined,
+          { shouldBeCapturedBySentry: false },
+        );
       default: {
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,
