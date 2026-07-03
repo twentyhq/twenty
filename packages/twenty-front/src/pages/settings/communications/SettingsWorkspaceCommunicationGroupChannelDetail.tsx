@@ -1,14 +1,14 @@
-import { useMutation, useQuery } from '@apollo/client/react';
+import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 
 import { useDeleteEmailGroupChannel } from '@/settings/accounts/hooks/useDeleteEmailGroupChannel';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
-import { UPDATE_MESSAGE_CHANNEL } from '@/settings/accounts/graphql/mutations/updateMessageChannel';
+
 import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannelDomain';
 import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecordsTable';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+
 import { SettingsEmailingDomainVerifyButton } from '@/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -22,7 +22,7 @@ import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
 import { Status } from 'twenty-ui/data-display';
-import { IconBriefcase, IconCopy, IconTrash, IconUsers } from 'twenty-ui/icon';
+import { IconCopy, IconTrash } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { InlineBanner } from 'twenty-ui/feedback';
@@ -62,7 +62,7 @@ const StyledDomainName = styled.div`
   white-space: nowrap;
 `;
 
-export const SettingsWorkspaceEmailGroupChannelDetail = () => {
+export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
   const { messageChannelId } = useParams<{ messageChannelId: string }>();
@@ -73,7 +73,6 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
   const { deleteEmailGroupChannel, loading: deleting } =
     useDeleteEmailGroupChannel();
   const { data: emailingDomainsData } = useQuery(GetEmailingDomainsDocument);
-  const [updateMessageChannel] = useMutation(UPDATE_MESSAGE_CHANNEL);
 
   if (loading) {
     return <SettingsSkeletonLoader />;
@@ -106,16 +105,6 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
         message: t`Failed to delete email channel.`,
       });
     }
-  };
-
-  const handleExcludeChange = (
-    update:
-      | { excludeGroupEmails: boolean }
-      | { excludeNonProfessionalEmails: boolean },
-  ) => {
-    updateMessageChannel({
-      variables: { input: { id: channel.id, update } },
-    });
   };
 
   return (
@@ -221,33 +210,6 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
             </Card>
           </Section>
         )}
-        <Section>
-          <H2Title
-            title={t`Advanced`}
-            description={t`Configure what emails should get synced`}
-          />
-          <Card rounded>
-            <SettingsOptionCardContentToggle
-              Icon={IconUsers}
-              title={t`Exclude group emails`}
-              description={t`Don't import emails from team@ support@ noreply@...`}
-              checked={channel.excludeGroupEmails}
-              divider
-              onChange={(checked) =>
-                handleExcludeChange({ excludeGroupEmails: checked })
-              }
-            />
-            <SettingsOptionCardContentToggle
-              Icon={IconBriefcase}
-              title={t`Exclude non-professional emails`}
-              description={t`Don't create contacts from/to Gmail, Outlook emails`}
-              checked={channel.excludeNonProfessionalEmails}
-              onChange={(checked) =>
-                handleExcludeChange({ excludeNonProfessionalEmails: checked })
-              }
-            />
-          </Card>
-        </Section>
       </SettingsPageContainer>
       <ConfirmationModal
         modalInstanceId={DELETE_EMAIL_GROUP_MODAL_ID}

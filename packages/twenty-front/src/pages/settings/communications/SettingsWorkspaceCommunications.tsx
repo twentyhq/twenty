@@ -20,8 +20,8 @@ import {
 } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
-import coverDark from '~/pages/settings/email/assets/cover-dark.png';
-import coverLight from '~/pages/settings/email/assets/cover-light.png';
+import coverDark from '~/pages/settings/communications/assets/cover-dark.png';
+import coverLight from '~/pages/settings/communications/assets/cover-light.png';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme-constants';
@@ -34,7 +34,7 @@ const StyledCardLink = styled.a`
   text-decoration: none;
 `;
 
-export const SettingsWorkspaceEmail = () => {
+export const SettingsWorkspaceCommunications = () => {
   const { theme } = useContext(ThemeContext);
 
   const { t } = useLingui();
