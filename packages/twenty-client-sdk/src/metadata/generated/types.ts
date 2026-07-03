@@ -1293,6 +1293,9 @@ export default {
             "logo": [
                 1
             ],
+            "logoFileId": [
+                3
+            ],
             "version": [
                 1
             ],
