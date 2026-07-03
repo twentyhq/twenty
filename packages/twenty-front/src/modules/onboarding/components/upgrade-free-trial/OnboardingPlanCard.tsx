@@ -33,12 +33,14 @@ const StyledHeader = styled.button<{ hasBody: boolean; hasNote: boolean }>`
   width: 100%;
 `;
 
-const StyledHeaderLeft = styled.div`
+const StyledHeaderLeft = styled.div<{ hasNote: boolean }>`
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
   min-width: 0;
+  padding-right: ${({ hasNote }) =>
+    hasNote ? themeCssVariables.spacing[8] : '0'};
 `;
 
 const StyledTitleRow = styled.div`
@@ -144,7 +146,7 @@ export const OnboardingPlanCard = ({
         hasNote={hasNote}
         onClick={onSelect}
       >
-        <StyledHeaderLeft>
+        <StyledHeaderLeft hasNote={hasNote}>
           <StyledTitleRow>
             <StyledTitle>{title}</StyledTitle>
             {isDefined(titleSuffix) && (

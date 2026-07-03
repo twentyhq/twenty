@@ -29,7 +29,7 @@ export const OnboardingTransitionOutlet = () => {
 
   return (
     <StyledTransitionContainer>
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         <StyledTransitionPage
           key={pathname}
           initial={{ opacity: 0 }}

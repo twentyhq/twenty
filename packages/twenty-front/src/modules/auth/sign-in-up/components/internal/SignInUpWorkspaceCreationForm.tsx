@@ -341,7 +341,7 @@ export const SignInUpWorkspaceCreationForm = () => {
           </OnboardingStepAnimatedItem>
         )}
       </StyledFormSection>
-      <OnboardingStepAnimatedItem index={5}>
+      <OnboardingStepAnimatedItem index={isMultiWorkspaceEnabled ? 5 : 4}>
         <MainButton
           title={t`Create workspace`}
           onClick={handleSubmit}

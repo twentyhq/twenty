@@ -37,17 +37,15 @@ export const OnboardingActivationSteps = ({
   const { i18n } = useLingui();
   const transition = useOnboardingMotionTransition();
 
-  const translatedMessages = messages.map((message) => i18n._(message));
-
   return (
     <StyledStepsContainer>
-      {translatedMessages.map((message, index) => {
+      {messages.map((message, index) => {
         const stepOffset = index - messageIndex;
         const isVisible = stepOffset >= 0 && stepOffset < VISIBLE_STEP_COUNT;
 
         return (
           <StyledStep
-            key={message}
+            key={message.id}
             initial={false}
             animate={{
               opacity: isVisible ? STEP_OPACITIES[stepOffset] : 0,
@@ -55,7 +53,7 @@ export const OnboardingActivationSteps = ({
             }}
             transition={transition}
           >
-            <SubTitle>{message}</SubTitle>
+            <SubTitle>{i18n._(message)}</SubTitle>
           </StyledStep>
         );
       })}
