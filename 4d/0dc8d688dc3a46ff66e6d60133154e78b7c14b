@@ -1,0 +1,256 @@
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/__tests__/derive-formula-as-expression-for-formula-field.util.spec.ts
+  s_c9896ad68d525f::t_3ebb77d1e87f94 1-128
+packages/twenty-shared/src/utils/formula/utils/computeFormulaFieldReferenceKey.ts
+  s_c9896ad68d525f::t_f402fc95eb65d3 1-8
+packages/twenty-shared/src/utils/formula/utils/isBlankFormulaValue.ts
+  s_c9896ad68d525f::t_be1edb54cd5c5c 1-2
+packages/twenty-shared/src/utils/formula/utils/computePostgresLeftSlice.ts
+  s_c9896ad68d525f::t_4a9c46cafcf8d9 1-12
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object/services/create-object-action-handler.service.ts
+  s_c9896ad68d525f::t_3ae0361009efef 9
+  s_c9896ad68d525f::t_85a24aa314752e 151-159
+packages/twenty-shared/src/utils/formula/utils/parseFormulaExpressionOrThrow.ts
+  s_c9896ad68d525f::t_dcd0ad39fd8a2f 220
+  s_c9896ad68d525f::t_83de51b4ecb33c 89,97,107,115,135,141,153,163,175,185,197,217
+  s_c9896ad68d525f::t_64df94f7eab7c0 1-88,90-96,98-106,108-114,116-134,136-140,142-152,154-162,164-174,176-184,186-196,198-216,218-219,221-320
+packages/twenty-front/src/modules/object-record/record-field/ui/components/FieldDisplay.tsx
+  s_c9896ad68d525f::t_9c69274792a43b 115-116
+  s_c9896ad68d525f::t_a3a7f8ab39abcd 9
+  s_c9896ad68d525f::t_a048b7cfd84c58 21
+packages/twenty-shared/src/utils/formula/types/FormulaValueType.ts
+  s_c9896ad68d525f::t_814e534f16ffd7 1-3
+packages/twenty-shared/src/utils/index.ts
+  s_c9896ad68d525f::t_b19ac538ae7be0 162,166,169,171,173,179-180,183,187-189,196,199
+  s_c9896ad68d525f::t_dcf7efd1bcb530 195
+  s_c9896ad68d525f::t_fb264d920ab548 194
+  s_c9896ad68d525f::t_6dbe9991e5556e 159-161,163-165,167-168,170,172,174-178,181-182,186,198,200
+  s_c9896ad68d525f::t_2218887d831ed1 184-185,190-193,197
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/create-field-action-handler.service.ts
+  s_c9896ad68d525f::t_91e9d856bd377f 168
+  s_c9896ad68d525f::t_add17c7e5d90bd 182,191,203-215,220
+  s_c9896ad68d525f::t_d8682ea88a2353 3
+  s_c9896ad68d525f::t_ae3b3f2d0b7180 13,15-16
+  s_c9896ad68d525f::t_61985b45adde59 125
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util.ts
+  s_c9896ad68d525f::t_d839332b3ec224 102-123
+  s_c9896ad68d525f::t_8809457fec9a10 233-239
+  s_c9896ad68d525f::t_d3bcff23ef3aec 11-12
+  s_c9896ad68d525f::t_9a679d28cb17ec 206,212
+  s_c9896ad68d525f::t_87c7ddd5b80ea5 232
+packages/twenty-shared/src/utils/formula/utils/tokenizeFormulaExpressionOrThrow.ts
+  s_c9896ad68d525f::t_a600b71810379f 1-146
+packages/twenty-shared/src/utils/formula/utils/__tests__/transpileFormulaToPostgresExpressionOrThrow.test.ts
+  s_c9896ad68d525f::t_b2f33a36de8de8 1-43,45-53,55-61,63-92
+  s_c9896ad68d525f::t_dcd0ad39fd8a2f 44,54,62
+packages/twenty-shared/src/utils/formula/constants/FormulaFunctions.ts
+  s_c9896ad68d525f::t_965ad9616b0c9b 1-12
+packages/twenty-shared/src/utils/formula/types/FormulaToken.ts
+  s_c9896ad68d525f::t_7b0269671e4500 1-14
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
+  s_c9896ad68d525f::t_cfc57cf20f5661 67
+  s_c9896ad68d525f::t_6c343340925539 15
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/display/components/FormulaFieldDisplay.tsx
+  s_c9896ad68d525f::t_0bd7b6ca5266e0 1-45
+packages/twenty-front/src/modules/object-record/read-only/utils/isRecordFieldReadOnly.ts
+  s_c9896ad68d525f::t_9ff8dc9b731300 59
+  s_c9896ad68d525f::t_e37bbc1a478a12 4
+  s_c9896ad68d525f::t_d8217053e29dd7 48-50
+packages/twenty-shared/src/types/FormulaOutputType.ts
+  s_c9896ad68d525f::t_93fc0bead1ba47 1-8
+packages/twenty-shared/src/utils/formula/utils/extractFormulaFieldReferences.ts
+  s_c9896ad68d525f::t_652d3fa8b5c6ce 1-47
+packages/twenty-shared/src/utils/formula/utils/inferTextSliceFunctionReturnTypeOrThrow.ts
+  s_c9896ad68d525f::t_7f7d15adbe96be 1-33
+packages/twenty-shared/src/utils/formula/utils/__tests__/evaluateFormulaOrThrow.test.ts
+  s_c9896ad68d525f::t_28cbf5a649ed0d 1-28,32-37,41-45,49-105
+  s_c9896ad68d525f::t_dcd0ad39fd8a2f 29-31,38-40,46-48
+packages/twenty-shared/src/types/FeatureFlagKey.ts
+  s_c9896ad68d525f::t_8bb9d63762664b 11
+packages/twenty-shared/src/utils/formula/utils/mapFieldMetadataTypeToFormulaValueType.ts
+  s_c9896ad68d525f::t_dd92a544b17c1d 1-22
+packages/twenty-shared/src/types/FieldMetadataSettings.ts
+  s_c9896ad68d525f::t_fa4eba34c26606 86
+  s_c9896ad68d525f::t_d6df6512c32669 4
+  s_c9896ad68d525f::t_a4e9aaaa8aaab5 66-70
+packages/twenty-shared/src/utils/formula/utils/mapFormulaOutputTypeToFieldMetadataType.ts
+  s_c9896ad68d525f::t_4e6b7130090b7d 1-17
+packages/twenty-shared/src/types/FieldMetadataType.ts
+  s_c9896ad68d525f::t_d73f98c84895f3 11
+packages/twenty-server/src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service.ts
+  s_c9896ad68d525f::t_f53b42a4591fcb 23-26
+  s_c9896ad68d525f::t_7475c7d4028903 249
+  s_c9896ad68d525f::t_a94e0bc486000b 219-224
+  s_c9896ad68d525f::t_8e2295a434eff5 167-178
+  s_c9896ad68d525f::t_9885aa4cbec340 104-110
+  s_c9896ad68d525f::t_714d1fc81b50d6 137-143
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaForm.tsx
+  s_c9896ad68d525f::t_fc321d8cc74355 1-110
+packages/twenty-shared/src/types/FieldMetadataDefaultValue.ts
+  s_c9896ad68d525f::t_b6b910845d57d5 120
+packages/twenty-shared/src/utils/formula/constants/FormulaLogicalFunctions.ts
+  s_c9896ad68d525f::t_0dc535710b3dc3 1-2,4-76
+  s_c9896ad68d525f::t_df88573be9cbc0 3
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/constants/FormulaDataModelSelectOptions.ts
+  s_c9896ad68d525f::t_a01eff417d1d89 1-27
+packages/twenty-server/src/engine/twenty-orm/factories/entity-schema-column.factory.ts
+  s_c9896ad68d525f::t_2e8e72bb02ba7d 7-10
+  s_c9896ad68d525f::t_2058574284fbe5 19
+  s_c9896ad68d525f::t_f5c848527e8875 90-101
+packages/twenty-shared/src/utils/filter/utils/getFilterTypeFromFieldType.ts
+  s_c9896ad68d525f::t_660353e3117e87 2,6,10,12-22
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-formula-flat-field-metadata.util.ts
+  s_c9896ad68d525f::t_083d56723237cb 1,3-66
+  s_c9896ad68d525f::t_419d2df8241f4d 2
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/build-formula-field-references-context.util.ts
+  s_c9896ad68d525f::t_3721acbe9e0d4e 1-82
+packages/twenty-front/src/modules/object-record/record-field/ui/utils/isFieldValueEmpty.ts
+  s_c9896ad68d525f::t_60d2abd1962105 66-67
+  s_c9896ad68d525f::t_0a1a9a8700df51 21
+packages/twenty-shared/src/utils/formula/constants/FormulaNumericFunctions.ts
+  s_c9896ad68d525f::t_0776bbb5aec3c5 3-10,12-27,29-37,39-48,50-58
+  s_c9896ad68d525f::t_b0751e15a275b9 1-2,11,28,38,49
+packages/twenty-shared/src/utils/formula/types/FormulaAstNode.ts
+  s_c9896ad68d525f::t_b917bd26e00a7c 1-45
+packages/twenty-shared/src/utils/formula/utils/transpileFormulaToPostgresExpressionOrThrow.ts
+  s_c9896ad68d525f::t_8291223f5d8ff3 31
+  s_c9896ad68d525f::t_4cd76c5a4c55d7 1-30,32-36,38-46,48-99
+  s_c9896ad68d525f::t_9a06fd77b98216 47
+  s_c9896ad68d525f::t_dcd0ad39fd8a2f 37
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/update-field-action-handler.service.ts
+  s_c9896ad68d525f::t_ff80efc263cca6 351-395
+  s_c9896ad68d525f::t_f4cafb426b450e 20
+packages/twenty-shared/src/types/index.ts
+  s_c9896ad68d525f::t_6dbe9991e5556e 133-134
+  s_c9896ad68d525f::t_868a96429fe2e9 114
+packages/twenty-front/src/modules/object-record/spreadsheet-import/hooks/useBuildSpreadSheetImportFields.ts
+  s_c9896ad68d525f::t_be24ef3bec20a1 94
+packages/twenty-front/src/modules/object-record/object-filter-dropdown/utils/isNonCompositeField.ts
+  s_c9896ad68d525f::t_c1a9d5042d82cd 21
+packages/twenty-server/src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util.ts
+  s_c9896ad68d525f::t_0735a974c7496c 21-22
+  s_c9896ad68d525f::t_f8004b4b60ea53 41-42
+packages/twenty-shared/src/utils/formula/utils/inferFormulaReturnTypeOrThrow.ts
+  s_c9896ad68d525f::t_7658910c9fcc92 1-30,32-130
+  s_c9896ad68d525f::t_dcd0ad39fd8a2f 31
+packages/twenty-front/src/modules/object-record/read-only/utils/__tests__/isRecordFieldReadOnly.test.ts
+  s_c9896ad68d525f::t_63411f84463514 90-110
+packages/twenty-shared/src/utils/formula/utils/evaluateFormulaOrThrow.ts
+  s_c9896ad68d525f::t_dcd0ad39fd8a2f 52-53
+  s_c9896ad68d525f::t_ab4bebcf4c25d4 1-51,54-159
+packages/twenty-front/src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
+  s_c9896ad68d525f::t_c66cfb6818ddae 81-83,89
+  s_c9896ad68d525f::t_34225739581f53 13
+  s_c9896ad68d525f::t_557d69a2135290 25-28
+packages/twenty-shared/src/utils/formula/constants/FormulaDateFunctions.ts
+  s_c9896ad68d525f::t_5658c478e39513 1-32,34-36
+  s_c9896ad68d525f::t_8f6f448c3ac47b 33
+packages/twenty-server/src/engine/twenty-orm/workspace-schema-manager/utils/build-sql-column-definition.util.ts
+  s_c9896ad68d525f::t_02bf40ddd0cf63 21-31
+  s_c9896ad68d525f::t_2a76747f965136 5
+packages/twenty-front/src/modules/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow.ts
+  s_c9896ad68d525f::t_cc44356eff5013 381
+packages/twenty-server/src/engine/core-modules/feature-flag/constants/public-feature-flag.const.ts
+  s_c9896ad68d525f::t_93cb6ccd81a689 39-46
+packages/twenty-shared/src/utils/formula/types/FormulaFieldReference.ts
+  s_c9896ad68d525f::t_c6982fad207103 1-4
+packages/twenty-front/src/modules/object-metadata/constants/SortableFieldMetadataTypes.ts
+  s_c9896ad68d525f::t_ae9d19d5602f3e 18
+packages/twenty-front/src/pages/settings/data-model/constants/DefaultIconsByFieldType.ts
+  s_c9896ad68d525f::t_c97236fda83f83 10
+packages/twenty-shared/src/utils/formula/utils/__tests__/parseFormulaExpressionOrThrow.test.ts
+  s_c9896ad68d525f::t_d7ae644e9a0252 1-32,34-108,110-111,120-122,126-135
+  s_c9896ad68d525f::t_dcd0ad39fd8a2f 33,109,123-125
+  s_c9896ad68d525f::t_014153d621ed4b 112-119
+packages/twenty-shared/src/utils/formula/utils/__tests__/inferFormulaReturnTypeOrThrow.test.ts
+  s_c9896ad68d525f::t_0bc875bccb0aa0 1-59
+packages/twenty-shared/src/utils/formula/utils/roundHalfAwayFromZero.ts
+  s_c9896ad68d525f::t_d73dc4da836df4 1-13
+packages/twenty-shared/src/utils/formula/utils/assertFormulaArgumentCountOrThrow.ts
+  s_c9896ad68d525f::t_882940d272606e 1-20
+packages/twenty-front/src/modules/object-record/utils/generateEmptyFieldValue.ts
+  s_c9896ad68d525f::t_b9a17d2584e39b 126-128
+packages/twenty-shared/src/utils/formula/utils/inferNumericFunctionReturnTypeOrThrow.ts
+  s_c9896ad68d525f::t_f03f1c33ad104a 1-30
+packages/twenty-shared/src/utils/formula/utils/inferTextFunctionReturnTypeOrThrow.ts
+  s_c9896ad68d525f::t_62b11386e89f54 1-30
+packages/twenty-shared/src/utils/formula/types/FormulaValue.ts
+  s_c9896ad68d525f::t_b16e5009f97a2f 1
+packages/twenty-server/src/engine/api/common/common-args-processors/filter-arg-processor/utils/get-operators-for-field-type.util.ts
+  s_c9896ad68d525f::t_6874c36ad8d966 28,34-44
+  s_c9896ad68d525f::t_31bf5be42cf8d2 1-10
+  s_c9896ad68d525f::t_e3e01372c8007b 45
+packages/twenty-shared/src/utils/formula/utils/createFormulaError.ts
+  s_c9896ad68d525f::t_c2087a9c28adbd 1-12
+packages/twenty-shared/src/utils/formula/utils/unifyFormulaValueTypesOrThrow.ts
+  s_c9896ad68d525f::t_b4cd05d163c977 1-25
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util.ts
+  s_c9896ad68d525f::t_1e5509ecbe3fbf 93-151
+packages/twenty-shared/src/utils/formula/types/FormulaErrorCode.ts
+  s_c9896ad68d525f::t_0ebe91bf910888 1-4
+packages/twenty-front/src/modules/object-record/record-field/ui/types/guards/isFieldFormula.ts
+  s_c9896ad68d525f::t_c7363c74853b68 1-12
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSettingsFormCard.tsx
+  s_c9896ad68d525f::t_cd030e3d31eb2e 1-42
+packages/twenty-shared/src/utils/formula/constants/FormulaExpressionMaxLength.ts
+  s_c9896ad68d525f::t_609b3bec926e5e 1
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util.ts
+  s_c9896ad68d525f::t_d6593052a15be6 187
+packages/twenty-shared/src/utils/formula/types/FormulaFunctionDefinition.ts
+  s_c9896ad68d525f::t_dcd0ad39fd8a2f 5-7
+  s_c9896ad68d525f::t_8e4b51e424c418 1-4,8-13
+packages/twenty-shared/src/utils/formula/constants/FormulaAstMaxDepth.ts
+  s_c9896ad68d525f::t_b6432e218272f8 1
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_c9896ad68d525f::t_b32b758bbc65e0 1851
+  s_c9896ad68d525f::t_be3fbbac552173 1756
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/derive-formula-as-expression-for-formula-field.util.ts
+  s_c9896ad68d525f::t_80843ee065155a 1-42
+packages/twenty-front/src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
+  s_c9896ad68d525f::t_7255b620b67887 132-137
+packages/twenty-front/src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard.tsx
+  s_c9896ad68d525f::t_1da1d00ab64d01 183
+  s_c9896ad68d525f::t_b4d99dedc2aa43 204
+  s_c9896ad68d525f::t_af4890200885cb 289-298
+  s_c9896ad68d525f::t_563eb150f4eaee 18-19
+  s_c9896ad68d525f::t_1008e89ce0a972 157
+  s_c9896ad68d525f::t_de138ecdd258fe 132-135
+packages/twenty-front/src/modules/object-metadata/utils/getFilterFilterableFieldMetadataItems.ts
+  s_c9896ad68d525f::t_1875ab11a6b8cf 43
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/hooks/useFormulaFieldDisplay.ts
+  s_c9896ad68d525f::t_9bf64cfc5008b4 1-22
+packages/twenty-front/src/modules/object-record/record-field/ui/types/FieldMetadata.ts
+  s_c9896ad68d525f::t_a58c5d0c3079c5 215
+  s_c9896ad68d525f::t_b818e52a7c2607 203-206
+  s_c9896ad68d525f::t_f73b1ce4fd4b8c 242
+  s_c9896ad68d525f::t_71001c3267fed3 8
+packages/twenty-shared/src/utils/formula/utils/computePostgresRightSlice.ts
+  s_c9896ad68d525f::t_d2e8405bb5e720 1-18
+packages/twenty-server/src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-operator-for-field-type-or-throw.util.ts
+  s_c9896ad68d525f::t_eaf48d0c529ade 16-19
+packages/twenty-shared/src/utils/formula/utils/assertFormulaArgumentTypeOrThrow.ts
+  s_c9896ad68d525f::t_1c935533deafbd 1-23
+packages/twenty-server/src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service.ts
+  s_c9896ad68d525f::t_60bcb3f1754bd1 339
+packages/twenty-shared/src/utils/formula/constants/FormulaTextFunctions.ts
+  s_c9896ad68d525f::t_7343272ae7f4fd 90
+  s_c9896ad68d525f::t_9525fc7ae3e786 2-3
+  s_c9896ad68d525f::t_00741c365fe9c6 1,4,7-41,43-53,55-65,67-78,83-89,91-94,96-105,107-110,112-117,119-120
+  s_c9896ad68d525f::t_69a834ae4ace62 106
+  s_c9896ad68d525f::t_bd88c886050e86 5-6,42,54,66,79-82,95,111,118
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4d0dc8d688dc3a46ff66e6d60133154e78b7c14b",
+  "prompts": {},
+  "sessions": {
+    "s_c9896ad68d525f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e5f7930d-ee88-45b7-923e-7aef12c5e30f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
