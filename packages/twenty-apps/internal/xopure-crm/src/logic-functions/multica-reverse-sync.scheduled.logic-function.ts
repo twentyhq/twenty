@@ -92,14 +92,6 @@ const handler = async (): Promise<Output> => {
       },
     });
 
-    type FindResult = {
-      xopureSupportTickets?: {
-        edges?: Array<{
-          node?: { id: string; status?: string | null; priority?: string | null };
-        }>;
-      };
-    };
-
     const extractTicket = (result: unknown): { id: string; status?: string | null; priority?: string | null } | null => {
       if (typeof result !== 'object' || result === null || !('xopureSupportTickets' in result) ) return null;
       const widing = result as Record<string, unknown>;

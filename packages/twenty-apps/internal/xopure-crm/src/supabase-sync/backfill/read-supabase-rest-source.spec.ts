@@ -62,6 +62,21 @@ describe('SOURCE_TABLE_TO_REST_SOURCE', () => {
     expect(SOURCE_TABLE_TO_REST_SOURCE.support_tickets.select).toContain(
       'requester_email',
     );
+    expect(SOURCE_TABLE_TO_REST_SOURCE.support_tickets.select).toContain(
+      'ticket_type',
+    );
+    expect(SOURCE_TABLE_TO_REST_SOURCE.support_tickets.select).toContain(
+      'severity',
+    );
+    expect(SOURCE_TABLE_TO_REST_SOURCE.support_tickets.select).toContain(
+      'product_tag',
+    );
+    expect(SOURCE_TABLE_TO_REST_SOURCE.support_tickets.select).toContain(
+      'sla_deadline',
+    );
+    expect(SOURCE_TABLE_TO_REST_SOURCE.support_tickets.select).toContain(
+      'sla_breached',
+    );
     expect(SOURCE_TABLE_TO_REST_SOURCE.support_tickets.select).not.toContain(
       'source_metadata',
     );
