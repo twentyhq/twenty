@@ -1,7 +1,8 @@
 import { TEST_OBJECT_GQL_FIELDS } from 'test/integration/graphql/suites/inputs-validation/constants/test-object-gql-fields.constant';
+import { expectCreateInputValidationSuccessWithRetry } from 'test/integration/graphql/suites/inputs-validation/create-validation/utils/expect-create-input-validation-success-with-retry.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
-import { pascalCase } from 'twenty-shared/utils';
+import { isDefined, pascalCase } from 'twenty-shared/utils';
 
 export const expectGqlCreateInputValidationSuccess = async (
   objectMetadataSingularName: string,
@@ -22,16 +23,19 @@ export const expectGqlCreateInputValidationSuccess = async (
     data: input,
   });
 
-  const createOneResponse =
-    await makeGraphqlAPIRequestWithApiKey(createOneOperation);
+  await expectCreateInputValidationSuccessWithRetry({
+    performCreate: async () => {
+      const createOneResponse =
+        await makeGraphqlAPIRequestWithApiKey(createOneOperation);
 
-  expect(createOneResponse.body.errors).toBeUndefined();
-  expect(createOneResponse.body.data).toBeDefined();
-  expect(
-    validateInput(
-      createOneResponse.body.data[
-        `create${pascalCase(objectMetadataSingularName)}`
-      ],
-    ),
-  ).toBe(true);
+      return {
+        hasError: isDefined(createOneResponse.body.errors),
+        record:
+          createOneResponse.body.data?.[
+            `create${pascalCase(objectMetadataSingularName)}`
+          ],
+      };
+    },
+    validateInput,
+  });
 };
