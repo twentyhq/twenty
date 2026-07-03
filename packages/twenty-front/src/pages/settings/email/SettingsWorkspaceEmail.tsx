@@ -5,6 +5,7 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { GET_UNSUBSCRIBE_PAGE_PREVIEW_URL } from '@/settings/unsubscribe-topics/graphql/queries/getUnsubscribePagePreviewUrl';
+import { SettingsWorkspaceUnsubscribeTopicSection } from '@/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -59,13 +60,13 @@ export const SettingsWorkspaceEmail = () => {
 
   return (
     <SettingsPageLayout
-      title={t`Emails`}
+      title={t`Communications`}
       links={[
         {
           children: t`Workspace`,
           href: getSettingsPath(SettingsPath.General),
         },
-        { children: t`Emails` },
+        { children: t`Communications` },
       ]}
     >
       <SettingsPageContainer>
@@ -98,6 +99,7 @@ export const SettingsWorkspaceEmail = () => {
           />
         </Section>
         <SettingsWorkspaceEmailGroupSection />
+        <SettingsWorkspaceUnsubscribeTopicSection />
         <Section>
           <H2Title
             title={t`Unsubscribe`}

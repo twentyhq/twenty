@@ -123,7 +123,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
           href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: t`Email`,
+          children: t`Communications`,
           href: getSettingsPath(SettingsPath.WorkspaceCommunications),
         },
         { children: topicName },

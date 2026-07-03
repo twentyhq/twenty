@@ -127,7 +127,7 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
           href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: t`Emails`,
+          children: t`Communications`,
           href: getSettingsPath(SettingsPath.WorkspaceCommunications),
         },
       ]}
