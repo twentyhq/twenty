@@ -43,6 +43,7 @@ const StyledLinkIconContainer = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.primary};
   border-radius: ${themeCssVariables.border.radius.rounded};
+  corner-shape: round;
   box-shadow: ${themeCssVariables.boxShadow.strong};
   color: ${themeCssVariables.font.color.primary};
   display: flex;

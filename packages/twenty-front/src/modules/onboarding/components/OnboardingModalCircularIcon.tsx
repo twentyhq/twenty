@@ -7,6 +7,7 @@ const StyledCheckContainer = styled.div<{ color: string }>`
   align-items: center;
   border: 2px solid ${({ color }) => color};
   border-radius: ${themeCssVariables.border.radius.rounded};
+  corner-shape: round;
   box-shadow: ${({ color }) => color && `-4px 4px 0 -2px ${color}`};
   box-sizing: content-box;
   display: flex;

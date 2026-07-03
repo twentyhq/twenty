@@ -13,7 +13,8 @@ const pillClassName = css`
   align-items: center;
   background: ${themeCssVariables.background.secondary};
   border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: 40px;
+  border-radius: ${themeCssVariables.border.radius.pill};
+  corner-shape: round;
   color: ${themeCssVariables.font.color.tertiary};
   display: inline-flex;
   font-weight: ${themeCssVariables.font.weight.medium};

@@ -60,6 +60,7 @@ const StyledStatusBadge = styled.div<{
         ? themeCssVariables.background.transparent.danger
         : themeCssVariables.background.transparent.medium};
   border-radius: ${themeCssVariables.border.radius.pill};
+  corner-shape: round;
   color: ${({ status }) =>
     status === 'success'
       ? themeCssVariables.color.turquoise

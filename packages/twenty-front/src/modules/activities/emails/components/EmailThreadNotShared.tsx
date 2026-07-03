@@ -10,7 +10,7 @@ const StyledContainer = styled.div<{ isCompact?: boolean }>`
   align-items: center;
   background: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: 4px;
+  border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   flex: 1;

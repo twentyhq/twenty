@@ -14,6 +14,7 @@ const StyledButton = styled.button`
   background: ${themeCssVariables.background.primary};
   border: none;
   border-radius: 50%;
+  corner-shape: round;
   box-shadow: ${themeCssVariables.boxShadow.strong};
   color: ${themeCssVariables.font.color.tertiary};
   cursor: pointer;

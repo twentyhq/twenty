@@ -4,7 +4,7 @@
   justify-content: center;
   width: 14px;
   height: 14px;
-  border-radius: 4px;
+  border-radius: var(--t-border-radius-sm);
   background-color: var(
     --avatar-or-icon-background,
     var(--t-background-inverted-secondary)

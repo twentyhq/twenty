@@ -1010,3 +1010,29 @@
   --t-color-transparent-amber11: #ab6400;
   --t-color-transparent-amber12: #341500dd;
 }
+
+/* Squircle corners: progressive enhancement for browsers supporting
+   corner-shape (Chromium 139+). A squircle needs ~2x the radius of a round
+   corner to read as the same visual size, so the radius tokens are doubled
+   here; other browsers keep the base tokens as plain rounded corners.
+   pill and rounded stay untouched: they are already at their geometric
+   maximum and keep corner-shape: round via component-level opt-outs.
+   Opt a subtree out with --t-corner-shape: round, or a single element with
+   corner-shape: round. */
+@supports (corner-shape: squircle) {
+  .light {
+    --t-border-radius-xs: 4px;
+    --t-border-radius-sm: 8px;
+    --t-border-radius-md: 16px;
+    --t-border-radius-lg: 32px;
+    --t-border-radius-xl: 40px;
+    --t-border-radius-xxl: 80px;
+  }
+
+  /* Zero specificity on purpose: any component rule can override it. */
+  *,
+  *::before,
+  *::after {
+    corner-shape: var(--t-corner-shape, squircle);
+  }
+}

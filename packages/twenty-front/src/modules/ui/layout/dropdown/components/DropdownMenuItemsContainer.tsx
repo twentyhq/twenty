@@ -34,7 +34,7 @@ const StyledScrollableContainer = styled.div<{ maxHeight?: number }>`
   width: 100%;
 
   *::-webkit-scrollbar-thumb {
-    border-radius: ${themeCssVariables.border.radius.sm};
+    border-radius: ${themeCssVariables.border.radius.md};
   }
 `;
 

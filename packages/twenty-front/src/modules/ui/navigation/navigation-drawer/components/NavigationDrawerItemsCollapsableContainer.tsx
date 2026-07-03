@@ -42,7 +42,7 @@ export const NavigationDrawerItemsCollapsableContainer = ({
         width: 24,
         backgroundColor: theme.background.transparent.lighter,
         border: `1px solid ${theme.background.transparent.lighter}`,
-        borderRadius: theme.border.radius.sm,
+        borderRadius: theme.border.radius.md,
       };
     }
   }

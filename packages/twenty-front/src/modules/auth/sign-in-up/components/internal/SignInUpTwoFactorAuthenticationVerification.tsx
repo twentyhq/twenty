@@ -137,7 +137,8 @@ const StyledDashContainer = styled.div`
 
 const StyledDash = styled.div`
   background-color: ${themeCssVariables.font.color.primary};
-  border-radius: 9999px;
+  border-radius: ${themeCssVariables.border.radius.pill};
+  corner-shape: round;
   height: 0.25rem;
   width: 0.75rem;
 `;

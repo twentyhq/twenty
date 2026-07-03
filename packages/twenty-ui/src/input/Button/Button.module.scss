@@ -69,13 +69,6 @@ $gray-scale-light-gray1: color(display-p3 1 1 1);
   }
 }
 
-@supports (corner-shape: squircle) {
-  .button {
-    border-radius: var(--btn-radius, var(--t-border-radius-lg));
-    corner-shape: squircle;
-  }
-}
-
 .small {
   height: 24px;
 }
@@ -94,7 +87,7 @@ $gray-scale-light-gray1: color(display-p3 1 1 1);
 // '1px 1px' override for primary/danger is omitted: it computes to the same
 // 1px on every side as the default.
 .button[data-position='left'] {
-  --btn-radius: var(--t-border-radius-sm) 0px 0px var(--t-border-radius-sm);
+  --btn-radius: var(--t-border-radius-md) 0px 0px var(--t-border-radius-md);
   --btn-border-width: 1px 0px 1px 1px;
 }
 
@@ -104,7 +97,7 @@ $gray-scale-light-gray1: color(display-p3 1 1 1);
 }
 
 .button[data-position='right'] {
-  --btn-radius: 0px var(--t-border-radius-sm) var(--t-border-radius-sm) 0px;
+  --btn-radius: 0px var(--t-border-radius-md) var(--t-border-radius-md) 0px;
   --btn-border-width: 1px 1px 1px 0px;
 }
 

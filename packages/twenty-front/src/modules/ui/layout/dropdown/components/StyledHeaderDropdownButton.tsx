@@ -35,9 +35,4 @@ export const StyledHeaderDropdownButton = styled.button<StyledDropdownButtonProp
         ? themeCssVariables.background.transparent.medium
         : themeCssVariables.background.transparent.light};
   }
-
-  @supports (corner-shape: squircle) {
-    border-radius: ${themeCssVariables.border.radius.lg};
-    corner-shape: squircle;
-  }
 `;

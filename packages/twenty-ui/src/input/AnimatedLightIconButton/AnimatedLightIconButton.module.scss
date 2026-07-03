@@ -60,13 +60,6 @@
   }
 }
 
-@supports (corner-shape: squircle) {
-  .button {
-    border-radius: var(--t-border-radius-lg);
-    corner-shape: squircle;
-  }
-}
-
 .small {
   height: 24px;
   min-width: 24px;

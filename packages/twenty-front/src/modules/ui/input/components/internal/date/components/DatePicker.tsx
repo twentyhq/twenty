@@ -39,7 +39,7 @@ export const MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID =
 
 const StyledButtonContainer = styled.div`
   align-items: center;
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   cursor: pointer;
   display: flex;

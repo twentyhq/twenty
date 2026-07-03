@@ -51,13 +51,6 @@
   }
 }
 
-@supports (corner-shape: squircle) {
-  .button {
-    border-radius: var(--icon-button-radius, var(--t-border-radius-lg));
-    corner-shape: squircle;
-  }
-}
-
 .small {
   height: 24px;
   min-width: 24px;
@@ -71,8 +64,8 @@
 // position only reshapes the border radius; standalone keeps the .button
 // fallback radius.
 .button[data-position='left'] {
-  --icon-button-radius: var(--t-border-radius-sm) 0px 0px
-    var(--t-border-radius-sm);
+  --icon-button-radius: var(--t-border-radius-md) 0px 0px
+    var(--t-border-radius-md);
 }
 
 .button[data-position='middle'] {
@@ -80,7 +73,7 @@
 }
 
 .button[data-position='right'] {
-  --icon-button-radius: 0px var(--t-border-radius-sm) var(--t-border-radius-sm)
+  --icon-button-radius: 0px var(--t-border-radius-md) var(--t-border-radius-md)
     0px;
 }
 

@@ -9,7 +9,7 @@ const StyledChip = styled.div<{ deletable: boolean; danger: boolean }>`
     danger ? themeCssVariables.color.red3 : themeCssVariables.color.blue3};
   border-color: ${({ danger }) =>
     danger ? themeCssVariables.color.red5 : themeCssVariables.color.blue5};
-  border-radius: 4px;
+  border-radius: ${themeCssVariables.border.radius.md};
   border-style: solid;
   border-width: 1px;
   box-sizing: border-box;
@@ -37,8 +37,8 @@ const StyledDelete = styled.button<{ danger: boolean }>`
   align-items: center;
   background: none;
   border: none;
-  border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
-  border-top-right-radius: ${themeCssVariables.border.radius.sm};
+  border-bottom-right-radius: ${themeCssVariables.border.radius.md};
+  border-top-right-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   color: ${({ danger }) =>
     danger ? themeCssVariables.color.red : themeCssVariables.color.blue};

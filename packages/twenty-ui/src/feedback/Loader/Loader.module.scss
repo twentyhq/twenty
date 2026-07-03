@@ -7,6 +7,7 @@
   width: var(--t-spacing-6);
   height: var(--t-spacing-3);
   border-radius: var(--t-border-radius-pill);
+  corner-shape: round;
   border: 1px solid
     var(--loader-color, var(--tw-button-color, var(--t-font-color-tertiary)));
   overflow: hidden;
@@ -18,6 +19,7 @@
     var(--tw-button-color, var(--t-font-color-tertiary))
   );
   border-radius: var(--t-border-radius-pill);
+  corner-shape: round;
   height: 8px;
   width: 8px;
   animation: loaderDot 0.8s ease-in-out infinite;

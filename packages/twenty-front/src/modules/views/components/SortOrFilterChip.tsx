@@ -25,7 +25,7 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
           return themeCssVariables.accent.tertiary;
       }
     }};
-  border-radius: 4px;
+  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   color: ${({ variant }) => {
     switch (variant) {
