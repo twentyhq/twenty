@@ -38,9 +38,9 @@ const StyledEmailRow = styled.div<{ isUnread: boolean }>`
   display: flex;
   flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.sm};
-  gap: 14px;
+  gap: ${themeCssVariables.spacing[2]};
   height: ${EMAIL_ROW_HEIGHT}px;
-  padding: 0 14px;
+  padding: 0 ${themeCssVariables.spacing[3]};
   white-space: nowrap;
 `;
 
@@ -89,9 +89,9 @@ const StyledEventCard = styled.div<{ color: 'orange' | 'sky' }>`
       : themeCssVariables.color.sky11};
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: ${themeCssVariables.spacing[1]};
   line-height: 1.1;
-  padding: 10px;
+  padding: ${themeCssVariables.spacing[2]};
   position: absolute;
   width: 160px;
 `;
