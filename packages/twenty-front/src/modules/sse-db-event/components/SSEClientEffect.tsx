@@ -1,5 +1,6 @@
 import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 import { useHandleSseClientConnectionRetry } from '@/sse-db-event/hooks/useHandleSseClientConnectionRetry';
 import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryListenersState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
@@ -7,7 +8,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { createClient } from 'graphql-sse';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useStore } from 'jotai';
@@ -17,6 +18,9 @@ export const SSEClientEffect = () => {
   const hasAccessTokenPair = useHasAccessTokenPair();
   const [sseClient, setSseClient] = useAtomState(sseClientState);
   const tokenPair = useAtomStateValue(tokenPairState);
+  const hasConnectedRef = useRef(false);
+
+  const { invalidateMetadataStore } = useInvalidateMetadataStore();
 
   const handleSSEClientConnected = useCallback(() => {
     const currentActiveQueryListeners = store.get(
@@ -26,7 +30,14 @@ export const SSEClientEffect = () => {
     if (isNonEmptyArray(currentActiveQueryListeners)) {
       store.set(activeQueryListenersState.atom, []);
     }
-  }, [store]);
+
+    if (!hasConnectedRef.current) {
+      hasConnectedRef.current = true;
+      return;
+    }
+
+    invalidateMetadataStore();
+  }, [invalidateMetadataStore, store]);
 
   const { handleSseClientConnectionRetry } =
     useHandleSseClientConnectionRetry();

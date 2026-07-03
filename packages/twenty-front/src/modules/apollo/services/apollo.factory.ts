@@ -46,6 +46,9 @@ let renewalPromise: Promise<boolean> | null = null;
 const TOKEN_RENEWAL_MAX_RETRIES = 3;
 const TOKEN_RENEWAL_RETRY_DELAY_MS = 1000;
 
+const isInvalidArgsFilterError = (graphQLError: GraphQLFormattedError) =>
+  graphQLError.extensions?.subCode === 'INVALID_ARGS_FILTER';
+
 export interface Options {
   uri: string;
   cache: ApolloClient.Options['cache'];
@@ -146,8 +149,12 @@ export class ApolloFactory implements ApolloManager {
         attempts: {
           max: 2,
           retryIf: (error) => {
-            // oxlint-disable-next-line no-console
-            console.log('retryIf error from retryLink', error);
+            if (isDebugMode === true) {
+              logDebug('Retrying Apollo request after network error', {
+                error,
+              });
+            }
+
             if (this.isAuthenticationError(error)) {
               return false;
             }
@@ -191,10 +198,12 @@ export class ApolloFactory implements ApolloManager {
           renewalPromise = attemptTokenRenewal()
             .then(() => true)
             .catch(() => {
-              // oxlint-disable-next-line no-console
-              console.log(
-                'Failed to renew token after retries, triggering unauthenticated error',
-              );
+              if (isDebugMode === true) {
+                logDebug(
+                  'Failed to renew token after retries, triggering unauthenticated error',
+                );
+              }
+
               onUnauthenticatedError?.();
 
               return false;
@@ -259,11 +268,11 @@ export class ApolloFactory implements ApolloManager {
             });
           })
           .catch((sentryError) => {
-            // oxlint-disable-next-line no-console
-            console.error(
-              'Failed to capture GraphQL error with Sentry:',
-              sentryError,
-            );
+            if (isDebugMode === true) {
+              logDebug('Failed to capture GraphQL error with Sentry', {
+                sentryError,
+              });
+            }
           });
       };
 
@@ -272,8 +281,6 @@ export class ApolloFactory implements ApolloManager {
           onErrorCb?.(error.errors);
           for (const graphQLError of error.errors) {
             if (graphQLError.message === 'Unauthorized') {
-              // oxlint-disable-next-line no-console
-              console.log('Unauthorized, triggering token renewal');
               return handleTokenRenewal(operation, forward);
             }
 
@@ -286,8 +293,6 @@ export class ApolloFactory implements ApolloManager {
                 return;
               }
               case 'UNAUTHENTICATED': {
-                // oxlint-disable-next-line no-console
-                console.log('UNAUTHENTICATED, triggering token renewal');
                 return handleTokenRenewal(operation, forward);
               }
               case 'NOT_FOUND':
@@ -301,6 +306,11 @@ export class ApolloFactory implements ApolloManager {
                 if (graphQLError.extensions?.isExpected === true) {
                   return;
                 }
+
+                if (isInvalidArgsFilterError(graphQLError)) {
+                  return;
+                }
+
                 sendToSentry({ graphQLError, operation });
                 return;
               }
@@ -316,10 +326,6 @@ export class ApolloFactory implements ApolloManager {
             this.isRestOperation(operation) &&
             this.isAuthenticationError(error)
           ) {
-            // oxlint-disable-next-line no-console
-            console.log(
-              'Authentication error, triggering token renewal from errorLink',
-            );
             return handleTokenRenewal(operation, forward);
           }
 

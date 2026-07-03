@@ -192,6 +192,35 @@ describe('ApolloFactory', () => {
     }
   }, 10000);
 
+  it('should not send expected invalid args filter user input errors to Sentry', async () => {
+    const errors = [
+      {
+        message: 'Invalid filter argument',
+        extensions: {
+          code: 'USER_INPUT_ERROR',
+          subCode: 'INVALID_ARGS_FILTER',
+        },
+      },
+    ];
+
+    fetchMock.mockResponse(() =>
+      Promise.resolve({
+        body: JSON.stringify({
+          data: {},
+          errors,
+        }),
+      }),
+    );
+
+    try {
+      await makeRequest();
+    } catch (error) {
+      expect(error).toBeInstanceOf(CombinedGraphQLErrors);
+      expect(mockOnError).toHaveBeenCalledWith(errors);
+      expect(mockCaptureException).not.toHaveBeenCalled();
+    }
+  }, 10000);
+
   it('should call onNetworkError when encountering a network error', async () => {
     const errors = [
       {
