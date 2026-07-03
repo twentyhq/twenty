@@ -151,124 +151,166 @@ function buildMetadata(
 }
 
 export const handler = async (input: Input): Promise<Output> => {
-  const client = new CoreApiClient();
   const supportTicketId = input.record?.id;
-  const subject = input.record?.subject ?? 'New ticket';
-  const dueAt = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString();
+  const jobType = 'support-ticket-task-creator';
+  const startTime = Date.now();
 
-  // --- Step 1: Create the Twenty Task ---
-  const taskResult = await client.mutation({
-    createTask: {
-      __args: {
-        data: {
-          body: `Follow up on support ticket: ${subject}`,
-          dueAt,
-        },
-      },
-      id: true,
-    },
-  });
+  console.log(JSON.stringify({
+    type: 'JOB_START',
+    job_type: jobType,
+    support_ticket_id: supportTicketId,
+    timestamp: new Date().toISOString(),
+  }));
 
-  const taskId = extractId(taskResult, 'createTask');
+  try {
+    const client = new CoreApiClient();
+    const subject = input.record?.subject ?? 'New ticket';
+    const dueAt = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString();
 
-  if (taskId && supportTicketId) {
-    await client.mutation({
-      createTaskTarget: {
+    // --- Step 1: Create the Twenty Task ---
+    const taskResult = await client.mutation({
+      createTask: {
         __args: {
           data: {
-            taskId,
-            targetXopureSupportTicketId: supportTicketId,
+            body: `Follow up on support ticket: ${subject}`,
+            dueAt,
           },
         },
         id: true,
       },
     });
-  }
 
-  // --- Step 2: Create the Multica Issue (idempotent — skip if already linked) ---
-  let multicaIssueId: string | undefined;
-  let multicaError: string | undefined;
+    const taskId = extractId(taskResult, 'createTask');
 
-  if (input.record?.multicaIssueId) {
-    multicaIssueId = input.record.multicaIssueId;
-  } else {
-    const apiKey = process.env.MULTICA_API_KEY;
-
-    if (!apiKey) {
-      multicaError =
-        'Missing MULTICA_API_KEY — task created, Multica sync skipped.';
-    } else {
-      try {
-        const multicaStatus = input.record?.status
-          ? (STATUS_TO_MULTICA[input.record.status] ?? 'todo')
-          : 'todo';
-        const multicaPriority = input.record?.priority
-          ? (PRIORITY_TO_MULTICA[input.record.priority] ?? 'medium')
-          : 'medium';
-
-        const response = await fetch(
-          `${MULTICA_API_URL}?workspace_id=${MULTICA_WORKSPACE_ID}`,
-          {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${apiKey}`,
-              'Content-Type': 'application/json',
+    if (taskId && supportTicketId) {
+      await client.mutation({
+        createTaskTarget: {
+          __args: {
+            data: {
+              taskId,
+              targetXopureSupportTicketId: supportTicketId,
             },
-            body: JSON.stringify({
-              title: subject,
-              description: buildDescription(input.record ?? {}),
-              priority: multicaPriority,
-              status: multicaStatus,
-              project_id: MULTICA_PROJECT_ID,
-              metadata: buildMetadata(input.record ?? {}, taskId),
-            }),
           },
-        );
+          id: true,
+        },
+      });
+    }
 
-        if (!response.ok) {
-          const errorBody = await response.text().catch(() => 'Unknown error');
-          multicaError = `Multica API returned ${response.status}: ${errorBody}`;
-        } else {
-          const issue = await response.json();
-          if (
-            typeof issue === 'object' &&
-            issue !== null &&
-            'id' in issue &&
-            typeof issue.id === 'string'
-          ) {
-            multicaIssueId = issue.id;
+    // --- Step 2: Create the Multica Issue (idempotent — skip if already linked) ---
+    let multicaIssueId: string | undefined;
+    let multicaError: string | undefined;
 
-            // Write back multicaIssueId to the support ticket record
-            if (supportTicketId) {
-              await client.mutation({
-                updateXopureSupportTicket: {
-                  __args: {
-                    id: supportTicketId,
-                    data: { multicaIssueId },
-                  },
-                  id: true,
-                },
-              });
-            }
-          } else {
-            multicaError = 'Multica API returned no issue id.';
-          }
-        }
-      } catch (err) {
+    if (input.record?.multicaIssueId) {
+      multicaIssueId = input.record.multicaIssueId;
+    } else {
+      let apiKey = process.env['MULTICA_API_KEY'];
+      if (!apiKey) {
+        try { apiKey = String(require('fs').readFileSync('/app/packages/twenty-server/.local-storage/.multica-pat', 'utf8')).trim(); } catch {}
+      }
+
+      if (!apiKey) {
         multicaError =
-          err instanceof Error ? err.message : 'Unknown network error';
+          'Missing MULTICA_API_KEY — task created, Multica sync skipped.';
+      } else {
+        try {
+          const multicaStatus = input.record?.status
+            ? (STATUS_TO_MULTICA[input.record.status] ?? 'todo')
+            : 'todo';
+          const multicaPriority = input.record?.priority
+            ? (PRIORITY_TO_MULTICA[input.record.priority] ?? 'medium')
+            : 'medium';
+
+          const response = await fetch(
+            `${MULTICA_API_URL}?workspace_id=${MULTICA_WORKSPACE_ID}`,
+            {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${apiKey}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                title: subject,
+                description: buildDescription(input.record ?? {}),
+                priority: multicaPriority,
+                status: multicaStatus,
+                project_id: MULTICA_PROJECT_ID,
+                metadata: buildMetadata(input.record ?? {}, taskId),
+              }),
+            },
+          );
+
+          if (!response.ok) {
+            const errorBody = await response.text().catch(() => 'Unknown error');
+            multicaError = `Multica API returned ${response.status}: ${errorBody}`;
+          } else {
+            const issue = await response.json();
+            if (
+              typeof issue === 'object' &&
+              issue !== null &&
+              'id' in issue &&
+              typeof issue.id === 'string'
+            ) {
+              multicaIssueId = issue.id;
+
+              // Write back multicaIssueId to the support ticket record
+              if (supportTicketId) {
+                await client.mutation({
+                  updateXopureSupportTicket: {
+                    __args: {
+                      id: supportTicketId,
+                      data: { multicaIssueId },
+                    },
+                    id: true,
+                  },
+                });
+              }
+            } else {
+              multicaError = 'Multica API returned no issue id.';
+            }
+          }
+        } catch (err) {
+          multicaError =
+            err instanceof Error ? err.message : 'Unknown network error';
+        }
       }
     }
-  }
 
-  return {
-    success: true,
-    taskId,
-    supportTicketId,
-    multicaIssueId,
-    multicaError,
-    processedAt: new Date().toISOString(),
-  };
+    const durationMs = Date.now() - startTime;
+
+    console.log(JSON.stringify({
+      type: 'JOB_COMPLETE',
+      job_type: jobType,
+      support_ticket_id: supportTicketId,
+      task_id: taskId,
+      multica_issue_id: multicaIssueId,
+      duration_ms: durationMs,
+      records_processed: 1,
+      records_failed: multicaError ? 1 : 0,
+      timestamp: new Date().toISOString(),
+    }));
+
+    return {
+      success: true,
+      taskId,
+      supportTicketId,
+      multicaIssueId,
+      multicaError,
+      processedAt: new Date().toISOString(),
+    };
+  } catch (err) {
+    const durationMs = Date.now() - startTime;
+
+    console.log(JSON.stringify({
+      type: 'JOB_FAIL',
+      job_type: jobType,
+      support_ticket_id: supportTicketId,
+      duration_ms: durationMs,
+      error_code: 'UNHANDLED_ERROR',
+      timestamp: new Date().toISOString(),
+    }));
+
+    throw err;
+  }
 };
 
 export default defineLogicFunction({

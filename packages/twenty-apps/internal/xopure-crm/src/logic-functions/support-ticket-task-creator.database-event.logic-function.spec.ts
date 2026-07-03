@@ -187,4 +187,129 @@ describe('support ticket task creator handler', () => {
       },
     });
   });
+
+  it('emits JOB_START and JOB_COMPLETE structured events with telemetry fields', async () => {
+    mocks.client.mutation
+      .mockResolvedValueOnce({ createTask: { id: 'task-10' } })
+      .mockResolvedValueOnce({ createTaskTarget: { id: 'task-target-10' } })
+      .mockResolvedValueOnce({ updateXopureSupportTicket: { id: 'ticket-10' } });
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({
+        ok: true,
+        json: async () => ({ id: 'multica-issue-10' }),
+        text: async () => '',
+      })) as unknown as typeof fetch,
+    );
+
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    const result = await handler({
+      record: {
+        id: 'ticket-10',
+        subject: 'Telemetry test',
+        status: 'NEW',
+        priority: 'HIGH',
+      },
+    });
+
+    expect(result).toMatchObject({
+      success: true,
+      taskId: 'task-10',
+      supportTicketId: 'ticket-10',
+    });
+
+    const calls = consoleSpy.mock.calls.flat() as string[];
+
+    // Assert JOB_START event
+    const startEvent = calls.find((c: string) => {
+      try {
+        return JSON.parse(c).type === 'JOB_START';
+      } catch {
+        return false;
+      }
+    });
+    expect(startEvent).toBeDefined();
+    const start = JSON.parse(startEvent as string);
+    expect(start).toMatchObject({
+      type: 'JOB_START',
+      job_type: 'support-ticket-task-creator',
+      support_ticket_id: 'ticket-10',
+    });
+    expect(start.timestamp).toBeDefined();
+
+    // Assert JOB_COMPLETE event
+    const completeEvent = calls.find((c: string) => {
+      try {
+        return JSON.parse(c).type === 'JOB_COMPLETE';
+      } catch {
+        return false;
+      }
+    });
+    expect(completeEvent).toBeDefined();
+    const complete = JSON.parse(completeEvent as string);
+    expect(complete).toMatchObject({
+      type: 'JOB_COMPLETE',
+      job_type: 'support-ticket-task-creator',
+      support_ticket_id: 'ticket-10',
+      task_id: 'task-10',
+      multica_issue_id: 'multica-issue-10',
+      records_processed: 1,
+      records_failed: 0,
+    });
+    expect(typeof complete.duration_ms).toBe('number');
+    expect(complete.duration_ms).toBeGreaterThanOrEqual(0);
+
+    // No subject or body in any JOB_* console event (sanitized telemetry)
+    for (const call of calls) {
+      if (typeof call !== 'string') continue;
+      try {
+        const parsed = JSON.parse(call);
+        if (typeof parsed.type === 'string' && parsed.type.startsWith('JOB_')) {
+          expect(parsed).not.toHaveProperty('subject');
+          expect(parsed).not.toHaveProperty('body');
+        }
+      } catch {
+        /* skip non-JSON */
+      }
+    }
+
+    consoleSpy.mockRestore();
+  });
+
+  it('emits JOB_FAIL with sanitized error_code when task creation throws', async () => {
+    mocks.client.mutation.mockRejectedValue(new Error('Connection refused'));
+
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    await expect(
+      handler({
+        record: { id: 'ticket-99', subject: 'Fail test' },
+      }),
+    ).rejects.toThrow();
+
+    const calls = consoleSpy.mock.calls.flat() as string[];
+
+    const failEvent = calls.find((c: string) => {
+      try {
+        return JSON.parse(c).type === 'JOB_FAIL';
+      } catch {
+        return false;
+      }
+    });
+    expect(failEvent).toBeDefined();
+    const fail = JSON.parse(failEvent as string);
+    expect(fail).toMatchObject({
+      type: 'JOB_FAIL',
+      job_type: 'support-ticket-task-creator',
+      support_ticket_id: 'ticket-99',
+      error_code: 'UNHANDLED_ERROR',
+    });
+    expect(typeof fail.duration_ms).toBe('number');
+    expect(fail).not.toHaveProperty('subject');
+    expect(fail).not.toHaveProperty('body');
+
+    consoleSpy.mockRestore();
+  });
 });
