@@ -8,62 +8,64 @@ registerEnumType(FileFolder, {
 
 export type FileFolderConfig = {
   ignoreExpirationToken: boolean;
-  immutable: boolean;
+  cacheControl: string | null;
 };
 
 export const IMMUTABLE_FILE_CACHE_CONTROL = 'private, max-age=86400, immutable';
 
+export const PUBLIC_ASSET_CACHE_CONTROL = 'public, max-age=3600';
+
 export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.CorePicture]: {
     ignoreExpirationToken: true,
-    immutable: true,
+    cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
   },
   [FileFolder.AgentChat]: {
     ignoreExpirationToken: false,
-    immutable: true,
+    cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
   },
   [FileFolder.BuiltLogicFunction]: {
     ignoreExpirationToken: false,
-    immutable: false,
+    cacheControl: null,
   },
   [FileFolder.BuiltFrontComponent]: {
     ignoreExpirationToken: false,
-    immutable: false,
+    cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
   },
   [FileFolder.PublicAsset]: {
     ignoreExpirationToken: true,
-    immutable: false,
+    cacheControl: PUBLIC_ASSET_CACHE_CONTROL,
   },
   [FileFolder.Source]: {
     ignoreExpirationToken: false,
-    immutable: false,
+    cacheControl: null,
   },
   [FileFolder.FilesField]: {
     ignoreExpirationToken: false,
-    immutable: true,
+    cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
   },
   [FileFolder.Dependencies]: {
     ignoreExpirationToken: false,
-    immutable: false,
+    cacheControl: null,
   },
   [FileFolder.Workflow]: {
     ignoreExpirationToken: false,
-    immutable: true,
+    cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
   },
   [FileFolder.EmailAttachment]: {
     ignoreExpirationToken: false,
-    immutable: true,
+    cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
   },
   [FileFolder.AppTarball]: {
     ignoreExpirationToken: false,
-    immutable: false,
+    cacheControl: null,
   },
   [FileFolder.GeneratedSdkClient]: {
     ignoreExpirationToken: false,
-    immutable: false,
+    cacheControl: null,
   },
   [FileFolder.Dpa]: {
     ignoreExpirationToken: false,
-    immutable: true,
+    cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
   },
 };

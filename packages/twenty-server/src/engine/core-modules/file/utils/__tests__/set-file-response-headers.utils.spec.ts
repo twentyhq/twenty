@@ -93,6 +93,7 @@ describe('setFileResponseHeaders', () => {
     FileFolder.AgentChat,
     FileFolder.EmailAttachment,
     FileFolder.Dpa,
+    FileFolder.BuiltFrontComponent,
   ])(
     'should set an immutable Cache-Control for immutable folder %s',
     (fileFolder) => {
@@ -107,11 +108,22 @@ describe('setFileResponseHeaders', () => {
     },
   );
 
+  it('should set a bounded public Cache-Control for the PublicAsset folder', () => {
+    const res = createMockResponse();
+
+    setFileResponseHeaders(res as any, 'image/png', FileFolder.PublicAsset);
+
+    expect(res.setHeader).toHaveBeenCalledWith(
+      'Cache-Control',
+      'public, max-age=3600',
+    );
+  });
+
   it.each([
-    FileFolder.PublicAsset,
     FileFolder.AppTarball,
     FileFolder.Source,
-    FileFolder.BuiltFrontComponent,
+    FileFolder.BuiltLogicFunction,
+    FileFolder.Dependencies,
   ])('should not set Cache-Control for mutable folder %s', (fileFolder) => {
     const res = createMockResponse();
 
