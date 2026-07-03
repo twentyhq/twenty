@@ -12,9 +12,8 @@ type GenerateSummariesResponse = {
 const buildSnackbarForResponse = (
   response: GenerateSummariesResponse,
 ): { message: string; variant: 'success' | 'error' } => {
-  const generatedCallRecordingCount = (
-    response.generatedCallRecordingIds ?? []
-  ).length;
+  const generatedCallRecordingCount = (response.generatedCallRecordingIds ?? [])
+    .length;
   const failedCallRecordingCount = (response.failedCallRecordingIds ?? [])
     .length;
 
