@@ -4,6 +4,8 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 import { isFieldAddress } from '@/object-record/record-field/ui/types/guards/isFieldAddress';
 import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '@/object-record/record-field/ui/types/guards/isFieldCurrencyValue';
+import { isFieldMultiSelect } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelect';
+import { isFieldMultiSelectValue } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelectValue';
 import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFieldNumber';
 import { isFieldNumberValue } from '@/object-record/record-field/ui/types/guards/isFieldNumberValue';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
@@ -104,6 +106,15 @@ export const computeDraftValueFromFieldValue = <FieldValue>({
           2,
         ) as FieldInputDraftValue<FieldValue>)
       : computeEmptyDraftValue<FieldValue>({ fieldDefinition });
+  }
+
+  if (isFieldMultiSelect(fieldDefinition)) {
+    return isFieldMultiSelectValue(
+      fieldValue,
+      fieldDefinition.metadata.options.map((option) => option.value),
+    )
+      ? (fieldValue as FieldInputDraftValue<FieldValue>)
+      : (null as FieldInputDraftValue<FieldValue>);
   }
 
   return fieldValue as FieldInputDraftValue<FieldValue>;
