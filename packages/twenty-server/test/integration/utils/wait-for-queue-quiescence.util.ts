@@ -52,10 +52,26 @@ const getPendingJobCountsByQueue = async (): Promise<
   );
 };
 
+const getActiveJobsFingerprint = async (
+  busyQueueNames: string[],
+): Promise<string> => {
+  const activeJobIdsByQueue = await Promise.all(
+    getQueues()
+      .filter((queue) => busyQueueNames.includes(queue.name))
+      .map(async (queue) => {
+        const activeJobs = await queue.getActive(0, 10);
+
+        return `${queue.name}:${activeJobs.map((job) => job.id).join(',')}`;
+      }),
+  );
+
+  return activeJobIdsByQueue.join('|');
+};
+
 export const waitForQueueQuiescence = async (): Promise<void> => {
   const startedAt = Date.now();
   let lastProgressAt = startedAt;
-  let minObservedPendingTotal = Number.POSITIVE_INFINITY;
+  let lastBusyFingerprint = '';
   let consecutiveQuietChecks = 0;
 
   while (consecutiveQuietChecks < REQUIRED_CONSECUTIVE_QUIET_CHECKS) {
@@ -71,8 +87,13 @@ export const waitForQueueQuiescence = async (): Promise<void> => {
       consecutiveQuietChecks = 0;
       const now = Date.now();
 
-      if (pendingTotal < minObservedPendingTotal) {
-        minObservedPendingTotal = pendingTotal;
+      const activeJobsFingerprint = await getActiveJobsFingerprint(
+        Object.keys(pendingJobCountsByQueue),
+      );
+      const busyFingerprint = `${pendingTotal}|${activeJobsFingerprint}`;
+
+      if (busyFingerprint !== lastBusyFingerprint) {
+        lastBusyFingerprint = busyFingerprint;
         lastProgressAt = now;
       }
 

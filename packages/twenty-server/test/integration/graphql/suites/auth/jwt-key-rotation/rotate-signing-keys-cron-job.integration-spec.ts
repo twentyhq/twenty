@@ -7,18 +7,18 @@ import { generateApiKeyToken } from 'test/integration/graphql/utils/generate-api
 import { deleteConfigVariable } from 'test/integration/twenty-config/utils/delete-config-variable.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 
-import { RotateSigningKeysCronJob } from 'src/engine/core-modules/jwt/crons/jobs/rotate-signing-keys.cron.job';
+import { SigningKeyRotationService } from 'src/engine/core-modules/jwt/services/signing-key-rotation.service';
 import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
 
 const SIGNING_KEY_ROTATION_DAYS_KEY = 'SIGNING_KEY_ROTATION_DAYS';
 
 describe('RotateSigningKeysCronJob (integration)', () => {
   const seededApiKeyId = API_KEY_DATA_SEED_IDS.ID_1;
-  let rotateSigningKeysCronJob: RotateSigningKeysCronJob;
+  let signingKeyRotationService: SigningKeyRotationService;
 
   beforeAll(() => {
-    rotateSigningKeysCronJob = global.app.get<RotateSigningKeysCronJob>(
-      RotateSigningKeysCronJob,
+    signingKeyRotationService = global.app.get<SigningKeyRotationService>(
+      SigningKeyRotationService,
     );
   });
 
@@ -58,7 +58,7 @@ describe('RotateSigningKeysCronJob (integration)', () => {
       input: { key: SIGNING_KEY_ROTATION_DAYS_KEY, value: 0 },
     });
 
-    await rotateSigningKeysCronJob.handle();
+    await signingKeyRotationService.rotateIfDue();
 
     const rotatedTokenResponse = await generateApiKeyToken({
       apiKeyId: seededApiKeyId,
