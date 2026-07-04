@@ -1,0 +1,50 @@
+packages/twenty-server/src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util.ts
+  s_c9896ad68d525f::t_61c56151a5745e 21
+  s_c9896ad68d525f::t_27de6f91f2087b 40
+packages/twenty-front/src/modules/object-record/advanced-filter/hooks/useApplyAdvancedFilterCompositeSubField.ts
+  s_c9896ad68d525f::t_29b54093f09933 67
+packages/twenty-front/src/modules/views/utils/mapViewFiltersToFilters.ts
+  s_c9896ad68d525f::t_89235ed16d219c 53-54
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util.ts
+  s_c9896ad68d525f::t_48efad83be2dc1 78
+packages/twenty-front/src/modules/object-record/record-field/ui/utils/isFieldValueEmpty.ts
+  s_c9896ad68d525f::t_a8dc966781efc9 65
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/__tests__/validate-flat-field-metadata-is-not-referenced-by-computed-field.util.spec.ts
+  s_c9896ad68d525f::t_85ff8d09cbb1c5 94-101,108,114
+packages/twenty-front/src/modules/object-record/advanced-filter/hooks/useApplyAdvancedFilterSourceField.ts
+  s_c9896ad68d525f::t_2f3a2f4e6d1fb5 66
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-to-update-and-related-flat-field-to-update.util.ts
+  s_c9896ad68d525f::t_8b9e6541af6eed 1
+packages/twenty-front/src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useRecordLevelPermissionFilterActions.ts
+  s_c9896ad68d525f::t_1507a826badd4c 78
+packages/twenty-front/src/modules/views/hooks/useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown.ts
+  s_c9896ad68d525f::t_c0314a6bea5720 74
+packages/twenty-front/src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/recordLevelPermissionPredicateConversion.ts
+  s_c9896ad68d525f::t_8ae3a66e4ac20d 28
+packages/twenty-front/src/modules/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem.ts
+  s_c9896ad68d525f::t_17124162d04f2e 15
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-is-not-referenced-by-computed-field.util.ts
+  s_c9896ad68d525f::t_2ba1f7a3d01e1a 60
+packages/twenty-front/src/modules/page-layout/widgets/graph/utils/buildFilterFromChartBucket.ts
+  s_c9896ad68d525f::t_7f12315d962eb9 132
+packages/twenty-front/src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
+  s_c9896ad68d525f::t_653294460919f8 90
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util.ts
+  s_c9896ad68d525f::t_176057b3a10463 122
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "043681acade659bdf2b8f18eb4d61f609ea8b540",
+  "prompts": {},
+  "sessions": {
+    "s_c9896ad68d525f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e5f7930d-ee88-45b7-923e-7aef12c5e30f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
