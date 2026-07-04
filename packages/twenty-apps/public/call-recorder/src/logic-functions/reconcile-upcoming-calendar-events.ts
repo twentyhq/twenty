@@ -4,6 +4,7 @@ import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
 import { RECONCILE_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/reconcile-upcoming-calendar-events-logic-function-universal-identifier';
 import { RECONCILE_UPCOMING_CALENDAR_EVENTS_ROUTE_PATH } from 'src/constants/reconcile-upcoming-calendar-events-route-path';
+import { ReconcileUpcomingCalendarEventsOutcome } from 'src/logic-functions/constants/reconcile-upcoming-calendar-events-outcome';
 import { fetchUpcomingCalendarEventIds } from 'src/logic-functions/data/fetch-upcoming-calendar-event-ids.util';
 import { reconcileUpcomingCalendarEventBatches } from 'src/logic-functions/flows/reconcile-upcoming-calendar-event-batches.util';
 import { type ReconcileUpcomingCalendarEventBatchesResult } from 'src/logic-functions/flows/reconcile-upcoming-calendar-event-batches-result.type';
@@ -17,9 +18,14 @@ type ReconcileUpcomingCalendarEventsRouteBody = {
 };
 
 type ReconcileUpcomingCalendarEventsRouteResult =
-  | { outcome: 'nothing-selected' }
-  | { outcome: 'nothing-to-reconcile' }
-  | ({ outcome: 'processed' } & ReconcileUpcomingCalendarEventBatchesResult);
+  | {
+      outcome:
+        | typeof ReconcileUpcomingCalendarEventsOutcome.NOTHING_SELECTED
+        | typeof ReconcileUpcomingCalendarEventsOutcome.NOTHING_TO_RECONCILE;
+    }
+  | ({
+      outcome: typeof ReconcileUpcomingCalendarEventsOutcome.PROCESSED;
+    } & ReconcileUpcomingCalendarEventBatchesResult);
 
 const toIdList = (value: unknown): string[] =>
   Array.isArray(value) ? value.filter(isNonEmptyString) : [];
@@ -39,8 +45,8 @@ export const reconcileUpcomingCalendarEventsHandler = async (
 
   if (calendarEventIds.length === 0) {
     return isSweep
-      ? { outcome: 'nothing-to-reconcile' }
-      : { outcome: 'nothing-selected' };
+      ? { outcome: ReconcileUpcomingCalendarEventsOutcome.NOTHING_TO_RECONCILE }
+      : { outcome: ReconcileUpcomingCalendarEventsOutcome.NOTHING_SELECTED };
   }
 
   const result = await reconcileUpcomingCalendarEventBatches({
@@ -50,7 +56,10 @@ export const reconcileUpcomingCalendarEventsHandler = async (
       startedAtMs + TIMEOUT_SECONDS * 1000 - CONTINUATION_RESERVE_MS,
   });
 
-  return { outcome: 'processed', ...result };
+  return {
+    outcome: ReconcileUpcomingCalendarEventsOutcome.PROCESSED,
+    ...result,
+  };
 };
 
 export default defineLogicFunction({

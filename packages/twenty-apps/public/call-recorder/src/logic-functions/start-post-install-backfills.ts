@@ -5,15 +5,14 @@ import {
 } from 'twenty-sdk/define';
 
 import { START_POST_INSTALL_BACKFILLS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/start-post-install-backfills-logic-function-universal-identifier';
+import { CalendarEventSweepKickoffOutcome } from 'src/logic-functions/constants/calendar-event-sweep-kickoff-outcome';
+import { SummaryBackfillKickoffOutcome } from 'src/logic-functions/constants/summary-backfill-kickoff-outcome';
 import { requestCallRecordingSummariesBackfill } from 'src/logic-functions/data/request-call-recording-summaries-backfill.util';
 import { requestUpcomingCalendarEventsReconciliation } from 'src/logic-functions/data/request-upcoming-calendar-events-reconciliation.util';
 
 type StartPostInstallBackfillsResult = {
-  calendarEventSweepOutcome: 'sweep-requested' | 'sweep-request-failed';
-  summaryBackfillOutcome:
-    | 'skipped-initial-install'
-    | 'backfill-requested'
-    | 'backfill-request-failed';
+  calendarEventSweepOutcome: CalendarEventSweepKickoffOutcome;
+  summaryBackfillOutcome: SummaryBackfillKickoffOutcome;
 };
 
 export const startPostInstallBackfillsHandler = async ({
@@ -23,14 +22,15 @@ export const startPostInstallBackfillsHandler = async ({
     await requestUpcomingCalendarEventsReconciliation();
 
   const summaryBackfillOutcome = isUndefined(previousVersion)
-    ? 'skipped-initial-install'
+    ? SummaryBackfillKickoffOutcome.SKIPPED_INITIAL_INSTALL
     : (await requestCallRecordingSummariesBackfill())
-      ? 'backfill-requested'
-      : 'backfill-request-failed';
+      ? SummaryBackfillKickoffOutcome.BACKFILL_REQUESTED
+      : SummaryBackfillKickoffOutcome.BACKFILL_REQUEST_FAILED;
 
   const failedKickoffs = [
     ...(calendarEventSweepRequested ? [] : ['upcoming calendar event sweep']),
-    ...(summaryBackfillOutcome === 'backfill-request-failed'
+    ...(summaryBackfillOutcome ===
+    SummaryBackfillKickoffOutcome.BACKFILL_REQUEST_FAILED
       ? ['call recording summary backfill']
       : []),
   ];
@@ -45,8 +45,8 @@ export const startPostInstallBackfillsHandler = async ({
 
   return {
     calendarEventSweepOutcome: calendarEventSweepRequested
-      ? 'sweep-requested'
-      : 'sweep-request-failed',
+      ? CalendarEventSweepKickoffOutcome.SWEEP_REQUESTED
+      : CalendarEventSweepKickoffOutcome.SWEEP_REQUEST_FAILED,
     summaryBackfillOutcome,
   };
 };
