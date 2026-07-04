@@ -20,6 +20,7 @@
 .track {
   background: var(--t-background-tertiary);
   border-radius: var(--t-border-radius-pill);
+  corner-shape: round;
   height: var(--slider-track-size);
   inset: 0;
   overflow: hidden;
@@ -29,6 +30,7 @@
 .fill {
   background: var(--slider-main-color);
   border-radius: var(--t-border-radius-pill);
+  corner-shape: round;
   height: 100%;
   left: 0;
   min-width: var(--slider-track-size);
@@ -39,6 +41,7 @@
   &::after {
     background: var(--t-background-primary);
     border-radius: var(--t-border-radius-rounded);
+    corner-shape: round;
     content: '';
     height: var(--slider-thumb-size);
     position: absolute;
@@ -70,6 +73,7 @@
     background: transparent;
     border: 0;
     border-radius: var(--t-border-radius-rounded);
+    corner-shape: round;
     height: var(--slider-thumb-size);
     margin-top: 2px;
     width: var(--slider-thumb-size);
@@ -85,6 +89,7 @@
     background: transparent;
     border: 0;
     border-radius: var(--t-border-radius-rounded);
+    corner-shape: round;
     height: var(--slider-thumb-size);
     width: var(--slider-thumb-size);
   }

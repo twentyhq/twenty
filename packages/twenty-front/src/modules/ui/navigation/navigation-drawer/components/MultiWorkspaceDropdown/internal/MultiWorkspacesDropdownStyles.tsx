@@ -8,7 +8,7 @@ export const StyledContainer = styled.div<{
 }>`
   align-items: center;
   border: 1px solid transparent;
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};

@@ -29,6 +29,7 @@ const StyledBadge = styled.div<{ hasClusterLeading: boolean }>`
   border-radius: ${themeCssVariables.border.radius.pill};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.light};
+  corner-shape: round;
   display: flex;
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.semiBold};

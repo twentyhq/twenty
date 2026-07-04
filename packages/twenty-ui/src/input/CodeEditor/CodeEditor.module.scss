@@ -9,13 +9,13 @@
 
   &[data-variant='default'] {
     border: 1px solid var(--t-border-color-medium);
-    border-radius: var(--t-border-radius-sm);
+    border-radius: var(--t-border-radius-md);
   }
 
   &[data-variant='with-header'] {
     border: 1px solid var(--t-border-color-medium);
     border-top: none;
-    border-radius: 0 0 var(--t-border-radius-sm) var(--t-border-radius-sm);
+    border-radius: 0 0 var(--t-border-radius-md) var(--t-border-radius-md);
   }
 }
 
@@ -29,7 +29,7 @@
 
 .editorWrapper :global(.monaco-editor) {
   outline-width: 0;
-  border-radius: var(--t-border-radius-sm);
+  border-radius: var(--t-border-radius-md);
   background-color: var(--t-background-secondary);
 }
 
@@ -49,11 +49,11 @@
 
 .editorWrapper[data-variant='default'] :global(.overflow-guard) {
   border: 1px solid var(--t-border-color-medium);
-  border-radius: var(--t-border-radius-sm);
+  border-radius: var(--t-border-radius-md);
 }
 
 .editorWrapper[data-variant='with-header'] :global(.overflow-guard) {
   border: 1px solid var(--t-border-color-medium);
   border-top: none;
-  border-radius: 0 0 var(--t-border-radius-sm) var(--t-border-radius-sm);
+  border-radius: 0 0 var(--t-border-radius-md) var(--t-border-radius-md);
 }

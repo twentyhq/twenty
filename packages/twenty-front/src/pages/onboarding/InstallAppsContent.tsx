@@ -31,6 +31,7 @@ const StyledBetaTag = styled.span`
   border-radius: ${themeCssVariables.border.radius.pill};
   box-sizing: border-box;
   color: ${themeCssVariables.grayScale.gray10};
+  corner-shape: round;
   display: flex;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};

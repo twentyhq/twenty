@@ -25,7 +25,7 @@ const StyledLayout = styled.div`
   width: 100%;
 
   *::-webkit-scrollbar-thumb {
-    border-radius: ${themeCssVariables.border.radius.sm};
+    border-radius: ${themeCssVariables.border.radius.md};
   }
 
   @media print {

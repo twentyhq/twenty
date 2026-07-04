@@ -92,6 +92,7 @@ const StyledBadge = styled.span`
   border-radius: ${themeCssVariables.border.radius.pill};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.tertiary};
+  corner-shape: round;
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};

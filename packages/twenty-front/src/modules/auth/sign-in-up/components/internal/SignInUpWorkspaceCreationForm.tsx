@@ -129,6 +129,7 @@ const StyledAvailabilityDot = styled.div`
   background-color: ${themeCssVariables.color.green};
   border-radius: 50%;
   box-shadow: 0 0 0 3px ${themeCssVariables.color.green5};
+  corner-shape: round;
   flex-shrink: 0;
   height: 6px;
   width: 6px;
