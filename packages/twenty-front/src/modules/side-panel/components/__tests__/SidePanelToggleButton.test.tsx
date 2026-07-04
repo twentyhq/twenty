@@ -18,6 +18,7 @@ const mockAppTooltip = jest.fn();
 
 jest.mock('twenty-ui/utilities', () => ({
   useIsMobile: () => false,
+  getOsControlSymbol: () => '⌘',
 }));
 
 jest.mock('twenty-ui/surfaces', () => ({

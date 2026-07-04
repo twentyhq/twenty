@@ -13,7 +13,7 @@ import { t } from '@lingui/core/macro';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/input';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
-import { useIsMobile } from 'twenty-ui/utilities';
+import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledButtonWrapper = styled.div<{ alignToTop: boolean }>`
@@ -64,7 +64,7 @@ export const SidePanelToggleButton = () => {
   }
 
   const ariaLabel = t`Command Menu`;
-  const tooltipContent = t`Command menu | ⌘K`;
+  const tooltipContent = t`Command menu | ${getOsControlSymbol()}K`;
 
   return (
     <StyledButtonWrapper alignToTop={alignWithSidePanelTopBar}>
