@@ -1,4 +1,5 @@
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsAdminServerAdmins } from '@/settings/admin-panel/components/SettingsAdminServerAdmins';
@@ -45,6 +46,7 @@ const TOP_WORKSPACES_GRID_TEMPLATE_COLUMNS = '2fr 1fr 36px';
 
 export const SettingsAdminGeneral = () => {
   const { theme } = useContext(ThemeContext);
+  const { formatNumber } = useNumberFormat();
   const apolloAdminClient = useApolloAdminClient();
   const [userSearchTerm, setUserSearchTerm] = useState('');
   const [debouncedUserSearchTerm] = useDebounce(userSearchTerm, 300);
@@ -250,7 +252,9 @@ export const SettingsAdminGeneral = () => {
                         text={workspace.name || '\u2014'}
                       />
                     </TableCell>
-                    <TableCell align="right">{workspace.totalUsers}</TableCell>
+                    <TableCell align="right">
+                      {formatNumber(workspace.totalUsers)}
+                    </TableCell>
                     <TableCell align="center">
                       <IconChevronRight
                         size={theme.icon.size.md}

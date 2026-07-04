@@ -24,6 +24,7 @@ export type IconButtonProps = {
   ariaLabel?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   to?: string;
+  children?: React.ReactNode;
 };
 
 export const IconButton = ({
@@ -39,6 +40,7 @@ export const IconButton = ({
   ariaLabel,
   onClick,
   to,
+  children,
 }: IconButtonProps) => {
   const theme = useTheme();
 
@@ -59,6 +61,7 @@ export const IconButton = ({
       {...{ to }}
     >
       {Icon && <Icon size={theme.icon.size.md} aria-hidden={!!ariaLabel} />}
+      {children}
     </button>
   );
 };

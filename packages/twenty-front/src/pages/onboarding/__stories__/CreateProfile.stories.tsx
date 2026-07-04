@@ -2,10 +2,10 @@ import { getOperationName } from '~/utils/getOperationName';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
 import { within } from 'storybook/test';
-
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { AppPath } from 'twenty-shared/types';
+
 import { OnboardingStatus } from '~/generated-metadata/graphql';
+import { GET_CURRENT_USER } from '~/modules/users/graphql/queries/getCurrentUser';
 import { CreateProfile } from '~/pages/onboarding/CreateProfile';
 import {
   PageDecorator,

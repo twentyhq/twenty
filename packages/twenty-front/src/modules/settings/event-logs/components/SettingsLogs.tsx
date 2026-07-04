@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { EventLogFilters } from '@/settings/event-logs/components/EventLogFilters';
@@ -89,6 +90,7 @@ const RECORDS_PER_PAGE = 100;
 
 export const SettingsLogs = () => {
   const { t } = useLingui();
+  const { formatNumber } = useNumberFormat();
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
@@ -177,7 +179,7 @@ export const SettingsLogs = () => {
             onClick={() =>
               navigateSettings(
                 isBillingEnabled
-                  ? SettingsPath.Billing
+                  ? SettingsPath.BillingPlans
                   : SettingsPath.AdminPanelEnterprise,
               )
             }
@@ -214,7 +216,7 @@ export const SettingsLogs = () => {
 
     return (
       <StyledResults>
-        <StyledRecordCount>{t`${displayedRecords.length} of ${totalCount + liveRecords.length}`}</StyledRecordCount>
+        <StyledRecordCount>{t`${formatNumber(displayedRecords.length)} of ${formatNumber(totalCount + liveRecords.length)}`}</StyledRecordCount>
         <StyledTableWrapper>
           <EventLogResultsTable
             records={displayedRecords}

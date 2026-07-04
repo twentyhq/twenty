@@ -8,7 +8,10 @@ import {
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import {
+  type ApplicationRegistrationCatalogCard,
+  ApplicationRegistrationService,
+} from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
@@ -30,7 +33,7 @@ export class MarketplaceQueryService {
 
   async findManyMarketplaceApps(): Promise<MarketplaceAppDTO[]> {
     const registrations =
-      await this.applicationRegistrationService.findManyListed();
+      await this.applicationRegistrationService.findManyListedCatalogCards();
 
     if (registrations.length === 0) {
       if (!this.hasSyncBeenEnqueued) {
@@ -86,19 +89,17 @@ export class MarketplaceQueryService {
   }
 
   private toMarketplaceAppDTO(
-    registration: ApplicationRegistrationEntity,
+    catalogCard: ApplicationRegistrationCatalogCard,
   ): MarketplaceAppDTO {
-    const app = registration.manifest?.application;
-
     return {
-      id: registration.universalIdentifier,
-      name: app?.displayName ?? registration.name,
-      description: app?.description ?? '',
-      author: `${app?.author ?? 'Unknown'}`,
-      category: app?.category ?? '',
-      logo: app?.logoUrl ?? undefined,
-      sourcePackage: registration.sourcePackage ?? undefined,
-      isFeatured: registration.isFeatured,
+      id: catalogCard.universalIdentifier,
+      name: catalogCard.name,
+      description: catalogCard.description ?? '',
+      author: catalogCard.author ?? 'Unknown',
+      category: catalogCard.category ?? '',
+      logo: catalogCard.logoUrl ?? undefined,
+      sourcePackage: catalogCard.sourcePackage ?? undefined,
+      isFeatured: catalogCard.isFeatured,
     };
   }
 

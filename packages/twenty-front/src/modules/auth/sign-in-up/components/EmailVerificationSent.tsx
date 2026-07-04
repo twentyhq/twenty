@@ -74,6 +74,7 @@ const StyledLinkButton = styled.button`
 const StyledDot = styled.div`
   background: ${themeCssVariables.font.color.light};
   border-radius: 50%;
+  corner-shape: round;
   height: 2px;
   width: 2px;
 `;

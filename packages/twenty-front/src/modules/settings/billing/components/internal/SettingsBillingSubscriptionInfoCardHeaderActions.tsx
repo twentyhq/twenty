@@ -1,8 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import {
-  IconArrowDown,
   IconArrowUp,
   IconCircleX,
+  IconColorSwatch,
   IconCreditCard,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
@@ -10,19 +12,16 @@ import { Button } from 'twenty-ui/input';
 export type SettingsBillingSubscriptionInfoCardHeaderActionsProps = {
   canCancelIntervalSwitch: boolean;
   canCancelPlanSwitch: boolean;
+  canComparePlans: boolean;
   canStartSubscription: boolean;
-  canSwitchToOrganizationPlan: boolean;
-  canSwitchToProPlan: boolean;
+  isComparePlansActionPrimary: boolean;
   isCancellationScheduled: boolean;
   isEndTrialPeriodDisabled: boolean;
   isSubscriptionActionDisabled: boolean;
-  isTrialPeriod: boolean;
   isUpdatePaymentDisabled: boolean;
   onCancelIntervalSwitch: () => void;
   onCancelPlanSwitch: () => void;
   onEndTrialPeriod: () => void;
-  onSwitchToOrganization: () => void;
-  onSwitchToPro: () => void;
   onUpdatePayment: () => void;
   shouldUpdatePayment: boolean;
 };
@@ -30,19 +29,16 @@ export type SettingsBillingSubscriptionInfoCardHeaderActionsProps = {
 export const SettingsBillingSubscriptionInfoCardHeaderActions = ({
   canCancelIntervalSwitch,
   canCancelPlanSwitch,
+  canComparePlans,
   canStartSubscription,
-  canSwitchToOrganizationPlan,
-  canSwitchToProPlan,
+  isComparePlansActionPrimary,
   isCancellationScheduled,
   isEndTrialPeriodDisabled,
   isSubscriptionActionDisabled,
-  isTrialPeriod,
   isUpdatePaymentDisabled,
   onCancelIntervalSwitch,
   onCancelPlanSwitch,
   onEndTrialPeriod,
-  onSwitchToOrganization,
-  onSwitchToPro,
   onUpdatePayment,
   shouldUpdatePayment,
 }: SettingsBillingSubscriptionInfoCardHeaderActionsProps) => {
@@ -88,19 +84,14 @@ export const SettingsBillingSubscriptionInfoCardHeaderActions = ({
           disabled={isSubscriptionActionDisabled}
         />
       )}
-      {canSwitchToOrganizationPlan && (
+      {canComparePlans && (
         <Button
-          Icon={IconArrowUp}
-          title={
-            isTrialPeriod
-              ? t`Switch to Organization`
-              : t`Upgrade to Organization`
-          }
-          variant={isTrialPeriod ? 'secondary' : 'primary'}
-          accent={isTrialPeriod ? 'default' : 'blue'}
+          Icon={IconColorSwatch}
+          title={t`Compare plans`}
+          variant={isComparePlansActionPrimary ? 'primary' : 'secondary'}
+          accent={isComparePlansActionPrimary ? 'blue' : 'default'}
           size="small"
-          onClick={onSwitchToOrganization}
-          disabled={isSubscriptionActionDisabled}
+          to={getSettingsPath(SettingsPath.BillingPlans)}
         />
       )}
       {canStartSubscription && (
@@ -112,16 +103,6 @@ export const SettingsBillingSubscriptionInfoCardHeaderActions = ({
           size="small"
           onClick={onEndTrialPeriod}
           disabled={isEndTrialPeriodDisabled}
-        />
-      )}
-      {canSwitchToProPlan && (
-        <Button
-          Icon={IconArrowDown}
-          title={t`Switch to Pro`}
-          variant="secondary"
-          size="small"
-          onClick={onSwitchToPro}
-          disabled={isSubscriptionActionDisabled}
         />
       )}
       {canCancelPlanSwitch && (

@@ -136,10 +136,13 @@
   --t-border-radius-xs: 2px;
   --t-border-radius-sm: 4px;
   --t-border-radius-md: 8px;
+  --t-border-radius-lg: 16px;
   --t-border-radius-xl: 20px;
   --t-border-radius-xxl: 40px;
   --t-border-radius-pill: 999px;
   --t-border-radius-rounded: 100%;
+  --t-border-radius-sm-round: 4px;
+  --t-border-radius-md-round: 8px;
   --t-box-shadow-color: rgba(0, 0, 0, 0.6);
   --t-box-shadow-light:
     0px 2px 4px 0px rgba(0, 0, 0, 0.04), 0px 0px 4px 0px rgba(0, 0, 0, 0.08);
@@ -1004,4 +1007,38 @@
   --t-color-transparent-amber10: #ffd60a;
   --t-color-transparent-amber11: #ffca16;
   --t-color-transparent-amber12: #ffe7b3;
+}
+
+/* Squircle corners: progressive enhancement for browsers supporting
+   corner-shape (Chromium 139+). A squircle needs ~2x the radius of a round
+   corner to read as the same visual size, so the radius tokens are doubled
+   here; other browsers keep the base tokens as plain rounded corners.
+
+   Shape rules:
+   - pill, rounded and the *-round tokens are never doubled: they belong to
+     elements that keep corner-shape: round (circles, capsules, checkboxes,
+     chips, tags) and must look identical in both modes.
+   - Opt a subtree out of squircles with --t-corner-shape: round, or a
+     single element with corner-shape: round.
+   - Nested radii must stay concentric in both modes: derive them from the
+     parent radius token minus the inset, e.g.
+     calc(var(--t-border-radius-md) - var(--t-spacing-1)).
+     The token doubles under squircle while the inset does not, which is
+     exactly what concentricity requires. */
+@supports (corner-shape: squircle) {
+  .dark {
+    --t-border-radius-xs: 4px;
+    --t-border-radius-sm: 8px;
+    --t-border-radius-md: 16px;
+    --t-border-radius-lg: 32px;
+    --t-border-radius-xl: 40px;
+    --t-border-radius-xxl: 80px;
+  }
+
+  /* Zero specificity on purpose: any component rule can override it. */
+  *,
+  *::before,
+  *::after {
+    corner-shape: var(--t-corner-shape, squircle);
+  }
 }

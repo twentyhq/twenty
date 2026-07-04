@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { type ReactElement } from 'react';
 
 import { type Note } from '@/activities/types/Note';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { NoteTile } from './NoteTile';
@@ -54,26 +55,30 @@ export const NoteList = ({
   notes,
   totalCount,
   button,
-}: NoteListProps) => (
-  <>
-    {notes.length > 0 && (
-      <StyledContainer>
-        <StyledTitleBar>
-          <StyledTitle>
-            {title} <StyledCount>{totalCount}</StyledCount>
-          </StyledTitle>
-          {button}
-        </StyledTitleBar>
-        <StyledNoteContainer>
-          {notes.map((note) => (
-            <NoteTile
-              key={note.id}
-              note={note}
-              isSingleNote={notes.length === 1}
-            />
-          ))}
-        </StyledNoteContainer>
-      </StyledContainer>
-    )}
-  </>
-);
+}: NoteListProps) => {
+  const { formatNumber } = useNumberFormat();
+
+  return (
+    <>
+      {notes.length > 0 && (
+        <StyledContainer>
+          <StyledTitleBar>
+            <StyledTitle>
+              {title} <StyledCount>{formatNumber(totalCount)}</StyledCount>
+            </StyledTitle>
+            {button}
+          </StyledTitleBar>
+          <StyledNoteContainer>
+            {notes.map((note) => (
+              <NoteTile
+                key={note.id}
+                note={note}
+                isSingleNote={notes.length === 1}
+              />
+            ))}
+          </StyledNoteContainer>
+        </StyledContainer>
+      )}
+    </>
+  );
+};

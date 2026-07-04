@@ -19,6 +19,7 @@ import { validateFolderPath } from 'src/engine/core-modules/file-storage/utils/v
 import { validateStoragePathIsWithinWorkspaceOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-workspace-or-throw.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -187,11 +188,105 @@ export class FileStorageService {
     );
   }
 
+  // Creates the file record ahead of a direct client upload. The bytes are
+  // not in storage yet: the record stays PENDING until the upload is
+  // confirmed (completeFileUpload) or reaped by the cleanup cron.
+  async createPendingFile({
+    fileFolder,
+    applicationUniversalIdentifier,
+    workspaceId,
+    resourcePath,
+    fileId,
+    size,
+    mimeType,
+    settings,
+  }: ResourceIdentifier & {
+    fileId: string;
+    size: number;
+    mimeType: string;
+    settings: FileSettings;
+  }): Promise<FileEntity> {
+    const application = await this.applicationRepository.findOneOrFail({
+      where: {
+        universalIdentifier: applicationUniversalIdentifier,
+        workspaceId,
+      },
+    });
+
+    const { filePath } = this.validateAndBuildFileStoragePathOrThrow({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder,
+      resourcePath,
+    });
+
+    return this.fileRepository.upsertAndReturnOne(
+      workspaceId,
+      {
+        path: filePath,
+        applicationId: application.id,
+        id: fileId,
+        mimeType,
+        size,
+        settings,
+        status: FILE_STATUS.PENDING,
+      },
+      ['path', 'workspaceId', 'applicationId'],
+    );
+  }
+
+  async writeFileStream(
+    params: ResourceIdentifier & {
+      stream: Readable;
+      mimeType: string | undefined;
+    },
+  ): Promise<void> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+    const { onStorageFilePath } =
+      this.validateAndBuildFileStoragePathOrThrow(params);
+
+    return driver.writeFileStream({
+      filePath: onStorageFilePath,
+      stream: params.stream,
+      mimeType: params.mimeType,
+    });
+  }
+
+  async getFileMetadata(
+    params: ResourceIdentifier,
+  ): Promise<{ size: number } | null> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+    const { onStorageFilePath } =
+      this.validateAndBuildFileStoragePathOrThrow(params);
+
+    return driver.getFileMetadata({ filePath: onStorageFilePath });
+  }
+
+  async getPresignedUploadUrl(
+    params: ResourceIdentifier & {
+      contentType: string;
+      contentLength: number;
+      expiresInSeconds?: number;
+    },
+  ): Promise<string | null> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+    const { onStorageFilePath } =
+      this.validateAndBuildFileStoragePathOrThrow(params);
+
+    return driver.getPresignedUploadUrl({
+      filePath: onStorageFilePath,
+      contentType: params.contentType,
+      contentLength: params.contentLength,
+      expiresInSeconds: params.expiresInSeconds,
+    });
+  }
+
   async getPresignedUrl(
     params: ResourceIdentifier & {
       expiresInSeconds?: number;
       responseContentType?: string;
       responseContentDisposition?: string;
+      responseCacheControl?: string;
     },
   ): Promise<string | null> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
@@ -203,6 +298,7 @@ export class FileStorageService {
       expiresInSeconds: params.expiresInSeconds,
       responseContentType: params.responseContentType,
       responseContentDisposition: params.responseContentDisposition,
+      responseCacheControl: params.responseCacheControl,
     });
   }
 
@@ -228,28 +324,33 @@ export class FileStorageService {
     });
   }
 
-  async deleteApplicationFiles({
+  async deleteApplicationFileRows({
+    applicationId,
+    workspaceId,
+    queryRunner,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+    queryRunner?: QueryRunner;
+  }) {
+    const fileRepository = queryRunner
+      ? this.fileRepository.withManager(queryRunner.manager)
+      : this.fileRepository;
+
+    await fileRepository.delete(workspaceId, { applicationId });
+  }
+
+  async deleteApplicationFilesFromStorage({
     applicationUniversalIdentifier,
     workspaceId,
   }: {
     applicationUniversalIdentifier: string;
     workspaceId: string;
   }) {
-    const application = await this.applicationRepository.findOneOrFail({
-      where: {
-        universalIdentifier: applicationUniversalIdentifier,
-        workspaceId: workspaceId,
-      },
-    });
-
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
     await driver.delete({
       folderPath: `${workspaceId}/${applicationUniversalIdentifier}/`,
-    });
-
-    await this.fileRepository.delete(workspaceId, {
-      applicationId: application.id,
     });
   }
 

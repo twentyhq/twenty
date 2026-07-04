@@ -80,7 +80,7 @@ const StyledAvatarWrapper = styled.div<{
 }>`
   background-color: ${({ hasIcon }) =>
     hasIcon ? themeCssVariables.background.transparent.light : 'unset'};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.md};
   cursor: ${({ isAvatarEditable }) =>
     isAvatarEditable ? 'pointer' : 'default'};
 `;

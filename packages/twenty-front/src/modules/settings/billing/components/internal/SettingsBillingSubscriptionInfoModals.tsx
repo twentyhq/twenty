@@ -10,17 +10,13 @@ type SettingsBillingSubscriptionInfoModalsProps = {
   isCancellingPlanSwitch: boolean;
   isEndTrialPeriodLoading: boolean;
   isSwitchingInterval: boolean;
-  isSwitchingPlan: boolean;
   onCancelIntervalSwitching: () => void;
   onCancelPlanSwitching: () => void;
   onCancelResourceCreditSwitching: () => void;
   onEndTrialPeriod: () => void;
   onSwitchInterval: () => void;
-  onSwitchPlan: () => void;
   startSubscriptionSubtitle: string;
   switchToMonthlySubtitle: string;
-  switchToOrganizationSubtitle: string;
-  switchToProSubtitle: string;
   switchToYearlySubtitle: string;
 };
 
@@ -32,17 +28,13 @@ export const SettingsBillingSubscriptionInfoModals = ({
   isCancellingPlanSwitch,
   isEndTrialPeriodLoading,
   isSwitchingInterval,
-  isSwitchingPlan,
   onCancelIntervalSwitching,
   onCancelPlanSwitching,
   onCancelResourceCreditSwitching,
   onEndTrialPeriod,
   onSwitchInterval,
-  onSwitchPlan,
   startSubscriptionSubtitle,
   switchToMonthlySubtitle,
-  switchToOrganizationSubtitle,
-  switchToProSubtitle,
   switchToYearlySubtitle,
 }: SettingsBillingSubscriptionInfoModalsProps) => {
   const { t } = useLingui();
@@ -75,24 +67,6 @@ export const SettingsBillingSubscriptionInfoModals = ({
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
         loading={isCancellingIntervalSwitch}
-      />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.switchBillingPlanToEnterprise}
-        title={t`Change to Organization Plan?`}
-        subtitle={switchToOrganizationSubtitle}
-        onConfirmClick={onSwitchPlan}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
-        loading={isSwitchingPlan}
-      />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.switchBillingPlanToPro}
-        title={t`Change to Pro Plan?`}
-        subtitle={switchToProSubtitle}
-        onConfirmClick={onSwitchPlan}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
-        loading={isSwitchingPlan}
       />
       <ConfirmationModal
         modalInstanceId={BILLING_MODAL_IDS.cancelSwitchBillingPlan}
