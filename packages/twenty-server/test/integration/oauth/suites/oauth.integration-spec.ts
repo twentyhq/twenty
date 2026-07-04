@@ -129,7 +129,6 @@ describe('OAuth (integration)', () => {
   let testClientSecret: string;
   let testApplication: TestApplication;
 
-  // A public client has no client secret and relies on PKCE.
   let publicRegistration: TestRegistration;
 
   let autoInstallRegistration: TestRegistration;
@@ -447,7 +446,6 @@ describe('OAuth (integration)', () => {
       expect(res.body.error_description).toContain('not issued to this client');
     });
 
-    // A public client (no secret) that used no PKCE must supply one of the two.
     it('should require either client_secret or code_verifier', async () => {
       const code = await createAuthorizationCode(
         publicRegistration.oAuthClientId,
@@ -547,9 +545,6 @@ describe('OAuth (integration)', () => {
       expect(res.body.error_description).toContain('code_verifier is required');
     });
 
-    // Security: PKCE is defense-in-depth for public clients, not a substitute
-    // for authenticating a confidential client. A confidential client (one
-    // issued a secret) must always present it, even when PKCE was used.
     it('should reject a confidential client that presents only PKCE and no client_secret', async () => {
       const { code, codeVerifier } = await createAuthCodeWithPkce(
         testRegistration.oAuthClientId,
