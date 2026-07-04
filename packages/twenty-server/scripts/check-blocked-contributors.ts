@@ -22,7 +22,8 @@ const IDENTITY_PATTERNS = [
 // never a bare product name a human might type in discussion.
 const SIGNATURE_PATTERNS = [
   /Generated with \[?Claude Code\]?/i,
-  /Co-Authored-By:\s*Claude\b/i,
+  // Match the Anthropic email, not a bare "Co-Authored-By: Claude": "Claude" is
+  // a common human first name, and the tool footer always carries this email.
   /Co-Authored-By:[^\n]*<[^>]*@anthropic\.com>/i,
   /Generated with \[?Cursor( Agent)?\]?/i,
   /Co-Authored-By:[^\n]*cursoragent/i,
@@ -203,7 +204,7 @@ async function main(): Promise<void> {
 
     if (matches.length > 0) {
       console.error(
-        `::error::Commit ${commit.sha} is attributed to a blocked contributor (matched: ${matches.join(', ')})`,
+        `::error::Commit ${commit.sha} contains a blocked bot attribution or signature (matched: ${matches.join(', ')})`,
       );
       violations += 1;
     }
