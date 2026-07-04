@@ -3,8 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { MarketplaceService } from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
-import { buildRegistryCdnUrl } from 'src/engine/core-modules/application/application-marketplace/utils/build-registry-cdn-url.util';
-import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
+import { resolveRegistryManifestAssetUrls } from 'src/engine/core-modules/application/application-registration/utils/resolve-registry-manifest-asset-urls.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -45,18 +44,12 @@ export class MarketplaceCatalogSyncService {
         const universalIdentifier =
           fetchedManifest.application.universalIdentifier;
 
-        const cdnBaseUrl = this.twentyConfigService.get('APP_REGISTRY_CDN_URL');
-
-        const manifestWithResolvedUrls = resolveManifestAssetUrls(
-          fetchedManifest,
-          (filePath) =>
-            buildRegistryCdnUrl({
-              cdnBaseUrl,
-              packageName: pkg.name,
-              version: pkg.version,
-              filePath,
-            }),
-        );
+        const manifestWithResolvedUrls = resolveRegistryManifestAssetUrls({
+          manifest: fetchedManifest,
+          packageName: pkg.name,
+          version: pkg.version,
+          cdnBaseUrl: this.twentyConfigService.get('APP_REGISTRY_CDN_URL'),
+        });
 
         await this.applicationRegistrationService.upsertFromCatalog({
           universalIdentifier,

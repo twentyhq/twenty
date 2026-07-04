@@ -17,8 +17,7 @@ import {
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { buildRegistryCdnUrl } from 'src/engine/core-modules/application/application-marketplace/utils/build-registry-cdn-url.util';
-import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
+import { resolveRegistryManifestAssetUrls } from 'src/engine/core-modules/application/application-registration/utils/resolve-registry-manifest-asset-urls.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
@@ -344,16 +343,12 @@ export class ApplicationInstallService {
       return manifest;
     }
 
-    const cdnBaseUrl = this.twentyConfigService.get('APP_REGISTRY_CDN_URL');
-
-    return resolveManifestAssetUrls(manifest, (filePath) =>
-      buildRegistryCdnUrl({
-        cdnBaseUrl,
-        packageName: sourcePackage,
-        version: installedVersion,
-        filePath,
-      }),
-    );
+    return resolveRegistryManifestAssetUrls({
+      manifest,
+      packageName: sourcePackage,
+      version: installedVersion,
+      cdnBaseUrl: this.twentyConfigService.get('APP_REGISTRY_CDN_URL'),
+    });
   }
 
   private async runPreInstallHook(params: {
