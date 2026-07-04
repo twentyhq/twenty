@@ -70,6 +70,16 @@ export class OAuthService {
 
     const applicationRegistration = clientValidation;
 
+    // Confidential clients (those issued a secret) must always authenticate,
+    // even when PKCE is used. PKCE is defense-in-depth for public clients, not
+    // a substitute for client authentication (RFC 6749 §4.1.3, OAuth 2.1 §4.1.3).
+    if (applicationRegistration.oAuthClientSecretHash && !clientSecret) {
+      return this.errorResponse(
+        'invalid_client',
+        'Client authentication required for confidential clients',
+      );
+    }
+
     if (clientSecret) {
       const secretError = await this.validateClientSecret(
         applicationRegistration,
