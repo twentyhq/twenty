@@ -35,7 +35,7 @@ const jestConfig: JestConfigWithTsJest = {
   modulePathIgnorePatterns: ['<rootDir>/dist'],
   globalSetup: '<rootDir>/test/integration/utils/setup-test.ts',
   globalTeardown: '<rootDir>/test/integration/utils/teardown-test.ts',
-  setupFilesAfterEnv: ['<rootDir>/test/integration/utils/setup-queue-quiescence.ts'],
+  setupFilesAfterEnv: ['<rootDir>/test/integration/utils/setup-wait-for-all-jobs-between-tests.ts'],
   testTimeout: 20000,
   maxWorkers: 1,
   // jsdom 29 pulls ESM-only transitive deps (parse5, entities, tough-cookie,

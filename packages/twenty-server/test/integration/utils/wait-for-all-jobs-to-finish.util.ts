@@ -68,7 +68,7 @@ const getActiveJobsFingerprint = async (
   return activeJobIdsByQueue.join('|');
 };
 
-export const waitForQueueQuiescence = async (): Promise<void> => {
+export const waitForAllJobsToFinish = async (): Promise<void> => {
   const startedAt = Date.now();
   let lastProgressAt = startedAt;
   let lastBusyFingerprint = '';
@@ -116,7 +116,7 @@ export const waitForQueueQuiescence = async (): Promise<void> => {
   }
 };
 
-export const closeQueueQuiescenceResources = async (): Promise<void> => {
+export const closeQueueConnections = async (): Promise<void> => {
   if (queues) {
     await Promise.all(queues.map((queue) => queue.close()));
     queues = null;

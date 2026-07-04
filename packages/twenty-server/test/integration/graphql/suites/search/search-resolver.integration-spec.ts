@@ -26,7 +26,7 @@ import {
 import { createManyOperation } from 'test/integration/graphql/utils/create-many-operation.util';
 import { search } from 'test/integration/graphql/utils/search.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
-import { waitForQueueQuiescence } from 'test/integration/utils/wait-for-queue-quiescence.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
@@ -193,7 +193,7 @@ describe('SearchResolver', () => {
       data: persons,
     });
 
-    await waitForQueueQuiescence();
+    await waitForAllJobsToFinish();
     await deleteAllRecords('company');
 
     await createManyOperation({
