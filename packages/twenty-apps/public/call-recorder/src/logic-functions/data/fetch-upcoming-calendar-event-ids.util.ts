@@ -25,8 +25,7 @@ export const fetchUpcomingCalendarEventIds = async (
           __args: {
             filter: {
               isCanceled: { eq: false },
-              // Same upcoming rule as the reconciliation policy: endsAt is the
-              // reference, startsAt is the fallback when endsAt is missing.
+              // Must match the policy's upcoming rule: endsAt, falling back to startsAt.
               or: [
                 { endsAt: { gt: nowIsoString } },
                 { endsAt: { is: 'NULL' }, startsAt: { gt: nowIsoString } },

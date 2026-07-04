@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import {
   definePostInstallLogicFunction,
   type InstallPayload,
@@ -7,23 +8,25 @@ import { START_POST_INSTALL_BACKFILLS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from
 import { requestCallRecordingSummariesBackfill } from 'src/logic-functions/data/request-call-recording-summaries-backfill.util';
 import { requestUpcomingCalendarEventsReconciliation } from 'src/logic-functions/data/request-upcoming-calendar-events-reconciliation.util';
 
+type StartPostInstallBackfillsResult = {
+  calendarEventSweepOutcome: 'sweep-requested' | 'sweep-request-failed';
+  summaryBackfillOutcome:
+    | 'skipped-initial-install'
+    | 'backfill-requested'
+    | 'backfill-request-failed';
+};
+
 export const startPostInstallBackfillsHandler = async ({
   previousVersion,
-}: InstallPayload): Promise<object> => {
-  // The database event trigger only covers calendar events that change after
-  // installation, so this sweep is the only path that schedules bots for
-  // meetings that already existed. Fresh installs and upgrades alike.
+}: InstallPayload): Promise<StartPostInstallBackfillsResult> => {
   const calendarEventSweepRequested =
     await requestUpcomingCalendarEventsReconciliation();
 
-  // Summaries only need a backfill on upgrades: fresh installs have no
-  // recordings to summarize yet.
-  const summaryBackfillOutcome =
-    previousVersion === undefined
-      ? 'skipped-initial-install'
-      : (await requestCallRecordingSummariesBackfill())
-        ? 'backfill-requested'
-        : 'backfill-request-failed';
+  const summaryBackfillOutcome = isUndefined(previousVersion)
+    ? 'skipped-initial-install'
+    : (await requestCallRecordingSummariesBackfill())
+      ? 'backfill-requested'
+      : 'backfill-request-failed';
 
   return {
     calendarEventSweepOutcome: calendarEventSweepRequested

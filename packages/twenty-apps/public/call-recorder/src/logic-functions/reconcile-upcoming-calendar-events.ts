@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
@@ -5,44 +6,41 @@ import { RECONCILE_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER 
 import { RECONCILE_UPCOMING_CALENDAR_EVENTS_ROUTE_PATH } from 'src/constants/reconcile-upcoming-calendar-events-route-path';
 import { fetchUpcomingCalendarEventIds } from 'src/logic-functions/data/fetch-upcoming-calendar-event-ids.util';
 import { reconcileUpcomingCalendarEventBatches } from 'src/logic-functions/flows/reconcile-upcoming-calendar-event-batches.util';
+import { type ReconcileUpcomingCalendarEventBatchesResult } from 'src/logic-functions/flows/reconcile-upcoming-calendar-event-batches-result.type';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 const TIMEOUT_SECONDS = 900;
 const CONTINUATION_RESERVE_MS = 30_000;
 
 type ReconcileUpcomingCalendarEventsRouteBody = {
-  calendarEventIds?: string[];
+  calendarEventIds?: unknown;
 };
+
+type ReconcileUpcomingCalendarEventsRouteResult =
+  | { outcome: 'nothing-selected' }
+  | { outcome: 'nothing-to-reconcile' }
+  | ({ outcome: 'processed' } & ReconcileUpcomingCalendarEventBatchesResult);
 
 const toIdList = (value: unknown): string[] =>
   Array.isArray(value) ? value.filter(isNonEmptyString) : [];
 
 export const reconcileUpcomingCalendarEventsHandler = async (
   payload: RoutePayload<ReconcileUpcomingCalendarEventsRouteBody>,
-): Promise<object> => {
+): Promise<ReconcileUpcomingCalendarEventsRouteResult> => {
   const startedAtMs = Date.now();
   const client = new CoreApiClient();
 
-  const hasRequestedIds =
-    payload.body !== undefined &&
-    payload.body !== null &&
-    Object.prototype.hasOwnProperty.call(payload.body, 'calendarEventIds');
+  const requestedCalendarEventIds = payload.body?.calendarEventIds;
+  const isSweep = isUndefined(requestedCalendarEventIds);
 
-  let calendarEventIds = toIdList(payload.body?.calendarEventIds);
+  const calendarEventIds = isSweep
+    ? await fetchUpcomingCalendarEventIds(client, new Date(startedAtMs))
+    : toIdList(requestedCalendarEventIds);
 
-  if (hasRequestedIds && calendarEventIds.length === 0) {
-    return { outcome: 'nothing-selected' };
-  }
-
-  if (!hasRequestedIds) {
-    calendarEventIds = await fetchUpcomingCalendarEventIds(
-      client,
-      new Date(startedAtMs),
-    );
-
-    if (calendarEventIds.length === 0) {
-      return { outcome: 'nothing-to-reconcile' };
-    }
+  if (calendarEventIds.length === 0) {
+    return isSweep
+      ? { outcome: 'nothing-to-reconcile' }
+      : { outcome: 'nothing-selected' };
   }
 
   const result = await reconcileUpcomingCalendarEventBatches({

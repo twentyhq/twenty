@@ -86,9 +86,7 @@ describe('reconcileUpcomingCalendarEventBatches', () => {
 
   it('stops at the deadline and requests a continuation with the remaining ids', async () => {
     const calendarEventIds = buildCalendarEventIds(30);
-    // The clock advances 5 seconds per reading, so the first batch measures
-    // 5 seconds and the post-batch check (15s now + 5s slowest batch)
-    // overshoots the 15-second deadline before a second batch can start.
+    // Clock advances 5s per reading: after one batch, 15s + 5s overshoots the deadline.
     let nowMs = 0;
     const getNowMs = () => {
       nowMs += 5_000;

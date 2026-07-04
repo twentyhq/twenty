@@ -3,15 +3,21 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE } from 'src/logic-functions/constants/upcoming-calendar-event-reconciliation-batch-size';
 import { requestUpcomingCalendarEventsReconciliation } from 'src/logic-functions/data/request-upcoming-calendar-events-reconciliation.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
-import { type ReconcileUpcomingCalendarEventBatchesResult } from 'src/logic-functions/flows/reconcile-upcoming-calendar-event-batches-result.type';
+import {
+  type CallRecorderReconciliationActionCounts,
+  type ReconcileUpcomingCalendarEventBatchesResult,
+} from 'src/logic-functions/flows/reconcile-upcoming-calendar-event-batches-result.type';
+import { type CallRecorderReconciliationResult } from 'src/logic-functions/types/call-recorder-reconciliation-result.type';
 
-const ACTION_COUNT_KEY_BY_ACTION = {
+const ACTION_COUNT_KEY_BY_ACTION: {
+  [Action in CallRecorderReconciliationResult['action']]: Lowercase<Action>;
+} = {
   CREATED: 'created',
   UPDATED: 'updated',
   CANCELED: 'canceled',
   SKIPPED: 'skipped',
   FAILED: 'failed',
-} as const;
+};
 
 export const reconcileUpcomingCalendarEventBatches = async ({
   client,
@@ -27,7 +33,7 @@ export const reconcileUpcomingCalendarEventBatches = async ({
   const remainingCalendarEventIds = [...calendarEventIds];
   const reconciledCalendarEventIds: string[] = [];
   const failedCalendarEventIds: string[] = [];
-  const actionCounts = {
+  const actionCounts: CallRecorderReconciliationActionCounts = {
     created: 0,
     updated: 0,
     canceled: 0,
@@ -36,9 +42,7 @@ export const reconcileUpcomingCalendarEventBatches = async ({
   };
   let slowestBatchMs = 0;
 
-  // Always process at least one batch so the remaining list strictly shrinks —
-  // otherwise a single slow batch would re-invoke with an unshrunk payload
-  // forever.
+  // Process at least one batch per run so the continuation payload strictly shrinks.
   while (remainingCalendarEventIds.length > 0) {
     const batchCalendarEventIds = remainingCalendarEventIds.slice(
       0,
