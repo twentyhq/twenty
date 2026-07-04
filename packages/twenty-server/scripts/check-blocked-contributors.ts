@@ -1,12 +1,4 @@
-// Fails a PR when a known bot is detected in its commits, description, comments
-// or reviews.
-//
-// Commits are matched on bot *identity* (author/committer name+email and
-// Co-Authored-By trailers) since bots leave a machine identity there. Prose
-// surfaces (PR body, comments, reviews) are humans' conversation, so they are
-// matched only on auto-generated attribution footers to avoid flagging a person
-// who merely mentions one of these tools.
-//
+// Fails a PR when a bot is detected in its commits, description, comments or reviews.
 // Usage: GITHUB_TOKEN=xxx GITHUB_REPOSITORY=owner/repo PR_NUMBER=123 npx nx run twenty-server:ts-node-no-deps-transpile-only -- ./scripts/check-blocked-contributors.ts
 
 // Bot identities — matched against commit author/committer and message.
@@ -17,13 +9,10 @@ const IDENTITY_PATTERNS = [
   /copilot-swe-agent\[bot\]/i,
 ];
 
-// Auto-generated attribution footers — matched against commit messages and all
-// prose surfaces. Kept deliberately tight: only strings a tool emits verbatim,
-// never a bare product name a human might type in discussion.
+// Auto-generated attribution footers — matched everywhere; tight enough not to flag humans discussing these tools.
 const SIGNATURE_PATTERNS = [
   /Generated with \[?Claude Code\]?/i,
-  // Match the Anthropic email, not a bare "Co-Authored-By: Claude": "Claude" is
-  // a common human first name, and the tool footer always carries this email.
+  // Require the Anthropic email — a bare "Co-Authored-By: Claude" would flag humans named Claude.
   /Co-Authored-By:[^\n]*<[^>]*@anthropic\.com>/i,
   /Generated with \[?Cursor( Agent)?\]?/i,
   /Co-Authored-By:[^\n]*cursoragent/i,
