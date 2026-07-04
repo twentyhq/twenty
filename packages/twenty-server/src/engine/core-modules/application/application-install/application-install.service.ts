@@ -471,7 +471,8 @@ export class ApplicationInstallService {
     const filesToWrite = this.buildFileList(manifest);
 
     for (const { relativePath, fileFolder } of filesToWrite) {
-      const absolutePath = resolve(extractedDir, relativePath);
+      const normalizedRelativePath = this.normalizeRelativePath(relativePath);
+      const absolutePath = resolve(extractedDir, normalizedRelativePath);
 
       if (!absolutePath.startsWith(extractedDir)) {
         throw new ApplicationException(
@@ -496,10 +497,14 @@ export class ApplicationInstallService {
         fileFolder,
         applicationUniversalIdentifier,
         workspaceId,
-        resourcePath: relativePath,
+        resourcePath: normalizedRelativePath,
         settings: { isTemporaryFile: false, toDelete: false },
       });
     }
+  }
+
+  private normalizeRelativePath(relativePath: string): string {
+    return relativePath.replaceAll('\\', '/');
   }
 
   private buildFileList(

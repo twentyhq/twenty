@@ -1,7 +1,11 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
 import path, { relative } from 'path';
-import { type FileFolder } from 'twenty-shared/types';
 import { OUTPUT_DIR } from 'twenty-shared/application';
+import { type FileFolder } from 'twenty-shared/types';
+
+export const normalizeArtifactPath = (artifactPath: string) => {
+  return artifactPath.replaceAll('\\', '/');
+};
 
 export class FileUploader {
   private apiService = new ApiService();
@@ -24,7 +28,9 @@ export class FileUploader {
     builtPath: string;
     fileFolder: FileFolder;
   }) {
-    const builtHandlerPath = relative(OUTPUT_DIR, builtPath);
+    const builtHandlerPath = normalizeArtifactPath(
+      relative(OUTPUT_DIR, builtPath),
+    );
 
     return await this.apiService.uploadFile({
       filePath: path.join(this.appPath, builtPath),
