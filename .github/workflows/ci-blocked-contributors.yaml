@@ -2,16 +2,25 @@ name: Blocked Contributors Check
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, edited]
+  issue_comment:
+    types: [created, edited]
+  pull_request_review:
+    types: [submitted, edited]
+  pull_request_review_comment:
+    types: [created, edited]
 
 permissions:
   contents: read
+  issues: read
   pull-requests: read
 
 jobs:
   check-blocked-contributors:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # issue_comment fires for issues too; only run it when the comment is on a PR.
+    if: ${{ github.event_name != 'issue_comment' || github.event.issue.pull_request }}
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -24,4 +33,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_NUMBER: ${{ github.event.pull_request.number || github.event.issue.number }}

@@ -1,12 +1,31 @@
-// Fails a PR when any commit is attributed to a known bot (author, committer,
-// or Co-Authored-By trailer). Patterns match bot identities, not human names.
+// Fails a PR when a known bot is detected in its commits, description, comments
+// or reviews.
+//
+// Commits are matched on bot *identity* (author/committer name+email and
+// Co-Authored-By trailers) since bots leave a machine identity there. Prose
+// surfaces (PR body, comments, reviews) are humans' conversation, so they are
+// matched only on auto-generated attribution footers to avoid flagging a person
+// who merely mentions one of these tools.
+//
 // Usage: GITHUB_TOKEN=xxx GITHUB_REPOSITORY=owner/repo PR_NUMBER=123 npx nx run twenty-server:ts-node-no-deps-transpile-only -- ./scripts/check-blocked-contributors.ts
 
-const BLOCKED_PATTERNS = [
+// Bot identities — matched against commit author/committer and message.
+const IDENTITY_PATTERNS = [
   /noreply@anthropic\.com/i,
   /@anthropic\.com/i,
   /cursoragent@cursor\.com/i,
   /copilot-swe-agent\[bot\]/i,
+];
+
+// Auto-generated attribution footers — matched against commit messages and all
+// prose surfaces. Kept deliberately tight: only strings a tool emits verbatim,
+// never a bare product name a human might type in discussion.
+const SIGNATURE_PATTERNS = [
+  /Generated with \[?Claude Code\]?/i,
+  /Co-Authored-By:\s*Claude\b/i,
+  /Co-Authored-By:[^\n]*<[^>]*@anthropic\.com>/i,
+  /Generated with \[?Cursor( Agent)?\]?/i,
+  /Co-Authored-By:[^\n]*cursoragent/i,
 ];
 
 type Commit = {
@@ -18,44 +37,67 @@ type Commit = {
   };
 };
 
-async function fetchPrCommits(
-  repo: string,
-  prNumber: string,
+type ProseSource = {
+  kind: string;
+  ref: string;
+  body: string;
+};
+
+async function githubGet<TResponse>(
+  url: string,
   token: string,
-): Promise<Commit[]> {
-  const commits: Commit[] = [];
+): Promise<TResponse> {
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/vnd.github+json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`GitHub API ${response.status}: ${await response.text()}`);
+  }
+
+  return (await response.json()) as TResponse;
+}
+
+async function githubGetPaginated<TItem>(
+  baseUrl: string,
+  token: string,
+): Promise<TItem[]> {
+  const items: TItem[] = [];
   let page = 1;
 
   for (;;) {
-    const response = await fetch(
-      `https://api.github.com/repos/${repo}/pulls/${prNumber}/commits?per_page=100&page=${page}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/vnd.github+json',
-        },
-      },
+    const separator = baseUrl.includes('?') ? '&' : '?';
+    const batch = await githubGet<TItem[]>(
+      `${baseUrl}${separator}per_page=100&page=${page}`,
+      token,
     );
 
-    if (!response.ok) {
-      throw new Error(
-        `GitHub API ${response.status}: ${await response.text()}`,
-      );
-    }
-
-    const batch = (await response.json()) as Commit[];
-    commits.push(...batch);
+    items.push(...batch);
 
     if (batch.length < 100) {
-      return commits;
+      return items;
     }
 
     page += 1;
   }
 }
 
-function findMatches(commit: Commit): string[] {
-  const haystack = [
+function matchPatterns(text: string, patterns: RegExp[]): string[] {
+  if (!text) {
+    return [];
+  }
+
+  return patterns.flatMap((pattern) => {
+    const match = text.match(pattern);
+    return match ? [match[0]] : [];
+  });
+}
+
+function findCommitMatches(commit: Commit): string[] {
+  const identityHaystack = [
     commit.commit.author.name,
     commit.commit.author.email,
     commit.commit.committer.name,
@@ -63,10 +105,78 @@ function findMatches(commit: Commit): string[] {
     commit.commit.message,
   ].join(' ');
 
-  return BLOCKED_PATTERNS.flatMap((pattern) => {
-    const match = haystack.match(pattern);
-    return match ? [match[0]] : [];
+  return [
+    ...matchPatterns(identityHaystack, IDENTITY_PATTERNS),
+    ...matchPatterns(commit.commit.message, SIGNATURE_PATTERNS),
+  ];
+}
+
+async function fetchPrCommits(
+  repo: string,
+  prNumber: string,
+  token: string,
+): Promise<Commit[]> {
+  return githubGetPaginated<Commit>(
+    `https://api.github.com/repos/${repo}/pulls/${prNumber}/commits`,
+    token,
+  );
+}
+
+async function fetchProseSources(
+  repo: string,
+  prNumber: string,
+  token: string,
+): Promise<ProseSource[]> {
+  const base = `https://api.github.com/repos/${repo}`;
+  const sources: ProseSource[] = [];
+
+  const pullRequest = await githubGet<{
+    body: string | null;
+    html_url: string;
+  }>(`${base}/pulls/${prNumber}`, token);
+  sources.push({
+    kind: 'PR description',
+    ref: pullRequest.html_url,
+    body: pullRequest.body ?? '',
   });
+
+  const conversationComments = await githubGetPaginated<{
+    body: string | null;
+    html_url: string;
+  }>(`${base}/issues/${prNumber}/comments`, token);
+  for (const comment of conversationComments) {
+    sources.push({
+      kind: 'Conversation comment',
+      ref: comment.html_url,
+      body: comment.body ?? '',
+    });
+  }
+
+  const reviewComments = await githubGetPaginated<{
+    body: string | null;
+    html_url: string;
+  }>(`${base}/pulls/${prNumber}/comments`, token);
+  for (const comment of reviewComments) {
+    sources.push({
+      kind: 'Inline review comment',
+      ref: comment.html_url,
+      body: comment.body ?? '',
+    });
+  }
+
+  const reviews = await githubGetPaginated<{
+    body: string | null;
+    html_url: string;
+  }>(`${base}/pulls/${prNumber}/reviews`, token);
+  for (const review of reviews) {
+    sources.push({
+      kind: 'Review summary',
+      ref: review.html_url,
+      body: review.body ?? '',
+    });
+  }
+
+  return sources;
 }
 
 async function main(): Promise<void> {
@@ -75,15 +185,21 @@ async function main(): Promise<void> {
   const prNumber = process.env.PR_NUMBER;
 
   if (!token || !repo || !prNumber) {
-    console.error('Error: GITHUB_TOKEN, GITHUB_REPOSITORY and PR_NUMBER are required');
+    console.error(
+      'Error: GITHUB_TOKEN, GITHUB_REPOSITORY and PR_NUMBER are required',
+    );
     process.exit(1);
   }
 
-  const commits = await fetchPrCommits(repo, prNumber, token);
+  const [commits, proseSources] = await Promise.all([
+    fetchPrCommits(repo, prNumber, token),
+    fetchProseSources(repo, prNumber, token),
+  ]);
+
   let violations = 0;
 
   for (const commit of commits) {
-    const matches = findMatches(commit);
+    const matches = findCommitMatches(commit);
 
     if (matches.length > 0) {
       console.error(
@@ -93,14 +209,34 @@ async function main(): Promise<void> {
     }
   }
 
+  for (const source of proseSources) {
+    const matches = matchPatterns(source.body, SIGNATURE_PATTERNS);
+
+    if (matches.length > 0) {
+      console.error(
+        `::error::${source.kind} contains a bot signature (matched: ${matches.join(', ')}) — ${source.ref}`,
+      );
+      violations += 1;
+    }
+  }
+
   if (violations > 0) {
-    console.error(`\nFound ${violations} commit(s) attributed to blocked bot contributors.`);
-    console.error("Rewrite the author/committer and strip Co-Authored-By trailers, then force-push:");
-    console.error("  git rebase -i --exec 'git commit --amend --reset-author --no-edit' origin/main");
+    console.error(
+      `\nFound ${violations} item(s) attributed to blocked bot contributors.`,
+    );
+    console.error(
+      'For commits: rewrite the author/committer and strip Co-Authored-By trailers, then force-push:',
+    );
+    console.error(
+      "  git rebase -i --exec 'git commit --amend --reset-author --no-edit' origin/main",
+    );
+    console.error(
+      'For the PR description, comments or reviews: remove the auto-generated attribution footer.',
+    );
     process.exit(1);
   }
 
-  console.log('No blocked contributors found in PR commits.');
+  console.log('No blocked contributors found in PR commits, description, comments or reviews.');
 }
 
 main().catch((error) => {
