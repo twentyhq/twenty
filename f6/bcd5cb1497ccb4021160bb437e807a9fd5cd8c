@@ -1,0 +1,20 @@
+packages/twenty-server/test/integration/graphql/suites/auth/jwt-key-rotation/rotate-signing-keys-cron-job.integration-spec.ts
+  s_8a5a157e980979::t_6fb55b73087b69 9,11-14,21,24-25
+  s_8a5a157e980979::t_9f4bdac2d90494 65,67,69-73,75,77-78,80-83,85-87
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f6bcd5cb1497ccb4021160bb437e807a9fd5cd8c",
+  "prompts": {},
+  "sessions": {
+    "s_8a5a157e980979": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8d765ae-92f9-4877-8c11-5e1240cfee8f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
