@@ -28,10 +28,7 @@ export const RecordTitleCellTextFieldInput = ({
     FieldInputEventContext,
   );
 
-  // When the title cell is in edit mode but the user never typed anything, the
-  // draft is undefined. Persisting then writes an empty string over the existing
-  // label identifier — e.g. opening another field counts as a click-outside and
-  // blanks the record's name. Skip persisting an untouched title.
+  // An untouched title has an undefined draft; persisting it would blank the existing label identifier (e.g. on click-outside), so skip persist.
   const isTitleUntouched = !isDefined(draftValue);
 
   useRegisterInputEvents<string>({
