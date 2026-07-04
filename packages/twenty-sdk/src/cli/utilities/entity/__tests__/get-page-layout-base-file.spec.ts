@@ -11,6 +11,7 @@ describe('getPageLayoutBaseFile', () => {
     );
     expect(result).toContain('export default definePageLayout({');
     expect(result).toContain("name: 'my-layout'");
+    expect(result).toContain("type: 'STANDALONE_PAGE'");
     expect(result).toContain("title: 'Overview'");
     expect(result).toContain('widgets: []');
     expect(result).toContain('tabs: [');

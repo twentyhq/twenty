@@ -16,8 +16,7 @@ export const fromPageLayoutManifestToUniversalFlatPageLayout = ({
     universalIdentifier: pageLayoutManifest.universalIdentifier,
     applicationUniversalIdentifier,
     name: pageLayoutManifest.name,
-    type:
-      (pageLayoutManifest.type as PageLayoutType) ?? PageLayoutType.RECORD_PAGE,
+    type: pageLayoutManifest.type as PageLayoutType,
     objectMetadataUniversalIdentifier:
       pageLayoutManifest.objectUniversalIdentifier ?? null,
     defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier:

@@ -6,6 +6,7 @@ export const getPageLayoutBaseFile = ({ name }: { name: string }) => {
 export default definePageLayout({
   universalIdentifier: '${uuidv4()}',
   name: '${name}',
+  type: 'STANDALONE_PAGE',
   tabs: [
     {
       universalIdentifier: '${uuidv4()}',

@@ -10,6 +10,7 @@ describe('fromPageLayoutManifestToUniversalFlatPageLayout', () => {
       pageLayoutManifest: {
         universalIdentifier: 'pl-uuid-1',
         name: 'My Page Layout',
+        type: PageLayoutType.RECORD_PAGE,
       },
       applicationUniversalIdentifier,
       now,

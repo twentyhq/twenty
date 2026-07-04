@@ -26,7 +26,7 @@ export type PageLayoutTabManifest = SyncableEntityOptions & {
 
 export type PageLayoutManifest = SyncableEntityOptions & {
   name: string;
-  type?: string;
+  type: string;
   objectUniversalIdentifier?: string;
   defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier?: string;
   tabs?: PageLayoutTabManifest[];
