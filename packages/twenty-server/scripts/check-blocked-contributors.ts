@@ -6,9 +6,9 @@ const IDENTITY_PATTERNS = [
 ];
 
 const SIGNATURE_PATTERNS = [
-  /Generated with \[?Claude Code\]?/i,
+  /Generated with \[Claude Code\]\(/i,
   /Co-Authored-By:[^\n]*<[^>]*@anthropic\.com>/i,
-  /Generated with \[?Cursor( Agent)?\]?/i,
+  /Generated with \[Cursor( Agent)?\]\(/i,
   /Co-Authored-By:[^\n]*cursoragent/i,
 ];
 
