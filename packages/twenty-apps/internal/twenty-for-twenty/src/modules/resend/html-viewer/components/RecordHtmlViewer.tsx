@@ -1,5 +1,5 @@
 import { isDefined } from '@utils/is-defined';
-import { Callout, IconAlertCircle } from 'twenty-sdk/ui';
+import { Callout, IconAlertCircle } from '@ui';
 
 import { HtmlPreview } from '@modules/resend/html-viewer/components/HtmlPreview';
 import { useRecordHtml } from '@modules/resend/html-viewer/hooks/useRecordHtml';

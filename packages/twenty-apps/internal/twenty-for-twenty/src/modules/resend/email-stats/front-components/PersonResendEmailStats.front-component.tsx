@@ -5,7 +5,7 @@ import {
   IconAlertCircle,
   IconMail,
   IconRefresh,
-} from 'twenty-sdk/ui';
+} from '@ui';
 
 import { isDefined } from '@utils/is-defined';
 
