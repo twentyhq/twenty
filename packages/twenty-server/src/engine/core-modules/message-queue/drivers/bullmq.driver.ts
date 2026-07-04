@@ -30,6 +30,7 @@ import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-k
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { applyWorkspaceSentryContextFromJobData } from 'src/engine/core-modules/sentry/utils/apply-workspace-sentry-context-from-job-data.util';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type BullMQDriverOptions = QueueOptions;
 
@@ -54,6 +55,7 @@ export class BullMQDriver
   constructor(
     private options: BullMQDriverOptions,
     private metricsService: MetricsService,
+    private twentyConfigService: TwentyConfigService,
   ) {}
 
   onModuleInit() {
@@ -136,14 +138,15 @@ export class BullMQDriver
     queueName: MessageQueue,
     worker: Worker,
   ): Promise<void> {
-    const shutdownTimeoutMs =
-      this.workerOptionsMap[queueName]?.shutdownTimeoutMs;
-
-    if (!isDefined(shutdownTimeoutMs)) {
+    if (!this.workerOptionsMap[queueName]?.boundedShutdownDrain) {
       await worker.close();
 
       return;
     }
+
+    const shutdownTimeoutMs = this.twentyConfigService.get(
+      'AI_STREAM_SHUTDOWN_DRAIN_MS',
+    );
 
     const abortTimer = setTimeout(() => {
       this.logger.warn(
