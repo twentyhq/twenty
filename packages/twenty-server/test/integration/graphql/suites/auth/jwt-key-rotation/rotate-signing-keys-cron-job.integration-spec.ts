@@ -6,19 +6,23 @@ import { findManyApplications } from 'test/integration/graphql/utils/find-many-a
 import { generateApiKeyToken } from 'test/integration/graphql/utils/generate-api-key-token.util';
 import { deleteConfigVariable } from 'test/integration/twenty-config/utils/delete-config-variable.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
+import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 
-import { SigningKeyRotationService } from 'src/engine/core-modules/jwt/services/signing-key-rotation.service';
+import { RotateSigningKeysCronJob } from 'src/engine/core-modules/jwt/crons/jobs/rotate-signing-keys.cron.job';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
 
 const SIGNING_KEY_ROTATION_DAYS_KEY = 'SIGNING_KEY_ROTATION_DAYS';
 
 describe('RotateSigningKeysCronJob (integration)', () => {
   const seededApiKeyId = API_KEY_DATA_SEED_IDS.ID_1;
-  let signingKeyRotationService: SigningKeyRotationService;
+  let cronQueue: MessageQueueService;
 
   beforeAll(() => {
-    signingKeyRotationService = global.app.get<SigningKeyRotationService>(
-      SigningKeyRotationService,
+    cronQueue = global.app.get<MessageQueueService>(
+      getQueueToken(MessageQueue.cronQueue),
     );
   });
 
@@ -58,25 +62,29 @@ describe('RotateSigningKeysCronJob (integration)', () => {
       input: { key: SIGNING_KEY_ROTATION_DAYS_KEY, value: 0 },
     });
 
-    await signingKeyRotationService.rotateIfDue();
+    await cronQueue.add(RotateSigningKeysCronJob.name, undefined);
 
-    const rotatedTokenResponse = await generateApiKeyToken({
-      apiKeyId: seededApiKeyId,
-      accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    let rotatedApiKeyToken = '';
+
+    await expectEventually(async () => {
+      const rotatedTokenResponse = await generateApiKeyToken({
+        apiKeyId: seededApiKeyId,
+        accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+
+      expect(rotatedTokenResponse.body.errors).toBeUndefined();
+
+      rotatedApiKeyToken =
+        rotatedTokenResponse.body.data?.generateApiKeyToken.token ?? '';
+
+      expect(isNonEmptyString(rotatedApiKeyToken)).toBe(true);
+
+      const rotatedKid = decodeJwtCompleteOrThrow(rotatedApiKeyToken).header
+        .kid as string;
+
+      expect(isNonEmptyString(rotatedKid)).toBe(true);
+      expect(rotatedKid).not.toBe(initialKid);
     });
-
-    expect(rotatedTokenResponse.body.errors).toBeUndefined();
-
-    const rotatedApiKeyToken: string =
-      rotatedTokenResponse.body.data?.generateApiKeyToken.token ?? '';
-
-    expect(isNonEmptyString(rotatedApiKeyToken)).toBe(true);
-
-    const rotatedKid = decodeJwtCompleteOrThrow(rotatedApiKeyToken).header
-      .kid as string;
-
-    expect(isNonEmptyString(rotatedKid)).toBe(true);
-    expect(rotatedKid).not.toBe(initialKid);
 
     const callWithPreviousToken = await findManyApplications({
       accessToken: initialApiKeyToken,
