@@ -5,12 +5,14 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 
 const POLL_INTERVAL_MS = 25;
 const REQUIRED_CONSECUTIVE_QUIET_CHECKS = 2;
-const DEFAULT_TIMEOUT_MS = 15_000;
+const STALL_TIMEOUT_MS = 15_000;
+const HARD_TIMEOUT_MS = 120_000;
 const PENDING_JOB_STATES = [
   'waiting',
   'active',
   'prioritized',
   'waiting-children',
+  'delayed',
 ] as const;
 
 let redisConnection: IORedis | null = null;
@@ -50,23 +52,39 @@ const getPendingJobCountsByQueue = async (): Promise<
   );
 };
 
-export const waitForQueueQuiescence = async (
-  timeoutMs = DEFAULT_TIMEOUT_MS,
-): Promise<void> => {
+export const waitForQueueQuiescence = async (): Promise<void> => {
   const startedAt = Date.now();
+  let lastProgressAt = startedAt;
+  let minObservedPendingTotal = Number.POSITIVE_INFINITY;
   let consecutiveQuietChecks = 0;
 
   while (consecutiveQuietChecks < REQUIRED_CONSECUTIVE_QUIET_CHECKS) {
     const pendingJobCountsByQueue = await getPendingJobCountsByQueue();
+    const pendingTotal = Object.values(pendingJobCountsByQueue).reduce(
+      (sum, count) => sum + count,
+      0,
+    );
 
-    if (Object.keys(pendingJobCountsByQueue).length === 0) {
+    if (pendingTotal === 0) {
       consecutiveQuietChecks += 1;
     } else {
       consecutiveQuietChecks = 0;
+      const now = Date.now();
 
-      if (Date.now() - startedAt > timeoutMs) {
+      if (pendingTotal < minObservedPendingTotal) {
+        minObservedPendingTotal = pendingTotal;
+        lastProgressAt = now;
+      }
+
+      if (now - lastProgressAt > STALL_TIMEOUT_MS) {
         throw new Error(
-          `Message queues still busy after ${timeoutMs}ms, pending jobs: ${JSON.stringify(pendingJobCountsByQueue)}`,
+          `Message queues stalled, no progress for ${STALL_TIMEOUT_MS}ms, pending jobs: ${JSON.stringify(pendingJobCountsByQueue)}`,
+        );
+      }
+
+      if (now - startedAt > HARD_TIMEOUT_MS) {
+        throw new Error(
+          `Message queues still busy after ${HARD_TIMEOUT_MS}ms, pending jobs: ${JSON.stringify(pendingJobCountsByQueue)}`,
         );
       }
     }

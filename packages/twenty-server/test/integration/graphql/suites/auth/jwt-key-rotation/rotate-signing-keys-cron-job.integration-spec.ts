@@ -8,21 +8,17 @@ import { deleteConfigVariable } from 'test/integration/twenty-config/utils/delet
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 
 import { RotateSigningKeysCronJob } from 'src/engine/core-modules/jwt/crons/jobs/rotate-signing-keys.cron.job';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
 
 const SIGNING_KEY_ROTATION_DAYS_KEY = 'SIGNING_KEY_ROTATION_DAYS';
-const ROTATE_SIGNING_KEYS_CRON_PATTERN = '15 3 * * *';
 
 describe('RotateSigningKeysCronJob (integration)', () => {
   const seededApiKeyId = API_KEY_DATA_SEED_IDS.ID_1;
-  let cronQueue: MessageQueueService;
+  let rotateSigningKeysCronJob: RotateSigningKeysCronJob;
 
   beforeAll(() => {
-    cronQueue = global.app.get<MessageQueueService>(
-      getQueueToken(MessageQueue.cronQueue),
+    rotateSigningKeysCronJob = global.app.get<RotateSigningKeysCronJob>(
+      RotateSigningKeysCronJob,
     );
   });
 
@@ -62,11 +58,7 @@ describe('RotateSigningKeysCronJob (integration)', () => {
       input: { key: SIGNING_KEY_ROTATION_DAYS_KEY, value: 0 },
     });
 
-    await cronQueue.addCron({
-      jobName: RotateSigningKeysCronJob.name,
-      data: undefined,
-      options: { repeat: { pattern: ROTATE_SIGNING_KEYS_CRON_PATTERN } },
-    });
+    await rotateSigningKeysCronJob.handle();
 
     const rotatedTokenResponse = await generateApiKeyToken({
       apiKeyId: seededApiKeyId,
