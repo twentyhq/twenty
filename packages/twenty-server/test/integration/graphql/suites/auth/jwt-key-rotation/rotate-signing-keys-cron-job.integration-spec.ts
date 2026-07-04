@@ -62,7 +62,7 @@ describe('RotateSigningKeysCronJob (integration)', () => {
       input: { key: SIGNING_KEY_ROTATION_DAYS_KEY, value: 0 },
     });
 
-    await cronQueue.add(RotateSigningKeysCronJob.name, undefined);
+    await cronQueue.add(RotateSigningKeysCronJob.name, {});
 
     let rotatedApiKeyToken = '';
 
