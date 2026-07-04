@@ -1,4 +1,4 @@
-import { MCP_SETUP } from '@/settings/playground/constants/McpSetup.constants';
+import { MCP_SETUP } from '@/settings/playground/constants/McpSetup';
 
 export const buildMcpServerUrl = (serverBaseUrl: string) =>
   `${serverBaseUrl.replace(/\/+$/, '')}/mcp`;

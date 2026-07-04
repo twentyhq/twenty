@@ -20,7 +20,7 @@ import {
   McpClientLogo,
   McpOpenAiLogo,
 } from '@/settings/playground/components/McpClientLogo';
-import { MCP_SETUP } from '@/settings/playground/constants/McpSetup.constants';
+import { MCP_SETUP } from '@/settings/playground/constants/McpSetup';
 import { type McpSetupCategory } from '@/settings/playground/types/McpSetup';
 import {
   buildClaudeInstallLink,

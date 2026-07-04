@@ -31,6 +31,8 @@ const SettingsRestPlayground = lazy(() =>
   ),
 );
 
+// TODO: remove these legacy /api-webhooks redirects after 2026-08-04, once
+// users have had time to update their bookmarks to the new API settings routes.
 const LEGACY_API_WEBHOOKS_SETTINGS_PATHS = {
   ApiWebhooks: 'api-webhooks',
   NewApiKey: 'api-webhooks/apis/new',
