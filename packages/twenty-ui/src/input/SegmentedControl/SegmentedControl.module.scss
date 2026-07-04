@@ -3,6 +3,7 @@
   background: var(--t-background-secondary);
   border: 1px solid var(--t-border-color-medium);
   border-radius: var(--t-border-radius-pill);
+  corner-shape: round;
   box-sizing: border-box;
   display: inline-flex;
   flex-shrink: 0;
@@ -17,6 +18,7 @@
   background: transparent;
   border: 0;
   border-radius: var(--t-border-radius-pill);
+  corner-shape: round;
   color: var(--t-font-color-secondary);
   cursor: pointer;
   display: flex;

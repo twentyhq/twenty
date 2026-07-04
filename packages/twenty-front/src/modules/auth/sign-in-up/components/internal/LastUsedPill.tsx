@@ -11,8 +11,9 @@ const StyledPillContainer = styled.span`
   > span {
     background: ${themeCssVariables.accent.accent3};
     border: 1px solid ${themeCssVariables.accent.accent5};
-    border-radius: ${themeCssVariables.border.radius.md};
+    border-radius: ${themeCssVariables.border.radius.pill};
     color: ${themeCssVariables.accent.accent9};
+    corner-shape: round;
     font-weight: ${themeCssVariables.font.weight.semiBold};
     height: ${themeCssVariables.spacing[5]};
   }

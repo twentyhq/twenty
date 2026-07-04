@@ -73,6 +73,7 @@ const StyledLinkGroup = styled.div`
   > span {
     background-color: ${themeCssVariables.font.color.extraLight};
     border-radius: 50%;
+    corner-shape: round;
     height: 2px;
     width: 2px;
   }

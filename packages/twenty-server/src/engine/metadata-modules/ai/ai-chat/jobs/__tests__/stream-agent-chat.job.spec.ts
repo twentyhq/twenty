@@ -87,14 +87,14 @@ describe('StreamAgentChatJob', () => {
     streamChatRejection,
     addMessageRejection,
     assistantPersistRejection,
-    assistantMessageExistedAtStart = false,
+    totalsUpdateAffected = 1,
   }: {
     workspaceFound?: boolean;
     chatStream?: ReturnType<typeof createFakeChatStream>;
     streamChatRejection?: Error;
     addMessageRejection?: Error;
     assistantPersistRejection?: Error;
-    assistantMessageExistedAtStart?: boolean;
+    totalsUpdateAffected?: number;
   } = {}) => {
     const publishedEvents: PublishedEvent[] = [];
 
@@ -104,7 +104,14 @@ describe('StreamAgentChatJob', () => {
         deletedAt: null,
         activeStreamId: 'stream-id',
       }),
-      update: jest.fn().mockResolvedValue({ affected: 1 }),
+      update: jest.fn().mockImplementation((_workspaceId, _criteria, values) =>
+        Promise.resolve({
+          affected:
+            values && typeof values.totalInputTokens === 'function'
+              ? totalsUpdateAffected
+              : 1,
+        }),
+      ),
     };
     const workspaceRepository = {
       findOne: jest.fn().mockResolvedValue(workspaceFound ? workspace : null),
@@ -116,9 +123,6 @@ describe('StreamAgentChatJob', () => {
       upsertAssistantMessage: assistantPersistRejection
         ? jest.fn().mockRejectedValue(assistantPersistRejection)
         : jest.fn().mockResolvedValue(undefined),
-      hasMessageById: jest
-        .fn()
-        .mockResolvedValue(assistantMessageExistedAtStart),
       generateTitleIfNeeded: jest.fn().mockResolvedValue(null),
       notifyThreadUsageUpdated: jest.fn().mockResolvedValue(undefined),
     };
@@ -212,7 +216,7 @@ describe('StreamAgentChatJob', () => {
     );
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
-      { id: 'thread-id' },
+      { id: 'thread-id', activeStreamId: 'stream-id' },
       expect.objectContaining({ lastStreamError: null }),
     );
     expect(threadRepository.update).toHaveBeenCalledWith(
@@ -223,9 +227,9 @@ describe('StreamAgentChatJob', () => {
     expect(agentChatStreamingService.flushNextQueuedMessage).toHaveBeenCalled();
   });
 
-  it('persists the assistant message but does not re-apply thread totals when a prior execution already persisted it', async () => {
+  it('gates the thread totals on still owning the stream so a prior completion is not double-counted', async () => {
     const { job, agentChatService, threadRepository } = buildJob({
-      assistantMessageExistedAtStart: true,
+      totalsUpdateAffected: 0,
     });
 
     await job.handle(jobData);
@@ -233,16 +237,21 @@ describe('StreamAgentChatJob', () => {
     expect(agentChatService.upsertAssistantMessage).toHaveBeenCalledWith(
       expect.objectContaining({ turnId: 'turn-id' }),
     );
-    // The thread-totals accumulation must not run twice for the same stream.
-    const totalsUpdate = threadRepository.update.mock.calls.find(
-      ([, criteria]) =>
-        criteria &&
-        typeof criteria === 'object' &&
-        !('activeStreamId' in criteria),
+    expect(threadRepository.update).toHaveBeenCalledWith(
+      'workspace-id',
+      { id: 'thread-id', activeStreamId: 'stream-id' },
+      expect.objectContaining({ lastStreamError: null }),
     );
-
-    expect(totalsUpdate).toBeUndefined();
     expect(agentChatService.notifyThreadUsageUpdated).not.toHaveBeenCalled();
+  });
+
+  it('applies thread totals when the claim is still held even if the message already exists from a checkpoint', async () => {
+    const { job, agentChatService } = buildJob({ totalsUpdateAffected: 1 });
+
+    await job.handle(jobData);
+
+    expect(agentChatService.upsertAssistantMessage).toHaveBeenCalled();
+    expect(agentChatService.notifyThreadUsageUpdated).toHaveBeenCalled();
   });
 
   it('never publishes the opaque error chunk to subscribers', async () => {
@@ -497,12 +506,17 @@ describe('StreamAgentChatJob', () => {
   it('resolves without flushing the queue when the stream is cancelled', async () => {
     let triggerCancel: (() => void) | undefined;
 
-    const { job, publishedEvents, agentChatStreamingService, cancelCallbacks } =
-      buildJob({
-        chatStream: createFakeChatStream({
-          onFirstChunk: () => triggerCancel?.(),
-        }),
-      });
+    const {
+      job,
+      publishedEvents,
+      agentChatService,
+      agentChatStreamingService,
+      cancelCallbacks,
+    } = buildJob({
+      chatStream: createFakeChatStream({
+        onFirstChunk: () => triggerCancel?.(),
+      }),
+    });
 
     triggerCancel = () => cancelCallbacks.forEach((callback) => callback());
 
@@ -514,5 +528,6 @@ describe('StreamAgentChatJob', () => {
     expect(
       agentChatStreamingService.flushNextQueuedMessage,
     ).not.toHaveBeenCalled();
+    expect(agentChatService.notifyThreadUsageUpdated).toHaveBeenCalled();
   });
 });

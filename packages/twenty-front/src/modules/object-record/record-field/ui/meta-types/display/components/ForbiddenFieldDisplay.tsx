@@ -8,7 +8,7 @@ const StyledContainer = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.transparent.light};
 
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.md};
   color: ${themeCssVariables.font.color.tertiary};
   display: inline-flex;
   font-size: ${themeCssVariables.font.size.md};

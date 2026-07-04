@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 import { Fragment } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { recordingThemeCssVariables } from 'src/front-components/constants/recording-theme-css-variables';
 import { type SummaryInlineSegment } from 'src/front-components/types/summary-inline-segment.type';
 
 const StyledBold = styled.strong`
-  color: ${recordingThemeCssVariables.font.colorPrimary};
-  font-weight: ${recordingThemeCssVariables.font.weightMedium};
+  color: ${() => themeCssVariables.font.color.primary};
+  font-weight: ${() => themeCssVariables.font.weight.medium};
 `;
 
 type SummaryInlineSegmentsProps = {

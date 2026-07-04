@@ -906,11 +906,11 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   goToSettingsApiWebhooks: {
     universalIdentifier: 'ed2c2fde-1e7a-4a42-ba63-221eaa7c9759',
-    label: 'Go to APIs & Webhooks Settings',
-    icon: 'IconApi',
+    label: 'Go to MCP & APIs Settings',
+    icon: 'IconPlug',
     isPinned: false,
     position: 58,
-    shortLabel: 'APIs & Webhooks',
+    shortLabel: 'MCP & APIs',
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: 'permissionFlags.API_KEYS_AND_WEBHOOKS',
     availabilityObjectMetadataUniversalIdentifier: null,
@@ -922,7 +922,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   goToSettingsApplications: {
     universalIdentifier: '44db6d7a-79ac-485e-b3da-da8776bd7777',
     label: 'Go to Apps Settings',
-    icon: 'IconPlug',
+    icon: 'IconApps',
     isPinned: false,
     position: 59,
     shortLabel: 'Apps',
