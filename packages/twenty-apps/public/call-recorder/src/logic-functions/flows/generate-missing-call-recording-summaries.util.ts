@@ -1,5 +1,6 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { CallRecordingSummaryGenerationOutcome } from 'src/logic-functions/constants/call-recording-summary-generation-outcome';
 import { requestCallRecordingSummariesContinuation } from 'src/logic-functions/data/request-call-recording-summaries-continuation.util';
 import { generateCallRecordingSummary } from 'src/logic-functions/flows/generate-call-recording-summary.util';
 import { type GenerateCallRecordingSummaryResult } from 'src/logic-functions/flows/generate-call-recording-summary-result.type';
@@ -47,7 +48,7 @@ export const generateMissingCallRecordingSummaries = async ({
     remainingCallRecordingIds.shift();
     slowestItemMs = Math.max(slowestItemMs, getNowMs() - itemStartedAtMs);
 
-    if (outcome === 'disabled') {
+    if (outcome === CallRecordingSummaryGenerationOutcome.DISABLED) {
       // The workspace toggle turned off mid-run; stop spending immediately.
       return {
         generatedCallRecordingIds,
@@ -59,9 +60,11 @@ export const generateMissingCallRecordingSummaries = async ({
       };
     }
 
-    if (outcome === 'generated') {
+    if (outcome === CallRecordingSummaryGenerationOutcome.GENERATED) {
       generatedCallRecordingIds.push(callRecordingId);
-    } else if (outcome === 'empty-summary') {
+    } else if (
+      outcome === CallRecordingSummaryGenerationOutcome.EMPTY_SUMMARY
+    ) {
       failedCallRecordingIds.push(callRecordingId);
     } else if (outcome === 'generation-error') {
       erroredCallRecordingIds.push(callRecordingId);

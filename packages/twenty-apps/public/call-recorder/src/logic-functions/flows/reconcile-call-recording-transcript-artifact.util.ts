@@ -1,6 +1,7 @@
 import { isNull, isUndefined } from '@sniptt/guards';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { TranscriptDownloadOutcome } from 'src/logic-functions/constants/transcript-download-outcome';
 import { buildFailedTranscriptMarker } from 'src/logic-functions/domain/build-failed-transcript-marker.util';
 import { buildPendingTranscriptMarker } from 'src/logic-functions/domain/build-pending-transcript-marker.util';
 import { buildTranscriptFailureReason } from 'src/logic-functions/domain/build-transcript-failure-reason.util';
@@ -119,7 +120,7 @@ export const reconcileCallRecordingTranscriptArtifact = async ({
     transcriptId: transcriptIdToDownload,
   });
 
-  if (downloadResult.outcome === 'filled') {
+  if (downloadResult.outcome === TranscriptDownloadOutcome.FILLED) {
     return {
       updateData: {
         transcript: downloadResult.content as Record<string, unknown>,
@@ -128,7 +129,7 @@ export const reconcileCallRecordingTranscriptArtifact = async ({
     };
   }
 
-  if (downloadResult.outcome === 'failed') {
+  if (downloadResult.outcome === TranscriptDownloadOutcome.FAILED) {
     return {
       updateData: buildTranscriptFailureUpdate({
         currentStatus,
@@ -139,7 +140,7 @@ export const reconcileCallRecordingTranscriptArtifact = async ({
     };
   }
 
-  if (downloadResult.outcome === 'error') {
+  if (downloadResult.outcome === TranscriptDownloadOutcome.ERROR) {
     console.warn(
       `[call-recorder] could not fill transcript for call recording ${callRecordingId}: ${downloadResult.errorMessage}`,
     );

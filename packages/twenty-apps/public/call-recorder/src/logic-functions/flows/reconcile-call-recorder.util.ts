@@ -1,6 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { CallRecorderReconciliationAction } from 'src/logic-functions/constants/call-recorder-reconciliation-action';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
@@ -202,7 +203,7 @@ const reconcileCallRecorderForMeetingOccurrences = async ({
         `[call-recorder] reconciliation failed for meeting ${meetingPolicyResult.realMeetingKey}: ${errorMessage}`,
       );
       reconciliationResults.push({
-        action: 'FAILED',
+        action: CallRecorderReconciliationAction.FAILED,
         realMeetingKey: meetingPolicyResult.realMeetingKey,
         errorMessage,
       });
@@ -261,7 +262,7 @@ const reconcileActiveMeeting = async ({
 
   if (!isUndefined(manualOpenCallRecording)) {
     return {
-      action: 'SKIPPED',
+      action: CallRecorderReconciliationAction.SKIPPED,
       realMeetingKey: meetingPolicyResult.realMeetingKey,
       callRecordingId: manualOpenCallRecording.id,
     };
@@ -299,7 +300,7 @@ const updatePolicyManagedCallRecording = async ({
   });
 
   return {
-    action: 'UPDATED',
+    action: CallRecorderReconciliationAction.UPDATED,
     realMeetingKey,
     callRecordingId: existingCallRecording.id,
   };
@@ -354,7 +355,7 @@ const createPolicyManagedCallRecording = async ({
   });
 
   return {
-    action: 'CREATED',
+    action: CallRecorderReconciliationAction.CREATED,
     realMeetingKey,
     callRecordingId,
   };
@@ -424,7 +425,7 @@ const reconcileCanceledMeeting = async ({
   }
 
   return {
-    action: 'CANCELED',
+    action: CallRecorderReconciliationAction.CANCELED,
     realMeetingKey: meetingPolicyResult.realMeetingKey,
     callRecordingId: cancellableCallRecordings[0].id,
   };
@@ -489,7 +490,7 @@ const buildRemovedCalendarEventIdsByMeetingKey = (
 const buildSkippedResult = (
   realMeetingKey: string,
 ): CallRecorderReconciliationResult => ({
-  action: 'SKIPPED',
+  action: CallRecorderReconciliationAction.SKIPPED,
   realMeetingKey,
   callRecordingId: null,
 });

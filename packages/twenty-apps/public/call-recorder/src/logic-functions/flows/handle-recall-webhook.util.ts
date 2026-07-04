@@ -2,6 +2,7 @@ import { isNonEmptyArray, isNull, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { TranscriptDownloadOutcome } from 'src/logic-functions/constants/transcript-download-outcome';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import { buildFailedTranscriptMarker } from 'src/logic-functions/domain/build-failed-transcript-marker.util';
 import { buildTranscriptFailureReason } from 'src/logic-functions/domain/build-transcript-failure-reason.util';
@@ -692,7 +693,7 @@ const handleRecallTranscriptEvent = async ({
   const downloadResult = await downloadTranscript({ transcriptId });
 
   switch (downloadResult.outcome) {
-    case 'filled': {
+    case TranscriptDownloadOutcome.FILLED: {
       const updateData: CallRecordingUpdateFields = {
         transcript: downloadResult.content as Record<string, unknown>,
         ...(isUndefined(callRecording.externalRecordingId)
@@ -713,7 +714,7 @@ const handleRecallTranscriptEvent = async ({
         transcriptOutcome: 'FILLED',
       };
     }
-    case 'failed':
+    case TranscriptDownloadOutcome.FAILED:
       return applyTranscriptFailure({
         client,
         callRecording,
@@ -721,11 +722,11 @@ const handleRecallTranscriptEvent = async ({
         transcriptId,
         subCode: downloadResult.subCode,
       });
-    case 'pending':
-    case 'error': {
+    case TranscriptDownloadOutcome.PENDING:
+    case TranscriptDownloadOutcome.ERROR: {
       // 200-acked either way, Svix never redelivers; the cron re-check retries this.
       const reason =
-        downloadResult.outcome === 'pending'
+        downloadResult.outcome === TranscriptDownloadOutcome.PENDING
           ? 'transcript not downloadable yet'
           : downloadResult.errorMessage;
 

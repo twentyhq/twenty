@@ -1,5 +1,6 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { CallRecorderReconciliationAction } from 'src/logic-functions/constants/call-recorder-reconciliation-action';
 import { UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE } from 'src/logic-functions/constants/upcoming-calendar-event-reconciliation-batch-size';
 import { requestUpcomingCalendarEventsReconciliation } from 'src/logic-functions/data/request-upcoming-calendar-events-reconciliation.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
@@ -12,11 +13,11 @@ import { type CallRecorderReconciliationResult } from 'src/logic-functions/types
 const ACTION_COUNT_KEY_BY_ACTION: {
   [Action in CallRecorderReconciliationResult['action']]: Lowercase<Action>;
 } = {
-  CREATED: 'created',
-  UPDATED: 'updated',
-  CANCELED: 'canceled',
-  SKIPPED: 'skipped',
-  FAILED: 'failed',
+  [CallRecorderReconciliationAction.CREATED]: 'created',
+  [CallRecorderReconciliationAction.UPDATED]: 'updated',
+  [CallRecorderReconciliationAction.CANCELED]: 'canceled',
+  [CallRecorderReconciliationAction.SKIPPED]: 'skipped',
+  [CallRecorderReconciliationAction.FAILED]: 'failed',
 };
 
 export const reconcileUpcomingCalendarEventBatches = async ({

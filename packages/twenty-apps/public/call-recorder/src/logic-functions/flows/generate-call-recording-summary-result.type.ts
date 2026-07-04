@@ -1,9 +1,5 @@
+import { type CallRecordingSummaryGenerationOutcome } from 'src/logic-functions/constants/call-recording-summary-generation-outcome';
+
 export type GenerateCallRecordingSummaryResult = {
-  outcome:
-    | 'disabled'
-    | 'no-transcript'
-    | 'not-app-recording'
-    | 'already-summarized'
-    | 'empty-summary'
-    | 'generated';
+  outcome: CallRecordingSummaryGenerationOutcome;
 };

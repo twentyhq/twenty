@@ -2,6 +2,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { runAgent } from 'twenty-sdk/logic-function';
 
 import { CALL_RECORDING_SUMMARIZER_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-summarizer-agent-universal-identifier';
+import { CallRecordingSummaryGenerationOutcome } from 'src/logic-functions/constants/call-recording-summary-generation-outcome';
 import { findCallRecordingForSummary } from 'src/logic-functions/data/find-call-recording-for-summary.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { buildCallRecordingSummaryPrompt } from 'src/logic-functions/domain/build-call-recording-summary-prompt.util';
@@ -20,7 +21,7 @@ export const generateCallRecordingSummary = async (
   }: { callRecordingId: string; requireCreatedByCallRecorder?: boolean },
 ): Promise<GenerateCallRecordingSummaryResult> => {
   if (!isCallRecordingSummaryEnabled()) {
-    return { outcome: 'disabled' };
+    return { outcome: CallRecordingSummaryGenerationOutcome.DISABLED };
   }
 
   const callRecording = await findCallRecordingForSummary(client, {
@@ -31,18 +32,22 @@ export const generateCallRecordingSummary = async (
     callRecording === undefined ||
     !isRealTranscript(callRecording.transcript)
   ) {
-    return { outcome: 'no-transcript' };
+    return { outcome: CallRecordingSummaryGenerationOutcome.NO_TRANSCRIPT };
   }
 
   if (
     requireCreatedByCallRecorder &&
     !isCallRecordingCreatedByCallRecorder(callRecording.createdBy)
   ) {
-    return { outcome: 'not-app-recording' };
+    return {
+      outcome: CallRecordingSummaryGenerationOutcome.NOT_APP_RECORDING,
+    };
   }
 
   if (callRecording.summaryMarkdown !== undefined) {
-    return { outcome: 'already-summarized' };
+    return {
+      outcome: CallRecordingSummaryGenerationOutcome.ALREADY_SUMMARIZED,
+    };
   }
 
   const prompt = buildCallRecordingSummaryPrompt({
@@ -52,7 +57,7 @@ export const generateCallRecordingSummary = async (
   });
 
   if (prompt === undefined) {
-    return { outcome: 'no-transcript' };
+    return { outcome: CallRecordingSummaryGenerationOutcome.NO_TRANSCRIPT };
   }
 
   const agentResult = await runAgent({
@@ -64,7 +69,7 @@ export const generateCallRecordingSummary = async (
   const markdown = extractCallRecordingSummaryMarkdown(agentResult);
 
   if (markdown === undefined) {
-    return { outcome: 'empty-summary' };
+    return { outcome: CallRecordingSummaryGenerationOutcome.EMPTY_SUMMARY };
   }
 
   await updateCallRecording(client, {
@@ -72,5 +77,5 @@ export const generateCallRecordingSummary = async (
     data: { summary: { blocknote: null, markdown } },
   });
 
-  return { outcome: 'generated' };
+  return { outcome: CallRecordingSummaryGenerationOutcome.GENERATED };
 };

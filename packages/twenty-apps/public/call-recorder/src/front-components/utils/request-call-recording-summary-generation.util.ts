@@ -3,6 +3,7 @@ import { RestApiClient } from 'twenty-client-sdk/rest';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 
 import { GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH } from 'src/constants/generate-call-recording-summaries-route-path';
+import { GenerateCallRecordingSummariesOutcome } from 'src/constants/generate-call-recording-summaries-outcome';
 import { TWENTY_FUNCTIONS_URL_ENV_VAR_NAME } from 'src/constants/twenty-functions-url-env-var-name';
 
 type GenerateSummariesResponse = {
@@ -21,14 +22,17 @@ const buildSnackbarForResponse = (
     (response.failedCallRecordingIds ?? []).length +
     (response.erroredCallRecordingIds ?? []).length;
 
-  if (response.outcome === 'disabled') {
+  if (response.outcome === GenerateCallRecordingSummariesOutcome.DISABLED) {
     return {
       message: 'Call summaries are disabled for this workspace.',
       variant: 'error',
     };
   }
 
-  if (response.outcome === 'no-call-recordings-for-calendar-events') {
+  if (
+    response.outcome ===
+    GenerateCallRecordingSummariesOutcome.NO_CALL_RECORDINGS_FOR_CALENDAR_EVENTS
+  ) {
     return {
       message: 'No call recording found for this event.',
       variant: 'error',

@@ -3,9 +3,11 @@ import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
 import { GENERATE_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/generate-call-recording-summaries-logic-function-universal-identifier';
 import { GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH } from 'src/constants/generate-call-recording-summaries-route-path';
+import { GenerateCallRecordingSummariesOutcome } from 'src/constants/generate-call-recording-summaries-outcome';
 import { findCallRecordingIdsForCalendarEvents } from 'src/logic-functions/data/find-call-recording-ids-for-calendar-events.util';
 import { findCallRecordingIdsMissingSummary } from 'src/logic-functions/data/find-call-recording-ids-missing-summary.util';
 import { generateMissingCallRecordingSummaries } from 'src/logic-functions/flows/generate-missing-call-recording-summaries.util';
+import { type GenerateMissingCallRecordingSummariesResult } from 'src/logic-functions/flows/generate-missing-call-recording-summaries-result.type';
 import { isCallRecordingSummaryEnabled } from 'src/logic-functions/utils/is-call-recording-summary-enabled.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
@@ -16,6 +18,18 @@ type GenerateCallRecordingSummariesRouteBody = {
   callRecordingIds?: string[];
   calendarEventIds?: string[];
 };
+
+type GenerateCallRecordingSummariesRouteResult =
+  | {
+      outcome:
+        | typeof GenerateCallRecordingSummariesOutcome.DISABLED
+        | typeof GenerateCallRecordingSummariesOutcome.NOTHING_SELECTED
+        | typeof GenerateCallRecordingSummariesOutcome.NO_CALL_RECORDINGS_FOR_CALENDAR_EVENTS
+        | typeof GenerateCallRecordingSummariesOutcome.NOTHING_TO_SUMMARIZE;
+    }
+  | ({
+      outcome: typeof GenerateCallRecordingSummariesOutcome.PROCESSED;
+    } & GenerateMissingCallRecordingSummariesResult);
 
 const hasOwnProperty = <T extends object>(
   object: T | null | undefined,
@@ -30,9 +44,9 @@ const toIdList = (value: unknown): string[] =>
 
 export const generateCallRecordingSummariesHandler = async (
   payload: RoutePayload<GenerateCallRecordingSummariesRouteBody>,
-): Promise<object> => {
+): Promise<GenerateCallRecordingSummariesRouteResult> => {
   if (!isCallRecordingSummaryEnabled()) {
-    return { outcome: 'disabled' };
+    return { outcome: GenerateCallRecordingSummariesOutcome.DISABLED };
   }
 
   const startedAtMs = Date.now();
@@ -58,7 +72,7 @@ export const generateCallRecordingSummariesHandler = async (
     requestedCallRecordingIds.length === 0 &&
     requestedCalendarEventIds.length === 0
   ) {
-    return { outcome: 'nothing-selected' };
+    return { outcome: GenerateCallRecordingSummariesOutcome.NOTHING_SELECTED };
   }
 
   if (callRecordingIds.length === 0 && requestedCalendarEventIds.length > 0) {
@@ -67,7 +81,10 @@ export const generateCallRecordingSummariesHandler = async (
     });
 
     if (callRecordingIds.length === 0) {
-      return { outcome: 'no-call-recordings-for-calendar-events' };
+      return {
+        outcome:
+          GenerateCallRecordingSummariesOutcome.NO_CALL_RECORDINGS_FOR_CALENDAR_EVENTS,
+      };
     }
   }
 
@@ -77,7 +94,9 @@ export const generateCallRecordingSummariesHandler = async (
     callRecordingIds = await findCallRecordingIdsMissingSummary(client);
 
     if (callRecordingIds.length === 0) {
-      return { outcome: 'nothing-to-summarize' };
+      return {
+        outcome: GenerateCallRecordingSummariesOutcome.NOTHING_TO_SUMMARIZE,
+      };
     }
   }
 
@@ -88,7 +107,10 @@ export const generateCallRecordingSummariesHandler = async (
       startedAtMs + TIMEOUT_SECONDS * 1000 - CONTINUATION_RESERVE_MS,
   });
 
-  return { outcome: 'processed', ...result };
+  return {
+    outcome: GenerateCallRecordingSummariesOutcome.PROCESSED,
+    ...result,
+  };
 };
 
 export default defineLogicFunction({

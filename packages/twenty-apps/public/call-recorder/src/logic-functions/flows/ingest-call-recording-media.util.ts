@@ -3,6 +3,7 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
 import { CALL_RECORDING_AUDIO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-audio-field-universal-identifier';
 import { CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-video-field-universal-identifier';
+import { CallRecordingMediaIngestionOutcome } from 'src/logic-functions/constants/call-recording-media-ingestion-outcome';
 import { getMaxMediaFileSizeBytes } from 'src/logic-functions/constants/get-max-media-file-size-bytes';
 import {
   AUDIO_FILE_TOO_LARGE_FAILURE_REASON,
@@ -20,13 +21,19 @@ type CallRecordingMediaUpdateFields = Pick<
 >;
 
 type IngestMediaArtifactResult =
-  | { outcome: 'ingested'; files: CallRecordingMediaFile[] }
-  | { outcome: 'too-large' }
-  | { outcome: 'failed' };
+  | {
+      outcome: typeof CallRecordingMediaIngestionOutcome.INGESTED;
+      files: CallRecordingMediaFile[];
+    }
+  | { outcome: typeof CallRecordingMediaIngestionOutcome.TOO_LARGE }
+  | { outcome: typeof CallRecordingMediaIngestionOutcome.FAILED };
 
 type DownloadMediaFileResult =
   | { outcome: 'downloaded'; buffer: Buffer; contentType: string }
-  | { outcome: 'too-large'; sizeBytes: number | undefined };
+  | {
+      outcome: typeof CallRecordingMediaIngestionOutcome.TOO_LARGE;
+      sizeBytes: number | undefined;
+    };
 
 const MEDIA_DOWNLOAD_TIMEOUT_MS = 120_000;
 
@@ -73,11 +80,11 @@ export const ingestCallRecordingMedia = async ({
       maxMediaFileSizeBytes,
     });
 
-    if (video.outcome === 'ingested') {
+    if (video.outcome === CallRecordingMediaIngestionOutcome.INGESTED) {
       updateFields.video = video.files;
     }
 
-    if (video.outcome === 'too-large') {
+    if (video.outcome === CallRecordingMediaIngestionOutcome.TOO_LARGE) {
       tooLargeFailureReasons.push(VIDEO_FILE_TOO_LARGE_FAILURE_REASON);
     }
   }
@@ -93,11 +100,11 @@ export const ingestCallRecordingMedia = async ({
       maxMediaFileSizeBytes,
     });
 
-    if (audio.outcome === 'ingested') {
+    if (audio.outcome === CallRecordingMediaIngestionOutcome.INGESTED) {
       updateFields.audio = audio.files;
     }
 
-    if (audio.outcome === 'too-large') {
+    if (audio.outcome === CallRecordingMediaIngestionOutcome.TOO_LARGE) {
       tooLargeFailureReasons.push(AUDIO_FILE_TOO_LARGE_FAILURE_REASON);
     }
   }
@@ -132,12 +139,14 @@ const ingestMediaArtifact = async ({
       maxMediaFileSizeBytes,
     });
 
-    if (downloadResult.outcome === 'too-large') {
+    if (
+      downloadResult.outcome === CallRecordingMediaIngestionOutcome.TOO_LARGE
+    ) {
       console.warn(
         `[call-recorder] media-ingestion phase=artifact-too-large callRecordingId=${callRecordingId} fileName=${fileName} sizeBytes=${downloadResult.sizeBytes ?? 'unknown'} maxMediaFileSizeBytes=${maxMediaFileSizeBytes}`,
       );
 
-      return { outcome: 'too-large' };
+      return { outcome: CallRecordingMediaIngestionOutcome.TOO_LARGE };
     }
 
     const { buffer, contentType } = downloadResult;
@@ -154,7 +163,7 @@ const ingestMediaArtifact = async ({
     );
 
     return {
-      outcome: 'ingested',
+      outcome: CallRecordingMediaIngestionOutcome.INGESTED,
       files: [{ fileId: uploadedFile.id, label: fileName }],
     };
   } catch (error) {
@@ -162,7 +171,7 @@ const ingestMediaArtifact = async ({
       `[call-recorder] failed to ingest ${fileName} for call recording ${callRecordingId}: ${error instanceof Error ? error.message : String(error)}`,
     );
 
-    return { outcome: 'failed' };
+    return { outcome: CallRecordingMediaIngestionOutcome.FAILED };
   }
 };
 
@@ -200,7 +209,10 @@ const downloadMediaFile = async ({
   ) {
     await response.body?.cancel();
 
-    return { outcome: 'too-large', sizeBytes: contentLengthBytes };
+    return {
+      outcome: CallRecordingMediaIngestionOutcome.TOO_LARGE,
+      sizeBytes: contentLengthBytes,
+    };
   }
 
   if (isNull(response.body)) {
@@ -239,7 +251,10 @@ const readBodyWithinSizeCap = async ({
     if (downloadedBytes > maxMediaFileSizeBytes) {
       await reader.cancel();
 
-      return { outcome: 'too-large', sizeBytes: undefined };
+      return {
+        outcome: CallRecordingMediaIngestionOutcome.TOO_LARGE,
+        sizeBytes: undefined,
+      };
     }
 
     chunks.push(value);

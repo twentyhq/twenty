@@ -1,14 +1,21 @@
 import { isUndefined } from '@sniptt/guards';
 
+import { TranscriptDownloadOutcome } from 'src/logic-functions/constants/transcript-download-outcome';
 import { retrieveRecallTranscript } from 'src/logic-functions/recall-api/retrieve-recall-transcript.util';
 
 const TRANSCRIPT_DOWNLOAD_TIMEOUT_MS = 20_000;
 
 export type DownloadTranscriptResult =
-  | { outcome: 'filled'; content: unknown }
-  | { outcome: 'failed'; subCode: string | null }
-  | { outcome: 'pending' }
-  | { outcome: 'error'; errorMessage: string };
+  | { outcome: typeof TranscriptDownloadOutcome.FILLED; content: unknown }
+  | {
+      outcome: typeof TranscriptDownloadOutcome.FAILED;
+      subCode: string | null;
+    }
+  | { outcome: typeof TranscriptDownloadOutcome.PENDING }
+  | {
+      outcome: typeof TranscriptDownloadOutcome.ERROR;
+      errorMessage: string;
+    };
 
 export const downloadTranscript = async ({
   transcriptId,
@@ -18,7 +25,10 @@ export const downloadTranscript = async ({
   const retrieveResult = await retrieveRecallTranscript({ transcriptId });
 
   if (!retrieveResult.ok) {
-    return { outcome: 'error', errorMessage: retrieveResult.errorMessage };
+    return {
+      outcome: TranscriptDownloadOutcome.ERROR,
+      errorMessage: retrieveResult.errorMessage,
+    };
   }
 
   const { downloadUrl, statusCode, statusSubCode } = retrieveResult.transcript;
@@ -28,10 +38,13 @@ export const downloadTranscript = async ({
   }
 
   if (statusCode === 'error' || statusCode === 'failed') {
-    return { outcome: 'failed', subCode: statusSubCode ?? null };
+    return {
+      outcome: TranscriptDownloadOutcome.FAILED,
+      subCode: statusSubCode ?? null,
+    };
   }
 
-  return { outcome: 'pending' };
+  return { outcome: TranscriptDownloadOutcome.PENDING };
 };
 
 const downloadTranscriptContent = async (
@@ -48,19 +61,22 @@ const downloadTranscriptContent = async (
       );
 
       return {
-        outcome: 'error',
+        outcome: TranscriptDownloadOutcome.ERROR,
         errorMessage: 'transcript download failed',
       };
     }
 
-    return { outcome: 'filled', content: await response.json() };
+    return {
+      outcome: TranscriptDownloadOutcome.FILLED,
+      content: await response.json(),
+    };
   } catch (error) {
     console.warn(
       `[call-recorder] transcript download failed: ${error instanceof Error ? error.message : String(error)}`,
     );
 
     return {
-      outcome: 'error',
+      outcome: TranscriptDownloadOutcome.ERROR,
       errorMessage: 'transcript download failed',
     };
   }
