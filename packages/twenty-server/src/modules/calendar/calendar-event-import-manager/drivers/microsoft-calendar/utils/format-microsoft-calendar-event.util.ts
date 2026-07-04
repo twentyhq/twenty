@@ -3,41 +3,15 @@ import {
   type NullableOption,
   type ResponseType,
 } from '@microsoft/microsoft-graph-types';
-import { convert, type HtmlToTextOptions } from 'html-to-text';
 
 import { sanitizeCalendarEvent } from 'src/modules/calendar/calendar-event-import-manager/drivers/utils/sanitizeCalendarEvent';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 
-const HTML_TO_TEXT_OPTIONS = {
-  wordwrap: false,
-  preserveNewlines: true,
-} satisfies HtmlToTextOptions;
-
 export const formatMicrosoftCalendarEvents = (
   events: Event[],
 ): FetchedCalendarEvent[] => {
   return events.map(formatMicrosoftCalendarEvent);
-};
-
-const normalizeMicrosoftCalendarEventDescription = (text: string): string =>
-  text
-    .replace(/\r\n?/g, '\n')
-    .replace(/\u00a0/g, ' ')
-    .replace(/[^\S\n]+$/gm, '')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
-
-const formatMicrosoftCalendarEventDescription = (event: Event): string => {
-  const content = event.body?.content ?? '';
-
-  if (event.body?.contentType !== 'html') {
-    return content;
-  }
-
-  return normalizeMicrosoftCalendarEventDescription(
-    convert(content, HTML_TO_TEXT_OPTIONS),
-  );
 };
 
 const formatMicrosoftCalendarEvent = (event: Event): FetchedCalendarEvent => {
@@ -66,7 +40,7 @@ const formatMicrosoftCalendarEvent = (event: Event): FetchedCalendarEvent => {
     id: event.id ?? '',
     externalCreatedAt: event.createdDateTime ?? '',
     externalUpdatedAt: event.lastModifiedDateTime ?? '',
-    description: formatMicrosoftCalendarEventDescription(event),
+    description: event.body?.content ?? '',
     location: event.location?.displayName ?? '',
     iCalUid: event.iCalUId ?? '',
     conferenceSolution: event.onlineMeetingProvider ?? '',

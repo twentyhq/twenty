@@ -84,76 +84,6 @@ describe('formatMicrosoftCalendarEvents', () => {
     );
   });
 
-  it('should convert a Microsoft Calendar event HTML body to plain text', () => {
-    const mockMicrosoftEventWithHtmlBody: Event = {
-      ...mockMicrosoftEvent,
-      body: {
-        content: '<html><body><div>Hello<br>World</div></body></html>',
-        contentType: 'html',
-      },
-    };
-
-    const result = formatMicrosoftCalendarEvents([
-      mockMicrosoftEventWithHtmlBody,
-    ]);
-
-    expect(result[0].description).toBe('Hello\nWorld');
-  });
-
-  it('should decode HTML entities and replace non-breaking spaces in Microsoft Calendar event bodies', () => {
-    const mockMicrosoftEventWithHtmlEntities: Event = {
-      ...mockMicrosoftEvent,
-      body: {
-        content:
-          '<html><body><p>Tom &amp; Jerry&nbsp;Meeting</p></body></html>',
-        contentType: 'html',
-      },
-    };
-
-    const result = formatMicrosoftCalendarEvents([
-      mockMicrosoftEventWithHtmlEntities,
-    ]);
-
-    expect(result[0].description).toBe('Tom & Jerry Meeting');
-  });
-
-  it('should return an empty description when Microsoft Calendar event body is empty', () => {
-    const mockMicrosoftEventWithoutBody: Event = {
-      ...mockMicrosoftEvent,
-      body: undefined,
-    };
-
-    const mockMicrosoftEventWithNullBody: Event = {
-      ...mockMicrosoftEvent,
-      body: null,
-    };
-
-    const result = formatMicrosoftCalendarEvents([
-      mockMicrosoftEventWithoutBody,
-      mockMicrosoftEventWithNullBody,
-    ]);
-
-    expect(result[0].description).toBe('');
-    expect(result[1].description).toBe('');
-  });
-
-  it('should remove script and style content from Microsoft Calendar event HTML bodies', () => {
-    const mockMicrosoftEventWithScriptAndStyle: Event = {
-      ...mockMicrosoftEvent,
-      body: {
-        content:
-          '<html><head><style>p { color: red; }</style><script>alert("x")</script></head><body><p>Visible</p></body></html>',
-        contentType: 'html',
-      },
-    };
-
-    const result = formatMicrosoftCalendarEvents([
-      mockMicrosoftEventWithScriptAndStyle,
-    ]);
-
-    expect(result[0].description).toBe('Visible');
-  });
-
   it('should sanitize a Microsoft Calendar event with improper exit char 0x00', () => {
     const mockMicrosoftEventWithImproperData: Event = {
       ...mockMicrosoftEvent,
@@ -172,21 +102,5 @@ describe('formatMicrosoftCalendarEvents', () => {
 
     expect(result[0].iCalUid).toBe('eventStrange@microsoft.com');
     expect(result[1].iCalUid).toBe('>\u0015-;_�^�W&�p\u001f�');
-  });
-
-  it('should sanitize a Microsoft Calendar event description after HTML conversion', () => {
-    const mockMicrosoftEventWithNullByteDescription: Event = {
-      ...mockMicrosoftEvent,
-      body: {
-        content: '<html><body><div>Hello\u0000<br>World</div></body></html>',
-        contentType: 'html',
-      },
-    };
-
-    const result = formatMicrosoftCalendarEvents([
-      mockMicrosoftEventWithNullByteDescription,
-    ]);
-
-    expect(result[0].description).toBe('Hello\nWorld');
   });
 });
