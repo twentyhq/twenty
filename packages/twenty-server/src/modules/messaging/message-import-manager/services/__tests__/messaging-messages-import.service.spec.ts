@@ -32,6 +32,7 @@ describe('MessagingMessagesImportService', () => {
   let emailAliasManagerService: EmailAliasManagerService;
   let messagingGetMessagesService: MessagingGetMessagesService;
   let saveMessagesService: MessagingSaveMessagesAndEnqueueContactCreationService;
+  let userWorkspaceRepository: { findOne: jest.Mock };
 
   const workspaceId = 'workspace-id';
   let mockMessageChannel: Pick<
@@ -64,6 +65,10 @@ describe('MessagingMessagesImportService', () => {
       handle: 'test@gmail.com',
       messageFolders: [],
       messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+    };
+
+    userWorkspaceRepository = {
+      findOne: jest.fn().mockResolvedValue({ userId: 'user-id' }),
     };
 
     providersBase = [
@@ -164,9 +169,7 @@ describe('MessagingMessagesImportService', () => {
       },
       {
         provide: getRepositoryToken(UserWorkspaceEntity),
-        useValue: {
-          findOne: jest.fn().mockResolvedValue({ userId: 'user-id' }),
-        },
+        useValue: userWorkspaceRepository,
       },
       {
         provide: getRepositoryToken(WorkspaceEntity),
@@ -259,6 +262,23 @@ describe('MessagingMessagesImportService', () => {
     expect(
       messageChannelSyncStatusService.markAsMessagesImportPending,
     ).toHaveBeenCalledTimes(0);
+  });
+
+  it('should retry userWorkspace lookup once when the first query fails', async () => {
+    userWorkspaceRepository.findOne
+      .mockRejectedValueOnce(new Error('Connection terminated unexpectedly'))
+      .mockResolvedValueOnce({ userId: 'user-id' });
+
+    await service.processMessageBatchImport(
+      mockMessageChannel as MessageChannelEntity,
+      mockConnectedAccount,
+      workspaceId,
+    );
+
+    expect(userWorkspaceRepository.findOne).toHaveBeenCalledTimes(2);
+    expect(
+      saveMessagesService.saveMessagesAndEnqueueContactCreation,
+    ).toHaveBeenCalled();
   });
 
   it('should process message batch import of more than MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE successfully', async () => {

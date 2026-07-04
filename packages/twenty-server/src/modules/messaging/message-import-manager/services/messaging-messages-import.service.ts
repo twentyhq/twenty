@@ -148,11 +148,10 @@ export class MessagingMessagesImportService {
               .filter(isDefined);
           }
 
-          const userWorkspace = await this.userWorkspaceRepository.findOne({
-            where: {
-              id: connectedAccount.userWorkspaceId,
-            },
-          });
+          const userWorkspace =
+            await this.findUserWorkspaceByIdWithRetry(
+              connectedAccount.userWorkspaceId,
+            );
 
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -263,6 +262,22 @@ export class MessagingMessagesImportService {
       authContext,
       { lite: true },
     );
+  }
+
+  private async findUserWorkspaceByIdWithRetry(userWorkspaceId: string) {
+    try {
+      return await this.userWorkspaceRepository.findOne({
+        where: {
+          id: userWorkspaceId,
+        },
+      });
+    } catch {
+      return await this.userWorkspaceRepository.findOne({
+        where: {
+          id: userWorkspaceId,
+        },
+      });
+    }
   }
 
   private async trackMessageImportCompleted(

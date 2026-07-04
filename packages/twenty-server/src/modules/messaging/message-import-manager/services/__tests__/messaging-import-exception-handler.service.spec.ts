@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { MessageChannelSyncStatus } from 'twenty-shared/types';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
@@ -177,5 +178,28 @@ describe('MessageImportExceptionHandlerService — refresh code dispatch', () =>
       MessageChannelSyncStatus.FAILED_UNKNOWN,
     );
     expect(messagingMonitoringService.track).not.toHaveBeenCalled();
+  });
+
+  it('should throttle on transient postgres connection errors', async () => {
+    await service.handleDriverException(
+      {
+        name: 'QueryFailedError',
+        message: 'Connection dropped',
+        code: POSTGRESQL_ERROR_CODES.CONNECTION_FAILURE,
+      } as Error & { code: string },
+      MessageImportSyncStep.MESSAGES_IMPORT_ONGOING,
+      messageChannel,
+      workspaceId,
+    );
+
+    expect(messageChannelRepository.increment).toHaveBeenCalledWith(
+      { id: messageChannel.id, workspaceId },
+      'throttleFailureCount',
+      1,
+    );
+    expect(
+      messageChannelSyncStatusService.markAsMessagesImportPending,
+    ).toHaveBeenCalledWith([messageChannel.id], workspaceId, true);
+    expect(exceptionHandlerService.captureExceptions).not.toHaveBeenCalled();
   });
 });

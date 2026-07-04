@@ -22,6 +22,7 @@ import {
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MessageNetworkExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-network.exception';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
+import { isTransientPostgresConnectionError } from 'src/modules/messaging/message-import-manager/utils/is-transient-postgres-connection-error.util';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
 export enum MessageImportSyncStep {
@@ -60,6 +61,17 @@ export class MessageImportExceptionHandlerService {
         workspaceId,
         syncStep,
       };
+    }
+
+    if (isTransientPostgresConnectionError(exception)) {
+      await this.handleTemporaryException(
+        syncStep,
+        messageChannel,
+        workspaceId,
+        exception,
+      );
+
+      return;
     }
 
     if ('code' in exception) {
