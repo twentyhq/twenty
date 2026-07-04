@@ -16,10 +16,9 @@ const StyledCardContent = styled(CardContent)`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[4]};
-  min-height: ${themeCssVariables.spacing[25]};
   min-width: 0;
-  padding: ${themeCssVariables.spacing[3]};
-  padding-left: ${themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[3]}
+    ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
 `;
 
 const StyledLogo = styled.div`
@@ -33,6 +32,7 @@ const StyledLogo = styled.div`
 `;
 
 const StyledBody = styled.div`
+  align-self: stretch;
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
