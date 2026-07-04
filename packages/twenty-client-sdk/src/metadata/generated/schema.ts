@@ -3043,7 +3043,6 @@ export interface Mutation {
     checkPublicDomainValidRecords?: DomainValidRecords
     createOneAppToken: AppToken
     createDevelopmentApplication: DevelopmentApplication
-    runWorkspaceMigration: Scalars['Boolean']
     syncApplication: WorkspaceMigration
     uploadApplicationFile: File
     upgradeApplication: Scalars['Boolean']
@@ -3055,8 +3054,6 @@ export interface Mutation {
 export type FileFolder = 'CorePicture' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'AppTarball' | 'GeneratedSdkClient' | 'Dpa'
 
 export type AnalyticsType = 'PAGEVIEW' | 'TRACK'
-
-export type WorkspaceMigrationActionType = 'delete' | 'create' | 'update'
 
 export interface Subscription {
     onEventSubscription?: EventSubscription
@@ -6291,7 +6288,6 @@ export interface MutationGenqlSelection{
     checkPublicDomainValidRecords?: (DomainValidRecordsGenqlSelection & { __args: {domain: Scalars['String']} })
     createOneAppToken?: (AppTokenGenqlSelection & { __args: {input: CreateOneAppTokenInput} })
     createDevelopmentApplication?: (DevelopmentApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], name: Scalars['String']} })
-    runWorkspaceMigration?: { __args: {workspaceMigration: WorkspaceMigrationInput} }
     syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {manifest: Scalars['JSON'], dryRun?: (Scalars['Boolean'] | null)} })
     uploadApplicationFile?: (FileGenqlSelection & { __args: {file: Scalars['Upload'], applicationUniversalIdentifier: Scalars['String'], fileFolder: FileFolder, filePath: Scalars['String']} })
     upgradeApplication?: { __args: {appRegistrationId: Scalars['String'], targetVersion: Scalars['String']} }
@@ -6684,10 +6680,6 @@ export interface CreateOneAppTokenInput {
 appToken: CreateAppTokenInput}
 
 export interface CreateAppTokenInput {expiresAt: Scalars['DateTime']}
-
-export interface WorkspaceMigrationInput {actions: WorkspaceMigrationDeleteActionInput[]}
-
-export interface WorkspaceMigrationDeleteActionInput {type: WorkspaceMigrationActionType,metadataName: AllMetadataName,universalIdentifier: Scalars['String']}
 
 export interface SubscriptionGenqlSelection{
     onEventSubscription?: (EventSubscriptionGenqlSelection & { __args: {eventStreamId: Scalars['String']} })
@@ -9467,10 +9459,4 @@ export const enumFileFolder = {
 export const enumAnalyticsType = {
    PAGEVIEW: 'PAGEVIEW' as const,
    TRACK: 'TRACK' as const
-}
-
-export const enumWorkspaceMigrationActionType = {
-   delete: 'delete' as const,
-   create: 'create' as const,
-   update: 'update' as const
 }

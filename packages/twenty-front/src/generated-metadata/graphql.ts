@@ -2657,7 +2657,6 @@ export type Mutation = {
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
   runAgent: RunAgentResult;
   runEvaluationInput: AgentTurn;
-  runWorkspaceMigration: Scalars['Boolean']['output'];
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendChatMessage: SendChatMessageResult;
   sendEmail: SendEmailOutput;
@@ -3422,11 +3421,6 @@ export type MutationRunAgentArgs = {
 export type MutationRunEvaluationInputArgs = {
   agentId: Scalars['UUID']['input'];
   input: Scalars['String']['input'];
-};
-
-
-export type MutationRunWorkspaceMigrationArgs = {
-  workspaceMigration: WorkspaceMigrationInput;
 };
 
 
@@ -6399,22 +6393,6 @@ export type WorkspaceMigration = {
   __typename?: 'WorkspaceMigration';
   actions: Scalars['JSON']['output'];
   applicationUniversalIdentifier: Scalars['String']['output'];
-};
-
-export enum WorkspaceMigrationActionType {
-  create = 'create',
-  delete = 'delete',
-  update = 'update'
-}
-
-export type WorkspaceMigrationDeleteActionInput = {
-  metadataName: AllMetadataName;
-  type: WorkspaceMigrationActionType;
-  universalIdentifier: Scalars['String']['input'];
-};
-
-export type WorkspaceMigrationInput = {
-  actions: Array<WorkspaceMigrationDeleteActionInput>;
 };
 
 export type WorkspaceNameAndId = {

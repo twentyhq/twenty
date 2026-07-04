@@ -21,7 +21,6 @@ import { UploadApplicationFileInput } from 'src/engine/core-modules/application/
 import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
-import { RunWorkspaceMigrationInput } from 'src/engine/core-modules/application/application-manifest/dtos/run-workspace-migration.input';
 import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
@@ -44,9 +43,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
-import { enrichCreateWorkspaceMigrationActionsWithIds } from 'src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util';
-import { AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
-import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const APP_DEV_RATE_LIMIT_MAX = 30;
@@ -73,7 +69,6 @@ export class ApplicationDevelopmentResolver {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly throttlerService: ThrottlerService,
     private readonly cacheLockService: CacheLockService,
-    private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
   ) {}
 
   @Mutation(() => DevelopmentApplicationDTO)
@@ -111,40 +106,6 @@ export class ApplicationDevelopmentResolver {
       id: application.id,
       universalIdentifier: application.universalIdentifier,
     };
-  }
-
-  @Mutation(() => Boolean)
-  async runWorkspaceMigration(
-    @Args() { workspaceMigration: { actions } }: RunWorkspaceMigrationInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
-
-    await this.throttlePerApplication(
-      workspaceCustomFlatApplication.universalIdentifier,
-      workspaceId,
-    );
-
-    const workspaceMigration = enrichCreateWorkspaceMigrationActionsWithIds({
-      workspaceMigration: {
-        actions: actions as AllUniversalWorkspaceMigrationAction[],
-        applicationUniversalIdentifier:
-          workspaceCustomFlatApplication.universalIdentifier,
-      },
-      idByUniversalIdentifierByMetadataName: {},
-    });
-
-    await this.workspaceMigrationRunnerService.run({
-      workspaceMigration,
-      workspaceId,
-    });
-
-    return true;
   }
 
   @Mutation(() => WorkspaceMigrationDTO)

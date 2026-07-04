@@ -82,8 +82,7 @@ export default {
         354,
         361,
         362,
-        488,
-        499
+        488
     ],
     "types": {
         "BillingProductDTO": {
@@ -9235,15 +9234,6 @@ export default {
                     ]
                 }
             ],
-            "runWorkspaceMigration": [
-                6,
-                {
-                    "workspaceMigration": [
-                        497,
-                        "WorkspaceMigrationInput!"
-                    ]
-                }
-            ],
             "syncApplication": [
                 269,
                 {
@@ -11940,29 +11930,6 @@ export default {
                 1
             ]
         },
-        "WorkspaceMigrationInput": {
-            "actions": [
-                498
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "WorkspaceMigrationDeleteActionInput": {
-            "type": [
-                499
-            ],
-            "metadataName": [
-                336
-            ],
-            "universalIdentifier": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "WorkspaceMigrationActionType": {},
         "Subscription": {
             "onEventSubscription": [
                 166,
@@ -11977,7 +11944,7 @@ export default {
                 238,
                 {
                     "input": [
-                        501,
+                        498,
                         "LogicFunctionLogsInput!"
                     ]
                 }

@@ -3510,7 +3510,6 @@ type Mutation {
   checkPublicDomainValidRecords(domain: String!): DomainValidRecords
   createOneAppToken(input: CreateOneAppTokenInput!): AppToken!
   createDevelopmentApplication(universalIdentifier: String!, name: String!): DevelopmentApplication!
-  runWorkspaceMigration(workspaceMigration: WorkspaceMigrationInput!): Boolean!
   syncApplication(manifest: JSON!, dryRun: Boolean): WorkspaceMigration!
   uploadApplicationFile(file: Upload!, applicationUniversalIdentifier: String!, fileFolder: FileFolder!, filePath: String!): File!
   upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
@@ -4684,22 +4683,6 @@ input CreateOneAppTokenInput {
 
 input CreateAppTokenInput {
   expiresAt: DateTime!
-}
-
-input WorkspaceMigrationInput {
-  actions: [WorkspaceMigrationDeleteActionInput!]!
-}
-
-input WorkspaceMigrationDeleteActionInput {
-  type: WorkspaceMigrationActionType!
-  metadataName: AllMetadataName!
-  universalIdentifier: String!
-}
-
-enum WorkspaceMigrationActionType {
-  delete
-  create
-  update
 }
 
 type Subscription {
