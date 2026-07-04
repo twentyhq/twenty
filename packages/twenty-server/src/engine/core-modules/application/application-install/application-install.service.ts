@@ -17,7 +17,6 @@ import {
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { shouldRefreshApplicationRegistrationOnInstall } from 'src/engine/core-modules/application/application-install/utils/should-refresh-application-registration-on-install.util';
 import { buildRegistryCdnUrl } from 'src/engine/core-modules/application/application-marketplace/utils/build-registry-cdn-url.util';
 import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -317,35 +316,16 @@ export class ApplicationInstallService {
   }): Promise<void> {
     const { appRegistration, manifest, installedVersion } = params;
 
-    await this.cacheLockService.withLock(async () => {
-      const currentRegistration =
-        await this.appRegistrationRepository.findOneOrFail({
-          where: { id: appRegistration.id },
-        });
-
-      if (
-        !shouldRefreshApplicationRegistrationOnInstall({
-          installedVersion,
-          latestAvailableVersion: currentRegistration.latestAvailableVersion,
-        })
-      ) {
-        this.logger.log(
-          `Skipping registration refresh for ${appRegistration.universalIdentifier}: installed version ${installedVersion} is older than latest available version ${currentRegistration.latestAvailableVersion}`,
-        );
-
-        return;
-      }
-
-      await this.applicationRegistrationService.updateFromManifest({
-        applicationRegistrationId: appRegistration.id,
-        manifest: this.resolveRegistrationManifestAssetUrls({
-          appRegistration,
-          manifest,
-          installedVersion,
-        }),
-        latestAvailableVersion: installedVersion,
-      });
-    }, `app-registration-refresh:${appRegistration.id}`);
+    await this.applicationRegistrationService.updateFromManifest({
+      applicationRegistrationId: appRegistration.id,
+      manifest: this.resolveRegistrationManifestAssetUrls({
+        appRegistration,
+        manifest,
+        installedVersion,
+      }),
+      latestAvailableVersion: installedVersion,
+      preventVersionDowngrade: true,
+    });
   }
 
   private resolveRegistrationManifestAssetUrls(params: {
