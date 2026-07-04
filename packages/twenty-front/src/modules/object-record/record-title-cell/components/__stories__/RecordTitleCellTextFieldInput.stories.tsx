@@ -6,10 +6,9 @@ import { useTextField } from '@/object-record/record-field/ui/meta-types/hooks/u
 import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordTitleCellTextFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellTextFieldInput';
+import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import {
   type Decorator,
   type Meta,
@@ -19,15 +18,16 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const recordId = 'record-id';
+const fieldName = 'name';
 
 const instanceId = getRecordFieldInputInstanceId({
   recordId,
-  fieldName: 'name',
-  prefix: RecordTitleCellContainerType.ShowPage,
+  fieldName,
+  prefix: RecordTitleCellContainerType.PageHeader,
 });
 
-// Sets the persisted field value (the record's existing name) without touching
-// the draft — mirrors a loaded record whose title cell has not been edited.
+// Sets the persisted field value (the record's existing name) in the record store,
+// mirroring a loaded record before its title cell is opened for editing.
 const FieldValueSetterEffect = ({ value }: { value: string }) => {
   const { setFieldValue } = useTextField();
 
@@ -50,22 +50,18 @@ type RecordTitleCellTextFieldInputWithContextProps = {
 const RecordTitleCellTextFieldInputWithContext = ({
   existingName,
 }: RecordTitleCellTextFieldInputWithContextProps) => {
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { openNewRecordTitleCell } = useOpenNewRecordTitleCell();
   const [isReady, setIsReady] = useState(false);
 
+  // Open the title cell the same way the create flow does; this must seed the
+  // draft from the field value set by the child FieldValueSetterEffect above.
   useEffect(() => {
     if (!isReady) {
-      pushFocusItemToFocusStack({
-        focusId: instanceId,
-        component: {
-          type: FocusComponentType.OPENED_FIELD_INPUT,
-          instanceId,
-        },
-      });
+      openNewRecordTitleCell({ recordId, fieldName });
 
       setIsReady(true);
     }
-  }, [isReady, pushFocusItemToFocusStack]);
+  }, [isReady, openNewRecordTitleCell]);
 
   return (
     <RecordFieldComponentInstanceContext.Provider value={{ instanceId }}>
@@ -78,7 +74,7 @@ const RecordTitleCellTextFieldInputWithContext = ({
             type: FieldMetadataType.TEXT,
             iconName: 'IconText',
             metadata: {
-              fieldName: 'name',
+              fieldName,
               objectMetadataNameSingular: 'person',
             },
           },
@@ -120,13 +116,17 @@ export default meta;
 
 type Story = StoryObj<typeof RecordTitleCellTextFieldInputWithContext>;
 
-// An untouched title cell (draft never set) must not persist on click outside,
-// so opening another field can't blank the record's existing name.
-export const SkipsPersistWhenUntouched: Story = {
+// An untouched title cell has its draft seeded from the field value, so clicking
+// outside re-persists the existing name instead of blanking it.
+export const PreservesExistingNameWhenUntouched: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await canvas.findByTestId('is-ready-marker');
+
+    await expect(
+      await canvas.findByDisplayValue('Existing name'),
+    ).toBeVisible();
 
     await userEvent.click(
       canvas.getByTestId('data-field-input-click-outside-div'),
@@ -134,20 +134,22 @@ export const SkipsPersistWhenUntouched: Story = {
 
     await waitFor(() => {
       expect(handleClickoutsideMocked).toHaveBeenCalledWith(
-        expect.objectContaining({ skipPersist: true }),
+        expect.objectContaining({ newValue: 'Existing name' }),
       );
     });
   },
 };
 
-// Once the user edits the title, click outside persists the new value.
-export const PersistsAfterEdit: Story = {
+// Editing the title persists the new value.
+export const PersistsEditedName: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await canvas.findByTestId('is-ready-marker');
 
-    await userEvent.type(canvas.getByPlaceholderText('Name'), 'New name');
+    const input = await canvas.findByDisplayValue('Existing name');
+    await userEvent.clear(input);
+    await userEvent.type(input, 'New name');
 
     await userEvent.click(
       canvas.getByTestId('data-field-input-click-outside-div'),
@@ -155,7 +157,29 @@ export const PersistsAfterEdit: Story = {
 
     await waitFor(() => {
       expect(handleClickoutsideMocked).toHaveBeenCalledWith(
-        expect.objectContaining({ skipPersist: false, newValue: 'New name' }),
+        expect.objectContaining({ newValue: 'New name' }),
+      );
+    });
+  },
+};
+
+// Clearing the title on purpose still persists an empty value — the seeding fix
+// distinguishes "untouched" from "intentionally cleared".
+export const AllowsClearingTitle: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByTestId('is-ready-marker');
+
+    await userEvent.clear(await canvas.findByDisplayValue('Existing name'));
+
+    await userEvent.click(
+      canvas.getByTestId('data-field-input-click-outside-div'),
+    );
+
+    await waitFor(() => {
+      expect(handleClickoutsideMocked).toHaveBeenCalledWith(
+        expect.objectContaining({ newValue: '' }),
       );
     });
   },

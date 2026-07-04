@@ -6,7 +6,6 @@ import { isDoubleTextFieldEmpty } from '@/object-record/record-field/ui/meta-typ
 import { type FieldDoubleText } from '@/object-record/record-field/ui/types/FieldDoubleText';
 
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { RecordTitleDoubleTextInput } from './RecordTitleDoubleTextInput';
 
 type RecordTitleFullNameFieldInputProps = {
@@ -21,9 +20,6 @@ export const RecordTitleFullNameFieldInput = ({
   const { onEnter, onEscape, onClickOutside, onTab, onShiftTab } = useContext(
     FieldInputEventContext,
   );
-
-  // An untouched title has an undefined draft; persisting it would blank the existing label identifier (e.g. on click-outside), so skip persist.
-  const isTitleUntouched = !isDefined(draftValue);
 
   const convertToFullName = (newDoubleText: FieldDoubleText) => {
     return {
@@ -41,10 +37,7 @@ export const RecordTitleFullNameFieldInput = ({
   };
 
   const handleEnter = (newDoubleText: FieldDoubleText) => {
-    onEnter?.({
-      newValue: convertToFullName(newDoubleText),
-      skipPersist: isTitleUntouched,
-    });
+    onEnter?.({ newValue: convertToFullName(newDoubleText) });
   };
 
   const handleEscape = (newDoubleText: FieldDoubleText) => {
@@ -55,25 +48,15 @@ export const RecordTitleFullNameFieldInput = ({
     event: MouseEvent | TouchEvent,
     newDoubleText: FieldDoubleText,
   ) => {
-    onClickOutside?.({
-      newValue: convertToFullName(newDoubleText),
-      event,
-      skipPersist: isTitleUntouched,
-    });
+    onClickOutside?.({ newValue: convertToFullName(newDoubleText), event });
   };
 
   const handleTab = (newDoubleText: FieldDoubleText) => {
-    onTab?.({
-      newValue: convertToFullName(newDoubleText),
-      skipPersist: isTitleUntouched,
-    });
+    onTab?.({ newValue: convertToFullName(newDoubleText) });
   };
 
   const handleShiftTab = (newDoubleText: FieldDoubleText) => {
-    onShiftTab?.({
-      newValue: convertToFullName(newDoubleText),
-      skipPersist: isTitleUntouched,
-    });
+    onShiftTab?.({ newValue: convertToFullName(newDoubleText) });
   };
 
   const handleChange = (newDoubleText: FieldDoubleText) => {

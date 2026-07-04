@@ -28,31 +28,24 @@ export const RecordTitleCellTextFieldInput = ({
     FieldInputEventContext,
   );
 
-  // An untouched title has an undefined draft; persisting it would blank the existing label identifier (e.g. on click-outside), so skip persist.
-  const isTitleUntouched = !isDefined(draftValue);
-
   useRegisterInputEvents<string>({
     focusId: instanceId,
     inputRef: wrapperRef,
     inputValue: draftValue ?? '',
     onEnter: (inputValue) => {
-      onEnter?.({ newValue: inputValue, skipPersist: isTitleUntouched });
+      onEnter?.({ newValue: inputValue });
     },
     onEscape: (inputValue) => {
       onEscape?.({ newValue: inputValue });
     },
     onClickOutside: (event, inputValue) => {
-      onClickOutside?.({
-        newValue: inputValue,
-        event,
-        skipPersist: isTitleUntouched,
-      });
+      onClickOutside?.({ newValue: inputValue, event });
     },
     onTab: (inputValue) => {
-      onTab?.({ newValue: inputValue, skipPersist: isTitleUntouched });
+      onTab?.({ newValue: inputValue });
     },
     onShiftTab: (inputValue) => {
-      onShiftTab?.({ newValue: inputValue, skipPersist: isTitleUntouched });
+      onShiftTab?.({ newValue: inputValue });
     },
   });
 
