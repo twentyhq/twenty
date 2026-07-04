@@ -39,9 +39,6 @@ export const useOpenNewRecordTitleCell = () => {
         true,
       );
 
-      // Seed the draft from the current field value so an untouched title cell
-      // does not persist an empty value over the existing label identifier on blur.
-      // Label identifiers are TEXT or FULL_NAME, which map 1:1 to their draft value.
       const recordFieldValue = store.get(
         recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
       );
