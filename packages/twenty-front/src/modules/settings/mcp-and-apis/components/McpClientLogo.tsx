@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 
-import { IconModelClaude, IconProviderOpenai } from 'twenty-ui/icon';
-import { useTheme, useThemeColorScheme } from 'twenty-ui/theme-constants';
+import { useThemeColorScheme } from 'twenty-ui/theme-constants';
 
 const StyledLogoImage = styled.img<{ isInverted: boolean }>`
   display: block;
@@ -29,16 +28,4 @@ export const McpClientLogo = ({
       isInverted={invertInDarkMode && colorScheme === 'dark'}
     />
   );
-};
-
-export const McpClaudeLogo = () => {
-  const theme = useTheme();
-
-  return <IconModelClaude size={theme.icon.size.xl} />;
-};
-
-export const McpOpenAiLogo = () => {
-  const theme = useTheme();
-
-  return <IconProviderOpenai size={theme.icon.size.xl} />;
 };

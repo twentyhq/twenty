@@ -303,7 +303,7 @@ export const SettingsBillingCreditsSection = ({
           <Button
             Icon={IconChartBar}
             title={t`View usage`}
-            variant="primary"
+            variant="secondary"
             size="small"
           />
         </UndecoratedLink>
