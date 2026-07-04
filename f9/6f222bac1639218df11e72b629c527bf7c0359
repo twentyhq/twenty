@@ -1,0 +1,38 @@
+packages/twenty-server/test/integration/graphql/suites/workflow/utils/workflow-run-test.util.ts
+  s_8a5a157e980979::t_a97cbd117e8368 120-126,136-138,147-157
+  s_8a5a157e980979::t_b5910ad229f3f8 158-160
+  s_8a5a157e980979::t_aaae4251397672 161-164
+packages/twenty-server/test/integration/graphql/suites/workflow/quick-lead-workflow.integration-spec.ts
+  s_8a5a157e980979::t_07cf2c11cbb4b0 130-133
+  s_8a5a157e980979::t_86923ac242db2c 287-289
+  s_8a5a157e980979::t_f1302c71807016 6-7
+  s_8a5a157e980979::t_cc45b7e7d79fa9 246-249
+packages/twenty-server/test/integration/graphql/suites/search/search-resolver.integration-spec.ts
+  s_8a5a157e980979::t_deb696e1e6f2f6 196-198
+  s_8a5a157e980979::t_b76b4f98baba77 29
+packages/twenty-server/test/integration/graphql/suites/auth/jwt-key-rotation/rotate-signing-keys-cron-job.integration-spec.ts
+  s_8a5a157e980979::t_08b4644a4fd6c6 61
+  s_8a5a157e980979::t_54a06f810f715f 17,20-21
+packages/twenty-server/test/integration/utils/wait-for-queue-quiescence.util.ts
+  s_8a5a157e980979::t_15ee452a641f31 15
+  s_8a5a157e980979::t_8f571ec24afb39 8-9
+  s_8a5a157e980979::t_0542e87b4f57e1 55,57-58,63-66,68,72-83,85,87
+packages/twenty-server/test/integration/utils/setup-queue-quiescence.ts
+  s_8a5a157e980979::t_dbf731abfaf0c3 6-7,10,15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f96f222bac1639218df11e72b629c527bf7c0359",
+  "prompts": {},
+  "sessions": {
+    "s_8a5a157e980979": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8d765ae-92f9-4877-8c11-5e1240cfee8f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
