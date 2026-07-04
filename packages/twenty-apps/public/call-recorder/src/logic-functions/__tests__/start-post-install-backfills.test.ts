@@ -73,33 +73,57 @@ describe('start-post-install-backfills', () => {
     expect(requestCallRecordingSummariesBackfillMock).toHaveBeenCalledTimes(1);
   });
 
-  it('reports failed kickoff requests per backfill', async () => {
+  it('throws when both upgrade kickoff requests fail', async () => {
     requestUpcomingCalendarEventsReconciliationMock.mockResolvedValue(false);
     requestCallRecordingSummariesBackfillMock.mockResolvedValue(false);
 
-    const result = await startPostInstallBackfillsHandler({
-      previousVersion: '1.0.6',
-      newVersion: '1.0.7',
-    });
-
-    expect(result).toEqual({
-      calendarEventSweepOutcome: 'sweep-request-failed',
-      summaryBackfillOutcome: 'backfill-request-failed',
-    });
+    await expect(
+      startPostInstallBackfillsHandler({
+        previousVersion: '1.0.6',
+        newVersion: '1.0.7',
+      }),
+    ).rejects.toThrow(
+      'Failed to start post-install backfills: upcoming calendar event sweep, call recording summary backfill',
+    );
   });
 
-  it('still requests the summary backfill when the sweep kickoff fails', async () => {
+  it('still requests the summary backfill before throwing when the sweep kickoff fails', async () => {
     requestUpcomingCalendarEventsReconciliationMock.mockResolvedValue(false);
 
-    const result = await startPostInstallBackfillsHandler({
-      previousVersion: '1.0.6',
-      newVersion: '1.0.7',
-    });
-
-    expect(result).toEqual({
-      calendarEventSweepOutcome: 'sweep-request-failed',
-      summaryBackfillOutcome: 'backfill-requested',
-    });
+    await expect(
+      startPostInstallBackfillsHandler({
+        previousVersion: '1.0.6',
+        newVersion: '1.0.7',
+      }),
+    ).rejects.toThrow(
+      'Failed to start post-install backfills: upcoming calendar event sweep',
+    );
     expect(requestCallRecordingSummariesBackfillMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('throws when the summary backfill kickoff fails', async () => {
+    requestCallRecordingSummariesBackfillMock.mockResolvedValue(false);
+
+    await expect(
+      startPostInstallBackfillsHandler({
+        previousVersion: '1.0.6',
+        newVersion: '1.0.7',
+      }),
+    ).rejects.toThrow(
+      'Failed to start post-install backfills: call recording summary backfill',
+    );
+  });
+
+  it('throws when the fresh-install calendar sweep kickoff fails', async () => {
+    requestUpcomingCalendarEventsReconciliationMock.mockResolvedValue(false);
+
+    await expect(
+      startPostInstallBackfillsHandler({
+        newVersion: '1.0.7',
+      }),
+    ).rejects.toThrow(
+      'Failed to start post-install backfills: upcoming calendar event sweep',
+    );
+    expect(requestCallRecordingSummariesBackfillMock).not.toHaveBeenCalled();
   });
 });

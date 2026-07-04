@@ -28,6 +28,21 @@ export const startPostInstallBackfillsHandler = async ({
       ? 'backfill-requested'
       : 'backfill-request-failed';
 
+  const failedKickoffs = [
+    ...(calendarEventSweepRequested ? [] : ['upcoming calendar event sweep']),
+    ...(summaryBackfillOutcome === 'backfill-request-failed'
+      ? ['call recording summary backfill']
+      : []),
+  ];
+
+  if (failedKickoffs.length > 0) {
+    throw new Error(
+      `[call-recorder] Failed to start post-install backfills: ${failedKickoffs.join(
+        ', ',
+      )}`,
+    );
+  }
+
   return {
     calendarEventSweepOutcome: calendarEventSweepRequested
       ? 'sweep-requested'
