@@ -1,7 +1,3 @@
-// Fails a PR when a bot is detected in its commits, description, comments or reviews.
-// Usage: GITHUB_TOKEN=xxx GITHUB_REPOSITORY=owner/repo PR_NUMBER=123 npx nx run twenty-server:ts-node-no-deps-transpile-only -- ./scripts/check-blocked-contributors.ts
-
-// Bot identities — matched against commit author/committer and message.
 const IDENTITY_PATTERNS = [
   /noreply@anthropic\.com/i,
   /@anthropic\.com/i,
@@ -9,10 +5,8 @@ const IDENTITY_PATTERNS = [
   /copilot-swe-agent\[bot\]/i,
 ];
 
-// Auto-generated attribution footers — matched everywhere; tight enough not to flag humans discussing these tools.
 const SIGNATURE_PATTERNS = [
   /Generated with \[?Claude Code\]?/i,
-  // Require the Anthropic email — a bare "Co-Authored-By: Claude" would flag humans named Claude.
   /Co-Authored-By:[^\n]*<[^>]*@anthropic\.com>/i,
   /Generated with \[?Cursor( Agent)?\]?/i,
   /Co-Authored-By:[^\n]*cursoragent/i,

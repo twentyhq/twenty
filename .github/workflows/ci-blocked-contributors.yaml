@@ -19,7 +19,6 @@ jobs:
   check-blocked-contributors:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # issue_comment fires for issues too; only run it when the comment is on a PR.
     if: ${{ github.event_name != 'issue_comment' || github.event.issue.pull_request }}
     steps:
       - name: Checkout
