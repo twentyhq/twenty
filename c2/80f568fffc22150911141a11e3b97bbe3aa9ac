@@ -1,0 +1,207 @@
+packages/twenty-shared/src/utils/filter/utils/getFilterTypeFromFieldType.ts
+  s_c9896ad68d525f::t_f4748b41d989b8 34-35
+packages/twenty-front/src/modules/object-record/advanced-filter/hooks/useApplyAdvancedFilterSourceField.ts
+  s_c9896ad68d525f::t_0d9f284e193864 66
+packages/twenty-server/src/engine/twenty-orm/entity-manager/workspace-entity-manager.spec.ts
+  s_c9896ad68d525f::t_7ba3fd0d6be926 246
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-rollup-flat-field-metadata.util.ts
+  s_c9896ad68d525f::t_dd10866c041d1e 1-2,7-69
+  s_c9896ad68d525f::t_340f72f92f495b 3-6
+packages/twenty-front/src/modules/object-metadata/constants/SortableFieldMetadataTypes.ts
+  s_c9896ad68d525f::t_37af0c3803de01 19
+packages/twenty-front/src/modules/object-record/utils/computeOptimisticFormulaFieldValues.ts
+  s_c9896ad68d525f::t_7c4bda21abd397 1-80
+packages/twenty-front/src/modules/settings/data-model/fields/forms/rollup/components/SettingsDataModelFieldRollupSettingsFormCard.tsx
+  s_c9896ad68d525f::t_e1a069beaf0e28 1-43
+packages/twenty-server/src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service.ts
+  s_c9896ad68d525f::t_e0efa22d2e3ed6 111-116
+  s_c9896ad68d525f::t_d7bd29e2c2d6b5 266
+  s_c9896ad68d525f::t_72f2263809b951 237-240
+  s_c9896ad68d525f::t_240b9792dca186 150-155
+packages/twenty-front/src/modules/object-metadata/utils/getFilterFilterableFieldMetadataItems.ts
+  s_c9896ad68d525f::t_a869f75dae257e 44
+packages/twenty-shared/src/types/RollupAggregateOperation.ts
+  s_c9896ad68d525f::t_a51e7089c216f0 1-10
+packages/twenty-front/src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useRecordLevelPermissionFilterActions.ts
+  s_c9896ad68d525f::t_c0907e7458ad73 143
+  s_c9896ad68d525f::t_431465c6a5e409 78
+packages/twenty-front/src/modules/object-record/spreadsheet-import/hooks/useBuildSpreadSheetImportFields.ts
+  s_c9896ad68d525f::t_2c076f4017cb72 95
+packages/twenty-server/test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test.ts
+  s_c9896ad68d525f::t_e29a80ceaa171a 8-10,15-17
+packages/twenty-front/src/modules/object-record/utils/generateEmptyFieldValue.ts
+  s_c9896ad68d525f::t_05cf3295f2a190 129-131
+packages/twenty-front/src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard.tsx
+  s_c9896ad68d525f::t_f30a7b6180bbed 138-141
+  s_c9896ad68d525f::t_69ff424518cf05 191
+  s_c9896ad68d525f::t_8a02c28a0e6940 223
+  s_c9896ad68d525f::t_2c465876b187c5 308-317
+  s_c9896ad68d525f::t_a479aa6eb55d97 21-22
+  s_c9896ad68d525f::t_bed49eb63ae4e3 164
+packages/twenty-server/src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util.ts
+  s_c9896ad68d525f::t_e9e8d7f24a7c3b 22-23
+  s_c9896ad68d525f::t_9b901832f4666f 43-44
+packages/twenty-front/src/modules/object-record/record-filter/hooks/useCreateRecordFilterFromObjectFilterDropdownCurrentStates.ts
+  s_c9896ad68d525f::t_c0907e7458ad73 53
+packages/twenty-server/src/engine/metadata-modules/field-metadata/field-metadata.module.ts
+  s_c9896ad68d525f::t_14017e465f9df8 21
+  s_c9896ad68d525f::t_d97f965f542714 106
+packages/twenty-shared/src/types/PartialFieldMetadataItem.ts
+  s_c9896ad68d525f::t_a93112b6c54c05 1,11
+packages/twenty-front/src/modules/settings/data-model/fields/forms/rollup/components/SettingsDataModelFieldRollupForm.tsx
+  s_c9896ad68d525f::t_fbc797745f14b3 23,25
+  s_c9896ad68d525f::t_96f9b5fe512888 17
+  s_c9896ad68d525f::t_4b128f46c71989 146
+  s_c9896ad68d525f::t_7bd13e9003e0a4 1-16,18-22,24,26-145,147-210
+packages/twenty-server/src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service.ts
+  s_c9896ad68d525f::t_1e6860621c7e3a 340
+packages/twenty-front/src/modules/views/utils/mapViewFiltersToFilters.ts
+  s_c9896ad68d525f::t_0d9f284e193864 53-54
+packages/twenty-front/src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
+  s_c9896ad68d525f::t_9b537eb462ecfc 139-144
+  s_c9896ad68d525f::t_f0bb57d0dc6fa4 11
+packages/twenty-server/src/engine/core-modules/message-queue/jobs.module.ts
+  s_c9896ad68d525f::t_fcef45ffefb494 84
+  s_c9896ad68d525f::t_1eb8177abfb039 40
+packages/twenty-server/src/engine/metadata-modules/field-metadata/jobs/rollup-field-job.module.ts
+  s_c9896ad68d525f::t_1665a91e0629db 1-11
+packages/twenty-server/src/engine/api/common/common-args-processors/filter-arg-processor/utils/get-operators-for-field-type.util.ts
+  s_c9896ad68d525f::t_7eceecd05edd96 49
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
+  s_c9896ad68d525f::t_8832c7d4c91ead 88
+  s_c9896ad68d525f::t_32e1adaedf60bc 19
+packages/twenty-front/src/modules/settings/data-model/fields/forms/rollup/constants/RollupAggregateOperationSelectOptions.ts
+  s_c9896ad68d525f::t_19003952227cc1 1-31
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_c9896ad68d525f::t_abc650737471fa 1864
+packages/twenty-front/src/modules/object-record/advanced-filter/hooks/useApplyAdvancedFilterCompositeSubField.ts
+  s_c9896ad68d525f::t_0d9f284e193864 67
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/build-formula-field-references-context.util.ts
+  s_c9896ad68d525f::t_90a2a82e5fe868 14,16-20,30
+  s_c9896ad68d525f::t_9f94d8d4273c5a 40
+packages/twenty-shared/src/utils/filter/checkIfShouldComputeEmptinessFilter.ts
+  s_c9896ad68d525f::t_c871a4388f4538 2
+  s_c9896ad68d525f::t_c0907e7458ad73 31
+  s_c9896ad68d525f::t_7e3f180e698fc2 15-18
+packages/twenty-front/src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/recordLevelPermissionPredicateConversion.ts
+  s_c9896ad68d525f::t_431465c6a5e409 28
+packages/twenty-front/src/modules/object-record/read-only/utils/__tests__/isRecordFieldReadOnly.test.ts
+  s_c9896ad68d525f::t_f1643a604c5f91 111-131
+packages/twenty-front/src/modules/object-record/hooks/useUpdateOneRecord.ts
+  s_c9896ad68d525f::t_cdfc3e31698552 19
+  s_c9896ad68d525f::t_9a53892b84a842 103-117,120
+  s_c9896ad68d525f::t_d68ecea812acc0 218
+  s_c9896ad68d525f::t_9efa8ace190ba2 260
+  s_c9896ad68d525f::t_ab30e523c2eb64 27
+  s_c9896ad68d525f::t_7e7c3214e10d55 143
+packages/twenty-server/src/engine/core-modules/open-api/utils/generate-random-field-value.util.ts
+  s_c9896ad68d525f::t_17f6bf44d99123 147-148
+packages/twenty-front/src/modules/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow.ts
+  s_c9896ad68d525f::t_78bb13f39c2c67 382
+packages/twenty-front/src/modules/object-record/record-field/ui/types/guards/isFieldRollup.ts
+  s_c9896ad68d525f::t_b0dc10b5226619 1-12
+packages/twenty-server/src/engine/metadata-modules/field-metadata/jobs/recompute-rollup-fields.job.ts
+  s_c9896ad68d525f::t_3759c97765789e 1-98
+packages/twenty-shared/src/types/FieldMetadataSettings.ts
+  s_c9896ad68d525f::t_638afb5971db12 7
+  s_c9896ad68d525f::t_f5fc6f85448a2d 94
+  s_c9896ad68d525f::t_37f2216faca597 72-77
+packages/twenty-front/src/pages/settings/data-model/constants/DefaultIconsByFieldType.ts
+  s_c9896ad68d525f::t_f237b4d4ba9579 18
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/__tests__/build-rollup-recompute-sql.util.spec.ts
+  s_c9896ad68d525f::t_183de8296c6b21 1-68
+packages/twenty-server/src/engine/metadata-modules/field-metadata/listeners/rollup-field-events.listener.ts
+  s_c9896ad68d525f::t_72b61476d25fc5 1-3,5-28,32-100,102,114-120,125-128,131,134-188
+  s_c9896ad68d525f::t_6dd0d9d6dd2337 123-124,129-130,132-133
+  s_c9896ad68d525f::t_55535385e7b623 29-31
+  s_c9896ad68d525f::t_f71eb1f0ab2cb0 4
+  s_c9896ad68d525f::t_2a8e4c78897387 121-122
+  s_c9896ad68d525f::t_5c34f878c5283a 101,103-113
+packages/twenty-front/src/modules/object-record/record-field/ui/components/FieldDisplay.tsx
+  s_c9896ad68d525f::t_3a630d2abffeff 15
+  s_c9896ad68d525f::t_f7ad6fc28dcd9f 119-120
+  s_c9896ad68d525f::t_995afb0cd15ab9 27
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/resolve-rollup-sql-context.util.ts
+  s_c9896ad68d525f::t_c9f79138b2ad98 1-131
+packages/twenty-shared/src/types/index.ts
+  s_c9896ad68d525f::t_1f313d5652735b 115
+  s_c9896ad68d525f::t_eaa75bc4ab8905 277-278
+packages/twenty-front/src/modules/views/hooks/useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown.ts
+  s_c9896ad68d525f::t_431465c6a5e409 74
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util.ts
+  s_c9896ad68d525f::t_8f13e82281d8d2 27
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/display/components/RollupFieldDisplay.tsx
+  s_c9896ad68d525f::t_62789457fc28ad 1-14
+packages/twenty-shared/src/utils/filter/turnRecordFilterIntoGqlOperationFilter.ts
+  s_c9896ad68d525f::t_431465c6a5e409 209
+  s_c9896ad68d525f::t_1d8dace96c5eb9 10
+  s_c9896ad68d525f::t_4ae344058b3225 78
+packages/twenty-front/src/modules/page-layout/widgets/graph/utils/buildFilterFromChartBucket.ts
+  s_c9896ad68d525f::t_431465c6a5e409 132
+packages/twenty-front/src/modules/object-record/advanced-filter/hooks/useApplyAdvancedFilterRelationTargetField.ts
+  s_c9896ad68d525f::t_c0907e7458ad73 69
+packages/twenty-shared/src/types/FieldMetadataDefaultValue.ts
+  s_c9896ad68d525f::t_28e9db717e3024 121
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util.ts
+  s_c9896ad68d525f::t_7216ea669f1998 253-256
+  s_c9896ad68d525f::t_f086dd6b5f8ed2 124-136
+packages/twenty-front/src/modules/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem.ts
+  s_c9896ad68d525f::t_431465c6a5e409 15
+packages/twenty-front/src/modules/views/hooks/useGetRecordGroupVisibilityFilters.ts
+  s_c9896ad68d525f::t_c0907e7458ad73 68
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-formula-flat-field-metadata.util.ts
+  s_c9896ad68d525f::t_bb540154eb065d 6,12,18,54-65,67-89,91,96,98
+packages/twenty-front/src/modules/object-record/record-field/ui/utils/isFieldValueEmpty.ts
+  s_c9896ad68d525f::t_f4d180a54974b1 68-69
+  s_c9896ad68d525f::t_337f989141658f 37
+packages/twenty-front/src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
+  s_c9896ad68d525f::t_a3cf336d17f886 89-91
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/create-field-action-handler.service.ts
+  s_c9896ad68d525f::t_89df7d4f681183 15,18
+  s_c9896ad68d525f::t_635a8389ab0558 239-264
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/build-rollup-recompute-sql.util.ts
+  s_c9896ad68d525f::t_79e86bce4db4e5 33,35,39
+  s_c9896ad68d525f::t_264fafbd12109c 1-32,34,36-38,40-45
+packages/twenty-front/src/modules/object-record/object-filter-dropdown/utils/isNonCompositeField.ts
+  s_c9896ad68d525f::t_444d01bd855f7e 22
+packages/twenty-shared/src/utils/filter/utils/getEmptyRecordGqlOperationFilter.ts
+  s_c9896ad68d525f::t_6270e8d896df46 30-33
+  s_c9896ad68d525f::t_0d9f284e193864 48
+packages/twenty-shared/src/types/FieldMetadataType.ts
+  s_c9896ad68d525f::t_6e9c6486f73362 24
+packages/twenty-front/src/modules/object-record/read-only/utils/isRecordFieldReadOnly.ts
+  s_c9896ad68d525f::t_23cd0c1d0d7645 52-54
+  s_c9896ad68d525f::t_95d6fee636e454 64
+  s_c9896ad68d525f::t_51b1efdc575bdc 5
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util.ts
+  s_c9896ad68d525f::t_bf35c0ae3fd013 188
+packages/twenty-front/src/modules/object-record/record-field/ui/types/FieldMetadata.ts
+  s_c9896ad68d525f::t_6e9d5df646b67d 208-211
+  s_c9896ad68d525f::t_d97644b22e79cb 249
+  s_c9896ad68d525f::t_47101aa58c4feb 221
+  s_c9896ad68d525f::t_c53994c39833a9 10
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/hooks/useRollupFieldDisplay.ts
+  s_c9896ad68d525f::t_1007b8ce74f77e 1-22
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/update-field-action-handler.service.ts
+  s_c9896ad68d525f::t_2041bf3422a128 20,22
+  s_c9896ad68d525f::t_b685529ba8aec9 399-429
+  s_c9896ad68d525f::t_70785845a09c5f 398
+packages/twenty-front/src/modules/object-record/utils/__tests__/computeOptimisticFormulaFieldValues.test.ts
+  s_c9896ad68d525f::t_e01427a97b5f2f 1-119
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c280f568fffc22150911141a11e3b97bbe3aa9ac",
+  "prompts": {},
+  "sessions": {
+    "s_c9896ad68d525f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e5f7930d-ee88-45b7-923e-7aef12c5e30f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
