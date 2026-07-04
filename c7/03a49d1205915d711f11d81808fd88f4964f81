@@ -1,0 +1,21 @@
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/services/microsoft-calendar-import-events.service.ts
+  s_eac60db33e327a::t_c5901d5ed7c105 30
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/utils/format-microsoft-calendar-event.util.ts
+  s_eac60db33e327a::t_90b34d68213cec 43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c703a49d1205915d711f11d81808fd88f4964f81",
+  "prompts": {},
+  "sessions": {
+    "s_eac60db33e327a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cceb6fab-fb24-4dda-8b8f-cd2232989390",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
