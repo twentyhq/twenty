@@ -11,6 +11,7 @@ import {
   pathExists,
   remove,
 } from '@/cli/utilities/file/fs-utils';
+import { normalizePathSeparators } from '@/cli/utilities/file/normalize-path-separators';
 
 export type AssetWatcherOptions = {
   appPath: string;
@@ -80,8 +81,10 @@ export class FileUploadWatcher {
   }
 
   private async copyAndNotify(absoluteFilePath: string): Promise<void> {
-    const sourcePath = relative(this.appPath, absoluteFilePath);
-    const outputPath = join(OUTPUT_DIR, sourcePath);
+    const sourcePath = normalizePathSeparators(
+      relative(this.appPath, absoluteFilePath),
+    );
+    const outputPath = normalizePathSeparators(join(OUTPUT_DIR, sourcePath));
     const absoluteOutputPath = join(this.appPath, outputPath);
 
     await ensureDir(dirname(absoluteOutputPath));
@@ -99,8 +102,10 @@ export class FileUploadWatcher {
   }
 
   private async handleUnlink(absoluteFilePath: string): Promise<void> {
-    const sourcePath = relative(this.appPath, absoluteFilePath);
-    const builtPath = join(OUTPUT_DIR, sourcePath);
+    const sourcePath = normalizePathSeparators(
+      relative(this.appPath, absoluteFilePath),
+    );
+    const builtPath = normalizePathSeparators(join(OUTPUT_DIR, sourcePath));
     const absoluteBuiltPath = join(this.appPath, builtPath);
 
     await remove(absoluteBuiltPath);

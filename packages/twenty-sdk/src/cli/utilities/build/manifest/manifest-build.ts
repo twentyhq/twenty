@@ -54,6 +54,7 @@ import {
   jsonSchemaToInputSchema,
 } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
+import { normalizePathSeparators } from '@/cli/utilities/file/normalize-path-separators';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -139,7 +140,7 @@ export const buildManifest = async (
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
-    const relativePath = relative(appPath, filePath);
+    const relativePath = normalizePathSeparators(relative(appPath, filePath));
 
     errors.push(
       ...validateConditionalAvailabilityUsage(fileContent, relativePath),
@@ -374,7 +375,9 @@ export const buildManifest = async (
 
         const { component, ...rest } = extract.config;
 
-        const relativeFilePath = relative(appPath, filePath);
+        const relativeFilePath = normalizePathSeparators(
+          relative(appPath, filePath),
+        );
 
         const config: FrontComponentManifest = {
           ...rest,
@@ -506,7 +509,7 @@ export const buildManifest = async (
   const assetFiles = await loadAssets(appPath);
 
   for (const assetFile of assetFiles) {
-    const relativePath = relative(appPath, assetFile);
+    const relativePath = normalizePathSeparators(relative(appPath, assetFile));
     publicAssets.push({
       filePath: relativePath,
       fileName: basename(assetFile),

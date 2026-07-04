@@ -1,4 +1,5 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
+import { normalizePathSeparators } from '@/cli/utilities/file/normalize-path-separators';
 import path, { relative } from 'path';
 import { type FileFolder } from 'twenty-shared/types';
 import { OUTPUT_DIR } from 'twenty-shared/application';
@@ -24,7 +25,9 @@ export class FileUploader {
     builtPath: string;
     fileFolder: FileFolder;
   }) {
-    const builtHandlerPath = relative(OUTPUT_DIR, builtPath);
+    const builtHandlerPath = normalizePathSeparators(
+      relative(OUTPUT_DIR, builtPath),
+    );
 
     return await this.apiService.uploadFile({
       filePath: path.join(this.appPath, builtPath),

@@ -3,6 +3,7 @@ import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
 import type { EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
+import { normalizePathSeparators } from '@/cli/utilities/file/normalize-path-separators';
 
 export type ManifestBuildResult = {
   manifest: Manifest | null;
@@ -32,7 +33,9 @@ export const manifestUpdateChecksums = ({
     builtPath,
     { fileFolder, checksum },
   ] of builtFileInfos.entries()) {
-    const rootBuiltPath = relative(OUTPUT_DIR, builtPath);
+    const rootBuiltPath = normalizePathSeparators(
+      relative(OUTPUT_DIR, builtPath),
+    );
     if (fileFolder === FileFolder.BuiltLogicFunction) {
       const logicFunctions = result.logicFunctions;
       const fnIndex = logicFunctions.findIndex(

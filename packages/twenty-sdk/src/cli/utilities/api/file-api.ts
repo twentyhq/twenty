@@ -1,5 +1,6 @@
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
+import { normalizePathSeparators } from '@/cli/utilities/file/normalize-path-separators';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -230,7 +231,7 @@ export class FileApi {
         variables: {
           file: null,
           applicationUniversalIdentifier,
-          filePath: builtHandlerPath,
+          filePath: normalizePathSeparators(builtHandlerPath),
           fileFolder: graphqlEnumFileFolder,
         },
       });

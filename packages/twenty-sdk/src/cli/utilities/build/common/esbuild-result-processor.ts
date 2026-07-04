@@ -3,6 +3,7 @@ import type * as esbuild from 'esbuild';
 import { readFile } from 'node:fs/promises';
 import path from 'path';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
+import { normalizePathSeparators } from '@/cli/utilities/file/normalize-path-separators';
 import { type FileFolder } from 'twenty-shared/types';
 
 const SDK_CLIENT_IMPORT_PREFIX = 'twenty-client-sdk';
@@ -28,10 +29,14 @@ export const processEsbuildResult = async ({
 
   for (const outputFile of outputFiles) {
     const absoluteBuiltFile = path.resolve(outputFile);
-    const relativeBuiltPath = path.relative(appPath, absoluteBuiltFile);
+    const relativeBuiltPath = normalizePathSeparators(
+      path.relative(appPath, absoluteBuiltFile),
+    );
     const absoluteSourcePath =
       result.metafile?.outputs?.[outputFile]?.entryPoint || '';
-    const relativeSourcePath = path.relative(appPath, absoluteSourcePath);
+    const relativeSourcePath = normalizePathSeparators(
+      path.relative(appPath, absoluteSourcePath),
+    );
 
     const content = await readFile(absoluteBuiltFile);
     const checksum = crypto.createHash('md5').update(content).digest('hex');
