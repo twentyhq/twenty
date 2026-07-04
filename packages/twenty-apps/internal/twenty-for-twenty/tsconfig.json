@@ -27,7 +27,9 @@
       "~/*": ["./*"],
       "@utils/*": ["./src/utils/*"],
       "@constants/*": ["./src/constants/*"],
-      "@modules/*": ["./src/modules/*"]
+      "@modules/*": ["./src/modules/*"],
+      "@ui": ["./src/ui/index.ts"],
+      "@ui/*": ["./src/ui/*"]
     }
   },
   "exclude": [

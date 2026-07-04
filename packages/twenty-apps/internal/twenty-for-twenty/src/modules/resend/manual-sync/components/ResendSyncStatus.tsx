@@ -7,7 +7,7 @@ import {
   IconAlertCircle,
   IconRefresh,
   Status,
-} from 'twenty-sdk/ui';
+} from '@ui';
 
 import { extractConnection } from '@modules/resend/shared/utils/typed-client';
 import { RESEND_SYNC_CURSOR_STEPS } from '@modules/resend/sync/cursor/constants/resend-sync-cursor-steps';
