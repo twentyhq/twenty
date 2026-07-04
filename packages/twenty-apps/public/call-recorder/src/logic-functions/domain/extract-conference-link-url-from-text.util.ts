@@ -1,8 +1,7 @@
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
-// Ordered by provider precedence: when a text contains several conferencing
-// links (e.g. an auto-added Meet link next to a pasted Zoom invitation), the
-// first matching provider wins.
+// Ordered by provider precedence: the first matching provider wins (e.g. a
+// pasted Zoom invitation beats an auto-added Meet link).
 const CONFERENCE_LINK_URL_PATTERNS: RegExp[] = [
   /https:\/\/(?:[\w-]+\.)*(?:zoom\.us|zoomgov\.com)\/(?:j|my|s|w|wc\/join)\/[^\s"'<>\\]+/i,
   /https:\/\/meet\.google\.com\/[^\s"'<>\\]+/i,
@@ -11,8 +10,7 @@ const CONFERENCE_LINK_URL_PATTERNS: RegExp[] = [
   /https:\/\/(?:[\w-]+\.)*(?:gotomeeting\.com\/join|gotomeet\.me)\/[^\s"'<>\\]+/i,
 ];
 
-// Links found in HTML bodies (Outlook) carry encoded ampersands, and links in
-// plain-text sentences can be followed by punctuation.
+// Outlook HTML bodies encode ampersands; plain-text links can end mid-sentence.
 const cleanExtractedConferenceLinkUrl = (url: string): string =>
   url.replace(/&amp;/gi, '&').replace(/[.,;:!?)\]]+$/, '');
 

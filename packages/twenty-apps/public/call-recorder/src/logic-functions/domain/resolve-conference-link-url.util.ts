@@ -7,11 +7,8 @@ type ResolveConferenceLinkUrlInput = {
   description: string | null | undefined;
 };
 
-// The server only fills conferenceLink when the calendar provider exposes a
-// structured conference field (Google Meet, Teams, or add-on-scheduled
-// meetings). Zoom and other third-party links usually only exist as plain
-// text in the event location or description, so we parse them out as a
-// fallback — the structured link keeps precedence.
+// The server only fills conferenceLink from structured provider data; Zoom and
+// other third-party links often exist only as text in location/description.
 export const resolveConferenceLinkUrl = ({
   conferenceLinkUrl,
   location,
