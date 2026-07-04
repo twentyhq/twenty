@@ -1,0 +1,24 @@
+packages/twenty-server/test/integration/graphql/suites/auth/jwt-key-rotation/rotate-signing-keys-cron-job.integration-spec.ts
+  s_8a5a157e980979::t_05681f62d41577 10,17,20-21
+  s_8a5a157e980979::t_330cc9921f7a8e 61
+packages/twenty-server/test/integration/graphql/suites/nested-relation-per-parent-limit.integration-spec.ts
+  s_8a5a157e980979::t_3cf72e16a06d60 62,79
+packages/twenty-server/test/integration/utils/wait-for-queue-quiescence.util.ts
+  s_8a5a157e980979::t_52d39e0111baea 55-70,74,90-96
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "518758e4188e70a4337ef19b39dfc804894f33eb",
+  "prompts": {},
+  "sessions": {
+    "s_8a5a157e980979": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8d765ae-92f9-4877-8c11-5e1240cfee8f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
