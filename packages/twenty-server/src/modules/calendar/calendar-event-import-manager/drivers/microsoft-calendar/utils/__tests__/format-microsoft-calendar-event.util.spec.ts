@@ -104,7 +104,8 @@ describe('formatMicrosoftCalendarEvents', () => {
     const mockMicrosoftEventWithHtmlEntities: Event = {
       ...mockMicrosoftEvent,
       body: {
-        content: '<html><body><p>Tom &amp; Jerry&nbsp;Meeting</p></body></html>',
+        content:
+          '<html><body><p>Tom &amp; Jerry&nbsp;Meeting</p></body></html>',
         contentType: 'html',
       },
     };
