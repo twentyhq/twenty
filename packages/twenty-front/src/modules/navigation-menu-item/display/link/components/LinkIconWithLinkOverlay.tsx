@@ -12,7 +12,7 @@ const failedFaviconUrls = new Set<string>();
 
 const StyledCompositeContainer = styled.div`
   align-items: center;
-  border-radius: 4px;
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;
   flex-shrink: 0;
@@ -34,7 +34,7 @@ const StyledMainIconWrapper = styled.div<{
     $noBackgroundOrBorder || !$borderColor
       ? 'none'
       : `1px solid ${$borderColor}`};
-  border-radius: 4px;
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;
   inset: 0;

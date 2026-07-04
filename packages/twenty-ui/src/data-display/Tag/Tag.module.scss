@@ -2,7 +2,8 @@
   box-sizing: content-box;
   align-items: center;
   background: var(--tag-background);
-  border-radius: var(--t-border-radius-sm);
+  border-radius: var(--t-border-radius-sm-round);
+  corner-shape: round;
   color: var(--tag-text);
   display: inline-flex;
   font-size: var(--t-font-size-md);

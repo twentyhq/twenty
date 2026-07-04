@@ -1,1 +1,0 @@
-export const RESEND_SYNC_STATUS_NAVIGATION_MENU_ITEM_NAME = 'Sync Status';
