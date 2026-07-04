@@ -9,6 +9,7 @@ const StyledCheckContainer = styled.div<{ color: string }>`
   border-radius: ${themeCssVariables.border.radius.rounded};
   box-shadow: ${({ color }) => color && `-4px 4px 0 -2px ${color}`};
   box-sizing: content-box;
+  corner-shape: round;
   display: flex;
   height: 36px;
   justify-content: center;

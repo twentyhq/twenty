@@ -45,7 +45,7 @@ const getOperationIcon = (toolName: string): IconComponent | null => {
 
 const StyledCompositeContainer = styled.div`
   align-items: center;
-  border-radius: 4px;
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;
   flex-shrink: 0;
@@ -63,7 +63,7 @@ const StyledMainIconWrapper = styled.div<{
   background-color: ${({ $backgroundColor }) => $backgroundColor};
   border: ${({ $borderColor }) =>
     $borderColor ? `1px solid ${$borderColor}` : 'none'};
-  border-radius: 4px;
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;
   inset: 0;
@@ -74,7 +74,7 @@ const StyledMainIconWrapper = styled.div<{
 const StyledOperationOverlay = styled.div`
   align-items: center;
   background-color: ${themeCssVariables.grayScale.gray4};
-  border-radius: 4px;
+  border-radius: ${themeCssVariables.border.radius.sm};
   bottom: -5px;
   display: flex;
   height: 14px;

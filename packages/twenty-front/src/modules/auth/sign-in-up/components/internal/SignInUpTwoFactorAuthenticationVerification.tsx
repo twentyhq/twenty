@@ -17,13 +17,11 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { OTPInput, type SlotProps } from 'input-otp';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
-import { useLocation } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -137,7 +135,8 @@ const StyledDashContainer = styled.div`
 
 const StyledDash = styled.div`
   background-color: ${themeCssVariables.font.color.primary};
-  border-radius: 9999px;
+  border-radius: ${themeCssVariables.border.radius.pill};
+  corner-shape: round;
   height: 0.25rem;
   width: 0.75rem;
 `;
@@ -183,7 +182,6 @@ export const SignInUpTOTPVerification = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const navigate = useNavigateApp();
-  const location = useLocation();
   const { readCaptchaToken } = useReadCaptchaToken();
   const { isCaptchaReady } = useCaptcha();
   const loginToken = useAtomStateValue(loginTokenState);
@@ -206,11 +204,7 @@ export const SignInUpTOTPVerification = () => {
       const captchaToken = readCaptchaToken();
 
       if (!loginToken) {
-        return navigate(
-          isMatchingLocation(location, AppPath.SignInUpV2)
-            ? AppPath.SignInUpV2
-            : AppPath.SignInUp,
-        );
+        return navigate(AppPath.SignInUp);
       }
 
       await getAuthTokensFromOTP(values.otp, loginToken, captchaToken);

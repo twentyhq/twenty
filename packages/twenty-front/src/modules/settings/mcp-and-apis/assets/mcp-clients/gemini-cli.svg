@@ -1,0 +1,12 @@
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <title>Gemini CLI</title>
+  <path d="M0 4.391A4.391 4.391 0 0 1 4.391 0h15.217A4.391 4.391 0 0 1 24 4.391v15.217A4.391 4.391 0 0 1 19.608 24H4.391A4.391 4.391 0 0 1 0 19.608V4.391z" fill="url(#gemini-cli-gradient)" />
+  <path clip-rule="evenodd" d="M19.74 1.444a2.816 2.816 0 0 1 2.816 2.816v15.48a2.816 2.816 0 0 1-2.816 2.816H4.26a2.816 2.816 0 0 1-2.816-2.816V4.26A2.816 2.816 0 0 1 4.26 1.444h15.48zM7.236 8.564l7.752 3.728-7.752 3.727v2.802l9.557-4.596v-3.866L7.236 5.763v2.801z" fill="#1E1E2E" fill-rule="evenodd" />
+  <defs>
+    <linearGradient gradientUnits="userSpaceOnUse" id="gemini-cli-gradient" x1="24" x2="0" y1="6.587" y2="16.494">
+      <stop stop-color="#EE4D5D" />
+      <stop offset=".328" stop-color="#B381DD" />
+      <stop offset=".476" stop-color="#207CFE" />
+    </linearGradient>
+  </defs>
+</svg>

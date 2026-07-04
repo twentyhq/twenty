@@ -54,6 +54,7 @@ const StyledStatusDot = styled.div<{ isActive: boolean }>`
   background-color: ${({ isActive }) =>
     isActive ? themeCssVariables.color.green : themeCssVariables.color.red};
   border-radius: 50%;
+  corner-shape: round;
   height: 8px;
   width: 8px;
 `;
