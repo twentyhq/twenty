@@ -1,4 +1,4 @@
-import { PlaygroundSetupForm } from '@/settings/playground/components/PlaygroundSetupForm';
+import { PlaygroundSetupForm } from '@/settings/mcp-and-apis/components/PlaygroundSetupForm';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';

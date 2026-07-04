@@ -7,9 +7,9 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   isPlaygroundApiKeyFresh,
   playgroundApiKeyState,
-} from '@/settings/playground/states/playgroundApiKeyState';
-import { type PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
-import { PlaygroundTypes } from '@/settings/playground/types/PlaygroundTypes';
+} from '@/settings/mcp-and-apis/states/playgroundApiKeyState';
+import { type PlaygroundSchemas } from '@/settings/mcp-and-apis/types/PlaygroundSchemas';
+import { PlaygroundTypes } from '@/settings/mcp-and-apis/types/PlaygroundTypes';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';

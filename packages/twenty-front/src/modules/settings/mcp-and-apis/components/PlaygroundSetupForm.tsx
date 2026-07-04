@@ -1,7 +1,7 @@
-import { useOpenPlayground } from '@/settings/playground/hooks/useOpenPlayground';
-import { SETTINGS_PLAYGROUND_FORM_SCHEMA_SELECT_OPTIONS } from '@/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions';
-import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
-import { PlaygroundTypes } from '@/settings/playground/types/PlaygroundTypes';
+import { useOpenPlayground } from '@/settings/mcp-and-apis/hooks/useOpenPlayground';
+import { SETTINGS_PLAYGROUND_FORM_SCHEMA_SELECT_OPTIONS } from '@/settings/mcp-and-apis/constants/SettingsPlaygroundFormSchemaSelectOptions';
+import { PlaygroundSchemas } from '@/settings/mcp-and-apis/types/PlaygroundSchemas';
+import { PlaygroundTypes } from '@/settings/mcp-and-apis/types/PlaygroundTypes';
 import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';

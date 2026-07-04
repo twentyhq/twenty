@@ -1,9 +1,9 @@
-import { RestPlaygroundSchemaFetchEffect } from '@/settings/playground/components/RestPlaygroundSchemaFetchEffect';
+import { RestPlaygroundSchemaFetchEffect } from '@/settings/mcp-and-apis/components/RestPlaygroundSchemaFetchEffect';
 import {
   isPlaygroundApiKeyFresh,
   playgroundApiKeyState,
-} from '@/settings/playground/states/playgroundApiKeyState';
-import { type PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
+} from '@/settings/mcp-and-apis/states/playgroundApiKeyState';
+import { type PlaygroundSchemas } from '@/settings/mcp-and-apis/types/PlaygroundSchemas';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useState, lazy, Suspense } from 'react';
 import { styled } from '@linaria/react';

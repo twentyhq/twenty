@@ -1,9 +1,9 @@
-import '@/settings/playground/utils/setupGraphiqlMonacoWorkers';
+import '@/settings/mcp-and-apis/utils/setupGraphiqlMonacoWorkers';
 import {
   isPlaygroundApiKeyFresh,
   playgroundApiKeyState,
-} from '@/settings/playground/states/playgroundApiKeyState';
-import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
+} from '@/settings/mcp-and-apis/states/playgroundApiKeyState';
+import { PlaygroundSchemas } from '@/settings/mcp-and-apis/types/PlaygroundSchemas';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { explorerPlugin } from '@graphiql/plugin-explorer';
