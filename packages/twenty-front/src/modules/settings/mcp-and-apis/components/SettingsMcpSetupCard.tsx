@@ -1,14 +1,19 @@
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type McpSetupCard } from '@/settings/playground/types/McpSetup';
+import { type McpSetupCard } from '@/settings/mcp-and-apis/types/McpSetup';
+import { Pill } from 'twenty-ui/data-display';
 import { IconExternalLink } from 'twenty-ui/icon';
-import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
+import {
+  AppTooltip,
+  Card,
+  CardContent,
+  TooltipDelay,
+} from 'twenty-ui/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
-const StyledCard = styled(Card)`
+const StyledCardContent = styled(CardContent)`
   align-items: center;
-  box-sizing: border-box;
   display: flex;
   gap: ${themeCssVariables.spacing[4]};
   min-height: ${themeCssVariables.spacing[25]};
@@ -17,7 +22,7 @@ const StyledCard = styled(Card)`
   padding-left: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledCardLogo = styled.div`
+const StyledLogo = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.primary};
   display: flex;
@@ -27,25 +32,22 @@ const StyledCardLogo = styled.div`
   width: ${themeCssVariables.spacing[8]};
 `;
 
-const StyledCardContent = styled.div`
-  align-self: stretch;
+const StyledBody = styled.div`
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  justify-content: center;
   min-width: 0;
 `;
 
-const StyledCardHeader = styled.div`
+const StyledHeader = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  min-height: ${themeCssVariables.spacing[6]};
   min-width: 0;
 `;
 
-const StyledCardTitle = styled.div`
+const StyledTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
@@ -54,21 +56,20 @@ const StyledCardTitle = styled.div`
   white-space: nowrap;
 `;
 
-const StyledCardBadge = styled.div`
-  color: ${themeCssVariables.font.color.light};
-  flex: 1 1 auto;
-  font-size: ${themeCssVariables.font.size.md};
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+const StyledActionSlot = styled.div`
+  display: flex;
+  flex: 0 0 auto;
+  margin-left: auto;
 `;
 
-const StyledCardDescription = styled.div`
+const StyledDescription = styled.div`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
+// Install links use custom URI schemes (goose://, vscode:, lmstudio://) that
+// twenty-ui Button/RawLink/RoundedLink strip through react-router or getSafeUrl,
+// so the call to action has to stay a raw anchor with the untouched href.
 const StyledInstallAction = styled.a`
   align-items: center;
   background: ${themeCssVariables.background.transparent.lighter};
@@ -77,7 +78,6 @@ const StyledInstallAction = styled.a`
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.secondary};
   display: flex;
-  flex: 0 0 auto;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[1]};
@@ -151,15 +151,19 @@ type SettingsMcpSetupCardProps = {
 };
 
 export const SettingsMcpSetupCard = ({ card }: SettingsMcpSetupCardProps) => (
-  <StyledCard rounded backgroundColor={themeCssVariables.background.secondary}>
-    <StyledCardLogo aria-hidden>{card.logo}</StyledCardLogo>
+  <Card rounded>
     <StyledCardContent>
-      <StyledCardHeader>
-        <StyledCardTitle>{card.title}</StyledCardTitle>
-        <StyledCardBadge>{card.badge}</StyledCardBadge>
-        <SettingsMcpSetupCardAction card={card} />
-      </StyledCardHeader>
-      <StyledCardDescription>{card.description}</StyledCardDescription>
+      <StyledLogo aria-hidden>{card.logo}</StyledLogo>
+      <StyledBody>
+        <StyledHeader>
+          <StyledTitle>{card.title}</StyledTitle>
+          <Pill label={card.badge} />
+          <StyledActionSlot>
+            <SettingsMcpSetupCardAction card={card} />
+          </StyledActionSlot>
+        </StyledHeader>
+        <StyledDescription>{card.description}</StyledDescription>
+      </StyledBody>
     </StyledCardContent>
-  </StyledCard>
+  </Card>
 );

@@ -1,6 +1,6 @@
-import { RestPlayground } from '@/settings/playground/components/RestPlayground';
-import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
-import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
+import { RestPlayground } from '@/settings/mcp-and-apis/components/RestPlayground';
+import { playgroundApiKeyState } from '@/settings/mcp-and-apis/states/playgroundApiKeyState';
+import { PlaygroundSchemas } from '@/settings/mcp-and-apis/types/PlaygroundSchemas';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, http } from 'msw';

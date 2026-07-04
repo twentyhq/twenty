@@ -1,4 +1,4 @@
-import { type PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
+import { type PlaygroundSchemas } from '@/settings/mcp-and-apis/types/PlaygroundSchemas';
 import { useEffect } from 'react';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 

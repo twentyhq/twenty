@@ -1,4 +1,4 @@
-import { SettingsMcpSetup } from '@/settings/playground/components/SettingsMcpSetup';
+import { SettingsMcpSetup } from '@/settings/mcp-and-apis/components/SettingsMcpSetup';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentDecorator } from 'twenty-ui/testing';

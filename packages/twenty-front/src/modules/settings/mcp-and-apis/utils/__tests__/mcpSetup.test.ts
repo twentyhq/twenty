@@ -9,7 +9,7 @@ import {
   buildRemoteMcpServerConfig,
   buildVsCodeInstallLink,
   isHttpsUrl,
-} from '@/settings/playground/utils/mcpSetup';
+} from '@/settings/mcp-and-apis/utils/mcpSetup';
 
 const mcpServerUrl = 'https://api.twenty.com/mcp';
 

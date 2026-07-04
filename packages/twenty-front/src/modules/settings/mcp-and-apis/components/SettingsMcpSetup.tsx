@@ -3,14 +3,14 @@ import { t } from '@lingui/core/macro';
 import { Fragment } from 'react';
 
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
-import ModelContextProtocolLogo from '@/settings/playground/assets/model-context-protocol-logo.svg?react';
-import { SettingsMcpSetupCard } from '@/settings/playground/components/SettingsMcpSetupCard';
-import { buildMcpSetupCategories } from '@/settings/playground/utils/buildMcpSetupCategories';
+import ModelContextProtocolLogo from '@/settings/mcp-and-apis/assets/model-context-protocol-logo.svg?react';
+import { SettingsMcpSetupCard } from '@/settings/mcp-and-apis/components/SettingsMcpSetupCard';
+import { buildMcpSetupCategories } from '@/settings/mcp-and-apis/utils/buildMcpSetupCategories';
 import {
   buildMcpConfig,
   buildMcpServerUrl,
   isHttpsUrl,
-} from '@/settings/playground/utils/mcpSetup';
+} from '@/settings/mcp-and-apis/utils/mcpSetup';
 import { CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';

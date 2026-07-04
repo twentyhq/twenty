@@ -1,5 +1,5 @@
-import { RestPlayground } from '@/settings/playground/components/RestPlayground';
-import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
+import { RestPlayground } from '@/settings/mcp-and-apis/components/RestPlayground';
+import { PlaygroundSchemas } from '@/settings/mcp-and-apis/types/PlaygroundSchemas';
 import { FullScreenContainer } from '@/ui/layout/fullscreen/components/FullScreenContainer';
 import { Trans } from '@lingui/react/macro';
 import { useCallback } from 'react';

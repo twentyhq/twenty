@@ -1,27 +1,27 @@
 import { t } from '@lingui/core/macro';
 
-import AmazonQLogo from '@/settings/playground/assets/mcp-clients/amazon-q.svg';
-import AugmentCodeLogo from '@/settings/playground/assets/mcp-clients/augment-code.svg';
-import ClineLogo from '@/settings/playground/assets/mcp-clients/cline.svg';
-import CursorLogo from '@/settings/playground/assets/mcp-clients/cursor.svg';
-import GeminiCliLogo from '@/settings/playground/assets/mcp-clients/gemini-cli.svg';
-import GooseLogo from '@/settings/playground/assets/mcp-clients/goose.svg';
-import JetBrainsLogo from '@/settings/playground/assets/mcp-clients/jetbrains.svg';
-import LibreChatLogo from '@/settings/playground/assets/mcp-clients/librechat.svg';
-import LmStudioLogo from '@/settings/playground/assets/mcp-clients/lm-studio.svg';
-import RaycastLogo from '@/settings/playground/assets/mcp-clients/raycast.svg';
-import ReplitLogo from '@/settings/playground/assets/mcp-clients/replit.svg';
-import VsCodeLogo from '@/settings/playground/assets/mcp-clients/vs-code.svg';
-import WarpLogo from '@/settings/playground/assets/mcp-clients/warp.svg';
-import WindsurfLogo from '@/settings/playground/assets/mcp-clients/windsurf.svg';
-import ZedLogo from '@/settings/playground/assets/mcp-clients/zed.svg';
+import AmazonQLogo from '@/settings/mcp-and-apis/assets/mcp-clients/amazon-q.svg';
+import AugmentCodeLogo from '@/settings/mcp-and-apis/assets/mcp-clients/augment-code.svg';
+import ClineLogo from '@/settings/mcp-and-apis/assets/mcp-clients/cline.svg';
+import CursorLogo from '@/settings/mcp-and-apis/assets/mcp-clients/cursor.svg';
+import GeminiCliLogo from '@/settings/mcp-and-apis/assets/mcp-clients/gemini-cli.svg';
+import GooseLogo from '@/settings/mcp-and-apis/assets/mcp-clients/goose.svg';
+import JetBrainsLogo from '@/settings/mcp-and-apis/assets/mcp-clients/jetbrains.svg';
+import LibreChatLogo from '@/settings/mcp-and-apis/assets/mcp-clients/librechat.svg';
+import LmStudioLogo from '@/settings/mcp-and-apis/assets/mcp-clients/lm-studio.svg';
+import RaycastLogo from '@/settings/mcp-and-apis/assets/mcp-clients/raycast.svg';
+import ReplitLogo from '@/settings/mcp-and-apis/assets/mcp-clients/replit.svg';
+import VsCodeLogo from '@/settings/mcp-and-apis/assets/mcp-clients/vs-code.svg';
+import WarpLogo from '@/settings/mcp-and-apis/assets/mcp-clients/warp.svg';
+import WindsurfLogo from '@/settings/mcp-and-apis/assets/mcp-clients/windsurf.svg';
+import ZedLogo from '@/settings/mcp-and-apis/assets/mcp-clients/zed.svg';
 import {
   McpClaudeLogo,
   McpClientLogo,
   McpOpenAiLogo,
-} from '@/settings/playground/components/McpClientLogo';
-import { MCP_SETUP } from '@/settings/playground/constants/McpSetup';
-import { type McpSetupCategory } from '@/settings/playground/types/McpSetup';
+} from '@/settings/mcp-and-apis/components/McpClientLogo';
+import { MCP_SETUP } from '@/settings/mcp-and-apis/constants/McpSetup';
+import { type McpSetupCategory } from '@/settings/mcp-and-apis/types/McpSetup';
 import {
   buildClaudeInstallLink,
   buildCursorInstallLink,
@@ -29,7 +29,7 @@ import {
   buildLmStudioInstallLink,
   buildReplitInstallLink,
   buildVsCodeInstallLink,
-} from '@/settings/playground/utils/mcpSetup';
+} from '@/settings/mcp-and-apis/utils/mcpSetup';
 
 type BuildMcpSetupCategoriesParams = {
   isHttpsInstallLinkEnabled: boolean;
