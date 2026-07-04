@@ -154,7 +154,12 @@ export const waitForWorkflowRunStatus = async (
   let workflowRun = await getWorkflowRun(workflowRunId);
   let attempts = 0;
 
-  while (workflowRun?.status !== expectedStatus && attempts < maxAttempts) {
+  while (
+    attempts < maxAttempts &&
+    workflowRun?.status !== expectedStatus &&
+    (workflowRun === null ||
+      PENDING_WORKFLOW_RUN_STATUSES.includes(workflowRun.status))
+  ) {
     await new Promise((resolve) => setTimeout(resolve, intervalMs));
     workflowRun = await getWorkflowRun(workflowRunId);
     attempts++;

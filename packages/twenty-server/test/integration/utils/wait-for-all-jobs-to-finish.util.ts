@@ -21,7 +21,9 @@ let queues: Queue[] | null = null;
 const getQueues = (): Queue[] => {
   if (!queues) {
     redisConnection = new IORedis(
-      process.env.REDIS_URL ?? 'redis://localhost:6379',
+      process.env.REDIS_QUEUE_URL ??
+        process.env.REDIS_URL ??
+        'redis://localhost:6379',
       { maxRetriesPerRequest: null },
     );
     queues = Object.values(MessageQueue).map(
@@ -59,7 +61,7 @@ const getActiveJobsFingerprint = async (
     getQueues()
       .filter((queue) => busyQueueNames.includes(queue.name))
       .map(async (queue) => {
-        const activeJobs = await queue.getActive(0, 10);
+        const activeJobs = await queue.getActive(0, 50);
 
         return `${queue.name}:${activeJobs.map((job) => job.id).join(',')}`;
       }),
@@ -118,12 +120,12 @@ export const waitForAllJobsToFinish = async (): Promise<void> => {
 
 export const closeQueueConnections = async (): Promise<void> => {
   if (queues) {
-    await Promise.all(queues.map((queue) => queue.close()));
+    await Promise.allSettled(queues.map((queue) => queue.close()));
     queues = null;
   }
 
   if (redisConnection) {
-    await redisConnection.quit();
+    await redisConnection.quit().catch(() => redisConnection?.disconnect());
     redisConnection = null;
   }
 };

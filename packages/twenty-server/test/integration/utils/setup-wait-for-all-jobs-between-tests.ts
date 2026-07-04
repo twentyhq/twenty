@@ -16,4 +16,4 @@ afterEach(async () => {
 
 afterAll(async () => {
   await closeQueueConnections();
-});
+}, WAIT_FOR_JOBS_HOOK_TIMEOUT_MS);
