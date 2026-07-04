@@ -3,8 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { MarketplaceService } from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
-import { resolveRegistryManifestAssetUrls } from 'src/engine/core-modules/application/application-registration/utils/resolve-registry-manifest-asset-urls.util';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { ManifestAssetUrlResolverService } from 'src/engine/core-modules/application/application-registration/manifest-asset-url-resolver.service';
 
 @Injectable()
 export class MarketplaceCatalogSyncService {
@@ -13,7 +12,7 @@ export class MarketplaceCatalogSyncService {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly marketplaceService: MarketplaceService,
-    private readonly twentyConfigService: TwentyConfigService,
+    private readonly manifestAssetUrlResolverService: ManifestAssetUrlResolverService,
   ) {}
 
   async syncCatalog(): Promise<void> {
@@ -44,12 +43,12 @@ export class MarketplaceCatalogSyncService {
         const universalIdentifier =
           fetchedManifest.application.universalIdentifier;
 
-        const manifestWithResolvedUrls = resolveRegistryManifestAssetUrls({
-          manifest: fetchedManifest,
-          packageName: pkg.name,
-          version: pkg.version,
-          cdnBaseUrl: this.twentyConfigService.get('APP_REGISTRY_CDN_URL'),
-        });
+        const manifestWithResolvedUrls =
+          this.manifestAssetUrlResolverService.resolveFromRegistrySource({
+            manifest: fetchedManifest,
+            packageName: pkg.name,
+            version: pkg.version,
+          });
 
         await this.applicationRegistrationService.upsertFromCatalog({
           universalIdentifier,

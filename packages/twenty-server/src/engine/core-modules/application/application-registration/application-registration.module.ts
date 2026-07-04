@@ -6,6 +6,7 @@ import { ApplicationRegistrationResolver } from 'src/engine/core-modules/applica
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationVariableModule } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.module';
 import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
+import { ManifestAssetUrlResolverService } from 'src/engine/core-modules/application/application-registration/manifest-asset-url-resolver.service';
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -40,10 +41,12 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     ApplicationRegistrationService,
     ApplicationRegistrationResolver,
     ApplicationTarballService,
+    ManifestAssetUrlResolverService,
   ],
   exports: [
     ApplicationRegistrationService,
     ApplicationRegistrationVariableModule,
+    ManifestAssetUrlResolverService,
   ],
 })
 export class ApplicationRegistrationModule {}

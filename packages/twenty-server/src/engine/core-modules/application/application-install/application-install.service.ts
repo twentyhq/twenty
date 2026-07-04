@@ -17,7 +17,7 @@ import {
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { resolveRegistryManifestAssetUrls } from 'src/engine/core-modules/application/application-registration/utils/resolve-registry-manifest-asset-urls.util';
+import { ManifestAssetUrlResolverService } from 'src/engine/core-modules/application/application-registration/manifest-asset-url-resolver.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
@@ -36,7 +36,6 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 
@@ -69,7 +68,7 @@ export class ApplicationInstallService {
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly twentyConfigService: TwentyConfigService,
+    private readonly manifestAssetUrlResolverService: ManifestAssetUrlResolverService,
   ) {}
 
   async installApplication(params: {
@@ -317,37 +316,14 @@ export class ApplicationInstallService {
 
     await this.applicationRegistrationService.updateFromManifest({
       applicationRegistrationId: appRegistration.id,
-      manifest: this.resolveRegistrationManifestAssetUrls({
-        appRegistration,
+      manifest: this.manifestAssetUrlResolverService.resolveFromRegistration({
+        sourceType: appRegistration.sourceType,
+        sourcePackage: appRegistration.sourcePackage,
         manifest,
-        installedVersion,
+        version: installedVersion,
       }),
       latestAvailableVersion: installedVersion,
       preventVersionDowngrade: true,
-    });
-  }
-
-  private resolveRegistrationManifestAssetUrls(params: {
-    appRegistration: ApplicationRegistrationEntity;
-    manifest: Manifest;
-    installedVersion: string;
-  }): Manifest {
-    const { appRegistration, manifest, installedVersion } = params;
-
-    const sourcePackage = appRegistration.sourcePackage;
-
-    if (
-      appRegistration.sourceType !== ApplicationRegistrationSourceType.NPM ||
-      !isDefined(sourcePackage)
-    ) {
-      return manifest;
-    }
-
-    return resolveRegistryManifestAssetUrls({
-      manifest,
-      packageName: sourcePackage,
-      version: installedVersion,
-      cdnBaseUrl: this.twentyConfigService.get('APP_REGISTRY_CDN_URL'),
     });
   }
 
