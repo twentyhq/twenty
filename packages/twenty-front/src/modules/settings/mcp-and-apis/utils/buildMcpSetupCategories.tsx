@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 
 import AmazonQLogo from '@/settings/mcp-and-apis/assets/mcp-clients/amazon-q.svg';
 import AugmentCodeLogo from '@/settings/mcp-and-apis/assets/mcp-clients/augment-code.svg';
+import ClaudeLogo from '@/settings/mcp-and-apis/assets/mcp-clients/claude-color.png';
 import ClineLogo from '@/settings/mcp-and-apis/assets/mcp-clients/cline.svg';
 import CursorLogo from '@/settings/mcp-and-apis/assets/mcp-clients/cursor.svg';
 import GeminiCliLogo from '@/settings/mcp-and-apis/assets/mcp-clients/gemini-cli.svg';
@@ -9,17 +10,14 @@ import GooseLogo from '@/settings/mcp-and-apis/assets/mcp-clients/goose.svg';
 import JetBrainsLogo from '@/settings/mcp-and-apis/assets/mcp-clients/jetbrains.svg';
 import LibreChatLogo from '@/settings/mcp-and-apis/assets/mcp-clients/librechat.svg';
 import LmStudioLogo from '@/settings/mcp-and-apis/assets/mcp-clients/lm-studio.svg';
+import OpenAiLogo from '@/settings/mcp-and-apis/assets/mcp-clients/openai.svg';
 import RaycastLogo from '@/settings/mcp-and-apis/assets/mcp-clients/raycast.svg';
 import ReplitLogo from '@/settings/mcp-and-apis/assets/mcp-clients/replit.svg';
 import VsCodeLogo from '@/settings/mcp-and-apis/assets/mcp-clients/vs-code.svg';
 import WarpLogo from '@/settings/mcp-and-apis/assets/mcp-clients/warp.svg';
 import WindsurfLogo from '@/settings/mcp-and-apis/assets/mcp-clients/windsurf.svg';
 import ZedLogo from '@/settings/mcp-and-apis/assets/mcp-clients/zed.svg';
-import {
-  McpClaudeLogo,
-  McpClientLogo,
-  McpOpenAiLogo,
-} from '@/settings/mcp-and-apis/components/McpClientLogo';
+import { McpClientLogo } from '@/settings/mcp-and-apis/components/McpClientLogo';
 import { MCP_SETUP } from '@/settings/mcp-and-apis/constants/McpSetup';
 import { type McpSetupCategory } from '@/settings/mcp-and-apis/types/McpSetup';
 import {
@@ -51,7 +49,7 @@ export const buildMcpSetupCategories = ({
         description: t`Open Twenty's official ChatGPT integration for your workspace.`,
         ctaLabel: t`Open`,
         href: MCP_SETUP.chatGptTwentyAppUrl,
-        logo: <McpOpenAiLogo />,
+        logo: <McpClientLogo src={OpenAiLogo} invertInDarkMode />,
       },
       {
         title: t`Claude`,
@@ -63,9 +61,15 @@ export const buildMcpSetupCategories = ({
           ? buildClaudeInstallLink(mcpServerUrl)
           : undefined,
         isDisabled: !isHttpsInstallLinkEnabled,
-        logo: <McpClaudeLogo />,
+        logo: <McpClientLogo src={ClaudeLogo} />,
         tooltipId: MCP_SETUP.tooltipIds.claudeInstallDisabled,
       },
+    ],
+  },
+  {
+    title: t`Other clients`,
+    description: t`Connect additional MCP clients using install links or client docs.`,
+    cards: [
       {
         title: t`Cursor`,
         badge: t`Install link`,
@@ -111,12 +115,6 @@ export const buildMcpSetupCategories = ({
         href: buildLmStudioInstallLink(mcpServerUrl),
         logo: <McpClientLogo src={LmStudioLogo} invertInDarkMode />,
       },
-    ],
-  },
-  {
-    title: t`Other manual clients`,
-    description: t`Follow client docs to connect your MCP manually.`,
-    cards: [
       {
         title: t`Cline`,
         badge: t`Manual`,
