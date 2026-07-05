@@ -1,7 +1,10 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
-import { useDragSelect } from './useDragSelect';
+import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 
+// Prevents the record drag-select from starting when interacting with a column header.
+// Pointer capture is intentionally avoided: capturing on pointerdown retargets the pointerup/click
+// to the cell and stops the column header dropdown from opening. dnd-kit handles drag pointer tracking.
 export const useDisableDragSelectOnPointerDown = () => {
   const { setDragSelectionStartEnabled } = useDragSelect();
 
@@ -12,19 +15,6 @@ export const useDisableDragSelectOnPointerDown = () => {
   const handlePointerEnd = useCallback(() => {
     setDragSelectionStartEnabled(true);
   }, [setDragSelectionStartEnabled]);
-
-  useEffect(() => {
-    document.addEventListener('pointerup', handlePointerEnd);
-    document.addEventListener('pointercancel', handlePointerEnd);
-    window.addEventListener('blur', handlePointerEnd);
-
-    return () => {
-      document.removeEventListener('pointerup', handlePointerEnd);
-      document.removeEventListener('pointercancel', handlePointerEnd);
-      window.removeEventListener('blur', handlePointerEnd);
-      setDragSelectionStartEnabled(true);
-    };
-  }, [handlePointerEnd, setDragSelectionStartEnabled]);
 
   return {
     onPointerDown: handlePointerDown,

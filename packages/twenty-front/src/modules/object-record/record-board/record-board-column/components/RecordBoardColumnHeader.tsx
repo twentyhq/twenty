@@ -189,9 +189,7 @@ export const RecordBoardColumnHeader = () => {
             </StyledLeftContainer>
             <StyledRightContainer>
               {isHeaderHovered && (
-                <StyledHeaderActions
-                  data-visible={isHeaderHovered ? 'true' : undefined}
-                >
+                <StyledHeaderActions>
                   <LightIconButton
                     accent="tertiary"
                     Icon={IconDotsVertical}
