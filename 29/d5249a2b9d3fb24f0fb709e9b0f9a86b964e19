@@ -1,0 +1,28 @@
+packages/twenty-server/test/integration/microsoft/messaging/folder-discovery.integration-spec.ts
+  s_4585f58d9459ae::t_0f5a885ac3825c 31-38
+packages/twenty-server/test/integration/google/messaging/sync-failure-lifecycle.integration-spec.ts
+  s_4585f58d9459ae::t_aad88b233d7ae8 105-106
+packages/twenty-server/test/integration/utils/mock-entity-store.util.ts
+  s_4585f58d9459ae::t_6277614538a970 12-13,23,25
+packages/twenty-server/test/integration/google/mocks/google-token-handlers.util.ts
+  s_4585f58d9459ae::t_ba436fea97f695 6
+packages/twenty-server/test/integration/google/mocks/setup-google-mock.util.ts
+  s_4585f58d9459ae::t_c6538f4c0b3278 10-13
+  s_4585f58d9459ae::t_c0eab7442c66f7 111-119
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "29d5249a2b9d3fb24f0fb709e9b0f9a86b964e19",
+  "prompts": {},
+  "sessions": {
+    "s_4585f58d9459ae": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bd9550cd-441b-4d3a-84e2-f0b78cf26b71",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
