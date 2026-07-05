@@ -6,14 +6,17 @@ import { connectMessagingAccount } from 'test/integration/messaging/utils/connec
 import { setupGmailMock } from 'test/integration/messaging/utils/gmail-message-mock.util';
 import {
   googleCalendarEvent,
-  googleCalendarEventsHandler,
+  googleCalendarEventsHandlers,
 } from 'test/integration/messaging/utils/google-calendar-mock.util';
 import { deleteConnectedAccount } from 'test/integration/messaging/utils/query-messaging.util';
 import {
   findRecordIdsByFilter,
   findRecordNodesByFilter,
 } from 'test/integration/utils/find-records-by-filter.util';
-import { runCalendarChannelListFetch } from 'test/integration/utils/run-channel-sync.util';
+import {
+  runCalendarChannelEventsImport,
+  runCalendarChannelListFetch,
+} from 'test/integration/utils/run-channel-sync.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
 const HANDLE = 'calendar-cleanup@apple.dev';
@@ -32,7 +35,7 @@ describe('Calendar connected account cleanup (integration)', () => {
     });
 
     gmail.use(
-      googleCalendarEventsHandler([
+      ...googleCalendarEventsHandlers([
         googleCalendarEvent({
           id: eventId,
           attendees: [
@@ -44,6 +47,7 @@ describe('Calendar connected account cleanup (integration)', () => {
     );
 
     await runCalendarChannelListFetch(channel.calendarChannelId);
+    await runCalendarChannelEventsImport(channel.calendarChannelId);
   }, 60000);
 
   afterAll(async () => {

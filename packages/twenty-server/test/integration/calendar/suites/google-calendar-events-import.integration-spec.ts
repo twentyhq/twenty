@@ -1,15 +1,22 @@
 import { randomUUID } from 'node:crypto';
 
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import {
+  CalendarChannelSyncStage,
+  ConnectedAccountProvider,
+} from 'twenty-shared/types';
 
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
 import { setupGmailMock } from 'test/integration/messaging/utils/gmail-message-mock.util';
 import {
   googleCalendarEvent,
-  googleCalendarEventsHandler,
+  googleCalendarEventsHandlers,
 } from 'test/integration/messaging/utils/google-calendar-mock.util';
+import { queryCalendarChannels } from 'test/integration/messaging/utils/query-messaging.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
-import { runCalendarChannelListFetch } from 'test/integration/utils/run-channel-sync.util';
+import {
+  runCalendarChannelEventsImport,
+  runCalendarChannelListFetch,
+} from 'test/integration/utils/run-channel-sync.util';
 
 const HANDLE = 'google-calendar-events-import@apple.dev';
 
@@ -29,6 +36,22 @@ describe('Google calendar events import (integration)', () => {
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
 
+  const importEventAndFindTitle = async (eventTitle: string) => {
+    await runCalendarChannelListFetch(channel.calendarChannelId);
+
+    const [calendarChannel] = await queryCalendarChannels(
+      channel.connectedAccountId,
+    );
+
+    expect(calendarChannel.syncStage).toBe(
+      CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
+    );
+
+    await runCalendarChannelEventsImport(channel.calendarChannelId);
+
+    return findImportedEventTitles([eventTitle]);
+  };
+
   beforeAll(async () => {
     channel = await connectMessagingAccount({
       provider: ConnectedAccountProvider.GOOGLE,
@@ -40,33 +63,29 @@ describe('Google calendar events import (integration)', () => {
     await channel?.cleanup().catch(() => undefined);
   });
 
-  it('imports calendar events through the real list-fetch pipeline', async () => {
+  it('imports calendar events through the real list-fetch and import pipeline', async () => {
     const eventTitle = `Calendar event ${randomUUID()}`;
 
     gmail.use(
-      googleCalendarEventsHandler([
+      ...googleCalendarEventsHandlers([
         googleCalendarEvent({ summary: eventTitle }),
       ]),
     );
 
-    await runCalendarChannelListFetch(channel.calendarChannelId);
-
-    expect(await findImportedEventTitles([eventTitle])).toEqual([eventTitle]);
+    expect(await importEventAndFindTitle(eventTitle)).toEqual([eventTitle]);
   }, 60000);
 
   it('imports a newly created event through the sync-token incremental fetch', async () => {
     const newEventTitle = `Calendar event ${randomUUID()}`;
 
     gmail.use(
-      googleCalendarEventsHandler(
+      ...googleCalendarEventsHandlers(
         [googleCalendarEvent({ summary: newEventTitle })],
         { nextSyncToken: 'mock-calendar-sync-token-2' },
       ),
     );
 
-    await runCalendarChannelListFetch(channel.calendarChannelId);
-
-    expect(await findImportedEventTitles([newEventTitle])).toEqual([
+    expect(await importEventAndFindTitle(newEventTitle)).toEqual([
       newEventTitle,
     ]);
   }, 60000);

@@ -27,18 +27,24 @@ export const googleCalendarEvent = (
   };
 };
 
-export const googleCalendarEventsHandler = (
+export const googleCalendarEventsHandlers = (
   events: calendar_v3.Schema$Event[],
   {
     nextSyncToken = 'mock-calendar-sync-token',
   }: { nextSyncToken?: string } = {},
-): MswHandler =>
+): MswHandler[] => [
   http.get(GOOGLE_CALENDAR_EVENTS_URL, () =>
     HttpResponse.json<calendar_v3.Schema$Events>({
       items: events,
       nextSyncToken,
     }),
-  );
+  ),
+  ...events.map((event) =>
+    http.get(`${GOOGLE_CALENDAR_EVENTS_URL}/${event.id}`, () =>
+      HttpResponse.json<calendar_v3.Schema$Event>(event),
+    ),
+  ),
+];
 
 export const rateLimitedGoogleCalendarEventList = (): MswHandler =>
   http.get(GOOGLE_CALENDAR_EVENTS_URL, () =>
