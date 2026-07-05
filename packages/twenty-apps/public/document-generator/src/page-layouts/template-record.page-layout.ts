@@ -2,18 +2,16 @@ import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 
 import {
   DOCUMENT_TEMPLATE_OBJECT_UNIVERSAL_IDENTIFIER,
-  TEMPLATE_EDITOR_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   TEMPLATE_FIELDS_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
   TEMPLATE_FIELDS_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
-  TEMPLATE_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
   TEMPLATE_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
-  TEMPLATE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
-// A "Fields" tab so the record's own fields (name, body, target) always render,
-// plus an "Editor" tab for editing the Markdown body with a live preview. An
-// app-defined record page replaces the object's default layout, so it must
-// carry its own fields tab or the record shows "No Data".
+// A "Fields" tab renders the record's own fields (name, body, target). The
+// `body` field is RICH_TEXT, so Twenty shows its native rich-text editor there
+// — no custom editor component needed. An app-defined record page replaces the
+// object's default layout, so it must carry its own fields tab or the record
+// shows "No Data".
 export default definePageLayout({
   universalIdentifier: TEMPLATE_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
   name: 'Template record page',
@@ -34,25 +32,6 @@ export default definePageLayout({
           type: 'FIELDS',
           configuration: {
             configurationType: 'FIELDS',
-          },
-        },
-      ],
-    },
-    {
-      universalIdentifier: TEMPLATE_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
-      title: 'Editor',
-      position: 50,
-      icon: 'IconEdit',
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
-      widgets: [
-        {
-          universalIdentifier: TEMPLATE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
-          title: 'Template editor',
-          type: 'FRONT_COMPONENT',
-          configuration: {
-            configurationType: 'FRONT_COMPONENT',
-            frontComponentUniversalIdentifier:
-              TEMPLATE_EDITOR_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
           },
         },
       ],

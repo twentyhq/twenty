@@ -33,11 +33,11 @@ export default defineObject({
     },
     {
       universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT,
+      type: FieldType.RICH_TEXT,
       name: 'body',
       label: 'Body',
       description:
-        'Template written in Markdown. Use {{placeholders}} such as {{name.firstName}} or {{jobTitle}}; they are replaced with values from the selected record.',
+        'Template edited with the rich-text editor. Type {{placeholders}} such as {{name.firstName}} or {{jobTitle}}; they are replaced with values from the selected record when a document is generated.',
       icon: 'IconFileText',
     },
     {

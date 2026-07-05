@@ -93,7 +93,16 @@ export const generateDocumentHandler = async (
     documentTemplates: {
       __args: { filter: { id: { eq: templateId } }, first: 1 },
       edges: {
-        node: { id: true, name: true, body: true, target: true },
+        // `body` is a RICH_TEXT field: request its Markdown projection. The
+        // generated client only types the composite after
+        // `twenty dev:generate-client` is re-run against a remote that has this
+        // field; until then the cast bridges the lag (drop it after regen).
+        node: {
+          id: true,
+          name: true,
+          target: true,
+          body: { markdown: true } as unknown as true,
+        },
       },
     },
   });
@@ -128,10 +137,13 @@ export const generateDocumentHandler = async (
     };
   }
 
-  const { content, missingTokens } = renderTemplate(
-    documentTemplate.body ?? '',
-    record.values,
-  );
+  // RICH_TEXT stores { blocknote, markdown }; the Markdown projection feeds the
+  // existing placeholder + PDF/HTML pipeline unchanged.
+  const bodyMarkdown =
+    (documentTemplate.body as unknown as { markdown: string | null } | null)
+      ?.markdown ?? '';
+
+  const { content, missingTokens } = renderTemplate(bodyMarkdown, record.values);
 
   const documentName = `${documentTemplate.name ?? 'Document'} — ${record.displayName}`;
 
