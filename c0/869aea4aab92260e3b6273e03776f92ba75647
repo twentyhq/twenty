@@ -1,0 +1,69 @@
+packages/twenty-server/test/integration/google/calendar/connected-account-cleanup.integration-spec.ts
+  s_906651219ad534::t_0dc91cbbb586fe 5-7,12
+packages/twenty-server/test/integration/google/calendar/events-import.integration-spec.ts
+  s_906651219ad534::t_3264398352b070 8-10,12
+packages/twenty-server/test/integration/google/calendar/stale-sync.integration-spec.ts
+  s_906651219ad534::t_931e8cd235db1a 9-10,12
+packages/twenty-server/test/integration/google/calendar/sync-failure-lifecycle.integration-spec.ts
+  s_906651219ad534::t_72c2bbfd7b674c 13-15,20
+packages/twenty-server/test/integration/google/messaging/connected-account-cleanup.integration-spec.ts
+  s_906651219ad534::t_c7d3bfcccf5b26 4-6,11
+packages/twenty-server/test/integration/google/messaging/folder-discovery.integration-spec.ts
+  s_906651219ad534::t_890315638fb331 6-7,11
+packages/twenty-server/test/integration/google/messaging/incremental-sync.integration-spec.ts
+  s_906651219ad534::t_50980d8b09c6c8 3-6
+packages/twenty-server/test/integration/google/messaging/message-list-fetch.integration-spec.ts
+  s_906651219ad534::t_06a629f31f2bed 3-6,8
+packages/twenty-server/test/integration/google/messaging/stale-sync.integration-spec.ts
+  s_906651219ad534::t_4599b4c2f227b7 9-10,12
+packages/twenty-server/test/integration/google/messaging/sync-failure-lifecycle.integration-spec.ts
+  s_906651219ad534::t_502a18bf26fd12 13-15,20
+packages/twenty-server/test/integration/google/messaging/token-refresh.integration-spec.ts
+  s_906651219ad534::t_9a86ee39097545 5-7,9
+packages/twenty-server/test/integration/google/mocks/gmail-history-handler.util.ts
+  s_906651219ad534::t_4731b0820e82ae 4
+packages/twenty-server/test/integration/google/mocks/gmail-mailbox-handlers.util.ts
+  s_906651219ad534::t_33ea711d8f2740 4-6
+packages/twenty-server/test/integration/google/mocks/gmail-message-list-handler.util.ts
+  s_906651219ad534::t_0f79aaebc1b24e 4
+packages/twenty-server/test/integration/google/mocks/google-calendar-events-handlers.util.ts
+  s_906651219ad534::t_49c1aaeb619d87 4-5
+packages/twenty-server/test/integration/google/mocks/google-identity-handlers.util.ts
+  s_906651219ad534::t_b6cf841564b55d 3-4
+packages/twenty-server/test/integration/google/mocks/google-token-handlers.util.ts
+  s_906651219ad534::t_1d5aa9378fc6e8 3-4
+packages/twenty-server/test/integration/google/mocks/setup-google-mock.util.ts
+  s_906651219ad534::t_a2da6e30c8896c 4-11,15
+packages/twenty-server/test/integration/microsoft/calendar/events-import.integration-spec.ts
+  s_906651219ad534::t_8f37eb3213eda2 8-10,12
+packages/twenty-server/test/integration/microsoft/messaging/folder-discovery.integration-spec.ts
+  s_906651219ad534::t_f1b8a94498675d 3-5
+packages/twenty-server/test/integration/microsoft/mocks/microsoft-auth-handlers.util.ts
+  s_906651219ad534::t_0277d7e1ad84a8 3
+packages/twenty-server/test/integration/microsoft/mocks/microsoft-calendar-events-handlers.util.ts
+  s_906651219ad534::t_936239f5464845 4
+packages/twenty-server/test/integration/microsoft/mocks/microsoft-mailbox-handlers.util.ts
+  s_906651219ad534::t_f57b85a6879693 4-5
+packages/twenty-server/test/integration/microsoft/mocks/setup-microsoft-mock.util.ts
+  s_906651219ad534::t_cbba0963ccbaa3 3-6,10
+packages/twenty-server/test/integration/utils/connect-messaging-account.util.ts
+  s_906651219ad534::t_0366e9245a1984 15
+packages/twenty-server/test/integration/utils/start-channel-sync-and-await.util.ts
+  s_906651219ad534::t_857eeb0023f252 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c0869aea4aab92260e3b6273e03776f92ba75647",
+  "prompts": {},
+  "sessions": {
+    "s_906651219ad534": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3786e44f-ff2f-409f-8afd-2fc110affa61",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
