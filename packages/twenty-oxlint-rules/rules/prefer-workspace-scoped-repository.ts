@@ -23,6 +23,7 @@ const STRUCTURAL_EXEMPTIONS = new Set<string>([
   'ConnectedAccountEntity',
   'ConnectionProviderEntity',
   'FrontComponentEntity',
+  'InstanceFileEntity',
   'LogicFunctionEntity',
   'MessageFolderEntity',
   'RolePermissionFlagEntity',
