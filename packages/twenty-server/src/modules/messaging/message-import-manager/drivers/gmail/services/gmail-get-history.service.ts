@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type gmail_v1 } from 'googleapis';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MESSAGING_GMAIL_USERS_HISTORY_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-history-max-result.constant';
 import { GmailMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-message-list-fetch-error-handler.service';
@@ -63,53 +64,43 @@ export class GmailGetHistoryService {
     return { history: fullHistory, historyId: nextHistoryId };
   }
 
-  public async getMessageIdsFromHistory(
+  public async getThreadIdsFromHistory(
     history: gmail_v1.Schema$History[],
   ): Promise<{
-    messagesAdded: string[];
-    messagesDeleted: string[];
+    threadIdsToFetch: string[];
+    messageExternalIdsToDelete: string[];
   }> {
-    const { messagesAdded, messagesDeleted } = history.reduce(
-      (
-        acc: {
-          messagesAdded: string[];
-          messagesDeleted: string[];
-        },
-        history,
-      ) => {
-        const messagesAdded = history.messagesAdded?.map(
-          (messageAdded) => messageAdded.message?.id || '',
-        );
-        const labelsAdded = history.labelsAdded?.map(
-          (labelAdded) => labelAdded.message?.id || '',
-        );
+    const threadIds = new Set<string>();
+    const deletedMessageIds = new Set<string>();
 
-        const messagesDeleted = history.messagesDeleted?.map(
-          (messageDeleted) => messageDeleted.message?.id || '',
-        );
+    for (const historyEntry of history) {
+      const addedMessages = [
+        ...(historyEntry.messagesAdded ?? []),
+        ...(historyEntry.labelsAdded ?? []),
+      ]
+        .map((addedEntry) => addedEntry.message)
+        .filter(isDefined);
 
-        if (messagesAdded) acc.messagesAdded.push(...messagesAdded);
-        if (labelsAdded) acc.messagesAdded.push(...labelsAdded);
-        if (messagesDeleted) acc.messagesDeleted.push(...messagesDeleted);
+      for (const message of addedMessages) {
+        const threadId = message.threadId ?? message.id;
 
-        return acc;
-      },
-      { messagesAdded: [], messagesDeleted: [] },
-    );
+        if (isNonEmptyString(threadId)) {
+          threadIds.add(threadId);
+        }
+      }
 
-    const uniqueMessagesAdded = messagesAdded.filter(
-      (messageId) =>
-        isNonEmptyString(messageId) && !messagesDeleted.includes(messageId),
-    );
+      for (const messageDeleted of historyEntry.messagesDeleted ?? []) {
+        const deletedMessageId = messageDeleted.message?.id;
 
-    const uniqueMessagesDeleted = messagesDeleted.filter(
-      (messageId) =>
-        isNonEmptyString(messageId) && !messagesAdded.includes(messageId),
-    );
+        if (isNonEmptyString(deletedMessageId)) {
+          deletedMessageIds.add(deletedMessageId);
+        }
+      }
+    }
 
     return {
-      messagesAdded: [...new Set(uniqueMessagesAdded)],
-      messagesDeleted: [...new Set(uniqueMessagesDeleted)],
+      threadIdsToFetch: [...threadIds],
+      messageExternalIdsToDelete: [...deletedMessageIds],
     };
   }
 }

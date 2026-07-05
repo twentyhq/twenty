@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { google } from 'googleapis';
+import { type gmail_v1 as gmailV1, google } from 'googleapis';
 
 import { MessageFolderImportPolicy } from 'twenty-shared/types';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -12,12 +12,18 @@ import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-list-max-result.constant';
+import { MESSAGING_GMAIL_USERS_THREADS_LIST_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-threads-list-max-result.constant';
 import { GmailGetHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service';
 import { GmailMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-message-list-fetch-error-handler.service';
+import { buildGmailRetryConfig } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/build-gmail-retry-config.util';
 import { computeGmailExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-exclude-search-filter.util';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import { type GetMessageListsResponse } from 'src/modules/messaging/message-import-manager/types/get-message-lists-response.type';
+
+type GmailThreadListItem = {
+  id: string;
+  historyId: string | null;
+};
 
 @Injectable()
 export class GmailGetMessageListService {
@@ -45,62 +51,24 @@ export class GmailGetMessageListService {
     const gmailClient = google.gmail({
       version: 'v1',
       auth: oAuth2Client,
+      retryConfig: buildGmailRetryConfig(),
     });
-
-    let pageToken: string | undefined;
-    let hasMoreMessages = true;
-
-    const messageExternalIds: string[] = [];
 
     const excludedSearchFilter = computeGmailExcludeSearchFilter(
       messageFolders,
       messageChannel.messageFolderImportPolicy,
     );
 
-    while (hasMoreMessages) {
-      const messageList = await gmailClient.users.messages
-        .list({
-          userId: 'me',
-          maxResults: MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT,
-          pageToken,
-          q: excludedSearchFilter,
-        })
-        .catch((error) => {
-          this.logger.error(
-            `Connected account ${connectedAccount.id}: Error fetching message list: ${error.message}`,
-          );
-          this.logger.error(
-            `Connected account ${connectedAccount.id}: Error fetching message list: ${JSON.stringify(error)}`,
-          );
+    const threads = await this.listThreads(
+      gmailClient,
+      connectedAccount,
+      excludedSearchFilter,
+    );
 
-          this.gmailMessageListFetchErrorHandler.handleError(error);
-
-          return {
-            data: {
-              messages: [],
-              nextPageToken: undefined,
-            },
-          };
-        });
-
-      const { messages } = messageList.data;
-      const hasMessages = messages && messages.length > 0;
-
-      if (!hasMessages) {
-        break;
-      }
-
-      pageToken = messageList.data.nextPageToken ?? undefined;
-      hasMoreMessages = !!pageToken;
-
-      // @ts-expect-error legacy noImplicitAny
-      messageExternalIds.push(...messages.map((message) => message.id));
-    }
-
-    if (messageExternalIds.length === 0) {
+    if (threads.length === 0) {
       return [
         {
-          messageExternalIds,
+          messageExternalIds: [],
           nextSyncCursor: '',
           previousSyncCursor: '',
           messageExternalIdsToDelete: [],
@@ -109,28 +77,18 @@ export class GmailGetMessageListService {
       ];
     }
 
-    const firstMessageExternalId = messageExternalIds[0];
-    const firstMessageContent = await gmailClient.users.messages
-      .get({
-        userId: 'me',
-        id: firstMessageExternalId,
-      })
-      .catch((error) => {
-        this.gmailMessageListFetchErrorHandler.handleError(error);
-      });
+    const nextSyncCursor = threads[0].historyId;
 
-    const nextSyncCursor = firstMessageContent?.data?.historyId;
-
-    if (!nextSyncCursor) {
+    if (!isNonEmptyString(nextSyncCursor)) {
       throw new MessageImportDriverException(
-        `No historyId found for message ${firstMessageExternalId} for connected account ${connectedAccount.id}`,
+        `No historyId found for thread ${threads[0].id} for connected account ${connectedAccount.id}`,
         MessageImportDriverExceptionCode.NO_NEXT_SYNC_CURSOR,
       );
     }
 
     return [
       {
-        messageExternalIds,
+        messageExternalIds: threads.map((thread) => thread.id),
         nextSyncCursor,
         previousSyncCursor: '',
         messageExternalIdsToDelete: [],
@@ -165,6 +123,7 @@ export class GmailGetMessageListService {
     const gmailClient = google.gmail({
       version: 'v1',
       auth: oAuth2Client,
+      retryConfig: buildGmailRetryConfig(),
     });
 
     if (!isNonEmptyString(messageChannel.syncCursor)) {
@@ -181,8 +140,8 @@ export class GmailGetMessageListService {
         messageChannel.syncCursor,
       );
 
-    const { messagesAdded, messagesDeleted } =
-      await this.gmailGetHistoryService.getMessageIdsFromHistory(history);
+    const { threadIdsToFetch, messageExternalIdsToDelete } =
+      await this.gmailGetHistoryService.getThreadIdsFromHistory(history);
 
     if (!nextSyncCursor) {
       throw new MessageImportDriverException(
@@ -193,12 +152,67 @@ export class GmailGetMessageListService {
 
     return [
       {
-        messageExternalIds: messagesAdded,
-        messageExternalIdsToDelete: messagesDeleted,
+        messageExternalIds: threadIdsToFetch,
+        messageExternalIdsToDelete,
         previousSyncCursor: messageChannel.syncCursor,
         nextSyncCursor,
         folderId: undefined,
       },
     ];
+  }
+
+  private async listThreads(
+    gmailClient: gmailV1.Gmail,
+    connectedAccount: Pick<ConnectedAccountEntity, 'id'>,
+    searchFilter: string,
+  ): Promise<GmailThreadListItem[]> {
+    const threads: GmailThreadListItem[] = [];
+    let pageToken: string | undefined;
+    let hasMoreThreads = true;
+
+    while (hasMoreThreads) {
+      const threadList = await gmailClient.users.threads
+        .list({
+          userId: 'me',
+          maxResults: MESSAGING_GMAIL_USERS_THREADS_LIST_MAX_RESULT,
+          pageToken,
+          q: searchFilter,
+        })
+        .catch((error) => {
+          this.logger.error(
+            `Connected account ${connectedAccount.id}: Error fetching thread list: ${JSON.stringify(error)}`,
+          );
+
+          this.gmailMessageListFetchErrorHandler.handleError(error);
+
+          return {
+            data: {
+              threads: [],
+              nextPageToken: undefined,
+            },
+          };
+        });
+
+      const pageThreads = threadList.data.threads;
+      const hasThreads = pageThreads && pageThreads.length > 0;
+
+      if (!hasThreads) {
+        break;
+      }
+
+      pageToken = threadList.data.nextPageToken ?? undefined;
+      hasMoreThreads = !!pageToken;
+
+      for (const pageThread of pageThreads) {
+        if (isNonEmptyString(pageThread.id)) {
+          threads.push({
+            id: pageThread.id,
+            historyId: pageThread.historyId ?? null,
+          });
+        }
+      }
+    }
+
+    return threads;
   }
 }
