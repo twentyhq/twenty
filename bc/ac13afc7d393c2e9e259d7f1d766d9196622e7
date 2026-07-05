@@ -1,0 +1,83 @@
+packages/twenty-server/test/integration/calendar/suites/google-calendar-events-import.integration-spec.ts
+  s_906651219ad534::t_373661b339b131 1-73
+packages/twenty-server/test/integration/messaging/suites/gmail-message-list-fetch.integration-spec.ts
+  s_906651219ad534::t_903c6809726c95 1-60
+packages/twenty-server/test/integration/messaging/utils/connect-messaging-account.util.ts
+  s_906651219ad534::t_c699b2ad531ae8 1-109
+packages/twenty-server/package.json
+  s_906651219ad534::t_011e4f0aa349e0 224-225
+  s_906651219ad534::t_553e85e8f33620 210
+packages/twenty-server/test/integration/messaging/suites/messaging-incremental-sync.integration-spec.ts
+  s_906651219ad534::t_b2820329433813 1-75
+packages/twenty-server/test/integration/calendar/suites/calendar-stale-sync.integration-spec.ts
+  s_906651219ad534::t_16b5807998f500 1-102
+packages/twenty-server/.env.test
+  s_906651219ad534::t_5b4c3cbcd10208 17-20,23-27
+packages/twenty-server/test/integration/calendar/suites/microsoft-calendar-events-import.integration-spec.ts
+  s_906651219ad534::t_c84e2e1eaf7eda 1-94
+packages/twenty-server/test/integration/utils/find-records-by-filter.util.ts
+  s_906651219ad534::t_ed23d6b3d45460 1-45
+packages/twenty-server/test/integration/calendar/suites/calendar-sync-failure-lifecycle.integration-spec.ts
+  s_906651219ad534::t_6b92eab987a083 1-185
+packages/twenty-server/test/integration/utils/run-channel-sync.util.ts
+  s_906651219ad534::t_bbcd2b3415c8c0 1-94
+packages/twenty-server/test/integration/messaging/suites/gmail-folder-discovery.integration-spec.ts
+  s_906651219ad534::t_c7f10ea07cf50d 1-78
+packages/twenty-server/test/integration/calendar/suites/calendar-connected-account-cleanup.integration-spec.ts
+  s_906651219ad534::t_eb91c32cb63d4f 1-108
+packages/twenty-server/jest-integration.config.ts
+  s_906651219ad534::t_bb31e997141c75 41-44
+  s_906651219ad534::t_9dd8cfbb1a1e77 46
+packages/twenty-server/test/integration/messaging/suites/messaging-connected-account-cleanup.integration-spec.ts
+  s_906651219ad534::t_7396f03a2f86ed 1-128
+packages/twenty-server/test/integration/messaging/suites/messaging-stale-sync.integration-spec.ts
+  s_906651219ad534::t_c1d9b38781d040 1-104
+packages/twenty-server/test/integration/messaging/suites/messaging-sync-failure-lifecycle.integration-spec.ts
+  s_906651219ad534::t_26294bd5036716 1-190
+packages/twenty-server/test/integration/utils/get-core-repository.util.ts
+  s_906651219ad534::t_b5d65ca779548d 1-11
+packages/twenty-server/test/integration/utils/setup-test.ts
+  s_906651219ad534::t_8d06fdf94f719d 1,10-13
+packages/twenty-server/test/integration/messaging/suites/microsoft-folder-discovery.integration-spec.ts
+  s_906651219ad534::t_0521d8b67b837f 1-36
+packages/twenty-server/test/integration/utils/run-queue-job.util.ts
+  s_906651219ad534::t_ebb244024a0b75 1-27
+packages/twenty-server/test/integration/messaging/utils/microsoft-auth-mock.util.ts
+  s_906651219ad534::t_e63c390ca03b7a 1-25
+packages/twenty-server/test/integration/messaging/utils/google-auth-mock.util.ts
+  s_906651219ad534::t_48848ab2c22167 1-63
+packages/twenty-server/test/integration/messaging/utils/microsoft-calendar-mock.util.ts
+  s_906651219ad534::t_6ee2e85bfddb51 1-43
+packages/twenty-server/test/integration/utils/http-mock.util.ts
+  s_906651219ad534::t_0c5a5b0b193b43 1-42
+packages/twenty-server/test/integration/messaging/utils/microsoft-message-mock.util.ts
+  s_906651219ad534::t_182dd4e8062fe7 1-114
+packages/twenty-server/test/integration/messaging/utils/google-calendar-mock.util.ts
+  s_906651219ad534::t_7984d15da806da 1-63
+packages/twenty-server/test/integration/messaging/suites/messaging-token-refresh.integration-spec.ts
+  s_906651219ad534::t_4edf505c89c1db 1-52
+packages/twenty-server/test/integration/messaging/utils/query-messaging.util.ts
+  s_906651219ad534::t_c692ad51db0e07 5-8
+  s_906651219ad534::t_c1b50a453f4781 29,34,46,57
+  s_906651219ad534::t_f7182728949636 1-4,9-28,30-33,35-45,47-56,58-277
+packages/twenty-server/test/integration/messaging/utils/gmail-message-mock.util.ts
+  s_906651219ad534::t_481d44e27a0265 1-231
+yarn.lock
+  s_906651219ad534::t_6613dce622db84 22280,53188,53264,53266
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "bcac13afc7d393c2e9e259d7f1d766d9196622e7",
+  "prompts": {},
+  "sessions": {
+    "s_906651219ad534": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3786e44f-ff2f-409f-8afd-2fc110affa61",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
