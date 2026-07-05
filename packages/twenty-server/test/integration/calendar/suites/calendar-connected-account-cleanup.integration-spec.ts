@@ -16,8 +16,7 @@ import {
 import {
   runCalendarChannelEventsImport,
   runCalendarChannelListFetch,
-} from 'test/integration/utils/run-channel-sync.util';
-import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+} from 'test/integration/utils/run-sync.util';
 
 const HANDLE = 'calendar-cleanup@apple.dev';
 
@@ -86,27 +85,25 @@ describe('Calendar connected account cleanup (integration)', () => {
     ).not.toHaveLength(0);
 
     await deleteConnectedAccount(channel.connectedAccountId);
-    await waitForAllJobsToFinish();
 
-    const [remainingAssociations, remainingEvents, remainingParticipants] =
-      await Promise.all([
-        findRecordIdsByFilter(
-          'calendarChannelEventAssociation',
-          'calendarChannelEventAssociations',
-          { calendarChannelId: { eq: channel.calendarChannelId } },
-        ),
-        findRecordIdsByFilter('calendarEvent', 'calendarEvents', {
-          id: { in: eventIds },
-        }),
-        findRecordIdsByFilter(
-          'calendarEventParticipant',
-          'calendarEventParticipants',
-          { calendarEventId: { in: eventIds } },
-        ),
-      ]);
-
-    expect(remainingAssociations).toHaveLength(0);
-    expect(remainingEvents).toHaveLength(0);
-    expect(remainingParticipants).toHaveLength(0);
+    expect(
+      await findRecordIdsByFilter(
+        'calendarChannelEventAssociation',
+        'calendarChannelEventAssociations',
+        { calendarChannelId: { eq: channel.calendarChannelId } },
+      ),
+    ).toHaveLength(0);
+    expect(
+      await findRecordIdsByFilter('calendarEvent', 'calendarEvents', {
+        id: { in: eventIds },
+      }),
+    ).toHaveLength(0);
+    expect(
+      await findRecordIdsByFilter(
+        'calendarEventParticipant',
+        'calendarEventParticipants',
+        { calendarEventId: { in: eventIds } },
+      ),
+    ).toHaveLength(0);
   }, 60000);
 });

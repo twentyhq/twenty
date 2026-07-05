@@ -3,7 +3,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
 import { setupMicrosoftMock } from 'test/integration/messaging/utils/microsoft-message-mock.util';
 import { queryMessageFolders } from 'test/integration/messaging/utils/query-messaging.util';
-import { runMessageChannelSync } from 'test/integration/utils/run-channel-sync.util';
+import { runMessageChannelSync } from 'test/integration/utils/run-sync.util';
 
 const HANDLE = 'microsoft-folder-discovery@apple.dev';
 

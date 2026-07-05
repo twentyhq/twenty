@@ -4,7 +4,6 @@ import {
   MessageChannelSyncStatus,
 } from 'twenty-shared/types';
 
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MESSAGING_THROTTLE_MAX_ATTEMPTS } from 'src/modules/messaging/message-import-manager/constants/messaging-throttle-max-attempts';
@@ -26,14 +25,14 @@ import {
   updateMessageChannel,
 } from 'test/integration/messaging/utils/query-messaging.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
-import { runQueueJobAndWaitForCompletion } from 'test/integration/utils/run-queue-job.util';
+import { runSyncCron } from 'test/integration/utils/run-sync.util';
 
 const THROTTLED_HANDLE = 'messaging-throttled@apple.dev';
 const REVOKED_HANDLE = 'messaging-revoked@apple.dev';
 
 const FUTURE_RETRY_AFTER_ISO = '2099-12-31T10:30:00.000Z';
 
-const ONE_HOUR_IN_MS = 60 * 60 * 1000;
+const ONE_HOUR_AGO = new Date(Date.now() - 60 * 60 * 1000);
 const EXPIRED_CREDENTIALS_AT = new Date(Date.now() - 56 * 60 * 1000);
 
 describe('Messaging sync failure lifecycle (integration)', () => {
@@ -41,34 +40,6 @@ describe('Messaging sync failure lifecycle (integration)', () => {
 
   let throttledChannel: Awaited<ReturnType<typeof connectMessagingAccount>>;
   let revokedChannel: Awaited<ReturnType<typeof connectMessagingAccount>>;
-
-  const runSyncCycle = () =>
-    runQueueJobAndWaitForCompletion(
-      MessageQueue.cronQueue,
-      MessagingMessageListFetchCronJob.name,
-      {},
-    );
-
-  const getThrottledChannel = () =>
-    queryMessageChannel(
-      throttledChannel.connectedAccountId,
-      throttledChannel.channelId,
-    );
-
-  const getRevokedChannel = () =>
-    queryMessageChannel(
-      revokedChannel.connectedAccountId,
-      revokedChannel.channelId,
-    );
-
-  const expireThrottleBackoff = () =>
-    getCoreRepository<MessageChannelEntity>(MessageChannelEntity).update(
-      { id: throttledChannel.channelId },
-      {
-        syncStageStartedAt: new Date(Date.now() - ONE_HOUR_IN_MS),
-        throttleRetryAfter: null,
-      },
-    );
 
   beforeAll(async () => {
     throttledChannel = await connectMessagingAccount({
@@ -96,9 +67,9 @@ describe('Messaging sync failure lifecycle (integration)', () => {
   it('records the throttle backoff on a 429 and keeps the channel alive', async () => {
     gmail.use(rateLimitedGmailMessageList(FUTURE_RETRY_AFTER_ISO));
 
-    await runSyncCycle();
+    await runSyncCron(MessagingMessageListFetchCronJob);
 
-    const channelState = await getThrottledChannel();
+    const channelState = await queryMessageChannel(throttledChannel);
 
     expect(channelState.throttleFailureCount).toBe(1);
     expect(channelState.throttleRetryAfter).toBe(FUTURE_RETRY_AFTER_ISO);
@@ -110,7 +81,10 @@ describe('Messaging sync failure lifecycle (integration)', () => {
   it('fails the channel as unknown once the throttle attempts are exhausted', async () => {
     gmail.use(rateLimitedGmailMessageList(FUTURE_RETRY_AFTER_ISO));
 
-    let channelState = await getThrottledChannel();
+    const messageChannelRepository =
+      getCoreRepository<MessageChannelEntity>(MessageChannelEntity);
+
+    let channelState = await queryMessageChannel(throttledChannel);
 
     for (
       let attempt = channelState.throttleFailureCount;
@@ -118,11 +92,14 @@ describe('Messaging sync failure lifecycle (integration)', () => {
       channelState.syncStatus !== MessageChannelSyncStatus.FAILED_UNKNOWN;
       attempt++
     ) {
-      await expireThrottleBackoff();
+      await messageChannelRepository.update(
+        { id: throttledChannel.channelId },
+        { syncStageStartedAt: ONE_HOUR_AGO, throttleRetryAfter: null },
+      );
 
-      await runSyncCycle();
+      await runSyncCron(MessagingMessageListFetchCronJob);
 
-      channelState = await getThrottledChannel();
+      channelState = await queryMessageChannel(throttledChannel);
     }
 
     expect(channelState.syncStatus).toBe(
@@ -145,9 +122,9 @@ describe('Messaging sync failure lifecycle (integration)', () => {
 
     gmail.use(declinedGoogleTokenRefresh());
 
-    await runSyncCycle();
+    await runSyncCron(MessagingMessageListFetchCronJob);
 
-    const channelState = await getRevokedChannel();
+    const channelState = await queryMessageChannel(revokedChannel);
 
     expect(channelState.syncStatus).toBe(
       MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
@@ -162,17 +139,11 @@ describe('Messaging sync failure lifecycle (integration)', () => {
   }, 60000);
 
   it('relaunches the unknown-failure channel and leaves the permissions-failure channel untouched', async () => {
-    await runQueueJobAndWaitForCompletion(
-      MessageQueue.cronQueue,
-      MessagingRelaunchFailedMessageChannelsCronJob.name,
-      {},
-    );
+    await runSyncCron(MessagingRelaunchFailedMessageChannelsCronJob);
 
-    const relaunchedChannel = await getThrottledChannel();
+    const relaunchedChannel = await queryMessageChannel(throttledChannel);
 
-    expect(relaunchedChannel.syncStatus).toBe(
-      MessageChannelSyncStatus.ACTIVE,
-    );
+    expect(relaunchedChannel.syncStatus).toBe(MessageChannelSyncStatus.ACTIVE);
     expect(relaunchedChannel.syncStage).toBe(
       MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
     );
@@ -180,7 +151,7 @@ describe('Messaging sync failure lifecycle (integration)', () => {
     expect(relaunchedChannel.throttleRetryAfter).toBeNull();
     expect(relaunchedChannel.syncStageStartedAt).toBeNull();
 
-    const untouchedChannel = await getRevokedChannel();
+    const untouchedChannel = await queryMessageChannel(revokedChannel);
 
     expect(untouchedChannel.syncStatus).toBe(
       MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,

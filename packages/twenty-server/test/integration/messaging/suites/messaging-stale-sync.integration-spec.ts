@@ -3,7 +3,6 @@ import {
   MessageChannelSyncStage,
 } from 'twenty-shared/types';
 
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessagingOngoingStaleCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-ongoing-stale.cron.job';
 
@@ -12,7 +11,7 @@ import { setupGmailMock } from 'test/integration/messaging/utils/gmail-message-m
 import { googleAccountIdentityHandlers } from 'test/integration/messaging/utils/google-auth-mock.util';
 import { queryMessageChannel } from 'test/integration/messaging/utils/query-messaging.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
-import { runQueueJobAndWaitForCompletion } from 'test/integration/utils/run-queue-job.util';
+import { runSyncCron } from 'test/integration/utils/run-sync.util';
 
 const STALE_HANDLE = 'messaging-stale-sync@apple.dev';
 const RECENT_HANDLE = 'messaging-recent-sync@apple.dev';
@@ -40,10 +39,7 @@ describe('Messaging stale-sync recovery (integration)', () => {
     });
 
     for (const connectedChannel of [staleChannel, recentChannel]) {
-      const channelState = await queryMessageChannel(
-        connectedChannel.connectedAccountId,
-        connectedChannel.channelId,
-      );
+      const channelState = await queryMessageChannel(connectedChannel);
 
       expect(channelState.syncStage).toBe(
         MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
@@ -76,26 +72,16 @@ describe('Messaging stale-sync recovery (integration)', () => {
       },
     );
 
-    await runQueueJobAndWaitForCompletion(
-      MessageQueue.cronQueue,
-      MessagingOngoingStaleCronJob.name,
-      {},
-    );
+    await runSyncCron(MessagingOngoingStaleCronJob);
 
-    const staleChannelAfter = await queryMessageChannel(
-      staleChannel.connectedAccountId,
-      staleChannel.channelId,
-    );
+    const staleChannelAfter = await queryMessageChannel(staleChannel);
 
     expect(staleChannelAfter.syncStage).toBe(
       MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
     );
     expect(staleChannelAfter.syncStageStartedAt).toBeNull();
 
-    const recentChannelAfter = await queryMessageChannel(
-      recentChannel.connectedAccountId,
-      recentChannel.channelId,
-    );
+    const recentChannelAfter = await queryMessageChannel(recentChannel);
 
     expect(recentChannelAfter.syncStage).toBe(
       MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,

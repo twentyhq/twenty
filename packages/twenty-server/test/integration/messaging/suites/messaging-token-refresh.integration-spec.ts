@@ -9,11 +9,10 @@ import {
 } from 'test/integration/messaging/utils/gmail-message-mock.util';
 import { queryConnectedAccount } from 'test/integration/messaging/utils/query-messaging.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
-import { runMessageChannelSync } from 'test/integration/utils/run-channel-sync.util';
+import { runMessageChannelSync } from 'test/integration/utils/run-sync.util';
 
 const HANDLE = 'messaging-token-refresh@apple.dev';
 
-// Older than the 55-minute access-token validity window, so the next sync refreshes.
 const EXPIRED_CREDENTIALS_AT = new Date(Date.now() - 56 * 60 * 1000);
 
 describe('Messaging token refresh (integration)', () => {

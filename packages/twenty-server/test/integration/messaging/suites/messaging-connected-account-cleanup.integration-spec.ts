@@ -11,8 +11,7 @@ import {
   findRecordIdsByFilter,
   findRecordNodesByFilter,
 } from 'test/integration/utils/find-records-by-filter.util';
-import { runMessageChannelSync } from 'test/integration/utils/run-channel-sync.util';
-import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import { runMessageChannelSync } from 'test/integration/utils/run-sync.util';
 
 const HANDLE = 'messaging-cleanup@apple.dev';
 
@@ -89,40 +88,35 @@ describe('Messaging connected account cleanup (integration)', () => {
     ).not.toHaveLength(0);
 
     await deleteConnectedAccount(channel.connectedAccountId);
-    await waitForAllJobsToFinish();
 
-    const [
-      remainingMessages,
-      remainingAssociations,
-      remainingFolders,
-      remainingParticipants,
-      remainingThreads,
-    ] = await Promise.all([
-      findRecordIdsByFilter('message', 'messages', {
+    expect(
+      await findRecordIdsByFilter('message', 'messages', {
         id: { in: messageIds },
       }),
-      findRecordIdsByFilter(
+    ).toHaveLength(0);
+    expect(
+      await findRecordIdsByFilter(
         'messageChannelMessageAssociation',
         'messageChannelMessageAssociations',
         { messageChannelId: { eq: channel.channelId } },
       ),
-      findRecordIdsByFilter(
+    ).toHaveLength(0);
+    expect(
+      await findRecordIdsByFilter(
         'messageChannelMessageAssociationMessageFolder',
         'messageChannelMessageAssociationMessageFolders',
         { messageChannelMessageAssociationId: { in: associationIds } },
       ),
-      findRecordIdsByFilter('messageParticipant', 'messageParticipants', {
+    ).toHaveLength(0);
+    expect(
+      await findRecordIdsByFilter('messageParticipant', 'messageParticipants', {
         messageId: { in: messageIds },
       }),
-      findRecordIdsByFilter('messageThread', 'messageThreads', {
+    ).toHaveLength(0);
+    expect(
+      await findRecordIdsByFilter('messageThread', 'messageThreads', {
         id: { in: threadIds },
       }),
-    ]);
-
-    expect(remainingMessages).toHaveLength(0);
-    expect(remainingAssociations).toHaveLength(0);
-    expect(remainingFolders).toHaveLength(0);
-    expect(remainingParticipants).toHaveLength(0);
-    expect(remainingThreads).toHaveLength(0);
+    ).toHaveLength(0);
   }, 60000);
 });

@@ -4,7 +4,6 @@ import {
   ConnectedAccountProvider,
 } from 'twenty-shared/types';
 
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { CALENDAR_THROTTLE_MAX_ATTEMPTS } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-throttle-max-attempts';
@@ -19,17 +18,17 @@ import {
 } from 'test/integration/messaging/utils/google-auth-mock.util';
 import { rateLimitedGoogleCalendarEventList } from 'test/integration/messaging/utils/google-calendar-mock.util';
 import {
-  queryCalendarChannels,
+  queryCalendarChannel,
   queryConnectedAccount,
   updateCalendarChannel,
 } from 'test/integration/messaging/utils/query-messaging.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
-import { runQueueJobAndWaitForCompletion } from 'test/integration/utils/run-queue-job.util';
+import { runSyncCron } from 'test/integration/utils/run-sync.util';
 
 const THROTTLED_HANDLE = 'calendar-throttled@apple.dev';
 const REVOKED_HANDLE = 'calendar-revoked@apple.dev';
 
-const ONE_HOUR_IN_MS = 60 * 60 * 1000;
+const ONE_HOUR_AGO = new Date(Date.now() - 60 * 60 * 1000);
 const EXPIRED_CREDENTIALS_AT = new Date(Date.now() - 56 * 60 * 1000);
 
 describe('Calendar sync failure lifecycle (integration)', () => {
@@ -37,35 +36,6 @@ describe('Calendar sync failure lifecycle (integration)', () => {
 
   let throttledChannel: Awaited<ReturnType<typeof connectMessagingAccount>>;
   let revokedChannel: Awaited<ReturnType<typeof connectMessagingAccount>>;
-
-  const runSyncCycle = () =>
-    runQueueJobAndWaitForCompletion(
-      MessageQueue.cronQueue,
-      CalendarEventListFetchCronJob.name,
-      {},
-    );
-
-  const getThrottledChannel = async () => {
-    const [calendarChannel] = await queryCalendarChannels(
-      throttledChannel.connectedAccountId,
-    );
-
-    return calendarChannel;
-  };
-
-  const getRevokedChannel = async () => {
-    const [calendarChannel] = await queryCalendarChannels(
-      revokedChannel.connectedAccountId,
-    );
-
-    return calendarChannel;
-  };
-
-  const expireThrottleBackoff = () =>
-    getCoreRepository<CalendarChannelEntity>(CalendarChannelEntity).update(
-      { id: throttledChannel.calendarChannelId },
-      { syncStageStartedAt: new Date(Date.now() - ONE_HOUR_IN_MS) },
-    );
 
   beforeAll(async () => {
     throttledChannel = await connectMessagingAccount({
@@ -93,9 +63,9 @@ describe('Calendar sync failure lifecycle (integration)', () => {
   it('counts a throttle failure on a 429 and keeps the channel alive', async () => {
     gmail.use(rateLimitedGoogleCalendarEventList());
 
-    await runSyncCycle();
+    await runSyncCron(CalendarEventListFetchCronJob);
 
-    const channelState = await getThrottledChannel();
+    const channelState = await queryCalendarChannel(throttledChannel);
 
     expect(channelState.throttleFailureCount).toBe(1);
     expect(channelState.syncStatus).not.toBe(
@@ -106,7 +76,11 @@ describe('Calendar sync failure lifecycle (integration)', () => {
   it('fails the channel as unknown once the throttle attempts are exhausted', async () => {
     gmail.use(rateLimitedGoogleCalendarEventList());
 
-    let channelState = await getThrottledChannel();
+    const calendarChannelRepository = getCoreRepository<CalendarChannelEntity>(
+      CalendarChannelEntity,
+    );
+
+    let channelState = await queryCalendarChannel(throttledChannel);
 
     for (
       let attempt = channelState.throttleFailureCount;
@@ -114,11 +88,14 @@ describe('Calendar sync failure lifecycle (integration)', () => {
       channelState.syncStatus !== CalendarChannelSyncStatus.FAILED_UNKNOWN;
       attempt++
     ) {
-      await expireThrottleBackoff();
+      await calendarChannelRepository.update(
+        { id: throttledChannel.calendarChannelId },
+        { syncStageStartedAt: ONE_HOUR_AGO },
+      );
 
-      await runSyncCycle();
+      await runSyncCron(CalendarEventListFetchCronJob);
 
-      channelState = await getThrottledChannel();
+      channelState = await queryCalendarChannel(throttledChannel);
     }
 
     expect(channelState.syncStatus).toBe(
@@ -141,9 +118,9 @@ describe('Calendar sync failure lifecycle (integration)', () => {
 
     gmail.use(declinedGoogleTokenRefresh());
 
-    await runSyncCycle();
+    await runSyncCron(CalendarEventListFetchCronJob);
 
-    const channelState = await getRevokedChannel();
+    const channelState = await queryCalendarChannel(revokedChannel);
 
     expect(channelState.syncStatus).toBe(
       CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
@@ -158,13 +135,9 @@ describe('Calendar sync failure lifecycle (integration)', () => {
   }, 60000);
 
   it('relaunches the unknown-failure channel and leaves the permissions-failure channel untouched', async () => {
-    await runQueueJobAndWaitForCompletion(
-      MessageQueue.cronQueue,
-      CalendarRelaunchFailedCalendarChannelsCronJob.name,
-      {},
-    );
+    await runSyncCron(CalendarRelaunchFailedCalendarChannelsCronJob);
 
-    const relaunchedChannel = await getThrottledChannel();
+    const relaunchedChannel = await queryCalendarChannel(throttledChannel);
 
     expect(relaunchedChannel.syncStatus).toBe(
       CalendarChannelSyncStatus.ACTIVE,
@@ -175,7 +148,7 @@ describe('Calendar sync failure lifecycle (integration)', () => {
     expect(relaunchedChannel.throttleFailureCount).toBe(0);
     expect(relaunchedChannel.syncStageStartedAt).toBeNull();
 
-    const untouchedChannel = await getRevokedChannel();
+    const untouchedChannel = await queryCalendarChannel(revokedChannel);
 
     expect(untouchedChannel.syncStatus).toBe(
       CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,

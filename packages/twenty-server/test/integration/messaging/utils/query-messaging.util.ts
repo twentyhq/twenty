@@ -8,6 +8,7 @@ import { type MessageChannelDTO } from 'src/engine/metadata-modules/message-chan
 import { type MessageFolderDTO } from 'src/engine/metadata-modules/message-folder/dtos/message-folder.dto';
 
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
 type MetadataAPIResponse = {
   body: { data: Record<string, unknown>; errors?: { message: string }[] };
@@ -97,10 +98,13 @@ export const queryMessageChannels = async (): Promise<MessageChannelDto[]> => {
   return getDataOrThrow(response).myMessageChannels as MessageChannelDto[];
 };
 
-export const queryMessageChannel = async (
-  connectedAccountId: string,
-  messageChannelId: string,
-): Promise<MessageChannelDto> => {
+export const queryMessageChannel = async ({
+  connectedAccountId,
+  channelId,
+}: {
+  connectedAccountId: string;
+  channelId: string;
+}): Promise<MessageChannelDto> => {
   const response = await makeMetadataAPIRequest({
     query: gql`
       query MessageChannelForTest($connectedAccountId: UUID) {
@@ -115,10 +119,10 @@ export const queryMessageChannel = async (
 
   const channel = (
     getDataOrThrow(response).myMessageChannels as MessageChannelDto[]
-  ).find((candidate) => candidate.id === messageChannelId);
+  ).find((candidate) => candidate.id === channelId);
 
   if (!channel) {
-    throw new Error(`Message channel ${messageChannelId} not found`);
+    throw new Error(`Message channel ${channelId} not found`);
   }
 
   return channel;
@@ -164,6 +168,24 @@ export const queryCalendarChannels = async (
   });
 
   return getDataOrThrow(response).myCalendarChannels as CalendarChannelDto[];
+};
+
+export const queryCalendarChannel = async ({
+  connectedAccountId,
+  calendarChannelId,
+}: {
+  connectedAccountId: string;
+  calendarChannelId: string;
+}): Promise<CalendarChannelDto> => {
+  const channel = (await queryCalendarChannels(connectedAccountId)).find(
+    (candidate) => candidate.id === calendarChannelId,
+  );
+
+  if (!channel) {
+    throw new Error(`Calendar channel ${calendarChannelId} not found`);
+  }
+
+  return channel;
 };
 
 export const queryConnectedAccount = async (
@@ -274,4 +296,6 @@ export const deleteConnectedAccount = async (
   });
 
   getDataOrThrow(response);
+
+  await waitForAllJobsToFinish();
 };

@@ -3,16 +3,15 @@ import {
   ConnectedAccountProvider,
 } from 'twenty-shared/types';
 
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { CalendarOngoingStaleCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-ongoing-stale.cron.job';
 
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
 import { setupGmailMock } from 'test/integration/messaging/utils/gmail-message-mock.util';
 import { googleAccountIdentityHandlers } from 'test/integration/messaging/utils/google-auth-mock.util';
-import { queryCalendarChannels } from 'test/integration/messaging/utils/query-messaging.util';
+import { queryCalendarChannel } from 'test/integration/messaging/utils/query-messaging.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
-import { runQueueJobAndWaitForCompletion } from 'test/integration/utils/run-queue-job.util';
+import { runSyncCron } from 'test/integration/utils/run-sync.util';
 
 const STALE_HANDLE = 'calendar-stale-sync@apple.dev';
 const RECENT_HANDLE = 'calendar-recent-sync@apple.dev';
@@ -40,11 +39,9 @@ describe('Calendar stale-sync recovery (integration)', () => {
     });
 
     for (const connectedChannel of [staleChannel, recentChannel]) {
-      const [calendarChannel] = await queryCalendarChannels(
-        connectedChannel.connectedAccountId,
-      );
+      const channelState = await queryCalendarChannel(connectedChannel);
 
-      expect(calendarChannel.syncStage).toBe(
+      expect(channelState.syncStage).toBe(
         CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
       );
     }
@@ -76,24 +73,16 @@ describe('Calendar stale-sync recovery (integration)', () => {
       },
     );
 
-    await runQueueJobAndWaitForCompletion(
-      MessageQueue.cronQueue,
-      CalendarOngoingStaleCronJob.name,
-      {},
-    );
+    await runSyncCron(CalendarOngoingStaleCronJob);
 
-    const [staleChannelAfter] = await queryCalendarChannels(
-      staleChannel.connectedAccountId,
-    );
+    const staleChannelAfter = await queryCalendarChannel(staleChannel);
 
     expect(staleChannelAfter.syncStage).toBe(
       CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
     );
     expect(staleChannelAfter.syncStageStartedAt).toBeNull();
 
-    const [recentChannelAfter] = await queryCalendarChannels(
-      recentChannel.connectedAccountId,
-    );
+    const recentChannelAfter = await queryCalendarChannel(recentChannel);
 
     expect(recentChannelAfter.syncStage).toBe(
       CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING,

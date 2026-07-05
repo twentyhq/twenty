@@ -8,21 +8,10 @@ import {
   gmailMessageListHandler,
   setupGmailMock,
 } from 'test/integration/messaging/utils/gmail-message-mock.util';
-import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
-import { runMessageChannelSync } from 'test/integration/utils/run-channel-sync.util';
+import { findImportedMessageSubjects } from 'test/integration/utils/find-imported-records.util';
+import { runMessageChannelSync } from 'test/integration/utils/run-sync.util';
 
 const HANDLE = 'messaging-incremental-sync@apple.dev';
-
-const findImportedSubjects = async (subjects: string[]): Promise<string[]> => {
-  const messages = await findRecordNodesByFilter<{ subject: string }>(
-    'message',
-    'messages',
-    'subject',
-    { subject: { in: subjects } },
-  );
-
-  return messages.map((message) => message.subject);
-};
 
 describe('Messaging incremental sync (integration)', () => {
   const inbox = [gmailMessage()];
@@ -47,7 +36,7 @@ describe('Messaging incremental sync (integration)', () => {
 
     const initialSubject = getGmailMessageSubject(inbox[0]);
 
-    expect(await findImportedSubjects([initialSubject])).toEqual([
+    expect(await findImportedMessageSubjects([initialSubject])).toEqual([
       initialSubject,
     ]);
   }, 60000);
@@ -70,6 +59,8 @@ describe('Messaging incremental sync (integration)', () => {
 
     const newSubject = getGmailMessageSubject(newMessage);
 
-    expect(await findImportedSubjects([newSubject])).toEqual([newSubject]);
+    expect(await findImportedMessageSubjects([newSubject])).toEqual([
+      newSubject,
+    ]);
   }, 60000);
 });

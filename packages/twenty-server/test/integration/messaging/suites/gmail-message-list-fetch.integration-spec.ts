@@ -7,21 +7,10 @@ import {
   setupGmailMock,
 } from 'test/integration/messaging/utils/gmail-message-mock.util';
 import { queryMessageFolders } from 'test/integration/messaging/utils/query-messaging.util';
-import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
-import { runMessageChannelSync } from 'test/integration/utils/run-channel-sync.util';
+import { findImportedMessageSubjects } from 'test/integration/utils/find-imported-records.util';
+import { runMessageChannelSync } from 'test/integration/utils/run-sync.util';
 
 const HANDLE = 'gmail-message-list-fetch@apple.dev';
-
-const findImportedSubjects = async (subjects: string[]): Promise<string[]> => {
-  const messages = await findRecordNodesByFilter<{ subject: string }>(
-    'message',
-    'messages',
-    'subject',
-    { subject: { in: subjects } },
-  );
-
-  return messages.map((message) => message.subject).sort();
-};
 
 describe('Gmail message list fetch (integration)', () => {
   const inbox = [gmailMessage(), gmailMessage()];
@@ -46,7 +35,7 @@ describe('Gmail message list fetch (integration)', () => {
 
     const expectedSubjects = inbox.map(getGmailMessageSubject);
 
-    expect(await findImportedSubjects(expectedSubjects)).toEqual(
+    expect(await findImportedMessageSubjects(expectedSubjects)).toEqual(
       [...expectedSubjects].sort(),
     );
 

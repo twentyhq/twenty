@@ -12,7 +12,7 @@ import {
 import {
   runMessageChannelSync,
   startChannelSyncAndAwait,
-} from 'test/integration/utils/run-channel-sync.util';
+} from 'test/integration/utils/run-sync.util';
 
 const HANDLE = 'gmail-folder-discovery@apple.dev';
 
@@ -29,14 +29,6 @@ describe('Gmail folder discovery (integration)', () => {
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
 
-  const getSyncStateByFolderName = async () => {
-    const folders = await queryMessageFolders(channel.channelId);
-
-    return Object.fromEntries(
-      folders.map((folder) => [folder.name, folder.isSynced]),
-    );
-  };
-
   beforeAll(async () => {
     channel = await connectMessagingAccount({
       provider: ConnectedAccountProvider.GOOGLE,
@@ -52,7 +44,11 @@ describe('Gmail folder discovery (integration)', () => {
   it('syncs every folder discovered at connect time under the default all-folders policy', async () => {
     await startChannelSyncAndAwait(channel.connectedAccountId);
 
-    expect(await getSyncStateByFolderName()).toEqual({
+    const folders = await queryMessageFolders(channel.channelId);
+
+    expect(
+      Object.fromEntries(folders.map((folder) => [folder.name, folder.isSynced])),
+    ).toEqual({
       INBOX: true,
       SENT: true,
       Work: true,
@@ -68,7 +64,11 @@ describe('Gmail folder discovery (integration)', () => {
 
     await runMessageChannelSync(channel.channelId);
 
-    expect(await getSyncStateByFolderName()).toEqual({
+    const folders = await queryMessageFolders(channel.channelId);
+
+    expect(
+      Object.fromEntries(folders.map((folder) => [folder.name, folder.isSynced])),
+    ).toEqual({
       INBOX: true,
       SENT: true,
       Work: true,
