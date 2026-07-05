@@ -1,0 +1,52 @@
+packages/twenty-server/test/integration/messaging/suites/microsoft-folder-discovery.integration-spec.ts
+  s_906651219ad534::t_8a01b5bc45c96d 6
+packages/twenty-server/test/integration/messaging/suites/messaging-token-refresh.integration-spec.ts
+  s_906651219ad534::t_e63f4b290063e8 12
+packages/twenty-server/test/integration/utils/run-sync.util.ts
+  s_906651219ad534::t_b244c00be10965 1-121
+packages/twenty-server/test/integration/calendar/suites/google-calendar-events-import.integration-spec.ts
+  s_906651219ad534::t_faca510c193f15 14-15,19,48-60,73-83
+packages/twenty-server/test/integration/messaging/utils/query-messaging.util.ts
+  s_906651219ad534::t_0348773b0f9866 173-190
+  s_906651219ad534::t_3c1f434d9506d1 101-107,122,125
+  s_906651219ad534::t_4bd22a734ecd97 11
+  s_906651219ad534::t_569ef76e5d284b 299-300
+packages/twenty-server/test/integration/messaging/suites/messaging-stale-sync.integration-spec.ts
+  s_906651219ad534::t_2a3266b7b8d336 14,42,75,77,84
+packages/twenty-server/test/integration/calendar/suites/calendar-connected-account-cleanup.integration-spec.ts
+  s_906651219ad534::t_a1f2c1af6a015a 19,88-107
+packages/twenty-server/test/integration/messaging/suites/gmail-message-list-fetch.integration-spec.ts
+  s_906651219ad534::t_5330bd2645910d 10-11,38
+packages/twenty-server/test/integration/messaging/suites/messaging-sync-failure-lifecycle.integration-spec.ts
+  s_906651219ad534::t_8d224583ce3ec0 28,35,70,72,84-87,95-98,100,102,125,127,142,144,146,154
+packages/twenty-server/test/integration/messaging/suites/messaging-incremental-sync.integration-spec.ts
+  s_906651219ad534::t_655c37cf7c2021 11-12,39,62-64
+packages/twenty-server/test/integration/messaging/suites/gmail-folder-discovery.integration-spec.ts
+  s_906651219ad534::t_7e515eb2287223 15,47-51,67-71
+packages/twenty-server/test/integration/utils/find-imported-records.util.ts
+  s_906651219ad534::t_4b822f4fe11d04 1-27
+packages/twenty-server/test/integration/calendar/suites/microsoft-calendar-events-import.integration-spec.ts
+  s_906651219ad534::t_be6d098259a5ce 14-15,19,44,48-60,68,73-83
+packages/twenty-server/test/integration/calendar/suites/calendar-stale-sync.integration-spec.ts
+  s_906651219ad534::t_35ecd7f3c7c88d 12,14,42,44,76,78,85
+packages/twenty-server/test/integration/calendar/suites/calendar-sync-failure-lifecycle.integration-spec.ts
+  s_906651219ad534::t_90191e57ebe599 21,26,31,66,68,79-83,91-94,96,98,121,123,138,140,151
+packages/twenty-server/test/integration/messaging/suites/messaging-connected-account-cleanup.integration-spec.ts
+  s_906651219ad534::t_1595ab9e8b0f91 14,91-93,96-98,103-105,110-112,115-117,120
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "fe3fc3ea97854ac6f2a68dcecf0a958bdb202e76",
+  "prompts": {},
+  "sessions": {
+    "s_906651219ad534": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3786e44f-ff2f-409f-8afd-2fc110affa61",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
