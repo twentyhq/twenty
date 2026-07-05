@@ -29,7 +29,14 @@ export type SyncFirefliesCallResult =
       created: boolean;
     }
   | { status: 'skipped'; field: FirefliesSyncableField; reason: string }
-  | { status: 'error'; field: FirefliesSyncableField; error: string };
+  | {
+      status: 'error';
+      field: FirefliesSyncableField;
+      error: string;
+      // HTTP status of a failed Fireflies fetch; lets callers tell a
+      // rate-limit (429) apart from a hard failure. Absent on upsert errors.
+      httpStatus?: number;
+    };
 
 const MINUTES_TO_MILLISECONDS = 60_000;
 
@@ -76,7 +83,12 @@ export const syncFirefliesCallToCallRecording = async ({
       : await fetchFirefliesSummary({ apiKey, transcriptId });
 
   if (!fetchResult.ok) {
-    return { status: 'error', field, error: fetchResult.errorMessage };
+    return {
+      status: 'error',
+      field,
+      error: fetchResult.errorMessage,
+      httpStatus: fetchResult.status,
+    };
   }
 
   const firefliesTranscript = fetchResult.data;

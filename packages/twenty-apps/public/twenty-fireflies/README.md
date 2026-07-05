@@ -91,6 +91,37 @@ The list-by-participant and search tools return the same compact call shape:
 `transcriptUrl`, `meetingLink`. To then sync any of those calls into a
 CallRecording, pass the `id` from a list result into **Sync Fireflies Call**.
 
+## History backfill
+
+Installing or upgrading the app automatically sweeps your Fireflies history
+into CallRecording records, so calls recorded before the installation show
+up without any manual syncing:
+
+- **Window** — the sweep covers the last `FIREFLIES_BACKFILL_DAYS` days of
+  Fireflies history (default **90**; app setting). Set it to `0` to disable
+  the automatic backfill entirely.
+- **Same pipeline as the webhook** — every historical call runs through the
+  same transcript + summary sync, so matching, formatting, and the
+  CallRecording shape are identical to live syncs.
+- **Idempotent** — CallRecording ids are derived deterministically from the
+  Fireflies meeting id, so re-running the sweep (reinstalling, upgrading
+  again, or re-invoking it manually) updates the same records instead of
+  creating duplicates.
+- **Timeout-safe** — the sweep pages through history newest-first and
+  re-invokes itself with the remaining date window when a run approaches the
+  function timeout, so any history size completes across runs.
+- **Rate-limit-aware** — Fireflies API calls are paced, and when Fireflies
+  answers HTTP 429 the run pauses and hands the remaining window to a
+  continuation instead of failing.
+- **Requires the API key** — on workspaces where `FIREFLIES_API_KEY` isn't
+  configured yet, the sweep no-ops; it runs on the next upgrade, or invoke
+  it manually once the key is set.
+
+The sweep is exposed as an authenticated `POST /fireflies/backfill` route.
+Invoke it with an empty body to sweep the configured window, or pass
+`{ "fromDate": "<ISO date>" }` to sweep a custom range (for example after
+setting the API key on an already-installed app).
+
 ## Installing
 
 1. Open **Settings → Applications** in your Twenty workspace.
@@ -108,10 +139,13 @@ Version 0.1.x stored transcripts and summaries as two rich-text fields on
 CalendarEvent. Upgrading removes those fields **and their stored content** —
 recordings now live on the standard CallRecording object instead.
 
-The removed content is a cache of Fireflies data: any call still available
-in Fireflies can be re-ingested as a CallRecording by passing its id to
-**Sync Fireflies Call** (find ids with the list / search tools). An
-automatic history backfill on install and upgrade is planned as a follow-up.
+The removed content is a cache of Fireflies data, and the upgrade re-ingests
+it automatically: the [history backfill](#history-backfill) sweeps the last
+`FIREFLIES_BACKFILL_DAYS` days (default 90) of Fireflies history back into
+CallRecording records. Calls older than the configured window can still be
+re-ingested one-by-one with **Sync Fireflies Call** (find ids with the
+list / search tools), or in bulk by invoking the backfill route with an
+explicit `fromDate`.
 
 ## Limitations
 
@@ -147,6 +181,7 @@ What this connector intentionally does **not** support in v1:
 | Summary is populated but Transcript isn't (or vice versa) | Only one of the two Fireflies events is subscribed to | Subscribe to both `meeting.transcribed` and `meeting.summarized` in your Fireflies Webhooks V2 configuration |
 | Fireflies API errors with `401` | API key wrong, rotated, or revoked | Generate a new key in Fireflies → Integrations → Fireflies API → Regenerate, then update `FIREFLIES_API_KEY` |
 | **Sync Fireflies Call** reports `No CallRecording was written` | Fireflies returned no transcript sentences and no summary for the call, or the per-field outcomes show transient Fireflies API failures | Check the `fieldOutcomes` array in the result — `skipped` means Fireflies had no content for that field; `error` means Fireflies-side failure (retry, or inspect the error message) |
+| Historical calls didn't appear after installing or upgrading | `FIREFLIES_API_KEY` wasn't configured when the backfill ran, or `FIREFLIES_BACKFILL_DAYS` is `0`, or the calls are older than the configured window | Set the API key, then `POST /fireflies/backfill` (authenticated) with an empty body — or with `{ "fromDate": ... }` for a wider window |
 | **List / Search** tools return `count: 0` for a contact you've definitely talked to | Email mismatch — Fireflies stores the address as the participant joined the meeting with, which may differ from the contact's primary address in Twenty (aliases, plus-addressing, work vs. personal) | Try the contact's other known email addresses; cross-check the `participants` list on a known matching call |
 
 ---
@@ -194,6 +229,9 @@ supported.
 1. In Twenty: **Settings → Applications → Fireflies → Settings tab**.
 2. Paste the Fireflies API key into the `FIREFLIES_API_KEY` row.
 3. Paste the signing secret into the `FIREFLIES_WEBHOOK_SECRET` row.
+4. Optionally adjust `FIREFLIES_BACKFILL_DAYS` — how many days of Fireflies
+   history the [automatic backfill](#history-backfill) ingests on install
+   and upgrade (default `90`, `0` disables it).
 
 After saving, the next time Fireflies finishes processing a recording, a
 CallRecording with the transcript will appear (linked to the matching

@@ -3,8 +3,10 @@ import { defineApplication } from 'twenty-sdk/define';
 import {
   APPLICATION_UNIVERSAL_IDENTIFIER,
   FIREFLIES_API_KEY_VARIABLE_UNIVERSAL_IDENTIFIER,
+  FIREFLIES_BACKFILL_DAYS_VARIABLE_UNIVERSAL_IDENTIFIER,
   FIREFLIES_WEBHOOK_SECRET_VARIABLE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { DEFAULT_FIREFLIES_BACKFILL_DAYS } from 'src/logic-functions/constants/default-fireflies-backfill-days';
 
 export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -34,6 +36,13 @@ export default defineApplication({
       description:
         'Signing secret for verifying Fireflies Webhooks V2 payloads (sent in the X-Hub-Signature header as sha256=<hex-hmac-sha256-of-body>). Configure the same value on the Fireflies V2 webhook setup page.',
       isSecret: true,
+    },
+    FIREFLIES_BACKFILL_DAYS: {
+      universalIdentifier: FIREFLIES_BACKFILL_DAYS_VARIABLE_UNIVERSAL_IDENTIFIER,
+      description:
+        'How many days of Fireflies call history are backfilled into CallRecording records when the app is installed or upgraded. Set to 0 to disable the automatic backfill.',
+      isSecret: false,
+      value: String(DEFAULT_FIREFLIES_BACKFILL_DAYS),
     },
   },
 });
