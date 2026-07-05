@@ -1,0 +1,24 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service.ts
+  s_6be62bda33d35c::t_9b64d03fe64526 30
+  s_6be62bda33d35c::t_98736bb98bdb6f 195,199-200
+  s_6be62bda33d35c::t_5e8d3b0205760d 239,247,250,253,255-261,269,275,277-280,282
+  s_6be62bda33d35c::t_f78caaa4dd7068 84,90-92,94,98,100-101,104
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service.ts
+  s_6be62bda33d35c::t_b7fd82675dc295 78,85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "dbd797c697264ca867f1497388d83f121d62cf16",
+  "prompts": {},
+  "sessions": {
+    "s_6be62bda33d35c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aef83266-5681-4988-89ce-6e3e26857cf3",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
