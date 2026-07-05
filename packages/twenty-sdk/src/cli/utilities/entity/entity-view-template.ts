@@ -51,14 +51,14 @@ export const getViewBaseFile = ({
   name,
   universalIdentifier = v4(),
   objectUniversalIdentifier = 'fill-later',
-  applicationUniversalIdentifier = 'fill-later',
+  applicationUniversalIdentifier,
   fields = [],
   type,
 }: {
   name: string;
   universalIdentifier?: string;
   objectUniversalIdentifier?: string;
-  applicationUniversalIdentifier?: string;
+  applicationUniversalIdentifier: string;
   fields?: ViewFieldTemplate[];
   type?: ViewType;
 }) => {

@@ -1,5 +1,5 @@
-import { generateDefaultFieldUniversalIdentifier } from '@/sdk/define/objects/generate-default-field-universal-identifier';
 import { RelationType } from '@/sdk/define';
+import { generateDefaultFieldUniversalIdentifier } from '@/sdk/define/objects/generate-default-field-universal-identifier';
 import type { ObjectConfig } from '@/sdk/define/objects/object-config';
 import {
   type FieldManifest,
@@ -139,9 +139,6 @@ export const getDefaultRelationObjectFields = ({
         fieldName: config.fieldName,
       });
 
-    // The reverse field lives on the standard object, so its universal
-    // identifier is derived from the standard object universal identifier
-    // and its own field name, matching the server-side derivation rule.
     const reverseFieldUniversalIdentifier =
       generateDefaultFieldUniversalIdentifier({
         applicationUniversalIdentifier,

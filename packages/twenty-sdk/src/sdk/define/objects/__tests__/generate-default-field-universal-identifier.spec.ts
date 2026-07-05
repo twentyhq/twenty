@@ -3,8 +3,7 @@ import { generateDefaultFieldUniversalIdentifier } from '@/sdk/define/objects/ge
 import { getFieldUniversalIdentifier } from 'twenty-shared/application';
 
 describe('generateDefaultFieldUniversalIdentifier', () => {
-  const applicationUniversalIdentifier =
-    'c6061e2c-7b5c-4a63-b6a4-6f2ef2f2fefb';
+  const applicationUniversalIdentifier = 'c6061e2c-7b5c-4a63-b6a4-6f2ef2f2fefb';
   const objectUniversalIdentifier = '55b79f88-4094-4b3f-a0ac-1a91a55714f2';
 
   it('should generate a unique universal identifier', () => {
