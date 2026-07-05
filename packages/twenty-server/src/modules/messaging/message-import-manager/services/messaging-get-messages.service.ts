@@ -37,7 +37,7 @@ export class MessagingGetMessagesService {
       | 'connectionParameters'
       | 'workspaceId'
     >,
-    messageChannel: Pick<
+    _messageChannel: Pick<
       MessageChannelEntity,
       'messageFolders' | 'messageFolderImportPolicy'
     >,
@@ -47,7 +47,6 @@ export class MessagingGetMessagesService {
         return this.gmailGetMessagesService.getMessages(
           messageIds,
           connectedAccount,
-          messageChannel,
         );
       case ConnectedAccountProvider.MICROSOFT:
         return this.microsoftGetMessagesService.getMessages(

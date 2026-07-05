@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MESSAGING_GMAIL_USERS_HISTORY_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-history-max-result.constant';
 import { GmailMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-message-list-fetch-error-handler.service';
+import { type GmailHistoryMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-history-message.type';
 
 @Injectable()
 export class GmailGetHistoryService {
@@ -64,29 +65,33 @@ export class GmailGetHistoryService {
     return { history: fullHistory, historyId: nextHistoryId };
   }
 
-  public async getThreadIdsFromHistory(
+  public async getAddedMessagesFromHistory(
     history: gmail_v1.Schema$History[],
   ): Promise<{
-    threadIdsToFetch: string[];
-    messageExternalIdsToDelete: string[];
+    addedMessages: GmailHistoryMessage[];
+    deletedMessageExternalIds: string[];
   }> {
-    const threadIds = new Set<string>();
+    const addedMessagesById = new Map<string, GmailHistoryMessage>();
     const deletedMessageIds = new Set<string>();
 
     for (const historyEntry of history) {
-      const addedMessages = [
+      const addedMessageStubs = [
         ...(historyEntry.messagesAdded ?? []),
         ...(historyEntry.labelsAdded ?? []),
       ]
         .map((addedEntry) => addedEntry.message)
         .filter(isDefined);
 
-      for (const message of addedMessages) {
-        const threadId = message.threadId ?? message.id;
-
-        if (isNonEmptyString(threadId)) {
-          threadIds.add(threadId);
+      for (const message of addedMessageStubs) {
+        if (!isNonEmptyString(message.id)) {
+          continue;
         }
+
+        addedMessagesById.set(message.id, {
+          id: message.id,
+          threadId: message.threadId ?? null,
+          labelIds: message.labelIds ?? [],
+        });
       }
 
       for (const messageDeleted of historyEntry.messagesDeleted ?? []) {
@@ -99,8 +104,12 @@ export class GmailGetHistoryService {
     }
 
     return {
-      threadIdsToFetch: [...threadIds],
-      messageExternalIdsToDelete: [...deletedMessageIds],
+      addedMessages: [...addedMessagesById.values()].filter(
+        (message) => !deletedMessageIds.has(message.id),
+      ),
+      deletedMessageExternalIds: [...deletedMessageIds].filter(
+        (messageId) => !addedMessagesById.has(messageId),
+      ),
     };
   }
 }
