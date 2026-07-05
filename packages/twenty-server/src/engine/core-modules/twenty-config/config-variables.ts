@@ -1282,6 +1282,17 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'How long (ms) a worker shutdown waits for active AI chat stream jobs to finish before aborting them into a retryable interrupted state. Must be lower than the pod terminationGracePeriodSeconds so the abort and clean exit fit before SIGKILL (default: 300000)',
+    type: ConfigVariableType.NUMBER,
+    isEnvOnly: true,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  AI_STREAM_SHUTDOWN_DRAIN_MS = 300_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Base URL for the server',
     type: ConfigVariableType.STRING,
     isEnvOnly: true,

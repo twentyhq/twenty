@@ -30,6 +30,7 @@ import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-k
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { applyWorkspaceSentryContextFromJobData } from 'src/engine/core-modules/sentry/utils/apply-workspace-sentry-context-from-job-data.util';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type BullMQDriverOptions = QueueOptions;
 
@@ -47,10 +48,14 @@ export class BullMQDriver
     MessageQueue,
     Worker
   >;
+  private workerOptionsMap: Partial<
+    Record<MessageQueue, MessageQueueWorkerOptions>
+  > = {};
 
   constructor(
     private options: BullMQDriverOptions,
     private metricsService: MetricsService,
+    private twentyConfigService: TwentyConfigService,
   ) {}
 
   onModuleInit() {
@@ -89,7 +94,7 @@ export class BullMQDriver
   }
 
   async onModuleDestroy() {
-    const workers = Object.entries(this.workerMap);
+    const workers = Object.entries(this.workerMap) as [MessageQueue, Worker][];
     const queues = Object.values(this.queueMap);
 
     if (workers.length > 0) {
@@ -101,7 +106,11 @@ export class BullMQDriver
     let workerCloseError: unknown;
 
     try {
-      await Promise.all(workers.map(([, worker]) => worker.close()));
+      await Promise.all(
+        workers.map(([queueName, worker]) =>
+          this.closeWorker(queueName, worker),
+        ),
+      );
     } catch (error) {
       workerCloseError = error;
     }
@@ -125,6 +134,34 @@ export class BullMQDriver
     this.logger.log('Message queue shutdown complete');
   }
 
+  private async closeWorker(
+    queueName: MessageQueue,
+    worker: Worker,
+  ): Promise<void> {
+    if (!this.workerOptionsMap[queueName]?.boundedShutdownDrain) {
+      await worker.close();
+
+      return;
+    }
+
+    const shutdownTimeoutMs = this.twentyConfigService.get(
+      'AI_STREAM_SHUTDOWN_DRAIN_MS',
+    );
+
+    const abortTimer = setTimeout(() => {
+      this.logger.warn(
+        `Queue ${queueName} still has active jobs after draining for ${shutdownTimeoutMs}ms, aborting them`,
+      );
+      worker.cancelAllJobs('worker shutdown');
+    }, shutdownTimeoutMs);
+
+    try {
+      await worker.close();
+    } finally {
+      clearTimeout(abortTimer);
+    }
+  }
+
   work<T>(
     queueName: MessageQueue,
     handler: (job: MessageQueueJob<T>) => Promise<void>,
@@ -138,15 +175,20 @@ export class BullMQDriver
       ...(isDefined(options?.lockDuration)
         ? { lockDuration: options.lockDuration }
         : {}),
+      ...(isDefined(options?.maxStalledCount)
+        ? { maxStalledCount: options.maxStalledCount }
+        : {}),
       metrics: {
         maxDataPoints: MetricsTime.ONE_WEEK,
         collectInterval: 60000,
       },
     };
 
+    this.workerOptionsMap[queueName] = options;
+
     this.workerMap[queueName] = new Worker(
       queueName,
-      async (job) =>
+      async (job, _token, abortSignal) =>
         Sentry.withIsolationScope(async () => {
           applyWorkspaceSentryContextFromJobData(job.data);
 
@@ -169,7 +211,12 @@ export class BullMQDriver
           this.logger.log(
             `Processing job ${job.id} with name ${job.name} on queue ${queueName}${workspaceSuffix}`,
           );
-          await handler({ data: job.data, id: job.id ?? '', name: job.name });
+          await handler({
+            data: job.data,
+            id: job.id ?? '',
+            name: job.name,
+            abortSignal,
+          });
           const timeEnd = performance.now();
           const executionTime = timeEnd - timeStart;
 
