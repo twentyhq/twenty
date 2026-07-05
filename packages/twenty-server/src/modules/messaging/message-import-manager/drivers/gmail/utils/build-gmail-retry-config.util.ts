@@ -6,8 +6,6 @@ import { isGmailApiError } from 'src/modules/messaging/message-import-manager/dr
 const GMAIL_MAX_RETRIES = 8;
 const GMAIL_NO_RESPONSE_MAX_RETRIES = 2;
 const GMAIL_FIRST_RETRY_DELAY_MS = 1_000;
-// Truncated exponential backoff ceiling recommended by Google:
-// https://developers.google.com/workspace/gmail/api/guides/handle-errors
 const GMAIL_MAX_RETRY_DELAY_MS = 64_000;
 
 const GMAIL_RETRYABLE_RATE_LIMIT_REASONS = [

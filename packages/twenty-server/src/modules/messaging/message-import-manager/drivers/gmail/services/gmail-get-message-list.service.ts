@@ -27,7 +27,7 @@ import { isGmailMessageInSyncedFolder } from 'src/modules/messaging/message-impo
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import { type GetMessageListsResponse } from 'src/modules/messaging/message-import-manager/types/get-message-lists-response.type';
 
-type GmailMessageStub = {
+type GmailMessageListItem = {
   id: string;
   threadId: string | null;
 };
@@ -61,8 +61,6 @@ export class GmailGetMessageListService {
       retryConfig: buildGmailRetryConfig(),
     });
 
-    // Fetched before listing so the cursor can only lag the listed snapshot:
-    // the first incremental sync replays the overlap and upserts deduplicate.
     const profile = await gmailClient.users
       .getProfile({ userId: 'me' })
       .catch((error) => {
@@ -83,25 +81,27 @@ export class GmailGetMessageListService {
       messageChannel.messageFolderImportPolicy,
     );
 
-    const seedMessageStubs = await this.listMessageStubs(
+    const listedMessages = await this.listMessages(
       gmailClient,
       connectedAccount,
       excludedSearchFilter,
     );
 
-    const messageExternalIds = seedMessageStubs.map((stub) => stub.id);
+    const messageExternalIds = listedMessages.map(
+      (listedMessage) => listedMessage.id,
+    );
 
-    const shouldHarvestThreadSiblings =
+    const shouldIncludeThreadSiblings =
       messageChannel.messageFolderImportPolicy ===
         MessageFolderImportPolicy.SELECTED_FOLDERS &&
       messageFolders.some((folder) => !folder.isSynced) &&
-      seedMessageStubs.length > 0;
+      listedMessages.length > 0;
 
-    if (shouldHarvestThreadSiblings) {
-      const threadSiblingIds = await this.harvestThreadSiblingIds(
+    if (shouldIncludeThreadSiblings) {
+      const threadSiblingIds = await this.listThreadSiblingIds(
         gmailClient,
         connectedAccount,
-        seedMessageStubs,
+        listedMessages,
       );
 
       messageExternalIds.push(...threadSiblingIds);
@@ -192,12 +192,12 @@ export class GmailGetMessageListService {
     ];
   }
 
-  private async listMessageStubs(
+  private async listMessages(
     gmailClient: gmailV1.Gmail,
     connectedAccount: Pick<ConnectedAccountEntity, 'id'>,
     searchFilter: string,
-  ): Promise<GmailMessageStub[]> {
-    const messageStubs: GmailMessageStub[] = [];
+  ): Promise<GmailMessageListItem[]> {
+    const listedMessages: GmailMessageListItem[] = [];
     let pageToken: string | undefined;
     let hasMoreMessages = true;
 
@@ -236,7 +236,7 @@ export class GmailGetMessageListService {
 
       for (const pageMessage of pageMessages) {
         if (isNonEmptyString(pageMessage.id)) {
-          messageStubs.push({
+          listedMessages.push({
             id: pageMessage.id,
             threadId: pageMessage.threadId ?? null,
           });
@@ -244,17 +244,21 @@ export class GmailGetMessageListService {
       }
     }
 
-    return messageStubs;
+    return listedMessages;
   }
 
-  private async harvestThreadSiblingIds(
+  private async listThreadSiblingIds(
     gmailClient: gmailV1.Gmail,
     connectedAccount: Pick<ConnectedAccountEntity, 'id'>,
-    seedMessageStubs: GmailMessageStub[],
+    listedMessages: GmailMessageListItem[],
   ): Promise<string[]> {
-    const seedMessageIds = new Set(seedMessageStubs.map((stub) => stub.id));
-    const seedThreadIds = new Set(
-      seedMessageStubs.map((stub) => stub.threadId).filter(isNonEmptyString),
+    const listedMessageIds = new Set(
+      listedMessages.map((listedMessage) => listedMessage.id),
+    );
+    const listedThreadIds = new Set(
+      listedMessages
+        .map((listedMessage) => listedMessage.threadId)
+        .filter(isNonEmptyString),
     );
 
     const systemExcludedSearchFilter =
@@ -262,20 +266,20 @@ export class GmailGetMessageListService {
         computeGmailDefaultNotSyncedLabelsSearchFilter,
       ).join(' ');
 
-    const mailboxMessageStubs = await this.listMessageStubs(
+    const mailboxMessages = await this.listMessages(
       gmailClient,
       connectedAccount,
       systemExcludedSearchFilter,
     );
 
-    return mailboxMessageStubs
+    return mailboxMessages
       .filter(
-        (stub) =>
-          isNonEmptyString(stub.threadId) &&
-          seedThreadIds.has(stub.threadId) &&
-          !seedMessageIds.has(stub.id),
+        (mailboxMessage) =>
+          isNonEmptyString(mailboxMessage.threadId) &&
+          listedThreadIds.has(mailboxMessage.threadId) &&
+          !listedMessageIds.has(mailboxMessage.id),
       )
-      .map((stub) => stub.id);
+      .map((mailboxMessage) => mailboxMessage.id);
   }
 
   private async resolveThreadAwareAddedMessageIds(

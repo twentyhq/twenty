@@ -75,14 +75,14 @@ export class GmailGetHistoryService {
     const deletedMessageIds = new Set<string>();
 
     for (const historyEntry of history) {
-      const addedMessageStubs = [
+      const addedEntryMessages = [
         ...(historyEntry.messagesAdded ?? []),
         ...(historyEntry.labelsAdded ?? []),
       ]
         .map((addedEntry) => addedEntry.message)
         .filter(isDefined);
 
-      for (const message of addedMessageStubs) {
+      for (const message of addedEntryMessages) {
         if (!isNonEmptyString(message.id)) {
           continue;
         }
