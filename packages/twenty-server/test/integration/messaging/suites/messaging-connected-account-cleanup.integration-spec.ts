@@ -11,7 +11,7 @@ import {
   findRecordIdsByFilter,
   findRecordNodesByFilter,
 } from 'test/integration/utils/find-records-by-filter.util';
-import { runMessageChannelSync } from 'test/integration/utils/run-sync.util';
+import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 
 const HANDLE = 'messaging-cleanup@apple.dev';
 

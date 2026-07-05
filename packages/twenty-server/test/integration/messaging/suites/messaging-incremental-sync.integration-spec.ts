@@ -9,7 +9,7 @@ import {
   setupGmailMock,
 } from 'test/integration/messaging/utils/gmail-message-mock.util';
 import { findImportedMessageSubjects } from 'test/integration/utils/find-imported-records.util';
-import { runMessageChannelSync } from 'test/integration/utils/run-sync.util';
+import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 
 const HANDLE = 'messaging-incremental-sync@apple.dev';
 

@@ -13,10 +13,8 @@ import {
   findRecordIdsByFilter,
   findRecordNodesByFilter,
 } from 'test/integration/utils/find-records-by-filter.util';
-import {
-  runCalendarChannelEventsImport,
-  runCalendarChannelListFetch,
-} from 'test/integration/utils/run-sync.util';
+import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calendar-channel-events-import.util';
+import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar-channel-list-fetch.util';
 
 const HANDLE = 'calendar-cleanup@apple.dev';
 

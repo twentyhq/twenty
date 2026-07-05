@@ -9,7 +9,7 @@ import {
 } from 'test/integration/messaging/utils/gmail-message-mock.util';
 import { queryConnectedAccount } from 'test/integration/messaging/utils/query-messaging.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
-import { runMessageChannelSync } from 'test/integration/utils/run-sync.util';
+import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 
 const HANDLE = 'messaging-token-refresh@apple.dev';
 

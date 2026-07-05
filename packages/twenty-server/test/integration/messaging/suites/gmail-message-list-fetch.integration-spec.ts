@@ -8,7 +8,7 @@ import {
 } from 'test/integration/messaging/utils/gmail-message-mock.util';
 import { queryMessageFolders } from 'test/integration/messaging/utils/query-messaging.util';
 import { findImportedMessageSubjects } from 'test/integration/utils/find-imported-records.util';
-import { runMessageChannelSync } from 'test/integration/utils/run-sync.util';
+import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 
 const HANDLE = 'gmail-message-list-fetch@apple.dev';
 

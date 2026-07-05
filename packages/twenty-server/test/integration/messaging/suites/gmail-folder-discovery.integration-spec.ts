@@ -9,10 +9,8 @@ import {
   queryMessageFolders,
   updateMessageChannel,
 } from 'test/integration/messaging/utils/query-messaging.util';
-import {
-  runMessageChannelSync,
-  startChannelSyncAndAwait,
-} from 'test/integration/utils/run-sync.util';
+import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
+import { startChannelSyncAndAwait } from 'test/integration/utils/start-channel-sync-and-await.util';
 
 const HANDLE = 'gmail-folder-discovery@apple.dev';
 

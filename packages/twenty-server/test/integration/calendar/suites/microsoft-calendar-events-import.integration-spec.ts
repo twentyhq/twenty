@@ -13,10 +13,8 @@ import {
 import { setupMicrosoftMock } from 'test/integration/messaging/utils/microsoft-message-mock.util';
 import { queryCalendarChannel } from 'test/integration/messaging/utils/query-messaging.util';
 import { findImportedCalendarEventTitles } from 'test/integration/utils/find-imported-records.util';
-import {
-  runCalendarChannelEventsImport,
-  runCalendarChannelListFetch,
-} from 'test/integration/utils/run-sync.util';
+import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calendar-channel-events-import.util';
+import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar-channel-list-fetch.util';
 
 const HANDLE = 'microsoft-calendar-events-import@apple.dev';
 

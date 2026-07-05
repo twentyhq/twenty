@@ -11,7 +11,7 @@ import { setupGmailMock } from 'test/integration/messaging/utils/gmail-message-m
 import { googleAccountIdentityHandlers } from 'test/integration/messaging/utils/google-auth-mock.util';
 import { queryMessageChannel } from 'test/integration/messaging/utils/query-messaging.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
-import { runSyncCron } from 'test/integration/utils/run-sync.util';
+import { runSyncCron } from 'test/integration/utils/run-sync-cron.util';
 
 const STALE_HANDLE = 'messaging-stale-sync@apple.dev';
 const RECENT_HANDLE = 'messaging-recent-sync@apple.dev';

@@ -25,7 +25,7 @@ import {
   updateMessageChannel,
 } from 'test/integration/messaging/utils/query-messaging.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
-import { runSyncCron } from 'test/integration/utils/run-sync.util';
+import { runSyncCron } from 'test/integration/utils/run-sync-cron.util';
 
 const THROTTLED_HANDLE = 'messaging-throttled@apple.dev';
 const REVOKED_HANDLE = 'messaging-revoked@apple.dev';
