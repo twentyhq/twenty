@@ -586,5 +586,17 @@ describe('manifestValidate', () => {
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
+
+    it('should not crash on a widget with a missing configuration', () => {
+      const nullConfiguration =
+        null as unknown as PageLayoutWidgetManifest['configuration'];
+
+      const result = manifestValidate({
+        ...validManifest,
+        pageLayoutTabs: [makeGraphWidgetTab(nullConfiguration)],
+      });
+
+      expect(result.isValid).toBe(true);
+    });
   });
 });

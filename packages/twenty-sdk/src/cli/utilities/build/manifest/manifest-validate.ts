@@ -11,6 +11,7 @@ import {
   type PageLayoutWidgetUniversalConfiguration,
   RelationType,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 const MIN_UUID_VERSION = 4;
 
@@ -24,30 +25,31 @@ const VALID_RELATION_TYPES: string[] = [
   RelationType.ONE_TO_MANY,
 ];
 
-const GRAPH_WIDGET_CONFIGURATION_TYPES: string[] = [
+const GRAPH_WIDGET_CONFIGURATION_TYPES = [
   'AGGREGATE_CHART',
   'PIE_CHART',
   'BAR_CHART',
   'LINE_CHART',
-];
+] as const;
 
 const RAW_AGGREGATE_FIELD_METADATA_ID_KEY = 'aggregateFieldMetadataId';
 
+type GraphWidgetConfigurationType =
+  (typeof GRAPH_WIDGET_CONFIGURATION_TYPES)[number];
+
 type GraphPageLayoutWidgetUniversalConfiguration = Extract<
   PageLayoutWidgetUniversalConfiguration,
-  {
-    configurationType:
-      | 'AGGREGATE_CHART'
-      | 'PIE_CHART'
-      | 'BAR_CHART'
-      | 'LINE_CHART';
-  }
+  { configurationType: GraphWidgetConfigurationType }
 >;
 
 const isGraphWidgetConfiguration = (
-  configuration: PageLayoutWidgetUniversalConfiguration,
+  configuration: PageLayoutWidgetUniversalConfiguration | null | undefined,
 ): configuration is GraphPageLayoutWidgetUniversalConfiguration =>
-  GRAPH_WIDGET_CONFIGURATION_TYPES.includes(configuration.configurationType);
+  isDefined(configuration) &&
+  GRAPH_WIDGET_CONFIGURATION_TYPES.some(
+    (configurationType) =>
+      configurationType === configuration.configurationType,
+  );
 
 const extractDuplicates = (values: string[]): string[] => {
   const seen = new Set<string>();
