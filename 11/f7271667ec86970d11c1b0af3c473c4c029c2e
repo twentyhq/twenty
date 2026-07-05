@@ -1,0 +1,30 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service.ts
+  s_6be62bda33d35c::t_b29d96b0b71195 64-80
+  s_6be62bda33d35c::t_c587f3188cb88f 5,16-18,21,23,25-26,30,32,86,92,94-98,100-104,106-107,112-113,164-165,174-183,186-187,195,199-200,202,204-205,208,214,221,227-228,230,234-235,237-241,247-371
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-get-messages.service.ts
+  s_6be62bda33d35c::t_04f67409508b31 40
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-messages.service.ts
+  s_6be62bda33d35c::t_f9df5c19b986f8 25,44,46-47,51-53,62,67-84,88
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-history-message.type.ts
+  s_6be62bda33d35c::t_2737a6c78a61de 1-5
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service.ts
+  s_6be62bda33d35c::t_b48c1c07418739 9,68,71-72,74,78,85-87,89-94,107-112
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-list-max-result.constant.ts
+  s_6be62bda33d35c::t_09fc09e167bb1a 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "11f7271667ec86970d11c1b0af3c473c4c029c2e",
+  "prompts": {},
+  "sessions": {
+    "s_6be62bda33d35c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aef83266-5681-4988-89ce-6e3e26857cf3",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
