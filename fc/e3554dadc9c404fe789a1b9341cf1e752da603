@@ -1,0 +1,57 @@
+packages/twenty-server/test/integration/messaging/suites/gmail-message-list-fetch.integration-spec.ts
+  s_906651219ad534::t_c92fd2a1a80dfd 11
+packages/twenty-server/test/integration/calendar/suites/calendar-sync-failure-lifecycle.integration-spec.ts
+  s_906651219ad534::t_eee30c865a3b28 26
+packages/twenty-server/test/integration/utils/enqueue-job-and-drain.util.ts
+  s_906651219ad534::t_58c7fef4b66f4a 1-25
+packages/twenty-server/test/integration/messaging/suites/messaging-incremental-sync.integration-spec.ts
+  s_906651219ad534::t_61a1595b824939 12
+packages/twenty-server/test/integration/messaging/suites/messaging-connected-account-cleanup.integration-spec.ts
+  s_906651219ad534::t_d7c40e2f67b703 14
+packages/twenty-server/test/integration/messaging/suites/microsoft-folder-discovery.integration-spec.ts
+  s_906651219ad534::t_36047240640c84 6
+packages/twenty-server/test/integration/calendar/suites/calendar-stale-sync.integration-spec.ts
+  s_906651219ad534::t_7778914748c1cf 14
+packages/twenty-server/test/integration/calendar/suites/calendar-connected-account-cleanup.integration-spec.ts
+  s_906651219ad534::t_7414f0efb50464 16-17
+packages/twenty-server/test/integration/messaging/suites/messaging-sync-failure-lifecycle.integration-spec.ts
+  s_906651219ad534::t_06153ac32baba1 28
+packages/twenty-server/test/integration/utils/schedule-channel-stage.util.ts
+  s_906651219ad534::t_6588f8334fe233 1-29
+packages/twenty-server/test/integration/utils/run-message-channel-sync.util.ts
+  s_906651219ad534::t_66fbf928807eba 1-24
+packages/twenty-server/test/integration/utils/run-sync-cron.util.ts
+  s_906651219ad534::t_8bece8309964c4 1-9
+packages/twenty-server/test/integration/messaging/suites/gmail-folder-discovery.integration-spec.ts
+  s_906651219ad534::t_fafa492296bc79 12-13
+packages/twenty-server/test/integration/calendar/suites/google-calendar-events-import.integration-spec.ts
+  s_906651219ad534::t_b303aa1ec49498 16-17
+packages/twenty-server/test/integration/utils/run-calendar-channel-list-fetch.util.ts
+  s_906651219ad534::t_c5f5cfb7d114b3 1-24
+packages/twenty-server/test/integration/utils/run-calendar-channel-events-import.util.ts
+  s_906651219ad534::t_bbfc79745126f1 1-24
+packages/twenty-server/test/integration/utils/start-channel-sync-and-await.util.ts
+  s_906651219ad534::t_6662bb94d987fc 1-9
+packages/twenty-server/test/integration/messaging/suites/messaging-stale-sync.integration-spec.ts
+  s_906651219ad534::t_66bdba7709e8f7 14
+packages/twenty-server/test/integration/messaging/suites/messaging-token-refresh.integration-spec.ts
+  s_906651219ad534::t_fa738e15ed5a3e 12
+packages/twenty-server/test/integration/calendar/suites/microsoft-calendar-events-import.integration-spec.ts
+  s_906651219ad534::t_b25fe57bb1b7c2 16-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "fce3554dadc9c404fe789a1b9341cf1e752da603",
+  "prompts": {},
+  "sessions": {
+    "s_906651219ad534": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3786e44f-ff2f-409f-8afd-2fc110affa61",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
