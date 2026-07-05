@@ -1,0 +1,22 @@
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-computed-flat-field-metadata.util.ts
+  s_c9896ad68d525f::t_b6f30cf7e7e889 51-60
+packages/twenty-front/src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
+  s_c9896ad68d525f::t_35bbddf2fb3382 9
+  s_c9896ad68d525f::t_a50b126a067773 50-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3b5f13324f2269af781eee4e9ea1ba23fd1dda0a",
+  "prompts": {},
+  "sessions": {
+    "s_c9896ad68d525f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e5f7930d-ee88-45b7-923e-7aef12c5e30f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
