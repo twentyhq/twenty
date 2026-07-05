@@ -11,6 +11,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { fromCreateFrontComponentInputToFlatFrontComponentToCreate } from 'src/engine/metadata-modules/flat-front-component/utils/from-create-front-component-input-to-flat-front-component-to-create.util';
 import { fromFlatFrontComponentToFrontComponentDto } from 'src/engine/metadata-modules/flat-front-component/utils/from-flat-front-component-to-front-component-dto.util';
@@ -303,10 +304,30 @@ export class FrontComponentService {
     frontComponentId: string;
     workspaceId: string;
   }): Promise<Readable> {
-    const frontComponent = await this.findByIdOrThrow(
-      frontComponentId,
-      workspaceId,
-    );
+    const { flatFrontComponentMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatFrontComponentMaps'],
+        },
+      );
+
+    const frontComponent =
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: frontComponentId,
+        flatEntityMaps: flatFrontComponentMaps,
+      }) ??
+      findFlatEntityByUniversalIdentifier({
+        universalIdentifier: frontComponentId,
+        flatEntityMaps: flatFrontComponentMaps,
+      });
+
+    if (!isDefined(frontComponent)) {
+      throw new FrontComponentException(
+        'Front component not found',
+        FrontComponentExceptionCode.FRONT_COMPONENT_NOT_FOUND,
+      );
+    }
 
     const application = await this.applicationService.findOneApplicationOrThrow(
       {

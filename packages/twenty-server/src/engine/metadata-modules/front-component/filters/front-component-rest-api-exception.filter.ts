@@ -26,11 +26,16 @@ export class FrontComponentRestApiExceptionFilter implements ExceptionFilter {
 
     switch (exception.code) {
       case FrontComponentExceptionCode.FRONT_COMPONENT_NOT_FOUND:
-      case FrontComponentExceptionCode.FRONT_COMPONENT_NOT_READY:
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,
           404,
+        );
+      case FrontComponentExceptionCode.FRONT_COMPONENT_NOT_READY:
+        return this.httpExceptionHandlerService.handleError(
+          exception,
+          response,
+          503,
         );
       case FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED:
       case FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT:
