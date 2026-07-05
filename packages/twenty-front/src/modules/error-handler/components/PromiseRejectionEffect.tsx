@@ -27,6 +27,19 @@ const hasErrorCode = (
   return 'code' in error && isDefined(error.code);
 };
 
+const isMetadataDriftInvariantError = (error: unknown) => {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  return (
+    error.message.includes(
+      'correspondingAvailableColumnDefinition is not defined this should not happen.',
+    ) ||
+    error.message.includes('Should never occur, encountered unknown fields')
+  );
+};
+
 export const PromiseRejectionEffect = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
@@ -54,6 +67,14 @@ export const PromiseRejectionEffect = () => {
         const { captureException } = await import('@sentry/react');
         captureException(error, (scope) => {
           scope.setExtras({ mechanism: 'onUnhandle' });
+
+          if (isMetadataDriftInvariantError(error)) {
+            scope.setLevel('warning');
+            scope.setFingerprint(['object-metadata-drift', 'stale-field-reference']);
+            scope.setTag('feature', 'object-metadata');
+            scope.setTag('cause', 'stale-field-reference');
+            return scope;
+          }
 
           const fingerprint = hasErrorCode(error) ? error.code : error.message;
           scope.setFingerprint([fingerprint]);

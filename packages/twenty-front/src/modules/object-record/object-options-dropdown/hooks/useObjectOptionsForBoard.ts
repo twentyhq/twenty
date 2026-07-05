@@ -159,9 +159,18 @@ export const useObjectOptionsForBoard = ({
           updatedFieldDefinition.fieldMetadataId,
       );
 
+      const correspondingAvailableColumnDefinition =
+        availableColumnDefinitions.find(
+          findByProperty('fieldMetadataId', updatedFieldDefinition.fieldMetadataId),
+        );
+
       const noExistingRecordField = !isDefined(corresponingRecordField);
 
       if (noExistingRecordField) {
+        if (!isDefined(correspondingAvailableColumnDefinition)) {
+          return;
+        }
+
         const recordFieldToUpsert: RecordField = {
           id: v4(),
           fieldMetadataItemId: updatedFieldDefinition.fieldMetadataId,
@@ -174,23 +183,9 @@ export const useObjectOptionsForBoard = ({
 
         saveViewFields([mapRecordFieldToViewField(recordFieldToUpsert)]);
 
-        const correspondingAvailableColumnDefinition =
-          availableColumnDefinitions.find(
-            findByProperty(
-              'fieldMetadataId',
-              updatedFieldDefinition.fieldMetadataId,
-            ),
-          );
-
         const modifiedRecordIndexFieldDefinitions = produce(
           recordIndexFieldDefinitions,
           (draftRecordIndexFieldDefinitions) => {
-            if (!isDefined(correspondingAvailableColumnDefinition)) {
-              throw new Error(
-                `correspondingAvailableColumnDefinition is not defined this should not happen.`,
-              );
-            }
-
             draftRecordIndexFieldDefinitions.push({
               ...correspondingAvailableColumnDefinition,
               fieldMetadataId: updatedFieldDefinition.fieldMetadataId,
@@ -222,8 +217,21 @@ export const useObjectOptionsForBoard = ({
                 updatedRecordField.fieldMetadataItemId,
             );
 
-            draftRecordIndexFieldDefinitions[indexToModify].isVisible =
-              shouldShowFieldMetadataItem;
+            if (indexToModify >= 0) {
+              draftRecordIndexFieldDefinitions[indexToModify].isVisible =
+                shouldShowFieldMetadataItem;
+              return;
+            }
+
+            if (!isDefined(correspondingAvailableColumnDefinition)) {
+              return;
+            }
+
+            draftRecordIndexFieldDefinitions.push({
+              ...correspondingAvailableColumnDefinition,
+              fieldMetadataId: updatedRecordField.fieldMetadataItemId,
+              isVisible: shouldShowFieldMetadataItem,
+            });
           },
         );
 
