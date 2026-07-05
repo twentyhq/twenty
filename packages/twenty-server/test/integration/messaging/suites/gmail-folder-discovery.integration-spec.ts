@@ -8,7 +8,7 @@ import {
   queryMessageFolders,
   updateMessageChannel,
 } from 'test/integration/messaging/utils/query-messaging.util';
-import { setupGoogleMock } from 'test/integration/mocks/setup-google-mock.util';
+import { setupGoogleMock } from 'test/integration/mocks/google/setup-google-mock.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 import { startChannelSyncAndAwait } from 'test/integration/utils/start-channel-sync-and-await.util';
 

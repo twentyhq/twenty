@@ -3,8 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
 import { deleteConnectedAccount } from 'test/integration/messaging/utils/query-messaging.util';
-import { gmailMessage } from 'test/integration/mocks/gmail-message.util';
-import { setupGoogleMock } from 'test/integration/mocks/setup-google-mock.util';
+import { gmailMessage } from 'test/integration/mocks/google/gmail-message.util';
+import { setupGoogleMock } from 'test/integration/mocks/google/setup-google-mock.util';
 import {
   findRecordIdsByFilter,
   findRecordNodesByFilter,

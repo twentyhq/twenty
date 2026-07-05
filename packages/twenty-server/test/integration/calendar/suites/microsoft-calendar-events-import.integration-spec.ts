@@ -7,8 +7,8 @@ import {
 
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
 import { queryCalendarChannel } from 'test/integration/messaging/utils/query-messaging.util';
-import { microsoftCalendarEvent } from 'test/integration/mocks/microsoft-calendar-event.util';
-import { setupMicrosoftMock } from 'test/integration/mocks/setup-microsoft-mock.util';
+import { microsoftCalendarEvent } from 'test/integration/mocks/microsoft/microsoft-calendar-event.util';
+import { setupMicrosoftMock } from 'test/integration/mocks/microsoft/setup-microsoft-mock.util';
 import { findImportedCalendarEventTitles } from 'test/integration/utils/find-imported-records.util';
 import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calendar-channel-events-import.util';
 import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar-channel-list-fetch.util';

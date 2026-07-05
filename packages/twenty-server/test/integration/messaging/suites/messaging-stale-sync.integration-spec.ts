@@ -8,7 +8,7 @@ import { MessagingOngoingStaleCronJob } from 'src/modules/messaging/message-impo
 
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
 import { queryMessageChannel } from 'test/integration/messaging/utils/query-messaging.util';
-import { setupGoogleMock } from 'test/integration/mocks/setup-google-mock.util';
+import { setupGoogleMock } from 'test/integration/mocks/google/setup-google-mock.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runSyncCron } from 'test/integration/utils/run-sync-cron.util';
 

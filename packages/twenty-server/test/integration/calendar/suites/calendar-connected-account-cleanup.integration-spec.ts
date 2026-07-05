@@ -4,8 +4,8 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
 import { deleteConnectedAccount } from 'test/integration/messaging/utils/query-messaging.util';
-import { googleCalendarEvent } from 'test/integration/mocks/google-calendar-event.util';
-import { setupGoogleMock } from 'test/integration/mocks/setup-google-mock.util';
+import { googleCalendarEvent } from 'test/integration/mocks/google/google-calendar-event.util';
+import { setupGoogleMock } from 'test/integration/mocks/google/setup-google-mock.util';
 import {
   findRecordIdsByFilter,
   findRecordNodesByFilter,

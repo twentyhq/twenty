@@ -7,8 +7,8 @@ import {
 
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
 import { queryCalendarChannel } from 'test/integration/messaging/utils/query-messaging.util';
-import { googleCalendarEvent } from 'test/integration/mocks/google-calendar-event.util';
-import { setupGoogleMock } from 'test/integration/mocks/setup-google-mock.util';
+import { googleCalendarEvent } from 'test/integration/mocks/google/google-calendar-event.util';
+import { setupGoogleMock } from 'test/integration/mocks/google/setup-google-mock.util';
 import { findImportedCalendarEventTitles } from 'test/integration/utils/find-imported-records.util';
 import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calendar-channel-events-import.util';
 import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar-channel-list-fetch.util';
