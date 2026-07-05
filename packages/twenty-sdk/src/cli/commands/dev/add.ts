@@ -13,6 +13,7 @@ import {
 import { assertUnreachable } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { getApplicationUniversalIdentifier } from '@/cli/utilities/application/get-application-universal-identifier';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { convertToLabel } from '@/cli/utilities/entity/entity-label';
 import { appendServerVariablesToAppConfig } from '@/cli/utilities/file/append-server-variables.util';
@@ -331,10 +332,14 @@ export class EntityAddCommand {
       this.lastNameFieldUniversalIdentifier,
     );
 
+    const applicationUniversalIdentifier =
+      await getApplicationUniversalIdentifier(CURRENT_EXECUTION_DIRECTORY);
+
     const recordPageFieldsViewFile = getViewBaseFile({
       name: `${kebabCase(objectName)}-record-page-fields`,
       universalIdentifier: fieldsWidgetViewUniversalIdentifier,
       objectUniversalIdentifier: this.lastObjectUniversalIdentifier,
+      applicationUniversalIdentifier,
       type: ViewType.FIELDS_WIDGET,
       fields: recordPageFieldsViewFields,
     });

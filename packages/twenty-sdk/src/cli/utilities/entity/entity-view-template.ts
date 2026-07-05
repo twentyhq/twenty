@@ -17,10 +17,12 @@ const renderFieldEntry = ({
   field,
   index,
   objectUniversalIdentifier,
+  applicationUniversalIdentifier,
 }: {
   field: ViewFieldTemplate;
   index: number;
   objectUniversalIdentifier: string;
+  applicationUniversalIdentifier: string;
 }) => {
   const universalIdentifier = field.universalIdentifier ?? v4();
   const position = field.position ?? index;
@@ -30,6 +32,7 @@ const renderFieldEntry = ({
   const fieldMetadataUniversalIdentifierLine =
     'defaultFieldName' in field
       ? `    fieldMetadataUniversalIdentifier: generateDefaultFieldUniversalIdentifier({
+      applicationUniversalIdentifier: '${applicationUniversalIdentifier}',
       objectUniversalIdentifier: '${objectUniversalIdentifier}',
       fieldName: '${field.defaultFieldName}',
     })`
@@ -48,12 +51,14 @@ export const getViewBaseFile = ({
   name,
   universalIdentifier = v4(),
   objectUniversalIdentifier = 'fill-later',
+  applicationUniversalIdentifier = 'fill-later',
   fields = [],
   type,
 }: {
   name: string;
   universalIdentifier?: string;
   objectUniversalIdentifier?: string;
+  applicationUniversalIdentifier?: string;
   fields?: ViewFieldTemplate[];
   type?: ViewType;
 }) => {
@@ -77,7 +82,12 @@ export const getViewBaseFile = ({
       ? `  fields: [
 ${fields
   .map((field, index) =>
-    renderFieldEntry({ field, index, objectUniversalIdentifier }),
+    renderFieldEntry({
+      field,
+      index,
+      objectUniversalIdentifier,
+      applicationUniversalIdentifier,
+    }),
   )
   .join(',\n')},
   ],`

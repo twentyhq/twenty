@@ -118,6 +118,7 @@ describe('getViewBaseFile', () => {
     const result = getViewBaseFile({
       name: 'view-default-field',
       objectUniversalIdentifier: 'obj-abc-123',
+      applicationUniversalIdentifier: 'app-abc-123',
       fields: [
         {
           defaultFieldName: 'createdAt',
@@ -132,6 +133,7 @@ describe('getViewBaseFile', () => {
     expect(result).toContain(
       'fieldMetadataUniversalIdentifier: generateDefaultFieldUniversalIdentifier({',
     );
+    expect(result).toContain("applicationUniversalIdentifier: 'app-abc-123'");
     expect(result).toContain("objectUniversalIdentifier: 'obj-abc-123'");
     expect(result).toContain("fieldName: 'createdAt'");
   });

@@ -98,6 +98,7 @@ import { AddLogoToApplicationRegistrationFastInstanceCommand } from './2-19/2-19
 import { BackfillLogoOnApplicationRegistrationSlowInstanceCommand } from './2-19/2-19-instance-command-slow-1783069673191-backfill-logo-on-application-registration';
 import { AddDisplayFieldsToApplicationRegistrationFastInstanceCommand } from './2-19/2-19-instance-command-fast-1783073776590-add-display-fields-to-application-registration';
 import { BackfillDisplayFieldsOnApplicationRegistrationSlowInstanceCommand } from './2-19/2-19-instance-command-slow-1783073776591-backfill-display-fields-on-application-registration';
+import { BackfillDeterministicFieldUniversalIdentifiersInManifestsSlowInstanceCommand } from './2-19/2-19-instance-command-slow-1783099000000-backfill-deterministic-field-universal-identifiers-in-manifests';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -198,4 +199,5 @@ export const INSTANCE_COMMANDS = [
   BackfillDisplayFieldsOnApplicationRegistrationSlowInstanceCommand,
   AddStatusToFileFastInstanceCommand,
   AddPendingMimeCheckToFileFastInstanceCommand,
+  BackfillDeterministicFieldUniversalIdentifiersInManifestsSlowInstanceCommand,
 ];

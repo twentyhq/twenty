@@ -96,6 +96,7 @@ export const buildManifest = async (
   const warnings: string[] = [];
 
   let applicationConfig: ApplicationConfig | undefined;
+  const objectConfigs: ObjectConfig[] = [];
   const objects: ObjectManifest[] = [];
   const fields: FieldManifest[] = [];
   const indexes: IndexManifest[] = [];
@@ -172,31 +173,9 @@ export const buildManifest = async (
           filePath,
         });
 
-        const {
-          objectFields: objectFieldsWithDefaults,
-          fields: reverseRelationFields,
-        } = getDefaultFieldsInObjectFields(extract.config);
-
-        const labelIdentifierFieldMetadataUniversalIdentifier =
-          extract.config.labelIdentifierFieldMetadataUniversalIdentifier ??
-          objectFieldsWithDefaults.find((field) => field.name === 'name')
-            ?.universalIdentifier;
-
-        if (!labelIdentifierFieldMetadataUniversalIdentifier) {
-          errors.push(
-            `No label identifier field found for object ${extract.config.nameSingular}. Please add a field with name "name" to your object.`,
-          );
-          break;
-        }
-
-        const objectManifest: ObjectManifest = {
-          ...extract.config,
-          fields: objectFieldsWithDefaults.map(addMissingFieldOptionIds),
-          labelIdentifierFieldMetadataUniversalIdentifier,
-        };
-
-        objects.push(objectManifest);
-        fields.push(...reverseRelationFields);
+        // Default fields are injected after the loop, once the application
+        // config (and thus its universal identifier) is known.
+        objectConfigs.push(extract.config);
 
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
@@ -520,6 +499,39 @@ export const buildManifest = async (
     errors.push(
       'Cannot build application, please export default defineApplication() to define an application',
     );
+  }
+
+  if (applicationConfig) {
+    for (const objectConfig of objectConfigs) {
+      const {
+        objectFields: objectFieldsWithDefaults,
+        fields: reverseRelationFields,
+      } = getDefaultFieldsInObjectFields({
+        objectConfig,
+        applicationUniversalIdentifier: applicationConfig.universalIdentifier,
+      });
+
+      const labelIdentifierFieldMetadataUniversalIdentifier =
+        objectConfig.labelIdentifierFieldMetadataUniversalIdentifier ??
+        objectFieldsWithDefaults.find((field) => field.name === 'name')
+          ?.universalIdentifier;
+
+      if (!labelIdentifierFieldMetadataUniversalIdentifier) {
+        errors.push(
+          `No label identifier field found for object ${objectConfig.nameSingular}. Please add a field with name "name" to your object.`,
+        );
+        continue;
+      }
+
+      const objectManifest: ObjectManifest = {
+        ...objectConfig,
+        fields: objectFieldsWithDefaults.map(addMissingFieldOptionIds),
+        labelIdentifierFieldMetadataUniversalIdentifier,
+      };
+
+      objects.push(objectManifest);
+      fields.push(...reverseRelationFields);
+    }
   }
 
   if (postInstallLogicFunctions.length > 1) {
