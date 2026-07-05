@@ -202,6 +202,8 @@ IMPORTANT: Use Context7 for code generation, setup or configuration steps, or li
 
 ## Dev Environment Setup
 
+**Prerequisite: Node `^24.5.0`** (`.nvmrc` pins the exact version). Check `node --version` BEFORE installing dependencies — cloud sandboxes and CI images often default to Node 20–22, and `yarn install` on an older Node fails only at the post-install engines check, after minutes of wasted work. If the version is too old, run `nvm install` (reads `.nvmrc`) first.
+
 All dev environments (Claude Code web, Cursor, local) use one script:
 
 ```bash
