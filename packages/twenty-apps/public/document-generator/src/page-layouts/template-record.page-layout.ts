@@ -2,16 +2,16 @@ import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 
 import {
   DOCUMENT_TEMPLATE_OBJECT_UNIVERSAL_IDENTIFIER,
+  TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
   TEMPLATE_FIELDS_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
   TEMPLATE_FIELDS_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
+  TEMPLATE_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
   TEMPLATE_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  TEMPLATE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
+  TIMELINE_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
+  TIMELINE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
-// A "Fields" tab renders the record's own fields (name, body, target). The
-// `body` field is RICH_TEXT, so Twenty shows its native rich-text editor there
-// — no custom editor component needed. An app-defined record page replaces the
-// object's default layout, so it must carry its own fields tab or the record
-// shows "No Data".
 export default definePageLayout({
   universalIdentifier: TEMPLATE_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
   name: 'Template record page',
@@ -28,10 +28,46 @@ export default definePageLayout({
         {
           universalIdentifier:
             TEMPLATE_FIELDS_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
-          title: 'Template fields',
+          title: 'Fields',
           type: 'FIELDS',
           configuration: {
             configurationType: 'FIELDS',
+          },
+        },
+      ],
+    },
+    {
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      position: 1,
+      title: 'Template',
+      universalIdentifier: TEMPLATE_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
+      widgets: [
+        {
+          universalIdentifier: TEMPLATE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
+          title: 'Template',
+          type: 'FIELD',
+          gridPosition: { row: 0, column: 0, rowSpan: 6, columnSpan: 12 },
+          configuration: {
+            configurationType: 'FIELD',
+            fieldMetadataId: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+            fieldDisplayMode: 'EDITOR',
+          },
+        },
+      ],
+    },
+    {
+      universalIdentifier: TIMELINE_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
+      title: 'Timeline',
+      position: 100,
+      icon: 'IconTimelineEvent',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: TIMELINE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
+          title: 'Timeline',
+          type: 'TIMELINE',
+          configuration: {
+            configurationType: 'TIMELINE',
           },
         },
       ],
