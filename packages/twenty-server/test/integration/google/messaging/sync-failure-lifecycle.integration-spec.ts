@@ -102,6 +102,8 @@ describe('Messaging sync failure lifecycle (integration)', () => {
   }, 120000);
 
   it('fails the channel as insufficient-permissions when the refresh token is declined', async () => {
+    gmail.actAsAccount(REVOKED_HANDLE);
+
     await updateMessageChannel(revokedChannel.channelId, {
       isSyncEnabled: true,
     });

@@ -7,7 +7,10 @@ import { gmailMessageListHandler } from 'test/integration/google/mocks/gmail-mes
 import { googleCalendarEventsHandlers } from 'test/integration/google/mocks/google-calendar-events-handlers.util';
 import { GOOGLE_CALENDAR_EVENTS_URL } from 'test/integration/google/mocks/google-calendar-events-url.constant';
 import { googleIdentityHandlers } from 'test/integration/google/mocks/google-identity-handlers.util';
-import { googleTokenHandlers } from 'test/integration/google/mocks/google-token-handlers.util';
+import {
+  GOOGLE_TOKEN_URLS,
+  googleTokenHandlers,
+} from 'test/integration/google/mocks/google-token-handlers.util';
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
 import {
   createMockEntityStore,
@@ -105,13 +108,15 @@ export const setupGoogleMock = ({
       ),
     declineTokenRefresh: () =>
       httpMock.use(
-        http.post('https://oauth2.googleapis.com/token', () =>
-          HttpResponse.json(
-            {
-              error: 'invalid_grant',
-              error_description: 'Token has been revoked',
-            },
-            { status: 400 },
+        ...GOOGLE_TOKEN_URLS.map((url) =>
+          http.post(url, () =>
+            HttpResponse.json(
+              {
+                error: 'invalid_grant',
+                error_description: 'Token has been revoked',
+              },
+              { status: 400 },
+            ),
           ),
         ),
       ),

@@ -3,7 +3,7 @@ import { http, HttpResponse } from 'msw';
 import { GOOGLE_OAUTH_SCOPES } from 'test/integration/google/mocks/google-oauth-scopes.constant';
 import { type MswHandler } from 'test/integration/utils/http-mock.util';
 
-const GOOGLE_TOKEN_URLS = [
+export const GOOGLE_TOKEN_URLS = [
   'https://oauth2.googleapis.com/token',
   'https://www.googleapis.com/oauth2/v4/token',
 ];

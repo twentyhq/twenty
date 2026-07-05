@@ -28,9 +28,13 @@ describe('Microsoft folder discovery (integration)', () => {
 
     const folders = await queryMessageFolders(channel.channelId);
 
-    expect(folders.map((folder) => folder.name).sort()).toEqual([
-      'Inbox',
-      'Sent Items',
-    ]);
+    expect(
+      Object.fromEntries(
+        folders.map((folder) => [folder.name, folder.isSynced]),
+      ),
+    ).toEqual({
+      Inbox: true,
+      'Sent Items': true,
+    });
   }, 60000);
 });

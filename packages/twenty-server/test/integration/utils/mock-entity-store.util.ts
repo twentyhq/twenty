@@ -9,7 +9,8 @@ export const createMockEntityStore = <TEntity>(
   initialEntities: TEntity[],
   getEntityId: (entity: TEntity) => string,
 ): MockEntityStore<TEntity> => {
-  let entities = [...initialEntities];
+  const seedEntities = [...initialEntities];
+  let entities = [...seedEntities];
 
   return {
     add: (entity) => {
@@ -19,8 +20,8 @@ export const createMockEntityStore = <TEntity>(
       entities = entities.filter((entity) => getEntityId(entity) !== entityId);
     },
     reset: () => {
-      entities = [...initialEntities];
+      entities = [...seedEntities];
     },
-    list: () => entities,
+    list: () => [...entities],
   };
 };
