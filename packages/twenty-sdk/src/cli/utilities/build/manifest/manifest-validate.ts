@@ -8,6 +8,8 @@ import {
 } from 'twenty-shared/application';
 import {
   FieldMetadataType,
+  GRAPH_WIDGET_CONFIGURATION_TYPES,
+  type GraphWidgetConfigurationType,
   type PageLayoutWidgetUniversalConfiguration,
   RelationType,
 } from 'twenty-shared/types';
@@ -25,17 +27,7 @@ const VALID_RELATION_TYPES: string[] = [
   RelationType.ONE_TO_MANY,
 ];
 
-const GRAPH_WIDGET_CONFIGURATION_TYPES = [
-  'AGGREGATE_CHART',
-  'PIE_CHART',
-  'BAR_CHART',
-  'LINE_CHART',
-] as const;
-
 const RAW_AGGREGATE_FIELD_METADATA_ID_KEY = 'aggregateFieldMetadataId';
-
-type GraphWidgetConfigurationType =
-  (typeof GRAPH_WIDGET_CONFIGURATION_TYPES)[number];
 
 type GraphPageLayoutWidgetUniversalConfiguration = Extract<
   PageLayoutWidgetUniversalConfiguration,
