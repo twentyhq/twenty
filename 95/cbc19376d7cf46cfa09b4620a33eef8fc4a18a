@@ -1,0 +1,25 @@
+packages/twenty-front/src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+  s_c9896ad68d525f::t_25de1cac1d9254 393-397
+  s_c9896ad68d525f::t_728a5fad8e6cb7 24
+packages/twenty-front/src/modules/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema.ts
+  s_c9896ad68d525f::t_4d488d86702892 42
+  s_c9896ad68d525f::t_86516c700e783b 14-29
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldComputationBySubFieldForm.tsx
+  s_c9896ad68d525f::t_34a191a60991c8 1-140
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "95cbc19376d7cf46cfa09b4620a33eef8fc4a18a",
+  "prompts": {},
+  "sessions": {
+    "s_c9896ad68d525f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e5f7930d-ee88-45b7-923e-7aef12c5e30f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
