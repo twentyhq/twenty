@@ -22277,7 +22277,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node-fetch@npm:^2.5.10":
+"@types/node-fetch@npm:^2.5.10, @types/node-fetch@npm:^2.6.12":
   version: 2.6.13
   resolution: "@types/node-fetch@npm:2.6.13"
   dependencies:
@@ -53185,6 +53185,7 @@ __metadata:
     "@types/lodash.uniqby": "npm:^4.7.9"
     "@types/ms": "npm:^0.7.31"
     "@types/node": "npm:^24.0.0"
+    "@types/node-fetch": "npm:^2.6.12"
     "@types/nodemailer": "npm:^7.0.3"
     "@types/passport-google-oauth20": "npm:^2.0.11"
     "@types/passport-jwt": "npm:^3.0.8"
@@ -53260,7 +53261,9 @@ __metadata:
     microdiff: "npm:1.4.0"
     mrmime: "npm:^2.0.1"
     ms: "npm:2.1.3"
+    msw: "npm:^2.12.7"
     nest-commander: "npm:^3.19.1"
+    node-fetch: "npm:^2.7.0"
     node-ical: "npm:^0.21.0"
     nodemailer: "npm:^9.0.1"
     openapi-types: "npm:12.1.3"
