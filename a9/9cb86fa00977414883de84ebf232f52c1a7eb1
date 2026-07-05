@@ -1,0 +1,42 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service.ts
+  s_6be62bda33d35c::t_031d4f2b0076de 4,15,18,24-27,54,63-66,71,82,126,143-144,155-156,163,165-167,170-195,198-205,211-215
+  s_6be62bda33d35c::t_f7f13668c602b1 196-197,206-207,209-210
+  s_6be62bda33d35c::t_713083f8307e5f 23
+  s_6be62bda33d35c::t_2350f615b7b627 62
+  s_6be62bda33d35c::t_bd7f1bf254a7ef 164
+  s_6be62bda33d35c::t_078e9e7b7ba5ee 168-169
+  s_6be62bda33d35c::t_f74f82e35a5892 208
+  s_6be62bda33d35c::t_1a6e2cc344fb3c 216-217
+  s_6be62bda33d35c::t_8836863831ab13 68,80,84,91
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-messages.service.ts
+  s_6be62bda33d35c::t_27403c4ba6fe49 13,16-17,29,39-41,43,49-53,89-90,93-100,122,126-128
+  s_6be62bda33d35c::t_9a79419f7d1378 6,56-58,61-82,85-88,102-114,116-121,125,129
+  s_6be62bda33d35c::t_1737ed83ad6a59 101
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-threads-list-max-result.constant.ts
+  s_6be62bda33d35c::t_a8cf8e9180a8b5 1
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-batch-request-max-size.constant.ts
+  s_6be62bda33d35c::t_7ecd6da9231c6e 1
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/utils/build-gmail-retry-config.util.ts
+  s_6be62bda33d35c::t_fc6932db333f5f 1-57
+  s_6be62bda33d35c::t_63e188c6d5494b 58
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-message-in-synced-folder.util.ts
+  s_6be62bda33d35c::t_f0d38863740052 1-31
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service.ts
+  s_6be62bda33d35c::t_4a54cb566967db 5,67,70-71,73-99,102-103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a99cb86fa00977414883de84ebf232f52c1a7eb1",
+  "prompts": {},
+  "sessions": {
+    "s_6be62bda33d35c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aef83266-5681-4988-89ce-6e3e26857cf3",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
