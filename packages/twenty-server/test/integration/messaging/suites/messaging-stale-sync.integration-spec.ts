@@ -7,9 +7,8 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { MessagingOngoingStaleCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-ongoing-stale.cron.job';
 
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
-import { setupGmailMock } from 'test/integration/messaging/utils/gmail-message-mock.util';
-import { googleAccountIdentityHandlers } from 'test/integration/messaging/utils/google-auth-mock.util';
 import { queryMessageChannel } from 'test/integration/messaging/utils/query-messaging.util';
+import { setupGoogleMock } from 'test/integration/mocks/setup-google-mock.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runSyncCron } from 'test/integration/utils/run-sync-cron.util';
 
@@ -20,7 +19,7 @@ const STALE_STARTED_AT = new Date(Date.now() - 31 * 60 * 1000);
 const RECENT_STARTED_AT = new Date(Date.now() - 60 * 1000);
 
 describe('Messaging stale-sync recovery (integration)', () => {
-  const gmail = setupGmailMock({ inbox: [], handle: STALE_HANDLE });
+  const gmail = setupGoogleMock({ handle: STALE_HANDLE });
 
   let staleChannel: Awaited<ReturnType<typeof connectMessagingAccount>>;
   let recentChannel: Awaited<ReturnType<typeof connectMessagingAccount>>;
@@ -31,7 +30,7 @@ describe('Messaging stale-sync recovery (integration)', () => {
       handle: STALE_HANDLE,
     });
 
-    gmail.use(...googleAccountIdentityHandlers(RECENT_HANDLE));
+    gmail.actAsAccount(RECENT_HANDLE);
 
     recentChannel = await connectMessagingAccount({
       provider: ConnectedAccountProvider.GOOGLE,

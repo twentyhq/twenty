@@ -6,12 +6,9 @@ import {
 } from 'twenty-shared/types';
 
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
-import {
-  microsoftCalendarEvent,
-  microsoftCalendarEventsHandlers,
-} from 'test/integration/messaging/utils/microsoft-calendar-mock.util';
-import { setupMicrosoftMock } from 'test/integration/messaging/utils/microsoft-message-mock.util';
 import { queryCalendarChannel } from 'test/integration/messaging/utils/query-messaging.util';
+import { microsoftCalendarEvent } from 'test/integration/mocks/microsoft-calendar-event.util';
+import { setupMicrosoftMock } from 'test/integration/mocks/setup-microsoft-mock.util';
 import { findImportedCalendarEventTitles } from 'test/integration/utils/find-imported-records.util';
 import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calendar-channel-events-import.util';
 import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar-channel-list-fetch.util';
@@ -19,7 +16,7 @@ import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar
 const HANDLE = 'microsoft-calendar-events-import@apple.dev';
 
 describe('Microsoft calendar events import (integration)', () => {
-  const microsoft = setupMicrosoftMock({ inbox: [], handle: HANDLE });
+  const microsoft = setupMicrosoftMock({ handle: HANDLE });
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
 
@@ -37,11 +34,9 @@ describe('Microsoft calendar events import (integration)', () => {
   it('imports calendar events through the real delta-fetch and import pipeline', async () => {
     const eventTitle = `Calendar event ${randomUUID()}`;
 
-    microsoft.use(
-      ...microsoftCalendarEventsHandlers([
-        microsoftCalendarEvent({ subject: eventTitle }),
-      ]),
-    );
+    microsoft.serveCalendarEvents([
+      microsoftCalendarEvent({ subject: eventTitle }),
+    ]);
 
     await runCalendarChannelListFetch(channel.calendarChannelId);
 
@@ -61,11 +56,9 @@ describe('Microsoft calendar events import (integration)', () => {
   it('imports a newly created event through the delta-token continuation', async () => {
     const newEventTitle = `Calendar event ${randomUUID()}`;
 
-    microsoft.use(
-      ...microsoftCalendarEventsHandlers(
-        [microsoftCalendarEvent({ subject: newEventTitle })],
-        { deltaToken: 'mock-calendar-delta-token-2' },
-      ),
+    microsoft.serveCalendarEvents(
+      [microsoftCalendarEvent({ subject: newEventTitle })],
+      { deltaToken: 'mock-calendar-delta-token-2' },
     );
 
     await runCalendarChannelListFetch(channel.calendarChannelId);

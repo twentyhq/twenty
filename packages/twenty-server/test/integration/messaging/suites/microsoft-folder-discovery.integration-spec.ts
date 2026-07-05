@@ -1,14 +1,14 @@
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
-import { setupMicrosoftMock } from 'test/integration/messaging/utils/microsoft-message-mock.util';
 import { queryMessageFolders } from 'test/integration/messaging/utils/query-messaging.util';
+import { setupMicrosoftMock } from 'test/integration/mocks/setup-microsoft-mock.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 
 const HANDLE = 'microsoft-folder-discovery@apple.dev';
 
 describe('Microsoft folder discovery (integration)', () => {
-  setupMicrosoftMock({ inbox: [], handle: HANDLE });
+  setupMicrosoftMock({ handle: HANDLE });
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
 

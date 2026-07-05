@@ -12,18 +12,11 @@ import { MessagingRelaunchFailedMessageChannelsCronJob } from 'src/modules/messa
 
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
 import {
-  rateLimitedGmailMessageList,
-  setupGmailMock,
-} from 'test/integration/messaging/utils/gmail-message-mock.util';
-import {
-  declinedGoogleTokenRefresh,
-  googleAccountIdentityHandlers,
-} from 'test/integration/messaging/utils/google-auth-mock.util';
-import {
   queryConnectedAccount,
   queryMessageChannel,
   updateMessageChannel,
 } from 'test/integration/messaging/utils/query-messaging.util';
+import { setupGoogleMock } from 'test/integration/mocks/setup-google-mock.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runSyncCron } from 'test/integration/utils/run-sync-cron.util';
 
@@ -36,7 +29,7 @@ const ONE_HOUR_AGO = new Date(Date.now() - 60 * 60 * 1000);
 const EXPIRED_CREDENTIALS_AT = new Date(Date.now() - 56 * 60 * 1000);
 
 describe('Messaging sync failure lifecycle (integration)', () => {
-  const gmail = setupGmailMock({ inbox: [], handle: THROTTLED_HANDLE });
+  const gmail = setupGoogleMock({ handle: THROTTLED_HANDLE });
 
   let throttledChannel: Awaited<ReturnType<typeof connectMessagingAccount>>;
   let revokedChannel: Awaited<ReturnType<typeof connectMessagingAccount>>;
@@ -47,7 +40,7 @@ describe('Messaging sync failure lifecycle (integration)', () => {
       handle: THROTTLED_HANDLE,
     });
 
-    gmail.use(...googleAccountIdentityHandlers(REVOKED_HANDLE));
+    gmail.actAsAccount(REVOKED_HANDLE);
 
     revokedChannel = await connectMessagingAccount({
       provider: ConnectedAccountProvider.GOOGLE,
@@ -65,7 +58,7 @@ describe('Messaging sync failure lifecycle (integration)', () => {
   });
 
   it('records the throttle backoff on a 429 and keeps the channel alive', async () => {
-    gmail.use(rateLimitedGmailMessageList(FUTURE_RETRY_AFTER_ISO));
+    gmail.rateLimitMessageList(FUTURE_RETRY_AFTER_ISO);
 
     await runSyncCron(MessagingMessageListFetchCronJob);
 
@@ -79,7 +72,7 @@ describe('Messaging sync failure lifecycle (integration)', () => {
   }, 60000);
 
   it('fails the channel as unknown once the throttle attempts are exhausted', async () => {
-    gmail.use(rateLimitedGmailMessageList(FUTURE_RETRY_AFTER_ISO));
+    gmail.rateLimitMessageList(FUTURE_RETRY_AFTER_ISO);
 
     const messageChannelRepository =
       getCoreRepository<MessageChannelEntity>(MessageChannelEntity);
@@ -120,7 +113,7 @@ describe('Messaging sync failure lifecycle (integration)', () => {
       { lastCredentialsRefreshedAt: EXPIRED_CREDENTIALS_AT },
     );
 
-    gmail.use(declinedGoogleTokenRefresh());
+    gmail.declineTokenRefresh();
 
     await runSyncCron(MessagingMessageListFetchCronJob);
 

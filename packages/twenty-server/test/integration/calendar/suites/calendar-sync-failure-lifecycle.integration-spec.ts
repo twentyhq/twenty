@@ -11,17 +11,12 @@ import { CalendarEventListFetchCronJob } from 'src/modules/calendar/calendar-eve
 import { CalendarRelaunchFailedCalendarChannelsCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-relaunch-failed-calendar-channels.cron.job';
 
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
-import { setupGmailMock } from 'test/integration/messaging/utils/gmail-message-mock.util';
-import {
-  declinedGoogleTokenRefresh,
-  googleAccountIdentityHandlers,
-} from 'test/integration/messaging/utils/google-auth-mock.util';
-import { rateLimitedGoogleCalendarEventList } from 'test/integration/messaging/utils/google-calendar-mock.util';
 import {
   queryCalendarChannel,
   queryConnectedAccount,
   updateCalendarChannel,
 } from 'test/integration/messaging/utils/query-messaging.util';
+import { setupGoogleMock } from 'test/integration/mocks/setup-google-mock.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runSyncCron } from 'test/integration/utils/run-sync-cron.util';
 
@@ -32,7 +27,7 @@ const ONE_HOUR_AGO = new Date(Date.now() - 60 * 60 * 1000);
 const EXPIRED_CREDENTIALS_AT = new Date(Date.now() - 56 * 60 * 1000);
 
 describe('Calendar sync failure lifecycle (integration)', () => {
-  const gmail = setupGmailMock({ inbox: [], handle: THROTTLED_HANDLE });
+  const gmail = setupGoogleMock({ handle: THROTTLED_HANDLE });
 
   let throttledChannel: Awaited<ReturnType<typeof connectMessagingAccount>>;
   let revokedChannel: Awaited<ReturnType<typeof connectMessagingAccount>>;
@@ -43,7 +38,7 @@ describe('Calendar sync failure lifecycle (integration)', () => {
       handle: THROTTLED_HANDLE,
     });
 
-    gmail.use(...googleAccountIdentityHandlers(REVOKED_HANDLE));
+    gmail.actAsAccount(REVOKED_HANDLE);
 
     revokedChannel = await connectMessagingAccount({
       provider: ConnectedAccountProvider.GOOGLE,
@@ -61,7 +56,7 @@ describe('Calendar sync failure lifecycle (integration)', () => {
   });
 
   it('counts a throttle failure on a 429 and keeps the channel alive', async () => {
-    gmail.use(rateLimitedGoogleCalendarEventList());
+    gmail.rateLimitCalendarEventList();
 
     await runSyncCron(CalendarEventListFetchCronJob);
 
@@ -74,7 +69,7 @@ describe('Calendar sync failure lifecycle (integration)', () => {
   }, 60000);
 
   it('fails the channel as unknown once the throttle attempts are exhausted', async () => {
-    gmail.use(rateLimitedGoogleCalendarEventList());
+    gmail.rateLimitCalendarEventList();
 
     const calendarChannelRepository = getCoreRepository<CalendarChannelEntity>(
       CalendarChannelEntity,
@@ -116,7 +111,7 @@ describe('Calendar sync failure lifecycle (integration)', () => {
       { lastCredentialsRefreshedAt: EXPIRED_CREDENTIALS_AT },
     );
 
-    gmail.use(declinedGoogleTokenRefresh());
+    gmail.declineTokenRefresh();
 
     await runSyncCron(CalendarEventListFetchCronJob);
 

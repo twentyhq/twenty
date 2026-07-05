@@ -1,13 +1,9 @@
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
-import {
-  getGmailMessageSubject,
-  gmailHistoryHandler,
-  gmailMessage,
-  gmailMessageListHandler,
-  setupGmailMock,
-} from 'test/integration/messaging/utils/gmail-message-mock.util';
+import { getGmailMessageSubject } from 'test/integration/mocks/gmail-message-subject.util';
+import { gmailMessage } from 'test/integration/mocks/gmail-message.util';
+import { setupGoogleMock } from 'test/integration/mocks/setup-google-mock.util';
 import { findImportedMessageSubjects } from 'test/integration/utils/find-imported-records.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 
@@ -16,7 +12,7 @@ const HANDLE = 'messaging-incremental-sync@apple.dev';
 describe('Messaging incremental sync (integration)', () => {
   const inbox = [gmailMessage()];
 
-  const gmail = setupGmailMock({ inbox, handle: HANDLE });
+  const gmail = setupGoogleMock({ handle: HANDLE, inbox });
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
 
@@ -50,10 +46,8 @@ describe('Messaging incremental sync (integration)', () => {
     // The list endpoint keeps serving only the initial inbox: the new message
     // is reachable through the history endpoint alone, so a regression that
     // re-runs a full list fetch instead of the history-based sync cannot pass.
-    gmail.use(
-      gmailMessageListHandler(initialMessages),
-      gmailHistoryHandler([newMessage]),
-    );
+    gmail.serveMessageList(initialMessages);
+    gmail.serveHistory([newMessage]);
 
     await runMessageChannelSync(channel.channelId);
 

@@ -6,12 +6,9 @@ import {
 } from 'twenty-shared/types';
 
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
-import { setupGmailMock } from 'test/integration/messaging/utils/gmail-message-mock.util';
-import {
-  googleCalendarEvent,
-  googleCalendarEventsHandlers,
-} from 'test/integration/messaging/utils/google-calendar-mock.util';
 import { queryCalendarChannel } from 'test/integration/messaging/utils/query-messaging.util';
+import { googleCalendarEvent } from 'test/integration/mocks/google-calendar-event.util';
+import { setupGoogleMock } from 'test/integration/mocks/setup-google-mock.util';
 import { findImportedCalendarEventTitles } from 'test/integration/utils/find-imported-records.util';
 import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calendar-channel-events-import.util';
 import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar-channel-list-fetch.util';
@@ -19,7 +16,7 @@ import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar
 const HANDLE = 'google-calendar-events-import@apple.dev';
 
 describe('Google calendar events import (integration)', () => {
-  const gmail = setupGmailMock({ inbox: [], handle: HANDLE });
+  const gmail = setupGoogleMock({ handle: HANDLE });
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
 
@@ -37,11 +34,7 @@ describe('Google calendar events import (integration)', () => {
   it('imports calendar events through the real list-fetch and import pipeline', async () => {
     const eventTitle = `Calendar event ${randomUUID()}`;
 
-    gmail.use(
-      ...googleCalendarEventsHandlers([
-        googleCalendarEvent({ summary: eventTitle }),
-      ]),
-    );
+    gmail.serveCalendarEvents([googleCalendarEvent({ summary: eventTitle })]);
 
     await runCalendarChannelListFetch(channel.calendarChannelId);
 
@@ -61,11 +54,9 @@ describe('Google calendar events import (integration)', () => {
   it('imports a newly created event through the sync-token incremental fetch', async () => {
     const newEventTitle = `Calendar event ${randomUUID()}`;
 
-    gmail.use(
-      ...googleCalendarEventsHandlers(
-        [googleCalendarEvent({ summary: newEventTitle })],
-        { nextSyncToken: 'mock-calendar-sync-token-2' },
-      ),
+    gmail.serveCalendarEvents(
+      [googleCalendarEvent({ summary: newEventTitle })],
+      { nextSyncToken: 'mock-calendar-sync-token-2' },
     );
 
     await runCalendarChannelListFetch(channel.calendarChannelId);

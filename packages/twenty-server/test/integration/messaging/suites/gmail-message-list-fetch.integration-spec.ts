@@ -1,12 +1,10 @@
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
-import {
-  getGmailMessageSubject,
-  gmailMessage,
-  setupGmailMock,
-} from 'test/integration/messaging/utils/gmail-message-mock.util';
 import { queryMessageFolders } from 'test/integration/messaging/utils/query-messaging.util';
+import { getGmailMessageSubject } from 'test/integration/mocks/gmail-message-subject.util';
+import { gmailMessage } from 'test/integration/mocks/gmail-message.util';
+import { setupGoogleMock } from 'test/integration/mocks/setup-google-mock.util';
 import { findImportedMessageSubjects } from 'test/integration/utils/find-imported-records.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 
@@ -15,7 +13,7 @@ const HANDLE = 'gmail-message-list-fetch@apple.dev';
 describe('Gmail message list fetch (integration)', () => {
   const inbox = [gmailMessage(), gmailMessage()];
 
-  setupGmailMock({ inbox, handle: HANDLE });
+  setupGoogleMock({ handle: HANDLE, inbox });
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
 

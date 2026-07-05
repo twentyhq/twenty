@@ -3,11 +3,9 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
-import {
-  gmailMessage,
-  setupGmailMock,
-} from 'test/integration/messaging/utils/gmail-message-mock.util';
 import { queryConnectedAccount } from 'test/integration/messaging/utils/query-messaging.util';
+import { gmailMessage } from 'test/integration/mocks/gmail-message.util';
+import { setupGoogleMock } from 'test/integration/mocks/setup-google-mock.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 
@@ -16,7 +14,7 @@ const HANDLE = 'messaging-token-refresh@apple.dev';
 const EXPIRED_CREDENTIALS_AT = new Date(Date.now() - 56 * 60 * 1000);
 
 describe('Messaging token refresh (integration)', () => {
-  setupGmailMock({ inbox: [gmailMessage()], handle: HANDLE });
+  setupGoogleMock({ handle: HANDLE, inbox: [gmailMessage()] });
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
 

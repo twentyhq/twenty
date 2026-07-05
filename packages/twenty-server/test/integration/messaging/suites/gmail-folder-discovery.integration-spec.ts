@@ -4,25 +4,24 @@ import {
 } from 'twenty-shared/types';
 
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
-import { setupGmailMock } from 'test/integration/messaging/utils/gmail-message-mock.util';
 import {
   queryMessageFolders,
   updateMessageChannel,
 } from 'test/integration/messaging/utils/query-messaging.util';
+import { setupGoogleMock } from 'test/integration/mocks/setup-google-mock.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 import { startChannelSyncAndAwait } from 'test/integration/utils/start-channel-sync-and-await.util';
 
 const HANDLE = 'gmail-folder-discovery@apple.dev';
 
 describe('Gmail folder discovery (integration)', () => {
-  const gmail = setupGmailMock({
-    inbox: [],
+  const gmail = setupGoogleMock({
+    handle: HANDLE,
     labels: [
       { id: 'INBOX', name: 'INBOX' },
       { id: 'SENT', name: 'SENT' },
       { id: 'Label_Work', name: 'Work' },
     ],
-    handle: HANDLE,
   });
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;

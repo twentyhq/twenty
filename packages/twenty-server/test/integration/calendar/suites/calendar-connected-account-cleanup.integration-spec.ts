@@ -3,12 +3,9 @@ import { randomUUID } from 'node:crypto';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
-import { setupGmailMock } from 'test/integration/messaging/utils/gmail-message-mock.util';
-import {
-  googleCalendarEvent,
-  googleCalendarEventsHandlers,
-} from 'test/integration/messaging/utils/google-calendar-mock.util';
 import { deleteConnectedAccount } from 'test/integration/messaging/utils/query-messaging.util';
+import { googleCalendarEvent } from 'test/integration/mocks/google-calendar-event.util';
+import { setupGoogleMock } from 'test/integration/mocks/setup-google-mock.util';
 import {
   findRecordIdsByFilter,
   findRecordNodesByFilter,
@@ -21,7 +18,7 @@ const HANDLE = 'calendar-cleanup@apple.dev';
 describe('Calendar connected account cleanup (integration)', () => {
   const eventId = `google-calendar-event-${randomUUID()}`;
 
-  const gmail = setupGmailMock({ inbox: [], handle: HANDLE });
+  const gmail = setupGoogleMock({ handle: HANDLE });
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
 
@@ -31,17 +28,15 @@ describe('Calendar connected account cleanup (integration)', () => {
       handle: HANDLE,
     });
 
-    gmail.use(
-      ...googleCalendarEventsHandlers([
-        googleCalendarEvent({
-          id: eventId,
-          attendees: [
-            { email: `organizer-${eventId}@example.com`, organizer: true },
-            { email: `attendee-${eventId}@example.com` },
-          ],
-        }),
-      ]),
-    );
+    gmail.serveCalendarEvents([
+      googleCalendarEvent({
+        id: eventId,
+        attendees: [
+          { email: `organizer-${eventId}@example.com`, organizer: true },
+          { email: `attendee-${eventId}@example.com` },
+        ],
+      }),
+    ]);
 
     await runCalendarChannelListFetch(channel.calendarChannelId);
     await runCalendarChannelEventsImport(channel.calendarChannelId);
