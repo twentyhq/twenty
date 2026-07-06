@@ -1,0 +1,21 @@
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_7c0169865c5a19::t_2fb3512080ca9d 114
+packages/twenty-server/src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum.ts
+  s_7c0169865c5a19::t_5a28f32d5980be 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "913951e6d63c185f5ce3c261228228b7471e1112",
+  "prompts": {},
+  "sessions": {
+    "s_7c0169865c5a19": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3fadbdc5-0639-4b62-a5ba-78f2c5c7d809",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
