@@ -191,6 +191,78 @@ export class UserRoleService {
       .map(([userWorkspaceId]) => userWorkspaceId);
   }
 
+  public async getWorkspaceMembersByRoleIds({
+    roleIds,
+    workspaceId,
+  }: {
+    roleIds: string[];
+    workspaceId: string;
+  }): Promise<Map<string, WorkspaceMemberWorkspaceEntity[]>> {
+    const membersByRoleId = new Map<string, WorkspaceMemberWorkspaceEntity[]>();
+
+    if (!roleIds.length) {
+      return membersByRoleId;
+    }
+
+    const { userWorkspaceRoleMap, flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'userWorkspaceRoleMap',
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    const roleIdSet = new Set(roleIds);
+
+    const roleIdByUserWorkspaceId = new Map<string, string>();
+
+    for (const [userWorkspaceId, roleId] of Object.entries(
+      userWorkspaceRoleMap,
+    )) {
+      if (roleIdSet.has(roleId)) {
+        roleIdByUserWorkspaceId.set(userWorkspaceId, roleId);
+      }
+    }
+
+    if (roleIdByUserWorkspaceId.size === 0) {
+      return membersByRoleId;
+    }
+
+    const userWorkspaces = await this.userWorkspaceRepository.find({
+      where: {
+        id: In([...roleIdByUserWorkspaceId.keys()]),
+      },
+    });
+
+    for (const userWorkspace of userWorkspaces) {
+      const roleId = roleIdByUserWorkspaceId.get(userWorkspace.id);
+
+      if (!isDefined(roleId)) {
+        continue;
+      }
+
+      const memberId = flatWorkspaceMemberMaps.idByUserId[userWorkspace.userId];
+
+      if (!isDefined(memberId)) {
+        continue;
+      }
+
+      const member = flatWorkspaceMemberMaps.byId[memberId];
+
+      if (!isDefined(member) || isDefined(member.deletedAt)) {
+        continue;
+      }
+
+      const existingMembers = membersByRoleId.get(roleId);
+
+      if (isDefined(existingMembers)) {
+        existingMembers.push(member);
+      } else {
+        membersByRoleId.set(roleId, [member]);
+      }
+    }
+
+    return membersByRoleId;
+  }
+
   public async validateUserWorkspaceIsNotUniqueAdminOrThrow({
     userWorkspaceId,
     workspaceId,

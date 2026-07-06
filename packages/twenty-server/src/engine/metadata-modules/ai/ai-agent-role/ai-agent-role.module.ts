@@ -6,12 +6,15 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { RoleTargetModule } from 'src/engine/metadata-modules/role-target/role-target.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+
 import { AiAgentRoleService } from './ai-agent-role.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AgentEntity, RoleEntity, RoleTargetEntity]),
     RoleTargetModule,
+    WorkspaceCacheModule,
   ],
   providers: [
     AiAgentRoleService,

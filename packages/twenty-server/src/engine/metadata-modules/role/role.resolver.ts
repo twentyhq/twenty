@@ -4,7 +4,7 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -25,50 +25,37 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
-import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
-import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FieldPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/field-permission.dto';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
 import { UpsertObjectPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { fromFlatFieldPermissionToFieldPermissionDto } from 'src/engine/metadata-modules/object-permission/utils/from-flat-field-permission-to-field-permission-dto.util';
 import { fromFlatObjectPermissionToObjectPermissionDto } from 'src/engine/metadata-modules/object-permission/utils/from-flat-object-permission-to-object-permission-dto.util';
-import { RolePermissionFlagDTO } from 'src/engine/metadata-modules/role-permission-flag/dtos/role-permission-flag.dto';
-import { UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/role-permission-flag/dtos/upsert-permission-flags.input';
-import { RolePermissionFlagService } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.service';
-import { fromFlatRolePermissionFlagToRolePermissionFlagDto } from 'src/engine/metadata-modules/role-permission-flag/utils/from-flat-role-permission-flag-to-role-permission-flag-dto.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { RolePermissionFlagDTO } from 'src/engine/metadata-modules/role-permission-flag/dtos/role-permission-flag.dto';
+import { UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/role-permission-flag/dtos/upsert-permission-flags.input';
+import { RolePermissionFlagService } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.service';
+import { fromFlatRolePermissionFlagToRolePermissionFlagDto } from 'src/engine/metadata-modules/role-permission-flag/utils/from-flat-role-permission-flag-to-role-permission-flag-dto.util';
 import { CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role.input';
-import {
-  ApiKeyForRoleDTO,
-  RoleDTO,
-} from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role.input';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { fromRoleEntitiesToRoleDtos } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import { UpsertRowLevelPermissionPredicatesInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-predicates.input';
-import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
-import { RowLevelPermissionPredicateDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate.dto';
 import { UpsertRowLevelPermissionPredicatesResultDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/upsert-row-level-permission-predicates-result.dto';
 import { RowLevelPermissionPredicateGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/row-level-permission-predicate/filters/row-level-permission-predicate-graphql-api-exception.filter';
 import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
 import { RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @MetadataResolver(() => RoleDTO)
 @UsePipes(ResolverValidationPipe)
@@ -95,7 +82,6 @@ export class RoleResolver {
     private readonly applicationService: ApplicationService,
     private readonly rowLevelPermissionPredicateService: RowLevelPermissionPredicateService,
     private readonly rowLevelPermissionPredicateGroupService: RowLevelPermissionPredicateGroupService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -103,9 +89,63 @@ export class RoleResolver {
   async getRoles(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<RoleDTO[]> {
-    const roleEntities = await this.roleService.getWorkspaceRoles(workspace.id);
+    const { id: workspaceId } = workspace;
+    const roleEntities = await this.roleService.getWorkspaceRoles(workspaceId);
+    const roleDtos = fromRoleEntitiesToRoleDtos(roleEntities);
+    const roleIds = roleDtos.map((roleDto) => roleDto.id);
 
-    return fromRoleEntitiesToRoleDtos(roleEntities);
+    const [
+      agentsByRoleId,
+      apiKeysByRoleId,
+      workspaceMembersByRoleId,
+      predicates,
+      predicateGroups,
+    ] = await Promise.all([
+      this.agentRoleService.getAgentDtosByRoleIds({ roleIds, workspaceId }),
+      this.apiKeyRoleService.getApiKeyDtosByRoleIds({ roleIds, workspaceId }),
+      this.userRoleService.getWorkspaceMembersByRoleIds({
+        roleIds,
+        workspaceId,
+      }),
+      this.rowLevelPermissionPredicateService.findByWorkspaceId(workspaceId),
+      this.rowLevelPermissionPredicateGroupService.findByWorkspaceId(
+        workspaceId,
+      ),
+    ]);
+
+    const predicatesByRoleId = this.groupByRoleId(predicates);
+    const predicateGroupsByRoleId = this.groupByRoleId(predicateGroups);
+
+    return roleDtos.map((roleDto) => ({
+      ...roleDto,
+      workspaceMembers: workspaceMembersByRoleId.get(
+        roleDto.id,
+      ) as WorkspaceMemberDTO[],
+      agents: agentsByRoleId.get(roleDto.id),
+      apiKeys: apiKeysByRoleId.get(roleDto.id),
+      rowLevelPermissionPredicates: predicatesByRoleId.get(roleDto.id),
+      rowLevelPermissionPredicateGroups: predicateGroupsByRoleId.get(
+        roleDto.id,
+      ),
+    }));
+  }
+
+  private groupByRoleId<TItem extends { roleId: string }>(
+    items: TItem[],
+  ): Map<string, TItem[]> {
+    const itemsByRoleId = new Map<string, TItem[]>();
+
+    for (const item of items) {
+      const existingItems = itemsByRoleId.get(item.roleId);
+
+      if (isDefined(existingItems)) {
+        existingItems.push(item);
+      } else {
+        itemsByRoleId.set(item.roleId, [item]);
+      }
+    }
+
+    return itemsByRoleId;
   }
 
   @Mutation(() => WorkspaceMemberDTO)
@@ -308,107 +348,5 @@ export class RoleResolver {
     });
 
     return true;
-  }
-
-  @ResolveField('workspaceMembers', () => [WorkspaceMemberDTO])
-  async getWorkspaceMembersAssignedToRole(
-    @Parent() role: RoleDTO,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<WorkspaceMemberWorkspaceEntity[]> {
-    const workspaceMembers =
-      await this.userRoleService.getWorkspaceMembersAssignedToRole(
-        role.id,
-        workspace.id,
-      );
-
-    return workspaceMembers;
-  }
-
-  @ResolveField('agents', () => [AgentDTO])
-  async getAgentsAssignedToRole(
-    @Parent() role: RoleDTO,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<AgentDTO[]> {
-    const agents = await this.agentRoleService.getAgentsAssignedToRole(
-      role.id,
-      workspace.id,
-    );
-
-    const { flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspace.id, [
-        'flatApplicationMaps',
-      ]);
-
-    return agents.map((agentEntity) => {
-      const flatApplication =
-        flatApplicationMaps.byId[agentEntity.applicationId];
-
-      if (!isDefined(flatApplication)) {
-        throw new AiException(
-          `Application not found for agent ${agentEntity.id}`,
-          AiExceptionCode.AGENT_NOT_FOUND,
-        );
-      }
-
-      return fromFlatAgentWithRoleIdToAgentDto({
-        ...agentEntity,
-        createdAt: agentEntity.createdAt.toISOString(),
-        updatedAt: agentEntity.updatedAt.toISOString(),
-        deletedAt: agentEntity.deletedAt?.toISOString() ?? null,
-        universalIdentifier: agentEntity.universalIdentifier,
-        applicationUniversalIdentifier: flatApplication.universalIdentifier,
-        roleId: role.id,
-      });
-    });
-  }
-
-  @ResolveField('apiKeys', () => [ApiKeyForRoleDTO])
-  async getApiKeysAssignedToRole(
-    @Parent() role: RoleDTO,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<ApiKeyForRoleDTO[]> {
-    const apiKeys = await this.apiKeyRoleService.getApiKeysAssignedToRole(
-      role.id,
-      workspace.id,
-    );
-
-    return apiKeys.map((apiKey) => ({
-      id: apiKey.id,
-      name: apiKey.name,
-      expiresAt: apiKey.expiresAt,
-      revokedAt: apiKey.revokedAt,
-    }));
-  }
-
-  @ResolveField(
-    'rowLevelPermissionPredicates',
-    () => [RowLevelPermissionPredicateDTO],
-    { nullable: true },
-  )
-  async getRowLevelPermissionPredicatesForRole(
-    @Parent() role: RoleDTO,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<RowLevelPermissionPredicateDTO[]> {
-    const allPredicates =
-      await this.rowLevelPermissionPredicateService.findByWorkspaceId(
-        workspace.id,
-      );
-
-    return allPredicates.filter((predicate) => predicate.roleId === role.id);
-  }
-
-  @ResolveField(
-    'rowLevelPermissionPredicateGroups',
-    () => [RowLevelPermissionPredicateGroupDTO],
-    { nullable: true },
-  )
-  async getRowLevelPermissionPredicateGroupsForRole(
-    @Parent() role: RoleDTO,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<RowLevelPermissionPredicateGroupDTO[]> {
-    return this.rowLevelPermissionPredicateGroupService.findByRole(
-      workspace.id,
-      role.id,
-    );
   }
 }

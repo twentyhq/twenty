@@ -11,7 +11,10 @@ import {
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
-import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import {
+  type ApiKeyForRoleDTO,
+  type RoleDTO,
+} from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
 import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
@@ -229,5 +232,62 @@ export class ApiKeyRoleService {
     });
 
     return apiKeys;
+  }
+
+  public async getApiKeyDtosByRoleIds({
+    roleIds,
+    workspaceId,
+  }: {
+    roleIds: string[];
+    workspaceId: string;
+  }): Promise<Map<string, ApiKeyForRoleDTO[]>> {
+    const apiKeyDtosByRoleId = new Map<string, ApiKeyForRoleDTO[]>();
+
+    if (!roleIds.length) {
+      return apiKeyDtosByRoleId;
+    }
+
+    const { flatRoleTargetMaps, apiKeyMap } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatRoleTargetMaps',
+        'apiKeyMap',
+      ]);
+
+    const roleIdSet = new Set(roleIds);
+
+    for (const flatRoleTarget of Object.values(
+      flatRoleTargetMaps.byUniversalIdentifier,
+    )) {
+      if (
+        !isDefined(flatRoleTarget) ||
+        !isDefined(flatRoleTarget.apiKeyId) ||
+        !roleIdSet.has(flatRoleTarget.roleId)
+      ) {
+        continue;
+      }
+
+      const flatApiKey = apiKeyMap[flatRoleTarget.apiKeyId];
+
+      if (!isDefined(flatApiKey) || isDefined(flatApiKey.revokedAt)) {
+        continue;
+      }
+
+      const apiKeyDto: ApiKeyForRoleDTO = {
+        id: flatApiKey.id,
+        name: flatApiKey.name,
+        expiresAt: new Date(flatApiKey.expiresAt),
+        revokedAt: null,
+      };
+
+      const existingApiKeyDtos = apiKeyDtosByRoleId.get(flatRoleTarget.roleId);
+
+      if (isDefined(existingApiKeyDtos)) {
+        existingApiKeyDtos.push(apiKeyDto);
+      } else {
+        apiKeyDtosByRoleId.set(flatRoleTarget.roleId, [apiKeyDto]);
+      }
+    }
+
+    return apiKeyDtosByRoleId;
   }
 }

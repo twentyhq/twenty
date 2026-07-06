@@ -3,16 +3,20 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 
+import { type AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 @Injectable()
 export class AiAgentRoleService {
   constructor(
@@ -23,6 +27,7 @@ export class AiAgentRoleService {
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     private readonly roleTargetService: RoleTargetService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   public async assignRoleToAgent({
@@ -107,6 +112,74 @@ export class AiAgentRoleService {
     });
 
     return agents;
+  }
+
+  public async getAgentDtosByRoleIds({
+    roleIds,
+    workspaceId,
+  }: {
+    roleIds: string[];
+    workspaceId: string;
+  }): Promise<Map<string, AgentDTO[]>> {
+    const agentDtosByRoleId = new Map<string, AgentDTO[]>();
+
+    if (!roleIds.length) {
+      return agentDtosByRoleId;
+    }
+
+    const { flatRoleTargetMaps, flatAgentMaps, flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatRoleTargetMaps',
+        'flatAgentMaps',
+        'flatApplicationMaps',
+      ]);
+
+    const roleIdSet = new Set(roleIds);
+
+    for (const flatRoleTarget of Object.values(
+      flatRoleTargetMaps.byUniversalIdentifier,
+    )) {
+      if (
+        !isDefined(flatRoleTarget) ||
+        !isDefined(flatRoleTarget.agentId) ||
+        !roleIdSet.has(flatRoleTarget.roleId)
+      ) {
+        continue;
+      }
+
+      const flatAgent = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: flatRoleTarget.agentId,
+        flatEntityMaps: flatAgentMaps,
+      });
+
+      if (!isDefined(flatAgent)) {
+        continue;
+      }
+
+      const flatApplication = flatApplicationMaps.byId[flatAgent.applicationId];
+
+      if (!isDefined(flatApplication)) {
+        throw new AiException(
+          `Application not found for agent ${flatAgent.id}`,
+          AiExceptionCode.AGENT_NOT_FOUND,
+        );
+      }
+
+      const agentDto = fromFlatAgentWithRoleIdToAgentDto({
+        ...flatAgent,
+        roleId: flatRoleTarget.roleId,
+      });
+
+      const existingAgentDtos = agentDtosByRoleId.get(flatRoleTarget.roleId);
+
+      if (isDefined(existingAgentDtos)) {
+        existingAgentDtos.push(agentDto);
+      } else {
+        agentDtosByRoleId.set(flatRoleTarget.roleId, [agentDto]);
+      }
+    }
+
+    return agentDtosByRoleId;
   }
 
   private async validateAssignRoleInput({
