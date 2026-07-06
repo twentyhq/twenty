@@ -185,6 +185,15 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         where: { id: file.applicationId },
       });
 
+      // Tarballs are workspace-scoped rows today; an instance-scoped row here
+      // would mean the pointer was corrupted, not that a workspace is missing.
+      if (!isDefined(file.workspaceId)) {
+        throw new ApplicationException(
+          `Tarball file ${file.id} for app registration ${appRegistration.id} has no workspaceId`,
+          ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED,
+        );
+      }
+
       const tarballStream = await this.fileStorageService.readFile({
         workspaceId: file.workspaceId,
         applicationUniversalIdentifier: application.universalIdentifier,

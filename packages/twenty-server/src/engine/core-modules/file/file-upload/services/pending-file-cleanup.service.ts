@@ -78,6 +78,12 @@ export class PendingFileCleanupService {
   // partial, possibly absent) storage object. A failure here leaks bytes but
   // never data, so it is logged rather than retried.
   private async deleteStorageObject(file: FileEntity): Promise<void> {
+    // Instance-scoped rows (workspaceId NULL) never go through the PENDING
+    // direct-upload flow, so there is nothing to reap for them.
+    if (!isDefined(file.workspaceId)) {
+      return;
+    }
+
     const [fileFolder] = file.path.split('/');
 
     const application = await this.applicationRepository.findOne({

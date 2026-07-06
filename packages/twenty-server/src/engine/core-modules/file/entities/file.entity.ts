@@ -14,6 +14,8 @@ import {
 } from 'typeorm';
 
 import { ADD_STATUS_TO_FILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-status-to-file-upgrade-command-name.constant';
+import { ALLOW_INSTANCE_SCOPED_FILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/allow-instance-scoped-file-upgrade-command-name.constant';
+import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 import {
@@ -21,7 +23,7 @@ import {
   FileStatus,
 } from 'src/engine/core-modules/file/types/file-status.types';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
-import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity('file')
 @Check(
@@ -30,14 +32,33 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
 )
 @Index('IDX_FILE_WORKSPACE_ID', ['workspaceId'])
 @Index('IDX_FILE_STATUS', ['status'])
+@Index('IDX_FILE_APPLICATION_REGISTRATION_ID', ['applicationRegistrationId'])
 @Unique('IDX_APPLICATION_PATH_WORKSPACE_ID_APPLICATION_ID_UNIQUE', [
   'workspaceId',
   'applicationId',
   'path',
 ])
-export class FileEntity extends WorkspaceRelatedEntity {
+// Instance-scoped rows have no workspaceId; the composite unique above never
+// fires on them (NULLs are distinct), so uniqueness needs its own index.
+@Index('IDX_FILE_INSTANCE_PATH_UNIQUE', ['path'], {
+  unique: true,
+  where: '"workspaceId" IS NULL',
+})
+export class FileEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  // Null for instance-scoped files (instance-level documents such as
+  // application-registration assets); set for workspace-scoped files.
+  @Column({ nullable: true, type: 'uuid' })
+  workspaceId: string | null;
+
+  @ManyToOne('WorkspaceEntity', {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'workspaceId' })
+  workspace: Relation<WorkspaceEntity> | null;
 
   @Column({ nullable: true, type: 'uuid' })
   applicationId: string;
@@ -47,6 +68,21 @@ export class FileEntity extends WorkspaceRelatedEntity {
   })
   @JoinColumn({ name: 'applicationId' })
   application: Relation<ApplicationEntity>;
+
+  // Set on instance-scoped files owned by an application registration so
+  // they follow their registration's lifecycle.
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ALLOW_INSTANCE_SCOPED_FILE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid' })
+  applicationRegistrationId: string | null;
+
+  @ManyToOne('ApplicationRegistrationEntity', {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'applicationRegistrationId' })
+  applicationRegistration: Relation<ApplicationRegistrationEntity> | null;
 
   @Column({ nullable: false })
   path: string;

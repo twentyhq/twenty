@@ -28,6 +28,14 @@ describe('FileStorageService', () => {
     delete: jest.fn(),
   };
 
+  const mockInstanceFileRepository = {
+    upsert: jest.fn(),
+    findOneBy: jest.fn(),
+    findOneByOrFail: jest.fn(),
+    findBy: jest.fn(),
+    delete: jest.fn(),
+  };
+
   const mockApplicationRepository = {
     findOneOrFail: jest.fn(),
   };
@@ -43,6 +51,10 @@ describe('FileStorageService', () => {
         {
           provide: getWorkspaceScopedRepositoryToken(FileEntity),
           useValue: mockFileRepository,
+        },
+        {
+          provide: getRepositoryToken(FileEntity),
+          useValue: mockInstanceFileRepository,
         },
         {
           provide: getRepositoryToken(ApplicationEntity),
