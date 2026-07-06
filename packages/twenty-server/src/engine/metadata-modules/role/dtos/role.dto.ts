@@ -59,13 +59,13 @@ export class RoleDTO {
   @HideField()
   roleTargets?: Relation<RoleTargetEntity[]>;
 
-  @Field(() => [WorkspaceMemberDTO], { nullable: true })
+  @Field(() => [WorkspaceMemberDTO], { nullable: false })
   workspaceMembers?: WorkspaceMemberDTO[];
 
-  @Field(() => [AgentDTO], { nullable: true })
+  @Field(() => [AgentDTO], { nullable: false })
   agents?: AgentDTO[];
 
-  @Field(() => [ApiKeyForRoleDTO], { nullable: true })
+  @Field(() => [ApiKeyForRoleDTO], { nullable: false })
   apiKeys?: ApiKeyForRoleDTO[];
 
   @Field({ nullable: false })
