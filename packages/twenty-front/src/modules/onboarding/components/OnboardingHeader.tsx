@@ -1,7 +1,5 @@
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
-import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
 import { styled } from '@linaria/react';
-import { motion } from 'framer-motion';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconCoins, IconInfoCircle } from 'twenty-ui/icon';
@@ -43,15 +41,13 @@ const StyledRightSide = styled(StyledSide)`
   padding-left: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledLogoBase = styled.div`
+const StyledLogo = styled.div`
   background-image: url('/images/integrations/twenty-logo.svg');
   background-size: cover;
   height: ${themeCssVariables.spacing[6]};
   opacity: 0.4;
   width: ${themeCssVariables.spacing[6]};
 `;
-
-const StyledLogo = motion.create(StyledLogoBase);
 
 const StyledFreeCredits = styled.div`
   align-items: center;
@@ -109,7 +105,6 @@ export const OnboardingHeader = ({
 }: OnboardingHeaderProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const transition = useOnboardingMotionTransition();
 
   return (
     <StyledHeader>
@@ -125,7 +120,7 @@ export const OnboardingHeader = ({
         )}
       </StyledLeftSide>
       <StyledCenter>
-        <StyledLogo layout transition={transition} />
+        <StyledLogo />
       </StyledCenter>
       <StyledRightSide>
         {isDefined(freeCredits) && (
