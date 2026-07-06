@@ -10,12 +10,9 @@ import {
 type DirectFileUploadOptions = {
   fileFolder: FileFolder;
   fieldMetadataId?: string;
+  signal?: AbortSignal;
 };
 
-// Uploads a file straight to storage without buffering it through the server:
-// initiate (createFileUpload) -> PUT the bytes to the returned url -> confirm
-// (completeFileUpload). The confirmed FileWithSignedUrl is returned, matching
-// the shape of the legacy single-mutation uploads.
 export const useDirectFileUpload = () => {
   const apolloClient = useApolloClient();
   const [createFileUpload] = useMutation(CreateFileUploadDocument, {
@@ -27,7 +24,7 @@ export const useDirectFileUpload = () => {
 
   const uploadFile = async (
     file: File,
-    { fileFolder, fieldMetadataId }: DirectFileUploadOptions,
+    { fileFolder, fieldMetadataId, signal }: DirectFileUploadOptions,
   ): Promise<FileWithSignedUrl> => {
     const createResult = await createFileUpload({
       variables: {
@@ -48,6 +45,8 @@ export const useDirectFileUpload = () => {
       method: 'PUT',
       headers: { 'Content-Type': uploadTarget.contentType },
       body: file,
+      credentials: 'omit',
+      signal,
     });
 
     if (!putResponse.ok) {
