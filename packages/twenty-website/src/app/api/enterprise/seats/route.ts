@@ -1,31 +1,38 @@
 import { NextResponse } from 'next/server';
 
-import { getStripeClient, verifyEnterpriseKey } from '@/platform/enterprise';
+import {
+  getEnterpriseConfigError,
+  getStripeClient,
+  isBillableSeatReporter,
+  verifyEnterpriseKey,
+} from '@/platform/enterprise';
 
 export const dynamic = 'force-dynamic';
 
 const NON_UPDATABLE_STATUSES = new Set(['canceled', 'incomplete_expired']);
 
+type InstanceMetadata = {
+  serverId?: string;
+};
+
 export async function POST(request: Request) {
-  if (
-    !process.env.STRIPE_SECRET_KEY ||
-    !process.env.ENTERPRISE_JWT_PUBLIC_KEY
-  ) {
-    console.error(
-      '[enterprise-seats] 503 — STRIPE_SECRET_KEY and/or ENTERPRISE_JWT_PUBLIC_KEY are not configured',
-    );
-    return NextResponse.json(
-      { error: 'Enterprise seat management is not configured.' },
-      { status: 503 },
-    );
+  const configError = getEnterpriseConfigError({
+    route: 'enterprise-seats',
+    feature: 'Enterprise seat management',
+    requiredEnvVars: ['STRIPE_SECRET_KEY', 'ENTERPRISE_JWT_PUBLIC_KEY'],
+  });
+
+  if (configError) {
+    return configError;
   }
 
   try {
     const body = (await request.json()) as {
       enterpriseKey?: unknown;
       seatCount?: unknown;
+      instanceMetadata?: InstanceMetadata;
     };
-    const { enterpriseKey, seatCount } = body;
+    const { enterpriseKey, seatCount, instanceMetadata } = body;
 
     if (!enterpriseKey || typeof enterpriseKey !== 'string') {
       return NextResponse.json(
@@ -49,6 +56,22 @@ export async function POST(request: Request) {
 
     const stripe = getStripeClient();
     const subscription = await stripe.subscriptions.retrieve(payload.sub);
+
+    const serverId = instanceMetadata?.serverId;
+
+    if (
+      !isBillableSeatReporter({
+        stripeMetadata: subscription.metadata,
+        serverId,
+      })
+    ) {
+      return NextResponse.json({
+        success: false,
+        reason: 'This instance is not the billing instance for this key',
+        seatCount: subscription.items.data[0]?.quantity ?? 0,
+        subscriptionId: payload.sub,
+      });
+    }
 
     if (
       NON_UPDATABLE_STATUSES.has(subscription.status) ||
