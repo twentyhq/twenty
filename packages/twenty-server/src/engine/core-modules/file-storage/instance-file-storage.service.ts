@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { basename, dirname, join } from 'path';
 import { type Readable } from 'stream';
 
-import { type FileFolder } from 'twenty-shared/types';
+import { type InstanceFileFolder } from 'src/engine/core-modules/file-storage/types/instance-file-folder.type';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -19,7 +19,7 @@ import { validateStoragePathIsWithinInstanceScopeOrThrow } from 'src/engine/core
 import { InstanceFileEntity } from 'src/engine/core-modules/file/entities/instance-file.entity';
 
 export type InstanceResourceIdentifier = {
-  fileFolder: FileFolder;
+  fileFolder: InstanceFileFolder;
   resourcePath: string;
 };
 

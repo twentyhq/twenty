@@ -1,22 +1,20 @@
-import { FileFolder } from 'twenty-shared/types';
-
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
 import { validateStoragePathIsWithinInstanceScopeOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-instance-scope-or-throw.util';
 
 const primitives = {
-  fileFolder: FileFolder.Source,
+  fileFolder: 'application-manifest',
 };
 
 describe('validateStoragePathIsWithinInstanceScopeOrThrow', () => {
   it.each([
     {
       title: 'nested path within prefix',
-      onStoragePath: 'instance/source/manifests/manifest.json',
+      onStoragePath: 'instance/application-manifest/manifests/manifest.json',
     },
     {
       title: 'file directly under prefix',
-      onStoragePath: 'instance/source/manifest.json',
+      onStoragePath: 'instance/application-manifest/manifest.json',
     },
   ])('should accept valid path: $title', ({ onStoragePath }) => {
     expect(() =>
@@ -46,19 +44,19 @@ describe('validateStoragePathIsWithinInstanceScopeOrThrow', () => {
     },
     {
       title: 'traversal out of the instance prefix',
-      onStoragePath: 'instance/source/../../workspace-id/file.json',
+      onStoragePath: 'instance/application-manifest/../../workspace-id/file.json',
     },
     {
       title: 'traversal segments kept after normalization',
-      onStoragePath: 'instance/source/../../../etc/passwd',
+      onStoragePath: 'instance/application-manifest/../../../etc/passwd',
     },
     {
       title: 'absolute path',
-      onStoragePath: '/instance/source/file.json',
+      onStoragePath: '/instance/application-manifest/file.json',
     },
     {
       title: 'null byte in path',
-      onStoragePath: 'instance/source/file\0.json',
+      onStoragePath: 'instance/application-manifest/file\0.json',
     },
   ])(
     'should reject path that escapes instance scope: $title',

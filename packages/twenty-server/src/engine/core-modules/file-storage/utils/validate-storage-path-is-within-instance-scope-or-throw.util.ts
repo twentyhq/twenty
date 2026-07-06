@@ -1,6 +1,6 @@
 import { join, normalize } from 'path';
 
-import { type FileFolder } from 'twenty-shared/types';
+import { type InstanceFileFolder } from 'src/engine/core-modules/file-storage/types/instance-file-folder.type';
 
 import {
   FileStorageException,
@@ -14,7 +14,7 @@ export const validateStoragePathIsWithinInstanceScopeOrThrow = ({
   fileFolder,
 }: {
   onStoragePath: string;
-  fileFolder: FileFolder;
+  fileFolder: InstanceFileFolder;
 }): void => {
   assertStoragePathIsSafe(onStoragePath);
 
