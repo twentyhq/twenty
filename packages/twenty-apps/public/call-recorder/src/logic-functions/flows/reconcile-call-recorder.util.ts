@@ -26,6 +26,12 @@ import { rescheduleCallRecordingBot } from 'src/logic-functions/flows/reschedule
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
+const logInfo = (message: string) => {
+  if (process.env.NODE_ENV !== 'test') {
+    console.info(message);
+  }
+};
+
 export const reconcileCallRecorderForCalendarEventIds = async ({
   client,
   calendarEventIds,
@@ -37,6 +43,10 @@ export const reconcileCallRecorderForCalendarEventIds = async ({
   removedOccurrences?: RemovedCallRecorderOccurrence[];
   now?: Date;
 }): Promise<CallRecorderReconciliationResult[]> => {
+  logInfo(
+    `[call-recorder] resolving call recorder policy for ${calendarEventIds.length} calendar events`,
+  );
+
   const meetingPolicyResults =
     await resolveCallRecorderPolicyResultsForMeetings({
       client,
@@ -44,6 +54,18 @@ export const reconcileCallRecorderForCalendarEventIds = async ({
       removedOccurrences,
       now,
     });
+
+  logInfo(
+    `[call-recorder] resolved ${meetingPolicyResults.length} meeting policies: requested=${
+      meetingPolicyResults.filter(
+        (meetingPolicyResult) => meetingPolicyResult.shouldRequestBot,
+      ).length
+    }, canceled=${
+      meetingPolicyResults.filter(
+        (meetingPolicyResult) => !meetingPolicyResult.shouldRequestBot,
+      ).length
+    }`,
+  );
 
   return reconcileCallRecorderForMeetingOccurrences({
     client,
@@ -325,6 +347,10 @@ const createPolicyManagedCallRecording = async ({
       id: callRecordingId,
       data: scheduledFields,
     });
+
+    logInfo(
+      `[call-recorder] created callRecording ${callRecordingId} from calendar reconciliation`,
+    );
   } catch (error) {
     // The id is deterministic, so a conflict means a concurrent run created the row first.
     const concurrentlyCreatedCallRecording = (
@@ -335,6 +361,10 @@ const createPolicyManagedCallRecording = async ({
       throw error;
     }
 
+    logInfo(
+      `[call-recorder] callRecording ${callRecordingId} already existed; updating it from calendar reconciliation`,
+    );
+
     return updatePolicyManagedCallRecording({
       client,
       existingCallRecording: concurrentlyCreatedCallRecording,
@@ -344,7 +374,7 @@ const createPolicyManagedCallRecording = async ({
   }
 
   // Winning the deterministic-id insert elects this run as the single writer that creates the bot.
-  await ensureCallRecorder(client, {
+  const didScheduleBot = await ensureCallRecorder(client, {
     callRecording: {
       id: callRecordingId,
       ...scheduledFields,
@@ -352,6 +382,12 @@ const createPolicyManagedCallRecording = async ({
     },
     calendarEvent: representativeCalendarEvent,
   });
+
+  if (!didScheduleBot && process.env.NODE_ENV !== 'test') {
+    console.warn(
+      `[call-recorder] created callRecording ${callRecordingId}, but did not schedule a Recall bot`,
+    );
+  }
 
   return {
     action: 'CREATED',

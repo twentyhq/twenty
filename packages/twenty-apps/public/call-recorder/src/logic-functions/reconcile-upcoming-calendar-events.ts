@@ -21,6 +21,12 @@ type ReconcileUpcomingCalendarEventsRouteResult =
   | { outcome: 'nothing-to-reconcile' }
   | ({ outcome: 'processed' } & ReconcileUpcomingCalendarEventBatchesResult);
 
+const logInfo = (message: string) => {
+  if (process.env.NODE_ENV !== 'test') {
+    console.info(message);
+  }
+};
+
 const toIdList = (value: unknown): string[] =>
   Array.isArray(value) ? value.filter(isNonEmptyString) : [];
 
@@ -33,11 +39,25 @@ export const reconcileUpcomingCalendarEventsHandler = async (
   const requestedCalendarEventIds = payload.body?.calendarEventIds;
   const isSweep = isUndefined(requestedCalendarEventIds);
 
+  logInfo(
+    `[call-recorder] starting upcoming calendar event reconciliation: mode=${
+      isSweep ? 'sweep' : 'explicit'
+    }`,
+  );
+
   const calendarEventIds = isSweep
     ? await fetchUpcomingCalendarEventIds(client, new Date(startedAtMs))
     : toIdList(requestedCalendarEventIds);
 
+  logInfo(
+    `[call-recorder] upcoming calendar event reconciliation selected ${calendarEventIds.length} calendar events`,
+  );
+
   if (calendarEventIds.length === 0) {
+    logInfo(
+      `[call-recorder] upcoming calendar event reconciliation found nothing to process`,
+    );
+
     return isSweep
       ? { outcome: 'nothing-to-reconcile' }
       : { outcome: 'nothing-selected' };
@@ -49,6 +69,10 @@ export const reconcileUpcomingCalendarEventsHandler = async (
     deadlineAtMs:
       startedAtMs + TIMEOUT_SECONDS * 1000 - CONTINUATION_RESERVE_MS,
   });
+
+  logInfo(
+    `[call-recorder] upcoming calendar event reconciliation processed: created=${result.actionCounts.created}, updated=${result.actionCounts.updated}, canceled=${result.actionCounts.canceled}, skipped=${result.actionCounts.skipped}, failed=${result.actionCounts.failed}, remaining=${result.remainingCalendarEventIds.length}, continuationRequested=${result.continuationRequested}`,
+  );
 
   return { outcome: 'processed', ...result };
 };
