@@ -1,7 +1,7 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { AddMessageCampaignStatFieldsCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-workspace-command-1783083423000-add-message-campaign-stat-fields.command';
+import { AddMessageCampaignStatFieldsCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783083423000-add-message-campaign-stat-fields.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -189,7 +189,9 @@ describe('AddMessageCampaignStatFieldsCommand', () => {
         ),
       ),
     );
-    expect(payload.fieldMetadata.flatEntityToCreate).toHaveLength(3);
+    expect(payload.fieldMetadata.flatEntityToCreate).toHaveLength(
+      STAT_FIELD_UNIVERSAL_IDENTIFIERS.length - 1,
+    );
     expect(payload.view.flatEntityToCreate).toEqual([]);
     expect(payload.viewField.flatEntityToCreate).toHaveLength(
       CAMPAIGN_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.length - 1,
