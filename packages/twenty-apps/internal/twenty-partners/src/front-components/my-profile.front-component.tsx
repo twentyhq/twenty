@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { enqueueSnackbar, useUserId } from 'twenty-sdk/front-component';
 
@@ -20,44 +20,40 @@ const MyProfile = () => {
   const [profile, setProfile] = useState<MyProfilePayload | null>(null);
   const [options, setOptions] = useState<ProfileOptions | null>(null);
   const [loading, setLoading] = useState(true);
+  // Bumped on every successful (re)load so section inputs remount from the
+  // freshly-fetched server values — after a save, the persisted data is shown.
+  const [version, setVersion] = useState(0);
+
+  const loadProfile = useCallback(async () => {
+    try {
+      const result = (await callAppRoute('/my-partner-profile', {})) as MyPartnerProfileResult;
+      if (result.ok) {
+        setProfile(result.profile);
+        setOptions(result.options);
+        setVersion((previous) => previous + 1);
+      } else {
+        await enqueueSnackbar({
+          message: `Could not load profile: ${result.reason}`,
+          variant: 'error',
+        });
+      }
+    } catch (error) {
+      await enqueueSnackbar({
+        message: error instanceof Error ? error.message : 'Failed to load profile',
+        variant: 'error',
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    let alive = true;
+    void loadProfile();
+  }, [loadProfile, userId]);
 
-    void (async () => {
-      try {
-        const result = (await callAppRoute(
-          '/my-partner-profile',
-          {},
-        )) as MyPartnerProfileResult;
-
-        if (!alive) return;
-
-        if (result.ok) {
-          setProfile(result.profile);
-          setOptions(result.options);
-        } else {
-          await enqueueSnackbar({
-            message: `Could not load profile: ${result.reason}`,
-            variant: 'error',
-          });
-        }
-      } catch (error) {
-        if (alive) {
-          await enqueueSnackbar({
-            message: error instanceof Error ? error.message : 'Failed to load profile',
-            variant: 'error',
-          });
-        }
-      } finally {
-        if (alive) setLoading(false);
-      }
-    })();
-
-    return () => {
-      alive = false;
-    };
-  }, [userId]);
+  const refresh = () => {
+    void loadProfile();
+  };
 
   if (loading) return <div style={{ padding: 24 }}>Loading…</div>;
   if (!profile || !options) {
@@ -65,7 +61,7 @@ const MyProfile = () => {
   }
 
   return (
-    <div style={{ padding: 24, maxWidth: 880, margin: '0 auto' }}>
+    <div key={version} style={{ padding: 24, maxWidth: 880, margin: '0 auto' }}>
       <h1 style={{ marginBottom: 8 }}>{profile.name ?? 'My Profile'}</h1>
       <p style={{ opacity: 0.6, fontSize: 13, marginBottom: 24 }}>
         Links: {profile.links.length} · Services: {profile.services.length} · Case studies:{' '}
@@ -74,39 +70,22 @@ const MyProfile = () => {
 
       <section style={{ marginBottom: 32 }}>
         <h2 style={{ fontSize: 16, marginBottom: 12 }}>Profile</h2>
-        <ProfileSection
-          profile={profile}
-          options={options}
-          onSaved={(patch) => setProfile((previous) => (previous ? { ...previous, ...patch } : previous))}
-        />
+        <ProfileSection profile={profile} options={options} onSaved={refresh} />
       </section>
 
       <section style={{ marginBottom: 32 }}>
         <h2 style={{ fontSize: 16, marginBottom: 12 }}>Links</h2>
-        <LinksSection
-          links={profile.links}
-          onSaved={(links) => setProfile((previous) => (previous ? { ...previous, links } : previous))}
-        />
+        <LinksSection links={profile.links} onSaved={refresh} />
       </section>
 
       <section style={{ marginBottom: 32 }}>
         <h2 style={{ fontSize: 16, marginBottom: 12 }}>Services</h2>
-        <ServicesSection
-          services={profile.services}
-          onSaved={(services) =>
-            setProfile((previous) => (previous ? { ...previous, services } : previous))
-          }
-        />
+        <ServicesSection services={profile.services} onSaved={refresh} />
       </section>
 
       <section style={{ marginBottom: 32 }}>
         <h2 style={{ fontSize: 16, marginBottom: 12 }}>Case studies</h2>
-        <CaseStudiesSection
-          caseStudies={profile.caseStudies}
-          onSaved={(caseStudies) =>
-            setProfile((previous) => (previous ? { ...previous, caseStudies } : previous))
-          }
-        />
+        <CaseStudiesSection caseStudies={profile.caseStudies} onSaved={refresh} />
       </section>
     </div>
   );

@@ -8,6 +8,13 @@ import { buildAppClient, errorResponse, resolvePartnerFromRequest } from './reso
 
 export const SAVE_MY_PARTNER_PROFILE_ID = 'de21e2a6-f4b4-4186-90d9-645015e856a1';
 
+// A blank URL field means "clear it" — real records carry LINKS with an empty
+// primaryLinkUrl, so treat '' as null instead of failing `.url()` validation.
+const optionalUrl = z.preprocess(
+  (value) => (value === '' ? null : value),
+  z.string().url().nullable().optional(),
+);
+
 export const saveProfileSchema = z
   .object({
     name: z.string().trim().optional(),
@@ -27,9 +34,9 @@ export const saveProfileSchema = z
       .object({ amountMicros: z.number(), currencyCode: z.string() })
       .nullable()
       .optional(),
-    website: z.string().url().nullable().optional(),
-    linkedin: z.string().url().nullable().optional(),
-    calendarLink: z.string().url().nullable().optional(),
+    website: optionalUrl,
+    linkedin: optionalUrl,
+    calendarLink: optionalUrl,
   })
   .strict();
 

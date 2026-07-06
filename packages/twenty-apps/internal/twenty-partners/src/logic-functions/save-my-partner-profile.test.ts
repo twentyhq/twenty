@@ -36,6 +36,12 @@ describe('saveProfileSchema', () => {
     expect(parsed.success).toBe(true);
   });
 
+  it('treats an empty-string url as cleared (null), not a validation error', () => {
+    const parsed = saveProfileSchema.safeParse({ website: '' });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) expect(parsed.data.website).toBeNull();
+  });
+
   it('rejects a typeOfTeam value outside the known enum', () => {
     const parsed = saveProfileSchema.safeParse({ typeOfTeam: 'FREELANCER' });
     expect(parsed.success).toBe(false);
