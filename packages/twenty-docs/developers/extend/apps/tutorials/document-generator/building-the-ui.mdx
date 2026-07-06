@@ -184,14 +184,22 @@ import { Markdown } from 'src/utils/markdown-to-react';
 
 const DocumentViewer = () => {
   const recordId = useFrontComponentExecutionContext((c) => c.recordId ?? null);
-  // ...load { content, file } for recordId, then render the template body plus
-  // quick links to the shareable web page and the PDF:
+  // ...load { content, file } for recordId, then derive the links:
+  const pdfUrl = document.file?.[0]?.url;
+  const webUrl = `${process.env.TWENTY_API_URL ?? ''}/s/documents/view?id=${recordId}`;
+
+  // Render the template body, plus quick links to the web page and the PDF.
+  // Links open in a new tab so they don't navigate the embedded component.
   return (
     <div style={styles.scroll}>
       <div style={styles.actions}>
-        <a style={styles.actionLink} href={webUrl}>Open web page</a>
-        {document.pdfUrl ? (
-          <a style={styles.actionLink} href={document.pdfUrl}>Download PDF</a>
+        <a style={styles.actionLink} href={webUrl} target="_blank" rel="noopener noreferrer">
+          Open web page
+        </a>
+        {pdfUrl ? (
+          <a style={styles.actionLink} href={pdfUrl} target="_blank" rel="noopener noreferrer">
+            Download PDF
+          </a>
         ) : null}
       </div>
       <div style={styles.paper}>
