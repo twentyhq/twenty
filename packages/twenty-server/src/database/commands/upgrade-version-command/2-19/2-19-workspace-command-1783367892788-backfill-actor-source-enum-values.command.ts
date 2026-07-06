@@ -97,7 +97,7 @@ export const buildActorSourceEnumBackfillTargets = ({
   return targets;
 };
 
-@RegisteredWorkspaceCommand('2.19.0', 1783100000000)
+@RegisteredWorkspaceCommand('2.19.0', 1783367892788)
 @Command({
   name: 'upgrade:2-19:backfill-actor-source-enum-values',
   description:
