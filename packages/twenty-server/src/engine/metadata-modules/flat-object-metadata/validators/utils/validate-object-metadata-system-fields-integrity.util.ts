@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { getFieldUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -65,6 +66,30 @@ export const validateObjectMetadataSystemFieldsIntegrity = ({
             value: actualValue,
           });
         }
+      }
+
+      // System field universal identifiers are server-owned and must match
+      // the deterministic derivation; clients cannot provide custom ones.
+      // TODO: remove once system fields are generated server side only by
+      // the metadata side effect engine and stripped from client inputs.
+      const expectedUniversalIdentifier = getFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          universalFlatObjectMetadata.applicationUniversalIdentifier,
+        objectUniversalIdentifier:
+          universalFlatObjectMetadata.universalIdentifier,
+        name: expectedFieldName,
+      });
+
+      if (
+        universalFlatFieldMetadata.universalIdentifier !==
+        expectedUniversalIdentifier
+      ) {
+        errors.push({
+          code: ObjectMetadataExceptionCode.INVALID_SYSTEM_FIELD,
+          message: `System field ${expectedFieldName} has invalid universalIdentifier: expected ${expectedUniversalIdentifier}, got ${universalFlatFieldMetadata.universalIdentifier}`,
+          userFriendlyMessage: msg`System field ${expectedFieldName} universal identifier is not deterministic; it is derived by the server and cannot be customized`,
+          value: universalFlatFieldMetadata.universalIdentifier,
+        });
       }
     }
   }

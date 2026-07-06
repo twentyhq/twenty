@@ -249,10 +249,10 @@ describe('Marketplace Catalog Sync (integration)', () => {
       await fs.writeFile(join(sourceDir, 'manifest.json'), manifest);
       await fs.writeFile(join(sourceDir, 'package.json'), packageJson);
 
-      await tar.create(
-        { file: tarballPath, gzip: true, cwd: sourceDir },
-        ['manifest.json', 'package.json'],
-      );
+      await tar.create({ file: tarballPath, gzip: true, cwd: sourceDir }, [
+        'manifest.json',
+        'package.json',
+      ]);
 
       const tarballBuffer = await fs.readFile(tarballPath);
 

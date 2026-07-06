@@ -12,21 +12,31 @@ const mockObjectConfig: ObjectConfig = {
   fields: [],
 };
 
+const mockApplicationUniversalIdentifier =
+  '3d05dbc0-4bd8-4041-a944-8cd0e26c2be1';
+
+const getMockDefaultObjectFields = (objectConfig: ObjectConfig) =>
+  getDefaultObjectFields({
+    objectConfig,
+    applicationUniversalIdentifier: mockApplicationUniversalIdentifier,
+  });
+
 const expectedUniversalId = (fieldName: string) =>
   generateDefaultFieldUniversalIdentifier({
+    applicationUniversalIdentifier: mockApplicationUniversalIdentifier,
     objectUniversalIdentifier: mockObjectConfig.universalIdentifier,
     fieldName,
   });
 
 describe('getDefaultObjectFields', () => {
   it('should return an array of 9 default fields', () => {
-    const fields = getDefaultObjectFields(mockObjectConfig);
+    const fields = getMockDefaultObjectFields(mockObjectConfig);
 
     expect(fields).toHaveLength(9);
   });
 
   it('should include an id field with UUID type', () => {
-    const fields = getDefaultObjectFields(mockObjectConfig);
+    const fields = getMockDefaultObjectFields(mockObjectConfig);
     const idField = fields.find((field) => field.name === 'id');
 
     expect(idField).toBeDefined();
@@ -43,7 +53,7 @@ describe('getDefaultObjectFields', () => {
   });
 
   it('should include a name field with TEXT type', () => {
-    const fields = getDefaultObjectFields(mockObjectConfig);
+    const fields = getMockDefaultObjectFields(mockObjectConfig);
     const nameField = fields.find((field) => field.name === 'name');
 
     expect(nameField).toBeDefined();
@@ -60,7 +70,7 @@ describe('getDefaultObjectFields', () => {
   });
 
   it('should include createdAt, updatedAt and deletedAt fields with DATE_TIME type', () => {
-    const fields = getDefaultObjectFields(mockObjectConfig);
+    const fields = getMockDefaultObjectFields(mockObjectConfig);
     const createdAtField = fields.find((field) => field.name === 'createdAt');
     const updatedAtField = fields.find((field) => field.name === 'updatedAt');
     const deletedAtField = fields.find((field) => field.name === 'deletedAt');
@@ -103,7 +113,7 @@ describe('getDefaultObjectFields', () => {
   });
 
   it('should include createdBy and updatedBy fields with ACTOR type', () => {
-    const fields = getDefaultObjectFields(mockObjectConfig);
+    const fields = getMockDefaultObjectFields(mockObjectConfig);
     const createdByField = fields.find((field) => field.name === 'createdBy');
     const updatedByField = fields.find((field) => field.name === 'updatedBy');
 
@@ -133,7 +143,7 @@ describe('getDefaultObjectFields', () => {
   });
 
   it('should include a position field with POSITION type', () => {
-    const fields = getDefaultObjectFields(mockObjectConfig);
+    const fields = getMockDefaultObjectFields(mockObjectConfig);
     const positionField = fields.find((field) => field.name === 'position');
 
     expect(positionField).toBeDefined();
@@ -150,7 +160,7 @@ describe('getDefaultObjectFields', () => {
   });
 
   it('should include a searchVector field with TS_VECTOR type', () => {
-    const fields = getDefaultObjectFields(mockObjectConfig);
+    const fields = getMockDefaultObjectFields(mockObjectConfig);
     const searchVectorField = fields.find(
       (field) => field.name === 'searchVector',
     );
@@ -169,8 +179,8 @@ describe('getDefaultObjectFields', () => {
   });
 
   it('should generate deterministic universalIdentifiers based on objectConfig', () => {
-    const firstResult = getDefaultObjectFields(mockObjectConfig);
-    const secondResult = getDefaultObjectFields(mockObjectConfig);
+    const firstResult = getMockDefaultObjectFields(mockObjectConfig);
+    const secondResult = getMockDefaultObjectFields(mockObjectConfig);
 
     firstResult.forEach((field, index) => {
       expect(field.universalIdentifier).toBe(
@@ -185,8 +195,8 @@ describe('getDefaultObjectFields', () => {
       universalIdentifier: 'ffffffff-ffff-ffff-ffff-ffffffffffff',
     };
 
-    const fieldsA = getDefaultObjectFields(mockObjectConfig);
-    const fieldsB = getDefaultObjectFields(otherObjectConfig);
+    const fieldsA = getMockDefaultObjectFields(mockObjectConfig);
+    const fieldsB = getMockDefaultObjectFields(otherObjectConfig);
 
     fieldsA.forEach((fieldA, index) => {
       expect(fieldA.universalIdentifier).not.toBe(
@@ -196,7 +206,7 @@ describe('getDefaultObjectFields', () => {
   });
 
   it('should return fields in the expected order', () => {
-    const fields = getDefaultObjectFields(mockObjectConfig);
+    const fields = getMockDefaultObjectFields(mockObjectConfig);
     const fieldNames = fields.map((field) => field.name);
 
     expect(fieldNames).toEqual([

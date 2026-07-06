@@ -1,5 +1,5 @@
-import { generateDefaultFieldUniversalIdentifier } from '@/sdk/define/objects/generate-default-field-universal-identifier';
 import { RelationType } from '@/sdk/define';
+import { generateDefaultFieldUniversalIdentifier } from '@/sdk/define/objects/generate-default-field-universal-identifier';
 import type { ObjectConfig } from '@/sdk/define/objects/object-config';
 import {
   type FieldManifest,
@@ -119,9 +119,13 @@ const buildReverseField = ({
   };
 };
 
-export const getDefaultRelationObjectFields = (
-  objectConfig: ObjectConfig,
-): { objectFields: ObjectFieldManifest[]; fields: FieldManifest[] } => {
+export const getDefaultRelationObjectFields = ({
+  objectConfig,
+  applicationUniversalIdentifier,
+}: {
+  objectConfig: ObjectConfig;
+  applicationUniversalIdentifier: string;
+}): { objectFields: ObjectFieldManifest[]; fields: FieldManifest[] } => {
   const objectFields: ObjectFieldManifest[] = [];
   const fields: FieldManifest[] = [];
 
@@ -130,14 +134,16 @@ export const getDefaultRelationObjectFields = (
 
     const forwardFieldUniversalIdentifier =
       generateDefaultFieldUniversalIdentifier({
+        applicationUniversalIdentifier,
         objectUniversalIdentifier: objectConfig.universalIdentifier,
         fieldName: config.fieldName,
       });
 
     const reverseFieldUniversalIdentifier =
       generateDefaultFieldUniversalIdentifier({
-        objectUniversalIdentifier: objectConfig.universalIdentifier,
-        fieldName: `${config.fieldName}Inverse`,
+        applicationUniversalIdentifier,
+        objectUniversalIdentifier: standardObject.universalIdentifier,
+        fieldName: config.targetFieldName(objectConfig),
       });
 
     const forwardField: ObjectFieldManifest = {

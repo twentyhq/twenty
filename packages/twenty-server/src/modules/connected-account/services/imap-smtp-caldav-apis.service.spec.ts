@@ -32,6 +32,7 @@ import { MessagingMessageListFetchJob } from 'src/modules/messaging/message-impo
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 
 jest.mock('uuid', () => ({
+  ...jest.requireActual('uuid'),
   v4: jest.fn(() => 'mocked-uuid'),
 }));
 
