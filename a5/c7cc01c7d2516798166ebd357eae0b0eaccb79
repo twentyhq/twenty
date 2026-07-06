@@ -1,0 +1,19 @@
+packages/twenty-server/src/modules/emailing/crons/jobs/message-campaign-stats-refresh.cron.job.ts
+  s_906651219ad534::t_3a50f5993ed67d 41-43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a5c7cc01c7d2516798166ebd357eae0b0eaccb79",
+  "prompts": {},
+  "sessions": {
+    "s_906651219ad534": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3786e44f-ff2f-409f-8afd-2fc110affa61",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
