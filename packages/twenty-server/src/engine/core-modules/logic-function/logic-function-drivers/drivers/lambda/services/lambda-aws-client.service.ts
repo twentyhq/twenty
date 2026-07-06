@@ -37,8 +37,6 @@ export class LambdaAwsClientService {
         ...(isDefined(this.options.subhostingRole) && {
           credentials: await this.getAssumeRoleCredentials(),
         }),
-        // Set after the spread so control-plane throttling ("Rate exceeded")
-        // during release-time build bursts is always paced and retried.
         maxAttempts: LAMBDA_CLIENT_MAX_ATTEMPTS,
         retryMode: LAMBDA_CLIENT_RETRY_MODE,
       });
