@@ -152,7 +152,7 @@ export class AiAgentRoleService {
         flatEntityMaps: flatAgentMaps,
       });
 
-      if (!isDefined(flatAgent)) {
+      if (!isDefined(flatAgent) || isDefined(flatAgent.deletedAt)) {
         continue;
       }
 
