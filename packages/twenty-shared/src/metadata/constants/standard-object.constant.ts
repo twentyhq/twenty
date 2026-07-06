@@ -15,16 +15,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-bd3d-4c60-8dca-571c71d4447a',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'createdBy',
-          'updatedBy',
-          'position',
-          'searchVector',
-        ],
       ),
       name: { universalIdentifier: '20202020-87a5-48f8-bbf7-ade388825a57' },
       file: { universalIdentifier: '20202020-15db-460e-8166-c7b5d87ad4be' },
@@ -128,16 +118,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-0408-4f38-b8a8-4d5e3e26e24d',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'createdBy',
-          'updatedBy',
-          'position',
-          'searchVector',
-        ],
       ),
       handle: { universalIdentifier: '20202020-eef3-44ed-aa32-4641d7fd4a3e' },
       workspaceMember: {
@@ -193,16 +173,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-491b-4aaa-9825-afd1bae6ae00',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'createdBy',
-          'updatedBy',
-          'position',
-          'searchVector',
-        ],
       ),
       calendarChannelId: {
         universalIdentifier: '20202020-93ee-4da4-8d58-0282c4a9cb7d',
@@ -278,16 +248,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-a1c3-47a6-9732-27e5b1e8436d',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'createdBy',
-          'updatedBy',
-          'position',
-          'searchVector',
-        ],
       ),
       calendarEvent: {
         universalIdentifier: '20202020-fe3a-401c-b889-af4f4657a861',
@@ -399,16 +359,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-8f1d-4eef-9f85-0d1965e27221',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'createdBy',
-          'updatedBy',
-          'position',
-          'searchVector',
-        ],
       ),
       title: { universalIdentifier: '20202020-080e-49d1-b21d-9702a7e2525c' },
       isCanceled: {
@@ -539,16 +489,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         'ce19efb9-710f-45b2-b141-473abbeea60b',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'createdBy',
-          'updatedBy',
-          'position',
-          'searchVector',
-        ],
       ),
       title: {
         universalIdentifier: '4cff8863-a1d1-45fd-a370-4eb6aa1f2a5b',
@@ -657,16 +597,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-b374-4779-a561-80086cb2e17f',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'position',
-          'createdBy',
-          'updatedBy',
-          'searchVector',
-        ],
       ),
       name: { universalIdentifier: '20202020-4d99-4e2e-a84c-4a27837b1ece' },
       domainName: {
@@ -808,16 +738,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-3840-4b6d-9425-0c5188b05ca8',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'position',
-          'createdBy',
-          'updatedBy',
-          'searchVector',
-        ],
       ),
       title: { universalIdentifier: '20202020-20ee-4091-95dc-44b57eda3a89' },
       pageLayoutId: {
@@ -860,16 +780,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '238acb94-dd4c-4036-bc55-19b99d821efd',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'createdBy',
-          'updatedBy',
-          'position',
-          'searchVector',
-        ],
       ),
       subject: { universalIdentifier: '7251544c-b07a-4f0d-9d0a-48514367f230' },
       bodyTemplate: {
@@ -909,16 +819,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '826561ea-4816-411c-baa0-eec5e6ca8866',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'createdBy',
-          'updatedBy',
-          'position',
-          'searchVector',
-        ],
       ),
       name: { universalIdentifier: '69b9ed8b-7b26-4108-894f-05700ef7e8ee' },
       members: {
@@ -942,16 +842,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '27773d24-8ce3-40f8-aa6c-1f590f2c08d2',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'createdBy',
-          'updatedBy',
-          'position',
-          'searchVector',
-        ],
       ),
       person: { universalIdentifier: '34288425-8805-42fb-8b98-ee13d09be3d3' },
       list: {
@@ -972,16 +862,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-ad1e-4127-bccb-d83ae04d2ccb',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'createdBy',
-          'updatedBy',
-          'position',
-          'searchVector',
-        ],
       ),
       messageChannelId: {
         universalIdentifier: '20202020-b658-408f-bd46-3bd2d15d7e52',
@@ -1075,16 +955,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-a1b0-40b0-8ab0-5b6c7d8e9f0a',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'createdBy',
-          'updatedBy',
-          'position',
-          'searchVector',
-        ],
       ),
       messageChannelMessageAssociation: {
         universalIdentifier: '7411cfa3-4fd9-4b90-a636-940015fd7243',
@@ -1151,16 +1021,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-a433-4456-aa2d-fd9cb26b774a',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'createdBy',
-          'updatedBy',
-          'position',
-          'searchVector',
-        ],
       ),
       message: {
         universalIdentifier: '20202020-985b-429a-9db9-9e55f4898a2a',
@@ -1266,16 +1126,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-849a-4c3e-84f5-a25a7d802271',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'createdBy',
-          'updatedBy',
-          'position',
-          'searchVector',
-        ],
       ),
       messages: {
         universalIdentifier: '20202020-3115-404f-aade-e1154b28e35a',
@@ -1313,16 +1163,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-3f6b-4425-80ab-e468899ab4b2',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'createdBy',
-          'updatedBy',
-          'position',
-          'searchVector',
-        ],
       ),
       headerMessageId: {
         universalIdentifier: '20202020-72b5-416d-aed8-b55609067d01',
@@ -1393,16 +1233,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-0b00-45cd-b6f6-6cd806fc6804',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'position',
-          'createdBy',
-          'updatedBy',
-          'searchVector',
-        ],
       ),
       title: { universalIdentifier: '20202020-faeb-4c76-8ba6-ccbb0b4a965f' },
       bodyV2: { universalIdentifier: '20202020-a7bb-4d94-be51-8f25181502c8' },
@@ -1486,16 +1316,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-fff0-4b44-be82-bda313884400',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'createdBy',
-          'updatedBy',
-          'position',
-          'searchVector',
-        ],
       ),
       note: { universalIdentifier: '20202020-57f3-4f50-9599-fc0f671df003' },
       targetPerson: {
@@ -1553,16 +1373,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-9549-49dd-b2b2-883999db8938',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'position',
-          'createdBy',
-          'updatedBy',
-          'searchVector',
-        ],
       ),
       name: { universalIdentifier: '20202020-8609-4f65-a2d9-44009eb422b5' },
       amount: { universalIdentifier: '20202020-583e-4642-8533-db761d5fa82f' },
@@ -1731,16 +1541,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-e674-48e5-a542-72570eee7213',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'position',
-          'createdBy',
-          'updatedBy',
-          'searchVector',
-        ],
       ),
       name: { universalIdentifier: '20202020-3875-44d5-8c33-a6239011cab8' },
       emails: { universalIdentifier: '20202020-3c51-43fa-8b6e-af39e29368ab' },
@@ -1902,16 +1702,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-1ba1-48ba-bc83-ef7e5990ed10',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'position',
-          'createdBy',
-          'updatedBy',
-          'searchVector',
-        ],
       ),
       title: { universalIdentifier: '20202020-b386-4cb7-aa5a-08d4a4d92680' },
       bodyV2: { universalIdentifier: '20202020-4aa0-4ae8-898d-7df0afd47ab1' },
@@ -2095,16 +1885,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-5a9a-44e8-95df-771cd06d0fb1',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'createdBy',
-          'updatedBy',
-          'position',
-          'searchVector',
-        ],
       ),
       task: { universalIdentifier: '20202020-e881-457a-8758-74aaef4ae78a' },
       targetPerson: {
@@ -2162,16 +1942,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-6736-4337-b5c4-8b39fae325a5',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'createdBy',
-          'updatedBy',
-          'position',
-          'searchVector',
-        ],
       ),
       name: { universalIdentifier: '20202020-7207-46e8-9dab-849505ae8497' },
       happensAt: {
@@ -2316,16 +2086,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-62be-406c-b9ca-8caa50d51392',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'position',
-          'createdBy',
-          'updatedBy',
-          'searchVector',
-        ],
       ),
       name: { universalIdentifier: '20202020-b3d3-478f-acc0-5d901e725b20' },
       lastPublishedVersionId: {
@@ -2380,16 +2140,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-3319-4234-a34c-7f3b9d2e4d1f',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'createdBy',
-          'updatedBy',
-          'position',
-          'searchVector',
-        ],
       ),
       type: {
         universalIdentifier: '20202020-3319-4234-a34c-3f92c1ab56e7',
@@ -2453,16 +2203,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-4e28-4e95-a9d7-6c00874f843c',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'position',
-          'createdBy',
-          'updatedBy',
-          'searchVector',
-        ],
       ),
       name: { universalIdentifier: '20202020-b840-4253-aef9-4e5013694587' },
       workflowVersion: {
@@ -2578,16 +2318,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-d65d-4ab9-9344-d77bfb376a3d',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'position',
-          'searchVector',
-          'createdBy',
-          'updatedBy',
-        ],
       ),
       name: { universalIdentifier: '20202020-a12f-4cca-9937-a2e40cc65509' },
       workflow: {
@@ -2684,16 +2414,6 @@ export const STANDARD_OBJECTS = {
     fields: {
       ...buildStandardObjectSystemFields(
         '20202020-3319-4234-a34c-82d5c0e881a6',
-        [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'deletedAt',
-          'position',
-          'searchVector',
-          'createdBy',
-          'updatedBy',
-        ],
       ),
       name: { universalIdentifier: '20202020-e914-43a6-9c26-3603c59065f4' },
       colorScheme: {

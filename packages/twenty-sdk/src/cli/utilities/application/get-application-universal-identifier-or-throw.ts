@@ -1,4 +1,7 @@
-import { findAppConfigPath } from '@/cli/utilities/application/find-app-config-path';
+import {
+  APP_CONFIG_CANDIDATE_PATHS,
+  findAppConfigPath,
+} from '@/cli/utilities/application/find-app-config-path';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
 
 type ApplicationConfigWithUniversalIdentifier = {
@@ -15,7 +18,7 @@ export const getApplicationUniversalIdentifierOrThrow = async (
 
   if (configPath === null) {
     throw new Error(
-      'Could not find the application config file (expected src/application.config.ts). Create it with defineApplication({ universalIdentifier: ... }) before generating entities.',
+      `Could not find the application config file (expected one of: ${APP_CONFIG_CANDIDATE_PATHS.join(', ')}). Create it with defineApplication({ universalIdentifier: ... }) before generating entities.`,
     );
   }
 
