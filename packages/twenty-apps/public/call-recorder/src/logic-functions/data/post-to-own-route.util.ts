@@ -1,4 +1,3 @@
-import { isUndefined } from '@sniptt/guards';
 import { RestApiClient } from 'twenty-client-sdk/rest';
 
 import { resolveOwnRouteTarget } from 'src/logic-functions/data/resolve-own-route-target.util';
@@ -22,9 +21,7 @@ export const postToOwnRoute = async ({
 }): Promise<boolean> => {
   try {
     const routeTarget = await resolveOwnRouteTarget();
-    const client = isUndefined(routeTarget.baseUrl)
-      ? new RestApiClient()
-      : new RestApiClient({ baseUrl: routeTarget.baseUrl });
+    const client = new RestApiClient({ baseUrl: routeTarget.baseUrl });
     const requestPath = `${routeTarget.pathPrefix}${path}`;
 
     logInfo(

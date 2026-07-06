@@ -21,7 +21,10 @@ describe('postToOwnRoute', () => {
       return { post: postMock };
     });
     postMock.mockResolvedValue({});
-    resolveOwnRouteTargetMock.mockResolvedValue({ pathPrefix: '/s' });
+    resolveOwnRouteTargetMock.mockResolvedValue({
+      baseUrl: 'http://acme.localhost:3000',
+      pathPrefix: '/s',
+    });
   });
 
   it('posts to the functions origin without the legacy prefix when resolved', async () => {
@@ -68,21 +71,6 @@ describe('postToOwnRoute', () => {
     );
   });
 
-  it('falls back to the legacy /s route when no functions origin exists', async () => {
-    const result = await postToOwnRoute({
-      path: '/call-recorder/some-route',
-      body: {},
-    });
-
-    expect(result).toBe(true);
-    expect(restApiClientMock).toHaveBeenCalledWith();
-    expect(postMock).toHaveBeenCalledWith(
-      '/s/call-recorder/some-route',
-      {},
-      { signal: expect.any(AbortSignal) },
-    );
-  });
-
   it('treats timeout as a successfully flushed request', async () => {
     const timeoutError = new Error('Timed out');
     timeoutError.name = 'TimeoutError';
@@ -99,5 +87,17 @@ describe('postToOwnRoute', () => {
     await expect(
       postToOwnRoute({ path: '/call-recorder/some-route', body: {} }),
     ).resolves.toBe(false);
+  });
+
+  it('returns false when the route target cannot be resolved', async () => {
+    resolveOwnRouteTargetMock.mockRejectedValue(
+      new Error('Unable to resolve target'),
+    );
+
+    await expect(
+      postToOwnRoute({ path: '/call-recorder/some-route', body: {} }),
+    ).resolves.toBe(false);
+    expect(restApiClientMock).not.toHaveBeenCalled();
+    expect(postMock).not.toHaveBeenCalled();
   });
 });

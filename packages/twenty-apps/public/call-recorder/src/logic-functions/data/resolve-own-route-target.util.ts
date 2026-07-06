@@ -14,11 +14,12 @@ type ClientConfigResponse = {
 };
 
 type OwnRouteTarget = {
-  baseUrl?: string;
+  baseUrl: string;
   pathPrefix: '' | '/s';
 };
 
-const LEGACY_ROUTE_TARGET: OwnRouteTarget = { pathPrefix: '/s' };
+const OWN_ROUTE_TARGET_RESOLUTION_ERROR_MESSAGE =
+  'Unable to resolve Call Recorder own route target without TWENTY_FUNCTIONS_URL';
 
 const getCurrentWorkspaceSubdomain = async (): Promise<string | undefined> => {
   const { currentWorkspace } = await new MetadataApiClient().query({
@@ -60,9 +61,8 @@ const buildWorkspaceLegacyRouteBaseUrl = ({
   }
 };
 
-// HTTP route triggers resolve the workspace from the request host before auth.
-// In multi-workspace local/dev installs, plain TWENTY_API_URL (localhost) is
-// not enough; the legacy /s route must be called through the workspace host.
+// Prefer the server-injected route origin. Until it is available in released
+// servers, resolve this app's own HTTP route from client config.
 export const resolveOwnRouteTarget = async (): Promise<OwnRouteTarget> => {
   const injectedFunctionsUrl = process.env[TWENTY_FUNCTIONS_URL_ENV_VAR_NAME];
 
@@ -70,6 +70,8 @@ export const resolveOwnRouteTarget = async (): Promise<OwnRouteTarget> => {
     return { baseUrl: injectedFunctionsUrl, pathPrefix: '' };
   }
 
+  // TODO: Remove this app-side resolution after the server release that
+  // injects TWENTY_FUNCTIONS_URL is the minimum supported version.
   try {
     const clientConfig = await new RestApiClient().get<ClientConfigResponse>(
       '/client-config',
@@ -79,12 +81,22 @@ export const resolveOwnRouteTarget = async (): Promise<OwnRouteTarget> => {
     if (isNonEmptyString(publicFunctionDomain)) {
       const workspaceSubdomain = await getCurrentWorkspaceSubdomain();
 
-      return isNonEmptyString(workspaceSubdomain)
-        ? {
-            baseUrl: `https://${workspaceSubdomain}.${publicFunctionDomain}`,
-            pathPrefix: '',
-          }
-        : LEGACY_ROUTE_TARGET;
+      if (!isNonEmptyString(workspaceSubdomain)) {
+        throw new Error(OWN_ROUTE_TARGET_RESOLUTION_ERROR_MESSAGE);
+      }
+
+      return {
+        baseUrl: `https://${workspaceSubdomain}.${publicFunctionDomain}`,
+        pathPrefix: '',
+      };
+    }
+
+    if (clientConfig?.isMultiWorkspaceEnabled === false) {
+      const apiUrl = process.env[TWENTY_API_URL_ENV_VAR_NAME];
+
+      if (isNonEmptyString(apiUrl)) {
+        return { baseUrl: apiUrl, pathPrefix: '/s' };
+      }
     }
 
     if (clientConfig?.isMultiWorkspaceEnabled === true) {
@@ -97,18 +109,20 @@ export const resolveOwnRouteTarget = async (): Promise<OwnRouteTarget> => {
       });
 
       if (isNonEmptyString(workspaceLegacyRouteBaseUrl)) {
+        // Local multi-workspace installs still serve HTTP routes under /s, but
+        // the host must include the workspace subdomain.
         return { baseUrl: workspaceLegacyRouteBaseUrl, pathPrefix: '/s' };
       }
     }
 
-    return LEGACY_ROUTE_TARGET;
+    throw new Error(OWN_ROUTE_TARGET_RESOLUTION_ERROR_MESSAGE);
   } catch (error) {
     if (process.env.NODE_ENV !== 'test') {
       console.warn(
-        `[call-recorder] own route target resolution failed, falling back to the legacy /s route: ${error instanceof Error ? error.message : String(error)}`,
+        `[call-recorder] own route target resolution failed: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
 
-    return LEGACY_ROUTE_TARGET;
+    throw error;
   }
 };

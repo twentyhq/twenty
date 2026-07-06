@@ -67,23 +67,52 @@ describe('resolveOwnRouteTarget', () => {
     });
   });
 
-  it('falls back to the plain legacy route in single-workspace deployments without a public functions domain', async () => {
+  it('uses the legacy route on the API url in single-workspace deployments without a public functions domain', async () => {
+    vi.stubEnv('TWENTY_API_URL', 'http://localhost:3000');
     getMock.mockResolvedValue({
       isMultiWorkspaceEnabled: false,
       publicFunctionDomain: null,
     });
 
     await expect(resolveOwnRouteTarget()).resolves.toEqual({
+      baseUrl: 'http://localhost:3000',
       pathPrefix: '/s',
     });
     expect(queryMock).not.toHaveBeenCalled();
   });
 
-  it('falls back to the plain legacy route when target resolution fails', async () => {
+  it('fails clearly when no route target can be resolved', async () => {
+    vi.stubEnv('TWENTY_API_URL', '');
+    getMock.mockResolvedValue({
+      isMultiWorkspaceEnabled: false,
+      publicFunctionDomain: null,
+    });
+
+    await expect(resolveOwnRouteTarget()).rejects.toThrow(
+      'Unable to resolve Call Recorder own route target without TWENTY_FUNCTIONS_URL',
+    );
+    expect(queryMock).not.toHaveBeenCalled();
+  });
+
+  it('does not fall back to a bare legacy route in multi-workspace deployments', async () => {
+    vi.stubEnv('TWENTY_API_URL', 'http://localhost:3000');
+    getMock.mockResolvedValue({
+      defaultSubdomain: 'acme',
+      frontDomain: 'localhost',
+      isMultiWorkspaceEnabled: true,
+      publicFunctionDomain: null,
+    });
+
+    await expect(resolveOwnRouteTarget()).rejects.toThrow(
+      'Unable to resolve Call Recorder own route target without TWENTY_FUNCTIONS_URL',
+    );
+  });
+
+  it('rejects when target resolution fails', async () => {
     getMock.mockRejectedValue(new Error('client config unavailable'));
 
-    await expect(resolveOwnRouteTarget()).resolves.toEqual({
-      pathPrefix: '/s',
-    });
+    await expect(resolveOwnRouteTarget()).rejects.toThrow(
+      'client config unavailable',
+    );
   });
 });
