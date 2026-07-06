@@ -20,6 +20,7 @@ const TEST_SECOND_FIELD_ID = uuidv4();
 const TEST_NUMBER_FIELD_ID = uuidv4();
 
 const TEST_OBJECT = buildDefaultObjectManifest({
+  applicationUniversalIdentifier: TEST_APP_ID,
   nameSingular: 'ticket',
   namePlural: 'tickets',
   labelSingular: 'Ticket',

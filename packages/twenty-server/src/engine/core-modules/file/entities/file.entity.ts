@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -23,6 +24,10 @@ import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorato
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity('file')
+@Check(
+  'CHK_FILE_PENDING_MIME_OCTET_STREAM',
+  `"status" != 'PENDING' OR "mimeType" = 'application/octet-stream'`,
+)
 @Index('IDX_FILE_WORKSPACE_ID', ['workspaceId'])
 @Index('IDX_FILE_STATUS', ['status'])
 @Unique('IDX_APPLICATION_PATH_WORKSPACE_ID_APPLICATION_ID_UNIQUE', [

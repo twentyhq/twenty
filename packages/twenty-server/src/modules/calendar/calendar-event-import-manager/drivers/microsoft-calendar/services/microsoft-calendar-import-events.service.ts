@@ -27,6 +27,7 @@ export class MicrosoftCalendarImportEventsService {
       for (const eventExternalId of eventExternalIds) {
         const event = await microsoftClient
           .api(`/me/calendar/events/${eventExternalId}`)
+          .header('Prefer', 'outlook.body-content-type="text"')
           .get();
 
         events.push(event);

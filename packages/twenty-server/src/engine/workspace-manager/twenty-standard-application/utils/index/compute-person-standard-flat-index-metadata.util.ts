@@ -36,6 +36,7 @@ export const buildPersonStandardFlatIndexMetadatas = ({
       indexName: 'emailsUniqueIndex',
       relatedFieldNames: ['emails'],
       isUnique: true,
+      hasDeterministicUniversalIdentifier: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

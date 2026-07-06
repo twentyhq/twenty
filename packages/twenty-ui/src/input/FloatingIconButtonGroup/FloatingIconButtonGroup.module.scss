@@ -1,6 +1,10 @@
 .container {
   backdrop-filter: blur(20px);
   background-color: var(--t-background-primary);
+  // sm, not md: the container is only 24-32px tall, where md would exceed 50%
+  // of the box and clamp to a full squircle. A scaled full squircle is not a
+  // uniform offset, so the child buttons' corners would pull away from the
+  // frame. sm stays below the clamp point, keeping the group concentric.
   border-radius: var(--t-border-radius-sm);
   box-shadow:
     0px 2px 4px 0px var(--t-background-transparent-light),

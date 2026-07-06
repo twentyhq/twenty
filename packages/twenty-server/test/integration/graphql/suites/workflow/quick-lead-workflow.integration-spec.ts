@@ -3,6 +3,8 @@ import {
   destroyWorkflowRun,
   getWorkflowRun,
   runWorkflowVersion,
+  waitForWorkflowCompletion,
+  waitForWorkflowRunStatus,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -125,7 +127,10 @@ describe('Quick Lead Workflow (e2e)', () => {
 
       createdWorkflowRunId = workflowRunId;
 
-      const workflowRun = await getWorkflowRun(workflowRunId);
+      const workflowRun = await waitForWorkflowRunStatus(
+        workflowRunId,
+        'RUNNING',
+      );
 
       expect(workflowRun).toBeDefined();
       expect(workflowRun?.workflowVersionId).toBe(
@@ -238,7 +243,10 @@ describe('Quick Lead Workflow (e2e)', () => {
 
       expect(testWorkflowRunId).toBeDefined();
 
-      let workflowRun = await getWorkflowRun(testWorkflowRunId as string);
+      let workflowRun = await waitForWorkflowRunStatus(
+        testWorkflowRunId as string,
+        'RUNNING',
+      );
 
       expect(workflowRun?.status).toBe('RUNNING');
       expect(workflowRun?.state?.stepInfos?.[FORM_STEP_ID]?.status).toBe(
@@ -276,7 +284,9 @@ describe('Quick Lead Workflow (e2e)', () => {
       expect(submitFormResponse.body.errors).toBeUndefined();
       expect(submitFormResponse.body.data.submitFormStep).toBe(true);
 
-      workflowRun = await getWorkflowRun(testWorkflowRunId as string);
+      workflowRun = await waitForWorkflowCompletion(
+        testWorkflowRunId as string,
+      );
       expect(workflowRun?.status).toBe('COMPLETED');
       expect(workflowRun?.state?.stepInfos?.trigger?.status).toBe('SUCCESS');
       expect(workflowRun?.state?.stepInfos?.[FORM_STEP_ID]?.status).toBe(

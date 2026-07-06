@@ -279,9 +279,11 @@ export const useAuth = () => {
       handleSetAuthTokens(authTokens);
       setIsAppEffectRedirectEnabled(false);
 
-      await loadCurrentUser();
-
-      setIsAppEffectRedirectEnabled(true);
+      try {
+        await loadCurrentUser();
+      } finally {
+        setIsAppEffectRedirectEnabled(true);
+      }
     },
     [loadCurrentUser, handleSetAuthTokens, setIsAppEffectRedirectEnabled],
   );

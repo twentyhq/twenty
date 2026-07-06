@@ -5,7 +5,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: 4px;
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex: 1;
   flex-direction: column;

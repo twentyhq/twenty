@@ -33,6 +33,7 @@ const StyledAvatarStackContainer = styled.div`
 const StyledAvatarContainer = styled.div`
   border: 1px solid ${themeCssVariables.background.secondary};
   border-radius: 50%;
+  corner-shape: round;
   display: flex;
 `;
 

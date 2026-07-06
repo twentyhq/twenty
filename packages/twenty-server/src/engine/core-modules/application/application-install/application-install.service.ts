@@ -15,7 +15,9 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { ManifestAssetUrlResolverService } from 'src/engine/core-modules/application/application-registration/manifest-asset-url-resolver.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
@@ -55,6 +57,7 @@ export class ApplicationInstallService {
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly applicationService: ApplicationService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly applicationSyncService: ApplicationSyncService,
@@ -65,6 +68,7 @@ export class ApplicationInstallService {
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly manifestAssetUrlResolverService: ManifestAssetUrlResolverService,
   ) {}
 
   async installApplication(params: {
@@ -270,6 +274,12 @@ export class ApplicationInstallService {
         universalIdentifier,
       });
 
+      await this.refreshRegistrationFromInstall({
+        appRegistration,
+        manifest: resolvedPackage.manifest,
+        installedVersion: newVersion,
+      });
+
       this.logger.log(
         `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
       );
@@ -295,6 +305,26 @@ export class ApplicationInstallService {
         );
       }
     }
+  }
+
+  private async refreshRegistrationFromInstall(params: {
+    appRegistration: ApplicationRegistrationEntity;
+    manifest: Manifest;
+    installedVersion: string;
+  }): Promise<void> {
+    const { appRegistration, manifest, installedVersion } = params;
+
+    await this.applicationRegistrationService.updateFromManifest({
+      applicationRegistrationId: appRegistration.id,
+      manifest: this.manifestAssetUrlResolverService.resolveFromRegistration({
+        sourceType: appRegistration.sourceType,
+        sourcePackage: appRegistration.sourcePackage,
+        manifest,
+        version: installedVersion,
+      }),
+      latestAvailableVersion: installedVersion,
+      preventVersionDowngrade: true,
+    });
   }
 
   private async runPreInstallHook(params: {

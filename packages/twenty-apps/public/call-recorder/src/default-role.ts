@@ -11,7 +11,7 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: `${APP_DISPLAY_NAME} default role`,
   description:
-    'Reads calendar events to decide whether the call recorder should attend a meeting; writes the resulting CallRecording records, uploads recording media, and fills transcripts.',
+    'Reads calendar events to decide whether the call recorder should attend a meeting; writes the resulting CallRecording records, uploads recording media, and fills transcripts and summaries.',
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
@@ -65,5 +65,8 @@ export default defineApplicationRole({
     },
   ],
   fieldPermissions: [],
-  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.UPLOAD_FILE],
+  permissionFlagUniversalIdentifiers: [
+    SystemPermissionFlag.UPLOAD_FILE,
+    SystemPermissionFlag.AI,
+  ],
 });

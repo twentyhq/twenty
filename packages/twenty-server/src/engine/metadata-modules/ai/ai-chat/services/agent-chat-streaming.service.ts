@@ -16,7 +16,6 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { STREAM_INTERRUPTED_CODE } from 'src/engine/metadata-modules/ai/ai-chat/constants/stream-interrupted-code.constant';
 import {
   AgentMessageRole,
   AgentMessageStatus,
@@ -81,7 +80,7 @@ export class AgentChatStreamingService {
     }
 
     const interruptedError: AgentChatThreadLastStreamError = {
-      code: STREAM_INTERRUPTED_CODE,
+      code: AiExceptionCode.STREAM_INTERRUPTED,
       message: 'The response was interrupted before it could finish.',
       failedAt: new Date().toISOString(),
     };

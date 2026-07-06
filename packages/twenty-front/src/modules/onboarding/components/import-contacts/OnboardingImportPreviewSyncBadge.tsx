@@ -9,8 +9,8 @@ const StyledBadge = styled.div`
   backdrop-filter: blur(20px);
   background-color: ${themeCssVariables.background.transparent.secondary};
   border: 1px solid ${themeCssVariables.background.transparent.lighter};
-  border-radius: 0 ${themeCssVariables.border.radius.md}
-    ${themeCssVariables.border.radius.md} 0;
+  border-left: none;
+  border-radius: ${themeCssVariables.border.radius.md};
   box-shadow: ${themeCssVariables.boxShadow.strong};
   box-sizing: border-box;
   display: flex;
@@ -18,7 +18,7 @@ const StyledBadge = styled.div`
   left: 50%;
   padding: ${themeCssVariables.spacing[2]};
   position: absolute;
-  top: 84px;
+  top: 83px;
   transform: translateX(-50%);
 `;
 
@@ -29,6 +29,7 @@ const StyledDivider = styled.div`
 `;
 
 const StyledTwentyLogo = styled.img`
+  border-radius: ${themeCssVariables.border.radius.xs};
   height: ${SYNC_BADGE_LOGO_SIZE}px;
   width: ${SYNC_BADGE_LOGO_SIZE}px;
 `;

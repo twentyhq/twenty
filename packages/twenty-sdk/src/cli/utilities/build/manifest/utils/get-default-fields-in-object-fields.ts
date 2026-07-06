@@ -6,12 +6,22 @@ import {
   type ObjectFieldManifest,
 } from 'twenty-shared/application';
 
-export const getDefaultFieldsInObjectFields = (
-  objectConfig: ObjectConfig,
-): { objectFields: ObjectFieldManifest[]; fields: FieldManifest[] } => {
-  const defaultObjectFields = getDefaultObjectFields(objectConfig);
+export const getDefaultFieldsInObjectFields = ({
+  objectConfig,
+  applicationUniversalIdentifier,
+}: {
+  objectConfig: ObjectConfig;
+  applicationUniversalIdentifier: string;
+}): { objectFields: ObjectFieldManifest[]; fields: FieldManifest[] } => {
+  const defaultObjectFields = getDefaultObjectFields({
+    objectConfig,
+    applicationUniversalIdentifier,
+  });
   const { objectFields: defaultRelationObjectFields, fields: reverseFields } =
-    getDefaultRelationObjectFields(objectConfig);
+    getDefaultRelationObjectFields({
+      objectConfig,
+      applicationUniversalIdentifier,
+    });
 
   const objectConfigFieldNames = (objectConfig.fields ?? []).map((f) => f.name);
 

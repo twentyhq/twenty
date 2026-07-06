@@ -1,6 +1,8 @@
+import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/ui/states/recordFieldInputDraftValueComponentState';
 import { isTitleCellInEditModeComponentState } from '@/object-record/record-title-cell/states/isTitleCellInEditModeComponentState';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useStore } from 'jotai';
@@ -35,6 +37,15 @@ export const useOpenNewRecordTitleCell = () => {
           instanceId,
         }),
         true,
+      );
+
+      const recordFieldValue = store.get(
+        recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
+      );
+
+      store.set(
+        recordFieldInputDraftValueComponentState.atomFamily({ instanceId }),
+        recordFieldValue,
       );
     },
     [pushFocusItemToFocusStack, store],
