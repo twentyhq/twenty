@@ -222,6 +222,7 @@ export class BackfillDeterministicFieldUniversalIdentifiersCommand extends Activ
       'fieldMetadata',
       ...getMetadataRelatedMetadataNames('fieldMetadata'),
       ...getMetadataSerializedRelationNames('fieldMetadata'),
+      'index',
     ] as const;
     const allFlatEntityMapsKeys = [
       ...new Set(fieldMetadataRelatedNames.map(getMetadataFlatEntityMapsKey)),
