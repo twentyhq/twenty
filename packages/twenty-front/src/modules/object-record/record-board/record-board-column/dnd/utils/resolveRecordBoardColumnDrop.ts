@@ -1,11 +1,11 @@
-type ResolveRecordBoardHeaderDropArgs = {
+type ResolveRecordBoardColumnDropArgs = {
   pointerX: number;
   sourceIndex: number;
   scrollWrapperElement: HTMLElement;
   columnWidths: number[];
 };
 
-type ResolvedRecordBoardHeaderDrop = {
+type ResolvedRecordBoardColumnDrop = {
   sourceIndex: number;
   dropTargetIndex: number;
   destinationIndex: number;
@@ -24,7 +24,7 @@ export const resolveRecordBoardColumnDrop = ({
   sourceIndex,
   scrollWrapperElement,
   columnWidths,
-}: ResolveRecordBoardHeaderDropArgs): ResolvedRecordBoardHeaderDrop => {
+}: ResolveRecordBoardColumnDropArgs): ResolvedRecordBoardColumnDrop => {
   const scrollContainerRect = scrollWrapperElement.getBoundingClientRect();
 
   const contentX =

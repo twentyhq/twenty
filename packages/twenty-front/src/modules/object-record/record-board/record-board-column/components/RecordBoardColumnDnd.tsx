@@ -1,5 +1,6 @@
-import React from 'react';
+import { Fragment } from 'react';
 
+import { RecordBoardAddGroupColumn } from '@/object-record/record-board/components/RecordBoardAddGroupColumn';
 import { RecordBoardColumnHeaderWrapper } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderWrapper';
 import { RecordBoardColumnDropTarget } from '@/object-record/record-board/record-board-column/dnd/components/RecordBoardColumnDropTarget';
 import { RecordBoardColumnDroppableSlot } from '@/object-record/record-board/record-board-column/dnd/components/RecordBoardColumnDroppableSlot';
@@ -26,16 +27,13 @@ export const RecordBoardColumnDnd = () => {
         <RecordBoardColumnDropTarget index={0} />
       </RecordBoardColumnDroppableSlot>
       {visibleRecordGroupIds.map((recordGroupId, index) => (
-        <React.Fragment key={recordGroupId}>
+        <Fragment key={recordGroupId}>
           <RecordBoardColumnSortableCell
             id={recordGroupId}
             index={index}
             group={RECORD_BOARD_COLUMN_DROPPABLE_ID}
           >
-            <RecordGroupContext.Provider
-              key={recordGroupId}
-              value={{ recordGroupId }}
-            >
+            <RecordGroupContext.Provider value={{ recordGroupId }}>
               <RecordBoardColumnHeaderWrapper
                 columnId={recordGroupId}
                 columnIndex={index}
@@ -48,8 +46,9 @@ export const RecordBoardColumnDnd = () => {
           >
             <RecordBoardColumnDropTarget index={index + 1} />
           </RecordBoardColumnDroppableSlot>
-        </React.Fragment>
+        </Fragment>
       ))}
+      <RecordBoardAddGroupColumn />
     </RecordBoardColumnDndKitProvider>
   );
 };
