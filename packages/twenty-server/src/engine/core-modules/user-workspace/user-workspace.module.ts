@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
-
-import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
@@ -29,34 +27,29 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 
 @Module({
   imports: [
-    NestjsQueryGraphQLModule.forFeature({
-      imports: [
-        NestjsQueryTypeOrmModule.forFeature([
-          UserEntity,
-          UserWorkspaceEntity,
-          WorkspaceEntity,
-          RoleTargetEntity,
-          RoleEntity,
-        ]),
-        RoleValidationModule,
-        NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
-        TypeORMModule,
-        WorkspaceDataSourceModule,
-        ApprovedAccessDomainModule,
-        WorkspaceInvitationModule,
-        WorkspaceDomainsModule,
-        TwentyORMModule,
-        UserRoleModule,
-        FileModule,
-        TokenModule,
-        PermissionsModule,
-        OnboardingModule,
-        EnterpriseModule,
-        FeatureFlagModule,
-        CoreEntityCacheModule,
-      ],
-      services: [UserWorkspaceService],
-    }),
+    TypeOrmModule.forFeature([
+      UserEntity,
+      UserWorkspaceEntity,
+      WorkspaceEntity,
+      RoleTargetEntity,
+      RoleEntity,
+      ObjectMetadataEntity,
+    ]),
+    RoleValidationModule,
+    TypeORMModule,
+    WorkspaceDataSourceModule,
+    ApprovedAccessDomainModule,
+    WorkspaceInvitationModule,
+    WorkspaceDomainsModule,
+    TwentyORMModule,
+    UserRoleModule,
+    FileModule,
+    TokenModule,
+    PermissionsModule,
+    OnboardingModule,
+    EnterpriseModule,
+    FeatureFlagModule,
+    CoreEntityCacheModule,
   ],
   exports: [UserWorkspaceService],
   providers: [UserWorkspaceService, UserWorkspaceEntityCacheProviderService],
