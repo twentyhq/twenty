@@ -28,7 +28,7 @@ const createFakeChatStream = ({
 }: {
   chunks?: UIMessageChunk[];
   responseMessage?: typeof RESPONSE_MESSAGE;
-  midStreamError?: Error;
+  midStreamError?: unknown;
   onFirstChunk?: () => void;
 } = {}) => ({
   toUIMessageStream: (options: {
@@ -51,10 +51,13 @@ const createFakeChatStream = ({
           }
         }
 
-        if (midStreamError) {
+        if (midStreamError !== undefined) {
           const errorText = options.onError?.(midStreamError) ?? '';
 
           controller.enqueue({ type: 'error', errorText });
+          // The AI SDK re-invokes onError with the errorText wrapped in an
+          // Error when it processes the error chunk (processUIMessageStream).
+          options.onError?.(new Error(errorText));
         }
 
         await options.onFinish?.({ responseMessage, isAborted: false });
@@ -309,6 +312,42 @@ describe('StreamAgentChatJob', () => {
       'workspace-id',
       { id: 'thread-id', activeStreamId: 'stream-id' },
       { activeStreamId: null },
+    );
+  });
+
+  it('surfaces the provider message when the stream error payload is a raw object', async () => {
+    // @ai-sdk/openai emits stream error parts carrying the raw API error
+    // object (not an Error instance) — e.g. for an invalid API key.
+    const providerErrorPayload = {
+      message: 'Incorrect API key provided: sk-proj-***',
+      type: 'invalid_request_error',
+      param: null,
+      code: 'invalid_api_key',
+    };
+
+    const { job, publishedEvents, threadRepository } = buildJob({
+      chatStream: createFakeChatStream({
+        midStreamError: providerErrorPayload,
+      }),
+    });
+
+    await expect(job.handle(jobData)).rejects.toThrow(
+      'Incorrect API key provided: sk-proj-*** (invalid_api_key)',
+    );
+
+    expect(publishedEvents[publishedEvents.length - 2]).toMatchObject({
+      type: 'stream-error',
+      code: 'STREAM_EXECUTION_FAILED',
+      message: 'Incorrect API key provided: sk-proj-*** (invalid_api_key)',
+    });
+    expect(threadRepository.update).toHaveBeenCalledWith(
+      'workspace-id',
+      { id: 'thread-id' },
+      {
+        lastStreamError: expect.objectContaining({
+          message: 'Incorrect API key provided: sk-proj-*** (invalid_api_key)',
+        }),
+      },
     );
   });
 

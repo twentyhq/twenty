@@ -2,6 +2,7 @@ import { type StepResult, type ToolSet } from 'ai';
 
 import { type AiToolCallLog } from 'twenty-shared/workflow';
 
+import { extractErrorMessage } from 'src/engine/metadata-modules/ai/utils/extract-error-message.util';
 import {
   TRUNCATION_SENTINEL,
   truncateStringToUtf8ByteBudget,
@@ -127,7 +128,7 @@ export const mapAiStepsToToolCallLogs = (
         const entry = openByCallId.get(part.toolCallId);
 
         if (entry) {
-          entry.errorMessage = String(part.error).slice(
+          entry.errorMessage = extractErrorMessage(part.error).slice(
             0,
             MAX_ERROR_MESSAGE_LENGTH,
           );

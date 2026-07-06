@@ -1,4 +1,5 @@
 import { AiException } from 'src/engine/metadata-modules/ai/ai.exception';
+import { extractErrorMessage } from 'src/engine/metadata-modules/ai/utils/extract-error-message.util';
 
 export const STREAM_EXECUTION_FAILED_CODE = 'STREAM_EXECUTION_FAILED';
 
@@ -22,7 +23,7 @@ export const mapErrorToStreamError = (error: unknown): StreamErrorPayload => {
   return {
     code: STREAM_EXECUTION_FAILED_CODE,
     message: truncateMessage(
-      error instanceof Error ? error.message : 'Stream execution failed',
+      extractErrorMessage(error, 'Stream execution failed'),
     ),
   };
 };
