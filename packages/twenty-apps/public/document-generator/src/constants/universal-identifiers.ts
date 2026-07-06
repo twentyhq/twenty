@@ -82,7 +82,8 @@ export const TEMPLATES_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER =
 export const DOCUMENTS_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER =
   '3249fdb2-8edb-41ac-b3ae-510fe4d0a099';
 
-// Document viewer + template editor front components and their record pages
+// Document viewer front component + the document and template record page layouts
+// (the template body is edited with Twenty's native RICH_TEXT editor)
 export const DOCUMENT_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
   '2c95f42a-cc54-4016-b26a-4d044ce15ae1';
 export const DOCUMENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =

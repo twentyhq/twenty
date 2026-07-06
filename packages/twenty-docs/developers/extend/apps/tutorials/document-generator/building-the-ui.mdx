@@ -6,8 +6,8 @@ description: Views, sidebar navigation, a command, and front components.
 
 Right now the objects are only reachable through Settings. Let's give the app a
 real presence in the UI: list views, sidebar entries, a one-click
-**Generate document** command, and two record-page front components — one to
-**preview** a document, one to **edit** a template in Markdown.
+**Generate document** command, a record-page front component to **preview** a
+document, and a native rich-text **editor** tab for templates.
 
 ## Views and navigation
 
@@ -239,41 +239,45 @@ shareable web page and the PDF:
   <img src="/images/docs/developers/extends/apps/document-generator/09-document-viewer.png" alt="Document viewer front component in a record-page tab" />
 </Frame>
 
-## Edit a template in Markdown
+## Edit a template with the rich-text editor
 
-The same pattern gives templates an **Editor** tab: a Markdown textarea on the
-left, a live preview on the right. Editing and saving writes straight back to the
-record with `CoreApiClient`.
+Templates don't need a custom component at all. Because the `body` is a
+`RICH_TEXT` field, Twenty already provides a full rich-text editor for it — the
+same one the standard Note and Task objects use. We just surface it on the
+template record page.
 
-```tsx filename="src/front-components/template-editor.front-component.tsx"
-const TemplateEditor = () => {
-  const recordId = useFrontComponentExecutionContext((c) => c.recordId ?? null);
-  const [body, setBody] = useState('');
-  // ...load the template body for recordId
+Add a tab with a `FIELD` widget in `EDITOR` display mode, pointing at the `body`
+field via `fieldMetadataId`:
 
-  const save = async () => {
-    await new CoreApiClient().mutation({
-      updateDocumentTemplate: { __args: { id: recordId, data: { body } }, id: true },
-    });
-    await enqueueSnackbar({ message: 'Template saved.', variant: 'success' });
-  };
-
-  return (
-    <div style={styles.split}>
-      <textarea value={body} onChange={(e) => setBody(e.target.value)} />
-      <div style={styles.preview}><Markdown content={body} /></div>
-    </div>
-  );
-};
+```ts filename="src/page-layouts/template-record.page-layout.ts"
+{
+  universalIdentifier: TEMPLATE_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
+  title: 'Template',
+  position: 1,
+  layoutMode: PageLayoutTabLayoutMode.GRID,
+  widgets: [{
+    universalIdentifier: TEMPLATE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
+    title: 'Template',
+    type: 'FIELD',
+    gridPosition: { row: 0, column: 0, rowSpan: 6, columnSpan: 12 },
+    configuration: {
+      configurationType: 'FIELD',
+      fieldMetadataId: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldDisplayMode: 'EDITOR',
+    },
+  }],
+}
 ```
 
-Mount it with a `RECORD_PAGE` page layout on `documentTemplate`, exactly like the
-viewer — see
+A `RICH_TEXT` field stores both the editor's block JSON and a Markdown
+projection. The generation pipeline reads that Markdown projection, so
+placeholders, the PDF, and the shareable web page all keep working unchanged —
+see the full
 [`template-record.page-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/document-generator/src/page-layouts/template-record.page-layout.ts).
-Now editors write templates with instant feedback:
+Now editors write templates in a proper rich-text editor:
 
-<Frame caption="The Editor tab: Markdown on the left, live preview on the right.">
-  <img src="/images/docs/developers/extends/apps/document-generator/10-template-editor.png" alt="Template editor front component with live Markdown preview" />
+<Frame caption="The Template tab: Twenty's native rich-text editor bound to the body field.">
+  <img src="/images/docs/developers/extends/apps/document-generator/10-template-editor.png" alt="Template record with the native rich-text editor tab" />
 </Frame>
 
 **After this step:** documents preview beautifully and templates are editable

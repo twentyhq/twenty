@@ -25,7 +25,8 @@ below omit those imports for brevity — keep them in your own files.
 ## The template object
 
 A template has a `name`, a `body` with `{{placeholders}}`, and a `target` that
-says whether it's written for a Person or a Company.
+says whether it's written for a Person or a Company. The `body` is a
+`RICH_TEXT` field, so Twenty gives it a full rich-text editor.
 
 ```ts filename="src/objects/document-template.object.ts"
 import { defineObject, FieldType } from 'twenty-sdk/define';
@@ -43,7 +44,7 @@ export default defineObject({
     { universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
       type: FieldType.TEXT, name: 'name', label: 'Name', icon: 'IconAbc' },
     { universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT, name: 'body', label: 'Body', icon: 'IconFileText',
+      type: FieldType.RICH_TEXT, name: 'body', label: 'Body', icon: 'IconFileText',
       description: 'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.' },
     { universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
       type: FieldType.SELECT, name: 'target', label: 'Target', icon: 'IconTarget',
