@@ -903,6 +903,7 @@ export type ClientConfig = {
   canManageFeatureFlags: Scalars['Boolean']['output'];
   captcha: Captcha;
   defaultSubdomain?: Maybe<Scalars['String']['output']>;
+  enterpriseInstanceType: Scalars['String']['output'];
   frontDomain: Scalars['String']['output'];
   isAttachmentPreviewEnabled: Scalars['Boolean']['output'];
   isClickHouseConfigured: Scalars['Boolean']['output'];
