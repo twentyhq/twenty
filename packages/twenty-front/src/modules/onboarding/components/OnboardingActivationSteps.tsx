@@ -1,5 +1,4 @@
 import { SubTitle } from '@/auth/components/SubTitle';
-import { ONBOARDING_ACTIVATION_STEPS_HEIGHT_IN_PX } from '@/onboarding/constants/OnboardingActivationStepsHeight';
 import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
 import { type OnboardingActivationMessage } from '@/onboarding/types/OnboardingActivationMessage';
 import { styled } from '@linaria/react';
@@ -8,9 +7,10 @@ import { motion } from 'framer-motion';
 const STEP_OPACITIES = [1, 0.4, 0.12];
 const VISIBLE_STEP_COUNT = STEP_OPACITIES.length;
 const STEP_HEIGHT_IN_PX = 28;
+const STEPS_CONTAINER_HEIGHT_IN_PX = STEP_HEIGHT_IN_PX * VISIBLE_STEP_COUNT;
 
 const StyledStepsContainer = styled.div`
-  height: ${ONBOARDING_ACTIVATION_STEPS_HEIGHT_IN_PX}px;
+  height: ${STEPS_CONTAINER_HEIGHT_IN_PX}px;
   position: relative;
   width: 100%;
 `;
