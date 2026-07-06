@@ -1968,6 +1968,7 @@ type ClientConfig {
   isCloudflareIntegrationEnabled: Boolean!
   isClickHouseConfigured: Boolean!
   isWorkspaceSchemaDDLLocked: Boolean!
+  enterpriseInstanceType: String!
   maintenance: ClientConfigMaintenanceMode
 }
 

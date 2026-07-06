@@ -13,13 +13,17 @@ const parseRecentTimestamps = (
     return [];
   }
 
-  const cutoffMs = now.getTime() - windowMs;
+  const nowMs = now.getTime();
+  const cutoffMs = nowMs - windowMs;
 
   return raw
     .split(',')
     .map((entry) => Number.parseInt(entry, 10))
     .filter(
-      (timestampMs) => !Number.isNaN(timestampMs) && timestampMs > cutoffMs,
+      (timestampMs) =>
+        !Number.isNaN(timestampMs) &&
+        timestampMs > cutoffMs &&
+        timestampMs <= nowMs,
     )
     .toSorted((a, b) => a - b);
 };

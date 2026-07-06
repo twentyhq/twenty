@@ -115,8 +115,9 @@ export function resolveServerBinding({
       };
     }
 
-    const expectedDevServerId =
-      stripeMetadata?.[STRIPE_METADATA_KEY.DEV_SERVER_ID];
+    const expectedDevServerId = normalizeServerId(
+      stripeMetadata?.[STRIPE_METADATA_KEY.DEV_SERVER_ID],
+    );
     const devLastSeenAt =
       stripeMetadata?.[STRIPE_METADATA_KEY.DEV_SERVER_LAST_SEEN_AT];
 
@@ -143,7 +144,9 @@ export function resolveServerBinding({
     };
   }
 
-  const boundServerId = stripeMetadata?.[STRIPE_METADATA_KEY.BOUND_SERVER_ID];
+  const boundServerId = normalizeServerId(
+    stripeMetadata?.[STRIPE_METADATA_KEY.BOUND_SERVER_ID],
+  );
   const boundLastSeenAt =
     stripeMetadata?.[STRIPE_METADATA_KEY.BOUND_SERVER_LAST_SEEN_AT];
 

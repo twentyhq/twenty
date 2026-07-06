@@ -1597,6 +1597,7 @@ export interface ClientConfig {
     isCloudflareIntegrationEnabled: Scalars['Boolean']
     isClickHouseConfigured: Scalars['Boolean']
     isWorkspaceSchemaDDLLocked: Scalars['Boolean']
+    enterpriseInstanceType: Scalars['String']
     maintenance?: ClientConfigMaintenanceMode
     __typename: 'ClientConfig'
 }
@@ -4681,6 +4682,7 @@ export interface ClientConfigGenqlSelection{
     isCloudflareIntegrationEnabled?: boolean | number
     isClickHouseConfigured?: boolean | number
     isWorkspaceSchemaDDLLocked?: boolean | number
+    enterpriseInstanceType?: boolean | number
     maintenance?: ClientConfigMaintenanceModeGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number

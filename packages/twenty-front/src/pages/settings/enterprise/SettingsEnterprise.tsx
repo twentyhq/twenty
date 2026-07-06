@@ -471,17 +471,23 @@ export const SettingsEnterprise = ({
         }
       } finally {
         if (instanceUpdateSuccess && !tokenRefreshSuccess) {
-          if (previousIsInstanceTypeFromDb) {
-            await updateInstanceTypeVariable(previousInstanceType, true);
-          } else {
-            await deleteInstanceTypeVariable();
+          try {
+            if (previousIsInstanceTypeFromDb) {
+              await updateInstanceTypeVariable(previousInstanceType, true);
+            } else {
+              await deleteInstanceTypeVariable();
+            }
+            setInstanceType(previousInstanceType);
+            setIsInstanceTypeFromDb(previousIsInstanceTypeFromDb);
+            await loadCurrentUser();
+            enqueueErrorSnackBar({
+              message: t`Could not refresh validity token - reverted the instance type change.`,
+            });
+          } catch {
+            enqueueErrorSnackBar({
+              message: t`Could not refresh validity token and could not revert the instance type change.`,
+            });
           }
-          setInstanceType(previousInstanceType);
-          setIsInstanceTypeFromDb(previousIsInstanceTypeFromDb);
-          await loadCurrentUser();
-          enqueueErrorSnackBar({
-            message: t`Could not refresh validity token - reverted the instance type change.`,
-          });
         }
         setIsUpdatingInstanceType(false);
       }
