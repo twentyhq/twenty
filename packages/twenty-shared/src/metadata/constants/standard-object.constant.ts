@@ -8,8 +8,6 @@ import { getFieldUniversalIdentifier } from '@/application/deterministic-identif
 //   deletedAt, createdBy, updatedBy, position, searchVector) are
 //   deterministically derived from the standard application universal
 //   identifier, the object universal identifier and the field name.
-//   Renaming a system field therefore changes its universal identifier and
-//   must never happen without a coordinated backfill of existing workspaces.
 const buildStandardObjectSystemFields = <const T extends readonly string[]>(
   objectUniversalIdentifier: string,
   fieldNames: T,
