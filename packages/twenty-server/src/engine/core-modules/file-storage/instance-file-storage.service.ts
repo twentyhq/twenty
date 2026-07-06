@@ -105,17 +105,28 @@ export class InstanceFileStorageService {
     return this.instanceFileRepository.findOneByOrFail({ path: filePath });
   }
 
-  readInstanceFile({
+  async readInstanceFile({
     fileFolder,
     resourcePath,
   }: InstanceResourceIdentifier): Promise<Readable> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
-    const { onStorageFilePath } =
+    const { onStorageFilePath, filePath } =
       this.validateAndBuildInstanceFileStoragePathOrThrow({
         fileFolder,
         resourcePath,
       });
+
+    const instanceFile = await this.instanceFileRepository.findOneBy({
+      path: filePath,
+    });
+
+    if (!isDefined(instanceFile)) {
+      throw new FileStorageException(
+        `Instance file ${filePath} not found`,
+        FileStorageExceptionCode.FILE_NOT_FOUND,
+      );
+    }
 
     return driver.readFile({ filePath: onStorageFilePath });
   }

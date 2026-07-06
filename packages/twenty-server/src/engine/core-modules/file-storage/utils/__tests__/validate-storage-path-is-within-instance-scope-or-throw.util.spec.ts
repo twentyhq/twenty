@@ -38,11 +38,11 @@ describe('validateStoragePathIsWithinInstanceScopeOrThrow', () => {
     },
     {
       title: 'prefix without trailing file',
-      onStoragePath: 'instance/source',
+      onStoragePath: 'instance/application-registration',
     },
     {
       title: 'partial prefix match (malicious suffix)',
-      onStoragePath: 'instance/sourceMalicious/file.json',
+      onStoragePath: 'instance/application-registrationMalicious/file.json',
     },
     {
       title: 'traversal out of the instance prefix',

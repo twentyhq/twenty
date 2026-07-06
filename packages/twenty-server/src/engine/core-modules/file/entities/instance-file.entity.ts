@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -19,6 +20,9 @@ import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorato
   upgradeCommandName: ADD_INSTANCE_FILE_TABLE_UPGRADE_COMMAND_NAME,
 })
 @Entity('instanceFile')
+@Index('IDX_INSTANCE_FILE_APPLICATION_REGISTRATION_ID', [
+  'applicationRegistrationId',
+])
 @Unique('IDX_INSTANCE_FILE_PATH_UNIQUE', ['path'])
 export class InstanceFileEntity {
   @PrimaryGeneratedColumn('uuid')

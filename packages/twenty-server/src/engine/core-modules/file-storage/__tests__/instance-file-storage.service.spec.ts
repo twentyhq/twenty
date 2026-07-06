@@ -58,6 +58,50 @@ describe('InstanceFileStorageService', () => {
     mockFileStorageDriverFactory.getCurrentDriver.mockReturnValue(mockDriver);
   });
 
+  describe.each([
+    [
+      'readInstanceFile',
+      (resourcePath: string) =>
+        service.readInstanceFile({
+          fileFolder: InstanceFileFolder.ApplicationRegistration,
+          resourcePath,
+        }),
+    ],
+    [
+      'checkInstanceFileExists',
+      (resourcePath: string) =>
+        service.checkInstanceFileExists({
+          fileFolder: InstanceFileFolder.ApplicationRegistration,
+          resourcePath,
+        }),
+    ],
+    [
+      'deleteInstanceFile',
+      (resourcePath: string) =>
+        service.deleteInstanceFile({
+          fileFolder: InstanceFileFolder.ApplicationRegistration,
+          resourcePath,
+        }),
+    ],
+  ] as const)('%s traversal protection', (_methodName, invoke) => {
+    it.each(['../workspace-id/stolen.json', 'a/../../escape.json'])(
+      'should reject traversal resource path %s without touching storage',
+      async (resourcePath) => {
+        await expect(
+          Promise.resolve().then(() => invoke(resourcePath)),
+        ).rejects.toThrow(
+          expect.objectContaining({
+            code: FileStorageExceptionCode.ACCESS_DENIED,
+          }),
+        );
+
+        expect(mockDriver.readFile).not.toHaveBeenCalled();
+        expect(mockDriver.checkFileExists).not.toHaveBeenCalled();
+        expect(mockDriver.delete).not.toHaveBeenCalled();
+      },
+    );
+  });
+
   describe('writeInstanceFile', () => {
     it('should write bytes with the instance prefix and upsert the row on path conflict', async () => {
       const instanceFile = {
@@ -150,6 +194,10 @@ describe('InstanceFileStorageService', () => {
     it('should read from the instance-prefixed storage path', async () => {
       const stream = Readable.from(['{}']);
 
+      mockInstanceFileRepository.findOneBy.mockResolvedValue({
+        id: 'instance-file-id',
+        path: 'application-registration/manifests/manifest.json',
+      } as InstanceFileEntity);
       mockDriver.readFile.mockResolvedValue(stream);
 
       const result = await service.readInstanceFile({
@@ -164,6 +212,10 @@ describe('InstanceFileStorageService', () => {
     });
 
     it('should propagate the missing-file exception from the driver', async () => {
+      mockInstanceFileRepository.findOneBy.mockResolvedValue({
+        id: 'instance-file-id',
+        path: 'application-registration/missing.json',
+      } as InstanceFileEntity);
       mockDriver.readFile.mockRejectedValueOnce(
         new FileStorageException(
           'File not found',
@@ -181,6 +233,23 @@ describe('InstanceFileStorageService', () => {
           code: FileStorageExceptionCode.FILE_NOT_FOUND,
         }),
       );
+    });
+
+    it('should throw FILE_NOT_FOUND without reading bytes when the row is missing', async () => {
+      mockInstanceFileRepository.findOneBy.mockResolvedValue(null);
+
+      await expect(
+        service.readInstanceFile({
+          fileFolder: InstanceFileFolder.ApplicationRegistration,
+          resourcePath: 'deleted.json',
+        }),
+      ).rejects.toThrow(
+        expect.objectContaining({
+          code: FileStorageExceptionCode.FILE_NOT_FOUND,
+        }),
+      );
+
+      expect(mockDriver.readFile).not.toHaveBeenCalled();
     });
   });
 
