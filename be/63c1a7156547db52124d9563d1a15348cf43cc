@@ -1,0 +1,35 @@
+packages/twenty-server/src/engine/core-modules/emailing-domain/constants/campaign.constant.ts
+  s_7c0169865c5a19::t_6e88447a018d04 20-24
+packages/twenty-server/src/modules/emailing/jobs/refresh-campaign-stats.job.ts
+  s_7c0169865c5a19::t_8c0b969e3676c1 1-21
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_7c0169865c5a19::t_fa99a54ab327a8 695-715
+  s_7c0169865c5a19::t_ea8c254b4f3913 10-11,15
+  s_7c0169865c5a19::t_7fb7eda4dc88cc 114-115
+  s_7c0169865c5a19::t_7cdc5fcd7a94cf 497
+  s_7c0169865c5a19::t_9d08b325c32a2d 32-34
+  s_7c0169865c5a19::t_76d3de15d61014 689
+  s_7c0169865c5a19::t_1ea20f3ae0c708 29
+  s_7c0169865c5a19::t_999c1b60beb9f3 716-717
+packages/twenty-server/src/engine/core-modules/emailing-domain/types/refresh-campaign-stats-job-data.type.ts
+  s_7c0169865c5a19::t_85b50eaa49b64e 1-4
+packages/twenty-server/src/engine/core-modules/message-queue/jobs.module.ts
+  s_7c0169865c5a19::t_3a8640d3ed7039 25
+  s_7c0169865c5a19::t_1160e4c83e7f93 108
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "be63c1a7156547db52124d9563d1a15348cf43cc",
+  "prompts": {},
+  "sessions": {
+    "s_7c0169865c5a19": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3fadbdc5-0639-4b62-a5ba-78f2c5c7d809",
+        "model": "claude-fable-5"
+      },
+      "human_author": null
+    }
+  }
+}
