@@ -22,6 +22,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 jest.mock('uuid', () => ({
+  ...jest.requireActual('uuid'),
   v4: jest.fn(() => 'mocked-file-id'),
 }));
 

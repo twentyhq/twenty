@@ -1,3 +1,4 @@
+import { getFieldUniversalIdentifier } from 'twenty-shared/application';
 import {
   STANDARD_OBJECTS,
   DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
@@ -117,6 +118,22 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
         const morphId =
           morphIdByRelationObjectNameSingular[objectMetadataNameSingular];
 
+        // Default relation fields get deterministic universal identifiers so
+        // that provisioning the same custom object always yields the same
+        // identifiers (matching the SDK manifest derivation).
+        const sourceFieldUniversalIdentifier = getFieldUniversalIdentifier({
+          applicationUniversalIdentifier: flatApplication.universalIdentifier,
+          objectUniversalIdentifier:
+            sourceFlatObjectMetadata.universalIdentifier,
+          name: targetFlatObjectMetadata.namePlural,
+        });
+        const targetFieldUniversalIdentifier = getFieldUniversalIdentifier({
+          applicationUniversalIdentifier: flatApplication.universalIdentifier,
+          objectUniversalIdentifier:
+            targetFlatObjectMetadata.universalIdentifier,
+          name: fieldName,
+        });
+
         const { flatFieldMetadatas, indexMetadatas } =
           generateMorphOrRelationFlatFieldMetadataPair({
             sourceFlatObjectMetadata,
@@ -128,6 +145,8 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             sourceFlatObjectMetadataJoinColumnName: joinColumnName,
             morphId,
             targetFieldName: fieldName,
+            sourceFieldUniversalIdentifier,
+            targetFieldUniversalIdentifier,
             createFieldInput: {
               icon: standardFieldProperties.icon,
               type: FieldMetadataType.RELATION,
