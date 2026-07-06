@@ -1,6 +1,7 @@
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
+import { tokenPairState } from '@/auth/states/tokenPairState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
@@ -34,6 +35,7 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
   const setVerifyEmailRedirectPath = useSetAtomState(
     verifyEmailRedirectPathState,
   );
+  const setTokenPair = useSetAtomState(tokenPairState);
 
   const email = searchParams.get('email');
   const emailVerificationToken = searchParams.get('emailVerificationToken');
@@ -95,6 +97,7 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
           setVerifyEmailRedirectPath(verifyEmailRedirectPath);
         }
 
+        setTokenPair(null);
         await verifyLoginToken(loginToken.token);
       } catch (error) {
         enqueueErrorSnackBar({

@@ -76,6 +76,7 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
         setCurrentUserWorkspace(null);
         if (
           !isMatchingLocation(locationRef.current, AppPath.Verify) &&
+          !isMatchingLocation(locationRef.current, AppPath.VerifyEmail) &&
           !isMatchingLocation(locationRef.current, AppPath.SignInUp) &&
           !isMatchingLocation(locationRef.current, AppPath.Invite) &&
           !isMatchingLocation(locationRef.current, AppPath.ResetPassword)
