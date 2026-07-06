@@ -27,7 +27,7 @@ import {
   type VersionValidationFailureReason,
 } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import type { ApplicationManifest } from 'twenty-shared/application';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 

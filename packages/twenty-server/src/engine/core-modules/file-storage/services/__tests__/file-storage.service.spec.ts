@@ -9,7 +9,7 @@ import {
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
@@ -28,14 +28,6 @@ describe('FileStorageService', () => {
     delete: jest.fn(),
   };
 
-  const mockInstanceFileRepository = {
-    upsert: jest.fn(),
-    findOneBy: jest.fn(),
-    findOneByOrFail: jest.fn(),
-    findBy: jest.fn(),
-    delete: jest.fn(),
-  };
-
   const mockApplicationRepository = {
     findOneOrFail: jest.fn(),
   };
@@ -51,10 +43,6 @@ describe('FileStorageService', () => {
         {
           provide: getWorkspaceScopedRepositoryToken(FileEntity),
           useValue: mockFileRepository,
-        },
-        {
-          provide: getRepositoryToken(FileEntity),
-          useValue: mockInstanceFileRepository,
         },
         {
           provide: getRepositoryToken(ApplicationEntity),

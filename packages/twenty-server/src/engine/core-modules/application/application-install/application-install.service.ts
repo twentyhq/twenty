@@ -27,7 +27,7 @@ import {
 } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import {
   LogicFunctionTriggerJob,
   type LogicFunctionTriggerJobData,

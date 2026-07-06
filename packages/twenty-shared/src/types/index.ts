@@ -132,7 +132,6 @@ export type { FormatRecordSerializedRelationProperties } from './FormatRecordSer
 export type { FromTo } from './FromToType';
 export { HTTPMethod } from './HttpMethod';
 export type { IndexOf } from './IndexOf.type';
-export { InstanceFileFolder } from './InstanceFileFolder';
 export type { IsEmptyObject } from './IsEmptyObject.type';
 export type { IsEmptyRecord } from './IsEmptyRecord.type';
 export type { IsExactly } from './IsExactly';
@@ -281,6 +280,7 @@ export type {
 } from './RowLevelPermissionPredicateValue';
 export type { SerializedRelation } from './SerializedRelation.type';
 export { SERIALIZED_RELATION_BRAND } from './SerializedRelation.type';
+export { ServerFileFolder } from './ServerFileFolder';
 export { SettingsPath } from './SettingsPath';
 export { SidePanelPages } from './SidePanelPages';
 export type { Sources } from './SourcesType';

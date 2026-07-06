@@ -1,3 +1,3 @@
-export enum InstanceFileFolder {
+export enum ServerFileFolder {
   ApplicationRegistration = 'application-registration',
 }

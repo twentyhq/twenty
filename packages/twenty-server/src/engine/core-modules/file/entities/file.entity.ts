@@ -14,7 +14,7 @@ import {
 } from 'typeorm';
 
 import { ADD_STATUS_TO_FILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-status-to-file-upgrade-command-name.constant';
-import { ALLOW_INSTANCE_SCOPED_FILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/allow-instance-scoped-file-upgrade-command-name.constant';
+import { ALLOW_SERVER_SCOPED_FILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/allow-server-scoped-file-upgrade-command-name.constant';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
@@ -38,9 +38,7 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
   'applicationId',
   'path',
 ])
-// Instance-scoped rows have no workspaceId; the composite unique above never
-// fires on them (NULLs are distinct), so uniqueness needs its own index.
-@Index('IDX_FILE_INSTANCE_PATH_UNIQUE', ['path'], {
+@Index('IDX_FILE_SERVER_PATH_UNIQUE', ['path'], {
   unique: true,
   where: '"workspaceId" IS NULL',
 })
@@ -48,8 +46,6 @@ export class FileEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // Null for instance-scoped files (instance-level documents such as
-  // application-registration assets); set for workspace-scoped files.
   @Column({ nullable: true, type: 'uuid' })
   workspaceId: string | null;
 
@@ -69,10 +65,8 @@ export class FileEntity {
   @JoinColumn({ name: 'applicationId' })
   application: Relation<ApplicationEntity>;
 
-  // Set on instance-scoped files owned by an application registration so
-  // they follow their registration's lifecycle.
   @WasIntroducedInUpgrade({
-    upgradeCommandName: ALLOW_INSTANCE_SCOPED_FILE_UPGRADE_COMMAND_NAME,
+    upgradeCommandName: ALLOW_SERVER_SCOPED_FILE_UPGRADE_COMMAND_NAME,
   })
   @Column({ nullable: true, type: 'uuid' })
   applicationRegistrationId: string | null;

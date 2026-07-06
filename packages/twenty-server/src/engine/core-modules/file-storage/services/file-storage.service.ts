@@ -1,15 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { basename, dirname, join } from 'path';
 import { type Readable } from 'stream';
 
-import { FileFolder, type InstanceFileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Like, Repository, type QueryRunner } from 'typeorm';
+import { FileFolder } from 'twenty-shared/types';
+import { Like, Repository, type QueryRunner } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { INSTANCE_FILE_STORAGE_PREFIX } from 'src/engine/core-modules/file-storage/constants/instance-file-storage-prefix.constant';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import {
   FileStorageException,
@@ -18,7 +16,6 @@ import {
 import { prepareFileForStorageOrThrow } from 'src/engine/core-modules/file-storage/utils/prepare-file-for-storage-or-throw.util';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { validateFolderPath } from 'src/engine/core-modules/file-storage/utils/validate-folder-path.util';
-import { validateStoragePathIsWithinInstanceScopeOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-instance-scope-or-throw.util';
 import { validateStoragePathIsWithinWorkspaceOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-workspace-or-throw.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
@@ -33,22 +30,12 @@ export type ResourceIdentifier = {
   resourcePath: string;
 };
 
-export type InstanceResourceIdentifier = {
-  fileFolder: InstanceFileFolder;
-  resourcePath: string;
-};
-
 @Injectable()
 export class FileStorageService {
-  private readonly logger = new Logger(FileStorageService.name);
-
   constructor(
     private readonly fileStorageDriverFactory: FileStorageDriverFactory,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository -- instance-scoped rows (workspaceId IS NULL) are unreachable through the scoped wrapper; every query below pins workspaceId to IsNull()
-    @InjectRepository(FileEntity)
-    private readonly instanceFileRepository: Repository<FileEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {}
@@ -509,224 +496,5 @@ export class FileStorageService {
       this.validateAndBuildFileStoragePathOrThrow(params);
 
     return driver.checkFileExists({ filePath: onStorageFilePath });
-  }
-
-  private validateAndBuildInstanceFileStoragePathOrThrow({
-    fileFolder,
-    resourcePath,
-  }: InstanceResourceIdentifier): {
-    onStorageFilePath: string;
-    filePath: string;
-  } {
-    const validationResult = validateFilePath({ resourcePath, fileFolder });
-
-    if (!validationResult.isValid) {
-      throw new FileStorageException(
-        validationResult.error,
-        FileStorageExceptionCode.ACCESS_DENIED,
-      );
-    }
-
-    const filePath = join(fileFolder, resourcePath).replace(/\/+/g, '/');
-
-    const onStorageFilePath = join(
-      INSTANCE_FILE_STORAGE_PREFIX,
-      filePath,
-    ).replace(/\/+/g, '/');
-
-    validateStoragePathIsWithinInstanceScopeOrThrow({
-      onStoragePath: onStorageFilePath,
-      fileFolder,
-    });
-
-    return { onStorageFilePath, filePath };
-  }
-
-  async writeInstanceFile({
-    fileFolder,
-    resourcePath,
-    contents,
-    mimeType,
-    applicationRegistrationId,
-  }: InstanceResourceIdentifier & {
-    contents: Buffer | string;
-    mimeType: string;
-    applicationRegistrationId?: string;
-  }): Promise<FileEntity> {
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    const { onStorageFilePath, filePath } =
-      this.validateAndBuildInstanceFileStoragePathOrThrow({
-        fileFolder,
-        resourcePath,
-      });
-
-    await driver.writeFile({
-      filePath: onStorageFilePath,
-      mimeType,
-      sourceFile: contents,
-    });
-
-    await this.instanceFileRepository.upsert(
-      {
-        path: filePath,
-        workspaceId: null,
-        size:
-          typeof contents === 'string'
-            ? Buffer.byteLength(contents)
-            : contents.length,
-        mimeType,
-        applicationRegistrationId: applicationRegistrationId ?? null,
-      },
-      {
-        conflictPaths: ['path'],
-        indexPredicate: '"workspaceId" IS NULL',
-      },
-    );
-
-    return this.instanceFileRepository.findOneByOrFail({
-      path: filePath,
-      workspaceId: IsNull(),
-    });
-  }
-
-  async readInstanceFile({
-    fileFolder,
-    resourcePath,
-  }: InstanceResourceIdentifier): Promise<Readable> {
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    const { onStorageFilePath, filePath } =
-      this.validateAndBuildInstanceFileStoragePathOrThrow({
-        fileFolder,
-        resourcePath,
-      });
-
-    const instanceFile = await this.instanceFileRepository.findOneBy({
-      path: filePath,
-      workspaceId: IsNull(),
-    });
-
-    if (!isDefined(instanceFile)) {
-      throw new FileStorageException(
-        `Instance file ${filePath} not found`,
-        FileStorageExceptionCode.FILE_NOT_FOUND,
-      );
-    }
-
-    return driver.readFile({ filePath: onStorageFilePath });
-  }
-
-  async readInstanceFileById(id: string): Promise<Readable> {
-    const instanceFile = await this.findInstanceFileByIdOrThrow(id);
-
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    return driver.readFile({
-      filePath: this.buildInstanceOnStorageFilePath(instanceFile),
-    });
-  }
-
-  checkInstanceFileExists({
-    fileFolder,
-    resourcePath,
-  }: InstanceResourceIdentifier): Promise<boolean> {
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    const { onStorageFilePath } =
-      this.validateAndBuildInstanceFileStoragePathOrThrow({
-        fileFolder,
-        resourcePath,
-      });
-
-    return driver.checkFileExists({ filePath: onStorageFilePath });
-  }
-
-  async deleteInstanceFile({
-    fileFolder,
-    resourcePath,
-  }: InstanceResourceIdentifier): Promise<void> {
-    const { onStorageFilePath, filePath } =
-      this.validateAndBuildInstanceFileStoragePathOrThrow({
-        fileFolder,
-        resourcePath,
-      });
-
-    await this.deleteInstanceFileBytesBestEffort(onStorageFilePath);
-
-    await this.instanceFileRepository.delete({
-      path: filePath,
-      workspaceId: IsNull(),
-    });
-  }
-
-  async deleteByInstanceFileId(id: string): Promise<void> {
-    const instanceFile = await this.findInstanceFileByIdOrThrow(id);
-
-    await this.deleteInstanceFileBytesBestEffort(
-      this.buildInstanceOnStorageFilePath(instanceFile),
-    );
-
-    await this.instanceFileRepository.delete({
-      id,
-      workspaceId: IsNull(),
-    });
-  }
-
-  async deleteByApplicationRegistrationId(
-    applicationRegistrationId: string,
-  ): Promise<void> {
-    const instanceFiles = await this.instanceFileRepository.findBy({
-      applicationRegistrationId,
-      workspaceId: IsNull(),
-    });
-
-    for (const instanceFile of instanceFiles) {
-      await this.deleteInstanceFileBytesBestEffort(
-        this.buildInstanceOnStorageFilePath(instanceFile),
-      );
-    }
-
-    await this.instanceFileRepository.delete({
-      applicationRegistrationId,
-      workspaceId: IsNull(),
-    });
-  }
-
-  private async findInstanceFileByIdOrThrow(id: string): Promise<FileEntity> {
-    const instanceFile = await this.instanceFileRepository.findOneBy({
-      id,
-      workspaceId: IsNull(),
-    });
-
-    if (!isDefined(instanceFile)) {
-      throw new FileStorageException(
-        `Instance file ${id} not found`,
-        FileStorageExceptionCode.FILE_NOT_FOUND,
-      );
-    }
-
-    return instanceFile;
-  }
-
-  private buildInstanceOnStorageFilePath(instanceFile: FileEntity): string {
-    return join(INSTANCE_FILE_STORAGE_PREFIX, instanceFile.path);
-  }
-
-  private async deleteInstanceFileBytesBestEffort(
-    onStorageFilePath: string,
-  ): Promise<void> {
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    try {
-      await driver.delete({
-        folderPath: dirname(onStorageFilePath),
-        filename: basename(onStorageFilePath),
-      });
-    } catch (error) {
-      this.logger.warn(
-        `Failed to delete instance file bytes at ${onStorageFilePath}: ${error}`,
-      );
-    }
   }
 }

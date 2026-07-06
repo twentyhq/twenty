@@ -286,8 +286,6 @@ export class ListOrphanedWorkspaceEntitiesCommand extends MigrationCommandRunner
 
             return `NOT EXISTS ${subQuery}`;
           })
-          // Instance-scoped rows (workspaceId NULL, e.g. on FileEntity)
-          // reference no workspace and are not orphans.
           .andWhere('entity.workspaceId IS NOT NULL')
           .select(['entity.id', 'entity.workspaceId'])
           .withDeleted()

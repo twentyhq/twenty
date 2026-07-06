@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { LessThan, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import {
   PENDING_FILE_CLEANUP_BATCH_SIZE,
@@ -78,8 +78,6 @@ export class PendingFileCleanupService {
   // partial, possibly absent) storage object. A failure here leaks bytes but
   // never data, so it is logged rather than retried.
   private async deleteStorageObject(file: FileEntity): Promise<void> {
-    // Instance-scoped rows (workspaceId NULL) never go through the PENDING
-    // direct-upload flow, so there is nothing to reap for them.
     if (!isDefined(file.workspaceId)) {
       return;
     }

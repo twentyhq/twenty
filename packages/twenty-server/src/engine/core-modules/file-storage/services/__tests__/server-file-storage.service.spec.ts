@@ -3,27 +3,25 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Readable } from 'stream';
 
-import { InstanceFileFolder } from 'twenty-shared/types';
+import { ServerFileFolder } from 'twenty-shared/types';
 import { IsNull } from 'typeorm';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
-describe('FileStorageService instance scope', () => {
-  let service: FileStorageService;
+describe('ServerFileStorageService', () => {
+  let service: ServerFileStorageService;
 
   const mockFileStorageDriverFactory = {
     getCurrentDriver: jest.fn(),
   };
 
-  const mockInstanceFileRepository = {
+  const mockServerFileRepository = {
     upsert: jest.fn(),
     findOneBy: jest.fn(),
     findOneByOrFail: jest.fn(),
@@ -41,27 +39,19 @@ describe('FileStorageService instance scope', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        FileStorageService,
+        ServerFileStorageService,
         {
           provide: FileStorageDriverFactory,
           useValue: mockFileStorageDriverFactory,
         },
         {
-          provide: getWorkspaceScopedRepositoryToken(FileEntity),
-          useValue: {},
-        },
-        {
           provide: getRepositoryToken(FileEntity),
-          useValue: mockInstanceFileRepository,
-        },
-        {
-          provide: getRepositoryToken(ApplicationEntity),
-          useValue: {},
+          useValue: mockServerFileRepository,
         },
       ],
     }).compile();
 
-    service = module.get<FileStorageService>(FileStorageService);
+    service = module.get<ServerFileStorageService>(ServerFileStorageService);
 
     jest.clearAllMocks();
 
@@ -70,26 +60,26 @@ describe('FileStorageService instance scope', () => {
 
   describe.each([
     [
-      'readInstanceFile',
+      'readServerFile',
       (resourcePath: string) =>
-        service.readInstanceFile({
-          fileFolder: InstanceFileFolder.ApplicationRegistration,
+        service.readServerFile({
+          fileFolder: ServerFileFolder.ApplicationRegistration,
           resourcePath,
         }),
     ],
     [
-      'checkInstanceFileExists',
+      'checkServerFileExists',
       (resourcePath: string) =>
-        service.checkInstanceFileExists({
-          fileFolder: InstanceFileFolder.ApplicationRegistration,
+        service.checkServerFileExists({
+          fileFolder: ServerFileFolder.ApplicationRegistration,
           resourcePath,
         }),
     ],
     [
-      'deleteInstanceFile',
+      'deleteServerFile',
       (resourcePath: string) =>
-        service.deleteInstanceFile({
-          fileFolder: InstanceFileFolder.ApplicationRegistration,
+        service.deleteServerFile({
+          fileFolder: ServerFileFolder.ApplicationRegistration,
           resourcePath,
         }),
     ],
@@ -114,19 +104,17 @@ describe('FileStorageService instance scope', () => {
     );
   });
 
-  describe('writeInstanceFile', () => {
-    it('should write bytes with the instance prefix and upsert the row on path conflict', async () => {
-      const instanceFile = {
-        id: 'instance-file-id',
+  describe('writeServerFile', () => {
+    it('should write bytes with the server prefix and upsert the row on path conflict', async () => {
+      const serverFile = {
+        id: 'server-file-id',
         path: 'application-registration/manifests/manifest.json',
       } as FileEntity;
 
-      mockInstanceFileRepository.findOneByOrFail.mockResolvedValue(
-        instanceFile,
-      );
+      mockServerFileRepository.findOneByOrFail.mockResolvedValue(serverFile);
 
-      const result = await service.writeInstanceFile({
-        fileFolder: InstanceFileFolder.ApplicationRegistration,
+      const result = await service.writeServerFile({
+        fileFolder: ServerFileFolder.ApplicationRegistration,
         resourcePath: 'manifests/manifest.json',
         contents: '{"name":"my-app"}',
         mimeType: 'application/json',
@@ -134,11 +122,11 @@ describe('FileStorageService instance scope', () => {
       });
 
       expect(mockDriver.writeFile).toHaveBeenCalledWith({
-        filePath: 'instance/application-registration/manifests/manifest.json',
+        filePath: 'server/application-registration/manifests/manifest.json',
         mimeType: 'application/json',
         sourceFile: '{"name":"my-app"}',
       });
-      expect(mockInstanceFileRepository.upsert).toHaveBeenCalledWith(
+      expect(mockServerFileRepository.upsert).toHaveBeenCalledWith(
         {
           path: 'application-registration/manifests/manifest.json',
           workspaceId: null,
@@ -151,26 +139,26 @@ describe('FileStorageService instance scope', () => {
           indexPredicate: '"workspaceId" IS NULL',
         },
       );
-      expect(mockInstanceFileRepository.findOneByOrFail).toHaveBeenCalledWith({
+      expect(mockServerFileRepository.findOneByOrFail).toHaveBeenCalledWith({
         path: 'application-registration/manifests/manifest.json',
         workspaceId: IsNull(),
       });
-      expect(result).toEqual(instanceFile);
+      expect(result).toEqual(serverFile);
     });
 
     it('should store a null applicationRegistrationId when none is provided', async () => {
-      mockInstanceFileRepository.findOneByOrFail.mockResolvedValue(
+      mockServerFileRepository.findOneByOrFail.mockResolvedValue(
         {} as FileEntity,
       );
 
-      await service.writeInstanceFile({
-        fileFolder: InstanceFileFolder.ApplicationRegistration,
+      await service.writeServerFile({
+        fileFolder: ServerFileFolder.ApplicationRegistration,
         resourcePath: 'manifest.json',
         contents: Buffer.from('{}'),
         mimeType: 'application/json',
       });
 
-      expect(mockInstanceFileRepository.upsert).toHaveBeenCalledWith(
+      expect(mockServerFileRepository.upsert).toHaveBeenCalledWith(
         expect.objectContaining({ applicationRegistrationId: null, size: 2 }),
         {
           conflictPaths: ['path'],
@@ -181,8 +169,8 @@ describe('FileStorageService instance scope', () => {
 
     it('should reject a traversal resource path without touching storage', async () => {
       await expect(
-        service.writeInstanceFile({
-          fileFolder: InstanceFileFolder.ApplicationRegistration,
+        service.writeServerFile({
+          fileFolder: ServerFileFolder.ApplicationRegistration,
           resourcePath: '../workspace-id/stolen.json',
           contents: '{}',
           mimeType: 'application/json',
@@ -194,53 +182,53 @@ describe('FileStorageService instance scope', () => {
       );
 
       expect(mockDriver.writeFile).not.toHaveBeenCalled();
-      expect(mockInstanceFileRepository.upsert).not.toHaveBeenCalled();
+      expect(mockServerFileRepository.upsert).not.toHaveBeenCalled();
     });
 
     it('should propagate driver write failures without upserting the row', async () => {
       mockDriver.writeFile.mockRejectedValueOnce(new Error('Write failed'));
 
       await expect(
-        service.writeInstanceFile({
-          fileFolder: InstanceFileFolder.ApplicationRegistration,
+        service.writeServerFile({
+          fileFolder: ServerFileFolder.ApplicationRegistration,
           resourcePath: 'manifest.json',
           contents: '{}',
           mimeType: 'application/json',
         }),
       ).rejects.toThrow('Write failed');
 
-      expect(mockInstanceFileRepository.upsert).not.toHaveBeenCalled();
+      expect(mockServerFileRepository.upsert).not.toHaveBeenCalled();
     });
   });
 
-  describe('readInstanceFile', () => {
-    it('should read from the instance-prefixed storage path', async () => {
+  describe('readServerFile', () => {
+    it('should read from the server-prefixed storage path', async () => {
       const stream = Readable.from(['{}']);
 
-      mockInstanceFileRepository.findOneBy.mockResolvedValue({
-        id: 'instance-file-id',
+      mockServerFileRepository.findOneBy.mockResolvedValue({
+        id: 'server-file-id',
         path: 'application-registration/manifests/manifest.json',
       } as FileEntity);
       mockDriver.readFile.mockResolvedValue(stream);
 
-      const result = await service.readInstanceFile({
-        fileFolder: InstanceFileFolder.ApplicationRegistration,
+      const result = await service.readServerFile({
+        fileFolder: ServerFileFolder.ApplicationRegistration,
         resourcePath: 'manifests/manifest.json',
       });
 
-      expect(mockInstanceFileRepository.findOneBy).toHaveBeenCalledWith({
+      expect(mockServerFileRepository.findOneBy).toHaveBeenCalledWith({
         path: 'application-registration/manifests/manifest.json',
         workspaceId: IsNull(),
       });
       expect(mockDriver.readFile).toHaveBeenCalledWith({
-        filePath: 'instance/application-registration/manifests/manifest.json',
+        filePath: 'server/application-registration/manifests/manifest.json',
       });
       expect(result).toBe(stream);
     });
 
     it('should propagate the missing-file exception from the driver', async () => {
-      mockInstanceFileRepository.findOneBy.mockResolvedValue({
-        id: 'instance-file-id',
+      mockServerFileRepository.findOneBy.mockResolvedValue({
+        id: 'server-file-id',
         path: 'application-registration/missing.json',
       } as FileEntity);
       mockDriver.readFile.mockRejectedValueOnce(
@@ -251,8 +239,8 @@ describe('FileStorageService instance scope', () => {
       );
 
       await expect(
-        service.readInstanceFile({
-          fileFolder: InstanceFileFolder.ApplicationRegistration,
+        service.readServerFile({
+          fileFolder: ServerFileFolder.ApplicationRegistration,
           resourcePath: 'missing.json',
         }),
       ).rejects.toThrow(
@@ -263,11 +251,11 @@ describe('FileStorageService instance scope', () => {
     });
 
     it('should throw FILE_NOT_FOUND without reading bytes when the row is missing', async () => {
-      mockInstanceFileRepository.findOneBy.mockResolvedValue(null);
+      mockServerFileRepository.findOneBy.mockResolvedValue(null);
 
       await expect(
-        service.readInstanceFile({
-          fileFolder: InstanceFileFolder.ApplicationRegistration,
+        service.readServerFile({
+          fileFolder: ServerFileFolder.ApplicationRegistration,
           resourcePath: 'deleted.json',
         }),
       ).rejects.toThrow(
@@ -280,32 +268,32 @@ describe('FileStorageService instance scope', () => {
     });
   });
 
-  describe('readInstanceFileById', () => {
+  describe('readServerFileById', () => {
     it('should read the bytes of the row storage path', async () => {
       const stream = Readable.from(['{}']);
 
-      mockInstanceFileRepository.findOneBy.mockResolvedValue({
-        id: 'instance-file-id',
+      mockServerFileRepository.findOneBy.mockResolvedValue({
+        id: 'server-file-id',
         path: 'application-registration/manifest.json',
       } as FileEntity);
       mockDriver.readFile.mockResolvedValue(stream);
 
-      const result = await service.readInstanceFileById('instance-file-id');
+      const result = await service.readServerFileById('server-file-id');
 
-      expect(mockInstanceFileRepository.findOneBy).toHaveBeenCalledWith({
-        id: 'instance-file-id',
+      expect(mockServerFileRepository.findOneBy).toHaveBeenCalledWith({
+        id: 'server-file-id',
         workspaceId: IsNull(),
       });
       expect(mockDriver.readFile).toHaveBeenCalledWith({
-        filePath: 'instance/application-registration/manifest.json',
+        filePath: 'server/application-registration/manifest.json',
       });
       expect(result).toBe(stream);
     });
 
     it('should throw a missing-file exception when the row does not exist', async () => {
-      mockInstanceFileRepository.findOneBy.mockResolvedValue(null);
+      mockServerFileRepository.findOneBy.mockResolvedValue(null);
 
-      await expect(service.readInstanceFileById('unknown-id')).rejects.toThrow(
+      await expect(service.readServerFileById('unknown-id')).rejects.toThrow(
         expect.objectContaining({
           code: FileStorageExceptionCode.FILE_NOT_FOUND,
         }),
@@ -315,34 +303,34 @@ describe('FileStorageService instance scope', () => {
     });
   });
 
-  describe('checkInstanceFileExists', () => {
-    it('should check existence on the instance-prefixed storage path', async () => {
+  describe('checkServerFileExists', () => {
+    it('should check existence on the server-prefixed storage path', async () => {
       mockDriver.checkFileExists.mockResolvedValue(true);
 
-      const result = await service.checkInstanceFileExists({
-        fileFolder: InstanceFileFolder.ApplicationRegistration,
+      const result = await service.checkServerFileExists({
+        fileFolder: ServerFileFolder.ApplicationRegistration,
         resourcePath: 'manifest.json',
       });
 
       expect(mockDriver.checkFileExists).toHaveBeenCalledWith({
-        filePath: 'instance/application-registration/manifest.json',
+        filePath: 'server/application-registration/manifest.json',
       });
       expect(result).toBe(true);
     });
   });
 
-  describe('deleteInstanceFile', () => {
+  describe('deleteServerFile', () => {
     it('should delete the bytes and the row', async () => {
-      await service.deleteInstanceFile({
-        fileFolder: InstanceFileFolder.ApplicationRegistration,
+      await service.deleteServerFile({
+        fileFolder: ServerFileFolder.ApplicationRegistration,
         resourcePath: 'manifests/manifest.json',
       });
 
       expect(mockDriver.delete).toHaveBeenCalledWith({
-        folderPath: 'instance/application-registration/manifests',
+        folderPath: 'server/application-registration/manifests',
         filename: 'manifest.json',
       });
-      expect(mockInstanceFileRepository.delete).toHaveBeenCalledWith({
+      expect(mockServerFileRepository.delete).toHaveBeenCalledWith({
         path: 'application-registration/manifests/manifest.json',
         workspaceId: IsNull(),
       });
@@ -351,68 +339,66 @@ describe('FileStorageService instance scope', () => {
     it('should still delete the row when the bytes deletion fails', async () => {
       mockDriver.delete.mockRejectedValueOnce(new Error('Delete failed'));
 
-      await service.deleteInstanceFile({
-        fileFolder: InstanceFileFolder.ApplicationRegistration,
+      await service.deleteServerFile({
+        fileFolder: ServerFileFolder.ApplicationRegistration,
         resourcePath: 'manifest.json',
       });
 
-      expect(mockInstanceFileRepository.delete).toHaveBeenCalledWith({
+      expect(mockServerFileRepository.delete).toHaveBeenCalledWith({
         path: 'application-registration/manifest.json',
         workspaceId: IsNull(),
       });
     });
 
     it('should propagate row deletion failures', async () => {
-      mockInstanceFileRepository.delete.mockRejectedValueOnce(
+      mockServerFileRepository.delete.mockRejectedValueOnce(
         new Error('Row deletion failed'),
       );
 
       await expect(
-        service.deleteInstanceFile({
-          fileFolder: InstanceFileFolder.ApplicationRegistration,
+        service.deleteServerFile({
+          fileFolder: ServerFileFolder.ApplicationRegistration,
           resourcePath: 'manifest.json',
         }),
       ).rejects.toThrow('Row deletion failed');
     });
   });
 
-  describe('deleteByInstanceFileId', () => {
+  describe('deleteByServerFileId', () => {
     it('should delete the bytes and the row of the given id', async () => {
-      mockInstanceFileRepository.findOneBy.mockResolvedValue({
-        id: 'instance-file-id',
+      mockServerFileRepository.findOneBy.mockResolvedValue({
+        id: 'server-file-id',
         path: 'application-registration/manifest.json',
       } as FileEntity);
 
-      await service.deleteByInstanceFileId('instance-file-id');
+      await service.deleteByServerFileId('server-file-id');
 
       expect(mockDriver.delete).toHaveBeenCalledWith({
-        folderPath: 'instance/application-registration',
+        folderPath: 'server/application-registration',
         filename: 'manifest.json',
       });
-      expect(mockInstanceFileRepository.delete).toHaveBeenCalledWith({
-        id: 'instance-file-id',
+      expect(mockServerFileRepository.delete).toHaveBeenCalledWith({
+        id: 'server-file-id',
         workspaceId: IsNull(),
       });
     });
 
     it('should throw a missing-file exception when the row does not exist', async () => {
-      mockInstanceFileRepository.findOneBy.mockResolvedValue(null);
+      mockServerFileRepository.findOneBy.mockResolvedValue(null);
 
-      await expect(
-        service.deleteByInstanceFileId('unknown-id'),
-      ).rejects.toThrow(
+      await expect(service.deleteByServerFileId('unknown-id')).rejects.toThrow(
         expect.objectContaining({
           code: FileStorageExceptionCode.FILE_NOT_FOUND,
         }),
       );
 
-      expect(mockInstanceFileRepository.delete).not.toHaveBeenCalled();
+      expect(mockServerFileRepository.delete).not.toHaveBeenCalled();
     });
   });
 
   describe('deleteByApplicationRegistrationId', () => {
     it('should delete the bytes of every file then the rows', async () => {
-      mockInstanceFileRepository.findBy.mockResolvedValue([
+      mockServerFileRepository.findBy.mockResolvedValue([
         { id: 'file-1', path: 'application-registration/manifest.json' },
         {
           id: 'file-2',
@@ -422,33 +408,33 @@ describe('FileStorageService instance scope', () => {
 
       await service.deleteByApplicationRegistrationId('registration-id');
 
-      expect(mockInstanceFileRepository.findBy).toHaveBeenCalledWith({
+      expect(mockServerFileRepository.findBy).toHaveBeenCalledWith({
         applicationRegistrationId: 'registration-id',
         workspaceId: IsNull(),
       });
       expect(mockDriver.delete).toHaveBeenCalledWith({
-        folderPath: 'instance/application-registration',
+        folderPath: 'server/application-registration',
         filename: 'manifest.json',
       });
       expect(mockDriver.delete).toHaveBeenCalledWith({
-        folderPath: 'instance/application-registration/nested',
+        folderPath: 'server/application-registration/nested',
         filename: 'settings.json',
       });
-      expect(mockInstanceFileRepository.delete).toHaveBeenCalledWith({
+      expect(mockServerFileRepository.delete).toHaveBeenCalledWith({
         applicationRegistrationId: 'registration-id',
         workspaceId: IsNull(),
       });
     });
 
     it('should still delete the rows when a bytes deletion fails', async () => {
-      mockInstanceFileRepository.findBy.mockResolvedValue([
+      mockServerFileRepository.findBy.mockResolvedValue([
         { id: 'file-1', path: 'application-registration/manifest.json' },
       ] as FileEntity[]);
       mockDriver.delete.mockRejectedValueOnce(new Error('Delete failed'));
 
       await service.deleteByApplicationRegistrationId('registration-id');
 
-      expect(mockInstanceFileRepository.delete).toHaveBeenCalledWith({
+      expect(mockServerFileRepository.delete).toHaveBeenCalledWith({
         applicationRegistrationId: 'registration-id',
         workspaceId: IsNull(),
       });

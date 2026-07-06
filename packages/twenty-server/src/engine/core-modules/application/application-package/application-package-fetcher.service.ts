@@ -24,7 +24,7 @@ import { assertValidNpmPackageName } from 'src/engine/core-modules/application/a
 import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
 import { readJsonFileOrThrow } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
@@ -185,8 +185,6 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         where: { id: file.applicationId },
       });
 
-      // Tarballs are workspace-scoped rows today; an instance-scoped row here
-      // would mean the pointer was corrupted, not that a workspace is missing.
       if (!isDefined(file.workspaceId)) {
         throw new ApplicationException(
           `Tarball file ${file.id} for app registration ${appRegistration.id} has no workspaceId`,
