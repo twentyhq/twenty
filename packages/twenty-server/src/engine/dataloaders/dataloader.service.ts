@@ -7,12 +7,16 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { type WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
+import { type AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
+import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -42,7 +46,13 @@ import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-me
 import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ApiKeyForRoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { type RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
+import { type RowLevelPermissionPredicateDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate.dto';
+import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
+import { RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
 import { type SearchFieldMetadataDTO } from 'src/engine/metadata-modules/search-field-metadata/dtos/search-field-metadata.dto';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
 export type RelationMetadataLoaderPayload = {
   workspaceId: string;
@@ -137,6 +147,11 @@ export type ApplicationTranslationCatalogLoaderPayload = {
   locale: keyof typeof APP_LOCALES;
 };
 
+export type RoleRelationLoaderPayload = {
+  workspaceId: string;
+  roleId: string;
+};
+
 @Injectable()
 export class DataloaderService {
   constructor(
@@ -144,6 +159,11 @@ export class DataloaderService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
+    private readonly userRoleService: UserRoleService,
+    private readonly aiAgentRoleService: AiAgentRoleService,
+    private readonly apiKeyRoleService: ApiKeyRoleService,
+    private readonly rowLevelPermissionPredicateService: RowLevelPermissionPredicateService,
+    private readonly rowLevelPermissionPredicateGroupService: RowLevelPermissionPredicateGroupService,
   ) {}
 
   createLoaders(): IDataloaders {
@@ -169,6 +189,13 @@ export class DataloaderService {
       this.createStandardApplicationIdLoader();
     const applicationTranslationCatalogLoader =
       this.createApplicationTranslationCatalogLoader();
+    const roleWorkspaceMembersLoader = this.createRoleWorkspaceMembersLoader();
+    const roleAgentsLoader = this.createRoleAgentsLoader();
+    const roleApiKeysLoader = this.createRoleApiKeysLoader();
+    const roleRowLevelPermissionPredicatesLoader =
+      this.createRoleRowLevelPermissionPredicatesLoader();
+    const roleRowLevelPermissionPredicateGroupsLoader =
+      this.createRoleRowLevelPermissionPredicateGroupsLoader();
 
     return {
       relationLoader,
@@ -188,7 +215,133 @@ export class DataloaderService {
       isConfiguredLoader,
       standardApplicationIdLoader,
       applicationTranslationCatalogLoader,
+      roleWorkspaceMembersLoader,
+      roleAgentsLoader,
+      roleApiKeysLoader,
+      roleRowLevelPermissionPredicatesLoader,
+      roleRowLevelPermissionPredicateGroupsLoader,
     };
+  }
+
+  private createRoleWorkspaceMembersLoader() {
+    return new DataLoader<RoleRelationLoaderPayload, WorkspaceMemberDTO[]>(
+      async (params: RoleRelationLoaderPayload[]) => {
+        const workspaceId = params[0].workspaceId;
+        const roleIds = params.map((param) => param.roleId);
+
+        const workspaceMembersByRoleId =
+          await this.userRoleService.getWorkspaceMembersByRoleIds({
+            roleIds,
+            workspaceId,
+          });
+
+        return params.map(
+          (param) =>
+            (workspaceMembersByRoleId.get(param.roleId) ??
+              []) as WorkspaceMemberDTO[],
+        );
+      },
+    );
+  }
+
+  private createRoleAgentsLoader() {
+    return new DataLoader<RoleRelationLoaderPayload, AgentDTO[]>(
+      async (params: RoleRelationLoaderPayload[]) => {
+        const workspaceId = params[0].workspaceId;
+        const roleIds = params.map((param) => param.roleId);
+
+        const agentsByRoleId =
+          await this.aiAgentRoleService.getAgentDtosByRoleIds({
+            roleIds,
+            workspaceId,
+          });
+
+        return params.map((param) => agentsByRoleId.get(param.roleId) ?? []);
+      },
+    );
+  }
+
+  private createRoleApiKeysLoader() {
+    return new DataLoader<RoleRelationLoaderPayload, ApiKeyForRoleDTO[]>(
+      async (params: RoleRelationLoaderPayload[]) => {
+        const workspaceId = params[0].workspaceId;
+        const roleIds = params.map((param) => param.roleId);
+
+        const apiKeysByRoleId =
+          await this.apiKeyRoleService.getApiKeyDtosByRoleIds({
+            roleIds,
+            workspaceId,
+          });
+
+        return params.map((param) => apiKeysByRoleId.get(param.roleId) ?? []);
+      },
+    );
+  }
+
+  private createRoleRowLevelPermissionPredicatesLoader() {
+    return new DataLoader<
+      RoleRelationLoaderPayload,
+      RowLevelPermissionPredicateDTO[]
+    >(async (params: RoleRelationLoaderPayload[]) => {
+      const workspaceId = params[0].workspaceId;
+
+      const predicates =
+        await this.rowLevelPermissionPredicateService.findByWorkspaceId(
+          workspaceId,
+        );
+
+      const predicatesByRoleId = new Map<
+        string,
+        RowLevelPermissionPredicateDTO[]
+      >();
+
+      for (const predicate of predicates) {
+        const existingPredicates = predicatesByRoleId.get(predicate.roleId);
+
+        if (isDefined(existingPredicates)) {
+          existingPredicates.push(predicate);
+        } else {
+          predicatesByRoleId.set(predicate.roleId, [predicate]);
+        }
+      }
+
+      return params.map((param) => predicatesByRoleId.get(param.roleId) ?? []);
+    });
+  }
+
+  private createRoleRowLevelPermissionPredicateGroupsLoader() {
+    return new DataLoader<
+      RoleRelationLoaderPayload,
+      RowLevelPermissionPredicateGroupDTO[]
+    >(async (params: RoleRelationLoaderPayload[]) => {
+      const workspaceId = params[0].workspaceId;
+
+      const predicateGroups =
+        await this.rowLevelPermissionPredicateGroupService.findByWorkspaceId(
+          workspaceId,
+        );
+
+      const predicateGroupsByRoleId = new Map<
+        string,
+        RowLevelPermissionPredicateGroupDTO[]
+      >();
+
+      for (const predicateGroup of predicateGroups) {
+        const existingPredicateGroups = predicateGroupsByRoleId.get(
+          predicateGroup.roleId,
+        );
+
+        if (isDefined(existingPredicateGroups)) {
+          existingPredicateGroups.push(predicateGroup);
+        } else {
+          predicateGroupsByRoleId.set(predicateGroup.roleId, [predicateGroup]);
+        }
+      }
+
+      return params.map(
+        (param) => predicateGroupsByRoleId.get(param.roleId) ?? [],
+      );
+    });
   }
 
   private createRelationLoader() {

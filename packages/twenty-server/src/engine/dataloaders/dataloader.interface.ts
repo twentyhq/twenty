@@ -1,5 +1,6 @@
 import type DataLoader from 'dataloader';
 
+import { type WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import {
   type ApplicationTranslationCatalogLoaderPayload,
   type FieldMetadataLoaderPayload,
@@ -11,6 +12,7 @@ import {
   type StandardApplicationIdLoaderPayload,
   type ObjectMetadataLoaderPayload,
   type RelationLoaderPayload,
+  type RoleRelationLoaderPayload,
   type ViewFieldGroupsByViewIdLoaderPayload,
   type ViewFieldsByViewFieldGroupIdLoaderPayload,
   type ViewFieldsByViewIdLoaderPayload,
@@ -19,11 +21,15 @@ import {
   type ViewGroupsByViewIdLoaderPayload,
   type ViewSortsByViewIdLoaderPayload,
 } from 'src/engine/dataloaders/dataloader.service';
+import { type AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { type ApiKeyForRoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { type RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
+import { type RowLevelPermissionPredicateDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate.dto';
 import { type SearchFieldMetadataDTO } from 'src/engine/metadata-modules/search-field-metadata/dtos/search-field-metadata.dto';
 import { type ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { type ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
@@ -110,5 +116,24 @@ export interface IDataloaders {
   applicationTranslationCatalogLoader: DataLoader<
     ApplicationTranslationCatalogLoaderPayload,
     Record<string, string> | undefined
+  >;
+
+  roleWorkspaceMembersLoader: DataLoader<
+    RoleRelationLoaderPayload,
+    WorkspaceMemberDTO[]
+  >;
+
+  roleAgentsLoader: DataLoader<RoleRelationLoaderPayload, AgentDTO[]>;
+
+  roleApiKeysLoader: DataLoader<RoleRelationLoaderPayload, ApiKeyForRoleDTO[]>;
+
+  roleRowLevelPermissionPredicatesLoader: DataLoader<
+    RoleRelationLoaderPayload,
+    RowLevelPermissionPredicateDTO[]
+  >;
+
+  roleRowLevelPermissionPredicateGroupsLoader: DataLoader<
+    RoleRelationLoaderPayload,
+    RowLevelPermissionPredicateGroupDTO[]
   >;
 }
