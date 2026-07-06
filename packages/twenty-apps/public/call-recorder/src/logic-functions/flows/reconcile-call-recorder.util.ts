@@ -23,6 +23,7 @@ import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/data/f
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { rescheduleCallRecordingBot } from 'src/logic-functions/flows/reschedule-call-recording-bot.util';
+import { resolveCallRecordingTitle } from 'src/logic-functions/domain/resolve-call-recording-title.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
@@ -378,7 +379,6 @@ const createPolicyManagedCallRecording = async ({
     callRecording: {
       id: callRecordingId,
       ...scheduledFields,
-      title: scheduledFields.title ?? undefined,
     },
     calendarEvent: representativeCalendarEvent,
   });
@@ -470,8 +470,7 @@ const reconcileCanceledMeeting = async ({
 const buildCalendarDrivenCallRecordingFields = (
   calendarEvent: CalendarEventRecord,
 ): Omit<ScheduledCallRecordingFields, 'status'> => ({
-  // Wire null clears a stale title when the calendar title is gone or restricted.
-  title: calendarEvent.title ?? null,
+  title: resolveCallRecordingTitle(calendarEvent),
   recordingRequestStatus: CallRecordingRequestStatus.REQUESTED,
   calendarEventId: calendarEvent.id,
 });
