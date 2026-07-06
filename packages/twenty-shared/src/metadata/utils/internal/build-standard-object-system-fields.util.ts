@@ -1,9 +1,6 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from '@/application/constants/TwentyStandardApplicationUniversalIdentifier';
 import { getFieldUniversalIdentifier } from '@/application/deterministic-identifier/get-field-universal-identifier.util';
 
-// Canonical set of system fields auto-provisioned on every standard object.
-// The name field is a default field, not a system field: it keeps its
-// hardcoded universal identifier.
 export const STANDARD_OBJECT_SYSTEM_FIELD_NAMES = [
   'id',
   'createdAt',
