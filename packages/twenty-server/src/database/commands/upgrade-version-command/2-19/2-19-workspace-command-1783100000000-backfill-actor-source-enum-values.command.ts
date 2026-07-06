@@ -101,7 +101,7 @@ export const buildActorSourceEnumBackfillTargets = ({
 @Command({
   name: 'upgrade:2-19:backfill-actor-source-enum-values',
   description:
-    'Backfill missing FieldActorSource values (AGENT, WEBHOOK, APPLICATION, ...) into the Postgres enums backing ACTOR fields (createdBy/updatedBy) of existing workspaces.',
+    'Backfill missing AGENT FieldActorSource values into the Postgres enums backing ACTOR fields (createdBy/updatedBy) of existing workspaces.',
 })
 export class BackfillActorSourceEnumValuesCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
