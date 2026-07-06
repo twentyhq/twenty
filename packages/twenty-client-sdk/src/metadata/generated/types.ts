@@ -7529,9 +7529,6 @@ export default {
             "skipSyncEmailOnboardingStep": [
                 154
             ],
-            "skipBookOnboardingStep": [
-                154
-            ],
             "triggerInstallAppsOnboardingStep": [
                 154,
                 {
