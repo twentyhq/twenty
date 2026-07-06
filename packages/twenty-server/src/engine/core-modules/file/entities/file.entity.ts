@@ -30,6 +30,10 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
   'CHK_FILE_PENDING_MIME_OCTET_STREAM',
   `"status" != 'PENDING' OR "mimeType" = 'application/octet-stream'`,
 )
+@Check(
+  'CHK_FILE_WORKSPACE_ID_OR_APPLICATION_REGISTRATION_ID',
+  `"workspaceId" IS NOT NULL OR "applicationRegistrationId" IS NOT NULL`,
+)
 @Index('IDX_FILE_WORKSPACE_ID', ['workspaceId'])
 @Index('IDX_FILE_STATUS', ['status'])
 @Index('IDX_FILE_APPLICATION_REGISTRATION_ID', ['applicationRegistrationId'])

@@ -146,27 +146,6 @@ describe('ServerFileStorageService', () => {
       expect(result).toEqual(serverFile);
     });
 
-    it('should store a null applicationRegistrationId when none is provided', async () => {
-      mockServerFileRepository.findOneByOrFail.mockResolvedValue(
-        {} as FileEntity,
-      );
-
-      await service.writeServerFile({
-        fileFolder: ServerFileFolder.ApplicationRegistration,
-        resourcePath: 'manifest.json',
-        contents: Buffer.from('{}'),
-        mimeType: 'application/json',
-      });
-
-      expect(mockServerFileRepository.upsert).toHaveBeenCalledWith(
-        expect.objectContaining({ applicationRegistrationId: null, size: 2 }),
-        {
-          conflictPaths: ['path'],
-          indexPredicate: '"workspaceId" IS NULL',
-        },
-      );
-    });
-
     it('should reject a traversal resource path without touching storage', async () => {
       await expect(
         service.writeServerFile({
@@ -174,6 +153,7 @@ describe('ServerFileStorageService', () => {
           resourcePath: '../workspace-id/stolen.json',
           contents: '{}',
           mimeType: 'application/json',
+          applicationRegistrationId: 'registration-id',
         }),
       ).rejects.toThrow(
         expect.objectContaining({
@@ -194,6 +174,7 @@ describe('ServerFileStorageService', () => {
           resourcePath: 'manifest.json',
           contents: '{}',
           mimeType: 'application/json',
+          applicationRegistrationId: 'registration-id',
         }),
       ).rejects.toThrow('Write failed');
 

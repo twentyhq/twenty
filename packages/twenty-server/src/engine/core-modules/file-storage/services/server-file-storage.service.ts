@@ -74,7 +74,7 @@ export class ServerFileStorageService {
   }: ServerResourceIdentifier & {
     contents: Buffer | string;
     mimeType: string;
-    applicationRegistrationId?: string;
+    applicationRegistrationId: string;
   }): Promise<FileEntity> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
@@ -99,7 +99,7 @@ export class ServerFileStorageService {
             ? Buffer.byteLength(contents)
             : contents.length,
         mimeType,
-        applicationRegistrationId: applicationRegistrationId ?? null,
+        applicationRegistrationId,
       },
       {
         conflictPaths: ['path'],

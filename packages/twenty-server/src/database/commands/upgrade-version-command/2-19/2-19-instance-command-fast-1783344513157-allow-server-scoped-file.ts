@@ -15,9 +15,11 @@ export class AllowServerScopedFileFastInstanceCommand implements FastInstanceCom
     await queryRunner.query('ALTER TABLE "core"."file" ADD CONSTRAINT "IDX_APPLICATION_PATH_WORKSPACE_ID_APPLICATION_ID_UNIQUE" UNIQUE ("workspaceId", "applicationId", "path")');
     await queryRunner.query('ALTER TABLE "core"."file" ADD CONSTRAINT "FK_de468b3d8dcf7e94f7074220929" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION');
     await queryRunner.query('ALTER TABLE "core"."file" ADD CONSTRAINT "FK_feffd2addf9467be6d7cd51db76" FOREIGN KEY ("applicationRegistrationId") REFERENCES "core"."applicationRegistration"("id") ON DELETE CASCADE ON UPDATE NO ACTION');
+    await queryRunner.query('ALTER TABLE "core"."file" ADD CONSTRAINT "CHK_FILE_WORKSPACE_ID_OR_APPLICATION_REGISTRATION_ID" CHECK ("workspaceId" IS NOT NULL OR "applicationRegistrationId" IS NOT NULL)');
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('ALTER TABLE "core"."file" DROP CONSTRAINT "CHK_FILE_WORKSPACE_ID_OR_APPLICATION_REGISTRATION_ID"');
     await queryRunner.query('ALTER TABLE "core"."file" DROP CONSTRAINT "FK_feffd2addf9467be6d7cd51db76"');
     await queryRunner.query('ALTER TABLE "core"."file" DROP CONSTRAINT "FK_de468b3d8dcf7e94f7074220929"');
     await queryRunner.query('ALTER TABLE "core"."file" DROP CONSTRAINT "IDX_APPLICATION_PATH_WORKSPACE_ID_APPLICATION_ID_UNIQUE"');
