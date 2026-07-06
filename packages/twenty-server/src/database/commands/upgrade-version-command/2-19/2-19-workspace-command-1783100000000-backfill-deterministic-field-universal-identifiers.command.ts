@@ -199,12 +199,19 @@ export class BackfillDeterministicFieldUniversalIdentifiersCommand extends Activ
       return;
     }
 
-    for (const { id, newUniversalIdentifier } of updates) {
-      await this.fieldMetadataRepository.update(
-        { id, workspaceId },
-        { universalIdentifier: newUniversalIdentifier },
-      );
-    }
+    await this.fieldMetadataRepository.manager.transaction(
+      async (entityManager) => {
+        const transactionalFieldMetadataRepository =
+          entityManager.getRepository(FieldMetadataEntity);
+
+        for (const { id, newUniversalIdentifier } of updates) {
+          await transactionalFieldMetadataRepository.update(
+            { id, workspaceId },
+            { universalIdentifier: newUniversalIdentifier },
+          );
+        }
+      },
+    );
 
     const fieldMetadataRelatedNames = [
       'fieldMetadata',
