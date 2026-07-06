@@ -1,5 +1,4 @@
 import { AgentChatMessagesFetchEffect } from '@/ai/components/AgentChatMessagesFetchEffect';
-import { AgentChatPrepromptEffect } from '@/ai/components/AgentChatPrepromptEffect';
 import { AgentChatSessionStartTimeEffect } from '@/ai/components/AgentChatSessionStartTimeEffect';
 import { AgentChatStreamKeepAliveEffect } from '@/ai/components/AgentChatStreamKeepAliveEffect';
 import { AgentChatStreamSubscriptionEffect } from '@/ai/components/AgentChatStreamSubscriptionEffect';
@@ -38,7 +37,6 @@ export const AgentChatRuntimeEffects = () => {
     <>
       <AgentChatMessagesFetchEffect />
       <AgentChatStreamSubscriptionEffect />
-      <AgentChatPrepromptEffect />
       <AgentChatStreamKeepAliveEffect />
       <AgentChatSessionStartTimeEffect />
       {isAgentChatOpen && (

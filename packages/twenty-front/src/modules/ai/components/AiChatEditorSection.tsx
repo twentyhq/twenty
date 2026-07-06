@@ -14,6 +14,7 @@ import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatConte
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatEditorFocusEffect } from '@/ai/components/internal/AiChatEditorFocusEffect';
+import { AiChatEditorSubmitEffect } from '@/ai/components/internal/AiChatEditorSubmitEffect';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
@@ -149,6 +150,7 @@ export const AiChatEditorSection = () => {
   return (
     <>
       <AiChatEditorFocusEffect editor={editor} />
+      <AiChatEditorSubmitEffect editor={editor} />
       <AiChatEmptyState editor={editor} />
       <AiChatStandaloneError />
       <AiChatSkeletonLoader />

@@ -3,18 +3,19 @@ import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
-import {
-  type AgentChatPrepromptMode,
-  agentChatPrepromptState,
-} from '@/ai/states/agentChatPrepromptState';
+import { shouldSubmitChatEditorState } from '@/ai/states/shouldSubmitChatEditorState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+
+export type AgentChatPrepromptMode = 'PREFILL' | 'SEND';
 
 export const useOpenAskAiPageWithPreprompt = () => {
   const { switchToNewChat } = useSwitchToNewAiChat();
   const setAgentChatDraftsByThreadId = useSetAtomState(
     agentChatDraftsByThreadIdState,
   );
-  const setAgentChatPreprompt = useSetAtomState(agentChatPrepromptState);
+  const setShouldSubmitChatEditor = useSetAtomState(
+    shouldSubmitChatEditorState,
+  );
 
   const openAskAiPageWithPreprompt = ({
     text,
@@ -28,7 +29,7 @@ export const useOpenAskAiPageWithPreprompt = () => {
       ...prev,
       [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: text,
     }));
-    setAgentChatPreprompt({ text, mode });
+    setShouldSubmitChatEditor(mode === 'SEND');
   };
 
   return { openAskAiPageWithPreprompt };
