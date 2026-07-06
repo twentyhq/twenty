@@ -1,6 +1,6 @@
 import { join, normalize } from 'path';
 
-import { type InstanceFileFolder } from 'src/engine/core-modules/file-storage/types/instance-file-folder.type';
+import { type InstanceFileFolder } from 'twenty-shared/types';
 
 import {
   FileStorageException,

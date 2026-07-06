@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { basename, dirname, join } from 'path';
 import { type Readable } from 'stream';
 
-import { type InstanceFileFolder } from 'src/engine/core-modules/file-storage/types/instance-file-folder.type';
+import { type InstanceFileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 

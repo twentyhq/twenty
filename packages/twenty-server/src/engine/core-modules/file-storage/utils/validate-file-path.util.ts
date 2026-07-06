@@ -1,7 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { type FileFolder } from 'twenty-shared/types';
-
-import { type InstanceFileFolder } from 'src/engine/core-modules/file-storage/types/instance-file-folder.type';
+import { type FileFolder, type InstanceFileFolder } from 'twenty-shared/types';
 
 import { type ResourcePathValidationResult } from 'src/engine/core-modules/file-storage/types/resource-path-validation-result.type';
 import { validateFileExtension } from 'src/engine/core-modules/file-storage/utils/validate-file-extension.util';

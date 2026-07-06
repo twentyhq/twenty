@@ -1,20 +1,22 @@
+import { InstanceFileFolder } from 'twenty-shared/types';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
 import { validateStoragePathIsWithinInstanceScopeOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-instance-scope-or-throw.util';
 
 const primitives = {
-  fileFolder: 'application-manifest',
+  fileFolder: InstanceFileFolder.ApplicationRegistration,
 } as const;
 
 describe('validateStoragePathIsWithinInstanceScopeOrThrow', () => {
   it.each([
     {
       title: 'nested path within prefix',
-      onStoragePath: 'instance/application-manifest/manifests/manifest.json',
+      onStoragePath:
+        'instance/application-registration/manifests/manifest.json',
     },
     {
       title: 'file directly under prefix',
-      onStoragePath: 'instance/application-manifest/manifest.json',
+      onStoragePath: 'instance/application-registration/manifest.json',
     },
   ])('should accept valid path: $title', ({ onStoragePath }) => {
     expect(() =>
@@ -45,19 +47,19 @@ describe('validateStoragePathIsWithinInstanceScopeOrThrow', () => {
     {
       title: 'traversal out of the instance prefix',
       onStoragePath:
-        'instance/application-manifest/../../workspace-id/file.json',
+        'instance/application-registration/../../workspace-id/file.json',
     },
     {
       title: 'traversal segments kept after normalization',
-      onStoragePath: 'instance/application-manifest/../../../etc/passwd',
+      onStoragePath: 'instance/application-registration/../../../etc/passwd',
     },
     {
       title: 'absolute path',
-      onStoragePath: '/instance/application-manifest/file.json',
+      onStoragePath: '/instance/application-registration/file.json',
     },
     {
       title: 'null byte in path',
-      onStoragePath: 'instance/application-manifest/file\0.json',
+      onStoragePath: 'instance/application-registration/file\0.json',
     },
   ])(
     'should reject path that escapes instance scope: $title',
