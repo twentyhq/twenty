@@ -1,7 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { RestApiClient } from 'twenty-client-sdk/rest';
 
-import { fetchFunctionsBaseUrl } from 'src/logic-functions/data/fetch-functions-base-url.util';
+import { resolveOwnRouteTarget } from 'src/logic-functions/data/resolve-own-route-target.util';
 
 const OWN_ROUTE_FLUSH_MS = 5_000;
 
@@ -21,16 +21,16 @@ export const postToOwnRoute = async ({
   body: object;
 }): Promise<boolean> => {
   try {
-    const functionsBaseUrl = await fetchFunctionsBaseUrl();
-    const client = isUndefined(functionsBaseUrl)
+    const routeTarget = await resolveOwnRouteTarget();
+    const client = isUndefined(routeTarget.baseUrl)
       ? new RestApiClient()
-      : new RestApiClient({ baseUrl: functionsBaseUrl });
-    const requestPath = isUndefined(functionsBaseUrl) ? `/s${path}` : path;
+      : new RestApiClient({ baseUrl: routeTarget.baseUrl });
+    const requestPath = `${routeTarget.pathPrefix}${path}`;
 
     logInfo(
-      `[call-recorder] posting to own route ${requestPath} with ${Object.keys(
-        body,
-      ).length} body fields`,
+      `[call-recorder] posting to own route ${requestPath} with ${
+        Object.keys(body).length
+      } body fields`,
     );
 
     await client.post(requestPath, body, {

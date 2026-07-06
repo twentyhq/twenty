@@ -4,14 +4,14 @@ import { postToOwnRoute } from 'src/logic-functions/data/post-to-own-route.util'
 
 const postMock = vi.hoisted(() => vi.fn());
 const restApiClientMock = vi.hoisted(() => vi.fn());
-const fetchFunctionsBaseUrlMock = vi.hoisted(() => vi.fn());
+const resolveOwnRouteTargetMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-client-sdk/rest', () => ({
   RestApiClient: restApiClientMock,
 }));
 
-vi.mock('src/logic-functions/data/fetch-functions-base-url.util', () => ({
-  fetchFunctionsBaseUrl: fetchFunctionsBaseUrlMock,
+vi.mock('src/logic-functions/data/resolve-own-route-target.util', () => ({
+  resolveOwnRouteTarget: resolveOwnRouteTargetMock,
 }));
 
 describe('postToOwnRoute', () => {
@@ -21,13 +21,14 @@ describe('postToOwnRoute', () => {
       return { post: postMock };
     });
     postMock.mockResolvedValue({});
-    fetchFunctionsBaseUrlMock.mockResolvedValue(undefined);
+    resolveOwnRouteTargetMock.mockResolvedValue({ pathPrefix: '/s' });
   });
 
   it('posts to the functions origin without the legacy prefix when resolved', async () => {
-    fetchFunctionsBaseUrlMock.mockResolvedValue(
-      'https://acme.functions.example.com',
-    );
+    resolveOwnRouteTargetMock.mockResolvedValue({
+      baseUrl: 'https://acme.functions.example.com',
+      pathPrefix: '',
+    });
 
     const result = await postToOwnRoute({
       path: '/call-recorder/some-route',
@@ -41,6 +42,28 @@ describe('postToOwnRoute', () => {
     expect(postMock).toHaveBeenCalledWith(
       '/call-recorder/some-route',
       { key: 'value' },
+      { signal: expect.any(AbortSignal) },
+    );
+  });
+
+  it('posts to a workspace-aware legacy route when resolved', async () => {
+    resolveOwnRouteTargetMock.mockResolvedValue({
+      baseUrl: 'http://acme.localhost:3000',
+      pathPrefix: '/s',
+    });
+
+    const result = await postToOwnRoute({
+      path: '/call-recorder/some-route',
+      body: {},
+    });
+
+    expect(result).toBe(true);
+    expect(restApiClientMock).toHaveBeenCalledWith({
+      baseUrl: 'http://acme.localhost:3000',
+    });
+    expect(postMock).toHaveBeenCalledWith(
+      '/s/call-recorder/some-route',
+      {},
       { signal: expect.any(AbortSignal) },
     );
   });
