@@ -1,34 +1,40 @@
 # Document Generator
 
-A [Twenty](https://twenty.com) app that turns reusable templates into personalized
-documents using the data already in your CRM. It is the app built in the
-[Document Generator tutorial](https://docs.twenty.com/developers/extend/apps/tutorials/document-generator/overview).
+**Turn your CRM data into finished documents — in one click.**
 
-## What it does
+Document Generator is a [Twenty](https://twenty.com) app that fills reusable
+templates with the data already in your CRM. Write a proposal, offer letter, or
+follow-up once with `{{placeholders}}`, then generate a personalized document for
+any Person or Company — from the command menu, an AI agent, or a workflow. Every
+document is saved to your CRM with a downloadable **PDF** and a shareable **web
+link**.
 
-- **Document templates** — write a template once with `{{placeholders}}` like
-  `{{name.firstName}}` or `{{jobTitle}}`.
-- **Documents** — generate a filled-in document from a template and a Person or
-  Company record, in one click.
-- **Generate anywhere** — from the command menu on a record, from an AI agent,
-  or as a step in a workflow.
-- **Real PDF** — every generated document carries a downloadable PDF file.
-- **Share** — open any generated document as a printable web page.
+No copy-paste. No leaving Twenty.
 
-## Capabilities used
+![A generated document](public/gallery/01-generated-document.png)
 
-| Capability | Files |
+## Why you'll love it
+
+- **✍️ Write once, reuse forever** — templates with `{{name.firstName}}`,
+  `{{jobTitle}}`, `{{company.name}}` and any field on your records.
+- **⚡ Generate anywhere** — one click from a record's command menu, a step in a
+  workflow, or a natural-language request to an AI agent.
+- **📄 Real, polished PDFs** — every document carries a clean, printable PDF
+  attached to the record.
+- **🔗 Shareable links** — open any document as a standalone web page to send to
+  a client.
+- **🧩 Native rich-text editor** — author templates in the same editor Twenty
+  uses for Notes and Tasks.
+
+## See it in action
+
+| | |
 | --- | --- |
-| Objects, fields & relations | `src/objects/`, `src/fields/` |
-| PDF generation + file upload | `src/logic-functions/utils/generate-document-pdf.ts`, `src/logic-functions/handlers/generate-document-handler.ts` |
-| Logic function (AI tool + workflow action) | `src/logic-functions/generate-document.ts` |
-| HTTP routes | `src/logic-functions/generate-document-route.ts`, `src/logic-functions/view-document.ts` |
-| Front component + command menu | `src/front-components/`, `src/command-menu-items/` |
-| Views & navigation | `src/views/`, `src/navigation-menu-items/` |
-| Agent & skill | `src/agents/`, `src/skills/` |
-| Role | `src/roles/` |
+| **Generate from the command menu** | ![Command menu](public/gallery/02-command-menu.png) |
+| **Author templates in rich text** | ![Template editor](public/gallery/03-template-editor.png) |
+| **Every document, organized** | ![Documents](public/gallery/04-documents.png) |
 
-## Getting started
+## Install
 
 ```bash
 yarn install
@@ -38,7 +44,25 @@ yarn twenty dev                          # build, sync, and watch
 ```
 
 Open your Twenty instance and look for **Templates** and **Documents** in the
-sidebar.
+sidebar. Create a template, then hit **⌘K → Generate document** on any Person or
+Company.
+
+## How it's built
+
+This is the reference app from the
+[Document Generator tutorial](https://docs.twenty.com/developers/extend/apps/tutorials/document-generator/overview) —
+a tour through most of the Twenty SDK.
+
+| Capability | Files |
+| --- | --- |
+| Objects, fields & relations | `src/objects/`, `src/fields/` |
+| PDF generation + file upload | `src/logic-functions/utils/generate-document-pdf.ts`, `src/logic-functions/handlers/generate-document-handler.ts` |
+| Logic function (AI tool + workflow action) | `src/logic-functions/generate-document.ts` |
+| HTTP routes (JSON + shareable page) | `src/logic-functions/generate-document-route.ts`, `src/logic-functions/view-document.ts` |
+| Front component + command menu | `src/front-components/`, `src/command-menu-items/` |
+| Views & navigation | `src/views/`, `src/navigation-menu-items/` |
+| Agent & skill | `src/agents/`, `src/skills/` |
+| Role | `src/roles/` |
 
 ## Commands
 
