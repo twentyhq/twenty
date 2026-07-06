@@ -42,6 +42,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.AGENT_EXECUTION_FAILED:
       case AiExceptionCode.API_KEY_NOT_CONFIGURED:
       case AiExceptionCode.USER_WORKSPACE_ID_NOT_FOUND:
+      case AiExceptionCode.STREAM_INTERRUPTED:
         throw new InternalServerError(error);
       default: {
         return assertUnreachable(error.code);

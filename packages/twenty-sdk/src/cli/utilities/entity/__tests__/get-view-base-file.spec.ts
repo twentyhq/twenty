@@ -1,8 +1,21 @@
 import { getViewBaseFile } from '@/cli/utilities/entity/entity-view-template';
 
+const APPLICATION_UNIVERSAL_IDENTIFIER = 'app-abc-123';
+
+const getTestViewBaseFile = (
+  overrides: Omit<
+    Parameters<typeof getViewBaseFile>[0],
+    'applicationUniversalIdentifier'
+  >,
+) =>
+  getViewBaseFile({
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    ...overrides,
+  });
+
 describe('getViewBaseFile', () => {
   it('should render proper file using defineView', () => {
-    const result = getViewBaseFile({
+    const result = getTestViewBaseFile({
       name: 'my-view',
       universalIdentifier: '71e45a58-41da-4ae4-8b73-a543c0a9d3d4',
       objectUniversalIdentifier: 'obj-abc-123',
@@ -20,7 +33,7 @@ describe('getViewBaseFile', () => {
   });
 
   it('should use default objectUniversalIdentifier when not provided', () => {
-    const result = getViewBaseFile({
+    const result = getTestViewBaseFile({
       name: 'default-view',
     });
 
@@ -28,7 +41,7 @@ describe('getViewBaseFile', () => {
   });
 
   it('should include commented fields, filters and sorts when no fields provided', () => {
-    const result = getViewBaseFile({
+    const result = getTestViewBaseFile({
       name: 'empty-view',
     });
 
@@ -38,7 +51,7 @@ describe('getViewBaseFile', () => {
   });
 
   it('should render fields block when fields are provided', () => {
-    const result = getViewBaseFile({
+    const result = getTestViewBaseFile({
       name: 'view-with-fields',
       fields: [
         {
@@ -61,7 +74,7 @@ describe('getViewBaseFile', () => {
   });
 
   it('should apply default values to fields', () => {
-    const result = getViewBaseFile({
+    const result = getTestViewBaseFile({
       name: 'view-defaults',
       fields: [
         {
@@ -77,7 +90,7 @@ describe('getViewBaseFile', () => {
   });
 
   it('should generate unique UUID when not provided', () => {
-    const result = getViewBaseFile({
+    const result = getTestViewBaseFile({
       name: 'auto-uuid-view',
     });
 
@@ -87,7 +100,7 @@ describe('getViewBaseFile', () => {
   });
 
   it('should use kebab-case for name', () => {
-    const result = getViewBaseFile({
+    const result = getTestViewBaseFile({
       name: 'all active contacts',
     });
 
@@ -95,7 +108,7 @@ describe('getViewBaseFile', () => {
   });
 
   it('should generate UUIDs for fields when not provided', () => {
-    const result = getViewBaseFile({
+    const result = getTestViewBaseFile({
       name: 'view-auto-field-uuids',
       fields: [
         {
@@ -115,7 +128,7 @@ describe('getViewBaseFile', () => {
   });
 
   it('should emit a generateDefaultFieldUniversalIdentifier call for fields using defaultFieldName', () => {
-    const result = getViewBaseFile({
+    const result = getTestViewBaseFile({
       name: 'view-default-field',
       objectUniversalIdentifier: 'obj-abc-123',
       fields: [
@@ -132,12 +145,13 @@ describe('getViewBaseFile', () => {
     expect(result).toContain(
       'fieldMetadataUniversalIdentifier: generateDefaultFieldUniversalIdentifier({',
     );
+    expect(result).toContain("applicationUniversalIdentifier: 'app-abc-123'");
     expect(result).toContain("objectUniversalIdentifier: 'obj-abc-123'");
     expect(result).toContain("fieldName: 'createdAt'");
   });
 
   it('should not import generateDefaultFieldUniversalIdentifier when no field uses defaultFieldName', () => {
-    const result = getViewBaseFile({
+    const result = getTestViewBaseFile({
       name: 'view-literal-only',
       fields: [
         {

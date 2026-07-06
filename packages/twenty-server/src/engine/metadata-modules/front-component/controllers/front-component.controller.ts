@@ -11,6 +11,7 @@ import {
 import { pipeline } from 'stream/promises';
 
 import { Response } from 'express';
+import { FileFolder } from 'twenty-shared/types';
 
 import {
   FileStorageException,
@@ -45,7 +46,7 @@ export class FrontComponentController {
 
   constructor(private readonly frontComponentService: FrontComponentService) {}
 
-  @Get(':frontComponentId')
+  @Get([':frontComponentId', ':frontComponentId/:cacheKey'])
   @UseGuards(NoPermissionGuard)
   async getBuiltJs(
     @Res() res: Response,
@@ -87,7 +88,11 @@ export class FrontComponentController {
       return res.redirect(fileResponse.presignedUrl);
     }
 
-    setFileResponseHeaders(res, fileResponse.mimeType);
+    setFileResponseHeaders(
+      res,
+      fileResponse.mimeType,
+      FileFolder.BuiltFrontComponent,
+    );
 
     try {
       await pipeline(fileResponse.stream, res);

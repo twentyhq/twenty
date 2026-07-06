@@ -380,7 +380,27 @@ export class WorkflowSchemaWorkspaceService {
   }
 
   private computeSendEmailActionOutputSchema(): OutputSchema {
-    return { success: { isLeaf: true, type: 'boolean', value: true } };
+    return {
+      success: { isLeaf: true, type: 'boolean', value: true },
+      headerMessageId: {
+        isLeaf: true,
+        type: 'string',
+        label: 'Message-ID header',
+        value: '<message-id@mail.example.com>',
+      },
+      messageId: {
+        isLeaf: true,
+        type: 'string',
+        label: 'Message record ID',
+        value: '',
+      },
+      messageThreadId: {
+        isLeaf: true,
+        type: 'string',
+        label: 'Message thread ID',
+        value: '',
+      },
+    };
   }
 
   private async computeAiAgentActionOutputSchema({

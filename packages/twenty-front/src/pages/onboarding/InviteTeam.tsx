@@ -1,41 +1,42 @@
-import { SubTitle } from '@/auth/components/SubTitle';
-import { Title } from '@/auth/components/Title';
+import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
+import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
+import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
+import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
+import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnboardingStepSubtitle';
+import { StyledOnboardingStepTagsRow } from '@/onboarding/components/StyledOnboardingStepTagsRow';
+import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
+import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
+import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
+import { ONBOARDING_MOTION_SLIDE_OFFSET } from '@/onboarding/constants/OnboardingMotionSlideOffset';
 import { useInviteTeam } from '@/onboarding/hooks/useInviteTeam';
+import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { ModalContent } from 'twenty-ui/surfaces';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { useLingui } from '@lingui/react/macro';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Controller } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCopy } from 'twenty-ui/icon';
-import { SeparatorLineText } from 'twenty-ui/typography';
-import { LightButton, MainButton } from 'twenty-ui/input';
-import { ClickToActionLink } from 'twenty-ui/navigation';
+import { IconX } from 'twenty-ui/icon';
+import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledAnimatedContainer = styled.div`
+const StyledForm = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
-  overflow-x: hidden;
-  overflow-y: scroll;
-  padding: ${themeCssVariables.spacing[8]} 0;
-  width: 100%;
+  max-width: 100%;
+  width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
 
-const StyledActionLinkContainer = styled.div`
+const StyledFooter = styled.div`
+  align-items: flex-end;
   display: flex;
-  justify-content: center;
-`;
-
-const StyledButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 200px;
-`;
-
-const StyledActionSkipLinkContainer = styled.div`
-  margin: ${themeCssVariables.spacing[3]} 0 0;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
+  max-width: 100%;
+  width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
 
 export const InviteTeam = () => {
@@ -43,87 +44,96 @@ export const InviteTeam = () => {
   const {
     control,
     fields,
+    remove,
     handleSubmit,
     onSubmit,
     handleSkip,
-    copyInviteLink,
     getPlaceholder,
-    hasPrefilledSuggestions,
-    hasCalendarBooking,
     isValid,
     isSubmitting,
-    currentWorkspace,
+    isNavigating,
   } = useInviteTeam();
+  const onboardingConfig = useAtomStateValue(onboardingConfigState);
+  const creditsRewardPerUser = onboardingConfig?.inviteTeamCreditsRewardPerUser;
+  const transition = useOnboardingMotionTransition();
 
   return (
-    <ModalContent isVerticallyCentered isHorizontallyCentered>
-      <Title>
-        <Trans>Invite your team</Trans>
-      </Title>
-      <SubTitle>
-        {hasPrefilledSuggestions ? (
-          <Trans>
-            We found teammates from your calendar. Review and invite them.
-          </Trans>
-        ) : (
-          <Trans>
-            Get the most out of your workspace by inviting your team.
-          </Trans>
-        )}
-      </SubTitle>
-      <StyledAnimatedContainer>
-        {fields.map((field, index) => (
-          <Controller
-            key={index}
-            name={`emails.${index}.email`}
-            control={control}
-            render={({
-              field: { onChange, onBlur, value },
-              fieldState: { error },
-            }) => (
-              <TextInput
-                autoFocus={index === 0}
-                type="email"
-                value={value}
-                placeholder={getPlaceholder(index)}
-                onBlur={onBlur}
-                error={error?.message}
-                onChange={onChange}
-                noErrorHelper
-                fullWidth
+    <StyledOnboardingStepPage>
+      <StyledOnboardingStepHeading>
+        <OnboardingStepAnimatedItem index={0}>
+          <StyledOnboardingStepTitle>{t`Invite your team`}</StyledOnboardingStepTitle>
+        </OnboardingStepAnimatedItem>
+        <OnboardingStepAnimatedItem index={1}>
+          <StyledOnboardingStepSubtitle>
+            {t`Get the most out of your workspace by inviting your team.`}
+          </StyledOnboardingStepSubtitle>
+        </OnboardingStepAnimatedItem>
+        {isDefined(creditsRewardPerUser) && (
+          <OnboardingStepAnimatedItem index={2}>
+            <StyledOnboardingStepTagsRow>
+              <OnboardingCreditsRewardTag
+                amount={creditsRewardPerUser}
+                suffix={t`free credits per user`}
               />
-            )}
+            </StyledOnboardingStepTagsRow>
+          </OnboardingStepAnimatedItem>
+        )}
+      </StyledOnboardingStepHeading>
+
+      <OnboardingStepAnimatedItem index={3}>
+        <StyledForm>
+          <AnimatePresence initial={false}>
+            {fields.map((field, index) => (
+              <motion.div
+                key={field.id}
+                layout
+                initial={{ opacity: 0, y: -ONBOARDING_MOTION_SLIDE_OFFSET }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -ONBOARDING_MOTION_SLIDE_OFFSET }}
+                transition={transition}
+              >
+                <Controller
+                  name={`emails.${index}.email`}
+                  control={control}
+                  render={({
+                    field: { onChange, onBlur, value },
+                    fieldState: { error },
+                  }) => (
+                    <TextInput
+                      autoFocus={index === 0}
+                      type="email"
+                      value={value}
+                      placeholder={getPlaceholder(index)}
+                      onBlur={onBlur}
+                      error={error?.message}
+                      onChange={onChange}
+                      RightIcon={IconX}
+                      onRightIconClick={() => remove(index)}
+                      noErrorHelper
+                      fullWidth
+                    />
+                  )}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </StyledForm>
+      </OnboardingStepAnimatedItem>
+
+      <OnboardingStepAnimatedItem index={4}>
+        <StyledFooter>
+          <MainButton
+            title={t`Invite`}
+            disabled={!isValid || isSubmitting || isNavigating}
+            onClick={handleSubmit(onSubmit)}
+            fullWidth
           />
-        ))}
-        {isDefined(currentWorkspace?.inviteHash) && (
-          <>
-            <SeparatorLineText>
-              <Trans>or</Trans>
-            </SeparatorLineText>
-            <StyledActionLinkContainer>
-              <LightButton
-                title={t`Copy invitation link`}
-                accent="tertiary"
-                onClick={copyInviteLink}
-                Icon={IconCopy}
-              />
-            </StyledActionLinkContainer>
-          </>
-        )}
-      </StyledAnimatedContainer>
-      <StyledButtonContainer>
-        <MainButton
-          title={hasCalendarBooking ? t`Continue` : t`Finish`}
-          disabled={!isValid || isSubmitting}
-          onClick={handleSubmit(onSubmit)}
-          fullWidth
-        />
-      </StyledButtonContainer>
-      <StyledActionSkipLinkContainer>
-        <ClickToActionLink onClick={handleSkip}>
-          <Trans>Skip</Trans>
-        </ClickToActionLink>
-      </StyledActionSkipLinkContainer>
-    </ModalContent>
+          <OnboardingSkipButton
+            onClick={handleSkip}
+            disabled={isSubmitting || isNavigating}
+          />
+        </StyledFooter>
+      </OnboardingStepAnimatedItem>
+    </StyledOnboardingStepPage>
   );
 };

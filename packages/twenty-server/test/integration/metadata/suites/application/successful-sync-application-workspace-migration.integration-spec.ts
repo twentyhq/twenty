@@ -19,6 +19,7 @@ const TEST_FIELD_ID = uuidv4();
 const TEST_SKILL_ID = uuidv4();
 
 const TEST_OBJECT = buildDefaultObjectManifest({
+  applicationUniversalIdentifier: TEST_APP_ID,
   nameSingular: 'ticket',
   namePlural: 'tickets',
   labelSingular: 'Ticket',
@@ -172,6 +173,7 @@ describe('syncApplication', () => {
     const updatedFieldId = uuidv4();
 
     const testObject = buildDefaultObjectManifest({
+      applicationUniversalIdentifier: TEST_APP_ID,
       nameSingular: 'ticket',
       namePlural: 'tickets',
       labelSingular: 'Ticket',

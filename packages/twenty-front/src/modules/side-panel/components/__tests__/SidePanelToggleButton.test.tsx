@@ -14,13 +14,20 @@ import { PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/icon';
 
+const mockAppTooltip = jest.fn();
+
 jest.mock('twenty-ui/utilities', () => ({
   useIsMobile: () => false,
+  getOsControlSymbol: () => '⌘',
 }));
 
 jest.mock('twenty-ui/surfaces', () => ({
   ...jest.requireActual('twenty-ui/surfaces'),
-  AppTooltip: () => null,
+  AppTooltip: (props: { content: string }) => {
+    mockAppTooltip(props);
+
+    return null;
+  },
 }));
 
 const renderSidePanelToggleButton = ({
@@ -68,6 +75,10 @@ const renderSidePanelToggleButton = ({
 };
 
 describe('SidePanelToggleButton', () => {
+  beforeEach(() => {
+    mockAppTooltip.mockClear();
+  });
+
   it('opens the command menu when the side panel is closed', () => {
     const { store } = renderSidePanelToggleButton();
 
@@ -145,6 +156,16 @@ describe('SidePanelToggleButton', () => {
     });
 
     expect(screen.getByTestId('page-header-side-panel-button')).toBeVisible();
+  });
+
+  it('shows the command menu keyboard shortcut in the tooltip', () => {
+    renderSidePanelToggleButton();
+
+    expect(mockAppTooltip).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: 'Command menu | ⌘K',
+      }),
+    );
   });
 
   it('marks the command menu button as a click-outside exclusion', () => {

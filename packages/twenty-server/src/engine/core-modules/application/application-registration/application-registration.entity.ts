@@ -141,6 +141,69 @@ export class ApplicationRegistrationEntity {
   })
   logo: string | null;
 
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
+  })
+  description: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
+  })
+  author: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
+  })
+  category: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
+  })
+  websiteUrl: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
+  })
+  aboutDescription: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
+  })
+  termsUrl: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
+  })
+  emailSupport: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
+  })
+  issueReportUrl: string | null;
+
+  @Column({ type: 'text', array: true, default: '{}' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
+  })
+  screenshots: string[];
+
   @Field(() => String, { nullable: true })
   get logoUrl(): string | null {
     return this.logo ?? this.manifest?.application?.logoUrl ?? null;

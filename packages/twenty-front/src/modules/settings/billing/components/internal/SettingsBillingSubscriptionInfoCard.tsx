@@ -81,6 +81,7 @@ const StyledStatusPill = styled.span<{ tone: BillingStatusTone }>`
   background-color: ${({ tone }) => STATUS_PILL_COLORS[tone].background};
   border-radius: ${themeCssVariables.border.radius.pill};
   color: ${({ tone }) => STATUS_PILL_COLORS[tone].color};
+  corner-shape: round;
   display: inline-flex;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
@@ -93,6 +94,7 @@ const StyledStatusPill = styled.span<{ tone: BillingStatusTone }>`
 const StyledStatusDot = styled.span<{ tone: BillingStatusTone }>`
   background-color: currentColor;
   border-radius: 50%;
+  corner-shape: round;
   height: 4px;
   width: 4px;
 `;
