@@ -1,0 +1,230 @@
+packages/twenty-shared/src/utils/formula/utils/__tests__/parseFormulaExpressionOrThrow.test.ts
+  s_c9896ad68d525f::t_dcd0ad39fd8a2f 33,109,123-125
+  s_c9896ad68d525f::t_014153d621ed4b 112-119
+  s_c9896ad68d525f::t_d7ae644e9a0252 1-32,34-108,110-111,120-122,126-135
+packages/twenty-shared/src/utils/formula/utils/parseFormulaExpressionOrThrow.ts
+  s_c9896ad68d525f::t_64df94f7eab7c0 1-88,90-96,98-106,108-114,116-134,136-140,142-152,154-162,164-174,176-184,186-196,198-216,218-219,221-320
+  s_c9896ad68d525f::t_83de51b4ecb33c 89,97,107,115,135,141,153,163,175,185,197,217
+  s_c9896ad68d525f::t_dcd0ad39fd8a2f 220
+packages/twenty-shared/src/utils/formula/types/FormulaToken.ts
+  s_c9896ad68d525f::t_7b0269671e4500 1-14
+packages/twenty-shared/src/types/FieldMetadataComputation.ts
+  s_c9896ad68d525f::t_e33e6b4e38914e 1-17
+packages/twenty-shared/src/utils/formula/utils/transpileFormulaToPostgresExpressionOrThrow.ts
+  s_c9896ad68d525f::t_789029aa096f08 93
+  s_c9896ad68d525f::t_4cd76c5a4c55d7 1-30,32-36,38-46,48-92,94-100
+  s_c9896ad68d525f::t_9a06fd77b98216 47
+  s_c9896ad68d525f::t_8291223f5d8ff3 31
+  s_c9896ad68d525f::t_dcd0ad39fd8a2f 37
+packages/twenty-shared/src/utils/formula/constants/FormulaLogicalFunctions.ts
+  s_c9896ad68d525f::t_1d7f577528c304 3-4,6
+  s_c9896ad68d525f::t_0dc535710b3dc3 1-2,7-40,48-86
+  s_c9896ad68d525f::t_df88573be9cbc0 5
+  s_c9896ad68d525f::t_a0cb7cc543d3e7 41,47
+  s_c9896ad68d525f::t_97aff52cfb40e5 42-46
+packages/twenty-shared/src/utils/formula/utils/createFormulaError.ts
+  s_c9896ad68d525f::t_c2087a9c28adbd 1-12
+packages/twenty-shared/src/utils/formula/utils/inferFormulaSwitchReturnTypeOrThrow.ts
+  s_59d27a21364f20::t_19caf9768d4c41 1-40
+packages/twenty-shared/src/utils/formula/constants/FormulaNumericFunctions.ts
+  s_c9896ad68d525f::t_c37b7ae1521b6b 79-80
+  s_c9896ad68d525f::t_b0751e15a275b9 2,4,13,30,40,51
+  s_c9896ad68d525f::t_d03fd0205ddd2c 1
+  s_c9896ad68d525f::t_f0fd0ccc73cb0b 3,60-67,70-78,81
+  s_c9896ad68d525f::t_44f0cda08303cd 68-69
+  s_c9896ad68d525f::t_0776bbb5aec3c5 5-12,14-29,31-39,41-50,52-59,82
+packages/twenty-shared/src/utils/formula/utils/evaluateFormulaDateAdd.ts
+  s_a1bfcf58dbd7fb::t_cce1cae0ba626b 1-25
+packages/twenty-shared/src/utils/formula/types/FormulaFieldReference.ts
+  s_c9896ad68d525f::t_c6982fad207103 1-4
+packages/twenty-shared/src/utils/formula/constants/FormulaDateAddUnitSeconds.ts
+  s_c9896ad68d525f::t_f3089d6ec1379d 1-6
+packages/twenty-shared/src/utils/formula/utils/inferNumericFunctionReturnTypeOrThrow.ts
+  s_c9896ad68d525f::t_f03f1c33ad104a 1-30
+packages/twenty-shared/src/utils/formula/utils/evaluateFormulaNumericAggregate.ts
+  s_c9896ad68d525f::t_778e54af7a1c18 1-20
+packages/twenty-shared/src/utils/formula/types/FormulaAstNode.ts
+  s_c9896ad68d525f::t_b917bd26e00a7c 1-45
+packages/twenty-shared/src/utils/formula/utils/inferDatePartFunctionReturnTypeOrThrow.ts
+  s_c9896ad68d525f::t_2593260e6d255e 1-26
+packages/twenty-shared/src/utils/formula/utils/computeFormulaFieldReferenceKey.ts
+  s_c9896ad68d525f::t_f402fc95eb65d3 1-8
+packages/twenty-shared/src/utils/formula/utils/__tests__/evaluateFormulaOrThrow.test.ts
+  s_c9896ad68d525f::t_dcd0ad39fd8a2f 29-31,38-40,46-48
+  s_c9896ad68d525f::t_28cbf5a649ed0d 1-28,32-37,41-45,49-105
+packages/twenty-shared/src/utils/formula/constants/FormulaTextFunctions.ts
+  s_c9896ad68d525f::t_00741c365fe9c6 2,5,8-42,44-54,56-66,68-79,84-90,92-95,97-106,108-109,148-149,151-156,158-159
+  s_c9896ad68d525f::t_bd88c886050e86 6-7,43,55,67,80-83,96,150,157
+  s_c9896ad68d525f::t_7343272ae7f4fd 91
+  s_e8f00f9b5c7d6e::t_43caa59ab09d80 1,110-147
+  s_c9896ad68d525f::t_9525fc7ae3e786 3-4
+  s_c9896ad68d525f::t_69a834ae4ace62 107
+packages/twenty-shared/src/utils/formula/utils/inferFormulaReturnTypeOrThrow.ts
+  s_c9896ad68d525f::t_7658910c9fcc92 1-30,32-123,125-131
+  s_c9896ad68d525f::t_dcd0ad39fd8a2f 31
+  s_c9896ad68d525f::t_8278d5404ec1cd 124
+packages/twenty-shared/src/utils/formula/types/FormulaValue.ts
+  s_c9896ad68d525f::t_b16e5009f97a2f 1
+packages/twenty-shared/src/utils/formula/utils/transpileFormulaSwitchToPostgresSql.ts
+  s_59976c0466c122::t_ff0dc8d81803a5 1-22
+packages/twenty-shared/src/types/ComputableFieldMetadataType.ts
+  s_c9896ad68d525f::t_cde179e6919253 1-12
+packages/twenty-shared/src/utils/index.ts
+  s_c9896ad68d525f::t_6dbe9991e5556e 159,161-162,164-166,168-169,171,173,175-179,182-183,187,207,210
+  s_c9896ad68d525f::t_b19ac538ae7be0 163,167,170,172,174,180-181,184,190,192,196,205,209
+  s_c9896ad68d525f::t_2218887d831ed1 185-186,198-200,202,206
+  s_c9896ad68d525f::t_fb264d920ab548 204
+  s_c9896ad68d525f::t_bf9a07f33610c9 160,188-189,191,194-195,197,201,208
+  s_461430d4380aad::t_c5e947a7c2b9c3 193,203
+packages/twenty-shared/src/utils/filter/checkIfShouldComputeEmptinessFilter.ts
+  s_c9896ad68d525f::t_c871a4388f4538 2
+  s_c9896ad68d525f::t_7e3f180e698fc2 15-18
+packages/twenty-shared/src/utils/formula/utils/extractFormulaFieldReferences.ts
+  s_c9896ad68d525f::t_652d3fa8b5c6ce 1-47
+packages/twenty-shared/src/utils/formula/utils/inferTextSliceFunctionReturnTypeOrThrow.ts
+  s_c9896ad68d525f::t_7f7d15adbe96be 1-33
+packages/twenty-shared/src/utils/formula/utils/mapFieldMetadataTypeToFormulaValueType.ts
+  s_c9896ad68d525f::t_dd92a544b17c1d 1-22
+packages/twenty-shared/src/utils/formula/utils/computePostgresRightSlice.ts
+  s_c9896ad68d525f::t_d2e8405bb5e720 1-18
+packages/twenty-shared/src/utils/formula/constants/FormulaExpressionMaxLength.ts
+  s_c9896ad68d525f::t_609b3bec926e5e 1
+packages/twenty-shared/src/utils/formula/types/FormulaErrorCode.ts
+  s_c9896ad68d525f::t_0ebe91bf910888 1-4
+packages/twenty-shared/src/utils/formula/types/FormulaValueType.ts
+  s_c9896ad68d525f::t_617f4306dbabfb 1-6
+packages/twenty-shared/src/types/PartialFieldMetadataItem.ts
+  s_c9896ad68d525f::t_a93112b6c54c05 1,11
+packages/twenty-shared/src/types/ComputableCompositeFieldMetadataType.ts
+  s_c9896ad68d525f::t_fbef2e22caaeab 1-13
+packages/twenty-shared/src/utils/formula/utils/assertFormulaArgumentTypeOrThrow.ts
+  s_c9896ad68d525f::t_1c935533deafbd 1-23
+packages/twenty-shared/src/utils/formula/utils/isComputableFieldMetadataType.ts
+  s_c9896ad68d525f::t_b64098d1c0f046 1-12
+packages/twenty-shared/src/utils/formula/constants/FormulaAstMaxDepth.ts
+  s_c9896ad68d525f::t_b6432e218272f8 1
+packages/twenty-shared/src/utils/formula/utils/unifyFormulaValueTypesOrThrow.ts
+  s_c9896ad68d525f::t_b4cd05d163c977 1-25
+packages/twenty-shared/src/types/FeatureFlagKey.ts
+  s_c9896ad68d525f::t_8bb9d63762664b 11
+packages/twenty-shared/src/utils/formula/utils/assertFormulaArgumentCountOrThrow.ts
+  s_c9896ad68d525f::t_882940d272606e 1-20
+packages/twenty-shared/src/utils/formula/utils/__tests__/inferFormulaReturnTypeOrThrow.test.ts
+  s_c9896ad68d525f::t_0bc875bccb0aa0 1-31,36-47,53-68
+  s_e8f00f9b5c7d6e::t_cf8c6e43d17141 32-35,48-52
+packages/twenty-shared/src/utils/formula/utils/isBlankFormulaValue.ts
+  s_c9896ad68d525f::t_be1edb54cd5c5c 1-2
+packages/twenty-shared/src/utils/formula/utils/__tests__/formulaFunctionsContract.test.ts
+  s_c9896ad68d525f::t_0ed2fe9e90e617 442
+  s_c9896ad68d525f::t_62ff8dd7985f0f 1-313,412-441,443-449
+  s_c9896ad68d525f::t_c44242d56d84f2 314-411
+packages/twenty-shared/src/utils/formula/utils/computePostgresLeftSlice.ts
+  s_c9896ad68d525f::t_4a9c46cafcf8d9 1-12
+packages/twenty-shared/src/utils/formula/types/FormulaFunctionDefinition.ts
+  s_c9896ad68d525f::t_dcd0ad39fd8a2f 6-7,9
+  s_c9896ad68d525f::t_8e4b51e424c418 2-5,10-12,14-16
+  s_c9896ad68d525f::t_9662282af9ae45 1,8,13
+packages/twenty-shared/src/utils/formula/utils/inferVariadicNumericFunctionReturnTypeOrThrow.ts
+  s_c9896ad68d525f::t_76dd934bd711de 1-29
+packages/twenty-shared/src/utils/filter/turnRecordFilterIntoGqlOperationFilter.ts
+  s_c9896ad68d525f::t_1d8dace96c5eb9 10
+  s_c9896ad68d525f::t_4ae344058b3225 78
+  s_c9896ad68d525f::t_8d53e1bf80187e 209-211
+packages/twenty-shared/src/utils/formula/utils/evaluateFormulaSwitch.ts
+  s_c9896ad68d525f::t_a7502bc6a491c4 1-36
+packages/twenty-shared/src/types/index.ts
+  s_c9896ad68d525f::t_8b8631ddd4ef14 61-62
+  s_c9896ad68d525f::t_f5e6e4ecb3b0bb 59-60,82-86
+packages/twenty-shared/src/utils/formula/utils/getExpectedFormulaValueTypeForComputedFieldType.ts
+  s_c9896ad68d525f::t_365c5640e56efd 1-21
+packages/twenty-shared/src/utils/formula/utils/getFormulaDateAddUnitSecondsOrThrow.ts
+  s_c9896ad68d525f::t_c49ccdb91c2269 1-28
+packages/twenty-shared/src/utils/formula/utils/__tests__/transpileFormulaToPostgresExpressionOrThrow.test.ts
+  s_c9896ad68d525f::t_b2f33a36de8de8 1-43,45-53,55-61,63-66,68-92
+  s_c9896ad68d525f::t_dcd0ad39fd8a2f 44,54,62
+  s_c9896ad68d525f::t_c44242d56d84f2 67
+packages/twenty-shared/src/utils/formula/utils/evaluateFormulaOrThrow.ts
+  s_c9896ad68d525f::t_ab4bebcf4c25d4 1-51,54-159
+  s_c9896ad68d525f::t_dcd0ad39fd8a2f 52-53
+packages/twenty-shared/src/utils/filter/utils/getEmptyRecordGqlOperationFilter.ts
+  s_c9896ad68d525f::t_8d53e1bf80187e 48-50
+  s_c9896ad68d525f::t_6270e8d896df46 30-33
+packages/twenty-shared/src/utils/formula/utils/inferTextFunctionReturnTypeOrThrow.ts
+  s_c9896ad68d525f::t_62b11386e89f54 1-30
+packages/twenty-shared/src/utils/formula/utils/roundHalfAwayFromZero.ts
+  s_c9896ad68d525f::t_d73dc4da836df4 1-13
+packages/twenty-shared/src/utils/formula/constants/FormulaDateFunctions.ts
+  s_c9896ad68d525f::t_66b499fe18b339 57-59
+  s_c9896ad68d525f::t_4b68669f6eb93c 40-56,64-91,101,109-131
+  s_c9896ad68d525f::t_9424c4b36f8aeb 4-5
+  s_c9896ad68d525f::t_37f305c4992985 3
+  s_c9896ad68d525f::t_258bcc8b8c6ea8 60
+  s_c9896ad68d525f::t_08c4bf118093ec 96
+  s_c9896ad68d525f::t_8f6f448c3ac47b 37
+  s_c9896ad68d525f::t_5658c478e39513 1-2,6-28,30,32-36,38-39,132
+  s_c9896ad68d525f::t_dba4f6641a11fe 29,31,105
+  s_c9896ad68d525f::t_220fa72ffb4b63 98-100,102-104
+  s_c9896ad68d525f::t_9a2ec519837b19 61-63,92-94
+  s_c9896ad68d525f::t_c048c9e14480dc 95,97
+  s_c9896ad68d525f::t_27da99d4b8f0fa 106-108
+packages/twenty-shared/src/utils/formula/utils/tokenizeFormulaExpressionOrThrow.ts
+  s_c9896ad68d525f::t_a600b71810379f 1-146
+packages/twenty-shared/src/utils/formula/constants/FormulaFunctions.ts
+  s_c9896ad68d525f::t_965ad9616b0c9b 1-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "62e4f00438a213d8af13eeccb9e286f48fc1488e",
+  "prompts": {},
+  "sessions": {
+    "s_461430d4380aad": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a3f801d28136e79be",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_59976c0466c122": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-ab972ead168cd9203",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_59d27a21364f20": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-ab9220d7bb1770a52",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_a1bfcf58dbd7fb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a172cfe53e83c221f",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_c9896ad68d525f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e5f7930d-ee88-45b7-923e-7aef12c5e30f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_e8f00f9b5c7d6e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-ac12bfe11bf4ec33d",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}

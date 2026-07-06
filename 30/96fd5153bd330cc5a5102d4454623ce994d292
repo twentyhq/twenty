@@ -1,0 +1,199 @@
+packages/twenty-front/src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard.tsx
+  s_c9896ad68d525f::t_814e999116a547 247-249
+  s_c9896ad68d525f::t_1d623e9eca00d2 4-5,8-11
+  s_c9896ad68d525f::t_81887104e4f944 171-173,191-192
+  s_c9896ad68d525f::t_ff3a9ee9bf718d 140-141
+  s_c9896ad68d525f::t_de138ecdd258fe 142-143
+  s_c9896ad68d525f::t_e87335188b9da6 196
+  s_c9896ad68d525f::t_563eb150f4eaee 24-25
+  s_c9896ad68d525f::t_6e22e390f66316 233-246,250-258
+  s_c9896ad68d525f::t_e3b1140821973f 45-46
+  s_c9896ad68d525f::t_20aa37eabd06ae 259
+packages/twenty-front/src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
+  s_c9896ad68d525f::t_35bbddf2fb3382 9
+  s_c9896ad68d525f::t_a50b126a067773 50-54
+packages/twenty-front/src/modules/object-record/read-only/utils/__tests__/isRecordFieldReadOnly.test.ts
+  s_c9896ad68d525f::t_b8962126c1a4bf 90,104-106,115
+  s_c9896ad68d525f::t_0ce6dbe215dc4e 134-135
+  s_c9896ad68d525f::t_63411f84463514 91-98,100,102,108-114
+  s_c9896ad68d525f::t_f206b3361b4564 99,101,103,107,116-133
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSettingsFormCard.tsx
+  s_c9896ad68d525f::t_ec6e1a6a8d137e 28
+  s_c9896ad68d525f::t_627c480ac5fa00 37
+  s_c9896ad68d525f::t_cd030e3d31eb2e 1-27,29-36,38-42
+packages/twenty-front/src/modules/object-record/utils/computeOptimisticFormulaFieldValues.ts
+  s_c9896ad68d525f::t_540b8aefa1bc85 73
+  s_c9896ad68d525f::t_b043ae179cfbbf 2,23,25-26,30-31,33,35
+  s_c9896ad68d525f::t_d4d1a3d5d23830 27
+  s_c9896ad68d525f::t_7c4bda21abd397 1,3-22,24,28-29,34,36-72,74-83
+  s_c9896ad68d525f::t_fe3181bb4b1393 32
+packages/twenty-front/src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
+  s_c9896ad68d525f::t_a317ed151a8567 136
+  s_c9896ad68d525f::t_7255b620b67887 137-141
+  s_c9896ad68d525f::t_57e75913ec0b57 51
+  s_c9896ad68d525f::t_3e53b5fbe08076 16-19
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/utils/registerTwentyFormulaLanguage.ts
+  s_c9896ad68d525f::t_ddd2bec5c43ffe 1-45
+packages/twenty-front/src/modules/object-metadata/types/FieldMetadataItem.ts
+  s_c9896ad68d525f::t_78cbab6bc897d4 43
+  s_c9896ad68d525f::t_ca75dfbd814e35 8
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_c9896ad68d525f::t_99b9118db3115a 5392
+  s_c9896ad68d525f::t_cc4bc92a4860c4 1138
+  s_c9896ad68d525f::t_aabc6a5905e96a 1770
+  s_c9896ad68d525f::t_be3fbbac552173 1757
+packages/twenty-front/src/modules/object-metadata/utils/getFieldComputedExpression.ts
+  s_c9896ad68d525f::t_9ec9fd4ee6b084 1-5,7,10-13
+  s_c9896ad68d525f::t_69010d0f69ab96 6,8-9
+packages/twenty-front/src/pages/settings/data-model/constants/DefaultIconsByFieldType.ts
+  s_c9896ad68d525f::t_b981878b4721cb 17
+  s_c9896ad68d525f::t_633a51f87545e1 1-4,7-10
+packages/twenty-front/src/modules/object-metadata/hooks/useFieldMetadataItem.ts
+  s_c9896ad68d525f::t_8cc367eb9bd67e 26
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldComputationBySubFieldForm.tsx
+  s_c9896ad68d525f::t_34a191a60991c8 1-140
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/utils/buildFormulaCompletionItems.ts
+  s_c9896ad68d525f::t_e119b9319d2e7d 2
+  s_c9896ad68d525f::t_eac59950931373 1,3-49
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/utils/getFormulaExpressionMarkers.ts
+  s_c9896ad68d525f::t_2e8e8a62ff5455 46,50
+  s_c9896ad68d525f::t_f950cb8b0dc583 64-67,71
+  s_e8f00f9b5c7d6e::t_4657d13c5bd1a0 1-45,47-49,51-63,68-70,72-95
+packages/twenty-front/src/modules/object-record/read-only/utils/isRecordFieldReadOnly.ts
+  s_c9896ad68d525f::t_23cd0c1d0d7645 50
+  s_c9896ad68d525f::t_beaedd6a817b6b 47-48
+  s_c9896ad68d525f::t_2821c9db4868d8 59
+  s_c9896ad68d525f::t_964e5079f1df8d 49
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/constants/FormulaKeywords.ts
+  s_c9896ad68d525f::t_e119b9319d2e7d 1
+packages/twenty-front/src/modules/settings/data-model/types/SettingsFieldType.ts
+  s_c9896ad68d525f::t_69b34bf08c3c5f 1,6-8
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaForm.tsx
+  s_c9896ad68d525f::t_fc321d8cc74355 2-5,8-9,12,14-16,19,24-26,30-31,33,35-49,53-56,58-62,64-65,68-72,90,133,142-144,154-155
+  s_c9896ad68d525f::t_a097a773664f08 7,17-18,20-23,50-52,66-67,86-89,91-122,124,128-130,134-136,138-140,145-146,148-153
+  s_c9896ad68d525f::t_729518ceb7c9bb 27-29,32,34
+  s_c9896ad68d525f::t_ff85c8e4ca28be 127
+  s_c9896ad68d525f::t_a5b8571cf517f5 123,125-126,131-132,137,141,147
+  s_59976c0466c122::t_1a51ba22707985 1,6,10-11,13,57,63,73-85
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaExpressionEditor.tsx
+  s_8a5a157e980979::t_0af812e614f748 1-32,34-40,42-114,116-122,124-148
+  s_c9896ad68d525f::t_14fbb8ddf2199e 115,123
+  s_c9896ad68d525f::t_fc60ba4d674427 33,41
+packages/twenty-front/src/modules/object-metadata/graphql/mutations.ts
+  s_c9896ad68d525f::t_32fbbc399845ae 185
+  s_c9896ad68d525f::t_eb65c58fa189e0 47
+  s_c9896ad68d525f::t_fb65c97e439fd7 113
+  s_c9896ad68d525f::t_eb6e4d8e613eda 259
+packages/twenty-front/src/modules/object-record/utils/__tests__/computeOptimisticFormulaFieldValues.test.ts
+  s_c9896ad68d525f::t_1162a015f7fb7f 6,8,11,25,28,37,54,73,75,91,105-106,108-121,123-124,126-131,133-134
+  s_c9896ad68d525f::t_c209104d6f2bf3 107
+  s_c9896ad68d525f::t_d78328016aab86 38,92
+  s_c9896ad68d525f::t_cded83ba040d95 74
+  s_c9896ad68d525f::t_0bce8150a39284 122
+  s_c9896ad68d525f::t_de2c58e5319062 55
+  s_c9896ad68d525f::t_dce294999dc80b 7,10,29
+  s_c9896ad68d525f::t_e01427a97b5f2f 1-5,9,12-24,26-27,30-36,39-53,56-72,76-90,93-104,135
+  s_c9896ad68d525f::t_3a330b4c6c27f4 125,132
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/utils/__tests__/buildFormulaCompletionItems.test.ts
+  s_c9896ad68d525f::t_e119b9319d2e7d 68-75
+  s_c9896ad68d525f::t_1b6628bae6703e 1-67,76-77
+packages/twenty-front/src/modules/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema.ts
+  s_c9896ad68d525f::t_86516c700e783b 14-29
+  s_c9896ad68d525f::t_4d488d86702892 42
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/utils/computeFormulaRecordPreviewValue.ts
+  s_e8f00f9b5c7d6e::t_177b85efdc4927 1-54
+packages/twenty-front/src/modules/object-record/hooks/useUpdateOneRecord.ts
+  s_c9896ad68d525f::t_9a4788954f3048 102,107
+  s_c9896ad68d525f::t_9efa8ace190ba2 259
+  s_c9896ad68d525f::t_7e7c3214e10d55 142
+  s_c9896ad68d525f::t_d68ecea812acc0 217
+  s_c9896ad68d525f::t_dc404279c3ee24 103
+  s_c9896ad68d525f::t_cdfc3e31698552 19
+  s_c9896ad68d525f::t_9a53892b84a842 104-106,108-116,119
+packages/twenty-front/src/modules/settings/data-model/constants/SettingsFieldTypeFormula.ts
+  s_c9896ad68d525f::t_e7392cbc119e4b 1-3
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/utils/buildFormulaFieldReferenceTypes.ts
+  s_c9896ad68d525f::t_c0e6abf952d502 1-12,17-20,22-64
+  s_c9896ad68d525f::t_9d4e2840b1a951 13-16,21
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/constants/TwentyFormulaLanguageId.ts
+  s_c9896ad68d525f::t_1875b949ecd78f 1
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaPreview.tsx
+  s_59976c0466c122::t_7fa4d8e8325b46 1-5,13-139
+  s_c9896ad68d525f::t_93936ff223445c 10-12
+  s_c9896ad68d525f::t_6c21805f013943 6-8
+  s_c9896ad68d525f::t_f4daf502e81f53 9
+packages/twenty-front/src/modules/settings/data-model/utils/isFieldTypeSupportedInSettings.ts
+  s_c9896ad68d525f::t_926e40d34d2ff5 7-8
+packages/twenty-front/src/modules/object-record/record-field/ui/types/FieldMetadata.ts
+  s_c9896ad68d525f::t_502ed239cca8f0 21
+  s_c9896ad68d525f::t_e9fb535146e9d2 8
+packages/twenty-front/src/modules/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition.ts
+  s_c9896ad68d525f::t_a22163e8e6e08b 50
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/constants/FormulaDataModelSelectOptions.ts
+  s_c9896ad68d525f::t_1c56bb8bc37160 3-6,10,16,20,23-24,28-32
+  s_c9896ad68d525f::t_a01eff417d1d89 1-2,7-9,11-15,17-19,21-22,25-27,33-34
+packages/twenty-front/src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+  s_c9896ad68d525f::t_84a8bceb71b042 55-57
+  s_c9896ad68d525f::t_46faf2c632e149 77-80
+  s_c9896ad68d525f::t_bcd83e9aace5ac 7-10
+packages/twenty-front/src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
+  s_c9896ad68d525f::t_c66cfb6818ddae 82-84
+  s_c9896ad68d525f::t_b8056630385460 89
+  s_c9896ad68d525f::t_34225739581f53 14
+  s_c9896ad68d525f::t_557d69a2135290 26-29
+  s_c9896ad68d525f::t_653294460919f8 90
+  s_c9896ad68d525f::t_5887adee058a61 6
+packages/twenty-front/src/modules/object-metadata/utils/formatFieldMetadataItemInput.ts
+  s_c9896ad68d525f::t_31b6ae8ca96a13 15,29
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/utils/__tests__/getFormulaExpressionMarkers.test.ts
+  s_c9896ad68d525f::t_fa6a748936d7eb 10,14,24,33,41,44,50,57
+  s_c9896ad68d525f::t_74910c669e9e65 1-9,11-13,15-23,25-32,34-40,42-43,45-49,51-56,58-66
+packages/twenty-front/src/modules/object-metadata/graphql/fragment.ts
+  s_c9896ad68d525f::t_52a488570f4c5b 72
+packages/twenty-front/src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+  s_c9896ad68d525f::t_47fbf6cdc961fc 386-392,398-400
+  s_c9896ad68d525f::t_25de1cac1d9254 393-397
+  s_c9896ad68d525f::t_728a5fad8e6cb7 24
+packages/twenty-front/src/modules/object-metadata/hooks/useUpdateOneFieldMetadataItem.ts
+  s_c9896ad68d525f::t_a175b3d1168940 52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3096fd5153bd330cc5a5102d4454623ce994d292",
+  "prompts": {},
+  "sessions": {
+    "s_59976c0466c122": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-ab972ead168cd9203",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_8a5a157e980979": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8d765ae-92f9-4877-8c11-5e1240cfee8f",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_c9896ad68d525f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e5f7930d-ee88-45b7-923e-7aef12c5e30f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_e8f00f9b5c7d6e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-ac12bfe11bf4ec33d",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
