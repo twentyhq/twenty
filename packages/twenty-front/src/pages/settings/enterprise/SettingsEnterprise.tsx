@@ -20,6 +20,7 @@ import { ENTERPRISE_PORTAL_SESSION } from '@/settings/enterprise/graphql/queries
 import { ENTERPRISE_SUBSCRIPTION_STATUS } from '@/settings/enterprise/graphql/queries/enterpriseSubscriptionStatus';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
@@ -44,6 +45,9 @@ import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
+
+const RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID =
+  'release-enterprise-binding-confirmation-modal';
 
 type SettingsEnterpriseProps = {
   isAdminPanelTab?: boolean;
@@ -134,8 +138,10 @@ export const SettingsEnterprise = ({
   const { loadCurrentUser } = useLoadCurrentUser();
 
   const apolloAdminClient = useApolloAdminClient();
-  const { handleUpdateVariable: updateInstanceTypeVariable } =
-    useConfigVariableActions('ENTERPRISE_INSTANCE_TYPE');
+  const {
+    handleUpdateVariable: updateInstanceTypeVariable,
+    handleDeleteVariable: deleteInstanceTypeVariable,
+  } = useConfigVariableActions('ENTERPRISE_INSTANCE_TYPE');
   const [instanceType, setInstanceType] = useState<EnterpriseInstanceType>(
     ENTERPRISE_INSTANCE_TYPE.PRODUCTION,
   );
@@ -433,12 +439,17 @@ export const SettingsEnterprise = ({
   const handleSetInstanceType = useCallback(
     async (nextInstanceType: EnterpriseInstanceType) => {
       setIsUpdatingInstanceType(true);
+      const previousInstanceType = instanceType;
+      const previousIsInstanceTypeFromDb = isInstanceTypeFromDb;
+      let instanceUpdateSuccess = false;
+      let tokenRefreshSuccess = false;
 
       try {
         await updateInstanceTypeVariable(
           nextInstanceType,
           isInstanceTypeFromDb,
         );
+        instanceUpdateSuccess = true;
         setInstanceType(nextInstanceType);
         setIsInstanceTypeFromDb(true);
         await loadCurrentUser();
@@ -449,22 +460,36 @@ export const SettingsEnterprise = ({
               ? t`Registered as a development instance. This instance will not be billed.`
               : t`Switched to a production instance.`,
         });
+
+        await refreshValidityTokenMutation();
+        tokenRefreshSuccess = true;
       } catch {
-        enqueueErrorSnackBar({
-          message: t`Could not update the instance type`,
-        });
-      } finally {
-        setIsUpdatingInstanceType(false);
-        try {
-          await refreshValidityTokenMutation();
-        } catch {
-          // Best-effort refresh after switching instance type; the manual
-          // reload button surfaces any binding or rate-limit error.
+        if (!instanceUpdateSuccess) {
+          enqueueErrorSnackBar({
+            message: t`Could not update the instance type`,
+          });
         }
+      } finally {
+        if (instanceUpdateSuccess && !tokenRefreshSuccess) {
+          if (previousIsInstanceTypeFromDb) {
+            await updateInstanceTypeVariable(previousInstanceType, true);
+          } else {
+            await deleteInstanceTypeVariable();
+          }
+          setInstanceType(previousInstanceType);
+          setIsInstanceTypeFromDb(previousIsInstanceTypeFromDb);
+          await loadCurrentUser();
+          enqueueErrorSnackBar({
+            message: t`Could not refresh validity token - reverted the instance type change.`,
+          });
+        }
+        setIsUpdatingInstanceType(false);
       }
     },
     [
+      instanceType,
       updateInstanceTypeVariable,
+      deleteInstanceTypeVariable,
       isInstanceTypeFromDb,
       refreshValidityTokenMutation,
       loadCurrentUser,
@@ -519,7 +544,9 @@ export const SettingsEnterprise = ({
         }
         variant="secondary"
         accent="blue"
-        onClick={handleReleaseBinding}
+        onClick={() =>
+          openModal(RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID)
+        }
         disabled={isReleasing}
       />
     </Section>
@@ -911,6 +938,15 @@ export const SettingsEnterprise = ({
   const innerContent = (
     <>
       <EnterprisePlanModal />
+      <ConfirmationModal
+        modalInstanceId={RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID}
+        title={t`Release & transfer enterprise key`}
+        subtitle={t`This enterprise key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?`}
+        confirmButtonText={t`Release & transfer`}
+        confirmButtonAccent="blue"
+        loading={isReleasing}
+        onConfirmClick={handleReleaseBinding}
+      />
       {renderContent()}
       {hasEnterpriseLicense && instanceTypeSection}
     </>

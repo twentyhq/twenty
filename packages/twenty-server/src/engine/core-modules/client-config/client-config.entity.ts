@@ -343,6 +343,9 @@ export class ClientConfig {
   @Field(() => Boolean)
   isWorkspaceSchemaDDLLocked: boolean;
 
+  @Field(() => String)
+  enterpriseInstanceType: string;
+
   @Field(() => ClientConfigMaintenanceMode, { nullable: true })
   maintenance?: ClientConfigMaintenanceMode;
 }
