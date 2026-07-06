@@ -3,7 +3,7 @@ import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
 import { type CommandConfirmationModalResult } from 'twenty-sdk/front-component';
 import { type ConfirmationModalCaller } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getURLSafely, isDefined } from 'twenty-shared/utils';
 
 import { createHostFetch } from '@/host/utils/createHostFetch';
 import { FRONT_COMPONENT_SANDBOX_MESSAGE } from '@/remote/sandbox/frontComponentSandboxMessages';
@@ -84,9 +84,11 @@ export const FrontComponentWorkerEffect = ({
 
     const channel = new MessageChannel();
 
-    const hostFetch = createHostFetch(
-      [apiUrl, functionsBaseUrl, componentUrl].filter(isDefined),
-    );
+    const hostFetchOrigins = [apiUrl, functionsBaseUrl, componentUrl]
+      .map((url) => (isDefined(url) ? getURLSafely(url)?.origin : undefined))
+      .filter(isDefined);
+
+    const hostFetch = createHostFetch(hostFetchOrigins);
 
     const thread = new ThreadMessagePort<
       WorkerExports,
@@ -159,6 +161,7 @@ export const FrontComponentWorkerEffect = ({
         apiUrl,
         functionsBaseUrl,
         sdkClientUrls,
+        hostFetchOrigins,
         applicationVariables,
       })
       .catch((error: Error) => {

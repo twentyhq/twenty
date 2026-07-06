@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { getURLSafely, isDefined } from 'twenty-shared/utils';
 
 import {
   type HostFetchFunction,
@@ -6,23 +6,13 @@ import {
   type HostFetchResult,
 } from '@/types/HostFetch';
 
-const toOrigin = (url: string): string | null => {
-  try {
-    return new URL(url).origin;
-  } catch {
-    return null;
-  }
-};
-
 export const createHostFetch = (
   allowedOrigins: string[],
 ): HostFetchFunction => {
-  const allowedOriginSet = new Set(
-    allowedOrigins.map(toOrigin).filter(isDefined),
-  );
+  const allowedOriginSet = new Set(allowedOrigins);
 
   return async (input: HostFetchInput): Promise<HostFetchResult> => {
-    const requestOrigin = toOrigin(input.url);
+    const requestOrigin = getURLSafely(input.url)?.origin;
 
     if (!isDefined(requestOrigin) || !allowedOriginSet.has(requestOrigin)) {
       throw new Error(
@@ -43,7 +33,6 @@ export const createHostFetch = (
     });
 
     return {
-      ok: response.ok,
       status: response.status,
       statusText: response.statusText,
       headers: responseHeaders,

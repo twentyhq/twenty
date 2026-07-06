@@ -11,7 +11,7 @@ import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponent
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
-import { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useContext, useEffect, useMemo } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
@@ -88,6 +88,13 @@ export const FrontComponentRenderer = ({
     frontComponentId,
   });
 
+  const applicationId = data?.frontComponent?.applicationId;
+
+  const sdkClientUrls = useMemo(
+    () => (isDefined(applicationId) ? getSdkClientUrls(applicationId) : undefined),
+    [applicationId],
+  );
+
   const applicationTokenPair =
     data?.frontComponent?.applicationTokenPair ?? null;
 
@@ -123,7 +130,7 @@ export const FrontComponentRenderer = ({
         applicationAccessToken={accessToken}
         apiUrl={REACT_APP_SERVER_BASE_URL}
         functionsBaseUrl={functionsBaseUrl}
-        sdkClientUrls={getSdkClientUrls(data.frontComponent.applicationId)}
+        sdkClientUrls={sdkClientUrls}
         executionContext={executionContext}
         frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
         applicationVariables={applicationVariables}

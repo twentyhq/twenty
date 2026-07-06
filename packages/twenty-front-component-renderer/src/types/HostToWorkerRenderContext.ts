@@ -9,5 +9,6 @@ export type HostToWorkerRenderContext = {
   apiUrl?: string;
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
+  hostFetchOrigins?: string[];
   applicationVariables?: Record<string, string>;
 };

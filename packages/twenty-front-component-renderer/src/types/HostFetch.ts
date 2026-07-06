@@ -6,7 +6,6 @@ export type HostFetchInput = {
 };
 
 export type HostFetchResult = {
-  ok: boolean;
   status: number;
   statusText: string;
   headers: Record<string, string>;

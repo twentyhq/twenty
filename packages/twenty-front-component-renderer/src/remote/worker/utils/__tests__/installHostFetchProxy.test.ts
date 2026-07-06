@@ -47,7 +47,6 @@ describe('installHostFetchProxy', () => {
     globalThis.fetch = nativeFetch as unknown as typeof fetch;
 
     const hostFetch: HostFetchFunction = jest.fn(async () => ({
-      ok: true,
       status: 200,
       statusText: 'OK',
       headers: { 'content-type': 'application/json' },
@@ -77,7 +76,6 @@ describe('installHostFetchProxy', () => {
     globalThis.fetch = nativeFetch as unknown as typeof fetch;
 
     const hostFetch: HostFetchFunction = jest.fn(async () => ({
-      ok: true,
       status: 200,
       statusText: 'OK',
       headers: {},

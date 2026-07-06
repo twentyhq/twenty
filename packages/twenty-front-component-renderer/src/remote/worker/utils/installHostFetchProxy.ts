@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { getURLSafely, isDefined } from 'twenty-shared/utils';
 
 import { type HostFetchFunction } from '@/types/HostFetch';
 
@@ -17,40 +17,28 @@ const toRequestUrl = (input: RequestInfo | URL): string => {
 const toRequestMethod = (
   input: RequestInfo | URL,
   init: RequestInit | undefined,
-): string => {
-  if (isDefined(init?.method)) {
-    return init.method;
-  }
-
-  if (typeof input === 'object' && !(input instanceof URL)) {
-    return input.method;
-  }
-
-  return 'GET';
-};
+): string =>
+  init?.method ??
+  (typeof input === 'object' && !(input instanceof URL) ? input.method : 'GET');
 
 const toHeaderRecord = (
   headers: HeadersInit | undefined,
 ): Record<string, string> => {
   const record: Record<string, string> = {};
 
-  if (!isDefined(headers)) {
-    return record;
+  if (isDefined(headers)) {
+    new Headers(headers).forEach((value, key) => {
+      record[key] = value;
+    });
   }
-
-  new Headers(headers).forEach((value, key) => {
-    record[key] = value;
-  });
 
   return record;
 };
 
 const isProxiedOrigin = (url: string, proxiedOrigins: string[]): boolean => {
-  try {
-    return proxiedOrigins.includes(new URL(url).origin);
-  } catch {
-    return false;
-  }
+  const origin = getURLSafely(url)?.origin;
+
+  return isDefined(origin) && proxiedOrigins.includes(origin);
 };
 
 export const installHostFetchProxy = (

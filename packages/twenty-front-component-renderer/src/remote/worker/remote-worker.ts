@@ -39,7 +39,7 @@ exposeGlobals({
   __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
 });
 
-const fetchComponentSource = async (
+const fetchModuleSource = async (
   url: string,
   headers?: Record<string, string>,
 ): Promise<string> => {
@@ -54,32 +54,18 @@ const fetchComponentSource = async (
   return response.text();
 };
 
-const fetchSdkModuleBlobUrl = async (
-  url: string,
-  headers?: Record<string, string>,
-): Promise<string> => {
-  const response = await fetch(url, { headers });
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch SDK module ${url}: ${response.status} ${response.statusText}`,
-    );
-  }
-
-  const source = await response.text();
-
-  return URL.createObjectURL(
-    new Blob([source], { type: 'application/javascript' }),
-  );
-};
+const createModuleBlobUrl = (source: string): string =>
+  URL.createObjectURL(new Blob([source], { type: 'application/javascript' }));
 
 const loadSdkModuleBlobUrls = async (
   sdkClientUrls: { core: string; metadata: string },
   headers?: Record<string, string>,
 ): Promise<{ core: string; metadata: string }> => {
   const [core, metadata] = await Promise.all([
-    fetchSdkModuleBlobUrl(sdkClientUrls.core, headers),
-    fetchSdkModuleBlobUrl(sdkClientUrls.metadata, headers),
+    fetchModuleSource(sdkClientUrls.core, headers).then(createModuleBlobUrl),
+    fetchModuleSource(sdkClientUrls.metadata, headers).then(
+      createModuleBlobUrl,
+    ),
   ]);
 
   return { core, metadata };
@@ -117,29 +103,6 @@ let hostThread: ThreadMessagePort<
   WorkerExports
 > | null = null;
 
-const toOriginOrNull = (value: string | undefined): string | null => {
-  if (!isDefined(value) || value.length === 0) {
-    return null;
-  }
-
-  try {
-    return new URL(value).origin;
-  } catch {
-    return null;
-  }
-};
-
-const toProxiedHostFetchOrigins = (
-  renderContext: HostToWorkerRenderContext,
-): string[] =>
-  [
-    renderContext.apiUrl,
-    renderContext.functionsBaseUrl,
-    renderContext.componentUrl,
-  ]
-    .map(toOriginOrNull)
-    .filter(isDefined);
-
 const render: WorkerExports['render'] = async (
   connection: RemoteConnection,
   renderContext: HostToWorkerRenderContext,
@@ -147,7 +110,7 @@ const render: WorkerExports['render'] = async (
   if (isDefined(hostThread)) {
     installHostFetchProxy(
       hostThread.imports.hostFetch,
-      toProxiedHostFetchOrigins(renderContext),
+      renderContext.hostFetchOrigins ?? [],
     );
   }
 
@@ -188,7 +151,7 @@ const render: WorkerExports['render'] = async (
     ? { Authorization: `Bearer ${renderContext.applicationAccessToken}` }
     : undefined;
 
-  const componentSource = await fetchComponentSource(
+  const componentSource = await fetchModuleSource(
     renderContext.componentUrl,
     authHeaders,
   );
@@ -207,11 +170,7 @@ const render: WorkerExports['render'] = async (
     ? rewriteSdkImports(componentSource, sdkModuleBlobUrls)
     : componentSource;
 
-  const componentBlob = new Blob([finalSource], {
-    type: 'application/javascript',
-  });
-
-  const importUrl = URL.createObjectURL(componentBlob);
+  const importUrl = createModuleBlobUrl(finalSource);
 
   try {
     /* @vite-ignore */
