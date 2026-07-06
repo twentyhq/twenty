@@ -173,11 +173,11 @@ yarn add pdf-lib marked
 The full helper is
 [`generate-document-pdf.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/document-generator/src/logic-functions/utils/generate-document-pdf.ts).
 It parses the Markdown into tokens with `marked.lexer`, then lays them out with
-pdf-lib: a coloured header band with the title, real headings, **bold**/*italic*
-runs, bullet and numbered lists, blockquotes and rules — a polished, multi-page
-A4 document rather than a wall of text.
+pdf-lib: real headings, **bold**/*italic* runs, bullet and numbered lists,
+blockquotes and rules — a polished, multi-page A4 rendering of the template
+itself, rather than a wall of text.
 
-<Frame caption="The generated PDF: a coloured header band, real typography, and Markdown formatting.">
+<Frame caption="The generated PDF: real typography and Markdown formatting, rendering the template body.">
   <img src="/images/docs/developers/extends/apps/document-generator/07b-generated-pdf.png" alt="A polished, marketable generated PDF" />
 </Frame>
 
