@@ -3,10 +3,12 @@ import { buildStandardObjectSystemFields } from '@/metadata/utils/internal/build
 // Important notice:
 // - Never ever mutate an existing universal identifier
 // - Deleting an existing universal identifier should be very rare
-// - System field universal identifiers (id, name, createdAt, updatedAt,
+// - System field universal identifiers (id, createdAt, updatedAt,
 //   deletedAt, createdBy, updatedBy, position, searchVector) are
 //   deterministically derived from the standard application universal
 //   identifier, the object universal identifier and the field name.
+//   The name field is a default field, not a system field, and keeps its
+//   hardcoded universal identifier.
 export const STANDARD_OBJECTS = {
   attachment: {
     universalIdentifier: '20202020-bd3d-4c60-8dca-571c71d4447a',
