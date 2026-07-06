@@ -31,6 +31,7 @@ const StyledContainer = styled.div`
 
 const StyledItemsContainer = styled.div`
   display: flex;
+  flex-direction: row-reverse;
   gap: ${PINNED_COMMAND_MENU_ITEMS_GAP}px;
   max-width: 100%;
   overflow: hidden;
