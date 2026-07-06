@@ -35,6 +35,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
@@ -68,6 +69,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatIndexMaps,
       workspaceDataSource,
     } = queryRunnerContext;
 
@@ -76,6 +78,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatIndexMaps,
       args,
     });
 
@@ -185,12 +188,14 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
+    flatIndexMaps,
     args,
   }: {
     repository: WorkspaceRepository<ObjectLiteral>;
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatIndexMaps?: FlatEntityMaps<FlatIndexMetadata>;
     args: CommonExtendedInput<CreateManyQueryArgs>;
   }): Promise<InsertResult> {
     const { selectedFieldsResult } = args;
@@ -214,6 +219,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatFieldMetadataMaps,
       args,
       selectedFieldsResult,
+      flatIndexMaps,
     });
   }
 
@@ -224,6 +230,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatFieldMetadataMaps,
     args,
     selectedFieldsResult,
+    flatIndexMaps,
   }: {
     repository: WorkspaceRepository<ObjectLiteral>;
     flatObjectMetadata: FlatObjectMetadata;
@@ -231,10 +238,12 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     args: CreateManyQueryArgs;
     selectedFieldsResult: CommonSelectedFieldsResult;
+    flatIndexMaps?: FlatEntityMaps<FlatIndexMetadata>;
   }): Promise<InsertResult> {
     const conflictingFieldGroups = getConflictingFields(
       flatObjectMetadata,
       flatFieldMetadataMaps,
+      flatIndexMaps,
     );
     const existingRecords = await this.findExistingRecords({
       repository,

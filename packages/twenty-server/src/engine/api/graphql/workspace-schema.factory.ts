@@ -39,6 +39,7 @@ export class WorkspaceSchemaFactory {
       usedScalarNames,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatIndexMaps,
     } = schemaSDLResult;
 
     const { idByNameSingular } = buildObjectIdByNameMaps(
@@ -50,6 +51,7 @@ export class WorkspaceSchemaFactory {
       flatFieldMetadataMaps,
       idByNameSingular,
       workspaceResolverBuilderMethodNames,
+      flatIndexMaps,
     );
     const scalarsResolvers =
       this.scalarsExplorerService.getScalarResolvers(usedScalarNames);
