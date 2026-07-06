@@ -1,5 +1,4 @@
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from '@/application/constants/TwentyStandardApplicationUniversalIdentifier';
-import { getFieldUniversalIdentifier } from '@/application/deterministic-identifier/get-field-universal-identifier.util';
+import { buildStandardObjectSystemFields } from '@/metadata/utils/internal/build-standard-object-system-fields.util';
 
 // Important notice:
 // - Never ever mutate an existing universal identifier
@@ -8,24 +7,6 @@ import { getFieldUniversalIdentifier } from '@/application/deterministic-identif
 //   deletedAt, createdBy, updatedBy, position, searchVector) are
 //   deterministically derived from the standard application universal
 //   identifier, the object universal identifier and the field name.
-const buildStandardObjectSystemFields = <const T extends readonly string[]>(
-  objectUniversalIdentifier: string,
-  fieldNames: T,
-): { [FieldName in T[number]]: { universalIdentifier: string } } =>
-  Object.fromEntries(
-    fieldNames.map((fieldName) => [
-      fieldName,
-      {
-        universalIdentifier: getFieldUniversalIdentifier({
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          objectUniversalIdentifier,
-          name: fieldName,
-        }),
-      },
-    ]),
-  ) as { [FieldName in T[number]]: { universalIdentifier: string } };
-
 export const STANDARD_OBJECTS = {
   attachment: {
     universalIdentifier: '20202020-bd3d-4c60-8dca-571c71d4447a',
