@@ -259,15 +259,18 @@ export const CurrencyInput = ({
   <div style={{ display: 'flex', gap: 8 }}>
     <input
       style={{ ...inputStyle, flex: 1 }}
-      type="number"
-      value={amount ?? ''}
+      type="text"
+      inputMode="decimal"
+      value={amount == null ? '' : String(amount)}
       placeholder="0"
-      onChange={(event) =>
+      onChange={(event) => {
+        const cleaned = event.target.value.replace(/[^0-9.]/g, '');
+        const next = Number(cleaned);
         onChange({
-          amount: event.target.value === '' ? null : Number(event.target.value),
+          amount: cleaned === '' || Number.isNaN(next) ? null : next,
           currencyCode,
-        })
-      }
+        });
+      }}
     />
     <input
       style={{ ...inputStyle, width: 84 }}

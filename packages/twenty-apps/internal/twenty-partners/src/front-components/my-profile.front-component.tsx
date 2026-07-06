@@ -156,7 +156,7 @@ const styles = {
   } as const,
   card: {
     width: '100%',
-    maxWidth: 560,
+    maxWidth: 840,
     background: COLORS.surface,
     border: `1px solid ${COLORS.border}`,
     borderRadius: 12,
