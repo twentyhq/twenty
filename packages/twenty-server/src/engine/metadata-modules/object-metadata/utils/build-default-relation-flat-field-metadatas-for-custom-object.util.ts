@@ -164,18 +164,18 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             },
           });
 
-        // Default relation fields are engine-owned side effects: marking them
-        // isSystemSideEffect keeps them out of manifest deletion inference once
-        // the SDK stops declaring them, and lets the object delete handler
-        // cascade them symmetrically.
+        // Default relation fields are caller-provided default fields (declared in
+        // the manifest by the SDK auto-complete, or synthesized here for the API
+        // path). They are authorable and subject to normal deletion inference,
+        // so they are NOT flagged isSystemSideEffect.
         return {
           standardSourceFlatFieldMetadatas: [
             ...sourceAndTargetFlatFieldMetadatasRecord.standardSourceFlatFieldMetadatas,
-            { ...flatFieldMetadatas[0], isSystemSideEffect: true },
+            { ...flatFieldMetadatas[0], isSystemSideEffect: false },
           ],
           standardTargetFlatFieldMetadatas: [
             ...sourceAndTargetFlatFieldMetadatasRecord.standardTargetFlatFieldMetadatas,
-            { ...flatFieldMetadatas[1], isSystemSideEffect: true },
+            { ...flatFieldMetadatas[1], isSystemSideEffect: false },
           ],
           standardTargetFlatIndexMetadatas: [
             ...sourceAndTargetFlatFieldMetadatasRecord.standardTargetFlatIndexMetadatas,

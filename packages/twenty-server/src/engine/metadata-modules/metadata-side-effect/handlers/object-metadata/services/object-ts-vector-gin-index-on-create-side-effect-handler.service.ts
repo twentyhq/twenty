@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { isFlatEntityAlreadyPresentForSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/utils/is-flat-entity-already-present-for-side-effect.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -21,8 +20,6 @@ export class ObjectTsVectorGinIndexOnCreateSideEffectHandlerService extends Meta
 ) {
   buildSideEffects({
     flatEntity: flatObjectMetadata,
-    allFlatEntityOperationRecordByMetadataName,
-    relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'objectMetadata'>): MetadataSideEffectResult {
     const { applicationUniversalIdentifier, universalIdentifier } =
       flatObjectMetadata;
@@ -46,17 +43,9 @@ export class ObjectTsVectorGinIndexOnCreateSideEffectHandlerService extends Meta
 
     const tsVectorFlatIndex = indexes.tsVectorFlatIndex;
 
-    if (
-      isFlatEntityAlreadyPresentForSideEffect({
-        metadataName: 'index',
-        universalIdentifier: tsVectorFlatIndex.universalIdentifier,
-        allFlatEntityOperationRecordByMetadataName,
-        relatedFlatEntityMaps,
-      })
-    ) {
-      return { status: 'noop' };
-    }
-
+    // The GIN index is pure engine output with a deterministic isSystemSideEffect
+    // universal identifier, so the engine merge dedups it silently if it is also
+    // declared elsewhere; no local presence check is needed.
     return {
       status: 'success',
       operations: {

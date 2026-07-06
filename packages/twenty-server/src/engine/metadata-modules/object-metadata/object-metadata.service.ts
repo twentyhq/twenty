@@ -27,7 +27,7 @@ import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metada
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { fromCreateObjectInputToFlatObjectMetadataToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
+import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-update-object-input-to-flat-object-metadata-and-related-flat-entities.util';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -483,16 +483,33 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const resolvedOwnerFlatApplication =
       ownerFlatApplication ?? workspaceCustomFlatApplication;
 
-    const { flatObjectMetadataToCreate } =
-      fromCreateObjectInputToFlatObjectMetadataToCreate({
-        createObjectInput,
-        flatApplication: resolvedOwnerFlatApplication,
-      });
+    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
 
-    // The default field creates are synthesized by the objectMetadata side-effect
-    // engine handlers; the pure builder is reused here only to resolve their
-    // deterministic universal identifiers, names and types for the default
-    // view / viewField side effects (relation fields are filtered out downstream).
+    // The reserved system fields, their indexes, the GIN searchVector index and
+    // the searchFieldMetadata are synthesized by the objectMetadata side-effect
+    // engine handlers. The caller-provided defaults (name field + default
+    // relations to the standard objects, both directions, with their indexes) are
+    // produced here for the direct GraphQL API path.
+    const {
+      flatObjectMetadataToCreate,
+      flatFieldMetadataToCreateOnObject,
+      relationTargetFlatFieldMetadataToCreate,
+      flatIndexMetadataToCreate,
+    } = fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
+      createObjectInput,
+      flatApplication: resolvedOwnerFlatApplication,
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+    });
+
+    // The system field universal identifiers, names and types are resolved from
+    // the pure builder only to compute the default view / viewField side effects
+    // (relation fields are filtered out downstream).
     const defaultFlatFieldForCustomObjectMaps =
       buildDefaultFlatFieldMetadatasForCustomObject({
         flatObjectMetadata: {
@@ -578,6 +595,19 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           allFlatEntityOperationByMetadataName: {
             objectMetadata: {
               flatEntityToCreate: [flatObjectMetadataToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+            fieldMetadata: {
+              flatEntityToCreate: [
+                ...flatFieldMetadataToCreateOnObject,
+                ...relationTargetFlatFieldMetadataToCreate,
+              ],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+            index: {
+              flatEntityToCreate: flatIndexMetadataToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },

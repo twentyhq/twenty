@@ -144,7 +144,11 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
           isNullable: true,
           isActive: true,
           isSystem: false,
-          isSystemSideEffect: true,
+          // The name field is a caller-provided default field (SDK auto-complete
+          // on the manifest path, input transpiler on the API path), not an
+          // engine side effect, so it is authorable and subject to normal
+          // deletion inference like any other declared field.
+          isSystemSideEffect: false,
           isUIEditable: true,
           defaultValue: null,
           createdAt: now,

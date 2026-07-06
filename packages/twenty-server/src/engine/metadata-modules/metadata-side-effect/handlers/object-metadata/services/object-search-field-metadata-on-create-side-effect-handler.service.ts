@@ -5,7 +5,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isSearchableFieldType } from 'twenty-shared/utils';
 
 import { buildFlatSearchFieldMetadataForField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/build-flat-search-field-metadata-for-field.util';
-import { isFlatEntityAlreadyPresentForSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/utils/is-flat-entity-already-present-for-side-effect.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -89,17 +88,9 @@ export class ObjectSearchFieldMetadataOnCreateSideEffectHandlerService extends M
       position: 0,
     });
 
-    if (
-      isFlatEntityAlreadyPresentForSideEffect({
-        metadataName: 'searchFieldMetadata',
-        universalIdentifier: flatSearchFieldMetadata.universalIdentifier,
-        allFlatEntityOperationRecordByMetadataName,
-        relatedFlatEntityMaps,
-      })
-    ) {
-      return { status: 'noop' };
-    }
-
+    // searchFieldMetadata is pure engine output and is never declared in a
+    // manifest, so the engine merge is the single source of dedup; no local
+    // presence check is needed.
     return {
       status: 'success',
       operations: {

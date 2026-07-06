@@ -69,10 +69,12 @@ const buildFlatEntityOperationRecordForMetadata = <T extends AllMetadataName>({
             return false;
           }
 
-          // Engine-owned side effects (system fields, the name field, default
-          // relation fields, and all system indexes including the GIN searchVector
-          // index) are excluded from deletion inference: they are re-synthesized on
-          // create and cascaded explicitly by the object delete handler.
+          // Engine-owned side effects (the reserved system fields and all system
+          // indexes including the GIN searchVector index) are excluded from
+          // deletion inference: they are re-synthesized on create and cascaded
+          // explicitly by the object delete handler. Caller-provided defaults
+          // (name, default relations) are NOT flagged and follow normal deletion
+          // inference since they live in both the from and to manifests.
           return !isSystemSideEffectFlatEntity(
             fromFlatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
           );

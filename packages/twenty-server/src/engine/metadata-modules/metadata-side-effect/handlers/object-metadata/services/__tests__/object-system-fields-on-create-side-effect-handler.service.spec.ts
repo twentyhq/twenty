@@ -7,6 +7,17 @@ import { ObjectSystemFieldsOnCreateSideEffectHandlerService } from 'src/engine/m
 const APPLICATION_UNIVERSAL_IDENTIFIER = 'a1a2a3a4-a5a6-4000-8000-000000000001';
 const OBJECT_UNIVERSAL_IDENTIFIER = 'b1b2b3b4-b5b6-4000-8000-000000000001';
 
+const SYSTEM_FIELD_NAMES = [
+  'id',
+  'createdAt',
+  'updatedAt',
+  'deletedAt',
+  'createdBy',
+  'updatedBy',
+  'position',
+  'searchVector',
+] as const;
+
 const NAME_FIELD_UNIVERSAL_IDENTIFIER = getFieldUniversalIdentifier({
   applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
@@ -37,7 +48,7 @@ describe('ObjectSystemFieldsOnCreateSideEffectHandlerService', () => {
   const handler =
     new (ObjectSystemFieldsOnCreateSideEffectHandlerService as unknown as new () => ObjectSystemFieldsOnCreateSideEffectHandlerService)();
 
-  it('should synthesize the 8 system fields plus name when the label identifier is the derived name field', () => {
+  it('should synthesize exactly the 8 reserved system fields and never the caller-provided name field', () => {
     const result = handler.buildSideEffects(
       buildArgs({
         labelIdentifierFieldMetadataUniversalIdentifier:
@@ -55,60 +66,26 @@ describe('ObjectSystemFieldsOnCreateSideEffectHandlerService', () => {
       result.operations.fieldMetadata?.flatEntityToCreate ?? {},
     );
 
-    expect(createdUniversalIdentifiers).toHaveLength(9);
-    expect(createdUniversalIdentifiers).toContain(
-      NAME_FIELD_UNIVERSAL_IDENTIFIER,
-    );
-  });
-
-  it('should skip the name field when the object uses a different label identifier (junction / author-declared)', () => {
-    const result = handler.buildSideEffects(
-      buildArgs({
-        labelIdentifierFieldMetadataUniversalIdentifier:
-          getFieldUniversalIdentifier({
-            applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-            objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-            name: 'id',
-          }),
-      }),
-    );
-
-    expect(result.status).toBe('success');
-
-    if (result.status !== 'success') {
-      throw new Error('expected success');
-    }
-
-    const createdUniversalIdentifiers = Object.keys(
-      result.operations.fieldMetadata?.flatEntityToCreate ?? {},
-    );
-
     expect(createdUniversalIdentifiers).toHaveLength(8);
     expect(createdUniversalIdentifiers).not.toContain(
       NAME_FIELD_UNIVERSAL_IDENTIFIER,
     );
+
+    for (const name of SYSTEM_FIELD_NAMES) {
+      expect(createdUniversalIdentifiers).toContain(
+        getFieldUniversalIdentifier({
+          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+          name,
+        }),
+      );
+    }
   });
 
-  it('should noop when every system field already exists in the workspace from-state', () => {
-    const idFieldUniversalIdentifier = getFieldUniversalIdentifier({
-      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-      objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-      name: 'id',
-    });
-
+  it('should still emit all system fields even when they already exist in the from-state (dedup delegated to the engine merge)', () => {
     const alreadyPresentByUniversalIdentifier: Record<string, unknown> = {};
 
-    for (const name of [
-      'name',
-      'id',
-      'createdAt',
-      'updatedAt',
-      'deletedAt',
-      'createdBy',
-      'updatedBy',
-      'position',
-      'searchVector',
-    ]) {
+    for (const name of SYSTEM_FIELD_NAMES) {
       const universalIdentifier = getFieldUniversalIdentifier({
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
@@ -132,9 +109,14 @@ describe('ObjectSystemFieldsOnCreateSideEffectHandlerService', () => {
       }),
     );
 
-    expect(result.status).toBe('noop');
+    expect(result.status).toBe('success');
+
+    if (result.status !== 'success') {
+      throw new Error('expected success');
+    }
+
     expect(
-      idFieldUniversalIdentifier in alreadyPresentByUniversalIdentifier,
-    ).toBe(true);
+      Object.keys(result.operations.fieldMetadata?.flatEntityToCreate ?? {}),
+    ).toHaveLength(8);
   });
 });

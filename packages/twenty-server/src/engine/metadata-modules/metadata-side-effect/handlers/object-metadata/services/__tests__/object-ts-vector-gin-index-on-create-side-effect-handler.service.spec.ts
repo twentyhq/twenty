@@ -58,7 +58,7 @@ describe('ObjectTsVectorGinIndexOnCreateSideEffectHandlerService', () => {
     );
   });
 
-  it('should noop when the GIN index already exists in the from-state', () => {
+  it('should still emit the GIN index even when it already exists in the from-state (dedup delegated to the engine merge)', () => {
     const firstResult = handler.buildSideEffects(buildArgs());
 
     if (firstResult.status !== 'success') {
@@ -83,6 +83,14 @@ describe('ObjectTsVectorGinIndexOnCreateSideEffectHandlerService', () => {
       }),
     );
 
-    expect(result.status).toBe('noop');
+    expect(result.status).toBe('success');
+
+    if (result.status !== 'success') {
+      throw new Error('expected success');
+    }
+
+    expect(
+      Object.keys(result.operations.index?.flatEntityToCreate ?? {}),
+    ).toHaveLength(1);
   });
 });

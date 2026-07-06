@@ -8,6 +8,7 @@ import {
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
 import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
+import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/manifest/utils/validate-conditional-availability-usage';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
@@ -34,7 +35,6 @@ import {
   type ConnectionProviderManifest,
   type FieldManifest,
   type FrontComponentManifest,
-  getFieldUniversalIdentifier,
   type IndexManifest,
   type LogicFunctionManifest,
   type Manifest,
@@ -502,25 +502,39 @@ export const buildManifest = async (
 
   if (applicationConfig) {
     for (const objectConfig of objectConfigs) {
-      // Default system fields, default relations and their reverse fields are now
-      // synthesized server-side by the objectMetadata side-effect engine, so the SDK
-      // no longer materializes them into the manifest. It only forwards the
-      // author-declared fields and resolves the label identifier deterministically.
+      // The reserved system fields, the searchVector GIN index and the
+      // searchFieldMetadata are synthesized server-side by the objectMetadata
+      // side-effect engine. The name field and the default relations to the
+      // standard objects are caller-provided defaults auto-completed here so they
+      // live in the manifest and remain authorable.
+      const {
+        objectFields: objectFieldsWithDefaults,
+        fields: reverseRelationFields,
+      } = getDefaultFieldsInObjectFields({
+        objectConfig,
+        applicationUniversalIdentifier: applicationConfig.universalIdentifier,
+      });
+
       const labelIdentifierFieldMetadataUniversalIdentifier =
         objectConfig.labelIdentifierFieldMetadataUniversalIdentifier ??
-        getFieldUniversalIdentifier({
-          applicationUniversalIdentifier: applicationConfig.universalIdentifier,
-          objectUniversalIdentifier: objectConfig.universalIdentifier,
-          name: 'name',
-        });
+        objectFieldsWithDefaults.find((field) => field.name === 'name')
+          ?.universalIdentifier;
+
+      if (!labelIdentifierFieldMetadataUniversalIdentifier) {
+        errors.push(
+          `No label identifier field found for object ${objectConfig.nameSingular}. Please add a field with name "name" to your object.`,
+        );
+        continue;
+      }
 
       const objectManifest: ObjectManifest = {
         ...objectConfig,
-        fields: objectConfig.fields.map(addMissingFieldOptionIds),
+        fields: objectFieldsWithDefaults.map(addMissingFieldOptionIds),
         labelIdentifierFieldMetadataUniversalIdentifier,
       };
 
       objects.push(objectManifest);
+      fields.push(...reverseRelationFields);
     }
   }
 
