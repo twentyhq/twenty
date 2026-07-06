@@ -32,6 +32,7 @@ describe('Sync application should surface a human error on flat-entity map confl
 
   it('should fail with an installation error naming the object when two objects share a universalIdentifier', async () => {
     const firstObject = buildDefaultObjectManifest({
+      applicationUniversalIdentifier: TEST_APP_ID,
       nameSingular: 'invoice',
       namePlural: 'invoices',
       labelSingular: 'Invoice',
@@ -40,6 +41,7 @@ describe('Sync application should surface a human error on flat-entity map confl
     });
 
     const conflictingObject = buildDefaultObjectManifest({
+      applicationUniversalIdentifier: TEST_APP_ID,
       nameSingular: 'invoiceDuplicate',
       namePlural: 'invoiceDuplicates',
       labelSingular: 'Invoice Duplicate',
@@ -65,6 +67,7 @@ describe('Sync application should surface a human error on flat-entity map confl
 
   it('should fail with an installation error naming the field when two fields of an object share a universalIdentifier', async () => {
     const objectWithConflictingFields = buildDefaultObjectManifest({
+      applicationUniversalIdentifier: TEST_APP_ID,
       nameSingular: 'invoice',
       namePlural: 'invoices',
       labelSingular: 'Invoice',

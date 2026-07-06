@@ -26,13 +26,12 @@ import { PARTIAL_SYSTEM_FLAT_FIELD_METADATAS } from 'src/engine/metadata-modules
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// Field names auto-provisioned on every object; their universal identifiers
-// are now deterministically derived from (application UID, object UID, name).
-// Fields are picked explicitly so system fields added to
+// Server-owned system field names: their universal identifiers are taken
+// over for every application, whatever value they currently hold, since
+// validateObjectMetadataSystemFieldsIntegrity now rejects any non-derived
+// value at sync time. Fields are picked explicitly so system fields added to
 // PARTIAL_SYSTEM_FLAT_FIELD_METADATAS later never alter this shipped
-// migration. The name field is provisioned alongside the system fields by
-// build-default-flat-field-metadatas-for-custom-object.util.ts but lives
-// outside PARTIAL_SYSTEM_FLAT_FIELD_METADATAS.
+// migration.
 const SYSTEM_FIELD_NAMES = new Set<string>([
   PARTIAL_SYSTEM_FLAT_FIELD_METADATAS.id.name,
   PARTIAL_SYSTEM_FLAT_FIELD_METADATAS.createdAt.name,
@@ -42,8 +41,14 @@ const SYSTEM_FIELD_NAMES = new Set<string>([
   PARTIAL_SYSTEM_FLAT_FIELD_METADATAS.updatedBy.name,
   PARTIAL_SYSTEM_FLAT_FIELD_METADATAS.position.name,
   PARTIAL_SYSTEM_FLAT_FIELD_METADATAS.searchVector.name,
-  'name',
 ]);
+
+// The name field is a default field, not a system field: it is only taken
+// over where it is guaranteed to be auto-provisioned (workspace-custom
+// objects). For installed applications authors may define it themselves, so
+// only legacy SDK-derived values are converged; for the standard application
+// it is author-provided in STANDARD_OBJECTS and keeps its hardcoded value.
+const NAME_FIELD_NAME = 'name';
 
 const DEFAULT_RELATION_FORWARD_FIELD_NAMES = new Set([
   'timelineActivities',
@@ -248,10 +253,18 @@ export class BackfillDeterministicFieldUniversalIdentifiersCommand extends Activ
     twentyStandardApplicationId: string;
     workspaceCustomApplicationId: string;
   }): boolean {
-    // Standard application: only system fields are derived in
-    // STANDARD_OBJECTS; every other standard field keeps its hardcoded value.
+    // System field universal identifiers are server-owned: they are taken
+    // over for every application. Sync now rejects non-derived values
+    // (validateObjectMetadataSystemFieldsIntegrity), so converging every row
+    // here is both safe and required.
+    if (SYSTEM_FIELD_NAMES.has(flatFieldMetadata.name)) {
+      return true;
+    }
+
+    // Standard application: every non-system standard field (including name)
+    // is author-provided in STANDARD_OBJECTS and keeps its hardcoded value.
     if (flatFieldMetadata.applicationId === twentyStandardApplicationId) {
-      return SYSTEM_FIELD_NAMES.has(flatFieldMetadata.name);
+      return false;
     }
 
     const relationTargetFlatObjectMetadata = isDefined(
@@ -264,7 +277,7 @@ export class BackfillDeterministicFieldUniversalIdentifiersCommand extends Activ
       : undefined;
 
     if (flatFieldMetadata.applicationId === workspaceCustomApplicationId) {
-      if (SYSTEM_FIELD_NAMES.has(flatFieldMetadata.name)) {
+      if (flatFieldMetadata.name === NAME_FIELD_NAME) {
         return true;
       }
 
@@ -302,9 +315,11 @@ export class BackfillDeterministicFieldUniversalIdentifiersCommand extends Activ
       return false;
     }
 
-    // Installed applications: only rows still carrying an SDK-auto-generated
-    // (legacy derivation) identifier are backfilled; author-provided
-    // identifiers must keep matching the application source code.
+    // Installed applications, remaining auto-provisioned fields (injected
+    // name field and default relation fields): only rows still carrying an
+    // SDK-auto-generated (legacy derivation) identifier are backfilled;
+    // author-provided identifiers must keep matching the application source
+    // code.
     const legacyDefaultUniversalIdentifier =
       computeLegacySdkDefaultFieldUniversalIdentifier({
         objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,

@@ -26,7 +26,7 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
         "universalIdentifier": "4b99ff33-3b68-523c-bc93-22c01ad5fb82",
       },
       "name": {
-        "universalIdentifier": "a5bc87de-6251-5c2c-af69-65197651398b",
+        "universalIdentifier": "20202020-87a5-48f8-bbf7-ade388825a57",
       },
       "position": {
         "universalIdentifier": "ae9bd922-70c6-5ce0-9073-d5002c2f9ccd",
@@ -755,7 +755,7 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
         "universalIdentifier": "20202020-ebeb-4beb-b9ad-6848036fb451",
       },
       "name": {
-        "universalIdentifier": "966ec900-6190-5c6c-97a2-549aa6d5a962",
+        "universalIdentifier": "20202020-4d99-4e2e-a84c-4a27837b1ece",
       },
       "noteTargets": {
         "universalIdentifier": "20202020-bae0-4556-a74a-a9c686f77a88",
@@ -1342,7 +1342,7 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
         "universalIdentifier": "92df3493-91cf-4665-8587-1b08917d299b",
       },
       "name": {
-        "universalIdentifier": "7be09a48-1d18-584c-b910-3a6c20bd73c6",
+        "universalIdentifier": "69b9ed8b-7b26-4108-894f-05700ef7e8ee",
       },
       "position": {
         "universalIdentifier": "fdec9697-14f8-56a3-85c4-ed63245600e0",
@@ -1811,7 +1811,7 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
         "universalIdentifier": "2fa92d57-b39d-5ee8-ac9e-b39bc65b9ee9",
       },
       "name": {
-        "universalIdentifier": "c5a09742-0f66-594b-9eba-bf248883b86b",
+        "universalIdentifier": "20202020-8609-4f65-a2d9-44009eb422b5",
       },
       "noteTargets": {
         "universalIdentifier": "20202020-dd3f-42d5-a382-db58aabf43d3",
@@ -2028,7 +2028,7 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
         "universalIdentifier": "20202020-498e-4c61-8158-fa04f0638334",
       },
       "name": {
-        "universalIdentifier": "21ed690c-99cb-5d36-be17-a6cf663f3aaa",
+        "universalIdentifier": "20202020-3875-44d5-8c33-a6239011cab8",
       },
       "noteTargets": {
         "universalIdentifier": "20202020-c8fc-4258-8250-15905d3fcfec",
@@ -2498,7 +2498,7 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
         "universalIdentifier": "20202020-2e0e-48c0-b445-ee6c1e61687d",
       },
       "name": {
-        "universalIdentifier": "5b0cb620-50df-5fe2-aa48-473e88034bd4",
+        "universalIdentifier": "20202020-7207-46e8-9dab-849505ae8497",
       },
       "position": {
         "universalIdentifier": "02c2a94c-f393-5de2-9fe9-71ff4f76980d",
@@ -2664,7 +2664,7 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
         "universalIdentifier": "20202020-326a-4fba-8639-3456c0a169e8",
       },
       "name": {
-        "universalIdentifier": "6362bbe3-9011-5729-96e3-fbbc64480373",
+        "universalIdentifier": "20202020-b3d3-478f-acc0-5d901e725b20",
       },
       "position": {
         "universalIdentifier": "c3550e45-4525-5690-913e-3803b1e964ae",
@@ -2828,7 +2828,7 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
         "universalIdentifier": "e8f6e894-4003-5cb1-a1c1-7ed5b3e4200c",
       },
       "name": {
-        "universalIdentifier": "aaa1ff38-712c-5481-b357-f388e2e7e830",
+        "universalIdentifier": "20202020-b840-4253-aef9-4e5013694587",
       },
       "position": {
         "universalIdentifier": "a7ac4402-cfb7-54ef-baf2-ee737c743a1c",
@@ -2966,7 +2966,7 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
         "universalIdentifier": "81e02441-5817-54f7-9edc-fac66c7c3415",
       },
       "name": {
-        "universalIdentifier": "ab8ca7e9-c69f-5cec-9961-bac7f049b7e1",
+        "universalIdentifier": "20202020-a12f-4cca-9937-a2e40cc65509",
       },
       "position": {
         "universalIdentifier": "bb0c73bd-d371-5e72-b2a0-05d8be1668f1",
@@ -3122,7 +3122,7 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
         "universalIdentifier": "20202020-8f99-48bc-a5eb-edd33dd54188",
       },
       "name": {
-        "universalIdentifier": "b817cb1d-24b1-5e85-9d1c-1e165f83aaf8",
+        "universalIdentifier": "20202020-e914-43a6-9c26-3603c59065f4",
       },
       "numberFormat": {
         "universalIdentifier": "20202020-7f40-4e7f-b126-11c0eda6b141",

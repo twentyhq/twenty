@@ -18,6 +18,7 @@ const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
 
 const TEST_OBJECT = buildDefaultObjectManifest({
+  applicationUniversalIdentifier: TEST_APP_ID,
   nameSingular: 'uniqueRenameObject',
   namePlural: 'uniqueRenameObjects',
   labelSingular: 'Unique Rename Object',
