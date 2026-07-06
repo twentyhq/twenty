@@ -20,11 +20,16 @@ export const createHostFetch = (
       );
     }
 
+    const requestMethod = (input.method ?? 'GET').toUpperCase();
+    const allowsFileStorageRedirects =
+      requestMethod === 'GET' || requestMethod === 'HEAD';
+
     const response = await fetch(input.url, {
-      method: input.method ?? 'GET',
+      method: requestMethod,
       headers: input.headers,
       body: input.body,
       credentials: 'omit',
+      redirect: allowsFileStorageRedirects ? 'follow' : 'error',
     });
 
     const responseHeaders: Record<string, string> = {};

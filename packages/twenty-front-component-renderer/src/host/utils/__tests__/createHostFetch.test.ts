@@ -48,6 +48,37 @@ describe('createHostFetch', () => {
     expect(result.headers['content-type']).toBe('application/json');
   });
 
+  it('should refuse redirects for non-GET requests', async () => {
+    const fetchSpy = jest.fn(async () => createFakeResponse());
+    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+
+    const hostFetch = createHostFetch(['https://api.twenty.test']);
+    await hostFetch({
+      url: 'https://api.twenty.test/graphql',
+      method: 'POST',
+    });
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      'https://api.twenty.test/graphql',
+      expect.objectContaining({ redirect: 'error' }),
+    );
+  });
+
+  it('should follow file storage redirects for GET requests', async () => {
+    const fetchSpy = jest.fn(async () => createFakeResponse());
+    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+
+    const hostFetch = createHostFetch(['https://api.twenty.test']);
+    await hostFetch({
+      url: 'https://api.twenty.test/rest/front-components/component-id',
+    });
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      'https://api.twenty.test/rest/front-components/component-id',
+      expect.objectContaining({ method: 'GET', redirect: 'follow' }),
+    );
+  });
+
   it('should reject malformed request urls', async () => {
     const hostFetch = createHostFetch(['https://api.twenty.test']);
 

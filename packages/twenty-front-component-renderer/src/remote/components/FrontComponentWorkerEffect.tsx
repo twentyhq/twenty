@@ -98,6 +98,8 @@ export const FrontComponentWorkerEffect = ({
     });
     channel.port1.start();
 
+    let hasTransferredWorkerPort = false;
+
     const handleSandboxMessage = (event: MessageEvent) => {
       if (event.source !== sandboxIframe.contentWindow) {
         return;
@@ -106,6 +108,11 @@ export const FrontComponentWorkerEffect = ({
       const messageType = (event.data as { type?: string } | null)?.type;
 
       if (messageType === FRONT_COMPONENT_SANDBOX_MESSAGE.READY) {
+        if (hasTransferredWorkerPort) {
+          return;
+        }
+        hasTransferredWorkerPort = true;
+
         sandboxIframe.contentWindow?.postMessage(
           { type: FRONT_COMPONENT_SANDBOX_MESSAGE.INIT },
           '*',

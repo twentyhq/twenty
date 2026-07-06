@@ -20,7 +20,25 @@ window.addEventListener('message', (event) => {
     return;
   }
 
-  const spawnedWorker = createRemoteWorker();
+  let spawnedWorker: Worker;
+
+  try {
+    spawnedWorker = createRemoteWorker();
+  } catch (error) {
+    window.parent.postMessage(
+      {
+        type: FRONT_COMPONENT_SANDBOX_MESSAGE.ERROR,
+        message:
+          error instanceof Error
+            ? error.message
+            : 'Failed to spawn the front component worker',
+      },
+      '*',
+    );
+
+    return;
+  }
+
   worker = spawnedWorker;
 
   spawnedWorker.addEventListener('error', (errorEvent) => {

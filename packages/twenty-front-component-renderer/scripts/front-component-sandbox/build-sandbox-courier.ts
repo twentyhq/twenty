@@ -31,15 +31,6 @@ const buildSandboxCourier = async (): Promise<void> => {
         '@/': path.resolve(projectRoot, 'src') + '/',
       },
     },
-    worker: {
-      format: 'iife',
-      plugins: () => [
-        {
-          name: 'define-process-env',
-          transform: replaceProcessEnv,
-        },
-      ],
-    },
     define: {
       'process.env.NODE_ENV': JSON.stringify('production'),
     },
@@ -50,6 +41,14 @@ const buildSandboxCourier = async (): Promise<void> => {
         formats: ['iife'],
         name: 'frontComponentSandboxCourier',
         fileName: () => 'sandbox-courier.js',
+      },
+      rollupOptions: {
+        plugins: [
+          {
+            name: 'define-process-env',
+            transform: replaceProcessEnv,
+          },
+        ],
       },
     },
     logLevel: 'warn',

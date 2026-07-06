@@ -68,6 +68,7 @@
       "inputs": [
         "{projectRoot}/scripts/front-component-sandbox/**/*",
         "{projectRoot}/src/remote/**/*",
+        "!{projectRoot}/src/remote/sandbox/generated/**/*",
         "{projectRoot}/src/constants/**/*",
         "{projectRoot}/src/polyfills/**/*",
         "{projectRoot}/src/types/**/*"

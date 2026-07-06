@@ -2,6 +2,12 @@ import { getURLSafely, isDefined } from 'twenty-shared/utils';
 
 import { type HostFetchFunction } from '@/types/HostFetch';
 
+const URL_SEARCH_PARAMS_CONTENT_TYPE =
+  'application/x-www-form-urlencoded;charset=UTF-8';
+
+const isRequestInput = (input: RequestInfo | URL): input is Request =>
+  typeof input === 'object' && !(input instanceof URL);
+
 const toRequestUrl = (input: RequestInfo | URL): string => {
   if (typeof input === 'string') {
     return input;
@@ -17,9 +23,7 @@ const toRequestUrl = (input: RequestInfo | URL): string => {
 const toRequestMethod = (
   input: RequestInfo | URL,
   init: RequestInit | undefined,
-): string =>
-  init?.method ??
-  (typeof input === 'object' && !(input instanceof URL) ? input.method : 'GET');
+): string => init?.method ?? (isRequestInput(input) ? input.method : 'GET');
 
 const toHeaderRecord = (
   headers: HeadersInit | undefined,
@@ -33,6 +37,50 @@ const toHeaderRecord = (
   }
 
   return record;
+};
+
+const toProxiedHeaders = (
+  input: RequestInfo | URL,
+  init: RequestInit | undefined,
+): Record<string, string> => {
+  if (isDefined(init?.headers)) {
+    return toHeaderRecord(init.headers);
+  }
+
+  if (isRequestInput(input)) {
+    return toHeaderRecord(input.headers);
+  }
+
+  return {};
+};
+
+const toProxiedBody = async (
+  input: RequestInfo | URL,
+  init: RequestInit | undefined,
+): Promise<string | undefined> => {
+  const initBody = init?.body;
+
+  if (!isDefined(initBody)) {
+    if (isRequestInput(input)) {
+      const requestBody = await input.clone().text();
+
+      return requestBody === '' ? undefined : requestBody;
+    }
+
+    return undefined;
+  }
+
+  if (typeof initBody === 'string') {
+    return initBody;
+  }
+
+  if (initBody instanceof URLSearchParams) {
+    return initBody.toString();
+  }
+
+  throw new TypeError(
+    'The front component fetch bridge only supports string and URLSearchParams request bodies for Twenty API requests',
+  );
 };
 
 const isProxiedOrigin = (url: string, proxiedOrigins: string[]): boolean => {
@@ -57,11 +105,20 @@ export const installHostFetchProxy = (
       return nativeFetch(input, init);
     }
 
+    const headers = toProxiedHeaders(input, init);
+
+    if (
+      init?.body instanceof URLSearchParams &&
+      !isDefined(headers['content-type'])
+    ) {
+      headers['content-type'] = URL_SEARCH_PARAMS_CONTENT_TYPE;
+    }
+
     const result = await hostFetch({
       url,
       method: toRequestMethod(input, init),
-      headers: toHeaderRecord(init?.headers),
-      body: typeof init?.body === 'string' ? init.body : undefined,
+      headers,
+      body: await toProxiedBody(input, init),
     });
 
     return new Response(result.body, {
