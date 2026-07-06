@@ -2,24 +2,25 @@ import { OnboardingImportPreviewCompanies } from '@/onboarding/components/import
 import { OnboardingImportPreviewEmails } from '@/onboarding/components/import-contacts/OnboardingImportPreviewEmails';
 import { OnboardingImportPreviewSyncBadge } from '@/onboarding/components/import-contacts/OnboardingImportPreviewSyncBadge';
 import { OnboardingImportPrivacyNote } from '@/onboarding/components/import-contacts/OnboardingImportPrivacyNote';
+import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const PREVIEW_WIDTH = 340;
-const PREVIEW_HEIGHT = 200;
+const PREVIEW_HEIGHT = 198;
 
 const StyledCard = styled.div`
   align-items: center;
   background-color: ${themeCssVariables.background.secondary};
   border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.xl};
+  border-radius: 12px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[3]};
+  max-width: 100%;
   overflow: hidden;
   padding-bottom: ${themeCssVariables.spacing[3]};
-  width: ${PREVIEW_WIDTH}px;
+  width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
 
 const StyledColumns = styled.div`

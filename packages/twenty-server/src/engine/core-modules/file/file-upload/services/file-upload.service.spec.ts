@@ -1,3 +1,5 @@
+import { Readable } from 'stream';
+
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -31,6 +33,7 @@ describe('FileUploadService', () => {
     getPresignedUploadUrl: jest.fn(),
     getFileMetadata: jest.fn(),
     writeFileStream: jest.fn(),
+    readFile: jest.fn(),
   };
 
   const fileUrlService = {
@@ -153,13 +156,13 @@ describe('FileUploadService', () => {
         expect.objectContaining({
           fileId: 'mocked-file-id',
           size: 1024,
-          mimeType: 'application/pdf',
+          mimeType: 'application/octet-stream',
           resourcePath: 'field-metadata-uid/mocked-file-id.pdf',
           settings: { isTemporaryFile: true, toDelete: false },
         }),
       );
       expect(result.uploadUrl).toBe('https://bucket/presigned-put');
-      expect(result.contentType).toBe('application/pdf');
+      expect(result.contentType).toBe('application/octet-stream');
       expect(result.fileId).toBe('mocked-file-id');
     });
 
@@ -193,11 +196,17 @@ describe('FileUploadService', () => {
       path: 'files-field/field-metadata-uid/file-id.pdf',
       size: 1024,
       applicationId: 'application-id',
-      mimeType: 'application/pdf',
+      mimeType: 'application/octet-stream',
       status: FILE_STATUS.PENDING,
       settings: { isTemporaryFile: true, toDelete: false },
       createdAt: new Date(),
     };
+
+    const PDF_BYTES = Buffer.from('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n', 'latin1');
+    const PNG_BYTES = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+      'base64',
+    );
 
     it('should throw when the file record does not exist', async () => {
       fileRepository.findOne.mockResolvedValueOnce(null);
@@ -240,11 +249,44 @@ describe('FileUploadService', () => {
       expect(fileRepository.update).not.toHaveBeenCalled();
     });
 
-    it('should flip the file to UPLOADED when the stored size matches', async () => {
+    it('should sniff the content, set the detected mime and flip to UPLOADED', async () => {
       fileRepository.findOne.mockResolvedValueOnce(pendingFile);
       fileStorageService.getFileMetadata.mockResolvedValueOnce({ size: 1024 });
+      fileStorageService.readFile.mockResolvedValueOnce(
+        Readable.from(PDF_BYTES),
+      );
 
       const result = await service.completeFileUpload({
+        workspaceId: 'workspace-id',
+        fileId: 'file-id',
+      });
+
+      expect(fileStorageService.readFile).toHaveBeenCalledWith(
+        expect.objectContaining({
+          fileFolder: FileFolder.FilesField,
+          resourcePath: 'field-metadata-uid/file-id.pdf',
+          workspaceId: 'workspace-id',
+        }),
+      );
+      expect(fileRepository.update).toHaveBeenCalledWith(
+        'workspace-id',
+        { id: 'file-id' },
+        { status: FILE_STATUS.UPLOADED, mimeType: 'application/pdf' },
+      );
+      expect(result.url).toBe('https://signed-url');
+    });
+
+    it('should override a spoofed extension with the detected content type', async () => {
+      fileRepository.findOne.mockResolvedValueOnce({
+        ...pendingFile,
+        path: 'files-field/field-metadata-uid/file-id.pdf',
+      });
+      fileStorageService.getFileMetadata.mockResolvedValueOnce({ size: 1024 });
+      fileStorageService.readFile.mockResolvedValueOnce(
+        Readable.from(PNG_BYTES),
+      );
+
+      await service.completeFileUpload({
         workspaceId: 'workspace-id',
         fileId: 'file-id',
       });
@@ -252,9 +294,27 @@ describe('FileUploadService', () => {
       expect(fileRepository.update).toHaveBeenCalledWith(
         'workspace-id',
         { id: 'file-id' },
-        { status: FILE_STATUS.UPLOADED },
+        { status: FILE_STATUS.UPLOADED, mimeType: 'image/png' },
       );
-      expect(result.url).toBe('https://signed-url');
+    });
+
+    it('should reject when the content cannot be matched to the declared extension', async () => {
+      fileRepository.findOne.mockResolvedValueOnce({
+        ...pendingFile,
+        path: 'files-field/field-metadata-uid/file-id.png',
+      });
+      fileStorageService.getFileMetadata.mockResolvedValueOnce({ size: 1024 });
+      fileStorageService.readFile.mockResolvedValueOnce(
+        Readable.from(Buffer.from('not-an-image-just-text')),
+      );
+
+      await expect(
+        service.completeFileUpload({
+          workspaceId: 'workspace-id',
+          fileId: 'file-id',
+        }),
+      ).rejects.toThrow();
+      expect(fileRepository.update).not.toHaveBeenCalled();
     });
 
     it('should be idempotent when the file is already UPLOADED', async () => {

@@ -530,32 +530,6 @@
         "supportsReasoning": true
       },
       {
-        "name": "claude-opus-4-0",
-        "label": "Claude Opus 4 (latest)",
-        "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 15,
-        "outputCostPerMillionTokens": 75,
-        "cachedInputCostPerMillionTokens": 1.5,
-        "cacheCreationCostPerMillionTokens": 18.75,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 32000,
-        "modalities": ["image", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "claude-3-opus-20240229",
-        "label": "Claude Opus 3",
-        "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 15,
-        "outputCostPerMillionTokens": 75,
-        "cachedInputCostPerMillionTokens": 1.5,
-        "cacheCreationCostPerMillionTokens": 18.75,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 4096,
-        "modalities": ["image", "pdf"],
-        "isDeprecated": true
-      },
-      {
         "name": "claude-opus-4-1-20250805",
         "label": "Claude Opus 4.1",
         "modelFamily": "CLAUDE",
@@ -566,7 +540,8 @@
         "contextWindowTokens": 200000,
         "maxOutputTokens": 32000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "isDeprecated": true
       },
       {
         "name": "claude-sonnet-4-5",
@@ -576,7 +551,7 @@
         "outputCostPerMillionTokens": 15,
         "cachedInputCostPerMillionTokens": 0.3,
         "cacheCreationCostPerMillionTokens": 3.75,
-        "contextWindowTokens": 200000,
+        "contextWindowTokens": 1000000,
         "maxOutputTokens": 64000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true
@@ -621,19 +596,6 @@
         "supportsReasoning": true
       },
       {
-        "name": "claude-3-5-sonnet-20241022",
-        "label": "Claude Sonnet 3.5 v2",
-        "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 3,
-        "outputCostPerMillionTokens": 15,
-        "cachedInputCostPerMillionTokens": 0.3,
-        "cacheCreationCostPerMillionTokens": 3.75,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 8192,
-        "modalities": ["image", "pdf"],
-        "isDeprecated": true
-      },
-      {
         "name": "claude-opus-4-8",
         "label": "Claude Opus 4.8",
         "modelFamily": "CLAUDE",
@@ -643,45 +605,6 @@
         "cacheCreationCostPerMillionTokens": 6.25,
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
-        "modalities": ["image", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "claude-opus-4-20250514",
-        "label": "Claude Opus 4",
-        "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 15,
-        "outputCostPerMillionTokens": 75,
-        "cachedInputCostPerMillionTokens": 1.5,
-        "cacheCreationCostPerMillionTokens": 18.75,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 32000,
-        "modalities": ["image", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "claude-3-5-sonnet-20240620",
-        "label": "Claude Sonnet 3.5",
-        "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 3,
-        "outputCostPerMillionTokens": 15,
-        "cachedInputCostPerMillionTokens": 0.3,
-        "cacheCreationCostPerMillionTokens": 3.75,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 8192,
-        "modalities": ["image", "pdf"],
-        "isDeprecated": true
-      },
-      {
-        "name": "claude-sonnet-4-20250514",
-        "label": "Claude Sonnet 4",
-        "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 3,
-        "outputCostPerMillionTokens": 15,
-        "cachedInputCostPerMillionTokens": 0.3,
-        "cacheCreationCostPerMillionTokens": 3.75,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 64000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
@@ -696,19 +619,7 @@
         "contextWindowTokens": 200000,
         "maxOutputTokens": 32000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "claude-3-haiku-20240307",
-        "label": "Claude Haiku 3",
-        "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 0.25,
-        "outputCostPerMillionTokens": 1.25,
-        "cachedInputCostPerMillionTokens": 0.03,
-        "cacheCreationCostPerMillionTokens": 0.3,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 4096,
-        "modalities": ["image", "pdf"],
+        "supportsReasoning": true,
         "isDeprecated": true
       },
       {
@@ -723,33 +634,6 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true
-      },
-      {
-        "name": "claude-sonnet-4-0",
-        "label": "Claude Sonnet 4 (latest)",
-        "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 3,
-        "outputCostPerMillionTokens": 15,
-        "cachedInputCostPerMillionTokens": 0.3,
-        "cacheCreationCostPerMillionTokens": 3.75,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 64000,
-        "modalities": ["image", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "claude-3-7-sonnet-20250219",
-        "label": "Claude Sonnet 3.7",
-        "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 3,
-        "outputCostPerMillionTokens": 15,
-        "cachedInputCostPerMillionTokens": 0.3,
-        "cacheCreationCostPerMillionTokens": 3.75,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 64000,
-        "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "isDeprecated": true
       },
       {
         "name": "claude-haiku-4-5",
@@ -785,23 +669,10 @@
         "outputCostPerMillionTokens": 15,
         "cachedInputCostPerMillionTokens": 0.3,
         "cacheCreationCostPerMillionTokens": 3.75,
-        "contextWindowTokens": 200000,
+        "contextWindowTokens": 1000000,
         "maxOutputTokens": 64000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true
-      },
-      {
-        "name": "claude-3-sonnet-20240229",
-        "label": "Claude Sonnet 3",
-        "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 3,
-        "outputCostPerMillionTokens": 15,
-        "cachedInputCostPerMillionTokens": 0.3,
-        "cacheCreationCostPerMillionTokens": 0.3,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 4096,
-        "modalities": ["image", "pdf"],
-        "isDeprecated": true
       },
       {
         "name": "claude-sonnet-4-6",
@@ -812,7 +683,7 @@
         "cachedInputCostPerMillionTokens": 0.3,
         "cacheCreationCostPerMillionTokens": 3.75,
         "contextWindowTokens": 1000000,
-        "maxOutputTokens": 64000,
+        "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true
       }
@@ -1121,11 +992,12 @@
         "name": "mistral-medium-latest",
         "label": "Mistral Medium (latest)",
         "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 0.4,
-        "outputCostPerMillionTokens": 2,
+        "inputCostPerMillionTokens": 1.5,
+        "outputCostPerMillionTokens": 7.5,
         "contextWindowTokens": 262144,
         "maxOutputTokens": 262144,
-        "modalities": ["image"]
+        "modalities": ["image"],
+        "supportsReasoning": true
       },
       {
         "name": "devstral-small-2505",

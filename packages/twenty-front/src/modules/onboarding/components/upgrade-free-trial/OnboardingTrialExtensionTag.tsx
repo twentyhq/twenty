@@ -10,6 +10,7 @@ const StyledTag = styled.div`
   border-radius: ${themeCssVariables.border.radius.pill};
   box-sizing: border-box;
   color: ${themeCssVariables.color.green9};
+  corner-shape: round;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[6]};

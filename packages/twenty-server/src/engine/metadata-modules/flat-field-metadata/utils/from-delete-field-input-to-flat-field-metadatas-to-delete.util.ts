@@ -14,7 +14,9 @@ import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
 import { computeSearchFieldMetadataDeletionForDeletedFields } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-search-field-metadata-deletion-for-deleted-fields.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { isSystemUniqueFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/is-system-unique-flat-index-metadata.util';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -95,10 +97,38 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
     ...relatedFlatFieldMetadataToDelete,
   ];
 
+  const isEngineOwnedBackingUniqueIndex = (
+    flatIndexMetadata: FlatIndexMetadata,
+  ): boolean => {
+    if (
+      !isSystemUniqueFlatIndexMetadata(flatIndexMetadata) ||
+      flatIndexMetadata.flatIndexFieldMetadatas.length !== 1
+    ) {
+      return false;
+    }
+
+    const backingFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId:
+        flatIndexMetadata.flatIndexFieldMetadatas[0].fieldMetadataId,
+      flatEntityMaps: existingFlatFieldMetadataMaps,
+    });
+
+    return (
+      isDefined(backingFlatFieldMetadata) &&
+      backingFlatFieldMetadata.isUnique === true &&
+      !isMorphOrRelationFlatFieldMetadata(backingFlatFieldMetadata)
+    );
+  };
+
   const flatIndexMap = new Map<string, FlatIndexMetadata>();
   const allFlatIndexes = Object.values(
     existingFlatIndexMaps.byUniversalIdentifier,
-  ).filter(isDefined);
+  )
+    .filter(isDefined)
+    .filter(
+      (flatIndexMetadata) =>
+        !isEngineOwnedBackingUniqueIndex(flatIndexMetadata),
+    );
 
   for (const flatFieldMetadata of flatFieldMetadatasToDelete) {
     allFlatIndexes.forEach((flatIndex) => {

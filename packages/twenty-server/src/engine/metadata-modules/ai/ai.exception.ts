@@ -22,6 +22,7 @@ export enum AiExceptionCode {
   ROLE_NOT_FOUND = 'ROLE_NOT_FOUND',
   ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS = 'ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS',
   NO_FAILED_TURN_TO_RETRY = 'NO_FAILED_TURN_TO_RETRY',
+  STREAM_INTERRUPTED = 'STREAM_INTERRUPTED',
 }
 
 const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
@@ -60,6 +61,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`This role cannot be assigned to agents.`;
     case AiExceptionCode.NO_FAILED_TURN_TO_RETRY:
       return msg`There is no failed message to retry.`;
+    case AiExceptionCode.STREAM_INTERRUPTED:
+      return msg`The response was interrupted before it could finish.`;
     default:
       assertUnreachable(code);
   }

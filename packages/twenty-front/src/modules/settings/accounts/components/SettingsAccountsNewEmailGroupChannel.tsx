@@ -53,8 +53,8 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
           href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: t`Email`,
-          href: getSettingsPath(SettingsPath.WorkspaceEmail),
+          children: t`Communications`,
+          href: getSettingsPath(SettingsPath.WorkspaceCommunications),
         },
         { children: t`New Email Channel` },
       ]}
@@ -63,7 +63,7 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
           isSaveDisabled={!canSave}
           isCancelDisabled={loading}
           isLoading={loading}
-          onCancel={() => navigate(SettingsPath.WorkspaceEmail)}
+          onCancel={() => navigate(SettingsPath.WorkspaceCommunications)}
           onSave={handleSave}
         />
       }
@@ -80,6 +80,11 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
             placeholder="support@mycompany.com"
             value={handle}
             onChange={setHandle}
+            onInputEnter={() => {
+              if (canSave) {
+                handleSave();
+              }
+            }}
             disabled={loading}
           />
         </Section>

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
@@ -10,6 +10,8 @@ import { ILike, type FindOptionsWhere, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
+import { shouldRefreshApplicationRegistrationOnInstall } from 'src/engine/core-modules/application/application-install/utils/should-refresh-application-registration-on-install.util';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 import {
@@ -79,6 +81,8 @@ export type ApplicationRegistrationCatalogCard = {
 
 @Injectable()
 export class ApplicationRegistrationService {
+  private readonly logger = new Logger(ApplicationRegistrationService.name);
+
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
@@ -87,6 +91,7 @@ export class ApplicationRegistrationService {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async findMany(
@@ -286,22 +291,47 @@ export class ApplicationRegistrationService {
     applicationRegistrationId,
     manifest,
     sourceType,
+    latestAvailableVersion,
+    preventVersionDowngrade = false,
   }: {
     applicationRegistrationId: string;
     manifest: Manifest;
     sourceType?: ApplicationRegistrationSourceType;
+    latestAvailableVersion?: string;
+    preventVersionDowngrade?: boolean;
   }): Promise<void> {
-    const existing = await this.applicationRegistrationRepository.findOneOrFail(
-      { where: { id: applicationRegistrationId } },
-    );
+    await this.cacheLockService.withLock(async () => {
+      const existing =
+        await this.applicationRegistrationRepository.findOneOrFail({
+          where: { id: applicationRegistrationId },
+        });
 
-    await this.applicationRegistrationRepository.save({
-      ...existing,
-      name: manifest.application.displayName,
-      manifest,
-      ...fromManifestApplicationToDisplayFields(manifest.application),
-      ...(sourceType !== undefined && { sourceType }),
-    });
+      if (
+        preventVersionDowngrade &&
+        isDefined(latestAvailableVersion) &&
+        !shouldRefreshApplicationRegistrationOnInstall({
+          installedVersion: latestAvailableVersion,
+          latestAvailableVersion: existing.latestAvailableVersion,
+        })
+      ) {
+        this.logger.log(
+          `Skipping registration update for ${existing.universalIdentifier}: version ${latestAvailableVersion} is older than latest available version ${existing.latestAvailableVersion}`,
+        );
+
+        return;
+      }
+
+      await this.applicationRegistrationRepository.save({
+        ...existing,
+        name: manifest.application.displayName,
+        manifest,
+        ...fromManifestApplicationToDisplayFields(manifest.application),
+        ...(sourceType !== undefined && { sourceType }),
+        ...(latestAvailableVersion !== undefined && {
+          latestAvailableVersion,
+        }),
+      });
+    }, `application-registration-update:${applicationRegistrationId}`);
   }
 
   async delete(id: string, ownerWorkspaceId: string): Promise<boolean> {

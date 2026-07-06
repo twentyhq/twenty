@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
-import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { MarketplaceCatalogSyncCronCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.cron.command';
 import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
 import { MarketplaceCatalogSyncService } from 'src/engine/core-modules/application/application-marketplace/marketplace-catalog-sync.service';
@@ -18,7 +17,6 @@ import { MarketplaceCatalogSyncCommand } from 'src/engine/core-modules/applicati
   imports: [
     ApplicationModule,
     ApplicationRegistrationModule,
-    ApplicationInstallModule,
     FeatureFlagModule,
     PermissionsModule,
     TwentyConfigModule,

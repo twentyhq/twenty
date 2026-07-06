@@ -7,6 +7,6 @@
   width: var(--tinted-icon-tile-dimension, var(--t-spacing-4));
   height: var(--tinted-icon-tile-dimension, var(--t-spacing-4));
   border: var(--tinted-icon-tile-border, none);
-  border-radius: 4px;
+  border-radius: var(--t-border-radius-sm);
   background-color: var(--tinted-icon-tile-background-color, transparent);
 }

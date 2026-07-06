@@ -44,6 +44,6 @@ export type Story = StoryObj<typeof SyncEmails>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
-    await canvas.findByText('Emails and Calendar');
+    await canvas.findByText('Import your contacts');
   },
 };

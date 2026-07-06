@@ -16,29 +16,37 @@ const TRUSTED_BY_LOGOS = [
 const StyledRow = styled.div`
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: center;
+  max-width: 100%;
 `;
 
-const StyledBadge = styled.div`
+const StyledBadge = styled.div<{ hasClusterLeading: boolean }>`
   align-items: center;
   background-color: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.pill};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.light};
+  corner-shape: round;
   display: flex;
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.semiBold};
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[7]};
-  padding: 0 ${themeCssVariables.spacing[2]} 0 ${themeCssVariables.spacing[1]};
+  overflow: hidden;
+  padding: 0 10px 0
+    ${({ hasClusterLeading }) =>
+      hasClusterLeading
+        ? themeCssVariables.spacing['0.5']
+        : themeCssVariables.spacing[1]};
 `;
 
 const StyledSeal = styled.img`
-  height: 20px;
+  height: 21px;
   object-fit: contain;
-  width: 20px;
+  width: 21px;
 `;
 
 const StyledLogoCluster = styled.div`
@@ -48,9 +56,9 @@ const StyledLogoCluster = styled.div`
 `;
 
 const StyledClusterLogo = styled.img`
-  height: 18px;
+  height: ${themeCssVariables.spacing[6]};
   object-fit: contain;
-  width: auto;
+  width: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledBadgeLabel = styled.span`
@@ -58,12 +66,17 @@ const StyledBadgeLabel = styled.span`
 `;
 
 type TrustBadgeProps = {
+  hasClusterLeading?: boolean;
   label: string;
   leading: ReactNode;
 };
 
-const TrustBadge = ({ label, leading }: TrustBadgeProps) => (
-  <StyledBadge>
+const TrustBadge = ({
+  hasClusterLeading = false,
+  label,
+  leading,
+}: TrustBadgeProps) => (
+  <StyledBadge hasClusterLeading={hasClusterLeading}>
     {leading}
     <StyledBadgeLabel>{label}</StyledBadgeLabel>
   </StyledBadge>
@@ -77,6 +90,7 @@ export const OnboardingTrustBadges = () => (
     />
     <TrustBadge
       label="+10k"
+      hasClusterLeading
       leading={
         <StyledLogoCluster>
           {TRUSTED_BY_LOGOS.map((logo) => (
