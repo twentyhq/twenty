@@ -20,9 +20,6 @@ export class WellKnownController {
   @Get('mcp/server-card.json')
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   @Header('Cache-Control', DISCOVERY_CACHE_CONTROL)
-  @Header('Access-Control-Allow-Origin', '*')
-  @Header('Access-Control-Allow-Methods', 'GET')
-  @Header('Access-Control-Allow-Headers', 'Content-Type')
   getMcpServerCard(@Req() request: Request) {
     const version =
       extractVersionMajorMinorPatch(
@@ -43,9 +40,6 @@ export class WellKnownController {
     'application/linkset+json; profile="https://www.rfc-editor.org/info/rfc9727"',
   )
   @Header('Cache-Control', DISCOVERY_CACHE_CONTROL)
-  @Header('Access-Control-Allow-Origin', '*')
-  @Header('Access-Control-Allow-Methods', 'GET')
-  @Header('Access-Control-Allow-Headers', 'Content-Type')
   getApiCatalog(@Req() request: Request): string {
     return JSON.stringify(buildApiCatalog(getRequestBaseUrl(request)), null, 2);
   }
