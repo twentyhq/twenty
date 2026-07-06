@@ -253,7 +253,14 @@ describe('direct file upload (createFileUpload / completeFileUpload)', () => {
     const completeResponse = await completeFileUpload(uploadTarget.fileId);
 
     expect(completeResponse.body.errors).toBeDefined();
-    expect(completeResponse.body.errors[0].message).toContain('match');
+    expect(completeResponse.body.errors[0].message).toContain(
+      'does not match its extension',
+    );
+
+    const retryResponse = await completeFileUpload(uploadTarget.fileId);
+
+    expect(retryResponse.body.errors).toBeDefined();
+    expect(retryResponse.body.data?.completeFileUpload ?? null).toBeNull();
   });
 
   it('should refuse a PUT larger than the declared size', async () => {

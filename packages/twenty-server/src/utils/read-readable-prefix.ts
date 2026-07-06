@@ -14,15 +14,19 @@ export const readReadablePrefix = async (
         return;
       }
 
-      chunks.push(chunk);
-      collected += chunk.length;
+      const remaining = maxBytes - collected;
+      const boundedChunk =
+        chunk.length > remaining ? chunk.subarray(0, remaining) : chunk;
+
+      chunks.push(boundedChunk);
+      collected += boundedChunk.length;
 
       if (collected >= maxBytes) {
         settled = true;
         stream.off('data', onData);
         stream.off('end', onEnd);
         stream.destroy();
-        resolve(Buffer.concat(chunks).subarray(0, maxBytes));
+        resolve(Buffer.concat(chunks));
       }
     };
 
