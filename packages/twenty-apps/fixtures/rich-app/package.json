@@ -5,7 +5,8 @@
   "engines": {
     "node": "^24.5.0",
     "npm": "please-use-yarn",
-    "yarn": ">=4.0.2"
+    "yarn": ">=4.0.2",
+    "twenty": ">=2.19.0"
   },
   "packageManager": "yarn@4.9.2",
   "scripts": {
@@ -14,8 +15,8 @@
     "lint:fix": "oxlint --fix -c .oxlintrc.json ."
   },
   "dependencies": {
-    "twenty-sdk": "latest",
-    "twenty-client-sdk": "latest"
+    "twenty-sdk": "2.19.0-alpha.1",
+    "twenty-client-sdk": "2.19.0-alpha.1"
   },
   "devDependencies": {
     "typescript": "^5.9.3",
