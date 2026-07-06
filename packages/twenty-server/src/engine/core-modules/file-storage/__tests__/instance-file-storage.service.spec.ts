@@ -88,7 +88,9 @@ describe('InstanceFileStorageService', () => {
       'should reject traversal resource path %s without touching storage',
       async (resourcePath) => {
         await expect(
-          Promise.resolve().then(() => invoke(resourcePath)),
+          (async () => {
+            await invoke(resourcePath);
+          })(),
         ).rejects.toThrow(
           expect.objectContaining({
             code: FileStorageExceptionCode.ACCESS_DENIED,
