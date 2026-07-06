@@ -1,14 +1,11 @@
-import {
-  API_DOCS_URL,
-  MCP_DOCS_URL,
-} from 'src/engine/core-modules/well-known/constants/well-known.constants';
-import { type ApiCatalogLinkset } from 'src/engine/core-modules/well-known/types/api-catalog-linkset.type';
+import { DOCUMENTATION_BASE_URL } from 'twenty-shared/constants';
 
-// Indexes the API surfaces available on `baseUrl`. The REST OpenAPI documents
-// are generated per workspace (they include each workspace's custom objects),
-// so service-desc points at the live per-host endpoint rather than a static
-// snapshot. service-meta links the REST base to its OAuth resource metadata.
-export const buildApiCatalog = (baseUrl: string): ApiCatalogLinkset => ({
+const API_DOCS_URL = `${DOCUMENTATION_BASE_URL}/developers/extend/api`;
+const MCP_DOCS_URL = `${DOCUMENTATION_BASE_URL}/user-guide/ai/capabilities/mcp`;
+
+// service-desc points at each host's live OpenAPI, which is generated per
+// workspace and so includes that workspace's custom objects.
+export const buildApiCatalog = (baseUrl: string) => ({
   linkset: [
     {
       anchor: `${baseUrl}/rest`,

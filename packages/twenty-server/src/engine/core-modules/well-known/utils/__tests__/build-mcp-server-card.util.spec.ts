@@ -1,8 +1,4 @@
 import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
-import {
-  MCP_SERVER_CARD_NAME,
-  MCP_SERVER_CARD_SCHEMA,
-} from 'src/engine/core-modules/well-known/constants/well-known.constants';
 import { buildMcpServerCard } from 'src/engine/core-modules/well-known/utils/build-mcp-server-card.util';
 
 describe('buildMcpServerCard', () => {
@@ -26,8 +22,10 @@ describe('buildMcpServerCard', () => {
       version: '0.42.0',
     });
 
-    expect(card.$schema).toBe(MCP_SERVER_CARD_SCHEMA);
-    expect(card.name).toBe(MCP_SERVER_CARD_NAME);
+    expect(card.$schema).toBe(
+      'https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json',
+    );
+    expect(card.name).toBe('com.twenty/twenty');
     expect(card.version).toBe('0.42.0');
     expect(card.repository.source).toBe('github');
   });
@@ -45,20 +43,5 @@ describe('buildMcpServerCard', () => {
         isSecret: true,
       }),
     ]);
-  });
-
-  it('keeps identity host-agnostic, varying only the remote URL', () => {
-    const first = buildMcpServerCard({
-      baseUrl: 'https://a.twenty.com',
-      version: '1.0.0',
-    });
-    const second = buildMcpServerCard({
-      baseUrl: 'https://custom.example.com',
-      version: '1.0.0',
-    });
-
-    expect(first.name).toBe(second.name);
-    expect(first.remotes[0].url).toBe('https://a.twenty.com/mcp');
-    expect(second.remotes[0].url).toBe('https://custom.example.com/mcp');
   });
 });

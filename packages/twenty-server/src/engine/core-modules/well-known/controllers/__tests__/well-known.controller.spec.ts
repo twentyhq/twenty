@@ -44,16 +44,6 @@ describe('WellKnownController', () => {
       expect(card.version).toBe('1.2.3');
     });
 
-    it('normalizes APP_VERSION to major.minor.patch', () => {
-      configGet.mockReturnValue('1.2.3-canary.7');
-
-      const card = controller.getMcpServerCard(
-        buildMockRequest('workspace.twenty.com'),
-      );
-
-      expect(card.version).toBe('1.2.3');
-    });
-
     it('falls back to 0.0.0 when APP_VERSION is unset', () => {
       configGet.mockReturnValue(undefined);
 

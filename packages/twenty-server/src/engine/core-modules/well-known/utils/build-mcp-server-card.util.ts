@@ -1,34 +1,24 @@
 import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
-import {
-  MCP_SERVER_CARD_DESCRIPTION,
-  MCP_SERVER_CARD_NAME,
-  MCP_SERVER_CARD_SCHEMA,
-  MCP_SERVER_CARD_TITLE,
-  TWENTY_REPOSITORY_URL,
-  TWENTY_WEBSITE_URL,
-} from 'src/engine/core-modules/well-known/constants/well-known.constants';
-import { type McpServerCard } from 'src/engine/core-modules/well-known/types/mcp-server-card.type';
 
 type BuildMcpServerCardArgs = {
   baseUrl: string;
   version: string;
 };
 
-// The Authorization header is optional: sending `Bearer <api-key>` uses static
-// API-key auth, while omitting it triggers OAuth 2.1, auto-discovered from this
-// same host's oauth-protected-resource / oauth-authorization-server metadata.
 export const buildMcpServerCard = ({
   baseUrl,
   version,
-}: BuildMcpServerCardArgs): McpServerCard => ({
-  $schema: MCP_SERVER_CARD_SCHEMA,
-  name: MCP_SERVER_CARD_NAME,
+}: BuildMcpServerCardArgs) => ({
+  $schema:
+    'https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json',
+  name: 'com.twenty/twenty',
   version,
-  title: MCP_SERVER_CARD_TITLE,
-  description: MCP_SERVER_CARD_DESCRIPTION,
-  websiteUrl: TWENTY_WEBSITE_URL,
+  title: 'Twenty CRM',
+  description:
+    'Read and write your Twenty CRM data - companies, people, opportunities, tasks, notes and any custom objects - from AI assistants. Tools are discovered at runtime and scoped to the authenticated workspace.',
+  websiteUrl: 'https://twenty.com',
   repository: {
-    url: TWENTY_REPOSITORY_URL,
+    url: 'https://github.com/twentyhq/twenty',
     source: 'github',
   },
   remotes: [
