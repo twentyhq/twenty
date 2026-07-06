@@ -33,10 +33,10 @@ export const EXPECTED_MANIFEST: Manifest = {
         onDelete: RelationOnDeleteAction.SET_NULL,
         joinColumnName: 'targetMyNoteId',
       },
-      universalIdentifier: '7e28b1ea-9a94-5d36-bc03-3f12f476867a',
+      universalIdentifier: '55153e55-1bdc-590d-8fb1-40eafec88ef0',
       objectUniversalIdentifier: '20202020-6736-4337-b5c4-8b39fae325a5',
       relationTargetFieldMetadataUniversalIdentifier:
-        '12c84c1c-6e3f-54c5-a9a8-e93c7b46ac35',
+        '559713af-d9c0-5894-a972-9a3951661a2b',
       relationTargetObjectMetadataUniversalIdentifier:
         'e1e2e3e4-e5e6-4000-8000-000000000030',
       type: FieldMetadataType.MORPH_RELATION,
@@ -53,10 +53,10 @@ export const EXPECTED_MANIFEST: Manifest = {
         onDelete: RelationOnDeleteAction.SET_NULL,
         joinColumnName: 'targetMyNoteId',
       },
-      universalIdentifier: '721b12d8-7a3d-5e13-b8d5-62b3ad8cb8b5',
+      universalIdentifier: '80596d88-f896-5108-8cff-302a2eb61668',
       objectUniversalIdentifier: '20202020-bd3d-4c60-8dca-571c71d4447a',
       relationTargetFieldMetadataUniversalIdentifier:
-        '56a872c8-7a1e-563d-8772-3978c2c5c220',
+        '8f8e42e3-77de-5b0a-b444-d96b6d3c7600',
       relationTargetObjectMetadataUniversalIdentifier:
         'e1e2e3e4-e5e6-4000-8000-000000000030',
       type: FieldMetadataType.MORPH_RELATION,
@@ -73,10 +73,10 @@ export const EXPECTED_MANIFEST: Manifest = {
         onDelete: RelationOnDeleteAction.SET_NULL,
         joinColumnName: 'targetMyNoteId',
       },
-      universalIdentifier: '94b6f269-fc9a-5bcd-af5b-2bdac69f276b',
+      universalIdentifier: '67bf90bd-f3d0-58ce-a96e-648364249812',
       objectUniversalIdentifier: '20202020-fff0-4b44-be82-bda313884400',
       relationTargetFieldMetadataUniversalIdentifier:
-        '011595e8-7524-5ec7-9fbc-4bd3c42d7d24',
+        '0cbc9a5c-34b2-5d39-97a2-878662cb13d5',
       relationTargetObjectMetadataUniversalIdentifier:
         'e1e2e3e4-e5e6-4000-8000-000000000030',
       type: FieldMetadataType.MORPH_RELATION,
@@ -93,10 +93,10 @@ export const EXPECTED_MANIFEST: Manifest = {
         onDelete: RelationOnDeleteAction.SET_NULL,
         joinColumnName: 'targetMyNoteId',
       },
-      universalIdentifier: '50da3cfa-dea5-5c9b-b1b7-cb615e1df4c3',
+      universalIdentifier: '2689365b-e6ce-5b14-a2b5-6daafbfe91f8',
       objectUniversalIdentifier: '20202020-5a9a-44e8-95df-771cd06d0fb1',
       relationTargetFieldMetadataUniversalIdentifier:
-        'dd734fa3-26c3-53dd-91aa-577c313e1fa4',
+        'affdd37c-4460-53fc-998b-ffb04bb3a470',
       relationTargetObjectMetadataUniversalIdentifier:
         'e1e2e3e4-e5e6-4000-8000-000000000030',
       type: FieldMetadataType.MORPH_RELATION,
@@ -129,7 +129,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           label: 'Id',
           name: 'id',
           type: FieldMetadataType.UUID,
-          universalIdentifier: '5bdb4f57-a349-56d0-b421-845fd55b3026',
+          universalIdentifier: 'a717a3ba-e257-5269-95c4-1b8ca4cb8bcf',
         },
         {
           defaultValue: null,
@@ -139,7 +139,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           label: 'Name',
           name: 'name',
           type: FieldMetadataType.TEXT,
-          universalIdentifier: '86cc7b06-26de-5b7b-bf4a-31fa246dfd90',
+          universalIdentifier: '9a7f457a-6c15-581e-8f28-e2c680f75f97',
         },
         {
           defaultValue: 'now',
@@ -149,7 +149,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           label: 'Creation date',
           name: 'createdAt',
           type: FieldMetadataType.DATE_TIME,
-          universalIdentifier: 'abe3bc69-1a51-5814-a722-74f5a025e92a',
+          universalIdentifier: 'f24a236a-e36a-5bab-91db-d43e3f4b8247',
         },
         {
           defaultValue: 'now',
@@ -159,7 +159,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           label: 'Last update',
           name: 'updatedAt',
           type: FieldMetadataType.DATE_TIME,
-          universalIdentifier: 'c296d408-9720-5a86-8586-3490fbf04b86',
+          universalIdentifier: '875c1f2e-19f0-5200-96ba-ac1cb4c1fd33',
         },
         {
           defaultValue: null,
@@ -169,7 +169,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           label: 'Deleted at',
           name: 'deletedAt',
           type: FieldMetadataType.DATE_TIME,
-          universalIdentifier: '488333a2-f4ff-5790-88ef-21f07f8f1985',
+          universalIdentifier: 'cc58b328-40e1-5087-b550-ad700e53490b',
         },
         {
           defaultValue: {
@@ -182,7 +182,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           label: 'Created by',
           name: 'createdBy',
           type: FieldMetadataType.ACTOR,
-          universalIdentifier: 'fba6e01b-6579-554e-ad64-a676003c8e68',
+          universalIdentifier: '6f34f940-966a-52c2-a8f2-f2f04115d88e',
         },
         {
           defaultValue: {
@@ -195,7 +195,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           label: 'Updated by',
           name: 'updatedBy',
           type: FieldMetadataType.ACTOR,
-          universalIdentifier: 'fa60f87d-15c8-5ff7-9da0-191fa14a922f',
+          universalIdentifier: '37515dfb-8ae0-5326-a391-9e66205f6530',
         },
         {
           defaultValue: 0,
@@ -205,7 +205,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           label: 'Position',
           name: 'position',
           type: FieldMetadataType.POSITION,
-          universalIdentifier: '4a5d7791-ddc9-53ee-bc46-699da7373290',
+          universalIdentifier: 'a418b503-74d0-500d-b4c0-75f364394e20',
         },
         {
           defaultValue: null,
@@ -215,7 +215,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           label: 'Search vector',
           name: 'searchVector',
           type: FieldMetadataType.TS_VECTOR,
-          universalIdentifier: '0f00bc3b-f313-5206-8496-842af20a538a',
+          universalIdentifier: '45718beb-e0d7-5bde-811c-29ff01b0fcfd',
         },
         {
           name: 'timelineActivities',
@@ -227,9 +227,9 @@ export const EXPECTED_MANIFEST: Manifest = {
           universalSettings: {
             relationType: RelationType.ONE_TO_MANY,
           },
-          universalIdentifier: '12c84c1c-6e3f-54c5-a9a8-e93c7b46ac35',
+          universalIdentifier: '559713af-d9c0-5894-a972-9a3951661a2b',
           relationTargetFieldMetadataUniversalIdentifier:
-            '7e28b1ea-9a94-5d36-bc03-3f12f476867a',
+            '55153e55-1bdc-590d-8fb1-40eafec88ef0',
           relationTargetObjectMetadataUniversalIdentifier:
             '20202020-6736-4337-b5c4-8b39fae325a5',
         },
@@ -243,9 +243,9 @@ export const EXPECTED_MANIFEST: Manifest = {
           universalSettings: {
             relationType: RelationType.ONE_TO_MANY,
           },
-          universalIdentifier: '56a872c8-7a1e-563d-8772-3978c2c5c220',
+          universalIdentifier: '8f8e42e3-77de-5b0a-b444-d96b6d3c7600',
           relationTargetFieldMetadataUniversalIdentifier:
-            '721b12d8-7a3d-5e13-b8d5-62b3ad8cb8b5',
+            '80596d88-f896-5108-8cff-302a2eb61668',
           relationTargetObjectMetadataUniversalIdentifier:
             '20202020-bd3d-4c60-8dca-571c71d4447a',
         },
@@ -259,9 +259,9 @@ export const EXPECTED_MANIFEST: Manifest = {
           universalSettings: {
             relationType: RelationType.ONE_TO_MANY,
           },
-          universalIdentifier: '011595e8-7524-5ec7-9fbc-4bd3c42d7d24',
+          universalIdentifier: '0cbc9a5c-34b2-5d39-97a2-878662cb13d5',
           relationTargetFieldMetadataUniversalIdentifier:
-            '94b6f269-fc9a-5bcd-af5b-2bdac69f276b',
+            '67bf90bd-f3d0-58ce-a96e-648364249812',
           relationTargetObjectMetadataUniversalIdentifier:
             '20202020-fff0-4b44-be82-bda313884400',
         },
@@ -275,9 +275,9 @@ export const EXPECTED_MANIFEST: Manifest = {
           universalSettings: {
             relationType: RelationType.ONE_TO_MANY,
           },
-          universalIdentifier: 'dd734fa3-26c3-53dd-91aa-577c313e1fa4',
+          universalIdentifier: 'affdd37c-4460-53fc-998b-ffb04bb3a470',
           relationTargetFieldMetadataUniversalIdentifier:
-            '50da3cfa-dea5-5c9b-b1b7-cb615e1df4c3',
+            '2689365b-e6ce-5b14-a2b5-6daafbfe91f8',
           relationTargetObjectMetadataUniversalIdentifier:
             '20202020-5a9a-44e8-95df-771cd06d0fb1',
         },
