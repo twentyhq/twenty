@@ -1,0 +1,67 @@
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_7c0169865c5a19::t_5c5d9ac3342db0 680
+  s_7c0169865c5a19::t_3bc12c3ffb9ff4 488
+packages/twenty-server/src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum.ts
+  s_7c0169865c5a19::t_7ac659a8ff1b90 3
+packages/twenty-server/src/database/commands/database-command.module.ts
+  s_7c0169865c5a19::t_53ab851b71e539 64
+  s_7c0169865c5a19::t_72e1ed528e7cfb 52
+packages/twenty-server/src/modules/emailing/standard-objects/message-campaign.workspace-entity.ts
+  s_7c0169865c5a19::t_dc91b5aee3f206 19
+packages/twenty-server/src/modules/emailing/emailing.module.ts
+  s_7c0169865c5a19::t_7da9a01a8ace72 19,21
+  s_7c0169865c5a19::t_1b209795f3384b 20,22-23
+  s_7c0169865c5a19::t_f25302389b437d 58-60
+  s_7c0169865c5a19::t_3d146a95c0f25e 48
+  s_7c0169865c5a19::t_ce09de5da8daad 74
+  s_7c0169865c5a19::t_64c07b18a8ce8e 75
+  s_7c0169865c5a19::t_d8754aa479a893 56-57
+  s_7c0169865c5a19::t_e734fd7bc3754e 10
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
+  s_7c0169865c5a19::t_36cb7f28b40bb2 316-331
+packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+  s_7c0169865c5a19::t_e614921e7825de 805-807
+packages/twenty-server/src/modules/emailing/crons/jobs/message-campaign-stats-refresh.cron.job.ts
+  s_7c0169865c5a19::t_2b982673485574 1-45
+packages/twenty-server/src/database/commands/cron-register-all.command.ts
+  s_7c0169865c5a19::t_2b53d4834b4f65 50
+  s_7c0169865c5a19::t_00b62fe04f9093 111-115,118
+  s_7c0169865c5a19::t_a585144ba6f21f 26
+  s_7c0169865c5a19::t_1c3dbb3db5198b 49,51
+  s_7c0169865c5a19::t_93b64bab61e51f 116-117
+  s_7c0169865c5a19::t_45b9d3d04d8aaf 25
+packages/twenty-server/src/modules/emailing/crons/jobs/message-campaign-stats-stale.cron.job.ts
+  s_7c0169865c5a19::t_a524421e875f9b 1-60
+packages/twenty-server/src/modules/emailing/crons/commands/message-campaign-stats-refresh.cron.command.ts
+  s_7c0169865c5a19::t_9643e3e99cce13 1-33
+packages/twenty-server/src/modules/emailing/crons/commands/message-campaign-stats-stale.cron.command.ts
+  s_7c0169865c5a19::t_7625d379eb9e79 1-33
+packages/twenty-server/src/modules/emailing/services/message-campaign-statistics.service.ts
+  s_7c0169865c5a19::t_2f96bdae8b10ac 66-96,103-148
+  s_7c0169865c5a19::t_6b03096a405e2e 97-102
+  s_7c0169865c5a19::t_2e96e30b8b5d67 17-24
+  s_7c0169865c5a19::t_b9a147a8360101 3-5,15-16,35-36,39-64
+  s_7c0169865c5a19::t_5ee33d117b8a44 209-215
+  s_7c0169865c5a19::t_7a296ea366e985 168,173-179
+  s_7c0169865c5a19::t_7b32b32c32e8b0 28
+  s_7c0169865c5a19::t_aa1bac522cc3a0 6-9
+  s_7c0169865c5a19::t_8f86435d558c69 65,180
+packages/twenty-server/src/modules/emailing/jobs/message-campaign-stats-stale.job.ts
+  s_7c0169865c5a19::t_a28bd9cb7184f9 1-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ec2b1fb5a43d2f744fde6241a77a3043f76e6158",
+  "prompts": {},
+  "sessions": {
+    "s_7c0169865c5a19": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3fadbdc5-0639-4b62-a5ba-78f2c5c7d809",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
