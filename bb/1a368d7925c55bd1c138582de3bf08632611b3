@@ -1,0 +1,25 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/drop-metadata-standard-overrides-column-upgrade-command-name.constant.ts
+  s_7c0169865c5a19::t_57e7994e6b9028 4
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/2-20-instance-command-fast-1782991100000-drop-metadata-standard-overrides-column.ts
+  s_7c0169865c5a19::t_57e7994e6b9028 1-35
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_7c0169865c5a19::t_57e7994e6b9028 96
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/__tests__/drop-metadata-standard-overrides-column.instance-command.spec.ts
+  s_7c0169865c5a19::t_57e7994e6b9028 3,22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "bb1a368d7925c55bd1c138582de3bf08632611b3",
+  "prompts": {},
+  "sessions": {
+    "s_7c0169865c5a19": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3fadbdc5-0639-4b62-a5ba-78f2c5c7d809",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
