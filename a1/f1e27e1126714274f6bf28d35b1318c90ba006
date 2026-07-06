@@ -1,0 +1,59 @@
+packages/twenty-front/src/modules/object-record/read-only/utils/__tests__/isRecordFieldReadOnly.test.ts
+  s_c9896ad68d525f::t_f876036da6bc37 90,95-96
+  s_c9896ad68d525f::t_f184abb5a8d304 106
+packages/twenty-shared/src/types/FieldMetadataComputation.ts
+  s_c9896ad68d525f::t_5520fff0c9abd9 2
+  s_c9896ad68d525f::t_bf772aa52080c3 3
+  s_c9896ad68d525f::t_4c30bdac37b66b 5-6,10-11,16-17
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util.ts
+  s_c9896ad68d525f::t_2d27ccd9642be1 62-68
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-computed-flat-field-metadata.util.ts
+  s_c9896ad68d525f::t_3dee51cc22a8fd 61-70
+  s_c9896ad68d525f::t_fdb033309521d8 88,90,101,111,194
+packages/twenty-front/src/modules/object-metadata/utils/getFieldComputedExpression.ts
+  s_c9896ad68d525f::t_bcd6b60afe3060 8
+packages/twenty-front/src/modules/object-record/hooks/useUpdateOneRecord.ts
+  s_c9896ad68d525f::t_5fc02e017b2800 103
+packages/twenty-front/src/modules/object-record/utils/__tests__/computeOptimisticFormulaFieldValues.test.ts
+  s_c9896ad68d525f::t_791ee2db1aea31 29
+packages/twenty-front/src/modules/object-record/utils/computeOptimisticFormulaFieldValues.ts
+  s_c9896ad68d525f::t_9edac39e2997c0 27
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldComputationBySubFieldForm.tsx
+  s_c9896ad68d525f::t_aa4cd86c289b1a 77,96
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaForm.tsx
+  s_c9896ad68d525f::t_9f3b6575e5c3a7 28,125,132,141
+packages/twenty-front/src/modules/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema.ts
+  s_c9896ad68d525f::t_d5241c13a7f186 18,22
+packages/twenty-front/src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+  s_c9896ad68d525f::t_2e95ff3ef11f19 387
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/__tests__/__snapshots__/morph-relation-from-create-field-input-to-flat-field-metadatas-to-create.spec.ts.snap
+  s_c9896ad68d525f::t_c4cc4907b2665c 121,158,197,234
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/__tests__/derive-computed-as-expression-for-flat-field-metadata.util.spec.ts
+  s_c9896ad68d525f::t_3d21703155b8bc 36,51,114,179
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/derive-computed-as-expression-for-flat-field-metadata.util.ts
+  s_c9896ad68d525f::t_167b792b08e459 29,50
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/get-flat-field-metadata-computed-expression.util.ts
+  s_c9896ad68d525f::t_95a40c2fae42b9 7
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/__tests__/validate-flat-field-metadata-is-not-referenced-by-computed-field.util.spec.ts
+  s_c9896ad68d525f::t_4944723b3c6fe7 39
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-is-not-referenced-by-computed-field.util.ts
+  s_c9896ad68d525f::t_e2b92f26c2a0fa 81
+packages/twenty-shared/src/types/index.ts
+  s_c9896ad68d525f::t_427bae239685c2 83-84
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a1f1e27e1126714274f6bf28d35b1318c90ba006",
+  "prompts": {},
+  "sessions": {
+    "s_c9896ad68d525f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e5f7930d-ee88-45b7-923e-7aef12c5e30f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
