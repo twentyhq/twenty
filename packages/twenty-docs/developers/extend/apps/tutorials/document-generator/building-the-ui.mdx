@@ -184,11 +184,20 @@ import { Markdown } from 'src/utils/markdown-to-react';
 
 const DocumentViewer = () => {
   const recordId = useFrontComponentExecutionContext((c) => c.recordId ?? null);
-  // ...load { content, file } for recordId, then render just the template body:
+  // ...load { content, file } for recordId, then render the template body plus
+  // quick links to the shareable web page and the PDF:
   return (
-    <div style={styles.paper}>
-      <div style={styles.body}>
-        <Markdown content={document.content} />
+    <div style={styles.scroll}>
+      <div style={styles.actions}>
+        <a style={styles.actionLink} href={webUrl}>Open web page</a>
+        {document.pdfUrl ? (
+          <a style={styles.actionLink} href={document.pdfUrl}>Download PDF</a>
+        ) : null}
+      </div>
+      <div style={styles.paper}>
+        <div style={styles.body}>
+          <Markdown content={document.content} />
+        </div>
       </div>
     </div>
   );
