@@ -14,8 +14,8 @@ export default defineApplication({
   description: APP_DESCRIPTION,
   logoUrl: 'public/document-generator.svg',
   screenshots: [
-    'public/gallery/01-command-menu.png',
-    'public/gallery/02-template-editor.png',
+    'public/gallery/01-template-editor.png',
+    'public/gallery/02-command-menu.png',
     'public/gallery/03-documents.png',
     'public/gallery/04-generated-document.png',
   ],
