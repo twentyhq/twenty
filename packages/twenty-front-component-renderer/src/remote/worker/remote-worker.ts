@@ -54,12 +54,42 @@ const fetchComponentSource = async (
   return response.text();
 };
 
+const fetchSdkModuleBlobUrl = async (
+  url: string,
+  headers?: Record<string, string>,
+): Promise<string> => {
+  const response = await fetch(url, { headers });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch SDK module ${url}: ${response.status} ${response.statusText}`,
+    );
+  }
+
+  const source = await response.text();
+
+  return URL.createObjectURL(
+    new Blob([source], { type: 'application/javascript' }),
+  );
+};
+
+const loadSdkModuleBlobUrls = async (
+  sdkClientUrls: { core: string; metadata: string },
+  headers?: Record<string, string>,
+): Promise<{ core: string; metadata: string }> => {
+  const [core, metadata] = await Promise.all([
+    fetchSdkModuleBlobUrl(sdkClientUrls.core, headers),
+    fetchSdkModuleBlobUrl(sdkClientUrls.metadata, headers),
+  ]);
+
+  return { core, metadata };
+};
+
 const SDK_IMPORT_SPECIFIERS = [
   'twenty-client-sdk/core',
   'twenty-client-sdk/metadata',
 ] as const;
 
-// Rewrites bare SDK import specifiers to the blob URLs provided by the host.
 const rewriteSdkImports = (
   source: string,
   sdkClientUrls: { core: string; metadata: string },
@@ -169,8 +199,12 @@ const render: WorkerExports['render'] = async (
       componentSource.includes(specifier),
     );
 
-  const finalSource = hasSdkImports
-    ? rewriteSdkImports(componentSource, renderContext.sdkClientUrls!)
+  const sdkModuleBlobUrls = hasSdkImports
+    ? await loadSdkModuleBlobUrls(renderContext.sdkClientUrls!, authHeaders)
+    : null;
+
+  const finalSource = isDefined(sdkModuleBlobUrls)
+    ? rewriteSdkImports(componentSource, sdkModuleBlobUrls)
     : componentSource;
 
   const componentBlob = new Blob([finalSource], {
@@ -186,6 +220,11 @@ const render: WorkerExports['render'] = async (
     componentModule.default(renderContainer);
   } finally {
     URL.revokeObjectURL(importUrl);
+
+    if (isDefined(sdkModuleBlobUrls)) {
+      URL.revokeObjectURL(sdkModuleBlobUrls.core);
+      URL.revokeObjectURL(sdkModuleBlobUrls.metadata);
+    }
   }
 };
 

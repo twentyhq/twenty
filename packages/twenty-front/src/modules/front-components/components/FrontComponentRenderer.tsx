@@ -1,7 +1,7 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
-import { FrontComponentRendererWithSdkClient } from '@/front-components/components/FrontComponentRendererWithSdkClient';
+import { getSdkClientUrls } from '@/front-components/utils/getSdkClientUrls';
 import { getFunctionsBaseUrl } from '@/settings/logic-functions/utils/getLogicFunctionHttpUrl';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
@@ -104,8 +104,6 @@ export const FrontComponentRenderer = ({
     checksum: data.frontComponent.builtComponentChecksum,
   });
 
-  const usesSdkClient = data.frontComponent.usesSdkClient;
-
   const accessToken = applicationTokenPair.applicationAccessToken.token;
 
   const applicationVariables =
@@ -117,26 +115,6 @@ export const FrontComponentRenderer = ({
       workspaceSubdomain: currentWorkspace?.subdomain,
     }) ?? `${REACT_APP_SERVER_BASE_URL}/s`;
 
-  if (usesSdkClient) {
-    return (
-      <FrontComponentRendererProvider frontComponentId={frontComponentId}>
-        <FrontComponentRendererWithSdkClient
-          colorScheme={colorScheme}
-          componentUrl={componentUrl}
-          applicationAccessToken={accessToken}
-          applicationId={data.frontComponent.applicationId}
-          functionsBaseUrl={functionsBaseUrl}
-          executionContext={executionContext}
-          frontComponentHostCommunicationApi={
-            frontComponentHostCommunicationApi
-          }
-          applicationVariables={applicationVariables}
-          onError={handleError}
-        />
-      </FrontComponentRendererProvider>
-    );
-  }
-
   return (
     <FrontComponentRendererProvider frontComponentId={frontComponentId}>
       <SharedFrontComponentRenderer
@@ -145,6 +123,7 @@ export const FrontComponentRenderer = ({
         applicationAccessToken={accessToken}
         apiUrl={REACT_APP_SERVER_BASE_URL}
         functionsBaseUrl={functionsBaseUrl}
+        sdkClientUrls={getSdkClientUrls(data.frontComponent.applicationId)}
         executionContext={executionContext}
         frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
         applicationVariables={applicationVariables}
