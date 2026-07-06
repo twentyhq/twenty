@@ -1,0 +1,23 @@
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/utils/registerTwentyFormulaLanguage.ts
+  s_c9896ad68d525f::t_8e13f8b25266cc 30-32,37-43
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaPreview.tsx
+  s_c9896ad68d525f::t_02f29d60542dee 3,10-11,19,21-22,25,29-30,32,34,37,41-47,81,95,106,109,113-116,118-138
+packages/twenty-ui/src/input/CodeEditor/utils/getBaseCodeEditorTheme.ts
+  s_c9896ad68d525f::t_bfacf5e29a0919 111-126
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "36994bd1ba5c0ec8f4ffde7fc1afa6842f4d8ed1",
+  "prompts": {},
+  "sessions": {
+    "s_c9896ad68d525f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e5f7930d-ee88-45b7-923e-7aef12c5e30f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
