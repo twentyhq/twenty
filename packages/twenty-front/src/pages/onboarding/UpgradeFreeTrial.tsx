@@ -11,7 +11,7 @@ import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingSt
 import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
 import { OnboardingPlanCard } from '@/onboarding/components/upgrade-free-trial/OnboardingPlanCard';
 import { OnboardingTrialExtensionTag } from '@/onboarding/components/upgrade-free-trial/OnboardingTrialExtensionTag';
-import { UPGRADE_STEP_CONTENT_WIDTH } from '@/onboarding/constants/UpgradeStepContentWidth';
+import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/settings/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
 import { useStripeAppearance } from '@/settings/billing/hooks/useStripeAppearance';
@@ -44,7 +44,7 @@ const StyledHeading = styled.div`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
   max-width: 100%;
-  width: ${UPGRADE_STEP_CONTENT_WIDTH}px;
+  width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
 
 const StyledCards = styled.div`
@@ -52,7 +52,7 @@ const StyledCards = styled.div`
   flex-direction: column;
   gap: ${themeCssVariables.spacing['1.5']};
   max-width: 100%;
-  width: ${UPGRADE_STEP_CONTENT_WIDTH}px;
+  width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
 
 const StyledFooter = styled.div`
@@ -61,7 +61,7 @@ const StyledFooter = styled.div`
   flex-direction: column;
   gap: ${themeCssVariables.spacing['1.5']};
   max-width: 100%;
-  width: ${UPGRADE_STEP_CONTENT_WIDTH}px;
+  width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
 
 const StyledLinkGroup = styled.div`

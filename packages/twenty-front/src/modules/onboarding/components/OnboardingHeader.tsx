@@ -1,4 +1,4 @@
-import { useOnboardingContentWidth } from '@/onboarding/hooks/useOnboardingContentWidth';
+import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
@@ -30,10 +30,10 @@ const StyledLeftSide = styled(StyledSide)`
   padding-right: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledCenter = styled.div<{ contentWidth: number }>`
+const StyledCenter = styled.div`
   align-items: center;
   display: flex;
-  flex: 0 1 ${({ contentWidth }) => `${contentWidth}px`};
+  flex: 0 1 ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
   justify-content: flex-start;
   min-width: 0;
 `;
@@ -109,7 +109,6 @@ export const OnboardingHeader = ({
 }: OnboardingHeaderProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const contentWidth = useOnboardingContentWidth();
   const transition = useOnboardingMotionTransition();
 
   return (
@@ -125,7 +124,7 @@ export const OnboardingHeader = ({
           />
         )}
       </StyledLeftSide>
-      <StyledCenter contentWidth={contentWidth}>
+      <StyledCenter>
         <StyledLogo layout transition={transition} />
       </StyledCenter>
       <StyledRightSide>
