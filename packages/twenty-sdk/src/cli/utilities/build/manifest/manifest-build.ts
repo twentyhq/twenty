@@ -8,7 +8,6 @@ import {
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
 import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
-import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/manifest/utils/validate-conditional-availability-usage';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
@@ -35,6 +34,7 @@ import {
   type ConnectionProviderManifest,
   type FieldManifest,
   type FrontComponentManifest,
+  getFieldUniversalIdentifier,
   type IndexManifest,
   type LogicFunctionManifest,
   type Manifest,
@@ -502,34 +502,25 @@ export const buildManifest = async (
 
   if (applicationConfig) {
     for (const objectConfig of objectConfigs) {
-      const {
-        objectFields: objectFieldsWithDefaults,
-        fields: reverseRelationFields,
-      } = getDefaultFieldsInObjectFields({
-        objectConfig,
-        applicationUniversalIdentifier: applicationConfig.universalIdentifier,
-      });
-
+      // Default system fields, default relations and their reverse fields are now
+      // synthesized server-side by the objectMetadata side-effect engine, so the SDK
+      // no longer materializes them into the manifest. It only forwards the
+      // author-declared fields and resolves the label identifier deterministically.
       const labelIdentifierFieldMetadataUniversalIdentifier =
         objectConfig.labelIdentifierFieldMetadataUniversalIdentifier ??
-        objectFieldsWithDefaults.find((field) => field.name === 'name')
-          ?.universalIdentifier;
-
-      if (!labelIdentifierFieldMetadataUniversalIdentifier) {
-        errors.push(
-          `No label identifier field found for object ${objectConfig.nameSingular}. Please add a field with name "name" to your object.`,
-        );
-        continue;
-      }
+        getFieldUniversalIdentifier({
+          applicationUniversalIdentifier: applicationConfig.universalIdentifier,
+          objectUniversalIdentifier: objectConfig.universalIdentifier,
+          name: 'name',
+        });
 
       const objectManifest: ObjectManifest = {
         ...objectConfig,
-        fields: objectFieldsWithDefaults.map(addMissingFieldOptionIds),
+        fields: objectConfig.fields.map(addMissingFieldOptionIds),
         labelIdentifierFieldMetadataUniversalIdentifier,
       };
 
       objects.push(objectManifest);
-      fields.push(...reverseRelationFields);
     }
   }
 

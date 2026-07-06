@@ -1,4 +1,5 @@
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
+import { getFieldUniversalIdentifier } from 'twenty-shared/application';
 import { type ViewType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
@@ -29,14 +30,19 @@ const renderFieldEntry = ({
   const isVisible = field.isVisible ?? true;
   const size = field.size ?? 200;
 
-  const fieldMetadataUniversalIdentifierLine =
+  // Default system fields are synthesized server-side with deterministic universal
+  // identifiers, so we resolve them at codegen time and emit a plain string literal
+  // rather than a runtime helper call in the generated view file.
+  const resolvedFieldMetadataUniversalIdentifier =
     'defaultFieldName' in field
-      ? `    fieldMetadataUniversalIdentifier: generateDefaultFieldUniversalIdentifier({
-      applicationUniversalIdentifier: '${applicationUniversalIdentifier}',
-      objectUniversalIdentifier: '${objectUniversalIdentifier}',
-      fieldName: '${field.defaultFieldName}',
-    })`
-      : `    fieldMetadataUniversalIdentifier: '${field.fieldMetadataUniversalIdentifier}'`;
+      ? getFieldUniversalIdentifier({
+          applicationUniversalIdentifier,
+          objectUniversalIdentifier,
+          name: field.defaultFieldName,
+        })
+      : field.fieldMetadataUniversalIdentifier;
+
+  const fieldMetadataUniversalIdentifierLine = `    fieldMetadataUniversalIdentifier: '${resolvedFieldMetadataUniversalIdentifier}'`;
 
   return `  {
     universalIdentifier: '${universalIdentifier}',
@@ -63,10 +69,6 @@ export const getViewBaseFile = ({
   type?: ViewType;
 }) => {
   const kebabCaseName = kebabCase(name);
-
-  const hasDefaultFieldEntry = fields.some(
-    (field) => 'defaultFieldName' in field,
-  );
 
   const defaultFields = `  // fields: [
   //   {
@@ -95,12 +97,7 @@ ${fields
 
   const typeBlock = type !== undefined ? `  type: '${type}',\n` : '';
 
-  const imports = hasDefaultFieldEntry
-    ? `import {
-  defineView,
-  generateDefaultFieldUniversalIdentifier,
-} from 'twenty-sdk/define';`
-    : `import { defineView } from 'twenty-sdk/define';`;
+  const imports = `import { defineView } from 'twenty-sdk/define';`;
 
   return `${imports}
 

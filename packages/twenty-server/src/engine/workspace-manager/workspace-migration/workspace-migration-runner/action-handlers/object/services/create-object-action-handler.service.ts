@@ -162,6 +162,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
                     allFlatEntityMaps.flatSearchFieldMetadataMaps,
                 }),
               indexedFieldById,
+              objectMetadataNameSingular: flatObjectMetadata.nameSingular,
             })
           : undefined,
       }),

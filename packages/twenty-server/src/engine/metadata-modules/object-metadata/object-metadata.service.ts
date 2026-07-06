@@ -27,7 +27,7 @@ import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metada
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
+import { fromCreateObjectInputToFlatObjectMetadataToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-update-object-input-to-flat-object-metadata-and-related-flat-entities.util';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -42,6 +42,7 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { buildDefaultFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util';
 import { computeFlatDefaultRecordPageLayoutToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-default-record-page-layout-to-create.util';
 import { computeFlatRecordPageFieldsViewToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-record-page-fields-view-to-create.util';
 import { computeFlatViewFieldsToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-view-fields-to-create.util';
@@ -482,22 +483,28 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const resolvedOwnerFlatApplication =
       ownerFlatApplication ?? workspaceCustomFlatApplication;
 
-    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-      ]);
+    const { flatObjectMetadataToCreate } =
+      fromCreateObjectInputToFlatObjectMetadataToCreate({
+        createObjectInput,
+        flatApplication: resolvedOwnerFlatApplication,
+      });
 
-    const {
-      flatObjectMetadataToCreate,
-      flatIndexMetadataToCreate,
-      flatSearchFieldMetadataToCreate,
-      flatFieldMetadataToCreateOnObject,
-      relationTargetFlatFieldMetadataToCreate,
-    } = fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
-      createObjectInput,
-      flatApplication: resolvedOwnerFlatApplication,
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-    });
+    // The default field creates are synthesized by the objectMetadata side-effect
+    // engine handlers; the pure builder is reused here only to resolve their
+    // deterministic universal identifiers, names and types for the default
+    // view / viewField side effects (relation fields are filtered out downstream).
+    const defaultFlatFieldForCustomObjectMaps =
+      buildDefaultFlatFieldMetadatasForCustomObject({
+        flatObjectMetadata: {
+          applicationUniversalIdentifier:
+            resolvedOwnerFlatApplication.universalIdentifier,
+          universalIdentifier: flatObjectMetadataToCreate.universalIdentifier,
+        },
+        skipNameField: createObjectInput.skipNameField,
+      });
+    const defaultFlatFieldMetadatasForViewFields = Object.values(
+      defaultFlatFieldForCustomObjectMaps.fields,
+    );
 
     const flatDefaultViewToCreate = this.computeFlatViewToCreate({
       objectMetadata: flatObjectMetadataToCreate,
@@ -506,7 +513,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const flatDefaultViewFieldsToCreate = computeFlatViewFieldsToCreate({
       flatApplication: resolvedOwnerFlatApplication,
-      objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
+      objectFlatFieldMetadatas: defaultFlatFieldMetadatasForViewFields,
       labelIdentifierFieldMetadataUniversalIdentifier:
         flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
       viewUniversalIdentifier: flatDefaultViewToCreate.universalIdentifier,
@@ -549,7 +556,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const flatRecordPageFieldsViewFieldsToCreate =
       computeFlatViewFieldsToCreate({
         flatApplication: resolvedOwnerFlatApplication,
-        objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
+        objectFlatFieldMetadatas: defaultFlatFieldMetadatasForViewFields,
         labelIdentifierFieldMetadataUniversalIdentifier:
           flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
         viewUniversalIdentifier:
@@ -590,19 +597,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
-            fieldMetadata: {
-              flatEntityToCreate: [
-                ...flatFieldMetadataToCreateOnObject,
-                ...relationTargetFlatFieldMetadataToCreate,
-              ],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            index: {
-              flatEntityToCreate: flatIndexMetadataToCreate,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
             commandMenuItem: {
               flatEntityToCreate: [flatCommandMenuItemToCreate],
               flatEntityToDelete: [],
@@ -623,11 +617,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             pageLayoutWidget: {
               flatEntityToCreate:
                 flatDefaultRecordPageLayoutsToCreate.pageLayoutWidgets,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            searchFieldMetadata: {
-              flatEntityToCreate: flatSearchFieldMetadataToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
