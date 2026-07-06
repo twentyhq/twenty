@@ -7,9 +7,12 @@ import { v4, v5 } from 'uuid';
 import {
   CAMPAIGN_MESSAGE_DELIVERY_STATUS,
   CAMPAIGN_MESSAGE_ID_NAMESPACE,
+  CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS,
+  CAMPAIGN_STATS_REFRESH_DELAY_MS,
   CAMPAIGN_STATUS,
   MATERIALIZE_CAMPAIGN_JOB,
   MAX_CAMPAIGN_RECIPIENTS,
+  REFRESH_CAMPAIGN_STATS_JOB,
   SEND_CAMPAIGN_EMAIL_JOB,
 } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import {
@@ -23,8 +26,12 @@ import { type CampaignRecipient } from 'src/engine/core-modules/emailing-domain/
 import { type CampaignSkippedBreakdown } from 'src/engine/core-modules/emailing-domain/types/campaign-skipped-breakdown.type';
 import { type MaterializeCampaignJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-job-data.type';
 import { type RawCampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/raw-campaign-recipient.type';
+import { type RefreshCampaignStatsJobData } from 'src/engine/core-modules/emailing-domain/types/refresh-campaign-stats-job-data.type';
 import { type SendCampaignEmailJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-job-data.type';
 import { normalizeCampaignRecipients } from 'src/engine/core-modules/emailing-domain/utils/normalize-campaign-recipients.util';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -104,6 +111,8 @@ export class MessageCampaignService {
     private readonly userRoleService: UserRoleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
     private readonly emailBillingService: EmailBillingService,
+    @InjectCacheStorage(CacheStorageNamespace.EngineLock)
+    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
   private getUserRepository<T extends ObjectLiteral>(
@@ -485,7 +494,7 @@ export class MessageCampaignService {
 
       await messageRepository.update(message.id, { deliveryStatus });
 
-      await this.messageCampaignStatisticsService.refreshCampaignCounts({
+      await this.scheduleCampaignStatsRefresh({
         workspaceId,
         campaignId: message.messageCampaignId,
       });
@@ -677,10 +686,33 @@ export class MessageCampaignService {
       },
     );
 
-    await this.messageCampaignStatisticsService.refreshCampaignCounts({
+    await this.scheduleCampaignStatsRefresh({
       workspaceId,
       campaignId,
     });
+  }
+
+  private async scheduleCampaignStatsRefresh({
+    workspaceId,
+    campaignId,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+  }): Promise<void> {
+    const acquired = await this.cacheStorageService.acquireLock(
+      `campaign-stats-refresh:${workspaceId}:${campaignId}`,
+      CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS,
+    );
+
+    if (!acquired) {
+      return;
+    }
+
+    await this.messageQueueService.add<RefreshCampaignStatsJobData>(
+      REFRESH_CAMPAIGN_STATS_JOB,
+      { workspaceId, campaignId },
+      { delay: CAMPAIGN_STATS_REFRESH_DELAY_MS },
+    );
   }
 
   async previewAudience({
