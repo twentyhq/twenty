@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { LessThan, Repository } from 'typeorm';
+import { IsNull, LessThan, Not, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -40,6 +40,7 @@ export class PendingFileCleanupService {
       where: {
         status: FILE_STATUS.PENDING,
         createdAt: LessThan(staleThreshold),
+        workspaceId: Not(IsNull()),
       },
       take: PENDING_FILE_CLEANUP_BATCH_SIZE,
     });
