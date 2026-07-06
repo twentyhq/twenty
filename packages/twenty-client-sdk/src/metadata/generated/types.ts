@@ -7150,7 +7150,7 @@ export default {
                 6
             ],
             "releaseEnterpriseServerBinding": [
-                128
+                125
             ],
             "setEnterpriseKey": [
                 125,
