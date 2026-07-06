@@ -1,15 +1,10 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
+import { CALENDAR_CRON_INTERVAL_MINUTES } from 'src/constants/calendar-cron-interval-minutes';
+import { CALENDAR_CRON_SECURITY_OVERLAP_MINUTES } from 'src/constants/calendar-cron-security-overlap-minutes';
 import { CALENDAR_EVENT_STARTED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { updatePersonLastContactAtFromCalendar } from 'src/utils/update-person-last-contact-at-from-calendar';
-
-const CRON_INTERVAL_MINUTES = Math.min(
-  Math.max(Number(process.env.CALENDAR_CRON_INTERVAL_MINUTES ?? 5), 1),
-  60 * 24,
-);
-
-const SECURITY_OVERLAP_MINUTES = 5;
+import { updatePersonLastContactFromCalendar } from 'src/utils/update-person-last-contact-from-calendar';
 
 const QUERY_MAX_RECORDS = 200;
 
@@ -19,7 +14,9 @@ const handler = async (): Promise<void> => {
   const now = new Date();
   const windowStart = new Date(
     now.getTime() -
-      (CRON_INTERVAL_MINUTES + SECURITY_OVERLAP_MINUTES) * 60 * 1000,
+      (CALENDAR_CRON_INTERVAL_MINUTES + CALENDAR_CRON_SECURITY_OVERLAP_MINUTES) *
+        60 *
+        1000,
   );
 
   const calendarEventIds: string[] = [];
@@ -103,7 +100,7 @@ const handler = async (): Promise<void> => {
 
   await Promise.all(
     [...personIds].map((personId) =>
-      updatePersonLastContactAtFromCalendar(client, personId),
+      updatePersonLastContactFromCalendar(client, personId),
     ),
   );
 };
@@ -116,7 +113,7 @@ export default defineLogicFunction({
     'Updates last-contacted fields for participants of calendar events whose start time just passed.',
   timeoutSeconds: 60,
   cronTriggerSettings: {
-    pattern: `*/${CRON_INTERVAL_MINUTES} * * * *`,
+    pattern: `*/${CALENDAR_CRON_INTERVAL_MINUTES} * * * *`,
   },
   handler,
 });

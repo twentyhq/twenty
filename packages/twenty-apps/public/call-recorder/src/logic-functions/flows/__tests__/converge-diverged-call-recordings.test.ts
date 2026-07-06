@@ -279,6 +279,163 @@ describe('convergeDivergedCallRecordings', () => {
     });
   });
 
+  it('completes and charges when the missing video is marked too large', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: {
+        status_changes: [
+          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        ],
+        recordings: [
+          {
+            id: 'recall-recording-1',
+            started_at: '2026-06-09T13:02:00.000Z',
+            completed_at: '2026-06-09T14:00:00.000Z',
+          },
+        ],
+      },
+    });
+    ingestCallRecordingMediaMock.mockResolvedValue({
+      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+      callRecorderFailureReason: 'video_file_too_large',
+    });
+    const client = buildClient([
+      buildStuckRecordingNode({
+        status: 'PROCESSING',
+        startedAt: '2026-06-09T13:02:00.000Z',
+        endedAt: '2026-06-09T14:00:00.000Z',
+        externalRecordingId: 'recall-recording-1',
+        transcript: [{ participant: { id: 1 }, words: [] }],
+      }),
+    ]);
+
+    const result = await convergeDivergedCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+          callRecorderFailureReason: 'video_file_too_large',
+        },
+      },
+      {
+        id: 'call-recording-1',
+        data: { status: 'COMPLETED' },
+      },
+    ]);
+    expect(chargeCompletedCallRecordingMock).toHaveBeenCalledWith({
+      callRecordingId: 'call-recording-1',
+      startedAt: '2026-06-09T13:02:00.000Z',
+      endedAt: '2026-06-09T14:00:00.000Z',
+    });
+    expect(result.updatedCallRecordingIds).toEqual(['call-recording-1']);
+  });
+
+  it('completes from a persisted size marker once the transcript lands', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: {
+        status_changes: [
+          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        ],
+        recordings: [
+          {
+            id: 'recall-recording-1',
+            started_at: '2026-06-09T13:02:00.000Z',
+            completed_at: '2026-06-09T14:00:00.000Z',
+          },
+        ],
+      },
+    });
+    const client = buildClient([
+      buildStuckRecordingNode({
+        status: 'PROCESSING',
+        startedAt: '2026-06-09T13:02:00.000Z',
+        endedAt: '2026-06-09T14:00:00.000Z',
+        externalRecordingId: 'recall-recording-1',
+        callRecorderFailureReason: 'video_file_too_large',
+        audio: [{ fileId: 'file-audio-1' }],
+        transcript: [{ participant: { id: 1 }, words: [] }],
+      }),
+    ]);
+
+    const result = await convergeDivergedCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(ingestCallRecordingMediaMock).toHaveBeenCalledWith({
+      callRecordingId: 'call-recording-1',
+      externalRecordingId: 'recall-recording-1',
+      hasAudio: true,
+      hasVideo: false,
+    });
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: { status: 'COMPLETED' },
+      },
+    ]);
+    expect(chargeCompletedCallRecordingMock).toHaveBeenCalledWith({
+      callRecordingId: 'call-recording-1',
+      startedAt: '2026-06-09T13:02:00.000Z',
+      endedAt: '2026-06-09T14:00:00.000Z',
+    });
+    expect(result.updatedCallRecordingIds).toEqual(['call-recording-1']);
+  });
+
+  it('keeps the real failure reason over the size marker when the bot failed', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: {
+        status_changes: [
+          { code: 'fatal', created_at: '2026-06-09T14:05:00.000Z' },
+        ],
+        recordings: [
+          {
+            id: 'recall-recording-1',
+            started_at: '2026-06-09T13:02:00.000Z',
+            completed_at: '2026-06-09T14:00:00.000Z',
+          },
+        ],
+      },
+    });
+    ingestCallRecordingMediaMock.mockResolvedValue({
+      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+      callRecorderFailureReason: 'video_file_too_large',
+    });
+    const client = buildClient([
+      buildStuckRecordingNode({
+        status: 'PROCESSING',
+        startedAt: '2026-06-09T13:02:00.000Z',
+        endedAt: '2026-06-09T14:00:00.000Z',
+        externalRecordingId: 'recall-recording-1',
+        transcript: [{ participant: { id: 1 }, words: [] }],
+      }),
+    ]);
+
+    await convergeDivergedCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'FAILED',
+          callRecorderFailureReason: 'fatal',
+          audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+        },
+      },
+    ]);
+    expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
+  });
+
   it('skips records whose meeting has not started yet', async () => {
     const client = buildClient([
       buildStuckRecordingNode({

@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { promises as fs } from 'fs';
-import { resolve } from 'path';
+import { isAbsolute, relative, resolve } from 'path';
 
 import semver from 'semver';
 import { Manifest } from 'twenty-shared/application';
@@ -15,7 +15,9 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { ManifestAssetUrlResolverService } from 'src/engine/core-modules/application/application-registration/manifest-asset-url-resolver.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
@@ -55,6 +57,7 @@ export class ApplicationInstallService {
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly applicationService: ApplicationService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly applicationSyncService: ApplicationSyncService,
@@ -65,6 +68,7 @@ export class ApplicationInstallService {
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly manifestAssetUrlResolverService: ManifestAssetUrlResolverService,
   ) {}
 
   async installApplication(params: {
@@ -222,6 +226,20 @@ export class ApplicationInstallService {
         params.workspaceId,
       );
 
+      const logoFileId = await this.importLogoFile({
+        extractedDir: resolvedPackage.extractedDir,
+        manifest: resolvedPackage.manifest,
+        applicationUniversalIdentifier: universalIdentifier,
+        workspaceId: params.workspaceId,
+      });
+
+      if (application.logoFileId !== logoFileId) {
+        await this.applicationService.update(application.id, {
+          logoFileId: logoFileId ?? null,
+          workspaceId: params.workspaceId,
+        });
+      }
+
       await this.runPreInstallHook({
         manifest: resolvedPackage.manifest,
         workspaceId: params.workspaceId,
@@ -256,6 +274,12 @@ export class ApplicationInstallService {
         universalIdentifier,
       });
 
+      await this.refreshRegistrationFromInstall({
+        appRegistration,
+        manifest: resolvedPackage.manifest,
+        installedVersion: newVersion,
+      });
+
       this.logger.log(
         `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
       );
@@ -281,6 +305,26 @@ export class ApplicationInstallService {
         );
       }
     }
+  }
+
+  private async refreshRegistrationFromInstall(params: {
+    appRegistration: ApplicationRegistrationEntity;
+    manifest: Manifest;
+    installedVersion: string;
+  }): Promise<void> {
+    const { appRegistration, manifest, installedVersion } = params;
+
+    await this.applicationRegistrationService.updateFromManifest({
+      applicationRegistrationId: appRegistration.id,
+      manifest: this.manifestAssetUrlResolverService.resolveFromRegistration({
+        sourceType: appRegistration.sourceType,
+        sourcePackage: appRegistration.sourcePackage,
+        manifest,
+        version: installedVersion,
+      }),
+      latestAvailableVersion: installedVersion,
+      preventVersionDowngrade: true,
+    });
   }
 
   private async runPreInstallHook(params: {
@@ -462,6 +506,23 @@ export class ApplicationInstallService {
     }
   }
 
+  private resolveWithinDirOrThrow(
+    extractedDir: string,
+    relativePath: string,
+  ): string {
+    const absolutePath = resolve(extractedDir, relativePath);
+    const relativeToDir = relative(extractedDir, absolutePath);
+
+    if (relativeToDir.startsWith('..') || isAbsolute(relativeToDir)) {
+      throw new ApplicationException(
+        `Path traversal detected for file: ${relativePath}`,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    return absolutePath;
+  }
+
   private async writeFilesToStorage(
     extractedDir: string,
     manifest: Manifest,
@@ -471,14 +532,10 @@ export class ApplicationInstallService {
     const filesToWrite = this.buildFileList(manifest);
 
     for (const { relativePath, fileFolder } of filesToWrite) {
-      const absolutePath = resolve(extractedDir, relativePath);
-
-      if (!absolutePath.startsWith(extractedDir)) {
-        throw new ApplicationException(
-          `Path traversal detected for file: ${relativePath}`,
-          ApplicationExceptionCode.INVALID_INPUT,
-        );
-      }
+      const absolutePath = this.resolveWithinDirOrThrow(
+        extractedDir,
+        relativePath,
+      );
 
       let content: Buffer;
 
@@ -500,6 +557,53 @@ export class ApplicationInstallService {
         settings: { isTemporaryFile: false, toDelete: false },
       });
     }
+  }
+
+  private async importLogoFile({
+    extractedDir,
+    manifest,
+    applicationUniversalIdentifier,
+    workspaceId,
+  }: {
+    extractedDir: string;
+    manifest: Manifest;
+    applicationUniversalIdentifier: string;
+    workspaceId: string;
+  }): Promise<string | null> {
+    const logoUrl = manifest.application.logoUrl;
+
+    if (
+      !isDefined(logoUrl) ||
+      logoUrl.startsWith('http://') ||
+      logoUrl.startsWith('https://')
+    ) {
+      return null;
+    }
+
+    const absolutePath = this.resolveWithinDirOrThrow(extractedDir, logoUrl);
+
+    let content: Buffer;
+
+    try {
+      content = await fs.readFile(absolutePath);
+    } catch {
+      this.logger.warn(
+        `Logo "${logoUrl}" declared in manifest but not found in package for ${applicationUniversalIdentifier}; skipping logo import`,
+      );
+
+      return null;
+    }
+
+    const file = await this.fileStorageService.writeFile({
+      sourceFile: content,
+      fileFolder: FileFolder.PublicAsset,
+      applicationUniversalIdentifier,
+      workspaceId,
+      resourcePath: logoUrl,
+      settings: { isTemporaryFile: false, toDelete: false },
+    });
+
+    return file.id;
   }
 
   private buildFileList(

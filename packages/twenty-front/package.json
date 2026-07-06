@@ -40,6 +40,8 @@
     "@dnd-kit/react": "^0.3.2",
     "@dr.pogodin/react-helmet": "^3.2.2",
     "@floating-ui/react": "^0.24.3",
+    "@fontsource/dm-mono": "^5.2.7",
+    "@fontsource/inter": "^5.2.8",
     "@graphiql/plugin-explorer": "^5.1.2",
     "@graphiql/react": "^0.37.6",
     "@hello-pangea/dnd": "^18.0.1",

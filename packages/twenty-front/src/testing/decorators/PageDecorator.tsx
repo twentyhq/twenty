@@ -6,16 +6,16 @@ import { HelmetProvider } from '@dr.pogodin/react-helmet';
 import {
   createMemoryRouter,
   createRoutesFromElements,
-  Outlet,
   Route,
   RouterProvider,
 } from 'react-router-dom';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
+import { MinimalMetadataGate } from '@/metadata-store/components/MinimalMetadataGate';
 import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';
 
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
-import { MinimalMetadataGater } from '@/metadata-store/components/MinimalMetadataGater';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
+import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { MockedMetadataLoadEffect } from '~/testing/decorators/MockedMetadataLoadEffect';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type JSX, useState } from 'react';
@@ -95,14 +95,14 @@ const Providers = () => {
               <UserMetadataProviderInitialEffect />
               <MockedMetadataLoadEffect />
               <WorkspaceProviderEffect />
-              <MinimalMetadataGater>
+              <UserContextProvider>
                 <ApolloCoreClientMockedProvider>
                   <PreComputedChipGeneratorsProvider>
                     <FullHeightStorybookLayout>
                       <HelmetProvider>
                         <IconsProvider>
                           <RecordComponentInstanceContextsWrapper componentInstanceId="storybook-test-record">
-                            <Outlet />
+                            <MinimalMetadataGate />
                           </RecordComponentInstanceContextsWrapper>
                         </IconsProvider>
                       </HelmetProvider>
@@ -110,7 +110,7 @@ const Providers = () => {
                   </PreComputedChipGeneratorsProvider>
                   <MainContextStoreProvider />
                 </ApolloCoreClientMockedProvider>
-              </MinimalMetadataGater>
+              </UserContextProvider>
             </ClientConfigProvider>
           </I18nProvider>
         </ApolloProvider>

@@ -48,11 +48,17 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     messageChannel: MessageChannelEntity,
     connectedAccount: ConnectedAccountEntity,
     workspaceId: string,
-  ) {
+  ): Promise<
+    | {
+        messageExternalIdsAndIdsMap: Map<string, string>;
+        messageExternalIdToMessageThreadIdMap: Map<string, string>;
+      }
+    | undefined
+  > {
     const handleAliases = connectedAccount.handleAliases || [];
     const authContext = buildSystemAuthContext(workspaceId);
 
-    const participantsWithMessageId =
+    const savedMessagesResult =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const workspaceDataSource =
@@ -63,6 +69,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
               const {
                 messageExternalIdsAndIdsMap,
                 messageExternalIdToMessageChannelMessageAssociationIdMap,
+                messageExternalIdToMessageThreadIdMap,
               } = await this.messageService.saveMessagesWithinTransaction(
                 messagesToSave,
                 messageChannel.id,
@@ -155,7 +162,11 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                 transactionManager,
               );
 
-              return participantsWithMessageId;
+              return {
+                participantsWithMessageId,
+                messageExternalIdsAndIdsMap,
+                messageExternalIdToMessageThreadIdMap,
+              };
             },
           );
         },
@@ -163,13 +174,11 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
         { lite: true },
       );
 
-    if (
-      messageChannel.isContactAutoCreationEnabled &&
-      participantsWithMessageId
-    ) {
-      const contactsToCreate = participantsWithMessageId.filter(
-        (participant) => participant.shouldCreateContact,
-      );
+    if (messageChannel.isContactAutoCreationEnabled && savedMessagesResult) {
+      const contactsToCreate =
+        savedMessagesResult.participantsWithMessageId.filter(
+          (participant) => participant.shouldCreateContact,
+        );
 
       await this.messageQueueService.add<CreateCompanyAndContactJobData>(
         CreateCompanyAndContactJob.name,
@@ -181,5 +190,16 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
         },
       );
     }
+
+    if (!isDefined(savedMessagesResult)) {
+      return undefined;
+    }
+
+    return {
+      messageExternalIdsAndIdsMap:
+        savedMessagesResult.messageExternalIdsAndIdsMap,
+      messageExternalIdToMessageThreadIdMap:
+        savedMessagesResult.messageExternalIdToMessageThreadIdMap,
+    };
   }
 }

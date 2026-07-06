@@ -1,9 +1,16 @@
 // Recursively strips null, undefined, empty strings, empty objects,
 // and empty arrays from a value. Returns undefined if the entire
+
+import { isDate } from '@sniptt/guards';
+
 // value is empty so the caller can decide whether to include it.
 export const stripEmptyValues = (value: unknown): unknown => {
   if (value === null || value === undefined || value === '') {
     return undefined;
+  }
+
+  if (isDate(value)) {
+    return value;
   }
 
   if (Array.isArray(value)) {

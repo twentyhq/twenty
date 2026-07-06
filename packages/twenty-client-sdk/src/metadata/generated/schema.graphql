@@ -29,10 +29,17 @@ type ApplicationRegistrationVariable {
   description: String!
   isSecret: Boolean!
   isRequired: Boolean!
+  type: String!
+  options: JSON
   isFilled: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
 
 type ApplicationRegistration {
   id: UUID!
@@ -113,11 +120,6 @@ enum RowLevelPermissionPredicateOperand {
   IS_TODAY
   VECTOR_SEARCH
 }
-
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON
 
 type ObjectPermission {
   objectMetadataId: UUID!
@@ -297,6 +299,8 @@ type ApplicationVariable {
   value: String!
   description: String!
   isSecret: Boolean!
+  type: String!
+  options: JSON
 }
 
 type AuthToken {
@@ -464,13 +468,6 @@ enum LogicFunctionExecutionMode {
   PREBUILT
 }
 
-type StandardOverrides {
-  label: String
-  description: String
-  icon: String
-  translations: JSON
-}
-
 type Field {
   id: UUID!
   universalIdentifier: String!
@@ -479,7 +476,6 @@ type Field {
   label: String!
   description: String
   icon: String
-  standardOverrides: StandardOverrides
   isActive: Boolean
   isSystem: Boolean
   isUIEditable: Boolean
@@ -529,15 +525,6 @@ enum FieldMetadataType {
   UUID
 }
 
-type IndexField {
-  id: UUID!
-  fieldMetadataId: UUID!
-  order: Float!
-  subFieldName: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
 type Index {
   id: UUID!
   name: String!
@@ -555,13 +542,6 @@ type Index {
     """Specify to filter the records returned."""
     filter: ObjectFilter! = {}
   ): IndexObjectMetadataConnection!
-  indexFieldMetadatas(
-    """Limit or page results."""
-    paging: CursorPaging! = {first: 10}
-
-    """Specify to filter the records returned."""
-    filter: IndexFieldFilter! = {}
-  ): IndexIndexFieldMetadatasConnection!
 }
 
 """Type of the index"""
@@ -622,22 +602,6 @@ input BooleanFieldComparison {
   isNot: Boolean
 }
 
-input IndexFieldFilter {
-  and: [IndexFieldFilter!]
-  or: [IndexFieldFilter!]
-  id: UUIDFilterComparison
-  fieldMetadataId: UUIDFilterComparison
-}
-
-type ObjectStandardOverrides {
-  labelSingular: String
-  labelPlural: String
-  description: String
-  icon: String
-  color: String
-  translations: JSON
-}
-
 type Object {
   id: UUID!
   universalIdentifier: String!
@@ -647,7 +611,6 @@ type Object {
   labelPlural: String!
   description: String
   icon: String
-  standardOverrides: ObjectStandardOverrides
   shortcut: String
   color: String
   isRemote: Boolean!
@@ -706,6 +669,7 @@ type Application {
   name: String!
   description: String
   logo: String
+  logoFileId: UUID
   version: String
   universalIdentifier: String!
   packageJsonChecksum: String
@@ -929,6 +893,7 @@ type Workspace {
   updatedAt: DateTime!
   allowImpersonation: Boolean!
   isPublicInviteLinkEnabled: Boolean!
+  workspaceDiscoverability: WorkspaceDiscoverability!
   trashRetentionDays: Float!
   eventLogRetentionDays: Float!
   workspaceMembersCount: Float
@@ -971,6 +936,12 @@ type Workspace {
   hasValidEnterpriseValidityToken: Boolean!
   workspaceUrls: WorkspaceUrls!
   workspaceCustomApplicationId: String!
+}
+
+enum WorkspaceDiscoverability {
+  PUBLIC
+  MEMBERS_AND_INVITEES
+  HIDDEN
 }
 
 enum WorkspaceActivationStatus {
@@ -1022,6 +993,7 @@ enum OnboardingStatus {
   WORKSPACE_ACTIVATION
   PROFILE_CREATION
   SYNC_EMAIL
+  APPS_INSTALLATION
   INVITE_TEAM
   BOOK_ONBOARDING
   COMPLETED
@@ -1465,6 +1437,13 @@ type FileWithSignedUrl {
   url: String!
 }
 
+type FileUploadTarget {
+  fileId: UUID!
+  uploadUrl: String!
+  contentType: String!
+  expiresAt: DateTime!
+}
+
 type BillingSubscriptionSchedulePhaseItem {
   price: String!
   quantity: Float
@@ -1569,6 +1548,7 @@ type BillingSubscription {
   currentPeriodEnd: DateTime
   metadata: JSON!
   phases: [BillingSubscriptionSchedulePhase!]!
+  cancelAt: DateTime
 }
 
 enum SubscriptionStatus {
@@ -1795,8 +1775,21 @@ type ApplicationRegistrationVariableDTO {
   isSecret: Boolean!
   isRequired: Boolean!
   isFilled: Boolean!
+  type: String!
+  options: JSON
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+type VersionDistributionEntry {
+  version: String!
+  count: Int!
+}
+
+type ApplicationRegistrationStats {
+  activeInstalls: Int!
+  mostInstalledVersion: String
+  versionDistribution: [VersionDistributionEntry!]!
 }
 
 type BillingTrialPeriod {
@@ -1978,17 +1971,6 @@ type UsageBreakdownItem {
   creditsUsed: Float!
 }
 
-type VersionDistributionEntry {
-  version: String!
-  count: Int!
-}
-
-type ApplicationRegistrationStats {
-  activeInstalls: Int!
-  mostInstalledVersion: String
-  versionDistribution: [VersionDistributionEntry!]!
-}
-
 type CreateApplicationRegistration {
   applicationRegistration: ApplicationRegistration!
   clientSecret: String!
@@ -2020,6 +2002,15 @@ enum RelationType {
   MANY_TO_ONE
 }
 
+type IndexField {
+  id: UUID!
+  fieldMetadataId: UUID!
+  order: Float!
+  subFieldName: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type IndexEdge {
   """The node containing the Index"""
   node: Index!
@@ -2048,22 +2039,6 @@ type IndexConnection {
 
   """Array of edges."""
   edges: [IndexEdge!]!
-}
-
-type IndexFieldEdge {
-  """The node containing the IndexField"""
-  node: IndexField!
-
-  """Cursor for this node."""
-  cursor: ConnectionCursor!
-}
-
-type IndexIndexFieldMetadatasConnection {
-  """Paging information"""
-  pageInfo: PageInfo!
-
-  """Array of edges."""
-  edges: [IndexFieldEdge!]!
 }
 
 type ObjectEdge {
@@ -2216,6 +2191,74 @@ type DeletedWorkspaceMember {
   userEmail: String!
   avatarUrl: String
   userWorkspaceId: UUID
+}
+
+type MarketplaceApp {
+  id: String!
+  name: String!
+  description: String!
+  author: String!
+  category: String!
+  logo: String
+  sourcePackage: String
+  isFeatured: Boolean!
+}
+
+type MarketplaceAppRoleObjectPermission {
+  universalIdentifier: String!
+  objectUniversalIdentifier: String!
+  canReadObjectRecords: Boolean
+  canUpdateObjectRecords: Boolean
+  canSoftDeleteObjectRecords: Boolean
+  canDestroyObjectRecords: Boolean
+}
+
+type MarketplaceAppRoleFieldPermission {
+  universalIdentifier: String!
+  objectUniversalIdentifier: String!
+  fieldUniversalIdentifier: String!
+  canReadFieldValue: Boolean
+  canUpdateFieldValue: Boolean
+}
+
+type MarketplaceAppRole {
+  universalIdentifier: String!
+  label: String!
+  description: String
+  icon: String
+  canUpdateAllSettings: Boolean
+  canAccessAllTools: Boolean
+  canReadAllObjectRecords: Boolean
+  canUpdateAllObjectRecords: Boolean
+  canSoftDeleteAllObjectRecords: Boolean
+  canDestroyAllObjectRecords: Boolean
+  permissionFlagUniversalIdentifiers: [String!]
+  objectPermissions: [MarketplaceAppRoleObjectPermission!]
+  fieldPermissions: [MarketplaceAppRoleFieldPermission!]
+}
+
+type MarketplaceAppDetail {
+  universalIdentifier: String!
+  id: String!
+  name: String!
+  sourceType: ApplicationRegistrationSourceType!
+  sourcePackage: String
+  latestAvailableVersion: String
+  isListed: Boolean!
+  isFeatured: Boolean!
+  description: String
+  author: String
+  category: String
+  logo: String
+  websiteUrl: String
+  aboutDescription: String
+  termsUrl: String
+  emailSupport: String
+  issueReportUrl: String
+  screenshots: [String!]!
+  defaultRoleUniversalIdentifier: String
+  roles: [MarketplaceAppRole!]
+  manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
 }
 
 type BillingEntitlement {
@@ -2436,29 +2479,6 @@ type File {
   path: String!
   size: Float!
   createdAt: DateTime!
-}
-
-type MarketplaceApp {
-  id: String!
-  name: String!
-  description: String!
-  author: String!
-  category: String!
-  logo: String
-  sourcePackage: String
-  isFeatured: Boolean!
-}
-
-type MarketplaceAppDetail {
-  universalIdentifier: String!
-  id: String!
-  name: String!
-  sourceType: ApplicationRegistrationSourceType!
-  sourcePackage: String
-  latestAvailableVersion: String
-  isListed: Boolean!
-  isFeatured: Boolean!
-  manifest: JSON
 }
 
 type PublicDomain {
@@ -2871,9 +2891,15 @@ type AiSystemPromptPreview {
   estimatedTokenCount: Int!
 }
 
+type ChatStreamError {
+  code: String!
+  message: String!
+}
+
 type ChatStreamCatchupChunks {
   chunks: [JSON!]!
   maxSeq: Int!
+  error: ChatStreamError
 }
 
 type SendChatMessageResult {
@@ -3126,7 +3152,8 @@ type Query {
   getViewGroup(id: String!): ViewGroup
   findManyApplications: [Application!]!
   findOneApplication(id: UUID, universalIdentifier: UUID): Application!
-  getRoles: [Role!]!
+  findManyMarketplaceApps: [MarketplaceApp!]!
+  findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
   findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
   findManyApplicationRegistrations: [ApplicationRegistration!]!
@@ -3134,6 +3161,7 @@ type Query {
   findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
   findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariableDTO!]!
   applicationRegistrationTarballUrl(id: String!): String
+  getRoles: [Role!]!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   unsubscribeTopics: [UnsubscribeTopic!]!
   unsubscribePagePreviewUrl: String!
@@ -3175,8 +3203,6 @@ type Query {
   getAddressDetails(placeId: String!, token: String!): PlaceDetailsResult!
   getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   findManyPublicDomains: [PublicDomain!]!
-  findManyMarketplaceApps: [MarketplaceApp!]!
-  findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
 }
 
 input GetApiKeyInput {
@@ -3261,6 +3287,7 @@ enum UsageOperationType {
   CODE_EXECUTION
   WEB_SEARCH
   CALL_RECORDING
+  EMAIL_SEND
 }
 
 type Mutation {
@@ -3272,10 +3299,12 @@ type Mutation {
   updateNavigationMenuItem(input: UpdateOneNavigationMenuItemInput!): NavigationMenuItem!
   deleteManyNavigationMenuItems(ids: [UUID!]!): [NavigationMenuItem!]!
   deleteNavigationMenuItem(id: UUID!): NavigationMenuItem!
-  uploadEmailAttachmentFile(file: Upload!): FileWithSignedUrl!
+  createFileUpload(filename: String!, size: Float!, fileFolder: FileFolder!, fieldMetadataId: String, fieldMetadataUniversalIdentifier: String): FileUploadTarget!
+  completeFileUpload(fileId: String!): FileWithSignedUrl!
   refreshEnterpriseValidityToken: Boolean!
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
+  uploadEmailAttachmentFile(file: Upload!): FileWithSignedUrl!
   uploadAiChatFile(file: Upload!): FileWithSignedUrl!
   uploadWorkflowFile(file: Upload!): FileWithSignedUrl!
   uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
@@ -3316,6 +3345,7 @@ type Mutation {
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   skipSyncEmailOnboardingStep: OnboardingStepSuccess!
   skipBookOnboardingStep: OnboardingStepSuccess!
+  triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!): OnboardingStepSuccess!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!
@@ -3378,8 +3408,19 @@ type Mutation {
   updateManyViewGroups(inputs: [UpdateViewGroupInput!]!): [ViewGroup!]!
   deleteViewGroup(input: DeleteViewGroupInput!): ViewGroup!
   destroyViewGroup(input: DestroyViewGroupInput!): ViewGroup!
-  runWorkspaceMigration(workspaceMigration: WorkspaceMigrationInput!): Boolean!
+  installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
+  installApplication(universalIdentifier: String!, version: String): Application!
   uninstallApplication(universalIdentifier: String!): Boolean!
+  syncMarketplaceCatalog: Boolean!
+  createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
+  updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
+  deleteApplicationRegistration(id: String!): Boolean!
+  rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
+  createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
+  updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
+  deleteApplicationRegistrationVariable(id: String!): Boolean!
+  uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration!
+  transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!
   createOneRole(createRoleInput: CreateRoleInput!): Role!
   updateOneRole(updateRoleInput: UpdateRoleInput!): Role!
@@ -3390,15 +3431,6 @@ type Mutation {
   upsertRowLevelPermissionPredicates(input: UpsertRowLevelPermissionPredicatesInput!): UpsertRowLevelPermissionPredicatesResult!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   removeRoleFromAgent(agentId: UUID!): Boolean!
-  createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
-  updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
-  deleteApplicationRegistration(id: String!): Boolean!
-  rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
-  createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
-  updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
-  deleteApplicationRegistrationVariable(id: String!): Boolean!
-  uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration!
-  transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
   createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
@@ -3420,6 +3452,8 @@ type Mutation {
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
+  retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
+  answerAgentChatQuestion(threadId: UUID!, messageId: UUID!, answers: [AgentChatQuestionAnswerInput!]!, modelId: String): SendChatMessageResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
   renameChatThread(id: UUID!, title: String!): AgentChatThread!
   archiveChatThread(id: UUID!): AgentChatThread!
@@ -3477,14 +3511,11 @@ type Mutation {
   deletePublicDomain(domain: String!): Boolean!
   checkPublicDomainValidRecords(domain: String!): DomainValidRecords
   createOneAppToken(input: CreateOneAppTokenInput!): AppToken!
-  installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
-  installApplication(universalIdentifier: String!, version: String): Application!
-  syncMarketplaceCatalog: Boolean!
   createDevelopmentApplication(universalIdentifier: String!, name: String!): DevelopmentApplication!
-  generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
   syncApplication(manifest: JSON!, dryRun: Boolean): WorkspaceMigration!
   uploadApplicationFile(file: Upload!, applicationUniversalIdentifier: String!, fileFolder: FileFolder!, filePath: String!): File!
   upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
+  generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
 }
 
@@ -3531,6 +3562,22 @@ input UpdateNavigationMenuItemInput {
   icon: String
   color: String
   pageLayoutId: UUID
+}
+
+enum FileFolder {
+  CorePicture
+  AgentChat
+  BuiltLogicFunction
+  BuiltFrontComponent
+  PublicAsset
+  Source
+  FilesField
+  Dependencies
+  Workflow
+  EmailAttachment
+  AppTarball
+  GeneratedSdkClient
+  Dpa
 }
 
 """The `Upload` scalar type represents a file upload."""
@@ -4148,6 +4195,7 @@ input UpdateWorkspaceInput {
   logo: String
   inviteHash: String
   isPublicInviteLinkEnabled: Boolean
+  workspaceDiscoverability: WorkspaceDiscoverability
   allowImpersonation: Boolean
   isGoogleAuthEnabled: Boolean
   isMicrosoftAuthEnabled: Boolean
@@ -4261,20 +4309,43 @@ input DestroyViewGroupInput {
   id: UUID!
 }
 
-input WorkspaceMigrationInput {
-  actions: [WorkspaceMigrationDeleteActionInput!]!
+input CreateApplicationRegistrationInput {
+  name: String!
+  universalIdentifier: String
+  oAuthRedirectUris: [String!]
+  oAuthScopes: [String!]
 }
 
-input WorkspaceMigrationDeleteActionInput {
-  type: WorkspaceMigrationActionType!
-  metadataName: AllMetadataName!
-  universalIdentifier: String!
+input UpdateApplicationRegistrationInput {
+  id: String!
+  update: UpdateApplicationRegistrationPayload!
 }
 
-enum WorkspaceMigrationActionType {
-  delete
-  create
-  update
+input UpdateApplicationRegistrationPayload {
+  name: String
+  oAuthRedirectUris: [String!]
+  oAuthScopes: [String!]
+  isListed: Boolean
+  isPreInstalled: Boolean
+}
+
+input CreateApplicationRegistrationVariableInput {
+  applicationRegistrationId: String!
+  key: String!
+  value: String!
+  description: String
+  isSecret: Boolean
+}
+
+input UpdateApplicationRegistrationVariableInput {
+  id: String!
+  update: UpdateApplicationRegistrationVariablePayload!
+}
+
+input UpdateApplicationRegistrationVariablePayload {
+  value: String
+  resetValue: Boolean
+  description: String
 }
 
 input CreateRoleInput {
@@ -4370,45 +4441,6 @@ input RowLevelPermissionPredicateGroupInput {
   parentRowLevelPermissionPredicateGroupId: UUID
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
   positionInRowLevelPermissionPredicateGroup: Float
-}
-
-input CreateApplicationRegistrationInput {
-  name: String!
-  universalIdentifier: String
-  oAuthRedirectUris: [String!]
-  oAuthScopes: [String!]
-}
-
-input UpdateApplicationRegistrationInput {
-  id: String!
-  update: UpdateApplicationRegistrationPayload!
-}
-
-input UpdateApplicationRegistrationPayload {
-  name: String
-  oAuthRedirectUris: [String!]
-  oAuthScopes: [String!]
-  isListed: Boolean
-  isPreInstalled: Boolean
-}
-
-input CreateApplicationRegistrationVariableInput {
-  applicationRegistrationId: String!
-  key: String!
-  value: String!
-  description: String
-  isSecret: Boolean
-}
-
-input UpdateApplicationRegistrationVariableInput {
-  id: String!
-  update: UpdateApplicationRegistrationVariablePayload!
-}
-
-input UpdateApplicationRegistrationVariablePayload {
-  value: String
-  resetValue: Boolean
-  description: String
 }
 
 input SendEmailViaDomainInput {
@@ -4524,6 +4556,12 @@ input UpdateCalendarChannelInputUpdates {
 input FileAttachmentInput {
   id: UUID!
   filename: String!
+}
+
+input AgentChatQuestionAnswerInput {
+  questionIndex: Int!
+  selectedOptionIndices: [Int!]!
+  freeText: String
 }
 
 input CreateSkillInput {
@@ -4647,27 +4685,6 @@ input CreateOneAppTokenInput {
 
 input CreateAppTokenInput {
   expiresAt: DateTime!
-}
-
-enum FileFolder {
-  ProfilePicture
-  WorkspaceLogo
-  Attachment
-  PersonPicture
-  CorePicture
-  File
-  AgentChat
-  BuiltLogicFunction
-  BuiltFrontComponent
-  PublicAsset
-  Source
-  FilesField
-  Dependencies
-  Workflow
-  EmailAttachment
-  AppTarball
-  GeneratedSdkClient
-  Dpa
 }
 
 type Subscription {

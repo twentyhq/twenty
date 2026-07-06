@@ -14,7 +14,7 @@
   align-items: center;
   background: var(--icon-button-bg, transparent);
   border-color: var(--icon-button-border-color, transparent);
-  border-radius: var(--icon-button-radius, var(--t-border-radius-sm));
+  border-radius: var(--icon-button-radius, var(--t-border-radius-md));
   border-style: solid;
   border-width: var(--icon-button-border-width, 1px);
   box-shadow: var(--icon-button-box-shadow, none);
@@ -62,10 +62,11 @@
 }
 
 // position only reshapes the border radius; standalone keeps the .button
-// fallback radius.
+// fallback radius. Grouped IconButtons abut flush (no framing container), so
+// their outer corners share the standalone md radius.
 .button[data-position='left'] {
-  --icon-button-radius: var(--t-border-radius-sm) 0px 0px
-    var(--t-border-radius-sm);
+  --icon-button-radius: var(--t-border-radius-md) 0px 0px
+    var(--t-border-radius-md);
 }
 
 .button[data-position='middle'] {
@@ -73,7 +74,7 @@
 }
 
 .button[data-position='right'] {
-  --icon-button-radius: 0px var(--t-border-radius-sm) var(--t-border-radius-sm)
+  --icon-button-radius: 0px var(--t-border-radius-md) var(--t-border-radius-md)
     0px;
 }
 
@@ -102,7 +103,7 @@
 // keeps the base/focus value, mirroring the legacy switch.
 $primary-accents: (
   'default': (
-    bg: var(--t-background-secondary),
+    bg: var(--t-background-transparent-lighter),
     border: var(--t-background-transparent-light),
     border-focus: var(--t-color-blue),
     border-disabled: null,
@@ -112,8 +113,8 @@ $primary-accents: (
     opacity-disabled: null,
     hover: var(--t-background-tertiary),
     active: var(--t-background-quaternary),
-    hover-disabled: var(--t-background-secondary),
-    active-disabled: var(--t-background-secondary),
+    hover-disabled: var(--t-background-transparent-lighter),
+    active-disabled: var(--t-background-transparent-lighter),
   ),
   'blue': (
     bg: var(--t-color-blue),

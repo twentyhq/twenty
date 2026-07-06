@@ -25,6 +25,7 @@ import {
   GetRolesDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
 
 export const SettingsDevelopersApiKeysNew = () => {
   const { t } = useLingui();
@@ -136,8 +137,13 @@ export const SettingsDevelopersApiKeysNew = () => {
           href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: t`APIs & Webhooks`,
-          href: getSettingsPath(SettingsPath.ApiWebhooks),
+          children: t`MCP & APIs`,
+          href: getSettingsPath(
+            SettingsPath.ApiWebhooks,
+            undefined,
+            undefined,
+            SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
+          ),
         },
         { children: t`New Key` },
       ]}
@@ -145,7 +151,13 @@ export const SettingsDevelopersApiKeysNew = () => {
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}
           onCancel={() => {
-            navigateSettings(SettingsPath.ApiWebhooks);
+            navigateSettings(
+              SettingsPath.ApiWebhooks,
+              undefined,
+              undefined,
+              undefined,
+              SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
+            );
           }}
           onSave={handleSave}
         />

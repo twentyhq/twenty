@@ -7,7 +7,8 @@
   overflow: hidden;
 
   &[data-with-border-radius] {
-    border-radius: var(--t-border-radius-xxl);
+    border-radius: var(--t-border-radius-pill);
+    corner-shape: round;
   }
 }
 
@@ -24,7 +25,8 @@
   transition: width duration(normal) linear;
 
   &[data-with-border-radius] {
-    border-radius: var(--t-border-radius-md);
+    border-radius: var(--t-border-radius-pill);
+    corner-shape: round;
   }
 
   &[data-nonzero] {

@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -12,12 +13,23 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_STATUS_TO_FILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-status-to-file-upgrade-command-name.constant';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
+import {
+  FILE_STATUS,
+  FileStatus,
+} from 'src/engine/core-modules/file/types/file-status.types';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity('file')
+@Check(
+  'CHK_FILE_PENDING_MIME_OCTET_STREAM',
+  `"status" != 'PENDING' OR "mimeType" = 'application/octet-stream'`,
+)
 @Index('IDX_FILE_WORKSPACE_ID', ['workspaceId'])
+@Index('IDX_FILE_STATUS', ['status'])
 @Unique('IDX_APPLICATION_PATH_WORKSPACE_ID_APPLICATION_ID_UNIQUE', [
   'workspaceId',
   'applicationId',
@@ -63,4 +75,15 @@ export class FileEntity extends WorkspaceRelatedEntity {
     default: 'application/octet-stream',
   })
   mimeType: string;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_STATUS_TO_FILE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({
+    type: 'enum',
+    enum: Object.values(FILE_STATUS),
+    nullable: false,
+    default: FILE_STATUS.UPLOADED,
+  })
+  status: FileStatus;
 }

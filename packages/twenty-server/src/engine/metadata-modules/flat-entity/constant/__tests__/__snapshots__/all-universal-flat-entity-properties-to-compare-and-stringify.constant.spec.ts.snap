@@ -25,8 +25,12 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "key",
       "description",
       "isSecret",
+      "type",
+      "options",
     ],
-    "propertiesToStringify": [],
+    "propertiesToStringify": [
+      "options",
+    ],
   },
   "commandMenuItem": {
     "propertiesToCompare": [
@@ -72,14 +76,15 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "label",
       "name",
       "options",
-      "standardOverrides",
+      "overrides",
       "universalSettings",
       "isUIEditable",
+      "isNullable",
     ],
     "propertiesToStringify": [
       "defaultValue",
       "options",
-      "standardOverrides",
+      "overrides",
       "universalSettings",
     ],
   },
@@ -170,14 +175,14 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "namePlural",
       "nameSingular",
       "labelIdentifierFieldMetadataUniversalIdentifier",
-      "standardOverrides",
+      "overrides",
       "isUIEditable",
       "isUICreatable",
       "isSearchable",
       "imageIdentifierFieldMetadataUniversalIdentifier",
     ],
     "propertiesToStringify": [
-      "standardOverrides",
+      "overrides",
     ],
   },
   "objectPermission": {

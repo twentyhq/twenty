@@ -3,6 +3,7 @@ import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
 import { getDefaultStore } from 'jotai';
 import { AppPath, SidePanelPages } from 'twenty-shared/types';
+import { type AppLocale } from 'twenty-shared/translations';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
@@ -180,7 +181,7 @@ describe('useFrontComponentExecutionContext', () => {
         recordId: 'record-456',
         selectedRecordIds: ['record-456'],
         colorScheme: 'light',
-        locale: i18n.locale,
+        locale: i18n.locale as AppLocale,
       });
     });
 
@@ -196,7 +197,7 @@ describe('useFrontComponentExecutionContext', () => {
         recordId: null,
         selectedRecordIds: ['record-1', 'record-2', 'record-3'],
         colorScheme: 'light',
-        locale: i18n.locale,
+        locale: i18n.locale as AppLocale,
       });
     });
 
@@ -542,7 +543,7 @@ describe('useFrontComponentExecutionContext', () => {
             title: 'Confirm?',
             subtitle: 'Are you sure?',
             confirmButtonText: 'Yes',
-            confirmButtonAccent: 'danger' as never,
+            confirmButtonAccent: 'danger',
           },
         );
       });
@@ -555,6 +556,32 @@ describe('useFrontComponentExecutionContext', () => {
         title: 'Confirm?',
         subtitle: 'Are you sure?',
         confirmButtonText: 'Yes',
+        confirmButtonAccent: 'danger',
+      });
+    });
+
+    it('should preserve danger as the default confirmation accent', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openCommandConfirmationModal(
+          {
+            title: 'Confirm?',
+            subtitle: 'Are you sure?',
+          },
+        );
+      });
+
+      expect(mockOpenConfirmationModal).toHaveBeenCalledWith({
+        caller: {
+          type: 'frontComponent',
+          frontComponentId: FRONT_COMPONENT_ID,
+        },
+        title: 'Confirm?',
+        subtitle: 'Are you sure?',
+        confirmButtonText: undefined,
         confirmButtonAccent: 'danger',
       });
     });

@@ -7,7 +7,7 @@ type GraphWidgetLegendDotProps = {
 
 const StyledDot = styled.div<{ color: string }>`
   background: ${({ color }) => color};
-  border-radius: 2px;
+  border-radius: var(--t-border-radius-xs);
   flex-shrink: 0;
   height: 8px;
   width: 8px;
