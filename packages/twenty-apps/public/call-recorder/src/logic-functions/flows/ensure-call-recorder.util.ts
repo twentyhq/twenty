@@ -11,12 +11,6 @@ import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-work
 import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
-const logInfo = (message: string) => {
-  if (process.env.NODE_ENV !== 'test') {
-    console.info(message);
-  }
-};
-
 // The sole place a Recall bot is created. Only the deterministic-create winner and the stale-state cron call it, so one writer per meeting POSTs exactly one bot.
 export const ensureCallRecorder = async (
   client: CoreApiClient,
@@ -26,12 +20,6 @@ export const ensureCallRecorder = async (
   const meetingStartsAt = calendarEvent.startsAt;
 
   if (isUndefined(meetingUrl) || isUndefined(meetingStartsAt)) {
-    logInfo(
-      `[call-recorder] skipping Recall bot scheduling for callRecording ${callRecording.id}: missing ${
-        isUndefined(meetingUrl) ? 'meeting URL' : 'meeting start time'
-      }`,
-    );
-
     return false;
   }
 
@@ -47,10 +35,6 @@ export const ensureCallRecorder = async (
       CallRecordingRequestStatus.REQUESTED ||
     !isUndefined(freshCallRecording.externalBotId)
   ) {
-    logInfo(
-      `[call-recorder] skipping Recall bot scheduling for callRecording ${callRecording.id}: recording is missing, no longer requested, or already has a bot`,
-    );
-
     return false;
   }
 
@@ -65,10 +49,6 @@ export const ensureCallRecorder = async (
   }
 
   const automaticVideoOutput = await buildRecallBotAutomaticVideoOutput();
-
-  logInfo(
-    `[call-recorder] scheduling Recall bot for callRecording ${callRecording.id} at ${joinAt}`,
-  );
 
   const scheduleResult = await scheduleRecallBot({
     meetingUrl,
@@ -92,10 +72,6 @@ export const ensureCallRecorder = async (
     id: callRecording.id,
     data: { externalBotId: scheduleResult.externalBotId },
   });
-
-  logInfo(
-    `[call-recorder] scheduled Recall bot ${scheduleResult.externalBotId} for callRecording ${callRecording.id}`,
-  );
 
   return true;
 };

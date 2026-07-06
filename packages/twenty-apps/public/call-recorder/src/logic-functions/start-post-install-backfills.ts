@@ -16,19 +16,9 @@ type StartPostInstallBackfillsResult = {
     | 'backfill-request-failed';
 };
 
-const logInfo = (message: string) => {
-  if (process.env.NODE_ENV !== 'test') {
-    console.info(message);
-  }
-};
-
 export const startPostInstallBackfillsHandler = async ({
   previousVersion,
 }: InstallPayload): Promise<StartPostInstallBackfillsResult> => {
-  logInfo(
-    `[call-recorder] starting post-install backfills for ${isUndefined(previousVersion) ? 'fresh install' : `upgrade from ${previousVersion}`}`,
-  );
-
   const calendarEventSweepRequested =
     await requestUpcomingCalendarEventsReconciliation();
 
@@ -52,12 +42,6 @@ export const startPostInstallBackfillsHandler = async ({
       )}`,
     );
   }
-
-  logInfo(
-    `[call-recorder] post-install backfill kickoff completed: calendarEventSweepOutcome=${
-      calendarEventSweepRequested ? 'sweep-requested' : 'sweep-request-failed'
-    }, summaryBackfillOutcome=${summaryBackfillOutcome}`,
-  );
 
   return {
     calendarEventSweepOutcome: calendarEventSweepRequested

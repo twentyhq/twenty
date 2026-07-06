@@ -19,12 +19,6 @@ const ACTION_COUNT_KEY_BY_ACTION: {
   FAILED: 'failed',
 };
 
-const logInfo = (message: string) => {
-  if (process.env.NODE_ENV !== 'test') {
-    console.info(message);
-  }
-};
-
 export const reconcileUpcomingCalendarEventBatches = async ({
   client,
   calendarEventIds,
@@ -56,10 +50,6 @@ export const reconcileUpcomingCalendarEventBatches = async ({
     );
     const batchStartedAtMs = getNowMs();
 
-    logInfo(
-      `[call-recorder] reconciling upcoming calendar event batch: size=${batchCalendarEventIds.length}, remainingBeforeBatch=${remainingCalendarEventIds.length}`,
-    );
-
     try {
       const reconciliationResults =
         await reconcileCallRecorderForCalendarEventIds({
@@ -69,25 +59,12 @@ export const reconcileUpcomingCalendarEventBatches = async ({
 
       reconciledCalendarEventIds.push(...batchCalendarEventIds);
 
-      const batchActionCounts = {
-        created: 0,
-        updated: 0,
-        canceled: 0,
-        skipped: 0,
-        failed: 0,
-      };
-
       for (const reconciliationResult of reconciliationResults) {
         const actionCountKey =
           ACTION_COUNT_KEY_BY_ACTION[reconciliationResult.action];
 
         actionCounts[actionCountKey] += 1;
-        batchActionCounts[actionCountKey] += 1;
       }
-
-      logInfo(
-        `[call-recorder] upcoming calendar event batch reconciled: created=${batchActionCounts.created}, updated=${batchActionCounts.updated}, canceled=${batchActionCounts.canceled}, skipped=${batchActionCounts.skipped}, failed=${batchActionCounts.failed}`,
-      );
     } catch (error) {
       failedCalendarEventIds.push(...batchCalendarEventIds);
 
@@ -112,10 +89,6 @@ export const reconcileUpcomingCalendarEventBatches = async ({
           calendarEventIds: remainingCalendarEventIds,
         })
       : false;
-
-  logInfo(
-    `[call-recorder] upcoming calendar event reconciliation batch run finished: reconciled=${reconciledCalendarEventIds.length}, failed=${failedCalendarEventIds.length}, remaining=${remainingCalendarEventIds.length}, continuationRequested=${continuationRequested}`,
-  );
 
   return {
     reconciledCalendarEventIds,
