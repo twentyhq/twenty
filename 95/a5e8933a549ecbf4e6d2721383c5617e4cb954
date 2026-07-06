@@ -1,0 +1,33 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/__tests__/2-20-workspace-command-1783083423000-add-message-campaign-stat-fields.command.spec.ts
+  s_7c0169865c5a19::t_12e31cac9bd810 4
+  s_7c0169865c5a19::t_3c825107b25db6 192-194
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/__tests__/2-20-workspace-command-1783083423001-create-message-list-view.command.spec.ts
+  s_7c0169865c5a19::t_12e31cac9bd810 4
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783083423001-create-message-list-view.command.ts
+  s_7c0169865c5a19::t_e12fbb805556f5 29,31
+packages/twenty-server/src/database/commands/upgrade-version-command/workspace-command-provider.module.ts
+  s_7c0169865c5a19::t_e8b6d61197bf92 23
+  s_7c0169865c5a19::t_a87e475d115da2 47
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/2-20-upgrade-version-command.module.ts
+  s_7c0169865c5a19::t_7577c41dbf86a2 1-30
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783083423000-add-message-campaign-stat-fields.command.ts
+  s_7c0169865c5a19::t_b5a4a215262e37 40,42
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783100000000-backfill-deterministic-field-universal-identifiers.command.ts
+  s_7c0169865c5a19::t_226753d2df5b27 90,92
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "95a5e8933a549ecbf4e6d2721383c5617e4cb954",
+  "prompts": {},
+  "sessions": {
+    "s_7c0169865c5a19": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3fadbdc5-0639-4b62-a5ba-78f2c5c7d809",
+        "model": "claude-fable-5"
+      },
+      "human_author": null
+    }
+  }
+}
