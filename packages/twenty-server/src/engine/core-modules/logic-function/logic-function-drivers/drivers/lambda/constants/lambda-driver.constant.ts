@@ -5,6 +5,15 @@ import { ASSET_PATH } from 'src/constants/assets-path';
 export const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 export const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
 
+// Control-plane calls (Create/Update/PublishLayer/GetFunction) share a low,
+// account-region-wide quota. On release the whole app's SDK layer goes stale at
+// once, so every function rebuilds together and bursts past that quota
+// ("Rate exceeded"). `adaptive` adds a client-side token bucket that paces
+// requests down when throttled instead of hammer-then-backoff, and the higher
+// attempt count rides out the burst.
+export const LAMBDA_CLIENT_MAX_ATTEMPTS = 8;
+export const LAMBDA_CLIENT_RETRY_MODE = 'adaptive' as const;
+
 export const YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS = 300;
 export const YARN_INSTALL_LAMBDA_MEMORY_MB = 1024;
 export const BUILDER_LAMBDA_TIMEOUT_SECONDS = 60;

@@ -11,6 +11,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   CREDENTIALS_DURATION_IN_SECONDS,
+  LAMBDA_CLIENT_MAX_ATTEMPTS,
+  LAMBDA_CLIENT_RETRY_MODE,
   UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
@@ -35,6 +37,10 @@ export class LambdaAwsClientService {
         ...(isDefined(this.options.subhostingRole) && {
           credentials: await this.getAssumeRoleCredentials(),
         }),
+        // Set after the spread so control-plane throttling ("Rate exceeded")
+        // during release-time build bursts is always paced and retried.
+        maxAttempts: LAMBDA_CLIENT_MAX_ATTEMPTS,
+        retryMode: LAMBDA_CLIENT_RETRY_MODE,
       });
     }
 
