@@ -14,7 +14,7 @@ Dear **Jeffery Griffin**, here is our _proposal_.
 
 describe('generateDocumentPdf', () => {
   it('should produce a valid PDF from markdown', async () => {
-    const bytes = await generateDocumentPdf('Sales proposal', MARKDOWN);
+    const bytes = await generateDocumentPdf(MARKDOWN);
 
     expect(bytes.byteLength).toBeGreaterThan(0);
     expect(Buffer.from(bytes.slice(0, 5)).toString()).toBe('%PDF-');
@@ -24,18 +24,18 @@ describe('generateDocumentPdf', () => {
   it('should paginate long content across multiple pages', async () => {
     const long = Array.from({ length: 120 }, (_, i) => `Paragraph number ${i} with some text.`).join('\n\n');
 
-    const bytes = await generateDocumentPdf('Big doc', long);
+    const bytes = await generateDocumentPdf(long);
     const loaded = await PDFDocument.load(bytes);
 
     expect(loaded.getPageCount()).toBeGreaterThan(1);
   });
 
   it('should render explicit line breaks and non-Latin characters without throwing', async () => {
-    // The header fonts use WinAnsi encoding: a naive sanitizer would either
+    // The body fonts use WinAnsi encoding: a naive sanitizer would either
     // throw on unencodable characters or swallow the `\n` line breaks.
     const content = 'Bonjour **José**,\nRendez-vous à 20€ le 5 — merci.\n\n世界 dropped gracefully.';
 
-    const bytes = await generateDocumentPdf('Café résumé — 世界', content);
+    const bytes = await generateDocumentPdf(content);
 
     expect(bytes.byteLength).toBeGreaterThan(0);
     expect(Buffer.from(bytes.slice(0, 5)).toString()).toBe('%PDF-');

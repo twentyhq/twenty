@@ -25,10 +25,7 @@ const styles: Record<string, CSSProperties> = {
     overflow: 'hidden',
     fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif",
   },
-  band: { height: '6px', background: 'linear-gradient(90deg, #1961ed, #6b9bff)' },
   body: { padding: '48px 56px 56px' },
-  title: { fontSize: '28px', fontWeight: 700, letterSpacing: '-0.02em', color: '#10152a', margin: '0 0 4px' },
-  rule: { height: '2px', width: '56px', background: '#1961ed', border: 0, margin: '14px 0 28px' },
   empty: { padding: '40px', textAlign: 'center', color: '#6b7280', fontFamily: 'sans-serif' },
   actions: {
     maxWidth: '720px',
@@ -111,10 +108,7 @@ const DocumentViewer = () => {
         ) : null}
       </div>
       <div style={styles.paper}>
-        <div style={styles.band} />
         <div style={styles.body}>
-          <div style={styles.title}>{document.name}</div>
-          <div style={styles.rule} />
           <Markdown content={document.content} />
         </div>
       </div>

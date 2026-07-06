@@ -31,7 +31,7 @@ const attachGeneratedPdf = async (
   documentName: string,
   content: string,
 ): Promise<void> => {
-  const bytes = await generateDocumentPdf(documentName, content);
+  const bytes = await generateDocumentPdf(content);
   const fileName = toPdfFileName(documentName);
 
   const uploaded = await new MetadataApiClient().uploadFile(

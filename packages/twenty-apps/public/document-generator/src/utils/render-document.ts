@@ -52,13 +52,7 @@ export const DOCUMENT_PAPER_CSS = `
     box-shadow: 0 10px 40px rgba(24, 39, 75, 0.08);
     overflow: hidden;
   }
-  .doc-band { height: 6px; background: linear-gradient(90deg, #1961ed, #6b9bff); }
   .doc-body { padding: 64px 72px 72px; }
-  .doc-title {
-    font-size: 30px; font-weight: 700; letter-spacing: -0.02em;
-    margin: 0 0 4px; color: #10152a;
-  }
-  .doc-rule { height: 2px; width: 56px; background: #1961ed; border: 0; margin: 16px 0 32px; }
   .doc-body h1, .doc-body h2, .doc-body h3 { color: #10152a; line-height: 1.3; margin: 32px 0 12px; }
   .doc-body h1 { font-size: 24px; } .doc-body h2 { font-size: 20px; } .doc-body h3 { font-size: 16px; }
   .doc-body p { margin: 0 0 16px; }
@@ -81,13 +75,11 @@ export const DOCUMENT_PAPER_CSS = `
   }
 `;
 
-// Inner markup for the styled "paper", reused by the page and the in-app viewer.
-export const documentPaperHtml = (title: string, content: string): string =>
+// Inner markup for the styled "paper": renders the template content only, with
+// no title header or footer chrome.
+export const documentPaperHtml = (content: string): string =>
   `<article class="doc-paper">
-      <div class="doc-band"></div>
       <div class="doc-body">
-        <h1 class="doc-title">${escapeHtml(title)}</h1>
-        <hr class="doc-rule" />
         ${documentContentToHtml(content)}
       </div>
     </article>`;
@@ -111,6 +103,6 @@ export const documentHtmlPage = (title: string, content: string): string => `<!d
     <style>${PAGE_BODY_CSS}${DOCUMENT_PAPER_CSS}</style>
   </head>
   <body>
-    ${documentPaperHtml(title, content)}
+    ${documentPaperHtml(content)}
   </body>
 </html>`;

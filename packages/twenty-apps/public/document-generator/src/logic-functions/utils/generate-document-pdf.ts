@@ -303,7 +303,6 @@ const drawBlocks = (ctx: Ctx, tokens: Token[], indent = 0) => {
 };
 
 export const generateDocumentPdf = async (
-  title: string,
   content: string,
 ): Promise<Uint8Array> => {
   const pdf = await PDFDocument.create();
@@ -317,24 +316,8 @@ export const generateDocumentPdf = async (
 
   const ctx: Ctx = { pdf, page: pdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]), y: 0, fonts };
 
-  // Header band with the document title.
-  const bandHeight = 96;
-  ctx.page.drawRectangle({
-    x: 0,
-    y: PAGE_HEIGHT - bandHeight,
-    width: PAGE_WIDTH,
-    height: bandHeight,
-    color: ACCENT,
-  });
-  ctx.page.drawText(toWinAnsi(title), {
-    x: MARGIN,
-    y: PAGE_HEIGHT - 58,
-    size: 22,
-    font: fonts.bold,
-    color: rgb(1, 1, 1),
-    maxWidth: PAGE_WIDTH - MARGIN * 2,
-  });
-  ctx.y = PAGE_HEIGHT - bandHeight - 40;
+  // Render the template content only — no title header or footer.
+  ctx.y = PAGE_HEIGHT - MARGIN;
 
   // Match the HTML renderer (breaks: true) so a single newline in a template
   // becomes a line break in the PDF too.
