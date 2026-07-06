@@ -17,6 +17,7 @@ import indexAppPath from '@/navigation/utils/indexAppPath';
 import { OnboardingActivationOutlet } from '@/onboarding/components/OnboardingActivationOutlet';
 import { OnboardingPageLoader } from '@/onboarding/components/OnboardingPageLoader';
 import { OnboardingStepLayout } from '@/onboarding/components/OnboardingStepLayout';
+import { OnboardingStepPageLoader } from '@/onboarding/components/OnboardingStepPageLoader';
 import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTransitionOutlet';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 import { AuthFlowLayout } from '@/ui/layout/page/components/AuthFlowLayout';
@@ -278,7 +279,7 @@ const createWorkspaceAppRouter = (
             <Route
               path={AppPath.CreateProfile}
               element={
-                <LazyRoute fallback={null}>
+                <LazyRoute fallback={<OnboardingStepPageLoader />}>
                   <CreateProfile />
                 </LazyRoute>
               }
@@ -286,7 +287,7 @@ const createWorkspaceAppRouter = (
             <Route
               path={AppPath.SyncEmails}
               element={
-                <LazyRoute fallback={null}>
+                <LazyRoute fallback={<OnboardingStepPageLoader />}>
                   <SyncEmails />
                 </LazyRoute>
               }
@@ -294,7 +295,7 @@ const createWorkspaceAppRouter = (
             <Route
               path={AppPath.InstallApps}
               element={
-                <LazyRoute fallback={null}>
+                <LazyRoute fallback={<OnboardingStepPageLoader />}>
                   <InstallApps />
                 </LazyRoute>
               }
@@ -302,7 +303,7 @@ const createWorkspaceAppRouter = (
             <Route
               path={AppPath.InviteTeam}
               element={
-                <LazyRoute fallback={null}>
+                <LazyRoute fallback={<OnboardingStepPageLoader />}>
                   <InviteTeam />
                 </LazyRoute>
               }
@@ -310,7 +311,7 @@ const createWorkspaceAppRouter = (
             <Route
               path={AppPath.PlanRequired}
               element={
-                <LazyRoute fallback={null}>
+                <LazyRoute fallback={<OnboardingStepPageLoader />}>
                   <ChooseYourPlan />
                 </LazyRoute>
               }
