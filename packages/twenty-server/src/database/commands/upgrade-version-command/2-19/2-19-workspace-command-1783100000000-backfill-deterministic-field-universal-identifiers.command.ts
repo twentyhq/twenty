@@ -23,8 +23,8 @@ import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { PARTIAL_SYSTEM_FLAT_FIELD_METADATAS } from 'src/engine/metadata-modules/object-metadata/constants/partial-system-flat-field-metadatas.constant';
-import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 // Server-owned system field names: their universal identifiers are taken
 // over for every application, whatever value they currently hold, since
@@ -98,7 +98,7 @@ export class BackfillDeterministicFieldUniversalIdentifiersCommand extends Activ
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
+    private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(FieldMetadataEntity)
@@ -223,15 +223,14 @@ export class BackfillDeterministicFieldUniversalIdentifiersCommand extends Activ
       ...getMetadataRelatedMetadataNames('fieldMetadata'),
       ...getMetadataSerializedRelationNames('fieldMetadata'),
     ] as const;
-    const cacheKeysToFlush = [
+    const allFlatEntityMapsKeys = [
       ...new Set(fieldMetadataRelatedNames.map(getMetadataFlatEntityMapsKey)),
     ];
 
-    await this.workspaceCacheService.flush(workspaceId, cacheKeysToFlush);
-
-    await this.workspaceMetadataVersionService.incrementMetadataVersion(
+    await this.workspaceMigrationRunnerService.invalidateCache({
+      allFlatEntityMapsKeys,
       workspaceId,
-    );
+    });
 
     this.logger.log(
       `Backfilled ${updates.length} field universal identifier(s) for workspace ${workspaceId}`,

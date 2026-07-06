@@ -13,6 +13,7 @@ import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceCacheModule,
     WorkspaceMetadataVersionModule,
     WorkspaceMigrationModule,
+    WorkspaceMigrationRunnerModule,
   ],
   providers: [
     BackfillWorkspaceCustomApplicationRegistrationCommand,
