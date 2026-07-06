@@ -22,7 +22,6 @@ export const setupHttpMock = (...baseHandlers: MswHandler[]): HttpMock => {
   };
 
   beforeAll(() => {
-    jest.useRealTimers();
     server.listen({ onUnhandledRequest: 'error' });
     applyBaseHandlers();
   });
