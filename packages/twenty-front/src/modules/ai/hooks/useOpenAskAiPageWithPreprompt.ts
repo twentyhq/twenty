@@ -28,7 +28,11 @@ export const useOpenAskAiPageWithPreprompt = () => {
       ...prev,
       [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: text,
     }));
-    setAgentChatPreprompt({ text, mode });
+    setAgentChatPreprompt({
+      text,
+      mode,
+      threadId: AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
+    });
   };
 
   return { openAskAiPageWithPreprompt };
