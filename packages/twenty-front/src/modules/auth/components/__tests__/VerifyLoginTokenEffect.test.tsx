@@ -1,10 +1,11 @@
-import { act, render, waitFor } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { StrictMode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { AppPath } from 'twenty-shared/types';
 
 import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect';
-import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
+import { tokenPairState } from '@/auth/states/tokenPairState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -21,17 +22,15 @@ jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => navigateMock,
 }));
 
-jest.mock('@/auth/hooks/useHasAccessTokenPair', () => ({
-  useHasAccessTokenPair: () => false,
-}));
-
-const setClientConfigSaved = (isSaved: boolean) => {
-  jotaiStore.set(clientConfigApiStatusState.atom, {
-    isLoadedOnce: true,
-    isLoading: false,
-    isErrored: false,
-    isSaved,
-  });
+const staleTokenPair = {
+  accessOrWorkspaceAgnosticToken: {
+    token: 'stale-access-token',
+    expiresAt: '2020-01-01T00:00:00.000Z',
+  },
+  refreshToken: {
+    token: 'stale-refresh-token',
+    expiresAt: '2020-01-01T00:00:00.000Z',
+  },
 };
 
 const renderEffect = (initialEntry: string) =>
@@ -48,25 +47,35 @@ const renderEffect = (initialEntry: string) =>
 describe('VerifyLoginTokenEffect', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    localStorage.clear();
     resetJotaiStore();
-    setClientConfigSaved(true);
   });
 
-  it('verifies the login token at most once even when the gating config re-triggers the effect', async () => {
+  it('verifies the login token at most once under StrictMode', async () => {
     renderEffect('/verify?loginToken=login-token');
 
     await waitFor(() => {
       expect(verifyLoginTokenMock).toHaveBeenCalledWith('login-token');
     });
     expect(verifyLoginTokenMock).toHaveBeenCalledTimes(1);
+  });
 
-    await act(async () => {
-      setClientConfigSaved(false);
-    });
-    await act(async () => {
-      setClientConfigSaved(true);
-    });
+  it('navigates to sign in up when neither login token nor token pair is present', async () => {
+    renderEffect('/verify');
 
-    expect(verifyLoginTokenMock).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(navigateMock).toHaveBeenCalledWith(AppPath.SignInUp);
+    });
+    expect(verifyLoginTokenMock).not.toHaveBeenCalled();
+  });
+
+  it('keeps the existing token pair when arriving without a login token', () => {
+    jotaiStore.set(tokenPairState.atom, staleTokenPair);
+
+    renderEffect('/verify');
+
+    expect(jotaiStore.get(tokenPairState.atom)).toEqual(staleTokenPair);
+    expect(navigateMock).not.toHaveBeenCalled();
+    expect(verifyLoginTokenMock).not.toHaveBeenCalled();
   });
 });
