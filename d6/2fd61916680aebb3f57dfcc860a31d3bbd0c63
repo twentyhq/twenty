@@ -1,0 +1,19 @@
+packages/twenty-shared/src/metadata/__tests__/__snapshots__/standardObjectUniversalIdentifiers.test.ts.snap
+  s_7c0169865c5a19::t_750919440f2908 1058-1063,1073-1075,1100-1102,1134-1173,1421-1439
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d62fd61916680aebb3f57dfcc860a31d3bbd0c63",
+  "prompts": {},
+  "sessions": {
+    "s_7c0169865c5a19": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3fadbdc5-0639-4b62-a5ba-78f2c5c7d809",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
