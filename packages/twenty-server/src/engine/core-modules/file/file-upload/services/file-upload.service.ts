@@ -7,7 +7,6 @@ import { pipeline } from 'stream/promises';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import bytes from 'bytes';
-import { lookup } from 'mrmime';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -19,9 +18,9 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { FileUploadTokenJwtPayload } from 'src/engine/core-modules/auth/types/file-upload-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { TWENTY_MIME_POLICY } from 'src/engine/core-modules/file/constants/twenty-mime-policy.constant';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FILE_CONTENT_SNIFF_BYTE_COUNT } from 'src/engine/core-modules/file/file-upload/constants/file-content-sniff.constant';
 import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
 import {
   FileUploadException,
@@ -30,12 +29,14 @@ import {
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
+import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { readReadablePrefix } from 'src/utils/read-readable-prefix';
 
 export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.FilesField,
@@ -100,14 +101,7 @@ export class FileUploadService {
     }
 
     const { ext } = buildFileInfo(filename);
-    // The file content cannot be sniffed before it reaches storage, so the
-    // mime type is derived from the extension only. Anything unknown is
-    // stored as octet-stream, and the serving path already forces
-    // Content-Disposition: attachment for non-inline-safe mime types.
-    const mimeType =
-      TWENTY_MIME_POLICY[ext] ??
-      (isNonEmptyString(ext) ? lookup(ext) : undefined) ??
-      'application/octet-stream';
+    const mimeType = 'application/octet-stream';
 
     const fileId = v4();
     const name = `${fileId}${isNonEmptyString(ext) ? `.${ext}` : ''}`;
@@ -361,17 +355,58 @@ export class FileUploadService {
       );
     }
 
+    const mimeType = await this.detectUploadedMimeTypeOrThrow({
+      fileFolder: fileFolder as FileFolder,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      workspaceId,
+      resourcePath,
+      filename: file.path,
+    });
+
     await this.fileRepository.update(
       workspaceId,
       { id: fileId },
-      { status: FILE_STATUS.UPLOADED },
+      { status: FILE_STATUS.UPLOADED, mimeType },
     );
 
     return this.toFileWithSignedUrl({
-      file: { ...file, status: FILE_STATUS.UPLOADED },
+      file: { ...file, status: FILE_STATUS.UPLOADED, mimeType },
       fileFolder: fileFolder as FileFolder,
       workspaceId,
     });
+  }
+
+  private async detectUploadedMimeTypeOrThrow({
+    fileFolder,
+    applicationUniversalIdentifier,
+    workspaceId,
+    resourcePath,
+    filename,
+  }: {
+    fileFolder: FileFolder;
+    applicationUniversalIdentifier: string;
+    workspaceId: string;
+    resourcePath: string;
+    filename: string;
+  }): Promise<string> {
+    const stream = await this.fileStorageService.readFile({
+      fileFolder,
+      applicationUniversalIdentifier,
+      workspaceId,
+      resourcePath,
+    });
+
+    const prefix = await readReadablePrefix(
+      stream,
+      FILE_CONTENT_SNIFF_BYTE_COUNT,
+    );
+
+    const { mimeType } = await extractFileInfoOrThrow({
+      file: prefix,
+      filename,
+    });
+
+    return mimeType;
   }
 
   private async resolveUploadLocation({

@@ -1,6 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
   CreateDateColumn,
@@ -56,7 +55,7 @@ export enum KeyValuePairType {
   },
 )
 export class KeyValuePairEntity {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
