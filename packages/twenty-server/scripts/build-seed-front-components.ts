@@ -20,7 +20,7 @@ const alias: Record<string, string> = {
   'react-dom': join(ROOT_NODE_MODULES, 'react-dom'),
 };
 
-const COMPONENTS = ['hello-world', 'show-notification'];
+const COMPONENTS = ['hello-world', 'show-notification', 'list-companies'];
 
 const build = async () => {
   for (const component of COMPONENTS) {
