@@ -28,8 +28,32 @@ describe('mapErrorToStreamError', () => {
     });
   });
 
-  it('handles non-Error values with a stable fallback', () => {
+  it('keeps the content of string errors', () => {
     expect(mapErrorToStreamError('boom')).toEqual({
+      code: STREAM_EXECUTION_FAILED_CODE,
+      message: 'boom',
+    });
+  });
+
+  it('extracts the provider message from raw error objects instead of "[object Object]"', () => {
+    expect(
+      mapErrorToStreamError({
+        message: 'Incorrect API key provided: sk-proj-***',
+        type: 'invalid_request_error',
+        code: 'invalid_api_key',
+      }),
+    ).toEqual({
+      code: STREAM_EXECUTION_FAILED_CODE,
+      message: 'Incorrect API key provided: sk-proj-*** (invalid_api_key)',
+    });
+  });
+
+  it('handles unserializable values with a stable fallback', () => {
+    const circular: Record<string, unknown> = {};
+
+    circular.self = circular;
+
+    expect(mapErrorToStreamError(circular)).toEqual({
       code: STREAM_EXECUTION_FAILED_CODE,
       message: 'Stream execution failed',
     });

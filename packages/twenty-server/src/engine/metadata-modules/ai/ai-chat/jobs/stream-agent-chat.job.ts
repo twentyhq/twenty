@@ -38,6 +38,7 @@ import { findPendingQuestionPart } from 'src/engine/metadata-modules/ai/ai-chat/
 import { AGENT_CHAT_CHECKPOINT_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-checkpoint-interval-ms.constant';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
+import { extractErrorMessage } from 'src/engine/metadata-modules/ai/utils/extract-error-message.util';
 import type { AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -128,7 +129,7 @@ export class StreamAgentChatJob {
       await this.executeStream(data, workspace, abortController.signal);
     } catch (error) {
       this.logger.error(
-        `Stream ${data.streamId} failed: ${error instanceof Error ? error.message : String(error)}`,
+        `Stream ${data.streamId} failed: ${extractErrorMessage(error)}`,
       );
       const streamError = mapErrorToStreamError(error);
 
@@ -363,7 +364,7 @@ export class StreamAgentChatJob {
               onError: (error) => {
                 streamError = error;
 
-                return error instanceof Error ? error.message : String(error);
+                return extractErrorMessage(error);
               },
               sendStart: true,
               generateMessageId: () => assistantMessageId,
@@ -421,7 +422,7 @@ export class StreamAgentChatJob {
           streamError = error;
           resolveStreamFinished();
 
-          return error instanceof Error ? error.message : String(error);
+          return extractErrorMessage(error);
         },
       });
 
@@ -767,7 +768,7 @@ export class StreamAgentChatJob {
       streamError instanceof Error
         ? `${streamError.name}: ${streamError.message}`
         : isDefined(streamError)
-          ? String(streamError)
+          ? extractErrorMessage(streamError)
           : 'none';
 
     this.logger.warn(
