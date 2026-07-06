@@ -2,6 +2,7 @@ import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
+import { UPCOMING_CALENDAR_EVENT_MAX_FUTURE_YEARS } from 'src/logic-functions/constants/upcoming-calendar-event-max-future-years';
 import {
   fetchAllNodes,
   type ConnectionPage,
@@ -17,6 +18,11 @@ export const fetchUpcomingCalendarEventIds = async (
   now: Date,
 ): Promise<string[]> => {
   const nowIsoString = now.toISOString();
+  const maxFutureDate = new Date(now);
+  maxFutureDate.setFullYear(
+    maxFutureDate.getFullYear() + UPCOMING_CALENDAR_EVENT_MAX_FUTURE_YEARS,
+  );
+  const maxFutureIsoString = maxFutureDate.toISOString();
 
   const calendarEventNodes = await fetchAllNodes<CalendarEventIdNode>(
     async (afterCursor) => {
@@ -26,11 +32,24 @@ export const fetchUpcomingCalendarEventIds = async (
             filter: {
               isCanceled: { eq: false },
               // Must match the policy's upcoming rule: endsAt, falling back to startsAt.
+              // Ranges use and-ed entries because the API applies one operator per field filter.
               or: [
-                { endsAt: { gt: nowIsoString } },
-                { endsAt: { is: 'NULL' }, startsAt: { gt: nowIsoString } },
+                {
+                  and: [
+                    { endsAt: { gt: nowIsoString } },
+                    { endsAt: { lte: maxFutureIsoString } },
+                  ],
+                },
+                {
+                  and: [
+                    { endsAt: { is: 'NULL' } },
+                    { startsAt: { gt: nowIsoString } },
+                    { startsAt: { lte: maxFutureIsoString } },
+                  ],
+                },
               ],
             },
+            orderBy: [{ startsAt: 'AscNullsLast' }],
             first: TWENTY_PAGE_SIZE,
             ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
           },
