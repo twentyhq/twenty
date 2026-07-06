@@ -111,7 +111,7 @@ export class MessageCampaignService {
     private readonly userRoleService: UserRoleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
     private readonly emailBillingService: EmailBillingService,
-    @InjectCacheStorage(CacheStorageNamespace.EngineLock)
+    @InjectCacheStorage(CacheStorageNamespace.ModuleEmailing)
     private readonly cacheStorageService: CacheStorageService,
   ) {}
 
