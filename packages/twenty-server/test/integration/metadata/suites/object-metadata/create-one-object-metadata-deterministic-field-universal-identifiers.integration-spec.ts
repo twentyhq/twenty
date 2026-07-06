@@ -104,9 +104,7 @@ describe('Custom object creation deterministic field universal identifiers', () 
       `,
     });
 
-    fetchedFields = fields.map(
-      (edge: { node: FetchedField }) => edge.node,
-    );
+    fetchedFields = fields.map((edge: { node: FetchedField }) => edge.node);
   });
 
   afterAll(async () => {
@@ -150,7 +148,8 @@ describe('Custom object creation deterministic field universal identifiers', () 
         }),
       );
 
-      const standardRelationObject = forwardField?.relation?.targetObjectMetadata;
+      const standardRelationObject =
+        forwardField?.relation?.targetObjectMetadata;
 
       expect(standardRelationObject).toBeDefined();
 
@@ -158,9 +157,6 @@ describe('Custom object creation deterministic field universal identifiers', () 
         return;
       }
 
-      // The relation DTO resolves morph relation members to sibling fields,
-      // so the stored reverse field is fetched from the standard object
-      // fields instead.
       const { fields: standardObjectFieldEdges } = await findManyFieldsMetadata(
         {
           expectToFail: false,
@@ -175,16 +171,13 @@ describe('Custom object creation deterministic field universal identifiers', () 
       const storedReverseFieldName = `target${capitalize(OBJECT_NAME_SINGULAR)}`;
       const reverseField = standardObjectFieldEdges
         .map((edge: { node: FetchedField }) => edge.node)
-        .find(
-          (field: FetchedField) => field.name === storedReverseFieldName,
-        );
+        .find((field: FetchedField) => field.name === storedReverseFieldName);
 
       expect(reverseField).toBeDefined();
       expect(reverseField?.universalIdentifier).toBe(
         getFieldUniversalIdentifier({
           applicationUniversalIdentifier,
-          objectUniversalIdentifier:
-            standardRelationObject.universalIdentifier,
+          objectUniversalIdentifier: standardRelationObject.universalIdentifier,
           name: storedReverseFieldName,
         }),
       );
