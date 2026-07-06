@@ -1,0 +1,220 @@
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type.ts
+  s_c9896ad68d525f::t_6ab0aa79b0fcd5 46
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/get-flat-field-metadata-computed-expression.util.ts
+  s_c9896ad68d525f::t_a6792e618d919c 1,5,7-8
+  s_c9896ad68d525f::t_db2e4fc47cc83e 2-4,6,9-12
+packages/twenty-server/src/engine/metadata-modules/flat-entity/types/__tests__/flat-entity-update.type-test.ts
+  s_c9896ad68d525f::t_bc068939be830b 28
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/derive-computed-currency-code-as-expression.util.ts
+  s_c9896ad68d525f::t_78acd86216d81e 2-4,6-8,10-47,59,64-65
+  s_c9896ad68d525f::t_86efc6d5b9effb 48-58,60-63
+  s_c9896ad68d525f::t_d6d6add8ed65a8 1,5,9
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/__tests__/universal-flat-field-metadata.test-type.ts
+  s_c9896ad68d525f::t_e606d599980057 136-137,139,144
+  s_c9896ad68d525f::t_3f2a6048427500 7,17
+  s_c9896ad68d525f::t_f55dedceb2d38c 138
+packages/twenty-server/src/utils/__test__/get-field-metadata-entity.mock.ts
+  s_c9896ad68d525f::t_3b09cb86fc4ae8 56
+packages/twenty-server/src/engine/twenty-orm/entity-manager/workspace-entity-manager.spec.ts
+  s_c9896ad68d525f::t_e17060abe4a06c 165
+  s_c9896ad68d525f::t_7ba3fd0d6be926 247
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-flat-field-metadata.util.ts
+  s_c9896ad68d525f::t_17fb07c3a6b85e 63-67
+  s_c9896ad68d525f::t_f6bb20b4c0ad90 21-24,26-28
+  s_c9896ad68d525f::t_7f90a5be49739d 10-20,25,29-43
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/build-formula-field-references-context.util.ts
+  s_c9896ad68d525f::t_9f94d8d4273c5a 40
+  s_c9896ad68d525f::t_dbdbc3e1b0b8e1 35
+  s_c9896ad68d525f::t_40bb75e0c47c5b 59
+  s_c9896ad68d525f::t_5ed3cfd2cfd5e5 36
+  s_c9896ad68d525f::t_3721acbe9e0d4e 1-12,14,20-28,30-34,37-39,41-58,60-84
+  s_c9896ad68d525f::t_e211cfd5ce4901 18-19
+  s_c9896ad68d525f::t_90a2a82e5fe868 13,15-17,29
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/derive-computed-as-expression-for-flat-field-metadata.util.ts
+  s_c9896ad68d525f::t_21dc6129bc375a 1,7-8,11,14-19,22-30,36-37,39,41,46-56,59-77,81,89,96-98,101-191
+  s_c9896ad68d525f::t_121b6b2b752579 2-5,9-10,12-13,20-21,31-35,38,40,42-45,57-58,78-80,82-88,90-95,99-100
+  s_c9896ad68d525f::t_0ae8dbf850d74b 6
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/page-layout-widget/services/utils/from-universal-configuration-to-flat-page-layout-widget-configuration.util.ts
+  s_c9896ad68d525f::t_a9c13b3d979664 58
+  s_c9896ad68d525f::t_c4d2ef44ee3f1d 52,54,56-57
+  s_c9896ad68d525f::t_d2c1e608c22dd6 55
+  s_8a5a157e980979::t_8ef4c5ab4e0e99 15,60
+  s_c9896ad68d525f::t_bb4d1553243d59 53
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/__tests__/derive-computed-as-expression-for-flat-field-metadata.util.spec.ts
+  s_c9896ad68d525f::t_7f448bd38f2f2f 92-93
+  s_c9896ad68d525f::t_bc82e9cc3a0797 108
+  s_c9896ad68d525f::t_b7814c9ef76e74 144
+  s_c9896ad68d525f::t_52d29b49c6a168 1-5,7-23,26-27,29-35,37-38,55-66,68,72-75,80-83,87-90,133-136,140-143,145-147,150-153,157-168,172-178,187-188,190-191
+  s_c9896ad68d525f::t_c1ebd56c01ff29 6,24-25,28,36,39-54,67,69-71,76-79,84-86,91,94-107,109-132,137-139,148-149,154-156,169-171,179-186,189
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util.ts
+  s_c9896ad68d525f::t_8e2a5bbe35a4b6 123
+packages/twenty-server/src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util.ts
+  s_c9896ad68d525f::t_56178b88b6559c 95
+packages/twenty-server/test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test.ts
+  s_c9896ad68d525f::t_e29a80ceaa171a 8-10,15-17
+packages/twenty-server/src/engine/core-modules/feature-flag/constants/public-feature-flag.const.ts
+  s_c9896ad68d525f::t_93cb6ccd81a689 39-46
+packages/twenty-server/src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto.ts
+  s_c9896ad68d525f::t_167f6ef46ea012 152-154
+  s_c9896ad68d525f::t_82bb0a12458310 27
+  s_c9896ad68d525f::t_6a65546a945828 155
+packages/twenty-server/src/engine/metadata-modules/field-metadata/field-metadata.entity.ts
+  s_c9896ad68d525f::t_76b7bf6d4e87dd 133-134
+  s_c9896ad68d525f::t_63ab736b99df17 129-132
+  s_c9896ad68d525f::t_aafb82c29aa8a9 4
+  s_c9896ad68d525f::t_d79c18a027dc59 27
+  s_c9896ad68d525f::t_79e91585db2aca 135
+packages/twenty-server/src/engine/twenty-orm/workspace-schema-manager/utils/build-sql-column-definition.util.ts
+  s_c9896ad68d525f::t_2a76747f965136 5
+  s_c9896ad68d525f::t_02bf40ddd0cf63 21-31
+packages/twenty-server/src/engine/metadata-modules/field-metadata/types/__tests__/field-metadata-entity.test-type.ts
+  s_c9896ad68d525f::t_0c41dcd1f120f0 249-253
+  s_c9896ad68d525f::t_e0e139bc5085ce 4
+  s_c9896ad68d525f::t_4241f69afb6ac6 248
+  s_c9896ad68d525f::t_5be1a808495ba6 254-257
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1783204317531-add-field-metadata-computation-column.ts
+  s_c9896ad68d525f::t_7338942df50ee6 1-15
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/is-computed-flat-field-metadata.util.ts
+  s_c9896ad68d525f::t_b7603425a8bc81 1-7
+packages/twenty-server/src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service.ts
+  s_c9896ad68d525f::t_1abb4e4059f0e8 181
+  s_c9896ad68d525f::t_add485b2f9b05d 65
+  s_c9896ad68d525f::t_30cc3fb009085b 182-188
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util.ts
+  s_c9896ad68d525f::t_1e5509ecbe3fbf 93-151
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/update-field-action-handler.service.ts
+  s_c9896ad68d525f::t_ff80efc263cca6 352-358,371-372,376-381,387-392,396-402
+  s_c9896ad68d525f::t_37530d105aa5b7 369,373-375,393-395
+  s_c9896ad68d525f::t_f3a7c1682063e8 359-365,403
+  s_c9896ad68d525f::t_f7eab303732ce7 20,25
+  s_c9896ad68d525f::t_b038b955be2fb6 366-368,370,382-386
+  s_c9896ad68d525f::t_2445ff573ee34a 404
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-is-not-referenced-by-computed-field.util.ts
+  s_c9896ad68d525f::t_5acd546bb6c481 1-12,20-23,25-56,61-69,72,75-76,78-79,91-108
+  s_c9896ad68d525f::t_2d68e61c333837 13-19,24,57-58,60
+  s_c9896ad68d525f::t_22bd4e7e399c95 70,73-74,77,80-90
+  s_c9896ad68d525f::t_ef929855590067 71
+  s_c9896ad68d525f::t_2ba1f7a3d01e1a 59
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/__mocks__/get-morph-or-relation-target-flat-field-metadata-mock.ts
+  s_c9896ad68d525f::t_f50812a3261866 65
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/create-field-action-handler.service.ts
+  s_c9896ad68d525f::t_61985b45adde59 125
+  s_c9896ad68d525f::t_add17c7e5d90bd 182,191,210
+  s_c9896ad68d525f::t_ae3b3f2d0b7180 13
+  s_c9896ad68d525f::t_f2f2cbc45e5625 203-209,215-220
+  s_c9896ad68d525f::t_91e9d856bd377f 168
+  s_c9896ad68d525f::t_e12f3b6f181f51 15-16
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util.ts
+  s_c9896ad68d525f::t_a2266d73039c41 16
+  s_c9896ad68d525f::t_b92b910b4170f8 57
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-computed-flat-field-metadata.util.ts
+  s_c9896ad68d525f::t_6c8cbe49604a0d 108
+  s_c9896ad68d525f::t_0735e7db3dd96e 2,18-21
+  s_c9896ad68d525f::t_32722e441ff68e 3-5,11,15,33,35,75,78-107,109-122,124,144,155,163,175,183-190,192-286,288-289
+  s_c9896ad68d525f::t_e230e247ca34c4 160
+  s_c9896ad68d525f::t_69b310e45a6378 287
+  s_c9896ad68d525f::t_b6f30cf7e7e889 51-60
+  s_c9896ad68d525f::t_5cfd681010624c 191
+  s_c9896ad68d525f::t_165cd7baf5d5d6 1,6-10,12-14,16-17,22-32,34,36-50,61-74,76-77,123,125-143,145-154,156-159,161-162,164-174,176-182
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object/services/create-object-action-handler.service.ts
+  s_c9896ad68d525f::t_349d1d34f37e01 149,155-160
+  s_c9896ad68d525f::t_abad9f31ad06d0 147-148,150-151,153-154,161-162,164,176-177
+  s_c9896ad68d525f::t_9ac7ca482326bd 163,165-175,178-179
+  s_c9896ad68d525f::t_691def94c63a5c 9,11
+packages/twenty-server/src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util.ts
+  s_c9896ad68d525f::t_10cbe89f1fd1ca 14,63
+  s_c9896ad68d525f::t_383e69917e7870 54,56,58-60
+  s_c9896ad68d525f::t_12c783b929756c 55
+  s_c9896ad68d525f::t_bb85c9eb5e84b6 61
+  s_c9896ad68d525f::t_f0b06c3caf47d7 57
+packages/twenty-server/src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant.ts
+  s_c9896ad68d525f::t_6805de81220064 116-120
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util.ts
+  s_c9896ad68d525f::t_caa65d9d96365d 109
+  s_c9896ad68d525f::t_8809457fec9a10 250,255
+  s_c9896ad68d525f::t_51ffc5b1c46482 7
+  s_c9896ad68d525f::t_c1085d7a228063 21
+  s_c9896ad68d525f::t_e3d1624f652e12 225-245,251-252
+  s_c9896ad68d525f::t_6d5debf82c7653 12
+  s_c9896ad68d525f::t_e5973cb0155454 249,253
+  s_c9896ad68d525f::t_278683e2e43a41 207,213,222-223
+  s_c9896ad68d525f::t_d3bcff23ef3aec 13
+  s_c9896ad68d525f::t_dba07b9c4837d9 104-108,110,115,119
+  s_c9896ad68d525f::t_d839332b3ec224 111-114,116-118,120-122
+  s_c9896ad68d525f::t_f89217110762a7 123-124,254,256-257
+packages/twenty-server/src/engine/twenty-orm/repository/__tests__/workspace.repository.spec.ts
+  s_c9896ad68d525f::t_2567e15a971e55 89
+packages/twenty-server/src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
+  s_c9896ad68d525f::t_7a441197115bf9 493-494,500-502
+  s_c9896ad68d525f::t_7db36b0d9219e3 352-359
+packages/twenty-server/src/engine/metadata-modules/object-metadata/constants/partial-system-flat-field-metadatas.constant.ts
+  s_c9896ad68d525f::t_c915b52aa7e9e3 34,65,96,127,158,189,220
+  s_c9896ad68d525f::t_1b6b1c2dc5713f 253
+packages/twenty-server/src/database/commands/upgrade-version-command/2-19/add-field-metadata-computation-column-upgrade-command-name.constant.ts
+  s_c9896ad68d525f::t_5d1cc2188e807f 1-2
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util.ts
+  s_c9896ad68d525f::t_e9d228ac6c467c 68
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-to-update-and-related-flat-field-to-update.util.ts
+  s_c9896ad68d525f::t_a992859def6323 38
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_c9896ad68d525f::t_9064fc4a84aa8d 100,200
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/convert-universal-chart-filter-to-chart-filter.util.ts
+  s_c9896ad68d525f::t_3ad8a9425b99a0 1-31
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util.ts
+  s_c9896ad68d525f::t_b3080e49f5676e 149
+packages/twenty-server/src/database/commands/upgrade-version-command/2-10/2-10-workspace-command-1799000055000-sync-call-recording-standard-objects.command.ts
+  s_c9896ad68d525f::t_20854802022ed5 184
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant.ts
+  s_c9896ad68d525f::t_922e7f1f6d64d7 5,18
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/__tests__/validate-flat-field-metadata-is-not-referenced-by-computed-field.util.spec.ts
+  s_c9896ad68d525f::t_843195b7d6d3ca 27-28,31,38
+  s_c9896ad68d525f::t_85ff8d09cbb1c5 94-101,108,114
+  s_c9896ad68d525f::t_9e11d99623c514 39
+  s_c9896ad68d525f::t_80e21775cdc19c 1-26,29-30,32-37,40-46,50-60,63-74,76-85,87-93,102-104,109-113,115-116
+  s_c9896ad68d525f::t_89325908c94635 47,49,61-62,75,86,105,107
+  s_c9896ad68d525f::t_132ca64fac0f68 48,106
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
+  s_c9896ad68d525f::t_f264e38714c2d7 168-172,184-191
+  s_c9896ad68d525f::t_33229e867aa165 434-436
+  s_c9896ad68d525f::t_773e5a1afaa259 222-227,433,437-438
+  s_c9896ad68d525f::t_02c7323d52a45c 16
+  s_c9896ad68d525f::t_cf4be7bb8bb3a0 192,327-333
+  s_c9896ad68d525f::t_844c5dc85a82c6 17
+  s_c9896ad68d525f::t_e3d91cf1a22bf3 228,334-335,439
+packages/twenty-server/src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util.ts
+  s_c9896ad68d525f::t_649951c6163f20 155
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/convert-chart-filter-to-universal-chart-filter.util.ts
+  s_c9896ad68d525f::t_0c5e3f4aa775ed 1-30
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/__tests__/universal-flat-entity-update.test-type.ts
+  s_c9896ad68d525f::t_713f5ac8409eb4 23
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock.ts
+  s_c9896ad68d525f::t_0f6192c11b8c2c 31
+packages/twenty-server/package.json
+  s_c9896ad68d525f::t_5a2033c5192efa 32
+yarn.lock
+  s_c9896ad68d525f::t_0ba8bd4594ae84 1774-1776,1778-1779,1785-1786,18659-18668,19269-19277,53126
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "481066ca0798ec2d6afde367c4562dfc654af003",
+  "prompts": {},
+  "sessions": {
+    "s_8a5a157e980979": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8d765ae-92f9-4877-8c11-5e1240cfee8f",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_c9896ad68d525f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e5f7930d-ee88-45b7-923e-7aef12c5e30f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
