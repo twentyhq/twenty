@@ -121,19 +121,20 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   const serializedRecordGroupFilter = JSON.stringify(recordGroupFilter);
   const serializedAnyFieldFilter = JSON.stringify(anyFieldFilter);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const filter = useMemo(
-    () => ({
-      ...requestFilters,
-      ...recordGroupFilter,
-      ...anyFieldFilter,
-    }),
-    [
-      serializedRequestFilters,
-      serializedRecordGroupFilter,
-      serializedAnyFieldFilter,
-    ],
-  );
+  const filter = useMemo(() => {
+    const parsedRequestFilters = JSON.parse(serializedRequestFilters);
+    const parsedRecordGroupFilter = JSON.parse(serializedRecordGroupFilter);
+    const parsedAnyFieldFilter = JSON.parse(serializedAnyFieldFilter);
+    return {
+      ...parsedRequestFilters,
+      ...parsedRecordGroupFilter,
+      ...parsedAnyFieldFilter,
+    };
+  }, [
+    serializedRequestFilters,
+    serializedRecordGroupFilter,
+    serializedAnyFieldFilter,
+  ]);
 
   const { data, loading } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,

@@ -65,11 +65,11 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
         const updatedRecord =
           unknownRecordInputFields.length > 0
             ? Object.fromEntries(
-              Object.entries(recordFromEvent).filter(
-                ([recordKey]) =>
-                  !unknownRecordInputFields.includes(recordKey),
-              ),
-            )
+                Object.entries(recordFromEvent).filter(
+                  ([recordKey]) =>
+                    !unknownRecordInputFields.includes(recordKey),
+                ),
+              )
             : recordFromEvent;
 
         const computedOptimisticRecord = {
@@ -105,7 +105,7 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
           isDefined(cachedRecord?.updatedAt) &&
           isDefined(updatedRecord.updatedAt) &&
           new Date(updatedRecord.updatedAt as string).getTime() <
-          new Date(cachedRecord!.updatedAt as string).getTime()
+            new Date(cachedRecord!.updatedAt as string).getTime()
         ) {
           continue;
         }
@@ -173,8 +173,12 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
       const hasOnlyLocalUpdates =
         updateEvents.length > 0 &&
         updateEvents.every((updateEvent) => {
-          const recordId = updateEvent.recordId ?? updateEvent.properties.after?.id;
-          return isDefined(recordId) && isRecentMutation(objectMetadataItem.nameSingular, recordId);
+          const recordId =
+            updateEvent.recordId ?? updateEvent.properties.after?.id;
+          return (
+            isDefined(recordId) &&
+            isRecentMutation(objectMetadataItem.nameSingular, recordId)
+          );
         });
 
       if (isNonEmptyArray(updateEvents) && !hasOnlyLocalUpdates) {
