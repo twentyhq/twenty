@@ -73,9 +73,9 @@ describe('WellKnownController', () => {
 
       const parsed = JSON.parse(body);
 
-      expect(parsed.linkset.map((entry: { anchor: string }) => entry.anchor)).toContain(
-        'https://workspace.twenty.com/rest',
-      );
+      expect(
+        parsed.linkset.map((entry: { anchor: string }) => entry.anchor),
+      ).toContain('https://workspace.twenty.com/rest');
     });
 
     it('respects the forwarded protocol', () => {
