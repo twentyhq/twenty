@@ -22,21 +22,27 @@ import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/fla
 import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { PARTIAL_SYSTEM_FLAT_FIELD_METADATAS } from 'src/engine/metadata-modules/object-metadata/constants/partial-system-flat-field-metadatas.constant';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 // Field names auto-provisioned on every object; their universal identifiers
 // are now deterministically derived from (application UID, object UID, name).
-const SYSTEM_FIELD_NAMES = new Set([
-  'id',
+// Fields are picked explicitly so system fields added to
+// PARTIAL_SYSTEM_FLAT_FIELD_METADATAS later never alter this shipped
+// migration. The name field is provisioned alongside the system fields by
+// build-default-flat-field-metadatas-for-custom-object.util.ts but lives
+// outside PARTIAL_SYSTEM_FLAT_FIELD_METADATAS.
+const SYSTEM_FIELD_NAMES = new Set<string>([
+  PARTIAL_SYSTEM_FLAT_FIELD_METADATAS.id.name,
+  PARTIAL_SYSTEM_FLAT_FIELD_METADATAS.createdAt.name,
+  PARTIAL_SYSTEM_FLAT_FIELD_METADATAS.updatedAt.name,
+  PARTIAL_SYSTEM_FLAT_FIELD_METADATAS.deletedAt.name,
+  PARTIAL_SYSTEM_FLAT_FIELD_METADATAS.createdBy.name,
+  PARTIAL_SYSTEM_FLAT_FIELD_METADATAS.updatedBy.name,
+  PARTIAL_SYSTEM_FLAT_FIELD_METADATAS.position.name,
+  PARTIAL_SYSTEM_FLAT_FIELD_METADATAS.searchVector.name,
   'name',
-  'createdAt',
-  'updatedAt',
-  'deletedAt',
-  'createdBy',
-  'updatedBy',
-  'position',
-  'searchVector',
 ]);
 
 const DEFAULT_RELATION_FORWARD_FIELD_NAMES = new Set([
