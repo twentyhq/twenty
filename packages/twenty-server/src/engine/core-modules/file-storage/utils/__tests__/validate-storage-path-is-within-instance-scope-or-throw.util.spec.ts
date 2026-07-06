@@ -4,7 +4,7 @@ import { validateStoragePathIsWithinInstanceScopeOrThrow } from 'src/engine/core
 
 const primitives = {
   fileFolder: 'application-manifest',
-};
+} as const;
 
 describe('validateStoragePathIsWithinInstanceScopeOrThrow', () => {
   it.each([
@@ -44,7 +44,8 @@ describe('validateStoragePathIsWithinInstanceScopeOrThrow', () => {
     },
     {
       title: 'traversal out of the instance prefix',
-      onStoragePath: 'instance/application-manifest/../../workspace-id/file.json',
+      onStoragePath:
+        'instance/application-manifest/../../workspace-id/file.json',
     },
     {
       title: 'traversal segments kept after normalization',
