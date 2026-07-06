@@ -68,4 +68,32 @@ describe('useOpenAskAiPageWithPreprompt', () => {
     });
     expect(switchToNewChatMock).toHaveBeenCalledTimes(1);
   });
+
+  it('should seed the draft after switching so the preprompt is not clobbered when already on the new thread draft', () => {
+    // Reproduce switchThreadWithDraft re-saving the current editor input into
+    // the new-thread draft when already on it.
+    switchToNewChatMock.mockImplementation(() => {
+      jotaiStore.set(agentChatDraftsByThreadIdState.atom, (prev) => ({
+        ...prev,
+        [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: 'stale editor content',
+      }));
+    });
+
+    const { result } = renderHook(() => useOpenAskAiPageWithPreprompt(), {
+      wrapper: Wrapper,
+    });
+
+    act(() => {
+      result.current.openAskAiPageWithPreprompt({
+        text: 'Draft an email',
+        mode: 'SEND',
+      });
+    });
+
+    expect(
+      jotaiStore.get(agentChatDraftsByThreadIdState.atom)[
+        AGENT_CHAT_NEW_THREAD_DRAFT_KEY
+      ],
+    ).toBe('Draft an email');
+  });
 });

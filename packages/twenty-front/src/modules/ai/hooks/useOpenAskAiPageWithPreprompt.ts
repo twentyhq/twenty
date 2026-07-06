@@ -23,12 +23,12 @@ export const useOpenAskAiPageWithPreprompt = () => {
     text: string;
     mode?: AgentChatPrepromptMode;
   }) => {
+    switchToNewChat();
     setAgentChatDraftsByThreadId((prev) => ({
       ...prev,
       [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: text,
     }));
     setAgentChatPreprompt({ text, mode });
-    switchToNewChat();
   };
 
   return { openAskAiPageWithPreprompt };
