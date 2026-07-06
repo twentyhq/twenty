@@ -5,6 +5,7 @@ import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { MY_PROFILE_FRONT_COMPONENT_ID } from 'src/constants/my-profile.constants';
 
 import { callAppRoute } from './call-app-route';
+import { ProfilePictureUpload } from './my-profile/ProfilePictureUpload';
 import {
   ChipMultiSelect,
   COLORS,
@@ -22,7 +23,9 @@ import {
 type Currency = { amountMicros: number | null; currencyCode: string | null } | null;
 
 type ProfilePayload = {
+  id: string;
   name: string | null;
+  profilePictureUrl: string | null;
   introduction: string | null;
   city: string | null;
   country: string | null;
@@ -203,6 +206,8 @@ const Section = ({ title, children }: { title: string; children: ReactNode }) =>
 const MyProfile = () => {
   const [form, setForm] = useState<ProfileForm | null>(null);
   const [options, setOptions] = useState<ProfileOptions | null>(null);
+  const [pictureUrl, setPictureUrl] = useState<string | null>(null);
+  const [partnerId, setPartnerId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -216,6 +221,8 @@ const MyProfile = () => {
       if (res.ok) {
         setForm(toProfileForm(res.profile));
         setOptions(res.options);
+        setPictureUrl(res.profile.profilePictureUrl);
+        setPartnerId(res.profile.id);
       } else {
         await enqueueSnackbar({ message: `Could not load profile: ${res.reason}`, variant: 'error' });
       }
@@ -265,6 +272,11 @@ const MyProfile = () => {
         <h1 style={styles.title}>My Profile</h1>
 
         <Section title="Basics">
+          {partnerId && (
+            <Field label="Profile picture">
+              <ProfilePictureUpload url={pictureUrl} recordId={partnerId} />
+            </Field>
+          )}
           <Field label="Name">
             <TextInput value={form.name} onChange={(value) => set('name', value)} />
           </Field>

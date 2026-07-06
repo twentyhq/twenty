@@ -1,4 +1,8 @@
-import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS, defineRole } from 'twenty-sdk/define';
+import {
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
+  defineRole,
+} from 'twenty-sdk/define';
 
 import {
   INTRO_SENT_AT_FIELD_UNIVERSAL_IDENTIFIER,
@@ -74,11 +78,9 @@ export default defineRole({
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
   canDestroyAllObjectRecords: false,
-  // No permission flags: partners apply by CREATING an Application directly (a normal record
-  // write, governed by the Application object permission), which fires on-application-created.
-  // They never run a manual workflow, so the WORKFLOWS flag is unnecessary — and it can't be
-  // granted on an app-owned role anyway (the manifest sync drops role→permissionFlag links).
-  permissionFlagUniversalIdentifiers: [],
+  // UPLOAD_FILE lets partners upload their own profile picture and case-study covers on the
+  // native record page (the FilesField upload mutation is gated behind this flag).
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.UPLOAD_FILE],
   // Lock every Opportunity field except the system/server-managed fields left out here
   // (id, timestamps, updatedBy, position — see header). Stage + amount are locked too.
   fieldPermissions: [
