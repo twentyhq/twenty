@@ -118,7 +118,7 @@ export default defineFrontComponent({
 Style with inline CSS variables (`var(--t-color-blue)`), not values imported from
 `twenty-ui`. The SDK mocks that package during build, so module-level imports of
 theme constants would be `undefined`. See the
-[full component](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/document-generator/src/front-components/generate-document-form.front-component.tsx).
+[full component](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/front-components/generate-document-form.front-component.tsx).
 </Warning>
 
 ## A command to open it
@@ -173,7 +173,7 @@ The component reads the current record id from its execution context, loads the
 document, and renders it. Front components run in a **sandbox** that only allows a
 whitelist of HTML tags — raw HTML injection (`dangerouslySetInnerHTML`) and
 `<style>` are blocked — so we render the Markdown as React elements with inline
-styles via a small [`Markdown`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/document-generator/src/utils/markdown-to-react.tsx)
+styles via a small [`Markdown`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/markdown-to-react.tsx)
 helper.
 
 ```tsx filename="src/front-components/document-viewer.front-component.tsx"
@@ -290,7 +290,7 @@ A `RICH_TEXT` field stores both the editor's block JSON and a Markdown
 projection. The generation pipeline reads that Markdown projection, so
 placeholders, the PDF, and the shareable web page all keep working unchanged —
 see the full
-[`template-record.page-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/document-generator/src/page-layouts/template-record.page-layout.ts).
+[`template-record.page-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/page-layouts/template-record.page-layout.ts).
 Now editors write templates in a proper rich-text editor:
 
 <Frame caption="The Template tab: Twenty's native rich-text editor bound to the body field.">

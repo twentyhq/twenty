@@ -84,7 +84,7 @@ export const generateDocumentHandler = async (
 
 `loadRecordValues` runs a different query for a Person vs. a Company and flattens
 the result — see
-[`load-record-values.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/document-generator/src/logic-functions/utils/load-record-values.ts).
+[`load-record-values.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/logic-functions/utils/load-record-values.ts).
 
 ## Expose it as a tool and a workflow action
 
@@ -120,7 +120,7 @@ export default defineLogicFunction({
 ```
 
 The input schema is a plain JSON schema describing `templateId` and `recordId` —
-see [`generate-document-input.schema.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/document-generator/src/logic-functions/schemas/generate-document-input.schema.ts).
+see [`generate-document-input.schema.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/logic-functions/schemas/generate-document-input.schema.ts).
 
 ## Grant it access
 
@@ -171,7 +171,7 @@ yarn add pdf-lib marked
 ```
 
 The full helper is
-[`generate-document-pdf.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/document-generator/src/logic-functions/utils/generate-document-pdf.ts).
+[`generate-document-pdf.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/logic-functions/utils/generate-document-pdf.ts).
 It parses the Markdown into tokens with `marked.lexer`, then lays them out with
 pdf-lib: real headings, **bold**/*italic* runs, bullet and numbered lists,
 blockquotes and rules — a polished, multi-page A4 rendering of the template
