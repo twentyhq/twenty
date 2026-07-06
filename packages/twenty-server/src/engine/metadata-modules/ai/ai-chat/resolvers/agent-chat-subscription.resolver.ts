@@ -100,29 +100,23 @@ export class AgentChatSubscriptionResolver {
     });
   }
 
-  // Reaping from the keep-alive loop means a user watching a stream whose
-  // worker died sees the interrupted state without having to interact;
-  // reapDeadStream publishes the stream-error event they are subscribed to.
   private async reapWatchedStreamIfDead(
     workspaceId: string,
     threadId: string,
   ): Promise<void> {
-    try {
-      const thread = await this.threadRepository.findOne(workspaceId, {
+    const thread = await this.threadRepository
+      .findOne(workspaceId, {
         where: { id: threadId },
         select: ['id', 'activeStreamId'],
-      });
+      })
+      .catch(() => null);
 
-      if (!isDefined(thread) || !isDefined(thread.activeStreamId)) {
-        return;
-      }
-
-      await this.agentChatStreamingService.reapDeadStream({
-        thread,
-        workspaceId,
-      });
-    } catch {
-      // The keep-alive tick must never die with the check
+    if (!isDefined(thread) || !isDefined(thread.activeStreamId)) {
+      return;
     }
+
+    await this.agentChatStreamingService
+      .reapDeadStream({ thread, workspaceId })
+      .catch(() => {});
   }
 }

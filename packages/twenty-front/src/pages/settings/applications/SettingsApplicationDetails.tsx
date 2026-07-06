@@ -35,6 +35,7 @@ import {
 import {
   ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,
+  FindMarketplaceAppManifestDocument,
   FindOneApplicationDocument,
   PermissionFlagType,
   UninstallApplicationDocument,
@@ -76,9 +77,15 @@ export const SettingsApplicationDetails = () => {
     skip: !application?.universalIdentifier,
   });
 
+  const { data: manifestData } = useQuery(FindMarketplaceAppManifestDocument, {
+    variables: { universalIdentifier: application?.universalIdentifier ?? '' },
+    skip: !application?.universalIdentifier,
+  });
+
   const detail = detailData?.findMarketplaceAppDetail;
-  const manifest = detail?.manifest as Manifest | undefined;
-  const app = manifest?.application;
+  const manifest = manifestData?.findMarketplaceAppDetail?.manifest as
+    | Manifest
+    | undefined;
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isStandardApplication = isTwentyStandardApplication(application);
   const isCustomApplication = isWorkspaceCustomApplication(
@@ -89,11 +96,11 @@ export const SettingsApplicationDetails = () => {
   const resolvedDescription = useResolvedApplicationDescription(application);
 
   const displayName =
-    app?.displayName ?? application?.name ?? t`Application details`;
-  const description = app?.description ?? resolvedDescription;
+    detail?.name ?? application?.name ?? t`Application details`;
+  const description = detail?.description ?? resolvedDescription;
 
   const getScreenshots = () => {
-    if (app?.screenshots?.length) return app.screenshots;
+    if (detail?.screenshots?.length) return detail.screenshots;
     if (isStandardApplication) return STANDARD_APPLICATION_ILLUSTRATIONS;
     if (isCustomApplication) return CUSTOM_APPLICATION_ILLUSTRATIONS;
     return undefined;
@@ -104,7 +111,7 @@ export const SettingsApplicationDetails = () => {
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
   const canInstallMarketplaceApps = useHasPermissionFlag(
-    PermissionFlagType.MARKETPLACE_APPS,
+    PermissionFlagType.APPLICATIONS,
   );
 
   const sourceType = application?.applicationRegistration?.sourceType;
@@ -254,20 +261,20 @@ export const SettingsApplicationDetails = () => {
           <SettingsApplicationDetailAboutTab
             displayName={displayName}
             description={description}
-            aboutDescription={app?.aboutDescription}
+            aboutDescription={detail?.aboutDescription ?? undefined}
             screenshots={screenshots}
-            author={app?.author}
-            category={app?.category}
+            author={detail?.author ?? undefined}
+            category={detail?.category ?? undefined}
             contentEntries={contentEntries}
             currentVersion={currentVersion ?? undefined}
             latestAvailableVersion={latestAvailableVersion ?? undefined}
             developerLinks={
-              isDefined(app)
+              isDefined(detail)
                 ? {
-                    websiteUrl: app.websiteUrl,
-                    termsUrl: app.termsUrl,
-                    emailSupport: app.emailSupport,
-                    issueReportUrl: app.issueReportUrl,
+                    websiteUrl: detail.websiteUrl ?? undefined,
+                    termsUrl: detail.termsUrl ?? undefined,
+                    emailSupport: detail.emailSupport ?? undefined,
+                    issueReportUrl: detail.issueReportUrl ?? undefined,
                   }
                 : undefined
             }
