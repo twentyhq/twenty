@@ -4,9 +4,10 @@ import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { SettingsWorkspaceEmailChannelDomainStatusCell } from '@/settings/workspace/components/SettingsWorkspaceEmailChannelDomainStatusCell';
-import { SettingsWorkspaceEmailGroupForwardingCell } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupForwardingCell';
 import { SettingsWorkspaceEmailGroupSourceCell } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSourceCell';
 import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
+import { Pill } from 'twenty-ui/data-display';
+import { IconLock } from 'twenty-ui/icon';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsWorkspaceEmailGroupSection = () => {
@@ -20,22 +21,20 @@ export const SettingsWorkspaceEmailGroupSection = () => {
 
   return (
     <SettingsTableListSection<MessageChannel>
-      title={t`Email Channels`}
-      description={t`Shared addresses your workspace uses to send and receive email.`}
+      title={t`Channels`}
+      description={t`Addresses your workspace uses to send and receive email from shared inboxes`}
+      headerAdornment={<Pill Icon={IconLock} label={t`Organization`} />}
       items={emailGroupChannels}
       columns={[
-        { label: t`Source`, Cell: SettingsWorkspaceEmailGroupSourceCell },
-        {
-          label: t`Forwarding address`,
-          Cell: SettingsWorkspaceEmailGroupForwardingCell,
-        },
+        { label: t`Email`, Cell: SettingsWorkspaceEmailGroupSourceCell },
         {
           label: t`Domain`,
           align: 'right',
           Cell: SettingsWorkspaceEmailChannelDomainStatusCell,
         },
       ]}
-      gridAutoColumns="1fr 1fr 1fr"
+      gridAutoColumns="1fr 1fr"
+      showRowChevron
       onRowClick={(channel) =>
         navigateSettings(SettingsPath.EmailGroupChannelDetail, {
           messageChannelId: channel.id,

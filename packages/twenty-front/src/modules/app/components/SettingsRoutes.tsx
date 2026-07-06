@@ -182,22 +182,24 @@ const SettingsLegalDpaNew = lazy(() =>
   })),
 );
 
-const SettingsWorkspaceEmail = lazy(() =>
-  import('~/pages/settings/email/SettingsWorkspaceEmail').then((module) => ({
-    default: module.SettingsWorkspaceEmail,
-  })),
+const SettingsWorkspaceCommunications = lazy(() =>
+  import('~/pages/settings/communications/SettingsWorkspaceCommunications').then(
+    (module) => ({
+      default: module.SettingsWorkspaceCommunications,
+    }),
+  ),
 );
 
-const SettingsWorkspaceEmailGroupChannelDetail = lazy(() =>
-  import('~/pages/settings/email/SettingsWorkspaceEmailGroupChannelDetail').then(
+const SettingsWorkspaceCommunicationGroupChannelDetail = lazy(() =>
+  import('~/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail').then(
     (module) => ({
-      default: module.SettingsWorkspaceEmailGroupChannelDetail,
+      default: module.SettingsWorkspaceCommunicationGroupChannelDetail,
     }),
   ),
 );
 
 const SettingsWorkspaceNewUnsubscribeTopic = lazy(() =>
-  import('~/pages/settings/email/SettingsWorkspaceNewUnsubscribeTopic').then(
+  import('~/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic').then(
     (module) => ({
       default: module.SettingsWorkspaceNewUnsubscribeTopic,
     }),
@@ -205,7 +207,7 @@ const SettingsWorkspaceNewUnsubscribeTopic = lazy(() =>
 );
 
 const SettingsWorkspaceUnsubscribeTopicDetail = lazy(() =>
-  import('~/pages/settings/email/SettingsWorkspaceUnsubscribeTopicDetail').then(
+  import('~/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail').then(
     (module) => ({
       default: module.SettingsWorkspaceUnsubscribeTopicDetail,
     }),
@@ -703,8 +705,8 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
       >
         <Route path={SettingsPath.General} element={<SettingsGeneral />} />
         <Route
-          path={SettingsPath.WorkspaceEmail}
-          element={<SettingsWorkspaceEmail />}
+          path={SettingsPath.WorkspaceCommunications}
+          element={<SettingsWorkspaceCommunications />}
         />
         <Route
           path={SettingsPath.NewEmailGroupChannel}
@@ -712,7 +714,7 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         />
         <Route
           path={SettingsPath.EmailGroupChannelDetail}
-          element={<SettingsWorkspaceEmailGroupChannelDetail />}
+          element={<SettingsWorkspaceCommunicationGroupChannelDetail />}
         />
         <Route
           path={SettingsPath.NewUnsubscribeTopic}
