@@ -31,6 +31,8 @@ export const useInviteTeam = () => {
   const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
 
+  const [isNavigating, setIsNavigating] = useState(false);
+
   const {
     control,
     handleSubmit,
@@ -152,6 +154,7 @@ export const useInviteTeam = () => {
       }
 
       setNextOnboardingStatus();
+      setIsNavigating(true);
     },
     [
       enqueueSuccessSnackBar,
@@ -186,5 +189,6 @@ export const useInviteTeam = () => {
     getPlaceholder,
     isValid,
     isSubmitting,
+    isNavigating,
   };
 };
