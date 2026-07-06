@@ -3,10 +3,7 @@ import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { formatFileSize } from '@/file/utils/formatFileSize';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
-import {
-  extractFolderPathFilenameAndTypeOrThrow,
-  isDefined,
-} from 'twenty-shared/utils';
+import { extractFolderPathFilenameAndTypeOrThrow } from 'twenty-shared/utils';
 import { type WorkflowAttachment } from 'twenty-shared/workflow';
 import { FileFolder } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';

@@ -7,10 +7,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { t } from '@lingui/core/macro';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import {
-  FieldMetadataType,
-  FileFolder,
-} from '~/generated-metadata/graphql';
+import { FieldMetadataType, FileFolder } from '~/generated-metadata/graphql';
 
 export const useUploadAttachmentFile = () => {
   const { uploadFile: directUploadFile } = useDirectFileUpload();
