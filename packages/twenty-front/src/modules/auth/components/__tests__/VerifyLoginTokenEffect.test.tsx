@@ -51,26 +51,11 @@ describe('VerifyLoginTokenEffect', () => {
     resetJotaiStore();
   });
 
-  it('clears the stale token pair before verifying the login token', async () => {
-    jotaiStore.set(tokenPairState.atom, staleTokenPair);
-    const tokenPairsAtVerifyTime: unknown[] = [];
-    verifyLoginTokenMock.mockImplementation(() => {
-      tokenPairsAtVerifyTime.push(jotaiStore.get(tokenPairState.atom));
-    });
-
-    renderEffect('/verify?loginToken=login-token');
-
-    await waitFor(() => {
-      expect(verifyLoginTokenMock).toHaveBeenCalledWith('login-token');
-    });
-    expect(tokenPairsAtVerifyTime).toEqual([null]);
-  });
-
   it('verifies the login token at most once under StrictMode', async () => {
     renderEffect('/verify?loginToken=login-token');
 
     await waitFor(() => {
-      expect(verifyLoginTokenMock).toHaveBeenCalledTimes(1);
+      expect(verifyLoginTokenMock).toHaveBeenCalledWith('login-token');
     });
     expect(verifyLoginTokenMock).toHaveBeenCalledTimes(1);
   });

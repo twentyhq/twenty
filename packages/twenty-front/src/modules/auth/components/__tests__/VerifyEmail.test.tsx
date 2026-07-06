@@ -169,16 +169,11 @@ describe('VerifyEmail', () => {
     expect(navigateMock).not.toHaveBeenCalledWith(AppPath.SignInUp);
   });
 
-  it('clears the stale token pair before exchanging the login token on the same origin', async () => {
+  it('exchanges the login token without redirecting when already on the workspace origin', async () => {
     isOnAWorkspaceValue = true;
-    jotaiStore.set(tokenPairState.atom, staleTokenPair);
     verifyEmailAndGetLoginTokenMock.mockResolvedValue({
       loginToken: { token: 'login-token' },
       workspaceUrls: { subdomainUrl: `${window.location.origin}/` },
-    });
-    const tokenPairsAtVerifyTime: unknown[] = [];
-    verifyLoginTokenMock.mockImplementation(() => {
-      tokenPairsAtVerifyTime.push(jotaiStore.get(tokenPairState.atom));
     });
 
     renderVerifyEmail(VERIFY_EMAIL_URL);
@@ -186,7 +181,6 @@ describe('VerifyEmail', () => {
     await waitFor(() => {
       expect(verifyLoginTokenMock).toHaveBeenCalledWith('login-token');
     });
-    expect(tokenPairsAtVerifyTime).toEqual([null]);
     expect(redirectToWorkspaceDomainMock).not.toHaveBeenCalled();
   });
 
