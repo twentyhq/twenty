@@ -1,4 +1,5 @@
 import { MAX_ATTACHMENT_SIZE } from '@/advanced-text-editor/utils/maxAttachmentSize';
+import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { formatFileSize } from '@/file/utils/formatFileSize';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
@@ -7,12 +8,11 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { type WorkflowAttachment } from 'twenty-shared/workflow';
-import { useMutation } from '@apollo/client/react';
-import { UploadWorkflowFileDocument } from '~/generated-metadata/graphql';
+import { FileFolder } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
 export const useUploadWorkflowFile = () => {
-  const [uploadWorkflowFileMutation] = useMutation(UploadWorkflowFileDocument);
+  const { uploadFile: directUploadFile } = useDirectFileUpload();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const uploadWorkflowFile = async (
@@ -28,13 +28,9 @@ export const useUploadWorkflowFile = () => {
         return null;
       }
 
-      const result = await uploadWorkflowFileMutation({
-        variables: { file },
+      const uploadedFile = await directUploadFile(file, {
+        fileFolder: FileFolder.Workflow,
       });
-      const uploadedFile = result?.data?.uploadWorkflowFile;
-      if (!isDefined(uploadedFile)) {
-        throw new Error('File upload failed');
-      }
       const workflowFile: WorkflowAttachment = {
         id: uploadedFile.id,
         name: file.name,
