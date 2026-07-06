@@ -53,6 +53,12 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
           RemoteTable: {
             keyFields: ['name'],
           },
+          PersonConnection: {
+            merge: true,
+          },
+          CompanyConnection: {
+            merge: true,
+          },
         },
       }),
 

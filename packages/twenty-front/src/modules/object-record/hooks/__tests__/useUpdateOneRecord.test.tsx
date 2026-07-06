@@ -37,6 +37,9 @@ const mocks = [
 ];
 
 jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
+jest.mock('use-debounce', () => ({
+  useDebouncedCallback: (fn: any) => fn,
+}));
 const mockRefetchAggregateQueries = jest.fn();
 (useRefetchAggregateQueries as jest.Mock).mockReturnValue({
   refetchAggregateQueries: mockRefetchAggregateQueries,
@@ -52,6 +55,7 @@ describe('useUpdateOneRecord', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
+
   it('works as expected', async () => {
     const { result } = renderHook(() => useUpdateOneRecord(), {
       wrapper: Wrapper,
@@ -66,6 +70,11 @@ describe('useUpdateOneRecord', () => {
       expect(res).toBeDefined();
       expect(res).toHaveProperty('id', person.id);
       expect(res).toHaveProperty('name', updateInput.name);
+    });
+
+    // Wait for the 100ms debounce timeout to execute
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 150));
     });
 
     expect(mocks[0].result).toHaveBeenCalled();

@@ -20,7 +20,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import {
   computeRecordGqlOperationFilter,
@@ -97,12 +97,15 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
 
   const fieldName = fieldMetadataItem?.name;
 
-  const recordGqlFieldsAggregate =
-    isDefined(aggregateOperationForViewField) && isDefined(fieldName)
-      ? {
-          [fieldName]: [aggregateOperationForViewField],
-        }
-      : {};
+  const recordGqlFieldsAggregate = useMemo(
+    () =>
+      isDefined(aggregateOperationForViewField) && isDefined(fieldName)
+        ? {
+            [fieldName]: [aggregateOperationForViewField],
+          }
+        : {},
+    [fieldName, aggregateOperationForViewField],
+  );
 
   const anyFieldFilterValue = useAtomComponentStateValue(
     anyFieldFilterValueComponentState,
@@ -114,14 +117,28 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
       filterValue: anyFieldFilterValue,
     });
 
-  const { data, loading } = useAggregateRecords({
-    objectNameSingular: objectMetadataItem.nameSingular,
-    recordGqlFieldsAggregate,
-    filter: {
+  const serializedRequestFilters = JSON.stringify(requestFilters);
+  const serializedRecordGroupFilter = JSON.stringify(recordGroupFilter);
+  const serializedAnyFieldFilter = JSON.stringify(anyFieldFilter);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const filter = useMemo(
+    () => ({
       ...requestFilters,
       ...recordGroupFilter,
       ...anyFieldFilter,
-    },
+    }),
+    [
+      serializedRequestFilters,
+      serializedRecordGroupFilter,
+      serializedAnyFieldFilter,
+    ],
+  );
+
+  const { data, loading } = useAggregateRecords({
+    objectNameSingular: objectMetadataItem.nameSingular,
+    recordGqlFieldsAggregate,
+    filter,
     skip: !isDefined(aggregateOperationForViewField),
   });
 

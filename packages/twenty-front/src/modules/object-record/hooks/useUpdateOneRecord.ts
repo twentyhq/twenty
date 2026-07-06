@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
@@ -14,6 +15,7 @@ import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/
 import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { useRecentLocalMutations } from '@/sse-db-event/hooks/useRecentLocalMutations';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
@@ -24,6 +26,29 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
+
+type RefetchFn = (args: { objectMetadataNamePlural: string }) => Promise<any>;
+
+const debouncedRefetchMap: Record<
+  string,
+  (args: { objectMetadataNamePlural: string }, refetch: RefetchFn) => void
+> = {};
+
+const getOrCreateDebouncedRefetch = (key: string) => {
+  if (debouncedRefetchMap[key] === undefined) {
+    let timeout: NodeJS.Timeout;
+    debouncedRefetchMap[key] = (args, refetch) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        const promise = refetch(args);
+        if (typeof promise?.catch === 'function') {
+          promise.catch(() => {});
+        }
+      }, 100);
+    };
+  }
+  return debouncedRefetchMap[key];
+};
 
 type UpdateOneRecordArgs<UpdatedObjectRecord> = {
   objectNameSingular: string;
@@ -42,6 +67,17 @@ export const useUpdateOneRecord = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { refetchAggregateQueries } = useRefetchAggregateQueries();
+
+  const debouncedRefetchAggregateQueries = useCallback(
+    (args: { objectMetadataNamePlural: string }) => {
+      const debouncedFn = getOrCreateDebouncedRefetch(
+        args.objectMetadataNamePlural,
+      );
+      debouncedFn(args, refetchAggregateQueries);
+    },
+    [refetchAggregateQueries],
+  );
+  const { registerMutation, unregisterMutation } = useRecentLocalMutations();
 
   const updateOneRecord = async <
     UpdatedObjectRecord extends ObjectRecord = ObjectRecord,
@@ -165,6 +201,8 @@ export const useUpdateOneRecord = () => {
       objectPermissionsByObjectMetadataId,
     });
 
+    registerMutation(objectNameSingular, idToUpdate);
+
     const updatedRecord = await apolloCoreClient
       .mutate({
         mutation: updateOneRecordMutation,
@@ -193,6 +231,7 @@ export const useUpdateOneRecord = () => {
         },
       })
       .catch((error: Error) => {
+        unregisterMutation(objectNameSingular, idToUpdate);
         if (!shouldHandleOptimisticCache) {
           throw error;
         }
@@ -264,7 +303,7 @@ export const useUpdateOneRecord = () => {
         throw error;
       });
 
-    await refetchAggregateQueries({
+    debouncedRefetchAggregateQueries({
       objectMetadataNamePlural: objectMetadataItem.namePlural,
     });
 
