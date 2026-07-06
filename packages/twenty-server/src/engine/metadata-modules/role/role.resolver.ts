@@ -118,15 +118,13 @@ export class RoleResolver {
 
     return roleDtos.map((roleDto) => ({
       ...roleDto,
-      workspaceMembers: workspaceMembersByRoleId.get(
-        roleDto.id,
-      ) as WorkspaceMemberDTO[],
-      agents: agentsByRoleId.get(roleDto.id),
-      apiKeys: apiKeysByRoleId.get(roleDto.id),
-      rowLevelPermissionPredicates: predicatesByRoleId.get(roleDto.id),
-      rowLevelPermissionPredicateGroups: predicateGroupsByRoleId.get(
-        roleDto.id,
-      ),
+      workspaceMembers: (workspaceMembersByRoleId.get(roleDto.id) ??
+        []) as WorkspaceMemberDTO[],
+      agents: agentsByRoleId.get(roleDto.id) ?? [],
+      apiKeys: apiKeysByRoleId.get(roleDto.id) ?? [],
+      rowLevelPermissionPredicates: predicatesByRoleId.get(roleDto.id) ?? [],
+      rowLevelPermissionPredicateGroups:
+        predicateGroupsByRoleId.get(roleDto.id) ?? [],
     }));
   }
 
