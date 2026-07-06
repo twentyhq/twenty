@@ -511,10 +511,6 @@ export class FileStorageService {
     return driver.checkFileExists({ filePath: onStorageFilePath });
   }
 
-  // Instance-scoped files: rows in the same "file" table with workspaceId
-  // NULL, bytes under the literal `instance/{fileFolder}/…` storage prefix
-  // (collision-free with workspace prefixes, which are UUIDs).
-
   private validateAndBuildInstanceFileStoragePathOrThrow({
     fileFolder,
     resourcePath,
