@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import {
@@ -17,14 +18,25 @@ describe('PendingFileCleanupService', () => {
 
   const fileRepository = {
     find: jest.fn(),
+    delete: jest.fn(),
+  };
+
+  const applicationRepository = {
+    findOne: jest.fn(),
   };
 
   const fileStorageService = {
-    deleteByFileId: jest.fn(),
+    deleteFile: jest.fn(),
   };
 
   beforeEach(async () => {
     jest.clearAllMocks();
+
+    applicationRepository.findOne.mockResolvedValue({
+      id: 'application-id',
+      universalIdentifier: 'application-uid',
+    });
+    fileRepository.delete.mockResolvedValue({ affected: 1 });
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -32,6 +44,10 @@ describe('PendingFileCleanupService', () => {
         {
           provide: getRepositoryToken(FileEntity),
           useValue: fileRepository,
+        },
+        {
+          provide: getRepositoryToken(ApplicationEntity),
+          useValue: applicationRepository,
         },
         {
           provide: FileStorageService,
@@ -67,35 +83,63 @@ describe('PendingFileCleanupService', () => {
     );
   });
 
-  it('should delete each stale file from storage and return the deleted count', async () => {
+  it('should delete each stale file guarded by status and return the deleted count', async () => {
     fileRepository.find.mockResolvedValue([
       {
         id: 'file-1',
         workspaceId: 'workspace-1',
+        applicationId: 'application-id',
         path: `${FileFolder.FilesField}/some/file-1.png`,
       },
       {
         id: 'file-2',
         workspaceId: 'workspace-2',
+        applicationId: 'application-id',
         path: `${FileFolder.Workflow}/file-2.pdf`,
       },
     ]);
-    fileStorageService.deleteByFileId.mockResolvedValue(undefined);
 
     const deletedCount = await service.cleanupStalePendingFiles();
 
     expect(deletedCount).toBe(2);
-    expect(fileStorageService.deleteByFileId).toHaveBeenCalledTimes(2);
-    expect(fileStorageService.deleteByFileId).toHaveBeenNthCalledWith(1, {
-      fileId: 'file-1',
+    expect(fileRepository.delete).toHaveBeenNthCalledWith(1, {
+      id: 'file-1',
+      status: FILE_STATUS.PENDING,
+    });
+    expect(fileRepository.delete).toHaveBeenNthCalledWith(2, {
+      id: 'file-2',
+      status: FILE_STATUS.PENDING,
+    });
+    expect(fileStorageService.deleteFile).toHaveBeenNthCalledWith(1, {
       workspaceId: 'workspace-1',
+      applicationUniversalIdentifier: 'application-uid',
       fileFolder: FileFolder.FilesField,
+      resourcePath: 'some/file-1.png',
     });
-    expect(fileStorageService.deleteByFileId).toHaveBeenNthCalledWith(2, {
-      fileId: 'file-2',
+    expect(fileStorageService.deleteFile).toHaveBeenNthCalledWith(2, {
       workspaceId: 'workspace-2',
+      applicationUniversalIdentifier: 'application-uid',
       fileFolder: FileFolder.Workflow,
+      resourcePath: 'file-2.pdf',
     });
+  });
+
+  it('should skip storage deletion when the file was confirmed concurrently', async () => {
+    fileRepository.find.mockResolvedValue([
+      {
+        id: 'file-1',
+        workspaceId: 'workspace-1',
+        applicationId: 'application-id',
+        path: `${FileFolder.FilesField}/file-1.png`,
+      },
+    ]);
+    // A racing completeFileUpload promoted the row, so the guarded delete is a no-op.
+    fileRepository.delete.mockResolvedValueOnce({ affected: 0 });
+
+    const deletedCount = await service.cleanupStalePendingFiles();
+
+    expect(deletedCount).toBe(0);
+    expect(fileStorageService.deleteFile).not.toHaveBeenCalled();
   });
 
   it('should keep cleaning remaining files when one deletion fails', async () => {
@@ -103,30 +147,33 @@ describe('PendingFileCleanupService', () => {
       {
         id: 'file-1',
         workspaceId: 'workspace-1',
+        applicationId: 'application-id',
         path: `${FileFolder.FilesField}/file-1.png`,
       },
       {
         id: 'file-2',
         workspaceId: 'workspace-2',
+        applicationId: 'application-id',
         path: `${FileFolder.FilesField}/file-2.png`,
       },
     ]);
-    fileStorageService.deleteByFileId
+    fileStorageService.deleteFile
       .mockRejectedValueOnce(new Error('storage exploded'))
       .mockResolvedValueOnce(undefined);
 
     const deletedCount = await service.cleanupStalePendingFiles();
 
     expect(deletedCount).toBe(1);
-    expect(fileStorageService.deleteByFileId).toHaveBeenCalledTimes(2);
+    expect(fileStorageService.deleteFile).toHaveBeenCalledTimes(2);
   });
 
-  it('should not call storage when there are no stale files', async () => {
+  it('should not delete anything when there are no stale files', async () => {
     fileRepository.find.mockResolvedValue([]);
 
     const deletedCount = await service.cleanupStalePendingFiles();
 
     expect(deletedCount).toBe(0);
-    expect(fileStorageService.deleteByFileId).not.toHaveBeenCalled();
+    expect(fileRepository.delete).not.toHaveBeenCalled();
+    expect(fileStorageService.deleteFile).not.toHaveBeenCalled();
   });
 });
