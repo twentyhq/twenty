@@ -5,6 +5,7 @@ import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { MY_PROFILE_FRONT_COMPONENT_ID } from 'src/constants/my-profile.constants';
 
 import { callAppRoute } from './call-app-route';
+import { MarkdownEditor } from './my-profile/markdown-editor';
 import { ProfilePictureUpload } from './my-profile/ProfilePictureUpload';
 import {
   ChipMultiSelect,
@@ -14,7 +15,6 @@ import {
   FONT,
   SelectInput,
   TagInput,
-  TextArea,
   TextInput,
   UrlInput,
   type SelectOption,
@@ -156,7 +156,7 @@ const styles = {
   } as const,
   card: {
     width: '100%',
-    maxWidth: 840,
+    maxWidth: '100%',
     background: COLORS.surface,
     border: `1px solid ${COLORS.border}`,
     borderRadius: 12,
@@ -281,7 +281,7 @@ const MyProfile = () => {
             <TextInput value={form.name} onChange={(value) => set('name', value)} />
           </Field>
           <Field label="Introduction">
-            <TextArea
+            <MarkdownEditor
               value={form.introduction}
               onChange={(value) => set('introduction', value)}
               placeholder="Tell clients about your team…"

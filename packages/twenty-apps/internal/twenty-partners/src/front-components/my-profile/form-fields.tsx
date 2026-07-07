@@ -272,12 +272,19 @@ export const CurrencyInput = ({
         });
       }}
     />
-    <input
-      style={{ ...inputStyle, width: 84 }}
-      value={currencyCode}
-      placeholder="USD"
-      onChange={(event) => onChange({ amount, currencyCode: event.target.value.toUpperCase() })}
-    />
+    <div
+      style={{
+        ...inputStyle,
+        width: 64,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: COLORS.muted,
+        background: COLORS.surfaceAlt,
+      }}
+    >
+      {currencyCode || 'USD'}
+    </div>
   </div>
 );
 
