@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -20,12 +21,14 @@ import {
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { type ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
+import { type ClaimableApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/claimable-application-registration.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { type PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
 import {
   type UpdateApplicationRegistrationInput,
   type UpdateApplicationRegistrationPayload,
 } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
+import { ApplicationRegistrationListingRequestStatus } from 'src/engine/core-modules/application/application-registration/enums/application-registration-listing-request-status.enum';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -66,6 +69,8 @@ const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegist
     'issueReportUrl',
     'screenshots',
     'galleryImages',
+    'listingRequestStatus',
+    'listingRequestedAt',
     'createdAt',
     'updatedAt',
   ];
@@ -432,7 +437,9 @@ export class ApplicationRegistrationService {
         sourceType: params.sourceType,
         sourcePackage: params.sourcePackage,
         latestAvailableVersion: params.latestAvailableVersion,
-        isListed: true,
+        // Catalog-synced apps are unlisted until their owner requests a
+        // listing and a server admin approves it.
+        isListed: false,
         isVetted,
         manifest: params.manifest,
         ...fromManifestApplicationToDisplayFields(params.manifest?.application),
@@ -645,6 +652,49 @@ export class ApplicationRegistrationService {
     };
   }
 
+  // Developer-facing lookup used to claim an app: resolves an npm-sourced
+  // registration by exact package name or id without leaking the full catalog.
+  async findClaimable(params: {
+    sourcePackage?: string;
+    id?: string;
+  }): Promise<ClaimableApplicationRegistrationDTO | null> {
+    const hasPackage = isNonEmptyString(params.sourcePackage);
+    const hasId = isNonEmptyString(params.id);
+
+    if (hasPackage === hasId) {
+      throw new ApplicationRegistrationException(
+        'Provide exactly one of sourcePackage or id',
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const where: FindOptionsWhere<ApplicationRegistrationEntity> = {
+      sourceType: ApplicationRegistrationSourceType.NPM,
+      ...(hasPackage
+        ? { sourcePackage: params.sourcePackage }
+        : { id: params.id }),
+    };
+
+    const registration = await this.applicationRegistrationRepository.findOne({
+      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
+      where,
+    });
+
+    if (!isDefined(registration)) {
+      return null;
+    }
+
+    return {
+      id: registration.id,
+      name: registration.name,
+      sourcePackage: registration.sourcePackage,
+      logoUrl: registration.logoUrl,
+      description: registration.description,
+      author: registration.author,
+      isOwned: isDefined(registration.ownerWorkspaceId),
+    };
+  }
+
   async claimOwnership(params: {
     applicationRegistrationId: string;
     claimingWorkspaceId: string;
@@ -680,6 +730,103 @@ export class ApplicationRegistrationService {
     return this.applicationRegistrationRepository.findOneOrFail({
       where: { id: registration.id },
     });
+  }
+
+  // Owner asks a server admin to list their app in the marketplace catalog.
+  async requestListing(params: {
+    applicationRegistrationId: string;
+    ownerWorkspaceId: string;
+  }): Promise<ApplicationRegistrationEntity> {
+    // Load with manifest so logoUrl can fall back to it for the completeness
+    // check below.
+    const registration = await this.applicationRegistrationRepository.findOne({
+      where: {
+        id: params.applicationRegistrationId,
+        ownerWorkspaceId: params.ownerWorkspaceId,
+      },
+    });
+
+    if (!isDefined(registration)) {
+      throw new ApplicationRegistrationException(
+        `Application registration with id ${params.applicationRegistrationId} not found`,
+        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
+      );
+    }
+
+    if (registration.isListed) {
+      throw new ApplicationRegistrationException(
+        'Application is already listed in the marketplace',
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    if (
+      registration.listingRequestStatus ===
+      ApplicationRegistrationListingRequestStatus.REQUESTED
+    ) {
+      throw new ApplicationRegistrationException(
+        'A listing request is already pending for this application',
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    if (
+      !isNonEmptyString(registration.description) ||
+      !isDefined(registration.logoUrl)
+    ) {
+      throw new ApplicationRegistrationException(
+        'A logo and description are required before requesting a listing',
+        ApplicationRegistrationExceptionCode.INCOMPLETE_LISTING_METADATA,
+      );
+    }
+
+    await this.applicationRegistrationRepository.update(registration.id, {
+      listingRequestStatus:
+        ApplicationRegistrationListingRequestStatus.REQUESTED,
+      listingRequestedAt: new Date(),
+    });
+
+    return this.findOneById(registration.id, params.ownerWorkspaceId);
+  }
+
+  async findManyListingRequests(): Promise<ApplicationRegistrationEntity[]> {
+    return this.applicationRegistrationRepository.find({
+      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
+      where: {
+        listingRequestStatus:
+          ApplicationRegistrationListingRequestStatus.REQUESTED,
+      },
+      order: { listingRequestedAt: 'ASC' },
+    });
+  }
+
+  // Server admin decision on a pending listing request.
+  async reviewListing(params: {
+    applicationRegistrationId: string;
+    approved: boolean;
+  }): Promise<ApplicationRegistrationEntity> {
+    const registration = await this.findOneByIdGlobal(
+      params.applicationRegistrationId,
+    );
+
+    if (
+      registration.listingRequestStatus !==
+      ApplicationRegistrationListingRequestStatus.REQUESTED
+    ) {
+      throw new ApplicationRegistrationException(
+        'No pending listing request to review',
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    await this.applicationRegistrationRepository.update(registration.id, {
+      listingRequestStatus: params.approved
+        ? ApplicationRegistrationListingRequestStatus.APPROVED
+        : ApplicationRegistrationListingRequestStatus.REJECTED,
+      ...(params.approved ? { isListed: true } : {}),
+    });
+
+    return this.findOneByIdGlobal(registration.id);
   }
 
   async transferOwnership(params: {
