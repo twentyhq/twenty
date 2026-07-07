@@ -75,7 +75,7 @@ const isCalendarEventInFuture = ({
   endsAt,
   now,
 }: CalendarEventWindowInput): boolean => {
-  const referenceMs = parseTimestampMs(endsAt ?? startsAt);
+  const referenceMs = parseTimestampMs(endsAt) ?? parseTimestampMs(startsAt);
 
   if (isUndefined(referenceMs)) {
     return false;
@@ -91,7 +91,7 @@ const isCalendarEventWithinSchedulingHorizon = ({
   endsAt,
   now,
 }: CalendarEventWindowInput): boolean => {
-  const referenceMs = parseTimestampMs(startsAt ?? endsAt);
+  const referenceMs = parseTimestampMs(startsAt) ?? parseTimestampMs(endsAt);
 
   if (isUndefined(referenceMs)) {
     return false;

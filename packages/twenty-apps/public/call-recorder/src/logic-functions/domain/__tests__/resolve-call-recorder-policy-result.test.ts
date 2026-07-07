@@ -156,4 +156,22 @@ describe('resolveCallRecorderPolicyResult', () => {
       reason: 'RECORDING_ENABLED',
     });
   });
+
+  it('falls back to endsAt for the horizon when startsAt is an empty string', () => {
+    expect(
+      resolveCallRecorderPolicyResult({
+        input: {
+          callRecorderPreference: CallRecorderPreference.ON,
+          isCanceled: false,
+          startsAt: '',
+          endsAt: FUTURE_ENDS_AT,
+          conferenceLinkUrl: 'https://meet.example.com/team-sync',
+        },
+        now: NOW,
+      }),
+    ).toEqual({
+      shouldRequestBot: true,
+      reason: 'RECORDING_ENABLED',
+    });
+  });
 });
