@@ -1,5 +1,5 @@
+import { type GridPosition } from 'twenty-shared/types';
 import {
-  type GridPosition,
   PageLayoutTabLayoutMode,
   type PageLayoutWidget,
   WidgetConfigurationType,
@@ -30,7 +30,6 @@ export const createDefaultRecordTableWidget = ({
     configuration: {
       configurationType: WidgetConfigurationType.RECORD_TABLE,
     },
-    gridPosition,
     position: {
       __typename: 'PageLayoutWidgetGridPosition',
       layoutMode: PageLayoutTabLayoutMode.GRID,

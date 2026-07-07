@@ -16,7 +16,11 @@ import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
-import { AggregateOperations } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  PageLayoutTabLayoutMode,
+  type PageLayoutWidgetPosition,
+} from 'twenty-shared/types';
 
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
@@ -30,12 +34,7 @@ type StaticUpdateTestContext = {
   input: {
     title?: string;
     configuration?: AllPageLayoutWidgetConfiguration;
-    gridPosition?: {
-      row: number;
-      column: number;
-      rowSpan: number;
-      columnSpan: number;
-    };
+    position?: PageLayoutWidgetPosition;
   };
 };
 
@@ -43,7 +42,8 @@ type GraphUpdateTestContext = {
   buildConfiguration: () => AllPageLayoutWidgetConfiguration;
 };
 
-const DEFAULT_GRID_POSITION = {
+const DEFAULT_GRID_POSITION: PageLayoutWidgetPosition = {
+  layoutMode: PageLayoutTabLayoutMode.GRID,
   row: 0,
   column: 0,
   rowSpan: 1,
@@ -64,7 +64,8 @@ const IFRAME_UPDATE_TEST_CASES: EachTestingContext<StaticUpdateTestContext>[] =
       title: 'update page layout widget grid position',
       context: {
         input: {
-          gridPosition: {
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 2,
             column: 3,
             rowSpan: 2,
@@ -139,7 +140,7 @@ describe('Page layout widget update should succeed', () => {
           pageLayoutTabId: testSetup.pageLayoutTabId,
           type: WidgetType.IFRAME,
           configuration: TEST_IFRAME_CONFIG,
-          gridPosition: DEFAULT_GRID_POSITION,
+          position: DEFAULT_GRID_POSITION,
         },
       });
 
@@ -187,7 +188,7 @@ describe('Page layout widget update should succeed', () => {
             configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
             body: { markdown: 'Initial content' },
           },
-          gridPosition: DEFAULT_GRID_POSITION,
+          position: DEFAULT_GRID_POSITION,
         },
       });
 
@@ -333,7 +334,7 @@ describe('Page layout widget update should succeed', () => {
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: false,
           },
-          gridPosition: DEFAULT_GRID_POSITION,
+          position: DEFAULT_GRID_POSITION,
         },
       });
 

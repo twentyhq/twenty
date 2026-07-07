@@ -161,7 +161,6 @@ export const getPageLayoutWidgetDataSeeds = (
           ),
           title: 'Total Pipeline Value',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,
@@ -193,7 +192,6 @@ export const getPageLayoutWidgetDataSeeds = (
           ),
           title: 'Rocket Count (Object Permission Test)',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 3, rowSpan: 4, columnSpan: 4 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,
@@ -227,7 +225,6 @@ export const getPageLayoutWidgetDataSeeds = (
           ),
           title: 'Pipeline Value by Close Date (Stacked by Stage)',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 4, column: 0, rowSpan: 8, columnSpan: 6 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 4,
@@ -267,7 +264,6 @@ export const getPageLayoutWidgetDataSeeds = (
           ),
           title: 'Rockets by Created Date (Object Permission Test)',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 0, rowSpan: 5, columnSpan: 5 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,
@@ -304,7 +300,6 @@ export const getPageLayoutWidgetDataSeeds = (
           ),
           title: 'Opportunity Count',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 5, rowSpan: 5, columnSpan: 7 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,
@@ -338,7 +333,6 @@ export const getPageLayoutWidgetDataSeeds = (
           ),
           title: 'Total Customers',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,
@@ -371,7 +365,6 @@ export const getPageLayoutWidgetDataSeeds = (
           ),
           title: 'Annual Revenue',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,
@@ -403,7 +396,6 @@ export const getPageLayoutWidgetDataSeeds = (
           ),
           title: 'LinkedIn Profiles Count (Field Permission Test)',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 2, column: 0, rowSpan: 4, columnSpan: 3 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 2,
@@ -434,7 +426,6 @@ export const getPageLayoutWidgetDataSeeds = (
           ),
           title: 'Team Size',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 0, rowSpan: 5, columnSpan: 6 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,
@@ -467,7 +458,6 @@ export const getPageLayoutWidgetDataSeeds = (
           ),
           title: 'Open Tasks',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 6, rowSpan: 6, columnSpan: 6 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,
@@ -497,7 +487,6 @@ export const getPageLayoutWidgetDataSeeds = (
       ),
       title: 'Front Component',
       type: WidgetType.FRONT_COMPONENT,
-      gridPosition: { row: 2, column: 7, rowSpan: 2, columnSpan: 5 },
       position: {
         layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 2,
@@ -524,7 +513,6 @@ export const getPageLayoutWidgetDataSeeds = (
       ),
       title: 'Twenty Star History',
       type: WidgetType.IFRAME,
-      gridPosition: { row: 0, column: 0, rowSpan: 12, columnSpan: 12 },
       position: {
         layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 0,

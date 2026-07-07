@@ -1,5 +1,5 @@
+import { type GridPosition } from 'twenty-shared/types';
 import {
-  type GridPosition,
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
@@ -26,7 +26,6 @@ export const createDefaultFrontComponentWidget = (
       configurationType: WidgetConfigurationType.FRONT_COMPONENT,
       frontComponentId,
     },
-    gridPosition,
     position: {
       __typename: 'PageLayoutWidgetGridPosition',
       layoutMode: PageLayoutTabLayoutMode.GRID,

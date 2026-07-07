@@ -1,5 +1,5 @@
+import { type GridPosition } from 'twenty-shared/types';
 import {
-  type GridPosition,
   PageLayoutTabLayoutMode,
   type PageLayoutWidget,
   type RichTextBody,
@@ -26,7 +26,6 @@ export const createDefaultStandaloneRichTextWidget = (
       configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
       body,
     },
-    gridPosition,
     position: {
       __typename: 'PageLayoutWidgetGridPosition',
       layoutMode: PageLayoutTabLayoutMode.GRID,

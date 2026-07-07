@@ -36,7 +36,6 @@ describe('createDefaultFrontComponentWidget', () => {
         configurationType: WidgetConfigurationType.FRONT_COMPONENT,
         frontComponentId: 'front-comp-1',
       },
-      gridPosition,
       position: {
         __typename: 'PageLayoutWidgetGridPosition',
         layoutMode: PageLayoutTabLayoutMode.GRID,

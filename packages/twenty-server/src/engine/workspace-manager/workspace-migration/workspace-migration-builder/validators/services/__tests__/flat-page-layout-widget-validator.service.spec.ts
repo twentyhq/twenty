@@ -33,7 +33,6 @@ const widget = (
     pageLayoutTabUniversalIdentifier,
     title: 'widget',
     type: 'FRONT_COMPONENT',
-    gridPosition: { row: 0, column: 0, rowSpan: 12, columnSpan: 12 },
     position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 0 },
   }) as unknown as FlatPageLayoutWidget;
 

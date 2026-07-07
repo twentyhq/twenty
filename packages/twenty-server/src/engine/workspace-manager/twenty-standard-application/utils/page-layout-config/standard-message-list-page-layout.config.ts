@@ -6,7 +6,6 @@ import {
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
-  GRID_POSITIONS,
   TAB_PROPS,
   VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
@@ -35,7 +34,6 @@ const MESSAGE_LIST_PAGE_TABS = {
             .home.widgets.members.universalIdentifier,
         title: 'Members',
         type: WidgetType.FIELD,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.messageList.fields.members.universalIdentifier,

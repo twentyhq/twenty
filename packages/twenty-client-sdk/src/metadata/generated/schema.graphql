@@ -1009,13 +1009,6 @@ type RichTextBody {
   markdown: String
 }
 
-type GridPosition {
-  row: Float!
-  column: Float!
-  rowSpan: Float!
-  columnSpan: Float!
-}
-
 type PageLayoutWidget {
   id: UUID!
   applicationId: UUID!
@@ -1023,8 +1016,7 @@ type PageLayoutWidget {
   title: String!
   type: WidgetType!
   objectMetadataId: UUID
-  gridPosition: GridPosition! @deprecated(reason: "Use `position` instead. Will be removed in a future release.")
-  position: PageLayoutWidgetPosition
+  position: PageLayoutWidgetPosition!
   configuration: WidgetConfiguration!
   conditionalDisplay: JSON
   conditionalAvailabilityExpression: String
@@ -3871,18 +3863,10 @@ input UpdatePageLayoutWidgetWithIdInput {
   title: String!
   type: WidgetType!
   objectMetadataId: UUID
-  gridPosition: GridPositionInput!
-  position: JSON
+  position: JSON!
   configuration: JSON
   conditionalDisplay: JSON
   conditionalAvailabilityExpression: String
-}
-
-input GridPositionInput {
-  row: Float!
-  column: Float!
-  rowSpan: Float!
-  columnSpan: Float!
 }
 
 input CreatePageLayoutWidgetInput {
@@ -3890,8 +3874,7 @@ input CreatePageLayoutWidgetInput {
   title: String!
   type: WidgetType!
   objectMetadataId: UUID
-  gridPosition: GridPositionInput!
-  position: JSON
+  position: JSON!
   configuration: JSON!
 }
 
@@ -3900,7 +3883,6 @@ input UpdatePageLayoutWidgetInput {
   title: String
   type: WidgetType
   objectMetadataId: UUID
-  gridPosition: GridPositionInput
   position: JSON
   configuration: JSON
   conditionalDisplay: JSON

@@ -2,6 +2,7 @@ import { PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY } from '@/page-layout/constants/P
 import { prepareGridLayoutItemsWithPlaceholders } from '@/page-layout/utils/prepareGridLayoutItemsWithPlaceholders';
 import {
   AggregateOperations,
+  PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
   type PageLayoutWidget,
@@ -16,7 +17,9 @@ describe('prepareGridLayoutItemsWithPlaceholders', () => {
     title: `Test Widget ${id}`,
     type: WidgetType.GRAPH,
     objectMetadataId: null,
-    gridPosition: {
+    position: {
+      __typename: 'PageLayoutWidgetGridPosition',
+      layoutMode: PageLayoutTabLayoutMode.GRID,
       row: 0,
       column: 0,
       rowSpan: 2,
@@ -212,7 +215,7 @@ describe('prepareGridLayoutItemsWithPlaceholders', () => {
         expect(resultWidget.title).toBe(widget.title);
         expect(resultWidget.type).toBe(widget.type);
         expect(resultWidget.objectMetadataId).toBe(widget.objectMetadataId);
-        expect(resultWidget.gridPosition).toEqual(widget.gridPosition);
+        expect(resultWidget.position).toEqual(widget.position);
         expect(resultWidget.configuration).toEqual(widget.configuration);
         expect(resultWidget.createdAt).toBe(widget.createdAt);
         expect(resultWidget.updatedAt).toBe(widget.updatedAt);

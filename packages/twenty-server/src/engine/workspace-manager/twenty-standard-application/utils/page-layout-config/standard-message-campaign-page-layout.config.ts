@@ -6,7 +6,6 @@ import {
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
-  GRID_POSITIONS,
   TAB_PROPS,
   VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
@@ -35,7 +34,6 @@ const MESSAGE_CAMPAIGN_PAGE_TABS = {
             .tabs.home.widgets.list.universalIdentifier,
         title: 'List',
         type: WidgetType.FIELD,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.THIRD,
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.messageCampaign.fields.list.universalIdentifier,
@@ -46,7 +44,6 @@ const MESSAGE_CAMPAIGN_PAGE_TABS = {
             .tabs.home.widgets.recipients.universalIdentifier,
         title: 'Recipients',
         type: WidgetType.FIELD,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.FOURTH,
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.messageCampaign.fields.recipients
@@ -58,7 +55,6 @@ const MESSAGE_CAMPAIGN_PAGE_TABS = {
             .tabs.home.widgets.messages.universalIdentifier,
         title: 'Sent Messages',
         type: WidgetType.FIELD,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.FIFTH,
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.messageCampaign.fields.messages.universalIdentifier,

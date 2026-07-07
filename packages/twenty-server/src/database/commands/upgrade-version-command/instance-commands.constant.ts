@@ -90,6 +90,8 @@ import { AddViewKanbanColumnWidthFastInstanceCommand } from './2-15/2-15-instanc
 import { AddPendingQuestionMessageIdToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1782999138000-add-pending-question-to-agent-chat-thread';
 import { AddWorkspaceDiscoverabilityToWorkspaceFastInstanceCommand } from './2-19/2-19-instance-command-fast-1783004140000-add-workspace-discoverability-to-workspace';
 import { DropMetadataStandardOverridesColumnFastInstanceCommand } from './2-20/2-20-instance-command-fast-1825000000000-drop-metadata-standard-overrides-column';
+import { MakePageLayoutWidgetPositionNotNullSlowInstanceCommand } from './2-19/2-19-instance-command-slow-1826000000000-make-page-layout-widget-position-not-null';
+import { DropPageLayoutWidgetGridPositionColumnFastInstanceCommand } from './2-20/2-20-instance-command-fast-1826500000000-drop-page-layout-widget-grid-position-column';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -182,4 +184,6 @@ export const INSTANCE_COMMANDS = [
   BackfillMetadataOverridesSlowInstanceCommand,
   AddLastStreamErrorToAgentChatThreadFastInstanceCommand,
   DropMetadataStandardOverridesColumnFastInstanceCommand,
+  MakePageLayoutWidgetPositionNotNullSlowInstanceCommand,
+  DropPageLayoutWidgetGridPositionColumnFastInstanceCommand,
 ];

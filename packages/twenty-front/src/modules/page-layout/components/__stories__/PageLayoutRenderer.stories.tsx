@@ -17,6 +17,7 @@ import {
   BarChartLayout,
   FindOnePageLayoutDocument,
   GraphOrderBy,
+  PageLayoutTabLayoutMode,
   PageLayoutType,
   type PageLayoutWidget,
   WidgetConfigurationType,
@@ -81,8 +82,9 @@ const mixedGraphsPageLayoutMocks = {
           type: WidgetType.GRAPH,
           title: 'Revenue',
           objectMetadataId: mockPersonObjectMetadataItem.id,
-          gridPosition: {
-            __typename: 'GridPosition',
+          position: {
+            __typename: 'PageLayoutWidgetGridPosition',
+            layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,
             column: 0,
             rowSpan: 2,
@@ -107,8 +109,9 @@ const mixedGraphsPageLayoutMocks = {
           type: WidgetType.GRAPH,
           title: 'Revenue Sources',
           objectMetadataId: mockPersonObjectMetadataItem.id,
-          gridPosition: {
-            __typename: 'GridPosition',
+          position: {
+            __typename: 'PageLayoutWidgetGridPosition',
+            layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,
             column: 6,
             rowSpan: 4,
@@ -135,8 +138,9 @@ const mixedGraphsPageLayoutMocks = {
           type: WidgetType.GRAPH,
           title: 'Quarterly Comparison',
           objectMetadataId: mockPersonObjectMetadataItem.id,
-          gridPosition: {
-            __typename: 'GridPosition',
+          position: {
+            __typename: 'PageLayoutWidgetGridPosition',
+            layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 2,
             column: 0,
             rowSpan: 4,

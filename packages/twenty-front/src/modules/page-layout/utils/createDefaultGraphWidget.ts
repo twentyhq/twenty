@@ -1,9 +1,9 @@
+import { type GridPosition } from 'twenty-shared/types';
 import {
   AggregateOperations,
   AxisNameDisplay,
   BarChartLayout,
   GraphOrderBy,
-  type GridPosition,
   PageLayoutTabLayoutMode,
   type PageLayoutWidget,
   type WidgetConfiguration,
@@ -76,7 +76,6 @@ export const createDefaultGraphWidget = ({
     isActive: true,
     type: WidgetType.GRAPH,
     configuration,
-    gridPosition,
     position: {
       __typename: 'PageLayoutWidgetGridPosition',
       layoutMode: PageLayoutTabLayoutMode.GRID,

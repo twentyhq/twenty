@@ -10,12 +10,7 @@ export const buildFlatPageLayoutWidgetCommonProperties = ({
 }: {
   widgetInput: Pick<
     CreatePageLayoutWidgetInput,
-    | 'pageLayoutTabId'
-    | 'title'
-    | 'type'
-    | 'objectMetadataId'
-    | 'gridPosition'
-    | 'position'
+    'pageLayoutTabId' | 'title' | 'type' | 'objectMetadataId' | 'position'
   >;
 } & Pick<
   AllFlatEntityMaps,
@@ -28,7 +23,6 @@ export const buildFlatPageLayoutWidgetCommonProperties = ({
   | 'type'
   | 'objectMetadataId'
   | 'objectMetadataUniversalIdentifier'
-  | 'gridPosition'
   | 'position'
 > => {
   const {
@@ -50,7 +44,6 @@ export const buildFlatPageLayoutWidgetCommonProperties = ({
     type: widgetInput.type,
     objectMetadataId: widgetInput.objectMetadataId ?? null,
     objectMetadataUniversalIdentifier,
-    gridPosition: widgetInput.gridPosition,
-    position: widgetInput.position ?? null,
+    position: widgetInput.position,
   };
 };

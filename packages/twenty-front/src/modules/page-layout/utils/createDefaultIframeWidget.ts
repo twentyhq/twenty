@@ -1,5 +1,5 @@
+import { type GridPosition } from 'twenty-shared/types';
 import {
-  type GridPosition,
   PageLayoutTabLayoutMode,
   type PageLayoutWidget,
   WidgetConfigurationType,
@@ -26,7 +26,6 @@ export const createDefaultIframeWidget = (
       configurationType: WidgetConfigurationType.IFRAME,
       url,
     },
-    gridPosition,
     position: {
       __typename: 'PageLayoutWidgetGridPosition',
       layoutMode: PageLayoutTabLayoutMode.GRID,

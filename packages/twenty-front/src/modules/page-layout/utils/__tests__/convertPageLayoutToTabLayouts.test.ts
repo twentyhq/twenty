@@ -42,7 +42,14 @@ describe('convertPageLayoutToTabLayouts', () => {
                 aggregateFieldMetadataId: 'id',
                 displayDataLabel: false,
               },
-              gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 2 },
+              position: {
+                __typename: 'PageLayoutWidgetGridPosition',
+                layoutMode: PageLayoutTabLayoutMode.GRID,
+                row: 0,
+                column: 0,
+                rowSpan: 2,
+                columnSpan: 2,
+              },
               objectMetadataId: 'object-metadata-1',
               createdAt: '2025-01-01T00:00:00.000Z',
               updatedAt: '2025-01-01T00:00:00.000Z',
@@ -64,7 +71,14 @@ describe('convertPageLayoutToTabLayouts', () => {
                 orderBy: GraphOrderBy.VALUE_DESC,
                 displayDataLabel: false,
               },
-              gridPosition: { row: 2, column: 0, rowSpan: 2, columnSpan: 2 },
+              position: {
+                __typename: 'PageLayoutWidgetGridPosition',
+                layoutMode: PageLayoutTabLayoutMode.GRID,
+                row: 2,
+                column: 0,
+                rowSpan: 2,
+                columnSpan: 2,
+              },
               objectMetadataId: 'object-metadata-1',
               createdAt: '2025-01-01T00:00:00.000Z',
               updatedAt: '2025-01-01T00:00:00.000Z',
@@ -97,7 +111,7 @@ describe('convertPageLayoutToTabLayouts', () => {
     });
   });
 
-  it('should use default widget size when gridPosition is undefined', () => {
+  it('should use default widget size when position is not a grid position', () => {
     const pageLayout: PageLayout = {
       id: 'page-layout-1',
       name: 'Page Layout 1',
@@ -125,7 +139,6 @@ describe('convertPageLayoutToTabLayouts', () => {
                 configurationType: WidgetConfigurationType.FRONT_COMPONENT,
                 frontComponentId: 'my-component',
               },
-              gridPosition: undefined as any,
               position: {
                 __typename: 'PageLayoutWidgetCanvasPosition' as const,
                 layoutMode: PageLayoutTabLayoutMode.CANVAS,
@@ -185,7 +198,14 @@ describe('convertPageLayoutToTabLayouts', () => {
                 configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
                 body: { blocknote: '[]' },
               },
-              gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
+              position: {
+                __typename: 'PageLayoutWidgetGridPosition',
+                layoutMode: PageLayoutTabLayoutMode.GRID,
+                row: 0,
+                column: 0,
+                rowSpan: 4,
+                columnSpan: 4,
+              },
               objectMetadataId: null,
               createdAt: '2025-01-01T00:00:00.000Z',
               updatedAt: '2025-01-01T00:00:00.000Z',

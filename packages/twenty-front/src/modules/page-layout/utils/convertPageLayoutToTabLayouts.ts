@@ -41,7 +41,7 @@ export const convertPageLayoutToTabLayouts = (
               rowSpan: widget.position.rowSpan,
               columnSpan: widget.position.columnSpan,
             }
-          : widget.gridPosition;
+          : undefined;
 
       return {
         i: widget.id,

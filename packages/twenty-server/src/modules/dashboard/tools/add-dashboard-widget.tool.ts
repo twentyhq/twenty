@@ -1,3 +1,4 @@
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
@@ -56,8 +57,16 @@ See create_complete_dashboard for full configuration examples.`,
     configuration?: AllPageLayoutWidgetConfiguration;
   }) => {
     try {
+      const { gridPosition, ...widgetInput } = parameters;
+
       const widget = await deps.pageLayoutWidgetService.create({
-        input: parameters as CreatePageLayoutWidgetInput,
+        input: {
+          ...widgetInput,
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            ...gridPosition,
+          },
+        } as CreatePageLayoutWidgetInput,
         workspaceId: context.workspaceId,
       });
 
@@ -68,7 +77,7 @@ See create_complete_dashboard for full configuration examples.`,
           widgetId: widget.id,
           title: widget.title,
           type: widget.type,
-          gridPosition: widget.gridPosition,
+          gridPosition: parameters.gridPosition,
           pageLayoutTabId: parameters.pageLayoutTabId,
         },
       };

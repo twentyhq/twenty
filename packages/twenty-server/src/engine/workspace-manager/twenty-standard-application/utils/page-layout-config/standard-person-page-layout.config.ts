@@ -6,7 +6,6 @@ import {
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
-  GRID_POSITIONS,
   TAB_PROPS,
   VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
@@ -35,7 +34,6 @@ const PERSON_PAGE_TABS = {
             .widgets.company.universalIdentifier,
         title: 'Company',
         type: WidgetType.FIELD,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.person.fields.company.universalIdentifier,
@@ -46,7 +44,6 @@ const PERSON_PAGE_TABS = {
             .widgets.pointOfContactForOpportunities.universalIdentifier,
         title: 'Opportunities',
         type: WidgetType.FIELD,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.THIRD,
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.person.fields.pointOfContactForOpportunities
@@ -58,7 +55,6 @@ const PERSON_PAGE_TABS = {
             .widgets.listMemberships.universalIdentifier,
         title: 'Lists',
         type: WidgetType.FIELD,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.FIFTH,
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.person.fields.listMemberships.universalIdentifier,

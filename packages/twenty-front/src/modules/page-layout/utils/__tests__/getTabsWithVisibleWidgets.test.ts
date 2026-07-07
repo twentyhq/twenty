@@ -1,6 +1,7 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 import {
+  PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
@@ -18,8 +19,9 @@ describe('getTabsWithVisibleWidgets', () => {
     title: `Widget ${id}`,
     type: WidgetType.FIELDS,
     objectMetadataId: null,
-    gridPosition: {
-      __typename: 'GridPosition',
+    position: {
+      __typename: 'PageLayoutWidgetGridPosition',
+      layoutMode: PageLayoutTabLayoutMode.GRID,
       row: 0,
       column: 0,
       rowSpan: 1,

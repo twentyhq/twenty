@@ -6,7 +6,6 @@ import {
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
-  GRID_POSITIONS,
   TAB_PROPS,
   VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
@@ -35,7 +34,6 @@ const WORKFLOW_RUN_PAGE_TABS = {
             .home.widgets.workflow.universalIdentifier,
         title: 'Workflow',
         type: WidgetType.FIELD,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.THIRD,
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.workflowRun.fields.workflow.universalIdentifier,

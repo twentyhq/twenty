@@ -1,3 +1,4 @@
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
@@ -133,10 +134,15 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
 
       for (const widget of widgets) {
         try {
+          const { gridPosition, ...widgetInput } = widget;
           const createdWidget = await deps.pageLayoutWidgetService.create({
             input: {
-              ...widget,
+              ...widgetInput,
               pageLayoutTabId: pageLayoutTab.id,
+              position: {
+                layoutMode: PageLayoutTabLayoutMode.GRID,
+                ...gridPosition,
+              },
             } as CreatePageLayoutWidgetInput,
             workspaceId: context.workspaceId,
           });

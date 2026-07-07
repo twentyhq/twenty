@@ -1215,16 +1215,22 @@ export const computeMetadataSchemaComponents = (
           return schemas;
         }
         case 'pageLayoutWidget': {
-          schemas['GridPosition'] = {
+          schemas['PageLayoutWidgetPosition'] = {
             type: 'object',
-            description: 'Grid position for widget placement',
+            description:
+              'Widget position within its tab (grid, vertical-list, or canvas)',
             properties: {
+              layoutMode: {
+                type: 'string',
+                enum: ['GRID', 'VERTICAL_LIST', 'CANVAS'],
+              },
               row: { type: 'number', minimum: 0 },
               column: { type: 'number', minimum: 0 },
               rowSpan: { type: 'number', minimum: 1 },
               columnSpan: { type: 'number', minimum: 1 },
+              index: { type: 'number', minimum: 0 },
             },
-            required: ['row', 'column', 'rowSpan', 'columnSpan'],
+            required: ['layoutMode'],
           };
 
           schemas[`${capitalize(item.nameSingular)}`] = {
@@ -1250,15 +1256,15 @@ export const computeMetadataSchemaComponents = (
                 default: 'VIEW',
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
-              gridPosition: {
-                $ref: '#/components/schemas/GridPosition',
+              position: {
+                $ref: '#/components/schemas/PageLayoutWidgetPosition',
               },
               configuration: {
                 type: 'object',
                 description: 'Widget-specific configuration',
               },
             },
-            required: ['pageLayoutTabId', 'title', 'gridPosition'],
+            required: ['pageLayoutTabId', 'title', 'position'],
           };
           schemas[`${capitalize(item.namePlural)}`] = {
             type: 'array',
@@ -1277,8 +1283,8 @@ export const computeMetadataSchemaComponents = (
                 enum: ['VIEW', 'IFRAME', 'FIELDS', 'GRAPH'],
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
-              gridPosition: {
-                $ref: '#/components/schemas/GridPosition',
+              position: {
+                $ref: '#/components/schemas/PageLayoutWidgetPosition',
               },
               configuration: {
                 type: 'object',
@@ -1298,8 +1304,8 @@ export const computeMetadataSchemaComponents = (
                 enum: ['VIEW', 'IFRAME', 'FIELDS', 'GRAPH'],
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
-              gridPosition: {
-                $ref: '#/components/schemas/GridPosition',
+              position: {
+                $ref: '#/components/schemas/PageLayoutWidgetPosition',
               },
               configuration: {
                 type: 'object',

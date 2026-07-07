@@ -210,7 +210,6 @@ describe('resolveOverridableEntityEventBatchOverrides', () => {
         title: 'Original',
         type: 'FIELDS',
         position: '{}',
-        gridPosition: '{}',
         configuration: '{}',
         conditionalDisplay: null,
         pageLayoutTabId: 'plt-1',

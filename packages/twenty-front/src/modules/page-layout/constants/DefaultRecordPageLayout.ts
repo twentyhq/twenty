@@ -41,13 +41,6 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
           title: 'Fields',
           type: WidgetType.FIELDS,
           objectMetadataId: null,
-          gridPosition: {
-            __typename: 'GridPosition',
-            row: 0,
-            column: 0,
-            rowSpan: 12,
-            columnSpan: 12,
-          },
           position: {
             __typename: 'PageLayoutWidgetVerticalListPosition',
             layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
@@ -87,13 +80,6 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
           title: 'Timeline',
           type: WidgetType.TIMELINE,
           objectMetadataId: null,
-          gridPosition: {
-            __typename: 'GridPosition',
-            row: 0,
-            column: 0,
-            rowSpan: 6,
-            columnSpan: 12,
-          },
           position: {
             __typename: 'PageLayoutWidgetCanvasPosition',
             layoutMode: PageLayoutTabLayoutMode.CANVAS,
@@ -132,13 +118,6 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
           title: 'Tasks',
           type: WidgetType.TASKS,
           objectMetadataId: null,
-          gridPosition: {
-            __typename: 'GridPosition',
-            row: 0,
-            column: 0,
-            rowSpan: 6,
-            columnSpan: 12,
-          },
           position: {
             __typename: 'PageLayoutWidgetCanvasPosition',
             layoutMode: PageLayoutTabLayoutMode.CANVAS,
@@ -177,13 +156,6 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
           title: 'Notes',
           type: WidgetType.NOTES,
           objectMetadataId: null,
-          gridPosition: {
-            __typename: 'GridPosition',
-            row: 0,
-            column: 0,
-            rowSpan: 6,
-            columnSpan: 12,
-          },
           position: {
             __typename: 'PageLayoutWidgetCanvasPosition',
             layoutMode: PageLayoutTabLayoutMode.CANVAS,
@@ -222,13 +194,6 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
           title: 'Files',
           type: WidgetType.FILES,
           objectMetadataId: null,
-          gridPosition: {
-            __typename: 'GridPosition',
-            row: 0,
-            column: 0,
-            rowSpan: 6,
-            columnSpan: 12,
-          },
           position: {
             __typename: 'PageLayoutWidgetCanvasPosition',
             layoutMode: PageLayoutTabLayoutMode.CANVAS,

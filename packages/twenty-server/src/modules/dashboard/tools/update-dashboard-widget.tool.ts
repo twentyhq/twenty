@@ -1,3 +1,4 @@
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -53,7 +54,18 @@ Only provide fields you want to change - others remain unchanged.`,
     configuration?: AllPageLayoutWidgetConfiguration;
   }) => {
     try {
-      const { widgetId, ...updates } = parameters;
+      const { widgetId, gridPosition, ...rest } = parameters;
+      const updates = {
+        ...rest,
+        ...(isDefined(gridPosition)
+          ? {
+              position: {
+                layoutMode: PageLayoutTabLayoutMode.GRID,
+                ...gridPosition,
+              },
+            }
+          : {}),
+      };
       const updateData = Object.fromEntries(
         Object.entries(updates).filter(([key, value]) => {
           if (!isDefined(value)) {
@@ -80,7 +92,7 @@ Only provide fields you want to change - others remain unchanged.`,
           widgetId: widget.id,
           title: widget.title,
           type: widget.type,
-          gridPosition: widget.gridPosition,
+          position: widget.position,
           configuration: widget.configuration,
         },
       };

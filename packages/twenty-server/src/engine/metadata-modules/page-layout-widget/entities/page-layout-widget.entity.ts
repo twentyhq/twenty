@@ -20,6 +20,7 @@ import {
 } from 'typeorm';
 
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { type WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
@@ -31,7 +32,7 @@ import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migra
 
 export type PageLayoutWidgetOverrides = {
   title?: string;
-  position?: PageLayoutWidgetPosition | null;
+  position?: PageLayoutWidgetPosition;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
   conditionalAvailabilityExpression?: string | null;
   pageLayoutTabId?: SerializedRelation;
@@ -91,11 +92,11 @@ export class PageLayoutWidgetEntity<
   @Column({ type: 'varchar', nullable: true })
   conditionalAvailabilityExpression: string | null;
 
-  @Column({ type: 'jsonb', nullable: false })
-  gridPosition: JsonbProperty<GridPosition>;
-
   @Column({ type: 'jsonb', nullable: true })
-  position: JsonbProperty<PageLayoutWidgetPosition | null>;
+  gridPosition: WasRemovedInUpgrade<JsonbProperty<GridPosition>>;
+
+  @Column({ type: 'jsonb', nullable: false })
+  position: JsonbProperty<PageLayoutWidgetPosition>;
 
   @Column({ type: 'jsonb', nullable: false })
   configuration: JsonbProperty<

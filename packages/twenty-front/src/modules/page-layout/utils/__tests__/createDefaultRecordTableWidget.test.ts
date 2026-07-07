@@ -38,8 +38,7 @@ describe('createDefaultRecordTableWidget', () => {
     });
   });
 
-  it('should correctly map grid position values to both gridPosition and position fields', () => {
-    expect(widget.gridPosition).toEqual(gridPosition);
+  it('should correctly map grid position values to the position field', () => {
     expect(widget.position).toEqual({
       __typename: 'PageLayoutWidgetGridPosition',
       layoutMode: PageLayoutTabLayoutMode.GRID,

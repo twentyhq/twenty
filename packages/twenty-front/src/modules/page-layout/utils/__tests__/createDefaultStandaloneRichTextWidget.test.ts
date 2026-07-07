@@ -22,7 +22,6 @@ describe('createDefaultStandaloneRichTextWidget', () => {
       configuration: {
         body: { blocknote: '[{"type":"paragraph","content":"Test"}]' },
       },
-      gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
       position: {
         __typename: 'PageLayoutWidgetGridPosition',
         layoutMode: PageLayoutTabLayoutMode.GRID,

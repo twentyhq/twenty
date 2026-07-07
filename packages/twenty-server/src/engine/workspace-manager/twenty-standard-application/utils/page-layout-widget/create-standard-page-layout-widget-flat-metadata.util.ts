@@ -1,5 +1,4 @@
 import {
-  type GridPosition,
   type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetPosition,
 } from 'twenty-shared/types';
@@ -25,8 +24,7 @@ export type CreateStandardPageLayoutWidgetContext = {
   widgetName: string;
   title: string;
   type: WidgetType;
-  gridPosition: GridPosition;
-  position: PageLayoutWidgetPosition | null;
+  position: PageLayoutWidgetPosition;
   configuration: AllPageLayoutWidgetConfiguration;
   universalConfiguration: MetadataUniversalFlatEntity<'pageLayoutWidget'>['universalConfiguration'];
   objectMetadataId: string | null;
@@ -50,7 +48,6 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     widgetName,
     title,
     type,
-    gridPosition,
     position,
     configuration,
     universalConfiguration,
@@ -102,7 +99,6 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     pageLayoutTabUniversalIdentifier: tabDefinition.universalIdentifier,
     title,
     type,
-    gridPosition,
     position,
     configuration,
     universalConfiguration,
