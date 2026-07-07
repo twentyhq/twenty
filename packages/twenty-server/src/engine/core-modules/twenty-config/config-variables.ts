@@ -5,6 +5,7 @@ import {
   IsDateString,
   IsDefined,
   IsEnum,
+  IsIn,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -14,6 +15,10 @@ import {
   type ValidationError,
   validateSync,
 } from 'class-validator';
+import {
+  ENTERPRISE_INSTANCE_TYPE,
+  type EnterpriseInstanceType,
+} from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { type LoggerOptions } from 'typeorm/logger/LoggerOptions';
 
@@ -23,8 +28,8 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
-import { DpaRegion } from 'src/engine/core-modules/dpa/enums/dpa-region.enum';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
+import { DpaRegion } from 'src/engine/core-modules/dpa/enums/dpa-region.enum';
 import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
@@ -1338,12 +1343,23 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
-      'Unique identifier for this server instance, generated as UUID v4 during database seeding',
+      'Unique identifier for this server instance, generated as UUID v4 during database seeding and persisted in the database. Can be overridden via the environment when IS_CONFIG_VARIABLES_IN_DB_ENABLED is false.',
     type: ConfigVariableType.STRING,
-    isEnvOnly: true,
   })
   @IsOptional()
   SERVER_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      "Declares whether this instance is a 'production' (billable per seat) or 'development' (included at no additional cost) enterprise instance. A subscription can register a single free development instance in addition to its production one.",
+    type: ConfigVariableType.ENUM,
+    options: Object.values(ENTERPRISE_INSTANCE_TYPE),
+  })
+  @IsOptional()
+  @IsIn(Object.values(ENTERPRISE_INSTANCE_TYPE))
+  ENTERPRISE_INSTANCE_TYPE: EnterpriseInstanceType =
+    ENTERPRISE_INSTANCE_TYPE.PRODUCTION;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

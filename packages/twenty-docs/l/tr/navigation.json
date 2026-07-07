@@ -160,6 +160,9 @@
             "appsGettingStarted": {
               "label": "Başlarken"
             },
+            "appsTutorial": {
+              "label": "Öğretici"
+            },
             "appsConfig": {
               "label": "Yapılandırma"
             },

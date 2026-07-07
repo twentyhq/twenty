@@ -1,7 +1,5 @@
-import { useOnboardingContentWidth } from '@/onboarding/hooks/useOnboardingContentWidth';
-import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
+import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { styled } from '@linaria/react';
-import { motion } from 'framer-motion';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconCoins, IconInfoCircle } from 'twenty-ui/icon';
@@ -30,10 +28,10 @@ const StyledLeftSide = styled(StyledSide)`
   padding-right: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledCenter = styled.div<{ contentWidth: number }>`
+const StyledCenter = styled.div`
   align-items: center;
   display: flex;
-  flex: 0 1 ${({ contentWidth }) => `${contentWidth}px`};
+  flex: 0 1 ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
   justify-content: flex-start;
   min-width: 0;
 `;
@@ -43,15 +41,13 @@ const StyledRightSide = styled(StyledSide)`
   padding-left: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledLogoBase = styled.div`
+const StyledLogo = styled.div`
   background-image: url('/images/integrations/twenty-logo.svg');
   background-size: cover;
   height: ${themeCssVariables.spacing[6]};
   opacity: 0.4;
   width: ${themeCssVariables.spacing[6]};
 `;
-
-const StyledLogo = motion.create(StyledLogoBase);
 
 const StyledFreeCredits = styled.div`
   align-items: center;
@@ -109,8 +105,6 @@ export const OnboardingHeader = ({
 }: OnboardingHeaderProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const contentWidth = useOnboardingContentWidth();
-  const transition = useOnboardingMotionTransition();
 
   return (
     <StyledHeader>
@@ -125,8 +119,8 @@ export const OnboardingHeader = ({
           />
         )}
       </StyledLeftSide>
-      <StyledCenter contentWidth={contentWidth}>
-        <StyledLogo layout transition={transition} />
+      <StyledCenter>
+        <StyledLogo />
       </StyledCenter>
       <StyledRightSide>
         {isDefined(freeCredits) && (
