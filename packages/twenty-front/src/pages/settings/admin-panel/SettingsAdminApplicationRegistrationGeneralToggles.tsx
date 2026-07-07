@@ -97,7 +97,6 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
             title={t`Allow installation`}
             description={t`Display this app in the NPM packages list`}
             checked={registration.isListed}
-            disabled={registration.isFeatured}
             onChange={(checked) =>
               updateRegistration({
                 variables: {
@@ -116,7 +115,6 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
             title={t`Vetted`}
             description={t`Mark this app as reviewed and approved`}
             checked={registration.isFeatured}
-            disabled={!registration.isListed}
             onChange={(checked) =>
               updateRegistration({
                 variables: {
