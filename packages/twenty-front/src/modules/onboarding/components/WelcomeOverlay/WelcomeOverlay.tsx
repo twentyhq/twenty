@@ -11,8 +11,13 @@ import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingC
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-const WELCOME_HOLD_DURATION_MS = 2800;
+const WELCOME_HOLD_DURATION_MS = 2900;
 const WELCOME_TITLE_WORDS = ['Welcome', 'to', 'your', 'workspace'];
+
+const REVEAL_EASE = [0.22, 1, 0.36, 1] as const;
+const SNAP_EASE = [0.16, 1, 0.3, 1] as const;
+const EXIT_EASE = [0.5, 0, 0.1, 1] as const;
+const TITLE_EXIT_EASE = [0.4, 0, 1, 1] as const;
 
 const StyledOverlay = styled(motion.div)`
   align-items: center;
@@ -43,6 +48,7 @@ const StyledHalftoneLayer = styled.div`
 const StyledHalftoneWrapper = styled(motion.div)`
   flex-shrink: 0;
   width: max(105vw, 130vh);
+  will-change: transform, opacity;
 `;
 
 const StyledTitle = styled(motion.div)`
@@ -59,6 +65,7 @@ const StyledTitle = styled(motion.div)`
   padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[8]};
   position: relative;
   white-space: nowrap;
+  will-change: transform, opacity;
   z-index: 1;
 `;
 
@@ -66,22 +73,65 @@ const StyledWord = styled(motion.span)`
   display: inline-flex;
 `;
 
+const getHalftoneVariants = (prefersReducedMotion: boolean): Variants => ({
+  hidden: prefersReducedMotion
+    ? { opacity: 0 }
+    : { opacity: 0, scale: 0.9, clipPath: 'circle(0% at 50% 50%)' },
+  show: prefersReducedMotion
+    ? { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' } }
+    : {
+        opacity: 1,
+        scale: [0.9, 1, 1.035],
+        clipPath: 'circle(72% at 50% 50%)',
+        transition: {
+          opacity: { duration: 0.6, ease: SNAP_EASE },
+          clipPath: { duration: 1.25, ease: REVEAL_EASE },
+          scale: { duration: 2.9, times: [0, 0.42, 1], ease: REVEAL_EASE },
+        },
+      },
+  leaving: prefersReducedMotion
+    ? { opacity: 0, transition: { duration: 0.4, ease: 'easeOut' } }
+    : { scale: 1.09, transition: { duration: 0.66, ease: EXIT_EASE } },
+});
+
 const getTitleVariants = (prefersReducedMotion: boolean): Variants => ({
   hidden: {},
   show: {
     transition: {
-      delayChildren: prefersReducedMotion ? 0 : 0.85,
+      delayChildren: prefersReducedMotion ? 0 : 0.55,
       staggerChildren: prefersReducedMotion ? 0 : 0.07,
+    },
+  },
+  leaving: {
+    opacity: 0,
+    y: prefersReducedMotion ? 0 : -10,
+    transition: {
+      duration: prefersReducedMotion ? 0.3 : 0.34,
+      ease: prefersReducedMotion ? 'easeOut' : TITLE_EXIT_EASE,
     },
   },
 });
 
 const getWordVariants = (prefersReducedMotion: boolean): Variants => ({
-  hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 10 },
+  hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 14 },
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
+    transition: { duration: 0.6, ease: SNAP_EASE },
+  },
+});
+
+const getChipVariants = (prefersReducedMotion: boolean): Variants => ({
+  hidden: {
+    opacity: 0,
+    y: prefersReducedMotion ? 0 : 14,
+    scale: prefersReducedMotion ? 1 : 0.94,
+  },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.55, ease: SNAP_EASE },
   },
 });
 
@@ -121,8 +171,11 @@ export const WelcomeOverlay = () => {
     }
   };
 
+  const halftoneVariants = getHalftoneVariants(prefersReducedMotion);
   const titleVariants = getTitleVariants(prefersReducedMotion);
   const wordVariants = getWordVariants(prefersReducedMotion);
+  const chipVariants = getChipVariants(prefersReducedMotion);
+  const animateState = isLeaving ? 'leaving' : 'show';
 
   return createPortal(
     <StyledOverlay
@@ -130,36 +183,33 @@ export const WelcomeOverlay = () => {
       onClick={handleSkip}
       initial={{ opacity: 1 }}
       animate={{ opacity: isLeaving ? 0 : 1 }}
-      transition={{ duration: 0.5, ease: 'easeInOut' }}
+      transition={{
+        duration: isLeaving ? (prefersReducedMotion ? 0.4 : 0.6) : 0,
+        ease: prefersReducedMotion ? 'easeOut' : EXIT_EASE,
+        delay: isLeaving && !prefersReducedMotion ? 0.08 : 0,
+      }}
       onAnimationComplete={handleOverlayAnimationComplete}
     >
       <StyledHalftoneLayer>
         <StyledHalftoneWrapper
-          initial={
-            prefersReducedMotion
-              ? { opacity: 0 }
-              : { opacity: 0, scale: 0.2, clipPath: 'circle(0% at 50% 50%)' }
-          }
-          animate={
-            prefersReducedMotion
-              ? { opacity: 1 }
-              : { opacity: 1, scale: 1, clipPath: 'circle(72% at 50% 50%)' }
-          }
-          transition={{
-            duration: prefersReducedMotion ? 0.4 : 1.1,
-            ease: prefersReducedMotion ? 'easeOut' : [0.34, 1.56, 0.64, 1],
-          }}
+          variants={halftoneVariants}
+          initial="hidden"
+          animate={animateState}
         >
           <HalftoneLogo />
         </StyledHalftoneWrapper>
       </StyledHalftoneLayer>
-      <StyledTitle variants={titleVariants} initial="hidden" animate="show">
+      <StyledTitle
+        variants={titleVariants}
+        initial="hidden"
+        animate={animateState}
+      >
         {WELCOME_TITLE_WORDS.map((word) => (
           <StyledWord key={word} variants={wordVariants}>
             {word}
           </StyledWord>
         ))}
-        <StyledWord variants={wordVariants}>
+        <StyledWord variants={chipVariants}>
           <WelcomePersonChip />
         </StyledWord>
       </StyledTitle>
