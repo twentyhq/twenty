@@ -66,7 +66,11 @@ const buildDownloadResponse = ({
   };
 };
 
-let fetchMock: ReturnType<typeof vi.fn>;
+const fetchMock = vi.fn();
+
+type DirectUploadMutationRequest =
+  | { createFileUpload: { __args: { filename: string } } }
+  | { completeFileUpload: { __args: { fileId: string } } };
 
 // Routes GET calls to Recall download responses and PUT calls to the presigned
 // storage responses, mirroring the direct-to-storage upload flow.
@@ -77,7 +81,8 @@ const stubFetch = ({
   downloadsByUrl: Record<string, unknown>;
   uploadsByUrl?: Record<string, unknown>;
 }) => {
-  fetchMock = vi.fn(
+  fetchMock.mockReset();
+  fetchMock.mockImplementation(
     (url: string, init?: { method?: string }) => {
       if (init?.method === 'PUT') {
         return Promise.resolve(uploadsByUrl?.[url] ?? { ok: true, status: 200 });
@@ -98,10 +103,21 @@ const stubFetch = ({
 
 // createFileUpload returns a presigned target whose fileId echoes the filename,
 // and completeFileUpload resolves that target to the final stored file id.
-const stubDirectUpload = (finalFileIdByFilename: Record<string, string>) => {
-  mutationMock.mockImplementation((request: Record<string, { __args: Record<string, unknown> }>) => {
+const stubDirectUpload = ({
+  finalFileIdByFilename,
+  createFileUploadErrorByFilename = {},
+}: {
+  finalFileIdByFilename: Record<string, string>;
+  createFileUploadErrorByFilename?: Record<string, Error>;
+}) => {
+  mutationMock.mockImplementation((request: DirectUploadMutationRequest) => {
     if ('createFileUpload' in request) {
-      const filename = request.createFileUpload.__args.filename as string;
+      const { filename } = request.createFileUpload.__args;
+      const createFileUploadError = createFileUploadErrorByFilename[filename];
+
+      if (createFileUploadError) {
+        return Promise.reject(createFileUploadError);
+      }
 
       return Promise.resolve({
         createFileUpload: {
@@ -113,10 +129,10 @@ const stubDirectUpload = (finalFileIdByFilename: Record<string, string>) => {
     }
 
     if ('completeFileUpload' in request) {
-      const filename = request.completeFileUpload.__args.fileId as string;
+      const { fileId } = request.completeFileUpload.__args;
 
       return Promise.resolve({
-        completeFileUpload: { id: finalFileIdByFilename[filename] },
+        completeFileUpload: { id: finalFileIdByFilename[fileId] },
       });
     }
 
@@ -140,8 +156,10 @@ describe('ingestCallRecordingMedia', () => {
       recording: RECORDING_WITH_MEDIA,
     });
     stubDirectUpload({
-      'video.mp4': 'file-video-1',
-      'audio.mp3': 'file-audio-1',
+      finalFileIdByFilename: {
+        'video.mp4': 'file-video-1',
+        'audio.mp3': 'file-audio-1',
+      },
     });
     stubFetch({
       downloadsByUrl: {
@@ -275,6 +293,45 @@ describe('ingestCallRecordingMedia', () => {
     expect(Object.keys(updateFields)).toEqual(['audio']);
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('upload failed with status 500'),
+    );
+  });
+
+  it('cancels the opened download body when creating its upload target fails', async () => {
+    const cancelMock = vi.fn().mockResolvedValue(undefined);
+
+    stubDirectUpload({
+      finalFileIdByFilename: {
+        'video.mp4': 'file-video-1',
+        'audio.mp3': 'file-audio-1',
+      },
+      createFileUploadErrorByFilename: {
+        'video.mp4': new Error('upload target exploded'),
+      },
+    });
+    stubFetch({
+      downloadsByUrl: {
+        [VIDEO_URL]: buildDownloadResponse({
+          contentLengthBytes: 8,
+          body: { cancel: cancelMock },
+        }),
+        [AUDIO_URL]: buildDownloadResponse({ contentLengthBytes: 8 }),
+      },
+    });
+
+    const updateFields = await ingestCallRecordingMedia({
+      callRecordingId: 'call-recording-1',
+      externalRecordingId: 'recall-recording-1',
+      hasAudio: false,
+      hasVideo: false,
+    });
+
+    expect(updateFields).toEqual({
+      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+    });
+    expect(cancelMock).toHaveBeenCalledTimes(1);
+    expect(getPutCall(uploadUrlForFilename('video.mp4'))).toBeUndefined();
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining('upload target exploded'),
     );
   });
 

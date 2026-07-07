@@ -233,6 +233,14 @@ const uploadMediaStreamToStorage = async ({
     fileName,
     sizeBytes,
     fieldMetadataUniversalIdentifier,
+  }).catch(async (error) => {
+    await cancelMediaDownloadBody({
+      callRecordingId,
+      fileName,
+      body,
+    });
+
+    throw error;
   });
 
   console.log(
@@ -255,6 +263,22 @@ const uploadMediaStreamToStorage = async ({
   }
 
   return completeFileUpload({ metadataClient, fileId: uploadTarget.fileId });
+};
+
+const cancelMediaDownloadBody = async ({
+  callRecordingId,
+  fileName,
+  body,
+}: {
+  callRecordingId: string;
+  fileName: string;
+  body: ReadableStream<Uint8Array>;
+}) => {
+  await body.cancel().catch((error) => {
+    console.warn(
+      `[call-recorder] media-ingestion phase=download-body-cancel-failed callRecordingId=${callRecordingId} fileName=${fileName}: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  });
 };
 
 const createFileUploadTarget = async ({
