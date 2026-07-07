@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE } from '@/remote/sandbox/constants/FrontComponentSandboxMessageType';
 import { type FrontComponentSandboxMessage } from '@/remote/sandbox/types/FrontComponentSandboxMessage';
 
@@ -9,5 +11,7 @@ export const createWorkerSpawnErrorSandboxMessage = (
 ): FrontComponentSandboxMessage => ({
   type: FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.ERROR,
   message:
-    error instanceof Error ? error.message : WORKER_SPAWN_FAILURE_MESSAGE,
+    error instanceof Error && isNonEmptyString(error.message)
+      ? error.message
+      : WORKER_SPAWN_FAILURE_MESSAGE,
 });

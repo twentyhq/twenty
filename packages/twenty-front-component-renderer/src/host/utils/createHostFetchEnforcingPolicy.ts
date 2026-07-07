@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { CustomError, getURLSafely, isDefined } from 'twenty-shared/utils';
 
 import { resolveHostFetchRedirectMode } from '@/host/utils/resolveHostFetchRedirectMode';
@@ -25,7 +26,9 @@ export const createHostFetchEnforcingPolicy = (
       );
     }
 
-    const requestMethod = (input.method ?? 'GET').toUpperCase();
+    const requestMethod = isNonEmptyString(input.method)
+      ? input.method.toUpperCase()
+      : 'GET';
 
     const response = await fetch(input.url, {
       method: requestMethod,

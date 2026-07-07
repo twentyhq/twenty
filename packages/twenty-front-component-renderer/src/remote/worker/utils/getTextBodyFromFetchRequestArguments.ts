@@ -1,4 +1,4 @@
-import { isString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isRequestObject } from '@/remote/worker/utils/isRequestObject';
@@ -9,7 +9,7 @@ const getRequestInputBody = async (
 ): Promise<string | undefined> => {
   const requestBody = await input.clone().text();
 
-  if (requestBody === '') {
+  if (!isNonEmptyString(requestBody)) {
     return undefined;
   }
 

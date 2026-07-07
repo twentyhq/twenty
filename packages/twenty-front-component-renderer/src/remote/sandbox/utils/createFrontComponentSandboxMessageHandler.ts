@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE } from '@/remote/sandbox/constants/FrontComponentSandboxMessageType';
@@ -52,7 +53,9 @@ export const createFrontComponentSandboxMessageHandler = ({
     if (sandboxMessage.type === FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.ERROR) {
       onSandboxError(
         new CustomError(
-          sandboxMessage.message || UNKNOWN_WORKER_ERROR_MESSAGE,
+          isNonEmptyString(sandboxMessage.message)
+            ? sandboxMessage.message
+            : UNKNOWN_WORKER_ERROR_MESSAGE,
           'FRONT_COMPONENT_WORKER_ERROR',
         ),
       );

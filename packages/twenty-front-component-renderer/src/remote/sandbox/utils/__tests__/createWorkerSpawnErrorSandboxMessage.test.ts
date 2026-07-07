@@ -17,4 +17,11 @@ describe('createWorkerSpawnErrorSandboxMessage', () => {
       message: 'Failed to spawn the front component worker',
     });
   });
+
+  it('should fall back to the spawn failure message when the Error message is empty', () => {
+    expect(createWorkerSpawnErrorSandboxMessage(new Error(''))).toEqual({
+      type: FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.ERROR,
+      message: 'Failed to spawn the front component worker',
+    });
+  });
 });

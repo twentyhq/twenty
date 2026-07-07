@@ -10,4 +10,8 @@ describe('buildAuthorizationHeadersFromAccessToken', () => {
   it('should return undefined when no access token is provided', () => {
     expect(buildAuthorizationHeadersFromAccessToken(undefined)).toBeUndefined();
   });
+
+  it('should return undefined when the access token is empty', () => {
+    expect(buildAuthorizationHeadersFromAccessToken('')).toBeUndefined();
+  });
 });
