@@ -6,17 +6,29 @@ import {
 
 import { START_POST_INSTALL_BACKFILLS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/start-post-install-backfills-logic-function-universal-identifier';
 import { requestCallRecordingSummariesBackfill } from 'src/logic-functions/data/request-call-recording-summaries-backfill.util';
+import { requestUpcomingCalendarEventsReconciliation } from 'src/logic-functions/data/request-upcoming-calendar-events-reconciliation.util';
 
+// An app is allowed a single post-install hook, so the two backfills share it:
+// a fresh install seeds the scheduling window, an upgrade relies on the scheduled sweep and backfills summaries.
 type StartPostInstallBackfillsResult = {
+  calendarEventSweepOutcome: 'sweep-requested' | 'skipped-upgrade';
   summaryBackfillOutcome: 'skipped-initial-install' | 'backfill-requested';
 };
 
 export const startPostInstallBackfillsHandler = async ({
   previousVersion,
 }: InstallPayload): Promise<StartPostInstallBackfillsResult> => {
-  // Missing summaries only exist for recordings made before an upgrade, so a fresh install has nothing to backfill.
   if (isUndefined(previousVersion)) {
-    return { summaryBackfillOutcome: 'skipped-initial-install' };
+    if (!(await requestUpcomingCalendarEventsReconciliation())) {
+      throw new Error(
+        '[call-recorder] Failed to start post-install backfills: upcoming calendar event sweep',
+      );
+    }
+
+    return {
+      calendarEventSweepOutcome: 'sweep-requested',
+      summaryBackfillOutcome: 'skipped-initial-install',
+    };
   }
 
   if (!(await requestCallRecordingSummariesBackfill())) {
@@ -25,7 +37,10 @@ export const startPostInstallBackfillsHandler = async ({
     );
   }
 
-  return { summaryBackfillOutcome: 'backfill-requested' };
+  return {
+    calendarEventSweepOutcome: 'skipped-upgrade',
+    summaryBackfillOutcome: 'backfill-requested',
+  };
 };
 
 export default definePostInstallLogicFunction({
@@ -33,7 +48,7 @@ export default definePostInstallLogicFunction({
     START_POST_INSTALL_BACKFILLS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'start-post-install-backfills',
   description:
-    'Generates missing call recording summaries when Call Recorder is upgraded in a workspace.',
+    "The app's single post-install hook: on a fresh install it seeds the scheduling window by sweeping upcoming calendar events; on an upgrade it relies on the scheduled sweep and backfills missing call recording summaries.",
   timeoutSeconds: 30,
   shouldRunOnVersionUpgrade: true,
   handler: startPostInstallBackfillsHandler,
