@@ -708,6 +708,19 @@ export class SignInUpService {
         .createContext({ workspaceId })
         .insertWorkspaceEvent(WORKSPACE_CREATED_EVENT, {});
 
+      try {
+        await this.billingCreditService.ensureBillingCustomer({
+          userEmail: email,
+          workspaceId: workspace.id,
+          workspaceDisplayName: workspace.displayName,
+        });
+      } catch (error) {
+        this.logger.error(
+          `Failed to create billing customer for workspace ${workspace.id}`,
+          error,
+        );
+      }
+
       return { user, workspace };
     } catch (error) {
       const isSubdomainConflict =
