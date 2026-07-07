@@ -383,13 +383,17 @@ export class ApplicationRegistrationService {
       params.universalIdentifier,
     );
 
-    const curatedIdentifiers = new Set(
-      MARKETPLACE_CURATED_APPLICATIONS.map(
-        (entry) => entry.universalIdentifier,
-      ),
+    const curatedApplication = MARKETPLACE_CURATED_APPLICATIONS.find(
+      (entry) => entry.universalIdentifier === params.universalIdentifier,
     );
 
-    const isFeatured = curatedIdentifiers.has(params.universalIdentifier);
+    const isFeatured = isDefined(curatedApplication);
+
+    // Curated applications carry a vetted category that takes precedence over
+    // whatever the manifest declares.
+    const curatedCategoryOverride = isDefined(curatedApplication)
+      ? { category: curatedApplication.category }
+      : {};
 
     if (isDefined(existing)) {
       await this.applicationRegistrationRepository.save({
@@ -400,6 +404,7 @@ export class ApplicationRegistrationService {
         latestAvailableVersion: params.latestAvailableVersion,
         manifest: params.manifest,
         ...fromManifestApplicationToDisplayFields(params.manifest?.application),
+        ...curatedCategoryOverride,
         isFeatured,
       });
     } else {
@@ -413,6 +418,7 @@ export class ApplicationRegistrationService {
         isFeatured,
         manifest: params.manifest,
         ...fromManifestApplicationToDisplayFields(params.manifest?.application),
+        ...curatedCategoryOverride,
         oAuthClientId: v4(),
         oAuthRedirectUris: [],
         oAuthScopes: [],

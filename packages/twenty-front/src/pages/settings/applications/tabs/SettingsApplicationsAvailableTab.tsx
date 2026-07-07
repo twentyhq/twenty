@@ -1,14 +1,9 @@
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useState } from 'react';
-import { IconSparkles } from 'twenty-ui/icon';
+import { useState } from 'react';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { MenuItemToggle } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMarketplaceApps } from '~/modules/marketplace/hooks/useMarketplaceApps';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
@@ -27,25 +22,19 @@ const StyledCardsGrid = styled.div`
   }
 `;
 
-const StyledHintLink = styled.button`
-  background: none;
-  border: none;
-  color: ${themeCssVariables.color.blue};
-  cursor: pointer;
-  font-size: inherit;
-  padding: 0;
-  text-decoration: underline;
-`;
-
 export const SettingsApplicationsAvailableTab = () => {
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
-  const [showFeaturedOnly, setShowFeaturedOnly] = useState(true);
 
   const { data: marketplaceApps, isLoading } = useMarketplaceApps();
 
-  const textFilteredApplications = searchTerm
-    ? marketplaceApps.filter((application) => {
+  // Only vetted (featured) applications are exposed on the marketplace tab.
+  const vettedApplications = marketplaceApps.filter(
+    (application) => application.isFeatured,
+  );
+
+  const filteredApplications = searchTerm
+    ? vettedApplications.filter((application) => {
         const lowerSearch = searchTerm.toLowerCase();
 
         return (
@@ -54,16 +43,7 @@ export const SettingsApplicationsAvailableTab = () => {
           application.author.toLowerCase().includes(lowerSearch)
         );
       })
-    : marketplaceApps;
-
-  const filteredApplications = showFeaturedOnly
-    ? textFilteredApplications.filter((application) => application.isFeatured)
-    : textFilteredApplications;
-
-  const nonFeaturedCount = showFeaturedOnly
-    ? textFilteredApplications.filter((application) => !application.isFeatured)
-        .length
-    : 0;
+    : vettedApplications;
 
   if (isLoading) {
     return (
@@ -73,9 +53,6 @@ export const SettingsApplicationsAvailableTab = () => {
     );
   }
 
-  const showNonFeaturedHint =
-    filteredApplications.length === 0 && nonFeaturedCount > 0;
-
   return (
     <Section>
       <StyledSearchInputContainer>
@@ -83,42 +60,12 @@ export const SettingsApplicationsAvailableTab = () => {
           placeholder={t`Search an application`}
           value={searchTerm}
           onChange={setSearchTerm}
-          filterDropdown={(filterButton: ReactNode) => (
-            <Dropdown
-              dropdownId="marketplace-filter-dropdown"
-              dropdownPlacement="bottom-end"
-              dropdownOffset={{ x: 0, y: 8 }}
-              clickableComponent={filterButton}
-              dropdownComponents={
-                <DropdownContent>
-                  <DropdownMenuItemsContainer>
-                    <MenuItemToggle
-                      LeftIcon={IconSparkles}
-                      onToggleChange={() =>
-                        setShowFeaturedOnly(!showFeaturedOnly)
-                      }
-                      toggled={showFeaturedOnly}
-                      text={t`Featured only`}
-                      toggleSize="small"
-                    />
-                  </DropdownMenuItemsContainer>
-                </DropdownContent>
-              }
-            />
-          )}
         />
       </StyledSearchInputContainer>
 
       {filteredApplications.length === 0 ? (
         <SettingsEmptyPlaceholder padding="4">
-          {showNonFeaturedHint
-            ? t`No featured applications found. ${nonFeaturedCount} non-featured result(s) available — `
-            : t`No applications available`}
-          {showNonFeaturedHint && (
-            <StyledHintLink onClick={() => setShowFeaturedOnly(false)}>
-              {t`show all`}
-            </StyledHintLink>
-          )}
+          {t`No applications available`}
         </SettingsEmptyPlaceholder>
       ) : (
         <StyledCardsGrid>
