@@ -16,12 +16,17 @@ jest.setTimeout(120000);
 
 const INJECTED_CURSOR_MARKER = 'integration-test-workspace-version-gate';
 
-const injectFailedWorkspaceCursor = async (name: string): Promise<void> => {
+const injectWorkspaceCursor = async (
+  name: string,
+  status: 'completed' | 'failed',
+): Promise<void> => {
+  // A fresh row with the default createdAt (now) outranks the workspace's
+  // seeded initial cursor, so getWorkspaceCompletedVersion reads this one.
   await global.testDataSource.query(
     `INSERT INTO core."upgradeMigration"
        (name, status, attempt, "executedByVersion", "workspaceId", "isInitial")
-     VALUES ($1, 'failed', 1, $2, $3, false)`,
-    [name, INJECTED_CURSOR_MARKER, SEED_APPLE_WORKSPACE_ID],
+     VALUES ($1, $2, 1, $3, $4, false)`,
+    [name, status, INJECTED_CURSOR_MARKER, SEED_APPLE_WORKSPACE_ID],
   );
 };
 
@@ -113,7 +118,36 @@ describe('Install application is gated by the workspace completed upgrade versio
 
     createdApplicationUniversalIdentifiers.push(universalIdentifier);
 
-    await injectFailedWorkspaceCursor(currentVersionCommandName);
+    // The workspace failed mid-way through the current version's upgrade
+    // segment, so its last completed version is the previous one.
+    await injectWorkspaceCursor(currentVersionCommandName, 'failed');
+
+    const { errors } = await installApplication({
+      input: { universalIdentifier },
+      expectToFail: true,
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('rejects installation when the workspace upgrade cursor cannot be interpreted', async () => {
+    const universalIdentifier = uuidv4();
+    const roleId = uuidv4();
+
+    await uploadTarballApp({
+      universalIdentifier,
+      roleId,
+      requiredServerVersion: '>=1.0.0',
+    });
+
+    createdApplicationUniversalIdentifiers.push(universalIdentifier);
+
+    // A cursor pointing at a command outside the supported upgrade sequence
+    // cannot be mapped to a completed version.
+    await injectWorkspaceCursor(
+      '1.0.0_UnknownLegacyCommand_1700000000000',
+      'completed',
+    );
 
     const { errors } = await installApplication({
       input: { universalIdentifier },
