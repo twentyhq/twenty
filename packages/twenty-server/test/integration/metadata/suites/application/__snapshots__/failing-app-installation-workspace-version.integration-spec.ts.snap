@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Install application is gated by the workspace completed upgrade version rejects installation when the workspace has not completed the required upgrade version 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "SERVER_VERSION_INCOMPATIBLE",
+    "userFriendlyMessage": "This app requires a newer version of the Twenty server. Please upgrade your server or use a compatible app version.",
+  },
+  "message": "App requires Twenty server >=2.19.0 but this workspace has only completed the upgrade to 2.18.0.",
+  "name": "UserInputError",
+}
+`;
