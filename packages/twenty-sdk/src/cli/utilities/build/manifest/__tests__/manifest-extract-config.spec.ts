@@ -3,10 +3,6 @@ import {
   findReferencedTargetFunctions,
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 
-// Valid TSX front component whose content breaks when parsed as plain TS:
-// the backtick in JSX text opens a template literal that swallows the rest
-// of the file, including the export default, so the entity used to be
-// silently dropped from the manifest.
 const DEEPLY_NESTED_JSX_FRONT_COMPONENT = `
 import { defineFrontComponent } from 'twenty-sdk/define';
 
