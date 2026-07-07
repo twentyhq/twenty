@@ -74,18 +74,12 @@ const StyledWord = styled(motion.span)`
 `;
 
 const getHalftoneVariants = (prefersReducedMotion: boolean): Variants => ({
-  hidden: prefersReducedMotion
-    ? { opacity: 0 }
-    : { opacity: 0, scale: 0.9, clipPath: 'circle(0% at 50% 50%)' },
+  hidden: prefersReducedMotion ? { opacity: 0 } : { scale: 0.96 },
   show: prefersReducedMotion
     ? { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' } }
     : {
-        opacity: 1,
-        scale: [0.9, 1, 1.035],
-        clipPath: 'circle(72% at 50% 50%)',
+        scale: [0.96, 1, 1.035],
         transition: {
-          opacity: { duration: 0.6, ease: SNAP_EASE },
-          clipPath: { duration: 1.25, ease: REVEAL_EASE },
           scale: { duration: 2.9, times: [0, 0.42, 1], ease: REVEAL_EASE },
         },
       },
@@ -98,7 +92,7 @@ const getTitleVariants = (prefersReducedMotion: boolean): Variants => ({
   hidden: {},
   show: {
     transition: {
-      delayChildren: prefersReducedMotion ? 0 : 0.55,
+      delayChildren: prefersReducedMotion ? 0 : 0.9,
       staggerChildren: prefersReducedMotion ? 0 : 0.07,
     },
   },
