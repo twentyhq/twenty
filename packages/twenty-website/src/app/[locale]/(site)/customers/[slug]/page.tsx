@@ -20,6 +20,7 @@ import {
   CustomersCaseStudySignoff,
 } from '@/sections/case-study-detail';
 import { Menu } from '@/sections/menu';
+import { PartnerEngagementBand } from '@/sections/partner-engagement-band';
 
 type CaseStudyParams = { locale: string; slug: string };
 
@@ -86,6 +87,12 @@ export default async function CaseStudyPage({
         <CaseStudyHighlights industry={entry.industry} kpis={entry.kpis} />
         <CaseStudyBody story={story} />
         <CaseStudyArticleNav items={story.tableOfContents} />
+        <PartnerEngagementBand
+          heading={msg`Want to build something like this?`}
+          body={msg`Work with a certified Twenty partner to migrate, customise, and implement your CRM.`}
+          ctaLabel={msg`Find a partner`}
+          ctaHref={`/partners/list?ref=customer-story-${slug}`}
+        />
         <CustomersCaseStudySignoff />
       </main>
     </>

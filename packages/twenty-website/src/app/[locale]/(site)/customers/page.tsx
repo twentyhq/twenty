@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { getCommunityStats } from '@/platform/community';
 import {
   getRouteI18n,
@@ -14,6 +16,7 @@ import { CustomersCatalogSignoff } from '@/sections/customers-catalog-signoff';
 import { CustomersHero } from '@/sections/customers-hero';
 import { Faq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
+import { PartnerEngagementBand } from '@/sections/partner-engagement-band';
 import { TrustedBy } from '@/sections/trusted-by';
 
 export const generateMetadata = buildRouteMetadata('customers');
@@ -45,6 +48,12 @@ export default async function CustomersPage({
         <CustomersHero />
         <TrustedBy scheme="muted" />
         <CaseStudyCatalogGrid />
+        <PartnerEngagementBand
+          heading={msg`Need a hand implementing Twenty?`}
+          body={msg`Browse certified partners who migrate, customise, host, and support Twenty across regions and languages.`}
+          ctaLabel={msg`Find a partner`}
+          ctaHref="/partners/list?ref=customers-index"
+        />
         <CustomersCatalogSignoff />
         <Faq />
       </main>
