@@ -22,6 +22,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 jest.mock('uuid', () => ({
+  ...jest.requireActual('uuid'),
   v4: jest.fn(() => 'mocked-file-id'),
 }));
 
@@ -188,6 +189,30 @@ describe('FileUploadService', () => {
       );
       expect(result.contentType).toBe('application/octet-stream');
     });
+
+    it.each([FileFolder.EmailAttachment, FileFolder.AgentChat])(
+      'should support direct upload for the %s folder',
+      async (fileFolder) => {
+        fileStorageService.getPresignedUploadUrl.mockResolvedValueOnce(
+          'https://bucket/presigned-put',
+        );
+
+        const result = await service.createFileUpload({
+          workspaceId: 'workspace-id',
+          filename: 'document.pdf',
+          size: 1024,
+          fileFolder,
+        });
+
+        expect(fileStorageService.createPendingFile).toHaveBeenCalledWith(
+          expect.objectContaining({
+            fileFolder,
+            resourcePath: 'mocked-file-id.pdf',
+          }),
+        );
+        expect(result.uploadUrl).toBe('https://bucket/presigned-put');
+      },
+    );
   });
 
   describe('completeFileUpload', () => {

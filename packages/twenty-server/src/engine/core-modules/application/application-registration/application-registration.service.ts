@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { ILike, type FindOptionsWhere, type Repository } from 'typeorm';
+import { ILike, IsNull, type FindOptionsWhere, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -613,6 +613,41 @@ export class ApplicationRegistrationService {
       totalCount,
       hasMore: offset + workspaces.length < totalCount,
     };
+  }
+
+  async claimOwnership(params: {
+    applicationRegistrationId: string;
+    claimingWorkspaceId: string;
+  }): Promise<ApplicationRegistrationEntity> {
+    const registration = await this.findOneByIdGlobal(
+      params.applicationRegistrationId,
+    );
+
+    // Only unclaimed registrations (no owner workspace) can be claimed.
+    if (isDefined(registration.ownerWorkspaceId)) {
+      throw new ApplicationRegistrationException(
+        'Application registration is already owned by a workspace',
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    // Claim atomically: only update while still unowned so concurrent
+    // claimers can't overwrite each other (first-claimant-wins).
+    const updateResult = await this.applicationRegistrationRepository.update(
+      { id: registration.id, ownerWorkspaceId: IsNull() },
+      { ownerWorkspaceId: params.claimingWorkspaceId },
+    );
+
+    if (updateResult.affected === 0) {
+      throw new ApplicationRegistrationException(
+        'Application registration is already owned by a workspace',
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    return this.applicationRegistrationRepository.findOneOrFail({
+      where: { id: registration.id },
+    });
   }
 
   async transferOwnership(params: {

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import {
+  getEnterpriseConfigError,
   getStripeClient,
   getSubscriptionCurrentPeriodEnd,
   verifyEnterpriseKey,
@@ -9,17 +10,14 @@ import {
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
-  if (
-    !process.env.STRIPE_SECRET_KEY ||
-    !process.env.ENTERPRISE_JWT_PUBLIC_KEY
-  ) {
-    console.error(
-      '[enterprise-status] 503 — STRIPE_SECRET_KEY and/or ENTERPRISE_JWT_PUBLIC_KEY are not configured',
-    );
-    return NextResponse.json(
-      { error: 'Enterprise status is not configured.' },
-      { status: 503 },
-    );
+  const configError = getEnterpriseConfigError({
+    route: 'enterprise-status',
+    feature: 'Enterprise status',
+    requiredEnvVars: ['STRIPE_SECRET_KEY', 'ENTERPRISE_JWT_PUBLIC_KEY'],
+  });
+
+  if (configError) {
+    return configError;
   }
 
   try {

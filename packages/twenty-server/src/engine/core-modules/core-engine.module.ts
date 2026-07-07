@@ -57,6 +57,7 @@ import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-cl
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SearchModule } from 'src/engine/core-modules/search/search.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
+import { WellKnownModule } from 'src/engine/core-modules/well-known/well-known.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -98,6 +99,7 @@ import { FileModule } from './file/file.module';
     FileModule,
     RowLevelPermissionModule,
     OpenApiModule,
+    WellKnownModule,
     ApplicationRegistrationModule,
     ApplicationOAuthModule,
     ApplicationModule,

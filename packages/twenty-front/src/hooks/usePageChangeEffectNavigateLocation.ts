@@ -5,7 +5,6 @@ import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { billingState } from '@/client-config/states/billingState';
-import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
@@ -43,7 +42,6 @@ export const usePageChangeEffectNavigateLocation = () => {
   );
   const { defaultHomePagePath } = useDefaultHomePagePath();
   const location = useLocation();
-  const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
 
@@ -97,7 +95,6 @@ export const usePageChangeEffectNavigateLocation = () => {
       AppPath.PlanRequired,
       AppPath.PlanRequiredSuccess,
       AppPath.BookCall,
-      AppPath.BookCallDecision,
     ])
   ) {
     if (
@@ -121,11 +118,7 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION &&
-    !someMatchingLocationOf([
-      AppPath.WorkspaceActivation,
-      AppPath.BookCallDecision,
-      AppPath.BookCall,
-    ])
+    !isMatchingLocation(location, AppPath.WorkspaceActivation)
   ) {
     return AppPath.WorkspaceActivation;
   }
@@ -158,27 +151,13 @@ export const usePageChangeEffectNavigateLocation = () => {
     return AppPath.InviteTeam;
   }
 
-  if (
-    isBillingEnabled &&
-    (onboardingStatus === OnboardingStatus.BOOK_ONBOARDING ||
-      onboardingStatus === OnboardingStatus.COMPLETED)
-  ) {
+  if (isBillingEnabled && onboardingStatus === OnboardingStatus.COMPLETED) {
     if (isMatchingLocation(location, AppPath.InviteTeam)) {
       return AppPath.PlanRequired;
     }
     if (isMatchingLocation(location, AppPath.PlanRequired)) {
       return;
     }
-  }
-
-  if (
-    onboardingStatus === OnboardingStatus.BOOK_ONBOARDING &&
-    !someMatchingLocationOf([AppPath.BookCallDecision, AppPath.BookCall])
-  ) {
-    if (!isDefined(calendarBookingPageId)) {
-      return defaultHomePagePath;
-    }
-    return AppPath.BookCallDecision;
   }
 
   if (

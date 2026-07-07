@@ -47,6 +47,7 @@ const buildCollidingManifest = (): Manifest => {
   const uniqueFieldUniversalIdentifier = uuidv4();
 
   const object = buildDefaultObjectManifest({
+    applicationUniversalIdentifier: TEST_APP_ID,
     nameSingular: OBJECT_NAME_SINGULAR,
     namePlural: 'collidingIndexObjects',
     labelSingular: 'Colliding Index Object',

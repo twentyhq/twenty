@@ -152,20 +152,4 @@ describe('useSetNextOnboardingStatus', () => {
     });
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.PLAN_REQUIRED);
   });
-
-  it('should complete after booking onboarding when the workspace already has a subscription', () => {
-    const nextOnboardingStatus = renderHooks(OnboardingStatus.BOOK_ONBOARDING, {
-      isBillingEnabled: true,
-      withSubscription: true,
-    });
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
-  });
-
-  it('should require a plan after booking onboarding when billing is enabled and the workspace has no subscription', () => {
-    const nextOnboardingStatus = renderHooks(OnboardingStatus.BOOK_ONBOARDING, {
-      isBillingEnabled: true,
-      withSubscription: false,
-    });
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.PLAN_REQUIRED);
-  });
 });

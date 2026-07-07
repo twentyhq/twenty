@@ -8,6 +8,5 @@ export const ONBOARDING_PATHS = [
   AppPath.InviteTeam,
   AppPath.PlanRequired,
   AppPath.PlanRequiredSuccess,
-  AppPath.BookCallDecision,
   AppPath.BookCall,
 ];

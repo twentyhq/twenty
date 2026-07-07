@@ -1,0 +1,135 @@
+---
+title: 1. Modèle de données
+icon: database
+description: Modèles de documents et de modèles avec des objets, des champs et une relation.
+---
+
+Notre application a besoin de deux objets personnalisés : **modèles de documents** (quoi écrire) et
+**documents** (le résultat généré). Définissons-les.
+
+Échappez chaque fichier d'entité avec le CLI — il génère un UUID valide et le dossier
+correct pour vous :
+
+```bash filename="Terminal"
+yarn twenty dev:add object
+```
+
+Ci-dessous nous montrons les fichiers finis.
+
+<Note>
+Chaque constante `*_UNIVERSAL_IDENTIFIER` vit dans
+`src/constants/universal-identifiers.ts` et est importée quand elle est utilisée. Les snippets
+ci-dessous omettent ces importations par souci de brièveté — conservez-les dans vos propres fichiers.
+</Note>
+
+## L'objet modèle
+
+Un modèle a un `nom`, un `body` avec `{{placeholders}}`, et un `target` que
+dit s'il est écrit pour une personne ou une entreprise. Le `body` est un champ
+`RICH_TEXT`. Vingt lui donne donc un éditeur de texte complet.
+
+```ts filename="src/objects/document-template.object.ts"
+import { defineObject, FieldType } from 'twenty-sdk/define';
+
+export default defineObject({
+  universalIdentifier: DOCUMENT_TEMPLATE_OBJECT_UNIVERSAL_IDENTIFIER,
+  nameSingular: 'documentTemplate',
+  namePlural: 'documentTemplates',
+  labelSingular: 'Document template',
+  labelPlural: 'Document templates',
+  icon: 'IconFileText',
+  labelIdentifierFieldMetadataUniversalIdentifier:
+    TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+  fields: [
+    { universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT, name: 'name', label: 'Name', icon: 'IconAbc' },
+    { universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.RICH_TEXT, name: 'body', label: 'Body', icon: 'IconFileText',
+      description: 'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.' },
+    { universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT, name: 'target', label: 'Target', icon: 'IconTarget',
+      defaultValue: `'PERSON'`,
+      options: [
+        { id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
+          value: 'PERSON', label: 'Person', color: 'blue', position: 0 },
+        { id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
+          value: 'COMPANY', label: 'Company', color: 'green', position: 1 },
+      ] },
+  ],
+});
+```
+
+<Warning>
+L'option `SELECT` **values** doit être `UPPER_CASE` (`PERSON`, pas `person`), et le
+`defaultValue` est enveloppé par des guillemets supplémentaires : `` `'PERSON'` ``. Le `label` est ce que les utilisateurs de
+voient.
+</Warning>
+
+## L'objet du document
+
+Le document généré stocke le contenu `content` et un `status`. Définissez
+de la même manière, avec un `status` de `DRAFT` / `GENERATED`. Fichier complet :
+[`document.object.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/objects/document.object.ts).
+
+## Les lier avec une relation
+
+Chaque document devrait revenir au modèle dont il provient. Les relations sont
+**bidirectionnelles** — vous définissez les deux côtés, chacun dans son propre fichier de champs.
+
+```ts filename="src/fields/document-template-relation.field.ts"
+import { defineField, FieldType, OnDeleteAction, RelationType } from 'twenty-sdk/define';
+
+// The "many" side: each document belongs to one template.
+export default defineField({
+  universalIdentifier: DOCUMENT_TEMPLATE_FIELD_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: DOCUMENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'template',
+  label: 'Template',
+  relationTargetObjectMetadataUniversalIdentifier:
+    DOCUMENT_TEMPLATE_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier:
+    TEMPLATE_DOCUMENTS_FIELD_UNIVERSAL_IDENTIFIER,
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.SET_NULL,
+    joinColumnName: 'templateId',
+  },
+});
+```
+
+L'autre côté (`template-documents-relation.field.ts`) est un champ
+`RelationType.ONE_TO_MANY` nommé `documents` qui pointe dans la direction opposée.
+Voir [Relations](/l/fr/developers/extend/apps/data/relations) pour le modèle complet.
+
+## Voyez-la en 20
+
+Avec `yarn twenty dev` en cours d'exécution, ouvrez **Paramètres → Modèle de données**. Les deux objets
+apparaissent, taggés avec votre application.
+
+<Frame caption="Les deux objets personnalisés, détenus par l'application Générateur de documents.">
+  <img src="/images/docs/developers/extends/apps/document-generator/01-data-model.png" alt="Réglages du modèle de données montrant les modèles de documents et de documents" />
+</Frame>
+
+Créez un modèle avec lequel tester — nommez-le *proposition de vente*, définissez **Cible** à
+*Personne*, et collez un corps avec quelques marqueurs :
+
+```text
+Dear {{name.firstName}} {{name.lastName}},
+
+As {{jobTitle}} at {{company.name}}, we think you'll love our product.
+
+Best,
+The Team
+```
+
+<Frame caption="Un enregistrement de gabarit. Le corps garde ses espaces réservés jusqu'à ce qu'un document soit généré.">
+  <img src="/images/docs/developers/extends/apps/document-generator/03-template-record.png" alt="Un enregistrement de modèle de proposition de vente avec le corps du placeholder" />
+</Frame>
+
+**Après cette étape :** vous avez des objets `documentTemplate` et `document`, liés par
+par une relation, et un modèle à générer. Ensuite, la logique qui le remplit.
+
+<Card title="Suivant : génération de documents →" icon="bolt" href="/fr/developers/extend/apps/tutorials/document-generator/generating-documents">
+  Écrit la fonction logique qui remplit le modèle.
+</Card>
