@@ -91,7 +91,8 @@ export const FrontComponentRenderer = ({
   const applicationId = data?.frontComponent?.applicationId;
 
   const sdkClientUrls = useMemo(
-    () => (isDefined(applicationId) ? getSdkClientUrls(applicationId) : undefined),
+    () =>
+      isDefined(applicationId) ? getSdkClientUrls(applicationId) : undefined,
     [applicationId],
   );
 

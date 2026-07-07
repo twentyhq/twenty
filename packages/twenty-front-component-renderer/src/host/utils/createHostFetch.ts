@@ -8,8 +8,10 @@ import {
 
 export const createHostFetch = (
   allowedOrigins: string[],
+  fileStorageRedirectableUrls: string[] = [],
 ): HostFetchFunction => {
   const allowedOriginSet = new Set(allowedOrigins);
+  const fileStorageRedirectableUrlSet = new Set(fileStorageRedirectableUrls);
 
   return async (input: HostFetchInput): Promise<HostFetchResult> => {
     const requestOrigin = getURLSafely(input.url)?.origin;
@@ -22,7 +24,8 @@ export const createHostFetch = (
 
     const requestMethod = (input.method ?? 'GET').toUpperCase();
     const allowsFileStorageRedirects =
-      requestMethod === 'GET' || requestMethod === 'HEAD';
+      (requestMethod === 'GET' || requestMethod === 'HEAD') &&
+      fileStorageRedirectableUrlSet.has(input.url);
 
     const response = await fetch(input.url, {
       method: requestMethod,

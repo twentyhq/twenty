@@ -54,6 +54,38 @@ const toProxiedHeaders = (
   return {};
 };
 
+const isTextContentType = (contentType: string): boolean => {
+  const mimeType = contentType.split(';')[0].trim().toLowerCase();
+
+  return (
+    mimeType.startsWith('text/') ||
+    mimeType === 'application/x-www-form-urlencoded' ||
+    mimeType === 'application/graphql' ||
+    mimeType.endsWith('json') ||
+    mimeType.endsWith('xml')
+  );
+};
+
+const toRequestInputBody = async (
+  input: Request,
+): Promise<string | undefined> => {
+  const requestBody = await input.clone().text();
+
+  if (requestBody === '') {
+    return undefined;
+  }
+
+  const contentType = input.headers.get('content-type');
+
+  if (isDefined(contentType) && !isTextContentType(contentType)) {
+    throw new TypeError(
+      `The front component fetch bridge only supports text request bodies for Twenty API requests, got content type: ${contentType}`,
+    );
+  }
+
+  return requestBody;
+};
+
 const toProxiedBody = async (
   input: RequestInfo | URL,
   init: RequestInit | undefined,
@@ -62,9 +94,7 @@ const toProxiedBody = async (
 
   if (!isDefined(initBody)) {
     if (isRequestInput(input)) {
-      const requestBody = await input.clone().text();
-
-      return requestBody === '' ? undefined : requestBody;
+      return toRequestInputBody(input);
     }
 
     return undefined;

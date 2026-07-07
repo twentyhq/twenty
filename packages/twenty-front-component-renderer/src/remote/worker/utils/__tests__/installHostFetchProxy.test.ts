@@ -132,6 +132,35 @@ describe('installHostFetchProxy', () => {
     });
   });
 
+  it('should reject Request object inputs with non-text bodies', async () => {
+    globalThis.fetch = jest.fn() as unknown as typeof fetch;
+
+    const hostFetch: HostFetchFunction = jest.fn(async () => ({
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      body: 'proxied',
+    }));
+
+    installHostFetchProxy(hostFetch, ['https://api.twenty.test']);
+
+    const request = {
+      url: 'https://api.twenty.test/upload',
+      method: 'POST',
+      headers: new Headers({
+        'content-type': 'multipart/form-data; boundary=boundary',
+      }),
+      clone: () => ({
+        text: async () => '--boundary\r\nbinary-payload\r\n--boundary--',
+      }),
+    } as unknown as Request;
+
+    await expect(fetch(request)).rejects.toThrow(
+      'front component fetch bridge',
+    );
+    expect(hostFetch).not.toHaveBeenCalled();
+  });
+
   it('should serialize URLSearchParams bodies with a form content type', async () => {
     globalThis.fetch = jest.fn() as unknown as typeof fetch;
 

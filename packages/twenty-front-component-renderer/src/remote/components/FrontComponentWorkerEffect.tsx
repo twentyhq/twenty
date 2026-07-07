@@ -88,7 +88,16 @@ export const FrontComponentWorkerEffect = ({
       .map((url) => (isDefined(url) ? getURLSafely(url)?.origin : undefined))
       .filter(isDefined);
 
-    const hostFetch = createHostFetch(hostFetchOrigins);
+    const fileStorageRedirectableUrls = [
+      componentUrl,
+      sdkClientUrls?.core,
+      sdkClientUrls?.metadata,
+    ].filter(isDefined);
+
+    const hostFetch = createHostFetch(
+      hostFetchOrigins,
+      fileStorageRedirectableUrls,
+    );
 
     const thread = new ThreadMessagePort<
       WorkerExports,

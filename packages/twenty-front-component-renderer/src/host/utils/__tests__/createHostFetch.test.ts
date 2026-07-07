@@ -48,7 +48,7 @@ describe('createHostFetch', () => {
     expect(result.headers['content-type']).toBe('application/json');
   });
 
-  it('should refuse redirects for non-GET requests', async () => {
+  it('should refuse redirects by default', async () => {
     const fetchSpy = jest.fn(async () => createFakeResponse());
     globalThis.fetch = fetchSpy as unknown as typeof fetch;
 
@@ -57,25 +57,41 @@ describe('createHostFetch', () => {
       url: 'https://api.twenty.test/graphql',
       method: 'POST',
     });
+    await hostFetch({
+      url: 'https://api.twenty.test/rest/some-endpoint',
+    });
 
     expect(fetchSpy).toHaveBeenCalledWith(
       'https://api.twenty.test/graphql',
       expect.objectContaining({ redirect: 'error' }),
     );
+    expect(fetchSpy).toHaveBeenCalledWith(
+      'https://api.twenty.test/rest/some-endpoint',
+      expect.objectContaining({ redirect: 'error' }),
+    );
   });
 
-  it('should follow file storage redirects for GET requests', async () => {
+  it('should follow file storage redirects only for GET requests to redirectable urls', async () => {
     const fetchSpy = jest.fn(async () => createFakeResponse());
     globalThis.fetch = fetchSpy as unknown as typeof fetch;
 
-    const hostFetch = createHostFetch(['https://api.twenty.test']);
-    await hostFetch({
-      url: 'https://api.twenty.test/rest/front-components/component-id',
-    });
+    const componentUrl =
+      'https://api.twenty.test/rest/front-components/component-id';
+
+    const hostFetch = createHostFetch(
+      ['https://api.twenty.test'],
+      [componentUrl],
+    );
+    await hostFetch({ url: componentUrl });
+    await hostFetch({ url: componentUrl, method: 'POST' });
 
     expect(fetchSpy).toHaveBeenCalledWith(
-      'https://api.twenty.test/rest/front-components/component-id',
+      componentUrl,
       expect.objectContaining({ method: 'GET', redirect: 'follow' }),
+    );
+    expect(fetchSpy).toHaveBeenCalledWith(
+      componentUrl,
+      expect.objectContaining({ method: 'POST', redirect: 'error' }),
     );
   });
 
