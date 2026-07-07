@@ -7,12 +7,9 @@ import { v4, v5 } from 'uuid';
 import {
   CAMPAIGN_MESSAGE_DELIVERY_STATUS,
   CAMPAIGN_MESSAGE_ID_NAMESPACE,
-  CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS,
-  CAMPAIGN_STATS_REFRESH_DELAY_MS,
   CAMPAIGN_STATUS,
   MATERIALIZE_CAMPAIGN_JOB,
   MAX_CAMPAIGN_RECIPIENTS,
-  REFRESH_CAMPAIGN_STATS_JOB,
   SEND_CAMPAIGN_EMAIL_JOB,
 } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import {
@@ -26,17 +23,12 @@ import { type CampaignRecipient } from 'src/engine/core-modules/emailing-domain/
 import { type CampaignSkippedBreakdown } from 'src/engine/core-modules/emailing-domain/types/campaign-skipped-breakdown.type';
 import { type MaterializeCampaignJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-job-data.type';
 import { type RawCampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/raw-campaign-recipient.type';
-import { type RefreshCampaignStatsJobData } from 'src/engine/core-modules/emailing-domain/types/refresh-campaign-stats-job-data.type';
 import { type SendCampaignEmailJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-job-data.type';
 import { normalizeCampaignRecipients } from 'src/engine/core-modules/emailing-domain/utils/normalize-campaign-recipients.util';
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -44,7 +36,6 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
-import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
@@ -108,21 +99,14 @@ export class MessageCampaignService {
     private readonly messageQueueService: MessageQueueService,
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
     private readonly messageSuppressionService: MessageSuppressionService,
-    private readonly userRoleService: UserRoleService,
-    private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
     private readonly emailBillingService: EmailBillingService,
-    @InjectCacheStorage(CacheStorageNamespace.ModuleEmailing)
-    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
   private getUserRepository<T extends ObjectLiteral>(
     workspaceId: string,
     entity: Type<T>,
-    roleId: string,
   ) {
-    return this.globalWorkspaceOrmManager.getRepository(workspaceId, entity, {
-      unionOf: [roleId],
-    });
+    return this.globalWorkspaceOrmManager.getRepository(workspaceId, entity);
   }
 
   private getSystemRepository<T extends ObjectLiteral>(
@@ -156,18 +140,12 @@ export class MessageCampaignService {
       );
     }
 
-    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-      workspaceId,
-      userWorkspaceId,
-    });
-
     const { campaignId, recipients, skipped } =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const rawRecipients = await this.resolveRecipientsFromList(
             workspaceId,
             listId,
-            roleId,
           );
 
           const normalized = normalizeCampaignRecipients(
@@ -177,7 +155,6 @@ export class MessageCampaignService {
 
           const newCampaignId = await this.createCampaign({
             workspaceId,
-            roleId,
             subject,
             html,
             fromAddress,
@@ -493,17 +470,11 @@ export class MessageCampaignService {
       }
 
       await messageRepository.update(message.id, { deliveryStatus });
-
-      await this.scheduleCampaignStatsRefresh({
-        workspaceId,
-        campaignId: message.messageCampaignId,
-      });
     }, buildSystemAuthContext(workspaceId));
   }
 
   private async createCampaign({
     workspaceId,
-    roleId,
     subject,
     html,
     fromAddress,
@@ -511,7 +482,6 @@ export class MessageCampaignService {
     listId,
   }: {
     workspaceId: string;
-    roleId: string;
     subject: string;
     html: string;
     fromAddress: string;
@@ -521,7 +491,6 @@ export class MessageCampaignService {
     const campaignRepository = await this.getUserRepository(
       workspaceId,
       MessageCampaignWorkspaceEntity,
-      roleId,
     );
 
     const { identifiers } = await campaignRepository.insert({
@@ -685,58 +654,22 @@ export class MessageCampaignService {
         sentAt: new Date(),
       },
     );
-
-    await this.scheduleCampaignStatsRefresh({
-      workspaceId,
-      campaignId,
-    });
-  }
-
-  private async scheduleCampaignStatsRefresh({
-    workspaceId,
-    campaignId,
-  }: {
-    workspaceId: string;
-    campaignId: string;
-  }): Promise<void> {
-    const acquired = await this.cacheStorageService.acquireLock(
-      `campaign-stats-refresh:${workspaceId}:${campaignId}`,
-      CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS,
-    );
-
-    if (!acquired) {
-      return;
-    }
-
-    await this.messageQueueService.add<RefreshCampaignStatsJobData>(
-      REFRESH_CAMPAIGN_STATS_JOB,
-      { workspaceId, campaignId },
-      { delay: CAMPAIGN_STATS_REFRESH_DELAY_MS },
-    );
   }
 
   async previewAudience({
     workspaceId,
-    userWorkspaceId,
     listId,
     unsubscribeTopicId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
     listId: string;
     unsubscribeTopicId?: string;
   }): Promise<CampaignAudiencePreview> {
-    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-      workspaceId,
-      userWorkspaceId,
-    });
-
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const rawRecipients = await this.resolveRecipientsFromList(
           workspaceId,
           listId,
-          roleId,
         );
         const totalMembers = rawRecipients.length;
 
@@ -791,12 +724,10 @@ export class MessageCampaignService {
   private async resolveRecipientsFromList(
     workspaceId: string,
     listId: string,
-    roleId: string,
   ): Promise<RawCampaignRecipient[]> {
     const listMemberRepository = await this.getUserRepository(
       workspaceId,
       MessageListMemberWorkspaceEntity,
-      roleId,
     );
 
     const members = await listMemberRepository.find({
@@ -806,14 +737,12 @@ export class MessageCampaignService {
     return this.loadRecipientsByPersonIds(
       workspaceId,
       members.map((member) => member.personId),
-      roleId,
     );
   }
 
   private async loadRecipientsByPersonIds(
     workspaceId: string,
     personIds: string[],
-    roleId: string,
   ): Promise<RawCampaignRecipient[]> {
     if (personIds.length === 0) {
       return [];
@@ -822,7 +751,6 @@ export class MessageCampaignService {
     const personRepository = await this.getUserRepository(
       workspaceId,
       PersonWorkspaceEntity,
-      roleId,
     );
 
     const people = await personRepository.find({
