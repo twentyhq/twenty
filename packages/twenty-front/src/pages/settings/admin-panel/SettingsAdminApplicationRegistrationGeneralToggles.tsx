@@ -1,7 +1,12 @@
 import { Section } from 'twenty-ui/layout';
 import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { IconArrowBarToDown, IconPinned, IconReload } from 'twenty-ui/icon';
+import {
+  IconArrowBarToDown,
+  IconPinned,
+  IconReload,
+  IconShield,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { H2Title } from 'twenty-ui/typography';
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
@@ -92,12 +97,32 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
             title={t`Allow installation`}
             description={t`Display this app in the NPM packages list`}
             checked={registration.isListed}
+            disabled={registration.isFeatured}
             onChange={(checked) =>
               updateRegistration({
                 variables: {
                   input: {
                     id: registration.id,
                     update: { isListed: checked },
+                  },
+                },
+              })
+            }
+          />
+        </Card>
+        <Card rounded fullWidth>
+          <SettingsOptionCardContentToggle
+            Icon={IconShield}
+            title={t`Vetted`}
+            description={t`Mark this app as reviewed and approved`}
+            checked={registration.isFeatured}
+            disabled={!registration.isListed}
+            onChange={(checked) =>
+              updateRegistration({
+                variables: {
+                  input: {
+                    id: registration.id,
+                    update: { isFeatured: checked },
                   },
                 },
               })

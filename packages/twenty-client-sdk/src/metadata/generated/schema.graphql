@@ -4326,6 +4326,7 @@ input UpdateApplicationRegistrationPayload {
   oAuthScopes: [String!]
   isListed: Boolean
   isPreInstalled: Boolean
+  isFeatured: Boolean
 }
 
 input CreateApplicationRegistrationVariableInput {

@@ -5347,6 +5347,7 @@ export type UpdateApplicationRegistrationInput = {
 };
 
 export type UpdateApplicationRegistrationPayload = {
+  isFeatured?: InputMaybe<Scalars['Boolean']['input']>;
   isListed?: InputMaybe<Scalars['Boolean']['input']>;
   isPreInstalled?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;

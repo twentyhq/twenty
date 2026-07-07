@@ -281,6 +281,7 @@ export class ApplicationRegistrationService {
     if (isDefined(update.isListed)) updateData.isListed = update.isListed;
     if (isDefined(update.isPreInstalled))
       updateData.isPreInstalled = update.isPreInstalled;
+    if (isDefined(update.isFeatured)) updateData.isFeatured = update.isFeatured;
 
     if (Object.keys(updateData).length > 0) {
       await this.applicationRegistrationRepository.update(id, updateData);
