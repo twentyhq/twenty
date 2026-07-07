@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
 import {
+  compositeTypeDefinitions,
   FieldMetadataType,
   FileFolder,
   ObjectRecord,
@@ -36,6 +37,8 @@ import { type RecordsWithObjectMetadataItem } from 'src/engine/core-modules/sear
 import { escapeForIlike } from 'src/engine/core-modules/search/utils/escape-for-ilike';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -280,7 +283,7 @@ export class SearchService {
 
     queryParser.applyDeletedAtToBuilder(queryBuilder, filter);
 
-    const imageIdentifierField = this.getImageIdentifierColumn(
+    const imageIdentifierColumns = this.getImageIdentifierColumns(
       flatObjectMetadata,
       flatFieldMetadataMaps,
     );
@@ -291,7 +294,7 @@ export class SearchService {
         flatObjectMetadata,
         flatFieldMetadataMaps,
       ),
-      ...(imageIdentifierField ? [imageIdentifierField] : []),
+      ...imageIdentifierColumns,
     ].map((field) => `"${field}"`);
 
     const tsRankCDExpr = `ts_rank_cd("${SEARCH_VECTOR_FIELD.name}", to_tsquery('simple', public.unaccent_immutable(:searchTerms)))`;
@@ -402,7 +405,7 @@ export class SearchService {
 
           queryParser.applyDeletedAtToBuilder(queryBuilder, filter);
 
-          const imageIdentifierField = this.getImageIdentifierColumn(
+          const imageIdentifierColumns = this.getImageIdentifierColumns(
             flatObjectMetadata,
             flatFieldMetadataMaps,
           );
@@ -413,7 +416,7 @@ export class SearchService {
               flatObjectMetadata,
               flatFieldMetadataMaps,
             ),
-            ...(imageIdentifierField ? [imageIdentifierField] : []),
+            ...imageIdentifierColumns,
           ].map((field) => `"${field}"`);
 
           queryBuilder.select(fieldsToSelect);
@@ -556,37 +559,63 @@ export class SearchService {
     return labelIdentifierFields.map((field) => record[field]).join(' ');
   }
 
-  getImageIdentifierColumn(
+  private getEffectiveImageIdentifierFieldMetadata(
     flatObjectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-  ) {
-    if (flatObjectMetadata.nameSingular === 'company') {
-      return 'domainNamePrimaryLinkUrl';
+  ): FlatFieldMetadata | undefined {
+    const { overrides } = flatObjectMetadata;
+
+    const imageIdentifierFieldMetadataId =
+      isDefined(overrides) && 'imageIdentifierFieldMetadataId' in overrides
+        ? overrides.imageIdentifierFieldMetadataId
+        : flatObjectMetadata.imageIdentifierFieldMetadataId;
+
+    if (!isDefined(imageIdentifierFieldMetadataId)) {
+      return undefined;
     }
 
-    //TODO: Temporary solution before imageIdentifier refactor
-    if (flatObjectMetadata.nameSingular === 'person') {
-      return 'avatarFile';
-    }
-
-    if (flatObjectMetadata.nameSingular === 'workspaceMember') {
-      return 'avatarUrl';
-    }
-
-    if (!flatObjectMetadata.imageIdentifierFieldMetadataId) {
-      return null;
-    }
-
-    const imageIdentifierField = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatObjectMetadata.imageIdentifierFieldMetadataId,
+    return findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: imageIdentifierFieldMetadataId,
       flatEntityMaps: flatFieldMetadataMaps,
     });
+  }
 
-    if (!isDefined(imageIdentifierField)) {
-      return null;
+  getImageIdentifierColumns(
+    flatObjectMetadata: FlatObjectMetadata,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  ): string[] {
+    // WorkspaceMember is an exception: its avatar is a TEXT column (avatarUrl)
+    // holding a signed CorePicture URL, which does not fit the generic
+    // FILES/LINKS image identifier resolution.
+    if (flatObjectMetadata.nameSingular === 'workspaceMember') {
+      return ['avatarUrl'];
     }
 
-    return imageIdentifierField.name;
+    const imageIdentifierField = this.getEffectiveImageIdentifierFieldMetadata(
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    );
+
+    if (!isDefined(imageIdentifierField)) {
+      return [];
+    }
+
+    const imageIdentifierCompositeType = isCompositeFieldMetadataType(
+      imageIdentifierField.type,
+    )
+      ? compositeTypeDefinitions.get(imageIdentifierField.type)
+      : undefined;
+
+    if (isDefined(imageIdentifierCompositeType)) {
+      return imageIdentifierCompositeType.properties.map((compositeProperty) =>
+        computeCompositeColumnName(
+          imageIdentifierField.name,
+          compositeProperty,
+        ),
+      );
+    }
+
+    return [imageIdentifierField.name];
   }
 
   private async getImageUrlWithToken(
@@ -607,39 +636,18 @@ export class SearchService {
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     workspaceId: string,
   ): Promise<string> {
-    const imageIdentifierField = this.getImageIdentifierColumn(
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    );
-
-    if (
-      flatObjectMetadata.nameSingular === 'company' &&
-      this.twentyConfigService.get('ALLOW_REQUESTS_TO_TWENTY_ICONS')
-    ) {
-      return getLogoUrlFromDomainName(record.domainNamePrimaryLinkUrl) || '';
-    }
-
-    //TODO: Temporary solution before imageIdentifier refactor
-    if (flatObjectMetadata.nameSingular === 'person') {
-      const avatarFileId = (record.avatarFile as FileOutput[])?.[0]?.fileId;
-      if (!isDefined(avatarFileId)) {
-        return '';
-      }
-      return this.getImageUrlWithToken(
-        avatarFileId,
-        FileFolder.FilesField,
-        workspaceId,
-      );
-    }
-
+    // WorkspaceMember is an exception: its avatarUrl TEXT column holds a signed
+    // CorePicture URL, which does not fit the generic FILES/LINKS resolution.
     if (flatObjectMetadata.nameSingular === 'workspaceMember') {
       const avatarFileId = extractFileIdFromUrl(
         record.avatarUrl,
         FileFolder.CorePicture,
       );
+
       if (!isDefined(avatarFileId)) {
         return '';
       }
+
       return this.getImageUrlWithToken(
         avatarFileId,
         FileFolder.CorePicture,
@@ -647,14 +655,68 @@ export class SearchService {
       );
     }
 
-    return imageIdentifierField &&
-      isNonEmptyString(record[imageIdentifierField])
-      ? this.getImageUrlWithToken(
-          record[imageIdentifierField],
+    const imageIdentifierField = this.getEffectiveImageIdentifierFieldMetadata(
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    );
+
+    if (!isDefined(imageIdentifierField)) {
+      return '';
+    }
+
+    switch (imageIdentifierField.type) {
+      case FieldMetadataType.FILES: {
+        const avatarFileId = (
+          record[imageIdentifierField.name] as FileOutput[]
+        )?.[0]?.fileId;
+
+        if (!isDefined(avatarFileId)) {
+          return '';
+        }
+
+        return this.getImageUrlWithToken(
+          avatarFileId,
           FileFolder.FilesField,
           workspaceId,
-        )
-      : '';
+        );
+      }
+      case FieldMetadataType.LINKS: {
+        if (!this.twentyConfigService.get('ALLOW_REQUESTS_TO_TWENTY_ICONS')) {
+          return '';
+        }
+
+        const primaryLinkUrlProperty = compositeTypeDefinitions
+          .get(FieldMetadataType.LINKS)
+          ?.properties.find((property) => property.name === 'primaryLinkUrl');
+
+        if (!isDefined(primaryLinkUrlProperty)) {
+          return '';
+        }
+
+        const primaryLinkUrl =
+          record[
+            computeCompositeColumnName(
+              imageIdentifierField.name,
+              primaryLinkUrlProperty,
+            )
+          ];
+
+        return isNonEmptyString(primaryLinkUrl)
+          ? getLogoUrlFromDomainName(primaryLinkUrl) || ''
+          : '';
+      }
+      default: {
+        const rawImageValue = record[imageIdentifierField.name];
+
+        return isNonEmptyString(rawImageValue)
+          ? this.getImageUrlWithToken(
+              rawImageValue,
+              FileFolder.FilesField,
+              workspaceId,
+            )
+          : '';
+      }
+    }
   }
 
   computeEdges({
