@@ -1,2 +1,0 @@
-export const ADD_MANIFEST_FILE_ID_TO_APPLICATION_REGISTRATION_UPGRADE_COMMAND_NAME =
-  '2.19.0_AddManifestFileIdToApplicationRegistrationFastInstanceCommand_1783412175009';
