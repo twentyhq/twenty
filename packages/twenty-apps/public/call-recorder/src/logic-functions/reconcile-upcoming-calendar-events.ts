@@ -58,7 +58,7 @@ export default defineLogicFunction({
     RECONCILE_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'reconcile-upcoming-calendar-events',
   description:
-    'HTTP-triggered upcoming calendar event sweep, kicked off on a fresh install and used to continue itself near the timeout. Called with no ids to discover and sweep every event within the scheduling horizon, or with explicit calendar event ids to continue a sweep; re-invokes itself with the remaining ids when a batch approaches the timeout. The scheduled sweep keeps the window fresh thereafter.',
+    'Sweeps upcoming calendar events through reconciliation, self-continuing with the remaining ids near the timeout.',
   timeoutSeconds: TIMEOUT_SECONDS,
   handler: reconcileUpcomingCalendarEventsHandler,
   httpRouteTriggerSettings: {

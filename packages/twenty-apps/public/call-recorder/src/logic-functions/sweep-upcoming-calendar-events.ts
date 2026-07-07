@@ -43,7 +43,7 @@ export default defineLogicFunction({
     SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'sweep-upcoming-calendar-events',
   description:
-    'Sweeps upcoming calendar events through call recorder reconciliation on a schedule, so meetings that enter the scheduling horizon without a calendar change event (created before the window and never edited) still get their recording bots.',
+    'Reconciles upcoming calendar events on a schedule so meetings entering the scheduling horizon get their recording bots.',
   timeoutSeconds: TIMEOUT_SECONDS,
   handler: sweepUpcomingCalendarEventsHandler,
   cronTriggerSettings: {

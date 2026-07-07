@@ -48,7 +48,7 @@ export default definePostInstallLogicFunction({
     START_POST_INSTALL_BACKFILLS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'start-post-install-backfills',
   description:
-    "The app's single post-install hook: on a fresh install it seeds the scheduling window by sweeping upcoming calendar events; on an upgrade it relies on the scheduled sweep and backfills missing call recording summaries.",
+    'Schedules recording bots for upcoming meetings on install, and backfills missing call recording summaries on upgrade.',
   timeoutSeconds: 30,
   shouldRunOnVersionUpgrade: true,
   handler: startPostInstallBackfillsHandler,
