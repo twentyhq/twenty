@@ -21,7 +21,6 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui"
   },
-  "dependencies": {},
   "devDependencies": {
     "@playwright/test": "^1.60.0",
     "@types/node": "^24.7.2",

@@ -15,14 +15,14 @@
     "lint:fix": "oxlint --fix -c .oxlintrc.json ."
   },
   "dependencies": {
-    "twenty-sdk": "2.19.0-alpha.1",
-    "twenty-client-sdk": "2.19.0-alpha.1"
+    "twenty-client-sdk": "2.19.0-alpha.1",
+    "twenty-sdk": "2.19.0-alpha.1"
   },
   "devDependencies": {
-    "typescript": "^5.9.3",
     "@types/node": "^24.7.2",
     "@types/react": "^19.0.2",
+    "oxlint": "^0.16.0",
     "react": "^19.0.2",
-    "oxlint": "^0.16.0"
+    "typescript": "^5.9.3"
   }
 }
