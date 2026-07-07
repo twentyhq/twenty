@@ -123,16 +123,6 @@ export const getSeedFrontComponentCommandMenuItemDefinitions = (
     },
     {
       universalIdentifier: uuidv5(
-        `${workspaceId}:seed-front-component-command:list-companies`,
-        SEED_FRONT_COMPONENT_ID_NAMESPACE,
-      ),
-      frontComponentId: listCompaniesId,
-      label: 'List Companies',
-      icon: 'IconBuildingSkyscraper',
-      position: 203,
-    },
-    {
-      universalIdentifier: uuidv5(
         `${workspaceId}:seed-front-component-command:standalone-page-show-notification`,
         SEED_FRONT_COMPONENT_ID_NAMESPACE,
       ),
@@ -145,6 +135,16 @@ export const getSeedFrontComponentCommandMenuItemDefinitions = (
         workspaceId,
         PAGE_LAYOUT_SEEDS.DOCUMENTATION_STANDALONE_PAGE,
       ),
+    },
+    {
+      universalIdentifier: uuidv5(
+        `${workspaceId}:seed-front-component-command:list-companies`,
+        SEED_FRONT_COMPONENT_ID_NAMESPACE,
+      ),
+      frontComponentId: listCompaniesId,
+      label: 'List Companies',
+      icon: 'IconBuildingSkyscraper',
+      position: 203,
     },
   ];
 };

@@ -74,15 +74,14 @@ export const FrontComponentRenderer = ({
     }
   }, [error, handleError]);
 
-  useEffect(() => {
-    if (data) {
-      const tokenPair = data.frontComponent?.applicationTokenPair;
+  const applicationTokenPair =
+    data?.frontComponent?.applicationTokenPair ?? null;
 
-      if (isDefined(tokenPair)) {
-        setFrontComponentApplicationTokenPair(tokenPair);
-      }
+  useEffect(() => {
+    if (isDefined(applicationTokenPair)) {
+      setFrontComponentApplicationTokenPair(applicationTokenPair);
     }
-  }, [data, setFrontComponentApplicationTokenPair]);
+  }, [applicationTokenPair, setFrontComponentApplicationTokenPair]);
 
   useOnFrontComponentUpdated({
     frontComponentId,
@@ -95,9 +94,6 @@ export const FrontComponentRenderer = ({
       isDefined(applicationId) ? getSdkClientUrls(applicationId) : undefined,
     [applicationId],
   );
-
-  const applicationTokenPair =
-    data?.frontComponent?.applicationTokenPair ?? null;
 
   if (
     loading ||
