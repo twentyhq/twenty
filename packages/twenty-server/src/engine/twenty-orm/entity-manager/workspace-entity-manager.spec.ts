@@ -236,7 +236,6 @@ describe('WorkspaceEntityManager', () => {
       featureFlagsMap: {
         IS_UNIQUE_INDEXES_ENABLED: false,
         IS_JSON_FILTER_ENABLED: false,
-        IS_MARKETPLACE_SETTING_TAB_VISIBLE: false,
         IS_EMAIL_GROUP_ENABLED: false,
         IS_JUNCTION_RELATIONS_ENABLED: false,
         IS_REST_METADATA_API_NEW_FORMAT_DIRECT: false,
