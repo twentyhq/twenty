@@ -13,6 +13,7 @@ import {
 } from 'twenty-shared/types';
 import { type AppLocale } from 'twenty-shared/translations';
 
+import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
 import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
@@ -63,6 +64,7 @@ export const useFrontComponentExecutionContext = ({
     frontComponentId,
   });
   const { openConfirmationModal } = useCommandMenuConfirmationModal();
+  const { openAskAiPageWithPreprompt } = useOpenAskAiPageWithPreprompt();
   const { navigateSidePanel } = useNavigateSidePanel();
   const { openRecordInSidePanel: openRecordInSidePanelInternal } =
     useOpenRecordInSidePanel();
@@ -189,6 +191,23 @@ export const useFrontComponentExecutionContext = ({
           resetNavigationStack: params.resetNavigationStack,
           recordContext,
         });
+
+        return;
+      }
+
+      if (
+        params.page === SidePanelPages.AskAI &&
+        isDefined(params.preprompt) &&
+        isNonEmptyString(params.preprompt.text)
+      ) {
+        openAskAiPageWithPreprompt({
+          text: params.preprompt.text,
+          mode: params.preprompt.mode,
+        });
+
+        if (params.shouldResetSearchState === true) {
+          setSidePanelSearch('');
+        }
 
         return;
       }

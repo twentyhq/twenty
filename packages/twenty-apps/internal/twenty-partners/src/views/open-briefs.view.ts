@@ -24,7 +24,7 @@ export default defineView({
   position: 5,
   fields: [
     // Name
-    { universalIdentifier: '74595afa-c9c4-45b6-b362-803fb5574fbd', fieldMetadataUniversalIdentifier: '20202020-8609-4f65-a2d9-44009eb422b5', position: 0, isVisible: true, size: 200 },
+    { universalIdentifier: '74595afa-c9c4-45b6-b362-803fb5574fbd', fieldMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.fields.name.universalIdentifier, position: 0, isVisible: true, size: 200 },
     // Need (B1 brief field)
     { universalIdentifier: 'a24d52c4-9d0b-4145-a8fb-a4e21e002f58', fieldMetadataUniversalIdentifier: OPPORTUNITY_NEED_FIELD_ID, position: 1, isVisible: true, size: 280 },
     // Requirements (B1 brief field)

@@ -91,7 +91,6 @@ describe('WorkspaceInvitationService', () => {
           provide: OnboardingService,
           useValue: {
             setOnboardingInviteTeamPending: jest.fn(),
-            setOnboardingBookOnboardingPending: jest.fn(),
             isOnboardingInviteTeamPending: jest.fn().mockResolvedValue(false),
           },
         },
@@ -226,12 +225,6 @@ describe('WorkspaceInvitationService', () => {
       ).toHaveBeenCalledWith({
         workspaceId: workspace.id,
         value: false,
-      });
-      expect(
-        onboardingService.setOnboardingBookOnboardingPending,
-      ).toHaveBeenCalledWith({
-        workspaceId: workspace.id,
-        value: true,
       });
     });
 

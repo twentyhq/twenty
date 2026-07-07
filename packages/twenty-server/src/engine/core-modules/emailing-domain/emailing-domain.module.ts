@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
@@ -32,8 +30,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 @Module({
   imports: [
     TypeORMModule,
-    TypeOrmModule.forFeature([WorkspaceEntity]),
-    NestjsQueryTypeOrmModule.forFeature([EmailingDomainEntity]),
+    TypeOrmModule.forFeature([WorkspaceEntity, EmailingDomainEntity]),
     FeatureFlagModule,
     PermissionsModule,
     DnsManagerModule,

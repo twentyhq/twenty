@@ -3821,6 +3821,9 @@ export default {
             "isWorkspaceSchemaDDLLocked": [
                 6
             ],
+            "enterpriseInstanceType": [
+                1
+            ],
             "maintenance": [
                 195
             ],
@@ -7146,6 +7149,9 @@ export default {
             "refreshEnterpriseValidityToken": [
                 6
             ],
+            "releaseEnterpriseServerBinding": [
+                125
+            ],
             "setEnterpriseKey": [
                 125,
                 {
@@ -7527,9 +7533,6 @@ export default {
                 }
             ],
             "skipSyncEmailOnboardingStep": [
-                154
-            ],
-            "skipBookOnboardingStep": [
                 154
             ],
             "triggerInstallAppsOnboardingStep": [
@@ -8206,6 +8209,15 @@ export default {
                     ],
                     "universalIdentifier": [
                         1
+                    ]
+                }
+            ],
+            "claimApplicationRegistrationOwnership": [
+                8,
+                {
+                    "applicationRegistrationId": [
+                        1,
+                        "String!"
                     ]
                 }
             ],

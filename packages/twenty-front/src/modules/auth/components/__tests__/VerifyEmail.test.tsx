@@ -8,6 +8,7 @@ import { AppPath } from 'twenty-shared/types';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import { VerifyEmail } from '@/auth/components/VerifyEmail';
+import { tokenPairState } from '@/auth/states/tokenPairState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import {
   jotaiStore,
@@ -89,9 +90,21 @@ const renderVerifyEmail = (initialEntry: string) =>
     </JotaiProvider>,
   );
 
+const staleTokenPair = {
+  accessOrWorkspaceAgnosticToken: {
+    token: 'stale-access-token',
+    expiresAt: '2020-01-01T00:00:00.000Z',
+  },
+  refreshToken: {
+    token: 'stale-refresh-token',
+    expiresAt: '2020-01-01T00:00:00.000Z',
+  },
+};
+
 describe('VerifyEmail', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    localStorage.clear();
     resetJotaiStore();
     isOnAWorkspaceValue = false;
     // The verification effect is gated on the client config having loaded.
@@ -154,5 +167,37 @@ describe('VerifyEmail', () => {
 
     expect(verifyEmailAndGetWorkspaceAgnosticTokenMock).not.toHaveBeenCalled();
     expect(navigateMock).not.toHaveBeenCalledWith(AppPath.SignInUp);
+  });
+
+  it('exchanges the login token without redirecting when already on the workspace origin', async () => {
+    isOnAWorkspaceValue = true;
+    verifyEmailAndGetLoginTokenMock.mockResolvedValue({
+      loginToken: { token: 'login-token' },
+      workspaceUrls: { subdomainUrl: `${window.location.origin}/` },
+    });
+
+    renderVerifyEmail(VERIFY_EMAIL_URL);
+
+    await waitFor(() => {
+      expect(verifyLoginTokenMock).toHaveBeenCalledWith('login-token');
+    });
+    expect(redirectToWorkspaceDomainMock).not.toHaveBeenCalled();
+  });
+
+  it('keeps the token pair when redirecting to another workspace domain', async () => {
+    isOnAWorkspaceValue = true;
+    jotaiStore.set(tokenPairState.atom, staleTokenPair);
+    verifyEmailAndGetLoginTokenMock.mockResolvedValue({
+      loginToken: { token: 'login-token' },
+      workspaceUrls: { subdomainUrl: 'https://foo.twenty.com/' },
+    });
+
+    renderVerifyEmail(VERIFY_EMAIL_URL);
+
+    await waitFor(() => {
+      expect(redirectToWorkspaceDomainMock).toHaveBeenCalled();
+    });
+    expect(jotaiStore.get(tokenPairState.atom)).toEqual(staleTokenPair);
+    expect(verifyLoginTokenMock).not.toHaveBeenCalled();
   });
 });

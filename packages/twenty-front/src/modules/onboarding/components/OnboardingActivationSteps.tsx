@@ -1,8 +1,7 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
+import { type OnboardingActivationMessage } from '@/onboarding/types/OnboardingActivationMessage';
 import { styled } from '@linaria/react';
-import { type MessageDescriptor } from '@lingui/core';
-import { useLingui } from '@lingui/react/macro';
 import { motion } from 'framer-motion';
 
 const STEP_OPACITIES = [1, 0.4, 0.12];
@@ -26,7 +25,7 @@ const StyledStepBase = styled.div`
 const StyledStep = motion.create(StyledStepBase);
 
 type OnboardingActivationStepsProps = {
-  messages: MessageDescriptor[];
+  messages: OnboardingActivationMessage[];
   messageIndex: number;
 };
 
@@ -34,7 +33,6 @@ export const OnboardingActivationSteps = ({
   messages,
   messageIndex,
 }: OnboardingActivationStepsProps) => {
-  const { i18n } = useLingui();
   const transition = useOnboardingMotionTransition();
 
   return (
@@ -53,7 +51,7 @@ export const OnboardingActivationSteps = ({
             }}
             transition={transition}
           >
-            <SubTitle>{i18n._(message)}</SubTitle>
+            <SubTitle>{message.content}</SubTitle>
           </StyledStep>
         );
       })}

@@ -708,7 +708,7 @@ export interface User {
 
 
 /** Onboarding status */
-export type OnboardingStatus = 'PLAN_REQUIRED' | 'WORKSPACE_ACTIVATION' | 'PROFILE_CREATION' | 'SYNC_EMAIL' | 'APPS_INSTALLATION' | 'INVITE_TEAM' | 'BOOK_ONBOARDING' | 'COMPLETED'
+export type OnboardingStatus = 'PLAN_REQUIRED' | 'WORKSPACE_ACTIVATION' | 'PROFILE_CREATION' | 'SYNC_EMAIL' | 'APPS_INSTALLATION' | 'INVITE_TEAM' | 'COMPLETED'
 
 export interface RatioAggregateConfig {
     fieldMetadataId: Scalars['UUID']
@@ -1598,6 +1598,7 @@ export interface ClientConfig {
     isCloudflareIntegrationEnabled: Scalars['Boolean']
     isClickHouseConfigured: Scalars['Boolean']
     isWorkspaceSchemaDDLLocked: Scalars['Boolean']
+    enterpriseInstanceType: Scalars['String']
     maintenance?: ClientConfigMaintenanceMode
     __typename: 'ClientConfig'
 }
@@ -2833,6 +2834,7 @@ export interface Mutation {
     createFileUpload: FileUploadTarget
     completeFileUpload: FileWithSignedUrl
     refreshEnterpriseValidityToken: Scalars['Boolean']
+    releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO
     setEnterpriseKey: EnterpriseLicenseInfoDTO
     uploadEmailAttachmentFile: FileWithSignedUrl
     uploadAiChatFile: FileWithSignedUrl
@@ -2874,7 +2876,6 @@ export interface Mutation {
     revokeApiKey?: ApiKey
     assignRoleToApiKey: Scalars['Boolean']
     skipSyncEmailOnboardingStep: OnboardingStepSuccess
-    skipBookOnboardingStep: OnboardingStepSuccess
     triggerInstallAppsOnboardingStep: OnboardingStepSuccess
     updateOneApplicationVariable: Scalars['Boolean']
     checkoutSession: BillingSession
@@ -2951,6 +2952,7 @@ export interface Mutation {
     updateApplicationRegistrationVariable: ApplicationRegistrationVariable
     deleteApplicationRegistrationVariable: Scalars['Boolean']
     uploadAppTarball: ApplicationRegistration
+    claimApplicationRegistrationOwnership: ApplicationRegistration
     transferApplicationRegistrationOwnership: ApplicationRegistration
     updateWorkspaceMemberRole: WorkspaceMember
     createOneRole: Role
@@ -4713,6 +4715,7 @@ export interface ClientConfigGenqlSelection{
     isCloudflareIntegrationEnabled?: boolean | number
     isClickHouseConfigured?: boolean | number
     isWorkspaceSchemaDDLLocked?: boolean | number
+    enterpriseInstanceType?: boolean | number
     maintenance?: ClientConfigMaintenanceModeGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -6078,6 +6081,7 @@ export interface MutationGenqlSelection{
     createFileUpload?: (FileUploadTargetGenqlSelection & { __args: {filename: Scalars['String'], size: Scalars['Float'], fileFolder: FileFolder, fieldMetadataId?: (Scalars['String'] | null), fieldMetadataUniversalIdentifier?: (Scalars['String'] | null)} })
     completeFileUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String']} })
     refreshEnterpriseValidityToken?: boolean | number
+    releaseEnterpriseServerBinding?: EnterpriseLicenseInfoDTOGenqlSelection
     setEnterpriseKey?: (EnterpriseLicenseInfoDTOGenqlSelection & { __args: {enterpriseKey: Scalars['String']} })
     uploadEmailAttachmentFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
     uploadAiChatFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
@@ -6119,7 +6123,6 @@ export interface MutationGenqlSelection{
     revokeApiKey?: (ApiKeyGenqlSelection & { __args: {input: RevokeApiKeyInput} })
     assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
     skipSyncEmailOnboardingStep?: OnboardingStepSuccessGenqlSelection
-    skipBookOnboardingStep?: OnboardingStepSuccessGenqlSelection
     triggerInstallAppsOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {universalIdentifiers: Scalars['String'][]} })
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
     checkoutSession?: (BillingSessionGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
@@ -6196,6 +6199,7 @@ export interface MutationGenqlSelection{
     updateApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: UpdateApplicationRegistrationVariableInput} })
     deleteApplicationRegistrationVariable?: { __args: {id: Scalars['String']} }
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
+    claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
     updateWorkspaceMemberRole?: (WorkspaceMemberGenqlSelection & { __args: {workspaceMemberId: Scalars['UUID'], roleId: Scalars['UUID']} })
     createOneRole?: (RoleGenqlSelection & { __args: {createRoleInput: CreateRoleInput} })
@@ -9055,7 +9059,6 @@ export const enumOnboardingStatus = {
    SYNC_EMAIL: 'SYNC_EMAIL' as const,
    APPS_INSTALLATION: 'APPS_INSTALLATION' as const,
    INVITE_TEAM: 'INVITE_TEAM' as const,
-   BOOK_ONBOARDING: 'BOOK_ONBOARDING' as const,
    COMPLETED: 'COMPLETED' as const
 }
 

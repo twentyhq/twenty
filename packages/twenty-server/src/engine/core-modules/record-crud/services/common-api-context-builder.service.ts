@@ -51,11 +51,15 @@ export class CommonApiContextBuilderService {
   }): Promise<CommonApiContext> {
     const workspaceId = authContext.workspace.id;
 
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+          flatMapsKeys: [
+            'flatObjectMetadataMaps',
+            'flatFieldMetadataMaps',
+            'flatIndexMaps',
+          ],
         },
       );
 
@@ -107,6 +111,7 @@ export class CommonApiContextBuilderService {
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+        flatIndexMaps,
         objectIdByNameSingular: idByNameSingular,
       },
       selectedFields,
