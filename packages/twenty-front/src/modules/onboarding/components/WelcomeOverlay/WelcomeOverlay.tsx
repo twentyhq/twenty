@@ -8,7 +8,7 @@ import {
 import { createPortal } from 'react-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { HalftoneLogo } from '@/onboarding/components/WelcomeOverlay/HalftoneLogo';
+import { WelcomeHalftoneCanvas } from '@/onboarding/components/WelcomeOverlay/WelcomeHalftoneCanvas';
 import { WelcomePersonChip } from '@/onboarding/components/WelcomeOverlay/WelcomePersonChip';
 import { welcomeAnimationVisibleState } from '@/onboarding/states/welcomeAnimationVisibleState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
@@ -20,7 +20,6 @@ const WELCOME_TITLE_WORDS = ['Welcome', 'to', 'your', 'workspace'];
 
 const StyledOverlay = styled.div`
   align-items: center;
-  background: ${themeCssVariables.background.primary};
   bottom: 0;
   cursor: pointer;
   display: flex;
@@ -30,15 +29,22 @@ const StyledOverlay = styled.div`
   position: fixed;
   right: 0;
   top: 0;
-  will-change: opacity;
   z-index: ${RootStackingContextZIndices.WelcomeOverlay};
+`;
+
+const StyledBackdrop = styled.div`
+  background: ${themeCssVariables.background.primary};
+  inset: 0;
+  position: absolute;
+  will-change: opacity;
+  z-index: 0;
 
   &.is-leaving {
-    animation: welcomeOverlayOut 0.6s cubic-bezier(0.5, 0, 0.1, 1) 0.08s
+    animation: welcomeBackdropOut 0.7s cubic-bezier(0.5, 0, 0.1, 1) 0.08s
       forwards;
   }
 
-  @keyframes welcomeOverlayOut {
+  @keyframes welcomeBackdropOut {
     to {
       opacity: 0;
     }
@@ -52,52 +58,10 @@ const StyledOverlay = styled.div`
   }
 `;
 
-const StyledHalftoneLayer = styled.div`
-  align-items: center;
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  left: 0;
+const StyledCanvasLayer = styled.div`
+  inset: 0;
   position: absolute;
-  right: 0;
-  top: 0;
-`;
-
-const StyledHalftoneWrapper = styled.div`
-  animation: welcomeHalftoneIn 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
-  flex-shrink: 0;
-  width: max(105vw, 130vh);
-  will-change: transform;
-
-  &.is-leaving {
-    animation: welcomeHalftoneOut 0.66s cubic-bezier(0.5, 0, 0.1, 1) forwards;
-  }
-
-  @keyframes welcomeHalftoneIn {
-    from {
-      transform: scale(0.96);
-    }
-    to {
-      transform: scale(1);
-    }
-  }
-
-  @keyframes welcomeHalftoneOut {
-    from {
-      transform: scale(1);
-    }
-    to {
-      transform: scale(1.09);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-
-    &.is-leaving {
-      animation: none;
-    }
-  }
+  z-index: 1;
 `;
 
 const StyledTitle = styled.div`
@@ -115,7 +79,7 @@ const StyledTitle = styled.div`
   position: relative;
   white-space: nowrap;
   will-change: transform, opacity;
-  z-index: 1;
+  z-index: 2;
 
   @media (max-width: 600px) {
     flex-wrap: wrap;
@@ -148,7 +112,7 @@ const StyledTitle = styled.div`
 
 const StyledWord = styled.span`
   animation: welcomeWordIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-  animation-delay: calc(0.9s + var(--word-index) * 0.07s);
+  animation-delay: calc(1.1s + var(--word-index) * 0.07s);
   display: inline-flex;
 
   @keyframes welcomeWordIn {
@@ -220,7 +184,9 @@ export const WelcomeOverlay = () => {
 
   const handleSkip = () => setIsLeaving(true);
 
-  const handleAnimationEnd = (event: AnimationEvent<HTMLDivElement>) => {
+  const handleBackdropAnimationEnd = (
+    event: AnimationEvent<HTMLDivElement>,
+  ) => {
     if (event.target === event.currentTarget && isLeaving) {
       setWelcomeAnimationVisible(false);
       setIsLeaving(false);
@@ -230,17 +196,14 @@ export const WelcomeOverlay = () => {
   const leavingClassName = isLeaving ? 'is-leaving' : undefined;
 
   return createPortal(
-    <StyledOverlay
-      role="presentation"
-      onClick={handleSkip}
-      onAnimationEnd={handleAnimationEnd}
-      className={leavingClassName}
-    >
-      <StyledHalftoneLayer>
-        <StyledHalftoneWrapper className={leavingClassName}>
-          <HalftoneLogo />
-        </StyledHalftoneWrapper>
-      </StyledHalftoneLayer>
+    <StyledOverlay role="presentation" onClick={handleSkip}>
+      <StyledBackdrop
+        className={leavingClassName}
+        onAnimationEnd={handleBackdropAnimationEnd}
+      />
+      <StyledCanvasLayer>
+        <WelcomeHalftoneCanvas isLeaving={isLeaving} />
+      </StyledCanvasLayer>
       <StyledTitle className={leavingClassName}>
         {WELCOME_TITLE_WORDS.map((word, index) => (
           <StyledWord

@@ -49,8 +49,9 @@ describe('WelcomeOverlay', () => {
     fireEvent.keyDown(window, { key: 'Escape' });
 
     const overlay = document.querySelector('[role="presentation"]');
-    if (overlay !== null) {
-      fireEvent.animationEnd(overlay);
+    const backdrop = overlay?.firstElementChild ?? null;
+    if (backdrop !== null) {
+      fireEvent.animationEnd(backdrop);
     }
 
     expect(screen.queryByText('Welcome')).not.toBeInTheDocument();
