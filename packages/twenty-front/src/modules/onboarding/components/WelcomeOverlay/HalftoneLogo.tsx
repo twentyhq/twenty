@@ -25,17 +25,13 @@ const StyledDot = styled.circle`
   animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   fill: var(--welcome-dot-color);
   opacity: 0;
-  transform-box: fill-box;
-  transform-origin: center;
 
   @keyframes welcomeDotIn {
     from {
       opacity: 0;
-      transform: scale(0.2);
     }
     to {
       opacity: 1;
-      transform: scale(1);
     }
   }
 

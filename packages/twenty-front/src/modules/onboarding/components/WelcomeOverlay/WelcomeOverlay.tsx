@@ -1,6 +1,10 @@
 import { styled } from '@linaria/react';
-import { type Variants, motion, useReducedMotion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import {
+  type AnimationEvent,
+  type CSSProperties,
+  useEffect,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -14,12 +18,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 const WELCOME_HOLD_DURATION_MS = 2900;
 const WELCOME_TITLE_WORDS = ['Welcome', 'to', 'your', 'workspace'];
 
-const REVEAL_EASE = [0.22, 1, 0.36, 1] as const;
-const SNAP_EASE = [0.16, 1, 0.3, 1] as const;
-const EXIT_EASE = [0.5, 0, 0.1, 1] as const;
-const TITLE_EXIT_EASE = [0.4, 0, 1, 1] as const;
-
-const StyledOverlay = styled(motion.div)`
+const StyledOverlay = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.primary};
   bottom: 0;
@@ -31,7 +30,26 @@ const StyledOverlay = styled(motion.div)`
   position: fixed;
   right: 0;
   top: 0;
+  will-change: opacity;
   z-index: ${RootStackingContextZIndices.WelcomeOverlay};
+
+  &.is-leaving {
+    animation: welcomeOverlayOut 0.6s cubic-bezier(0.5, 0, 0.1, 1) 0.08s
+      forwards;
+  }
+
+  @keyframes welcomeOverlayOut {
+    to {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &.is-leaving {
+      animation-duration: 0.4s;
+      animation-delay: 0s;
+    }
+  }
 `;
 
 const StyledHalftoneLayer = styled.div`
@@ -45,13 +63,44 @@ const StyledHalftoneLayer = styled.div`
   top: 0;
 `;
 
-const StyledHalftoneWrapper = styled(motion.div)`
+const StyledHalftoneWrapper = styled.div`
+  animation: welcomeHalftoneIn 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
   flex-shrink: 0;
   width: max(105vw, 130vh);
-  will-change: transform, opacity;
+  will-change: transform;
+
+  &.is-leaving {
+    animation: welcomeHalftoneOut 0.66s cubic-bezier(0.5, 0, 0.1, 1) forwards;
+  }
+
+  @keyframes welcomeHalftoneIn {
+    from {
+      transform: scale(0.96);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes welcomeHalftoneOut {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.09);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+
+    &.is-leaving {
+      animation: none;
+    }
+  }
 `;
 
-const StyledTitle = styled(motion.div)`
+const StyledTitle = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.primary};
   border-radius: ${themeCssVariables.border.radius.pill};
@@ -67,67 +116,61 @@ const StyledTitle = styled(motion.div)`
   white-space: nowrap;
   will-change: transform, opacity;
   z-index: 1;
+
+  &.is-leaving {
+    animation: welcomeTitleOut 0.34s cubic-bezier(0.4, 0, 1, 1) forwards;
+  }
+
+  @keyframes welcomeTitleOut {
+    to {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &.is-leaving {
+      animation-name: welcomeTitleFadeOut;
+    }
+
+    @keyframes welcomeTitleFadeOut {
+      to {
+        opacity: 0;
+      }
+    }
+  }
 `;
 
-const StyledWord = styled(motion.span)`
+const StyledWord = styled.span`
+  animation: welcomeWordIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(0.9s + var(--word-index) * 0.07s);
   display: inline-flex;
+
+  @keyframes welcomeWordIn {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation-name: welcomeWordFadeIn;
+    animation-delay: 0s;
+
+    @keyframes welcomeWordFadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  }
 `;
-
-const getHalftoneVariants = (prefersReducedMotion: boolean): Variants => ({
-  hidden: prefersReducedMotion ? { opacity: 0 } : { scale: 0.96 },
-  show: prefersReducedMotion
-    ? { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' } }
-    : {
-        scale: [0.96, 1, 1.035],
-        transition: {
-          scale: { duration: 2.9, times: [0, 0.42, 1], ease: REVEAL_EASE },
-        },
-      },
-  leaving: prefersReducedMotion
-    ? { opacity: 0, transition: { duration: 0.4, ease: 'easeOut' } }
-    : { scale: 1.09, transition: { duration: 0.66, ease: EXIT_EASE } },
-});
-
-const getTitleVariants = (prefersReducedMotion: boolean): Variants => ({
-  hidden: {},
-  show: {
-    transition: {
-      delayChildren: prefersReducedMotion ? 0 : 0.9,
-      staggerChildren: prefersReducedMotion ? 0 : 0.07,
-    },
-  },
-  leaving: {
-    opacity: 0,
-    y: prefersReducedMotion ? 0 : -10,
-    transition: {
-      duration: prefersReducedMotion ? 0.3 : 0.34,
-      ease: prefersReducedMotion ? 'easeOut' : TITLE_EXIT_EASE,
-    },
-  },
-});
-
-const getWordVariants = (prefersReducedMotion: boolean): Variants => ({
-  hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 14 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: SNAP_EASE },
-  },
-});
-
-const getChipVariants = (prefersReducedMotion: boolean): Variants => ({
-  hidden: {
-    opacity: 0,
-    y: prefersReducedMotion ? 0 : 14,
-    scale: prefersReducedMotion ? 1 : 0.94,
-  },
-  show: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { duration: 0.55, ease: SNAP_EASE },
-  },
-});
 
 export const WelcomeOverlay = () => {
   const welcomeAnimationVisible = useAtomStateValue(
@@ -136,7 +179,6 @@ export const WelcomeOverlay = () => {
   const setWelcomeAnimationVisible = useSetAtomState(
     welcomeAnimationVisibleState,
   );
-  const prefersReducedMotion = useReducedMotion() ?? false;
   const [isLeaving, setIsLeaving] = useState(false);
 
   useEffect(() => {
@@ -158,52 +200,41 @@ export const WelcomeOverlay = () => {
 
   const handleSkip = () => setIsLeaving(true);
 
-  const handleOverlayAnimationComplete = () => {
-    if (isLeaving) {
+  const handleAnimationEnd = (event: AnimationEvent<HTMLDivElement>) => {
+    if (event.target === event.currentTarget && isLeaving) {
       setWelcomeAnimationVisible(false);
       setIsLeaving(false);
     }
   };
 
-  const halftoneVariants = getHalftoneVariants(prefersReducedMotion);
-  const titleVariants = getTitleVariants(prefersReducedMotion);
-  const wordVariants = getWordVariants(prefersReducedMotion);
-  const chipVariants = getChipVariants(prefersReducedMotion);
-  const animateState = isLeaving ? 'leaving' : 'show';
+  const leavingClassName = isLeaving ? 'is-leaving' : undefined;
 
   return createPortal(
     <StyledOverlay
       role="presentation"
       onClick={handleSkip}
-      initial={{ opacity: 1 }}
-      animate={{ opacity: isLeaving ? 0 : 1 }}
-      transition={{
-        duration: isLeaving ? (prefersReducedMotion ? 0.4 : 0.6) : 0,
-        ease: prefersReducedMotion ? 'easeOut' : EXIT_EASE,
-        delay: isLeaving && !prefersReducedMotion ? 0.08 : 0,
-      }}
-      onAnimationComplete={handleOverlayAnimationComplete}
+      onAnimationEnd={handleAnimationEnd}
+      className={leavingClassName}
     >
       <StyledHalftoneLayer>
-        <StyledHalftoneWrapper
-          variants={halftoneVariants}
-          initial="hidden"
-          animate={animateState}
-        >
+        <StyledHalftoneWrapper className={leavingClassName}>
           <HalftoneLogo />
         </StyledHalftoneWrapper>
       </StyledHalftoneLayer>
-      <StyledTitle
-        variants={titleVariants}
-        initial="hidden"
-        animate={animateState}
-      >
-        {WELCOME_TITLE_WORDS.map((word) => (
-          <StyledWord key={word} variants={wordVariants}>
+      <StyledTitle className={leavingClassName}>
+        {WELCOME_TITLE_WORDS.map((word, index) => (
+          <StyledWord
+            key={word}
+            style={{ '--word-index': index } as CSSProperties}
+          >
             {word}
           </StyledWord>
         ))}
-        <StyledWord variants={chipVariants}>
+        <StyledWord
+          style={
+            { '--word-index': WELCOME_TITLE_WORDS.length } as CSSProperties
+          }
+        >
           <WelcomePersonChip />
         </StyledWord>
       </StyledTitle>
