@@ -1,11 +1,21 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getAvatarType = (
-  objectNameSingular: string,
-  imageIdentifierFieldMetadataItem?: FieldMetadataItem,
+  objectMetadataItem?: Pick<
+    EnrichedObjectMetadataItem,
+    'fields' | 'imageIdentifierFieldMetadataId' | 'nameSingular'
+  >,
 ) => {
+  if (!isDefined(objectMetadataItem)) {
+    return 'rounded';
+  }
+
+  const imageIdentifierFieldMetadataItem =
+    getImageIdentifierFieldMetadataItem(objectMetadataItem);
+
   if (isDefined(imageIdentifierFieldMetadataItem)) {
     switch (imageIdentifierFieldMetadataItem.type) {
       case FieldMetadataType.LINKS:
@@ -15,17 +25,18 @@ export const getAvatarType = (
     }
   }
 
-  if (objectNameSingular === CoreObjectNameSingular.WorkspaceMember) {
+  // Name-based fallbacks when the image identifier type doesn't resolve a shape.
+  // Company stays as a safety net until the backfill command has seeded its
+  // imageIdentifierFieldMetadataId on existing workspaces.
+  if (
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.WorkspaceMember
+  ) {
     return 'rounded';
   }
 
-  if (objectNameSingular === CoreObjectNameSingular.Company) {
-    return 'squared';
-  }
-
   if (
-    objectNameSingular === CoreObjectNameSingular.Task ||
-    objectNameSingular === CoreObjectNameSingular.Note
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.Task ||
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.Note
   ) {
     return 'icon';
   }

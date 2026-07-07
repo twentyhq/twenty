@@ -58,6 +58,12 @@ export const SingleRecordPickerMenuItem = ({
   const showObjectName =
     singleRecordPickerSearchableObjectMetadataItems.length > 1;
 
+  const objectMetadataItem =
+    singleRecordPickerSearchableObjectMetadataItems.find(
+      (searchableObjectMetadataItem) =>
+        searchableObjectMetadataItem.id === morphItem.objectMetadataId,
+    );
+
   return (
     <SelectableListItem
       itemId={morphItem.recordId}
@@ -78,9 +84,7 @@ export const SingleRecordPickerMenuItem = ({
             placeholderColorSeed={morphItem.recordId}
             placeholder={searchRecordStore.label}
             size="md"
-            type={
-              getAvatarType(searchRecordStore.objectNameSingular) ?? 'rounded'
-            }
+            type={getAvatarType(objectMetadataItem)}
           />
         }
         contextualText={

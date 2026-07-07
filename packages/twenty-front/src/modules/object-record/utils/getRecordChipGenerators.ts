@@ -78,7 +78,7 @@ export const getRecordChipGenerators = (
                 objectMetadataItemToUse.imageIdentifierFieldMetadataId,
             );
 
-          const avatarType = getAvatarType(objectNameSingularToFind);
+          const avatarType = getAvatarType(objectMetadataItemToUse);
 
           return [
             fieldMetadataItem.name,

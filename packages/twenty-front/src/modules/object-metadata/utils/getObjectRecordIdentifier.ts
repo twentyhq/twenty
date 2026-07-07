@@ -35,12 +35,8 @@ export const getObjectRecordIdentifier = ({
     (field) => field.id === objectMetadataItem.imageIdentifierFieldMetadataId,
   );
 
-  const avatarType = getAvatarType(
-    objectMetadataItem.nameSingular,
-    imageIdentifierFieldMetadata,
-  );
+  const avatarType = getAvatarType(objectMetadataItem);
 
-  // TODO: This is a temporary solution before we seed imageIdentifierFieldMetadataId in the database
   const avatarUrl = getAvatarUrl(
     objectMetadataItem.nameSingular,
     record,
