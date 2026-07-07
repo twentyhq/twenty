@@ -1,14 +1,45 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import {
+  type FieldFilesValue,
+  type FieldLinksValue,
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { getLogoUrlFromDomainName, isDefined } from 'twenty-shared/utils';
 
 export const getImageIdentifierFieldValue = (
   record: ObjectRecord,
   imageIdentifierFieldMetadataItem: FieldMetadataItem | undefined,
-) => {
-  if (isDefined(imageIdentifierFieldMetadataItem?.name)) {
-    return record[imageIdentifierFieldMetadataItem.name] as string;
+  allowRequestsToTwentyIcons?: boolean,
+): string | null => {
+  if (!isDefined(imageIdentifierFieldMetadataItem?.name)) {
+    return null;
   }
 
-  return null;
+  const fieldValue = record[imageIdentifierFieldMetadataItem.name];
+
+  if (!isDefined(fieldValue)) {
+    return null;
+  }
+
+  switch (imageIdentifierFieldMetadataItem.type) {
+    case FieldMetadataType.FILES: {
+      const files = fieldValue as FieldFilesValue[];
+
+      return files[0]?.url ?? null;
+    }
+    case FieldMetadataType.LINKS: {
+      if (allowRequestsToTwentyIcons !== true) {
+        return null;
+      }
+
+      const links = fieldValue as FieldLinksValue;
+
+      return isDefined(links.primaryLinkUrl)
+        ? (getLogoUrlFromDomainName(links.primaryLinkUrl) ?? null)
+        : null;
+    }
+    default:
+      return fieldValue as string;
+  }
 };

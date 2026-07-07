@@ -32,6 +32,7 @@ export const getAvatarUrl = (
   const imageIdentifierFieldValue = getImageIdentifierFieldValue(
     record,
     imageIdentifierFieldMetadataItem,
+    allowRequestsToTwentyIcons,
   );
 
   if (isDefined(imageIdentifierFieldValue)) {
