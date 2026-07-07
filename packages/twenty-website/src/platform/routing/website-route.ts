@@ -19,7 +19,7 @@ export type WebsiteRouteId =
   | 'whyTwenty';
 
 // Grows as content-driven families migrate ('articles', 'releases', ...).
-export type WebsiteRouteFamilyId = never;
+export type WebsiteRouteFamilyId = 'customerStories' | 'partnerProfiles';
 
 export type SitemapChangeFrequency =
   MetadataRoute.Sitemap[number]['changeFrequency'];
@@ -40,8 +40,9 @@ export type WebsiteRoute = {
 };
 
 // One slug under a dynamic family, produced by the family's enumerator from
-// its content source (markdown, CMS). Strings are content, not catalog
-// messages — they arrive already written per entry.
+// its content source (markdown, CMS, live API). Strings are content, not
+// catalog messages — the enumerator resolves any catalog messages to strings
+// before returning them.
 export type WebsiteRouteFamilyEntry = {
   description: string;
   lastModified?: Date;
