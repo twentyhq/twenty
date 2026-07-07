@@ -33,7 +33,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
-import { MARKETPLACE_CURATED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-curated-applications.constant';
+import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-featured-applications.constant';
 
 const BCRYPT_SALT_ROUNDS = 10;
 
@@ -284,6 +284,7 @@ export class ApplicationRegistrationService {
     if (isDefined(update.isListed)) updateData.isListed = update.isListed;
     if (isDefined(update.isPreInstalled))
       updateData.isPreInstalled = update.isPreInstalled;
+    if (isDefined(update.isFeatured)) updateData.isFeatured = update.isFeatured;
 
     if (Object.keys(updateData).length > 0) {
       await this.applicationRegistrationRepository.update(id, updateData);
@@ -451,13 +452,13 @@ export class ApplicationRegistrationService {
       params.universalIdentifier,
     );
 
-    const curatedIdentifiers = new Set(
-      MARKETPLACE_CURATED_APPLICATIONS.map(
+    const featuredIdentifiers = new Set(
+      MARKETPLACE_FEATURED_APPLICATIONS.map(
         (entry) => entry.universalIdentifier,
       ),
     );
 
-    const isFeatured = curatedIdentifiers.has(params.universalIdentifier);
+    const isFeatured = featuredIdentifiers.has(params.universalIdentifier);
 
     if (isDefined(existing)) {
       const manifestFileId = isDefined(params.manifest)
@@ -478,7 +479,6 @@ export class ApplicationRegistrationService {
         manifest: params.manifest,
         manifestFileId,
         ...fromManifestApplicationToDisplayFields(params.manifest?.application),
-        isFeatured,
       });
     } else {
       const registration = this.applicationRegistrationRepository.create({
