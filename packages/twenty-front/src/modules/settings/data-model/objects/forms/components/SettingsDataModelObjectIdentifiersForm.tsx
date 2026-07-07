@@ -11,7 +11,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { zodResolver } from '@hookform/resolvers/zod';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useCallback, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -90,45 +89,41 @@ export const SettingsDataModelObjectIdentifiersForm = ({
 
   const { getIcon } = useIcons();
 
-  const mapFieldToSelectOption = useCallback(
-    (fieldMetadataItem: FieldMetadataItem): SelectOption<string | null> => ({
-      Icon: getIcon(fieldMetadataItem.icon),
-      label: fieldMetadataItem.label,
-      value: fieldMetadataItem.id,
-    }),
-    [getIcon],
-  );
+  const mapFieldToSelectOption = (
+    fieldMetadataItem: FieldMetadataItem,
+  ): SelectOption<string | null> => ({
+    Icon: getIcon(fieldMetadataItem.icon),
+    label: fieldMetadataItem.label,
+    value: fieldMetadataItem.id,
+  });
 
-  const labelIdentifierFieldOptions = useMemo(
-    () =>
-      getActiveFieldMetadataItems(objectMetadataItem)
-        .filter(
-          ({ id, type }) =>
-            (isLabelIdentifierFieldMetadataTypes(type) &&
-              isSearchableFieldType(type)) ||
-            objectMetadataItem.labelIdentifierFieldMetadataId === id,
-        )
-        .map(mapFieldToSelectOption),
-    [mapFieldToSelectOption, objectMetadataItem],
-  );
-
-  const imageIdentifierFieldOptions = useMemo(
-    () =>
-      getActiveFieldMetadataItems(objectMetadataItem)
-        .filter(
-          ({ id, type }) =>
-            isImageIdentifierFieldMetadataType(type) ||
-            objectMetadataItem.imageIdentifierFieldMetadataId === id,
-        )
-        .map(mapFieldToSelectOption),
-    [mapFieldToSelectOption, objectMetadataItem],
-  );
+  const labelIdentifierFieldOptions = getActiveFieldMetadataItems(
+    objectMetadataItem,
+  )
+    .filter(
+      ({ id, type }) =>
+        (isLabelIdentifierFieldMetadataTypes(type) &&
+          isSearchableFieldType(type)) ||
+        objectMetadataItem.labelIdentifierFieldMetadataId === id,
+    )
+    .map(mapFieldToSelectOption);
 
   const emptyOption: SelectOption<string | null> = {
     Icon: IconCircleOff,
     label: t`None`,
     value: null,
   };
+
+  const imageIdentifierFieldOptions = [
+    emptyOption,
+    ...getActiveFieldMetadataItems(objectMetadataItem)
+      .filter(
+        ({ id, type }) =>
+          isImageIdentifierFieldMetadataType(type) ||
+          objectMetadataItem.imageIdentifierFieldMetadataId === id,
+      )
+      .map(mapFieldToSelectOption),
+  ];
 
   const navigate = useNavigate();
 
