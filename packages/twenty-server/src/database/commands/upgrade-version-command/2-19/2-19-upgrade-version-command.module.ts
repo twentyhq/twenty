@@ -5,6 +5,7 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { BackfillWorkspaceCustomApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-workspace-command-1782853718000-backfill-workspace-custom-application-registration.command';
 import { BackfillSystemUniqueIndexUniversalIdentifierCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-workspace-command-1783093620000-backfill-system-unique-index-universal-identifier.command';
 import { BackfillDeterministicFieldUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-workspace-command-1783100000000-backfill-deterministic-field-universal-identifiers.command';
+import { BackfillCompanyPersonImageIdentifierFieldMetadataIdCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-workspace-command-1783200000000-backfill-company-person-image-identifier-field-metadata-id.command';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -34,6 +35,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     BackfillWorkspaceCustomApplicationRegistrationCommand,
     BackfillSystemUniqueIndexUniversalIdentifierCommand,
     BackfillDeterministicFieldUniversalIdentifiersCommand,
+    BackfillCompanyPersonImageIdentifierFieldMetadataIdCommand,
   ],
 })
 export class V2_19_UpgradeVersionCommandModule {}
