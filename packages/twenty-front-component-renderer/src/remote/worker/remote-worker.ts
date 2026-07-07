@@ -4,32 +4,22 @@ import '@remote-dom/react/polyfill';
 import '../generated/remote-elements';
 
 import { ThreadMessagePort } from '@quilted/threads';
-import {
-  BatchingRemoteConnection,
-  type RemoteConnection,
-  type RemoteRootElement,
-} from '@remote-dom/core/elements';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { installStyleBridge } from '@/polyfills/installStyleBridge';
-import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
-import { patchRemoteElementSetAttribute } from '@/remote/utils/patchRemoteElementSetAttribute';
-import { installHostFetchProxy } from './utils/installHostFetchProxy';
-import { installErrorEventBridge } from './utils/installErrorEventBridge';
-import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 import { frontComponentHostCommunicationApi } from '@/constants/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToRemoteComponent';
-import { setFrontComponentExecutionContext } from './utils/setFrontComponentExecutionContext';
-import { type FrontComponentHostThreadExports } from '../../types/FrontComponentHostThreadExports';
-import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
-import { type WorkerExports } from '../../types/WorkerExports';
-import { exposeGlobals } from '../utils/exposeGlobals';
-import {
-  createOpenCommandConfirmationModalAdapter,
-  handleCommandConfirmationModalResult,
-} from './utils/createCommandConfirmationModalBridge';
-import { setWorkerEnv } from './utils/setWorkerEnv';
+import { exposeGlobals } from '@/remote/utils/exposeGlobals';
+import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
+import { patchRemoteElementSetAttribute } from '@/remote/utils/patchRemoteElementSetAttribute';
+import { buildFrontComponentHostCommunicationApi } from '@/remote/worker/utils/buildFrontComponentHostCommunicationApi';
+import { handleCommandConfirmationModalResult } from '@/remote/worker/utils/createCommandConfirmationModalBridge';
+import { installErrorEventBridge } from '@/remote/worker/utils/installErrorEventBridge';
+import { renderFrontComponent } from '@/remote/worker/utils/renderFrontComponent';
+import { setFrontComponentExecutionContext } from '@/remote/worker/utils/setFrontComponentExecutionContext';
+import { type FrontComponentHostThread } from '@/types/FrontComponentHostThread';
+import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
+import { type WorkerExports } from '@/types/WorkerExports';
 
 installStylePropertyOnRemoteElements();
 patchRemoteElementSetAttribute();
@@ -39,188 +29,32 @@ exposeGlobals({
   __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
 });
 
-const fetchModuleSource = async (
-  url: string,
-  headers?: Record<string, string>,
-): Promise<string> => {
-  const response = await fetch(url, { headers });
+let hostThread: FrontComponentHostThread | null = null;
 
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch ${url}: ${response.status} ${response.statusText}`,
-    );
-  }
-
-  return response.text();
-};
-
-const createModuleBlobUrl = (source: string): string =>
-  URL.createObjectURL(new Blob([source], { type: 'application/javascript' }));
-
-const loadSdkModuleBlobUrls = async (
-  sdkClientUrls: { core: string; metadata: string },
-  headers?: Record<string, string>,
-): Promise<{ core: string; metadata: string }> => {
-  const [core, metadata] = await Promise.all([
-    fetchModuleSource(sdkClientUrls.core, headers).then(createModuleBlobUrl),
-    fetchModuleSource(sdkClientUrls.metadata, headers).then(
-      createModuleBlobUrl,
-    ),
-  ]);
-
-  return { core, metadata };
-};
-
-const SDK_IMPORT_SPECIFIERS = [
-  'twenty-client-sdk/core',
-  'twenty-client-sdk/metadata',
-] as const;
-
-const rewriteSdkImports = (
-  source: string,
-  sdkClientUrls: { core: string; metadata: string },
-): string => {
-  const specifierToBlobUrl: Record<string, string> = {
-    'twenty-client-sdk/core': sdkClientUrls.core,
-    'twenty-client-sdk/metadata': sdkClientUrls.metadata,
-  };
-
-  let rewritten = source;
-
-  for (const [specifier, blobUrl] of Object.entries(specifierToBlobUrl)) {
-    rewritten = rewritten
-      .split(`"${specifier}"`)
-      .join(`"${blobUrl}"`)
-      .split(`'${specifier}'`)
-      .join(`'${blobUrl}'`);
-  }
-
-  return rewritten;
-};
-
-let hostThread: ThreadMessagePort<
-  FrontComponentHostThreadExports,
-  WorkerExports
-> | null = null;
-
-const render: WorkerExports['render'] = async (
-  connection: RemoteConnection,
-  renderContext: HostToWorkerRenderContext,
-) => {
-  if (isDefined(hostThread)) {
-    installHostFetchProxy(
-      hostThread.imports.hostFetch,
-      renderContext.hostFetchOrigins ?? [],
-    );
-  }
-
-  const batchedConnection = new BatchingRemoteConnection(connection);
-  const root = document.createElement('remote-root') as RemoteRootElement;
-  const renderContainer = document.createElement('remote-fragment');
-  root.connect(batchedConnection);
-  root.append(renderContainer);
-  document.body.append(root);
-  installStyleBridge(root);
-
-  if (isDefined(renderContext.applicationVariables)) {
-    setWorkerEnv({
-      applicationVariables: JSON.stringify(renderContext.applicationVariables),
+const workerExports: WorkerExports = {
+  render: async (connection, renderContext) => {
+    await renderFrontComponent({
+      connection,
+      renderContext,
+      hostFetch: hostThread?.imports.hostFetch ?? null,
     });
-  }
-
-  // System variables are set after application variables so they cannot be overridden
-  if (isDefined(renderContext.apiUrl)) {
-    setWorkerEnv({
-      TWENTY_API_URL: renderContext.apiUrl,
-    });
-  }
-
-  if (isDefined(renderContext.functionsBaseUrl)) {
-    setWorkerEnv({
-      TWENTY_FUNCTIONS_URL: renderContext.functionsBaseUrl,
-    });
-  }
-
-  if (isDefined(renderContext.applicationAccessToken)) {
-    setWorkerEnv({
-      TWENTY_APP_ACCESS_TOKEN: renderContext.applicationAccessToken,
-    });
-  }
-
-  const authHeaders = isDefined(renderContext.applicationAccessToken)
-    ? { Authorization: `Bearer ${renderContext.applicationAccessToken}` }
-    : undefined;
-
-  const componentSource = await fetchModuleSource(
-    renderContext.componentUrl,
-    authHeaders,
-  );
-
-  const hasSdkImports =
-    isDefined(renderContext.sdkClientUrls) &&
-    SDK_IMPORT_SPECIFIERS.some((specifier) =>
-      componentSource.includes(specifier),
-    );
-
-  const sdkModuleBlobUrls = hasSdkImports
-    ? await loadSdkModuleBlobUrls(renderContext.sdkClientUrls!, authHeaders)
-    : null;
-
-  const finalSource = isDefined(sdkModuleBlobUrls)
-    ? rewriteSdkImports(componentSource, sdkModuleBlobUrls)
-    : componentSource;
-
-  const importUrl = createModuleBlobUrl(finalSource);
-
-  try {
-    /* @vite-ignore */
-    const componentModule = await import(importUrl);
-
-    componentModule.default(renderContainer);
-  } finally {
-    URL.revokeObjectURL(importUrl);
-
-    if (isDefined(sdkModuleBlobUrls)) {
-      URL.revokeObjectURL(sdkModuleBlobUrls.core);
-      URL.revokeObjectURL(sdkModuleBlobUrls.metadata);
-    }
-  }
-};
-
-const initializeHostCommunicationApi: WorkerExports['initializeHostCommunicationApi'] =
-  async () => {
+  },
+  initializeHostCommunicationApi: async () => {
     if (!isDefined(hostThread)) {
       return;
     }
 
-    const hostApi = hostThread.imports;
-
-    frontComponentHostCommunicationApi.navigate = hostApi.navigate;
-    frontComponentHostCommunicationApi.requestAccessTokenRefresh =
-      hostApi.requestAccessTokenRefresh;
-    frontComponentHostCommunicationApi.openSidePanelPage =
-      hostApi.openSidePanelPage;
-    frontComponentHostCommunicationApi.openCommandConfirmationModal =
-      createOpenCommandConfirmationModalAdapter(hostApi);
-    frontComponentHostCommunicationApi.unmountFrontComponent =
-      hostApi.unmountFrontComponent;
-    frontComponentHostCommunicationApi.enqueueSnackbar =
-      hostApi.enqueueSnackbar;
-    frontComponentHostCommunicationApi.closeSidePanel = hostApi.closeSidePanel;
-    frontComponentHostCommunicationApi.updateProgress = hostApi.updateProgress;
-    frontComponentHostCommunicationApi.copyToClipboard =
-      hostApi.copyToClipboard;
-  };
-
-const onConfirmationModalResult: WorkerExports['onConfirmationModalResult'] =
-  async (result) => {
+    Object.assign(
+      frontComponentHostCommunicationApi,
+      buildFrontComponentHostCommunicationApi(hostThread.imports),
+    );
+  },
+  updateContext: async (context) => {
+    setFrontComponentExecutionContext(context);
+  },
+  onConfirmationModalResult: async (result) => {
     await handleCommandConfirmationModalResult(result);
-  };
-
-const updateContext: WorkerExports['updateContext'] = async (
-  context: FrontComponentExecutionContext,
-) => {
-  setFrontComponentExecutionContext(context);
+  },
 };
 
 self.addEventListener('message', (event) => {
@@ -234,12 +68,7 @@ self.addEventListener('message', (event) => {
     FrontComponentHostThreadExports,
     WorkerExports
   >(transferredPort, {
-    exports: {
-      render,
-      initializeHostCommunicationApi,
-      onConfirmationModalResult,
-      updateContext,
-    },
+    exports: workerExports,
   });
 
   transferredPort.start();

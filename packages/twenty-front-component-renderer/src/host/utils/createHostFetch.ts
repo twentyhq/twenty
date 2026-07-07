@@ -1,4 +1,4 @@
-import { getURLSafely, isDefined } from 'twenty-shared/utils';
+import { CustomError, getURLSafely, isDefined } from 'twenty-shared/utils';
 
 import { type HostFetchFunction } from '@/types/HostFetchFunction';
 import { type HostFetchInput } from '@/types/HostFetchInput';
@@ -15,8 +15,9 @@ export const createHostFetch = (
     const requestOrigin = getURLSafely(input.url)?.origin;
 
     if (!isDefined(requestOrigin) || !allowedOriginSet.has(requestOrigin)) {
-      throw new Error(
+      throw new CustomError(
         `Front component host fetch blocked for disallowed origin: ${input.url}`,
+        'FRONT_COMPONENT_HOST_FETCH_BLOCKED_ORIGIN',
       );
     }
 

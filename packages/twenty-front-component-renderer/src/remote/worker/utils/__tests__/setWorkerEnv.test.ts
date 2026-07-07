@@ -22,6 +22,22 @@ describe('setWorkerEnv', () => {
     );
   });
 
+  it('should let later calls win when the same variable is set twice', () => {
+    setWorkerEnv({
+      TWENTY_API_URL: 'https://application-provided.example.com',
+    });
+    setWorkerEnv({ TWENTY_API_URL: 'https://system-provided.example.com' });
+
+    const processObject = (globalThis as Record<string, unknown>)[
+      'process'
+    ] as Record<string, unknown>;
+    const processEnvironment = processObject['env'] as Record<string, string>;
+
+    expect(processEnvironment['TWENTY_API_URL']).toBe(
+      'https://system-provided.example.com',
+    );
+  });
+
   it('should preserve existing process properties and environment values', () => {
     (globalThis as Record<string, unknown>)['process'] = {
       env: {

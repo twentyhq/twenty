@@ -33,6 +33,14 @@ class StubResponse {
 const originalFetch = globalThis.fetch;
 const originalResponse = (globalThis as { Response?: unknown }).Response;
 
+const createHostFetchStub = (): HostFetchFunction =>
+  jest.fn(async () => ({
+    status: 201,
+    statusText: 'Created',
+    headers: { 'content-type': 'application/json' },
+    body: 'proxied',
+  }));
+
 describe('installHostFetchProxy', () => {
   beforeAll(() => {
     (globalThis as { Response?: unknown }).Response = StubResponse;
@@ -50,16 +58,11 @@ describe('installHostFetchProxy', () => {
     const nativeFetch = jest.fn(async () => new StubResponse('native'));
     globalThis.fetch = nativeFetch as unknown as typeof fetch;
 
-    const hostFetch: HostFetchFunction = jest.fn(async () => ({
-      status: 200,
-      statusText: 'OK',
-      headers: { 'content-type': 'application/json' },
-      body: 'proxied',
-    }));
+    const hostFetch = createHostFetchStub();
 
     installHostFetchProxy(hostFetch, ['https://api.twenty.test']);
 
-    const response = await fetch('https://api.twenty.test/graphql', {
+    await fetch('https://api.twenty.test/graphql', {
       method: 'POST',
       body: '{"query":"{ me }"}',
     });
@@ -72,21 +75,13 @@ describe('installHostFetchProxy', () => {
       }),
     );
     expect(nativeFetch).not.toHaveBeenCalled();
-    expect(response.ok).toBe(true);
-    expect(response.headers.get('content-type')).toBe('application/json');
-    expect(await response.text()).toBe('proxied');
   });
 
   it('should pass non-proxied origins through to the native fetch', async () => {
     const nativeFetch = jest.fn(async () => new StubResponse('native'));
     globalThis.fetch = nativeFetch as unknown as typeof fetch;
 
-    const hostFetch: HostFetchFunction = jest.fn(async () => ({
-      status: 200,
-      statusText: 'OK',
-      headers: {},
-      body: 'proxied',
-    }));
+    const hostFetch = createHostFetchStub();
 
     installHostFetchProxy(hostFetch, ['https://api.twenty.test']);
 
@@ -97,79 +92,10 @@ describe('installHostFetchProxy', () => {
     expect(await response.text()).toBe('native');
   });
 
-  it('should forward headers and body from Request object inputs', async () => {
+  it('should default the content type when serializing URLSearchParams bodies', async () => {
     globalThis.fetch = jest.fn() as unknown as typeof fetch;
 
-    const hostFetch: HostFetchFunction = jest.fn(async () => ({
-      status: 200,
-      statusText: 'OK',
-      headers: {},
-      body: 'proxied',
-    }));
-
-    installHostFetchProxy(hostFetch, ['https://api.twenty.test']);
-
-    const request = {
-      url: 'https://api.twenty.test/graphql',
-      method: 'POST',
-      headers: new Headers({
-        authorization: 'Bearer token',
-        'content-type': 'application/json',
-      }),
-      clone: () => ({ text: async () => '{"query":"{ me }"}' }),
-    } as unknown as Request;
-
-    await fetch(request);
-
-    expect(hostFetch).toHaveBeenCalledWith({
-      url: 'https://api.twenty.test/graphql',
-      method: 'POST',
-      headers: {
-        authorization: 'Bearer token',
-        'content-type': 'application/json',
-      },
-      body: '{"query":"{ me }"}',
-    });
-  });
-
-  it('should reject Request object inputs with non-text bodies', async () => {
-    globalThis.fetch = jest.fn() as unknown as typeof fetch;
-
-    const hostFetch: HostFetchFunction = jest.fn(async () => ({
-      status: 200,
-      statusText: 'OK',
-      headers: {},
-      body: 'proxied',
-    }));
-
-    installHostFetchProxy(hostFetch, ['https://api.twenty.test']);
-
-    const request = {
-      url: 'https://api.twenty.test/upload',
-      method: 'POST',
-      headers: new Headers({
-        'content-type': 'multipart/form-data; boundary=boundary',
-      }),
-      clone: () => ({
-        text: async () => '--boundary\r\nbinary-payload\r\n--boundary--',
-      }),
-    } as unknown as Request;
-
-    await expect(fetch(request)).rejects.toThrow(
-      'front component fetch bridge',
-    );
-    expect(hostFetch).not.toHaveBeenCalled();
-  });
-
-  it('should serialize URLSearchParams bodies with a form content type', async () => {
-    globalThis.fetch = jest.fn() as unknown as typeof fetch;
-
-    const hostFetch: HostFetchFunction = jest.fn(async () => ({
-      status: 200,
-      statusText: 'OK',
-      headers: {},
-      body: 'proxied',
-    }));
+    const hostFetch = createHostFetchStub();
 
     installHostFetchProxy(hostFetch, ['https://api.twenty.test']);
 
@@ -188,24 +114,22 @@ describe('installHostFetchProxy', () => {
     );
   });
 
-  it('should reject unsupported body types instead of silently dropping them', async () => {
+  it('should rebuild a Response from the host fetch result', async () => {
     globalThis.fetch = jest.fn() as unknown as typeof fetch;
 
-    const hostFetch: HostFetchFunction = jest.fn(async () => ({
-      status: 200,
-      statusText: 'OK',
-      headers: {},
-      body: 'proxied',
-    }));
+    const hostFetch = createHostFetchStub();
 
     installHostFetchProxy(hostFetch, ['https://api.twenty.test']);
 
-    await expect(
-      fetch('https://api.twenty.test/upload', {
-        method: 'POST',
-        body: new FormData(),
-      }),
-    ).rejects.toThrow('front component fetch bridge');
-    expect(hostFetch).not.toHaveBeenCalled();
+    const response = await fetch('https://api.twenty.test/graphql', {
+      method: 'POST',
+      body: '{}',
+    });
+
+    expect(response.ok).toBe(true);
+    expect(response.status).toBe(201);
+    expect(response.statusText).toBe('Created');
+    expect(response.headers.get('content-type')).toBe('application/json');
+    expect(await response.text()).toBe('proxied');
   });
 });

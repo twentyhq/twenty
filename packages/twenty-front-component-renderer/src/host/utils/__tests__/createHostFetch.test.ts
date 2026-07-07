@@ -1,3 +1,5 @@
+import { CustomError } from 'twenty-shared/utils';
+
 import { createHostFetch } from '../createHostFetch';
 
 const originalFetch = globalThis.fetch;
@@ -24,7 +26,35 @@ describe('createHostFetch', () => {
     await expect(hostFetch({ url: 'https://evil.test/steal' })).rejects.toThrow(
       'disallowed origin',
     );
+    await expect(
+      hostFetch({ url: 'https://evil.test/steal' }),
+    ).rejects.toMatchObject({
+      code: 'FRONT_COMPONENT_HOST_FETCH_BLOCKED_ORIGIN',
+    });
+    await expect(
+      hostFetch({ url: 'https://evil.test/steal' }),
+    ).rejects.toBeInstanceOf(CustomError);
     expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it('should uppercase lowercase methods and default to GET', async () => {
+    const fetchSpy = jest.fn(async () => createFakeResponse());
+    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+
+    const hostFetch = createHostFetch(['https://api.twenty.test']);
+    await hostFetch({ url: 'https://api.twenty.test/graphql', method: 'post' });
+    await hostFetch({ url: 'https://api.twenty.test/graphql' });
+
+    expect(fetchSpy).toHaveBeenNthCalledWith(
+      1,
+      'https://api.twenty.test/graphql',
+      expect.objectContaining({ method: 'POST' }),
+    );
+    expect(fetchSpy).toHaveBeenNthCalledWith(
+      2,
+      'https://api.twenty.test/graphql',
+      expect.objectContaining({ method: 'GET' }),
+    );
   });
 
   it('should forward allowlisted requests without ambient credentials', async () => {
@@ -83,11 +113,16 @@ describe('createHostFetch', () => {
       [componentUrl],
     );
     await hostFetch({ url: componentUrl });
+    await hostFetch({ url: componentUrl, method: 'HEAD' });
     await hostFetch({ url: componentUrl, method: 'POST' });
 
     expect(fetchSpy).toHaveBeenCalledWith(
       componentUrl,
       expect.objectContaining({ method: 'GET', redirect: 'follow' }),
+    );
+    expect(fetchSpy).toHaveBeenCalledWith(
+      componentUrl,
+      expect.objectContaining({ method: 'HEAD', redirect: 'follow' }),
     );
     expect(fetchSpy).toHaveBeenCalledWith(
       componentUrl,

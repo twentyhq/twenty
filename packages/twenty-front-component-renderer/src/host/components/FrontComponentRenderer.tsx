@@ -1,3 +1,4 @@
+import { FrontComponentConfirmationModalResultEffect } from '@/remote/components/FrontComponentConfirmationModalResultEffect';
 import { FrontComponentErrorEffect } from '@/remote/components/FrontComponentErrorEffect';
 import { FrontComponentInitializeHostCommunicationApiEffect } from '@/remote/components/FrontComponentInitializeHostCommunicationApiEffect';
 import { FrontComponentUpdateContextEffect } from '@/remote/components/FrontComponentUpdateContextEffect';
@@ -62,7 +63,6 @@ export const FrontComponentRenderer = ({
         functionsBaseUrl={functionsBaseUrl}
         sdkClientUrls={sdkClientUrls}
         applicationVariables={applicationVariables}
-        frontComponentId={executionContext.frontComponentId}
         setReceiver={setReceiver}
         setThread={setThread}
         setError={setError}
@@ -78,7 +78,6 @@ export const FrontComponentRenderer = ({
     functionsBaseUrl,
     sdkClientUrls,
     applicationVariables,
-    executionContext.frontComponentId,
   ]);
 
   return (
@@ -123,6 +122,11 @@ export const FrontComponentRenderer = ({
             onExecutionContextInitialized={() =>
               setIsExecutionContextInitialized(true)
             }
+          />
+          <FrontComponentConfirmationModalResultEffect
+            thread={thread}
+            frontComponentId={executionContext.frontComponentId}
+            onError={setError}
           />
         </>
       )}
