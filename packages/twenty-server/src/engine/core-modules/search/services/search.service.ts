@@ -43,6 +43,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getEffectiveImageIdentifierFieldMetadataId } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-image-identifier-field-metadata-id.util';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -563,12 +564,8 @@ export class SearchService {
     flatObjectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ): FlatFieldMetadata | undefined {
-    const { overrides } = flatObjectMetadata;
-
     const imageIdentifierFieldMetadataId =
-      isDefined(overrides) && 'imageIdentifierFieldMetadataId' in overrides
-        ? overrides.imageIdentifierFieldMetadataId
-        : flatObjectMetadata.imageIdentifierFieldMetadataId;
+      getEffectiveImageIdentifierFieldMetadataId(flatObjectMetadata);
 
     if (!isDefined(imageIdentifierFieldMetadataId)) {
       return undefined;
