@@ -57,7 +57,11 @@ const runSandboxProbe = (
   }
 
   try {
-    report.cookiesDenied = document.cookie === '';
+    document.cookie = 'front_component_sandbox_isolation_probe=1';
+    report.cookiesDenied = !document.cookie.includes(
+      'front_component_sandbox_isolation_probe=1',
+    );
+    document.cookie = 'front_component_sandbox_isolation_probe=1;max-age=0';
   } catch {
     report.cookiesDenied = true;
   }
