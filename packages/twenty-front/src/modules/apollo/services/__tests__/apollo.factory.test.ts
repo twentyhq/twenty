@@ -10,7 +10,33 @@ import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { WorkspaceActivationStatus } from '~/generated-metadata/graphql';
 
+const mockCaptureException = jest.fn();
+const mockCaptureMessage = jest.fn();
+const mockScopeSetContext = jest.fn();
+const mockScopeSetExtra = jest.fn();
+const mockScopeSetFingerprint = jest.fn();
+const mockScopeSetLevel = jest.fn();
+
 enableFetchMocks();
+
+jest.mock('@sentry/react', () => ({
+  captureException: mockCaptureException,
+  captureMessage: mockCaptureMessage,
+  withScope: (
+    cb: (scope: {
+      setContext: jest.Mock;
+      setExtra: jest.Mock;
+      setFingerprint: jest.Mock;
+      setLevel: jest.Mock;
+    }) => void,
+  ) =>
+    cb({
+      setContext: mockScopeSetContext,
+      setExtra: mockScopeSetExtra,
+      setFingerprint: mockScopeSetFingerprint,
+      setLevel: mockScopeSetLevel,
+    }),
+}));
 
 jest.mock('@/auth/services/AuthService', () => {
   const initialAuthService = jest.requireActual('@/auth/services/AuthService');
@@ -131,6 +157,10 @@ const makeRequest = async () => {
 };
 
 describe('ApolloFactory', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should create an instance of ApolloFactory', () => {
     const options = createMockOptions();
     const apolloFactory = new ApolloFactory(options);
@@ -189,6 +219,33 @@ describe('ApolloFactory', () => {
         'Error message not found.',
       );
       expect(mockOnError).toHaveBeenCalledWith(errors);
+    }
+  }, 10000);
+
+  it('should report GRAPHQL_VALIDATION_FAILED as warning monitoring events', async () => {
+    const errors = [
+      {
+        message: 'Validation failed',
+        extensions: {
+          code: 'GRAPHQL_VALIDATION_FAILED',
+        },
+      },
+    ];
+
+    fetchMock.mockResponse(() =>
+      Promise.resolve({
+        body: JSON.stringify({
+          data: {},
+          errors,
+        }),
+      }),
+    );
+
+    try {
+      await makeRequest();
+    } catch {
+      expect(mockCaptureMessage).toHaveBeenCalledWith('Validation failed');
+      expect(mockCaptureException).not.toHaveBeenCalled();
     }
   }, 10000);
 

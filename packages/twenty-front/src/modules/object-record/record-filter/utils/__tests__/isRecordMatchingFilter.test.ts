@@ -225,6 +225,57 @@ describe('isRecordMatchingFilter', () => {
     });
   });
 
+  describe('Actor Filters', () => {
+    it('matches actor source filter when actor value exists', () => {
+      const filter = {
+        createdBy: {
+          source: {
+            eq: 'MANUAL',
+          },
+        },
+      };
+
+      const matchingCompany = {
+        ...companiesMock[0],
+        createdBy: {
+          ...companiesMock[0].createdBy,
+          source: 'MANUAL',
+        },
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record: matchingCompany,
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(true);
+    });
+
+    it('returns false for actor source filter when actor value is missing', () => {
+      const filter = {
+        createdBy: {
+          source: {
+            eq: 'MANUAL',
+          },
+        },
+      };
+
+      const companyWithMissingActor = {
+        ...companiesMock[0],
+        createdBy: null,
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyWithMissingActor,
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+  });
+
   describe('Complex And/Or/Not Nesting', () => {
     it('matches record with a combination of and + or filters', () => {
       const companyMockInFilter = {

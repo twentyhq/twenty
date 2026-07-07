@@ -46,6 +46,43 @@ let renewalPromise: Promise<boolean> | null = null;
 const TOKEN_RENEWAL_MAX_RETRIES = 3;
 const TOKEN_RENEWAL_RETRY_DELAY_MS = 1000;
 
+type GraphQLErrorMonitoringLevel = 'warning' | 'error';
+
+const isInvalidArgsFilterError = (graphQLError: GraphQLFormattedError) =>
+  graphQLError.extensions?.subCode === 'INVALID_ARGS_FILTER';
+
+const getGraphQLOperationMonitoringVariables = (
+  operation: ApolloLink.Operation,
+) => {
+  const operationVariables = operation.variables as
+    | Record<string, unknown>
+    | undefined;
+
+  if (!isDefined(operationVariables)) {
+    return;
+  }
+
+  const monitoringVariables: Record<string, unknown> = {};
+
+  if (isDefined(operationVariables.filter)) {
+    monitoringVariables.filter = operationVariables.filter;
+  }
+
+  if (isDefined(operationVariables.orderBy)) {
+    monitoringVariables.orderBy = operationVariables.orderBy;
+  }
+
+  if (isDefined(operationVariables.viewId)) {
+    monitoringVariables.viewId = operationVariables.viewId;
+  }
+
+  if (isEmpty(monitoringVariables)) {
+    return;
+  }
+
+  return monitoringVariables;
+};
+
 export interface Options {
   uri: string;
   cache: ApolloClient.Options['cache'];
@@ -212,9 +249,11 @@ export class ApolloFactory implements ApolloManager {
       const sendToSentry = ({
         graphQLError,
         operation,
+        level = 'error',
       }: {
         graphQLError: GraphQLFormattedError;
         operation: ApolloLink.Operation;
+        level?: GraphQLErrorMonitoringLevel;
       }) => {
         if (isDebugMode === true) {
           logDebug(
@@ -226,7 +265,7 @@ export class ApolloFactory implements ApolloManager {
           );
         }
         import('@sentry/react')
-          .then(({ captureException, withScope }) => {
+          .then(({ captureException, captureMessage, withScope }) => {
             withScope((scope) => {
               const error = new Error(graphQLError.message);
 
@@ -251,8 +290,25 @@ export class ApolloFactory implements ApolloManager {
                 }
               }
 
+              const operationMonitoringVariables =
+                getGraphQLOperationMonitoringVariables(operation);
+
+              if (isDefined(operationMonitoringVariables)) {
+                scope.setContext(
+                  'graphql_operation_variables',
+                  operationMonitoringVariables,
+                );
+              }
+
+              scope.setLevel(level);
+
               if (!isEmpty(fingerPrint)) {
                 scope.setFingerprint(fingerPrint);
+              }
+
+              if (level === 'warning') {
+                captureMessage(graphQLError.message);
+                return;
               }
 
               captureException(error); // Sentry expects a JS error
@@ -301,14 +357,28 @@ export class ApolloFactory implements ApolloManager {
                 if (graphQLError.extensions?.isExpected === true) {
                   return;
                 }
-                sendToSentry({ graphQLError, operation });
+
+                sendToSentry({
+                  graphQLError,
+                  operation,
+                  level: isInvalidArgsFilterError(graphQLError)
+                    ? 'warning'
+                    : 'error',
+                });
                 return;
               }
               case 'INTERNAL_SERVER_ERROR': {
                 return; // already caught in BE
               }
               default:
-                sendToSentry({ graphQLError, operation });
+                sendToSentry({
+                  graphQLError,
+                  operation,
+                  level:
+                    graphQLError.extensions?.code === 'GRAPHQL_VALIDATION_FAILED'
+                      ? 'warning'
+                      : 'error',
+                });
             }
           }
         } else if (ServerError.is(error)) {
