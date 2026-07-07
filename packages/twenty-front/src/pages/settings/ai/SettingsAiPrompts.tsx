@@ -52,6 +52,16 @@ export const SettingsAiPrompts = () => {
       parts.push(`**${t`Timezone`}:** ${currentWorkspaceMember.timeZone}`);
     }
 
+    const currentDate = new Intl.DateTimeFormat('en-US', {
+      timeZone: currentWorkspaceMember.timeZone ?? undefined,
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }).format(new Date());
+
+    parts.push(`**${t`Current date`}:** ${currentDate}`);
+
     return parts.join('\n\n');
   };
 

@@ -16,6 +16,7 @@ import {
   type UserContext,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
+import { getValidTimeZoneOrUndefined } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-valid-time-zone-or-undefined.util';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
@@ -186,10 +187,22 @@ ${instructions}`;
       parts.push(`Timezone: ${userContext.timezone}`);
     }
 
+    parts.push(`Current date: ${this.formatCurrentDate(userContext.timezone)}`);
+
     return `
 ## User Context
 
 ${parts.join('\n')}`;
+  }
+
+  private formatCurrentDate(timezone: string | null): string {
+    return new Intl.DateTimeFormat('en-US', {
+      timeZone: getValidTimeZoneOrUndefined(timezone),
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }).format(new Date());
   }
 
   buildUploadedFilesSection(

@@ -603,7 +603,7 @@ export class AgentChatStreamingService {
             return part;
           }),
         ),
-        createdAt: message.createdAt,
+        metadata: { createdAt: message.createdAt.toISOString() },
       })),
     );
   }
