@@ -87,9 +87,9 @@ const isMorphOrRelationFieldMetadataType = (type: FieldMetadataType) =>
   type === FieldMetadataType.RELATION ||
   type === FieldMetadataType.MORPH_RELATION;
 
-@RegisteredWorkspaceCommand('2.20.0', 1783100000000)
+@RegisteredWorkspaceCommand('2.19.0', 1783100000000)
 @Command({
-  name: 'upgrade:2-20:backfill-deterministic-field-universal-identifiers',
+  name: 'upgrade:2-19:backfill-deterministic-field-universal-identifiers',
   description:
     'Recompute the universal identifier of auto-provisioned field metadata (system fields and default relation fields) to the deterministic getFieldUniversalIdentifier derivation.',
 })
