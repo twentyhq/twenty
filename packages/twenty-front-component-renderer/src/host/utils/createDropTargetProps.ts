@@ -4,9 +4,7 @@ type PreventableEvent = { preventDefault: () => void };
 
 type RemoteEventHandler = (event: PreventableEvent) => void;
 
-const asRemoteEventHandler = (
-  value: unknown,
-): RemoteEventHandler | undefined =>
+const asRemoteEventHandler = (value: unknown): RemoteEventHandler | undefined =>
   isFunction(value) ? (value as RemoteEventHandler) : undefined;
 
 export const createDropTargetProps = (

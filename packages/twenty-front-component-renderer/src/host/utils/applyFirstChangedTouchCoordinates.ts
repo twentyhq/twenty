@@ -21,7 +21,9 @@ export const applyFirstChangedTouchCoordinates = (
     return;
   }
 
-  const firstChangedTouch = (domEvent.changedTouches as Record<number, unknown>)[0];
+  const firstChangedTouch = (
+    domEvent.changedTouches as Record<number, unknown>
+  )[0];
 
   if (!isObject(firstChangedTouch)) {
     return;
