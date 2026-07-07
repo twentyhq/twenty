@@ -1,10 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { containsSdkImportSpecifier } from '@/remote/worker/utils/containsSdkImportSpecifier';
+import { containsSdkClientImportSpecifier } from '@/remote/worker/utils/containsSdkClientImportSpecifier';
 import { createJavaScriptModuleBlobUrl } from '@/remote/worker/utils/createJavaScriptModuleBlobUrl';
-import { fetchModuleSourceText } from '@/remote/worker/utils/fetchModuleSourceText';
-import { loadSdkModuleBlobUrls } from '@/remote/worker/utils/loadSdkModuleBlobUrls';
-import { rewriteSdkImportsToBlobUrls } from '@/remote/worker/utils/rewriteSdkImportsToBlobUrls';
+import { fetchJavaScriptModuleSourceText } from '@/remote/worker/utils/fetchJavaScriptModuleSourceText';
+import { fetchSdkClientModulesAsBlobUrls } from '@/remote/worker/utils/fetchSdkClientModulesAsBlobUrls';
+import { rewriteSdkClientImportsToBlobUrls } from '@/remote/worker/utils/rewriteSdkClientImportsToBlobUrls';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 
 type LoadFrontComponentModuleInput = {
@@ -26,18 +26,22 @@ export const loadFrontComponentModule = async ({
     ? { Authorization: `Bearer ${applicationAccessToken}` }
     : undefined;
 
-  const componentSource = await fetchModuleSourceText(
+  const componentSource = await fetchJavaScriptModuleSourceText(
     componentUrl,
     authorizationHeaders,
   );
 
   const sdkModuleBlobUrls =
-    isDefined(sdkClientUrls) && containsSdkImportSpecifier(componentSource)
-      ? await loadSdkModuleBlobUrls(sdkClientUrls, authorizationHeaders)
+    isDefined(sdkClientUrls) &&
+    containsSdkClientImportSpecifier(componentSource)
+      ? await fetchSdkClientModulesAsBlobUrls(
+          sdkClientUrls,
+          authorizationHeaders,
+        )
       : null;
 
   const componentModuleSource = isDefined(sdkModuleBlobUrls)
-    ? rewriteSdkImportsToBlobUrls(componentSource, sdkModuleBlobUrls)
+    ? rewriteSdkClientImportsToBlobUrls(componentSource, sdkModuleBlobUrls)
     : componentSource;
 
   const componentModuleBlobUrl = createJavaScriptModuleBlobUrl(

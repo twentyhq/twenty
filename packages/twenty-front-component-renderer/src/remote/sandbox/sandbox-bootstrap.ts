@@ -3,14 +3,16 @@ import { isDefined } from 'twenty-shared/utils';
 import { FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE } from '@/remote/sandbox/constants/FrontComponentSandboxMessageType';
 import { type FrontComponentSandboxMessage } from '@/remote/sandbox/types/FrontComponentSandboxMessage';
 import { parseFrontComponentSandboxMessage } from '@/remote/sandbox/utils/parseFrontComponentSandboxMessage';
-import { createRemoteWorker } from '@/remote/worker/utils/createRemoteWorker';
+import { createFrontComponentRemoteWorker } from '@/remote/worker/utils/createFrontComponentRemoteWorker';
 
 const WORKER_SPAWN_FAILURE_MESSAGE =
   'Failed to spawn the front component worker';
 
 let worker: Worker | null = null;
 
-const postMessageToHost = (message: FrontComponentSandboxMessage): void => {
+const postSandboxMessageToHostWindow = (
+  message: FrontComponentSandboxMessage,
+): void => {
   window.parent.postMessage(message, '*');
 };
 
@@ -33,9 +35,9 @@ window.addEventListener('message', (event) => {
   let spawnedWorker: Worker;
 
   try {
-    spawnedWorker = createRemoteWorker();
+    spawnedWorker = createFrontComponentRemoteWorker();
   } catch (error) {
-    postMessageToHost({
+    postSandboxMessageToHostWindow({
       type: FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.ERROR,
       message:
         error instanceof Error ? error.message : WORKER_SPAWN_FAILURE_MESSAGE,
@@ -47,7 +49,7 @@ window.addEventListener('message', (event) => {
   worker = spawnedWorker;
 
   spawnedWorker.addEventListener('error', (errorEvent) => {
-    postMessageToHost({
+    postSandboxMessageToHostWindow({
       type: FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.ERROR,
       message: errorEvent.message,
       filename: errorEvent.filename,
@@ -64,4 +66,6 @@ window.addEventListener('message', (event) => {
   );
 });
 
-postMessageToHost({ type: FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.READY });
+postSandboxMessageToHostWindow({
+  type: FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.READY,
+});

@@ -1,4 +1,4 @@
-import { type SDK_IMPORT_SPECIFIERS } from '@/remote/worker/constants/SdkImportSpecifiers';
+import { type SDK_CLIENT_IMPORT_SPECIFIERS } from '@/remote/worker/constants/SdkClientImportSpecifiers';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 
 const escapeRegExpToken = (value: string): string =>
@@ -10,12 +10,12 @@ const buildImportContextPattern = (specifier: string): RegExp =>
     'g',
   );
 
-export const rewriteSdkImportsToBlobUrls = (
+export const rewriteSdkClientImportsToBlobUrls = (
   source: string,
   sdkModuleBlobUrls: SdkClientUrls,
 ): string => {
   const specifierToBlobUrl: Record<
-    (typeof SDK_IMPORT_SPECIFIERS)[number],
+    (typeof SDK_CLIENT_IMPORT_SPECIFIERS)[number],
     string
   > = {
     'twenty-client-sdk/core': sdkModuleBlobUrls.core,

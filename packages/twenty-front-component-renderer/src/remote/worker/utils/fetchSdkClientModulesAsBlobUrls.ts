@@ -1,16 +1,16 @@
 import { createJavaScriptModuleBlobUrl } from '@/remote/worker/utils/createJavaScriptModuleBlobUrl';
-import { fetchModuleSourceText } from '@/remote/worker/utils/fetchModuleSourceText';
+import { fetchJavaScriptModuleSourceText } from '@/remote/worker/utils/fetchJavaScriptModuleSourceText';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 
-export const loadSdkModuleBlobUrls = async (
+export const fetchSdkClientModulesAsBlobUrls = async (
   sdkClientUrls: SdkClientUrls,
   headers?: Record<string, string>,
 ): Promise<SdkClientUrls> => {
   const [coreResult, metadataResult] = await Promise.allSettled([
-    fetchModuleSourceText(sdkClientUrls.core, headers).then(
+    fetchJavaScriptModuleSourceText(sdkClientUrls.core, headers).then(
       createJavaScriptModuleBlobUrl,
     ),
-    fetchModuleSourceText(sdkClientUrls.metadata, headers).then(
+    fetchJavaScriptModuleSourceText(sdkClientUrls.metadata, headers).then(
       createJavaScriptModuleBlobUrl,
     ),
   ]);

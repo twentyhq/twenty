@@ -3,9 +3,9 @@ import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildHostFetchPolicy } from '@/host/utils/buildHostFetchPolicy';
+import { buildHostFetchPolicyFromFrontComponentUrls } from '@/host/utils/buildHostFetchPolicyFromFrontComponentUrls';
 import { createFrontComponentHostThread } from '@/host/utils/createFrontComponentHostThread';
-import { createHostFetch } from '@/host/utils/createHostFetch';
+import { createHostFetchEnforcingPolicy } from '@/host/utils/createHostFetchEnforcingPolicy';
 import { FRONT_COMPONENT_SANDBOX_DOCUMENT } from '@/remote/sandbox/generated/frontComponentSandboxDocument';
 import { createFrontComponentSandboxIframe } from '@/remote/sandbox/utils/createFrontComponentSandboxIframe';
 import { createFrontComponentSandboxMessageHandler } from '@/remote/sandbox/utils/createFrontComponentSandboxMessageHandler';
@@ -51,17 +51,14 @@ export const FrontComponentWorkerEffect = ({
 
     const channel = new MessageChannel();
 
-    const hostFetchPolicy = buildHostFetchPolicy({
+    const hostFetchPolicy = buildHostFetchPolicyFromFrontComponentUrls({
       componentUrl,
       apiUrl,
       functionsBaseUrl,
       sdkClientUrls,
     });
 
-    const hostFetch = createHostFetch(
-      hostFetchPolicy.allowedOrigins,
-      hostFetchPolicy.fileStorageRedirectableUrls,
-    );
+    const hostFetch = createHostFetchEnforcingPolicy(hostFetchPolicy);
 
     const thread = createFrontComponentHostThread(channel.port1, hostFetch);
 

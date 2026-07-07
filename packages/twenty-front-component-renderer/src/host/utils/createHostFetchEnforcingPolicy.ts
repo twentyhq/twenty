@@ -2,14 +2,16 @@ import { CustomError, getURLSafely, isDefined } from 'twenty-shared/utils';
 
 import { type HostFetchFunction } from '@/types/HostFetchFunction';
 import { type HostFetchInput } from '@/types/HostFetchInput';
+import { type HostFetchPolicy } from '@/types/HostFetchPolicy';
 import { type HostFetchResult } from '@/types/HostFetchResult';
 
-export const createHostFetch = (
-  allowedOrigins: string[],
-  fileStorageRedirectableUrls: string[] = [],
+export const createHostFetchEnforcingPolicy = (
+  hostFetchPolicy: HostFetchPolicy,
 ): HostFetchFunction => {
-  const allowedOriginSet = new Set(allowedOrigins);
-  const fileStorageRedirectableUrlSet = new Set(fileStorageRedirectableUrls);
+  const allowedOriginSet = new Set(hostFetchPolicy.allowedOrigins);
+  const fileStorageRedirectableUrlSet = new Set(
+    hostFetchPolicy.fileStorageRedirectableUrls,
+  );
 
   return async (input: HostFetchInput): Promise<HostFetchResult> => {
     const requestOrigin = getURLSafely(input.url)?.origin;

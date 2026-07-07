@@ -1,10 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { getProxiedBody } from '@/remote/worker/utils/getProxiedBody';
-import { getProxiedHeaders } from '@/remote/worker/utils/getProxiedHeaders';
-import { getRequestMethod } from '@/remote/worker/utils/getRequestMethod';
-import { getRequestUrl } from '@/remote/worker/utils/getRequestUrl';
-import { isProxiedOrigin } from '@/remote/worker/utils/isProxiedOrigin';
+import { getTextBodyFromFetchRequestArguments } from '@/remote/worker/utils/getTextBodyFromFetchRequestArguments';
+import { getHeadersFromFetchRequestArguments } from '@/remote/worker/utils/getHeadersFromFetchRequestArguments';
+import { getMethodFromFetchRequestArguments } from '@/remote/worker/utils/getMethodFromFetchRequestArguments';
+import { getUrlFromFetchRequestInput } from '@/remote/worker/utils/getUrlFromFetchRequestInput';
+import { isUrlFromProxiedOrigin } from '@/remote/worker/utils/isUrlFromProxiedOrigin';
 import { type HostFetchFunction } from '@/types/HostFetchFunction';
 
 const URL_SEARCH_PARAMS_CONTENT_TYPE =
@@ -20,13 +20,13 @@ export const installHostFetchProxy = (
     input: RequestInfo | URL,
     init?: RequestInit,
   ): Promise<Response> => {
-    const url = getRequestUrl(input);
+    const url = getUrlFromFetchRequestInput(input);
 
-    if (!isProxiedOrigin(url, proxiedOrigins)) {
+    if (!isUrlFromProxiedOrigin(url, proxiedOrigins)) {
       return nativeFetch(input, init);
     }
 
-    const headers = getProxiedHeaders(input, init);
+    const headers = getHeadersFromFetchRequestArguments(input, init);
 
     if (
       init?.body instanceof URLSearchParams &&
@@ -37,9 +37,9 @@ export const installHostFetchProxy = (
 
     const result = await hostFetch({
       url,
-      method: getRequestMethod(input, init),
+      method: getMethodFromFetchRequestArguments(input, init),
       headers,
-      body: await getProxiedBody(input, init),
+      body: await getTextBodyFromFetchRequestArguments(input, init),
     });
 
     return new Response(result.body, {

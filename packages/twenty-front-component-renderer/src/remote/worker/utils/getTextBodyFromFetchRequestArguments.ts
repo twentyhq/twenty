@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { isRequestInput } from '@/remote/worker/utils/isRequestInput';
+import { isRequestObject } from '@/remote/worker/utils/isRequestObject';
 import { isTextContentType } from '@/remote/worker/utils/isTextContentType';
 
 const getRequestInputBody = async (
@@ -23,14 +23,14 @@ const getRequestInputBody = async (
   return requestBody;
 };
 
-export const getProxiedBody = async (
+export const getTextBodyFromFetchRequestArguments = async (
   input: RequestInfo | URL,
   init: RequestInit | undefined,
 ): Promise<string | undefined> => {
   const initBody = init?.body;
 
   if (!isDefined(initBody)) {
-    if (isRequestInput(input)) {
+    if (isRequestObject(input)) {
       return getRequestInputBody(input);
     }
 

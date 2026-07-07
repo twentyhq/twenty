@@ -1,4 +1,4 @@
-import { getProxiedBody } from '../getProxiedBody';
+import { getTextBodyFromFetchRequestArguments } from '../getTextBodyFromFetchRequestArguments';
 
 const createRequestInput = ({
   headers,
@@ -13,16 +13,18 @@ const createRequestInput = ({
     clone: () => ({ text: async () => body ?? '' }),
   }) as unknown as Request;
 
-describe('getProxiedBody', () => {
+describe('getTextBodyFromFetchRequestArguments', () => {
   it('should return the init body when it is a string', async () => {
     await expect(
-      getProxiedBody('https://api.twenty.test', { body: '{"query":"{ me }"}' }),
+      getTextBodyFromFetchRequestArguments('https://api.twenty.test', {
+        body: '{"query":"{ me }"}',
+      }),
     ).resolves.toBe('{"query":"{ me }"}');
   });
 
   it('should stringify URLSearchParams init bodies', async () => {
     await expect(
-      getProxiedBody('https://api.twenty.test', {
+      getTextBodyFromFetchRequestArguments('https://api.twenty.test', {
         body: new URLSearchParams({ event: 'clicked' }),
       }),
     ).resolves.toBe('event=clicked');
@@ -30,7 +32,10 @@ describe('getProxiedBody', () => {
 
   it('should return undefined when no body is provided', async () => {
     await expect(
-      getProxiedBody('https://api.twenty.test', undefined),
+      getTextBodyFromFetchRequestArguments(
+        'https://api.twenty.test',
+        undefined,
+      ),
     ).resolves.toBeUndefined();
   });
 
@@ -40,15 +45,17 @@ describe('getProxiedBody', () => {
       body: '{"query":"{ me }"}',
     });
 
-    await expect(getProxiedBody(request, undefined)).resolves.toBe(
-      '{"query":"{ me }"}',
-    );
+    await expect(
+      getTextBodyFromFetchRequestArguments(request, undefined),
+    ).resolves.toBe('{"query":"{ me }"}');
   });
 
   it('should return undefined when the Request body is empty', async () => {
     const request = createRequestInput({});
 
-    await expect(getProxiedBody(request, undefined)).resolves.toBeUndefined();
+    await expect(
+      getTextBodyFromFetchRequestArguments(request, undefined),
+    ).resolves.toBeUndefined();
   });
 
   it('should reject with a TypeError when the Request content type is not text', async () => {
@@ -57,23 +64,27 @@ describe('getProxiedBody', () => {
       body: '--boundary\r\nbinary-payload\r\n--boundary--',
     });
 
-    await expect(getProxiedBody(request, undefined)).rejects.toBeInstanceOf(
-      TypeError,
-    );
-    await expect(getProxiedBody(request, undefined)).rejects.toThrow(
-      'multipart/form-data',
-    );
+    await expect(
+      getTextBodyFromFetchRequestArguments(request, undefined),
+    ).rejects.toBeInstanceOf(TypeError);
+    await expect(
+      getTextBodyFromFetchRequestArguments(request, undefined),
+    ).rejects.toThrow('multipart/form-data');
   });
 
   it('should reject with a TypeError when the init body is FormData', async () => {
     await expect(
-      getProxiedBody('https://api.twenty.test', { body: new FormData() }),
+      getTextBodyFromFetchRequestArguments('https://api.twenty.test', {
+        body: new FormData(),
+      }),
     ).rejects.toBeInstanceOf(TypeError);
   });
 
   it('should reject with a TypeError when the init body is a Blob', async () => {
     await expect(
-      getProxiedBody('https://api.twenty.test', { body: new Blob(['x']) }),
+      getTextBodyFromFetchRequestArguments('https://api.twenty.test', {
+        body: new Blob(['x']),
+      }),
     ).rejects.toBeInstanceOf(TypeError);
   });
 });

@@ -1,4 +1,4 @@
-import { loadSdkModuleBlobUrls } from '../loadSdkModuleBlobUrls';
+import { fetchSdkClientModulesAsBlobUrls } from '../fetchSdkClientModulesAsBlobUrls';
 
 const originalFetch = globalThis.fetch;
 const originalCreateObjectUrl = URL.createObjectURL;
@@ -9,7 +9,7 @@ const sdkClientUrls = {
   metadata: 'https://api.twenty.test/sdk-client/application-id/metadata',
 };
 
-describe('loadSdkModuleBlobUrls', () => {
+describe('fetchSdkClientModulesAsBlobUrls', () => {
   afterEach(() => {
     globalThis.fetch = originalFetch;
     URL.createObjectURL = originalCreateObjectUrl;
@@ -27,7 +27,9 @@ describe('loadSdkModuleBlobUrls', () => {
       .mockReturnValueOnce('blob:core-url')
       .mockReturnValueOnce('blob:metadata-url');
 
-    await expect(loadSdkModuleBlobUrls(sdkClientUrls)).resolves.toEqual({
+    await expect(
+      fetchSdkClientModulesAsBlobUrls(sdkClientUrls),
+    ).resolves.toEqual({
       core: 'blob:core-url',
       metadata: 'blob:metadata-url',
     });
@@ -47,7 +49,7 @@ describe('loadSdkModuleBlobUrls', () => {
     globalThis.fetch = fetchSpy as unknown as typeof fetch;
     URL.createObjectURL = jest.fn(() => 'blob:mock-url');
 
-    await loadSdkModuleBlobUrls(sdkClientUrls, {
+    await fetchSdkClientModulesAsBlobUrls(sdkClientUrls, {
       Authorization: 'Bearer token',
     });
 
@@ -69,7 +71,9 @@ describe('loadSdkModuleBlobUrls', () => {
     URL.createObjectURL = jest.fn(() => 'blob:mock-url');
     URL.revokeObjectURL = jest.fn();
 
-    await expect(loadSdkModuleBlobUrls(sdkClientUrls)).rejects.toMatchObject({
+    await expect(
+      fetchSdkClientModulesAsBlobUrls(sdkClientUrls),
+    ).rejects.toMatchObject({
       code: 'FRONT_COMPONENT_MODULE_FETCH_FAILED',
     });
   });
@@ -85,7 +89,9 @@ describe('loadSdkModuleBlobUrls', () => {
     const revokeObjectUrlSpy = jest.fn();
     URL.revokeObjectURL = revokeObjectUrlSpy;
 
-    await expect(loadSdkModuleBlobUrls(sdkClientUrls)).rejects.toMatchObject({
+    await expect(
+      fetchSdkClientModulesAsBlobUrls(sdkClientUrls),
+    ).rejects.toMatchObject({
       code: 'FRONT_COMPONENT_MODULE_FETCH_FAILED',
     });
     expect(revokeObjectUrlSpy).toHaveBeenCalledWith('blob:core-url');

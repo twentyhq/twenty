@@ -12,7 +12,7 @@ import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToRemoteCompo
 import { exposeGlobals } from '@/remote/utils/exposeGlobals';
 import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementSetAttribute } from '@/remote/utils/patchRemoteElementSetAttribute';
-import { buildFrontComponentHostCommunicationApi } from '@/remote/worker/utils/buildFrontComponentHostCommunicationApi';
+import { buildFrontComponentHostCommunicationApiFromThreadImports } from '@/remote/worker/utils/buildFrontComponentHostCommunicationApiFromThreadImports';
 import { handleCommandConfirmationModalResult } from '@/remote/worker/utils/createCommandConfirmationModalBridge';
 import { installErrorEventBridge } from '@/remote/worker/utils/installErrorEventBridge';
 import { renderFrontComponent } from '@/remote/worker/utils/renderFrontComponent';
@@ -46,7 +46,9 @@ const workerExports: WorkerExports = {
 
     Object.assign(
       frontComponentHostCommunicationApi,
-      buildFrontComponentHostCommunicationApi(hostThread.imports),
+      buildFrontComponentHostCommunicationApiFromThreadImports(
+        hostThread.imports,
+      ),
     );
   },
   updateContext: async (context) => {

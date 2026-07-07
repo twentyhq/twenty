@@ -1,10 +1,10 @@
 import { type RemoteConnection } from '@remote-dom/core/elements';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
-import { attachRemoteRenderRoot } from '@/remote/worker/utils/attachRemoteRenderRoot';
+import { attachRemoteRenderRootToWorkerDocument } from '@/remote/worker/utils/attachRemoteRenderRootToWorkerDocument';
 import { installHostFetchProxy } from '@/remote/worker/utils/installHostFetchProxy';
 import { loadFrontComponentModule } from '@/remote/worker/utils/loadFrontComponentModule';
-import { setWorkerEnvFromRenderContext } from '@/remote/worker/utils/setWorkerEnvFromRenderContext';
+import { setWorkerEnvironmentVariablesFromRenderContext } from '@/remote/worker/utils/setWorkerEnvironmentVariablesFromRenderContext';
 import { type HostFetchFunction } from '@/types/HostFetchFunction';
 import { type HostToWorkerRenderContext } from '@/types/HostToWorkerRenderContext';
 
@@ -28,9 +28,9 @@ export const renderFrontComponent = async ({
 
   installHostFetchProxy(hostFetch, renderContext.hostFetchOrigins ?? []);
 
-  const renderContainer = attachRemoteRenderRoot(connection);
+  const renderContainer = attachRemoteRenderRootToWorkerDocument(connection);
 
-  setWorkerEnvFromRenderContext(renderContext);
+  setWorkerEnvironmentVariablesFromRenderContext(renderContext);
 
   const componentModule = await loadFrontComponentModule({
     componentUrl: renderContext.componentUrl,

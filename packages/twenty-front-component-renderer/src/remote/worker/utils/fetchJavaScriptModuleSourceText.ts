@@ -1,6 +1,6 @@
 import { CustomError } from 'twenty-shared/utils';
 
-export const fetchModuleSourceText = async (
+export const fetchJavaScriptModuleSourceText = async (
   url: string,
   headers?: Record<string, string>,
 ): Promise<string> => {

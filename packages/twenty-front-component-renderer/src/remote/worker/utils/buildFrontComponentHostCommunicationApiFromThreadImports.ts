@@ -2,7 +2,7 @@ import { createOpenCommandConfirmationModalAdapter } from '@/remote/worker/utils
 import { type FrontComponentHostCommunicationApiStore } from '@/types/FrontComponentHostCommunicationApiStore';
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
 
-export const buildFrontComponentHostCommunicationApi = (
+export const buildFrontComponentHostCommunicationApiFromThreadImports = (
   hostThreadImports: FrontComponentHostThreadExports,
 ): Required<FrontComponentHostCommunicationApiStore> => ({
   navigate: hostThreadImports.navigate,

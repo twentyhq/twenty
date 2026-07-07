@@ -1,12 +1,12 @@
-import { setWorkerEnv } from '../setWorkerEnv';
+import { setWorkerEnvironmentVariables } from '../setWorkerEnvironmentVariables';
 
-describe('setWorkerEnv', () => {
+describe('setWorkerEnvironmentVariables', () => {
   beforeEach(() => {
     delete (globalThis as Record<string, unknown>)['process'];
   });
 
   it('should set process.env on globalThis', () => {
-    setWorkerEnv({
+    setWorkerEnvironmentVariables({
       TWENTY_APP_ACCESS_TOKEN: 'test-key',
       TWENTY_API_URL: 'https://api.example.com',
     });
@@ -23,10 +23,12 @@ describe('setWorkerEnv', () => {
   });
 
   it('should let later calls win when the same variable is set twice', () => {
-    setWorkerEnv({
+    setWorkerEnvironmentVariables({
       TWENTY_API_URL: 'https://application-provided.example.com',
     });
-    setWorkerEnv({ TWENTY_API_URL: 'https://system-provided.example.com' });
+    setWorkerEnvironmentVariables({
+      TWENTY_API_URL: 'https://system-provided.example.com',
+    });
 
     const processObject = (globalThis as Record<string, unknown>)[
       'process'
@@ -46,7 +48,7 @@ describe('setWorkerEnv', () => {
       version: 'test-version',
     };
 
-    setWorkerEnv({
+    setWorkerEnvironmentVariables({
       TWENTY_APP_ACCESS_TOKEN: 'test-key',
     });
 

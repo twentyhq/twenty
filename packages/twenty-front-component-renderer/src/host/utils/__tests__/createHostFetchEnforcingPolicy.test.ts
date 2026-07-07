@@ -1,6 +1,6 @@
 import { CustomError } from 'twenty-shared/utils';
 
-import { createHostFetch } from '../createHostFetch';
+import { createHostFetchEnforcingPolicy } from '../createHostFetchEnforcingPolicy';
 
 const originalFetch = globalThis.fetch;
 
@@ -12,7 +12,7 @@ const createFakeResponse = () => ({
   text: async () => 'response-body',
 });
 
-describe('createHostFetch', () => {
+describe('createHostFetchEnforcingPolicy', () => {
   afterEach(() => {
     globalThis.fetch = originalFetch;
   });
@@ -21,7 +21,10 @@ describe('createHostFetch', () => {
     const fetchSpy = jest.fn(async () => createFakeResponse());
     globalThis.fetch = fetchSpy as unknown as typeof fetch;
 
-    const hostFetch = createHostFetch(['https://api.twenty.test']);
+    const hostFetch = createHostFetchEnforcingPolicy({
+      allowedOrigins: ['https://api.twenty.test'],
+      fileStorageRedirectableUrls: [],
+    });
 
     await expect(hostFetch({ url: 'https://evil.test/steal' })).rejects.toThrow(
       'disallowed origin',
@@ -41,7 +44,10 @@ describe('createHostFetch', () => {
     const fetchSpy = jest.fn(async () => createFakeResponse());
     globalThis.fetch = fetchSpy as unknown as typeof fetch;
 
-    const hostFetch = createHostFetch(['https://api.twenty.test']);
+    const hostFetch = createHostFetchEnforcingPolicy({
+      allowedOrigins: ['https://api.twenty.test'],
+      fileStorageRedirectableUrls: [],
+    });
     await hostFetch({ url: 'https://api.twenty.test/graphql', method: 'post' });
     await hostFetch({ url: 'https://api.twenty.test/graphql' });
 
@@ -61,7 +67,10 @@ describe('createHostFetch', () => {
     const fetchSpy = jest.fn(async () => createFakeResponse());
     globalThis.fetch = fetchSpy as unknown as typeof fetch;
 
-    const hostFetch = createHostFetch(['https://api.twenty.test']);
+    const hostFetch = createHostFetchEnforcingPolicy({
+      allowedOrigins: ['https://api.twenty.test'],
+      fileStorageRedirectableUrls: [],
+    });
     const result = await hostFetch({
       url: 'https://api.twenty.test/graphql',
       method: 'POST',
@@ -82,7 +91,10 @@ describe('createHostFetch', () => {
     const fetchSpy = jest.fn(async () => createFakeResponse());
     globalThis.fetch = fetchSpy as unknown as typeof fetch;
 
-    const hostFetch = createHostFetch(['https://api.twenty.test']);
+    const hostFetch = createHostFetchEnforcingPolicy({
+      allowedOrigins: ['https://api.twenty.test'],
+      fileStorageRedirectableUrls: [],
+    });
     await hostFetch({
       url: 'https://api.twenty.test/graphql',
       method: 'POST',
@@ -108,10 +120,10 @@ describe('createHostFetch', () => {
     const componentUrl =
       'https://api.twenty.test/rest/front-components/component-id';
 
-    const hostFetch = createHostFetch(
-      ['https://api.twenty.test'],
-      [componentUrl],
-    );
+    const hostFetch = createHostFetchEnforcingPolicy({
+      allowedOrigins: ['https://api.twenty.test'],
+      fileStorageRedirectableUrls: [componentUrl],
+    });
     await hostFetch({ url: componentUrl });
     await hostFetch({ url: componentUrl, method: 'HEAD' });
     await hostFetch({ url: componentUrl, method: 'POST' });
@@ -131,7 +143,10 @@ describe('createHostFetch', () => {
   });
 
   it('should reject malformed request urls', async () => {
-    const hostFetch = createHostFetch(['https://api.twenty.test']);
+    const hostFetch = createHostFetchEnforcingPolicy({
+      allowedOrigins: ['https://api.twenty.test'],
+      fileStorageRedirectableUrls: [],
+    });
 
     await expect(hostFetch({ url: 'not a url' })).rejects.toThrow(
       'disallowed origin',

@@ -1,5 +1,5 @@
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
-import { buildFrontComponentHostCommunicationApi } from '../buildFrontComponentHostCommunicationApi';
+import { buildFrontComponentHostCommunicationApiFromThreadImports } from '../buildFrontComponentHostCommunicationApiFromThreadImports';
 import { handleCommandConfirmationModalResult } from '../createCommandConfirmationModalBridge';
 
 const createHostThreadImportsStub = () =>
@@ -16,7 +16,7 @@ const createHostThreadImportsStub = () =>
     hostFetch: jest.fn(),
   }) as unknown as FrontComponentHostThreadExports;
 
-describe('buildFrontComponentHostCommunicationApi', () => {
+describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
   afterEach(async () => {
     await handleCommandConfirmationModalResult('cancel');
   });
@@ -25,7 +25,9 @@ describe('buildFrontComponentHostCommunicationApi', () => {
     const hostThreadImports = createHostThreadImportsStub();
 
     const hostCommunicationApi =
-      buildFrontComponentHostCommunicationApi(hostThreadImports);
+      buildFrontComponentHostCommunicationApiFromThreadImports(
+        hostThreadImports,
+      );
 
     expect(Object.keys(hostCommunicationApi).sort()).toEqual([
       'closeSidePanel',
@@ -66,7 +68,9 @@ describe('buildFrontComponentHostCommunicationApi', () => {
     const hostThreadImports = createHostThreadImportsStub();
 
     const hostCommunicationApi =
-      buildFrontComponentHostCommunicationApi(hostThreadImports);
+      buildFrontComponentHostCommunicationApiFromThreadImports(
+        hostThreadImports,
+      );
 
     expect(hostCommunicationApi.openCommandConfirmationModal).not.toBe(
       hostThreadImports.openCommandConfirmationModal,

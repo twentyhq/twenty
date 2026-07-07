@@ -1,5 +1,6 @@
 import { getURLSafely, isDefined } from 'twenty-shared/utils';
 
+import { type HostFetchPolicy } from '@/types/HostFetchPolicy';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 
 type BuildHostFetchPolicyInput = {
@@ -9,12 +10,7 @@ type BuildHostFetchPolicyInput = {
   sdkClientUrls?: SdkClientUrls;
 };
 
-type HostFetchPolicy = {
-  allowedOrigins: string[];
-  fileStorageRedirectableUrls: string[];
-};
-
-export const buildHostFetchPolicy = ({
+export const buildHostFetchPolicyFromFrontComponentUrls = ({
   componentUrl,
   apiUrl,
   functionsBaseUrl,

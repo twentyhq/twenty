@@ -1,4 +1,6 @@
-export const getRequestUrl = (input: RequestInfo | URL): string => {
+export const getUrlFromFetchRequestInput = (
+  input: RequestInfo | URL,
+): string => {
   if (typeof input === 'string') {
     return input;
   }

@@ -1,31 +1,31 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { setWorkerEnv } from '@/remote/worker/utils/setWorkerEnv';
+import { setWorkerEnvironmentVariables } from '@/remote/worker/utils/setWorkerEnvironmentVariables';
 import { type HostToWorkerRenderContext } from '@/types/HostToWorkerRenderContext';
 
-export const setWorkerEnvFromRenderContext = (
+export const setWorkerEnvironmentVariablesFromRenderContext = (
   renderContext: HostToWorkerRenderContext,
 ): void => {
   if (isDefined(renderContext.applicationVariables)) {
-    setWorkerEnv({
+    setWorkerEnvironmentVariables({
       applicationVariables: JSON.stringify(renderContext.applicationVariables),
     });
   }
 
   if (isDefined(renderContext.apiUrl)) {
-    setWorkerEnv({
+    setWorkerEnvironmentVariables({
       TWENTY_API_URL: renderContext.apiUrl,
     });
   }
 
   if (isDefined(renderContext.functionsBaseUrl)) {
-    setWorkerEnv({
+    setWorkerEnvironmentVariables({
       TWENTY_FUNCTIONS_URL: renderContext.functionsBaseUrl,
     });
   }
 
   if (isDefined(renderContext.applicationAccessToken)) {
-    setWorkerEnv({
+    setWorkerEnvironmentVariables({
       TWENTY_APP_ACCESS_TOKEN: renderContext.applicationAccessToken,
     });
   }

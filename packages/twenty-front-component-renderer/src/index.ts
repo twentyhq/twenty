@@ -129,7 +129,7 @@ export type {
   HtmlTextareaProperties,
   HtmlThProperties,
 } from './remote/generated/remote-elements';
-export { createRemoteWorker } from './remote/worker/utils/createRemoteWorker';
+export { createFrontComponentRemoteWorker } from './remote/worker/utils/createFrontComponentRemoteWorker';
 export { installStyleBridge } from './polyfills/installStyleBridge';
 export { exposeGlobals } from './remote/utils/exposeGlobals';
 export type { FrontComponentExecutionContext } from 'twenty-sdk/front-component';

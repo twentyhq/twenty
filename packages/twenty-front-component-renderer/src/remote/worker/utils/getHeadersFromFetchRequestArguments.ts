@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { isRequestInput } from '@/remote/worker/utils/isRequestInput';
+import { isRequestObject } from '@/remote/worker/utils/isRequestObject';
 
 const toHeaderRecord = (headers: HeadersInit): Record<string, string> => {
   const record: Record<string, string> = {};
@@ -12,7 +12,7 @@ const toHeaderRecord = (headers: HeadersInit): Record<string, string> => {
   return record;
 };
 
-export const getProxiedHeaders = (
+export const getHeadersFromFetchRequestArguments = (
   input: RequestInfo | URL,
   init: RequestInit | undefined,
 ): Record<string, string> => {
@@ -20,7 +20,7 @@ export const getProxiedHeaders = (
     return toHeaderRecord(init.headers);
   }
 
-  if (isRequestInput(input)) {
+  if (isRequestObject(input)) {
     return toHeaderRecord(input.headers);
   }
 

@@ -24,7 +24,7 @@ type WorkerProbeReport = {
   workerIndexedDbDenied: boolean;
 };
 
-const runWorkerProbe = (databaseName: string): void => {
+const runWorkerStorageIsolationProbe = (databaseName: string): void => {
   const report = { workerOrigin: self.origin, workerIndexedDbDenied: false };
 
   try {
@@ -36,7 +36,7 @@ const runWorkerProbe = (databaseName: string): void => {
   self.postMessage(report);
 };
 
-const runSandboxProbe = (
+const runSandboxIframeIsolationProbe = (
   workerProbeSource: string,
   reportMessageType: string,
   databaseName: string,
@@ -84,7 +84,7 @@ const runSandboxProbe = (
   };
 };
 
-const serializeProbeInvocation = (
+const serializeProbeFunctionInvocation = (
   probeFunction: (...probeArguments: string[]) => void,
   ...probeArguments: string[]
 ): string => {
@@ -95,14 +95,14 @@ const serializeProbeInvocation = (
   return `(${probeFunction.toString()})(${serializedArguments});`;
 };
 
-const buildSandboxProbeDocument = (): string => {
-  const workerProbeSource = serializeProbeInvocation(
-    runWorkerProbe,
+const buildSandboxIsolationProbeDocument = (): string => {
+  const workerProbeSource = serializeProbeFunctionInvocation(
+    runWorkerStorageIsolationProbe,
     SANDBOX_ISOLATION_PROBE_DATABASE_NAME,
   );
 
-  const sandboxProbeScript = serializeProbeInvocation(
-    runSandboxProbe,
+  const sandboxProbeScript = serializeProbeFunctionInvocation(
+    runSandboxIframeIsolationProbe,
     workerProbeSource,
     SANDBOX_ISOLATION_PROBE_REPORT_MESSAGE_TYPE,
     SANDBOX_ISOLATION_PROBE_DATABASE_NAME,
@@ -114,7 +114,7 @@ const buildSandboxProbeDocument = (): string => {
 export const runFrontComponentSandboxIsolationProbe =
   (): Promise<FrontComponentSandboxIsolationReport> => {
     const sandboxIframe = createFrontComponentSandboxIframe(
-      buildSandboxProbeDocument(),
+      buildSandboxIsolationProbeDocument(),
     );
 
     return new Promise<FrontComponentSandboxIsolationReport>(

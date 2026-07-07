@@ -1,6 +1,6 @@
 import { getURLSafely, isDefined } from 'twenty-shared/utils';
 
-export const isProxiedOrigin = (
+export const isUrlFromProxiedOrigin = (
   url: string,
   proxiedOrigins: string[],
 ): boolean => {

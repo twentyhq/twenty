@@ -1,8 +1,8 @@
-import { buildHostFetchPolicy } from '../buildHostFetchPolicy';
+import { buildHostFetchPolicyFromFrontComponentUrls } from '../buildHostFetchPolicyFromFrontComponentUrls';
 
-describe('buildHostFetchPolicy', () => {
+describe('buildHostFetchPolicyFromFrontComponentUrls', () => {
   it('should derive allowed origins from the api, functions and component urls', () => {
-    const hostFetchPolicy = buildHostFetchPolicy({
+    const hostFetchPolicy = buildHostFetchPolicyFromFrontComponentUrls({
       componentUrl:
         'https://components.twenty.test/rest/front-components/component-id',
       apiUrl: 'https://api.twenty.test/graphql',
@@ -17,7 +17,7 @@ describe('buildHostFetchPolicy', () => {
   });
 
   it('should drop undefined urls', () => {
-    const hostFetchPolicy = buildHostFetchPolicy({
+    const hostFetchPolicy = buildHostFetchPolicyFromFrontComponentUrls({
       componentUrl: 'https://api.twenty.test/rest/front-components/id',
     });
 
@@ -25,7 +25,7 @@ describe('buildHostFetchPolicy', () => {
   });
 
   it('should drop malformed urls', () => {
-    const hostFetchPolicy = buildHostFetchPolicy({
+    const hostFetchPolicy = buildHostFetchPolicyFromFrontComponentUrls({
       componentUrl: 'https://api.twenty.test/rest/front-components/id',
       apiUrl: 'not a url',
     });
@@ -34,7 +34,7 @@ describe('buildHostFetchPolicy', () => {
   });
 
   it('should drop urls with non http schemes', () => {
-    const hostFetchPolicy = buildHostFetchPolicy({
+    const hostFetchPolicy = buildHostFetchPolicyFromFrontComponentUrls({
       componentUrl: 'https://api.twenty.test/rest/front-components/id',
       apiUrl: 'data:text/html,<script>alert(1)</script>',
       functionsBaseUrl: 'file:///etc/passwd',
@@ -44,7 +44,7 @@ describe('buildHostFetchPolicy', () => {
   });
 
   it('should deduplicate identical origins', () => {
-    const hostFetchPolicy = buildHostFetchPolicy({
+    const hostFetchPolicy = buildHostFetchPolicyFromFrontComponentUrls({
       componentUrl: 'https://api.twenty.test/rest/front-components/id',
       apiUrl: 'https://api.twenty.test/graphql',
       functionsBaseUrl: 'https://api.twenty.test/functions',
@@ -54,7 +54,7 @@ describe('buildHostFetchPolicy', () => {
   });
 
   it('should mark the component and sdk client urls as file storage redirectable', () => {
-    const hostFetchPolicy = buildHostFetchPolicy({
+    const hostFetchPolicy = buildHostFetchPolicyFromFrontComponentUrls({
       componentUrl: 'https://api.twenty.test/rest/front-components/id',
       sdkClientUrls: {
         core: 'https://api.twenty.test/sdk-client/application-id/core',
@@ -70,7 +70,7 @@ describe('buildHostFetchPolicy', () => {
   });
 
   it('should mark only the component url as redirectable when sdk client urls are undefined', () => {
-    const hostFetchPolicy = buildHostFetchPolicy({
+    const hostFetchPolicy = buildHostFetchPolicyFromFrontComponentUrls({
       componentUrl: 'https://api.twenty.test/rest/front-components/id',
     });
 

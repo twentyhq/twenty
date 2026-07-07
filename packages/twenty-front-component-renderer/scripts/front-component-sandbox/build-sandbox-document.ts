@@ -17,7 +17,7 @@ const generatedFile = path.resolve(
   'src/remote/sandbox/generated/frontComponentSandboxDocument.ts',
 );
 
-const replaceProcessEnv = (code: string): string =>
+const replaceProcessEnvReferences = (code: string): string =>
   code
     .replace(/process\.env\.NODE_ENV/g, JSON.stringify('production'))
     .replace(/process\.env/g, '{}');
@@ -49,7 +49,7 @@ const buildSandboxDocument = async (): Promise<void> => {
         plugins: [
           {
             name: 'define-process-env',
-            transform: replaceProcessEnv,
+            transform: replaceProcessEnvReferences,
           },
         ],
       },

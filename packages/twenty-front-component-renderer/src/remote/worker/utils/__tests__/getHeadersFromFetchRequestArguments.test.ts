@@ -1,9 +1,9 @@
-import { getProxiedHeaders } from '../getProxiedHeaders';
+import { getHeadersFromFetchRequestArguments } from '../getHeadersFromFetchRequestArguments';
 
-describe('getProxiedHeaders', () => {
+describe('getHeadersFromFetchRequestArguments', () => {
   it('should convert init headers given as a record', () => {
     expect(
-      getProxiedHeaders('https://api.twenty.test', {
+      getHeadersFromFetchRequestArguments('https://api.twenty.test', {
         headers: { 'Content-Type': 'application/json' },
       }),
     ).toEqual({ 'content-type': 'application/json' });
@@ -11,7 +11,7 @@ describe('getProxiedHeaders', () => {
 
   it('should convert init headers given as a Headers instance', () => {
     expect(
-      getProxiedHeaders('https://api.twenty.test', {
+      getHeadersFromFetchRequestArguments('https://api.twenty.test', {
         headers: new Headers({ authorization: 'Bearer token' }),
       }),
     ).toEqual({ authorization: 'Bearer token' });
@@ -19,7 +19,7 @@ describe('getProxiedHeaders', () => {
 
   it('should convert init headers given as an entries array', () => {
     expect(
-      getProxiedHeaders('https://api.twenty.test', {
+      getHeadersFromFetchRequestArguments('https://api.twenty.test', {
         headers: [['x-schema-version', '42']],
       }),
     ).toEqual({ 'x-schema-version': '42' });
@@ -32,7 +32,7 @@ describe('getProxiedHeaders', () => {
     } as unknown as Request;
 
     expect(
-      getProxiedHeaders(request, {
+      getHeadersFromFetchRequestArguments(request, {
         headers: { authorization: 'Bearer init-token' },
       }),
     ).toEqual({ authorization: 'Bearer init-token' });
@@ -44,12 +44,14 @@ describe('getProxiedHeaders', () => {
       headers: new Headers({ authorization: 'Bearer request-token' }),
     } as unknown as Request;
 
-    expect(getProxiedHeaders(request, undefined)).toEqual({
+    expect(getHeadersFromFetchRequestArguments(request, undefined)).toEqual({
       authorization: 'Bearer request-token',
     });
   });
 
   it('should return an empty record when neither init nor Request provides headers', () => {
-    expect(getProxiedHeaders('https://api.twenty.test', undefined)).toEqual({});
+    expect(
+      getHeadersFromFetchRequestArguments('https://api.twenty.test', undefined),
+    ).toEqual({});
   });
 });

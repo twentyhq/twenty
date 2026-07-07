@@ -1,8 +1,8 @@
-import { fetchModuleSourceText } from '../fetchModuleSourceText';
+import { fetchJavaScriptModuleSourceText } from '../fetchJavaScriptModuleSourceText';
 
 const originalFetch = globalThis.fetch;
 
-describe('fetchModuleSourceText', () => {
+describe('fetchJavaScriptModuleSourceText', () => {
   afterEach(() => {
     globalThis.fetch = originalFetch;
   });
@@ -14,7 +14,7 @@ describe('fetchModuleSourceText', () => {
     })) as unknown as typeof fetch;
 
     await expect(
-      fetchModuleSourceText('https://api.twenty.test/component.js'),
+      fetchJavaScriptModuleSourceText('https://api.twenty.test/component.js'),
     ).resolves.toBe('module source');
   });
 
@@ -25,9 +25,12 @@ describe('fetchModuleSourceText', () => {
     }));
     globalThis.fetch = fetchSpy as unknown as typeof fetch;
 
-    await fetchModuleSourceText('https://api.twenty.test/component.js', {
-      Authorization: 'Bearer token',
-    });
+    await fetchJavaScriptModuleSourceText(
+      'https://api.twenty.test/component.js',
+      {
+        Authorization: 'Bearer token',
+      },
+    );
 
     expect(fetchSpy).toHaveBeenCalledWith(
       'https://api.twenty.test/component.js',
@@ -43,7 +46,7 @@ describe('fetchModuleSourceText', () => {
     })) as unknown as typeof fetch;
 
     await expect(
-      fetchModuleSourceText('https://api.twenty.test/component.js'),
+      fetchJavaScriptModuleSourceText('https://api.twenty.test/component.js'),
     ).rejects.toMatchObject({ code: 'FRONT_COMPONENT_MODULE_FETCH_FAILED' });
   });
 
@@ -53,7 +56,7 @@ describe('fetchModuleSourceText', () => {
     }) as unknown as typeof fetch;
 
     await expect(
-      fetchModuleSourceText('https://api.twenty.test/component.js'),
+      fetchJavaScriptModuleSourceText('https://api.twenty.test/component.js'),
     ).rejects.toMatchObject({
       code: 'FRONT_COMPONENT_MODULE_FETCH_FAILED',
       message:
@@ -69,7 +72,7 @@ describe('fetchModuleSourceText', () => {
     })) as unknown as typeof fetch;
 
     await expect(
-      fetchModuleSourceText('https://api.twenty.test/component.js'),
+      fetchJavaScriptModuleSourceText('https://api.twenty.test/component.js'),
     ).rejects.toThrow(
       'Failed to fetch front component module https://api.twenty.test/component.js: 403 Forbidden',
     );

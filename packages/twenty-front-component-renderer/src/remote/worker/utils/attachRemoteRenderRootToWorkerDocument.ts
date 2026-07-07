@@ -6,7 +6,7 @@ import {
 
 import { installStyleBridge } from '@/polyfills/installStyleBridge';
 
-export const attachRemoteRenderRoot = (
+export const attachRemoteRenderRootToWorkerDocument = (
   connection: RemoteConnection,
 ): Element => {
   const batchedConnection = new BatchingRemoteConnection(connection);
