@@ -15,7 +15,6 @@ export const getAvatarType = (
     }
   }
 
-  // Fallback per object until image identifiers are seeded on standard objects
   if (objectNameSingular === CoreObjectNameSingular.WorkspaceMember) {
     return 'rounded';
   }
