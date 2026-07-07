@@ -139,11 +139,11 @@ describe('ServerFileStorageService', () => {
           applicationRegistrationId: 'registration-id',
         },
         {
-          conflictPaths: ['path'],
-          indexPredicate: '"workspaceId" IS NULL',
+          conflictPaths: ['applicationRegistrationId', 'path'],
         },
       );
       expect(mockServerFileRepository.findOneByOrFail).toHaveBeenCalledWith({
+        applicationRegistrationId: 'registration-id',
         path: 'application-registration/registration-id/manifests/manifest.json',
         workspaceId: IsNull(),
       });
