@@ -55,6 +55,8 @@ type ApplicationRegistration {
   isListed: Boolean!
   isVetted: Boolean!
   isPreInstalled: Boolean!
+  listingRequestStatus: ApplicationRegistrationListingRequestStatus!
+  listingRequestedAt: DateTime
   logoUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -66,6 +68,13 @@ enum ApplicationRegistrationSourceType {
   TARBALL
   LOCAL
   OAUTH_ONLY
+}
+
+enum ApplicationRegistrationListingRequestStatus {
+  NONE
+  REQUESTED
+  APPROVED
+  REJECTED
 }
 
 type TwoFactorAuthenticationMethodSummary {
@@ -1941,6 +1950,23 @@ type UsageBreakdownItem {
   creditsUsed: Float!
 }
 
+type ApplicationRegistrationClaimChallenge {
+  applicationRegistrationId: String!
+  sourcePackage: String!
+  token: String!
+  expiresAt: DateTime!
+}
+
+type ClaimableApplicationRegistration {
+  id: String!
+  name: String!
+  sourcePackage: String
+  logoUrl: String
+  description: String
+  author: String
+  isOwned: Boolean!
+}
+
 type CreateApplicationRegistration {
   applicationRegistration: ApplicationRegistration!
   clientSecret: String!
@@ -3108,6 +3134,7 @@ type Query {
   findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
   findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariableDTO!]!
   applicationRegistrationTarballUrl(id: String!): String
+  findClaimableApplicationRegistration(sourcePackage: String, id: String): ClaimableApplicationRegistration
   getRoles: [Role!]!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   unsubscribeTopics: [UnsubscribeTopic!]!
@@ -3379,8 +3406,10 @@ type Mutation {
   updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   deleteApplicationRegistrationVariable(id: String!): Boolean!
   uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration!
-  claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
+  startApplicationRegistrationClaim(applicationRegistrationId: String!): ApplicationRegistrationClaimChallenge!
+  verifyApplicationRegistrationClaim(applicationRegistrationId: String!): ApplicationRegistration!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
+  requestApplicationRegistrationListing(applicationRegistrationId: String!): ApplicationRegistration!
   updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!
   createOneRole(createRoleInput: CreateRoleInput!): Role!
   updateOneRole(updateRoleInput: UpdateRoleInput!): Role!

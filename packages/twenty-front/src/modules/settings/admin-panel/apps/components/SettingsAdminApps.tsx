@@ -27,6 +27,8 @@ import {
   type ApplicationRegistrationFragmentFragment,
   ApplicationRegistrationSourceType,
   FindAllApplicationRegistrationsDocument,
+  FindApplicationRegistrationListingRequestsDocument,
+  ReviewApplicationRegistrationListingDocument,
   SyncMarketplaceCatalogDocument,
 } from '~/generated-admin/graphql';
 
@@ -37,6 +39,12 @@ const StyledTableContainer = styled.div`
 
 const TABLE_GRID = '1fr 100px 100px 100px 40px';
 const TABLE_GRID_MOBILE = '3fr 3fr 1fr 1fr 40px';
+const LISTING_REQUESTS_GRID = '1fr 1fr 160px';
+
+const StyledListingActionsCell = styled(TableCell)`
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: flex-end;
+`;
 
 export const SettingsAdminApps = () => {
   const apolloAdminClient = useApolloAdminClient();
@@ -52,6 +60,43 @@ export const SettingsAdminApps = () => {
     SyncMarketplaceCatalogDocument,
     { client: apolloAdminClient },
   );
+
+  const { data: listingRequestsData } = useQuery(
+    FindApplicationRegistrationListingRequestsDocument,
+    { client: apolloAdminClient },
+  );
+
+  const [reviewListing, { loading: isReviewing }] = useMutation(
+    ReviewApplicationRegistrationListingDocument,
+    {
+      client: apolloAdminClient,
+      refetchQueries: [
+        FindApplicationRegistrationListingRequestsDocument,
+        FindAllApplicationRegistrationsDocument,
+      ],
+    },
+  );
+
+  const listingRequests =
+    listingRequestsData?.findApplicationRegistrationListingRequests ?? [];
+
+  const handleReviewListing = async (
+    applicationRegistrationId: string,
+    approved: boolean,
+  ) => {
+    try {
+      await reviewListing({
+        variables: { applicationRegistrationId, approved },
+      });
+      enqueueSuccessSnackBar({
+        message: approved ? t`Listing approved.` : t`Listing rejected.`,
+      });
+    } catch {
+      enqueueErrorSnackBar({
+        message: t`Failed to review the listing request.`,
+      });
+    }
+  };
 
   const handleSyncCatalog = async () => {
     try {
@@ -126,6 +171,61 @@ export const SettingsAdminApps = () => {
           disabled={isSyncing}
         />
       </Section>
+      {listingRequests.length > 0 && (
+        <Section>
+          <H2Title
+            title={t`Listing requests`}
+            description={t`Developers asking to list their app in the marketplace`}
+          />
+          <StyledTableContainer>
+            <Table>
+              <TableRow gridAutoColumns={LISTING_REQUESTS_GRID}>
+                <TableHeader>{t`Name`}</TableHeader>
+                <TableHeader>{t`Package`}</TableHeader>
+                <TableHeader align="right">{''}</TableHeader>
+              </TableRow>
+              <TableBody>
+                {listingRequests.map((request) => (
+                  <TableRow
+                    key={request.id}
+                    gridAutoColumns={LISTING_REQUESTS_GRID}
+                  >
+                    <StyledNameTableCell minWidth="0" overflow="hidden">
+                      <ApplicationDisplay
+                        application={{
+                          name: request.name,
+                          logo: request.logoUrl,
+                        }}
+                      />
+                    </StyledNameTableCell>
+                    <TableCell overflow="hidden">
+                      {request.sourcePackage ?? ''}
+                    </TableCell>
+                    <StyledListingActionsCell>
+                      <Button
+                        title={t`Reject`}
+                        size="small"
+                        variant="secondary"
+                        accent="danger"
+                        disabled={isReviewing}
+                        onClick={() => handleReviewListing(request.id, false)}
+                      />
+                      <Button
+                        title={t`Approve`}
+                        size="small"
+                        variant="secondary"
+                        accent="blue"
+                        disabled={isReviewing}
+                        onClick={() => handleReviewListing(request.id, true)}
+                      />
+                    </StyledListingActionsCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </StyledTableContainer>
+        </Section>
+      )}
       <Section>
         <H2Title
           title={t`All App Registrations`}

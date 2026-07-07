@@ -15,12 +15,12 @@ import { Button } from 'twenty-ui/input';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import {
   type ApplicationRegistration,
-  ClaimApplicationRegistrationOwnershipDocument,
   DeleteApplicationRegistrationDocument,
   FindApplicationRegistrationStatsDocument,
   FindManyApplicationRegistrationsDocument,
   TransferApplicationRegistrationOwnershipDocument,
 } from '~/generated-metadata/graphql';
+import { ClaimApplicationRegistrationOwnershipDocument } from '~/generated-admin/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -215,23 +215,28 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
               delay={TooltipDelay.shortDelay}
             />
           )}
-          {isUnclaimed ? (
-            <Button
-              accent="default"
-              variant="secondary"
-              title={t`Claim ownership`}
-              Icon={IconUserPlus}
-              onClick={() => openModal(CLAIM_OWNERSHIP_MODAL_ID)}
-            />
-          ) : (
-            <Button
-              accent="default"
-              variant="secondary"
-              title={t`Transfer ownership`}
-              Icon={IconShare}
-              onClick={() => openModal(TRANSFER_OWNERSHIP_MODAL_ID)}
-            />
-          )}
+          {isUnclaimed
+            ? // One-click claim without proof is an admin-only escape hatch.
+              // Regular workspaces claim by proving npm ownership from the
+              // developer tab's "Claim an application" section.
+              fromAdmin && (
+                <Button
+                  accent="default"
+                  variant="secondary"
+                  title={t`Claim ownership`}
+                  Icon={IconUserPlus}
+                  onClick={() => openModal(CLAIM_OWNERSHIP_MODAL_ID)}
+                />
+              )
+            : !isUnclaimed && (
+                <Button
+                  accent="default"
+                  variant="secondary"
+                  title={t`Transfer ownership`}
+                  Icon={IconShare}
+                  onClick={() => openModal(TRANSFER_OWNERSHIP_MODAL_ID)}
+                />
+              )}
         </StyledDangerButtonGroup>
       </Section>
 

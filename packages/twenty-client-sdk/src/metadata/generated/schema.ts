@@ -54,6 +54,8 @@ export interface ApplicationRegistration {
     isListed: Scalars['Boolean']
     isVetted: Scalars['Boolean']
     isPreInstalled: Scalars['Boolean']
+    listingRequestStatus: ApplicationRegistrationListingRequestStatus
+    listingRequestedAt?: Scalars['DateTime']
     logoUrl?: Scalars['String']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
@@ -62,6 +64,8 @@ export interface ApplicationRegistration {
 }
 
 export type ApplicationRegistrationSourceType = 'NPM' | 'TARBALL' | 'LOCAL' | 'OAUTH_ONLY'
+
+export type ApplicationRegistrationListingRequestStatus = 'NONE' | 'REQUESTED' | 'APPROVED' | 'REJECTED'
 
 export interface TwoFactorAuthenticationMethodSummary {
     twoFactorAuthenticationMethodId: Scalars['UUID']
@@ -1600,6 +1604,25 @@ export interface UsageBreakdownItem {
     __typename: 'UsageBreakdownItem'
 }
 
+export interface ApplicationRegistrationClaimChallenge {
+    applicationRegistrationId: Scalars['String']
+    sourcePackage: Scalars['String']
+    token: Scalars['String']
+    expiresAt: Scalars['DateTime']
+    __typename: 'ApplicationRegistrationClaimChallenge'
+}
+
+export interface ClaimableApplicationRegistration {
+    id: Scalars['String']
+    name: Scalars['String']
+    sourcePackage?: Scalars['String']
+    logoUrl?: Scalars['String']
+    description?: Scalars['String']
+    author?: Scalars['String']
+    isOwned: Scalars['Boolean']
+    __typename: 'ClaimableApplicationRegistration'
+}
+
 export interface CreateApplicationRegistration {
     applicationRegistration: ApplicationRegistration
     clientSecret: Scalars['String']
@@ -2750,6 +2773,7 @@ export interface Query {
     findApplicationRegistrationStats: ApplicationRegistrationStats
     findApplicationRegistrationVariables: ApplicationRegistrationVariableDTO[]
     applicationRegistrationTarballUrl?: Scalars['String']
+    findClaimableApplicationRegistration?: ClaimableApplicationRegistration
     getRoles: Role[]
     previewMessageCampaignAudience: CampaignAudiencePreviewDTO
     unsubscribeTopics: UnsubscribeTopic[]
@@ -2929,8 +2953,10 @@ export interface Mutation {
     updateApplicationRegistrationVariable: ApplicationRegistrationVariable
     deleteApplicationRegistrationVariable: Scalars['Boolean']
     uploadAppTarball: ApplicationRegistration
-    claimApplicationRegistrationOwnership: ApplicationRegistration
+    startApplicationRegistrationClaim: ApplicationRegistrationClaimChallenge
+    verifyApplicationRegistrationClaim: ApplicationRegistration
     transferApplicationRegistrationOwnership: ApplicationRegistration
+    requestApplicationRegistrationListing: ApplicationRegistration
     updateWorkspaceMemberRole: WorkspaceMember
     createOneRole: Role
     updateOneRole: Role
@@ -3093,6 +3119,8 @@ export interface ApplicationRegistrationGenqlSelection{
     isListed?: boolean | number
     isVetted?: boolean | number
     isPreInstalled?: boolean | number
+    listingRequestStatus?: boolean | number
+    listingRequestedAt?: boolean | number
     logoUrl?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
@@ -4688,6 +4716,27 @@ export interface UsageBreakdownItemGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationRegistrationClaimChallengeGenqlSelection{
+    applicationRegistrationId?: boolean | number
+    sourcePackage?: boolean | number
+    token?: boolean | number
+    expiresAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ClaimableApplicationRegistrationGenqlSelection{
+    id?: boolean | number
+    name?: boolean | number
+    sourcePackage?: boolean | number
+    logoUrl?: boolean | number
+    description?: boolean | number
+    author?: boolean | number
+    isOwned?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface CreateApplicationRegistrationGenqlSelection{
     applicationRegistration?: ApplicationRegistrationGenqlSelection
     clientSecret?: boolean | number
@@ -5933,6 +5982,7 @@ export interface QueryGenqlSelection{
     findApplicationRegistrationStats?: (ApplicationRegistrationStatsGenqlSelection & { __args: {id: Scalars['String']} })
     findApplicationRegistrationVariables?: (ApplicationRegistrationVariableDTOGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     applicationRegistrationTarballUrl?: { __args: {id: Scalars['String']} }
+    findClaimableApplicationRegistration?: (ClaimableApplicationRegistrationGenqlSelection & { __args?: {sourcePackage?: (Scalars['String'] | null), id?: (Scalars['String'] | null)} })
     getRoles?: RoleGenqlSelection
     previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
     unsubscribeTopics?: UnsubscribeTopicGenqlSelection
@@ -6139,8 +6189,10 @@ export interface MutationGenqlSelection{
     updateApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: UpdateApplicationRegistrationVariableInput} })
     deleteApplicationRegistrationVariable?: { __args: {id: Scalars['String']} }
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
-    claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
+    startApplicationRegistrationClaim?: (ApplicationRegistrationClaimChallengeGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
+    verifyApplicationRegistrationClaim?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
+    requestApplicationRegistrationListing?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     updateWorkspaceMemberRole?: (WorkspaceMemberGenqlSelection & { __args: {workspaceMemberId: Scalars['UUID'], roleId: Scalars['UUID']} })
     createOneRole?: (RoleGenqlSelection & { __args: {createRoleInput: CreateRoleInput} })
     updateOneRole?: (RoleGenqlSelection & { __args: {updateRoleInput: UpdateRoleInput} })
@@ -7686,6 +7738,22 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const ApplicationRegistrationClaimChallenge_possibleTypes: string[] = ['ApplicationRegistrationClaimChallenge']
+    export const isApplicationRegistrationClaimChallenge = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationClaimChallenge => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationClaimChallenge"')
+      return ApplicationRegistrationClaimChallenge_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ClaimableApplicationRegistration_possibleTypes: string[] = ['ClaimableApplicationRegistration']
+    export const isClaimableApplicationRegistration = (obj?: { __typename?: any } | null): obj is ClaimableApplicationRegistration => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isClaimableApplicationRegistration"')
+      return ClaimableApplicationRegistration_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const CreateApplicationRegistration_possibleTypes: string[] = ['CreateApplicationRegistration']
     export const isCreateApplicationRegistration = (obj?: { __typename?: any } | null): obj is CreateApplicationRegistration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isCreateApplicationRegistration"')
@@ -8682,6 +8750,13 @@ export const enumApplicationRegistrationSourceType = {
    TARBALL: 'TARBALL' as const,
    LOCAL: 'LOCAL' as const,
    OAUTH_ONLY: 'OAUTH_ONLY' as const
+}
+
+export const enumApplicationRegistrationListingRequestStatus = {
+   NONE: 'NONE' as const,
+   REQUESTED: 'REQUESTED' as const,
+   APPROVED: 'APPROVED' as const,
+   REJECTED: 'REJECTED' as const
 }
 
 export const enumRowLevelPermissionPredicateGroupLogicalOperator = {

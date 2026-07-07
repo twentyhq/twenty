@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.20.0', 1783200100000)
+@RegisteredInstanceCommand('2.19.0', 1783200100000)
 export class AddListingRequestFieldsToApplicationRegistrationFastInstanceCommand
   implements FastInstanceCommand
 {

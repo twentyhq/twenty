@@ -5,7 +5,7 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 
 // Backing table for the npm publish-code ownership challenge: one pending
 // claim per (registration, workspace), removed once ownership is settled.
-@RegisteredInstanceCommand('2.20.0', 1783200000000)
+@RegisteredInstanceCommand('2.19.0', 1783200000000)
 export class CreateApplicationRegistrationClaimCoreTableFastInstanceCommand
   implements FastInstanceCommand
 {
