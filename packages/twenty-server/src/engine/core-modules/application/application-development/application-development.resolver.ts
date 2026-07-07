@@ -22,9 +22,9 @@ import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/appli
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
-import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import {
@@ -121,7 +121,21 @@ export class ApplicationDevelopmentResolver {
       workspaceId,
     );
 
-    await this.validateManifestVersionCompatibility(manifest, workspaceId);
+    const versionValidation =
+      await this.applicationVersionValidationService.validateWorkspaceCompatibility(
+        {
+          requiredServerVersion:
+            manifest.application.requiredServerVersionRange ?? undefined,
+          workspaceId,
+        },
+      );
+
+    if (!versionValidation.compatible) {
+      throw new ApplicationException(
+        versionValidation.message,
+        VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE[versionValidation.reason],
+      );
+    }
 
     if (dryRun === true) {
       const { workspaceMigration } =
@@ -268,31 +282,6 @@ export class ApplicationDevelopmentResolver {
       resourcePath: filePath,
       settings: { isTemporaryFile: false, toDelete: false },
     });
-  }
-
-  private async validateManifestVersionCompatibility(
-    manifest: ApplicationInput['manifest'],
-    workspaceId: string,
-  ): Promise<void> {
-    // A workspace's completed version can never be ahead of the instance
-    // version (workspace upgrades run after the instance upgrade), so gating on
-    // the workspace completed version also covers the instance: if it passes,
-    // the instance necessarily satisfies the range too.
-    const versionValidation =
-      await this.applicationVersionValidationService.validateWorkspaceCompatibility(
-        {
-          requiredServerVersion:
-            manifest.application.requiredServerVersionRange ?? undefined,
-          workspaceId,
-        },
-      );
-
-    if (!versionValidation.compatible) {
-      throw new ApplicationException(
-        versionValidation.message,
-        VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE[versionValidation.reason],
-      );
-    }
   }
 
   private async throttlePerApplication(
