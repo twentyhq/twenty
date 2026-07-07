@@ -1,1 +1,0 @@
-export declare const FRONT_COMPONENT_SANDBOX_COURIER_SOURCE: string;

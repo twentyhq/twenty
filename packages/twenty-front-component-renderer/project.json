@@ -74,7 +74,7 @@
         "{projectRoot}/src/types/**/*"
       ],
       "outputs": [
-        "{projectRoot}/src/remote/sandbox/generated/frontComponentSandboxCourierSource.ts"
+        "{projectRoot}/src/remote/sandbox/generated/frontComponentSandboxDocument.ts"
       ],
       "options": {
         "cwd": "packages/twenty-front-component-renderer",

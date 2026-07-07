@@ -14,13 +14,16 @@ const courierEntry = path.resolve(
 
 const generatedFile = path.resolve(
   projectRoot,
-  'src/remote/sandbox/generated/frontComponentSandboxCourierSource.ts',
+  'src/remote/sandbox/generated/frontComponentSandboxDocument.ts',
 );
 
 const replaceProcessEnv = (code: string): string =>
   code
     .replace(/process\.env\.NODE_ENV/g, JSON.stringify('production'))
     .replace(/process\.env/g, '{}');
+
+const escapeClosingScriptTags = (code: string): string =>
+  code.replace(/<\/script/gi, '<\\/script');
 
 const buildSandboxCourier = async (): Promise<void> => {
   const buildResult = await build({
@@ -68,8 +71,11 @@ const buildSandboxCourier = async (): Promise<void> => {
     );
   }
 
-  const generatedSource = `export const FRONT_COMPONENT_SANDBOX_COURIER_SOURCE = ${JSON.stringify(
-    courierChunk.code,
+  const courierScript = `<script>${escapeClosingScriptTags(courierChunk.code)}</script>`;
+  const sandboxDocument = `<!doctype html><html><head><meta charset="utf-8" /></head><body>${courierScript}</body></html>`;
+
+  const generatedSource = `export const FRONT_COMPONENT_SANDBOX_DOCUMENT = ${JSON.stringify(
+    sandboxDocument,
   )};\n`;
 
   fs.mkdirSync(path.dirname(generatedFile), { recursive: true });

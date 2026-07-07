@@ -4,4 +4,4 @@ src/__stories__/example-sources-built/*
 !src/__stories__/example-sources-built/bundle-sizes.json.d.ts
 src/__stories__/example-sources-built-preact
 src/remote/sandbox/generated/*
-!src/remote/sandbox/generated/frontComponentSandboxCourierSource.d.ts
+!src/remote/sandbox/generated/frontComponentSandboxDocument.d.ts

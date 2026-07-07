@@ -6,8 +6,8 @@ import { type ConfirmationModalCaller } from 'twenty-shared/types';
 import { getURLSafely, isDefined } from 'twenty-shared/utils';
 
 import { createHostFetch } from '@/host/utils/createHostFetch';
+import { FRONT_COMPONENT_SANDBOX_DOCUMENT } from '@/remote/sandbox/generated/frontComponentSandboxDocument';
 import { FRONT_COMPONENT_SANDBOX_MESSAGE } from '@/remote/sandbox/frontComponentSandboxMessages';
-import { buildFrontComponentSandboxDocument } from '@/remote/sandbox/utils/buildFrontComponentSandboxDocument';
 import { createFrontComponentSandboxIframe } from '@/remote/sandbox/utils/createFrontComponentSandboxIframe';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type FrontComponentHostThreadExports } from '../../types/FrontComponentHostThreadExports';
@@ -78,7 +78,7 @@ export const FrontComponentWorkerEffect = ({
     const newReceiver = new RemoteReceiver({ retain, release });
 
     const sandboxIframe = createFrontComponentSandboxIframe(
-      buildFrontComponentSandboxDocument(),
+      FRONT_COMPONENT_SANDBOX_DOCUMENT,
     );
     document.body.append(sandboxIframe);
 
