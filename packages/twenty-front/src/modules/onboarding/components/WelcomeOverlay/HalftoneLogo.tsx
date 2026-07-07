@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { type CSSProperties } from 'react';
 
-import { WELCOME_HALFTONE_DOTS } from '@/onboarding/components/WelcomeOverlay/welcomeHalftoneDots';
+import { WELCOME_HALFTONE_DASHES } from '@/onboarding/components/WelcomeOverlay/welcomeHalftoneDots';
 
 import './welcomeHalftone.css';
 
@@ -17,16 +17,17 @@ const StyledSvg = styled.svg`
   width: 100%;
 `;
 
-const StyledDot = styled.circle`
+const StyledDash = styled.line`
   animation-delay: var(--dot-delay, 0s);
   animation-duration: 0.5s;
   animation-fill-mode: both;
-  animation-name: welcomeDotIn;
+  animation-name: welcomeDashIn;
   animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  fill: var(--welcome-dot-color);
   opacity: 0;
+  stroke: var(--welcome-dot-color);
+  stroke-linecap: round;
 
-  @keyframes welcomeDotIn {
+  @keyframes welcomeDashIn {
     from {
       opacity: 0;
     }
@@ -47,16 +48,22 @@ export const HalftoneLogo = () => (
     preserveAspectRatio="xMidYMid meet"
     aria-hidden="true"
   >
-    {WELCOME_HALFTONE_DOTS.map(([cx, cy, r]) => {
-      const distance = Math.hypot(cx - VIEWBOX_CENTER_X, cy - VIEWBOX_CENTER_Y);
+    {WELCOME_HALFTONE_DASHES.map(([x1, x2, y, strokeWidth]) => {
+      const centerX = (x1 + x2) / 2;
+      const distance = Math.hypot(
+        centerX - VIEWBOX_CENTER_X,
+        y - VIEWBOX_CENTER_Y,
+      );
       const delay = (distance / MAX_CENTER_DISTANCE) * BLOOM_SPREAD_SECONDS;
 
       return (
-        <StyledDot
-          key={`${cx}-${cy}-${r}`}
-          cx={cx}
-          cy={cy}
-          r={r}
+        <StyledDash
+          key={`${x1}-${x2}-${y}`}
+          x1={x1}
+          y1={y}
+          x2={x2}
+          y2={y}
+          strokeWidth={strokeWidth}
           style={{ '--dot-delay': `${delay.toFixed(3)}s` } as CSSProperties}
         />
       );
