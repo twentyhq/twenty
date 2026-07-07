@@ -1,5 +1,6 @@
-import { getURLSafely, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
+import { getUniqueHttpOriginsFromUrls } from '@/host/utils/getUniqueHttpOriginsFromUrls';
 import { type HostFetchPolicy } from '@/types/HostFetchPolicy';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 
@@ -16,16 +17,11 @@ export const buildHostFetchPolicyFromFrontComponentUrls = ({
   functionsBaseUrl,
   sdkClientUrls,
 }: BuildHostFetchPolicyInput): HostFetchPolicy => {
-  const allowedOrigins = [
-    ...new Set(
-      [apiUrl, functionsBaseUrl, componentUrl]
-        .filter(isDefined)
-        .map((url) => getURLSafely(url))
-        .filter(isDefined)
-        .filter((url) => url.protocol === 'http:' || url.protocol === 'https:')
-        .map((url) => url.origin),
-    ),
-  ];
+  const allowedOrigins = getUniqueHttpOriginsFromUrls([
+    apiUrl,
+    functionsBaseUrl,
+    componentUrl,
+  ]);
 
   const fileStorageRedirectableUrls = [
     componentUrl,

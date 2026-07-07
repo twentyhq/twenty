@@ -1,5 +1,7 @@
 import { CustomError, getURLSafely, isDefined } from 'twenty-shared/utils';
 
+import { resolveHostFetchRedirectMode } from '@/host/utils/resolveHostFetchRedirectMode';
+import { serializeResponseToHostFetchResult } from '@/host/utils/serializeResponseToHostFetchResult';
 import { type HostFetchFunction } from '@/types/HostFetchFunction';
 import { type HostFetchInput } from '@/types/HostFetchInput';
 import { type HostFetchPolicy } from '@/types/HostFetchPolicy';
@@ -24,28 +26,19 @@ export const createHostFetchEnforcingPolicy = (
     }
 
     const requestMethod = (input.method ?? 'GET').toUpperCase();
-    const allowsFileStorageRedirects =
-      (requestMethod === 'GET' || requestMethod === 'HEAD') &&
-      fileStorageRedirectableUrlSet.has(input.url);
 
     const response = await fetch(input.url, {
       method: requestMethod,
       headers: input.headers,
       body: input.body,
       credentials: 'omit',
-      redirect: allowsFileStorageRedirects ? 'follow' : 'error',
+      redirect: resolveHostFetchRedirectMode(
+        requestMethod,
+        input.url,
+        fileStorageRedirectableUrlSet,
+      ),
     });
 
-    const responseHeaders: Record<string, string> = {};
-    response.headers.forEach((value, key) => {
-      responseHeaders[key] = value;
-    });
-
-    return {
-      status: response.status,
-      statusText: response.statusText,
-      headers: responseHeaders,
-      body: await response.text(),
-    };
+    return serializeResponseToHostFetchResult(response);
   };
 };

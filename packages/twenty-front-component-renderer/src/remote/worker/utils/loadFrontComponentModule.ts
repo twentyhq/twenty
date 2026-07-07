@@ -1,9 +1,11 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { buildAuthorizationHeadersFromAccessToken } from '@/remote/worker/utils/buildAuthorizationHeadersFromAccessToken';
 import { containsSdkClientImportSpecifier } from '@/remote/worker/utils/containsSdkClientImportSpecifier';
 import { createJavaScriptModuleBlobUrl } from '@/remote/worker/utils/createJavaScriptModuleBlobUrl';
 import { fetchJavaScriptModuleSourceText } from '@/remote/worker/utils/fetchJavaScriptModuleSourceText';
 import { fetchSdkClientModulesAsBlobUrls } from '@/remote/worker/utils/fetchSdkClientModulesAsBlobUrls';
+import { revokeSdkClientModuleBlobUrls } from '@/remote/worker/utils/revokeSdkClientModuleBlobUrls';
 import { rewriteSdkClientImportsToBlobUrls } from '@/remote/worker/utils/rewriteSdkClientImportsToBlobUrls';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 
@@ -22,9 +24,9 @@ export const loadFrontComponentModule = async ({
   sdkClientUrls,
   applicationAccessToken,
 }: LoadFrontComponentModuleInput): Promise<FrontComponentModule> => {
-  const authorizationHeaders = isDefined(applicationAccessToken)
-    ? { Authorization: `Bearer ${applicationAccessToken}` }
-    : undefined;
+  const authorizationHeaders = buildAuthorizationHeadersFromAccessToken(
+    applicationAccessToken,
+  );
 
   const componentSource = await fetchJavaScriptModuleSourceText(
     componentUrl,
@@ -55,8 +57,7 @@ export const loadFrontComponentModule = async ({
     URL.revokeObjectURL(componentModuleBlobUrl);
 
     if (isDefined(sdkModuleBlobUrls)) {
-      URL.revokeObjectURL(sdkModuleBlobUrls.core);
-      URL.revokeObjectURL(sdkModuleBlobUrls.metadata);
+      revokeSdkClientModuleBlobUrls(sdkModuleBlobUrls);
     }
   }
 };
