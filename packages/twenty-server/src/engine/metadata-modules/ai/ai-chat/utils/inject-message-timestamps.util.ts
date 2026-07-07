@@ -3,10 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getValidTimeZoneOrUndefined } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-valid-time-zone-or-undefined.util';
 
-const formatMessageTimestamp = (
-  date: Date,
-  timezone: string | null,
-): string =>
+const formatMessageTimestamp = (date: Date, timezone: string | null): string =>
   new Intl.DateTimeFormat('en-US', {
     timeZone: getValidTimeZoneOrUndefined(timezone),
     weekday: 'long',

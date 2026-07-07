@@ -1,6 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-
 export const getValidTimeZoneOrUndefined = (
   timeZone: string | null | undefined,
 ): string | undefined => {
