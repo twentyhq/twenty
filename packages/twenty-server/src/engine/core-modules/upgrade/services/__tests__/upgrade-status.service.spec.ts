@@ -12,8 +12,7 @@ import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/u
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const V1_21_INSTANCE_COMMAND = '1.21.0_InstanceCommand_1772000001000';
-const V1_21_SLOW_INSTANCE_COMMAND =
-  '1.21.0_SlowInstanceCommand_1772000002000';
+const V1_21_SLOW_INSTANCE_COMMAND = '1.21.0_SlowInstanceCommand_1772000002000';
 const V1_21_FIRST_WORKSPACE_COMMAND =
   '1.21.0_FirstWorkspaceCommand_1772000003000';
 const V1_21_SECOND_WORKSPACE_COMMAND =
@@ -222,7 +221,10 @@ describe('UpgradeStatusService', () => {
     };
 
     it('should return the cursor version when at the last step of its segment with completed status', async () => {
-      mockWorkspaceCursor({ name: V1_23_WORKSPACE_COMMAND, status: 'completed' });
+      mockWorkspaceCursor({
+        name: V1_23_WORKSPACE_COMMAND,
+        status: 'completed',
+      });
 
       await expect(service.getWorkspaceCompletedVersion('ws-1')).resolves.toBe(
         '1.23.0',
@@ -230,7 +232,10 @@ describe('UpgradeStatusService', () => {
     });
 
     it('should return the immediately previous version when the cursor is mid-segment', async () => {
-      mockWorkspaceCursor({ name: V1_23_INSTANCE_COMMAND, status: 'completed' });
+      mockWorkspaceCursor({
+        name: V1_23_INSTANCE_COMMAND,
+        status: 'completed',
+      });
 
       await expect(service.getWorkspaceCompletedVersion('ws-1')).resolves.toBe(
         '1.22.0',
@@ -246,7 +251,10 @@ describe('UpgradeStatusService', () => {
     });
 
     it('should return the cursor version when completed at the end of an instance-only segment', async () => {
-      mockWorkspaceCursor({ name: V1_22_INSTANCE_COMMAND, status: 'completed' });
+      mockWorkspaceCursor({
+        name: V1_22_INSTANCE_COMMAND,
+        status: 'completed',
+      });
 
       await expect(service.getWorkspaceCompletedVersion('ws-1')).resolves.toBe(
         '1.22.0',
