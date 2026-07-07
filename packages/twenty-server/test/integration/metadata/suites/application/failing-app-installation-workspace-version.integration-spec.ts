@@ -20,12 +20,13 @@ const injectWorkspaceCursor = async (
   name: string,
   status: 'completed' | 'failed',
 ): Promise<void> => {
-  // A fresh row with the default createdAt (now) outranks the workspace's
-  // seeded initial cursor, so getWorkspaceCompletedVersion reads this one.
+  // Inject as attempt 2 with a fresh createdAt (now): this stays unique against
+  // the seeded completed attempt-1 cursor (which may share this name) and
+  // outranks it, so getWorkspaceCompletedVersion reads this attempt.
   await global.testDataSource.query(
     `INSERT INTO core."upgradeMigration"
        (name, status, attempt, "executedByVersion", "workspaceId", "isInitial")
-     VALUES ($1, $2, 1, $3, $4, false)`,
+     VALUES ($1, $2, 2, $3, $4, false)`,
     [name, status, INJECTED_CURSOR_MARKER, SEED_APPLE_WORKSPACE_ID],
   );
 };
@@ -73,23 +74,24 @@ describe('Install application is gated by the workspace completed upgrade versio
   beforeAll(async () => {
     jest.useRealTimers();
 
-    const [instanceCommand] = await global.testDataSource.query(
+    // The seeded workspace's cursor is the last step of the current version.
+    // Re-injecting it as a failed attempt makes the workspace resolve to the
+    // previous completed version — i.e. behind the instance.
+    const [workspaceCursor] = await global.testDataSource.query(
       `SELECT name FROM core."upgradeMigration"
-       WHERE "workspaceId" IS NULL
-         AND "isInitial" = false
-         AND name LIKE $1
-       ORDER BY "createdAt" DESC
+       WHERE "workspaceId" = $1
+       ORDER BY "createdAt" DESC, attempt DESC
        LIMIT 1`,
-      [`${TWENTY_CURRENT_VERSION}_%`],
+      [SEED_APPLE_WORKSPACE_ID],
     );
 
-    if (!isDefined(instanceCommand)) {
+    if (!isDefined(workspaceCursor)) {
       throw new Error(
-        `Expected at least one recorded instance command for version ${TWENTY_CURRENT_VERSION}`,
+        `Expected a seeded upgrade cursor for workspace ${SEED_APPLE_WORKSPACE_ID}`,
       );
     }
 
-    currentVersionCommandName = instanceCommand.name;
+    currentVersionCommandName = workspaceCursor.name;
   });
 
   afterEach(async () => {
