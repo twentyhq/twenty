@@ -75,6 +75,15 @@ export const patchRemoteElementAttributes = (): void => {
       this: RemoteElementWithAttributeUpdater,
       attributeName: string,
     ) {
+      const mappedElementPropertyName =
+        ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME[attributeName];
+
+      if (mappedElementPropertyName) {
+        this[mappedElementPropertyName] = undefined;
+
+        return;
+      }
+
       originalRemoveAttribute.call(this, attributeName);
 
       if (shouldForwardAttributeAcrossBoundary(attributeName)) {
