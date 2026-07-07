@@ -27,7 +27,7 @@ const About = styled.div`
 
   & h3 {
     color: ${semanticColor.ink};
-    font-size: ${fontSize(4.5)};
+    font-size: ${fontSize(5.5)};
     font-weight: 600;
     margin: ${spacing(6)} 0 ${spacing(2.5)};
     text-decoration: underline;
@@ -37,7 +37,7 @@ const About = styled.div`
 
   & h4 {
     color: ${semanticColor.ink};
-    font-size: ${fontSize(4)};
+    font-size: ${fontSize(4.75)};
     font-weight: 600;
     margin: ${spacing(6)} 0 ${spacing(2.5)};
     text-decoration: underline;
