@@ -1,31 +1,25 @@
 import { isFunction } from '@sniptt/guards';
 
-import { HOST_NATIVE_ONLY_EVENT_PROPS } from '@/host/constants/HostNativeOnlyEventProps';
-
-type HostNativeEventType =
-  (typeof HOST_NATIVE_ONLY_EVENT_PROPS)[keyof typeof HOST_NATIVE_ONLY_EVENT_PROPS];
+import { HOST_NATIVE_EVENT_PROP_TO_EVENT_TYPE } from '@/host/constants/HostNativeEventPropToEventType';
+import { type HostNativeEventHandlers } from '@/host/types/HostNativeEventHandlers';
 
 export const extractHostNativeEventHandlers = (
   reactProps: Record<string, unknown>,
 ): {
-  nativeEventHandlers: Partial<
-    Record<HostNativeEventType, (event: Event) => void>
-  >;
+  nativeEventHandlers: HostNativeEventHandlers;
   remainingProps: Record<string, unknown>;
 } => {
-  const nativeEventHandlers: Partial<
-    Record<HostNativeEventType, (event: Event) => void>
-  > = {};
-  const remainingProps: Record<string, unknown> = { ...reactProps };
+  const nativeEventHandlers: HostNativeEventHandlers = {};
+  const remainingProps = { ...reactProps };
 
-  for (const [propName, eventType] of Object.entries(
-    HOST_NATIVE_ONLY_EVENT_PROPS,
+  for (const [reactPropName, nativeEventType] of Object.entries(
+    HOST_NATIVE_EVENT_PROP_TO_EVENT_TYPE,
   )) {
-    const handler = remainingProps[propName];
-    delete remainingProps[propName];
+    const handler = remainingProps[reactPropName];
+    delete remainingProps[reactPropName];
 
     if (isFunction(handler)) {
-      nativeEventHandlers[eventType] = handler as (event: Event) => void;
+      nativeEventHandlers[nativeEventType] = handler as (event: Event) => void;
     }
   }
 

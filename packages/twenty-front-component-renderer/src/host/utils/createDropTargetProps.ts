@@ -2,28 +2,34 @@ import { isFunction } from '@sniptt/guards';
 
 type PreventableEvent = { preventDefault: () => void };
 
+type RemoteEventHandler = (event: PreventableEvent) => void;
+
+const asRemoteEventHandler = (
+  value: unknown,
+): RemoteEventHandler | undefined =>
+  isFunction(value) ? (value as RemoteEventHandler) : undefined;
+
 export const createDropTargetProps = (
   reactProps: Record<string, unknown>,
 ): Record<string, unknown> | undefined => {
-  const remoteOnDragOver = reactProps.onDragOver;
-  const remoteOnDrop = reactProps.onDrop;
+  const remoteDragOverHandler = asRemoteEventHandler(reactProps.onDragOver);
+  const remoteDropHandler = asRemoteEventHandler(reactProps.onDrop);
 
-  if (!isFunction(remoteOnDragOver) && !isFunction(remoteOnDrop)) {
+  const isDropTarget =
+    remoteDragOverHandler !== undefined || remoteDropHandler !== undefined;
+
+  if (!isDropTarget) {
     return undefined;
   }
 
   return {
-    onDragOver: (event: PreventableEvent) => {
-      event.preventDefault();
-      if (isFunction(remoteOnDragOver)) {
-        (remoteOnDragOver as (event: PreventableEvent) => void)(event);
-      }
+    onDragOver: (dragOverEvent: PreventableEvent) => {
+      dragOverEvent.preventDefault();
+      remoteDragOverHandler?.(dragOverEvent);
     },
-    onDrop: (event: PreventableEvent) => {
-      event.preventDefault();
-      if (isFunction(remoteOnDrop)) {
-        (remoteOnDrop as (event: PreventableEvent) => void)(event);
-      }
+    onDrop: (dropEvent: PreventableEvent) => {
+      dropEvent.preventDefault();
+      remoteDropHandler?.(dropEvent);
     },
   };
 };

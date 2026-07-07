@@ -1,9 +1,9 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext } from 'react';
 
 import { FrontComponentInputFocusContext } from '@/host/contexts/FrontComponentInputFocusContext';
+import { useHostNativeEventListenerRef } from '@/host/hooks/useHostNativeEventListenerRef';
 import { createCaretPreservingElement } from '@/host/utils/createCaretPreservingElement';
 import { createDropTargetProps } from '@/host/utils/createDropTargetProps';
-import { createNativeEventListenerRef } from '@/host/utils/createNativeEventListenerRef';
 import { extractHostNativeEventHandlers } from '@/host/utils/extractHostNativeEventHandlers';
 import { filterProps } from '@/host/utils/filterProps';
 import { isTextLikeInputType } from '@/host/utils/isTextLikeInputType';
@@ -37,17 +37,8 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
     const { nativeEventHandlers, remainingProps: reactProps } =
       extractHostNativeEventHandlers(filterProps(props, htmlTag));
 
-    const nativeEventHandlersRef = useRef(nativeEventHandlers);
-    nativeEventHandlersRef.current = nativeEventHandlers;
-
-    const [nativeEventListenerRef] = useState(() =>
-      createNativeEventListenerRef(nativeEventHandlersRef),
-    );
-
-    const elementRef =
-      Object.keys(nativeEventHandlers).length > 0
-        ? nativeEventListenerRef
-        : undefined;
+    const hostNativeEventListenerRef =
+      useHostNativeEventListenerRef(nativeEventHandlers);
 
     const dropTargetProps = createDropTargetProps(reactProps);
 
@@ -86,13 +77,18 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
         reactProps,
         { ...dropTargetProps, ...forcedProps },
         setEditableFocused,
-        elementRef,
+        hostNativeEventListenerRef,
       );
     }
 
     return React.createElement(
       htmlTag,
-      { ...reactProps, ...dropTargetProps, ...forcedProps, ref: elementRef },
+      {
+        ...reactProps,
+        ...dropTargetProps,
+        ...forcedProps,
+        ref: hostNativeEventListenerRef,
+      },
       isVoid ? undefined : children,
     );
   };

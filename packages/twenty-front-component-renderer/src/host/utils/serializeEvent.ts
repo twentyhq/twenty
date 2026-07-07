@@ -1,6 +1,7 @@
 import { isBoolean, isNumber, isObject, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { applyFirstChangedTouchCoordinates } from '@/host/utils/applyFirstChangedTouchCoordinates';
 import { serializeFileList } from '@/host/utils/serializeFileList';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
@@ -70,30 +71,7 @@ export const serializeEvent = (event: unknown): SerializedEventData => {
     serialized.buttons = domEvent.buttons;
   }
 
-  if (!isNumber(domEvent.clientX) && isObject(domEvent.changedTouches)) {
-    const firstTouch = (domEvent.changedTouches as Record<number, unknown>)[0];
-    if (isObject(firstTouch)) {
-      const touchRecord = firstTouch as Record<string, unknown>;
-      if (isNumber(touchRecord.clientX)) {
-        serialized.clientX = touchRecord.clientX;
-      }
-      if (isNumber(touchRecord.clientY)) {
-        serialized.clientY = touchRecord.clientY;
-      }
-      if (isNumber(touchRecord.pageX)) {
-        serialized.pageX = touchRecord.pageX;
-      }
-      if (isNumber(touchRecord.pageY)) {
-        serialized.pageY = touchRecord.pageY;
-      }
-      if (isNumber(touchRecord.screenX)) {
-        serialized.screenX = touchRecord.screenX;
-      }
-      if (isNumber(touchRecord.screenY)) {
-        serialized.screenY = touchRecord.screenY;
-      }
-    }
-  }
+  applyFirstChangedTouchCoordinates(serialized, domEvent);
 
   if (isNumber(domEvent.pointerId)) {
     serialized.pointerId = domEvent.pointerId;

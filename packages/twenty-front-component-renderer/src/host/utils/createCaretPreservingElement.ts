@@ -12,7 +12,7 @@ export const createCaretPreservingElement = (
   reactProps: Record<string, unknown>,
   forcedProps: Record<string, unknown> | undefined,
   setEditableFocused: SetEditableFocused | null,
-  nativeEventListenerRef?: (node: Element | null) => void,
+  hostNativeEventListenerRef?: (node: Element | null) => void,
 ) => {
   const {
     value,
@@ -48,7 +48,7 @@ export const createCaretPreservingElement = (
     onFocus: handleFocus,
     onBlur: handleBlur,
     ref: (node: CaretPreservingElement | null) => {
-      nativeEventListenerRef?.(node);
+      hostNativeEventListenerRef?.(node);
       if (!isDefined(node)) {
         return;
       }
