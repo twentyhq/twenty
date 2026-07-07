@@ -90,7 +90,6 @@ export class WorkspaceSchemaEnumManagerService {
     value,
     beforeValue,
     afterValue,
-    ifNotExists = false,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
@@ -98,17 +97,30 @@ export class WorkspaceSchemaEnumManagerService {
     value: string;
     beforeValue?: string;
     afterValue?: string;
-    ifNotExists?: boolean;
   }): Promise<void> {
-    const ifNotExistsClause = ifNotExists ? ' IF NOT EXISTS' : '';
-
-    let sql = `ALTER TYPE ${escapeIdentifier(schemaName)}.${escapeIdentifier(enumName)} ADD VALUE${ifNotExistsClause} ${escapeLiteral(value)}`;
+    let sql = `ALTER TYPE ${escapeIdentifier(schemaName)}.${escapeIdentifier(enumName)} ADD VALUE ${escapeLiteral(value)}`;
 
     if (beforeValue) {
       sql += ` BEFORE ${escapeLiteral(beforeValue)}`;
     } else if (afterValue) {
       sql += ` AFTER ${escapeLiteral(afterValue)}`;
     }
+
+    await queryRunner.query(sql);
+  }
+
+  async upsertEnumValue({
+    queryRunner,
+    schemaName,
+    enumName,
+    value,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    enumName: string;
+    value: string;
+  }): Promise<void> {
+    const sql = `ALTER TYPE ${escapeIdentifier(schemaName)}.${escapeIdentifier(enumName)} ADD VALUE IF NOT EXISTS ${escapeLiteral(value)}`;
 
     await queryRunner.query(sql);
   }

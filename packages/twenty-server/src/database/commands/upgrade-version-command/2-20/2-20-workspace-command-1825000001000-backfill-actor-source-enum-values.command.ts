@@ -30,7 +30,6 @@ export type ActorSourceEnumBackfillTarget = {
   expectedValues: string[];
 };
 
-
 export const buildActorSourceEnumBackfillTargets = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
@@ -97,9 +96,9 @@ export const buildActorSourceEnumBackfillTargets = ({
   return targets;
 };
 
-@RegisteredWorkspaceCommand('2.19.0', 1783367892788)
+@RegisteredWorkspaceCommand('2.20.0', 1825000001000)
 @Command({
-  name: 'upgrade:2-19:backfill-actor-source-enum-values',
+  name: 'upgrade:2-20:backfill-actor-source-enum-values',
   description:
     'Backfill missing AGENT FieldActorSource values into the Postgres enums backing ACTOR fields (createdBy/updatedBy) of existing workspaces.',
 })
@@ -144,11 +143,11 @@ export class BackfillActorSourceEnumValuesCommand extends ActiveOrSuspendedWorks
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
     const queryRunner = dataSource.createQueryRunner();
-    let isQueryRunnerConnected = false;
 
     try {
       await queryRunner.connect();
-      isQueryRunnerConnected = true;
+
+      await queryRunner.startTransaction();
 
       const companyCreatedBySourceTarget = targets.find(
         (target) =>
@@ -174,9 +173,13 @@ export class BackfillActorSourceEnumValuesCommand extends ActiveOrSuspendedWorks
             `AGENT already present on ${schemaName}.${companyCreatedBySourceTarget.enumName}, skipping workspace ${workspaceId}`,
           );
 
+          await queryRunner.commitTransaction();
+
           return;
         }
       }
+
+      const isDryRun = options.dryRun ?? false;
 
       for (const target of targets) {
         await this.backfillEnumTarget({
@@ -184,13 +187,19 @@ export class BackfillActorSourceEnumValuesCommand extends ActiveOrSuspendedWorks
           schemaName,
           target,
           workspaceId,
-          isDryRun: options.dryRun ?? false,
+          isDryRun,
         });
       }
-    } finally {
-      if (isQueryRunnerConnected) {
-        await queryRunner.release();
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
       }
+
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -215,24 +224,17 @@ export class BackfillActorSourceEnumValuesCommand extends ActiveOrSuspendedWorks
       return;
     }
 
-    try {
-      for (const value of target.expectedValues) {
-        await this.workspaceSchemaManagerService.enumManager.addEnumValue({
-          queryRunner,
-          schemaName,
-          enumName: target.enumName,
-          value,
-          ifNotExists: true,
-        });
-      }
-
-      this.logger.log(
-        `Ensured actor source values on ${schemaName}.${target.enumName} (workspace ${workspaceId})`,
-      );
-    } catch (error) {
-      this.logger.warn(
-        `Skipping enum ${schemaName}.${target.enumName} for workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
-      );
+    for (const value of target.expectedValues) {
+      await this.workspaceSchemaManagerService.enumManager.upsertEnumValue({
+        queryRunner,
+        schemaName,
+        enumName: target.enumName,
+        value,
+      });
     }
+
+    this.logger.log(
+      `Ensured actor source values on ${schemaName}.${target.enumName} (workspace ${workspaceId})`,
+    );
   }
 }

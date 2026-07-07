@@ -33,7 +33,7 @@ describe('WorkspaceSchemaEnumManagerService', () => {
   });
 
   describe('addEnumValue', () => {
-    it('emits a plain ADD VALUE statement by default', async () => {
+    it('emits a plain ADD VALUE statement', async () => {
       await service.addEnumValue({
         queryRunner: queryRunner as unknown as QueryRunner,
         schemaName: 'workspace_adhj7eaegq93fzpgbfpdm8ok3',
@@ -46,14 +46,15 @@ describe('WorkspaceSchemaEnumManagerService', () => {
       expect(executedSql[0]).not.toContain('IF NOT EXISTS');
       expect(executedSql[0]).toContain("'AGENT'");
     });
+  });
 
-    it('emits ADD VALUE IF NOT EXISTS when ifNotExists is set', async () => {
-      await service.addEnumValue({
+  describe('upsertEnumValue', () => {
+    it('emits ADD VALUE IF NOT EXISTS', async () => {
+      await service.upsertEnumValue({
         queryRunner: queryRunner as unknown as QueryRunner,
         schemaName: 'workspace_adhj7eaegq93fzpgbfpdm8ok3',
         enumName: 'company_createdBySource_enum',
         value: 'AGENT',
-        ifNotExists: true,
       });
 
       expect(executedSql).toHaveLength(1);
