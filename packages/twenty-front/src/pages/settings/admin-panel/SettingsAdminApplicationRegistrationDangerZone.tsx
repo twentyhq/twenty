@@ -215,20 +215,21 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
               delay={TooltipDelay.shortDelay}
             />
           )}
-          <Button
-            accent="default"
-            variant="secondary"
-            title={t`Transfer ownership`}
-            Icon={IconShare}
-            onClick={() => openModal(TRANSFER_OWNERSHIP_MODAL_ID)}
-          />
-          {isUnclaimed && (
+          {isUnclaimed ? (
             <Button
               accent="default"
               variant="secondary"
               title={t`Claim ownership`}
               Icon={IconUserPlus}
               onClick={() => openModal(CLAIM_OWNERSHIP_MODAL_ID)}
+            />
+          ) : (
+            <Button
+              accent="default"
+              variant="secondary"
+              title={t`Transfer ownership`}
+              Icon={IconShare}
+              onClick={() => openModal(TRANSFER_OWNERSHIP_MODAL_ID)}
             />
           )}
         </StyledDangerButtonGroup>
