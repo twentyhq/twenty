@@ -1,0 +1,81 @@
+---
+title: 5. An AI agent
+icon: robot
+description: Permiteți unui agent să genereze documente dintr-o conversație, utilizând instrumentul dvs.
+---
+
+Pentru că `generate-document` este expus ca **unealtă**, un agent AI îl poate chema.
+Hai să adăugăm un agent și o abilitate astfel încât utilizatorii să poată spune *"generează o propunere pentru
+Jeffery Griffin"*.
+
+## Abilitatea
+
+Un [skill](/l/ro/developers/extend/apps/logic/skills-and-agents) este reutilizabil
+instrucțiuni - cunoștințele atașate la agenți. Noi învață modelul cum să folosești
+unealta.
+
+```ts filename="src/skills/document-drafting.skill.ts"
+import { defineSkill } from 'twenty-sdk/define';
+
+export default defineSkill({
+  universalIdentifier: DOCUMENT_SKILL_UNIVERSAL_IDENTIFIER,
+  name: 'document-drafting',
+  label: 'Document drafting',
+  icon: 'IconFileText',
+  content: [
+    'To generate a document, call the `generate-document` tool with:',
+    '- `templateId`: the id of the document template to use.',
+    '- `recordId`: the id of the Person or Company the document is for.',
+    '',
+    'If the user names a template or person instead of an id, find the record first,',
+    'then pass its id. Make sure the template target matches the record type.',
+  ].join('\n'),
+});
+```
+
+## Agentul
+
+Un [agent](/l/ro/developers/extend/apps/logic/skills-and-agents) împerechează o recomandare cu un model
+. Setați în mod explicit `responseFormat` pentru a evita un avertisment de construire.
+
+```ts filename="src/agents/document-assistant.agent.ts"
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: DOCUMENT_AGENT_UNIVERSAL_IDENTIFIER,
+  name: 'document-assistant',
+  label: 'Document Assistant',
+  description: 'Generates documents from your templates and CRM records.',
+  icon: 'IconFileText',
+  responseFormat: { type: 'text' },
+  prompt: [
+    'You are the Document Assistant for a CRM.',
+    'You help users generate personalized documents from reusable templates',
+    'and the data already in their CRM. Use the generate-document tool, and',
+    'always confirm what you created.',
+  ].join(' '),
+});
+```
+
+<Note>
+Agentul poate apela instrumentul doar dacă rolul său îi permite acest lucru. Am setat deja
+`canAccessAllTools: true` și `canBeAssignedToAgents: true` pe rolul aplicației în
+[capitolul 2](/l/ro/developers/extend/apps/tutorials/document-generator/generating-documents#grant-it-access).
+</Note>
+
+## Încearcă-l
+
+Deschideți o conversație cu **Asistentul pentru documente** și cereți-i să elaboreze un document pentru o persoană
+din CRM. Găsește înregistrarea, apelează `generate-document`, și raportează
+înapoi documentul pe care l-a creat — care apare acum în **documentele**,
+exact ca meniul de comenzi și căile fluxului de lucru.
+
+Aceasta este rezultatul prezentării logicii ca unealtă: **o funcție, multe uși din față** -
+meniul de comandă, HTTP, pasul fluxului de lucru, și acum limbajul natural.
+
+**După acest pas:** aplicația este completă și cu adevărat utilă. Timpul până la expedierea lui
+.
+
+<Card title="Următorul: publicare →" icon="rocket" href="/dezvoltatori/extindere/aplicații/tutoriale/generator documente/publicare">
+  Adăugați metadate de bazar și publicați.
+</Card>
