@@ -46,10 +46,10 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
   'applicationId',
   'path',
 ])
-@Index('IDX_FILE_SERVER_PATH_UNIQUE', ['path'], {
-  unique: true,
-  where: '"workspaceId" IS NULL',
-})
+@Unique('IDX_FILE_APPLICATION_REGISTRATION_ID_PATH_UNIQUE', [
+  'applicationRegistrationId',
+  'path',
+])
 export class FileEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

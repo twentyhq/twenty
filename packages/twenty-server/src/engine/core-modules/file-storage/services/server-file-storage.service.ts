@@ -108,12 +108,12 @@ export class ServerFileStorageService {
         applicationRegistrationId,
       },
       {
-        conflictPaths: ['path'],
-        indexPredicate: '"workspaceId" IS NULL',
+        conflictPaths: ['applicationRegistrationId', 'path'],
       },
     );
 
     return this.serverFileRepository.findOneByOrFail({
+      applicationRegistrationId,
       path: filePath,
       workspaceId: IsNull(),
     });
