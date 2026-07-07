@@ -4,8 +4,8 @@ exports[`Install application is gated by the workspace completed upgrade version
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
-    "subCode": "SERVER_VERSION_INCOMPATIBLE",
-    "userFriendlyMessage": "This app requires a newer version of the Twenty server. Please upgrade your server or use a compatible app version.",
+    "subCode": "WORKSPACE_VERSION_INCOMPATIBLE",
+    "userFriendlyMessage": "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes.",
   },
   "message": "App requires Twenty server >=2.19.0 but this workspace has only completed the upgrade to 2.18.0.",
   "name": "UserInputError",

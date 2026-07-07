@@ -34,6 +34,7 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
       case ApplicationExceptionCode.APP_ALREADY_INSTALLED:
       case ApplicationExceptionCode.CANNOT_DOWNGRADE_APPLICATION:
       case ApplicationExceptionCode.SERVER_VERSION_INCOMPATIBLE:
+      case ApplicationExceptionCode.WORKSPACE_VERSION_INCOMPATIBLE:
       case ApplicationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT:
       case ApplicationExceptionCode.INVALID_WORKSPACE_VERSION:
         throw new UserInputError(exception);

@@ -61,7 +61,7 @@ describe('ApplicationVersionValidationService', () => {
 
       expect(result).toMatchObject({
         compatible: false,
-        reason: 'INCOMPATIBLE',
+        reason: 'INSTANCE_INCOMPATIBLE',
       });
     });
 
@@ -125,7 +125,7 @@ describe('ApplicationVersionValidationService', () => {
 
       expect(result).toMatchObject({
         compatible: false,
-        reason: 'INCOMPATIBLE',
+        reason: 'WORKSPACE_INCOMPATIBLE',
         message:
           'App requires Twenty server >=2.19.0 but this workspace has only completed the upgrade to 2.18.0.',
       });

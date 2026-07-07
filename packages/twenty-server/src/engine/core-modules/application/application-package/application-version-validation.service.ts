@@ -9,7 +9,8 @@ export type VersionValidationFailureReason =
   | 'INVALID_REQUIRED_VERSION'
   | 'INVALID_SERVER_VERSION'
   | 'INVALID_WORKSPACE_VERSION'
-  | 'INCOMPATIBLE';
+  | 'INSTANCE_INCOMPATIBLE'
+  | 'WORKSPACE_INCOMPATIBLE';
 
 export type VersionValidationResult =
   | { compatible: true }
@@ -98,22 +99,31 @@ export class ApplicationVersionValidationService {
     scope: 'instance' | 'workspace';
   }): VersionValidationResult {
     if (!isDefined(version) || !isDefined(semver.valid(version))) {
-      return {
-        compatible: false,
-        reason: 'INVALID_SERVER_VERSION',
-        message: `Cannot verify server compatibility: inferred server version "${version ?? 'undefined'}" is not a valid semver version.`,
-      };
+      return scope === 'workspace'
+        ? {
+            compatible: false,
+            reason: 'INVALID_WORKSPACE_VERSION',
+            message: `Cannot verify workspace compatibility: workspace completed version "${version ?? 'undefined'}" is not a valid semver version.`,
+          }
+        : {
+            compatible: false,
+            reason: 'INVALID_SERVER_VERSION',
+            message: `Cannot verify server compatibility: inferred server version "${version ?? 'undefined'}" is not a valid semver version.`,
+          };
     }
 
     if (!semver.satisfies(version, requiredVersionRange)) {
-      return {
-        compatible: false,
-        reason: 'INCOMPATIBLE',
-        message:
-          scope === 'workspace'
-            ? `App requires Twenty server ${requiredVersionRange} but this workspace has only completed the upgrade to ${version}.`
-            : `App requires Twenty server ${requiredVersionRange} but this server is ${version}.`,
-      };
+      return scope === 'workspace'
+        ? {
+            compatible: false,
+            reason: 'WORKSPACE_INCOMPATIBLE',
+            message: `App requires Twenty server ${requiredVersionRange} but this workspace has only completed the upgrade to ${version}.`,
+          }
+        : {
+            compatible: false,
+            reason: 'INSTANCE_INCOMPATIBLE',
+            message: `App requires Twenty server ${requiredVersionRange} but this server is ${version}.`,
+          };
     }
 
     return { compatible: true };

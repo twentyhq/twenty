@@ -52,7 +52,9 @@ export class ApplicationInstallService {
     INVALID_SERVER_VERSION: ApplicationExceptionCode.INVALID_SERVER_VERSION,
     INVALID_WORKSPACE_VERSION:
       ApplicationExceptionCode.INVALID_WORKSPACE_VERSION,
-    INCOMPATIBLE: ApplicationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
+    INSTANCE_INCOMPATIBLE: ApplicationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
+    WORKSPACE_INCOMPATIBLE:
+      ApplicationExceptionCode.WORKSPACE_VERSION_INCOMPATIBLE,
   };
 
   constructor(
