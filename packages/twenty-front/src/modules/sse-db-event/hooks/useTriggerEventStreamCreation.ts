@@ -11,7 +11,7 @@ import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdSta
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
 import { isGracefullyHandledEventStreamError } from '@/sse-db-event/utils/isGracefullyHandledEventStreamError';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { captureException } from '@sentry/react';
+import { captureException, withScope } from '@sentry/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { print, type ExecutionResult } from 'graphql';
 
@@ -38,6 +38,37 @@ export const useTriggerEventStreamCreation = () => {
     useTriggerOptimisticEffectFromSseEvents();
 
   const triggerEventStreamCreation = useCallback(() => {
+    const captureSseProcessingError = ({
+      error,
+      message,
+      eventType,
+      objectRecordEventsWithQueryIdsCount,
+      metadataEventsCount,
+    }: {
+      error: unknown;
+      message: string;
+      eventType: string;
+      objectRecordEventsWithQueryIdsCount: number;
+      metadataEventsCount: number;
+    }) => {
+      withScope((scope) => {
+        scope.setLevel('warning');
+        scope.setTag('module', 'sse-db-event');
+        scope.setTag('sse-handler', 'event-stream-message');
+        scope.setTag('sse-event-type', eventType);
+        scope.setExtras({
+          objectRecordEventsWithQueryIdsCount,
+          metadataEventsCount,
+        });
+
+        captureException(
+          new Error(message, {
+            cause: error instanceof Error ? error : undefined,
+          }),
+        );
+      });
+    };
+
     const sseClient = store.get(sseClientState.atom);
 
     const isCreatingSseEventStream = store.get(
@@ -154,9 +185,16 @@ export const useTriggerEventStreamCreation = () => {
                     code: extensions?.code,
                   })
                 ) {
-                  for (const error of result.errors) {
-                    captureException(error);
-                  }
+                  withScope((scope) => {
+                    scope.setTag('module', 'sse-db-event');
+                    scope.setTag('sse-handler', 'event-stream-message');
+                    scope.setTag('sse-event-type', event);
+                    scope.setExtras({
+                      errors: result.errors.map(({ message }) => message),
+                      errorCount: result.errors.length,
+                    });
+                    captureException(result.errors[0]);
+                  });
                 }
 
                 store.set(shouldDestroyEventStreamState.atom, true);
@@ -191,12 +229,20 @@ export const useTriggerEventStreamCreation = () => {
               }
             }
           } catch (error) {
-            const errorProcessingSSEMessage = new Error(
-              'Error while processing SSE message',
-              { cause: error instanceof Error ? error : undefined },
-            );
+            const objectRecordEventsWithQueryIds =
+              result?.data?.onEventSubscription?.objectRecordEventsWithQueryIds ??
+              [];
+            const metadataEvents =
+              result?.data?.onEventSubscription?.metadataEvents ?? [];
 
-            captureException(errorProcessingSSEMessage);
+            captureSseProcessingError({
+              error,
+              message: 'Error while processing SSE message',
+              eventType: event,
+              objectRecordEventsWithQueryIdsCount:
+                objectRecordEventsWithQueryIds.length,
+              metadataEventsCount: metadataEvents.length,
+            });
           }
         },
       },

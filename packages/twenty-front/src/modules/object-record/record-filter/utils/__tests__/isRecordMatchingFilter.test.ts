@@ -456,6 +456,18 @@ describe('isRecordMatchingFilter', () => {
     });
   });
 
+  describe('Unknown Filter Fields', () => {
+    it('does not throw and returns false when filter field is missing in metadata', () => {
+      expect(
+        isRecordMatchingFilter({
+          record: companiesMock[0],
+          filter: { stage: { eq: 'PROSPECTING' } },
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+  });
+
   describe('Implicit And Conditions', () => {
     it('matches record with implicit and of multiple operators within the same field', () => {
       const companyMockInFilter = {

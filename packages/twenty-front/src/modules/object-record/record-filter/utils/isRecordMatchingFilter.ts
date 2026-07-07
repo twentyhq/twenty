@@ -217,12 +217,7 @@ export const isRecordMatchingFilter = ({
       );
 
     if (!isDefined(objectMetadataField)) {
-      throw new Error(
-        'Field metadata item "' +
-          filterKey +
-          '" not found for object metadata item ' +
-          objectMetadataItem.nameSingular,
-      );
+      return false;
     }
 
     switch (objectMetadataField.type) {
