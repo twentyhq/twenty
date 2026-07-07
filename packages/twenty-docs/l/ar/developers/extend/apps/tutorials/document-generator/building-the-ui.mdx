@@ -4,7 +4,7 @@ icon: table-columns
 description: المشاهدة، الملاحة الجانبية، الأوامر، والمكونات الأمامية.
 ---
 
-الآن يمكن الوصول إلى الكائنات فقط من خلال الإعدادات. لنمنح التطبيق حضورًا حقيقيًا في واجهة المستخدم: عروض قائمة، وعناصر في الشريط الجانبي، وأمر **Generate document** بنقرة واحدة، ومكوّن واجهة أمامية في صفحة السجل لِـ**preview** مستند، وعلامة تبويب **editor** نصيّة منسّقة (rich-text) أصلية للقوالب.
+الآن يمكن الوصول إلى الكائنات فقط من خلال الإعدادات. لنمنح التطبيق حضورًا حقيقيًا في واجهة المستخدم: طرق عرض القوائم، وعناصر في الشريط الجانبي، وأمر **إنشاء مستند** بنقرة واحدة، ومكوّن واجهة أمامية في صفحة السجل من أجل **معاينة** مستند، وعلامة تبويب **محرر** نص منسق أصلية للقوالب.
 
 ## وجهات النظر والملاحة
 
@@ -140,7 +140,7 @@ export default defineCommandMenuItem({
 
 ## جرب التدفق بأكمله
 
-افتح **People**، وحدِّد شخصًا، ثم اضغط <kbd>⌘K</kbd> / <kbd>Ctrl K</kbd>.
+افتح **People**، حدِّد شخصًا، ثم اضغط <kbd>⌘K</kbd> / <kbd>Ctrl K</kbd>.
 يظهر "إنشاء مستند"، وسم مع التطبيق الخاص بك:
 
 <Frame caption="يظهر الأمر عندما يتم اختيار شخص.">
@@ -279,7 +279,7 @@ export default definePageLayout({
 ```
 
 يخزن حقل "RICH_TEXT" كتلة المحرر JSON وإسقاط Markdown
-على حد سواء. تقوم قناة التوليد بقراءة إسقاط Markdown هذا، بحيث تظل العناصر البديلة placeholders وملف PDF وصفحة الويب القابلة للمشاركة تعمل دون أي تغيير — اطّلع على الملف الكامل [`template-record.page-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/page-layouts/template-record.page-layout.ts).
+على حد سواء. خط أنابيب التوليد يقرأ إسقاط الـ Markdown هذا، لذا فإن العناصر النائبة وملف PDF وصفحة الويب القابلة للمشاركة تستمر جميعها في العمل دون تغيير — راجع الملف الكامل [`template-record.page-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/page-layouts/template-record.page-layout.ts).
 الآن المحررون يكتبون قوالب في محرر نص غني مناسب:
 
 <Frame caption="علامة التبويب النموذج: محرر النص الغني الأصلي 20 مرتبط بحقل الجسم.">

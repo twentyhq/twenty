@@ -1,29 +1,29 @@
 ---
 title: "Tutorial: Dokumentgenerator"
 icon: wand-magic-sparkles
-description: Erstelle eine echte Twenty-App, die personalisierte Dokumente aus deinen CRM-Daten generiert.
+description: Erstellen Sie eine echte Twenty-App, die personalisierte Dokumente aus Ihren CRM-Daten generiert.
 ---
 
-In diesem Tutorial erstellst du **Document Generator** – eine App, die wiederverwendbare Vorlagen in personalisierte Dokumente umwandelt, indem sie die bereits in deinem CRM vorhandenen Daten nutzt.
+In diesem Tutorial erstellen Sie **Document Generator** – eine App, die wiederverwendbare Vorlagen in personalisierte Dokumente umwandelt, indem sie die bereits in Ihrem CRM vorhandenen Daten nutzt.
 
-Schreibe einmal eine Vorlage mit `{{placeholders}}` und generiere dann mit einem Klick ein ausgefülltes Dokument für jede Person oder jedes Unternehmen – über das Befehlsmenü, über einen KI-Agenten oder über einen Workflow.
+Schreiben Sie eine Vorlage einmal mit `{{placeholders}}` und generieren Sie dann mit einem Klick ein ausgefülltes Dokument für jede Person oder jedes Unternehmen – über das Befehlsmenü, über einen KI-Agenten oder über einen Workflow.
 
 <Frame caption="Eine Vorlage, die für eine bestimmte Person generiert wurde und als druckbare Seite geöffnet ist.">
-  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="Ein generiertes Verkaufsangebotsdokument" />
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="Ein generiertes Verkaufsangebot" />
 </Frame>
 
 ## Was Sie lernen werden
 
 Jedes Kapitel fügt eine Funktion hinzu. Am Ende haben Sie den Großteil des SDK kennengelernt.
 
-| Kapitel                                                                                              | Funktion                                                                                                           | Referenz                                                            |
-| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
-| [1. Datenmodell](/l/de/developers/extend/apps/tutorials/document-generator/data-model)                    | Objekte, Felder und eine Relation                                                                                  | [Daten](/l/de/developers/extend/apps/data/overview)                      |
-| [2. Dokumente generieren](/l/de/developers/extend/apps/tutorials/document-generator/generating-documents) | Eine Logikfunktion (KI-Tool + Workflow-Aktion), die eine Markdown-Vorlage ausfüllt und ein fertiges PDF anhängt    | [Logikfunktionen](/l/de/developers/extend/apps/logic/logic-functions)    |
-| [3. HTTP-Routen](/l/de/developers/extend/apps/tutorials/document-generator/http-routes)                   | Ausliefern von JSON und einer teilbaren HTML-Seite über Routen                                                     | [Logikfunktionen](/l/de/developers/extend/apps/logic/logic-functions)    |
-| [4. Die UI erstellen](/l/de/developers/extend/apps/tutorials/document-generator/building-the-ui)          | Ansichten, Navigation, Befehlsmenü und Frontend-Komponenten, die ein Dokument anzeigen und eine Vorlage bearbeiten | [Layout](/l/de/developers/extend/apps/layout/overview)                   |
-| [5. Ein KI-Agent](/l/de/developers/extend/apps/tutorials/document-generator/ai-agent)                     | Agent + Skill                                                                                                      | [Skills & Agenten](/l/de/developers/extend/apps/logic/skills-and-agents) |
-| [6. Veröffentlichen](/l/de/developers/extend/apps/tutorials/document-generator/publishing)                | In den Marketplace veröffentlichen                                                                                 | [Veröffentlichen](/l/de/developers/extend/apps/operations/publishing)    |
+| Kapitel                                                                                              | Funktion                                                                                                                            | Referenz                                                            |
+| ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| [1. Datenmodell](/l/de/developers/extend/apps/tutorials/document-generator/data-model)                    | Objekte, Felder und eine Relation                                                                                                   | [Daten](/l/de/developers/extend/apps/data/overview)                      |
+| [2. Dokumente generieren](/l/de/developers/extend/apps/tutorials/document-generator/generating-documents) | Eine Logikfunktion (KI-Tool + Workflow-Aktion), die eine Markdown-Vorlage ausfüllt und ein fertiges PDF anhängt                     | [Logikfunktionen](/l/de/developers/extend/apps/logic/logic-functions)    |
+| [3. HTTP-Routen](/l/de/developers/extend/apps/tutorials/document-generator/http-routes)                   | Ausliefern von JSON und einer teilbaren HTML-Seite über Routen                                                                      | [Logikfunktionen](/l/de/developers/extend/apps/logic/logic-functions)    |
+| [4. Die UI erstellen](/l/de/developers/extend/apps/tutorials/document-generator/building-the-ui)          | Ansichten, Navigation, Befehlsmenü und Frontend-Komponenten, die eine Vorschau eines Dokuments anzeigen und eine Vorlage bearbeiten | [Layout](/l/de/developers/extend/apps/layout/overview)                   |
+| [5. Ein KI-Agent](/l/de/developers/extend/apps/tutorials/document-generator/ai-agent)                     | Agent + Skill                                                                                                                       | [Skills & Agenten](/l/de/developers/extend/apps/logic/skills-and-agents) |
+| [6. Veröffentlichen](/l/de/developers/extend/apps/tutorials/document-generator/publishing)                | In den Marketplace veröffentlichen                                                                                                  | [Veröffentlichen](/l/de/developers/extend/apps/operations/publishing)    |
 
 ## Voraussetzungen
 
@@ -62,6 +62,6 @@ Lassen Sie `yarn twenty dev` während des gesamten Tutorials in einem Terminal l
 Sie eine Datei unter `src/` hinzufügen oder bearbeiten, wird sie innerhalb weniger
 Sekunden mit Ihrem Server synchronisiert, sodass Sie beobachten können, wie jede Funktion in der UI erscheint, während Sie sie entwickeln.
 
-<Card title="Beginnen Sie mit dem Bauen →" icon="database" href="/l/de/developers/extend/apps/tutorials/document-generator/data-model">
+<Card title="Beginnen Sie mit der Entwicklung →" icon="database" href="/l/de/developers/extend/apps/tutorials/document-generator/data-model">
   Kapitel 1: Dokumente und Vorlagen modellieren.
 </Card>
