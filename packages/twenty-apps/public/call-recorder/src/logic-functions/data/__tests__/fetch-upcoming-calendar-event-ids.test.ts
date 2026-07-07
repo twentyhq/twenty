@@ -32,7 +32,7 @@ describe('fetchUpcomingCalendarEventIds', () => {
     vi.clearAllMocks();
   });
 
-  it('filters to non-canceled events ending (or starting) between now and the max future date, closest first', async () => {
+  it('filters to non-canceled events starting within the scheduling horizon and not yet ended, closest first', async () => {
     queryMock.mockResolvedValue(buildPage(['calendar-event-1']));
 
     await fetchUpcomingCalendarEventIds(CLIENT, NOW);
@@ -46,15 +46,15 @@ describe('fetchUpcomingCalendarEventIds', () => {
               or: [
                 {
                   and: [
+                    { startsAt: { lte: '2026-07-11T12:00:00.000Z' } },
                     { endsAt: { gt: '2026-07-04T12:00:00.000Z' } },
-                    { endsAt: { lte: '2029-07-04T12:00:00.000Z' } },
                   ],
                 },
                 {
                   and: [
                     { endsAt: { is: 'NULL' } },
                     { startsAt: { gt: '2026-07-04T12:00:00.000Z' } },
-                    { startsAt: { lte: '2029-07-04T12:00:00.000Z' } },
+                    { startsAt: { lte: '2026-07-11T12:00:00.000Z' } },
                   ],
                 },
               ],
