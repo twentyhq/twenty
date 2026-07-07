@@ -91,14 +91,29 @@ const computeIsTargetFunctionCall = (node: ts.Node): string | undefined => {
   return undefined;
 };
 
+// Files that reference a define function but yield no entity are silently
+// skipped by discovery, so callers use this to warn instead of dropping them.
+export const findReferencedTargetFunctions = (
+  fileContent: string,
+): TargetFunction[] => {
+  return Object.values(TargetFunction).filter((targetFunction) =>
+    new RegExp(`\\b${targetFunction}\\s*\\(`).test(fileContent),
+  );
+};
+
 export const extractDefineEntity = (
   fileContent: string,
+  fileName: string,
 ): TargetFunction | undefined => {
+  // Parsing .tsx content as .ts turns JSX into type assertions; error
+  // recovery can then swallow the trailing export default and the entity
+  // silently disappears from the manifest.
   const sourceFile = ts.createSourceFile(
-    'temp.ts',
+    fileName,
     fileContent,
     ts.ScriptTarget.Latest,
     true,
+    fileName.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
   );
 
   const children: ts.Node[] = [];

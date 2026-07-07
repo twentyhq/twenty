@@ -1,6 +1,7 @@
 import {
   type EntityFilePaths,
   extractDefineEntity,
+  findReferencedTargetFunctions,
   ManifestEntityKey,
   TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING,
   TargetFunction,
@@ -146,9 +147,18 @@ export const buildManifest = async (
       ...validateConditionalAvailabilityUsage(fileContent, relativePath),
     );
 
-    const targetFunctionName = extractDefineEntity(fileContent);
+    const targetFunctionName = extractDefineEntity(fileContent, filePath);
 
     if (!targetFunctionName) {
+      const referencedTargetFunctions =
+        findReferencedTargetFunctions(fileContent);
+
+      if (referencedTargetFunctions.length > 0) {
+        warnings.push(
+          `${relativePath} calls ${referencedTargetFunctions.join(', ')} but no entity could be discovered, so it was skipped and will not appear in the manifest. Make sure the file has a top-level "export default ${referencedTargetFunctions[0]}(...)".`,
+        );
+      }
+
       continue;
     }
 
