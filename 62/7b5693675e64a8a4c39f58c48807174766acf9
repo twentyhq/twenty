@@ -1,0 +1,125 @@
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/utils/getFormulaExpressionMarkers.ts
+  s_c9896ad68d525f::t_401b2f961dd7d4 3,5,86-87
+  s_c9896ad68d525f::t_7ca7822c643eb3 1,10-12
+packages/twenty-shared/src/utils/formula/utils/computePostgresRightSlice.ts
+  s_c9896ad68d525f::t_b36d63e056bcae 9-10
+packages/twenty-shared/src/utils/formula/utils/transpileFormulaToPostgresExpressionOrThrow.ts
+  s_c9896ad68d525f::t_de6975aafe4841 31-33
+  s_c9896ad68d525f::t_cfeef5d5d715a1 3,22,43,78
+packages/twenty-shared/src/utils/formula/utils/isFormulaDateAddUnit.ts
+  s_c9896ad68d525f::t_8a87bfcf1bbfe6 1-8
+packages/twenty-shared/src/utils/formula/utils/__tests__/formulaFunctionsContract.test.ts
+  s_c9896ad68d525f::t_d40b7b21dfd98a 44,50,72,78,86,92,98,104,296,302
+packages/twenty-shared/src/utils/formula/constants/FormulaDateAddUnitSeconds.ts
+  s_c9896ad68d525f::t_f67ccd358820de 7
+  s_c9896ad68d525f::t_8a87bfcf1bbfe6 1,6,8
+packages/twenty-server/src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
+  s_c9896ad68d525f::t_e4eedefaa0edb9 372-376
+  s_c9896ad68d525f::t_eab624e1ca541e 216
+  s_c9896ad68d525f::t_3e2b9be09eca84 5,10,46,217-219,369-371,377-385,401-407
+  s_c9896ad68d525f::t_d312854dfeeb4f 408
+packages/twenty-shared/src/utils/index.ts
+  s_c9896ad68d525f::t_e52e548333d7ec 165
+  s_c9896ad68d525f::t_336324ac53abb8 207
+  s_c9896ad68d525f::t_ace79fc8ab49cb 160,169,206
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service.ts
+  s_c9896ad68d525f::t_4db358d6d7d8c5 72-79
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/derive-computed-as-expression-for-flat-field-metadata.util.ts
+  s_c9896ad68d525f::t_9f53297fb90597 27-28,165
+packages/twenty-shared/src/utils/formula/utils/__tests__/transpileFormulaToPostgresExpressionOrThrow.test.ts
+  s_c9896ad68d525f::t_d40b7b21dfd98a 62,79
+packages/twenty-shared/src/utils/formula/utils/evaluateFormulaDateAdd.ts
+  s_c9896ad68d525f::t_8a87bfcf1bbfe6 2,18,22
+  s_c9896ad68d525f::t_f9396e302556d5 23
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/__tests__/validate-computed-flat-field-metadata.util.spec.ts
+  s_c9896ad68d525f::t_c22b3adac58453 1-115
+packages/twenty-front/src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+  s_c9896ad68d525f::t_e4eedefaa0edb9 386
+packages/twenty-shared/src/utils/formula/utils/computePostgresLeftSlice.ts
+  s_c9896ad68d525f::t_b36d63e056bcae 9-10
+packages/twenty-shared/src/utils/formula/constants/FormulaKeywords.ts
+  s_c9896ad68d525f::t_75a39583cfa00b 1-8
+packages/twenty-front/src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard.tsx
+  s_c9896ad68d525f::t_7b0758619a0cbd 237
+packages/twenty-shared/src/utils/formula/utils/getFormulaDateAddUnitSecondsOrThrow.ts
+  s_c9896ad68d525f::t_8a87bfcf1bbfe6 2-3,12,18-19,25
+  s_c9896ad68d525f::t_7ca08804658b50 26
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-computed-flat-field-metadata.util.ts
+  s_c9896ad68d525f::t_9f53297fb90597 200
+  s_c9896ad68d525f::t_cd33b1c93ca947 71-84
+  s_c9896ad68d525f::t_ed7ee285e4018b 233-243,245,249,251
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/utils/buildFormulaCompletionItems.ts
+  s_c9896ad68d525f::t_e52e548333d7ec 1
+  s_c9896ad68d525f::t_e4eedefaa0edb9 2-5
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util.ts
+  s_c9896ad68d525f::t_561a4845651e98 242-244
+packages/twenty-shared/src/utils/formula/utils/tokenizeFormulaExpressionOrThrow.ts
+  s_c9896ad68d525f::t_ff3ede31c02359 54,67,70,141,144
+  s_c9896ad68d525f::t_c700de94b21a00 1,51
+packages/twenty-shared/src/utils/formula/utils/parseFormulaExpressionOrThrow.ts
+  s_c9896ad68d525f::t_e52e548333d7ec 1
+  s_c9896ad68d525f::t_ff3ede31c02359 71,80,225,228,261,264,287,321,324
+  s_c9896ad68d525f::t_7bfdbe54d4af79 279-283
+  s_c9896ad68d525f::t_e0e67e68abb8ee 4,29,36,51,68,284
+packages/twenty-shared/src/utils/formula/utils/isFormulaExpressionBySubField.ts
+  s_c9896ad68d525f::t_54c6f2d11eb377 1-5
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/utils/registerTwentyFormulaLanguage.ts
+  s_c9896ad68d525f::t_e52e548333d7ec 2
+packages/twenty-shared/src/utils/formula/errors/FormulaError.ts
+  s_c9896ad68d525f::t_0f0fc6cfc146b3 1-20
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/update-field-action-handler.service.ts
+  s_c9896ad68d525f::t_1a65abb09f7473 3-4
+  s_c9896ad68d525f::t_067c2e2e1533aa 368,370,372-376,382-392,394-401,407
+packages/twenty-front/src/modules/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema.ts
+  s_c9896ad68d525f::t_5f94f6b8ed07c2 20-25
+packages/twenty-server/package.json
+  s_c9896ad68d525f::t_dfc69aff0208cf 32
+packages/twenty-server/src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service.ts
+  s_c9896ad68d525f::t_e94bed40d82fbe 23
+packages/twenty-server/src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util.ts
+  s_c9896ad68d525f::t_b2f24c06f15807 53-67,69-71
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/page-layout-widget/services/utils/from-universal-configuration-to-flat-page-layout-widget-configuration.util.ts
+  s_c9896ad68d525f::t_ea636b0a924010 51-64,66-68
+packages/twenty-server/test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test.ts
+  s_c9896ad68d525f::t_07b0ed2b94ddf2 8,13
+packages/twenty-shared/src/utils/filter/checkIfShouldComputeEmptinessFilter.ts
+  s_c9896ad68d525f::t_e559591de6debb 14
+packages/twenty-shared/src/utils/filter/turnRecordFilterIntoGqlOperationFilter.ts
+  s_c9896ad68d525f::t_578536453e8a6b 207
+packages/twenty-shared/src/utils/filter/utils/getEmptyRecordGqlOperationFilter.ts
+  s_c9896ad68d525f::t_c308d8e2dcff94 30,45
+packages/twenty-shared/src/utils/formula/constants/FormulaTextFunctions.ts
+  s_c9896ad68d525f::t_f7074b29aa1c60 5,15
+packages/twenty-shared/src/utils/formula/utils/assertFormulaArgumentCountOrThrow.ts
+  s_c9896ad68d525f::t_a63ddc3533d781 1,16
+packages/twenty-shared/src/utils/formula/utils/assertFormulaArgumentTypeOrThrow.ts
+  s_c9896ad68d525f::t_30cdb598c2f70c 1,19
+packages/twenty-shared/src/utils/formula/utils/evaluateFormulaOrThrow.ts
+  s_c9896ad68d525f::t_a755a42d4478f0 3,56,145
+packages/twenty-shared/src/utils/formula/utils/inferFormulaReturnTypeOrThrow.ts
+  s_c9896ad68d525f::t_e0b32b29efece2 3,35,104,116
+packages/twenty-shared/src/utils/formula/utils/inferFormulaSwitchReturnTypeOrThrow.ts
+  s_c9896ad68d525f::t_feda95084cec69 1,9
+packages/twenty-shared/src/utils/formula/utils/inferVariadicNumericFunctionReturnTypeOrThrow.ts
+  s_c9896ad68d525f::t_8b793790a487c4 2,13
+packages/twenty-shared/src/utils/formula/utils/unifyFormulaValueTypesOrThrow.ts
+  s_c9896ad68d525f::t_fee1d0d26ef26c 1,21
+yarn.lock
+  s_c9896ad68d525f::t_ae716fcd0b6024 1774-1776,1778-1780,1786-1787,53108
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "627b5693675e64a8a4c39f58c48807174766acf9",
+  "prompts": {},
+  "sessions": {
+    "s_c9896ad68d525f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e5f7930d-ee88-45b7-923e-7aef12c5e30f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
