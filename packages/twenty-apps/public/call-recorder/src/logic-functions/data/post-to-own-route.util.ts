@@ -1,6 +1,6 @@
 import { RestApiClient } from 'twenty-client-sdk/rest';
 
-import { resolveOwnRouteTarget } from 'src/logic-functions/data/resolve-own-route-target.util';
+import { resolveOwnRouteBaseUrl } from 'src/logic-functions/data/resolve-own-route-base-url.util';
 
 const OWN_ROUTE_FLUSH_MS = 5_000;
 
@@ -14,11 +14,9 @@ export const postToOwnRoute = async ({
   body: object;
 }): Promise<boolean> => {
   try {
-    const routeTarget = await resolveOwnRouteTarget();
-    const client = new RestApiClient({ baseUrl: routeTarget.baseUrl });
-    const requestPath = `${routeTarget.pathPrefix}${path}`;
+    const client = new RestApiClient({ baseUrl: resolveOwnRouteBaseUrl() });
 
-    await client.post(requestPath, body, {
+    await client.post(path, body, {
       signal: AbortSignal.timeout(OWN_ROUTE_FLUSH_MS),
     });
 

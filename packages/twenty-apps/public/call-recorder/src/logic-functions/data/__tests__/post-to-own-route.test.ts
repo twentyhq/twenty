@@ -4,14 +4,14 @@ import { postToOwnRoute } from 'src/logic-functions/data/post-to-own-route.util'
 
 const postMock = vi.hoisted(() => vi.fn());
 const restApiClientMock = vi.hoisted(() => vi.fn());
-const resolveOwnRouteTargetMock = vi.hoisted(() => vi.fn());
+const resolveOwnRouteBaseUrlMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-client-sdk/rest', () => ({
   RestApiClient: restApiClientMock,
 }));
 
-vi.mock('src/logic-functions/data/resolve-own-route-target.util', () => ({
-  resolveOwnRouteTarget: resolveOwnRouteTargetMock,
+vi.mock('src/logic-functions/data/resolve-own-route-base-url.util', () => ({
+  resolveOwnRouteBaseUrl: resolveOwnRouteBaseUrlMock,
 }));
 
 describe('postToOwnRoute', () => {
@@ -21,18 +21,12 @@ describe('postToOwnRoute', () => {
       return { post: postMock };
     });
     postMock.mockResolvedValue({});
-    resolveOwnRouteTargetMock.mockResolvedValue({
-      baseUrl: 'http://acme.localhost:3000',
-      pathPrefix: '/s',
-    });
+    resolveOwnRouteBaseUrlMock.mockReturnValue(
+      'https://acme.functions.example.com',
+    );
   });
 
-  it('posts to the functions origin without the legacy prefix when resolved', async () => {
-    resolveOwnRouteTargetMock.mockResolvedValue({
-      baseUrl: 'https://acme.functions.example.com',
-      pathPrefix: '',
-    });
-
+  it('posts to the functions origin when resolved', async () => {
     const result = await postToOwnRoute({
       path: '/call-recorder/some-route',
       body: { key: 'value' },
@@ -45,28 +39,6 @@ describe('postToOwnRoute', () => {
     expect(postMock).toHaveBeenCalledWith(
       '/call-recorder/some-route',
       { key: 'value' },
-      { signal: expect.any(AbortSignal) },
-    );
-  });
-
-  it('posts to a workspace-aware legacy route when resolved', async () => {
-    resolveOwnRouteTargetMock.mockResolvedValue({
-      baseUrl: 'http://acme.localhost:3000',
-      pathPrefix: '/s',
-    });
-
-    const result = await postToOwnRoute({
-      path: '/call-recorder/some-route',
-      body: {},
-    });
-
-    expect(result).toBe(true);
-    expect(restApiClientMock).toHaveBeenCalledWith({
-      baseUrl: 'http://acme.localhost:3000',
-    });
-    expect(postMock).toHaveBeenCalledWith(
-      '/s/call-recorder/some-route',
-      {},
       { signal: expect.any(AbortSignal) },
     );
   });
@@ -89,10 +61,10 @@ describe('postToOwnRoute', () => {
     ).resolves.toBe(false);
   });
 
-  it('returns false when the route target cannot be resolved', async () => {
-    resolveOwnRouteTargetMock.mockRejectedValue(
-      new Error('Unable to resolve target'),
-    );
+  it('returns false when the route base url cannot be resolved', async () => {
+    resolveOwnRouteBaseUrlMock.mockImplementation(() => {
+      throw new Error('Unable to resolve target');
+    });
 
     await expect(
       postToOwnRoute({ path: '/call-recorder/some-route', body: {} }),
