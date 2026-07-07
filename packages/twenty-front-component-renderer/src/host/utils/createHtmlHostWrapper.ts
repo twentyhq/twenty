@@ -1,7 +1,10 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 
 import { FrontComponentInputFocusContext } from '@/host/contexts/FrontComponentInputFocusContext';
 import { createCaretPreservingElement } from '@/host/utils/createCaretPreservingElement';
+import { createDropTargetProps } from '@/host/utils/createDropTargetProps';
+import { createNativeEventListenerRef } from '@/host/utils/createNativeEventListenerRef';
+import { extractHostNativeEventHandlers } from '@/host/utils/extractHostNativeEventHandlers';
 import { filterProps } from '@/host/utils/filterProps';
 import { isTextLikeInputType } from '@/host/utils/isTextLikeInputType';
 import { sanitizeIframeSandbox } from '@/host/utils/sanitizeIframeSandbox';
@@ -31,7 +34,22 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
 
   return ({ children, ...props }: WrapperProps) => {
     const setEditableFocused = useContext(FrontComponentInputFocusContext);
-    const reactProps = filterProps(props, htmlTag);
+    const { nativeEventHandlers, remainingProps: reactProps } =
+      extractHostNativeEventHandlers(filterProps(props, htmlTag));
+
+    const nativeEventHandlersRef = useRef(nativeEventHandlers);
+    nativeEventHandlersRef.current = nativeEventHandlers;
+
+    const [nativeEventListenerRef] = useState(() =>
+      createNativeEventListenerRef(nativeEventHandlersRef),
+    );
+
+    const elementRef =
+      Object.keys(nativeEventHandlers).length > 0
+        ? nativeEventListenerRef
+        : undefined;
+
+    const dropTargetProps = createDropTargetProps(reactProps);
 
     const forcedProps: Record<string, unknown> | undefined = isIframe
       ? { sandbox: sanitizeIframeSandbox(reactProps.sandbox) }
@@ -66,14 +84,15 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
       return createCaretPreservingElement(
         htmlTag,
         reactProps,
-        forcedProps,
+        { ...dropTargetProps, ...forcedProps },
         setEditableFocused,
+        elementRef,
       );
     }
 
     return React.createElement(
       htmlTag,
-      { ...reactProps, ...forcedProps },
+      { ...reactProps, ...dropTargetProps, ...forcedProps, ref: elementRef },
       isVoid ? undefined : children,
     );
   };

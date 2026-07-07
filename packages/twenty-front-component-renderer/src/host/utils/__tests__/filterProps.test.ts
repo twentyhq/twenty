@@ -34,6 +34,40 @@ describe('filterProps', () => {
     expect(result.onClick).not.toBe(onClick);
   });
 
+  it('should normalize and wrap newly allowed event handlers', () => {
+    const handler = jest.fn();
+    const result = filter(
+      {
+        onTouchstart: handler,
+        onDragstart: handler,
+        onDrop: handler,
+        onAnimationend: handler,
+        onTransitionend: handler,
+        onScrollend: handler,
+        onToggle: handler,
+        onLoad: handler,
+      },
+      'div',
+    );
+
+    expect(typeof result.onTouchStart).toBe('function');
+    expect(typeof result.onDragStart).toBe('function');
+    expect(typeof result.onDrop).toBe('function');
+    expect(typeof result.onAnimationEnd).toBe('function');
+    expect(typeof result.onTransitionEnd).toBe('function');
+    expect(typeof result.onScrollEnd).toBe('function');
+    expect(typeof result.onToggle).toBe('function');
+    expect(typeof result.onLoad).toBe('function');
+  });
+
+  it('should normalize focusin and focusout handlers to their react-style keys', () => {
+    const handler = jest.fn();
+    const result = filter({ onFocusin: handler, onFocusout: handler }, 'div');
+
+    expect(typeof result.onFocusIn).toBe('function');
+    expect(typeof result.onFocusOut).toBe('function');
+  });
+
   it('should drop event-handler props whose value is not a function', () => {
     const result = filter({ onClick: 'alert(1)', onmouseover: 'x' }, 'div');
 
