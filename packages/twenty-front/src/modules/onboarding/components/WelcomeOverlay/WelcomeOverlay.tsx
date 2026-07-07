@@ -117,6 +117,11 @@ const StyledTitle = styled.div`
   will-change: transform, opacity;
   z-index: 1;
 
+  @media (max-width: 600px) {
+    flex-wrap: wrap;
+    max-width: 90vw;
+  }
+
   &.is-leaving {
     animation: welcomeTitleOut 0.34s cubic-bezier(0.4, 0, 1, 1) forwards;
   }
@@ -191,7 +196,22 @@ export const WelcomeOverlay = () => {
       WELCOME_HOLD_DURATION_MS,
     );
 
-    return () => clearTimeout(timer);
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.key === 'Escape' ||
+        event.key === 'Enter' ||
+        event.key === ' '
+      ) {
+        setIsLeaving(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [welcomeAnimationVisible]);
 
   if (!welcomeAnimationVisible) {

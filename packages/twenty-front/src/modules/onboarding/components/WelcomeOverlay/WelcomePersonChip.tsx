@@ -17,6 +17,11 @@ const StyledChip = styled.div`
 
 const StyledPersonName = styled.span`
   color: ${themeCssVariables.font.color.primary};
+  max-width: min(40vw, 360px);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const WelcomePersonChip = () => {
