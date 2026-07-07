@@ -51,9 +51,9 @@ export type WebsiteRouteFamilyEntry = {
   title: string;
 };
 
-// A dynamic route family (e.g. /articles/[slug]). The enumerator is the
-// single source for generateStaticParams, the sitemap, and per-entry
-// metadata.
+// A dynamic route family (e.g. /articles/[slug]). The enumerator feeds the
+// sitemap today, and is shaped to also drive generateStaticParams and
+// per-entry metadata as pages migrate onto it.
 export type WebsiteRouteFamily = {
   basePath: string;
   changeFrequency: SitemapChangeFrequency;
