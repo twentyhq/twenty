@@ -136,7 +136,7 @@ export class ApplicationDevelopmentResolver {
       workspaceId,
     );
 
-    await this.validateManifestServerCompatibility(manifest, workspaceId);
+    await this.validateManifestVersionCompatibility(manifest, workspaceId);
 
     if (dryRun === true) {
       const { workspaceMigration } =
@@ -285,10 +285,14 @@ export class ApplicationDevelopmentResolver {
     });
   }
 
-  private async validateManifestServerCompatibility(
+  private async validateManifestVersionCompatibility(
     manifest: ApplicationInput['manifest'],
     workspaceId: string,
   ): Promise<void> {
+    // A workspace's completed version can never be ahead of the instance
+    // version (workspace upgrades run after the instance upgrade), so gating on
+    // the workspace completed version also covers the instance: if it passes,
+    // the instance necessarily satisfies the range too.
     const versionValidation =
       await this.applicationVersionValidationService.validateWorkspaceCompatibility(
         {
