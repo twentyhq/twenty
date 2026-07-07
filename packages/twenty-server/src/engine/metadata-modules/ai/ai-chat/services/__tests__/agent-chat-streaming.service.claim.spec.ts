@@ -1,5 +1,5 @@
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { STREAM_INTERRUPTED_CODE } from 'src/engine/metadata-modules/ai/ai-chat/constants/stream-interrupted-code.constant';
+import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 
 describe('AgentChatStreamingService claim & reap', () => {
@@ -175,7 +175,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       });
 
       expect(reaped).toEqual(
-        expect.objectContaining({ code: STREAM_INTERRUPTED_CODE }),
+        expect.objectContaining({ code: AiExceptionCode.STREAM_INTERRUPTED }),
       );
       expect(threadRepository.update).toHaveBeenCalledWith(
         'workspace-id',
@@ -183,7 +183,7 @@ describe('AgentChatStreamingService claim & reap', () => {
         expect.objectContaining({
           activeStreamId: null,
           lastStreamError: expect.objectContaining({
-            code: STREAM_INTERRUPTED_CODE,
+            code: AiExceptionCode.STREAM_INTERRUPTED,
           }),
         }),
       );
@@ -193,7 +193,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       expect(publishedEvents).toContainEqual(
         expect.objectContaining({
           type: 'stream-error',
-          code: STREAM_INTERRUPTED_CODE,
+          code: AiExceptionCode.STREAM_INTERRUPTED,
         }),
       );
     });

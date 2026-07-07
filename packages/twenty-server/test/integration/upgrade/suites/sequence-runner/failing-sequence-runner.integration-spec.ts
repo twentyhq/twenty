@@ -12,9 +12,11 @@ import {
   makeWorkspace,
   migrationRecordToKey,
   resetSeedSequenceCounter,
+  restoreUpgradeMigrations,
   seedInstanceMigration,
   seedWorkspaceMigration,
   setMockActiveWorkspaceIds,
+  snapshotUpgradeMigrations,
   testGetExecutedMigrationsInOrder,
   WS_1,
   WS_2,
@@ -62,13 +64,19 @@ const makeWorkspaceFailingForIds = (
 
 describe('UpgradeSequenceRunnerService — failing sequence (integration)', () => {
   let context: IntegrationTestContext;
+  let savedUpgradeMigrations: Awaited<
+    ReturnType<typeof snapshotUpgradeMigrations>
+  >;
 
   beforeAll(async () => {
     context = await createUpgradeSequenceRunnerIntegrationTestModule();
+    savedUpgradeMigrations = await snapshotUpgradeMigrations(
+      context.dataSource,
+    );
   }, 30000);
 
   afterAll(async () => {
-    await context.dataSource.query('DELETE FROM core."upgradeMigration"');
+    await restoreUpgradeMigrations(context.dataSource, savedUpgradeMigrations);
     await context.module?.close();
     await context.dataSource?.destroy();
   }, 15000);

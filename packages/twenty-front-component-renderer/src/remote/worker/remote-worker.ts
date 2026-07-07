@@ -11,7 +11,7 @@ import { frontComponentHostCommunicationApi } from '@/constants/frontComponentHo
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToRemoteComponent';
 import { exposeGlobals } from '@/remote/utils/exposeGlobals';
 import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
-import { patchRemoteElementSetAttribute } from '@/remote/utils/patchRemoteElementSetAttribute';
+import { patchRemoteElementAttributes } from '@/remote/utils/patchRemoteElementAttributes';
 import { buildFrontComponentHostCommunicationApiFromThreadImports } from '@/remote/worker/utils/buildFrontComponentHostCommunicationApiFromThreadImports';
 import { handleCommandConfirmationModalResult } from '@/remote/worker/utils/createCommandConfirmationModalBridge';
 import { installErrorEventBridge } from '@/remote/worker/utils/installErrorEventBridge';
@@ -22,7 +22,7 @@ import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHost
 import { type WorkerExports } from '@/types/WorkerExports';
 
 installStylePropertyOnRemoteElements();
-patchRemoteElementSetAttribute();
+patchRemoteElementAttributes();
 installErrorEventBridge();
 
 exposeGlobals({

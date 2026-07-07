@@ -22,6 +22,7 @@ const StyledUploader = styled.button`
   border-radius: ${themeCssVariables.border.radius.rounded};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.light};
+  corner-shape: round;
   cursor: pointer;
   display: flex;
   flex-shrink: 0;

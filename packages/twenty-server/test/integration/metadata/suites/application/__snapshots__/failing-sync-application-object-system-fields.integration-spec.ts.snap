@@ -174,6 +174,43 @@ exports[`Sync application should fail due to object system fields integrity when
 }
 `;
 
+exports[`Sync application should fail due to object system fields integrity when object has a system field with a custom (non-derived) universal identifier 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_SYSTEM_FIELD",
+              "message": "System field createdAt has invalid universalIdentifier: expected 62e9d388-38c0-5cd8-b18d-db186455a563, got 899ac540-3a1f-42cf-9f99-8a55e79d0d9e",
+              "userFriendlyMessage": "System field createdAt universal identifier is not deterministic; it is derived by the server and cannot be customized",
+              "value": "899ac540-3a1f-42cf-9f99-8a55e79d0d9e",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "namePlural": "customSystemFieldUidObjects",
+            "nameSingular": "customSystemFieldUidObject",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "objectMetadata",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 objectMetadata",
+    "summary": {
+      "objectMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "System field createdAt universal identifier is not deterministic; it is derived by the server and cannot be customized",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Sync application should fail due to object system fields integrity when object has id field with wrong type (TEXT instead of UUID) 1`] = `
 {
   "extensions": {
@@ -187,6 +224,12 @@ exports[`Sync application should fail due to object system fields integrity when
               "message": "System field id has invalid type: expected UUID, got TEXT",
               "userFriendlyMessage": "System field id has invalid type",
               "value": "TEXT",
+            },
+            {
+              "code": "INVALID_SYSTEM_FIELD",
+              "message": "System field id has invalid universalIdentifier: expected 64e60b60-2bc9-5eac-a98b-83c1d628e326, got 4254b620-34f1-57d1-a155-527015f523db",
+              "userFriendlyMessage": "System field id universal identifier is not deterministic; it is derived by the server and cannot be customized",
+              "value": "4254b620-34f1-57d1-a155-527015f523db",
             },
             {
               "code": "MISSING_SYSTEM_FIELD",
@@ -302,6 +345,12 @@ exports[`Sync application should fail due to object system fields integrity when
               "message": "System field position has invalid type: expected POSITION, got TEXT",
               "userFriendlyMessage": "System field position has invalid type",
               "value": "TEXT",
+            },
+            {
+              "code": "INVALID_SYSTEM_FIELD",
+              "message": "System field position has invalid universalIdentifier: expected dbd9f170-1d32-5267-b76e-e1f172ab617a, got 65eb86b6-1b74-58bd-8c02-7f79b018359d",
+              "userFriendlyMessage": "System field position universal identifier is not deterministic; it is derived by the server and cannot be customized",
+              "value": "65eb86b6-1b74-58bd-8c02-7f79b018359d",
             },
             {
               "code": "MISSING_SYSTEM_FIELD",

@@ -14,10 +14,10 @@ import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils
 import { type ApplicationConfig, type LogicFunctionConfig } from '@/sdk/define';
 import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
+import { type IndexConfig } from '@/sdk/define/indexes/index-config';
 import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
 import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
 import { type ObjectConfig } from '@/sdk/define/objects/object-config';
-import { type IndexConfig } from '@/sdk/define/indexes/index-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
@@ -96,6 +96,7 @@ export const buildManifest = async (
   const warnings: string[] = [];
 
   let applicationConfig: ApplicationConfig | undefined;
+  const objectConfigs: ObjectConfig[] = [];
   const objects: ObjectManifest[] = [];
   const fields: FieldManifest[] = [];
   const indexes: IndexManifest[] = [];
@@ -172,31 +173,7 @@ export const buildManifest = async (
           filePath,
         });
 
-        const {
-          objectFields: objectFieldsWithDefaults,
-          fields: reverseRelationFields,
-        } = getDefaultFieldsInObjectFields(extract.config);
-
-        const labelIdentifierFieldMetadataUniversalIdentifier =
-          extract.config.labelIdentifierFieldMetadataUniversalIdentifier ??
-          objectFieldsWithDefaults.find((field) => field.name === 'name')
-            ?.universalIdentifier;
-
-        if (!labelIdentifierFieldMetadataUniversalIdentifier) {
-          errors.push(
-            `No label identifier field found for object ${extract.config.nameSingular}. Please add a field with name "name" to your object.`,
-          );
-          break;
-        }
-
-        const objectManifest: ObjectManifest = {
-          ...extract.config,
-          fields: objectFieldsWithDefaults.map(addMissingFieldOptionIds),
-          labelIdentifierFieldMetadataUniversalIdentifier,
-        };
-
-        objects.push(objectManifest);
-        fields.push(...reverseRelationFields);
+        objectConfigs.push(extract.config);
 
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
@@ -520,6 +497,39 @@ export const buildManifest = async (
     errors.push(
       'Cannot build application, please export default defineApplication() to define an application',
     );
+  }
+
+  if (applicationConfig) {
+    for (const objectConfig of objectConfigs) {
+      const {
+        objectFields: objectFieldsWithDefaults,
+        fields: reverseRelationFields,
+      } = getDefaultFieldsInObjectFields({
+        objectConfig,
+        applicationUniversalIdentifier: applicationConfig.universalIdentifier,
+      });
+
+      const labelIdentifierFieldMetadataUniversalIdentifier =
+        objectConfig.labelIdentifierFieldMetadataUniversalIdentifier ??
+        objectFieldsWithDefaults.find((field) => field.name === 'name')
+          ?.universalIdentifier;
+
+      if (!labelIdentifierFieldMetadataUniversalIdentifier) {
+        errors.push(
+          `No label identifier field found for object ${objectConfig.nameSingular}. Please add a field with name "name" to your object.`,
+        );
+        continue;
+      }
+
+      const objectManifest: ObjectManifest = {
+        ...objectConfig,
+        fields: objectFieldsWithDefaults.map(addMissingFieldOptionIds),
+        labelIdentifierFieldMetadataUniversalIdentifier,
+      };
+
+      objects.push(objectManifest);
+      fields.push(...reverseRelationFields);
+    }
   }
 
   if (postInstallLogicFunctions.length > 1) {

@@ -4,6 +4,7 @@ import { type ComposedEmail } from 'src/engine/core-modules/tool/tools/email-too
 import { MessagingDraftSendService } from 'src/modules/messaging/message-outbound-manager/services/messaging-draft-send.service';
 import { MessagingMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/services/messaging-message-outbound.service';
 import { SentMessagePersistenceService } from 'src/modules/messaging/message-outbound-manager/services/sent-message-persistence.service';
+import { type PersistedSentMessage } from 'src/modules/messaging/message-outbound-manager/types/persisted-sent-message.type';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
 
@@ -78,9 +79,9 @@ export class SendEmailService {
     sendResult: SendMessageResult,
     data: ComposedEmail,
     workspaceId: string,
-  ): Promise<void> {
+  ): Promise<PersistedSentMessage | undefined> {
     try {
-      await this.sentMessagePersistenceService.persistSentMessage({
+      return await this.sentMessagePersistenceService.persistSentMessage({
         sendResult,
         subject: data.sanitizedSubject,
         body: data.plainTextBody,
@@ -95,6 +96,8 @@ export class SendEmailService {
       this.logger.warn(
         `Failed to persist sent message (sync will recover): ${persistenceError}`,
       );
+
+      return undefined;
     }
   }
 }

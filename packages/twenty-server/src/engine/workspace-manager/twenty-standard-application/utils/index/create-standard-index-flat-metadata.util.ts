@@ -1,3 +1,4 @@
+import { getIndexUniversalIdentifier } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -9,7 +10,7 @@ import {
   type FlatIndexMetadata,
 } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
+import { computeFlatIndexNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/compute-flat-index-name.util';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectIndexName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-index-name.type';
@@ -20,6 +21,7 @@ import { type UniversalFlatIndexFieldMetadata } from 'src/engine/workspace-manag
 export type CreateStandardIndexOptions<O extends AllStandardObjectName> = {
   indexName: AllStandardObjectIndexName<O>;
   relatedFieldNames: AllStandardObjectFieldName<O>[];
+  hasDeterministicUniversalIdentifier?: boolean;
 } & Partial<
   Pick<FlatIndexMetadata, 'indexType' | 'indexWhereClause' | 'isUnique'>
 >;
@@ -42,6 +44,7 @@ export const createStandardIndexFlatMetadata = <
     indexType = IndexType.BTREE,
     indexWhereClause = null,
     isUnique = false,
+    hasDeterministicUniversalIdentifier = false,
   },
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps: { flatFieldMetadataMaps, flatObjectMetadataMaps },
@@ -88,41 +91,55 @@ export const createStandardIndexFlatMetadata = <
 
   const indexId = v4();
 
-  const unviersalFlatIndex = generateFlatIndexMetadataWithNameOrThrow({
-    flatIndex: {
-      createdAt: now,
-      applicationUniversalIdentifier:
-        TWENTY_STANDARD_APPLICATION.universalIdentifier,
-      indexType,
-      indexWhereClause,
-      isCustom: false,
-      isUnique,
-      isSystemSideEffect: true,
-      objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
-      universalIdentifier: indexDefinition.universalIdentifier,
-      updatedAt: now,
-      universalFlatIndexFieldMetadatas:
-        flatFieldMetadatas.map<UniversalFlatIndexFieldMetadata>(
-          (
-            { universalIdentifier: fieldMetadataUniversalIdentifier },
-            index,
-          ) => ({
-            createdAt: now,
-            order: index,
-            subFieldName: null,
-            updatedAt: now,
-            fieldMetadataUniversalIdentifier,
-            indexMetadataUniversalIdentifier:
-              indexDefinition.universalIdentifier,
-          }),
-        ),
-    },
+  const computedIndexName = computeFlatIndexNameOrThrow({
     flatObjectMetadata,
     objectFlatFieldMetadatas: flatFieldMetadatas,
+    indexFields: flatFieldMetadatas.map((flatFieldMetadata, index) => ({
+      order: index,
+      fieldMetadataUniversalIdentifier: flatFieldMetadata.universalIdentifier,
+      subFieldName: null,
+    })),
+    isUnique,
+    indexWhereClause,
   });
 
+  const universalIdentifier = hasDeterministicUniversalIdentifier
+    ? getIndexUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION.universalIdentifier,
+        objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
+        name: computedIndexName,
+      })
+    : indexDefinition.universalIdentifier;
+
+  const universalFlatIndex = {
+    createdAt: now,
+    applicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION.universalIdentifier,
+    indexType,
+    indexWhereClause,
+    isCustom: false,
+    isUnique,
+    isSystemSideEffect: true,
+    name: computedIndexName,
+    objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
+    universalIdentifier,
+    updatedAt: now,
+    universalFlatIndexFieldMetadatas:
+      flatFieldMetadatas.map<UniversalFlatIndexFieldMetadata>(
+        ({ universalIdentifier: fieldMetadataUniversalIdentifier }, index) => ({
+          createdAt: now,
+          order: index,
+          subFieldName: null,
+          updatedAt: now,
+          fieldMetadataUniversalIdentifier,
+          indexMetadataUniversalIdentifier: universalIdentifier,
+        }),
+      ),
+  };
+
   return {
-    ...unviersalFlatIndex,
+    ...universalFlatIndex,
     applicationId: twentyStandardApplicationId,
     id: v4(),
     flatIndexFieldMetadatas: relatedFieldIds.map<FlatIndexFieldMetadata>(

@@ -67,7 +67,9 @@ export const StyledDatePickerContainer = styled.div<{
   & .react-datepicker__month-dropdown-container,
   & .react-datepicker__year-dropdown-container {
     text-align: left;
-    border-radius: ${themeCssVariables.border.radius.sm};
+    border-radius: calc(
+      ${themeCssVariables.border.radius.md} - ${themeCssVariables.spacing[1]}
+    );
     margin-left: ${themeCssVariables.spacing[1]};
     margin-right: 0;
     padding: ${themeCssVariables.spacing[2]};
@@ -193,7 +195,9 @@ export const StyledDatePickerContainer = styled.div<{
   & .react-datepicker__navigation--previous,
   & .react-datepicker__navigation--next {
     height: 34px;
-    border-radius: ${themeCssVariables.border.radius.sm};
+    border-radius: calc(
+      ${themeCssVariables.border.radius.md} - ${themeCssVariables.spacing[1]}
+    );
     padding-top: 6px;
     &:hover {
       background: ${themeCssVariables.background.transparent.light};
