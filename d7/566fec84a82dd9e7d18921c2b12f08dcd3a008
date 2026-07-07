@@ -1,0 +1,40 @@
+packages/twenty-shared/src/types/index.ts
+  s_c9896ad68d525f::t_3fd46b6475966e 83
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-computed-flat-field-metadata.util.ts
+  s_c9896ad68d525f::t_883c7912774d34 88,90,101,103,111
+  s_c9896ad68d525f::t_f04a0490caf4c5 124,126,194,211,213
+packages/twenty-front/src/modules/object-metadata/utils/getFieldComputedExpression.ts
+  s_c9896ad68d525f::t_93938a93d3c1db 8
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldCompositeFormulaForm.tsx
+  s_c9896ad68d525f::t_25d3dcba74453c 1-138
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/derive-computed-as-expression-for-flat-field-metadata.util.ts
+  s_c9896ad68d525f::t_ba915f001847f8 27-30,51-52,60,62,103,116,145
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/utils/__tests__/derive-computed-as-expression-for-flat-field-metadata.util.spec.ts
+  s_c9896ad68d525f::t_84fb0736c1a02e 51,114,179
+packages/twenty-front/src/modules/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema.ts
+  s_c9896ad68d525f::t_5e0e103e931ac9 16-22
+packages/twenty-shared/src/types/FieldMetadataComputation.ts
+  s_c9896ad68d525f::t_9ea70356b59b86 2-9,12,15
+packages/twenty-front/src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaForm.tsx
+  s_c9896ad68d525f::t_33f3161930ca9c 132
+packages/twenty-front/src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+  s_c9896ad68d525f::t_d43d2e3dab7fd6 24,386-387,393
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-is-not-referenced-by-computed-field.util.ts
+  s_c9896ad68d525f::t_b84ff1b633ec40 81,83
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d7566fec84a82dd9e7d18921c2b12f08dcd3a008",
+  "prompts": {},
+  "sessions": {
+    "s_c9896ad68d525f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e5f7930d-ee88-45b7-923e-7aef12c5e30f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
