@@ -35,7 +35,7 @@ type WelcomeHalftoneParticle = {
 };
 
 type WelcomeHalftoneRendererOptions = {
-  context: CanvasRenderingContext2D;
+  context: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
   dashes: readonly (readonly [number, number, number, number])[];
   width: number;
   height: number;
@@ -65,7 +65,26 @@ export const createWelcomeHalftoneRenderer = (
   let startTimeMs: number | null = null;
   let leaveTimeSeconds: number | null = null;
   let leaveRequested = false;
-  let rafId = 0;
+  let frameHandle = 0;
+
+  const supportsAnimationFrame = typeof requestAnimationFrame === 'function';
+
+  const requestFrame = (callback: (time: number) => void) => {
+    frameHandle = supportsAnimationFrame
+      ? requestAnimationFrame(callback)
+      : (setTimeout(
+          () => callback(performance.now()),
+          16,
+        ) as unknown as number);
+  };
+
+  const cancelFrame = () => {
+    if (supportsAnimationFrame) {
+      cancelAnimationFrame(frameHandle);
+    } else {
+      clearTimeout(frameHandle);
+    }
+  };
 
   const build = () => {
     context.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
@@ -198,11 +217,11 @@ export const createWelcomeHalftoneRenderer = (
     }
 
     context.globalAlpha = 1;
-    rafId = requestAnimationFrame(draw);
+    requestFrame(draw);
   };
 
   build();
-  rafId = requestAnimationFrame(draw);
+  requestFrame(draw);
 
   return {
     leave: () => {
@@ -219,7 +238,7 @@ export const createWelcomeHalftoneRenderer = (
       build();
     },
     destroy: () => {
-      cancelAnimationFrame(rafId);
+      cancelFrame();
     },
   };
 };
