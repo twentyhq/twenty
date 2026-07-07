@@ -7,7 +7,6 @@ import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 describe('BillingCreditService', () => {
@@ -16,13 +15,7 @@ describe('BillingCreditService', () => {
   let billingUsageCacheService: jest.Mocked<
     Pick<BillingUsageCacheService, 'flushAvailableCredits'>
   >;
-  let stripeCustomerService: jest.Mocked<
-    Pick<StripeCustomerService, 'createStripeCustomer'>
-  >;
-  let billingCustomerRepository: jest.Mocked<{
-    increment: jest.Mock;
-    findOne: jest.Mock;
-  }>;
+  let billingCustomerRepository: jest.Mocked<{ increment: jest.Mock }>;
 
   const workspaceId = 'ws_123';
 
@@ -43,18 +36,9 @@ describe('BillingCreditService', () => {
           },
         },
         {
-          provide: StripeCustomerService,
-          useValue: {
-            createStripeCustomer: jest
-              .fn()
-              .mockResolvedValue({ id: 'cus_123' }),
-          },
-        },
-        {
           provide: getWorkspaceScopedRepositoryToken(BillingCustomerEntity),
           useValue: {
             increment: jest.fn().mockResolvedValue({ affected: 1 }),
-            findOne: jest.fn().mockResolvedValue(null),
           },
         },
       ],
@@ -63,7 +47,6 @@ describe('BillingCreditService', () => {
     service = module.get<BillingCreditService>(BillingCreditService);
     billingService = module.get(BillingService);
     billingUsageCacheService = module.get(BillingUsageCacheService);
-    stripeCustomerService = module.get(StripeCustomerService);
     billingCustomerRepository = module.get(
       getWorkspaceScopedRepositoryToken(BillingCustomerEntity),
     );
@@ -136,42 +119,5 @@ describe('BillingCreditService', () => {
         expect(billingCustomerRepository.increment).not.toHaveBeenCalled();
       },
     );
-  });
-
-  describe('ensureBillingCustomer', () => {
-    const ensureParams = {
-      userEmail: 'user@example.com',
-      workspaceId,
-      workspaceDisplayName: 'Acme',
-    };
-
-    it('creates a stripe customer when none exists', async () => {
-      billingCustomerRepository.findOne.mockResolvedValue(null);
-
-      await service.ensureBillingCustomer(ensureParams);
-
-      expect(stripeCustomerService.createStripeCustomer).toHaveBeenCalledWith(
-        'user@example.com',
-        workspaceId,
-        'Acme',
-      );
-    });
-
-    it('is idempotent when a billing customer already exists', async () => {
-      billingCustomerRepository.findOne.mockResolvedValue({ id: 'bc_1' });
-
-      await service.ensureBillingCustomer(ensureParams);
-
-      expect(stripeCustomerService.createStripeCustomer).not.toHaveBeenCalled();
-    });
-
-    it('no-ops when billing is disabled', async () => {
-      billingService.isBillingEnabled.mockReturnValue(false);
-
-      await service.ensureBillingCustomer(ensureParams);
-
-      expect(billingCustomerRepository.findOne).not.toHaveBeenCalled();
-      expect(stripeCustomerService.createStripeCustomer).not.toHaveBeenCalled();
-    });
   });
 });

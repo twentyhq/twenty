@@ -11,7 +11,6 @@ import {
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -22,37 +21,9 @@ export class BillingCreditService {
   constructor(
     private readonly billingService: BillingService,
     private readonly billingUsageCacheService: BillingUsageCacheService,
-    private readonly stripeCustomerService: StripeCustomerService,
     @InjectWorkspaceScopedRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
   ) {}
-
-  async ensureBillingCustomer({
-    userEmail,
-    workspaceId,
-    workspaceDisplayName,
-  }: {
-    userEmail: string;
-    workspaceId: string;
-    workspaceDisplayName: string | undefined;
-  }): Promise<void> {
-    if (!this.billingService.isBillingEnabled()) {
-      return;
-    }
-
-    const existingBillingCustomer =
-      await this.billingCustomerRepository.findOne(workspaceId, { where: {} });
-
-    if (isDefined(existingBillingCustomer)) {
-      return;
-    }
-
-    await this.stripeCustomerService.createStripeCustomer(
-      userEmail,
-      workspaceId,
-      workspaceDisplayName,
-    );
-  }
 
   async creditWorkspaceBalance({
     workspaceId,

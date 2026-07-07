@@ -25,6 +25,7 @@ import {
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -93,6 +94,7 @@ export class SignInUpService {
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly billingCreditService: BillingCreditService,
+    private readonly billingService: BillingService,
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
@@ -708,17 +710,12 @@ export class SignInUpService {
         .createContext({ workspaceId })
         .insertWorkspaceEvent(WORKSPACE_CREATED_EVENT, {});
 
-      try {
-        await this.billingCreditService.ensureBillingCustomer({
+      if (this.billingService.isBillingEnabled()) {
+        await this.billingService.ensureBillingCustomer({
           userEmail: email,
           workspaceId: workspace.id,
           workspaceDisplayName: workspace.displayName,
         });
-      } catch (error) {
-        this.logger.error(
-          `Failed to create billing customer for workspace ${workspace.id}`,
-          error,
-        );
       }
 
       return { user, workspace };

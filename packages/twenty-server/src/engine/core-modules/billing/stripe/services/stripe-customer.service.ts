@@ -86,18 +86,30 @@ export class StripeCustomerService {
     workspaceId: string,
     customerName: string | undefined,
   ) {
-    const customer = await this.stripe.customers.create({
-      name: customerName,
-      email: userEmail,
-      metadata: {
-        workspaceId,
+    const customer = await this.stripe.customers.create(
+      {
+        name: customerName,
+        email: userEmail,
+        metadata: {
+          workspaceId,
+        },
       },
-    });
+      {
+        idempotencyKey: `billing-customer-${workspaceId}`,
+      },
+    );
 
-    await this.billingCustomerRepository.save(workspaceId, {
-      stripeCustomerId: customer.id,
-      hasPaymentMethod: false,
-    });
+    await this.billingCustomerRepository.upsert(
+      workspaceId,
+      {
+        stripeCustomerId: customer.id,
+        hasPaymentMethod: false,
+      },
+      {
+        conflictPaths: ['workspaceId'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
 
     return customer;
   }
