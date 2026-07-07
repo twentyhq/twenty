@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
@@ -107,6 +108,30 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends WorkspaceCache
     const flatPageLayoutWidgetMaps = createEmptyFlatEntityMaps();
 
     for (const pageLayoutWidgetEntity of existingPageLayoutWidgets) {
+      // Skip widgets orphaned by a deleted app/object/tab so the whole
+      // dashboard map still builds instead of throwing FlatEntityMapsException.
+      const isApplicationMissing =
+        !applicationIdToUniversalIdentifierMap.has(
+          pageLayoutWidgetEntity.applicationId,
+        );
+      const isPageLayoutTabMissing =
+        !pageLayoutTabIdToUniversalIdentifierMap.has(
+          pageLayoutWidgetEntity.pageLayoutTabId,
+        );
+      const isObjectMetadataMissing =
+        isDefined(pageLayoutWidgetEntity.objectMetadataId) &&
+        !objectMetadataIdToUniversalIdentifierMap.has(
+          pageLayoutWidgetEntity.objectMetadataId,
+        );
+
+      if (
+        isApplicationMissing ||
+        isPageLayoutTabMissing ||
+        isObjectMetadataMissing
+      ) {
+        continue;
+      }
+
       const flatPageLayoutWidget =
         fromPageLayoutWidgetEntityToFlatPageLayoutWidget({
           entity: pageLayoutWidgetEntity,
