@@ -1,16 +1,16 @@
 ---
 title: 2. Belgeleri oluşturma
 icon: bolt
-description: Bir mantık fonksiyonu, bir yapay zekâ aracı ve bir iş akışı eylemi olarak sunulur.
+description: Yapay zekâ aracı ve iş akışı eylemi olarak sunulan tek bir mantık işlevi.
 ---
 
-Şimdi asıl kısma geçelim: bir şablon ve bir kaydı yükleyen, yer tutucuları dolduran ve yeni bir belge kaydeden bir [mantık fonksiyonu](/l/tr/developers/extend/apps/logic/logic-functions).
+Şimdi esas kısma geçelim: bir şablon ve bir kaydı yükleyen, yer tutucuları dolduran ve yeni bir belge kaydeden bir [mantık işlevi](/l/tr/developers/extend/apps/logic/logic-functions).
 
-İş mantığını **handler** olarak bir kez yazacağız, sonra bunu birkaç tetikleyici üzerinden kullanıma sunacağız. Bu bölüm bunlardan ikisini birbirine bağlıyor — bir **AI aracı** ve bir **iş akışı eylemi**.
+İş mantığını **handler** olarak bir kez yazacağız, sonra bunu birkaç tetikleyici üzerinden kullanıma sunacağız. Bu bölüm bunlardan ikisini birleştiriyor — bir **yapay zekâ aracı** ve bir **iş akışı eylemi**.
 
 ## Oluşturma yardımcısı
 
-Saf mantığı kendi dosyasında tutun ki birim testlerini yazmak kolay olsun. Bu, bir kaydı `{{dot.path}}` belirteçlerine düzleştirir ve bunların yerine değerlerini koyar.
+Saf mantığı kendi dosyasında tutun ki birim testi yapmak kolay olsun. Bu, bir kaydı `{{dot.path}}` belirteçlerine düzleştirir ve bunların yerine değerlerini koyar.
 
 ```ts filename="src/logic-functions/utils/render-template.ts"
 const PLACEHOLDER_PATTERN = /\{\{\s*([\w.]+)\s*\}\}/g;
@@ -30,7 +30,7 @@ export const renderTemplate = (body: string, values: Record<string, string>) => 
 Bu dosyanın yan etkisi olmadığından, onu hızlı birim testleriyle kapsayabilirsiniz (`yarn test:unit`). Bkz. [Testing](/l/tr/developers/extend/apps/operations/testing).
 </Tip>
 
-## Handler
+## İşleyici
 
 Handler, CRM verilerini okumak ve yazmak için oluşturulmuş [`CoreApiClient`](/l/tr/developers/extend/apps/logic/logic-functions) kullanır. Şablonu yükler, hedef kaydı yükler, gövdeyi doldurur ve bir `document` oluşturur.
 
@@ -77,7 +77,7 @@ export const generateDocumentHandler = async (
 `loadRecordValues`, Kişi ile Şirket için farklı bir sorgu çalıştırır ve sonucu düzleştirir — bkz.
 [`load-record-values.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/logic-functions/utils/load-record-values.ts).
 
-## Bunu bir araç ve bir iş akışı eylemi olarak kullanıma sunma
+## Bunu bir araç ve iş akışı eylemi olarak kullanıma açın
 
 Tek bir `defineLogicFunction` birden çok tetikleyici barındırabilir. Burada, `toolTriggerSettings` onu AI aracılarının çağırabileceği hâle getirir ve `workflowActionTriggerSettings` onu görsel iş akışı oluşturucusundaki bir adıma dönüştürür. Her ikisi de girdilerini bir JSON şemasıyla tanımlar.
 
@@ -112,7 +112,7 @@ Girdi şeması, `templateId` ve `recordId` değerlerini tanımlayan basit bir JS
 
 ## Erişim verin
 
-Mantık fonksiyonları, uygulamanın rolüyle çalışır. Şablonları ve kayıtları okuması ve belgeler oluşturması gerektiğinden, `src/roles/default-role.ts` içinde buna izin verin:
+Mantık işlevleri uygulamanın rolü olarak çalışır. Şablonları ve kayıtları okuması ve belgeler oluşturması gerektiğinden, `src/roles/default-role.ts` içinde buna izin verin:
 
 ```ts
 export default defineApplicationRole({
@@ -126,14 +126,14 @@ export default defineApplicationRole({
 });
 ```
 
-`UPLOAD_FILE`, bir sonraki bölümde fonksiyonun oluşturulan PDF'yi yüklemesine olanak tanır.
+`UPLOAD_FILE`, bir sonraki bölümde oluşturulan PDF'yi işlevin yüklemesine izin verir.
 Daha ayrıntılı izinler için bkz. [Roles](/l/tr/developers/extend/apps/config/roles).
 
 ## Gerçek bir PDF dosyası ekleyin
 
 Oluşturulmuş bir metin alanı kullanışlıdır, ancak kullanıcılar gerçek bir belge ister. Bir **PDF** oluşturalım ve onu kayıt üzerinde indirilebilir bir dosya olarak saklayalım.
 
-Önce, PDF'yi tutması için `document` nesnesine bir `FILES` alanı verin. Uygulamalar **kendi** dosya alanlarına yükleme yapar, dolayısıyla yüklemenin yönlendirildiği yer bu alandır:
+Önce, PDF'yi tutmak için `document` nesnesine bir `FILES` alanı verin. Uygulamalar **kendi** dosya alanlarına yükleme yapar, dolayısıyla yüklemenin yönlendirildiği yer bu alandır:
 
 ```ts filename="src/objects/document.object.ts"
 {
@@ -146,24 +146,24 @@ Oluşturulmuş bir metin alanı kullanışlıdır, ancak kullanıcılar gerçek 
 }
 ```
 
-Şimdi o PDF'yi oluşturun. Bir uygulama gerçek bir Node projesidir, bu yüzden ihtiyaç duyduğunuz herhangi bir npm paketini ekleyebilir ve onu başka yerlerde olduğu gibi içe aktarabilirsiniz. Biz, PDF'yi çizmek için **[pdf-lib](https://pdf-lib.js.org/)** ve Markdown gövdesini ayrıştırmak için **[marked](https://marked.js.org/)** kullanıyoruz — CLI bunları fonksiyonun çalışma zamanına sizin için kurar:
+Şimdi o PDF'yi oluşturun. Bir uygulama gerçek bir Node projesidir, bu yüzden ihtiyacınız olan herhangi bir npm paketini ekleyebilir ve onu başka yerlerde olduğu gibi içe aktarabilirsiniz. Biz, PDF'yi çizmek için **[pdf-lib](https://pdf-lib.js.org/)** ve Markdown gövdesini ayrıştırmak için **[marked](https://marked.js.org/)** kullanıyoruz — CLI bunları işlevin çalışma zamanına sizin için kurar:
 
 ```bash filename="Terminal"
 yarn add pdf-lib marked
 ```
 
 Tam yardımcı işlev şuradadır: [`generate-document-pdf.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/logic-functions/utils/generate-document-pdf.ts).
-Bu yardımcı, Markdown'ı `marked.lexer` ile belirteçlere ayrıştırır, ardından onları pdf-lib ile yerleştirir: gerçek başlıklar, **kalın**/*italik* kısımlar, madde ve numaralı listeler, alıntı blokları ve çizgiler — şablonun kendisinin, sadece bir metin yığını yerine, cilalı, çok sayfalı A4 formatında bir oluşturması.
+Bu, Markdown'ı `marked.lexer` ile belirteçlere ayrıştırır, ardından bunları pdf-lib ile yerleştirir: gerçek başlıklar, **kalın**/*italik* metinler, madde ve numaralı listeler, alıntılar ve çizgiler — şablonun kendisinin duvar gibi bir metin yerine cilalı, çok sayfalı A4 işlenmesi.
 
-<Frame caption="Oluşturulan PDF: gerçek tipografi ve Markdown biçimlendirmesiyle şablon gövdesinin oluşturulması.">
+<Frame caption="Oluşturulan PDF: gerçek tipografi ve Markdown biçimlendirmesiyle şablon gövdesinin işlenmiş hâli.">
   <img src="/images/docs/developers/extends/apps/document-generator/07b-generated-pdf.png" alt="Cilalı, pazarlanabilir oluşturulmuş bir PDF" />
 </Frame>
 
 <Note>
-pdf-lib'in yerleşik yazı tipleri WinAnsi kodlaması kullanır, bu nedenle Batı Avrupa aksanları kutudan çıktığı gibi oluşturulur; yardımcı, akıllı tırnak işaretlerini ve tireleri eşler ve kodlayamadığı karakterleri atar. Latin olmayan yazı sistemlerini (Çince, Arapça, Kiril) oluşturmak, bir Unicode yazı tipi gömmek anlamına gelir.
+pdf-lib'in yerleşik yazı tipleri WinAnsi kodlaması kullanır, bu nedenle Batı Avrupa aksanları kutudan çıktığı gibi oluşturulur; yardımcı, akıllı tırnak işaretlerini ve tireleri eşler ve kodlayamadığı karakterleri atar. Latin olmayan yazı sistemlerini (Çince, Arapça, Kiril) işlemek, bir Unicode yazı tipi gömmeyi gerektirir.
 </Note>
 
-Sonra onu yükleyin ve başvurusunu kayıt üzerinde saklayın. `uploadFile`, baytları uygulamaya ait dosya alanınıza yönlendirir; döndürülen `id`, kaydettiğiniz değerdir:
+Sonra onu yükleyin ve referansını kayıt üzerinde saklayın. `uploadFile`, baytları uygulamanıza ait dosya alanına yönlendirir; döndürülen `id`, kaydettiğiniz değerdir:
 
 ```ts filename="src/logic-functions/handlers/generate-document-handler.ts"
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -191,18 +191,18 @@ await client.mutation({
 });
 ```
 
-Artık oluşturulan belge indirilebilir bir PDF taşıyor:
+Oluşturulan belge artık indirilebilir bir PDF taşıyor:
 
 <Frame caption="Oluşturulan PDF, belgenin Dosya alanında saklanır.">
   <img src="/images/docs/developers/extends/apps/document-generator/08-document-with-pdf.png" alt="Oluşturulmuş PDF dosyasına sahip bir belge kaydı" />
 </Frame>
 
 <Note>
-`uploadFile` yalnızca **uygulamaya ait** dosya alanlarını hedefler (bu nedenle yüklemeler her zaman alanın sahibi olan bir uygulama ve ayrıca `UPLOAD_FILE` rol bayrağı gerektirir). Bu nedenle PDF, kaydın kendi `file` alanına düşer — [call-recorder app](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/public/call-recorder) uygulamasının kayıtlar için kullandığıyla aynı desen.
+`uploadFile` yalnızca **uygulamaya ait** dosya alanlarını hedefler (bu nedenle yüklemeler her zaman alanın sahibi olan bir uygulama ve ayrıca `UPLOAD_FILE` rol bayrağı gerektirir). Bu nedenle PDF, kaydın kendi `file` alanına düşer — [call-recorder app](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/public/call-recorder) uygulamasının kayıtlar için kullandığı desenle aynıdır.
 </Note>
 
-**Bu adımdan sonra:** her oluşturulan belgenin gerçek, indirilebilir bir PDF'si vardır. Ancak henüz hiçbir şey oluşturucuyu arayüzden *çağır*amıyor — bunun için bir HTTP rotasına ihtiyacımız var.
+**Bu adımdan sonra:** her oluşturulan belgenin gerçek, indirilebilir bir PDF'si vardır. Ancak henüz hiçbir şey oluşturucuyu arayüzden *çağıramıyor* — bunun için bir HTTP rotasına ihtiyacımız var.
 
-<Card title="Sırada: HTTP rotaları →" icon="küre" href="/l/tr/developers/extend/apps/tutorials/document-generator/http-routes">
+<Card title="Sırada: HTTP rotaları →" icon="globe" href="/l/tr/developers/extend/apps/tutorials/document-generator/http-routes">
   Fonksiyonu HTTP üzerinden sunun ve belgeleri web sayfaları olarak oluşturun.
 </Card>

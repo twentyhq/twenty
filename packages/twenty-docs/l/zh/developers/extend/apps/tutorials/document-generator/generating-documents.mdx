@@ -14,8 +14,8 @@ description: 一个逻辑函数作为一个 AI 工具和工作流动作暴露。
 
 ## 渲染帮助器
 
-将纯逻辑保留在它自己的文件中，这样便于拆除测试。 这会将一个记录
-展平成 `{{dot.path}}` 标记并对其进行替换。
+将纯逻辑保留在它自己的文件中，这样便于拆除测试。 这会将一条记录
+展平成 `{{dot.path}}` 占位符并进行替换。
 
 ```ts filename="src/logic-functions/utils/render-template.ts"
 const PLACEHOLDER_PATTERN = /\{\{\s*([\w.]+)\s*\}\}/g;

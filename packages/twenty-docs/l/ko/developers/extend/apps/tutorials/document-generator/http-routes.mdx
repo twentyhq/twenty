@@ -1,5 +1,5 @@
 ---
-title: 3. HTTP 경로들
+title: 3. HTTP 경로
 icon: globe
 description: HTTP를 통해 함수를 트리거하고 문서를 웹 페이지로 렌더링합니다.
 ---
@@ -13,7 +13,7 @@ description: HTTP를 통해 함수를 트리거하고 문서를 웹 페이지로
 
 ## POST 경로 — 온디맨드로 생성하기
 
-이는 `generateDocumentHandler`를 재사용하므로, 반복해야 할 로직은 없고 요청 본문을 읽는 얇은 어댑터만 있으면 됩니다.
+이는 `generateDocumentHandler`를 재사용하므로 반복해야 할 로직은 없고, 요청 본문을 읽는 간단한 어댑터만 있으면 됩니다.
 
 ```ts filename="src/logic-functions/generate-document-route.ts"
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
@@ -130,6 +130,6 @@ http://localhost:2020/s/documents/view?id=<documentId>
 
 **이 단계를 마치면:** 앱은 HTTP를 통해 문서를 생성하고 이를 웹 페이지로 제공할 수 있습니다. 이제 `curl` 없이도 사용할 수 있도록 만들어 봅시다.
 
-<Card title="다음: UI 빌드하기 →" icon="table-columns" href="/l/ko/developers/extend/apps/tutorials/document-generator/building-the-ui">
+<Card title="다음: UI 구성하기 →" icon="table-columns" href="/l/ko/developers/extend/apps/tutorials/document-generator/building-the-ui">
   뷰, 내비게이션, 커맨드, 그리고 프런트 컴포넌트.
 </Card>
