@@ -60,4 +60,33 @@ describe('filterProps', () => {
 
     expect(result.href).toBe('https://twenty.com');
   });
+
+  it('should forward arbitrary aria-* and data-* attributes', () => {
+    const result = filter(
+      {
+        'aria-selected': 'true',
+        'aria-activedescendant': 'item-2',
+        'data-state': 'open',
+        'data-count': '3',
+      },
+      'div',
+    );
+
+    expect(result['aria-selected']).toBe('true');
+    expect(result['aria-activedescendant']).toBe('item-2');
+    expect(result['data-state']).toBe('open');
+    expect(result['data-count']).toBe('3');
+  });
+
+  it('should forward the draggable attribute', () => {
+    expect(filter({ draggable: 'true' }, 'div').draggable).toBe('true');
+    expect(filter({ draggable: true }, 'div').draggable).toBe(true);
+  });
+
+  it('should still drop a non-function on* handler smuggled as a data-adjacent prop', () => {
+    const result = filter({ onClick: 'alert(1)', 'data-state': 'open' }, 'div');
+
+    expect('onClick' in result).toBe(false);
+    expect(result['data-state']).toBe('open');
+  });
 });
