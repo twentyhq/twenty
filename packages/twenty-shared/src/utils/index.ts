@@ -229,6 +229,7 @@ export { assertIsDefinedOrThrow } from './validation/assertIsDefinedOrThrow';
 export { emailSchema } from './validation/emailSchema';
 export { isDefined } from './validation/isDefined';
 export { isEmptyObject } from './validation/isEmptyObject';
+export { isImageIdentifierFieldMetadataType } from './validation/isImageIdentifierFieldMetadataType';
 export { isLabelIdentifierFieldMetadataTypes } from './validation/isLabelIdentifierFieldMetadataTypes';
 export type { SearchableFieldType } from './validation/isSearchableFieldType';
 export { isSearchableFieldType } from './validation/isSearchableFieldType';
