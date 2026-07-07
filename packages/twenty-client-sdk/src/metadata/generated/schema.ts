@@ -2314,6 +2314,7 @@ export interface ImapSmtpCaldavPublicConnectionParams {
 }
 
 export interface ImapSmtpCaldavPublicConnectionParameters {
+    name?: Scalars['String']
     IMAP?: ImapSmtpCaldavPublicConnectionParams
     SMTP?: ImapSmtpCaldavPublicConnectionParams
     CALDAV?: ImapSmtpCaldavPublicConnectionParams
@@ -5490,6 +5491,7 @@ export interface ImapSmtpCaldavPublicConnectionParamsGenqlSelection{
 }
 
 export interface ImapSmtpCaldavPublicConnectionParametersGenqlSelection{
+    name?: boolean | number
     IMAP?: ImapSmtpCaldavPublicConnectionParamsGenqlSelection
     SMTP?: ImapSmtpCaldavPublicConnectionParamsGenqlSelection
     CALDAV?: ImapSmtpCaldavPublicConnectionParamsGenqlSelection
@@ -6673,7 +6675,7 @@ export interface SendEmailInput {connectedAccountId: Scalars['String'],to: Scala
 
 export interface SendEmailAttachmentInput {id: Scalars['String'],name: Scalars['String']}
 
-export interface EmailAccountConnectionParameters {IMAP?: (ConnectionParametersInput | null),SMTP?: (ConnectionParametersInput | null),CALDAV?: (ConnectionParametersInput | null)}
+export interface EmailAccountConnectionParameters {name?: (Scalars['String'] | null),IMAP?: (ConnectionParametersInput | null),SMTP?: (ConnectionParametersInput | null),CALDAV?: (ConnectionParametersInput | null)}
 
 export interface ConnectionParametersInput {host: Scalars['String'],port: Scalars['Float'],username?: (Scalars['String'] | null),password?: (Scalars['String'] | null),connectionSecurity?: (EmailConnectionSecurity | null)}
 

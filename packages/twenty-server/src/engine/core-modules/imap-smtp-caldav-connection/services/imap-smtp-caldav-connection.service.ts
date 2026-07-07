@@ -224,6 +224,17 @@ export class ImapSmtpCaldavService {
   }): Promise<PlaintextImapSmtpCaldavParams> {
     const validatedParams: PlaintextImapSmtpCaldavParams = {};
 
+    if (connectionParameters.name !== undefined) {
+      const trimmedName = connectionParameters.name?.trim();
+
+      validatedParams.name =
+        trimmedName !== undefined && trimmedName.length > 0
+          ? trimmedName
+          : null;
+    } else if (existingConnectionParameters?.name !== undefined) {
+      validatedParams.name = existingConnectionParameters.name;
+    }
+
     for (const protocol of ACCOUNT_TYPES) {
       const params = connectionParameters[protocol];
 

@@ -5228,6 +5228,9 @@ export default {
             ]
         },
         "ImapSmtpCaldavPublicConnectionParameters": {
+            "name": [
+                1
+            ],
             "IMAP": [
                 293
             ],
@@ -11876,6 +11879,9 @@ export default {
             ]
         },
         "EmailAccountConnectionParameters": {
+            "name": [
+                1
+            ],
             "IMAP": [
                 493
             ],
