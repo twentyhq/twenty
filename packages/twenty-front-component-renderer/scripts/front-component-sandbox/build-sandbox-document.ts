@@ -7,9 +7,9 @@ import { build, type Rollup } from 'vite';
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(dirname, '../..');
 
-const courierEntry = path.resolve(
+const sandboxBootstrapEntryPath = path.resolve(
   projectRoot,
-  'src/remote/sandbox/sandbox-courier.ts',
+  'src/remote/sandbox/sandbox-bootstrap.ts',
 );
 
 const generatedFile = path.resolve(
@@ -25,7 +25,7 @@ const replaceProcessEnv = (code: string): string =>
 const escapeClosingScriptTags = (code: string): string =>
   code.replace(/<\/script/gi, '<\\/script');
 
-const buildSandboxCourier = async (): Promise<void> => {
+const buildSandboxDocument = async (): Promise<void> => {
   const buildResult = await build({
     configFile: false,
     root: projectRoot,
@@ -40,10 +40,10 @@ const buildSandboxCourier = async (): Promise<void> => {
     build: {
       write: false,
       lib: {
-        entry: courierEntry,
+        entry: sandboxBootstrapEntryPath,
         formats: ['iife'],
-        name: 'frontComponentSandboxCourier',
-        fileName: () => 'sandbox-courier.js',
+        name: 'frontComponentSandboxBootstrap',
+        fileName: () => 'sandbox-bootstrap.js',
       },
       rollupOptions: {
         plugins: [
@@ -61,18 +61,18 @@ const buildSandboxCourier = async (): Promise<void> => {
     Array.isArray(buildResult) ? buildResult : [buildResult]
   ).filter((item): item is Rollup.RollupOutput => 'output' in item);
 
-  const courierChunk = rollupOutputs
+  const sandboxBootstrapChunk = rollupOutputs
     .flatMap((result) => result.output)
     .find((item): item is Rollup.OutputChunk => item.type === 'chunk');
 
-  if (courierChunk === undefined) {
+  if (sandboxBootstrapChunk === undefined) {
     throw new Error(
-      'Failed to build the front component sandbox courier bundle',
+      'Failed to build the front component sandbox bootstrap bundle',
     );
   }
 
-  const courierScript = `<script>${escapeClosingScriptTags(courierChunk.code)}</script>`;
-  const sandboxDocument = `<!doctype html><html><head><meta charset="utf-8" /></head><body>${courierScript}</body></html>`;
+  const sandboxBootstrapScriptTag = `<script>${escapeClosingScriptTags(sandboxBootstrapChunk.code)}</script>`;
+  const sandboxDocument = `<!doctype html><html><head><meta charset="utf-8" /></head><body>${sandboxBootstrapScriptTag}</body></html>`;
 
   const generatedSource = `export const FRONT_COMPONENT_SANDBOX_DOCUMENT = ${JSON.stringify(
     sandboxDocument,
@@ -82,7 +82,7 @@ const buildSandboxCourier = async (): Promise<void> => {
   fs.writeFileSync(generatedFile, generatedSource, 'utf8');
 };
 
-buildSandboxCourier().catch((error: unknown) => {
+buildSandboxDocument().catch((error: unknown) => {
   console.error(error);
   process.exit(1);
 });

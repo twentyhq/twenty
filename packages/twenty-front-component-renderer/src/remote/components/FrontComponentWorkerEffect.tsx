@@ -7,12 +7,13 @@ import { getURLSafely, isDefined } from 'twenty-shared/utils';
 
 import { createHostFetch } from '@/host/utils/createHostFetch';
 import { FRONT_COMPONENT_SANDBOX_DOCUMENT } from '@/remote/sandbox/generated/frontComponentSandboxDocument';
-import { FRONT_COMPONENT_SANDBOX_MESSAGE } from '@/remote/sandbox/frontComponentSandboxMessages';
+import { FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE } from '@/remote/sandbox/constants/FrontComponentSandboxMessageType';
 import { createFrontComponentSandboxIframe } from '@/remote/sandbox/utils/createFrontComponentSandboxIframe';
-import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
-import { type FrontComponentHostThreadExports } from '../../types/FrontComponentHostThreadExports';
-import { type SdkClientUrls } from '../../types/HostToWorkerRenderContext';
-import { type WorkerExports } from '../../types/WorkerExports';
+import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
+import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
+import { type FrontComponentThread } from '@/types/FrontComponentThread';
+import { type SdkClientUrls } from '@/types/SdkClientUrls';
+import { type WorkerExports } from '@/types/WorkerExports';
 
 // Must match COMMAND_MENU_ITEM_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME in twenty-front
 const COMMAND_MENU_ITEM_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME =
@@ -37,11 +38,6 @@ const HOST_COMMUNICATION_API_NOOP_INITIALIZATION: FrontComponentHostCommunicatio
     updateProgress: noopAsync,
     copyToClipboard: noopAsync,
   };
-
-export type FrontComponentThread = ThreadMessagePort<
-  WorkerExports,
-  FrontComponentHostThreadExports
->;
 
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;
@@ -116,21 +112,21 @@ export const FrontComponentWorkerEffect = ({
 
       const messageType = (event.data as { type?: string } | null)?.type;
 
-      if (messageType === FRONT_COMPONENT_SANDBOX_MESSAGE.READY) {
+      if (messageType === FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.READY) {
         if (hasTransferredWorkerPort) {
           return;
         }
         hasTransferredWorkerPort = true;
 
         sandboxIframe.contentWindow?.postMessage(
-          { type: FRONT_COMPONENT_SANDBOX_MESSAGE.INIT },
+          { type: FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.INIT },
           '*',
           [channel.port2],
         );
         return;
       }
 
-      if (messageType === FRONT_COMPONENT_SANDBOX_MESSAGE.ERROR) {
+      if (messageType === FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.ERROR) {
         const message = (event.data as { message?: string }).message;
         setError(new Error(message || 'Unknown front component worker error'));
       }

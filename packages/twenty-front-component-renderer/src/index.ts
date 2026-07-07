@@ -133,9 +133,7 @@ export { installStyleBridge } from './polyfills/installStyleBridge';
 export { exposeGlobals } from './remote/utils/exposeGlobals';
 export type { FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 export type { FrontComponentHostCommunicationApi } from './types/FrontComponentHostCommunicationApi';
-export type {
-  HostToWorkerRenderContext,
-  SdkClientUrls,
-} from './types/HostToWorkerRenderContext';
+export type { HostToWorkerRenderContext } from './types/HostToWorkerRenderContext';
+export type { SdkClientUrls } from './types/SdkClientUrls';
 export type { PropertySchema } from './constants/PropertySchema';
 export type { WorkerExports } from './types/WorkerExports';

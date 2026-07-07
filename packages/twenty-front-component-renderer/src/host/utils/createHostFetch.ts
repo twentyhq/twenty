@@ -1,10 +1,8 @@
 import { getURLSafely, isDefined } from 'twenty-shared/utils';
 
-import {
-  type HostFetchFunction,
-  type HostFetchInput,
-  type HostFetchResult,
-} from '@/types/HostFetch';
+import { type HostFetchFunction } from '@/types/HostFetchFunction';
+import { type HostFetchInput } from '@/types/HostFetchInput';
+import { type HostFetchResult } from '@/types/HostFetchResult';
 
 export const createHostFetch = (
   allowedOrigins: string[],

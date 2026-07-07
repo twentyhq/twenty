@@ -1,4 +1,4 @@
-import { type HostFetchFunction } from '@/types/HostFetch';
+import { type HostFetchFunction } from '@/types/HostFetchFunction';
 import { installHostFetchProxy } from '../installHostFetchProxy';
 
 class StubResponse {

@@ -3,7 +3,8 @@ import { FrontComponentInitializeHostCommunicationApiEffect } from '@/remote/com
 import { FrontComponentUpdateContextEffect } from '@/remote/components/FrontComponentUpdateContextEffect';
 import { FrontComponentUpdateHostCommunicationApiEffect } from '@/remote/components/FrontComponentUpdateHostCommunicationApiEffect';
 import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
-import { type SdkClientUrls } from '@/types/HostToWorkerRenderContext';
+import { type FrontComponentThread } from '@/types/FrontComponentThread';
+import { type SdkClientUrls } from '@/types/SdkClientUrls';
 import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 import {
   type RemoteReceiver,
@@ -14,10 +15,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ThemeProvider } from 'twenty-ui/theme-constants';
-import {
-  FrontComponentWorkerEffect,
-  type FrontComponentThread,
-} from '../../remote/components/FrontComponentWorkerEffect';
+import { FrontComponentWorkerEffect } from '../../remote/components/FrontComponentWorkerEffect';
 import { componentRegistry } from '../generated/host-component-registry';
 import { createFallbackComponentRegistry } from '../utils/createFallbackComponentRegistry';
 

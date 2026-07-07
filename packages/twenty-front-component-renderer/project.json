@@ -78,7 +78,7 @@
       ],
       "options": {
         "cwd": "packages/twenty-front-component-renderer",
-        "command": "tsx -r tsconfig-paths/register scripts/front-component-sandbox/build-sandbox-courier.ts"
+        "command": "tsx -r tsconfig-paths/register scripts/front-component-sandbox/build-sandbox-document.ts"
       }
     },
     "storybook:prebuild": {

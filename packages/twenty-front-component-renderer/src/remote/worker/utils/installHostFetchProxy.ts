@@ -1,6 +1,6 @@
 import { getURLSafely, isDefined } from 'twenty-shared/utils';
 
-import { type HostFetchFunction } from '@/types/HostFetch';
+import { type HostFetchFunction } from '@/types/HostFetchFunction';
 
 const URL_SEARCH_PARAMS_CONTENT_TYPE =
   'application/x-www-form-urlencoded;charset=UTF-8';
