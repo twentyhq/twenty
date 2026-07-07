@@ -13,15 +13,19 @@ import { type ApiKeyToken } from 'src/engine/core-modules/auth/dto/api-key-token
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 @Injectable()
 export class ApiKeyService {
   constructor(
     @InjectWorkspaceScopedRepository(ApiKeyEntity)
     private readonly apiKeyRepository: WorkspaceScopedRepository<ApiKeyEntity>,
+    @InjectWorkspaceScopedRepository(RoleEntity)
+    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly roleTargetService: RoleTargetService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -164,6 +168,49 @@ export class ApiKeyService {
     return { token };
   }
 
+  async createWorkspaceAdminApiKeyToken(input: {
+    workspaceId: string;
+    name: string;
+    expiresAt?: Date | string;
+  }): Promise<{ apiKeyId: string; token: string }> {
+    const expiresAt = input.expiresAt
+      ? new Date(input.expiresAt)
+      : new Date(Date.now() + 100 * 365 * 24 * 60 * 60 * 1000);
+    const adminRole = await this.roleRepository.findOne(input.workspaceId, {
+      where: {
+        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+      },
+    });
+
+    if (!adminRole) {
+      throw new ApiKeyException(
+        `No Admin role found for workspace ${input.workspaceId}`,
+        ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED,
+      );
+    }
+
+    const apiKey = await this.create({
+      name: input.name,
+      expiresAt,
+      workspaceId: input.workspaceId,
+      roleId: adminRole.id,
+    });
+    const token = await this.generateApiKeyToken(
+      input.workspaceId,
+      apiKey.id,
+      expiresAt,
+    );
+
+    if (!token) {
+      throw new ApiKeyException(
+        'Failed to generate API key token',
+        ApiKeyExceptionCode.API_KEY_NOT_FOUND,
+      );
+    }
+
+    return { apiKeyId: apiKey.id, token: token.token };
+  }
+
   isExpired(apiKey: ApiKeyEntity): boolean {
     return new Date() > apiKey.expiresAt;
   }
@@ -179,6 +226,7 @@ export class ApiKeyService {
   private async invalidateApiKeyCache(workspaceId: string): Promise<void> {
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'apiKeyMap',
+      'apiKeyRoleMap',
     ]);
   }
 }

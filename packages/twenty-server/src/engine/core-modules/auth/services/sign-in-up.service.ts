@@ -497,7 +497,11 @@ export class SignInUpService {
 
   async signUpOnNewWorkspace(
     userData: ExistingUserOrPartialUserWithPicture['userData'],
-    options?: { displayName?: string; subdomain?: string },
+    options?: {
+      displayName?: string;
+      subdomain?: string;
+      shouldBypassWorkspaceCreationChecks?: boolean;
+    },
   ) {
     const email =
       userData.type === 'newUserWithPicture'
@@ -514,7 +518,9 @@ export class SignInUpService {
       );
     }
 
-    await this.assertWorkspaceCreationAllowed(userData);
+    if (!options?.shouldBypassWorkspaceCreationChecks) {
+      await this.assertWorkspaceCreationAllowed(userData);
+    }
 
     const displayName = options?.displayName?.trim();
 

@@ -13,6 +13,7 @@ import { ConnectionProviderModule } from 'src/engine/core-modules/application/co
 import { ApplicationConnectionsModule } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.module';
 import { GoogleAPIsAuthController } from 'src/engine/core-modules/auth/controllers/google-apis-auth.controller';
 import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/google-auth.controller';
+import { InternalWorkspaceProvisioningController } from 'src/engine/core-modules/auth/controllers/internal-workspace-provisioning.controller';
 import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
 import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-auth.controller';
 import { OAuthPropagatorController } from 'src/engine/core-modules/auth/controllers/oauth-propagator.controller';
@@ -25,6 +26,7 @@ import { CreateSSOConnectedAccountService } from 'src/engine/core-modules/auth/s
 import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
 import { GoogleApisServiceAvailabilityService } from 'src/engine/core-modules/auth/services/google-apis-service-availability.service';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
+import { InternalWorkspaceProvisioningService } from 'src/engine/core-modules/auth/services/internal-workspace-provisioning.service';
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
@@ -60,7 +62,9 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
+import { InternalMetadataTokenGuard } from 'src/engine/core-modules/workspace/internal/guards/internal-metadata-token.guard';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
@@ -101,6 +105,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
       CalendarChannelEntity,
     ]),
     UserWorkspaceModule,
+    WorkspaceModule,
     OnboardingModule,
     ConnectedAccountModule,
     MessagingCommonModule,
@@ -135,6 +140,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     MicrosoftAuthController,
     GoogleAPIsAuthController,
     MicrosoftAPIsAuthController,
+    InternalWorkspaceProvisioningController,
     OAuthPropagatorController,
     SSOAuthController,
     ConnectionProviderOAuthController,
@@ -149,6 +155,8 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     GoogleAPIScopesService,
     GoogleApisServiceAvailabilityService,
     MicrosoftAPIsService,
+    InternalWorkspaceProvisioningService,
+    InternalMetadataTokenGuard,
     AppTokenService,
     AccessTokenService,
     RefreshTokenService,

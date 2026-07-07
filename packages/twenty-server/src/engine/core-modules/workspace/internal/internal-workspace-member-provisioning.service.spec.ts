@@ -13,7 +13,7 @@ const uniqueViolation = (constraint: string) =>
   new QueryFailedError('INSERT', [], {
     code: '23505',
     constraint,
-  });
+  } as any);
 
 type StoredUser = {
   id: string;
