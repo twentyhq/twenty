@@ -1,7 +1,9 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { RestApiClient } from 'twenty-client-sdk/rest';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 
 import { GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH } from 'src/constants/generate-call-recording-summaries-route-path';
+import { TWENTY_FUNCTIONS_URL_ENV_VAR_NAME } from 'src/constants/twenty-functions-url-env-var-name';
 
 type GenerateSummariesResponse = {
   outcome?: string;
@@ -64,10 +66,17 @@ export const requestCallRecordingSummaryGeneration = async ({
   }
 
   try {
-    const client = new RestApiClient();
+    // The host injects the isolated functions origin; the legacy /s route
+    // 410s post-cutoff functions and only remains for self-hosting.
+    const functionsBaseUrl = process.env[TWENTY_FUNCTIONS_URL_ENV_VAR_NAME];
+    const client = isNonEmptyString(functionsBaseUrl)
+      ? new RestApiClient({ baseUrl: functionsBaseUrl })
+      : new RestApiClient();
 
     const response = await client.post<GenerateSummariesResponse>(
-      `/s${GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH}`,
+      isNonEmptyString(functionsBaseUrl)
+        ? GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH
+        : `/s${GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH}`,
       { calendarEventIds },
     );
 

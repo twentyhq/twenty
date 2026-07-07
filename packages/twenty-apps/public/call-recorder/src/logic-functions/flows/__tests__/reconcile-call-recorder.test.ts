@@ -269,6 +269,32 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     });
   });
 
+  it('creates a scheduled call recording with a fallback title when the calendar title is unavailable', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [buildCalendarEvent({ title: undefined })],
+    });
+
+    const result = await reconcileCallRecorderForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(result).toEqual([
+      expect.objectContaining({
+        action: 'CREATED',
+        callRecordingId: buildCustomerSyncCallRecordingId(),
+      }),
+    ]);
+    expect(client.callRecordings).toEqual([
+      expect.objectContaining({
+        title: 'Call recording - Jan 1, 2026, 1:00 PM UTC',
+        status: 'SCHEDULED',
+        recordingRequestStatus: 'REQUESTED',
+      }),
+    ]);
+  });
+
   it('creates a scheduled call recording for the default ON preference', async () => {
     const client = buildFakeCoreApiClient({
       calendarEvents: [buildCalendarEvent({ callRecorderPreference: null })],
@@ -415,6 +441,44 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         twentyCallRecordingId: buildCustomerSyncCallRecordingId(),
       },
     });
+  });
+
+  it('replaces a stale visible title with the fallback title when the calendar title becomes unavailable', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [buildCalendarEvent({ title: undefined })],
+      callRecordings: [
+        {
+          id: buildCustomerSyncCallRecordingId(),
+          title: 'Old Customer Sync',
+          status: 'SCHEDULED',
+          recordingRequestStatus: 'REQUESTED',
+          startedAt: FUTURE_STARTS_AT,
+          endedAt: FUTURE_ENDS_AT,
+          calendarEventId: 'calendar-event-1',
+          externalBotId: 'recall-bot-1',
+        },
+      ],
+    });
+
+    const result = await reconcileCallRecorderForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(result).toEqual([
+      expect.objectContaining({
+        action: 'UPDATED',
+        callRecordingId: buildCustomerSyncCallRecordingId(),
+      }),
+    ]);
+    expect(client.callRecordings).toEqual([
+      expect.objectContaining({
+        title: 'Call recording - Jan 1, 2026, 1:00 PM UTC',
+        status: 'SCHEDULED',
+        recordingRequestStatus: 'REQUESTED',
+      }),
+    ]);
   });
 
   it('cancels an existing scheduled request when the policy no longer requests a bot', async () => {
