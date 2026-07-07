@@ -25,26 +25,8 @@ export const getRecordImageIdentifier = async ({
   flatFieldMetadataMaps,
   signUrl,
 }: GetRecordImageIdentifierOptions): Promise<string | null> => {
-  if (flatObjectMetadata.nameSingular === 'company') {
-    const domainNameObj = record.domainName as
-      | { primaryLinkUrl?: string }
-      | undefined;
-    const domainNamePrimaryLinkUrl = domainNameObj?.primaryLinkUrl;
-
-    return domainNamePrimaryLinkUrl
-      ? getLogoUrlFromDomainName(domainNamePrimaryLinkUrl) || null
-      : null;
-  }
-
-  //TODO: Temporary solution before imageIdentifier refactor
-  if (signUrl && flatObjectMetadata.nameSingular === 'person') {
-    const avatarFileId = (record.avatarFile as FileOutput[])?.[0]?.fileId;
-    if (!isDefined(avatarFileId)) {
-      return null;
-    }
-    return signUrl(avatarFileId, FileFolder.FilesField);
-  }
-
+  // WorkspaceMember is an exception: its avatar is a TEXT field storing a signed
+  // CorePicture URL, which does not fit the generic FILES/LINKS resolution.
   if (
     signUrl &&
     flatObjectMetadata.nameSingular === 'workspaceMember' &&
