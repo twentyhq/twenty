@@ -24,8 +24,10 @@ export const buildHostFetchPolicy = ({
     ...new Set(
       [apiUrl, functionsBaseUrl, componentUrl]
         .filter(isDefined)
-        .map((url) => getURLSafely(url)?.origin)
-        .filter(isDefined),
+        .map((url) => getURLSafely(url))
+        .filter(isDefined)
+        .filter((url) => url.protocol === 'http:' || url.protocol === 'https:')
+        .map((url) => url.origin),
     ),
   ];
 

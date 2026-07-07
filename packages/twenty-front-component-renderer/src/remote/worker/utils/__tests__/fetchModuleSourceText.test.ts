@@ -47,6 +47,20 @@ describe('fetchModuleSourceText', () => {
     ).rejects.toMatchObject({ code: 'FRONT_COMPONENT_MODULE_FETCH_FAILED' });
   });
 
+  it('should wrap fetch rejections in a coded error', async () => {
+    globalThis.fetch = jest.fn(async () => {
+      throw new TypeError('Failed to fetch');
+    }) as unknown as typeof fetch;
+
+    await expect(
+      fetchModuleSourceText('https://api.twenty.test/component.js'),
+    ).rejects.toMatchObject({
+      code: 'FRONT_COMPONENT_MODULE_FETCH_FAILED',
+      message:
+        'Failed to fetch front component module https://api.twenty.test/component.js: Failed to fetch',
+    });
+  });
+
   it('should include the url and status in the error message', async () => {
     globalThis.fetch = jest.fn(async () => ({
       ok: false,

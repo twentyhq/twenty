@@ -33,6 +33,16 @@ describe('buildHostFetchPolicy', () => {
     expect(hostFetchPolicy.allowedOrigins).toEqual(['https://api.twenty.test']);
   });
 
+  it('should drop urls with non http schemes', () => {
+    const hostFetchPolicy = buildHostFetchPolicy({
+      componentUrl: 'https://api.twenty.test/rest/front-components/id',
+      apiUrl: 'data:text/html,<script>alert(1)</script>',
+      functionsBaseUrl: 'file:///etc/passwd',
+    });
+
+    expect(hostFetchPolicy.allowedOrigins).toEqual(['https://api.twenty.test']);
+  });
+
   it('should deduplicate identical origins', () => {
     const hostFetchPolicy = buildHostFetchPolicy({
       componentUrl: 'https://api.twenty.test/rest/front-components/id',

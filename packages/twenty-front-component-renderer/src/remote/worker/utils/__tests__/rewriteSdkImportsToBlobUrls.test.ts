@@ -49,4 +49,26 @@ describe('rewriteSdkImportsToBlobUrls', () => {
 
     expect(rewriteSdkImportsToBlobUrls(source, sdkModuleBlobUrls)).toBe(source);
   });
+
+  it('should not rewrite the specifier inside a plain string literal', () => {
+    const source = 'const specifierName = "twenty-client-sdk/core";';
+
+    expect(rewriteSdkImportsToBlobUrls(source, sdkModuleBlobUrls)).toBe(source);
+  });
+
+  it('should rewrite export from statements', () => {
+    const source = 'export { CoreApiClient } from "twenty-client-sdk/core";';
+
+    expect(rewriteSdkImportsToBlobUrls(source, sdkModuleBlobUrls)).toBe(
+      'export { CoreApiClient } from "blob:core-url";',
+    );
+  });
+
+  it('should rewrite minified imports without whitespace', () => {
+    const source = 'import{CoreApiClient}from"twenty-client-sdk/core";';
+
+    expect(rewriteSdkImportsToBlobUrls(source, sdkModuleBlobUrls)).toBe(
+      'import{CoreApiClient}from"blob:core-url";',
+    );
+  });
 });
