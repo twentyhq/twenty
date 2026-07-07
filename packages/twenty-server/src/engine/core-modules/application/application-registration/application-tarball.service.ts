@@ -12,6 +12,14 @@ import { Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
+import {
+  ApplicationVersionValidationService,
+  type VersionValidationFailureReason,
+} from 'src/engine/core-modules/application/application-package/application-version-validation.service';
+import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
+import { readJsonFile } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
+import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
   ApplicationRegistrationException,
@@ -19,18 +27,10 @@ import {
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
-import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
-import { readJsonFile } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
-import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
-import {
-  ApplicationVersionValidationService,
-  type VersionValidationFailureReason,
-} from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationManifestStorageService } from 'src/engine/core-modules/application/application-registration/application-manifest-storage.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import type { ApplicationManifest, Manifest } from 'twenty-shared/application';
-import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 
 @Injectable()
 export class ApplicationTarballService {
@@ -44,7 +44,11 @@ export class ApplicationTarballService {
       ApplicationRegistrationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT,
     INVALID_SERVER_VERSION:
       ApplicationRegistrationExceptionCode.INVALID_SERVER_VERSION,
-    INCOMPATIBLE:
+    INVALID_WORKSPACE_VERSION:
+      ApplicationRegistrationExceptionCode.INVALID_SERVER_VERSION,
+    INSTANCE_INCOMPATIBLE:
+      ApplicationRegistrationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
+    WORKSPACE_INCOMPATIBLE:
       ApplicationRegistrationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
   };
 

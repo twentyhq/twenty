@@ -3,5 +3,17 @@
   "attribution": {
     "commit": "",
     "pr": ""
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat <<'EOF'\nInstructions for this session:\n- Do NOT add any signature, footer, co-author tag, \"Generated with Claude\" or \"Co-Authored-By\" mention in commits, PRs, or files.\n- Be concise. Get to the point, no preamble or unnecessary recap.\n- Write like a human: natural, direct tone, no marketing language or overwrought phrasing.\n- No weird punctuation: never use em dashes, no emojis unless explicitly asked, standard punctuation only.\nEOF"
+          }
+        ]
+      }
+    ]
   }
 }

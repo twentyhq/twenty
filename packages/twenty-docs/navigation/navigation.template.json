@@ -160,6 +160,9 @@
             "appsGettingStarted": {
               "label": "Getting Started"
             },
+            "appsTutorial": {
+              "label": "Tutorial"
+            },
             "appsConfig": {
               "label": "Config"
             },

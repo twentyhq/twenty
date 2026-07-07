@@ -41,6 +41,8 @@ import { readReadablePrefix } from 'src/utils/read-readable-prefix';
 export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.FilesField,
   FileFolder.Workflow,
+  FileFolder.EmailAttachment,
+  FileFolder.AgentChat,
 ] as const;
 
 @Injectable()
