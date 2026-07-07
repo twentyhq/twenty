@@ -47,15 +47,21 @@ export const getMinimalSelectForRecordIdentifier = ({
     }
   }
 
+  const { overrides } = flatObjectMetadata;
+  const imageIdentifierFieldMetadataId =
+    isDefined(overrides) && 'imageIdentifierFieldMetadataId' in overrides
+      ? overrides.imageIdentifierFieldMetadataId
+      : flatObjectMetadata.imageIdentifierFieldMetadataId;
+
   if (flatObjectMetadata.nameSingular === 'company') {
     selectColumns.push(COMPANY_AVATAR_COLUMN);
     //TODO: Temporary solution before imageIdentifier refactor
   } else if (flatObjectMetadata.nameSingular === 'person') {
     selectColumns.push(PERSON_AVATAR_COLUMN);
-  } else if (isDefined(flatObjectMetadata.imageIdentifierFieldMetadataId)) {
+  } else if (isDefined(imageIdentifierFieldMetadataId)) {
     const imageField = findFlatEntityByIdInFlatEntityMaps({
       flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityId: flatObjectMetadata.imageIdentifierFieldMetadataId,
+      flatEntityId: imageIdentifierFieldMetadataId,
     });
 
     if (isDefined(imageField)) {
