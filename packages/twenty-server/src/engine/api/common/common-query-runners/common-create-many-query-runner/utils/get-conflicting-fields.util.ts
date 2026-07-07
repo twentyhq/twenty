@@ -66,7 +66,6 @@ const computeConflictingPropertiesForIndexField = ({
       ];
     }
 
-
     return compositeType.properties
       .filter((property) => property.isIncludedInUniqueConstraint)
       .map((property) => ({

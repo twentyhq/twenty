@@ -32,7 +32,6 @@ import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner
 import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -51,10 +50,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 > {
   protected readonly operationName = CommonQueryNames.CREATE_MANY;
 
-  constructor(
-    private readonly recordPositionService: RecordPositionService,
-    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-  ) {
+  constructor(private readonly recordPositionService: RecordPositionService) {
     super();
   }
 
@@ -79,14 +75,24 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatIndexMaps,
       workspaceDataSource,
     } = queryRunnerContext;
+
+    if (!isDefined(flatIndexMaps)) {
+      throw new CommonQueryRunnerException(
+        `Missing flatIndexMaps in queryRunnerContext`,
+        CommonQueryRunnerExceptionCode.MISSING_FLAT_INDEX_MAPS,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
+    }
 
     const objectRecords = await this.insertOrUpsertRecords({
       repository,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatIndexMaps,
       args,
       workspaceId: authContext.workspace.id,
     });
@@ -198,6 +204,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
+    flatIndexMaps,
     args,
     workspaceId,
   }: {
@@ -205,6 +212,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
     args: CommonExtendedInput<CreateManyQueryArgs>;
     workspaceId: string;
   }): Promise<InsertResult> {
@@ -227,6 +235,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatIndexMaps,
       args,
       selectedFieldsResult,
       workspaceId,
@@ -238,6 +247,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
+    flatIndexMaps,
     args,
     selectedFieldsResult,
     workspaceId,
@@ -246,18 +256,11 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
     args: CreateManyQueryArgs;
     selectedFieldsResult: CommonSelectedFieldsResult;
     workspaceId: string;
   }): Promise<InsertResult> {
-    const { flatIndexMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatIndexMaps'],
-        },
-      );
-
     const conflictingFieldGroups = getConflictingFields(
       flatObjectMetadata,
       flatFieldMetadataMaps,

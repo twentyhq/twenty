@@ -53,7 +53,10 @@ export const getMatchingRecordId = (
       .map((group) => {
         const values = group.conflictingProperties
           .map((conflictingProperty) => {
-            const value = getValueFromPath(record, conflictingProperty.fullPath);
+            const value = getValueFromPath(
+              record,
+              conflictingProperty.fullPath,
+            );
 
             return isDefined(value)
               ? `${conflictingProperty.fullPath}: ${value}`
