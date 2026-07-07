@@ -35,7 +35,6 @@ export class ApplicationManifestStorageService {
     const serializedManifest = JSON.stringify(manifest);
 
     const resourcePath = buildApplicationManifestResourcePath({
-      applicationRegistrationId,
       sourceType,
       version,
       serializedManifest,
@@ -43,10 +42,10 @@ export class ApplicationManifestStorageService {
 
     return this.serverFileStorageService.writeServerFile({
       fileFolder: ServerFileFolder.ApplicationRegistration,
+      applicationRegistrationId,
       resourcePath,
       contents: serializedManifest,
       mimeType: 'application/json',
-      applicationRegistrationId,
     });
   }
 

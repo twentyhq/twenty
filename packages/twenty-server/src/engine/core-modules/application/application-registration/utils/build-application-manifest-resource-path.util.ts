@@ -13,18 +13,16 @@ const SAFE_VERSION_FILE_NAME_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._+-]*$/;
 const CONTENT_HASH_LENGTH = 16;
 
 export const buildApplicationManifestResourcePath = ({
-  applicationRegistrationId,
   sourceType,
   version,
   serializedManifest,
 }: {
-  applicationRegistrationId: string;
   sourceType: ApplicationRegistrationSourceType;
   version?: string | null;
   serializedManifest: string;
 }): string => {
   if (sourceType === ApplicationRegistrationSourceType.LOCAL) {
-    return `${applicationRegistrationId}/${APPLICATION_MANIFESTS_SUBFOLDER}/${APPLICATION_MANIFEST_DEV_FILE_NAME}.json`;
+    return `${APPLICATION_MANIFESTS_SUBFOLDER}/${APPLICATION_MANIFEST_DEV_FILE_NAME}.json`;
   }
 
   const fileName =
@@ -35,5 +33,5 @@ export const buildApplicationManifestResourcePath = ({
           .digest('hex')
           .slice(0, CONTENT_HASH_LENGTH);
 
-  return `${applicationRegistrationId}/${APPLICATION_MANIFESTS_SUBFOLDER}/${fileName}.json`;
+  return `${APPLICATION_MANIFESTS_SUBFOLDER}/${fileName}.json`;
 };

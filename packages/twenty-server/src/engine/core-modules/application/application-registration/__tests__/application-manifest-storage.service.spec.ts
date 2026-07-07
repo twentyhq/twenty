@@ -48,7 +48,7 @@ describe('ApplicationManifestStorageService', () => {
   });
 
   describe('writeManifest', () => {
-    it('should write the serialized manifest as an instance file and return it', async () => {
+    it('should write the serialized manifest as a server file and return it', async () => {
       const serverFile = { id: serverFileId } as FileEntity;
 
       serverFileStorageService.writeServerFile.mockResolvedValue(serverFile);
@@ -63,7 +63,7 @@ describe('ApplicationManifestStorageService', () => {
       expect(result).toBe(serverFile);
       expect(serverFileStorageService.writeServerFile).toHaveBeenCalledWith({
         fileFolder: ServerFileFolder.ApplicationRegistration,
-        resourcePath: `${applicationRegistrationId}/manifests/2.0.0.json`,
+        resourcePath: 'manifests/2.0.0.json',
         contents: JSON.stringify(manifest),
         mimeType: 'application/json',
         applicationRegistrationId,
@@ -84,7 +84,7 @@ describe('ApplicationManifestStorageService', () => {
 
       expect(serverFileStorageService.writeServerFile).toHaveBeenCalledWith(
         expect.objectContaining({
-          resourcePath: `${applicationRegistrationId}/manifests/dev.json`,
+          resourcePath: 'manifests/dev.json',
         }),
       );
     });
