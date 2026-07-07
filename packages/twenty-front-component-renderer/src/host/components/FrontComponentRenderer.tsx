@@ -70,10 +70,10 @@ export const FrontComponentRenderer = ({
       />
 
       {isDefined(error) && (
-        <>
+        <ThemeProvider colorScheme={colorScheme}>
           <FrontComponentErrorEffect error={error} onError={onError} />
           <FrontComponentErrorBox error={error} />
-        </>
+        </ThemeProvider>
       )}
 
       {isDefined(thread) && (
