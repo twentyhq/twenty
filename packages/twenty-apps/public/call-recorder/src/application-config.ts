@@ -43,7 +43,7 @@ export default defineApplication({
   displayName: APP_DISPLAY_NAME,
   description: APP_DESCRIPTION,
   logoUrl: 'public/logo.svg',
-  category: 'Communication',
+  category: 'Productivity',
   author: 'Twenty',
   screenshots: ['public/gallery/call-recorder-cover.png'],
   applicationVariables: {
