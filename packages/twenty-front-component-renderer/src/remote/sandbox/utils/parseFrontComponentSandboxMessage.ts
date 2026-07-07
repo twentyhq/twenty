@@ -1,10 +1,12 @@
+import { isNumber, isObject, isString } from '@sniptt/guards';
+
 import { FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE } from '@/remote/sandbox/constants/FrontComponentSandboxMessageType';
 import { type FrontComponentSandboxMessage } from '@/remote/sandbox/types/FrontComponentSandboxMessage';
 
 export const parseFrontComponentSandboxMessage = (
   data: unknown,
 ): FrontComponentSandboxMessage | null => {
-  if (typeof data !== 'object' || data === null || !('type' in data)) {
+  if (!isObject(data) || !('type' in data)) {
     return null;
   }
 
@@ -27,10 +29,10 @@ export const parseFrontComponentSandboxMessage = (
 
     return {
       type,
-      message: typeof message === 'string' ? message : '',
-      filename: typeof filename === 'string' ? filename : undefined,
-      lineno: typeof lineno === 'number' ? lineno : undefined,
-      colno: typeof colno === 'number' ? colno : undefined,
+      message: isString(message) ? message : '',
+      filename: isString(filename) ? filename : undefined,
+      lineno: isNumber(lineno) ? lineno : undefined,
+      colno: isNumber(colno) ? colno : undefined,
     };
   }
 

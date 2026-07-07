@@ -1,3 +1,4 @@
+import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isRequestObject } from '@/remote/worker/utils/isRequestObject';
@@ -37,7 +38,7 @@ export const getTextBodyFromFetchRequestArguments = async (
     return undefined;
   }
 
-  if (typeof initBody === 'string') {
+  if (isString(initBody)) {
     return initBody;
   }
 

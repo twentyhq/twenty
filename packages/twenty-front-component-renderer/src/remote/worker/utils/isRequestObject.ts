@@ -1,2 +1,4 @@
+import { isObject } from '@sniptt/guards';
+
 export const isRequestObject = (input: RequestInfo | URL): input is Request =>
-  typeof input === 'object' && !(input instanceof URL);
+  isObject(input) && !(input instanceof URL);
