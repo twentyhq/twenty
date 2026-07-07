@@ -45,7 +45,9 @@ describe('BillingCreditService', () => {
         {
           provide: StripeCustomerService,
           useValue: {
-            createStripeCustomer: jest.fn().mockResolvedValue({ id: 'cus_123' }),
+            createStripeCustomer: jest
+              .fn()
+              .mockResolvedValue({ id: 'cus_123' }),
           },
         },
         {
