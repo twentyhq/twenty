@@ -97,17 +97,17 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
         flatFieldMetadata?.universalIdentifier;
     }
 
-    if (
-      isDefined(updatedEditableObjectProperties.imageIdentifierFieldMetadataId)
-    ) {
-      const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityMaps: flatFieldMetadataMaps,
-        flatEntityId:
-          updatedEditableObjectProperties.imageIdentifierFieldMetadataId,
-      });
+    if ('imageIdentifierFieldMetadataId' in updatedEditableObjectProperties) {
+      const { imageIdentifierFieldMetadataId } =
+        updatedEditableObjectProperties;
 
       toFlatObjectMetadata.imageIdentifierFieldMetadataUniversalIdentifier =
-        flatFieldMetadata?.universalIdentifier;
+        isDefined(imageIdentifierFieldMetadataId)
+          ? findFlatEntityByIdInFlatEntityMapsOrThrow({
+              flatEntityMaps: flatFieldMetadataMaps,
+              flatEntityId: imageIdentifierFieldMetadataId,
+            }).universalIdentifier
+          : null;
     }
 
     const {
