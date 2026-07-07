@@ -1,3 +1,6 @@
+import { Readable } from 'node:stream';
+import { type ReadableStream as WebReadableStream } from 'node:stream/web';
+
 import { isNull, isUndefined } from '@sniptt/guards';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
@@ -24,11 +27,13 @@ type IngestMediaArtifactResult =
   | { outcome: 'too-large' }
   | { outcome: 'failed' };
 
-type DownloadMediaFileResult =
-  | { outcome: 'downloaded'; buffer: Buffer; contentType: string }
-  | { outcome: 'too-large'; sizeBytes: number | undefined };
+type OpenMediaDownloadResult =
+  | { outcome: 'opened'; body: ReadableStream<Uint8Array>; sizeBytes: number }
+  | { outcome: 'too-large'; sizeBytes: number };
 
 const MEDIA_DOWNLOAD_TIMEOUT_MS = 120_000;
+const MEDIA_UPLOAD_TIMEOUT_MS = 120_000;
+const MEDIA_FILE_FOLDER = 'FilesField';
 
 export const ingestCallRecordingMedia = async ({
   callRecordingId,
@@ -57,7 +62,6 @@ export const ingestCallRecordingMedia = async ({
 
   const mediaUrls = extractRecallMediaUrls(recordingResult.recording);
   const metadataClient = new MetadataApiClient();
-  // TODO: drop the size cap once core streams uploads without buffering whole files in memory.
   const maxMediaFileSizeBytes = getMaxMediaFileSizeBytes();
   const updateFields: CallRecordingMediaUpdateFields = {};
   const tooLargeFailureReasons: string[] = [];
@@ -125,37 +129,33 @@ const ingestMediaArtifact = async ({
   maxMediaFileSizeBytes: number;
 }): Promise<IngestMediaArtifactResult> => {
   try {
-    const downloadResult = await downloadMediaFile({
+    const download = await openMediaDownload({
       callRecordingId,
       fileName,
       url,
       maxMediaFileSizeBytes,
     });
 
-    if (downloadResult.outcome === 'too-large') {
+    if (download.outcome === 'too-large') {
       console.warn(
-        `[call-recorder] media-ingestion phase=artifact-too-large callRecordingId=${callRecordingId} fileName=${fileName} sizeBytes=${downloadResult.sizeBytes ?? 'unknown'} maxMediaFileSizeBytes=${maxMediaFileSizeBytes}`,
+        `[call-recorder] media-ingestion phase=artifact-too-large callRecordingId=${callRecordingId} fileName=${fileName} sizeBytes=${download.sizeBytes} maxMediaFileSizeBytes=${maxMediaFileSizeBytes}`,
       );
 
       return { outcome: 'too-large' };
     }
 
-    const { buffer, contentType } = downloadResult;
-
-    console.log(
-      `[call-recorder] media-ingestion phase=artifact-upload-start callRecordingId=${callRecordingId} fileName=${fileName} downloadedBytes=${buffer.byteLength} contentType=${contentType} ${formatMemoryUsageForLog()}`,
-    );
-
-    const uploadedFile = await metadataClient.uploadFile(
-      buffer,
+    const fileId = await uploadMediaStreamToStorage({
+      callRecordingId,
+      metadataClient,
       fileName,
-      contentType,
       fieldMetadataUniversalIdentifier,
-    );
+      body: download.body,
+      sizeBytes: download.sizeBytes,
+    });
 
     return {
       outcome: 'ingested',
-      files: [{ fileId: uploadedFile.id, label: fileName }],
+      files: [{ fileId, label: fileName }],
     };
   } catch (error) {
     console.warn(
@@ -166,7 +166,7 @@ const ingestMediaArtifact = async ({
   }
 };
 
-const downloadMediaFile = async ({
+const openMediaDownload = async ({
   callRecordingId,
   fileName,
   url,
@@ -176,28 +176,31 @@ const downloadMediaFile = async ({
   fileName: string;
   url: string;
   maxMediaFileSizeBytes: number;
-}): Promise<DownloadMediaFileResult> => {
+}): Promise<OpenMediaDownloadResult> => {
   const response = await fetch(url, {
     signal: AbortSignal.timeout(MEDIA_DOWNLOAD_TIMEOUT_MS),
   });
-  const contentType =
-    response.headers.get('content-type') ?? 'application/octet-stream';
   const contentLengthBytes = parseContentLengthBytes(
     response.headers.get('content-length'),
   );
 
   console.log(
-    `[call-recorder] media-ingestion phase=artifact-download-response callRecordingId=${callRecordingId} fileName=${fileName} responseStatus=${response.status} contentLengthBytes=${contentLengthBytes ?? 'unknown'} contentType=${contentType} ${formatMemoryUsageForLog()}`,
+    `[call-recorder] media-ingestion phase=artifact-download-response callRecordingId=${callRecordingId} fileName=${fileName} responseStatus=${response.status} contentLengthBytes=${contentLengthBytes ?? 'unknown'} ${formatMemoryUsageForLog()}`,
   );
 
   if (!response.ok) {
+    await response.body?.cancel();
+
     throw new Error(`download failed with status ${response.status}`);
   }
 
-  if (
-    !isUndefined(contentLengthBytes) &&
-    contentLengthBytes > maxMediaFileSizeBytes
-  ) {
+  if (isUndefined(contentLengthBytes)) {
+    await response.body?.cancel();
+
+    throw new Error('download response is missing content-length');
+  }
+
+  if (contentLengthBytes > maxMediaFileSizeBytes) {
     await response.body?.cancel();
 
     return { outcome: 'too-large', sizeBytes: contentLengthBytes };
@@ -207,49 +210,106 @@ const downloadMediaFile = async ({
     throw new Error('download returned no body');
   }
 
-  return readBodyWithinSizeCap({
-    body: response.body,
-    contentType,
-    maxMediaFileSizeBytes,
-  });
+  return { outcome: 'opened', body: response.body, sizeBytes: contentLengthBytes };
 };
 
-const readBodyWithinSizeCap = async ({
+const uploadMediaStreamToStorage = async ({
+  callRecordingId,
+  metadataClient,
+  fileName,
+  fieldMetadataUniversalIdentifier,
   body,
-  contentType,
-  maxMediaFileSizeBytes,
+  sizeBytes,
 }: {
+  callRecordingId: string;
+  metadataClient: InstanceType<typeof MetadataApiClient>;
+  fileName: string;
+  fieldMetadataUniversalIdentifier: string;
   body: ReadableStream<Uint8Array>;
-  contentType: string;
-  maxMediaFileSizeBytes: number;
-}): Promise<DownloadMediaFileResult> => {
-  const reader = body.getReader();
-  const chunks: Uint8Array[] = [];
-  let downloadedBytes = 0;
+  sizeBytes: number;
+}): Promise<string> => {
+  const uploadTarget = await createFileUploadTarget({
+    metadataClient,
+    fileName,
+    sizeBytes,
+    fieldMetadataUniversalIdentifier,
+  });
 
-  for (;;) {
-    const { done, value } = await reader.read();
+  console.log(
+    `[call-recorder] media-ingestion phase=artifact-upload-start callRecordingId=${callRecordingId} fileName=${fileName} declaredBytes=${sizeBytes} ${formatMemoryUsageForLog()}`,
+  );
 
-    if (done) {
-      break;
-    }
+  const uploadResponse = await fetch(uploadTarget.uploadUrl, {
+    method: 'PUT',
+    body: Readable.fromWeb(body as WebReadableStream<Uint8Array>),
+    duplex: 'half',
+    headers: {
+      'Content-Type': uploadTarget.contentType,
+      'Content-Length': String(sizeBytes),
+    },
+    signal: AbortSignal.timeout(MEDIA_UPLOAD_TIMEOUT_MS),
+  } as unknown as RequestInit);
 
-    downloadedBytes += value.byteLength;
-
-    if (downloadedBytes > maxMediaFileSizeBytes) {
-      await reader.cancel();
-
-      return { outcome: 'too-large', sizeBytes: undefined };
-    }
-
-    chunks.push(value);
+  if (!uploadResponse.ok) {
+    throw new Error(`upload failed with status ${uploadResponse.status}`);
   }
 
-  return {
-    outcome: 'downloaded',
-    buffer: Buffer.concat(chunks),
-    contentType,
-  };
+  return completeFileUpload({ metadataClient, fileId: uploadTarget.fileId });
+};
+
+const createFileUploadTarget = async ({
+  metadataClient,
+  fileName,
+  sizeBytes,
+  fieldMetadataUniversalIdentifier,
+}: {
+  metadataClient: InstanceType<typeof MetadataApiClient>;
+  fileName: string;
+  sizeBytes: number;
+  fieldMetadataUniversalIdentifier: string;
+}): Promise<{ fileId: string; uploadUrl: string; contentType: string }> => {
+  const mutationResult = await metadataClient.mutation({
+    createFileUpload: {
+      __args: {
+        filename: fileName,
+        size: sizeBytes,
+        fileFolder: MEDIA_FILE_FOLDER,
+        fieldMetadataUniversalIdentifier,
+      },
+      fileId: true,
+      uploadUrl: true,
+      contentType: true,
+    },
+  });
+  const uploadTarget = mutationResult.createFileUpload;
+
+  if (isUndefined(uploadTarget)) {
+    throw new Error('createFileUpload mutation did not return an upload target');
+  }
+
+  return uploadTarget;
+};
+
+const completeFileUpload = async ({
+  metadataClient,
+  fileId,
+}: {
+  metadataClient: InstanceType<typeof MetadataApiClient>;
+  fileId: string;
+}): Promise<string> => {
+  const mutationResult = await metadataClient.mutation({
+    completeFileUpload: {
+      __args: { fileId },
+      id: true,
+    },
+  });
+  const uploadedFileId = mutationResult.completeFileUpload?.id;
+
+  if (isUndefined(uploadedFileId)) {
+    throw new Error('completeFileUpload mutation did not return a file id');
+  }
+
+  return uploadedFileId;
 };
 
 const parseContentLengthBytes = (
