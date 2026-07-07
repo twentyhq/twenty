@@ -43,6 +43,8 @@ export class ApplicationTarballService {
       ApplicationRegistrationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT,
     INVALID_SERVER_VERSION:
       ApplicationRegistrationExceptionCode.INVALID_SERVER_VERSION,
+    INVALID_WORKSPACE_VERSION:
+      ApplicationRegistrationExceptionCode.INVALID_SERVER_VERSION,
     INCOMPATIBLE:
       ApplicationRegistrationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
   };
