@@ -864,6 +864,26 @@ describe('evaluateFilterConditions', () => {
           false,
         );
       });
+
+      it('should handle legacy IsNot operand on arrays without throwing', () => {
+        const matching = createFilter(
+          ViewFilterOperand.IS_NOT,
+          ['apple', 'banana'],
+          ['grape'],
+          'MULTI_SELECT',
+        );
+        const notMatching = createFilter(
+          ViewFilterOperand.IS_NOT,
+          ['apple', 'banana'],
+          ['apple'],
+          'MULTI_SELECT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [matching] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [notMatching] })).toBe(
+          false,
+        );
+      });
     });
 
     describe('empty operands', () => {
