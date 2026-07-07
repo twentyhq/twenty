@@ -20,6 +20,7 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 
 export type ServerResourceIdentifier = {
   fileFolder: ServerFileFolder;
+  applicationRegistrationId: string;
   resourcePath: string;
 };
 
@@ -36,6 +37,7 @@ export class ServerFileStorageService {
 
   private validateAndBuildServerFileStoragePathOrThrow({
     fileFolder,
+    applicationRegistrationId,
     resourcePath,
   }: ServerResourceIdentifier): {
     onStorageFilePath: string;
@@ -50,7 +52,11 @@ export class ServerFileStorageService {
       );
     }
 
-    const filePath = join(fileFolder, resourcePath).replace(/\/+/g, '/');
+    const filePath = join(
+      fileFolder,
+      applicationRegistrationId,
+      resourcePath,
+    ).replace(/\/+/g, '/');
 
     const onStorageFilePath = join(
       SERVER_FILE_STORAGE_PREFIX,
@@ -67,20 +73,20 @@ export class ServerFileStorageService {
 
   async writeServerFile({
     fileFolder,
+    applicationRegistrationId,
     resourcePath,
     contents,
     mimeType,
-    applicationRegistrationId,
   }: ServerResourceIdentifier & {
     contents: Buffer | string;
     mimeType: string;
-    applicationRegistrationId: string;
   }): Promise<FileEntity> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
     const { onStorageFilePath, filePath } =
       this.validateAndBuildServerFileStoragePathOrThrow({
         fileFolder,
+        applicationRegistrationId,
         resourcePath,
       });
 
@@ -115,6 +121,7 @@ export class ServerFileStorageService {
 
   async readServerFile({
     fileFolder,
+    applicationRegistrationId,
     resourcePath,
   }: ServerResourceIdentifier): Promise<Readable> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
@@ -122,6 +129,7 @@ export class ServerFileStorageService {
     const { onStorageFilePath, filePath } =
       this.validateAndBuildServerFileStoragePathOrThrow({
         fileFolder,
+        applicationRegistrationId,
         resourcePath,
       });
 
@@ -152,6 +160,7 @@ export class ServerFileStorageService {
 
   checkServerFileExists({
     fileFolder,
+    applicationRegistrationId,
     resourcePath,
   }: ServerResourceIdentifier): Promise<boolean> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
@@ -159,6 +168,7 @@ export class ServerFileStorageService {
     const { onStorageFilePath } =
       this.validateAndBuildServerFileStoragePathOrThrow({
         fileFolder,
+        applicationRegistrationId,
         resourcePath,
       });
 
@@ -167,11 +177,13 @@ export class ServerFileStorageService {
 
   async deleteServerFile({
     fileFolder,
+    applicationRegistrationId,
     resourcePath,
   }: ServerResourceIdentifier): Promise<void> {
     const { onStorageFilePath, filePath } =
       this.validateAndBuildServerFileStoragePathOrThrow({
         fileFolder,
+        applicationRegistrationId,
         resourcePath,
       });
 
