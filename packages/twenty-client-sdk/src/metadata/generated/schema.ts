@@ -2952,6 +2952,7 @@ export interface Mutation {
     updateApplicationRegistrationVariable: ApplicationRegistrationVariable
     deleteApplicationRegistrationVariable: Scalars['Boolean']
     uploadAppTarball: ApplicationRegistration
+    claimApplicationRegistrationOwnership: ApplicationRegistration
     transferApplicationRegistrationOwnership: ApplicationRegistration
     updateWorkspaceMemberRole: WorkspaceMember
     createOneRole: Role
@@ -6198,6 +6199,7 @@ export interface MutationGenqlSelection{
     updateApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: UpdateApplicationRegistrationVariableInput} })
     deleteApplicationRegistrationVariable?: { __args: {id: Scalars['String']} }
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
+    claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
     updateWorkspaceMemberRole?: (WorkspaceMemberGenqlSelection & { __args: {workspaceMemberId: Scalars['UUID'], roleId: Scalars['UUID']} })
     createOneRole?: (RoleGenqlSelection & { __args: {createRoleInput: CreateRoleInput} })
