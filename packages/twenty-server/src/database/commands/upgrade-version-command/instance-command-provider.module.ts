@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { INSTANCE_COMMANDS } from 'src/database/commands/upgrade-version-command/instance-commands.constant';
+import { ApplicationManifestStorageService } from 'src/engine/core-modules/application/application-registration/application-manifest-storage.service';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { SimpleSecretEncryptionUtil } from 'src/engine/core-modules/two-factor-authentication/utils/simple-secret-encryption.util';
@@ -15,6 +16,10 @@ import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modul
     // is retired.
     JwtModule,
   ],
-  providers: [...INSTANCE_COMMANDS, SimpleSecretEncryptionUtil],
+  providers: [
+    ...INSTANCE_COMMANDS,
+    SimpleSecretEncryptionUtil,
+    ApplicationManifestStorageService,
+  ],
 })
 export class InstanceCommandProviderModule {}

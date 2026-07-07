@@ -26,6 +26,7 @@ import {
   type UpdateApplicationRegistrationInput,
   type UpdateApplicationRegistrationPayload,
 } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
+import { ApplicationManifestStorageService } from 'src/engine/core-modules/application/application-registration/application-manifest-storage.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -49,6 +50,7 @@ const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegist
     'sourceType',
     'sourcePackage',
     'tarballFileId',
+    'manifestFileId',
     'latestAvailableVersion',
     'isListed',
     'isFeatured',
@@ -92,6 +94,7 @@ export class ApplicationRegistrationService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly cacheLockService: CacheLockService,
+    private readonly applicationManifestStorageService: ApplicationManifestStorageService,
   ) {}
 
   async findMany(
@@ -321,10 +324,18 @@ export class ApplicationRegistrationService {
         return;
       }
 
+      const manifestFileId = await this.tryWriteManifestFile({
+        applicationRegistrationId,
+        manifest,
+        sourceType: sourceType ?? existing.sourceType,
+        version: latestAvailableVersion ?? existing.latestAvailableVersion,
+      });
+
       await this.applicationRegistrationRepository.save({
         ...existing,
         name: manifest.application.displayName,
         manifest,
+        manifestFileId,
         ...fromManifestApplicationToDisplayFields(manifest.application),
         ...(sourceType !== undefined && { sourceType }),
         ...(latestAvailableVersion !== undefined && {
@@ -332,6 +343,63 @@ export class ApplicationRegistrationService {
         }),
       });
     }, `application-registration-update:${applicationRegistrationId}`);
+  }
+
+  async getManifest(
+    registration: ApplicationRegistrationEntity,
+  ): Promise<Manifest | null> {
+    if (isDefined(registration.manifestFileId)) {
+      try {
+        const manifestFromStorage =
+          await this.applicationManifestStorageService.readManifest(
+            registration.manifestFileId,
+          );
+
+        if (isDefined(manifestFromStorage)) {
+          return manifestFromStorage;
+        }
+      } catch (error) {
+        this.logger.warn(
+          `Failed to read manifest file ${registration.manifestFileId} for application registration ${registration.id}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      }
+    }
+
+    return registration.manifest ?? null;
+  }
+
+  private async tryWriteManifestFile({
+    applicationRegistrationId,
+    manifest,
+    sourceType,
+    version,
+  }: {
+    applicationRegistrationId: string;
+    manifest: Manifest;
+    sourceType: ApplicationRegistrationSourceType;
+    version?: string | null;
+  }): Promise<string | null> {
+    try {
+      const manifestFile =
+        await this.applicationManifestStorageService.writeManifest({
+          applicationRegistrationId,
+          manifest,
+          sourceType,
+          version,
+        });
+
+      return manifestFile.id;
+    } catch (error) {
+      this.logger.warn(
+        `Failed to persist manifest file for application registration ${applicationRegistrationId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+
+      return null;
+    }
   }
 
   async delete(id: string, ownerWorkspaceId: string): Promise<boolean> {
@@ -392,6 +460,15 @@ export class ApplicationRegistrationService {
     const isFeatured = curatedIdentifiers.has(params.universalIdentifier);
 
     if (isDefined(existing)) {
+      const manifestFileId = isDefined(params.manifest)
+        ? await this.tryWriteManifestFile({
+            applicationRegistrationId: existing.id,
+            manifest: params.manifest,
+            sourceType: params.sourceType,
+            version: params.latestAvailableVersion,
+          })
+        : null;
+
       await this.applicationRegistrationRepository.save({
         ...existing,
         name: params.name,
@@ -399,6 +476,7 @@ export class ApplicationRegistrationService {
         sourcePackage: params.sourcePackage,
         latestAvailableVersion: params.latestAvailableVersion,
         manifest: params.manifest,
+        manifestFileId,
         ...fromManifestApplicationToDisplayFields(params.manifest?.application),
         isFeatured,
       });
@@ -419,7 +497,23 @@ export class ApplicationRegistrationService {
         ownerWorkspaceId: null,
       });
 
-      await this.applicationRegistrationRepository.save(registration);
+      const saved =
+        await this.applicationRegistrationRepository.save(registration);
+
+      if (isDefined(params.manifest)) {
+        const manifestFileId = await this.tryWriteManifestFile({
+          applicationRegistrationId: saved.id,
+          manifest: params.manifest,
+          sourceType: params.sourceType,
+          version: params.latestAvailableVersion,
+        });
+
+        if (isDefined(manifestFileId)) {
+          await this.applicationRegistrationRepository.update(saved.id, {
+            manifestFileId,
+          });
+        }
+      }
     }
 
     if (!isDefined(params.manifest?.application?.serverVariables)) {

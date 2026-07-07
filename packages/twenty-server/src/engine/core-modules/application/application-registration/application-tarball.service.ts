@@ -27,8 +27,9 @@ import {
   type VersionValidationFailureReason,
 } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationManifestStorageService } from 'src/engine/core-modules/application/application-registration/application-manifest-storage.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import type { ApplicationManifest } from 'twenty-shared/application';
+import type { ApplicationManifest, Manifest } from 'twenty-shared/application';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 
 @Injectable()
@@ -51,6 +52,7 @@ export class ApplicationTarballService {
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly fileStorageService: FileStorageService,
+    private readonly applicationManifestStorageService: ApplicationManifestStorageService,
     private readonly applicationService: ApplicationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
@@ -204,11 +206,32 @@ export class ApplicationTarballService {
         },
       });
 
+      let manifestFileId: string | null = null;
+
+      try {
+        const manifestFile =
+          await this.applicationManifestStorageService.writeManifest({
+            applicationRegistrationId: appRegistration.id,
+            manifest: manifest as Manifest,
+            sourceType: ApplicationRegistrationSourceType.TARBALL,
+            version: packageJson?.version ?? null,
+          });
+
+        manifestFileId = manifestFile.id;
+      } catch (error) {
+        this.logger.warn(
+          `Failed to persist manifest file for application registration ${appRegistration.id}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      }
+
       await this.appRegistrationRepository.update(appRegistration.id, {
         sourceType: ApplicationRegistrationSourceType.TARBALL,
         tarballFileId: savedFile.id,
         name: manifest.application?.displayName ?? 'Unknown App',
         manifest,
+        manifestFileId,
         ...fromManifestApplicationToDisplayFields(manifest.application),
         latestAvailableVersion: packageJson?.version ?? null,
         isListed: false,

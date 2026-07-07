@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type RoleManifest } from 'twenty-shared/application';
+import { type Manifest, type RoleManifest } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -69,7 +69,10 @@ export class MarketplaceQueryService {
     const registration =
       await this.findRegistrationByUniversalIdentifier(universalIdentifier);
 
-    return this.toMarketplaceAppDetailDTO(registration);
+    const manifest =
+      await this.applicationRegistrationService.getManifest(registration);
+
+    return this.toMarketplaceAppDetailDTO(registration, manifest);
   }
 
   async findRegistrationByUniversalIdentifier(
@@ -107,6 +110,7 @@ export class MarketplaceQueryService {
 
   private toMarketplaceAppDetailDTO(
     registration: ApplicationRegistrationEntity,
+    manifest: Manifest | null,
   ): MarketplaceAppDetailDTO {
     return {
       id: registration.id,
@@ -119,46 +123,37 @@ export class MarketplaceQueryService {
       isFeatured: registration.isFeatured,
       description:
         registration.description ??
-        registration.manifest?.application?.description ??
+        manifest?.application?.description ??
         undefined,
-      author:
-        registration.author ??
-        registration.manifest?.application?.author ??
-        undefined,
+      author: registration.author ?? manifest?.application?.author ?? undefined,
       category:
-        registration.category ??
-        registration.manifest?.application?.category ??
-        undefined,
+        registration.category ?? manifest?.application?.category ?? undefined,
       logo: registration.logoUrl ?? undefined,
       websiteUrl:
         registration.websiteUrl ??
-        registration.manifest?.application?.websiteUrl ??
+        manifest?.application?.websiteUrl ??
         undefined,
       aboutDescription:
         registration.aboutDescription ??
-        registration.manifest?.application?.aboutDescription ??
+        manifest?.application?.aboutDescription ??
         undefined,
       termsUrl:
-        registration.termsUrl ??
-        registration.manifest?.application?.termsUrl ??
-        undefined,
+        registration.termsUrl ?? manifest?.application?.termsUrl ?? undefined,
       emailSupport:
         registration.emailSupport ??
-        registration.manifest?.application?.emailSupport ??
+        manifest?.application?.emailSupport ??
         undefined,
       issueReportUrl:
         registration.issueReportUrl ??
-        registration.manifest?.application?.issueReportUrl ??
+        manifest?.application?.issueReportUrl ??
         undefined,
       screenshots: isNonEmptyArray(registration.screenshots)
         ? registration.screenshots
-        : (registration.manifest?.application?.screenshots ?? []),
+        : (manifest?.application?.screenshots ?? []),
       defaultRoleUniversalIdentifier:
-        registration.manifest?.application?.defaultRoleUniversalIdentifier,
-      roles: registration.manifest?.roles?.map((role) =>
-        this.toMarketplaceAppRoleDTO(role),
-      ),
-      manifest: registration.manifest ?? undefined,
+        manifest?.application?.defaultRoleUniversalIdentifier,
+      roles: manifest?.roles?.map((role) => this.toMarketplaceAppRoleDTO(role)),
+      manifest: manifest ?? undefined,
     };
   }
 

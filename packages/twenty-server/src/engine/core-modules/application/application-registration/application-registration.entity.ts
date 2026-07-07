@@ -17,6 +17,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_MANIFEST_FILE_ID_TO_APPLICATION_REGISTRATION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-manifest-file-id-to-application-registration-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type Manifest } from 'twenty-shared/application';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
@@ -133,6 +134,17 @@ export class ApplicationRegistrationEntity {
 
   @Column({ type: 'jsonb', nullable: true })
   manifest: Manifest | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_MANIFEST_FILE_ID_TO_APPLICATION_REGISTRATION_UPGRADE_COMMAND_NAME,
+  })
+  manifestFileId: string | null;
+
+  @OneToOne(() => FileEntity, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'manifestFileId' })
+  manifestFile: Relation<FileEntity> | null;
 
   @Column({ nullable: true, type: 'text' })
   @WasIntroducedInUpgrade({
