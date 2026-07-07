@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { HalftoneLogo } from '@/onboarding/components/WelcomeOverlay/HalftoneLogo';
-import { WelcomeWorkspaceChip } from '@/onboarding/components/WelcomeOverlay/WelcomeWorkspaceChip';
+import { WelcomePersonChip } from '@/onboarding/components/WelcomeOverlay/WelcomePersonChip';
 import { welcomeAnimationVisibleState } from '@/onboarding/states/welcomeAnimationVisibleState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -20,31 +20,46 @@ const StyledOverlay = styled(motion.div)`
   bottom: 0;
   cursor: pointer;
   display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[8]};
   justify-content: center;
   left: 0;
+  overflow: hidden;
   position: fixed;
   right: 0;
   top: 0;
   z-index: ${RootStackingContextZIndices.WelcomeOverlay};
 `;
 
+const StyledHalftoneLayer = styled.div`
+  align-items: center;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+`;
+
 const StyledHalftoneWrapper = styled(motion.div)`
-  width: 260px;
+  flex-shrink: 0;
+  width: max(105vw, 130vh);
 `;
 
 const StyledTitle = styled(motion.div)`
   align-items: center;
+  background: ${themeCssVariables.background.primary};
+  border-radius: ${themeCssVariables.border.radius.pill};
   color: ${themeCssVariables.font.color.primary};
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   font-size: 26px;
   font-weight: ${themeCssVariables.font.weight.semiBold};
   gap: ${themeCssVariables.spacing[2]};
   justify-content: center;
-  max-width: 480px;
-  padding: 0 ${themeCssVariables.spacing[6]};
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[8]};
+  position: relative;
+  white-space: nowrap;
+  z-index: 1;
 `;
 
 const StyledWord = styled(motion.span)`
@@ -118,24 +133,26 @@ export const WelcomeOverlay = () => {
       transition={{ duration: 0.5, ease: 'easeInOut' }}
       onAnimationComplete={handleOverlayAnimationComplete}
     >
-      <StyledHalftoneWrapper
-        initial={
-          prefersReducedMotion
-            ? { opacity: 0 }
-            : { opacity: 0, scale: 0.2, clipPath: 'circle(0% at 50% 50%)' }
-        }
-        animate={
-          prefersReducedMotion
-            ? { opacity: 1 }
-            : { opacity: 1, scale: 1, clipPath: 'circle(72% at 50% 50%)' }
-        }
-        transition={{
-          duration: prefersReducedMotion ? 0.4 : 1.1,
-          ease: prefersReducedMotion ? 'easeOut' : [0.34, 1.56, 0.64, 1],
-        }}
-      >
-        <HalftoneLogo />
-      </StyledHalftoneWrapper>
+      <StyledHalftoneLayer>
+        <StyledHalftoneWrapper
+          initial={
+            prefersReducedMotion
+              ? { opacity: 0 }
+              : { opacity: 0, scale: 0.2, clipPath: 'circle(0% at 50% 50%)' }
+          }
+          animate={
+            prefersReducedMotion
+              ? { opacity: 1 }
+              : { opacity: 1, scale: 1, clipPath: 'circle(72% at 50% 50%)' }
+          }
+          transition={{
+            duration: prefersReducedMotion ? 0.4 : 1.1,
+            ease: prefersReducedMotion ? 'easeOut' : [0.34, 1.56, 0.64, 1],
+          }}
+        >
+          <HalftoneLogo />
+        </StyledHalftoneWrapper>
+      </StyledHalftoneLayer>
       <StyledTitle variants={titleVariants} initial="hidden" animate="show">
         {WELCOME_TITLE_WORDS.map((word) => (
           <StyledWord key={word} variants={wordVariants}>
@@ -143,7 +160,7 @@ export const WelcomeOverlay = () => {
           </StyledWord>
         ))}
         <StyledWord variants={wordVariants}>
-          <WelcomeWorkspaceChip />
+          <WelcomePersonChip />
         </StyledWord>
       </StyledTitle>
     </StyledOverlay>,
