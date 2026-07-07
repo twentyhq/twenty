@@ -97,6 +97,19 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
         flatFieldMetadata?.universalIdentifier;
     }
 
+    if (
+      isDefined(updatedEditableObjectProperties.imageIdentifierFieldMetadataId)
+    ) {
+      const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityMaps: flatFieldMetadataMaps,
+        flatEntityId:
+          updatedEditableObjectProperties.imageIdentifierFieldMetadataId,
+      });
+
+      toFlatObjectMetadata.imageIdentifierFieldMetadataUniversalIdentifier =
+        flatFieldMetadata?.universalIdentifier;
+    }
+
     const {
       flatIndexMetadatasToUpdate,
       flatViewFieldsToCreate,
