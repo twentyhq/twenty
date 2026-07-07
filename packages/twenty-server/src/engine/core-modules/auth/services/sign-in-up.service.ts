@@ -25,6 +25,7 @@ import {
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -93,6 +94,7 @@ export class SignInUpService {
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly billingCreditService: BillingCreditService,
+    private readonly billingService: BillingService,
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
@@ -707,6 +709,14 @@ export class SignInUpService {
       void this.eventLogEmitterService
         .createContext({ workspaceId })
         .insertWorkspaceEvent(WORKSPACE_CREATED_EVENT, {});
+
+      if (this.billingService.isBillingEnabled()) {
+        await this.billingService.ensureBillingCustomer({
+          userEmail: email,
+          workspaceId: workspace.id,
+          workspaceDisplayName: workspace.displayName,
+        });
+      }
 
       return { user, workspace };
     } catch (error) {
