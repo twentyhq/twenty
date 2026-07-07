@@ -1,5 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { createFrontComponentSandboxIframe } from '@/remote/sandbox/utils/createFrontComponentSandboxIframe';
+
 type FrontComponentSandboxIsolationReport = {
   iframeOrigin: string;
   workerOrigin: string;
@@ -107,10 +109,9 @@ const buildSandboxProbeDocument = (): string => {
 
 export const runFrontComponentSandboxIsolationProbe =
   (): Promise<FrontComponentSandboxIsolationReport> => {
-    const sandboxIframe = document.createElement('iframe');
-    sandboxIframe.setAttribute('sandbox', 'allow-scripts');
-    sandboxIframe.style.display = 'none';
-    sandboxIframe.srcdoc = buildSandboxProbeDocument();
+    const sandboxIframe = createFrontComponentSandboxIframe(
+      buildSandboxProbeDocument(),
+    );
 
     return new Promise<FrontComponentSandboxIsolationReport>(
       (resolve, reject) => {

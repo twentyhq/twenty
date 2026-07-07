@@ -11,7 +11,7 @@ import {
   type RemoteReceiver,
   RemoteRootRenderer,
 } from '@remote-dom/react/host';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -19,11 +19,12 @@ import { ThemeProvider } from 'twenty-ui/theme-constants';
 import { FrontComponentWorkerEffect } from '../../remote/components/FrontComponentWorkerEffect';
 import { componentRegistry } from '../generated/host-component-registry';
 import { createFallbackComponentRegistry } from '../utils/createFallbackComponentRegistry';
+import { FrontComponentErrorBox } from './FrontComponentErrorBox';
 
 const fallbackComponentRegistry =
   createFallbackComponentRegistry(componentRegistry);
 
-type FrontComponentContentProps = {
+type FrontComponentRendererProps = {
   componentUrl: string;
   applicationAccessToken?: string;
   apiUrl?: string;
@@ -47,15 +48,15 @@ export const FrontComponentRenderer = ({
   frontComponentHostCommunicationApi,
   onError,
   colorScheme,
-}: FrontComponentContentProps) => {
+}: FrontComponentRendererProps) => {
   const [receiver, setReceiver] = useState<RemoteReceiver | null>(null);
   const [thread, setThread] = useState<FrontComponentThread | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const [isExecutionContextInitialized, setIsExecutionContextInitialized] =
     useState(false);
 
-  const MemoizedFrontComponentWorkerEffect = useMemo(() => {
-    return (
+  return (
+    <>
       <FrontComponentWorkerEffect
         componentUrl={componentUrl}
         applicationAccessToken={applicationAccessToken}
@@ -67,43 +68,11 @@ export const FrontComponentRenderer = ({
         setThread={setThread}
         setError={setError}
       />
-    );
-  }, [
-    componentUrl,
-    setError,
-    setReceiver,
-    setThread,
-    applicationAccessToken,
-    apiUrl,
-    functionsBaseUrl,
-    sdkClientUrls,
-    applicationVariables,
-  ]);
-
-  return (
-    <>
-      {MemoizedFrontComponentWorkerEffect}
 
       {isDefined(error) && (
         <>
           <FrontComponentErrorEffect error={error} onError={onError} />
-          <div
-            style={{
-              padding: '12px 16px',
-              backgroundColor: '#fef2f2',
-              border: '1px solid #fecaca',
-              borderRadius: '6px',
-              color: '#991b1b',
-              fontFamily: 'monospace',
-              fontSize: '13px',
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word',
-              maxHeight: '200px',
-              overflow: 'auto',
-            }}
-          >
-            <strong>FrontComponent error:</strong> {error.message}
-          </div>
+          <FrontComponentErrorBox error={error} />
         </>
       )}
 
