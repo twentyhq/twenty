@@ -67,12 +67,20 @@ export const SettingsDataModelObjectIdentifiersForm = ({
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
   const handleSave = async (
-    fieldName: SettingsDataModelObjectIdentifiers,
-    value: string | null,
+    formValues: SettingsDataModelObjectIdentifiersFormValues,
   ) => {
+    const {
+      labelIdentifierFieldMetadataId: _labelIdentifierFieldMetadataId,
+      ...payloadWithoutLabelIdentifier
+    } = formValues;
+
+    const updatePayload = isCustomObject
+      ? formValues
+      : payloadWithoutLabelIdentifier;
+
     const result = await updateOneObjectMetadataItem({
       idToUpdate: objectMetadataItem.id,
-      updatePayload: { [fieldName]: value },
+      updatePayload,
     });
 
     if (result.status === 'successful') {
@@ -170,7 +178,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
               }
               onChange={(newValue) => {
                 onChange(newValue);
-                handleSave(fieldName, newValue);
+                formConfig.handleSubmit(handleSave)();
               }}
             />
           )}
