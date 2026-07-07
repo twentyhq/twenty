@@ -6,12 +6,12 @@ description: İşlevi HTTP üzerinden tetikleyin ve belgeleri web sayfaları ola
 
 Aynı işleyici HTTP isteklerine de yanıt verebilir. İki rota ekleyeceğiz:
 
-* belge oluşturmak için UI’ın çağırdığı bir **POST** uç noktası ve
+* belge oluşturmak için arayüzün çağırdığı bir **POST** uç noktası ve
 * belgeyi yazdırılabilir bir web sayfası olarak oluşturan herkese açık bir **GET** uç noktası.
 
 Her ikisi de `httpRouteTriggerSettings` kullanır. Uygulama rotaları Twenty sunucunuzda `/s` altında sunulur (ör. `http://localhost:2020/s/documents/generate`).
 
-## POST rotası — isteğe bağlı oluşturma
+## POST rotası — istek üzerine oluşturma
 
 Bu, `generateDocumentHandler`’ı yeniden kullanır, bu nedenle tekrarlanacak bir mantık yoktur — yalnızca istek gövdesini okuyan ince bir adaptör vardır.
 
@@ -49,7 +49,7 @@ export default defineLogicFunction({
 });
 ```
 
-Paylaşılan işleyici, hata durumunda önerilen bir `status` döndürür; böylece rota uygun bir `4xx`/`5xx` koduyla yanıt verebilir. `isAuthRequired: true`, çağıranın geçerli bir belirteç sunması gerektiği anlamına gelir — bir sonraki bölümdeki ön bileşen, kullanıcının erişim belirtecini otomatik olarak iletir.
+Paylaşılan işleyici, hata durumunda önerilen bir `status` döndürür; böylece rota uygun bir `4xx`/`5xx` koduyla yanıt verebilir. `isAuthRequired: true`, çağıranın geçerli bir belirteç sunması gerektiği anlamına gelir — bir sonraki bölümdeki ön uç bileşeni, kullanıcının erişim belirtecini otomatik olarak iletir.
 
 ## GET rotası — web sayfası olarak oluşturma
 
@@ -105,7 +105,7 @@ export default defineLogicFunction({
 
 ## Deneyin
 
-Çalışma alanınızda bir şablon ve bir Kişi ile rotayı çağırın (**Settings → APIs & Webhooks** bölümünden bir belirteç alın):
+Çalışma alanınızda bir şablon ve bir Kişi ile rotayı çağırın (**Ayarlar → API'ler ve Web kancaları** bölümünden bir belirteç alın):
 
 ```bash filename="Terminal"
 curl -X POST http://localhost:2020/s/documents/generate \
@@ -121,7 +121,7 @@ http://localhost:2020/s/documents/view?id=<documentId>
 ```
 
 <Frame caption="Herkese açık GET rotası, belgeyi yazdırılabilir bir sayfa olarak oluşturur.">
-  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="Oluşturulmuş bir belge web sayfası" />
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="Oluşturulan bir belgenin web sayfası" />
 </Frame>
 
 <Tip>
@@ -131,5 +131,5 @@ Ayrıca test ederken bir işlevin günlüklerini `yarn twenty dev:function:logs`
 **Bu adımdan sonra:** uygulama HTTP üzerinden belgeler oluşturabilir ve bunları web sayfaları olarak sunabilir. Şimdi bunu `curl` olmadan kullanılabilir hale getirelim.
 
 <Card title="Sıradaki: arayüzü oluşturma →" icon="table-columns" href="/l/tr/developers/extend/apps/tutorials/document-generator/building-the-ui">
-  Görünümler, gezinme, komut ve bir ön bileşen.
+  Görünümler, gezinme, bir komut ve bir ön uç bileşeni.
 </Card>

@@ -10,7 +10,7 @@ qui charge un modèle et un enregistrement, remplit les marqueurs et enregistre 
 
 Nous allons écrire la logique commerciale une fois en tant que **gestionnaire**, puis l'exposer à travers
 plusieurs déclencheurs. Ce chapitre connecte deux d’entre eux — un **outil d’IA** et une
-**action de workflow**.
+**action de flux de travail**.
 
 ## L'assistant de rendu
 
@@ -82,7 +82,7 @@ export const generateDocumentHandler = async (
 };
 ```
 
-`loadRecordValues` exécute une requête différente pour une Person par rapport à une Company et aplatit
+`loadRecordValues` exécute une requête différente pour une personne par rapport à une entreprise et aplatit
 le résultat — voir
 [`load-record-values.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/logic-functions/utils/load-record-values.ts).
 

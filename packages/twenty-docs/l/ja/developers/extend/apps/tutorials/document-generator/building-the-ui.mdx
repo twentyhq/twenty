@@ -4,9 +4,7 @@ icon: table-columns
 description: ビュー、サイドバーナビゲーション、コマンド、フロントコンポーネント。
 ---
 
-現在、オブジェクトは設定を通じてのみアクセス可能です。 アプリにUI上での
-本格的な存在感を持たせましょう。リストビュー、サイドバーエントリ、ワンクリックで実行できる
-**Generate document** コマンド、レコードページの先頭コンポーネントによるドキュメントの**プレビュー**、そしてテンプレート用のネイティブなリッチテキスト**エディタ**タブを追加します。
+現在、オブジェクトは設定を通じてのみアクセス可能です。 アプリに本物の存在感を持たせて、UI にしっかり組み込みましょう。リストビュー、サイドバーエントリ、ワンクリックで実行できる **Generate document** コマンド、レコードページのフロントコンポーネントによるドキュメントの**プレビュー**、そしてテンプレート用のネイティブなリッチテキスト**エディター**タブを追加します。
 
 ## ビューとナビゲーション
 
@@ -122,8 +120,7 @@ export default defineFrontComponent({
 
 ## 開くためのコマンド
 
-People が選択されているときに表示され、サイドパネルでコンポーネントを開く
-`availabilityType: 'RECORD_SELECTION'` を指定した [command menu item](/l/ja/developers/extend/apps/layout/command-menu-items) を追加します。
+`availabilityType: 'RECORD_SELECTION'` を指定した [command menu item](/l/ja/developers/extend/apps/layout/command-menu-items) は、Person が選択されているときに表示され、サイドパネルでコンポーネントを開きます。
 
 ```ts filename="src/command-menu-items/generate-document.command-menu-item.ts"
 import { defineCommandMenuItem, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
@@ -256,8 +253,7 @@ export default definePageLayout({
 
 ## リッチテキストエディタでテンプレートを編集
 
-テンプレートにはカスタムコンポーネントは一切必要ありません。 `body` は
-`RICH_TEXT` フィールドなので、Twenty にはすでに完全なリッチテキストエディタが用意されています。これは、標準の Note および Task オブジェクトが使用しているものと同じです。
+テンプレートにはカスタムコンポーネントは一切必要ありません。 `body` は `RICH_TEXT` フィールドなので、Twenty にはすでにフル機能のリッチテキストエディターが用意されています。標準の Note および Task オブジェクトが使用しているものと同じエディターです。
 テンプレートのレコードページでサーフェスを作成します。
 
 `EDITOR`ディスプレイモードで`FIELD`ウィジェットを持つタブを追加します。`fieldMetadataId`を介して`body`
@@ -284,15 +280,14 @@ export default definePageLayout({
 ```
 
 `RICH_TEXT` フィールドには、エディタのブロック JSON と Markdown
-プロジェクションの両方が格納されます。 生成パイプラインはその Markdown プロジェクションを読み取るため、プレースホルダー、PDF、共有可能なウェブページはすべて変更なしで動作し続けます。詳しくは、
-[`template-record.page-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/page-layouts/template-record.page-layout.ts) を参照してください。
+プロジェクションの両方が格納されます。 生成パイプラインはその Markdown プロジェクションを読み取るため、プレースホルダー、PDF、共有可能なウェブページはすべてそのまま問題なく動作します。詳しくは、[`template-record.page-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/page-layouts/template-record.page-layout.ts) を参照してください。
 編集者は適切なリッチテキストエディタでテンプレートを書き込むようになりました：
 
 <Frame caption="format@@0タブ:本文フィールドにバインドされている、Twentyのネイティブリッチテキストエディタ。">
   <img src="/images/docs/developers/extends/apps/document-generator/10-template-editor.png" alt="ネイティブリッチテキストエディタタブのテンプレートレコード" />
 </Frame>
 
-**このステップの完了後:** ドキュメントは美しくプレビューされ、テンプレートはアプリ内で編集可能になります。 次に、AIエージェントがチャットからそれらを生成します。
+**このステップの後:** ドキュメントは美しくプレビューでき、テンプレートはアプリ内で編集可能になります。 次に、AIエージェントがチャットからそれらを生成します。
 
 <Card title="次へ: AI エージェント →" icon="robot" href="/l/ja/developers/extend/apps/tutorials/document-generator/ai-agent">
   エージェントとツールと呼ぶスキルを追加します。
