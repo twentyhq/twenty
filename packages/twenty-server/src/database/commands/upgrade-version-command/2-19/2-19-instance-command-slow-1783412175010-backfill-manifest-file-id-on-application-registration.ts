@@ -15,7 +15,7 @@ type ApplicationRegistrationRow = {
   manifest: Manifest;
 };
 
-@RegisteredInstanceCommand('2.20.0', 1783412175010, { type: 'slow' })
+@RegisteredInstanceCommand('2.19.0', 1783412175010, { type: 'slow' })
 export class BackfillManifestFileIdOnApplicationRegistrationSlowInstanceCommand
   implements SlowInstanceCommand
 {
