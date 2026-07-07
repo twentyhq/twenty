@@ -838,6 +838,18 @@
                     ]
                   },
                   {
+                    "group": "Tutoriel",
+                    "pages": [
+                      "l/fr/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/fr/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/fr/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/fr/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/fr/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/fr/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/fr/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "Configuration",
                     "pages": [
                       "l/fr/developers/extend/apps/config/overview",
@@ -1275,6 +1287,18 @@
                       "l/ar/developers/extend/apps/getting-started/local-server",
                       "l/ar/developers/extend/apps/getting-started/scaffolding",
                       "l/ar/developers/extend/apps/getting-started/troubleshooting"
+                    ]
+                  },
+                  {
+                    "group": "البرنامج التعليمي",
+                    "pages": [
+                      "l/ar/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/ar/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/ar/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/ar/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/ar/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/ar/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/ar/developers/extend/apps/tutorials/document-generator/publishing"
                     ]
                   },
                   {
@@ -1718,6 +1742,18 @@
                     ]
                   },
                   {
+                    "group": "Návod",
+                    "pages": [
+                      "l/cs/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/cs/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/cs/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/cs/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/cs/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/cs/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/cs/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "Konfigurace",
                     "pages": [
                       "l/cs/developers/extend/apps/config/overview",
@@ -2155,6 +2191,18 @@
                       "l/de/developers/extend/apps/getting-started/local-server",
                       "l/de/developers/extend/apps/getting-started/scaffolding",
                       "l/de/developers/extend/apps/getting-started/troubleshooting"
+                    ]
+                  },
+                  {
+                    "group": "Tutorial",
+                    "pages": [
+                      "l/de/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/de/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/de/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/de/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/de/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/de/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/de/developers/extend/apps/tutorials/document-generator/publishing"
                     ]
                   },
                   {
@@ -2598,6 +2646,18 @@
                     ]
                   },
                   {
+                    "group": "Tutorial",
+                    "pages": [
+                      "l/es/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/es/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/es/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/es/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/es/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/es/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/es/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "Configuración",
                     "pages": [
                       "l/es/developers/extend/apps/config/overview",
@@ -3035,6 +3095,18 @@
                       "l/it/developers/extend/apps/getting-started/local-server",
                       "l/it/developers/extend/apps/getting-started/scaffolding",
                       "l/it/developers/extend/apps/getting-started/troubleshooting"
+                    ]
+                  },
+                  {
+                    "group": "Tutorial",
+                    "pages": [
+                      "l/it/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/it/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/it/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/it/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/it/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/it/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/it/developers/extend/apps/tutorials/document-generator/publishing"
                     ]
                   },
                   {
@@ -3478,6 +3550,18 @@
                     ]
                   },
                   {
+                    "group": "チュートリアル",
+                    "pages": [
+                      "l/ja/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/ja/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/ja/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/ja/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/ja/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/ja/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/ja/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "設定",
                     "pages": [
                       "l/ja/developers/extend/apps/config/overview",
@@ -3915,6 +3999,18 @@
                       "l/ko/developers/extend/apps/getting-started/local-server",
                       "l/ko/developers/extend/apps/getting-started/scaffolding",
                       "l/ko/developers/extend/apps/getting-started/troubleshooting"
+                    ]
+                  },
+                  {
+                    "group": "튜토리얼",
+                    "pages": [
+                      "l/ko/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/ko/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/ko/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/ko/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/ko/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/ko/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/ko/developers/extend/apps/tutorials/document-generator/publishing"
                     ]
                   },
                   {
@@ -4358,6 +4454,18 @@
                     ]
                   },
                   {
+                    "group": "Tutorial",
+                    "pages": [
+                      "l/pt/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/pt/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/pt/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/pt/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/pt/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/pt/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/pt/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "Configuração",
                     "pages": [
                       "l/pt/developers/extend/apps/config/overview",
@@ -4795,6 +4903,18 @@
                       "l/ro/developers/extend/apps/getting-started/local-server",
                       "l/ro/developers/extend/apps/getting-started/scaffolding",
                       "l/ro/developers/extend/apps/getting-started/troubleshooting"
+                    ]
+                  },
+                  {
+                    "group": "Tutorial",
+                    "pages": [
+                      "l/ro/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/ro/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/ro/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/ro/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/ro/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/ro/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/ro/developers/extend/apps/tutorials/document-generator/publishing"
                     ]
                   },
                   {
@@ -5672,6 +5792,18 @@
                     ]
                   },
                   {
+                    "group": "Öğretici",
+                    "pages": [
+                      "l/tr/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/tr/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/tr/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/tr/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/tr/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/tr/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/tr/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "Yapılandırma",
                     "pages": [
                       "l/tr/developers/extend/apps/config/overview",
@@ -6109,6 +6241,18 @@
                       "l/zh/developers/extend/apps/getting-started/local-server",
                       "l/zh/developers/extend/apps/getting-started/scaffolding",
                       "l/zh/developers/extend/apps/getting-started/troubleshooting"
+                    ]
+                  },
+                  {
+                    "group": "教程",
+                    "pages": [
+                      "l/zh/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/zh/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/zh/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/zh/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/zh/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/zh/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/zh/developers/extend/apps/tutorials/document-generator/publishing"
                     ]
                   },
                   {
