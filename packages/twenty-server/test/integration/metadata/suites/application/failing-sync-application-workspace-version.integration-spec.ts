@@ -1,6 +1,7 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { scrubSemverVersions } from 'test/utils/scrub-semver-versions.util';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
@@ -103,7 +104,10 @@ describe('Sync application is gated by the workspace completed upgrade version',
       expectToFail: true,
     });
 
-    expectOneNotInternalServerErrorSnapshot({ errors });
+    expectOneNotInternalServerErrorSnapshot({
+      errors,
+      normalizeMessage: scrubSemverVersions,
+    });
   });
 
   it('rejects sync when the workspace upgrade cursor cannot be interpreted', async () => {
@@ -125,6 +129,9 @@ describe('Sync application is gated by the workspace completed upgrade version',
       expectToFail: true,
     });
 
-    expectOneNotInternalServerErrorSnapshot({ errors });
+    expectOneNotInternalServerErrorSnapshot({
+      errors,
+      normalizeMessage: scrubSemverVersions,
+    });
   });
 });

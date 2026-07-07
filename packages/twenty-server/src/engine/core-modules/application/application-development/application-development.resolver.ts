@@ -23,10 +23,8 @@ import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
-import {
-  ApplicationVersionValidationService,
-  type VersionValidationFailureReason,
-} from 'src/engine/core-modules/application/application-package/application-version-validation.service';
+import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
+import { VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import {
@@ -53,19 +51,6 @@ const APP_DEV_RATE_LIMIT_MAX = 30;
 const APP_DEV_RATE_LIMIT_WINDOW_MS = 30_000;
 
 const APP_SYNC_LOCK_OPTIONS = { ttl: 60_000, ms: 500, maxRetries: 120 };
-
-const VERSION_REASON_TO_EXCEPTION_CODE: Record<
-  VersionValidationFailureReason,
-  ApplicationExceptionCode
-> = {
-  INVALID_REQUIRED_VERSION:
-    ApplicationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT,
-  INVALID_SERVER_VERSION: ApplicationExceptionCode.INVALID_SERVER_VERSION,
-  INVALID_WORKSPACE_VERSION: ApplicationExceptionCode.INVALID_WORKSPACE_VERSION,
-  INSTANCE_INCOMPATIBLE: ApplicationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
-  WORKSPACE_INCOMPATIBLE:
-    ApplicationExceptionCode.WORKSPACE_VERSION_INCOMPATIBLE,
-};
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -305,7 +290,7 @@ export class ApplicationDevelopmentResolver {
     if (!versionValidation.compatible) {
       throw new ApplicationException(
         versionValidation.message,
-        VERSION_REASON_TO_EXCEPTION_CODE[versionValidation.reason],
+        VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE[versionValidation.reason],
       );
     }
   }
