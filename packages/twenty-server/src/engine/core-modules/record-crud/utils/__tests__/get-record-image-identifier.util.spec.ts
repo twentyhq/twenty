@@ -47,9 +47,35 @@ describe('getRecordImageIdentifier', () => {
       record: { domainName: { primaryLinkUrl: 'twenty.com' } },
       flatObjectMetadata: company,
       flatFieldMetadataMaps: buildFieldMaps([domainNameField]),
+      allowRequestsToTwentyIcons: true,
     });
 
     expect(result).toBe('https://twenty-icons.com/twenty.com');
+  });
+
+  it('returns null for a LINKS image identifier when twenty-icons requests are disabled', async () => {
+    const domainNameField = getFlatFieldMetadataMock({
+      universalIdentifier: 'domain-ui',
+      objectMetadataId: 'company-id',
+      id: 'domain-id',
+      name: 'domainName',
+      type: FieldMetadataType.LINKS,
+    });
+    const company = getFlatObjectMetadataMock({
+      universalIdentifier: 'company-ui',
+      id: 'company-id',
+      nameSingular: 'company',
+      imageIdentifierFieldMetadataId: 'domain-id',
+    });
+
+    const result = await getRecordImageIdentifier({
+      record: { domainName: { primaryLinkUrl: 'twenty.com' } },
+      flatObjectMetadata: company,
+      flatFieldMetadataMaps: buildFieldMaps([domainNameField]),
+      allowRequestsToTwentyIcons: false,
+    });
+
+    expect(result).toBe(null);
   });
 
   it('resolves a FILES image identifier to a signed url', async () => {
@@ -71,6 +97,7 @@ describe('getRecordImageIdentifier', () => {
       record: { avatarFile: [{ fileId: 'file-1' }] },
       flatObjectMetadata: person,
       flatFieldMetadataMaps: buildFieldMaps([avatarFileField]),
+      allowRequestsToTwentyIcons: true,
       signUrl,
     });
 
@@ -96,6 +123,7 @@ describe('getRecordImageIdentifier', () => {
       record: { avatarFile: [{ fileId: 'file-1' }] },
       flatObjectMetadata: person,
       flatFieldMetadataMaps: buildFieldMaps([avatarFileField]),
+      allowRequestsToTwentyIcons: true,
     });
 
     expect(result).toBe(null);
@@ -131,6 +159,7 @@ describe('getRecordImageIdentifier', () => {
       },
       flatObjectMetadata: customObject,
       flatFieldMetadataMaps: buildFieldMaps([baseTextField, domainNameField]),
+      allowRequestsToTwentyIcons: true,
     });
 
     expect(result).toBe('https://twenty-icons.com/acme.com');
@@ -156,6 +185,7 @@ describe('getRecordImageIdentifier', () => {
       record: { domainName: { primaryLinkUrl: 'acme.com' } },
       flatObjectMetadata: customObject,
       flatFieldMetadataMaps: buildFieldMaps([domainNameField]),
+      allowRequestsToTwentyIcons: true,
     });
 
     expect(result).toBe(null);
@@ -173,6 +203,7 @@ describe('getRecordImageIdentifier', () => {
       record: {},
       flatObjectMetadata: customObject,
       flatFieldMetadataMaps: buildFieldMaps([]),
+      allowRequestsToTwentyIcons: true,
     });
 
     expect(result).toBe(null);
@@ -192,6 +223,7 @@ describe('getRecordImageIdentifier', () => {
       },
       flatObjectMetadata: workspaceMember,
       flatFieldMetadataMaps: buildFieldMaps([]),
+      allowRequestsToTwentyIcons: true,
       signUrl,
     });
 

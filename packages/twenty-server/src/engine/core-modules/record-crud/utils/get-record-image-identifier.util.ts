@@ -14,6 +14,7 @@ type GetRecordImageIdentifierOptions = {
   record: Record<string, unknown>;
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  allowRequestsToTwentyIcons: boolean;
   signUrl?: (
     fileId: string,
     fileFolder: FileFolder,
@@ -24,6 +25,7 @@ export const getRecordImageIdentifier = async ({
   record,
   flatObjectMetadata,
   flatFieldMetadataMaps,
+  allowRequestsToTwentyIcons,
   signUrl,
 }: GetRecordImageIdentifierOptions): Promise<string | null> => {
   // WorkspaceMember is an exception: its avatar is a TEXT field storing a signed
@@ -76,6 +78,10 @@ export const getRecordImageIdentifier = async ({
       return signUrl(fileId, FileFolder.FilesField);
     }
     case FieldMetadataType.LINKS: {
+      if (!allowRequestsToTwentyIcons) {
+        return null;
+      }
+
       const primaryLinkUrl = (imageValue as { primaryLinkUrl?: string })
         ?.primaryLinkUrl;
 
