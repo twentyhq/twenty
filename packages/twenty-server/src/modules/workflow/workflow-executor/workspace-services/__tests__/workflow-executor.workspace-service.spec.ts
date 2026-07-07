@@ -7,6 +7,7 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -313,6 +314,26 @@ describe('WorkflowExecutorWorkspaceService', () => {
         },
         workflowRunId: mockWorkflowRunId,
         workspaceId: 'workspace-id',
+      });
+
+      expect(mockExceptionHandlerService.captureExceptions).toHaveBeenCalledWith(
+        [expect.any(Error)],
+        {
+          workspace: { id: mockWorkspaceId },
+          additionalData: {
+            workflowRunId: mockWorkflowRunId,
+            stepId: 'step-1',
+            stepType: WorkflowActionType.CODE,
+            workflowStepErrorCode: undefined,
+          },
+        },
+      );
+
+      expect(mockMetricsService.incrementCounterForEvent).toHaveBeenCalledWith({
+        key: MetricsKeys.WorkflowRunSystemError,
+        eventId: mockWorkflowRunId,
+        debugLog:
+          '[Workflow Run System Error] Workflow run workflow-run-id in workspace workspace-id ended with system error on step step-1 (CODE)',
       });
     });
 

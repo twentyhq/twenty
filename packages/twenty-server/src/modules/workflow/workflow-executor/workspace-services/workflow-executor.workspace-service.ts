@@ -517,12 +517,21 @@ export class WorkflowExecutorWorkspaceService {
       if (!isUserError) {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: { id: workspaceId },
+          additionalData: {
+            workflowRunId,
+            stepId,
+            stepType: step.type,
+            workflowStepErrorCode:
+              error instanceof WorkflowStepExecutorException
+                ? error.code
+                : undefined,
+          },
         });
 
         await this.metricsService.incrementCounterForEvent({
           key: MetricsKeys.WorkflowRunSystemError,
           eventId: workflowRunId,
-          debugLog: `[Workflow Run System Error] Workflow run ${workflowRunId} in workspace ${workspaceId} ended with system error`,
+          debugLog: `[Workflow Run System Error] Workflow run ${workflowRunId} in workspace ${workspaceId} ended with system error on step ${stepId} (${step.type})`,
         });
       }
 
