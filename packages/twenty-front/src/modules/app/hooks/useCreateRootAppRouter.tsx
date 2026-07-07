@@ -9,6 +9,7 @@ import { AppPath } from 'twenty-shared/types';
 
 import { LazyRoute } from '@/app/components/LazyRoute';
 import { RootAppProviders } from '@/app/components/RootAppProviders';
+import { RootAuthorizeRedirect } from '@/app/components/RootAuthorizeRedirect';
 import { VerifyEmail } from '@/auth/components/VerifyEmail';
 import { OnboardingPageLoader } from '@/onboarding/components/OnboardingPageLoader';
 import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTransitionOutlet';
@@ -18,12 +19,6 @@ import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 const SignInUp = lazy(() =>
   import('~/pages/auth/SignInUp').then((module) => ({
     default: module.SignInUp,
-  })),
-);
-
-const Authorize = lazy(() =>
-  import('~/pages/auth/Authorize').then((module) => ({
-    default: module.Authorize,
   })),
 );
 
@@ -68,14 +63,7 @@ const createRootAppRouter = () =>
             }
           />
         </Route>
-        <Route
-          path={AppPath.Authorize}
-          element={
-            <LazyRoute>
-              <Authorize />
-            </LazyRoute>
-          }
-        />
+        <Route path={AppPath.Authorize} element={<RootAuthorizeRedirect />} />
         <Route
           path={AppPath.NotFoundWildcard}
           element={<Navigate to={AppPath.SignInUp} replace />}
