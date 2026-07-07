@@ -615,6 +615,31 @@ export class ApplicationRegistrationService {
     };
   }
 
+  async claimOwnership(params: {
+    applicationRegistrationId: string;
+    claimingWorkspaceId: string;
+  }): Promise<ApplicationRegistrationEntity> {
+    const registration = await this.findOneByIdGlobal(
+      params.applicationRegistrationId,
+    );
+
+    // Only unclaimed registrations (no owner workspace) can be claimed.
+    if (isDefined(registration.ownerWorkspaceId)) {
+      throw new ApplicationRegistrationException(
+        'Application registration is already owned by a workspace',
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    await this.applicationRegistrationRepository.update(registration.id, {
+      ownerWorkspaceId: params.claimingWorkspaceId,
+    });
+
+    return this.applicationRegistrationRepository.findOneOrFail({
+      where: { id: registration.id },
+    });
+  }
+
   async transferOwnership(params: {
     applicationRegistrationId: string;
     targetWorkspaceSubdomain: string;
