@@ -10,7 +10,7 @@ import { type Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type PackageJson } from 'type-fest';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -178,7 +178,10 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
 
     try {
       const file = await this.fileRepository.findOneOrFail({
-        where: { id: appRegistration.tarballFileId },
+        where: {
+          id: appRegistration.tarballFileId,
+          workspaceId: Not(IsNull()),
+        },
       });
 
       const application = await this.applicationRepository.findOneOrFail({

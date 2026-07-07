@@ -34,6 +34,10 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
   'CHK_FILE_WORKSPACE_ID_OR_APPLICATION_REGISTRATION_ID',
   `"workspaceId" IS NOT NULL OR "applicationRegistrationId" IS NOT NULL`,
 )
+@Check(
+  'CHK_FILE_WORKSPACE_ID_XOR_APPLICATION_REGISTRATION_ID',
+  `"workspaceId" IS NULL OR "applicationRegistrationId" IS NULL`,
+)
 @Index('IDX_FILE_WORKSPACE_ID', ['workspaceId'])
 @Index('IDX_FILE_STATUS', ['status'])
 @Index('IDX_FILE_APPLICATION_REGISTRATION_ID', ['applicationRegistrationId'])
