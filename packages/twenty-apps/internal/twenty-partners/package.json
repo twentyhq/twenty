@@ -24,6 +24,7 @@
     "rls:configure:prod": "ENV_FILE=.env.prod tsx src/scripts/configure-partner-rls.ts"
   },
   "dependencies": {
+    "react-markdown": "^10.1.0",
     "twenty-client-sdk": "2.13.0",
     "twenty-sdk": "2.13.0",
     "zod": "^4.1.11"
@@ -31,6 +32,7 @@
   "devDependencies": {
     "@types/node": "^24.7.2",
     "@types/react": "^19.0.0",
+    "@types/react-dom": "^19",
     "dotenv": "^16.0.0",
     "oxlint": "^0.16.0",
     "react": "^19.0.0",
