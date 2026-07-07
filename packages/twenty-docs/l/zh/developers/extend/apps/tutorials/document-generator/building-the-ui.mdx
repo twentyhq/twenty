@@ -4,7 +4,7 @@ icon: table-columns
 description: 查看、侧边栏导航、命令和前部件。
 ---
 
-现在，对象只能通过设置访问。 让这个应用在 UI 中真正“现身”：列表视图、侧边栏条目、一键式 **Generate document** 命令、用于**预览**文档的记录页面 front 组件，以及用于模板的原生富文本 **editor** 选项卡。
+现在，对象只能通过设置访问。 让应用在 UI 中真正“现身”：列表视图、侧边栏条目、一键式**生成文档**命令、用于**预览**文档的记录页面前端组件，以及用于模板的原生富文本**编辑器**选项卡。
 
 ## 视图和导航
 
@@ -58,7 +58,7 @@ export default defineNavigationMenuItem({
 
 ## 前台组件
 
-[front component](/l/zh/developers/extend/apps/layout/front-components) 是在 Twenty 内部沙盒运行的 React 组件。 我们读取了选中的记录，通过 `CoreApiClient` 和 POSTs 将
+[前端组件](/l/zh/developers/extend/apps/layout/front-components)是一个被沙箱隔离在 Twenty 内部的 React 组件。 我们读取了选中的记录，通过 `CoreApiClient` 和 POSTs 将
 人模板加载到最后一章的
 路线。
 
@@ -119,7 +119,7 @@ export default defineFrontComponent({
 
 ## 打开它的命令
 
-当选中一个 Person 时，带有 `availabilityType: 'RECORD_SELECTION'` 的 [command menu item](/l/zh/developers/extend/apps/layout/command-menu-items) 会显示出来，并在侧边面板中打开该组件。
+当选中某个 Person 时，带有 `availabilityType: 'RECORD_SELECTION'` 的[命令菜单项](/l/zh/developers/extend/apps/layout/command-menu-items)会出现，并在侧边面板中打开该组件。
 
 ```ts filename="src/command-menu-items/generate-document.command-menu-item.ts"
 import { defineCommandMenuItem, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
@@ -137,7 +137,7 @@ export default defineCommandMenuItem({
 
 ## 尝试整个流程
 
-打开 **People**，勾选一个人，然后按下 <kbd>⌘K</kbd> / <kbd>Ctrl K</kbd>。
+打开 **People**，勾选一位人员，然后按下 <kbd>⌘K</kbd> / <kbd>Ctrl K</kbd>。
 “生成文档”出现，标记为您的应用：
 
 <Frame caption="命令显示何时选中某人。">
@@ -164,7 +164,7 @@ export default defineCommandMenuItem({
 Markdown 物体作为一个可打印的打印页面。
 
 组件从执行上下文读取当前记录ID，加载
-文档并将其渲染。 Front 组件运行在一个只允许白名单 HTML 标签的**沙盒**中——原始 HTML 注入（`dangerouslySetInnerHTML`）和 `\<style>` 会被阻止——因此我们通过一个小型 [`Markdown`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/markdown-to-react.tsx) helper，将 Markdown 渲染为带有内联样式的 React 元素。
+文档并将其渲染。 前端组件运行在一个只允许白名单 HTML 标签的**沙箱**中——原始 HTML 注入（`dangerouslySetInnerHTML`）和 `\<style>` 会被阻止——因此我们通过一个小型的 [`Markdown`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/markdown-to-react.tsx) 助手，将 Markdown 渲染为带内联样式的 React 元素。
 
 ```tsx filename="src/front-components/document-viewer.front-component.tsx"
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -208,7 +208,7 @@ export default defineFrontComponent({
 });
 ```
 
-用[页面布局](/l/zh/developers/extend/apps/layout/page-layouts)挂载它。 `RECORD_PAGE` 布局会在对象的记录视图中添加选项卡；`CANVAS` 选项卡中的 `FRONT_COMPONENT` 小部件则承载该组件：
+用[页面布局](/l/zh/developers/extend/apps/layout/page-layouts)挂载它。 `RECORD_PAGE` 布局会在对象的记录视图中添加选项卡；位于 `CANVAS` 选项卡中的 `FRONT_COMPONENT` 小部件则承载该组件：
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';

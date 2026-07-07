@@ -34,6 +34,7 @@ export const commonQueryRunnerToRestApiExceptionHandler = (
       throw new NotFoundException('Record not found');
     case CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT:
       throw new UnauthorizedException(error.message);
+    case CommonQueryRunnerExceptionCode.MISSING_FLAT_INDEX_MAPS:
     case CommonQueryRunnerExceptionCode.MISSING_SYSTEM_FIELD:
     case CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR:
       throw new InternalServerErrorException(error.message);
