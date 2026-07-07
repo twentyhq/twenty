@@ -21,7 +21,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 // assigned or the registration is claimed by someone else.
 @Entity({ name: 'applicationRegistrationClaim', schema: 'core' })
 @Index(
-  'IDX_APPLICATION_REGISTRATION_CLAIM_REGISTRATION_WORKSPACE_UNIQUE',
+  'IDX_APP_REGISTRATION_CLAIM_REGISTRATION_WORKSPACE_UNIQUE',
   ['applicationRegistrationId', 'workspaceId'],
   { unique: true },
 )

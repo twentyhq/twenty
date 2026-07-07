@@ -21,13 +21,13 @@ export class CreateApplicationRegistrationClaimCoreTableFastInstanceCommand
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         CONSTRAINT "PK_applicationRegistrationClaim_id" PRIMARY KEY ("id"),
-        CONSTRAINT "FK_applicationRegistrationClaim_registrationId" FOREIGN KEY ("applicationRegistrationId") REFERENCES "core"."applicationRegistration"("id") ON DELETE CASCADE,
-        CONSTRAINT "FK_applicationRegistrationClaim_workspaceId" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE,
-        CONSTRAINT "FK_applicationRegistrationClaim_createdByUserId" FOREIGN KEY ("createdByUserId") REFERENCES "core"."user"("id") ON DELETE SET NULL
+        CONSTRAINT "FK_7d1ea86fd78e1591a3bab283481" FOREIGN KEY ("applicationRegistrationId") REFERENCES "core"."applicationRegistration"("id") ON DELETE CASCADE,
+        CONSTRAINT "FK_5f082b9be9c2c2b0a1365a86d9e" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE,
+        CONSTRAINT "FK_7e4c6bf2f123cac7e5f414e6999" FOREIGN KEY ("createdByUserId") REFERENCES "core"."user"("id") ON DELETE SET NULL
       )`,
     );
     await queryRunner.query(
-      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_APPLICATION_REGISTRATION_CLAIM_REGISTRATION_WORKSPACE_UNIQUE"
+      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_APP_REGISTRATION_CLAIM_REGISTRATION_WORKSPACE_UNIQUE"
         ON "core"."applicationRegistrationClaim" ("applicationRegistrationId", "workspaceId")`,
     );
   }

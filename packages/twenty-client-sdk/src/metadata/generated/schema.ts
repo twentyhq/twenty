@@ -2953,6 +2953,7 @@ export interface Mutation {
     updateApplicationRegistrationVariable: ApplicationRegistrationVariable
     deleteApplicationRegistrationVariable: Scalars['Boolean']
     uploadAppTarball: ApplicationRegistration
+    claimApplicationRegistrationOwnership: ApplicationRegistration
     startApplicationRegistrationClaim: ApplicationRegistrationClaimChallenge
     verifyApplicationRegistrationClaim: ApplicationRegistration
     transferApplicationRegistrationOwnership: ApplicationRegistration
@@ -6189,6 +6190,7 @@ export interface MutationGenqlSelection{
     updateApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: UpdateApplicationRegistrationVariableInput} })
     deleteApplicationRegistrationVariable?: { __args: {id: Scalars['String']} }
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
+    claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     startApplicationRegistrationClaim?: (ApplicationRegistrationClaimChallengeGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     verifyApplicationRegistrationClaim?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })

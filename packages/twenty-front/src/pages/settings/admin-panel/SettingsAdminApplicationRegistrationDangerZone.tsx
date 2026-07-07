@@ -15,12 +15,12 @@ import { Button } from 'twenty-ui/input';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import {
   type ApplicationRegistration,
+  ClaimApplicationRegistrationOwnershipDocument,
   DeleteApplicationRegistrationDocument,
   FindApplicationRegistrationStatsDocument,
   FindManyApplicationRegistrationsDocument,
   TransferApplicationRegistrationOwnershipDocument,
 } from '~/generated-metadata/graphql';
-import { ClaimApplicationRegistrationOwnershipDocument } from '~/generated-admin/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {

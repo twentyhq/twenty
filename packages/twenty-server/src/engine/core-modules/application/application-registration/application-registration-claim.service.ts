@@ -186,7 +186,7 @@ export class ApplicationRegistrationClaimService {
     const registryUrl = this.twentyConfigService.get('APP_REGISTRY_URL');
     // Scoped packages need their slash percent-encoded for the registry path.
     const encodedName = packageName.startsWith('@')
-      ? packageName.replace('/', '%2F')
+      ? packageName.replace(/\//g, '%2F')
       : packageName;
 
     try {

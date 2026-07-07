@@ -30,6 +30,7 @@ import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/app
 import { ApplicationRegistrationClaimChallengeDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-claim-challenge.dto';
 import { ApplicationRegistrationClaimInput } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-claim.input';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
+import { ClaimApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/claim-application-registration-ownership.input';
 import { ClaimableApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/claimable-application-registration.dto';
 import { FindClaimableApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/find-claimable-application-registration.input';
 import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.dto';
@@ -47,6 +48,7 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -327,6 +329,27 @@ export class ApplicationRegistrationResolver {
     return this.applicationRegistrationService.findClaimable({
       sourcePackage,
       id,
+    });
+  }
+
+  // One-click claim without proof of ownership. AdminPanelGuard restricts it to
+  // server admins, who use it from the Admin Panel to take over seeded / curated
+  // apps. Regular workspaces instead prove control of the npm package via the
+  // start/verify challenge below.
+  @UseGuards(
+    WorkspaceAuthGuard,
+    AdminPanelGuard,
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  )
+  @Mutation(() => ApplicationRegistrationEntity)
+  async claimApplicationRegistrationOwnership(
+    @Args()
+    { applicationRegistrationId }: ClaimApplicationRegistrationOwnershipInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ApplicationRegistrationEntity> {
+    return this.applicationRegistrationService.claimOwnership({
+      applicationRegistrationId,
+      claimingWorkspaceId: workspaceId,
     });
   }
 

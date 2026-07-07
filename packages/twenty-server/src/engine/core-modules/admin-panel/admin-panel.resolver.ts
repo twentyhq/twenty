@@ -53,7 +53,6 @@ import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modu
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
-import { ClaimApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/claim-application-registration-ownership.input';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { FindApplicationRegistrationInstalledWorkspacesInput } from 'src/engine/core-modules/application/application-registration/dtos/find-application-registration-installed-workspaces.input';
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
@@ -498,23 +497,6 @@ export class AdminPanelResolver {
     );
 
     return true;
-  }
-
-  // One-click claim without proof of ownership. Admin-only escape hatch used
-  // from the Admin Panel to take over seeded / curated apps. Regular workspaces
-  // instead prove control of the npm package via the start/verify challenge on
-  // ApplicationRegistrationResolver.
-  @UseGuards(AdminPanelGuard)
-  @Mutation(() => ApplicationRegistrationEntity)
-  async claimApplicationRegistrationOwnership(
-    @Args()
-    { applicationRegistrationId }: ClaimApplicationRegistrationOwnershipInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ApplicationRegistrationEntity> {
-    return this.applicationRegistrationService.claimOwnership({
-      applicationRegistrationId,
-      claimingWorkspaceId: workspaceId,
-    });
   }
 
   @UseGuards(AdminPanelGuard)

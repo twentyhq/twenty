@@ -8274,6 +8274,15 @@ export default {
                     ]
                 }
             ],
+            "claimApplicationRegistrationOwnership": [
+                8,
+                {
+                    "applicationRegistrationId": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "startApplicationRegistrationClaim": [
                 199,
                 {
