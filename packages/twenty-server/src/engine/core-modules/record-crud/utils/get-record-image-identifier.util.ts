@@ -7,7 +7,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { FileFolder } from 'twenty-shared/types';
+import { FieldMetadataType, FileFolder } from 'twenty-shared/types';
 
 type GetRecordImageIdentifierOptions = {
   record: Record<string, unknown>;
@@ -60,13 +60,20 @@ export const getRecordImageIdentifier = async ({
     return signUrl(avatarFileId, FileFolder.CorePicture);
   }
 
-  if (!isDefined(flatObjectMetadata.imageIdentifierFieldMetadataId)) {
+  const { overrides } = flatObjectMetadata;
+
+  const imageIdentifierFieldMetadataId =
+    isDefined(overrides) && 'imageIdentifierFieldMetadataId' in overrides
+      ? overrides.imageIdentifierFieldMetadataId
+      : flatObjectMetadata.imageIdentifierFieldMetadataId;
+
+  if (!isDefined(imageIdentifierFieldMetadataId)) {
     return null;
   }
 
   const imageIdentifierField = findFlatEntityByIdInFlatEntityMaps({
     flatEntityMaps: flatFieldMetadataMaps,
-    flatEntityId: flatObjectMetadata.imageIdentifierFieldMetadataId,
+    flatEntityId: imageIdentifierFieldMetadataId,
   });
 
   if (!isDefined(imageIdentifierField)) {
@@ -79,15 +86,36 @@ export const getRecordImageIdentifier = async ({
     return null;
   }
 
-  const rawImageValue = String(imageValue);
+  switch (imageIdentifierField.type) {
+    case FieldMetadataType.FILES: {
+      const fileId = (imageValue as FileOutput[])?.[0]?.fileId;
 
-  if (!isNonEmptyString(rawImageValue)) {
-    return null;
+      if (!isDefined(fileId) || !isDefined(signUrl)) {
+        return null;
+      }
+
+      return signUrl(fileId, FileFolder.FilesField);
+    }
+    case FieldMetadataType.LINKS: {
+      const primaryLinkUrl = (imageValue as { primaryLinkUrl?: string })
+        ?.primaryLinkUrl;
+
+      return isNonEmptyString(primaryLinkUrl)
+        ? getLogoUrlFromDomainName(primaryLinkUrl) || null
+        : null;
+    }
+    default: {
+      const rawImageValue = String(imageValue);
+
+      if (!isNonEmptyString(rawImageValue)) {
+        return null;
+      }
+
+      if (signUrl && flatObjectMetadata.nameSingular === 'workspaceMember') {
+        return signUrl(rawImageValue, FileFolder.FilesField);
+      }
+
+      return rawImageValue;
+    }
   }
-
-  if (signUrl && flatObjectMetadata.nameSingular === 'workspaceMember') {
-    return signUrl(rawImageValue, FileFolder.FilesField);
-  }
-
-  return rawImageValue;
 };
