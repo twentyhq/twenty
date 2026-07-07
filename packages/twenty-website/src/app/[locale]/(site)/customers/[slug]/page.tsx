@@ -7,6 +7,7 @@ import {
   CASE_STUDY_STORIES,
   getCaseStudyAccent,
 } from '@/case-studies';
+import { PartnerEngagementBand } from '@/partners-marketplace/PartnerEngagementBand';
 import { getCommunityStats } from '@/platform/community';
 import { getRouteI18n } from '@/platform/i18n/get-route-i18n';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
@@ -20,7 +21,6 @@ import {
   CustomersCaseStudySignoff,
 } from '@/sections/case-study-detail';
 import { Menu } from '@/sections/menu';
-import { PartnerEngagementBand } from '@/sections/partner-engagement-band';
 
 type CaseStudyParams = { locale: string; slug: string };
 

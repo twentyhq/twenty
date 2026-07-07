@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 
+import { PartnerEngagementBand } from '@/partners-marketplace/PartnerEngagementBand';
 import { getCommunityStats } from '@/platform/community';
 import {
   getRouteI18n,
@@ -16,7 +17,6 @@ import { CustomersCatalogSignoff } from '@/sections/customers-catalog-signoff';
 import { CustomersHero } from '@/sections/customers-hero';
 import { Faq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
-import { PartnerEngagementBand } from '@/sections/partner-engagement-band';
 import { TrustedBy } from '@/sections/trusted-by';
 
 export const generateMetadata = buildRouteMetadata('customers');

@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 
-import { PartnerEngagementBand } from '@/sections/partner-engagement-band';
+import { PartnerEngagementBand } from '@/partners-marketplace/PartnerEngagementBand';
 
 export function PricingEngagementBand() {
   return (
