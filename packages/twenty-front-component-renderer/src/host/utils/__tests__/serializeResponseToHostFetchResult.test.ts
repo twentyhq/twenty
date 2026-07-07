@@ -24,4 +24,19 @@ describe('serializeResponseToHostFetchResult', () => {
       },
     );
   });
+
+  it('should reject responses whose declared content length exceeds the body size limit', async () => {
+    const response = {
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers({ 'content-length': String(200 * 1024 * 1024) }),
+      text: async () => '',
+    } as unknown as Response;
+
+    await expect(
+      serializeResponseToHostFetchResult(response),
+    ).rejects.toMatchObject({
+      code: 'FRONT_COMPONENT_HOST_FETCH_RESPONSE_TOO_LARGE',
+    });
+  });
 });

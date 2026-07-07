@@ -1,8 +1,30 @@
+import { CustomError } from 'twenty-shared/utils';
+
+import { MAX_HOST_FETCH_RESPONSE_BODY_BYTES } from '@/host/constants/MaxHostFetchResponseBodyBytes';
 import { type HostFetchResult } from '@/types/HostFetchResult';
+
+const throwResponseTooLargeError = (): never => {
+  throw new CustomError(
+    `Front component host fetch response exceeds the ${MAX_HOST_FETCH_RESPONSE_BODY_BYTES} bytes limit`,
+    'FRONT_COMPONENT_HOST_FETCH_RESPONSE_TOO_LARGE',
+  );
+};
 
 export const serializeResponseToHostFetchResult = async (
   response: Response,
 ): Promise<HostFetchResult> => {
+  const contentLength = Number(response.headers.get('content-length') ?? 0);
+
+  if (contentLength > MAX_HOST_FETCH_RESPONSE_BODY_BYTES) {
+    throwResponseTooLargeError();
+  }
+
+  const body = await response.text();
+
+  if (body.length > MAX_HOST_FETCH_RESPONSE_BODY_BYTES) {
+    throwResponseTooLargeError();
+  }
+
   const responseHeaders: Record<string, string> = {};
 
   response.headers.forEach((value, key) => {
@@ -13,6 +35,6 @@ export const serializeResponseToHostFetchResult = async (
     status: response.status,
     statusText: response.statusText,
     headers: responseHeaders,
-    body: await response.text(),
+    body,
   };
 };

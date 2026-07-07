@@ -1,13 +1,13 @@
 import { buildResponseFromHostFetchResult } from '../buildResponseFromHostFetchResult';
 
 class StubResponse {
-  body: string;
+  body: string | null;
   status: number;
   statusText: string;
   headers: Headers;
 
   constructor(
-    body: string,
+    body: string | null,
     init?: {
       status?: number;
       statusText?: string;
@@ -25,7 +25,7 @@ class StubResponse {
   }
 
   async text() {
-    return this.body;
+    return this.body ?? '';
   }
 }
 
@@ -64,5 +64,18 @@ describe('buildResponseFromHostFetchResult', () => {
     });
 
     expect(response.ok).toBe(false);
+  });
+
+  it('should drop the body for null body statuses', () => {
+    for (const status of [204, 205, 304]) {
+      const response = buildResponseFromHostFetchResult({
+        status,
+        statusText: '',
+        headers: {},
+        body: '',
+      });
+
+      expect(response.body).toBeNull();
+    }
   });
 });
