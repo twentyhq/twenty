@@ -804,6 +804,66 @@ describe('evaluateFilterConditions', () => {
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter3] })).toBe(true);
       });
+
+      it('should handle legacy Is operand on text without throwing', () => {
+        const matching = createFilter(
+          ViewFilterOperand.IS,
+          'Hello World',
+          'World',
+          'TEXT',
+        );
+        const notMatching = createFilter(
+          ViewFilterOperand.IS,
+          'Hello',
+          'World',
+          'TEXT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [matching] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [notMatching] })).toBe(
+          false,
+        );
+      });
+
+      it('should handle legacy IsNot operand on text without throwing', () => {
+        const matching = createFilter(
+          ViewFilterOperand.IS_NOT,
+          'Hello',
+          'World',
+          'TEXT',
+        );
+        const notMatching = createFilter(
+          ViewFilterOperand.IS_NOT,
+          'Hello World',
+          'World',
+          'TEXT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [matching] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [notMatching] })).toBe(
+          false,
+        );
+      });
+
+      it('should handle legacy Is operand on arrays without throwing', () => {
+        const matching = createFilter(
+          ViewFilterOperand.IS,
+          ['apple', 'banana'],
+          ['apple'],
+          'MULTI_SELECT',
+        );
+        const notMatching = createFilter(
+          ViewFilterOperand.IS,
+          ['apple', 'banana'],
+          ['grape'],
+          'MULTI_SELECT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [matching] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [notMatching] })).toBe(
+          false,
+        );
+      });
     });
 
     describe('empty operands', () => {

@@ -186,6 +186,10 @@ function evaluateTextAndArrayFilter(
         (isDefined(nullEquivalentRightValue) &&
           isNotEmptyTextOrArray(filter.leftOperand))
       );
+    case ViewFilterOperand.IS:
+      return contains(filter.leftOperand, filter.rightOperand);
+    case ViewFilterOperand.IS_NOT:
+      return !contains(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(filter.leftOperand);
 
