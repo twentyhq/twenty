@@ -707,6 +707,30 @@ describe('recall bot api', () => {
       expect(fetchMock).toHaveBeenCalledTimes(2);
     });
 
+    it('retries a 409 conflict and succeeds on the next attempt', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: false,
+        status: 409,
+        headers: new Headers(),
+        json: async () => ({ detail: 'conflict' }),
+      });
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ id: 'recall-bot-id' }),
+      });
+
+      const resultPromise = getRecallBot({ externalBotId: 'recall-bot-id' });
+
+      await vi.runAllTimersAsync();
+
+      expect(await resultPromise).toEqual({
+        ok: true,
+        bot: { id: 'recall-bot-id' },
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
     it('gives up after the attempt budget on persistent server errors', async () => {
       fetchMock.mockResolvedValue({
         ok: false,

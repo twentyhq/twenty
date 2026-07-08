@@ -1,10 +1,13 @@
 import { isUndefined } from '@sniptt/guards';
 
 import { RECALL_API_MAX_ATTEMPTS } from 'src/logic-functions/constants/recall-api-max-attempts';
-import { RECALL_API_RETRY_DELAY_MS } from 'src/logic-functions/constants/recall-api-retry-delay-ms';
 import { type RecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { parseRecallRetryAfterMs } from 'src/logic-functions/recall-api/parse-recall-retry-after.util';
 import { reserveRecallApiRateLimitSlotMs } from 'src/logic-functions/recall-api/recall-api-rate-limiter.util';
+import {
+  isRetryableRecallApiStatus,
+  resolveRecallApiRetryDelayMs,
+} from 'src/logic-functions/recall-api/recall-api-retry-policy.util';
 
 type RecallBotApiRequestArgs = {
   config: RecallApiConfig;
@@ -42,9 +45,13 @@ export const recallBotApiRequest = async <TData>(
       return result;
     }
 
-    // Honor Retry-After when throttled so retries wait for the window to reset
-    // instead of racing back into it; otherwise back off linearly.
-    await sleep(retryAfterMs ?? RECALL_API_RETRY_DELAY_MS * attemptNumber);
+    await sleep(
+      resolveRecallApiRetryDelayMs({
+        retryAfterMs,
+        status: result.status,
+        attemptNumber,
+      }),
+    );
   }
 };
 
@@ -148,9 +155,6 @@ const performRecallBotApiRequestAttempt = async <TData>({
     };
   }
 };
-
-const isRetryableRecallApiStatus = (status: number): boolean =>
-  status === 429 || status >= 500;
 
 const sleep = (delayMs: number): Promise<void> =>
   new Promise((resolve) => {
