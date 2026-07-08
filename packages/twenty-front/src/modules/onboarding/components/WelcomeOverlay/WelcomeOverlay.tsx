@@ -65,6 +65,7 @@ const StyledCanvasLayer = styled.div`
 
 const StyledTitle = styled.div`
   align-items: center;
+  animation: welcomeTitleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
   background: ${themeCssVariables.background.primary};
   border-radius: ${themeCssVariables.border.radius.pill};
   color: ${themeCssVariables.font.color.primary};
@@ -79,6 +80,15 @@ const StyledTitle = styled.div`
   white-space: nowrap;
   will-change: transform, opacity;
   z-index: 2;
+
+  @keyframes welcomeTitleIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
 
   @media (max-width: 600px) {
     flex-wrap: wrap;
@@ -97,6 +107,8 @@ const StyledTitle = styled.div`
   }
 
   @media (prefers-reduced-motion: reduce) {
+    animation: none;
+
     &.is-leaving {
       animation-name: welcomeTitleFadeOut;
     }
