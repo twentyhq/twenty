@@ -28,8 +28,6 @@ export const getRecordImageIdentifier = async ({
   allowRequestsToTwentyIcons,
   signUrl,
 }: GetRecordImageIdentifierOptions): Promise<string | null> => {
-  // WorkspaceMember is an exception: its avatar is a TEXT field storing a signed
-  // CorePicture URL, which does not fit the generic FILES/LINKS resolution.
   if (
     signUrl &&
     flatObjectMetadata.nameSingular === 'workspaceMember' &&
