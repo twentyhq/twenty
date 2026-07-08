@@ -73,7 +73,11 @@ const performRecallBotApiRequestAttempt = async <TData>({
   isRetryable: boolean;
   retryAfterMs?: number;
 }> => {
-  const rateLimitWaitMs = reserveRecallApiRateLimitSlotMs(Date.now());
+  const rateLimitWaitMs = reserveRecallApiRateLimitSlotMs({
+    method,
+    path,
+    nowMs: Date.now(),
+  });
 
   if (rateLimitWaitMs > 0) {
     await sleep(rateLimitWaitMs);

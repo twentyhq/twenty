@@ -1,6 +1,6 @@
-// Below Recall's lowest per-minute bot ceiling (create and list, 120/min for this workspace)
-// so one invocation paces itself under the limit; cross-invocation contention is
-// still handled by Retry-After and the low-volume webhook/batched architecture.
-export const RECALL_API_RATE_LIMIT_PER_MINUTE = 100;
+// Local, endpoint-scoped burst smoothing. This matches the current Recall bot
+// read/create ceiling for this shared key; Retry-After remains the source of
+// truth for real fleet-wide throttling.
+export const RECALL_API_ENDPOINT_RATE_LIMIT_PER_MINUTE = 120;
 
-export const RECALL_API_RATE_LIMIT_BURST = 20;
+export const RECALL_API_ENDPOINT_RATE_LIMIT_BURST = 20;
