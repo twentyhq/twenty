@@ -7,23 +7,36 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { WORKSPACE_CACHE_KEY } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceCacheDataMap } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000000';
 
+type FlatFieldMetadataMaps = WorkspaceCacheDataMap['flatFieldMetadataMaps'];
+type FlatObjectMetadataMaps = WorkspaceCacheDataMap['flatObjectMetadataMaps'];
+
+const OLD_FIELD_MAPS = {
+  marker: 'OLD_MAPS_WITHOUT_NEW_FIELD',
+} as unknown as FlatFieldMetadataMaps;
+const NEW_FIELD_MAPS = {
+  marker: 'NEW_MAPS_WITH_NEW_FIELD',
+} as unknown as FlatFieldMetadataMaps;
+const OBJECT_MAPS = {
+  marker: 'OBJECT_MAPS',
+} as unknown as FlatObjectMetadataMaps;
+
 // Simulates the database: the migration runner writes to it, then triggers a
 // cache recomputation that reads from it.
-let dbFieldMaps = 'OLD_MAPS_WITHOUT_NEW_FIELD';
-let dbObjectMaps = 'OLD_OBJECT_MAPS';
+let dbFieldMaps = OLD_FIELD_MAPS;
 
-class MockFlatFieldMetadataMapsProvider extends WorkspaceCacheProvider<string> {
+class MockFlatFieldMetadataMapsProvider extends WorkspaceCacheProvider<FlatFieldMetadataMaps> {
   async computeForCache(_workspaceId: string) {
     return dbFieldMaps;
   }
 }
 
-class MockFlatObjectMetadataMapsProvider extends WorkspaceCacheProvider<string> {
+class MockFlatObjectMetadataMapsProvider extends WorkspaceCacheProvider<FlatObjectMetadataMaps> {
   async computeForCache(_workspaceId: string) {
-    return dbObjectMaps;
+    return OBJECT_MAPS;
   }
 }
 
@@ -106,8 +119,7 @@ describe('WorkspaceCacheService invalidation race', () => {
     jest.useRealTimers();
     redis = new Map();
     gateNextDataMget = false;
-    dbFieldMaps = 'OLD_MAPS_WITHOUT_NEW_FIELD';
-    dbObjectMaps = 'OLD_OBJECT_MAPS';
+    dbFieldMaps = OLD_FIELD_MAPS;
   });
 
   it('should not serve pre-invalidation data written back by a slow concurrent reader', async () => {
@@ -140,7 +152,7 @@ describe('WorkspaceCacheService invalidation race', () => {
     await new Promise((resolve) => setImmediate(resolve));
 
     // T1: a migration commits a new field and invalidates the cache.
-    dbFieldMaps = 'NEW_MAPS_WITH_NEW_FIELD';
+    dbFieldMaps = NEW_FIELD_MAPS;
     await service.invalidateAndRecompute(WORKSPACE_ID, [
       'flatFieldMetadataMaps',
       'flatObjectMetadataMaps',
@@ -156,6 +168,6 @@ describe('WorkspaceCacheService invalidation race', () => {
       ['flatFieldMetadataMaps'],
     );
 
-    expect(flatFieldMetadataMaps).toBe('NEW_MAPS_WITH_NEW_FIELD');
+    expect(flatFieldMetadataMaps).toBe(NEW_FIELD_MAPS);
   });
 });

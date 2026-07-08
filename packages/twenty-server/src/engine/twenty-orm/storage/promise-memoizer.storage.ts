@@ -40,6 +40,9 @@ export class PromiseMemoizer<T> {
       return existingPromise;
     }
 
+    // Assigned right after the IIFE below; only read after its first await.
+    let registeredPromise: Promise<T | null> | undefined;
+
     const newPromise = (async () => {
       try {
         const value = await factory();
@@ -55,12 +58,13 @@ export class PromiseMemoizer<T> {
 
         return value;
       } finally {
-        if (this.pending.get(cacheKey) === newPromise) {
+        if (this.pending.get(cacheKey) === registeredPromise) {
           this.pending.delete(cacheKey);
         }
       }
     })();
 
+    registeredPromise = newPromise;
     this.pending.set(cacheKey, newPromise);
 
     return newPromise;
