@@ -1,4 +1,9 @@
-import { CONTAINER_NAME } from '@/cli/utilities/server/docker-container';
+import { ConfigService } from '@/cli/utilities/config/config-service';
+import {
+  CONTAINER_NAME,
+  getContainerPort,
+  isContainerRunning,
+} from '@/cli/utilities/server/docker-container';
 import { compareSemver } from '@/cli/utilities/version/compare-semver';
 import { getLocalServerVersion } from '@/cli/utilities/version/get-local-server-version';
 import { getPublishedServerVersions } from '@/cli/utilities/version/get-published-server-versions';
@@ -6,6 +11,56 @@ import { getServerVersionFromApi } from '@/cli/utilities/version/get-server-vers
 import { parseSemver } from '@/cli/utilities/version/parse-semver';
 import { type VersionInfo } from '@/cli/utilities/version/version-info';
 import sdkPackageJson from '../../../../package.json';
+
+const LOCAL_REMOTE_NAME = 'local';
+
+// Cheap, network-free check: is the CLI-managed container the one actually
+// serving the configured apiUrl? If it's running and bound to the same port,
+// its baked-in APP_VERSION is authoritative (two processes can't share a port),
+// so we can read it locally instead of paying the API fetch timeout.
+const isContainerServingApiUrl = async (
+  containerName: string,
+): Promise<boolean> => {
+  if (ConfigService.getActiveRemote() !== LOCAL_REMOTE_NAME) {
+    return false;
+  }
+
+  if (!isContainerRunning(containerName)) {
+    return false;
+  }
+
+  try {
+    const { apiUrl } = await new ConfigService().getConfig();
+    const apiPort = new URL(apiUrl).port;
+
+    return (
+      apiPort !== '' && String(getContainerPort(containerName)) === apiPort
+    );
+  } catch {
+    return false;
+  }
+};
+
+// Resolves the version of the server the CLI is connected to. Prefers a local
+// Docker read when the CLI-managed container is the server (fast, no network),
+// otherwise asks the connected server over HTTP and only falls back to Docker
+// inspection when it can't be reached.
+const resolveLocalServerVersion = async (
+  containerName: string,
+): Promise<string | null> => {
+  if (await isContainerServingApiUrl(containerName)) {
+    const dockerVersion = await getLocalServerVersion(containerName);
+
+    if (dockerVersion !== null) {
+      return dockerVersion;
+    }
+  }
+
+  return (
+    (await getServerVersionFromApi()) ??
+    (await getLocalServerVersion(containerName))
+  );
+};
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -19,12 +74,10 @@ export const getVersionInfo = async (
 ): Promise<VersionInfo> => {
   const cliVersion = sdkPackageJson.version;
 
-  const [apiServerVersion, publishedVersions] = await Promise.all([
-    getServerVersionFromApi(),
+  const [localServerVersion, publishedVersions] = await Promise.all([
+    resolveLocalServerVersion(containerName),
     getPublishedServerVersions(),
   ]);
-  const localServerVersion =
-    apiServerVersion ?? (await getLocalServerVersion(containerName));
   const latestServerVersion = publishedVersions[0]?.name ?? null;
 
   const localParsed = localServerVersion
