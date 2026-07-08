@@ -90,13 +90,7 @@ export const getRecordImageIdentifier = async ({
         : null;
     }
     default: {
-      const rawImageValue = String(imageValue);
-
-      if (!isNonEmptyString(rawImageValue)) {
-        return null;
-      }
-
-      return rawImageValue;
+      return null;
     }
   }
 };
