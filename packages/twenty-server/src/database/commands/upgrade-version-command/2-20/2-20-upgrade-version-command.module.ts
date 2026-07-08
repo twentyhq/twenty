@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { BackfillActorSourceEnumValuesCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783499671542-backfill-actor-source-enum-values.command';
+import { BackfillCallRecordingApplicationIdCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783528000000-backfill-call-recording-application-id.command';
 import { BackfillWorkflowVersionToCoreCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783526282685-backfill-workflow-version-to-core.command';
 import { AddMessageCampaignStatFieldsCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783525261000-add-message-campaign-stat-fields.command';
 import { CreateMessageListViewCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783525261001-create-message-list-view.command';
@@ -25,6 +26,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     CreateMessageListViewCommand,
     BackfillActorSourceEnumValuesCommand,
     BackfillWorkflowVersionToCoreCommand,
+    BackfillCallRecordingApplicationIdCommand,
   ],
 })
 export class V2_20_UpgradeVersionCommandModule {}
