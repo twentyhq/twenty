@@ -1,0 +1,61 @@
+node_modules
+  s_7b1c6f2e0e3b83::t_bebea7f40c5812 1
+packages/twenty-server/node_modules
+  s_7b1c6f2e0e3b83::t_6883b887b4f6df 1
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/services/__tests__/calendar-event-composer.service.spec.ts
+  s_44005784e231b4::t_e63ac34add97c9 1-2,4-8,11-24,28-29,31-59,61,63-78,81-84,87-129,132-134,137-168,170-172,175-178,181-184,186-188,191-197,200-246,249-253
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
+  s_44005784e231b4::t_db429dd60608ce 5,8,14,16,19-24,34-35,47,79-188
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/services/__tests__/calendar-save-events.service.spec.ts
+  s_44005784e231b4::t_f1741e0f84ae87 1-3,9-49,72-80,83-84,86,88-91,94-114,116-119,128-170,172-193,195-198
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service.ts
+  s_44005784e231b4::t_9f3a66067d6bbe 4,16-21,83-134,136,138,143-198,200,211-221,223-230,239-247,252,261-273,275-282,286-296,298-302,304
+packages/twenty-server/src/modules/calendar/common/query-hooks/calendar-event/services/apply-calendar-events-visibility-restrictions.service.spec.ts
+  s_44005784e231b4::t_db5252b56b1f33 1-385
+packages/twenty-server/src/modules/calendar/common/query-hooks/calendar-event/services/apply-calendar-events-visibility-restrictions.service.ts
+  s_44005784e231b4::t_bc387a8cbc245e 4,6,86-87,91-97,117-119,123-127
+packages/twenty-server/src/modules/messaging/common/query-hooks/message/apply-messages-visibility-restrictions.service.spec.ts
+  s_44005784e231b4::t_3134eb67a20d91 1-3,6-10,13,16,19-100,102,105-108,110-168,171-182,185-202,204-208,211-213,215-228,231-241,243-252,255-257,259-274,277-287,289-297,300-313,316-321,323-342,345-389,391-413
+packages/twenty-server/src/modules/messaging/common/query-hooks/message/apply-messages-visibility-restrictions.service.ts
+  s_44005784e231b4::t_f1847d3bf3130d 4-6,96-97,101-107,132-134,138-143,145-150,154
+packages/twenty-server/src/modules/messaging/message-folder-manager/drivers/imap/services/__tests__/imap-get-all-folders.service.spec.ts
+  s_44005784e231b4::t_ac1ff447f23c9d 1-3,5-6,11-37,39-236
+packages/twenty-server/src/modules/messaging/message-folder-manager/drivers/imap/services/imap-get-all-folders.service.ts
+  s_44005784e231b4::t_2be286946aa82b 79,132-158,165
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-message-list.service.spec.ts
+  s_44005784e231b4::t_94217e089a91f4 1,3-7,9,11-52,54-67,69-97,100-106,108,110,112-116,118-130,132-134,136-215,217,219-269,271,273-275
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-message-list.service.ts
+  s_44005784e231b4::t_af7fc8d7daff54 91,160,180-222
+packages/twenty-server/src/modules/messaging/message-import-manager/services/__tests__/messaging-import-exception-handler.service.spec.ts
+  s_44005784e231b4::t_337d0aadad271d 1-43,45-66,68-79,82-161,163-181
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service.ts
+  s_44005784e231b4::t_594de4d0d9af67 8-15,24,74-108,115-128
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service.spec.ts
+  s_44005784e231b4::t_9b00a561b0f4b5 1-3,5,11-17,19-21,23-29,31-35,41,47,50-60,69-70,73-83,87-88,91-103,106-107,109-114,116-118,120-179,182,184-195,198-204,206-211,213-216,218-224,226-231,233-235,237-238,241-243,245-252,255-258,260-274,276,279-281,283-290,293-296,298-304,306,308-320,322-338,340-348,350-363,366-369,371-377,379
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service.ts
+  s_44005784e231b4::t_68dedfd5f4c2ed 3-7,33,58,89-107,109-117
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "92a09ba039d2bd0222cf3d863421729cbb4759d0",
+  "prompts": {},
+  "sessions": {
+    "s_44005784e231b4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a9b3905185288c5dd",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_7b1c6f2e0e3b83": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ecb71351-1f99-4bd4-80d0-5ced7c089ea6",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
