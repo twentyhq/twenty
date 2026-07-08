@@ -2,9 +2,9 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 
 import { EmailAttachmentsField } from '@/activities/emails/components/EmailAttachmentsField';
+import { EmailRecipientsFieldInput } from '@/activities/emails/recipients/components/EmailRecipientsFieldInput';
 import { type EmailComposerState } from '@/activities/emails/types/EmailComposerState';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
-import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
 import { Select } from '@/ui/input/components/Select';
@@ -39,6 +39,11 @@ const StyledCcBccToggle = styled.button`
   }
 `;
 
+const StyledRecipientLimitWarning = styled.div`
+  color: ${themeCssVariables.color.red};
+  font-size: ${themeCssVariables.font.size.xs};
+`;
+
 type EmailComposerFieldsProps = {
   composerState: EmailComposerState;
 };
@@ -71,11 +76,11 @@ export const EmailComposerFields = ({
         />
       )}
       <StyledToRow>
-        <FormMultiTextFieldInput
+        <EmailRecipientsFieldInput
           label={t`To`}
-          defaultValue={composerState.initialTo}
-          onChange={composerState.setTo}
           placeholder={t`Recipients`}
+          recipients={composerState.to}
+          onChange={composerState.setTo}
         />
         {!composerState.showCcBcc && (
           <StyledCcBccToggle onClick={() => composerState.setShowCcBcc(true)}>
@@ -85,19 +90,24 @@ export const EmailComposerFields = ({
       </StyledToRow>
       {composerState.showCcBcc && (
         <>
-          <FormMultiTextFieldInput
+          <EmailRecipientsFieldInput
             label={t`Cc`}
-            defaultValue={composerState.initialCc}
-            onChange={composerState.setCc}
             placeholder={t`Cc`}
+            recipients={composerState.cc}
+            onChange={composerState.setCc}
           />
-          <FormMultiTextFieldInput
+          <EmailRecipientsFieldInput
             label={t`Bcc`}
-            defaultValue={composerState.initialBcc}
-            onChange={composerState.setBcc}
             placeholder={t`Bcc`}
+            recipients={composerState.bcc}
+            onChange={composerState.setBcc}
           />
         </>
+      )}
+      {composerState.exceedsRecipientLimit && (
+        <StyledRecipientLimitWarning>
+          {t`Too many recipients (${composerState.recipientCount}/${composerState.maxRecipients}).`}
+        </StyledRecipientLimitWarning>
       )}
       <FormTextFieldInput
         label={t`Subject`}
