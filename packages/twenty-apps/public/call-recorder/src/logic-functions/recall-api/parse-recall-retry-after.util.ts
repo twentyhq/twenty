@@ -1,9 +1,7 @@
 import { RECALL_API_MAX_RETRY_AFTER_MS } from 'src/logic-functions/constants/recall-api-max-retry-after-ms';
 
-// Recall returns Retry-After (delta-seconds, or an HTTP date) on 429/507 so a
-// throttled retry can wait exactly as long as the API asks instead of racing back
-// into the same rate-limit window. Returns undefined when the header is absent or
-// unparseable, letting the caller fall back to its default backoff.
+// Retry-After may be delta-seconds or an HTTP date; returns undefined when absent
+// or unparseable so callers fall back to their default backoff.
 export const parseRecallRetryAfterMs = (
   retryAfterHeader: string | null,
   nowMs: number,

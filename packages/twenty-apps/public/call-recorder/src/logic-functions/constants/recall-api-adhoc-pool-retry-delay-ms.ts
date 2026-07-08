@@ -1,4 +1,2 @@
-// Recall's shared ad-hoc bot pool refills within about 30 seconds, so a 507
-// (pool momentarily drained) waits that long before retrying when Recall does not
-// send a Retry-After header of its own.
+// Recall's ad-hoc bot pool refills within ~30s; used for a 507 with no Retry-After.
 export const RECALL_API_ADHOC_POOL_RETRY_DELAY_MS = 30_000;
