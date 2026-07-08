@@ -79,12 +79,12 @@ describe('getImageIdentifierFieldValue', () => {
     });
   });
 
-  it('returns the raw string value for other field types', () => {
+  it('returns null for unsupported field types (image identifiers are constrained to FILES/LINKS)', () => {
     expect(
       getImageIdentifierFieldValue(
         buildRecord('https://example.com/avatar.png'),
         buildFieldMetadataItem(FieldMetadataType.TEXT),
       ),
-    ).toBe('https://example.com/avatar.png');
+    ).toBe(null);
   });
 });
