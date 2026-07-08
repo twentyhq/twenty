@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ServerVariables } from 'twenty-shared/application';
@@ -6,8 +6,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Not, type Repository } from 'typeorm';
 
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -22,10 +20,6 @@ import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/appl
 
 @Injectable()
 export class ApplicationRegistrationVariableService {
-  private readonly logger = new Logger(
-    ApplicationRegistrationVariableService.name,
-  );
-
   constructor(
     @InjectRepository(ApplicationRegistrationVariableEntity)
     private readonly variableRepository: Repository<ApplicationRegistrationVariableEntity>,
@@ -34,19 +28,7 @@ export class ApplicationRegistrationVariableService {
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly encryptionService: SecretEncryptionService,
-    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
-
-  private async invalidateMarketplaceCatalogCache(): Promise<void> {
-    try {
-      await this.coreEntityCacheService.invalidate(
-        'marketplaceCatalog',
-        MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
-      );
-    } catch (error) {
-      this.logger.error('Failed to invalidate marketplace apps cache', error);
-    }
-  }
 
   async findVariablesWithObfuscatedValues(
     applicationRegistrationId: string,
@@ -92,11 +74,7 @@ export class ApplicationRegistrationVariableService {
       isSecret: input.isSecret ?? true,
     });
 
-    const saved = await this.variableRepository.save(variable);
-
-    await this.invalidateMarketplaceCatalogCache();
-
-    return saved;
+    return this.variableRepository.save(variable);
   }
 
   async updateVariable(
@@ -110,11 +88,7 @@ export class ApplicationRegistrationVariableService {
       workspaceId,
     );
 
-    const updated = await this.applyVariableUpdate(input);
-
-    await this.invalidateMarketplaceCatalogCache();
-
-    return updated;
+    return this.applyVariableUpdate(input);
   }
 
   async updateVariableGlobal(
@@ -123,8 +97,6 @@ export class ApplicationRegistrationVariableService {
     await this.findVariableOrThrow(input.id);
 
     const entity = await this.applyVariableUpdate(input);
-
-    await this.invalidateMarketplaceCatalogCache();
 
     return this.toObfuscatedDTO(entity);
   }
@@ -138,8 +110,6 @@ export class ApplicationRegistrationVariableService {
     );
 
     await this.variableRepository.delete(id);
-
-    await this.invalidateMarketplaceCatalogCache();
 
     return true;
   }
@@ -194,8 +164,6 @@ export class ApplicationRegistrationVariableService {
     } else {
       await this.variableRepository.delete({ applicationRegistrationId });
     }
-
-    await this.invalidateMarketplaceCatalogCache();
   }
 
   async isConfiguredBatch(
