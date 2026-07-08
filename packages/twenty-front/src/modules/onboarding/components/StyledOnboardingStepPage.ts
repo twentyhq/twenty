@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledOnboardingStepPage = styled.div`
   align-items: center;
@@ -13,4 +13,9 @@ export const StyledOnboardingStepPage = styled.div`
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[16]} ${themeCssVariables.spacing[8]};
   width: 100%;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    gap: ${themeCssVariables.spacing[8]};
+    padding: ${themeCssVariables.spacing[8]} ${themeCssVariables.spacing[4]};
+  }
 `;

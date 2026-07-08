@@ -8,7 +8,7 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 // (the sequence only runs previous + current versions). down() restores it.
 const TABLES = ['objectMetadata', 'fieldMetadata'] as const;
 
-@RegisteredInstanceCommand('2.20.0', 1825000000000)
+@RegisteredInstanceCommand('2.20.0', 1783511477234)
 export class DropMetadataStandardOverridesColumnFastInstanceCommand
   implements FastInstanceCommand
 {

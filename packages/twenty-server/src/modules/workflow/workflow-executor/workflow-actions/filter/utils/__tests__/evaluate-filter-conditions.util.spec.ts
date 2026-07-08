@@ -804,6 +804,100 @@ describe('evaluateFilterConditions', () => {
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter3] })).toBe(true);
       });
+
+      it('should match legacy Is operand on text by equality', () => {
+        const matching = createFilter(
+          ViewFilterOperand.IS,
+          'World',
+          'World',
+          'TEXT',
+        );
+        const substring = createFilter(
+          ViewFilterOperand.IS,
+          'Hello World',
+          'World',
+          'TEXT',
+        );
+        const notMatching = createFilter(
+          ViewFilterOperand.IS,
+          'Hello',
+          'World',
+          'TEXT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [matching] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [substring] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [notMatching] })).toBe(
+          false,
+        );
+      });
+
+      it('should match legacy IsNot operand on text by inequality', () => {
+        const matching = createFilter(
+          ViewFilterOperand.IS_NOT,
+          'Hello',
+          'World',
+          'TEXT',
+        );
+        const notMatching = createFilter(
+          ViewFilterOperand.IS_NOT,
+          'World',
+          'World',
+          'TEXT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [matching] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [notMatching] })).toBe(
+          false,
+        );
+      });
+
+      it('should match legacy Is operand on arrays by equality', () => {
+        const matching = createFilter(
+          ViewFilterOperand.IS,
+          ['apple', 'banana'],
+          ['apple', 'banana'],
+          'MULTI_SELECT',
+        );
+        const subset = createFilter(
+          ViewFilterOperand.IS,
+          ['apple', 'banana'],
+          ['apple'],
+          'MULTI_SELECT',
+        );
+        const notMatching = createFilter(
+          ViewFilterOperand.IS,
+          ['apple', 'banana'],
+          ['grape'],
+          'MULTI_SELECT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [matching] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [subset] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [notMatching] })).toBe(
+          false,
+        );
+      });
+
+      it('should match legacy IsNot operand on arrays by set inequality', () => {
+        const matching = createFilter(
+          ViewFilterOperand.IS_NOT,
+          ['apple', 'banana'],
+          ['grape'],
+          'MULTI_SELECT',
+        );
+        const notMatching = createFilter(
+          ViewFilterOperand.IS_NOT,
+          ['apple', 'banana'],
+          ['apple', 'banana'],
+          'MULTI_SELECT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [matching] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [notMatching] })).toBe(
+          false,
+        );
+      });
     });
 
     describe('empty operands', () => {
