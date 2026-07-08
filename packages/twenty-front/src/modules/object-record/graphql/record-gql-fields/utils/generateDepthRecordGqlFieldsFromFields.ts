@@ -10,6 +10,7 @@ import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/
 import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
 import { generateActivityTargetGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateActivityTargetGqlFields';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
+import { reportMissingRelationTargetMetadata } from '@/object-record/graphql/record-gql-fields/utils/reportMissingRelationTargetMetadata';
 import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
 import {
   computeMorphRelationGqlFieldName,
@@ -57,9 +58,18 @@ export const generateDepthRecordGqlFieldsFromFields = ({
         );
 
         if (!targetObjectMetadataItem) {
-          throw new Error(
-            `Target object metadata item not found for ${fieldMetadata.name}`,
-          );
+          void reportMissingRelationTargetMetadata({
+            fieldMetadataName: fieldMetadata.name,
+            relationFieldType: FieldMetadataType.RELATION,
+            relationType,
+          });
+
+          return {
+            ...recordGqlFields,
+            ...(relationType === RelationType.MANY_TO_ONE
+              ? { [`${fieldMetadata.name}Id`]: true }
+              : undefined),
+          };
         }
 
         const isActivityTargetField =
@@ -127,7 +137,7 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           );
         }
 
-        const morphGqlFields = fieldMetadata.morphRelations.map(
+        const morphGqlFields = fieldMetadata.morphRelations.flatMap(
           (morphRelation) => {
             const morphTargetObjectMetadataItem = objectMetadataItems.find(
               (objectMetadataItem) =>
@@ -135,9 +145,15 @@ export const generateDepthRecordGqlFieldsFromFields = ({
             );
 
             if (!morphTargetObjectMetadataItem) {
-              throw new Error(
-                `Target object metadata item not found for ${fieldMetadata.name} (morph target ${morphRelation.targetObjectMetadata.nameSingular})`,
-              );
+              void reportMissingRelationTargetMetadata({
+                fieldMetadataName: fieldMetadata.name,
+                relationFieldType: FieldMetadataType.MORPH_RELATION,
+                relationType,
+                targetObjectMetadataNameSingular:
+                  morphRelation.targetObjectMetadata.nameSingular,
+              });
+
+              return [];
             }
 
             return {
