@@ -1,0 +1,124 @@
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/utils/parse-whatsapp-webhook-import-messages.util.ts
+  s_f50cf24ed5fc3b::t_890719ab7b121d 1-69
+packages/twenty-apps/public/twenty-whatsapp/css.d.ts
+  s_f50cf24ed5fc3b::t_bf5b86f00f2b56 1
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/types/import-message.type.ts
+  s_f50cf24ed5fc3b::t_4d12e24eaa2e3f 1-12
+packages/twenty-apps/public/twenty-whatsapp/src/front-components/types/whatsapp-message-item.type.ts
+  s_f50cf24ed5fc3b::t_41f791f2299368 1-6
+packages/twenty-apps/public/twenty-whatsapp/tsconfig.json
+  s_f50cf24ed5fc3b::t_08e66e167f3eb7 1-42
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/send-whatsapp-message.ts
+  s_f50cf24ed5fc3b::t_b1f708b2e63c15 1-40
+packages/twenty-apps/public/twenty-whatsapp/.gitignore
+  s_f50cf24ed5fc3b::t_21ffc988ac7548 1-45
+packages/twenty-apps/public/twenty-whatsapp/src/constants/environment-variable-names.ts
+  s_f50cf24ed5fc3b::t_0f58cfed58e2ea 1-6
+packages/twenty-apps/public/twenty-whatsapp/package.json
+  s_f50cf24ed5fc3b::t_6222b891ff85a8 1-49
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/types/send-whatsapp-message-payload.type.ts
+  s_f50cf24ed5fc3b::t_f5a4e159855bcf 1-23
+packages/twenty-apps/public/twenty-whatsapp/src/front-components/components/WhatsappMessagesContent.tsx
+  s_f50cf24ed5fc3b::t_0a180bad4550b9 1-89
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/whatsapp-webhook-receive.ts
+  s_f50cf24ed5fc3b::t_c856753a45a573 1-66
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/whatsapp-webhook-verify.ts
+  s_f50cf24ed5fc3b::t_7183435b342699 1-44
+packages/twenty-apps/public/twenty-whatsapp/yarn.lock
+  s_f50cf24ed5fc3b::t_662880280e0767 1-4015
+packages/twenty-apps/public/twenty-whatsapp/.nvmrc
+  s_f50cf24ed5fc3b::t_4f9d9649274f2b 1
+packages/twenty-apps/public/twenty-whatsapp/src/page-layouts/person-whatsapp-tab.ts
+  s_f50cf24ed5fc3b::t_feec0aa1e78085 1-30
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/utils/verify-meta-signature.util.ts
+  s_f50cf24ed5fc3b::t_494e76eea77757 1-36
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/utils/normalize-whatsapp-recipient.util.ts
+  s_f50cf24ed5fc3b::t_df84f15582b896 1-12
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/utils/import-whatsapp-messages.util.ts
+  s_f50cf24ed5fc3b::t_6b81085e977b4e 1-17
+  s_f50cf24ed5fc3b::t_eb84f71b9caa38 18-20
+  s_85fb2aae8ba1c7::t_1c8f2b4c9bd708 21-32
+packages/twenty-apps/public/twenty-whatsapp/src/front-components/whatsapp-messages.front-component.tsx
+  s_f50cf24ed5fc3b::t_c9270abd70d732 1-15
+packages/twenty-apps/public/twenty-whatsapp/README.md
+  s_f50cf24ed5fc3b::t_fe42ccea755d32 1-25
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/utils/send-whatsapp-text-message.util.ts
+  s_f50cf24ed5fc3b::t_202366691a709e 1-59
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/types/import-message-participant.type.ts
+  s_f50cf24ed5fc3b::t_183ce137eedfc3 1-5
+packages/twenty-apps/public/twenty-whatsapp/src/application.config.ts
+  s_f50cf24ed5fc3b::t_d73261a2f1c4e3 1-42
+packages/twenty-apps/public/twenty-whatsapp/tsconfig.spec.json
+  s_f50cf24ed5fc3b::t_bb6560f5363436 1-9
+packages/twenty-apps/public/twenty-whatsapp/.oxlintrc.json
+  s_f50cf24ed5fc3b::t_7e1bdfc108a7d3 1-20
+packages/twenty-apps/public/twenty-whatsapp/src/constants/universal-identifiers.ts
+  s_f50cf24ed5fc3b::t_974dd760e98259 1-14
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/types/whatsapp-webhook-message.type.ts
+  s_f50cf24ed5fc3b::t_af8e80fef1a513 1-9
+packages/twenty-apps/public/twenty-whatsapp/src/front-components/components/WhatsappMessages.tsx
+  s_f50cf24ed5fc3b::t_2dcb91970855e8 1-34
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/types/whatsapp-webhook-contact.type.ts
+  s_f50cf24ed5fc3b::t_e029afd6dc8ad1 1-6
+packages/twenty-apps/public/twenty-whatsapp/src/roles/whatsapp-default.role.ts
+  s_f50cf24ed5fc3b::t_717320647fe7c2 1-42
+packages/twenty-apps/public/twenty-whatsapp/src/page-layouts/company-whatsapp-tab.ts
+  s_f50cf24ed5fc3b::t_92fd9d27687f81 1-31
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/types/whatsapp-webhook-body.type.ts
+  s_f50cf24ed5fc3b::t_dcc9d5c4141c60 1-11
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/utils/is-non-empty-string.util.ts
+  s_f50cf24ed5fc3b::t_eaf23230c84da3 1-2
+packages/twenty-apps/public/twenty-whatsapp/src/connection-providers/whatsapp.connection-provider.ts
+  s_f50cf24ed5fc3b::t_fc5c54b79f7e58 1-24
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/utils/get-required-environment-variable.util.ts
+  s_f50cf24ed5fc3b::t_6ff4e4317fd880 1-13
+packages/twenty-apps/public/twenty-whatsapp/vitest.config.ts
+  s_f50cf24ed5fc3b::t_d4bcaa33093501 1-14
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/types/whatsapp-webhook-value.type.ts
+  s_f50cf24ed5fc3b::t_0e827f4059ed97 1-11
+packages/twenty-apps/public/twenty-whatsapp/.yarnrc.yml
+  s_f50cf24ed5fc3b::t_eafe375d1cfb94 1
+packages/twenty-apps/public/twenty-whatsapp/src/constants/__tests__/universal-identifiers.test.ts
+  s_f50cf24ed5fc3b::t_e7408ce9890a08 1-20
+packages/twenty-apps/public/twenty-whatsapp/src/front-components/hooks/use-whatsapp-messages.ts
+  s_f50cf24ed5fc3b::t_d58b188cff0afe 1-44,46-197,199-200,211
+  s_f50cf24ed5fc3b::t_a2b52df9c5390b 45
+  s_f50cf24ed5fc3b::t_eae0ebcf7ce303 198
+  s_f50cf24ed5fc3b::t_047f4c77cc1d99 201-203,208-210
+  s_f50cf24ed5fc3b::t_48046ff8ddc968 212-214
+  s_85fb2aae8ba1c7::t_259fa3f986208d 204-207
+packages/twenty-apps/public/twenty-whatsapp/vitest.unit.config.ts
+  s_f50cf24ed5fc3b::t_24cfb033c84679 1-14
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/types/whatsapp-message-channel.type.ts
+  s_85fb2aae8ba1c7::t_8bebbb26107ace 1-4
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/utils/__tests__/resolve-whatsapp-message-channel-id.util.test.ts
+  s_85fb2aae8ba1c7::t_2780fe67a817fb 1-72
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/utils/fetch-whatsapp-message-channels.util.ts
+  s_85fb2aae8ba1c7::t_d525d386139eb0 1-28
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/utils/resolve-whatsapp-message-channel-id.util.ts
+  s_85fb2aae8ba1c7::t_28494be4061681 1-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4032d941704a59dc715a7c9811257a936a0ef353",
+  "prompts": {},
+  "sessions": {
+    "s_85fb2aae8ba1c7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a8b82a2ff54410faf",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_f50cf24ed5fc3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c2ba5cc7-0588-443f-84fd-cc232e1987ed",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
