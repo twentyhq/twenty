@@ -44,10 +44,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     CreateMessageListViewCommand,
     BackfillActorSourceEnumValuesCommand,
     BackfillWorkflowVersionToCoreCommand,
-  ],
-  providers: [
     BackfillCompanyPersonImageIdentifierFieldMetadataIdCommand,
-    BackfillActorSourceEnumValuesCommand,
   ],
 })
 export class V2_20_UpgradeVersionCommandModule {}
