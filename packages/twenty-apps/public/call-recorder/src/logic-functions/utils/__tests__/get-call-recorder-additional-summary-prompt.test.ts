@@ -16,7 +16,26 @@ describe('getCallRecorderAdditionalSummaryPrompt', () => {
     expect(getCallRecorderAdditionalSummaryPrompt()).toBeUndefined();
   });
 
-  it('returns the trimmed additional prompt', () => {
+  it('returns the markdown from a rich text value', () => {
+    process.env[CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_ENV_VAR_NAME] =
+      JSON.stringify({
+        blocknote: '[{"type":"paragraph"}]',
+        markdown: '  Write concise **sales** notes.  ',
+      });
+
+    expect(getCallRecorderAdditionalSummaryPrompt()).toBe(
+      'Write concise **sales** notes.',
+    );
+  });
+
+  it('returns undefined when the rich text markdown is empty', () => {
+    process.env[CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_ENV_VAR_NAME] =
+      JSON.stringify({ blocknote: null, markdown: null });
+
+    expect(getCallRecorderAdditionalSummaryPrompt()).toBeUndefined();
+  });
+
+  it('falls back to raw plaintext stored before the variable became rich text', () => {
     process.env[CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_ENV_VAR_NAME] =
       '  Write concise sales notes.  ';
 
