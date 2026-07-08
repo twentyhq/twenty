@@ -14,12 +14,7 @@ import sdkPackageJson from '../../../../package.json';
 
 const LOCAL_REMOTE_NAME = 'local';
 
-const LOOPBACK_HOSTS = new Set([
-  'localhost',
-  '127.0.0.1',
-  '[::1]',
-  '0.0.0.0',
-]);
+const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '0.0.0.0']);
 
 const isLoopbackHost = (hostname: string): boolean =>
   LOOPBACK_HOSTS.has(hostname);
