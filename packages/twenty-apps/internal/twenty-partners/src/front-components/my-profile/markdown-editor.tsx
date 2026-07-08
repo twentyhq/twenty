@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 
-import { enqueueSnackbar } from 'twenty-sdk/front-component';
+import { copyToClipboard } from 'twenty-sdk/front-component';
 
 import { COLORS, FONT } from './form-fields';
 import { MarkdownContent } from './markdown-render';
@@ -44,25 +44,16 @@ const buildPrompt = (value: string): string =>
   [
     'Reformat the text below as clean markdown for my partner profile.',
     'Use only: **bold**, *italic*, ### headings, - bullet lists, 1. numbered lists, and [links](url).',
-    "Keep all the information and don't invent anything. Return only the formatted text.",
+    "Keep all the information and don't invent anything.",
+    'Ask me any questions you need to be sure you have captured all the formatting I want, then return only the formatted text.',
     '',
     '---',
     value.trim() === '' ? '(paste your introduction here)' : value.trim(),
   ].join('\n');
 
-const copyPrompt = async (value: string): Promise<void> => {
-  const clipboard = (
-    globalThis as { navigator?: { clipboard?: { writeText?: (text: string) => Promise<void> } } }
-  ).navigator?.clipboard;
-  try {
-    if (clipboard?.writeText) {
-      await clipboard.writeText(buildPrompt(value));
-      await enqueueSnackbar({ message: 'Prompt copied — paste it to Claude', variant: 'success' });
-    }
-  } catch {
-    // Clipboard is unavailable in the sandbox — the prompt box below stays selectable to copy by hand.
-  }
-};
+// The front-component runs in a Web Worker with no clipboard API; copyToClipboard is a host
+// action that copies on the main thread and shows its own confirmation snackbar.
+const copyPrompt = (value: string): Promise<void> => copyToClipboard(buildPrompt(value));
 
 const EDITOR_HEIGHT = 280;
 
@@ -117,14 +108,6 @@ const helpBoxStyle = {
   borderRadius: 8,
   background: COLORS.surfaceAlt,
   padding: 12,
-} as const;
-
-const promptStyle = {
-  ...controlBase,
-  height: 96,
-  resize: 'vertical',
-  fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-  fontSize: 12,
 } as const;
 
 const copyButtonStyle = {
@@ -190,10 +173,8 @@ export const MarkdownEditor = ({
 
     <div style={helpBoxStyle}>
       <span style={{ fontSize: 12.5, color: COLORS.muted }}>
-        Not comfortable with markdown? Ask Claude to format it for you — copy the prompt below,
-        paste it into Claude with your text, then paste the result back here.
+        Not comfortable with Markdown? Copy the prompt into your AI agent to format it for you.
       </span>
-      <textarea readOnly style={promptStyle} value={buildPrompt(value)} />
       <button type="button" style={copyButtonStyle} onClick={() => void copyPrompt(value)}>
         Copy prompt
       </button>
