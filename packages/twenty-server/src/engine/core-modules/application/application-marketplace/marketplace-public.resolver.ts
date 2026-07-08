@@ -3,6 +3,10 @@ import { Args, Query } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
+import {
+  ApplicationRegistrationException,
+  ApplicationRegistrationExceptionCode,
+} from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
@@ -27,8 +31,18 @@ export class MarketplacePublicResolver {
   async findPublicMarketplaceAppDetail(
     @Args('universalIdentifier') universalIdentifier: string,
   ): Promise<MarketplaceAppDetailDTO> {
-    return this.marketplaceQueryService.findMarketplaceAppDetail(
-      universalIdentifier,
-    );
+    const detail =
+      await this.marketplaceQueryService.findMarketplaceAppDetail(
+        universalIdentifier,
+      );
+
+    if (!detail.isListed) {
+      throw new ApplicationRegistrationException(
+        `No listed marketplace application found for identifier "${universalIdentifier}"`,
+        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
+      );
+    }
+
+    return detail;
   }
 }

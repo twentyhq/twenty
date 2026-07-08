@@ -3152,6 +3152,8 @@ type Query {
   findOneApplication(id: UUID, universalIdentifier: UUID): Application!
   findManyMarketplaceApps: [MarketplaceApp!]!
   findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
+  publicMarketplaceApps: [MarketplaceApp!]!
+  publicMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
   findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
   findManyApplicationRegistrations: [ApplicationRegistration!]!

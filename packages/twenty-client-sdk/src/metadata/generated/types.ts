@@ -6537,6 +6537,18 @@ export default {
                     ]
                 }
             ],
+            "publicMarketplaceApps": [
+                228
+            ],
+            "publicMarketplaceAppDetail": [
+                232,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "findApplicationRegistrationByClientId": [
                 199,
                 {
