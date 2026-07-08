@@ -21,6 +21,8 @@ const mockFetch = (
 };
 
 describe('getServerVersionFromApi', () => {
+  const originalFetch = global.fetch;
+
   beforeEach(() => {
     vi.clearAllMocks();
     mockedGetConfig.mockResolvedValue({ apiUrl: 'http://localhost:2020' });
@@ -28,6 +30,7 @@ describe('getServerVersionFromApi', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    global.fetch = originalFetch;
   });
 
   it('returns the version reported by the server card endpoint', async () => {
