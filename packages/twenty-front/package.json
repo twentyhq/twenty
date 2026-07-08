@@ -194,7 +194,7 @@
     "monaco-editor": "0.52.2",
     "monaco-editor-auto-typings": "^0.4.5",
     "monaco-graphql": "1.8.0",
-    "msw": "^2.12.7",
+    "msw": "2.12.14",
     "msw-storybook-addon": "^2.0.6",
     "optionator": "^0.9.1",
     "oxlint": "^1.51.0",
