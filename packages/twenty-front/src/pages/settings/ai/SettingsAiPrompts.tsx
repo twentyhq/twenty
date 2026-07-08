@@ -4,11 +4,16 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  getSettingsPath,
+  getValidTimeZoneOrUndefined,
+  isDefined,
+} from 'twenty-shared/utils';
 import { H2Title, H3Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -30,6 +35,7 @@ const StyledTitleContainer = styled.div`
 
 export const SettingsAiPrompts = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const { userTimezone } = useUserTimezone();
 
   const { data: previewData, loading: previewLoading } = useQuery(
     GetAiSystemPromptPreviewDocument,
@@ -48,12 +54,14 @@ export const SettingsAiPrompts = () => {
       `**${t`Locale`}:** ${currentWorkspaceMember.locale ?? 'en'}`,
     ];
 
-    if (isDefined(currentWorkspaceMember.timeZone)) {
-      parts.push(`**${t`Timezone`}:** ${currentWorkspaceMember.timeZone}`);
+    const validTimeZone = getValidTimeZoneOrUndefined(userTimezone);
+
+    if (isDefined(validTimeZone)) {
+      parts.push(`**${t`Timezone`}:** ${validTimeZone}`);
     }
 
     const currentDate = new Intl.DateTimeFormat('en-US', {
-      timeZone: currentWorkspaceMember.timeZone ?? undefined,
+      timeZone: validTimeZone,
       weekday: 'long',
       year: 'numeric',
       month: 'long',

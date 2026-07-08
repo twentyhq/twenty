@@ -1,7 +1,5 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
-
-import { getValidTimeZoneOrUndefined } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-valid-time-zone-or-undefined.util';
+import { getValidTimeZoneOrUndefined, isDefined } from 'twenty-shared/utils';
 
 const formatMessageTimestamp = (date: Date, timezone: string | null): string =>
   new Intl.DateTimeFormat('en-US', {

@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { assertUnreachable } from 'twenty-shared/utils';
+import {
+  assertUnreachable,
+  getValidTimeZoneOrUndefined,
+} from 'twenty-shared/utils';
 
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { ToolCategory } from 'twenty-shared/ai';
@@ -16,7 +19,6 @@ import {
   type UserContext,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
-import { getValidTimeZoneOrUndefined } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-valid-time-zone-or-undefined.util';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
@@ -183,8 +185,10 @@ ${instructions}`;
       `Locale: ${userContext.locale}`,
     ];
 
-    if (userContext.timezone) {
-      parts.push(`Timezone: ${userContext.timezone}`);
+    const resolvedTimeZone = getValidTimeZoneOrUndefined(userContext.timezone);
+
+    if (resolvedTimeZone) {
+      parts.push(`Timezone: ${resolvedTimeZone}`);
     }
 
     parts.push(`Current date: ${this.formatCurrentDate(userContext.timezone)}`);
