@@ -111,11 +111,11 @@ export const FrontComponentRenderer = ({
   const applicationVariables =
     data.frontComponent.applicationVariables ?? undefined;
 
-  const functionsBaseUrl =
-    getFunctionsBaseUrl({
-      publicFunctionDomain,
-      workspaceSubdomain: currentWorkspace?.subdomain,
-    }) ?? `${REACT_APP_SERVER_BASE_URL}/s`;
+  const functionsBaseUrl = getFunctionsBaseUrl({
+    serverBaseUrl: REACT_APP_SERVER_BASE_URL,
+    publicFunctionDomain,
+    workspaceSubdomain: currentWorkspace?.subdomain,
+  });
 
   if (usesSdkClient) {
     return (
