@@ -17,7 +17,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ADD_MANIFEST_FILE_ID_TO_APPLICATION_REGISTRATION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-manifest-file-id-to-application-registration-upgrade-command-name.constant';
+import { ADD_MANIFEST_FILE_ID_TO_APPLICATION_REGISTRATION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/add-manifest-file-id-to-application-registration-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type Manifest } from 'twenty-shared/application';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';

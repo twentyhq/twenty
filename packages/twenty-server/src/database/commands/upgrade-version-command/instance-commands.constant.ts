@@ -100,8 +100,8 @@ import { AddDisplayFieldsToApplicationRegistrationFastInstanceCommand } from './
 import { BackfillDisplayFieldsOnApplicationRegistrationSlowInstanceCommand } from './2-19/2-19-instance-command-slow-1783073776591-backfill-display-fields-on-application-registration';
 import { BackfillIsFeaturedOnApplicationRegistrationSlowInstanceCommand } from './2-19/2-19-instance-command-slow-1783120000000-backfill-is-featured-on-application-registration';
 import { AllowServerScopedFileFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-instance-command-fast-1783499671541-allow-server-scoped-file';
-import { AddManifestFileIdToApplicationRegistrationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1783412175009-add-manifest-file-id-to-application-registration';
-import { BackfillManifestFileIdOnApplicationRegistrationSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-slow-1783412175010-backfill-manifest-file-id-on-application-registration';
+import { AddManifestFileIdToApplicationRegistrationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-instance-command-fast-1783499671542-add-manifest-file-id-to-application-registration';
+import { BackfillManifestFileIdOnApplicationRegistrationSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-instance-command-slow-1783499671543-backfill-manifest-file-id-on-application-registration';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
