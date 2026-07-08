@@ -1,0 +1,113 @@
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/app/utils/parse-app-send-message-result-or-throw.util.ts
+  s_f50cf24ed5fc3b::t_12ee2664a46bed 1-35
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_f50cf24ed5fc3b::t_daf4ccefa7d340 103,206
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/app/utils/__tests__/parse-app-send-message-result-or-throw.util.spec.ts
+  s_f50cf24ed5fc3b::t_7992ef419994bd 1-37
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/app/services/app-message-outbound.service.ts
+  s_f50cf24ed5fc3b::t_daf4ccefa7d340 59,61,74,83
+  s_f50cf24ed5fc3b::t_ae3a9bae2254fe 46-49
+  s_f50cf24ed5fc3b::t_f92e4f878dbfdd 75
+  s_f50cf24ed5fc3b::t_0a1d32cb8abea1 16-20,39,41,53,55,60,62,82,84,120,122,126,130-132,137-139
+  s_f50cf24ed5fc3b::t_a89e6eec5bd912 1-15,21-38,40,42-45,50-52,54,56-58,63-73,76-81,85-119,121,123-125,127-129,133-136,140-142
+packages/twenty-shared/src/types/MessageChannelType.ts
+  s_f50cf24ed5fc3b::t_e74b628664c4eb 5
+packages/twenty-server/src/engine/core-modules/application/application-manifest/converters/from-connection-provider-manifest-to-universal-flat-connection-provider.util.ts
+  s_f50cf24ed5fc3b::t_18de93f8499f2e 46
+packages/twenty-sdk/src/sdk/define/connection-providers/define-connection-provider.ts
+  s_f50cf24ed5fc3b::t_daf4ccefa7d340 82
+  s_f50cf24ed5fc3b::t_18de93f8499f2e 79-80
+  s_f50cf24ed5fc3b::t_e74b628664c4eb 81,83-86
+packages/twenty-server/src/engine/core-modules/application/connection-provider/connection-provider.module.ts
+  s_f50cf24ed5fc3b::t_8da0ba17c059b8 17,26
+packages/twenty-server/src/engine/core-modules/application/application-manifest/converters/__tests__/from-connection-provider-manifest-to-universal-flat-connection-provider.util.spec.ts
+  s_f50cf24ed5fc3b::t_daf4ccefa7d340 53,72
+  s_f50cf24ed5fc3b::t_18de93f8499f2e 59,63
+  s_f50cf24ed5fc3b::t_e74b628664c4eb 60-62,64-71,73-74
+  s_f50cf24ed5fc3b::t_fec42ecd9aae12 75-77
+packages/twenty-server/src/engine/core-modules/application/connection-provider/connection-provider.entity.ts
+  s_f50cf24ed5fc3b::t_daf4ccefa7d340 3,44
+  s_f50cf24ed5fc3b::t_e74b628664c4eb 43
+  s_f50cf24ed5fc3b::t_9f55db4ded22c8 45
+packages/twenty-server/src/modules/messaging/message-outbound-manager/services/messaging-message-outbound.service.ts
+  s_f50cf24ed5fc3b::t_3e08bdaf85c141 22
+  s_f50cf24ed5fc3b::t_df23db7f5c49b8 50-54
+  s_f50cf24ed5fc3b::t_e7df4defe04888 7
+packages/twenty-shared/src/application/connectionProviderManifestType.ts
+  s_f50cf24ed5fc3b::t_daf4ccefa7d340 1
+  s_f50cf24ed5fc3b::t_18de93f8499f2e 10
+packages/twenty-server/src/modules/messaging/message-outbound-manager/messaging-send-manager.module.ts
+  s_f50cf24ed5fc3b::t_db2fc9235ef921 4,6,8,12,18
+  s_f50cf24ed5fc3b::t_f9d8836bb978d4 36-38,43,51
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-import-messages.service.ts
+  s_f50cf24ed5fc3b::t_7d2b34849b3521 1-20,28-85
+  s_f50cf24ed5fc3b::t_36ff0035bdec0b 21-27
+packages/twenty-server/src/modules/connected-account/channel-sync/services/channel-sync.service.ts
+  s_f50cf24ed5fc3b::t_c22a24a2b7b49f 11
+  s_f50cf24ed5fc3b::t_bb65111c29a182 76
+packages/twenty-server/src/modules/messaging/message-import-manager/crons/jobs/messaging-message-list-fetch.cron.job.ts
+  s_f50cf24ed5fc3b::t_bb65111c29a182 65
+  s_f50cf24ed5fc3b::t_c22a24a2b7b49f 5
+packages/twenty-server/src/modules/messaging/message-import-manager/crons/jobs/messaging-relaunch-failed-message-channels.cron.job.ts
+  s_f50cf24ed5fc3b::t_c22a24a2b7b49f 4
+  s_f50cf24ed5fc3b::t_bb65111c29a182 65
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/exceptions/message-outbound-driver.exception.ts
+  s_f50cf24ed5fc3b::t_e8fec15360be0c 1-18
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/app/types/app-send-message-payload.type.ts
+  s_f50cf24ed5fc3b::t_c4ea9be8b0da91 1-16
+packages/twenty-sdk/src/sdk/define/connection-providers/__tests__/define-connection-provider.spec.ts
+  s_f50cf24ed5fc3b::t_bc499494686258 85,87-88,90-98,100-101,103-113
+  s_f50cf24ed5fc3b::t_18de93f8499f2e 86,89,99,102
+packages/twenty-server/src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant.ts
+  s_f50cf24ed5fc3b::t_e74b628664c4eb 1799-1802
+  s_f50cf24ed5fc3b::t_daf4ccefa7d340 1798
+packages/twenty-server/src/modules/messaging/message-import-manager/crons/jobs/messaging-messages-import.cron.job.ts
+  s_f50cf24ed5fc3b::t_bb65111c29a182 64
+  s_f50cf24ed5fc3b::t_c22a24a2b7b49f 6
+packages/twenty-server/src/engine/core-modules/application/connection-provider/connection-provider-oauth-flow.service.ts
+  s_f50cf24ed5fc3b::t_8df57abd942eec 308,310-330
+  s_f50cf24ed5fc3b::t_26f71d0ce679c8 37
+  s_f50cf24ed5fc3b::t_977b037680a1b9 75-76
+  s_f50cf24ed5fc3b::t_705dd176e5fcf3 6-14
+  s_f50cf24ed5fc3b::t_f92e4f878dbfdd 306-307
+  s_f50cf24ed5fc3b::t_daf4ccefa7d340 309
+packages/twenty-shared/src/application/index.ts
+  s_f50cf24ed5fc3b::t_daf4ccefa7d340 99
+packages/twenty-shared/src/application/messagingSettingsType.ts
+  s_f50cf24ed5fc3b::t_daf4ccefa7d340 1-3
+packages/twenty-server/src/engine/metadata-modules/flat-entity/constant/__tests__/__snapshots__/all-universal-flat-entity-properties-to-compare-and-stringify.constant.spec.ts.snap
+  s_f50cf24ed5fc3b::t_f0a1bc1618965f 63,67
+packages/twenty-server/src/modules/messaging/message-import-manager/dtos/import-messages.input.ts
+  s_f50cf24ed5fc3b::t_7d2b34849b3521 1-61
+packages/twenty-server/src/modules/messaging/message-import-manager/messaging-import-manager.module.ts
+  s_f50cf24ed5fc3b::t_e74b628664c4eb 12,90
+  s_f50cf24ed5fc3b::t_7d2b34849b3521 43,56,114-115
+packages/twenty-server/src/modules/messaging/message-import-manager/resolvers/import-messages.resolver.ts
+  s_f50cf24ed5fc3b::t_7d2b34849b3521 1-37,39,42-54
+  s_f50cf24ed5fc3b::t_260644fcd188c1 38,40-41
+packages/twenty-server/src/modules/messaging/message-import-manager/dtos/import-messages-output.dto.ts
+  s_f50cf24ed5fc3b::t_aacfdcc736be2b 3,15
+  s_f50cf24ed5fc3b::t_7d2b34849b3521 1-2,4-14,16-25
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/2-20-instance-command-fast-1783515520392-add-messaging-settings-and-app-message-channel-type.ts
+  s_f50cf24ed5fc3b::t_daf4ccefa7d340 1-39
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+  s_f50cf24ed5fc3b::t_e74b628664c4eb 83-84,89-91,93-96
+  s_f50cf24ed5fc3b::t_daf4ccefa7d340 82,85,87,92
+  s_f50cf24ed5fc3b::t_c065ba2ba9e4e6 86,88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "7ff9ced610a6007919101a68349ede8c4ca304ed",
+  "prompts": {},
+  "sessions": {
+    "s_f50cf24ed5fc3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c2ba5cc7-0588-443f-84fd-cc232e1987ed",
+        "model": "claude-fable-5"
+      },
+      "human_author": null
+    }
+  }
+}
