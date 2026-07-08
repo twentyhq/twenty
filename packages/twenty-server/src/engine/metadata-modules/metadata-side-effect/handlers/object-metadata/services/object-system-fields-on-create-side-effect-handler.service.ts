@@ -15,7 +15,7 @@ export class ObjectSystemFieldsOnCreateSideEffectHandlerService extends Metadata
     metadataName: 'objectMetadata',
     name: 'objectSystemFieldsOnCreate',
     description:
-      'When an object is created, generate its 8 reserved system fields (id, createdAt, updatedAt, deletedAt, createdBy, updatedBy, position, searchVector). The default name field is NOT synthesized here: it is a caller-provided default field (SDK auto-complete on the manifest path, input transpiler on the API path).',
+      'When an object is created, generate its 7 reserved system fields (id, createdAt, updatedAt, deletedAt, createdBy, updatedBy, position). The searchVector field is provisioned by the self-contained objectSearchVectorOnCreate handler alongside its GIN index and searchFieldMetadata. The default name field is NOT synthesized here: it is a caller-provided default field (SDK auto-complete on the manifest path, input transpiler on the API path).',
   },
 ) {
   buildSideEffects({
@@ -39,14 +39,20 @@ export class ObjectSystemFieldsOnCreateSideEffectHandlerService extends Metadata
     // manifest also declares them they carry isSystemSideEffect too, so the
     // engine merge dedups the identical deterministic universal identifiers
     // silently (first-writer wins) rather than raising a collision.
+    // The searchVector field is excluded here: it is owned by the self-contained
+    // search-vector handler alongside its GIN index and searchFieldMetadata.
     const flatEntityToCreate: Record<
       string,
       MetadataUniversalFlatEntity<'fieldMetadata'>
     > = {};
 
-    for (const flatFieldMetadata of Object.values(
+    for (const [fieldName, flatFieldMetadata] of Object.entries(
       defaultFlatFieldForCustomObjectMaps.fields,
     )) {
+      if (fieldName === 'searchVector') {
+        continue;
+      }
+
       flatEntityToCreate[flatFieldMetadata.universalIdentifier] =
         flatFieldMetadata;
     }

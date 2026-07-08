@@ -15,13 +15,18 @@ const SYSTEM_FIELD_NAMES = [
   'createdBy',
   'updatedBy',
   'position',
-  'searchVector',
 ] as const;
 
 const NAME_FIELD_UNIVERSAL_IDENTIFIER = getFieldUniversalIdentifier({
   applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
   name: 'name',
+});
+
+const SEARCH_VECTOR_FIELD_UNIVERSAL_IDENTIFIER = getFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+  name: 'searchVector',
 });
 
 const buildArgs = ({
@@ -48,7 +53,7 @@ describe('ObjectSystemFieldsOnCreateSideEffectHandlerService', () => {
   const handler =
     new (ObjectSystemFieldsOnCreateSideEffectHandlerService as unknown as new () => ObjectSystemFieldsOnCreateSideEffectHandlerService)();
 
-  it('should synthesize exactly the 8 reserved system fields and never the caller-provided name field', () => {
+  it('should synthesize exactly the 7 reserved system fields and never the caller-provided name field nor the searchVector field', () => {
     const result = handler.buildSideEffects(
       buildArgs({
         labelIdentifierFieldMetadataUniversalIdentifier:
@@ -66,9 +71,14 @@ describe('ObjectSystemFieldsOnCreateSideEffectHandlerService', () => {
       result.operations.fieldMetadata?.flatEntityToCreate ?? {},
     );
 
-    expect(createdUniversalIdentifiers).toHaveLength(8);
+    expect(createdUniversalIdentifiers).toHaveLength(7);
     expect(createdUniversalIdentifiers).not.toContain(
       NAME_FIELD_UNIVERSAL_IDENTIFIER,
+    );
+    // The searchVector field is owned by the self-contained search-vector
+    // handler, not the system-fields handler.
+    expect(createdUniversalIdentifiers).not.toContain(
+      SEARCH_VECTOR_FIELD_UNIVERSAL_IDENTIFIER,
     );
 
     for (const name of SYSTEM_FIELD_NAMES) {
@@ -117,6 +127,6 @@ describe('ObjectSystemFieldsOnCreateSideEffectHandlerService', () => {
 
     expect(
       Object.keys(result.operations.fieldMetadata?.flatEntityToCreate ?? {}),
-    ).toHaveLength(8);
+    ).toHaveLength(7);
   });
 });
