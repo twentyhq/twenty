@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
 
@@ -9,7 +9,7 @@ export const formatMessageFromHeader = ({
   fromEmail: string;
   fromName?: string | null;
 }) => {
-  return isDefined(fromName) && fromName.trim().length > 0
-    ? `${mimeEncode(fromName.trim())} <${fromEmail}>`
+  return isNonEmptyString(fromName)
+    ? `${mimeEncode(fromName)} <${fromEmail}>`
     : fromEmail;
 };

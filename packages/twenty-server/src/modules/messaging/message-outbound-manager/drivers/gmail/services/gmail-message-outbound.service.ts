@@ -169,7 +169,7 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
 
     const fromEmail = gmailData.emailAddress;
 
-    if (!fromEmail) {
+    if (!isNonEmptyString(fromEmail)) {
       throw new Error('Gmail profile did not return an email address');
     }
 

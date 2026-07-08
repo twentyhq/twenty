@@ -180,9 +180,7 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
       const lock = await imapClient.getMailboxLock(parsedMessageId.folder);
 
       try {
-        await imapClient.messageDelete(`${parsedMessageId.uid}`, {
-          uid: true,
-        });
+        await imapClient.messageDelete(`${parsedMessageId.uid}`, { uid: true });
       } finally {
         lock.release();
       }

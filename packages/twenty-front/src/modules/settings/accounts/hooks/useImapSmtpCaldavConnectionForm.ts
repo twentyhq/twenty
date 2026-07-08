@@ -144,7 +144,6 @@ export const useImapSmtpCaldavConnectionForm = ({
   const handleSave = useCallback(
     async (formValues: ConnectionFormData): Promise<void> => {
       const configuredProtocols = getConfiguredProtocols(formValues);
-      const trimmedName = formValues.name.trim();
 
       if (configuredProtocols.length === 0) {
         throw new Error('At least one protocol must be configured');
@@ -174,7 +173,7 @@ export const useImapSmtpCaldavConnectionForm = ({
             handle: formValues.handle,
             connectionParameters: {
               ...connectionParameters,
-              name: trimmedName.length > 0 ? trimmedName : null,
+              name: formValues.name,
             },
           },
         });
