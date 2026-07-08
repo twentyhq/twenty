@@ -1,0 +1,69 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/2-20-upgrade-version-command.module.ts
+  s_2a545fd7be32ce::t_149b8415fb6fce 1-19
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783083423000-add-message-campaign-stat-fields.command.ts
+  s_2a545fd7be32ce::t_d76c3361d99e2a 1-231
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783083423001-create-message-list-view.command.ts
+  s_2a545fd7be32ce::t_53afff413c2da1 1-187
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/__tests__/2-20-workspace-command-1783083423000-add-message-campaign-stat-fields.command.spec.ts
+  s_2a545fd7be32ce::t_815e4a26a12ba0 1-234
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/__tests__/2-20-workspace-command-1783083423001-create-message-list-view.command.spec.ts
+  s_2a545fd7be32ce::t_2798c6f9a0c652 1-202
+packages/twenty-server/src/database/commands/upgrade-version-command/workspace-command-provider.module.ts
+  s_2a545fd7be32ce::t_854161a1666d16 23,47
+packages/twenty-server/src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum.ts
+  s_2a545fd7be32ce::t_b21a16b3fa2985 3
+packages/twenty-server/src/engine/core-modules/emailing-domain/constants/campaign.constant.ts
+  s_2a545fd7be32ce::t_59a85b2b02e41d 20-24
+packages/twenty-server/src/engine/core-modules/emailing-domain/types/refresh-campaign-stats-job-data.type.ts
+  s_2a545fd7be32ce::t_58aca09d6cda22 1-4
+packages/twenty-server/src/engine/core-modules/message-queue/jobs.module.ts
+  s_2a545fd7be32ce::t_0e9d72bbe4f30e 25,108
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/__tests__/__snapshots__/get-standard-object-metadata-related-entity-ids.util.spec.ts.snap
+  s_2a545fd7be32ce::t_2036eea956f8c5 909,912,915,918,921,924,927,930,933,936,939,942,945,948,951,954,957,960,963,966,970,973,976,979,982,985,988,1000-1005,1015-1017,1025,1028,1034,1042-1044,1052,1055,1064-1106,1111,1114,1117,1120,1123,1126,1129,1132,1135,1138,1141,1144,1147,1150,1153,1156,1159,1163,1166,1169,1172,1175,1181,1184,1187,1192,1195,1198,1201,1204,1207,1217,1220,1223,1226,1229,1232,1235,1238,1241,1244,1247,1250,1254,1257,1260,1266,1269,1272,1277,1280,1283,1286,1296,1299,1302,1305,1308,1311,1314,1317,1320,1323,1326,1329-1351,1358,1361,1364,1367,1370,1373,1376,1379,1382,1385,1388,1394,1397,1400,1403,1406,1409,1412,1415,1418,1421,1424,1427,1430,1433,1436,1439,1442,1446,1449,1452,1455,1458,1461,1464,1470,1473,1476,1481,1484,1487,1490,1493,1496,1499,1509,1512,1515,1518,1521,1524,1527,1530,1533,1536,1539,1542,1545,1549,1552,1555,1558,1568,1571,1574,1577,1580,1583,1586,1589,1592,1595,1598,1601,1604,1607,1610,1614,1617,1620,1623,1626,1632,1635,1638,1643,1646,1649,1652,1655,1658,1661,1664,1674,1677,1680,1683,1686,1689,1692,1695,1698,1701,1704,1707,1710,1713,1717,1720,1723,1726,1729,1739,1742,1745,1748,1751,1754,1757,1760,1763,1766,1769,1772,1775,1778,1781,1784,1787,1790,1793,1796,1799,1803,1806,1809,1812,1815,1818,1824,1828,1831,1834,1837,1840,1843,1848,1851,1854,1857,1860,1865,1868,1871,1874,1879,1882,1885,1888,1891,1894,1897,1900,1903,1906,1909,1912,1915,1918,1928,1931,1934,1937,1940,1943,1946,1949,1952,1955,1958,1961,1964,1967,1970,1973,1976,1979,1982,1985,1988,1991,1994,1997,2000,2003,2007,2010,2013,2016,2019,2022,2025,2028,2034,2037,2040,2043,2046,2051,2054,2057,2060,2063,2066,2069,2072,2075,2078,2081,2084,2087,2090,2093,2096,2099,2102,2112,2115,2118,2121,2124,2127,2130,2133,2136,2139,2142,2145,2148,2151,2154,2157,2160,2163,2167,2170,2173,2176,2179,2182,2185,2188,2194,2198,2201,2204,2207,2210,2213,2216,2221,2224,2227,2230,2235,2239,2242,2245,2248,2251,2256,2259,2262,2267,2270,2273,2278,2281,2284,2287,2290,2293,2296,2299,2302,2305,2308,2318,2321,2324,2327,2330,2333,2336,2339,2342,2345,2348,2351,2354,2357,2361,2364,2367,2370,2373,2383,2386,2389,2392,2395,2398,2401,2404,2407,2410,2413,2416,2419,2422,2425,2428,2431,2434,2437,2440,2443,2446,2449,2452,2455,2458,2461,2464,2468,2471,2474,2477,2480,2483,2486,2489,2492,2495,2498,2501,2504,2507,2517,2520,2523,2526,2529,2532,2535,2538,2541,2544,2547,2550,2553,2556,2559,2562,2565,2568,2572,2575,2578,2581,2584,2587,2597,2600,2603,2606,2609,2612,2615,2618,2621,2624,2627,2630,2633,2637,2640,2643,2649,2652,2655,2660,2663,2666,2669,2679,2682,2685,2688,2691,2694,2697,2700,2703,2706,2709,2712,2715,2718,2721,2724,2727,2730,2733,2736,2740,2743,2746,2749,2752,2755,2761,2764,2767,2772,2775,2778,2781,2784,2787,2790,2793,2796,2799,2802,2805,2815,2818,2821,2824,2827,2830,2833,2836,2839,2842,2845,2848,2851,2854,2857,2860,2863,2867,2870,2873,2876,2879,2885,2888,2891,2896,2899,2902,2905,2908,2911,2914,2917,2920,2923,2933,2936,2939,2942,2945,2948,2951,2954,2957,2960,2963,2966,2969,2972,2975,2978,2981,2984,2987,2990,2993,2996,2999,3002,3005,3008,3011,3014,3017,3021,3024,3027,3030,3033,3036,3039,3042,3045,3048,3051
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
+  s_2a545fd7be32ce::t_48bf59362a49a3 264-315
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view-field/build-standard-flat-view-field-metadata-maps.util.ts
+  s_2a545fd7be32ce::t_e6c0de9ec19492 14,17,50,55
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-campaign-view-fields.util.ts
+  s_2a545fd7be32ce::t_254eb7e2387e3d 1-144
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-list-view-fields.util.ts
+  s_2a545fd7be32ce::t_4847530f6b93d7 1-60
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view/build-standard-flat-view-metadata-maps.util.ts
+  s_2a545fd7be32ce::t_0cb5540a4c3444 14,17,50,55
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-campaign-views.util.ts
+  s_2a545fd7be32ce::t_4dfb5cf982c106 1-26
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-list-views.util.ts
+  s_2a545fd7be32ce::t_d3864a2cbd7646 1-26
+packages/twenty-server/src/modules/emailing/emailing.module.ts
+  s_2a545fd7be32ce::t_abda05a5fecf56 13,22,33,48,61
+packages/twenty-server/src/modules/emailing/jobs/refresh-campaign-stats.job.ts
+  s_2a545fd7be32ce::t_80d9b7c575d3db 1-21
+packages/twenty-server/src/modules/emailing/resolvers/emailing-send.resolver.ts
+  s_2a545fd7be32ce::t_2a02490f520c96 100,106
+packages/twenty-server/src/modules/emailing/services/message-campaign-statistics.service.ts
+  s_2a545fd7be32ce::t_05d7ee0b9fd11a 1-75
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_2a545fd7be32ce::t_36f8edb9bab312 10-11,15,29,32-34,39,47,111-112,114-115,121,123-125,159-163,170,180,496-500,506,514,524,688-715,720,725,729-733,739,794,799,809,816,825
+packages/twenty-server/src/modules/emailing/standard-objects/message-campaign.workspace-entity.ts
+  s_2a545fd7be32ce::t_9d940366ca96c1 15-18
+packages/twenty-shared/src/metadata/__tests__/__snapshots__/standardObjectUniversalIdentifiers.test.ts.snap
+  s_2a545fd7be32ce::t_57b4c83677e7a5 1058-1063,1073-1075,1100-1102,1134-1173,1421-1439
+packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+  s_2a545fd7be32ce::t_2146b11d78015d 793-804,828-867,891-909
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9f38a06691cfc9895b1c9a9ba5fc829f8e42d049",
+  "prompts": {},
+  "sessions": {
+    "s_2a545fd7be32ce": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "509bbba6-585f-497d-a103-1da780e33b43",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
