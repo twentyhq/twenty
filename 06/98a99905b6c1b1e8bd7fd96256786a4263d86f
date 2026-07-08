@@ -1,5 +1,6 @@
 packages/twenty-server/src/database/commands/upgrade-version-command/2-20/2-20-upgrade-version-command.module.ts
   s_2a545fd7be32ce::t_149b8415fb6fce 1-5,7,9-17,24,25-26
+  s_2a545fd7be32ce::t_0e40a3e2f486ad 20-23
 packages/twenty-server/src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783083423000-add-message-campaign-stat-fields.command.ts
   s_2a545fd7be32ce::t_d76c3361d99e2a 1-231
 packages/twenty-server/src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783083423001-create-message-list-view.command.ts
