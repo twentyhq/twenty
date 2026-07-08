@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isNonEmptyString, isObject } from '@sniptt/guards';
 import {
   convertToModelMessages,
   hasToolCall,
@@ -83,6 +82,8 @@ export type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
   userWorkspaceId: string;
   threadId?: string;
+  streamId?: string;
+  turnId?: string;
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
   browsingContext: BrowsingContextType | null;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
@@ -121,6 +122,8 @@ export class ChatExecutionService {
     workspace,
     userWorkspaceId,
     threadId,
+    streamId,
+    turnId,
     messages,
     browsingContext,
     onCodeExecutionUpdate,
@@ -435,7 +438,16 @@ export class ChatExecutionService {
         stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
         hasToolCall(ASK_QUESTIONS_TOOL_NAME)(step) ||
         hasNoMoreAvailableCredits,
-      experimental_telemetry: AI_TELEMETRY_CONFIG,
+      experimental_telemetry: {
+        ...AI_TELEMETRY_CONFIG,
+        functionId: 'ai-chat-stream',
+        metadata: {
+          streamId: streamId ?? '',
+          turnId: turnId ?? '',
+          threadId: threadId ?? '',
+          workspaceId: workspace.id,
+        },
+      },
       providerOptions: getCallLevelProviderOptions({
         sdkPackage: registeredModel.sdkPackage,
         providerOptions: undefined,
@@ -529,52 +541,6 @@ export class ChatExecutionService {
             unit: 'token',
             attributes: executionAttributes,
           });
-
-          const { input } = part;
-
-          if (part.toolName === LEARN_TOOLS_TOOL_NAME) {
-            const learntToolNames =
-              isObject(input) && 'toolNames' in input
-                ? input.toolNames
-                : undefined;
-
-            for (const learntToolName of Array.isArray(learntToolNames)
-              ? learntToolNames.filter(isNonEmptyString)
-              : []) {
-              this.metricsService.incrementCounterBy({
-                key: succeeded
-                  ? MetricsKeys.AiChatToolLearnedSucceeded
-                  : MetricsKeys.AiChatToolLearnedFailed,
-                amount: 1,
-                attributes: {
-                  model: registeredModel.modelId,
-                  tool: getToolMetricName(learntToolName),
-                },
-              });
-            }
-          }
-
-          if (part.toolName === LOAD_SKILL_TOOL_NAME) {
-            const loadedSkillNames =
-              isObject(input) && 'skillNames' in input
-                ? input.skillNames
-                : undefined;
-
-            for (const loadedSkillName of Array.isArray(loadedSkillNames)
-              ? loadedSkillNames.filter(isNonEmptyString)
-              : []) {
-              this.metricsService.incrementCounterBy({
-                key: succeeded
-                  ? MetricsKeys.AiChatSkillLoadedSucceeded
-                  : MetricsKeys.AiChatSkillLoadedFailed,
-                amount: 1,
-                attributes: {
-                  model: registeredModel.modelId,
-                  skill: loadedSkillName,
-                },
-              });
-            }
-          }
         }
       },
       onAbort: async ({ steps }) => {

@@ -15,6 +15,8 @@ import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.s
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   AgentMessageRole,
@@ -62,6 +64,7 @@ export class AgentChatStreamingService {
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly fileUrlService: FileUrlService,
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async reapDeadStream({
@@ -94,6 +97,15 @@ export class AgentChatStreamingService {
     if (!reap.affected) {
       return null;
     }
+
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.AiChatTurnFailed,
+      amount: 1,
+      attributes: {
+        failure_phase: 'interrupted',
+        error_code: interruptedError.code,
+      },
+    });
 
     await this.eventPublisherService.resetStreamState(thread.id);
     await this.eventPublisherService
@@ -147,7 +159,12 @@ export class AgentChatStreamingService {
     messageId,
     fileAttachments,
   }: StreamAgentChatOptions): Promise<
-    | { queued: false; streamId: string; messageId: string }
+    | {
+        queued: false;
+        streamId: string;
+        messageId: string;
+        turnId: string | null;
+      }
     | { queued: true; messageId: string }
   > {
     const thread = await this.threadRepository.findOne(workspace.id, {
@@ -253,9 +270,19 @@ export class AgentChatStreamingService {
         },
       );
 
-      return { queued: false, streamId, messageId: savedUserMessage.id };
+      return {
+        queued: false,
+        streamId,
+        messageId: savedUserMessage.id,
+        turnId: savedUserMessage.turnId,
+      };
     } catch (error) {
       await this.releaseStreamClaim(threadId, workspace.id, streamId);
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.AiChatTurnFailed,
+        amount: 1,
+        attributes: { model: modelId ?? 'unknown', failure_phase: 'enqueue' },
+      });
       throw error;
     }
   }
@@ -270,7 +297,7 @@ export class AgentChatStreamingService {
     userWorkspaceId: string;
     workspace: WorkspaceEntity;
     modelId?: string;
-  }): Promise<{ streamId: string; messageId: string }> {
+  }): Promise<{ streamId: string; messageId: string; turnId: string }> {
     const thread = await this.threadRepository.findOne(workspace.id, {
       where: { id: threadId, userWorkspaceId },
     });
@@ -364,10 +391,19 @@ export class AgentChatStreamingService {
         },
       );
 
-      return { streamId, messageId: lastUserMessage.id };
+      return {
+        streamId,
+        messageId: lastUserMessage.id,
+        turnId: lastUserMessage.turnId,
+      };
     } catch (error) {
       await this.releaseStreamClaim(threadId, workspace.id, streamId, {
         lastStreamError: thread.lastStreamError,
+      });
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.AiChatTurnFailed,
+        amount: 1,
+        attributes: { model: modelId ?? 'unknown', failure_phase: 'enqueue' },
       });
       throw error;
     }
@@ -543,6 +579,11 @@ export class AgentChatStreamingService {
       );
     } catch (error) {
       await this.releaseStreamClaim(threadId, workspaceId, streamId);
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.AiChatTurnFailed,
+        amount: 1,
+        attributes: { model: 'unknown', failure_phase: 'enqueue' },
+      });
       throw error;
     }
   }
