@@ -56,7 +56,7 @@ export default defineLogicFunction({
   universalIdentifier: FIREFLIES_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'fireflies-webhook',
   description:
-    'Receives Fireflies webhook events when a transcript is ready, then writes the transcript onto the matching CalendarEvent.',
+    'Receives Fireflies webhook events when a transcript or summary is ready, then upserts a CallRecording record linked to the matching CalendarEvent.',
   timeoutSeconds: 60,
   handler: firefliesWebhookRouteHandler,
   httpRouteTriggerSettings: {

@@ -1756,7 +1756,6 @@ export enum FeatureFlagKey {
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_JUNCTION_RELATIONS_ENABLED = 'IS_JUNCTION_RELATIONS_ENABLED',
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED = 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED',
-  IS_MARKETPLACE_SETTING_TAB_VISIBLE = 'IS_MARKETPLACE_SETTING_TAB_VISIBLE',
   IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED = 'IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
   IS_SETTINGS_DISCOVERY_HERO_ENABLED = 'IS_SETTINGS_DISCOVERY_HERO_ENABLED',
@@ -5347,6 +5346,7 @@ export type UpdateApplicationRegistrationInput = {
 };
 
 export type UpdateApplicationRegistrationPayload = {
+  isFeatured?: InputMaybe<Scalars['Boolean']['input']>;
   isListed?: InputMaybe<Scalars['Boolean']['input']>;
   isPreInstalled?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
