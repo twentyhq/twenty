@@ -37,7 +37,9 @@ export class MarketplaceQueryService {
     isFeatured?: boolean,
   ): Promise<MarketplaceAppDTO[]> {
     const registrations =
-      await this.applicationRegistrationService.findManyListedCatalogCards();
+      await this.applicationRegistrationService.findManyListedCatalogCards(
+        isFeatured,
+      );
 
     if (registrations.length === 0) {
       if (!this.hasSyncBeenEnqueued) {
@@ -62,10 +64,6 @@ export class MarketplaceQueryService {
 
     return registrations
       .filter((registration) => configuredStatuses.get(registration.id) ?? true)
-      .filter(
-        (registration) =>
-          isFeatured === undefined || registration.isFeatured === isFeatured,
-      )
       .map((registration) => this.toMarketplaceAppDTO(registration));
   }
 

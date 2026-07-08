@@ -465,9 +465,9 @@ export class ApplicationRegistrationService {
     return this.applicationRegistrationRepository.save(registration);
   }
 
-  async findManyListedCatalogCards(): Promise<
-    ApplicationRegistrationCatalogCard[]
-  > {
+  async findManyListedCatalogCards(
+    isFeatured?: boolean,
+  ): Promise<ApplicationRegistrationCatalogCard[]> {
     const registrations = await this.applicationRegistrationRepository.find({
       select: [
         'id',
@@ -483,6 +483,7 @@ export class ApplicationRegistrationService {
       where: {
         isListed: true,
         sourceType: ApplicationRegistrationSourceType.NPM,
+        ...(isFeatured !== undefined && { isFeatured }),
       },
     });
 
