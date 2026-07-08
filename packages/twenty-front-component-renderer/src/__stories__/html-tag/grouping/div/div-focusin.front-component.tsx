@@ -1,5 +1,6 @@
 import { type SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
+import { isDefined } from 'twenty-shared/utils';
 import {
   EventLog,
   useEventLog,
@@ -13,7 +14,7 @@ const DivFocusinFrontComponent = () => {
 
   useEffect(() => {
     const container = containerRef.current;
-    if (container === null) {
+    if (!isDefined(container)) {
       return;
     }
 

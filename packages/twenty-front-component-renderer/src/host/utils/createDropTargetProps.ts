@@ -1,4 +1,5 @@
 import { isFunction } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 type PreventableEvent = { preventDefault: () => void };
 
@@ -19,7 +20,7 @@ export const createDropTargetProps = (
   const remoteDragOverHandler = asRemoteEventHandler(reactProps.onDragOver);
   const remoteDropHandler = asRemoteEventHandler(reactProps.onDrop);
 
-  if (remoteDragOverHandler === undefined && remoteDropHandler === undefined) {
+  if (!isDefined(remoteDragOverHandler) && !isDefined(remoteDropHandler)) {
     return undefined;
   }
 

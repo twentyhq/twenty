@@ -1,3 +1,4 @@
+import { isFunction } from '@sniptt/guards';
 import React, { useContext } from 'react';
 
 import { FrontComponentInputFocusContext } from '@/host/contexts/FrontComponentInputFocusContext';
@@ -57,7 +58,7 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
               const remoteOnSubmit = reactProps.onSubmit;
               // The remote prop is untrusted across the remote-dom boundary, so
               // it may not be a function — guard before invoking.
-              if (typeof remoteOnSubmit === 'function') {
+              if (isFunction(remoteOnSubmit)) {
                 (
                   remoteOnSubmit as (
                     event: React.FormEvent<HTMLFormElement>,

@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { HOST_NATIVE_EVENT_PROP_TO_EVENT_TYPE } from '@/host/constants/HostNativeEventPropToEventType';
 import { type HostNativeEventHandlers } from '@/host/types/HostNativeEventHandlers';
 import { type HostNativeEventType } from '@/host/types/HostNativeEventType';
@@ -18,7 +20,7 @@ export const createHostNativeEventListenerRef = (latestHandlersRef: {
   };
 
   return (element: Element | null) => {
-    if (attachedElement !== null) {
+    if (isDefined(attachedElement)) {
       for (const eventType of HOST_NATIVE_EVENT_TYPES) {
         attachedElement.removeEventListener(
           eventType,
@@ -29,7 +31,7 @@ export const createHostNativeEventListenerRef = (latestHandlersRef: {
 
     attachedElement = element;
 
-    if (element !== null) {
+    if (isDefined(element)) {
       for (const eventType of HOST_NATIVE_EVENT_TYPES) {
         element.addEventListener(eventType, forwardEventToLatestHandler);
       }
