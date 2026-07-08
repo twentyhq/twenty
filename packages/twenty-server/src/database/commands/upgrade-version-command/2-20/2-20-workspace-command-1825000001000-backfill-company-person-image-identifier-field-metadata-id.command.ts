@@ -76,11 +76,12 @@ export class BackfillCompanyPersonImageIdentifierFieldMetadataIdCommand extends 
       }
 
       if (
-        existingObject.imageIdentifierFieldMetadataUniversalIdentifier ===
-        target.fieldUniversalIdentifier
+        isDefined(
+          existingObject.imageIdentifierFieldMetadataUniversalIdentifier,
+        )
       ) {
         this.logger.log(
-          `imageIdentifierFieldMetadataId already set to ${target.fieldNameForLog} on ${target.objectNameForLog} for workspace ${workspaceId}, skipping`,
+          `imageIdentifierFieldMetadataId already set on ${target.objectNameForLog} for workspace ${workspaceId}, skipping`,
         );
 
         continue;
