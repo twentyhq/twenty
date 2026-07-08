@@ -1,4 +1,4 @@
-import { defineLogicFunction } from 'twenty-sdk/define';
+import { defineLogicFunction, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
 import { UPDATE_FIELDS_OPTION_VALUES } from 'src/constants/update-fields-option-values';
 import { PDL_LOGIC_FUNCTION_CONSTANTS } from 'src/constants/universal-identifiers';
@@ -22,7 +22,9 @@ export default defineLogicFunction({
         type: 'object',
         properties: {
           recordId: {
-            type: 'string',
+            type: 'record',
+            objectUniversalIdentifier:
+              STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
             label: 'Record',
           },
           updateFields: {

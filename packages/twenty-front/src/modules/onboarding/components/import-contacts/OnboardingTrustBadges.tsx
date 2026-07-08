@@ -5,7 +5,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const BADGE_ASSET_PATH = '/images/onboarding/trust-badges';
 
 const TRUSTED_BY_LOGOS = [
-  { name: 'Bayer', src: `${BADGE_ASSET_PATH}/bayer.png` },
   { name: 'PwC', src: `${BADGE_ASSET_PATH}/pwc.png` },
   {
     name: 'République Française',

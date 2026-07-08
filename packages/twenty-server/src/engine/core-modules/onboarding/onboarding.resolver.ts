@@ -58,19 +58,6 @@ export class OnboardingResolver {
 
   @Mutation(() => OnboardingStepSuccessDTO)
   @UseGuards(NoPermissionGuard)
-  async skipBookOnboardingStep(
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<OnboardingStepSuccessDTO> {
-    await this.onboardingService.setOnboardingBookOnboardingPending({
-      workspaceId: workspace.id,
-      value: false,
-    });
-
-    return { success: true };
-  }
-
-  @Mutation(() => OnboardingStepSuccessDTO)
-  @UseGuards(NoPermissionGuard)
   async triggerInstallAppsOnboardingStep(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,

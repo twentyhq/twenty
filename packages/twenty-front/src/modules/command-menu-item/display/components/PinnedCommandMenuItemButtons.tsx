@@ -73,7 +73,6 @@ export const PinnedCommandMenuItemButtons = () => {
               {pinnedInlineCommandMenuItems.map((item) => (
                 <StyledCommandMenuItemContainer
                   key={item.id}
-                  layout
                   initial={{ width: 0, opacity: 0 }}
                   animate={{ width: 'unset', opacity: 1 }}
                   exit={{ width: 0, opacity: 0 }}

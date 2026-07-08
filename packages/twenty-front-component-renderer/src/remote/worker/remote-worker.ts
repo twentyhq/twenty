@@ -14,7 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { installStyleBridge } from '@/polyfills/installStyleBridge';
 import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
-import { patchRemoteElementSetAttribute } from '@/remote/utils/patchRemoteElementSetAttribute';
+import { patchRemoteElementAttributes } from '@/remote/utils/patchRemoteElementAttributes';
 import { installErrorEventBridge } from './utils/installErrorEventBridge';
 import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 import { frontComponentHostCommunicationApi } from '@/constants/frontComponentHostCommunicationApi';
@@ -31,7 +31,7 @@ import {
 import { setWorkerEnv } from './utils/setWorkerEnv';
 
 installStylePropertyOnRemoteElements();
-patchRemoteElementSetAttribute();
+patchRemoteElementAttributes();
 installErrorEventBridge();
 
 exposeGlobals({

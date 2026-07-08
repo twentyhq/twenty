@@ -7535,9 +7535,6 @@ export default {
             "skipSyncEmailOnboardingStep": [
                 154
             ],
-            "skipBookOnboardingStep": [
-                154
-            ],
             "triggerInstallAppsOnboardingStep": [
                 154,
                 {
@@ -8212,6 +8209,15 @@ export default {
                     ],
                     "universalIdentifier": [
                         1
+                    ]
+                }
+            ],
+            "claimApplicationRegistrationOwnership": [
+                8,
+                {
+                    "applicationRegistrationId": [
+                        1,
+                        "String!"
                     ]
                 }
             ],
@@ -11088,6 +11094,9 @@ export default {
                 6
             ],
             "isPreInstalled": [
+                6
+            ],
+            "isFeatured": [
                 6
             ],
             "__typename": [
