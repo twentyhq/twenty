@@ -24,6 +24,7 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
   "position": true,
   "searchVector": true,
   "targetCompany": {
+    "domainName": true,
     "id": true,
     "name": true,
   },
@@ -38,6 +39,7 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
   },
   "targetOpportunityId": true,
   "targetPerson": {
+    "avatarFile": true,
     "id": true,
     "name": true,
   },
@@ -114,6 +116,7 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
   "position": true,
   "searchVector": true,
   "targetCompany": {
+    "domainName": true,
     "id": true,
     "name": true,
   },
@@ -128,6 +131,7 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
   },
   "targetOpportunityId": true,
   "targetPerson": {
+    "avatarFile": true,
     "id": true,
     "name": true,
   },
