@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { getLogoUrlFromDomainName, isDefined } from 'twenty-shared/utils';
 
-import { FileOutput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
+import { type FileOutput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -33,10 +33,10 @@ export const getRecordImageIdentifier = async ({
   if (
     signUrl &&
     flatObjectMetadata.nameSingular === 'workspaceMember' &&
-    isDefined(record.avatarUrl)
+    isNonEmptyString(record.avatarUrl)
   ) {
     const avatarFileId = extractFileIdFromUrl(
-      record.avatarUrl as string,
+      record.avatarUrl,
       FileFolder.CorePicture,
     );
     if (!isDefined(avatarFileId)) {
@@ -69,9 +69,9 @@ export const getRecordImageIdentifier = async ({
 
   switch (imageIdentifierField.type) {
     case FieldMetadataType.FILES: {
-      const fileId = (imageValue as FileOutput[])?.[0]?.fileId;
+      const fileId = (imageValue as FileOutput[])[0]?.fileId;
 
-      if (!isDefined(fileId) || !isDefined(signUrl)) {
+      if (!isNonEmptyString(fileId) || !isDefined(signUrl)) {
         return null;
       }
 
@@ -83,7 +83,7 @@ export const getRecordImageIdentifier = async ({
       }
 
       const primaryLinkUrl = (imageValue as { primaryLinkUrl?: string })
-        ?.primaryLinkUrl;
+        .primaryLinkUrl;
 
       return isNonEmptyString(primaryLinkUrl)
         ? getLogoUrlFromDomainName(primaryLinkUrl) || null
