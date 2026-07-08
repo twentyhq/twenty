@@ -563,7 +563,7 @@ export const SettingsEnterprise = ({
     <Section>
       <H2Title
         title={t`Your enterprise key`}
-        description={t`Your enterprise key is safely stored on this server. Make sure you keep a copy of it somewhere safe: you need the same key to activate a development instance or to move your license to a replacement server. If you lose it, contact support to recover it.`}
+        description={t`This server has an enterprise key configured. Make sure you keep a copy of it somewhere safe: you need the same key to activate a development instance or to move your license to a replacement server. If you no longer have access to your key, contact support.`}
       />
     </Section>
   );
