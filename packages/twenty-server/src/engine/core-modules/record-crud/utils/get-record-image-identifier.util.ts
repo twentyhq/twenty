@@ -96,10 +96,6 @@ export const getRecordImageIdentifier = async ({
         return null;
       }
 
-      if (signUrl && flatObjectMetadata.nameSingular === 'workspaceMember') {
-        return signUrl(rawImageValue, FileFolder.FilesField);
-      }
-
       return rawImageValue;
     }
   }
