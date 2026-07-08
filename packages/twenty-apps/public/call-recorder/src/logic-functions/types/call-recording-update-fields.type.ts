@@ -4,6 +4,7 @@ import { type CallRecordingMediaFile } from 'src/logic-functions/types/call-reco
 import { type CallRecordingSummary } from 'src/logic-functions/types/call-recording-summary.type';
 
 export type CallRecordingUpdateFields = Partial<{
+  applicationId: string;
   // null clears a previously synced title when the calendar title disappears.
   title: string | null;
   status: CallRecordingStatus;

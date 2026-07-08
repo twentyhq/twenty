@@ -5,14 +5,17 @@ import {
 } from 'twenty-sdk/define';
 
 import { START_POST_INSTALL_BACKFILLS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/start-post-install-backfills-logic-function-universal-identifier';
+import { requestCallRecordingApplicationIdsBackfill } from 'src/logic-functions/data/request-call-recording-application-ids-backfill.util';
 import { requestCallRecordingSummariesBackfill } from 'src/logic-functions/data/request-call-recording-summaries-backfill.util';
 import { requestUpcomingCalendarEventsReconciliation } from 'src/logic-functions/data/request-upcoming-calendar-events-reconciliation.util';
 
-// An app is allowed a single post-install hook, so the two backfills share it:
-// a fresh install seeds the scheduling window, an upgrade relies on the scheduled sweep and backfills summaries.
+// An app is allowed a single post-install hook, so the backfills share it:
+// a fresh install seeds the scheduling window, an upgrade relies on the scheduled sweep
+// and backfills summaries and applicationId provenance on existing recordings.
 type StartPostInstallBackfillsResult = {
   calendarEventSweepOutcome: 'sweep-requested' | 'skipped-upgrade';
   summaryBackfillOutcome: 'skipped-initial-install' | 'backfill-requested';
+  applicationIdBackfillOutcome: 'skipped-initial-install' | 'backfill-requested';
 };
 
 export const startPostInstallBackfillsHandler = async ({
@@ -28,18 +31,30 @@ export const startPostInstallBackfillsHandler = async ({
     return {
       calendarEventSweepOutcome: 'sweep-requested',
       summaryBackfillOutcome: 'skipped-initial-install',
+      applicationIdBackfillOutcome: 'skipped-initial-install',
     };
   }
 
+  const failedKickoffs: string[] = [];
+
+  if (!(await requestCallRecordingApplicationIdsBackfill())) {
+    failedKickoffs.push('call recording applicationId backfill');
+  }
+
   if (!(await requestCallRecordingSummariesBackfill())) {
+    failedKickoffs.push('call recording summary backfill');
+  }
+
+  if (failedKickoffs.length > 0) {
     throw new Error(
-      '[call-recorder] Failed to start post-install backfills: call recording summary backfill',
+      `[call-recorder] Failed to start post-install backfills: ${failedKickoffs.join(', ')}`,
     );
   }
 
   return {
     calendarEventSweepOutcome: 'skipped-upgrade',
     summaryBackfillOutcome: 'backfill-requested',
+    applicationIdBackfillOutcome: 'backfill-requested',
   };
 };
 

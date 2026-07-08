@@ -1,4 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { isDefined } from 'src/utils/is-defined';
 
 export type CallRecordingWriteFields = {
@@ -75,7 +76,13 @@ export const upsertCallRecording = async (
   try {
     await client.mutation({
       createCallRecording: {
-        __args: { data: { id, ...createFields } },
+        __args: {
+          data: {
+            id,
+            applicationId: APPLICATION_UNIVERSAL_IDENTIFIER,
+            ...createFields,
+          },
+        },
         id: true,
       },
     });

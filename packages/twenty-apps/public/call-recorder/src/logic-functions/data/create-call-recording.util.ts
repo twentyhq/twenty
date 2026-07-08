@@ -1,6 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/application-universal-identifier';
 import { type CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { type CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 
@@ -24,7 +25,7 @@ export const createCallRecording = async (
   const mutationResult = await client.mutation({
     createCallRecording: {
       __args: {
-        data: { id, ...data },
+        data: { id, applicationId: APPLICATION_UNIVERSAL_IDENTIFIER, ...data },
       },
       id: true,
     },

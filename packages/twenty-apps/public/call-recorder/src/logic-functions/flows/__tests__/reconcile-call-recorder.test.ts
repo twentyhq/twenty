@@ -1,6 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/application-universal-identifier';
 import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/compute-call-recording-id-for-meeting.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 
@@ -252,6 +253,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     expect(client.callRecordings).toEqual([
       {
         id: buildCustomerSyncCallRecordingId(),
+        applicationId: APPLICATION_UNIVERSAL_IDENTIFIER,
         title: 'Customer Sync',
         status: 'SCHEDULED',
         recordingRequestStatus: 'REQUESTED',
