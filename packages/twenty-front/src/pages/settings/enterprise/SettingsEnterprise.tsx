@@ -563,7 +563,7 @@ export const SettingsEnterprise = ({
     <Section>
       <H2Title
         title={t`Your enterprise key`}
-        description={t`Your enterprise key is safely stored on this server, so you do not need to re-enter it here. Make sure you keep a copy of it somewhere safe: you will need the same key to activate a development instance or to move your license to a replacement server. If you lose it, contact support to recover it.`}
+        description={t`Your enterprise key is safely stored on this server. Make sure you keep a copy of it somewhere safe: you need the same key to activate a development instance or to move your license to a replacement server. If you lose it, contact support to recover it.`}
       />
     </Section>
   );
@@ -575,7 +575,7 @@ export const SettingsEnterprise = ({
         description={
           instanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT
             ? t`This server is registered as a development instance and is not billed additionally. A subscription can have a single development instance in addition to its production one. Switching it back to a production instance will make its seats count toward billing.`
-            : t`One enterprise key powers all of your instances. To run a staging or test environment, install Twenty on a second server, activate it with this same enterprise key, then register that server as a development instance. Development instances unlock enterprise features without extra billing and do not count toward your production seats. Each subscription can have one development instance alongside its production one, as long as the production instance stays active.`
+            : t`One subscription provides one enterprise key powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same enterprise key, then register that server as a development instance. Development instances unlock enterprise features without extra billing and do not count toward your production seats.`
         }
       />
       {instanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT ? (
