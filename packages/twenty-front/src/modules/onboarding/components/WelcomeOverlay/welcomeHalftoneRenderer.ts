@@ -91,6 +91,7 @@ export const createWelcomeHalftoneRenderer = (
 
   const build = () => {
     context.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    context.lineCap = 'round';
     halftoneSize = Math.max(width * 1.05, height * 1.3);
     const scale = halftoneSize / VIEWBOX_WIDTH;
     centerX = width / 2;
@@ -175,9 +176,10 @@ export const createWelcomeHalftoneRenderer = (
     const isLeaving = leaveTimeSeconds !== null;
 
     context.clearRect(0, 0, width, height);
-    context.lineCap = 'round';
 
     const sweepPosition = ((elapsedSeconds * 0.5) % 1.3) / 1.3;
+    const sweepActive = !reducedMotion && !isLeaving;
+    const spanInverse = 1 / (width + height);
     let currentStroke = '';
 
     for (const particle of particles) {
@@ -185,7 +187,8 @@ export const createWelcomeHalftoneRenderer = (
       let y: number;
       let alpha: number;
       let length = particle.length;
-      let angle = 0;
+      let directionalX = 1;
+      let directionalY = 0;
 
       if (reducedMotion) {
         x = particle.targetX;
@@ -207,18 +210,16 @@ export const createWelcomeHalftoneRenderer = (
         y = particle.leaveY + particle.directionY * push;
         alpha = particle.leaveAlpha * (1 - easeOut(clamp01(burst / 0.85)));
         length = particle.length + push * 0.12 * burst;
-        angle = Math.atan2(particle.directionY, particle.directionX);
+        directionalX = particle.directionX;
+        directionalY = particle.directionY;
       }
 
       if (alpha <= 0.01) {
         continue;
       }
 
-      const projection = (x + y) / (width + height);
       const isInSweep =
-        !reducedMotion &&
-        !isLeaving &&
-        Math.abs(projection - sweepPosition) < 0.028;
+        sweepActive && Math.abs((x + y) * spanInverse - sweepPosition) < 0.028;
       const stroke = isInSweep ? highlightColor : baseColor;
       if (stroke !== currentStroke) {
         context.strokeStyle = stroke;
@@ -228,15 +229,10 @@ export const createWelcomeHalftoneRenderer = (
       context.globalAlpha = alpha;
       context.lineWidth = particle.strokeWidth;
       context.beginPath();
-      if (angle === 0) {
-        context.moveTo(x - length / 2, y);
-        context.lineTo(x + length / 2, y);
-      } else {
-        const halfX = (Math.cos(angle) * length) / 2;
-        const halfY = (Math.sin(angle) * length) / 2;
-        context.moveTo(x - halfX, y - halfY);
-        context.lineTo(x + halfX, y + halfY);
-      }
+      const halfX = (directionalX * length) / 2;
+      const halfY = (directionalY * length) / 2;
+      context.moveTo(x - halfX, y - halfY);
+      context.lineTo(x + halfX, y + halfY);
       context.stroke();
     }
 

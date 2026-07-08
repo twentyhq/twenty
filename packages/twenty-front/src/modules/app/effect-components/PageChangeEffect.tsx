@@ -44,6 +44,12 @@ import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffect
 import { getPageLayoutIdForLocation } from '~/modules/app/utils/getPageLayoutIdForLocation';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
+const ONBOARDING_OR_AUTH_NAVIGATE_PATHS = [
+  ...ONBOARDING_PATHS,
+  ...ONGOING_USER_CREATION_PATHS,
+  AppPath.ResetPassword,
+];
+
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
 export const PageChangeEffect = () => {
@@ -163,11 +169,10 @@ export const PageChangeEffect = () => {
       const consumedReturnToPath =
         getReturnToPath() === pageChangeEffectNavigateLocation;
 
-      const isNavigatingToOnboardingOrAuthPath = [
-        ...ONBOARDING_PATHS,
-        ...ONGOING_USER_CREATION_PATHS,
-        AppPath.ResetPassword,
-      ].some((appPath) => pageChangeEffectNavigateLocation === appPath);
+      const isNavigatingToOnboardingOrAuthPath =
+        ONBOARDING_OR_AUTH_NAVIGATE_PATHS.some(
+          (appPath) => pageChangeEffectNavigateLocation === appPath,
+        );
 
       if (
         shouldShowWelcomeAnimationOnNavigate({
