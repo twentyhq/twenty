@@ -26,9 +26,7 @@ export class MarketplacePublicResolver {
     @Args('isFeatured', { type: () => Boolean, defaultValue: true })
     isFeatured: boolean,
   ): Promise<MarketplaceAppDTO[]> {
-    const apps = await this.marketplaceQueryService.findManyMarketplaceApps();
-
-    return apps.filter((app) => app.isFeatured === isFeatured);
+    return this.marketplaceQueryService.findManyMarketplaceApps(isFeatured);
   }
 
   @Query(() => MarketplaceAppDetailDTO, { name: 'publicMarketplaceAppDetail' })

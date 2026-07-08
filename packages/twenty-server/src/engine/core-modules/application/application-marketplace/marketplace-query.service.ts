@@ -33,7 +33,9 @@ export class MarketplaceQueryService {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  async findManyMarketplaceApps(): Promise<MarketplaceAppDTO[]> {
+  async findManyMarketplaceApps(
+    isFeatured?: boolean,
+  ): Promise<MarketplaceAppDTO[]> {
     const registrations =
       await this.applicationRegistrationService.findManyListedCatalogCards();
 
@@ -60,6 +62,10 @@ export class MarketplaceQueryService {
 
     return registrations
       .filter((registration) => configuredStatuses.get(registration.id) ?? true)
+      .filter(
+        (registration) =>
+          isFeatured === undefined || registration.isFeatured === isFeatured,
+      )
       .map((registration) => this.toMarketplaceAppDTO(registration));
   }
 
