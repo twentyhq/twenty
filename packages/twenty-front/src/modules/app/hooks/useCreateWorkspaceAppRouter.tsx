@@ -99,12 +99,6 @@ const PaymentSuccess = lazy(() =>
   })),
 );
 
-const BookCallDecision = lazy(() =>
-  import('~/pages/onboarding/BookCallDecision').then((module) => ({
-    default: module.BookCallDecision,
-  })),
-);
-
 const BookCall = lazy(() =>
   import('~/pages/onboarding/BookCall').then((module) => ({
     default: module.BookCall,
@@ -216,14 +210,6 @@ const createWorkspaceAppRouter = (
             element={
               <LazyRoute fallback={null}>
                 <PaymentSuccess />
-              </LazyRoute>
-            }
-          />
-          <Route
-            path={AppPath.BookCallDecision}
-            element={
-              <LazyRoute fallback={null}>
-                <BookCallDecision />
               </LazyRoute>
             }
           />

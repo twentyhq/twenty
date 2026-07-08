@@ -44,7 +44,7 @@ const StyledSidePanel = styled.aside`
   height: 100%;
   overflow: hidden;
   position: relative;
-  width: 100%;
+  width: var(${SIDE_PANEL_WIDTH_VAR});
 `;
 
 const StyledModalContainer = styled.div`

@@ -20,6 +20,7 @@ export type HtmlCommonProperties = {
   'aria-label'?: string;
   'aria-hidden'?: boolean;
   'data-testid'?: string;
+  draggable?: string;
 };
 export type HtmlCommonEvents = {
   click(event: RemoteEvent<SerializedEventData>): void;
@@ -121,6 +122,7 @@ const HTML_COMMON_PROPERTIES_CONFIG = {
   'aria-label': { type: String },
   'aria-hidden': { type: Boolean },
   'data-testid': { type: String },
+  draggable: { type: String },
 };
 export const HtmlDivElement = createRemoteElement<
   HtmlCommonProperties,

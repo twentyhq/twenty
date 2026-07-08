@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type QueryRunner, Repository } from 'typeorm';
@@ -26,7 +25,6 @@ export enum OnboardingStepKeys {
   ONBOARDING_CONNECT_ACCOUNT_PENDING = 'ONBOARDING_CONNECT_ACCOUNT_PENDING',
   ONBOARDING_INVITE_TEAM_PENDING = 'ONBOARDING_INVITE_TEAM_PENDING',
   ONBOARDING_CREATE_PROFILE_PENDING = 'ONBOARDING_CREATE_PROFILE_PENDING',
-  ONBOARDING_BOOK_ONBOARDING_PENDING = 'ONBOARDING_BOOK_ONBOARDING_PENDING',
   ONBOARDING_INSTALL_APPS_PENDING = 'ONBOARDING_INSTALL_APPS_PENDING',
 }
 
@@ -34,7 +32,6 @@ export type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING]: boolean;
-  [OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING]: boolean;
 };
 
@@ -103,10 +100,6 @@ export class OnboardingService {
     const isInviteTeamPending =
       userVars.get(OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING) === true;
 
-    const isBookOnboardingPending =
-      userVars.get(OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING) ===
-      true;
-
     if (isConnectAccountPending) {
       return OnboardingStatus.SYNC_EMAIL;
     }
@@ -129,26 +122,6 @@ export class OnboardingService {
       )
     ) {
       return OnboardingStatus.PLAN_REQUIRED;
-    }
-
-    if (isBookOnboardingPending) {
-      const calendarBookingPageId = this.twentyConfigService.get(
-        'CALENDAR_BOOKING_PAGE_ID',
-      );
-      const isBookingConfigured =
-        isDefined(calendarBookingPageId) &&
-        isNonEmptyString(calendarBookingPageId);
-
-      if (!isBookingConfigured) {
-        await this.userVarsService.delete({
-          workspaceId: workspace.id,
-          key: OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING,
-        });
-
-        return OnboardingStatus.COMPLETED;
-      }
-
-      return OnboardingStatus.BOOK_ONBOARDING;
     }
 
     return OnboardingStatus.COMPLETED;
@@ -460,37 +433,6 @@ export class OnboardingService {
       userId,
       workspaceId,
       value: false,
-    });
-  }
-
-  async setOnboardingBookOnboardingPending({
-    workspaceId,
-    value,
-  }: {
-    workspaceId: string;
-    value: boolean;
-  }) {
-    const calendarBookingPageId = this.twentyConfigService.get(
-      'CALENDAR_BOOKING_PAGE_ID',
-    );
-
-    const isBookingConfigured =
-      isDefined(calendarBookingPageId) &&
-      isNonEmptyString(calendarBookingPageId);
-
-    if (!value || !isBookingConfigured) {
-      await this.userVarsService.delete({
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING,
-      });
-
-      return;
-    }
-
-    await this.userVarsService.set({
-      workspaceId,
-      key: OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING,
-      value: true,
     });
   }
 }

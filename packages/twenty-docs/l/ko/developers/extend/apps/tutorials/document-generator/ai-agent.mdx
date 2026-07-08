@@ -1,0 +1,76 @@
+---
+title: 5. AI 에이전트
+icon: robot
+description: 에이전트가 귀하의 도구를 사용해 채팅에서 문서를 생성하도록 하세요.
+---
+
+`generate-document`가 **tool**로 노출되어 있기 때문에, AI 에이전트가 이를 호출할 수 있습니다.
+사용자가 그냥 \*"generate a proposal for
+Jeffery Griffin"\*이라고 말하기만 하면 되도록 에이전트와 스킬을 추가해 봅시다.
+
+## 스킬
+
+[skill](/l/ko/developers/extend/apps/logic/skills-and-agents)은(는) 재사용 가능한 지침으로,
+에이전트에 연결하는 지식입니다. 우리 스킬은 모델에게 그 도구를 어떻게 사용하는지 알려 줍니다.
+
+```ts filename="src/skills/document-drafting.skill.ts"
+import { defineSkill } from 'twenty-sdk/define';
+
+export default defineSkill({
+  universalIdentifier: DOCUMENT_SKILL_UNIVERSAL_IDENTIFIER,
+  name: 'document-drafting',
+  label: 'Document drafting',
+  icon: 'IconFileText',
+  content: [
+    'To generate a document, call the `generate-document` tool with:',
+    '- `templateId`: the id of the document template to use.',
+    '- `recordId`: the id of the Person or Company the document is for.',
+    '',
+    'If the user names a template or person instead of an id, find the record first,',
+    'then pass its id. Make sure the template target matches the record type.',
+  ].join('\n'),
+});
+```
+
+## 에이전트
+
+[agent](/l/ko/developers/extend/apps/logic/skills-and-agents)는 프롬프트와 모델을
+연결합니다. 빌드 경고를 피하려면 `responseFormat`을 명시적으로 설정하세요.
+
+```ts filename="src/agents/document-assistant.agent.ts"
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: DOCUMENT_AGENT_UNIVERSAL_IDENTIFIER,
+  name: 'document-assistant',
+  label: 'Document Assistant',
+  description: 'Generates documents from your templates and CRM records.',
+  icon: 'IconFileText',
+  responseFormat: { type: 'text' },
+  prompt: [
+    'You are the Document Assistant for a CRM.',
+    'You help users generate personalized documents from reusable templates',
+    'and the data already in their CRM. Use the generate-document tool, and',
+    'always confirm what you created.',
+  ].join(' '),
+});
+```
+
+<Note>
+에이전트는 자신의 역할이 허용할 때만 그 도구를 호출할 수 있습니다. 우리는 이미 [2장](/l/ko/developers/extend/apps/tutorials/document-generator/generating-documents#grant-it-access)에서 앱의 역할에 `canAccessAllTools: true` 및 `canBeAssignedToAgents: true`를 설정했습니다.
+</Note>
+
+## 사용해 보기
+
+**Document Assistant**와 채팅을 열고, CRM에 있는 사람을 위한 문서를 작성해 달라고 요청하세요. 에이전트는 레코드를 찾고 `generate-document`를 호출한 다음,
+생성한 문서를 다시 알려 줍니다. 이 문서는 이제 **Documents** 보기에도 표시되며,
+명령 메뉴와 워크플로 경로를 사용할 때와 정확히 동일하게 동작합니다.
+
+로직을 도구로 노출하면 이런 이점이 있습니다: **하나의 함수, 여러 개의 진입점** —
+명령 메뉴, HTTP, 워크플로 단계, 그리고 이제는 자연어.
+
+**이 단계를 마치면:** 앱은 기능이 완전해지고 실제로 유용해집니다. 이제 배포할 시간입니다.
+
+<Card title="다음: 게시 →" icon="rocket" href="/l/ko/developers/extend/apps/tutorials/document-generator/publishing">
+  마켓플레이스 메타데이터를 추가하고 게시하세요.
+</Card>
