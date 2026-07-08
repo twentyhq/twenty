@@ -506,18 +506,20 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     // the transpiler output) plus the engine-owned reserved system fields, whose
     // deterministic identifiers we re-derive here (searchVector is never shown).
     // TODO: remove once default view fields move to the metadata side effect engine.
-    const defaultFlatFieldMetadatasForViewFields: UniversalFlatFieldMetadata[] = [
-      ...flatFieldMetadataToCreateOnObject,
-      ...Object.values(
-        buildReservedSystemFlatFieldMetadatasForCustomObject({
-          flatObjectMetadata: {
-            applicationUniversalIdentifier:
-              resolvedOwnerFlatApplication.universalIdentifier,
-            universalIdentifier: flatObjectMetadataToCreate.universalIdentifier,
-          },
-        }),
-      ),
-    ];
+    const defaultFlatFieldMetadatasForViewFields: UniversalFlatFieldMetadata[] =
+      [
+        ...flatFieldMetadataToCreateOnObject,
+        ...Object.values(
+          buildReservedSystemFlatFieldMetadatasForCustomObject({
+            flatObjectMetadata: {
+              applicationUniversalIdentifier:
+                resolvedOwnerFlatApplication.universalIdentifier,
+              universalIdentifier:
+                flatObjectMetadataToCreate.universalIdentifier,
+            },
+          }),
+        ),
+      ];
 
     const flatDefaultViewToCreate = this.computeFlatViewToCreate({
       objectMetadata: flatObjectMetadataToCreate,

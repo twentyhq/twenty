@@ -141,7 +141,9 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
         index: { flatEntityToDelete: indexToDelete },
       }),
       ...(hasSearchFieldMetadataToDelete && {
-        searchFieldMetadata: { flatEntityToDelete: searchFieldMetadataToDelete },
+        searchFieldMetadata: {
+          flatEntityToDelete: searchFieldMetadataToDelete,
+        },
       }),
     };
 
