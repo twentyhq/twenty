@@ -4,6 +4,7 @@ import {
   isObject,
   isString,
 } from '@sniptt/guards';
+import isEqual from 'lodash.isequal';
 import { Temporal } from 'temporal-polyfill';
 import {
   type StepFilter,
@@ -161,33 +162,6 @@ function contains(leftValue: unknown, rightValue: unknown): boolean {
   return String(leftValue).includes(String(rightValue));
 }
 
-function equals(leftValue: unknown, rightValue: unknown): boolean {
-  const parsedRightValue = isString(rightValue)
-    ? tryParseJson(rightValue)
-    : rightValue;
-
-  if (Array.isArray(leftValue) && Array.isArray(parsedRightValue)) {
-    return (
-      leftValue.length === parsedRightValue.length &&
-      leftValue.every((item) => parsedRightValue.includes(item))
-    );
-  }
-
-  if (Array.isArray(leftValue) || Array.isArray(parsedRightValue)) {
-    return false;
-  }
-
-  return String(leftValue) === String(parsedRightValue);
-}
-
-function tryParseJson(value: string): unknown {
-  try {
-    return JSON.parse(value);
-  } catch {
-    return value;
-  }
-}
-
 function evaluateTextAndArrayFilter(
   filter: ResolvedFilter,
   filterType: string,
@@ -214,9 +188,9 @@ function evaluateTextAndArrayFilter(
           isNotEmptyTextOrArray(filter.leftOperand))
       );
     case ViewFilterOperand.IS:
-      return equals(filter.leftOperand, filter.rightOperand);
+      return isEqual(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_NOT:
-      return !equals(filter.leftOperand, filter.rightOperand);
+      return !isEqual(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(filter.leftOperand);
 

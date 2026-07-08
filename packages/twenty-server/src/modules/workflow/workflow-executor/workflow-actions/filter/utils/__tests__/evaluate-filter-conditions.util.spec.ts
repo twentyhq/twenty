@@ -852,11 +852,11 @@ describe('evaluateFilterConditions', () => {
         );
       });
 
-      it('should match legacy Is operand on arrays by set equality', () => {
+      it('should match legacy Is operand on arrays by equality', () => {
         const matching = createFilter(
           ViewFilterOperand.IS,
           ['apple', 'banana'],
-          ['banana', 'apple'],
+          ['apple', 'banana'],
           'MULTI_SELECT',
         );
         const subset = createFilter(
