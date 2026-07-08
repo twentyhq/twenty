@@ -2,6 +2,7 @@ import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPla
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
@@ -11,6 +12,7 @@ import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { FindManyApplicationsDocument } from '~/generated-metadata/graphql';
 import { useMarketplaceApps } from '~/modules/marketplace/hooks/useMarketplaceApps';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
 
@@ -54,6 +56,15 @@ export const SettingsApplicationsAvailableTab = () => {
   const [showFeaturedOnly, setShowFeaturedOnly] = useState(true);
 
   const { data: marketplaceApps, isLoading } = useMarketplaceApps();
+
+  const { data: applicationsData } = useQuery(FindManyApplicationsDocument);
+
+  const installedApplicationIdByUniversalIdentifier = new Map(
+    (applicationsData?.findManyApplications ?? []).map((application) => [
+      application.universalIdentifier,
+      application.id,
+    ]),
+  );
 
   const textFilteredApplications = searchTerm
     ? marketplaceApps.filter((application) => {
@@ -143,6 +154,9 @@ export const SettingsApplicationsAvailableTab = () => {
                 <SettingsAvailableApplicationCard
                   key={application.id}
                   application={application}
+                  installedApplicationId={installedApplicationIdByUniversalIdentifier.get(
+                    application.id,
+                  )}
                 />
               ))}
             </StyledCardsGrid>
@@ -159,6 +173,9 @@ export const SettingsApplicationsAvailableTab = () => {
                   <SettingsAvailableApplicationCard
                     key={application.id}
                     application={application}
+                    installedApplicationId={installedApplicationIdByUniversalIdentifier.get(
+                      application.id,
+                    )}
                   />
                 ))}
               </StyledCardsGrid>

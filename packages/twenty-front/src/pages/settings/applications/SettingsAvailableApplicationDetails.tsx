@@ -135,6 +135,14 @@ export const SettingsAvailableApplicationDetails = () => {
     });
   };
 
+  const handleManage = () => {
+    if (isDefined(application)) {
+      navigateSettings(SettingsPath.ApplicationDetail, {
+        applicationId: application.id,
+      });
+    }
+  };
+
   const contentEntries = [
     {
       icon: IconBox,
@@ -245,6 +253,7 @@ export const SettingsAvailableApplicationDetails = () => {
             hasUpdate={hasUpdate}
             onUpgrade={handleUpgrade}
             isUpgrading={isUpgrading}
+            onManage={isAlreadyInstalled ? handleManage : undefined}
           />
         );
       case 'content':

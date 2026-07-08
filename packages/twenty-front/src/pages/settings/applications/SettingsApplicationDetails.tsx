@@ -15,7 +15,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useMutation, useQuery } from '@apollo/client/react';
+import { useApolloClient, useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -34,6 +34,7 @@ import {
 } from 'twenty-ui/icon';
 import {
   ApplicationRegistrationSourceType,
+  FindManyApplicationsDocument,
   FindMarketplaceAppDetailDocument,
   FindMarketplaceAppManifestDocument,
   FindOneApplicationDocument,
@@ -139,10 +140,13 @@ export const SettingsApplicationDetails = () => {
     });
   };
 
-  const [uninstallApplication] = useMutation(UninstallApplicationDocument);
+  const [uninstallApplication] = useMutation(UninstallApplicationDocument, {
+    refetchQueries: [FindManyApplicationsDocument],
+  });
   const [isUninstalling, setIsUninstalling] = useState(false);
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const navigate = useNavigateSettings();
+  const apolloClient = useApolloClient();
 
   const handleUninstall = async () => {
     if (!isDefined(application)) return;
@@ -152,6 +156,10 @@ export const SettingsApplicationDetails = () => {
       await uninstallApplication({
         variables: { universalIdentifier: application.universalIdentifier },
       });
+      // The marketplace detail page resolves installed state through this
+      // root field; evict it so the app no longer reads as installed there
+      apolloClient.cache.evict({ fieldName: 'findOneApplication' });
+      apolloClient.cache.gc();
       enqueueSuccessSnackBar({
         message: t`Application successfully uninstalled.`,
       });

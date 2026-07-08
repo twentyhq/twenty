@@ -4,6 +4,7 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  FindManyApplicationsDocument,
   InstallApplicationDocument,
   type InstallApplicationMutation,
 } from '~/generated-metadata/graphql';
@@ -11,7 +12,9 @@ import {
 export const useInstallMarketplaceApp = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const [isInstalling, setIsInstalling] = useState(false);
-  const [installApplicationMutation] = useMutation(InstallApplicationDocument);
+  const [installApplicationMutation] = useMutation(InstallApplicationDocument, {
+    refetchQueries: [FindManyApplicationsDocument],
+  });
 
   const install = async (variables: {
     universalIdentifier: string;

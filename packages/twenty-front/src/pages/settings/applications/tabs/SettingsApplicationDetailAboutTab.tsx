@@ -5,7 +5,13 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCheck, IconDownload, IconTrash, IconUpload } from 'twenty-ui/icon';
+import {
+  IconCheck,
+  IconDownload,
+  IconSettings,
+  IconTrash,
+  IconUpload,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -39,6 +45,7 @@ type SettingsApplicationDetailAboutTabProps = {
   canBeUninstalled?: boolean;
   onUninstall?: () => void;
   isUninstalling?: boolean;
+  onManage?: () => void;
 };
 
 const StyledContentContainer = styled.div`
@@ -115,6 +122,7 @@ export const SettingsApplicationDetailAboutTab = ({
   canBeUninstalled,
   onUninstall,
   isUninstalling,
+  onManage,
 }: SettingsApplicationDetailAboutTabProps) => {
   const { openModal } = useModal();
 
@@ -169,6 +177,18 @@ export const SettingsApplicationDetailAboutTab = ({
           accent={'danger'}
           onClick={() => openModal(UNINSTALL_APPLICATION_MODAL_ID)}
           disabled={isUninstalling}
+        />
+      );
+    }
+
+    if (isDefined(onManage)) {
+      return (
+        <Button
+          Icon={IconSettings}
+          title={t`Manage app`}
+          variant={'secondary'}
+          accent={'default'}
+          onClick={onManage}
         />
       );
     }
