@@ -1,0 +1,20 @@
+packages/twenty-server/src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service.ts
+  s_5d8cf47020ef69::t_2549f2a286174e 155-157
+  s_5d8cf47020ef69::t_e3d5c4678e55f1 128-130
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3ebfe9815680e93dafd89e81acc05ec93878bac9",
+  "prompts": {},
+  "sessions": {
+    "s_5d8cf47020ef69": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "658ef5fb-4b18-4ed2-b1b9-0ff1c3ad7962",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
