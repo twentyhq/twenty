@@ -56,6 +56,29 @@ const SDK_IMPORT_SPECIFIERS = [
   'twenty-client-sdk/metadata',
 ] as const;
 
+const getAuthHeaders = (
+  componentUrl: string,
+  applicationAccessToken?: string,
+): Record<string, string> | undefined => {
+  if (!isDefined(applicationAccessToken)) {
+    return undefined;
+  }
+
+  const workerLocationUrl = new URL(globalThis.location.href);
+
+  try {
+    const componentSourceUrl = new URL(componentUrl, workerLocationUrl.href);
+
+    if (componentSourceUrl.origin !== workerLocationUrl.origin) {
+      return undefined;
+    }
+  } catch {
+    return undefined;
+  }
+
+  return { Authorization: `Bearer ${applicationAccessToken}` };
+};
+
 // Rewrites bare SDK import specifiers to the blob URLs provided by the host.
 const rewriteSdkImports = (
   source: string,
@@ -110,13 +133,12 @@ const render: WorkerExports['render'] = async (
     });
   }
 
-  const authHeaders = isDefined(renderContext.applicationAccessToken)
-    ? { Authorization: `Bearer ${renderContext.applicationAccessToken}` }
-    : undefined;
-
   const componentSource = await fetchComponentSource(
     renderContext.componentUrl,
-    authHeaders,
+    getAuthHeaders(
+      renderContext.componentUrl,
+      renderContext.applicationAccessToken,
+    ),
   );
 
   const hasSdkImports =

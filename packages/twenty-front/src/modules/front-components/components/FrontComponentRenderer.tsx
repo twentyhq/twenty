@@ -1,3 +1,11 @@
+import { ApolloError } from '@apollo/client/errors';
+import { useQuery } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
+import { useCallback, useContext, useEffect } from 'react';
+import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
+import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme-constants';
+
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
 import { FrontComponentRendererWithSdkClient } from '@/front-components/components/FrontComponentRendererWithSdkClient';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
@@ -6,13 +14,7 @@ import { frontComponentApplicationTokenPairComponentState } from '@/front-compon
 import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { t } from '@lingui/core/macro';
-import { useCallback, useContext, useEffect } from 'react';
-import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
-import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useQuery } from '@apollo/client/react';
 import { FindOneFrontComponentDocument } from '~/generated-metadata/graphql';
 
 type FrontComponentRendererProps = {
@@ -42,7 +44,11 @@ export const FrontComponentRenderer = ({
     });
 
   const handleError = useCallback(
-    (error?: Error) => {
+    (
+      error?: Error,
+      source: 'frontComponentRenderer' | 'metadataQuery' =
+        'frontComponentRenderer',
+    ) => {
       if (!isDefined(error)) {
         return;
       }
@@ -52,8 +58,22 @@ export const FrontComponentRenderer = ({
       enqueueErrorSnackBar({
         message: t`Failed to load front component: ${errorMessage}`,
       });
+
+      if (source === 'metadataQuery' || error instanceof ApolloError) {
+        return;
+      }
+
+      void import('@sentry/react').then(({ captureException, withScope }) => {
+        withScope((scope) => {
+          scope.setTag('feature', 'front-components');
+          scope.setTag('frontComponentId', frontComponentId);
+          scope.setTag('errorSource', source);
+          scope.setTag('browserUserAgent', navigator.userAgent);
+          captureException(error);
+        });
+      });
     },
-    [enqueueErrorSnackBar],
+    [enqueueErrorSnackBar, frontComponentId],
   );
 
   const { data, loading, error } = useQuery(FindOneFrontComponentDocument, {
@@ -62,7 +82,7 @@ export const FrontComponentRenderer = ({
 
   useEffect(() => {
     if (error) {
-      handleError(error);
+      handleError(error, 'metadataQuery');
     }
   }, [error, handleError]);
 
