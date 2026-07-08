@@ -7,7 +7,6 @@ import { v4, v5 } from 'uuid';
 import {
   CAMPAIGN_MESSAGE_DELIVERY_STATUS,
   CAMPAIGN_MESSAGE_ID_NAMESPACE,
-  CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS,
   CAMPAIGN_STATS_REFRESH_DELAY_MS,
   CAMPAIGN_STATUS,
   MATERIALIZE_CAMPAIGN_JOB,
@@ -701,7 +700,7 @@ export class MessageCampaignService {
   }): Promise<void> {
     const acquired = await this.cacheStorageService.acquireLock(
       `campaign-stats-refresh:${workspaceId}:${campaignId}`,
-      CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS,
+      CAMPAIGN_STATS_REFRESH_DELAY_MS,
     );
 
     if (!acquired) {
