@@ -2,7 +2,6 @@ import { useState } from 'react';
 
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
 import { formatEmailRecipient } from '@/activities/emails/recipients/utils/formatEmailRecipient';
-import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { mergeEmailRecipients } from '@/activities/emails/recipients/utils/mergeEmailRecipients';
 import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
 import { toSpliced } from '~/utils/array/toSpliced';
@@ -37,8 +36,6 @@ export const useEmailRecipientsField = ({
     }));
   };
 
-  const clearChipFlash = () => setChipFlash(null);
-
   const addRecipients = (
     addedRecipients: EmailRecipient[],
     replacedIndex: number | null,
@@ -62,32 +59,23 @@ export const useEmailRecipientsField = ({
     }
   };
 
-  const commitInput = () => {
-    const parsedRecipients = parseEmailRecipients(inputValue);
-
-    if (editingIndex !== null) {
-      if (parsedRecipients.length === 0) {
-        onChange(toSpliced(recipients, editingIndex, 1));
-      } else {
-        addRecipients(parsedRecipients, editingIndex);
-      }
-
-      setEditingIndex(null);
-      setInputValue('');
-      return;
+  const commitRecipients = (committedRecipients: EmailRecipient[]) => {
+    if (editingIndex !== null && committedRecipients.length === 0) {
+      onChange(toSpliced(recipients, editingIndex, 1));
+    } else if (committedRecipients.length > 0) {
+      addRecipients(committedRecipients, editingIndex);
     }
 
-    if (parsedRecipients.length > 0) {
-      addRecipients(parsedRecipients, null);
-    }
-
+    setEditingIndex(null);
     setInputValue('');
   };
 
+  const commitInput = () => {
+    commitRecipients(parseEmailRecipients(inputValue));
+  };
+
   const addRecipient = (recipient: EmailRecipient) => {
-    addRecipients([recipient], editingIndex);
-    setEditingIndex(null);
-    setInputValue('');
+    commitRecipients([recipient]);
   };
 
   const beginEditingChip = (chipIndex: number) => {
@@ -124,10 +112,6 @@ export const useEmailRecipientsField = ({
     );
   };
 
-  const selectChip = (chipIndex: number) => {
-    setSelectedChipIndex(chipIndex);
-  };
-
   const clearChipSelection = () => {
     setSelectedChipIndex(null);
   };
@@ -159,9 +143,6 @@ export const useEmailRecipientsField = ({
     return boundedIndex;
   };
 
-  const getChipKey = (recipient: EmailRecipient) =>
-    getEmailRecipientKey(recipient.address);
-
   return {
     inputValue,
     setInputValue,
@@ -169,7 +150,6 @@ export const useEmailRecipientsField = ({
     isEditing,
     selectedChipIndex,
     chipFlash,
-    clearChipFlash,
     commitInput,
     addRecipient,
     addRecipients,
@@ -177,9 +157,7 @@ export const useEmailRecipientsField = ({
     cancelEditing,
     removeRecipientAtIndex,
     removeRecipientWithKeyboard,
-    selectChip,
     clearChipSelection,
     moveChipSelection,
-    getChipKey,
   };
 };

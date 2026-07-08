@@ -53,13 +53,10 @@ export const useReplyContext = (
     }
 
     const senderHandle = lastSentMessage.sender?.handle ?? '';
-    const senderDisplayName = lastSentMessage.sender?.displayName;
     const replyTo = isNonEmptyString(senderHandle)
       ? formatEmailRecipient({
           address: senderHandle,
-          displayName: isNonEmptyString(senderDisplayName)
-            ? senderDisplayName
-            : undefined,
+          displayName: lastSentMessage.sender?.displayName,
         })
       : '';
 

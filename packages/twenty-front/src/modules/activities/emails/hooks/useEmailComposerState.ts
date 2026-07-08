@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { type EmailAttachment } from 'twenty-shared/types';
 
@@ -62,10 +62,13 @@ export const useEmailComposerState = ({
 
   const exceedsRecipientLimit = recipientCount > MAX_EMAIL_RECIPIENTS;
 
-  const hasInvalidRecipients =
-    hasInvalidRecipient(to) ||
-    hasInvalidRecipient(cc) ||
-    hasInvalidRecipient(bcc);
+  const hasInvalidRecipients = useMemo(
+    () =>
+      hasInvalidRecipient(to) ||
+      hasInvalidRecipient(cc) ||
+      hasInvalidRecipient(bcc),
+    [to, cc, bcc],
+  );
 
   const canSend =
     to.length > 0 &&
@@ -75,14 +78,7 @@ export const useEmailComposerState = ({
     !hasInvalidRecipients;
 
   const handleSend = useCallback(async () => {
-    if (
-      to.length === 0 ||
-      !connectedAccountId ||
-      exceedsRecipientLimit ||
-      hasInvalidRecipient(to) ||
-      hasInvalidRecipient(cc) ||
-      hasInvalidRecipient(bcc)
-    ) {
+    if (!canSend) {
       return;
     }
 
@@ -105,6 +101,7 @@ export const useEmailComposerState = ({
       onSent?.(messageThreadId);
     }
   }, [
+    canSend,
     connectedAccountId,
     to,
     cc,
@@ -116,7 +113,6 @@ export const useEmailComposerState = ({
     files,
     sendEmail,
     onSent,
-    exceedsRecipientLimit,
   ]);
 
   return {

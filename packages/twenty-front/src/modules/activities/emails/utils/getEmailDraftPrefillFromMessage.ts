@@ -15,9 +15,7 @@ export const getEmailDraftPrefillFromMessage = (
       .map((participant) =>
         formatEmailRecipient({
           address: participant.handle,
-          displayName: isNonEmptyString(participant.displayName)
-            ? participant.displayName
-            : undefined,
+          displayName: participant.displayName,
         }),
       )
       .join(', ');

@@ -1,17 +1,20 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useStore } from 'jotai';
 import {
   type ClipboardEvent,
   type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
-  useContext,
   useId,
+  useMemo,
   useRef,
+  useState,
 } from 'react';
 import { flushSync } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { EmailRecipientsFieldChip } from '@/activities/emails/recipients/components/EmailRecipientsFieldChip';
 import { EmailRecipientSuggestionsDropdownContent } from '@/activities/emails/recipients/components/EmailRecipientSuggestionsDropdownContent';
@@ -23,6 +26,7 @@ import {
 } from '@/activities/emails/recipients/hooks/useEmailRecipientSuggestions';
 import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
+import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
 import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
@@ -37,7 +41,11 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+
+const SUGGESTIONS_SEARCH_DEBOUNCE_MS = 300;
 
 const StyledRowContainer = styled.div`
   align-content: flex-start;
@@ -75,9 +83,6 @@ const StyledInput = styled.input`
   }
 `;
 
-const parseSpacingValueAsNumber = (value: string) =>
-  Number(value.replace('px', ''));
-
 type EmailRecipientsFieldInputProps = {
   label: string;
   placeholder: string;
@@ -97,7 +102,6 @@ export const EmailRecipientsFieldInput = ({
   excludedSuggestionKeys = [],
   contextRecord,
 }: EmailRecipientsFieldInputProps) => {
-  const { theme } = useContext(ThemeContext);
   const instanceId = useId();
   const focusId = `email-recipients-field-${instanceId}`;
   const suggestionsDropdownId = `${focusId}-suggestions`;
@@ -111,12 +115,14 @@ export const EmailRecipientsFieldInput = ({
   const { closeDropdown } = useCloseDropdown();
   const { resetSelectedItem } = useSelectableList(suggestionsDropdownId);
 
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
+  const store = useStore();
+  const selectedItemIdAtom = useAtomComponentStateCallbackState(
+    selectedItemIdComponentState,
     suggestionsDropdownId,
   );
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
+
+  const isDropdownOpen = useAtomComponentStateValue(
+    isDropdownOpenComponentState,
     suggestionsDropdownId,
   );
 
@@ -127,7 +133,6 @@ export const EmailRecipientsFieldInput = ({
     isEditing,
     selectedChipIndex,
     chipFlash,
-    clearChipFlash,
     commitInput,
     addRecipient,
     addRecipients,
@@ -137,18 +142,40 @@ export const EmailRecipientsFieldInput = ({
     removeRecipientWithKeyboard,
     clearChipSelection,
     moveChipSelection,
-    getChipKey,
   } = useEmailRecipientsField({ recipients, onChange });
+
+  const [suggestionsSearchInput, setSuggestionsSearchInput] = useState('');
+  const debouncedSetSuggestionsSearchInput = useDebouncedCallback(
+    setSuggestionsSearchInput,
+    SUGGESTIONS_SEARCH_DEBOUNCE_MS,
+  );
+
+  const resetSuggestionsSearchInput = () => {
+    debouncedSetSuggestionsSearchInput.cancel();
+    setSuggestionsSearchInput('');
+  };
 
   const { resolutionByRecipientKey } = useEmailRecipientsResolution({
     recipients,
   });
 
   const { suggestions } = useEmailRecipientSuggestions({
-    searchInput: isEditing ? '' : inputValue,
+    searchInput: isEditing ? '' : suggestionsSearchInput,
     excludedRecipientKeys: excludedSuggestionKeys,
     contextRecord,
   });
+
+  const invalidRecipientKeys = useMemo(
+    () =>
+      new Set(
+        recipients
+          .filter(
+            (recipient) => !isValidEmailRecipientAddress(recipient.address),
+          )
+          .map((recipient) => getEmailRecipientKey(recipient.address)),
+      ),
+    [recipients],
+  );
 
   const openSuggestions = () => {
     if (!isDropdownOpen) {
@@ -205,11 +232,16 @@ export const EmailRecipientsFieldInput = ({
     }
   };
 
+  const commitInputAndCloseSuggestions = () => {
+    commitInput();
+    resetSuggestionsSearchInput();
+    closeSuggestions();
+  };
+
   const handleInputBlur = () => {
     removeFocusItemFromFocusStackById({ focusId });
-    commitInput();
+    commitInputAndCloseSuggestions();
     clearChipSelection();
-    closeSuggestions();
   };
 
   const handleInputChange = (value: string) => {
@@ -220,20 +252,19 @@ export const EmailRecipientsFieldInput = ({
       return;
     }
 
+    debouncedSetSuggestionsSearchInput(value);
+
     if (value.trim().length > 0) {
       openSuggestions();
     } else {
+      resetSuggestionsSearchInput();
       closeSuggestions();
     }
   };
 
-  const commitInputAndCloseSuggestions = () => {
-    commitInput();
-    closeSuggestions();
-  };
-
   const handlePickSuggestion = (suggestion: EmailRecipientSuggestion) => {
     addRecipient(suggestion.recipient);
+    resetSuggestionsSearchInput();
     closeSuggestions();
     focusInput();
   };
@@ -263,6 +294,7 @@ export const EmailRecipientsFieldInput = ({
   const handleChipEdit = (chipIndex: number) => {
     flushSync(() => {
       beginEditingChip(chipIndex);
+      resetSuggestionsSearchInput();
       closeSuggestions();
     });
 
@@ -284,15 +316,21 @@ export const EmailRecipientsFieldInput = ({
     focusInput();
   };
 
+  useHotkeysOnFocusedElement({
+    keys: ['ctrl+Enter,meta+Enter'],
+    callback: () => {
+      if (inputValue.length > 0) {
+        commitInputAndCloseSuggestions();
+      } else {
+        onSubmit?.();
+      }
+    },
+    focusId,
+    dependencies: [inputValue, commitInputAndCloseSuggestions, onSubmit],
+  });
+
   const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.ctrlKey || event.metaKey) {
-      if (event.key === 'Enter') {
-        if (inputValue.length > 0) {
-          commitInputAndCloseSuggestions();
-        } else {
-          onSubmit?.();
-        }
-      }
       return;
     }
 
@@ -306,6 +344,7 @@ export const EmailRecipientsFieldInput = ({
         event.preventDefault();
 
         if (!isEditing && isDropdownOpen && suggestions.length > 0) {
+          const selectedItemId = store.get(selectedItemIdAtom);
           const selectedSuggestion =
             suggestions.find(
               (suggestion) => suggestion.suggestionId === selectedItemId,
@@ -425,9 +464,6 @@ export const EmailRecipientsFieldInput = ({
       role="combobox"
       aria-expanded={isDropdownOpen}
       aria-label={label}
-      aria-activedescendant={
-        selectedChipIndex === null ? undefined : getChipId(selectedChipIndex)
-      }
       placeholder={
         recipients.length === 0 && !isEditing ? placeholder : undefined
       }
@@ -446,7 +482,7 @@ export const EmailRecipientsFieldInput = ({
       return recipientsInput;
     }
 
-    const chipKey = getChipKey(recipient);
+    const chipKey = getEmailRecipientKey(recipient.address);
     const flashNonce =
       chipFlash !== null && chipFlash.chipKey === chipKey
         ? chipFlash.nonce
@@ -462,9 +498,9 @@ export const EmailRecipientsFieldInput = ({
           dropdownId={`${focusId}-chip-menu-${chipKey}`}
           recipient={recipient}
           resolution={resolutionByRecipientKey.get(chipKey)}
+          isInvalid={invalidRecipientKeys.has(chipKey)}
           selected={chipIndex === selectedChipIndex}
           isFlashing={flashNonce !== null}
-          onFlashEnd={clearChipFlash}
           onEdit={() => handleChipEdit(chipIndex)}
           onRemove={() => handleChipRemove(chipIndex)}
         />
@@ -482,16 +518,12 @@ export const EmailRecipientsFieldInput = ({
       <Dropdown
         dropdownId={suggestionsDropdownId}
         dropdownPlacement="bottom-start"
-        dropdownOffset={{ y: parseSpacingValueAsNumber(theme.spacing[1]) }}
+        dropdownOffset={{ y: 4 }}
         disableClickForClickableComponent
         clickableComponentWidth="100%"
         onClose={resetSelectedItem}
         clickableComponent={
-          <StyledRowContainer
-            role="listbox"
-            aria-label={label}
-            onMouseDown={handleRowMouseDown}
-          >
+          <StyledRowContainer onMouseDown={handleRowMouseDown}>
             {rowChildren}
           </StyledRowContainer>
         }

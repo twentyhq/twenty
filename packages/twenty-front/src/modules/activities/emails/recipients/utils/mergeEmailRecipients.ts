@@ -21,7 +21,7 @@ export const mergeEmailRecipients = (
   );
 
   const uniqueAddedRecipients: EmailRecipient[] = [];
-  const uniqueAddedRecipientKeys = new Set<string>();
+  const uniqueAddedRecipientsByKey = new Map<string, EmailRecipient>();
   const duplicateKeys: string[] = [];
   const displayNameUpgrades = new Map<string, string>();
 
@@ -37,13 +37,23 @@ export const mergeEmailRecipients = (
       continue;
     }
 
-    if (uniqueAddedRecipientKeys.has(recipientKey)) {
+    const alreadyAddedRecipient = uniqueAddedRecipientsByKey.get(recipientKey);
+
+    if (alreadyAddedRecipient !== undefined) {
       duplicateKeys.push(recipientKey);
+
+      if (
+        isNonEmptyString(addedRecipient.displayName) &&
+        !isNonEmptyString(alreadyAddedRecipient.displayName)
+      ) {
+        alreadyAddedRecipient.displayName = addedRecipient.displayName;
+      }
       continue;
     }
 
-    uniqueAddedRecipientKeys.add(recipientKey);
-    uniqueAddedRecipients.push(addedRecipient);
+    const uniqueAddedRecipient = { ...addedRecipient };
+    uniqueAddedRecipientsByKey.set(recipientKey, uniqueAddedRecipient);
+    uniqueAddedRecipients.push(uniqueAddedRecipient);
   }
 
   const upgradedBaseRecipients = baseRecipients.map((baseRecipient) => {

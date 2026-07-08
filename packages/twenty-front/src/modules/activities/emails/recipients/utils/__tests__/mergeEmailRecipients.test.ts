@@ -74,4 +74,19 @@ describe('mergeEmailRecipients', () => {
     expect(mergedRecipients).toEqual([{ address: 'a@example.com' }]);
     expect(duplicateKeys).toEqual(['a@example.com']);
   });
+
+  it('should upgrade a display name from a later duplicate within the batch', () => {
+    const { mergedRecipients } = mergeEmailRecipients(
+      [],
+      [
+        { address: 'a@example.com' },
+        { address: 'A@example.com', displayName: 'Aline' },
+      ],
+      0,
+    );
+
+    expect(mergedRecipients).toEqual([
+      { address: 'a@example.com', displayName: 'Aline' },
+    ]);
+  });
 });
