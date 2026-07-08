@@ -3,9 +3,13 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { generateDefaultFieldUniversalIdentifier } from '@/sdk/define/objects/generate-default-field-universal-identifier';
 import { type ObjectFieldManifest } from 'twenty-shared/application';
 
-export const getDefaultObjectFields = (
-  objectConfig: ObjectConfig,
-): ObjectFieldManifest[] => {
+export const getDefaultObjectFields = ({
+  objectConfig,
+  applicationUniversalIdentifier,
+}: {
+  objectConfig: ObjectConfig;
+  applicationUniversalIdentifier: string;
+}): ObjectFieldManifest[] => {
   const objectUniversalIdentifier = objectConfig.universalIdentifier;
 
   const idField: ObjectFieldManifest = {
@@ -17,6 +21,7 @@ export const getDefaultObjectFields = (
     defaultValue: 'uuid',
     type: FieldMetadataType.UUID as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
+      applicationUniversalIdentifier,
       objectUniversalIdentifier,
       fieldName: 'id',
     }),
@@ -31,6 +36,7 @@ export const getDefaultObjectFields = (
     defaultValue: null,
     type: FieldMetadataType.TEXT as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
+      applicationUniversalIdentifier,
       objectUniversalIdentifier,
       fieldName: 'name',
     }),
@@ -45,6 +51,7 @@ export const getDefaultObjectFields = (
     defaultValue: 'now',
     type: FieldMetadataType.DATE_TIME as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
+      applicationUniversalIdentifier,
       objectUniversalIdentifier,
       fieldName: 'createdAt',
     }),
@@ -59,6 +66,7 @@ export const getDefaultObjectFields = (
     defaultValue: 'now',
     type: FieldMetadataType.DATE_TIME as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
+      applicationUniversalIdentifier,
       objectUniversalIdentifier,
       fieldName: 'updatedAt',
     }),
@@ -73,6 +81,7 @@ export const getDefaultObjectFields = (
     defaultValue: null,
     type: FieldMetadataType.DATE_TIME as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
+      applicationUniversalIdentifier,
       objectUniversalIdentifier,
       fieldName: 'deletedAt',
     }),
@@ -87,6 +96,7 @@ export const getDefaultObjectFields = (
     defaultValue: { name: "''", source: "'MANUAL'" },
     type: FieldMetadataType.ACTOR as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
+      applicationUniversalIdentifier,
       objectUniversalIdentifier,
       fieldName: 'createdBy',
     }),
@@ -101,6 +111,7 @@ export const getDefaultObjectFields = (
     defaultValue: { name: "''", source: "'MANUAL'" },
     type: FieldMetadataType.ACTOR as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
+      applicationUniversalIdentifier,
       objectUniversalIdentifier,
       fieldName: 'updatedBy',
     }),
@@ -115,6 +126,7 @@ export const getDefaultObjectFields = (
     defaultValue: 0,
     type: FieldMetadataType.POSITION,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
+      applicationUniversalIdentifier,
       objectUniversalIdentifier,
       fieldName: 'position',
     }),
@@ -129,6 +141,7 @@ export const getDefaultObjectFields = (
     defaultValue: null,
     type: FieldMetadataType.TS_VECTOR,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
+      applicationUniversalIdentifier,
       objectUniversalIdentifier,
       fieldName: 'searchVector',
     }),

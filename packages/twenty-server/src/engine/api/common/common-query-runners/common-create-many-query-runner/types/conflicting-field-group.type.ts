@@ -4,6 +4,6 @@ export type ConflictingProperty = {
 };
 
 export type ConflictingFieldGroup = {
-  baseField: string;
+  baseFields: string[];
   conflictingProperties: ConflictingProperty[];
 };

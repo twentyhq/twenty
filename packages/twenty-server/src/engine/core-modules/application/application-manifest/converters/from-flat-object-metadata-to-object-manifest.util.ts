@@ -1,4 +1,7 @@
-import { type ObjectFieldManifest, type ObjectManifest } from 'twenty-shared/application';
+import {
+  type ObjectFieldManifest,
+  type ObjectManifest,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import {

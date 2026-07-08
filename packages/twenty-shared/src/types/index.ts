@@ -215,6 +215,7 @@ export type {
 } from './page-layout/page-layout-widget-position.type';
 export type { PageLayoutWidgetUniversalConfiguration } from './page-layout/page-layout-widget-universal-configuration.type';
 export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
+export { PageLayoutType } from './page-layout/PageLayoutType';
 export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
 export type { RatioAggregateConfig } from './page-layout/ratio-aggregate-config.type';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
@@ -279,6 +280,7 @@ export type {
 } from './RowLevelPermissionPredicateValue';
 export type { SerializedRelation } from './SerializedRelation.type';
 export { SERIALIZED_RELATION_BRAND } from './SerializedRelation.type';
+export { ServerFileFolder } from './ServerFileFolder';
 export { SettingsPath } from './SettingsPath';
 export { SidePanelPages } from './SidePanelPages';
 export type { Sources } from './SourcesType';

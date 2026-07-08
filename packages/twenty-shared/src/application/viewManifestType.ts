@@ -62,6 +62,7 @@ export type ViewFieldGroupManifest = SyncableEntityOptions & {
 export type ViewSortManifest = SyncableEntityOptions & {
   fieldMetadataUniversalIdentifier: string;
   direction: ViewSortDirection;
+  subFieldName?: string;
 };
 
 export type ViewManifest = SyncableEntityOptions & {

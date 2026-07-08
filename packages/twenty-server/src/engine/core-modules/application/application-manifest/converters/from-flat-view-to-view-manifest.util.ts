@@ -1,4 +1,7 @@
-import { type ViewFieldManifest, type ViewManifest } from 'twenty-shared/application';
+import {
+  type ViewFieldManifest,
+  type ViewManifest,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -43,7 +46,9 @@ export const fromFlatViewToViewManifest = ({
     ...(isDefined(flatView.kanbanAggregateOperation)
       ? { kanbanAggregateOperation: flatView.kanbanAggregateOperation }
       : {}),
-    ...(isDefined(flatView.kanbanAggregateOperationFieldMetadataUniversalIdentifier)
+    ...(isDefined(
+      flatView.kanbanAggregateOperationFieldMetadataUniversalIdentifier,
+    )
       ? {
           kanbanAggregateOperationFieldMetadataUniversalIdentifier:
             flatView.kanbanAggregateOperationFieldMetadataUniversalIdentifier,

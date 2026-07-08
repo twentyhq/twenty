@@ -29,6 +29,23 @@ describe('fromViewSortManifestToUniversalFlatViewSort', () => {
     expect(result.createdAt).toBe(now);
     expect(result.updatedAt).toBe(now);
     expect(result.deletedAt).toBeNull();
+    expect(result.subFieldName).toBeNull();
+  });
+
+  it('should pass through subFieldName when provided', () => {
+    const result = fromViewSortManifestToUniversalFlatViewSort({
+      viewSortManifest: {
+        universalIdentifier: 'vsort-uuid-3',
+        fieldMetadataUniversalIdentifier: 'field-uuid-3',
+        direction: ViewSortDirection.ASC,
+        subFieldName: 'amountMicros',
+      },
+      viewUniversalIdentifier,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.subFieldName).toBe('amountMicros');
   });
 
   it('should convert a view sort manifest with DESC direction', () => {

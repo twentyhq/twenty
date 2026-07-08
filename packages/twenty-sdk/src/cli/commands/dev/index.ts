@@ -8,8 +8,8 @@ import { AppDevCommand } from './dev';
 import { AppDevOnceCommand } from './dev-once';
 import { registerDevFunctionCommands } from './function';
 import { AppGenerateClientCommand } from './generate-client';
-import { AppI18nExtractCommand } from './i18n-extract';
 import { AppPullCommand } from './pull';
+import { AppTranslationsExtractCommand } from './translations-extract';
 import { AppTypecheckCommand } from './typecheck';
 
 export const registerDevCommands = (program: Command): void => {
@@ -19,8 +19,8 @@ export const registerDevCommands = (program: Command): void => {
   const typecheckCommand = new AppTypecheckCommand();
   const addCommand = new EntityAddCommand();
   const generateClientCommand = new AppGenerateClientCommand();
-  const i18nExtractCommand = new AppI18nExtractCommand();
   const pullCommand = new AppPullCommand();
+  const translationsExtractCommand = new AppTranslationsExtractCommand();
 
   const devAction = async (
     appPath: string | undefined,
@@ -206,14 +206,14 @@ export const registerDevCommands = (program: Command): void => {
     });
 
   program
-    .command('dev:i18n-extract [appPath]')
+    .command('dev:translations-extract [appPath]')
     .description('Extract translatable strings into locales/ catalogs')
     .option(
       '--locale <locale>',
       'Scaffold an empty catalog for a target locale (e.g. fr-FR)',
     )
     .action(async (appPath, options) => {
-      await i18nExtractCommand.execute({
+      await translationsExtractCommand.execute({
         appPath: formatPath(appPath),
         locale: options.locale,
       });

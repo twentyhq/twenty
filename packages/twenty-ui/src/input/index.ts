@@ -95,6 +95,13 @@ export type { RoundedIconButtonSize } from './RoundedIconButton/RoundedIconButto
 export { RoundedIconButton } from './RoundedIconButton/RoundedIconButton';
 export type { SearchInputProps } from './SearchInput/SearchInput';
 export { SearchInput } from './SearchInput/SearchInput';
+export type {
+  SegmentedControlOption,
+  SegmentedControlProps,
+} from './SegmentedControl/SegmentedControl';
+export { SegmentedControl } from './SegmentedControl/SegmentedControl';
+export type { SliderColor, SliderProps } from './Slider/Slider';
+export { Slider } from './Slider/Slider';
 export type { TabContentProps } from './TabButton/TabButton';
 export {
   StyledTabContainer,

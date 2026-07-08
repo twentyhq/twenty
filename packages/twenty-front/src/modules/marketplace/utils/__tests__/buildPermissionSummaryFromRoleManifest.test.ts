@@ -231,7 +231,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       const result = buildPermissionSummaryFromRoleManifest(role);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Manage API keys and webhooks');
+      expect(result[0].label).toBe('Manage MCP, API keys, and webhooks');
     });
 
     it('should ignore unknown permission flags', () => {

@@ -1,24 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type QueryRunner, type Repository } from 'typeorm';
+import { type DataSource, type QueryRunner, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import {
-  ApplicationException,
-  ApplicationExceptionCode,
-} from 'src/engine/core-modules/application/application.exception';
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
 import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
@@ -34,7 +34,11 @@ import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty
 
 @Injectable()
 export class ApplicationService {
+  private readonly logger = new Logger(ApplicationService.name);
+
   constructor(
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(ApplicationRegistrationEntity)
@@ -593,15 +597,50 @@ export class ApplicationService {
       );
     }
 
-    await this.fileStorageService.deleteApplicationFiles({
-      workspaceId,
-      applicationUniversalIdentifier: universalIdentifier,
-    });
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
-    await this.applicationRepository.delete({
-      universalIdentifier,
-      workspaceId,
-    });
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager.update(
+        ApplicationEntity,
+        { id: application.id },
+        { packageJsonFileId: null, yarnLockFileId: null },
+      );
+
+      await this.fileStorageService.deleteApplicationFileRows({
+        applicationId: application.id,
+        workspaceId,
+        queryRunner,
+      });
+
+      await queryRunner.manager.delete(ApplicationEntity, {
+        universalIdentifier,
+        workspaceId,
+      });
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
+
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+
+    try {
+      await this.fileStorageService.deleteApplicationFilesFromStorage({
+        workspaceId,
+        applicationUniversalIdentifier: universalIdentifier,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to delete storage folder for application ${universalIdentifier} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatApplicationMaps',

@@ -19,6 +19,7 @@ const VIEW_ID = uuidv4();
 const VIEW_FIELD_ID = uuidv4();
 
 const authoredObject = buildDefaultObjectManifest({
+  applicationUniversalIdentifier: TEST_APP_ID,
   nameSingular: 'roundTripItem',
   namePlural: 'roundTripItems',
   labelSingular: 'Round Trip Item',

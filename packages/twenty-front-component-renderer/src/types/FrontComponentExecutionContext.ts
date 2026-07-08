@@ -1,3 +1,5 @@
+import { type AppLocale } from 'twenty-shared/translations';
+
 export type FrontComponentExecutionContext = {
   frontComponentId: string;
   userId: string | null;
@@ -9,5 +11,5 @@ export type FrontComponentExecutionContext = {
   selectedRecordIds: string[];
   /** Resolved color scheme of the host UI ('System' is already resolved) */
   colorScheme: 'light' | 'dark';
-  locale?: string;
+  locale?: AppLocale;
 };

@@ -4,7 +4,6 @@ import { ApplicationRegistrationModule } from 'src/engine/core-modules/applicati
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationDevelopmentResolver } from 'src/engine/core-modules/application/application-development/application-development.resolver';
-import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
@@ -21,7 +20,6 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
     CacheLockModule,
     FeatureFlagModule,
     SdkClientModule,
-    TokenModule,
     FileStorageModule,
     PermissionsModule,
     ThrottlerModule,

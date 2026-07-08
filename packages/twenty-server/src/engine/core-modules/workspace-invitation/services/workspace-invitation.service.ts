@@ -385,11 +385,6 @@ export class WorkspaceInvitationService {
       value: false,
     });
 
-    await this.onboardingService.setOnboardingBookOnboardingPending({
-      workspaceId: workspace.id,
-      value: true,
-    });
-
     const i18n = this.i18nService.getI18nInstance(sender.locale);
 
     const result = invitationResults.reduce<{

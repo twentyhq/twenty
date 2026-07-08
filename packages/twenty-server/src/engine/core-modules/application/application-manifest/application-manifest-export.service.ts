@@ -116,10 +116,12 @@ export class ApplicationManifestExportService {
     workspaceId: string;
     universalIdentifier: string;
   }): Promise<{ applicationUniversalIdentifier: string; manifest: Manifest }> {
-    const application = await this.applicationService.findByUniversalIdentifier({
-      universalIdentifier,
-      workspaceId,
-    });
+    const application = await this.applicationService.findByUniversalIdentifier(
+      {
+        universalIdentifier,
+        workspaceId,
+      },
+    );
 
     if (!isDefined(application)) {
       throw new ApplicationException(
@@ -132,10 +134,11 @@ export class ApplicationManifestExportService {
       getMetadataFlatEntityMapsKey,
     );
 
-    const fromAllFlatEntityMaps = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      flatEntityMapsCacheKeys,
-    );
+    const fromAllFlatEntityMaps =
+      await this.workspaceCacheService.getOrRecompute(
+        workspaceId,
+        flatEntityMapsCacheKeys,
+      );
 
     const appMaps = getApplicationSubAllFlatEntityMaps({
       applicationIds: [application.id],
@@ -222,7 +225,8 @@ export class ApplicationManifestExportService {
 
     const flatFieldMetadatasByObjectUniversalIdentifier = groupByKey(
       flatFieldMetadatas,
-      (flatFieldMetadata) => flatFieldMetadata.objectMetadataUniversalIdentifier,
+      (flatFieldMetadata) =>
+        flatFieldMetadata.objectMetadataUniversalIdentifier,
     );
 
     const objects = flatObjectMetadatas.map((flatObjectMetadata) => {
@@ -253,9 +257,7 @@ export class ApplicationManifestExportService {
     const fields: FieldManifest[] = flatFieldMetadatas
       .filter(
         (flatFieldMetadata) =>
-          isDefined(
-            flatFieldMetadata.objectMetadataUniversalIdentifier,
-          ) &&
+          isDefined(flatFieldMetadata.objectMetadataUniversalIdentifier) &&
           !appObjectUniversalIdentifiers.has(
             flatFieldMetadata.objectMetadataUniversalIdentifier,
           ) &&
@@ -429,7 +431,9 @@ export class ApplicationManifestExportService {
   private reconstructPermissionFlags(
     appMaps: AllFlatEntityMaps,
   ): PermissionFlagManifest[] {
-    return getDefinedValues(appMaps.flatPermissionFlagMaps.byUniversalIdentifier)
+    return getDefinedValues(
+      appMaps.flatPermissionFlagMaps.byUniversalIdentifier,
+    )
       .sort(
         (a, b) =>
           a.key.localeCompare(b.key) ||
@@ -441,15 +445,18 @@ export class ApplicationManifestExportService {
   }
 
   private reconstructRoles(appMaps: AllFlatEntityMaps): RoleManifest[] {
-    const flatRoles = getDefinedValues(appMaps.flatRoleMaps.byUniversalIdentifier)
-      .sort(
-        (a, b) =>
-          a.label.localeCompare(b.label) ||
-          a.universalIdentifier.localeCompare(b.universalIdentifier),
-      );
+    const flatRoles = getDefinedValues(
+      appMaps.flatRoleMaps.byUniversalIdentifier,
+    ).sort(
+      (a, b) =>
+        a.label.localeCompare(b.label) ||
+        a.universalIdentifier.localeCompare(b.universalIdentifier),
+    );
 
     const flatRolePermissionFlagsByRoleUniversalIdentifier = groupByKey(
-      getDefinedValues(appMaps.flatRolePermissionFlagMaps.byUniversalIdentifier),
+      getDefinedValues(
+        appMaps.flatRolePermissionFlagMaps.byUniversalIdentifier,
+      ),
       (flatRolePermissionFlag) =>
         flatRolePermissionFlag.roleUniversalIdentifier,
     );

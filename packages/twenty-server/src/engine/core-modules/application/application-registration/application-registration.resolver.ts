@@ -27,6 +27,7 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
+import { ClaimApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/claim-application-registration-ownership.input';
 import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.dto';
 import { CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
@@ -307,6 +308,22 @@ export class ApplicationRegistrationResolver {
       fileId: registration.tarballFileId,
       workspaceId,
       fileFolder: FileFolder.AppTarball,
+    });
+  }
+
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  )
+  @Mutation(() => ApplicationRegistrationEntity)
+  async claimApplicationRegistrationOwnership(
+    @Args()
+    { applicationRegistrationId }: ClaimApplicationRegistrationOwnershipInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ApplicationRegistrationEntity> {
+    return this.applicationRegistrationService.claimOwnership({
+      applicationRegistrationId,
+      claimingWorkspaceId: workspaceId,
     });
   }
 

@@ -377,6 +377,8 @@ export default defineFrontComponent({
 Les variables secrètes (`isSecret: true`) ne sont **pas** exposées aux composants front. Elles sont uniquement disponibles dans les [fonctions logiques](/l/fr/developers/extend/apps/logic/logic-functions), qui s'exécutent côté serveur. Cela empêche l’envoi au navigateur de valeurs sensibles comme les clés d’API.
 </Warning>
 
+`getApplicationVariable` renvoie toujours une **chaîne** (ou `undefined`), quel que soit le `type` déclaré de la variable. La chaîne est sérialisée de manière cohérente selon le type (booléens sous la forme `"true"` / `"false"`, nombres sous forme de chaînes décimales, tableaux / objets en JSON), dans le même format utilisé pour la fonction logique `process.env` — analysez-la vous-même (`Number(...)`, `JSON.parse(...)`, `=== 'true'`). Voir [Types de variables](/l/fr/developers/extend/apps/config/application#variable-types).
+
 Les variables système suivantes sont toujours disponibles via `process.env` :
 
 | Variable                  | Description                                                                                      |

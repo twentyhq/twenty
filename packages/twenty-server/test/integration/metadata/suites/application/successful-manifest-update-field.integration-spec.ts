@@ -20,6 +20,7 @@ const TEST_SECOND_FIELD_ID = uuidv4();
 const TEST_NUMBER_FIELD_ID = uuidv4();
 
 const TEST_OBJECT = buildDefaultObjectManifest({
+  applicationUniversalIdentifier: TEST_APP_ID,
   nameSingular: 'ticket',
   namePlural: 'tickets',
   labelSingular: 'Ticket',
@@ -87,23 +88,37 @@ const buildReferenceFieldManifest = (isNullable: boolean): FieldManifest => ({
 // coerces null/omitted TEXT values to '' via the null-equivalent processor,
 // so a TEXT column can never actually hold NULL. NUMBER preserves NULL, which
 // is what the nullable -> non-nullable backfill needs to act on.
-const buildEstimateFieldManifest = ({
-  isNullable,
-  defaultValue,
-}: {
-  isNullable: boolean;
-  defaultValue?: number;
-}): FieldManifest => ({
-  universalIdentifier: TEST_NUMBER_FIELD_ID,
-  type: FieldMetadataType.NUMBER,
-  name: 'estimate',
-  label: 'Estimate',
-  description: 'Ticket estimate',
-  icon: 'IconNumber',
-  isNullable,
-  ...(isDefined(defaultValue) ? { defaultValue } : {}),
-  objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
-});
+const buildEstimateFieldManifest = (
+  params:
+    | { isNullable: true; defaultValue?: number }
+    | { isNullable: false; defaultValue: number },
+): FieldManifest => {
+  const commonEstimateFields = {
+    universalIdentifier: TEST_NUMBER_FIELD_ID,
+    type: FieldMetadataType.NUMBER as const,
+    name: 'estimate',
+    label: 'Estimate',
+    description: 'Ticket estimate',
+    icon: 'IconNumber',
+    objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
+  };
+
+  if (params.isNullable) {
+    return {
+      ...commonEstimateFields,
+      isNullable: true,
+      ...(isDefined(params.defaultValue)
+        ? { defaultValue: params.defaultValue }
+        : {}),
+    };
+  }
+
+  return {
+    ...commonEstimateFields,
+    isNullable: false,
+    defaultValue: params.defaultValue,
+  };
+};
 
 const createTicketRecord = async (data: Record<string, unknown>) => {
   const response = await makeGraphqlAPIRequest(
@@ -415,7 +430,7 @@ describe('Manifest update - fields', () => {
             description: 'Unique external identifier',
             icon: 'IconId',
             isUnique: true,
-            isNullable: false,
+            isNullable: true,
             objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
           },
         ],

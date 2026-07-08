@@ -936,6 +936,110 @@ describe('handleRecallWebhook', () => {
     });
   });
 
+  it('completes and keeps the size marker when a media file is too large', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: { id: 'recall-bot-1' },
+    });
+    ingestCallRecordingMediaMock.mockResolvedValue({
+      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+      callRecorderFailureReason: 'video_file_too_large',
+    });
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'PROCESSING',
+        externalBotId: 'recall-bot-1',
+        externalRecordingId: 'recall-recording-1',
+        startedAt: '2026-01-01T13:02:00.000Z',
+        endedAt: '2026-01-01T14:05:00.000Z',
+        transcript: [{ participant: { id: 1 }, words: [] }],
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: buildRecordingDoneWebhookBody(),
+    });
+
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          externalBotId: 'recall-bot-1',
+          externalRecordingId: 'recall-recording-1',
+          audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+          callRecorderFailureReason: 'video_file_too_large',
+        },
+      },
+      {
+        id: 'call-recording-1',
+        data: { status: 'COMPLETED' },
+      },
+    ]);
+    expect(chargeCompletedCallRecordingMock).toHaveBeenCalledWith({
+      callRecordingId: 'call-recording-1',
+      startedAt: '2026-01-01T13:02:00.000Z',
+      endedAt: '2026-01-01T14:05:00.000Z',
+    });
+    expect(result).toEqual({
+      status: 'updated',
+      event: 'recording.done',
+      callRecordingId: 'call-recording-1',
+      callRecordingStatus: 'COMPLETED',
+    });
+  });
+
+  it('keeps the real failure reason over the size marker on recording.failed', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: { id: 'recall-bot-1' },
+    });
+    ingestCallRecordingMediaMock.mockResolvedValue({
+      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+      callRecorderFailureReason: 'video_file_too_large',
+    });
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'PROCESSING',
+        externalBotId: 'recall-bot-1',
+        externalRecordingId: 'recall-recording-1',
+        startedAt: '2026-01-01T13:02:00.000Z',
+        endedAt: '2026-01-01T14:05:00.000Z',
+        transcript: [{ participant: { id: 1 }, words: [] }],
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        ...buildRecordingDoneWebhookBody(),
+        event: 'recording.failed',
+      },
+    });
+
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          externalBotId: 'recall-bot-1',
+          externalRecordingId: 'recall-recording-1',
+          status: 'FAILED',
+          callRecorderFailureReason: 'recording.failed',
+          audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+        },
+      },
+    ]);
+    expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
+    expect(result).toEqual({
+      status: 'updated',
+      event: 'recording.failed',
+      callRecordingId: 'call-recording-1',
+      callRecordingStatus: 'FAILED',
+    });
+  });
+
   it('stays PROCESSING on recording.done while artifacts are missing', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,

@@ -5,6 +5,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
+import { InlineBanner } from 'twenty-ui/feedback';
 import { IconSparkles } from 'twenty-ui/icon';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -15,6 +16,16 @@ import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledContentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
+`;
+
+const StyledNotFeaturedContainer = styled.div`
+  margin-top: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledCardsGrid = styled.div`
@@ -56,14 +67,13 @@ export const SettingsApplicationsAvailableTab = () => {
       })
     : marketplaceApps;
 
-  const filteredApplications = showFeaturedOnly
-    ? textFilteredApplications.filter((application) => application.isFeatured)
-    : textFilteredApplications;
+  const featuredApplications = textFilteredApplications.filter(
+    (application) => application.isFeatured,
+  );
 
-  const nonFeaturedCount = showFeaturedOnly
-    ? textFilteredApplications.filter((application) => !application.isFeatured)
-        .length
-    : 0;
+  const nonFeaturedApplications = textFilteredApplications.filter(
+    (application) => !application.isFeatured,
+  );
 
   if (isLoading) {
     return (
@@ -74,7 +84,11 @@ export const SettingsApplicationsAvailableTab = () => {
   }
 
   const showNonFeaturedHint =
-    filteredApplications.length === 0 && nonFeaturedCount > 0;
+    showFeaturedOnly &&
+    featuredApplications.length === 0 &&
+    nonFeaturedApplications.length > 0;
+
+  const hasNoApplications = textFilteredApplications.length === 0;
 
   return (
     <Section>
@@ -109,10 +123,11 @@ export const SettingsApplicationsAvailableTab = () => {
         />
       </StyledSearchInputContainer>
 
-      {filteredApplications.length === 0 ? (
+      {hasNoApplications ||
+      (showFeaturedOnly && featuredApplications.length === 0) ? (
         <SettingsEmptyPlaceholder padding="4">
           {showNonFeaturedHint
-            ? t`No featured applications found. ${nonFeaturedCount} non-featured result(s) available — `
+            ? t`No featured applications found. ${nonFeaturedApplications.length} non-featured result(s) available — `
             : t`No applications available`}
           {showNonFeaturedHint && (
             <StyledHintLink onClick={() => setShowFeaturedOnly(false)}>
@@ -121,14 +136,35 @@ export const SettingsApplicationsAvailableTab = () => {
           )}
         </SettingsEmptyPlaceholder>
       ) : (
-        <StyledCardsGrid>
-          {filteredApplications.map((application) => (
-            <SettingsAvailableApplicationCard
-              key={application.id}
-              application={application}
-            />
-          ))}
-        </StyledCardsGrid>
+        <StyledContentContainer>
+          {featuredApplications.length > 0 && (
+            <StyledCardsGrid>
+              {featuredApplications.map((application) => (
+                <SettingsAvailableApplicationCard
+                  key={application.id}
+                  application={application}
+                />
+              ))}
+            </StyledCardsGrid>
+          )}
+
+          {!showFeaturedOnly && nonFeaturedApplications.length > 0 && (
+            <StyledNotFeaturedContainer>
+              <InlineBanner
+                color={'danger'}
+                message={t`Applications below are not featured. Use at your own risk.`}
+              />
+              <StyledCardsGrid>
+                {nonFeaturedApplications.map((application) => (
+                  <SettingsAvailableApplicationCard
+                    key={application.id}
+                    application={application}
+                  />
+                ))}
+              </StyledCardsGrid>
+            </StyledNotFeaturedContainer>
+          )}
+        </StyledContentContainer>
       )}
     </Section>
   );

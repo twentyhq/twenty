@@ -22,7 +22,10 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemManifest = ({
       ? { color: flatNavigationMenuItem.color }
       : {}),
     ...(isDefined(flatNavigationMenuItem.viewUniversalIdentifier)
-      ? { viewUniversalIdentifier: flatNavigationMenuItem.viewUniversalIdentifier }
+      ? {
+          viewUniversalIdentifier:
+            flatNavigationMenuItem.viewUniversalIdentifier,
+        }
       : {}),
     ...(isDefined(flatNavigationMenuItem.link)
       ? { link: flatNavigationMenuItem.link }
@@ -33,7 +36,9 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemManifest = ({
             flatNavigationMenuItem.folderUniversalIdentifier,
         }
       : {}),
-    ...(isDefined(flatNavigationMenuItem.targetObjectMetadataUniversalIdentifier)
+    ...(isDefined(
+      flatNavigationMenuItem.targetObjectMetadataUniversalIdentifier,
+    )
       ? {
           targetObjectUniversalIdentifier:
             flatNavigationMenuItem.targetObjectMetadataUniversalIdentifier,

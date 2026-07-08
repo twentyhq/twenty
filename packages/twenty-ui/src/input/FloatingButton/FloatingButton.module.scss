@@ -8,7 +8,7 @@
   backdrop-filter: var(--floating-button-backdrop-filter, none);
   background: var(--t-background-primary);
   border: var(--floating-button-border, none);
-  border-radius: var(--floating-button-radius, var(--t-border-radius-sm));
+  border-radius: var(--floating-button-radius, var(--t-border-radius-md));
   box-shadow: var(--floating-button-box-shadow, none);
   color: var(--floating-button-color, var(--t-font-color-secondary));
   cursor: pointer;
@@ -57,8 +57,8 @@
 
 // position only reshapes the radius; standalone keeps the .button default.
 .button[data-position='left'] {
-  --floating-button-radius: var(--t-border-radius-sm) 0px 0px
-    var(--t-border-radius-sm);
+  --floating-button-radius: var(--t-border-radius-md) 0px 0px
+    var(--t-border-radius-md);
 }
 
 .button[data-position='middle'] {
@@ -66,8 +66,8 @@
 }
 
 .button[data-position='right'] {
-  --floating-button-radius: 0px var(--t-border-radius-sm)
-    var(--t-border-radius-sm) 0px;
+  --floating-button-radius: 0px var(--t-border-radius-md)
+    var(--t-border-radius-md) 0px;
 }
 
 .button[data-apply-blur] {

@@ -151,6 +151,10 @@ describe('FileController', () => {
         'Content-Disposition',
         'inline',
       );
+      expect(mockResponse.setHeader).toHaveBeenCalledWith(
+        'Cache-Control',
+        'private, max-age=86400, immutable',
+      );
       expect(mockPipeline).toHaveBeenCalledWith(mockStream, mockResponse);
     });
 
