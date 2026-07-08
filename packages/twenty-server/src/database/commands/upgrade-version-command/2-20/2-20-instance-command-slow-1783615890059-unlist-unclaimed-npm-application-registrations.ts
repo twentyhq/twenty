@@ -7,7 +7,7 @@ import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 // owner request + admin approval, so unlist the auto-synced ones: npm-sourced,
 // still unclaimed, and not curated/featured. Owned or featured rows are left
 // untouched.
-@RegisteredInstanceCommand('2.20.0', 1783200100001, { type: 'slow' })
+@RegisteredInstanceCommand('2.20.0', 1783615890059, { type: 'slow' })
 export class UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand
   implements SlowInstanceCommand
 {
