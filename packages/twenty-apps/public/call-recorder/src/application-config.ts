@@ -1,4 +1,4 @@
-import { defineApplication } from 'twenty-sdk/define';
+import { defineApplication, FieldType } from 'twenty-sdk/define';
 
 import { APP_DESCRIPTION } from 'src/constants/app-description';
 import { APP_DISPLAY_NAME } from 'src/constants/app-display-name';
@@ -51,6 +51,7 @@ export default defineApplication({
       universalIdentifier: CALL_RECORDER_NAME_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
       description: 'Display name the call recorder uses when it joins a call.',
       isSecret: false,
+      type: FieldType.TEXT,
       value: DEFAULT_CALL_RECORDER_NAME,
     },
     [CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME]: {
@@ -59,7 +60,8 @@ export default defineApplication({
       description:
         'How many minutes before the meeting start time the bot should join. Set to 0 to join at the scheduled start time.',
       isSecret: false,
-      value: String(DEFAULT_CALL_RECORDER_JOIN_EARLY_MINUTES),
+      type: FieldType.NUMBER,
+      value: DEFAULT_CALL_RECORDER_JOIN_EARLY_MINUTES,
     },
     [CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME]: {
       universalIdentifier:
@@ -67,7 +69,8 @@ export default defineApplication({
       description:
         'How many seconds the bot waits in a meeting lobby before giving up and leaving.',
       isSecret: false,
-      value: String(CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS),
+      type: FieldType.NUMBER,
+      value: CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS,
     },
     [CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME]: {
       universalIdentifier:
@@ -75,7 +78,8 @@ export default defineApplication({
       description:
         'How many seconds the bot stays in an empty meeting when no one else ever joins.',
       isSecret: false,
-      value: String(CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS),
+      type: FieldType.NUMBER,
+      value: CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS,
     },
     [CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME]: {
       universalIdentifier:
@@ -83,7 +87,8 @@ export default defineApplication({
       description:
         'How many seconds the bot keeps recording after everyone else leaves the meeting.',
       isSecret: false,
-      value: String(CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS),
+      type: FieldType.NUMBER,
+      value: CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS,
     },
     [CALL_RECORDER_SUMMARY_ENABLED_ENV_VAR_NAME]: {
       universalIdentifier:
@@ -91,7 +96,8 @@ export default defineApplication({
       description:
         'Whether AI summaries are generated for call recordings. Set to false to disable and avoid AI credit usage.',
       isSecret: false,
-      value: String(DEFAULT_CALL_RECORDER_SUMMARY_ENABLED),
+      type: FieldType.BOOLEAN,
+      value: DEFAULT_CALL_RECORDER_SUMMARY_ENABLED,
     },
     [CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_ENV_VAR_NAME]: {
       universalIdentifier:
@@ -99,6 +105,7 @@ export default defineApplication({
       description:
         'Extra instructions appended to the built-in summary prompt (tone, language, focus areas). Leave empty to use the built-in prompt alone.',
       isSecret: false,
+      type: FieldType.TEXT,
     },
     [CALL_RECORDER_USE_WORKSPACE_LOGO_ENV_VAR_NAME]: {
       universalIdentifier:
@@ -106,7 +113,8 @@ export default defineApplication({
       description:
         'Whether the bot displays the workspace logo on its camera tile while in a call. Set to false to disable.',
       isSecret: false,
-      value: String(DEFAULT_CALL_RECORDER_USE_WORKSPACE_LOGO),
+      type: FieldType.BOOLEAN,
+      value: DEFAULT_CALL_RECORDER_USE_WORKSPACE_LOGO,
     },
     [CALL_RECORDER_BOT_IMAGE_BACKGROUND_ENV_VAR_NAME]: {
       universalIdentifier:
@@ -114,6 +122,7 @@ export default defineApplication({
       description:
         'Hex color (e.g. #ffffff) drawn behind the workspace logo on the bot camera tile. Defaults to dark gray when unset or invalid.',
       isSecret: false,
+      type: FieldType.TEXT,
       value: DEFAULT_CALL_RECORDER_BOT_IMAGE_BACKGROUND,
     },
   },
