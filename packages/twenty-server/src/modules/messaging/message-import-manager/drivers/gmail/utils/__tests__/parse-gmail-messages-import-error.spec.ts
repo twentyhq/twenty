@@ -51,6 +51,21 @@ describe('GmailMessagesImportErrorHandler', () => {
     );
   });
 
+  it('should handle premature close as a temporary network error', () => {
+    const error = Object.assign(
+      new Error(
+        'Invalid response body while trying to fetch https://gmail.googleapis.com/gmail/v1/users/me/messages/123: Premature close',
+      ),
+      { code: 'ERR_STREAM_PREMATURE_CLOSE' },
+    );
+
+    expect(() => handler.handleError(error, messageExternalId)).toThrow(
+      expect.objectContaining({
+        code: MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+      }),
+    );
+  });
+
   it('should handle 403 Daily Limit Exceeded', () => {
     const error = getGmailApiError({ code: 403, reason: 'dailyLimit' });
 

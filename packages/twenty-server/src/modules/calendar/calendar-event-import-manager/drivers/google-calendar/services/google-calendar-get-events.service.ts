@@ -107,6 +107,7 @@ export class GoogleCalendarGetEventsService {
         'ECONNABORTED',
         'ETIMEDOUT',
         'ERR_NETWORK',
+        'ERR_STREAM_PREMATURE_CLOSE',
       ].includes(error.code)
     ) {
       throw parseGaxiosError(error);
