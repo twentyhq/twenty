@@ -1,0 +1,87 @@
+packages/twenty-client-sdk/src/metadata/generated/schema.graphql
+  s_f50cf24ed5fc3b::t_2bceb204002b69 1424-1435,2348-2421,3182,3388,3980-4014
+packages/twenty-client-sdk/src/metadata/generated/schema.ts
+  s_f50cf24ed5fc3b::t_286b9cc00a9b1e 1084-1097,2009,2013-2051,2797,2923,3075-3078,4208-4223,5183-5209,6042,6193,6506-6511,7362-7377,8154-8161,9367-9368,9407-9413,9524-9536
+packages/twenty-client-sdk/src/metadata/generated/types.ts
+  s_f50cf24ed5fc3b::t_a4520af9f3263d 48,50-52,54,56-74,77,80-87,101,104,107,956,959,995,998,1206,1209,1222,1827,1830,1836,1839,1842,1851,1941,1953,2796-2823,2897,2905,2908,2911,2922,2931,2957,2960,2966,2983,3000,3003,3020,3023,3065,3068,3071,3080,3092,3106,3135,3138,3141,3144,3171,3174,3224,3261,3294,3320,3329,3341,3356,3368,3379,3382,3399,3411,3489,3514,3517,3530,3567,3570,3579,3618,3633,3672,3680,3706,3740,3743,3768,3771,3774,3798,3804,3807,3810,3816,3858,3919,3991,3994,4013,4016,4058,4061,4069,4072,4091,4094,4102,4105,4113,4165,4174,4193,4205,4208,4219,4228,4236,4248,4271,4277,4285,4288,4421,4424,4489,4500,4538,4577,4586,4589,4592,4648,4650-4651,4657-4659,4661-4662,4664,4667-4668,4670-4671,4673-4773,4777,4780,4818,4832,4865,4909,4950,4972,4980,4983,4986,4989,4998,5094,5097,5109,5171,5194,5240,5257,5265,5268,5271,5291,5513,5562,5570,5607,5712,5718,5782,5796,5851,5879,5941,5944,5975,5978,5981,5987,6038,6056,6120,6123,6126,6134,6137,6279,6285,6297,6308,6311,6314,6317,6382,6388,6400,6422,6438,6450,6459,6492,6500,6518,6562,6565,6574,6604,6613,6634,6637,6643,6649,6657-6660,6663,6666,6678,6681,6690,6698,6706,6709,6712,6717,6720,6726,6729,6732,6741,6750,6759,6762,6765,6774,6783,6795,6813,6822,6825,6837,6840,6843,6849,6852,6858,6861,6867,6870,6876,6885,6904,6917,6920,6925,6949,6982,6985,7006,7073,7085,7094,7100,7103,7109,7112,7118,7121,7127,7130,7136,7145,7154,7165,7177,7201,7204,7210,7213,7219,7222,7228,7231,7237,7240,7246,7249,7259,7262,7275,7288,7315,7324,7333,7342,7351,7364,7391,7400,7409,7418,7427,7436,7445,7454,7463,7472,7481,7490,7499,7508,7517,7526,7535,7544,7553,7572,7575,7601,7604,7608,7621,7624,7628,7645,7648,7651,7654,7657,7660,7669,7672,7684,7693,7705,7708,7717,7723,7726,7735,7748,7766,7779,7801,7833-7841,7846,7859,7877,7886,7895,7904,7913,7922,7931,7940,7949,7958,7964,7967,7976,7985,7994,8021,8030,8048,8057,8066,8072,8081,8090,8099,8108,8117,8126,8135,8144,8186,8189,8198,8213,8225,8234,8252,8299,8308,8326,8335,8344,8350,8353,8381,8384,8390,8393,8399,8402,8408,8411,8426,8429,8435,8438,8444,8453,8456,8471,8480,8489,8492,8498,8501,8507,8510,8516,8525,8528,8534,8537,8543,8546,8552,8555,8576,8582,8594,8605,8623,8636,8645,8672,8675,8681,8684,8690,8699,8708,8717,8726,8739,8742,8748,8774,8796,8816,8832,8852,8874,8905,8908,8913,8920,8926,8929,8942,8964,8973,8989,9001,9014,9027,9030,9039,9063,9081,9094,9097,9103,9106,9112,9115,9121,9124,9130,9150,9153,9168,9177,9190,9193,9199,9202,9208,9217,9224,9233,9236,9242,9264,9276,9282,9295,9307,9310,9318,9404,9436,9547,9712,9715,9718,9721,9832,9870,9946,10010,10013,10033,10201,10224,10247,10282-10337,10352,10378,10471,10531,10586,10597,10682,10842,10949,11022,11117,11178,11232,11298,11353,11395,11426,11429,11547,11564,11575,11583,11589,11592,11659,11687,11706,11717,11725,11731,11900,11971,11990,11993,11996,12016,12035,12051,12060,12063,12069,12078,12081
+packages/twenty-server/src/modules/contact-creation-manager/services/__tests__/create-company-and-contact.service.spec.ts
+  s_8be4f825ce5b67::t_55da2ad472ca0e 153-233,487-531
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service.spec.ts
+  s_8be4f825ce5b67::t_1bc5e5e4c68ce0 308-345
+packages/twenty-server/src/engine/metadata-modules/connected-account/connected-account-metadata.module.ts
+  s_48d33c01f7a200::t_124b46c048933a 10,31
+packages/twenty-server/src/engine/metadata-modules/connected-account/connected-account-metadata.service.ts
+  s_782d15db78688d::t_58e12cbc484768 6-7,51-66
+packages/twenty-server/src/engine/metadata-modules/connected-account/resolvers/app-connected-accounts.resolver.ts
+  s_48d33c01f7a200::t_51ebb248570277 1-57
+packages/twenty-server/src/modules/contact-creation-manager/services/create-company-and-contact.service.ts
+  s_782d15db78688d::t_f154fac14911ab 31-32,37,106-137,152,265,273-291,497-517,531
+packages/twenty-server/src/modules/contact-creation-manager/utils/__tests__/get-first-name-and-last-name-from-handle-and-display-name.util.spec.ts
+  s_782d15db78688d::t_107c7b9b0b09f3 145-170
+packages/twenty-server/src/modules/contact-creation-manager/utils/get-first-name-and-last-name-from-handle-and-display-name.util.ts
+  s_782d15db78688d::t_5a8c39537c90a6 1,6,12-22
+packages/twenty-server/src/modules/match-participant/match-participant.service.ts
+  s_782d15db78688d::t_68b2bf6c1187d6 13,15,19,35,125-134,136-154,171-181,291,294-295,312-319,324
+packages/twenty-server/src/modules/match-participant/utils/__tests__/add-person-phone-filters-to-query-builder.spec.ts
+  s_782d15db78688d::t_b046b07a770131 1-81
+packages/twenty-server/src/modules/match-participant/utils/__tests__/find-person-by-primary-or-additional-phone.spec.ts
+  s_782d15db78688d::t_cddefd05c1be53 1-101
+packages/twenty-server/src/modules/match-participant/utils/__tests__/get-phone-handles-from-phones.spec.ts
+  s_782d15db78688d::t_ddbaf60a2c448b 1-55
+packages/twenty-server/src/modules/match-participant/utils/add-person-phone-filters-to-query-builder.ts
+  s_782d15db78688d::t_b1a6a092610d23 1-37
+packages/twenty-server/src/modules/match-participant/utils/find-person-by-primary-or-additional-phone.ts
+  s_782d15db78688d::t_63b7de9f679ca0 1-37
+packages/twenty-server/src/modules/match-participant/utils/get-phone-handles-from-phones.ts
+  s_782d15db78688d::t_1014e82d4fc5b6 1-31
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service.ts
+  s_782d15db78688d::t_1932682a417312 34,105-106
+packages/twenty-server/src/modules/messaging/message-participant-manager/jobs/message-participant-match-participant.job.ts
+  s_782d15db78688d::t_e07e6426757f2f 14,34-35
+packages/twenty-server/src/modules/messaging/message-participant-manager/listeners/message-participant-person.listener.ts
+  s_782d15db78688d::t_b3d8efc8990a15 3,18,38,41-44,47,50,52,57-61,70,83-94,97,100,102,107-112,121,134,137-140,149,151,156-160
+packages/twenty-server/src/utils/__tests__/parse-phone-handle.spec.ts
+  s_782d15db78688d::t_e04b38e4e436b1 1-55
+packages/twenty-server/src/utils/parse-phone-handle.ts
+  s_782d15db78688d::t_0610046ec144d0 1-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d36fdcd4eed3580ce617b8656c49f34261590b74",
+  "prompts": {},
+  "sessions": {
+    "s_48d33c01f7a200": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-aca13cf9fd77cd781",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_782d15db78688d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a536a50da07aef8f3",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_8be4f825ce5b67": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "381a5895-ddfd-4891-a48c-ba8d33ea114e",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_f50cf24ed5fc3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c2ba5cc7-0588-443f-84fd-cc232e1987ed",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
