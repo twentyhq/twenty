@@ -181,8 +181,7 @@ export const useEmailRecipientSuggestions = ({
         ),
         searchQuery: trimmedSearchInput,
         getSearchableValues: (workspaceMember) => [
-          workspaceMember.name.firstName,
-          workspaceMember.name.lastName,
+          `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`.trim(),
           workspaceMember.userEmail,
         ],
       })
