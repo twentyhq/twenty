@@ -161,6 +161,33 @@ function contains(leftValue: unknown, rightValue: unknown): boolean {
   return String(leftValue).includes(String(rightValue));
 }
 
+function equals(leftValue: unknown, rightValue: unknown): boolean {
+  const parsedRightValue = isString(rightValue)
+    ? tryParseJson(rightValue)
+    : rightValue;
+
+  if (Array.isArray(leftValue) && Array.isArray(parsedRightValue)) {
+    return (
+      leftValue.length === parsedRightValue.length &&
+      leftValue.every((item) => parsedRightValue.includes(item))
+    );
+  }
+
+  if (Array.isArray(leftValue) || Array.isArray(parsedRightValue)) {
+    return false;
+  }
+
+  return String(leftValue) === String(parsedRightValue);
+}
+
+function tryParseJson(value: string): unknown {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
+}
+
 function evaluateTextAndArrayFilter(
   filter: ResolvedFilter,
   filterType: string,
@@ -187,9 +214,9 @@ function evaluateTextAndArrayFilter(
           isNotEmptyTextOrArray(filter.leftOperand))
       );
     case ViewFilterOperand.IS:
-      return contains(filter.leftOperand, filter.rightOperand);
+      return equals(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_NOT:
-      return !contains(filter.leftOperand, filter.rightOperand);
+      return !equals(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(filter.leftOperand);
 
