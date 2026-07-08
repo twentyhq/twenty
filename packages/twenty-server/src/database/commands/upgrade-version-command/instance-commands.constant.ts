@@ -101,6 +101,8 @@ import { BackfillDisplayFieldsOnApplicationRegistrationSlowInstanceCommand } fro
 import { BackfillIsFeaturedOnApplicationRegistrationSlowInstanceCommand } from './2-19/2-19-instance-command-slow-1783120000000-backfill-is-featured-on-application-registration';
 import { AllowServerScopedFileFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-instance-command-fast-1783499671541-allow-server-scoped-file';
 import { CreateWorkflowVersionCoreTableFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783512000000-create-workflow-version-core-table';
+import { AddIsVettedToApplicationRegistrationFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783520000000-add-is-vetted-to-application-registration';
+import { BackfillIsVettedOnApplicationRegistrationSlowInstanceCommand } from './2-20/2-20-instance-command-slow-1783520000001-backfill-is-vetted-on-application-registration';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -204,4 +206,6 @@ export const INSTANCE_COMMANDS = [
   BackfillIsFeaturedOnApplicationRegistrationSlowInstanceCommand,
   AllowServerScopedFileFastInstanceCommand,
   CreateWorkflowVersionCoreTableFastInstanceCommand,
+  AddIsVettedToApplicationRegistrationFastInstanceCommand,
+  BackfillIsVettedOnApplicationRegistrationSlowInstanceCommand,
 ];

@@ -52,7 +52,7 @@ export interface ApplicationRegistration {
     sourcePackage?: Scalars['String']
     latestAvailableVersion?: Scalars['String']
     isListed: Scalars['Boolean']
-    isFeatured: Scalars['Boolean']
+    isVetted: Scalars['Boolean']
     isPreInstalled: Scalars['Boolean']
     logoUrl?: Scalars['String']
     createdAt: Scalars['DateTime']
@@ -1854,7 +1854,7 @@ export interface MarketplaceApp {
     category: Scalars['String']
     logo?: Scalars['String']
     sourcePackage?: Scalars['String']
-    isFeatured: Scalars['Boolean']
+    isVetted: Scalars['Boolean']
     __typename: 'MarketplaceApp'
 }
 
@@ -1902,7 +1902,7 @@ export interface MarketplaceAppDetail {
     sourcePackage?: Scalars['String']
     latestAvailableVersion?: Scalars['String']
     isListed: Scalars['Boolean']
-    isFeatured: Scalars['Boolean']
+    isVetted: Scalars['Boolean']
     description?: Scalars['String']
     author?: Scalars['String']
     category?: Scalars['String']
@@ -3115,7 +3115,7 @@ export interface ApplicationRegistrationGenqlSelection{
     sourcePackage?: boolean | number
     latestAvailableVersion?: boolean | number
     isListed?: boolean | number
-    isFeatured?: boolean | number
+    isVetted?: boolean | number
     isPreInstalled?: boolean | number
     logoUrl?: boolean | number
     createdAt?: boolean | number
@@ -4997,7 +4997,7 @@ export interface MarketplaceAppGenqlSelection{
     category?: boolean | number
     logo?: boolean | number
     sourcePackage?: boolean | number
-    isFeatured?: boolean | number
+    isVetted?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5049,7 +5049,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     sourcePackage?: boolean | number
     latestAvailableVersion?: boolean | number
     isListed?: boolean | number
-    isFeatured?: boolean | number
+    isVetted?: boolean | number
     description?: boolean | number
     author?: boolean | number
     category?: boolean | number
@@ -6575,7 +6575,7 @@ export interface CreateApplicationRegistrationInput {name: Scalars['String'],uni
 
 export interface UpdateApplicationRegistrationInput {id: Scalars['String'],update: UpdateApplicationRegistrationPayload}
 
-export interface UpdateApplicationRegistrationPayload {name?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null),isListed?: (Scalars['Boolean'] | null),isPreInstalled?: (Scalars['Boolean'] | null),isFeatured?: (Scalars['Boolean'] | null)}
+export interface UpdateApplicationRegistrationPayload {name?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null),isListed?: (Scalars['Boolean'] | null),isPreInstalled?: (Scalars['Boolean'] | null),isVetted?: (Scalars['Boolean'] | null)}
 
 export interface CreateApplicationRegistrationVariableInput {applicationRegistrationId: Scalars['String'],key: Scalars['String'],value: Scalars['String'],description?: (Scalars['String'] | null),isSecret?: (Scalars['Boolean'] | null)}
 

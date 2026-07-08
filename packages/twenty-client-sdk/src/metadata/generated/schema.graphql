@@ -53,7 +53,7 @@ type ApplicationRegistration {
   sourcePackage: String
   latestAvailableVersion: String
   isListed: Boolean!
-  isFeatured: Boolean!
+  isVetted: Boolean!
   isPreInstalled: Boolean!
   logoUrl: String
   createdAt: DateTime!
@@ -2200,7 +2200,7 @@ type MarketplaceApp {
   category: String!
   logo: String
   sourcePackage: String
-  isFeatured: Boolean!
+  isVetted: Boolean!
 }
 
 type MarketplaceAppRoleObjectPermission {
@@ -2244,7 +2244,7 @@ type MarketplaceAppDetail {
   sourcePackage: String
   latestAvailableVersion: String
   isListed: Boolean!
-  isFeatured: Boolean!
+  isVetted: Boolean!
   description: String
   author: String
   category: String
@@ -4326,7 +4326,7 @@ input UpdateApplicationRegistrationPayload {
   oAuthScopes: [String!]
   isListed: Boolean
   isPreInstalled: Boolean
-  isFeatured: Boolean
+  isVetted: Boolean
 }
 
 input CreateApplicationRegistrationVariableInput {

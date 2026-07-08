@@ -101,7 +101,7 @@ export class MarketplaceQueryService {
       category: catalogCard.category ?? '',
       logo: catalogCard.logoUrl ?? undefined,
       sourcePackage: catalogCard.sourcePackage ?? undefined,
-      isFeatured: catalogCard.isFeatured,
+      isVetted: catalogCard.isVetted,
     };
   }
 
@@ -116,7 +116,7 @@ export class MarketplaceQueryService {
       sourcePackage: registration.sourcePackage ?? undefined,
       latestAvailableVersion: registration.latestAvailableVersion ?? undefined,
       isListed: registration.isListed,
-      isFeatured: registration.isFeatured,
+      isVetted: registration.isVetted,
       description:
         registration.description ??
         registration.manifest?.application?.description ??

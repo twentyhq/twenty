@@ -121,9 +121,18 @@ export class ApplicationRegistrationEntity {
   @Column({ type: 'boolean', default: false })
   isListed: boolean;
 
-  @Field(() => Boolean)
+  // Deprecated in favor of isVetted. Kept (values reset to false) in case we
+  // need it again; no longer exposed through GraphQL.
   @Column({ name: 'isFeatured', type: 'boolean', default: false })
   isFeatured: boolean;
+
+  @Field(() => Boolean)
+  @Column({ name: 'isVetted', type: 'boolean', default: false })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.20.0_AddIsVettedToApplicationRegistrationFastInstanceCommand_1783520000000',
+  })
+  isVetted: boolean;
 
   // Auto-installed on every new workspace; existing workspaces are
   // backfilled by the `install-pre-installed-apps` CLI command.

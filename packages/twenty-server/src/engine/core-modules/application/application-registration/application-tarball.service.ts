@@ -178,7 +178,7 @@ export class ApplicationTarballService {
           ...fromManifestApplicationToDisplayFields(manifest.application),
           latestAvailableVersion: packageJson?.version ?? null,
           isListed: false,
-          isFeatured: false,
+          isVetted: false,
           oAuthClientId: v4(),
           oAuthRedirectUris: [],
           oAuthScopes: [],
@@ -216,7 +216,7 @@ export class ApplicationTarballService {
         ...fromManifestApplicationToDisplayFields(manifest.application),
         latestAvailableVersion: packageJson?.version ?? null,
         isListed: false,
-        isFeatured: false,
+        isVetted: false,
         ownerWorkspaceId: params.ownerWorkspaceId,
       } as QueryDeepPartialEntity<ApplicationRegistrationEntity>);
 

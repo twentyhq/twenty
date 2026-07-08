@@ -208,7 +208,7 @@ export default {
             "isListed": [
                 6
             ],
-            "isFeatured": [
+            "isVetted": [
                 6
             ],
             "isPreInstalled": [
@@ -4303,7 +4303,7 @@ export default {
             "sourcePackage": [
                 1
             ],
-            "isFeatured": [
+            "isVetted": [
                 6
             ],
             "__typename": [
@@ -4419,7 +4419,7 @@ export default {
             "isListed": [
                 6
             ],
-            "isFeatured": [
+            "isVetted": [
                 6
             ],
             "description": [
@@ -11096,7 +11096,7 @@ export default {
             "isPreInstalled": [
                 6
             ],
-            "isFeatured": [
+            "isVetted": [
                 6
             ],
             "__typename": [
