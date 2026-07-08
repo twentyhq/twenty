@@ -13,6 +13,12 @@ export const getAvatarType = (
     return 'rounded';
   }
 
+  if (
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.WorkspaceMember
+  ) {
+    return 'rounded';
+  }
+
   const imageIdentifierFieldMetadataItem =
     getImageIdentifierFieldMetadataItem(objectMetadataItem);
 
@@ -23,12 +29,6 @@ export const getAvatarType = (
       case FieldMetadataType.FILES:
         return 'rounded';
     }
-  }
-
-  if (
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.WorkspaceMember
-  ) {
-    return 'rounded';
   }
 
   if (
