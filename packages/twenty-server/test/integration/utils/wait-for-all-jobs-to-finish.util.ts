@@ -1,11 +1,14 @@
-import { Queue } from 'bullmq';
+import { type Job, Queue } from 'bullmq';
 import IORedis from 'ioredis';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
-const POLL_INTERVAL_MS = 25;
+const QUIET_POLL_INTERVAL_MS = 25;
+const BUSY_POLL_INTERVAL_MS = 250;
 const REQUIRED_CONSECUTIVE_QUIET_CHECKS = 2;
-const STALL_TIMEOUT_MS = 15_000;
+// The workflow worker runs at concurrency 1 on a loaded 2-core runner, so a
+// single slow job plus a queued one is normal; 15s produced false stalls.
+const STALL_TIMEOUT_MS = 45_000;
 const HARD_TIMEOUT_MS = 120_000;
 const PENDING_JOB_STATES = [
   'waiting',
@@ -34,40 +37,89 @@ const getQueues = (): Queue[] => {
   return queues;
 };
 
-const getPendingJobCountsByQueue = async (): Promise<
-  Record<string, number>
-> => {
-  const countsByQueue = await Promise.all(
-    getQueues().map(async (queue) => {
+// Jobs scheduled further out than the stall window (e.g. billing's 24h
+// UpdateSubscriptionQuantityJob) will never run during the test run; waiting
+// on them can only produce false stalls.
+const isBlockingJob = (job: Job): boolean => {
+  if (!job.delay) {
+    return true;
+  }
+
+  const remainingDelayMs = job.timestamp + job.delay - Date.now();
+
+  return remainingDelayMs <= STALL_TIMEOUT_MS;
+};
+
+type QueueSnapshot = {
+  blockingJobsByQueue: Record<string, Job[]>;
+  blockingTotal: number;
+  fingerprint: string;
+};
+
+const getQueueSnapshot = async (): Promise<QueueSnapshot> => {
+  const jobsByQueue: Array<[string, Job[]]> = await Promise.all(
+    getQueues().map(async (queue): Promise<[string, Job[]]> => {
       const jobCounts = await queue.getJobCounts(...PENDING_JOB_STATES);
       const pendingCount = Object.values(jobCounts).reduce(
         (sum, count) => sum + count,
         0,
       );
 
-      return [queue.name, pendingCount] as const;
+      if (pendingCount === 0) {
+        return [queue.name, []];
+      }
+
+      const jobs = await queue.getJobs([...PENDING_JOB_STATES], 0, 100);
+
+      return [
+        queue.name,
+        jobs.filter((job): job is Job => Boolean(job)).filter(isBlockingJob),
+      ];
     }),
   );
 
-  return Object.fromEntries(
-    countsByQueue.filter(([, pendingCount]) => pendingCount > 0),
+  const blockingJobsByQueue: Record<string, Job[]> = Object.fromEntries(
+    jobsByQueue.filter(([, jobs]) => jobs.length > 0),
   );
+
+  const blockingTotal = Object.values(blockingJobsByQueue).reduce(
+    (sum, jobs) => sum + jobs.length,
+    0,
+  );
+
+  // Retries keep their job id but increment attemptsMade, so a churning
+  // queue registers as progress while a genuinely frozen one does not.
+  const fingerprint = Object.entries(blockingJobsByQueue)
+    .map(
+      ([queueName, jobs]) =>
+        `${queueName}:${jobs
+          .map(
+            (job) =>
+              `${job.name}#${job.id}@${job.attemptsMade}:${job.delay ?? 0}`,
+          )
+          .sort()
+          .join(',')}`,
+    )
+    .sort()
+    .join('|');
+
+  return { blockingJobsByQueue, blockingTotal, fingerprint };
 };
 
-const getActiveJobsFingerprint = async (
-  busyQueueNames: string[],
-): Promise<string> => {
-  const activeJobIdsByQueue = await Promise.all(
-    getQueues()
-      .filter((queue) => busyQueueNames.includes(queue.name))
-      .map(async (queue) => {
-        const activeJobs = await queue.getActive(0, 50);
-
-        return `${queue.name}:${activeJobs.map((job) => job.id).join(',')}`;
-      }),
-  );
-
-  return activeJobIdsByQueue.join('|');
+const describeBlockingJobs = (
+  blockingJobsByQueue: Record<string, Job[]>,
+): string => {
+  return Object.entries(blockingJobsByQueue)
+    .map(
+      ([queueName, jobs]) =>
+        `${queueName}: ${jobs
+          .map(
+            (job) =>
+              `${job.name}(id=${job.id}, attemptsMade=${job.attemptsMade}, delay=${job.delay ?? 0})`,
+          )
+          .join(', ')}`,
+    )
+    .join('; ');
 };
 
 export const waitForAllJobsToFinish = async (): Promise<void> => {
@@ -75,45 +127,49 @@ export const waitForAllJobsToFinish = async (): Promise<void> => {
   let lastProgressAt = startedAt;
   let lastBusyFingerprint = '';
   let consecutiveQuietChecks = 0;
+  let busy = false;
 
   while (consecutiveQuietChecks < REQUIRED_CONSECUTIVE_QUIET_CHECKS) {
-    const pendingJobCountsByQueue = await getPendingJobCountsByQueue();
-    const pendingTotal = Object.values(pendingJobCountsByQueue).reduce(
-      (sum, count) => sum + count,
-      0,
-    );
+    const { blockingJobsByQueue, blockingTotal, fingerprint } =
+      await getQueueSnapshot();
 
-    if (pendingTotal === 0) {
+    if (blockingTotal === 0) {
+      busy = false;
       consecutiveQuietChecks += 1;
     } else {
+      busy = true;
       consecutiveQuietChecks = 0;
       const now = Date.now();
 
-      const activeJobsFingerprint = await getActiveJobsFingerprint(
-        Object.keys(pendingJobCountsByQueue),
-      );
-      const busyFingerprint = `${pendingTotal}|${activeJobsFingerprint}`;
-
-      if (busyFingerprint !== lastBusyFingerprint) {
-        lastBusyFingerprint = busyFingerprint;
+      if (fingerprint !== lastBusyFingerprint) {
+        lastBusyFingerprint = fingerprint;
         lastProgressAt = now;
       }
 
       if (now - lastProgressAt > STALL_TIMEOUT_MS) {
         throw new Error(
-          `Message queues stalled, no progress for ${STALL_TIMEOUT_MS}ms, pending jobs: ${JSON.stringify(pendingJobCountsByQueue)}`,
+          `Message queues stalled, no progress for ${STALL_TIMEOUT_MS}ms, pending jobs: ${describeBlockingJobs(
+            blockingJobsByQueue,
+          )}`,
         );
       }
 
       if (now - startedAt > HARD_TIMEOUT_MS) {
         throw new Error(
-          `Message queues still busy after ${HARD_TIMEOUT_MS}ms, pending jobs: ${JSON.stringify(pendingJobCountsByQueue)}`,
+          `Message queues still busy after ${HARD_TIMEOUT_MS}ms, pending jobs: ${describeBlockingJobs(
+            blockingJobsByQueue,
+          )}`,
         );
       }
     }
 
     if (consecutiveQuietChecks < REQUIRED_CONSECUTIVE_QUIET_CHECKS) {
-      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+      await new Promise((resolve) =>
+        setTimeout(
+          resolve,
+          busy ? BUSY_POLL_INTERVAL_MS : QUIET_POLL_INTERVAL_MS,
+        ),
+      );
     }
   }
 };
