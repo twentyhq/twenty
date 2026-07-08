@@ -1,3 +1,4 @@
+import { getLinkFaviconUrl } from '@/navigation-menu-item/display/link/utils/getLinkFaviconUrl';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
   type FieldFilesValue,
@@ -5,7 +6,7 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { getLogoUrlFromDomainName, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getImageIdentifierFieldValue = (
   record: ObjectRecord,
@@ -36,7 +37,7 @@ export const getImageIdentifierFieldValue = (
       const links = fieldValue as FieldLinksValue;
 
       return isDefined(links.primaryLinkUrl)
-        ? (getLogoUrlFromDomainName(links.primaryLinkUrl) ?? null)
+        ? (getLinkFaviconUrl(links.primaryLinkUrl) ?? null)
         : null;
     }
     default:
