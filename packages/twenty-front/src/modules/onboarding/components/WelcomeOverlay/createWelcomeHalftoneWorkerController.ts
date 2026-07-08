@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type WelcomeHalftoneController } from '@/onboarding/components/WelcomeOverlay/welcomeHalftoneController.type';
 
 import WelcomeHalftoneWorker from './welcomeHalftone.worker?worker';
@@ -33,19 +35,30 @@ export const createWelcomeHalftoneWorkerController = ({
     return null;
   }
 
-  try {
-    const worker = new WelcomeHalftoneWorker();
-    let hasWorkerSettled = false;
-    let workerReadyTimeoutId: ReturnType<typeof setTimeout>;
-    const handleWorkerUnavailable = () => {
-      if (hasWorkerSettled) {
-        return;
-      }
-      hasWorkerSettled = true;
+  let worker: Worker | null = null;
+  let workerReadyTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  let hasWorkerSettled = false;
+  let hasCanvasBeenTransferred = false;
+
+  const settleWorker = () => {
+    hasWorkerSettled = true;
+    if (isDefined(workerReadyTimeoutId)) {
       clearTimeout(workerReadyTimeoutId);
-      worker.terminate();
-      onWorkerUnavailable();
-    };
+      workerReadyTimeoutId = null;
+    }
+  };
+
+  const handleWorkerUnavailable = () => {
+    if (hasWorkerSettled) {
+      return;
+    }
+    settleWorker();
+    worker?.terminate();
+    onWorkerUnavailable();
+  };
+
+  try {
+    worker = new WelcomeHalftoneWorker();
     workerReadyTimeoutId = setTimeout(
       handleWorkerUnavailable,
       WORKER_READY_TIMEOUT_MS,
@@ -53,12 +66,12 @@ export const createWelcomeHalftoneWorkerController = ({
     worker.onerror = handleWorkerUnavailable;
     worker.onmessage = (event: MessageEvent<{ type?: string }>) => {
       if (event.data?.type === 'ready') {
-        hasWorkerSettled = true;
-        clearTimeout(workerReadyTimeoutId);
+        settleWorker();
       }
     };
 
     const offscreenCanvas = canvas.transferControlToOffscreen();
+    hasCanvasBeenTransferred = true;
     worker.postMessage(
       {
         type: 'init',
@@ -74,22 +87,26 @@ export const createWelcomeHalftoneWorkerController = ({
     );
 
     return {
-      leave: () => worker.postMessage({ type: 'leave' }),
+      leave: () => worker?.postMessage({ type: 'leave' }),
       resize: (nextCanvasWidth, nextCanvasHeight, nextDevicePixelRatio) =>
-        worker.postMessage({
+        worker?.postMessage({
           type: 'resize',
           width: nextCanvasWidth,
           height: nextCanvasHeight,
           devicePixelRatio: nextDevicePixelRatio,
         }),
       destroy: () => {
-        hasWorkerSettled = true;
-        clearTimeout(workerReadyTimeoutId);
-        worker.postMessage({ type: 'stop' });
-        worker.terminate();
+        settleWorker();
+        worker?.postMessage({ type: 'stop' });
+        worker?.terminate();
       },
     };
   } catch {
+    settleWorker();
+    worker?.terminate();
+    if (hasCanvasBeenTransferred) {
+      onWorkerUnavailable();
+    }
     return null;
   }
 };
