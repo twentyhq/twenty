@@ -1,10 +1,11 @@
-import { isArray, isNonEmptyString, isNumber, isUndefined } from '@sniptt/guards';
+import { isArray, isNumber, isUndefined } from '@sniptt/guards';
 
 import {
   type TranscriptEntry,
   type TranscriptWord,
 } from 'src/front-components/types/transcript-entry.type';
 import { asRecord } from 'src/front-components/utils/as-record.util';
+import { isNonEmptyString } from 'src/front-components/utils/is-non-empty-string.util';
 
 type TranscriptRecord = NonNullable<ReturnType<typeof asRecord>>;
 

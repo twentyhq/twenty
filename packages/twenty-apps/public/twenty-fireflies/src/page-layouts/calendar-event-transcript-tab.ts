@@ -14,7 +14,7 @@ export default definePageLayoutTab({
   universalIdentifier:
     CALENDAR_EVENT_TRANSCRIPT_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
   title: 'Transcript',
-  position: 15,
+  position: 17,
   icon: 'IconMicrophone',
   layoutMode: PageLayoutTabLayoutMode.CANVAS,
   pageLayoutUniversalIdentifier:

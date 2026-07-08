@@ -1,9 +1,9 @@
 import { type SummaryInlineSegment } from 'src/front-components/types/summary-inline-segment.type';
 
-const BOLD_PATTERN = /\*\*(.+?)\*\*/g;
+const BOLD_PATTERN = /(\*\*|__)(.+?)\1/g;
 
-// Splits a markdown line into plain and **bold** runs, preserving surrounding
-// whitespace so adjacent bold runs don't collapse together.
+// Splits a markdown line into plain and bold (**bold** or __bold__) runs,
+// preserving surrounding whitespace so adjacent bold runs don't collapse together.
 export const parseSummaryInlineSegments = (
   text: string,
 ): SummaryInlineSegment[] => {
@@ -23,7 +23,7 @@ export const parseSummaryInlineSegments = (
         segments: [
           ...accumulator.segments,
           ...leadingSegments,
-          { text: match[1], isBold: true },
+          { text: match[2], isBold: true },
         ],
         cursor: matchStart + match[0].length,
       };

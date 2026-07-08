@@ -14,7 +14,7 @@ export default definePageLayoutTab({
   universalIdentifier:
     CALENDAR_EVENT_SUMMARY_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
   title: 'Summary',
-  position: 14,
+  position: 16,
   icon: 'IconFileText',
   layoutMode: PageLayoutTabLayoutMode.CANVAS,
   pageLayoutUniversalIdentifier:
