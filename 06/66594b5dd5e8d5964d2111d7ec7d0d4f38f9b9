@@ -1,0 +1,45 @@
+packages/twenty-server/test/integration/microsoft/calendar/empty-events-fetch.integration-spec.ts
+  s_7b1c6f2e0e3b83::t_f2e7c656f86f61 1-45
+packages/twenty-server/test/integration/microsoft/calendar/event-create.integration-spec.ts
+  s_7b1c6f2e0e3b83::t_a62e0d1a62595e 3,9-10,14-15,20-24,37-45,68-92
+  s_7b1c6f2e0e3b83::t_10ccc1bac7ff21 1-2,4-8,11-13,16-19,25-36,46-67,93-127
+packages/twenty-server/test/integration/microsoft/messaging/message-list-error.integration-spec.ts
+  s_7b1c6f2e0e3b83::t_868d9ce2c9bbdf 1-78
+packages/twenty-server/test/integration/google/mocks/setup-google-mock.util.ts
+  s_7b1c6f2e0e3b83::t_04d78395018277 34-37
+  s_7b1c6f2e0e3b83::t_fe5e1ece3ec573 73-80
+packages/twenty-server/test/integration/google/calendar/event-create.integration-spec.ts
+  s_7b1c6f2e0e3b83::t_f69019361b1783 1-94
+packages/twenty-server/test/integration/google/messaging/empty-import.integration-spec.ts
+  s_7b1c6f2e0e3b83::t_c9f6ed1d327be7 1-56
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/utils/__tests__/normalize-and-validate-calendar-event-input.util.spec.ts
+  s_7b1c6f2e0e3b83::t_c394729ebbc4ec 54-56,64-67,77-80,103-107,117-121,139-142,166-169
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service.ts
+  s_7b1c6f2e0e3b83::t_79327d6634f9df 147-148,175-178,195-198
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/utils/__tests__/partition-fetched-calendar-events.util.spec.ts
+  s_7b1c6f2e0e3b83::t_117b8ed148de24 84-86,121-123
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/utils/__tests__/build-initial-delta-url.util.spec.ts
+  s_7b1c6f2e0e3b83::t_e31966d46b744a 7-8
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/utils/__tests__/partition-delta-page.util.spec.ts
+  s_7b1c6f2e0e3b83::t_2b2dc518cf5b2f 19,27
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/__tests__/should-create-contact-from-participant.util.spec.ts
+  s_7b1c6f2e0e3b83::t_8c112d72a64b42 89-92
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/should-create-contact-from-participant.util.ts
+  s_7b1c6f2e0e3b83::t_afd4597947427e 32-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "0666594b5dd5e8d5964d2111d7ec7d0d4f38f9b9",
+  "prompts": {},
+  "sessions": {
+    "s_7b1c6f2e0e3b83": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ecb71351-1f99-4bd4-80d0-5ced7c089ea6",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
