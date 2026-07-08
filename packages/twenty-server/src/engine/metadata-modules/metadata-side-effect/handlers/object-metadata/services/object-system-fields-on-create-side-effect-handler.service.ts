@@ -32,10 +32,6 @@ export class ObjectSystemFieldsOnCreateSideEffectHandlerService extends Metadata
         },
       });
 
-    // System fields are pure engine output: we always emit them. When a legacy
-    // manifest also declares them they carry isSystemSideEffect too, so the
-    // engine merge dedups the identical deterministic universal identifiers
-    // silently (first-writer wins) rather than raising a collision.
     const flatEntityToCreate: Record<
       string,
       MetadataUniversalFlatEntity<'fieldMetadata'>

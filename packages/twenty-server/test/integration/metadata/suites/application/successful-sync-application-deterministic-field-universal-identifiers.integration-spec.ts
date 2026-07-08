@@ -12,11 +12,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
-// The reserved system fields are the only fields the manifest sync funnel
-// synthesizes server-side (through the objectMetadata side-effect engine). The
-// name field and the default relations are caller-provided defaults (SDK
-// auto-complete on the real manifest path), so they are intentionally out of
-// scope here: the manifest funnel never derives their universal identifiers.
 const SYSTEM_FIELD_NAMES = [
   'id',
   'createdAt',
@@ -31,17 +26,10 @@ const SYSTEM_FIELD_NAMES = [
 const TEST_APP_UNIVERSAL_IDENTIFIER = uuidv4();
 const TEST_ROLE_UNIVERSAL_IDENTIFIER = uuidv4();
 const OBJECT_UNIVERSAL_IDENTIFIER = uuidv4();
-// The name field is a caller-provided default: we give it a random universal
-// identifier and use it as the label identifier so the manifest is valid without
-// pre-deriving any system field universal identifier from the test definition.
 const NAME_FIELD_UNIVERSAL_IDENTIFIER = uuidv4();
 
 const OBJECT_NAME_SINGULAR = 'rocketForManifestUniversalIdentifier';
 
-// The manifest deliberately declares no system field: it only carries the base
-// object universal identifier and a caller-provided name field. Every system
-// field universal identifier asserted below is therefore derived by the server,
-// never provided by this test definition.
 const TEST_OBJECT: ObjectManifest = {
   universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
   labelIdentifierFieldMetadataUniversalIdentifier:

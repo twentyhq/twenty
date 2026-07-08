@@ -502,11 +502,6 @@ export const buildManifest = async (
 
   if (applicationConfig) {
     for (const objectConfig of objectConfigs) {
-      // The reserved system fields, the searchVector GIN index and the
-      // searchFieldMetadata are synthesized server-side by the objectMetadata
-      // side-effect engine. The name field and the default relations to the
-      // standard objects are caller-provided defaults auto-completed here so they
-      // live in the manifest and remain authorable.
       const {
         objectFields: objectFieldsWithDefaults,
         fields: reverseRelationFields,

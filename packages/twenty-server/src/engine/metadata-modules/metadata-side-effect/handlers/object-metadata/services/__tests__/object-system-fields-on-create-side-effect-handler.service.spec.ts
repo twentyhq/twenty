@@ -75,8 +75,6 @@ describe('ObjectSystemFieldsOnCreateSideEffectHandlerService', () => {
     expect(createdUniversalIdentifiers).not.toContain(
       NAME_FIELD_UNIVERSAL_IDENTIFIER,
     );
-    // The searchVector field is owned by the self-contained search-vector
-    // handler, not the system-fields handler.
     expect(createdUniversalIdentifiers).not.toContain(
       SEARCH_VECTOR_FIELD_UNIVERSAL_IDENTIFIER,
     );

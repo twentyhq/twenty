@@ -43,10 +43,6 @@ export const deriveSearchVectorAsExpressionForTsVectorField = ({
     },
   );
 
-  // A searchable object whose searchVector resolves to zero target fields yields a
-  // permanently NULL tsvector column (silent search breakage, see #2635). The
-  // objectMetadata searchFieldMetadata side-effect handler is meant to guarantee at
-  // least one row, so an empty set here signals a synthesis regression.
   if (targetSearchableFields.length === 0) {
     logger.error(
       `Deriving searchVector expression with zero target search fields${

@@ -30,9 +30,6 @@ const renderFieldEntry = ({
   const isVisible = field.isVisible ?? true;
   const size = field.size ?? 200;
 
-  // Default system fields are synthesized server-side with deterministic universal
-  // identifiers, so we resolve them at codegen time and emit a plain string literal
-  // rather than a runtime helper call in the generated view file.
   const resolvedFieldMetadataUniversalIdentifier =
     'defaultFieldName' in field
       ? getFieldUniversalIdentifier({

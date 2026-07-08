@@ -164,10 +164,6 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             },
           });
 
-        // Default relation fields are caller-provided default fields (declared in
-        // the manifest by the SDK auto-complete, or synthesized here for the API
-        // path). They are authorable and subject to normal deletion inference,
-        // so they are NOT flagged isSystemSideEffect.
         return {
           standardSourceFlatFieldMetadatas: [
             ...sourceAndTargetFlatFieldMetadatasRecord.standardSourceFlatFieldMetadatas,

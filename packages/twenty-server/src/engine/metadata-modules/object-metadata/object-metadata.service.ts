@@ -491,11 +491,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         },
       );
 
-    // The reserved system fields, their indexes, the GIN searchVector index and
-    // the searchFieldMetadata are synthesized by the objectMetadata side-effect
-    // engine handlers. The caller-provided defaults (name field + default
-    // relations to the standard objects, both directions, with their indexes) are
-    // produced here for the direct GraphQL API path.
     const {
       flatObjectMetadataToCreate,
       flatFieldMetadataToCreateOnObject,

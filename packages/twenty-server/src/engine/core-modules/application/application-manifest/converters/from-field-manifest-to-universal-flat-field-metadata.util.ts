@@ -68,13 +68,6 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     relationTargetObjectMetadataUniversalIdentifier,
   } = getRelationTargetUniversalIdentifiers(fieldManifest);
 
-  // The default system fields are synthesized by the objectMetadata side-effect
-  // engine handlers. Legacy manifests that still declare them are tolerated and
-  // flagged isSystemSideEffect below so they dedup against the synthesized field.
-  // The default name field and default relation fields are caller-provided (SDK
-  // auto-complete): they are declared in the manifest as normal fields. We still
-  // re-normalize composite defaults here for author-declared composite fields
-  // whose canonical shape the SDK cannot know.
   const rawDefaultValue =
     fieldManifest.defaultValue ?? generateDefaultValue(fieldManifest.type);
   const defaultValue = isCompositeFieldMetadataType(fieldManifest.type)
@@ -98,10 +91,6 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     universalSettings: fieldManifest.universalSettings ?? null,
     isActive: true,
     isSystem: fieldManifest.name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS,
-    // Only the reserved system fields are engine-owned. A legacy manifest that
-    // still declares one is tolerated by flagging it isSystemSideEffect so it
-    // dedups against the synthesized field and is excluded from deletion
-    // inference. The name field and default relations are caller-provided.
     isSystemSideEffect:
       fieldManifest.name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS,
     isUIEditable: fieldManifest.isUIEditable ?? true,

@@ -18,16 +18,9 @@ const OBJECT_UNIVERSAL_IDENTIFIER = uuidv4();
 const OBJECT_NAME_SINGULAR = 'searchableRocket';
 const OBJECT_NAME_PLURAL = 'searchableRockets';
 
-// A distinctive value so the search result cannot be polluted by seed data.
 const RECORD_NAME_VALUE = 'FalconHeavyManifestSearchTerm';
 const OTHER_RECORD_NAME_VALUE = 'AtlasFiveManifestSearchTerm';
 
-// The name field is a caller-provided default: the SDK auto-completes it with a
-// deterministically derived universal identifier, so we mirror that here and use
-// it as the label identifier. The searchFieldMetadata that makes the object
-// searchable is NOT declared in the manifest: it is synthesized server-side by
-// the objectMetadata search-field side-effect handler because the label
-// identifier is a searchable (TEXT) field.
 const NAME_FIELD_UNIVERSAL_IDENTIFIER = getFieldUniversalIdentifier({
   applicationUniversalIdentifier: TEST_APP_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,

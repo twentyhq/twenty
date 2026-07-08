@@ -21,13 +21,6 @@ type FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs 
     flatApplication: FlatApplication;
   } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>;
 
-// The reserved system fields, their system indexes, the GIN searchVector index
-// and the searchFieldMetadata are synthesized by the objectMetadata side-effect
-// engine handlers. This transpiler produces the caller-provided defaults for the
-// direct GraphQL API path: the object metadata itself, its default `name` field
-// (unless it is a junction object) and the default relations to the standard
-// objects (both directions, plus their backing indexes). None of these are
-// flagged isSystemSideEffect — they are authorable defaults.
 export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate =
   ({
     createObjectInput: rawCreateObjectInput,
@@ -101,9 +94,6 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       imageIdentifierFieldMetadataUniversalIdentifier: null,
     };
 
-    // Only the caller-provided name field is produced here; the reserved system
-    // fields and the searchVector surface are engine-owned side effects synthesized
-    // by the metadata side effect engine.
     const nameFlatFieldMetadata =
       createObjectInput.skipNameField === true
         ? null

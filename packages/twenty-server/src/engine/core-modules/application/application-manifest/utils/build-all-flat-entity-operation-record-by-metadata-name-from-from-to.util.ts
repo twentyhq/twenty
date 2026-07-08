@@ -61,20 +61,10 @@ const buildFlatEntityOperationRecordForMetadata = <T extends AllMetadataName>({
             ),
         )
         .filter((fromFlatEntity) => {
-          // searchFieldMetadata has no isSystemSideEffect column yet but is always
-          // engine-owned (synthesized by the objectMetadata side-effect handlers),
-          // so never infer its deletion — the object delete handler removes it
-          // explicitly. Acknowledged stopgap until it carries the flag.
           if (metadataName === ALL_METADATA_NAME.searchFieldMetadata) {
             return false;
           }
 
-          // Engine-owned side effects (the reserved system fields and all system
-          // indexes including the GIN searchVector index) are excluded from
-          // deletion inference: they are re-synthesized on create and cascaded
-          // explicitly by the object delete handler. Caller-provided defaults
-          // (name, default relations) are NOT flagged and follow normal deletion
-          // inference since they live in both the from and to manifests.
           return !isSystemSideEffectFlatEntity(
             fromFlatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
           );

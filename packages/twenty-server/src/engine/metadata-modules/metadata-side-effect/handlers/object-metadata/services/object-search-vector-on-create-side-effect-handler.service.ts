@@ -46,11 +46,6 @@ export class ObjectSearchVectorOnCreateSideEffectHandlerService extends Metadata
       searchVectorFlatFieldMetadata,
     });
 
-    // The searchVector field and its GIN index are pure engine output with
-    // deterministic isSystemSideEffect universal identifiers, so the engine merge
-    // dedups them silently if they are also declared elsewhere; no local presence
-    // check is needed. They are always provisioned, even for non-searchable
-    // objects, so the column and its index exist consistently.
     const operations: MetadataSideEffectOperationsByMetadataName = {
       fieldMetadata: {
         flatEntityToCreate: {
@@ -86,10 +81,6 @@ export class ObjectSearchVectorOnCreateSideEffectHandlerService extends Metadata
     };
   }
 
-  // The searchFieldMetadata targets the object's label identifier so the
-  // searchVector is populated. It is only provisioned for searchable objects
-  // whose label identifier is a searchable-type field. Junction objects use the
-  // id field as their label identifier and never get a searchFieldMetadata row.
   private buildSearchFieldMetadata({
     flatObjectMetadata,
     searchVectorFlatFieldMetadata,
@@ -155,9 +146,6 @@ export class ObjectSearchVectorOnCreateSideEffectHandlerService extends Metadata
     });
   }
 
-  // The label identifier is either the derived name field (always TEXT and
-  // searchable) or an author-declared field that must be resolved from the
-  // pending create matrix or the workspace from-state to read its type.
   private resolveLabelIdentifierFieldType({
     applicationUniversalIdentifier,
     objectUniversalIdentifier,
