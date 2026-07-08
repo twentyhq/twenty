@@ -18,6 +18,7 @@ export const saveContentSchema = z.object({
       headline: z.string().optional(),
       bodyMarkdown: z.string().optional(),
       caseStudyLink: z.string().optional(),
+      published: z.boolean().optional(),
     }),
   ),
 });
@@ -41,9 +42,7 @@ export type SaveContentResult =
   | { ok: true; caseStudies: CaseStudyRow[] }
   | { ok: false; reason: string };
 
-// Rows author freely: new rows are always created WIP/CASE_STUDY (privileged app
-// client bypasses the partner field-locks on status/contentType), and updates never
-// touch either column — approval/publication stays staff-controlled.
+// Partner self-controls visibility: published → APPROVED (public), draft → WIP (hidden).
 export function buildContentCreateData(
   item: CaseStudyItem,
   partnerId: string,
@@ -56,7 +55,7 @@ export function buildContentCreateData(
     body: { markdown: item.bodyMarkdown ?? '' },
     caseStudyLink: item.caseStudyLink ? { primaryLinkUrl: item.caseStudyLink } : undefined,
     contentType: ['CASE_STUDY'],
-    status: 'WIP',
+    status: item.published ? 'APPROVED' : 'WIP',
   };
 }
 
@@ -69,6 +68,7 @@ export function buildContentUpdateData(
     headline: item.headline,
     body: { markdown: item.bodyMarkdown ?? '' },
     caseStudyLink: item.caseStudyLink ? { primaryLinkUrl: item.caseStudyLink } : undefined,
+    status: item.published ? 'APPROVED' : 'WIP',
   };
 }
 
@@ -176,7 +176,7 @@ export default defineLogicFunction({
   universalIdentifier: SAVE_MY_PARTNER_CONTENT_ID,
   name: 'save-my-partner-content',
   description:
-    "Reconciles the calling partner's own case studies (create/update/delete in one call); new rows are always WIP.",
+    "Reconciles the calling partner's own case studies (create/update/delete in one call); each row is published (APPROVED) or kept as a draft (WIP) per its published flag.",
   timeoutSeconds: 20,
   handler,
   httpRouteTriggerSettings: {

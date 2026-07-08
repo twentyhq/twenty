@@ -64,9 +64,8 @@ describe('buildContentCreateData', () => {
 });
 
 describe('buildContentUpdateData', () => {
-  it('omits status and contentType', () => {
+  it('omits contentType and partnerId', () => {
     const data = buildContentUpdateData({ name: 'Acme rollout (edited)' });
-    expect(data).not.toHaveProperty('status');
     expect(data).not.toHaveProperty('contentType');
     expect(data).not.toHaveProperty('partnerId');
   });
@@ -90,6 +89,31 @@ describe('buildContentUpdateData', () => {
     expect(data.name).toBe('Acme rollout (edited)');
     expect(data.clientName).toBe('Acme Corp');
     expect(data.headline).toBe('A better migration');
+  });
+});
+
+describe('partner-controlled publish', () => {
+  it('creates a published case study as APPROVED', () => {
+    const data = buildContentCreateData(
+      { name: 'x', published: true },
+      'partner-1',
+    );
+    expect(data.status).toBe('APPROVED');
+    expect(data.contentType).toEqual(['CASE_STUDY']);
+  });
+
+  it('creates a draft (published false or omitted) as WIP', () => {
+    expect(buildContentCreateData({ name: 'x', published: false }, 'p').status).toBe('WIP');
+    expect(buildContentCreateData({ name: 'x' }, 'p').status).toBe('WIP');
+  });
+
+  it('updates status from the published flag', () => {
+    expect(buildContentUpdateData({ name: 'x', published: true }).status).toBe('APPROVED');
+    expect(buildContentUpdateData({ name: 'x', published: false }).status).toBe('WIP');
+  });
+
+  it('updates a row with published omitted to WIP', () => {
+    expect(buildContentUpdateData({ name: 'x' }).status).toBe('WIP');
   });
 });
 
