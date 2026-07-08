@@ -25,6 +25,10 @@ type WelcomeHalftoneWorkerMessage =
   | { type: 'leave' }
   | { type: 'stop' };
 
+const workerSelf = self as unknown as {
+  postMessage: (message: unknown) => void;
+};
+
 let renderer: ReturnType<typeof createWelcomeHalftoneRenderer> | null = null;
 let offscreenCanvas: OffscreenCanvas | null = null;
 
@@ -62,6 +66,7 @@ addEventListener(
         highlightColor: message.highlightColor,
         reducedMotion: message.reducedMotion,
       });
+      workerSelf.postMessage({ type: 'ready' });
     } else if (message.type === 'resize') {
       applyBackingSize(message.width, message.height, message.devicePixelRatio);
       renderer?.resize(message.width, message.height, message.devicePixelRatio);

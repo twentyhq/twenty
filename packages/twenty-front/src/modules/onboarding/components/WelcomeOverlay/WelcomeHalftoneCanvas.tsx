@@ -7,6 +7,8 @@ import { createWelcomeHalftoneRenderer } from '@/onboarding/components/WelcomeOv
 import WelcomeHalftoneWorker from './welcomeHalftone.worker?worker';
 import './welcomeHalftone.css';
 
+const WORKER_READY_TIMEOUT_MS = 1500;
+
 const StyledCanvas = styled.canvas`
   display: block;
   height: 100%;
@@ -29,6 +31,7 @@ export const WelcomeHalftoneCanvas = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [controller, setController] =
     useState<WelcomeHalftoneController | null>(null);
+  const [workerFailed, setWorkerFailed] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -42,7 +45,8 @@ export const WelcomeHalftoneCanvas = ({
     const color = styles.getPropertyValue('--welcome-dot-color').trim();
     const highlightColor =
       styles.getPropertyValue('--welcome-dot-highlight').trim() || color;
-    const devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    const readDevicePixelRatio = () =>
+      Math.min(window.devicePixelRatio || 1, 2);
     const readSize = () => ({
       width: canvas.clientWidth,
       height: canvas.clientHeight,
@@ -50,6 +54,7 @@ export const WelcomeHalftoneCanvas = ({
 
     const createWorkerController = (): WelcomeHalftoneController | null => {
       if (
+        workerFailed ||
         typeof Worker === 'undefined' ||
         typeof OffscreenCanvas === 'undefined' ||
         typeof canvas.transferControlToOffscreen !== 'function'
@@ -59,6 +64,27 @@ export const WelcomeHalftoneCanvas = ({
 
       try {
         const worker = new WelcomeHalftoneWorker();
+        let settled = false;
+        let readyTimer: ReturnType<typeof setTimeout>;
+        const failWorker = () => {
+          if (settled) {
+            return;
+          }
+          settled = true;
+          clearTimeout(readyTimer);
+          worker.terminate();
+          setWorkerFailed(true);
+        };
+        readyTimer = setTimeout(failWorker, WORKER_READY_TIMEOUT_MS);
+        worker.onerror = failWorker;
+        worker.onmessage = (event: MessageEvent<{ type?: string }>) => {
+          if (event.data?.type === 'ready') {
+            settled = true;
+            clearTimeout(readyTimer);
+          }
+        };
+
+        const devicePixelRatio = readDevicePixelRatio();
         const offscreen = canvas.transferControlToOffscreen();
         const { width, height } = readSize();
         worker.postMessage(
@@ -85,6 +111,8 @@ export const WelcomeHalftoneCanvas = ({
               devicePixelRatio: nextDevicePixelRatio,
             }),
           destroy: () => {
+            settled = true;
+            clearTimeout(readyTimer);
             worker.postMessage({ type: 'stop' });
             worker.terminate();
           },
@@ -105,13 +133,18 @@ export const WelcomeHalftoneCanvas = ({
         return null;
       }
 
-      const applyBackingSize = (width: number, height: number) => {
+      const applyBackingSize = (
+        width: number,
+        height: number,
+        devicePixelRatio: number,
+      ) => {
         canvas.width = Math.round(width * devicePixelRatio);
         canvas.height = Math.round(height * devicePixelRatio);
       };
 
+      const devicePixelRatio = readDevicePixelRatio();
       const { width, height } = readSize();
-      applyBackingSize(width, height);
+      applyBackingSize(width, height, devicePixelRatio);
       const renderer = createWelcomeHalftoneRenderer({
         context,
         dashes: WELCOME_HALFTONE_DASHES,
@@ -126,7 +159,7 @@ export const WelcomeHalftoneCanvas = ({
       return {
         leave: () => renderer.leave(),
         resize: (nextWidth, nextHeight, nextDevicePixelRatio) => {
-          applyBackingSize(nextWidth, nextHeight);
+          applyBackingSize(nextWidth, nextHeight, nextDevicePixelRatio);
           renderer.resize(nextWidth, nextHeight, nextDevicePixelRatio);
         },
         destroy: () => renderer.destroy(),
@@ -142,7 +175,7 @@ export const WelcomeHalftoneCanvas = ({
 
     const handleResize = () => {
       const size = readSize();
-      activeController.resize(size.width, size.height, devicePixelRatio);
+      activeController.resize(size.width, size.height, readDevicePixelRatio());
     };
     window.addEventListener('resize', handleResize);
 
@@ -150,7 +183,7 @@ export const WelcomeHalftoneCanvas = ({
       window.removeEventListener('resize', handleResize);
       activeController.destroy();
     };
-  }, []);
+  }, [workerFailed]);
 
   useEffect(() => {
     if (isLeaving) {
@@ -158,5 +191,11 @@ export const WelcomeHalftoneCanvas = ({
     }
   }, [isLeaving, controller]);
 
-  return <StyledCanvas ref={canvasRef} aria-hidden="true" />;
+  return (
+    <StyledCanvas
+      key={workerFailed ? 'main-thread' : 'worker'}
+      ref={canvasRef}
+      aria-hidden="true"
+    />
+  );
 };

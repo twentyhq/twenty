@@ -32,6 +32,9 @@ type WelcomeHalftoneParticle = {
   distanceToCenter: number;
   delaySeconds: number;
   phase: number;
+  leaveX: number;
+  leaveY: number;
+  leaveAlpha: number;
 };
 
 type WelcomeHalftoneRendererOptions = {
@@ -119,8 +122,28 @@ export const createWelcomeHalftoneRenderer = (
           ASSEMBLE_STAGGER_SECONDS * (distanceToCenter / maxDistanceToCenter) +
           ASSEMBLE_JITTER_SECONDS * pseudoRandom(index * 3.7),
         phase: pseudoRandom(index * 5.1) * TAU,
+        leaveX: 0,
+        leaveY: 0,
+        leaveAlpha: 0,
       };
     });
+  };
+
+  const computeAssembleState = (
+    particle: WelcomeHalftoneParticle,
+    seconds: number,
+  ) => {
+    const progress = easeOutExpo(
+      clamp01((seconds - particle.delaySeconds) / DASH_DURATION_SECONDS),
+    );
+    let x = lerp(particle.startX, particle.targetX, progress);
+    let y = lerp(particle.startY, particle.targetY, progress);
+    const settled = clamp01(
+      (seconds - (particle.delaySeconds + DASH_DURATION_SECONDS)) / 0.6,
+    );
+    x += Math.sin(seconds * 1.6 + particle.phase) * settled * 1.2;
+    y += Math.cos(seconds * 1.4 + particle.phase) * settled * 0.8;
+    return { x, y, alpha: progress };
   };
 
   const draw = (timeMs: number) => {
@@ -131,6 +154,18 @@ export const createWelcomeHalftoneRenderer = (
 
     if (leaveRequested && leaveTimeSeconds === null) {
       leaveTimeSeconds = elapsedSeconds;
+      for (const particle of particles) {
+        if (reducedMotion) {
+          particle.leaveX = particle.targetX;
+          particle.leaveY = particle.targetY;
+          particle.leaveAlpha = 1;
+        } else {
+          const state = computeAssembleState(particle, elapsedSeconds);
+          particle.leaveX = state.x;
+          particle.leaveY = state.y;
+          particle.leaveAlpha = state.alpha;
+        }
+      }
     }
 
     const burst =
@@ -157,21 +192,10 @@ export const createWelcomeHalftoneRenderer = (
         y = particle.targetY;
         alpha = isLeaving ? 1 - burst : 1;
       } else if (!isLeaving) {
-        const progress = easeOutExpo(
-          clamp01(
-            (elapsedSeconds - particle.delaySeconds) / DASH_DURATION_SECONDS,
-          ),
-        );
-        x = lerp(particle.startX, particle.targetX, progress);
-        y = lerp(particle.startY, particle.targetY, progress);
-        alpha = progress;
-
-        const settled = clamp01(
-          (elapsedSeconds - (particle.delaySeconds + DASH_DURATION_SECONDS)) /
-            0.6,
-        );
-        x += Math.sin(elapsedSeconds * 1.6 + particle.phase) * settled * 1.2;
-        y += Math.cos(elapsedSeconds * 1.4 + particle.phase) * settled * 0.8;
+        const state = computeAssembleState(particle, elapsedSeconds);
+        x = state.x;
+        y = state.y;
+        alpha = state.alpha;
       } else {
         const eased = smootherStep(burst);
         const push =
@@ -179,9 +203,9 @@ export const createWelcomeHalftoneRenderer = (
           halftoneSize *
           1.1 *
           (0.6 + 0.8 * (particle.distanceToCenter / maxDistanceToCenter));
-        x = particle.targetX + particle.directionX * push;
-        y = particle.targetY + particle.directionY * push;
-        alpha = 1 - easeOut(clamp01(burst / 0.85));
+        x = particle.leaveX + particle.directionX * push;
+        y = particle.leaveY + particle.directionY * push;
+        alpha = particle.leaveAlpha * (1 - easeOut(clamp01(burst / 0.85)));
         length = particle.length + push * 0.12 * burst;
         angle = Math.atan2(particle.directionY, particle.directionX);
       }
