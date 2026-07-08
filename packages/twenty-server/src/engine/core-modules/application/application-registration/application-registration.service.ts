@@ -399,6 +399,7 @@ export class ApplicationRegistrationService {
         sourceType: params.sourceType,
         sourcePackage: params.sourcePackage,
         latestAvailableVersion: params.latestAvailableVersion,
+        isFeatured,
         manifest: params.manifest,
         ...fromManifestApplicationToDisplayFields(params.manifest?.application),
       });
@@ -483,7 +484,7 @@ export class ApplicationRegistrationService {
       where: {
         isListed: true,
         sourceType: ApplicationRegistrationSourceType.NPM,
-        ...(isFeatured !== undefined && { isFeatured }),
+        ...(isDefined(isFeatured) && { isFeatured }),
       },
     });
 
