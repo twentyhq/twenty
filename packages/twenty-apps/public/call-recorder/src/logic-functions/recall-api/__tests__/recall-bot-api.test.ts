@@ -224,8 +224,12 @@ describe('recall bot api', () => {
     expect(result).toEqual({
       ok: true,
       bots: [
-        { id: 'bot-1', metadata: { twentyCallRecordingId: 'recording-1' } },
-        { id: 'bot-2', metadata: {} },
+        {
+          id: 'bot-1',
+          metadata: { twentyCallRecordingId: 'recording-1' },
+          raw: { id: 'bot-1', metadata: { twentyCallRecordingId: 'recording-1' } },
+        },
+        { id: 'bot-2', metadata: {}, raw: { id: 'bot-2' } },
       ],
     });
     expect(fetchMock).toHaveBeenNthCalledWith(
@@ -282,7 +286,7 @@ describe('recall bot api', () => {
 
     expect(result).toEqual({
       ok: true,
-      bots: [{ id: 'bot-1', metadata: {} }],
+      bots: [{ id: 'bot-1', metadata: {}, raw: { id: 'bot-1' } }],
     });
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });

@@ -8,6 +8,8 @@ import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-a
 export type RecallScheduledBot = {
   id: string;
   metadata: Record<string, unknown>;
+  // Full bot record so convergence can read status without a per-id fetch.
+  raw: Record<string, unknown>;
 };
 
 type RecallBotListResponse = {
@@ -87,6 +89,7 @@ const extractRecallBots = (
       {
         id: bot.id,
         metadata: asRecord(bot.metadata) ?? {},
+        raw: bot,
       },
     ];
   });
