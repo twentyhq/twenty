@@ -1,9 +1,9 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { getLinkFaviconUrl } from '@/navigation-menu-item/display/link/utils/getLinkFaviconUrl';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import {
-  type FieldFilesValue,
-  type FieldLinksValue,
-} from '@/object-record/record-field/ui/types/FieldMetadata';
+import { isFieldFilesValue } from '@/object-record/record-field/ui/types/guards/isFieldFilesValue';
+import { isFieldLinksValue } from '@/object-record/record-field/ui/types/guards/isFieldLinksValue';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,22 +25,25 @@ export const getImageIdentifierFieldValue = (
 
   switch (imageIdentifierFieldMetadataItem.type) {
     case FieldMetadataType.FILES: {
-      const files = fieldValue as FieldFilesValue[];
-
-      return files[0]?.url ?? null;
-    }
-    case FieldMetadataType.LINKS: {
-      if (allowRequestsToTwentyIcons !== true) {
+      if (!isFieldFilesValue(fieldValue)) {
         return null;
       }
 
-      const links = fieldValue as FieldLinksValue;
+      return fieldValue[0]?.url ?? null;
+    }
+    case FieldMetadataType.LINKS: {
+      if (
+        allowRequestsToTwentyIcons !== true ||
+        !isFieldLinksValue(fieldValue)
+      ) {
+        return null;
+      }
 
-      return isDefined(links.primaryLinkUrl)
-        ? (getLinkFaviconUrl(links.primaryLinkUrl) ?? null)
+      return isDefined(fieldValue.primaryLinkUrl)
+        ? getLinkFaviconUrl(fieldValue.primaryLinkUrl)
         : null;
     }
     default:
-      return fieldValue as string;
+      return isNonEmptyString(fieldValue) ? fieldValue : null;
   }
 };
