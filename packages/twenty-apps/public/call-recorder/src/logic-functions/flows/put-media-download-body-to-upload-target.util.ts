@@ -13,7 +13,7 @@ type MediaUploadTarget = {
   contentType: string;
 };
 
-const MEDIA_UPLOAD_TIMEOUT_MS = 120_000;
+const MEDIA_UPLOAD_TIMEOUT_MS = 14 * 60 * 1000;
 const HTTP_STATUS_OK_LOWER_BOUND = 200;
 const HTTP_STATUS_OK_UPPER_BOUND = 300;
 
@@ -28,8 +28,8 @@ export const putMediaDownloadBodyToUploadTarget = async ({
   sizeBytes: number;
   uploadTarget: MediaUploadTarget;
 }): Promise<void> => {
-  // Stream via node http, not fetch: undici buffers a whole ReadableStream
-  // request body in memory and OOMs the 512MB Lambda on large media.
+  // Use node:http instead of fetch here: fetch can buffer ReadableStream
+  // request bodies in memory, which OOMs Lambda for large recordings.
   const mediaDownloadReadable = Readable.fromWeb(
     mediaDownloadBody as NodeWebReadableStream<Uint8Array>,
   );

@@ -65,7 +65,7 @@ export const ingestCallRecordingMedia = async ({
 
   const mediaUrls = extractRecallMediaUrls(recordingResult.recording);
   const metadataClient = new MetadataApiClient();
-  // TODO: uploads now stream, so the cap is no longer needed for memory; monitor and raise it on prod, then remove it after a decisive call.
+  // TODO: raise this cap via config, monitor streamed uploads in prod, then remove the cap once verified.
   const maxMediaFileSizeBytes = getMaxMediaFileSizeBytes();
   const updateFields: CallRecordingMediaUpdateFields = {};
   const tooLargeFailureReasons: string[] = [];
