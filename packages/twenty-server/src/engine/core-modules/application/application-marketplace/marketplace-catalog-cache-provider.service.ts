@@ -38,15 +38,15 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
 
     if (registrations.length === 0) {
       if (!this.hasSyncBeenEnqueued) {
-        this.hasSyncBeenEnqueued = true;
         this.logger.log(
           'No marketplace registrations found, enqueuing one-time sync job',
         );
         await this.messageQueueService.add(
           MarketplaceCatalogSyncCronJob.name,
           {},
-          { id: 'marketplace-catalog-sync' }, // Avoids triggering multiple pending jobs
+          { id: 'marketplace-catalog-sync' },
         );
+        this.hasSyncBeenEnqueued = true;
       }
 
       return {};
