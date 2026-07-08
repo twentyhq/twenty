@@ -581,9 +581,6 @@ export class SearchService {
     flatObjectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ): string[] {
-    // WorkspaceMember is an exception: its avatar is a TEXT column (avatarUrl)
-    // holding a signed CorePicture URL, which does not fit the generic
-    // FILES/LINKS image identifier resolution.
     if (flatObjectMetadata.nameSingular === 'workspaceMember') {
       return ['avatarUrl'];
     }
@@ -633,8 +630,6 @@ export class SearchService {
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     workspaceId: string,
   ): Promise<string> {
-    // WorkspaceMember is an exception: its avatarUrl TEXT column holds a signed
-    // CorePicture URL, which does not fit the generic FILES/LINKS resolution.
     if (flatObjectMetadata.nameSingular === 'workspaceMember') {
       const avatarFileId = extractFileIdFromUrl(
         record.avatarUrl,
