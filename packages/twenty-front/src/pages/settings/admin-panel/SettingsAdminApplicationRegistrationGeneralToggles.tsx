@@ -112,7 +112,7 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
         <Card rounded fullWidth>
           <SettingsOptionCardContentToggle
             Icon={IconShield}
-            title={t`Vetted`}
+            title={t`Featured`}
             description={t`Mark this app as reviewed and approved`}
             checked={registration.isFeatured}
             onChange={(checked) =>
