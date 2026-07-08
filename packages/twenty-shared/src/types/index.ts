@@ -181,6 +181,8 @@ export type {
   ChartFilter,
   UniversalChartFilter,
 } from './page-layout/chart-filter.type';
+export type { GraphWidgetConfigurationType } from './page-layout/graph-widget-configuration-type';
+export { GRAPH_WIDGET_CONFIGURATION_TYPES } from './page-layout/graph-widget-configuration-type';
 export type { GridPosition } from './page-layout/grid-position.type';
 export type {
   AggregateChartConfiguration,
