@@ -378,7 +378,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
               flatSearchFieldMetadataMaps,
             }),
           indexedFieldById,
-          objectMetadataNameSingular: flatObjectMetadata.nameSingular,
         });
 
       const columnDefinitions = generateColumnDefinitions({

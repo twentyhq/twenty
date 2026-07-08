@@ -133,21 +133,17 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
       return { status: 'noop' };
     }
 
-    const operations: MetadataSideEffectOperationsByMetadataName = {};
-
-    if (hasFieldMetadataToDelete) {
-      operations.fieldMetadata = { flatEntityToDelete: fieldMetadataToDelete };
-    }
-
-    if (hasIndexToDelete) {
-      operations.index = { flatEntityToDelete: indexToDelete };
-    }
-
-    if (hasSearchFieldMetadataToDelete) {
-      operations.searchFieldMetadata = {
-        flatEntityToDelete: searchFieldMetadataToDelete,
-      };
-    }
+    const operations: MetadataSideEffectOperationsByMetadataName = {
+      ...(hasFieldMetadataToDelete && {
+        fieldMetadata: { flatEntityToDelete: fieldMetadataToDelete },
+      }),
+      ...(hasIndexToDelete && {
+        index: { flatEntityToDelete: indexToDelete },
+      }),
+      ...(hasSearchFieldMetadataToDelete && {
+        searchFieldMetadata: { flatEntityToDelete: searchFieldMetadataToDelete },
+      }),
+    };
 
     return {
       status: 'success',

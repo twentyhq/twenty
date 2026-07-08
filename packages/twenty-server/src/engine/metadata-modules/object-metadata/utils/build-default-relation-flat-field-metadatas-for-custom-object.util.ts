@@ -167,11 +167,11 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
         return {
           standardSourceFlatFieldMetadatas: [
             ...sourceAndTargetFlatFieldMetadatasRecord.standardSourceFlatFieldMetadatas,
-            { ...flatFieldMetadatas[0], isSystemSideEffect: false },
+            flatFieldMetadatas[0],
           ],
           standardTargetFlatFieldMetadatas: [
             ...sourceAndTargetFlatFieldMetadatasRecord.standardTargetFlatFieldMetadatas,
-            { ...flatFieldMetadatas[1], isSystemSideEffect: false },
+            flatFieldMetadatas[1],
           ],
           standardTargetFlatIndexMetadatas: [
             ...sourceAndTargetFlatFieldMetadatasRecord.standardTargetFlatIndexMetadatas,
