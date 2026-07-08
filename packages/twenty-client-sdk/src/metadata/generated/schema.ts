@@ -52,7 +52,7 @@ export interface ApplicationRegistration {
     sourcePackage?: Scalars['String']
     latestAvailableVersion?: Scalars['String']
     isListed: Scalars['Boolean']
-    isFeatured: Scalars['Boolean']
+    isVetted: Scalars['Boolean']
     isPreInstalled: Scalars['Boolean']
     logoUrl?: Scalars['String']
     createdAt: Scalars['DateTime']
@@ -1854,7 +1854,7 @@ export interface MarketplaceApp {
     category: Scalars['String']
     logo?: Scalars['String']
     sourcePackage?: Scalars['String']
-    isFeatured: Scalars['Boolean']
+    isVetted: Scalars['Boolean']
     __typename: 'MarketplaceApp'
 }
 
@@ -1902,7 +1902,7 @@ export interface MarketplaceAppDetail {
     sourcePackage?: Scalars['String']
     latestAvailableVersion?: Scalars['String']
     isListed: Scalars['Boolean']
-    isFeatured: Scalars['Boolean']
+    isVetted: Scalars['Boolean']
     description?: Scalars['String']
     author?: Scalars['String']
     category?: Scalars['String']
@@ -2314,6 +2314,7 @@ export interface ImapSmtpCaldavPublicConnectionParams {
 }
 
 export interface ImapSmtpCaldavPublicConnectionParameters {
+    name?: Scalars['String']
     IMAP?: ImapSmtpCaldavPublicConnectionParams
     SMTP?: ImapSmtpCaldavPublicConnectionParams
     CALDAV?: ImapSmtpCaldavPublicConnectionParams
@@ -2766,6 +2767,8 @@ export interface Query {
     findOneApplication: Application
     findManyMarketplaceApps: MarketplaceApp[]
     findMarketplaceAppDetail: MarketplaceAppDetail
+    publicMarketplaceApps: MarketplaceApp[]
+    publicMarketplaceAppDetail: MarketplaceAppDetail
     findApplicationRegistrationByClientId?: PublicApplicationRegistration
     findApplicationRegistrationByUniversalIdentifier?: ApplicationRegistration
     findManyApplicationRegistrations: ApplicationRegistration[]
@@ -3115,7 +3118,7 @@ export interface ApplicationRegistrationGenqlSelection{
     sourcePackage?: boolean | number
     latestAvailableVersion?: boolean | number
     isListed?: boolean | number
-    isFeatured?: boolean | number
+    isVetted?: boolean | number
     isPreInstalled?: boolean | number
     logoUrl?: boolean | number
     createdAt?: boolean | number
@@ -4997,7 +5000,7 @@ export interface MarketplaceAppGenqlSelection{
     category?: boolean | number
     logo?: boolean | number
     sourcePackage?: boolean | number
-    isFeatured?: boolean | number
+    isVetted?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5049,7 +5052,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     sourcePackage?: boolean | number
     latestAvailableVersion?: boolean | number
     isListed?: boolean | number
-    isFeatured?: boolean | number
+    isVetted?: boolean | number
     description?: boolean | number
     author?: boolean | number
     category?: boolean | number
@@ -5490,6 +5493,7 @@ export interface ImapSmtpCaldavPublicConnectionParamsGenqlSelection{
 }
 
 export interface ImapSmtpCaldavPublicConnectionParametersGenqlSelection{
+    name?: boolean | number
     IMAP?: ImapSmtpCaldavPublicConnectionParamsGenqlSelection
     SMTP?: ImapSmtpCaldavPublicConnectionParamsGenqlSelection
     CALDAV?: ImapSmtpCaldavPublicConnectionParamsGenqlSelection
@@ -5988,6 +5992,8 @@ export interface QueryGenqlSelection{
     findOneApplication?: (ApplicationGenqlSelection & { __args?: {id?: (Scalars['UUID'] | null), universalIdentifier?: (Scalars['UUID'] | null)} })
     findManyMarketplaceApps?: MarketplaceAppGenqlSelection
     findMarketplaceAppDetail?: (MarketplaceAppDetailGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
+    publicMarketplaceApps?: (MarketplaceAppGenqlSelection & { __args: {isVetted: Scalars['Boolean']} })
+    publicMarketplaceAppDetail?: (MarketplaceAppDetailGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     findApplicationRegistrationByClientId?: (PublicApplicationRegistrationGenqlSelection & { __args: {clientId: Scalars['String']} })
     findApplicationRegistrationByUniversalIdentifier?: (ApplicationRegistrationGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     findManyApplicationRegistrations?: ApplicationRegistrationGenqlSelection
@@ -6575,7 +6581,7 @@ export interface CreateApplicationRegistrationInput {name: Scalars['String'],uni
 
 export interface UpdateApplicationRegistrationInput {id: Scalars['String'],update: UpdateApplicationRegistrationPayload}
 
-export interface UpdateApplicationRegistrationPayload {name?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null),isListed?: (Scalars['Boolean'] | null),isPreInstalled?: (Scalars['Boolean'] | null),isFeatured?: (Scalars['Boolean'] | null)}
+export interface UpdateApplicationRegistrationPayload {name?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null),isListed?: (Scalars['Boolean'] | null),isPreInstalled?: (Scalars['Boolean'] | null),isVetted?: (Scalars['Boolean'] | null)}
 
 export interface CreateApplicationRegistrationVariableInput {applicationRegistrationId: Scalars['String'],key: Scalars['String'],value: Scalars['String'],description?: (Scalars['String'] | null),isSecret?: (Scalars['Boolean'] | null)}
 
@@ -6673,7 +6679,7 @@ export interface SendEmailInput {connectedAccountId: Scalars['String'],to: Scala
 
 export interface SendEmailAttachmentInput {id: Scalars['String'],name: Scalars['String']}
 
-export interface EmailAccountConnectionParameters {IMAP?: (ConnectionParametersInput | null),SMTP?: (ConnectionParametersInput | null),CALDAV?: (ConnectionParametersInput | null)}
+export interface EmailAccountConnectionParameters {name?: (Scalars['String'] | null),IMAP?: (ConnectionParametersInput | null),SMTP?: (ConnectionParametersInput | null),CALDAV?: (ConnectionParametersInput | null)}
 
 export interface ConnectionParametersInput {host: Scalars['String'],port: Scalars['Float'],username?: (Scalars['String'] | null),password?: (Scalars['String'] | null),connectionSecurity?: (EmailConnectionSecurity | null)}
 

@@ -1,5 +1,9 @@
 import { Module } from '@nestjs/common';
 import { BackfillActorSourceEnumValuesCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783499671542-backfill-actor-source-enum-values.command';
+import { BackfillWorkflowVersionToCoreCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783526282685-backfill-workflow-version-to-core.command';
+import { AddMessageCampaignStatFieldsCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783525261000-add-message-campaign-stat-fields.command';
+import { CreateMessageListViewCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783525261001-create-message-list-view.command';
+import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -31,7 +35,15 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     WorkspaceMigrationRunnerModule,
     WorkspaceIteratorModule,
     WorkspaceCacheModule,
+    WorkspaceMigrationModule,
     WorkspaceSchemaManagerModule,
+    WorkflowVersionCoreModule,
+  ],
+  providers: [
+    AddMessageCampaignStatFieldsCommand,
+    CreateMessageListViewCommand,
+    BackfillActorSourceEnumValuesCommand,
+    BackfillWorkflowVersionToCoreCommand,
   ],
   providers: [
     BackfillCompanyPersonImageIdentifierFieldMetadataIdCommand,

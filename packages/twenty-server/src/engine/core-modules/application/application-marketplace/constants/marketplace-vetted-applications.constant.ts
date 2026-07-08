@@ -1,4 +1,4 @@
-export const MARKETPLACE_FEATURED_APPLICATIONS: {
+export const MARKETPLACE_VETTED_APPLICATIONS: {
   universalIdentifier: string;
   position?: number;
 }[] = [
