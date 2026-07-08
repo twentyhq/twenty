@@ -3,6 +3,8 @@ import { styled } from '@linaria/react';
 
 import { EmailAttachmentsField } from '@/activities/emails/components/EmailAttachmentsField';
 import { EmailRecipientsFieldInput } from '@/activities/emails/recipients/components/EmailRecipientsFieldInput';
+import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
+import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { type EmailComposerState } from '@/activities/emails/types/EmailComposerState';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
@@ -46,10 +48,12 @@ const StyledRecipientLimitWarning = styled.div`
 
 type EmailComposerFieldsProps = {
   composerState: EmailComposerState;
+  contextRecord?: EmailComposerContextRecord | null;
 };
 
 export const EmailComposerFields = ({
   composerState,
+  contextRecord,
 }: EmailComposerFieldsProps) => {
   const { data: accountsData } = useQuery<{
     myConnectedAccounts: { id: string; handle: string }[];
@@ -62,6 +66,12 @@ export const EmailComposerFields = ({
     })) ?? [];
 
   const hasMultipleAccounts = accountOptions.length > 1;
+
+  const allRecipientKeys = [
+    ...composerState.to,
+    ...composerState.cc,
+    ...composerState.bcc,
+  ].map((recipient) => getEmailRecipientKey(recipient.address));
 
   return (
     <StyledFieldsContainer>
@@ -81,6 +91,8 @@ export const EmailComposerFields = ({
           placeholder={t`Recipients`}
           recipients={composerState.to}
           onChange={composerState.setTo}
+          excludedSuggestionKeys={allRecipientKeys}
+          contextRecord={contextRecord}
         />
         {!composerState.showCcBcc && (
           <StyledCcBccToggle onClick={() => composerState.setShowCcBcc(true)}>
@@ -95,12 +107,16 @@ export const EmailComposerFields = ({
             placeholder={t`Cc`}
             recipients={composerState.cc}
             onChange={composerState.setCc}
+            excludedSuggestionKeys={allRecipientKeys}
+            contextRecord={contextRecord}
           />
           <EmailRecipientsFieldInput
             label={t`Bcc`}
             placeholder={t`Bcc`}
             recipients={composerState.bcc}
             onChange={composerState.setBcc}
+            excludedSuggestionKeys={allRecipientKeys}
+            contextRecord={contextRecord}
           />
         </>
       )}

@@ -35,11 +35,40 @@ Working notes for the To/Cc/Bcc field rebuild. To be deleted before opening the 
 
 ## Tradeoffs
 
-- Person resolution matches on `emails.primaryEmail` only (case-insensitive, via `in` filter).
-  `additionalEmails` is a JSONB array and not filterable through the GraphQL filter API today;
-  the server-side matcher checks additional emails too, so a chip may show as plain address even
-  though the send will still link to the person via participant matching. Acceptable for v1.
-- (running list, updated as implementation progresses)
+- Person resolution matches on `emails.primaryEmail` only, case-insensitively via per-address
+  `ilike` filters (no `%` wildcards, `%_\` escaped). `additionalEmails` is a JSONB array and not
+  cleanly filterable through the GraphQL filter API today; the server-side matcher checks
+  additional emails too, so a chip may show as a plain address even though the send still links
+  to the person via participant matching. Acceptable for v1.
+- `EmailsFilter` existed in twenty-shared but was missing from the `LeafFilter` union, so no
+  frontend code could filter on `emails.primaryEmail`. Added it to the union (safe, additive).
+- Chip flash-on-duplicate replays its CSS animation by remounting the chip subtree (nonce in the
+  React key). Chosen over animation-restart hacks (forced reflow); the remount is invisible.
+- Keyboard chip selection keeps DOM focus on the input and tracks a virtual `selectedChipIndex`
+  (aria-activedescendant), instead of roving focus across chips. One focus point, no focus
+  juggling, standard combobox listbox pattern.
+- `flushSync` (precedent: `Dropdown.tsx`) is used to focus + place the caret in the input right
+  after entering chip-edit mode. The alternative was a useEffect on editing state, which the
+  house rules forbid.
+- Suggestion rows call `event.preventDefault()` on mousedown so picking a suggestion never blurs
+  the input (blur would commit the half-typed buffer as a junk chip first).
+- Cmd/Ctrl+Enter with a non-empty buffer commits the buffer but does not send in the same
+  keystroke: the send hotkey handler holds a same-render closure over composer state, so sending
+  in the same event would read the pre-commit recipients. Pressing it again sends. Gmail commits
+  and sends in one stroke; doing that here needs the send path to read live state.
+- Enter with the suggestions open picks the highlighted (or top) suggestion, Gmail-style. When
+  the typed buffer is itself a valid email, the literal "Use this email" row is ranked first so
+  Enter keeps meaning "add what I typed".
+- Suggestions are disabled while editing a chip (the edit buffer holds "Name <email>" text,
+  which makes a poor search query).
+- Dedupe blocks within a field; across fields duplicates are allowed when typed (sometimes
+  intentional), but suggestions exclude addresses already present in any of To/Cc/Bcc.
+- The reply composer (EmailThreadComposer) gets no context record: its widget target record is
+  the message thread, not a person/company, and replies already prefill participants.
+- If two people share a primary email, the last fetched match wins for chip display (no
+  ambiguity UI). Rare enough to not warrant the extra state.
+- "Add as person" splits the display name on the first space for firstName/lastName. Same
+  heuristic the contact-creation manager uses server-side.
 
 ## Deferred (out of scope for this PR)
 

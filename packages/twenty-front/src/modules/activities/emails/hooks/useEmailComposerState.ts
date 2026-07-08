@@ -63,7 +63,9 @@ export const useEmailComposerState = ({
   const exceedsRecipientLimit = recipientCount > MAX_EMAIL_RECIPIENTS;
 
   const hasInvalidRecipients =
-    hasInvalidRecipient(to) || hasInvalidRecipient(cc) || hasInvalidRecipient(bcc);
+    hasInvalidRecipient(to) ||
+    hasInvalidRecipient(cc) ||
+    hasInvalidRecipient(bcc);
 
   const canSend =
     to.length > 0 &&
