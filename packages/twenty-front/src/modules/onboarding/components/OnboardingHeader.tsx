@@ -4,7 +4,11 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconCoins, IconInfoCircle } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  themeCssVariables,
+  useTheme,
+} from 'twenty-ui/theme-constants';
 
 const StyledHeader = styled.div`
   align-items: flex-start;
@@ -13,6 +17,10 @@ const StyledHeader = styled.div`
   justify-content: space-between;
   padding: ${themeCssVariables.spacing[8]} ${themeCssVariables.spacing[8]} 1px;
   width: 100%;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    padding: ${themeCssVariables.spacing[8]} ${themeCssVariables.spacing[4]} 1px;
+  }
 `;
 
 const StyledSide = styled.div`
@@ -26,6 +34,10 @@ const StyledSide = styled.div`
 const StyledLeftSide = styled(StyledSide)`
   justify-content: flex-end;
   padding-right: ${themeCssVariables.spacing[1]};
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    justify-content: flex-start;
+  }
 `;
 
 const StyledCenter = styled.div`
@@ -34,6 +46,10 @@ const StyledCenter = styled.div`
   flex: 0 1 ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
   justify-content: flex-start;
   min-width: 0;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    flex-basis: auto;
+  }
 `;
 
 const StyledRightSide = styled(StyledSide)`
