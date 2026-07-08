@@ -1,13 +1,16 @@
 import { FileFolder } from 'twenty-shared/types';
 
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
-jest.mock('src/engine/core-modules/file-storage/file-storage.service', () => ({
-  FileStorageService: class {},
-}));
+jest.mock(
+  'src/engine/core-modules/file-storage/services/file-storage.service',
+  () => ({
+    FileStorageService: class {},
+  }),
+);
 jest.mock('src/engine/core-modules/application/application.service', () => ({
   ApplicationService: class {},
 }));
