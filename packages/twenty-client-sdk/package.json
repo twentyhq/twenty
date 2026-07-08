@@ -22,6 +22,11 @@
       "import": "./dist/rest.mjs",
       "require": "./dist/rest.cjs"
     },
+    "./files": {
+      "types": "./dist/files/index.d.ts",
+      "import": "./dist/files.mjs",
+      "require": "./dist/files.cjs"
+    },
     "./generate": {
       "types": "./dist/generate/index.d.ts",
       "import": "./dist/generate.mjs",
@@ -38,6 +43,9 @@
       ],
       "rest": [
         "dist/rest/index.d.ts"
+      ],
+      "files": [
+        "dist/files/index.d.ts"
       ],
       "generate": [
         "dist/generate/index.d.ts"

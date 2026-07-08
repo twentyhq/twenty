@@ -742,6 +742,49 @@ Key points:
 </Accordion>
 </AccordionGroup>
 
+## File helpers (twenty-client-sdk/files)
+
+`twenty-client-sdk/files` provides first-class file operations so you don't have to hand-roll multipart uploads and attachment mutations.
+
+### createAttachment
+
+Downloads (or receives) a file, uploads it to Twenty, and creates an Attachment linked to a record — in one call:
+
+```ts
+import { createAttachment } from 'twenty-client-sdk/files';
+
+const attachment = await createAttachment({
+  source: { url: 'https://your-pdf-service.com/generated-quote.pdf' },
+  filename: 'quote.pdf',
+  target: { objectNameSingular: 'company', recordId: companyId },
+});
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `source` | `{ url }` or `{ data, contentType? }` | A URL to download, or the file contents (`Blob`, `ArrayBuffer`, `Uint8Array`) |
+| `filename` | `string` | The attachment name and file label |
+| `target.objectNameSingular` | `string` | The API name of the object to attach to (e.g. `company`, `person`, or a custom object) |
+| `target.recordId` | `string` | The ID of the record to attach to |
+
+### uploadFile
+
+Uploads a file into any FILES field, identified by its `universalIdentifier`:
+
+```ts
+import { uploadFile } from 'twenty-client-sdk/files';
+
+const uploadedFile = await uploadFile({
+  source: { data: fileBuffer, contentType: 'application/pdf' },
+  filename: 'invoice.pdf',
+  fieldMetadataUniversalIdentifier: INVOICE_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+});
+
+// Set the FILES field value on your record:
+// [{ fileId: uploadedFile.id, label: 'invoice.pdf' }]
+```
+
+`source` accepts the same shapes as `createAttachment`, so `{ url: '...' }` also works. The returned object is `{ id, path, size, createdAt, url }` where `url` is a signed URL for the uploaded file.
 
 <Note>
   When your code runs on Twenty (logic functions or front components), the platform injects credentials as environment variables:

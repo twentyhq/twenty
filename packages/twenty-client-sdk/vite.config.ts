@@ -6,6 +6,7 @@ import { entryFileNames, isExternal } from './vite.shared';
 const entries = [
   'src/core/index.ts',
   'src/rest/index.ts',
+  'src/files/index.ts',
   'src/generate/index.ts',
 ];
 

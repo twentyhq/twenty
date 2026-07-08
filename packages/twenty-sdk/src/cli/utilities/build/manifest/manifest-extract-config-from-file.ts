@@ -64,6 +64,7 @@ const MANIFEST_MOCK_MODULES = [
   'twenty-ui',
   'twenty-client-sdk/core',
   'twenty-client-sdk/metadata',
+  'twenty-client-sdk/files',
 ];
 
 const escapeRegExp = (value: string): string =>
