@@ -112,6 +112,6 @@ export const findMatchingCalendarEvent = async ({
   return {
     matched: false,
     reason:
-      'No CalendarEvent matched the transcript by external ID or iCalUid. Either the meeting was never on a synced calendar, or its calendar sync (Google/Outlook/CalDAV) is not configured in Twenty. Orphan calls are skipped in v1.',
+      'No CalendarEvent matched the transcript by external ID or iCalUid. Either the meeting was never on a synced calendar, or its calendar sync (Google/Outlook/CalDAV) is not configured in Twenty. The CallRecording is created without a linked calendar event.',
   };
 };
