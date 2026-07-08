@@ -1,7 +1,4 @@
-import {
-  getFieldUniversalIdentifier,
-  getSearchFieldUniversalIdentifier,
-} from 'twenty-shared/application';
+import { getFieldUniversalIdentifier } from 'twenty-shared/application';
 import {
   fromArrayToValuesByKeyRecord,
   isDefined,
