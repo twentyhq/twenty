@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { createElement } from 'react';
 
@@ -38,22 +38,5 @@ describe('WelcomeOverlay', () => {
     expect(screen.getByText('Welcome')).toBeInTheDocument();
     expect(screen.getByText('workspace')).toBeInTheDocument();
     expect(screen.getByText('Marie Curie')).toBeInTheDocument();
-  });
-
-  it('should let keyboard users skip the animation with the Escape key', () => {
-    jotaiStore.set(isWelcomeAnimationVisibleState.atom, true);
-
-    render(<WelcomeOverlay />, { wrapper: Wrapper });
-    expect(screen.getByText('Welcome')).toBeInTheDocument();
-
-    fireEvent.keyDown(window, { key: 'Escape' });
-
-    const overlay = document.querySelector('[role="presentation"]');
-    const backdrop = overlay?.firstElementChild ?? null;
-    if (backdrop !== null) {
-      fireEvent.animationEnd(backdrop);
-    }
-
-    expect(screen.queryByText('Welcome')).not.toBeInTheDocument();
   });
 });

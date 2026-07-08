@@ -8,7 +8,7 @@ import {
 import { createPortal } from 'react-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { WelcomeAnimationDismissEffect } from '@/onboarding/components/WelcomeOverlay/WelcomeAnimationDismissEffect';
+import { WelcomeAnimationAutoLeaveEffect } from '@/onboarding/components/WelcomeOverlay/WelcomeAnimationAutoLeaveEffect';
 import { WelcomeHalftoneCanvas } from '@/onboarding/components/WelcomeOverlay/WelcomeHalftoneCanvas';
 import { WelcomePersonChip } from '@/onboarding/components/WelcomeOverlay/WelcomePersonChip';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
@@ -21,7 +21,6 @@ const WELCOME_TITLE_WORDS = ['Welcome', 'to', 'your', 'workspace'];
 const StyledOverlay = styled.div`
   align-items: center;
   bottom: 0;
-  cursor: pointer;
   display: flex;
   justify-content: center;
   left: 0;
@@ -168,8 +167,8 @@ export const WelcomeOverlay = () => {
   const leavingClassName = isLeaving ? 'is-leaving' : undefined;
 
   return createPortal(
-    <StyledOverlay role="presentation" onClick={startLeaving}>
-      <WelcomeAnimationDismissEffect onDismiss={startLeaving} />
+    <StyledOverlay>
+      <WelcomeAnimationAutoLeaveEffect onAutoLeave={startLeaving} />
       <StyledBackdrop
         className={leavingClassName}
         onAnimationEnd={handleBackdropAnimationEnd}
