@@ -22,8 +22,13 @@ export class MarketplacePublicResolver {
 
   @Query(() => [MarketplaceAppDTO], { name: 'publicMarketplaceApps' })
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-  async findManyPublicMarketplaceApps(): Promise<MarketplaceAppDTO[]> {
-    return this.marketplaceQueryService.findManyMarketplaceApps();
+  async findManyPublicMarketplaceApps(
+    @Args('isFeatured', { type: () => Boolean, defaultValue: true })
+    isFeatured: boolean,
+  ): Promise<MarketplaceAppDTO[]> {
+    const apps = await this.marketplaceQueryService.findManyMarketplaceApps();
+
+    return apps.filter((app) => app.isFeatured === isFeatured);
   }
 
   @Query(() => MarketplaceAppDetailDTO, { name: 'publicMarketplaceAppDetail' })

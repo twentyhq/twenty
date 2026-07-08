@@ -6538,7 +6538,13 @@ export default {
                 }
             ],
             "publicMarketplaceApps": [
-                228
+                228,
+                {
+                    "isFeatured": [
+                        6,
+                        "Boolean!"
+                    ]
+                }
             ],
             "publicMarketplaceAppDetail": [
                 232,

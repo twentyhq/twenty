@@ -4840,6 +4840,11 @@ export type QueryPublicMarketplaceAppDetailArgs = {
 };
 
 
+export type QueryPublicMarketplaceAppsArgs = {
+  isFeatured?: Scalars['Boolean']['input'];
+};
+
+
 export type QuerySkillArgs = {
   id: Scalars['UUID']['input'];
 };
