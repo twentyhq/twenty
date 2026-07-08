@@ -128,7 +128,7 @@ export class ApplicationRegistrationEntity {
     {
       previousName: 'isFeatured',
       upgradeCommandName:
-        '2.20.0_RenameIsFeaturedToIsVettedOnApplicationRegistrationFastInstanceCommand_1783520000000',
+        '2.20.0_RenameIsFeaturedToIsVettedOnApplicationRegistrationFastInstanceCommand_1783527064000',
     },
   ])
   isVetted: boolean;
