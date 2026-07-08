@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -30,21 +32,40 @@ export class WorkflowHandleStaledRunsWorkspaceService {
           { shouldBypassPermissionChecks: true },
         );
 
-      const staledWorkflowRuns = await workflowRunRepository.find({
+      const staledRunsCount = await workflowRunRepository.count({
         where: getStaledRunsFindOptions(),
       });
 
-      if (staledWorkflowRuns.length <= 0) {
+      if (staledRunsCount <= 0) {
         return;
       }
 
-      await workflowRunRepository.update(
-        staledWorkflowRuns.map((workflowRun) => workflowRun.id),
-        {
-          enqueuedAt: null,
-          status: WorkflowRunStatus.NOT_STARTED,
-        },
-      );
+      const batchCount = Math.ceil(staledRunsCount / QUERY_MAX_RECORDS);
+
+      for (let batchIndex = 0; batchIndex < batchCount; batchIndex++) {
+        const staledWorkflowRuns = await workflowRunRepository.find({
+          where: getStaledRunsFindOptions(),
+          select: {
+            id: true,
+          },
+          order: {
+            createdAt: 'ASC',
+          },
+          take: QUERY_MAX_RECORDS,
+        });
+
+        if (staledWorkflowRuns.length <= 0) {
+          break;
+        }
+
+        await workflowRunRepository.update(
+          staledWorkflowRuns.map((workflowRun) => workflowRun.id),
+          {
+            enqueuedAt: null,
+            status: WorkflowRunStatus.NOT_STARTED,
+          },
+        );
+      }
 
       await this.workflowThrottlingWorkspaceService.recomputeWorkflowRunNotStartedCount(
         workspaceId,
