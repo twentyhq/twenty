@@ -4459,6 +4459,8 @@ export type Query = {
   objects: ObjectConnection;
   pieChartData: PieChartData;
   previewMessageCampaignAudience: CampaignAudiencePreviewDto;
+  publicMarketplaceAppDetail: MarketplaceAppDetail;
+  publicMarketplaceApps: Array<MarketplaceApp>;
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
   unsubscribePagePreviewUrl: Scalars['String']['output'];
@@ -4833,6 +4835,16 @@ export type QueryPieChartDataArgs = {
 
 export type QueryPreviewMessageCampaignAudienceArgs = {
   input: PreviewMessageCampaignAudienceInput;
+};
+
+
+export type QueryPublicMarketplaceAppDetailArgs = {
+  universalIdentifier: Scalars['String']['input'];
+};
+
+
+export type QueryPublicMarketplaceAppsArgs = {
+  isFeatured?: Scalars['Boolean']['input'];
 };
 
 

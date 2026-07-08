@@ -6540,6 +6540,24 @@ export default {
                     ]
                 }
             ],
+            "publicMarketplaceApps": [
+                228,
+                {
+                    "isFeatured": [
+                        6,
+                        "Boolean!"
+                    ]
+                }
+            ],
+            "publicMarketplaceAppDetail": [
+                232,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "findApplicationRegistrationByClientId": [
                 199,
                 {
