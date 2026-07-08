@@ -37,7 +37,7 @@ const CAMPAIGN_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = Object.values(
   CAMPAIGN.views.allMessageCampaigns.viewFields,
 ).map((viewField) => viewField.universalIdentifier);
 
-@RegisteredWorkspaceCommand('2.20.0', 1783083423000)
+@RegisteredWorkspaceCommand('2.20.0', 1783525261000)
 @Command({
   name: 'upgrade:2-20:add-message-campaign-stat-fields',
   description:
