@@ -108,8 +108,27 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
   }
 
   for (const fieldManifest of manifest.fields) {
+    const objectManifest = manifest.objects.find(
+      (objectManifestFromList) =>
+        objectManifestFromList.universalIdentifier ===
+        fieldManifest.objectUniversalIdentifier,
+    );
+
+    const enrichedFieldManifest =
+      fieldManifest.type === FieldMetadataType.TS_VECTOR &&
+      !isDefined(fieldManifest.universalSettings) &&
+      isDefined(objectManifest)
+        ? {
+            ...fieldManifest,
+            universalSettings:
+              computeSearchVectorUniversalSettingsFromObjectManifest({
+                objectManifest,
+              }),
+          }
+        : fieldManifest;
+
     const flatFieldMetadata = fromFieldManifestToUniversalFlatFieldMetadata({
-      fieldManifest: fieldManifest,
+      fieldManifest: enrichedFieldManifest,
       applicationUniversalIdentifier,
       now,
     });
