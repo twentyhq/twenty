@@ -1,6 +1,3 @@
-import { Readable } from 'node:stream';
-import { type ReadableStream as WebReadableStream } from 'node:stream/web';
-
 import { isNull, isUndefined } from '@sniptt/guards';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
@@ -30,6 +27,9 @@ type IngestMediaArtifactResult =
 type OpenMediaDownloadResult =
   | { outcome: 'opened'; body: ReadableStream<Uint8Array>; sizeBytes: number }
   | { outcome: 'too-large'; sizeBytes: number };
+
+// duplex is required by fetch when the body is a stream but is missing from the DOM lib's RequestInit
+type StreamingRequestInit = RequestInit & { duplex: 'half' };
 
 const MEDIA_DOWNLOAD_TIMEOUT_MS = 120_000;
 const MEDIA_UPLOAD_TIMEOUT_MS = 120_000;
@@ -247,16 +247,18 @@ const uploadMediaStreamToStorage = async ({
     `[call-recorder] media-ingestion phase=artifact-upload-start callRecordingId=${callRecordingId} fileName=${fileName} declaredBytes=${sizeBytes} ${formatMemoryUsageForLog()}`,
   );
 
-  const uploadResponse = await fetch(uploadTarget.uploadUrl, {
+  const uploadRequestInit: StreamingRequestInit = {
     method: 'PUT',
-    body: Readable.fromWeb(body as WebReadableStream<Uint8Array>),
+    body,
     duplex: 'half',
     headers: {
       'Content-Type': uploadTarget.contentType,
       'Content-Length': String(sizeBytes),
     },
     signal: AbortSignal.timeout(MEDIA_UPLOAD_TIMEOUT_MS),
-  } as unknown as RequestInit);
+  };
+
+  const uploadResponse = await fetch(uploadTarget.uploadUrl, uploadRequestInit);
 
   if (!uploadResponse.ok) {
     throw new Error(`upload failed with status ${uploadResponse.status}`);

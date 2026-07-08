@@ -1,5 +1,3 @@
-import { Readable } from 'node:stream';
-
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-video-field-universal-identifier';
@@ -236,7 +234,7 @@ describe('ingestCallRecordingMedia', () => {
       headers: Record<string, string>;
     };
 
-    expect(putInit.body).toBeInstanceOf(Readable);
+    expect(putInit.body).toBeInstanceOf(ReadableStream);
     expect(putInit.duplex).toBe('half');
     expect(putInit.headers['Content-Length']).toBe('8');
     expect(putInit.headers['Content-Type']).toBe('application/octet-stream');
