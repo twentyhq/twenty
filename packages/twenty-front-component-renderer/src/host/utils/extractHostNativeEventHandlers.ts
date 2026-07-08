@@ -33,7 +33,10 @@ export const extractHostNativeEventHandlers = (
   const nativeEventHandlers: HostNativeEventHandlers = {};
   const remainingProps = { ...reactProps };
 
-  for (const [reactPropName, nativeEventType] of HOST_NATIVE_EVENT_PROP_ENTRIES) {
+  for (const [
+    reactPropName,
+    nativeEventType,
+  ] of HOST_NATIVE_EVENT_PROP_ENTRIES) {
     const handler = remainingProps[reactPropName];
     delete remainingProps[reactPropName];
 
