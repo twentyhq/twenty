@@ -132,24 +132,29 @@ export default defineApplication({
         'Recall.ai API key for the configured region. Set by the server admin on this registration after installation; used to create, update, and cancel scheduled recording bots.',
       isSecret: true,
       isRequired: true,
+      type: FieldType.TEXT,
     },
     [RECALL_REGION_ENV_VAR_NAME]: {
       description: `Recall.ai region used for API requests. Defaults to ${DEFAULT_RECALL_REGION} when unset. Europe Frankfurt is eu-central-1.`,
       isSecret: false,
+      type: FieldType.TEXT,
     },
     [CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME]: {
       description: `How many hours Recall.ai retains recording media after processing. Defaults to ${DEFAULT_CALL_RECORDER_RECORDING_RETENTION_HOURS} hours (6 days and 22 hours) to stay below Recall.ai's 7-day free storage window. Values above 168 hours may incur Recall.ai storage charges.`,
       isSecret: false,
+      type: FieldType.NUMBER,
     },
     [CALL_RECORDER_MAX_MEDIA_FILE_SIZE_MB_ENV_VAR_NAME]: {
       description: `Maximum size in megabytes for a single recording media file (video or audio) ingested from Recall.ai. Larger files are skipped and noted in the call recording failure reason; the recording still completes with its remaining artifacts. Defaults to ${DEFAULT_CALL_RECORDER_MAX_MEDIA_FILE_SIZE_MB} MB to keep media ingestion within the logic function memory limit.`,
       isSecret: false,
+      type: FieldType.NUMBER,
     },
     [RECALL_WEBHOOK_SECRET_ENV_VAR_NAME]: {
       description:
         'Recall.ai webhook signing secret (whsec_...). Set by the server admin from the Recall webhook endpoint settings; used to verify the Svix signature of incoming Recall webhook deliveries.',
       isSecret: true,
       isRequired: true,
+      type: FieldType.TEXT,
     },
   },
 });
