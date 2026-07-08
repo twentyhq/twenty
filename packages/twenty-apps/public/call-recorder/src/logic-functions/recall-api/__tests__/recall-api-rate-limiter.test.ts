@@ -38,4 +38,14 @@ describe('reserveRecallApiRateLimitSlotMs', () => {
 
     expect(reserveRecallApiRateLimitSlotMs(NOW_MS + MS_PER_TOKEN)).toBe(0);
   });
+
+  it('stacks waits for reservations made at the same timestamp', () => {
+    for (let slot = 0; slot < RECALL_API_RATE_LIMIT_BURST; slot++) {
+      reserveRecallApiRateLimitSlotMs(NOW_MS);
+    }
+
+    expect(reserveRecallApiRateLimitSlotMs(NOW_MS)).toBe(MS_PER_TOKEN);
+    expect(reserveRecallApiRateLimitSlotMs(NOW_MS)).toBe(2 * MS_PER_TOKEN);
+    expect(reserveRecallApiRateLimitSlotMs(NOW_MS)).toBe(3 * MS_PER_TOKEN);
+  });
 });

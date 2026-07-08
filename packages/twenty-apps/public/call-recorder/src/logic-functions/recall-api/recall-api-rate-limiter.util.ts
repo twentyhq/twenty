@@ -21,27 +21,31 @@ export const reserveRecallApiRateLimitSlotMs = (nowMs: number): number => {
     bucket.lastRefillMs = nowMs;
   }
 
-  const elapsedMs = Math.max(0, nowMs - bucket.lastRefillMs);
+  // Never rewind past an already-scheduled reservation, so concurrent reservations
+  // at the same timestamp stack their waits instead of colliding.
+  const reservationStartMs = Math.max(nowMs, bucket.lastRefillMs);
+  const elapsedMs = reservationStartMs - bucket.lastRefillMs;
 
   bucket.tokens = Math.min(
     RECALL_API_RATE_LIMIT_BURST,
     bucket.tokens + elapsedMs * REFILL_TOKENS_PER_MS,
   );
-  bucket.lastRefillMs = nowMs;
+  bucket.lastRefillMs = reservationStartMs;
 
   if (bucket.tokens >= 1) {
     bucket.tokens -= 1;
 
-    return 0;
+    return reservationStartMs - nowMs;
   }
 
   const waitMs = Math.ceil((1 - bucket.tokens) / REFILL_TOKENS_PER_MS);
+  const reservedAtMs = reservationStartMs + waitMs;
 
   // The reserved token will have accrued and been consumed once the wait ends.
   bucket.tokens = 0;
-  bucket.lastRefillMs = nowMs + waitMs;
+  bucket.lastRefillMs = reservedAtMs;
 
-  return waitMs;
+  return reservedAtMs - nowMs;
 };
 
 export const resetRecallApiRateLimiter = (): void => {
