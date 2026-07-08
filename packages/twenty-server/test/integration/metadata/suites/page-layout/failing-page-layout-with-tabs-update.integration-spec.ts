@@ -11,10 +11,15 @@ import {
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout-with-tabs-and-widgets.util';
-import { AggregateOperations, FieldMetadataType } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  FieldMetadataType,
+  PageLayoutTabLayoutMode,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
@@ -44,7 +49,13 @@ describe('Page layout with tabs update should fail', () => {
                 title: 'Widget 1',
                 type: WidgetType.FIELDS,
                 objectMetadataId: null,
-                gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
+                  row: 0,
+                  column: 0,
+                  rowSpan: 1,
+                  columnSpan: 1,
+                },
                 configuration: {
                   configurationType: WidgetConfigurationType.IFRAME,
                 },
@@ -174,7 +185,7 @@ describe('Page layout with tabs update should fail', () => {
         },
       } satisfies AllPageLayoutWidgetConfiguration;
 
-      const tabs = [
+      const tabs: UpdatePageLayoutTabWithWidgetsInput[] = [
         {
           id: testPageLayoutTabId,
           title: 'Deleted Filter Field Tab',
@@ -186,7 +197,8 @@ describe('Page layout with tabs update should fail', () => {
               title: chartTitle,
               type: WidgetType.GRAPH,
               objectMetadataId: testFieldMetadataIds.objectMetadataId,
-              gridPosition: {
+              position: {
+                layoutMode: PageLayoutTabLayoutMode.GRID,
                 row: 0,
                 column: 0,
                 rowSpan: 1,

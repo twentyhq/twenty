@@ -8,7 +8,11 @@ import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
-import { AggregateOperations } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  PageLayoutTabLayoutMode,
+  type PageLayoutWidgetPosition,
+} from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -38,12 +42,7 @@ type TestContext = {
       title: string;
       type: WidgetType;
       objectMetadataId: string | null;
-      gridPosition: {
-        row: number;
-        column: number;
-        rowSpan: number;
-        columnSpan: number;
-      };
+      position: PageLayoutWidgetPosition;
       configuration: AllPageLayoutWidgetConfiguration;
     }>;
   }>;
@@ -78,7 +77,8 @@ describe('Page layout with tabs update should succeed', () => {
                 title: 'Pie Chart Widget',
                 type: WidgetType.GRAPH,
                 objectMetadataId: testFieldMetadataIds.objectMetadataId,
-                gridPosition: {
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
                   row: 0,
                   column: 0,
                   rowSpan: 1,
@@ -113,7 +113,8 @@ describe('Page layout with tabs update should succeed', () => {
                 title: 'Pie Chart Widget',
                 type: WidgetType.GRAPH,
                 objectMetadataId: testFieldMetadataIds.objectMetadataId,
-                gridPosition: {
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
                   row: 0,
                   column: 0,
                   rowSpan: 1,
@@ -140,7 +141,8 @@ describe('Page layout with tabs update should succeed', () => {
                 title: 'Iframe Widget',
                 type: WidgetType.IFRAME,
                 objectMetadataId: null,
-                gridPosition: {
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
                   row: 0,
                   column: 0,
                   rowSpan: 1,
@@ -252,7 +254,8 @@ describe('Page layout with tabs update should succeed', () => {
                 title: 'Iframe Widget',
                 type: WidgetType.IFRAME,
                 objectMetadataId: null,
-                gridPosition: {
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
                   row: 0,
                   column: 0,
                   rowSpan: 1,
@@ -297,7 +300,8 @@ describe('Page layout with tabs update should succeed', () => {
                 title: 'Iframe Widget',
                 type: WidgetType.IFRAME,
                 objectMetadataId: null,
-                gridPosition: {
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
                   row: 0,
                   column: 0,
                   rowSpan: 1,

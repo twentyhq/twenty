@@ -1,6 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsEnum, IsObject, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsEnum,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import {
   PageLayoutWidgetConditionalDisplay,

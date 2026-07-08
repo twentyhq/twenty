@@ -1,4 +1,7 @@
-import { FieldMetadataType, PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  PageLayoutTabLayoutMode,
+} from 'twenty-shared/types';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { createGetDashboardTool } from 'src/modules/dashboard/tools/get-dashboard.tool';

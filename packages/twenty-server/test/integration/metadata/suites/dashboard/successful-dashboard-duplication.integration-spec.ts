@@ -13,6 +13,7 @@ import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
@@ -120,7 +121,8 @@ describe('Dashboard duplication should succeed', () => {
               title: 'Test Widget',
               type: WidgetType.IFRAME,
               pageLayoutTabId: testPageLayoutTabId,
-              gridPosition: {
+              position: {
+                layoutMode: PageLayoutTabLayoutMode.GRID,
                 row: 0,
                 column: 0,
                 rowSpan: 1,

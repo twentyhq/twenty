@@ -121,6 +121,12 @@ export const useCreatePageLayoutGraphWidget = ({
         id: widgetId,
         pageLayoutTabId: activeTabId,
         title,
+        gridPosition: {
+          row: position.y,
+          column: position.x,
+          rowSpan: position.h,
+          columnSpan: position.w,
+        },
         fieldSelection,
         timezone: timeZone,
         firstDayOfTheWeek: calendarStartDay,

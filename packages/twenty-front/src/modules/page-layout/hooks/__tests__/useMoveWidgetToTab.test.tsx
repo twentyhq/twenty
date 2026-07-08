@@ -142,7 +142,7 @@ describe('useMoveWidgetToTab', () => {
     const draft = store.get(getDraftAtom());
 
     const tab1Positions = draft.tabs[0].widgets.map((w) => {
-      if (w.position && 'index' in w.position) {
+      if ('index' in w.position) {
         return w.position.index;
       }
       return -1;

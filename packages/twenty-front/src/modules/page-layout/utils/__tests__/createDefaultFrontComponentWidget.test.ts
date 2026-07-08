@@ -1,6 +1,7 @@
+import { type GridPosition } from 'twenty-shared/types';
+
 import { createDefaultFrontComponentWidget } from '@/page-layout/utils/createDefaultFrontComponentWidget';
 import {
-  type GridPosition,
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
@@ -9,7 +10,6 @@ import {
 describe('createDefaultFrontComponentWidget', () => {
   it('should return a FRONT_COMPONENT widget with grid position mapped to position', () => {
     const gridPosition: GridPosition = {
-      __typename: 'GridPosition',
       row: 2,
       column: 3,
       rowSpan: 4,

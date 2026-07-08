@@ -5,7 +5,10 @@ import { createOnePageLayout } from 'test/integration/metadata/suites/page-layou
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout-with-tabs-and-widgets.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
-import { AggregateOperations } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  PageLayoutTabLayoutMode,
+} from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -96,7 +99,8 @@ describe('Page layout with tabs creation via update should succeed', () => {
                 title: 'Existing Tab Widget',
                 type: WidgetType.GRAPH,
                 objectMetadataId: testFieldMetadataIds.objectMetadataId,
-                gridPosition: {
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
                   row: 0,
                   column: 0,
                   rowSpan: 1,
@@ -123,7 +127,8 @@ describe('Page layout with tabs creation via update should succeed', () => {
                 title: 'New Tab Iframe Widget',
                 type: WidgetType.IFRAME,
                 objectMetadataId: null,
-                gridPosition: {
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
                   row: 0,
                   column: 0,
                   rowSpan: 1,
