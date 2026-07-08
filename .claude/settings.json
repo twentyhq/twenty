@@ -5,6 +5,24 @@
     "pr": "",
     "sessionUrl": false
   },
+  "permissions": {
+    "allow": [
+      "Bash(npx nx lint:*)",
+      "Bash(npx nx typecheck:*)",
+      "Bash(npx nx test:*)",
+      "Bash(npx nx run:*)",
+      "Bash(npx nx build:*)",
+      "Bash(npx nx fmt:*)",
+      "Bash(npx nx storybook:*)",
+      "Bash(npx nx graphql:*)",
+      "Bash(npx jest:*)",
+      "Bash(yarn install)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git fetch:*)"
+    ]
+  },
   "hooks": {
     "SessionStart": [
       {
