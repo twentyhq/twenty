@@ -4,7 +4,11 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconCoins, IconInfoCircle } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  themeCssVariables,
+  useTheme,
+} from 'twenty-ui/theme-constants';
 
 const StyledHeader = styled.div`
   align-items: flex-start;
@@ -13,6 +17,10 @@ const StyledHeader = styled.div`
   justify-content: space-between;
   padding: ${themeCssVariables.spacing[8]} ${themeCssVariables.spacing[8]} 1px;
   width: 100%;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    padding: ${themeCssVariables.spacing[8]} ${themeCssVariables.spacing[4]} 1px;
+  }
 `;
 
 const StyledSide = styled.div`
