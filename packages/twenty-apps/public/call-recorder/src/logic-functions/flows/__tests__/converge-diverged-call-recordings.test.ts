@@ -4,6 +4,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { convergeDivergedCallRecordings } from 'src/logic-functions/flows/converge-diverged-call-recordings.util';
 
 const getRecallBotMock = vi.hoisted(() => vi.fn());
+const listScheduledRecallBotsMock = vi.hoisted(() => vi.fn());
+const getCurrentWorkspaceIdMock = vi.hoisted(() => vi.fn());
 const listRecallTranscriptsMock = vi.hoisted(() => vi.fn());
 const createAsyncRecallTranscriptMock = vi.hoisted(() => vi.fn());
 const downloadTranscriptMock = vi.hoisted(() => vi.fn());
@@ -12,6 +14,14 @@ const chargeCompletedCallRecordingMock = vi.hoisted(() => vi.fn());
 
 vi.mock('src/logic-functions/recall-api/get-recall-bot.util', () => ({
   getRecallBot: getRecallBotMock,
+}));
+
+vi.mock('src/logic-functions/recall-api/list-scheduled-recall-bots.util', () => ({
+  listScheduledRecallBots: listScheduledRecallBotsMock,
+}));
+
+vi.mock('src/logic-functions/data/get-current-workspace-id.util', () => ({
+  getCurrentWorkspaceId: getCurrentWorkspaceIdMock,
 }));
 
 vi.mock('src/logic-functions/recall-api/list-recall-transcripts.util', () => ({
@@ -103,6 +113,15 @@ describe('convergeDivergedCallRecordings', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     getRecallBotMock.mockReset();
+    listScheduledRecallBotsMock.mockReset();
+    listScheduledRecallBotsMock.mockResolvedValue({
+      ok: true,
+      bots: [],
+    });
+    getCurrentWorkspaceIdMock.mockReset();
+    getCurrentWorkspaceIdMock.mockReturnValue(
+      '123e4567-e89b-12d3-a456-426614174000',
+    );
     listRecallTranscriptsMock.mockReset();
     listRecallTranscriptsMock.mockResolvedValue({
       ok: true,
@@ -181,6 +200,56 @@ describe('convergeDivergedCallRecordings', () => {
       unconvergeableCallRecordingIds: [],
       skippedNotStartedCallRecordingIds: [],
     });
+  });
+
+  it('uses a listed Recall bot snapshot instead of fetching the bot by id', async () => {
+    listScheduledRecallBotsMock.mockResolvedValue({
+      ok: true,
+      bots: [
+        {
+          id: 'recall-bot-1',
+          metadata: {
+            twentyWorkspaceId: '123e4567-e89b-12d3-a456-426614174000',
+          },
+          raw: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyWorkspaceId: '123e4567-e89b-12d3-a456-426614174000',
+            },
+            status_changes: [
+              {
+                code: 'in_call_recording',
+                created_at: '2026-06-09T13:02:30.000Z',
+              },
+              { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+            ],
+            recordings: [
+              {
+                id: 'recall-recording-1',
+                started_at: '2026-06-09T13:02:00.000Z',
+                completed_at: '2026-06-09T14:00:00.000Z',
+              },
+            ],
+          },
+        },
+      ],
+    });
+    const client = buildClient([buildStuckRecordingNode()]);
+
+    const result = await convergeDivergedCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(listScheduledRecallBotsMock).toHaveBeenCalledWith({
+      joinAtAfter: '2026-06-02T12:00:00.000Z',
+      joinAtBefore: '2026-06-10T13:00:00.000Z',
+      metadata: {
+        twentyWorkspaceId: '123e4567-e89b-12d3-a456-426614174000',
+      },
+    });
+    expect(getRecallBotMock).not.toHaveBeenCalled();
+    expect(result.updatedCallRecordingIds).toEqual(['call-recording-1']);
   });
 
   it('marks FAILED when Recall is done but has no recording artifact path', async () => {

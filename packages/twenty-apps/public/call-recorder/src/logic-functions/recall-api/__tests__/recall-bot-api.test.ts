@@ -10,6 +10,7 @@ import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-r
 import { retrieveRecallTranscript } from 'src/logic-functions/recall-api/retrieve-recall-transcript.util';
 import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 import { CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-retention-hours-env-var-name';
+import { resetRecallApiRateLimiter } from 'src/logic-functions/recall-api/recall-api-rate-limiter.util';
 
 const getRecallApiConfigMock = vi.hoisted(() => vi.fn());
 const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
@@ -26,6 +27,7 @@ describe('recall bot api', () => {
   const fetchMock = vi.fn();
 
   beforeEach(() => {
+    resetRecallApiRateLimiter();
     delete process.env[CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME];
     getRecallApiConfigMock.mockReset();
     getRecallApiConfigMock.mockReturnValue({
@@ -220,8 +222,15 @@ describe('recall bot api', () => {
     expect(result).toEqual({
       ok: true,
       bots: [
-        { id: 'bot-1', metadata: { twentyCallRecordingId: 'recording-1' } },
-        { id: 'bot-2', metadata: {} },
+        {
+          id: 'bot-1',
+          metadata: { twentyCallRecordingId: 'recording-1' },
+          raw: {
+            id: 'bot-1',
+            metadata: { twentyCallRecordingId: 'recording-1' },
+          },
+        },
+        { id: 'bot-2', metadata: {}, raw: { id: 'bot-2' } },
       ],
     });
     expect(fetchMock).toHaveBeenNthCalledWith(
@@ -278,7 +287,7 @@ describe('recall bot api', () => {
 
     expect(result).toEqual({
       ok: true,
-      bots: [{ id: 'bot-1', metadata: {} }],
+      bots: [{ id: 'bot-1', metadata: {}, raw: { id: 'bot-1' } }],
     });
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });

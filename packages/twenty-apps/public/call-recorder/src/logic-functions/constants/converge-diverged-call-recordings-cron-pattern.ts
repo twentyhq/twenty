@@ -1,0 +1,2 @@
+export const CONVERGE_DIVERGED_CALL_RECORDINGS_CRON_PATTERN =
+  '*/15 * * * *';

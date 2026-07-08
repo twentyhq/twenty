@@ -8,6 +8,7 @@ import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-a
 export type RecallScheduledBot = {
   id: string;
   metadata: Record<string, unknown>;
+  raw: Record<string, unknown>;
 };
 
 type RecallBotListResponse = {
@@ -24,9 +25,11 @@ const RECALL_BOT_LIST_MAX_PAGES = 10;
 export const listScheduledRecallBots = async ({
   joinAtAfter,
   joinAtBefore,
+  metadata,
 }: {
   joinAtAfter: string;
   joinAtBefore: string;
+  metadata?: Record<string, string>;
 }): Promise<ListScheduledRecallBotsResult> => {
   const configResult = getRecallApiConfig();
 
@@ -35,9 +38,16 @@ export const listScheduledRecallBots = async ({
   }
 
   const bots: RecallScheduledBot[] = [];
-  let path: string | undefined = `/bot/?join_at_after=${encodeURIComponent(
-    joinAtAfter,
-  )}&join_at_before=${encodeURIComponent(joinAtBefore)}`;
+  const searchParams = new URLSearchParams({
+    join_at_after: joinAtAfter,
+    join_at_before: joinAtBefore,
+  });
+
+  Object.entries(metadata ?? {}).forEach(([key, value]) => {
+    searchParams.set(`metadata__${key}`, value);
+  });
+
+  let path: string | undefined = `/bot/?${searchParams.toString()}`;
 
   for (
     let pageIndex = 0;
@@ -87,6 +97,7 @@ const extractRecallBots = (
       {
         id: bot.id,
         metadata: asRecord(bot.metadata) ?? {},
+        raw: bot,
       },
     ];
   });

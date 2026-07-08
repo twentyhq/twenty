@@ -14,7 +14,12 @@ import {
   fetchAllNodes,
   type ConnectionPage,
 } from 'src/logic-functions/data/fetch-all-nodes.util';
+import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
+import {
+  listScheduledRecallBots,
+  type RecallScheduledBot,
+} from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
 import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-recording-media.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
@@ -27,6 +32,10 @@ import { updateCallRecording } from 'src/logic-functions/data/update-call-record
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
 const CONVERGENCE_LOOKBACK_DAYS = 7;
+// One extra day so a bot whose join time precedes its meeting-end anchor still lists.
+const CONVERGENCE_BOT_LIST_LOOKBACK_DAYS = CONVERGENCE_LOOKBACK_DAYS + 1;
+const CONVERGENCE_BOT_LIST_LOOKAHEAD_MS = 60 * 60 * 1000;
+const CONVERGENCE_PER_ID_FALLBACK_LIMIT = 25;
 
 type DivergedCallRecordingCandidate = {
   id: string;
@@ -79,6 +88,9 @@ export const convergeDivergedCallRecordings = async ({
     unconvergeableCallRecordingIds: [],
     skippedNotStartedCallRecordingIds: [],
   };
+  const actionableCandidates: Array<
+    DivergedCallRecordingCandidate & { externalBotId: string }
+  > = [];
 
   for (const candidate of candidates) {
     if (isOutsideConvergenceBound(candidate, convergenceLowerBound)) {
@@ -102,16 +114,99 @@ export const convergeDivergedCallRecordings = async ({
       continue;
     }
 
+    actionableCandidates.push({
+      ...candidate,
+      externalBotId: candidate.externalBotId,
+    });
+  }
+
+  if (actionableCandidates.length === 0) {
+    return result;
+  }
+
+  const listedBotsById = await listConvergenceBotsById(now);
+  let remainingPerIdFallbackCount = CONVERGENCE_PER_ID_FALLBACK_LIMIT;
+
+  for (const candidate of actionableCandidates) {
+    const listedBot = listedBotsById.get(candidate.externalBotId);
+    const canFallbackToPerIdFetch =
+      isUndefined(listedBot) && remainingPerIdFallbackCount > 0;
+
+    if (canFallbackToPerIdFetch) {
+      remainingPerIdFallbackCount -= 1;
+    }
+
+    if (isUndefined(listedBot) && !canFallbackToPerIdFetch) {
+      console.warn(
+        `[call-recorder] skipping Recall bot ${candidate.externalBotId} for call recording ${candidate.id}: per-id convergence fallback budget exhausted`,
+      );
+
+      continue;
+    }
+
     await convergeCallRecording({
       client,
       candidate,
       externalBotId: candidate.externalBotId,
+      listedBot,
+      canFallbackToPerIdFetch,
       now,
       result,
     });
   }
 
   return result;
+};
+
+// Batches the status pull: one list call over the convergence window replaces a
+// per-id fetch for every bot it returns. Misses fall back to a small capped budget.
+const listConvergenceBotsById = async (
+  now: Date,
+): Promise<Map<string, Record<string, unknown>>> => {
+  const currentWorkspaceId = getCurrentWorkspaceId();
+
+  if (isUndefined(currentWorkspaceId)) {
+    return new Map();
+  }
+
+  const listResult = await listScheduledRecallBots({
+    joinAtAfter: new Date(
+      now.getTime() - CONVERGENCE_BOT_LIST_LOOKBACK_DAYS * 24 * 60 * 60 * 1000,
+    ).toISOString(),
+    joinAtBefore: new Date(
+      now.getTime() + CONVERGENCE_BOT_LIST_LOOKAHEAD_MS,
+    ).toISOString(),
+    metadata: { twentyWorkspaceId: currentWorkspaceId },
+  });
+
+  if (!listResult.ok) {
+    console.warn(
+      `[call-recorder] failed to list Recall bots for convergence, falling back to capped per-id fetches: ${listResult.errorMessage}`,
+    );
+
+    return new Map();
+  }
+
+  return new Map(
+    listResult.bots
+      .filter((bot) => isCurrentWorkspaceManagedBot({ bot, currentWorkspaceId }))
+      .map((bot) => [bot.id, bot.raw]),
+  );
+};
+
+const isCurrentWorkspaceManagedBot = ({
+  bot,
+  currentWorkspaceId,
+}: {
+  bot: RecallScheduledBot;
+  currentWorkspaceId: string;
+}): boolean => {
+  const claimedWorkspaceId = bot.metadata.twentyWorkspaceId;
+
+  return (
+    isNonEmptyString(claimedWorkspaceId) &&
+    claimedWorkspaceId.trim() === currentWorkspaceId
+  );
 };
 
 const fetchDivergedCallRecordingCandidates = async (
@@ -221,16 +316,28 @@ const convergeCallRecording = async ({
   client,
   candidate,
   externalBotId,
+  listedBot,
+  canFallbackToPerIdFetch,
   now,
   result,
 }: {
   client: CoreApiClient;
   candidate: DivergedCallRecordingCandidate;
   externalBotId: string;
+  listedBot: Record<string, unknown> | undefined;
+  canFallbackToPerIdFetch: boolean;
   now: Date;
   result: ConvergeDivergedCallRecordingsResult;
 }): Promise<void> => {
-  const botResult = await getRecallBot({ externalBotId });
+  const botResult = isUndefined(listedBot)
+    ? canFallbackToPerIdFetch
+      ? await getRecallBot({ externalBotId })
+      : undefined
+    : ({ ok: true, bot: listedBot } as const);
+
+  if (isUndefined(botResult)) {
+    return;
+  }
 
   if (!botResult.ok) {
     if (botResult.status === 404) {
