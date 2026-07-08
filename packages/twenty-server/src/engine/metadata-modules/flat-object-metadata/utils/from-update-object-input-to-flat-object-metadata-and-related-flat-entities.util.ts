@@ -1,5 +1,6 @@
 import {
   isDefined,
+  isImageIdentifierFieldMetadataType,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
@@ -61,6 +62,35 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
         'Object to update not found',
         ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
+    }
+
+    const requestedImageIdentifierFieldMetadataId =
+      rawUpdateObjectInput.update.imageIdentifierFieldMetadataId;
+
+    if (isDefined(requestedImageIdentifierFieldMetadataId)) {
+      const imageIdentifierFlatFieldMetadata =
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityMaps: flatFieldMetadataMaps,
+          flatEntityId: requestedImageIdentifierFieldMetadataId,
+        });
+
+      if (!isDefined(imageIdentifierFlatFieldMetadata)) {
+        throw new ObjectMetadataException(
+          'Field declared as image identifier not found',
+          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        );
+      }
+
+      if (
+        !isImageIdentifierFieldMetadataType(
+          imageIdentifierFlatFieldMetadata.type,
+        )
+      ) {
+        throw new ObjectMetadataException(
+          'Field cannot be used as image identifier due to its type: should be of type Files or Links',
+          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        );
+      }
     }
 
     const isStandardObject = belongsToTwentyStandardApp(
