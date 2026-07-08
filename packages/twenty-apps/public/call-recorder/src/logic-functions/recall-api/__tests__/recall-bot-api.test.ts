@@ -5,6 +5,7 @@ import { createAsyncRecallTranscript } from 'src/logic-functions/recall-api/crea
 import { ejectRecallBot } from 'src/logic-functions/recall-api/eject-recall-bot.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { listRecallTranscripts } from 'src/logic-functions/recall-api/list-recall-transcripts.util';
+import { resetRecallApiRateLimiter } from 'src/logic-functions/recall-api/recall-api-rate-limiter.util';
 import { listScheduledRecallBots } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
 import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-recall-bot.util';
 import { retrieveRecallTranscript } from 'src/logic-functions/recall-api/retrieve-recall-transcript.util';
@@ -40,9 +41,11 @@ describe('recall bot api', () => {
     fetchMock.mockResolvedValue({
       ok: true,
       status: 201,
+      headers: new Headers(),
       json: async () => ({ id: 'recall-bot-id' }),
     });
     vi.stubGlobal('fetch', fetchMock);
+    resetRecallApiRateLimiter();
   });
 
   it('creates Recall bot requests with the Token authorization scheme', async () => {
@@ -140,6 +143,7 @@ describe('recall bot api', () => {
     fetchMock.mockResolvedValue({
       ok: false,
       status: 404,
+      headers: new Headers(),
       json: async () => ({ detail: 'Not found.' }),
     });
 
@@ -345,6 +349,7 @@ describe('recall bot api', () => {
     fetchMock.mockResolvedValue({
       ok: false,
       status: 404,
+      headers: new Headers(),
       json: async () => ({ detail: 'Not found.' }),
     });
 
@@ -495,6 +500,7 @@ describe('recall bot api', () => {
     fetchMock.mockResolvedValue({
       ok: false,
       status: 503,
+      headers: new Headers(),
       json: async () => ({ detail: 'service unavailable' }),
     });
 
@@ -654,6 +660,7 @@ describe('recall bot api', () => {
       fetchMock.mockResolvedValueOnce({
         ok: false,
         status: 503,
+        headers: new Headers(),
         json: async () => ({ detail: 'service unavailable' }),
       });
       fetchMock.mockResolvedValueOnce({
@@ -673,10 +680,38 @@ describe('recall bot api', () => {
       expect(fetchMock).toHaveBeenCalledTimes(2);
     });
 
+    it('waits for the Retry-After delay before retrying a 429', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: false,
+        status: 429,
+        headers: new Headers({ 'retry-after': '2' }),
+        json: async () => ({ detail: 'too many requests' }),
+      });
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ id: 'recall-bot-id' }),
+      });
+
+      const resultPromise = getRecallBot({ externalBotId: 'recall-bot-id' });
+
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+
+      await vi.advanceTimersByTimeAsync(1000);
+
+      expect(await resultPromise).toEqual({
+        ok: true,
+        bot: { id: 'recall-bot-id' },
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
     it('gives up after the attempt budget on persistent server errors', async () => {
       fetchMock.mockResolvedValue({
         ok: false,
         status: 500,
+        headers: new Headers(),
         json: async () => ({ detail: 'server error' }),
       });
 
@@ -697,6 +732,7 @@ describe('recall bot api', () => {
       fetchMock.mockResolvedValue({
         ok: false,
         status: 400,
+        headers: new Headers(),
         json: async () => ({ detail: 'bad request' }),
       });
 
