@@ -4,6 +4,7 @@ import {
   isObject,
   isString,
 } from '@sniptt/guards';
+import isEqual from 'lodash.isequal';
 import { Temporal } from 'temporal-polyfill';
 import {
   type StepFilter,
@@ -186,6 +187,10 @@ function evaluateTextAndArrayFilter(
         (isDefined(nullEquivalentRightValue) &&
           isNotEmptyTextOrArray(filter.leftOperand))
       );
+    case ViewFilterOperand.IS:
+      return isEqual(filter.leftOperand, filter.rightOperand);
+    case ViewFilterOperand.IS_NOT:
+      return !isEqual(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(filter.leftOperand);
 
