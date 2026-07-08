@@ -87,10 +87,6 @@ const MainColumn = styled.div`
   min-width: 0;
 `;
 
-const AboutBody = styled.div`
-  max-width: 640px;
-`;
-
 const ScreenshotList = styled.div`
   display: flex;
   flex-direction: column;
@@ -155,14 +151,6 @@ const Divider = styled.hr`
   width: 100%;
 `;
 
-const SectionTitle = styled.h2`
-  color: ${semanticColor.ink};
-  font-family: ${fontFamily('serif')};
-  font-size: ${fontSize(6)};
-  font-weight: ${FONT_WEIGHT.light};
-  letter-spacing: -0.02em;
-`;
-
 type AppDetailProps = {
   app: MarketplaceAppDetail;
 };
@@ -206,12 +194,6 @@ export function AppDetail({ app }: AppDetailProps) {
       <SectionShell rhythm="section" scheme="light">
         <ContentGrid>
           <MainColumn>
-            <SectionTitle>{i18n._(msg`About`)}</SectionTitle>
-            <AboutBody>
-              <Body muted size="md">
-                {app.description}
-              </Body>
-            </AboutBody>
             {app.screenshots.length > 0 && (
               <ScreenshotList>
                 {app.screenshots.map((screenshot) => (
