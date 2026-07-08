@@ -43,7 +43,7 @@ export class BackfillManifestFileIdOnApplicationRegistrationSlowInstanceCommand
           });
 
         await dataSource.query(
-          `UPDATE "core"."applicationRegistration" SET "manifestFileId" = $1 WHERE id = $2`,
+          `UPDATE "core"."applicationRegistration" SET "manifestFileId" = $1 WHERE id = $2 AND "manifestFileId" IS NULL`,
           [manifestFile.id, row.id],
         );
       } catch (error) {
