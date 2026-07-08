@@ -23,6 +23,12 @@ msgstr "-33% off"
 msgid "...with AI that actually helps you *work faster*"
 msgstr "...with AI that actually helps you *work faster*"
 
+#. js-lingui-id: PtoUO1
+#. placeholder {0}: app.name
+#: src/app/[locale]/(site)/apps/[slug]/page.tsx
+msgid "{0} — Twenty Apps"
+msgstr "{0} — Twenty Apps"
+
 #. js-lingui-id: Z6mKXu
 #. placeholder {0}: partner.name
 #: src/app/[locale]/(site)/partners/profile/[slug]/page.tsx
@@ -34,6 +40,12 @@ msgstr "{0} — Twenty Partner"
 #: src/sections/three-cards/IllustrationCard.tsx
 msgid "{0} case study"
 msgstr "{0} case study"
+
+#. js-lingui-id: tYTgTe
+#. placeholder {0}: app.name
+#: src/apps-marketplace/AppDetail.tsx
+msgid "{0} screenshot"
+msgstr "{0} screenshot"
 
 #. js-lingui-id: jC5JCB
 #: src/sections/case-study-promo/CaseStudyPromo.tsx
@@ -694,6 +706,11 @@ msgstr "Albania 🇦🇱"
 msgid "Algeria 🇩🇿"
 msgstr "Algeria 🇩🇿"
 
+#. js-lingui-id: N40H+G
+#: src/apps-marketplace/AppsMarketplaceClient.tsx
+msgid "All"
+msgstr "All"
+
 #. js-lingui-id: LIGwFL
 #: src/sections/three-cards/three-cards.data.ts
 #: src/case-studies/case-study-stories.ts
@@ -800,6 +817,11 @@ msgstr "APIs are extra. Simplicity has a price."
 msgid "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
 msgstr "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
 
+#. js-lingui-id: L/34fX
+#: src/app/[locale]/(site)/apps/[slug]/page.tsx
+msgid "App not found — Twenty"
+msgstr "App not found — Twenty"
+
 #. js-lingui-id: k8I7/G
 #: src/partner-application/partner-application-copy.ts
 msgid ""
@@ -813,6 +835,16 @@ msgstr ""
 #: src/platform/routing/static-website-routes.ts
 msgid "Apply to join the Twenty partner ecosystem and grow your practice with the #1 open source CRM."
 msgstr "Apply to join the Twenty partner ecosystem and grow your practice with the #1 open source CRM."
+
+#. js-lingui-id: VDvaN2
+#: src/sections/menu/data/menu.ts
+msgid "Apps"
+msgstr "Apps"
+
+#. js-lingui-id: lAg+Wy
+#: src/apps-marketplace/AppsMarketplaceHeader.tsx
+msgid "Apps for *Twenty*"
+msgstr "Apps for *Twenty*"
 
 #. js-lingui-id: 1AsfMD
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -1218,6 +1250,11 @@ msgstr "Catalan"
 #: src/partners-marketplace/FilterBar.tsx
 msgid "Categories"
 msgstr "Categories"
+
+#. js-lingui-id: K7tIrx
+#: src/apps-marketplace/AppDetail.tsx
+msgid "Category"
+msgstr "Category"
 
 #. js-lingui-id: dBApoS
 #: src/partner-application/data/partner-country-options.ts
@@ -1958,6 +1995,11 @@ msgstr "Designed specifically for financial data, the <0>Currency Field</0> ensu
 msgid "Dev teams power company-wide *change with Twenty*"
 msgstr "Dev teams power company-wide *change with Twenty*"
 
+#. js-lingui-id: 7aDnUb
+#: src/apps-marketplace/AppDetail.tsx
+msgid "Developer"
+msgstr "Developer"
+
 #. js-lingui-id: n+SX4g
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/menu/data/menu.ts
@@ -2389,6 +2431,21 @@ msgstr "Expertise & experience"
 msgid "Explore customer stories"
 msgstr "Explore customer stories"
 
+#. js-lingui-id: qu9kGK
+#: src/platform/routing/static-website-routes.ts
+msgid "Extend Twenty with vetted apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click."
+msgstr "Extend Twenty with vetted apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click."
+
+#. js-lingui-id: ZToPid
+#: src/sections/menu/data/menu.ts
+msgid "Extend your CRM"
+msgstr "Extend your CRM"
+
+#. js-lingui-id: wmJ4p4
+#: src/apps-marketplace/AppsMarketplaceHeader.tsx
+msgid "Extend your CRM with apps built and maintained by Twenty. Every app here is vetted by our team — install one in a click and it's live in your workspace."
+msgstr "Extend your CRM with apps built and maintained by Twenty. Every app here is vetted by our team — install one in a click and it's live in your workspace."
+
 #. js-lingui-id: weFouS
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Extended run!"
@@ -2493,6 +2550,11 @@ msgstr "Files in records"
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
 msgid "Filter"
 msgstr "Filter"
+
+#. js-lingui-id: tr2ZvJ
+#: src/apps-marketplace/AppsMarketplaceClient.tsx
+msgid "Filter apps by category"
+msgstr "Filter apps by category"
 
 #. js-lingui-id: 1t0xRH
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3156,6 +3218,22 @@ msgstr "Infinite scroll"
 msgid "Infinite scroll is still coming soon, unlike the invoice."
 msgstr "Infinite scroll is still coming soon, unlike the invoice."
 
+#. js-lingui-id: TKQ7K+
+#: src/apps-marketplace/AppDetail.tsx
+#: src/apps-marketplace/AppCard.tsx
+msgid "Install"
+msgstr "Install"
+
+#. js-lingui-id: qq1x6K
+#: src/sections/menu/data/menu.ts
+msgid "Install call recording, enrichment, Slack, Linear and more — every app built and maintained by Twenty."
+msgstr "Install call recording, enrichment, Slack, Linear and more — every app built and maintained by Twenty."
+
+#. js-lingui-id: R6HbUq
+#: src/apps-marketplace/AppDetail.tsx
+msgid "Install on Twenty"
+msgstr "Install on Twenty"
+
 #. js-lingui-id: K8iwJx
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Install shared tarball app"
@@ -3473,6 +3551,17 @@ msgstr "Layout"
 msgid "Learn how to use Twenty"
 msgstr "Learn how to use Twenty"
 
+#. js-lingui-id: zwWKhA
+#: src/apps-marketplace/AppCard.tsx
+msgid "Learn more"
+msgstr "Learn more"
+
+#. js-lingui-id: Pd/m1Q
+#. placeholder {0}: app.name
+#: src/apps-marketplace/AppCard.tsx
+msgid "Learn more about {0}"
+msgstr "Learn more about {0}"
+
 #. js-lingui-id: wB0DGn
 #: src/partner-application/data/partner-country-options.ts
 msgid "Lebanon 🇱🇧"
@@ -3680,6 +3769,7 @@ msgstr "Mar"
 
 #. js-lingui-id: Zt5PUS
 #: src/partners-marketplace/MarketplaceHeader.tsx
+#: src/apps-marketplace/AppsMarketplaceHeader.tsx
 msgid "Marketplace"
 msgstr "Marketplace"
 
@@ -4025,6 +4115,11 @@ msgstr "Nine Dots Ventures"
 msgid "No"
 msgstr "No"
 
+#. js-lingui-id: UVo4Xv
+#: src/apps-marketplace/AppsMarketplaceClient.tsx
+msgid "No apps are available right now. Check back soon."
+msgstr "No apps are available right now. Check back soon."
+
 #. js-lingui-id: 6tRXQ4
 #: src/partner-application/partner-application-copy.ts
 msgid "No matching country."
@@ -4244,6 +4339,11 @@ msgstr "Ownership"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Owning your stack remains mysteriously out of stock."
 msgstr "Owning your stack remains mysteriously out of stock."
+
+#. js-lingui-id: mGYa19
+#: src/apps-marketplace/AppDetail.tsx
+msgid "Package"
+msgstr "Package"
 
 #. js-lingui-id: h/oMMb
 #: src/platform/routing/static-website-routes.ts
@@ -5923,6 +6023,16 @@ msgstr "Tuvalu 🇹🇻"
 msgid "Twenty | #1 Open Source CRM"
 msgstr "Twenty | #1 Open Source CRM"
 
+#. js-lingui-id: XxKVz4
+#: src/platform/routing/static-website-routes.ts
+msgid "Twenty Apps — Vetted Apps for the Open Source CRM"
+msgstr "Twenty Apps — Vetted Apps for the Open Source CRM"
+
+#. js-lingui-id: jwNPEV
+#: src/sections/menu/data/menu.ts
+msgid "Twenty apps marketplace"
+msgstr "Twenty apps marketplace"
+
 #. js-lingui-id: NalB1c
 #: src/sections/testimonials/partner-testimonials.data.ts
 msgid "Twenty Apps opens the door to building products, not just implementations. For example, we're developing a WhatsApp Business integration that any Twenty's client could get. That's a recurring revenue stream we wouldn't have if we were just configuring someone else's platform."
@@ -6247,6 +6357,16 @@ msgstr "Venezuela 🇻🇪"
 msgid "Version control"
 msgstr "Version control"
 
+#. js-lingui-id: vNIHYX
+#: src/sections/menu/data/menu.ts
+msgid "Vetted apps for your workspace"
+msgstr "Vetted apps for your workspace"
+
+#. js-lingui-id: k5HTQK
+#: src/apps-marketplace/AppDetail.tsx
+msgid "Vetted by Twenty"
+msgstr "Vetted by Twenty"
+
 #. js-lingui-id: FlQ1vR
 #: src/partner-application/data/partner-country-options.ts
 msgid "Vietnam 🇻🇳"
@@ -6419,6 +6539,11 @@ msgstr "Webhooks filter"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Webhooks multi-object filtering"
 msgstr "Webhooks multi-object filtering"
+
+#. js-lingui-id: On0aF2
+#: src/apps-marketplace/AppDetail.tsx
+msgid "Website"
+msgstr "Website"
 
 #. js-lingui-id: 7kkV4O
 #: src/partner-application/partner-application-copy.ts
