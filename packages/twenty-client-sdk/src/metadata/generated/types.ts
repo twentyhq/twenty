@@ -5228,6 +5228,9 @@ export default {
             ]
         },
         "ImapSmtpCaldavPublicConnectionParameters": {
+            "name": [
+                1
+            ],
             "IMAP": [
                 293
             ],
@@ -6529,6 +6532,24 @@ export default {
                 228
             ],
             "findMarketplaceAppDetail": [
+                232,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "publicMarketplaceApps": [
+                228,
+                {
+                    "isVetted": [
+                        6,
+                        "Boolean!"
+                    ]
+                }
+            ],
+            "publicMarketplaceAppDetail": [
                 232,
                 {
                     "universalIdentifier": [
@@ -11885,6 +11906,9 @@ export default {
             ]
         },
         "EmailAccountConnectionParameters": {
+            "name": [
+                1
+            ],
             "IMAP": [
                 493
             ],
