@@ -105,7 +105,7 @@ export default defineApplication({
       description:
         'Extra instructions appended to the built-in summary prompt (tone, language, focus areas). Leave empty to use the built-in prompt alone.',
       isSecret: false,
-      type: FieldType.TEXT,
+      type: FieldType.RICH_TEXT,
     },
     [CALL_RECORDER_USE_WORKSPACE_LOGO_ENV_VAR_NAME]: {
       universalIdentifier:
