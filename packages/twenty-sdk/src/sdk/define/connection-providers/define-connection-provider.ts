@@ -76,5 +76,13 @@ export const defineConnectionProvider: DefineEntity<
     }
   }
 
+  if (config.messagingSettings) {
+    if (!config.messagingSettings.sendMessageFunctionUniversalIdentifier) {
+      errors.push(
+        'Messaging settings must reference a sendMessageFunctionUniversalIdentifier (universalIdentifier of a logic function on defineLogicFunction)',
+      );
+    }
+  }
+
   return createValidationResult({ config, errors });
 };

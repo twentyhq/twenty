@@ -82,4 +82,33 @@ describe('defineConnectionProvider', () => {
 
     expect(result.success).toBe(false);
   });
+
+  it('accepts a messaging settings referencing a send message function', () => {
+    const result = defineConnectionProvider({
+      ...baseValidConfig,
+      messagingSettings: {
+        sendMessageFunctionUniversalIdentifier:
+          'b648f87b-1d26-4961-b974-0908fd991061',
+      },
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('rejects a messaging settings without a send message function', () => {
+    const result = defineConnectionProvider({
+      ...baseValidConfig,
+      messagingSettings: {
+        sendMessageFunctionUniversalIdentifier: '',
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(
+      result.errors.some((error) =>
+        error.includes('sendMessageFunctionUniversalIdentifier'),
+      ),
+    ).toBe(true);
+  });
 });

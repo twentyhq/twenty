@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, Not, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import {
   MessageChannelSyncStage,
@@ -62,7 +62,7 @@ export class MessagingRelaunchFailedMessageChannelsCronJob {
         where: {
           syncStage: MessageChannelSyncStage.FAILED,
           syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
-          type: Not(MessageChannelType.EMAIL_GROUP),
+          type: MessageChannelType.EMAIL,
           workspaceId: In(activeWorkspaceIds),
         },
       })

@@ -50,8 +50,28 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
         tokenRequestContentType: 'json',
         usePkce: true,
       },
+      messagingSettings: null,
       createdAt: NOW,
       updatedAt: NOW,
+    });
+  });
+
+  it('passes through the messaging settings when provided', () => {
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: buildManifest({
+          messagingSettings: {
+            sendMessageFunctionUniversalIdentifier:
+              '3b1f0a7e-5c2d-4e8f-9a6b-1c2d3e4f5a6b',
+          },
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result.messagingSettings).toEqual({
+      sendMessageFunctionUniversalIdentifier:
+        '3b1f0a7e-5c2d-4e8f-9a6b-1c2d3e4f5a6b',
     });
   });
 

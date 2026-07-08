@@ -3,7 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import {
+  ConnectedAccountProvider,
+  MessageChannelContactAutoCreationPolicy,
+  MessageChannelPendingGroupEmailsAction,
+  MessageChannelSyncStage,
+  MessageChannelSyncStatus,
+  MessageChannelType,
+  MessageChannelVisibility,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
@@ -26,6 +34,7 @@ import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-cli
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
 const STATE_JWT_EXPIRES_IN = '10m';
 
@@ -63,6 +72,8 @@ export class ConnectionProviderOAuthFlowService {
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
   ) {}
 
   async startAuthorizationFlow(
@@ -292,6 +303,30 @@ export class ConnectionProviderOAuthFlowService {
       userWorkspaceId,
     });
 
-    return this.connectedAccountRepository.save(created);
+    const connectedAccount =
+      await this.connectedAccountRepository.save(created);
+
+    if (isDefined(provider.messagingSettings)) {
+      await this.messageChannelRepository.save(
+        this.messageChannelRepository.create({
+          workspaceId,
+          handle: connectedAccount.handle,
+          connectedAccountId: connectedAccount.id,
+          type: MessageChannelType.APP,
+          visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+          syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+          syncStatus: MessageChannelSyncStatus.ACTIVE,
+          isSyncEnabled: true,
+          isContactAutoCreationEnabled: true,
+          contactAutoCreationPolicy:
+            MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED,
+          excludeGroupEmails: false,
+          excludeNonProfessionalEmails: false,
+          pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
+        }),
+      );
+    }
+
+    return connectedAccount;
   }
 }

@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, Not, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import {
   MessageChannelSyncStage,
@@ -62,7 +62,7 @@ export class MessagingMessageListFetchCronJob {
               workspaceId: activeWorkspace.id,
               isSyncEnabled: true,
               syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-              type: Not(MessageChannelType.EMAIL_GROUP),
+              type: MessageChannelType.EMAIL,
             },
           },
         );

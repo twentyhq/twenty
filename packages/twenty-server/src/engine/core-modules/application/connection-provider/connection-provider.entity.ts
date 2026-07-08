@@ -1,5 +1,6 @@
 import {
   type ConnectionProviderType,
+  type MessagingSettings,
   type StoredOAuthConnectionProviderConfig,
 } from 'twenty-shared/application';
 import {
@@ -38,6 +39,9 @@ export class ConnectionProviderEntity
 
   @Column({ nullable: true, type: 'jsonb' })
   oauthConfig: StoredOAuthConnectionProviderConfig | null;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  messagingSettings: MessagingSettings | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -96,6 +96,7 @@ export type {
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';
 export type { TranslationsManifest, Manifest } from './manifestType';
+export type { MessagingSettings } from './messagingSettingsType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
 export type { OAuthConnectionProviderConfig } from './oauthConnectionProviderConfigType';
 export type { OAuthProviderTokenRequestContentType } from './oauthProviderTokenRequestContentType.type';

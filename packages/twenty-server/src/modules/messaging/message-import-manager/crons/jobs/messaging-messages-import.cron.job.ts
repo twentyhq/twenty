@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, Not, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import {
   MessageChannelSyncStage,
@@ -61,7 +61,7 @@ export class MessagingMessagesImportCronJob {
               workspaceId: activeWorkspace.id,
               isSyncEnabled: true,
               syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
-              type: Not(MessageChannelType.EMAIL_GROUP),
+              type: MessageChannelType.EMAIL,
             },
           },
         );

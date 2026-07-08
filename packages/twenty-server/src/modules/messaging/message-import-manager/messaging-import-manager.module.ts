@@ -9,6 +9,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
@@ -39,6 +40,7 @@ import { MessagingMessageListFetchJob } from 'src/modules/messaging/message-impo
 import { MessagingMessagesImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
 import { MessagingOngoingStaleJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
 import { MessagingRelaunchFailedMessageChannelJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-relaunch-failed-message-channel.job';
+import { ImportMessagesResolver } from 'src/modules/messaging/message-import-manager/resolvers/import-messages.resolver';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingDeleteFolderMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-folder-messages.service';
 import { MessagingDeleteGroupEmailMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-group-email-messages.service';
@@ -51,6 +53,7 @@ import { MessagingMessageListFetchService } from 'src/modules/messaging/message-
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingProcessFolderActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
+import { MessagingImportMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-import-messages.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -84,6 +87,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingMessageCleanerModule,
     WorkspaceEventEmitterModule,
     ConnectedAccountModule,
+    PermissionsModule,
   ],
   providers: [
     provideWorkspaceScopedRepository(MessageChannelEntity),
@@ -107,6 +111,8 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingMessageListFetchService,
     MessagingMessagesImportService,
     MessagingSaveMessagesAndEnqueueContactCreationService,
+    MessagingImportMessagesService,
+    ImportMessagesResolver,
     MessagingGetMessageListService,
     MessagingGetMessagesService,
     MessageImportExceptionHandlerService,

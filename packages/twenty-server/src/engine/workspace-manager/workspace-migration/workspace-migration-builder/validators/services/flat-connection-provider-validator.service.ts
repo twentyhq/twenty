@@ -79,6 +79,21 @@ export class FlatConnectionProviderValidatorService {
       }
     }
 
+    const messagingSettings = flatConnectionProvider.messagingSettings;
+
+    if (
+      isDefined(messagingSettings) &&
+      !isNonEmptyString(
+        messagingSettings.sendMessageFunctionUniversalIdentifier,
+      )
+    ) {
+      validationResult.errors.push({
+        code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
+        message: t`Connection provider messagingSettings.sendMessageFunctionUniversalIdentifier is required`,
+        userFriendlyMessage: msg`Messaging sendMessageFunctionUniversalIdentifier is required`,
+      });
+    }
+
     const existingByName = Object.values(
       optimisticFlatConnectionProviderMaps.byUniversalIdentifier,
     ).find(

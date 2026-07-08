@@ -8,7 +8,7 @@ import {
   MessageChannelType,
   WebhookSubscriptionChannelType,
 } from 'twenty-shared/types';
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -73,7 +73,7 @@ export class ChannelSyncService {
         where: {
           connectedAccountId,
           syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
-          type: Not(MessageChannelType.EMAIL_GROUP),
+          type: MessageChannelType.EMAIL,
           workspaceId,
         },
       });
