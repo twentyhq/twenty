@@ -429,7 +429,7 @@ export class FileStorageService {
     });
 
     const application = await this.applicationRepository.findOneOrFail({
-      where: { id: file.applicationId, workspaceId: file.workspaceId },
+      where: { id: file.applicationId, workspaceId },
     });
 
     await this.deleteFile({

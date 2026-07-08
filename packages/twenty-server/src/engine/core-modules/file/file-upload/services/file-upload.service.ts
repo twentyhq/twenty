@@ -17,7 +17,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileUploadTokenJwtPayload } from 'src/engine/core-modules/auth/types/file-upload-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_CONTENT_SNIFF_BYTE_COUNT } from 'src/engine/core-modules/file/file-upload/constants/file-content-sniff.constant';
