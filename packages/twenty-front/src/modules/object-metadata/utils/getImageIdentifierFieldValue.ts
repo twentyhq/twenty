@@ -1,5 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
-
 import { getLinkFaviconUrl } from '@/navigation-menu-item/display/link/utils/getLinkFaviconUrl';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isFieldFilesValue } from '@/object-record/record-field/ui/types/guards/isFieldFilesValue';
@@ -44,6 +42,6 @@ export const getImageIdentifierFieldValue = (
         : null;
     }
     default:
-      return isNonEmptyString(fieldValue) ? fieldValue : null;
+      return null;
   }
 };
