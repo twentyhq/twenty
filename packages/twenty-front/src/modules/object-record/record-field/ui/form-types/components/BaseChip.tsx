@@ -3,7 +3,11 @@ import { type MouseEvent, type ReactNode, useContext } from 'react';
 import { IconX } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledChip = styled.div<{ deletable: boolean; danger: boolean; selected: boolean }>`
+const StyledChip = styled.div<{
+  deletable: boolean;
+  danger: boolean;
+  selected: boolean;
+}>`
   align-items: center;
   background-color: ${({ danger, selected }) =>
     selected

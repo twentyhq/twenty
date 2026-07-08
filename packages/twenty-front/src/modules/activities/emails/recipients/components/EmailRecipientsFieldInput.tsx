@@ -247,6 +247,7 @@ export const EmailRecipientsFieldInput = ({
   const handleInputChange = (value: string) => {
     setInputValue(value);
     clearChipSelection();
+    resetSelectedItem();
 
     if (isEditing) {
       return;
@@ -316,17 +317,26 @@ export const EmailRecipientsFieldInput = ({
     focusInput();
   };
 
+  const handleSubmitHotkey = () => {
+    if (inputValue.length > 0) {
+      commitInputAndCloseSuggestions();
+    } else {
+      onSubmit?.();
+    }
+  };
+
   useHotkeysOnFocusedElement({
     keys: ['ctrl+Enter,meta+Enter'],
-    callback: () => {
-      if (inputValue.length > 0) {
-        commitInputAndCloseSuggestions();
-      } else {
-        onSubmit?.();
-      }
-    },
+    callback: handleSubmitHotkey,
     focusId,
-    dependencies: [inputValue, commitInputAndCloseSuggestions, onSubmit],
+    dependencies: [handleSubmitHotkey],
+  });
+
+  useHotkeysOnFocusedElement({
+    keys: ['ctrl+Enter,meta+Enter'],
+    callback: handleSubmitHotkey,
+    focusId: suggestionsDropdownId,
+    dependencies: [handleSubmitHotkey],
   });
 
   const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -345,13 +355,20 @@ export const EmailRecipientsFieldInput = ({
 
         if (!isEditing && isDropdownOpen && suggestions.length > 0) {
           const selectedItemId = store.get(selectedItemIdAtom);
-          const selectedSuggestion =
-            suggestions.find(
-              (suggestion) => suggestion.suggestionId === selectedItemId,
-            ) ?? suggestions[0];
+          const selectedSuggestion = suggestions.find(
+            (suggestion) => suggestion.suggestionId === selectedItemId,
+          );
+          const suggestionsMatchBuffer =
+            suggestionsSearchInput === inputValue.trim();
+          const topSuggestion = suggestionsMatchBuffer
+            ? suggestions[0]
+            : undefined;
+          const pickedSuggestion = selectedSuggestion ?? topSuggestion;
 
-          handlePickSuggestion(selectedSuggestion);
-          return;
+          if (isDefined(pickedSuggestion)) {
+            handlePickSuggestion(pickedSuggestion);
+            return;
+          }
         }
 
         if (bufferIsEmpty && selectedChipIndex !== null) {
