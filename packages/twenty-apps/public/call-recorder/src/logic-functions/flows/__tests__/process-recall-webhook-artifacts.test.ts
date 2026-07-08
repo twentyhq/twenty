@@ -221,6 +221,38 @@ describe('processRecallWebhookArtifacts', () => {
     );
   });
 
+  it('keeps a terminal webhook retryable when Recall has not exposed the recording id yet', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: {
+        recordings: [],
+      },
+    });
+    const client = buildClient([
+      buildProcessingCallRecording({ externalRecordingId: null }),
+    ]);
+
+    const result = await processRecallWebhookArtifacts({
+      client: client as unknown as CoreApiClient,
+      request: {
+        event: 'recording.done',
+        callRecordingId: 'call-recording-1',
+        externalBotId: 'recall-bot-1',
+        requestedAt: '2026-01-01T14:06:00.000Z',
+      },
+    });
+
+    expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
+    expect(ingestCallRecordingMediaMock).not.toHaveBeenCalled();
+    expect(client.mutations).toEqual([]);
+    expect(result).toEqual({
+      status: 'skipped',
+      event: 'recording.done',
+      callRecordingId: 'call-recording-1',
+      reason: 'no artifact updates',
+    });
+  });
+
   it('completes and charges when artifact reconciliation lands the final media files', async () => {
     ingestCallRecordingMediaMock.mockResolvedValue({
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
@@ -376,5 +408,48 @@ describe('processRecallWebhookArtifacts', () => {
       reason: 'transcript already filled',
     });
     expect(client.mutations).toEqual([]);
+  });
+
+  it('writes a failed transcript marker when transcript.failed omits the transcript id', async () => {
+    const client = buildClient([
+      buildProcessingCallRecording({
+        transcript: {
+          recallTranscriptId: 'recall-transcript-1',
+          status: 'PENDING',
+          requestedAt: '2026-01-01T14:06:00.000Z',
+        },
+      }),
+    ]);
+
+    const result = await processRecallWebhookArtifacts({
+      client: client as unknown as CoreApiClient,
+      request: {
+        event: 'transcript.failed',
+        callRecordingId: 'call-recording-1',
+        transcriptFailureSubCode: 'transcription_failed',
+        requestedAt: '2026-01-01T14:06:00.000Z',
+      },
+    });
+
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          transcript: {
+            recallTranscriptId: 'recall-transcript-1',
+            status: 'FAILED',
+            subCode: 'transcription_failed',
+          },
+          callRecorderFailureReason: 'transcript_failed:transcription_failed',
+          status: 'FAILED',
+        },
+      },
+    ]);
+    expect(result).toEqual({
+      status: 'processed',
+      event: 'transcript.failed',
+      callRecordingId: 'call-recording-1',
+      outcome: 'transcript-failed',
+    });
   });
 });

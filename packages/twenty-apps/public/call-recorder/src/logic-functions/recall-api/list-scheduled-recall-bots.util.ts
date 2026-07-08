@@ -69,11 +69,11 @@ export const listScheduledRecallBots = async ({
   }
 
   if (!isUndefined(path)) {
-    return {
-      ok: false,
-      status: null,
-      errorMessage: `Recall bot list exceeded ${RECALL_BOT_LIST_MAX_PAGES} pages`,
-    };
+    if (process.env.NODE_ENV !== 'test') {
+      console.warn(
+        `[call-recorder] Recall bot list exceeded ${RECALL_BOT_LIST_MAX_PAGES} pages; continuing with ${bots.length} fetched bots and capped per-id fallback for misses`,
+      );
+    }
   }
 
   return { ok: true, bots };

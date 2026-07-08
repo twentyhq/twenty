@@ -252,7 +252,7 @@ describe('convergeDivergedCallRecordings', () => {
     expect(result.updatedCallRecordingIds).toEqual(['call-recording-1']);
   });
 
-  it('marks FAILED when Recall is done but has no recording artifact path', async () => {
+  it('keeps a done Recall bot retryable when the recording artifact is not visible yet', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
@@ -275,8 +275,7 @@ describe('convergeDivergedCallRecordings', () => {
       {
         id: 'call-recording-1',
         data: {
-          status: 'FAILED',
-          callRecorderFailureReason: 'recording_artifacts_unavailable',
+          status: 'PROCESSING',
         },
       },
     ]);
@@ -631,7 +630,7 @@ describe('convergeDivergedCallRecordings', () => {
     expect(console.warn).toHaveBeenCalled();
   });
 
-  it('converges candidates created long before a recently ended meeting', async () => {
+  it('does not use old createdAt as the convergence bound when calendar data is missing', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
@@ -642,6 +641,7 @@ describe('convergeDivergedCallRecordings', () => {
     });
     const client = buildClient([
       buildStuckRecordingNode({
+        calendarEvent: null,
         createdAt: '2026-06-01T12:00:00.000Z',
         startedAt: '2026-06-09T13:02:00.000Z',
       }),
@@ -656,6 +656,45 @@ describe('convergeDivergedCallRecordings', () => {
       externalBotId: 'recall-bot-1',
     });
     expect(result.unconvergeableCallRecordingIds).toEqual([]);
+  });
+
+  it('rotates the capped per-id fallback window so the same tail is not always skipped', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: false,
+      status: 500,
+      errorMessage: 'temporary outage',
+    });
+    const candidateNodes = Array.from({ length: 27 }, (_, index) =>
+      buildStuckRecordingNode({
+        id: `call-recording-${index + 1}`,
+        externalBotId: `recall-bot-${index + 1}`,
+        calendarEvent: null,
+      }),
+    );
+
+    await convergeDivergedCallRecordings({
+      client: buildClient(candidateNodes) as unknown as CoreApiClient,
+      now: new Date(0),
+    });
+
+    expect(
+      getRecallBotMock.mock.calls.map(([request]) => request.externalBotId),
+    ).toEqual(
+      Array.from({ length: 25 }, (_, index) => `recall-bot-${index + 1}`),
+    );
+
+    getRecallBotMock.mockClear();
+
+    await convergeDivergedCallRecordings({
+      client: buildClient(candidateNodes) as unknown as CoreApiClient,
+      now: new Date(15 * 60 * 1000),
+    });
+
+    expect(
+      getRecallBotMock.mock.calls.map(([request]) => request.externalBotId),
+    ).toEqual(
+      Array.from({ length: 25 }, (_, index) => `recall-bot-${index + 2}`),
+    );
   });
 
   it('applies the downgrade guard to pulled statuses while still filling timestamps', async () => {

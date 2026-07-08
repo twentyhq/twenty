@@ -1,3 +1,5 @@
+import { isUndefined } from '@sniptt/guards';
+
 import {
   RECALL_API_ENDPOINT_RATE_LIMIT_BURST,
   RECALL_API_ENDPOINT_RATE_LIMIT_PER_MINUTE,
@@ -93,61 +95,27 @@ const buildRecallApiRateLimitKey = ({
 const normalizeRecallApiRateLimitPath = (path: string): string => {
   const pathWithoutQueryString = path.split('?')[0] ?? path;
   const segments = pathWithoutQueryString.split('/').filter(Boolean);
+  const [resourceSegment, resourceIdSegment, ...actionSegments] = segments;
 
-  if (segments[0] === 'bot') {
-    return normalizeBotRateLimitPath(segments);
+  if (isUndefined(resourceSegment)) {
+    return '/';
   }
 
-  if (segments[0] === 'recording') {
-    return normalizeRecordingRateLimitPath(segments);
+  if (isUndefined(resourceIdSegment)) {
+    return `/${resourceSegment}/`;
   }
 
-  if (segments[0] === 'transcript') {
-    return normalizeTranscriptRateLimitPath(segments);
+  if (isKnownRecallIdScopedResource(resourceSegment)) {
+    return `/${[resourceSegment, '{id}', ...actionSegments].join('/')}/`;
   }
 
   return pathWithoutQueryString;
 };
 
-const normalizeBotRateLimitPath = (segments: string[]): string => {
-  if (segments.length === 1) {
-    return '/bot/';
-  }
-
-  if (segments.length === 2) {
-    return '/bot/{id}/';
-  }
-
-  if (segments.length === 3 && segments[2] === 'leave_call') {
-    return '/bot/{id}/leave_call/';
-  }
-
-  return `/${segments.join('/')}/`;
-};
-
-const normalizeRecordingRateLimitPath = (segments: string[]): string => {
-  if (segments.length === 2) {
-    return '/recording/{id}/';
-  }
-
-  if (segments.length === 3 && segments[2] === 'create_transcript') {
-    return '/recording/{id}/create_transcript/';
-  }
-
-  return `/${segments.join('/')}/`;
-};
-
-const normalizeTranscriptRateLimitPath = (segments: string[]): string => {
-  if (segments.length === 1) {
-    return '/transcript/';
-  }
-
-  if (segments.length === 2) {
-    return '/transcript/{id}/';
-  }
-
-  return `/${segments.join('/')}/`;
-};
+const isKnownRecallIdScopedResource = (resourceSegment: string): boolean =>
+  resourceSegment === 'bot' ||
+  resourceSegment === 'recording' ||
+  resourceSegment === 'transcript';
 
 export const resetRecallApiRateLimiter = (): void => {
   bucketsByRateLimitKey.clear();

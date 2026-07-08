@@ -29,10 +29,5 @@ export const parseRecallRetryAfterMs = (
   return capRecallRetryAfterMs(Math.max(0, retryAfterDateMs - nowMs));
 };
 
-const capRecallRetryAfterMs = (retryAfterMs: number): number | undefined => {
-  if (retryAfterMs > RECALL_API_MAX_RETRY_AFTER_MS) {
-    return undefined;
-  }
-
-  return retryAfterMs;
-};
+const capRecallRetryAfterMs = (retryAfterMs: number): number =>
+  Math.min(retryAfterMs, RECALL_API_MAX_RETRY_AFTER_MS);

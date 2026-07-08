@@ -245,7 +245,7 @@ describe('recall bot api', () => {
     );
   });
 
-  it('fails the scheduled bot list when the pagination cap would truncate results', async () => {
+  it('returns the fetched scheduled bots when the pagination cap leaves more pages', async () => {
     for (let pageIndex = 1; pageIndex <= 10; pageIndex++) {
       fetchMock.mockResolvedValueOnce({
         ok: true,
@@ -263,9 +263,12 @@ describe('recall bot api', () => {
     });
 
     expect(result).toEqual({
-      ok: false,
-      status: null,
-      errorMessage: 'Recall bot list exceeded 10 pages',
+      ok: true,
+      bots: Array.from({ length: 10 }, (_, index) => ({
+        id: `bot-${index + 1}`,
+        metadata: {},
+        raw: { id: `bot-${index + 1}` },
+      })),
     });
     expect(fetchMock).toHaveBeenCalledTimes(10);
   });
@@ -700,6 +703,46 @@ describe('recall bot api', () => {
           'Recall API responded with HTTP 500: {"detail":"server error"}',
       });
       expect(fetchMock).toHaveBeenCalledTimes(3);
+    });
+
+    it('defers instead of retrying in-process when Retry-After exceeds the invocation budget', async () => {
+      fetchMock.mockResolvedValue({
+        ok: false,
+        status: 429,
+        headers: {
+          get: (headerName: string) =>
+            headerName.toLowerCase() === 'retry-after' ? '120' : null,
+        },
+        json: async () => ({ detail: 'rate limited' }),
+      });
+
+      const result = await getRecallBot({ externalBotId: 'recall-bot-id' });
+
+      expect(result).toEqual({
+        ok: false,
+        status: 429,
+        errorMessage:
+          'Recall API responded with HTTP 429: {"detail":"rate limited"}',
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('defers 507 adhoc pool exhaustion instead of sleeping in-process', async () => {
+      fetchMock.mockResolvedValue({
+        ok: false,
+        status: 507,
+        json: async () => ({ detail: 'adhoc pool exhausted' }),
+      });
+
+      const result = await getRecallBot({ externalBotId: 'recall-bot-id' });
+
+      expect(result).toEqual({
+        ok: false,
+        status: 507,
+        errorMessage:
+          'Recall API responded with HTTP 507: {"detail":"adhoc pool exhausted"}',
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 
     it('does not retry client errors', async () => {
