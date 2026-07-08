@@ -20,6 +20,7 @@ const IMAGE_IDENTIFIER_BACKFILL_TARGETS = [
     fieldNameForLog: 'domainName',
     fieldUniversalIdentifier:
       STANDARD_OBJECTS.company.fields.domainName.universalIdentifier,
+    deprecatedFieldUniversalIdentifier: undefined,
   },
   {
     objectNameForLog: 'person',
@@ -27,6 +28,8 @@ const IMAGE_IDENTIFIER_BACKFILL_TARGETS = [
     fieldNameForLog: 'avatarFile',
     fieldUniversalIdentifier:
       STANDARD_OBJECTS.person.fields.avatarFile.universalIdentifier,
+    deprecatedFieldUniversalIdentifier:
+      STANDARD_OBJECTS.person.fields.avatarUrl.universalIdentifier,
   },
 ] as const;
 
@@ -75,11 +78,16 @@ export class BackfillCompanyPersonImageIdentifierFieldMetadataIdCommand extends 
         continue;
       }
 
-      if (
-        isDefined(
-          existingObject.imageIdentifierFieldMetadataUniversalIdentifier,
-        )
-      ) {
+      const currentIdentifier =
+        existingObject.imageIdentifierFieldMetadataUniversalIdentifier;
+
+      // Backfill when unset, or when it still points to the deprecated field
+      // (e.g. person.avatarUrl). Never clobber a real user customization.
+      const isBackfillable =
+        !isDefined(currentIdentifier) ||
+        currentIdentifier === target.deprecatedFieldUniversalIdentifier;
+
+      if (!isBackfillable) {
         this.logger.log(
           `imageIdentifierFieldMetadataId already set on ${target.objectNameForLog} for workspace ${workspaceId}, skipping`,
         );
