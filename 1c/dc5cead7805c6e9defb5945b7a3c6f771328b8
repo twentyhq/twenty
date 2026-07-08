@@ -1,0 +1,27 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/__tests__/2-20-workspace-command-1783525261000-add-message-campaign-stat-fields.command.spec.ts
+  s_2a545fd7be32ce::t_bdef89684ca514 4
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783525261001-create-message-list-view.command.ts
+  s_2a545fd7be32ce::t_369eb78ea79c3c 29
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/__tests__/2-20-workspace-command-1783525261001-create-message-list-view.command.spec.ts
+  s_2a545fd7be32ce::t_76b023eaa689e2 4
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783525261000-add-message-campaign-stat-fields.command.ts
+  s_2a545fd7be32ce::t_48bfd3f6730022 40
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/2-20-upgrade-version-command.module.ts
+  s_2a545fd7be32ce::t_f6329379d2b178 4-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "1cdc5cead7805c6e9defb5945b7a3c6f771328b8",
+  "prompts": {},
+  "sessions": {
+    "s_2a545fd7be32ce": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "509bbba6-585f-497d-a103-1da780e33b43",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
