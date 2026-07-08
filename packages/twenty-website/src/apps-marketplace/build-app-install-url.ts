@@ -4,5 +4,7 @@ export const buildAppInstallUrl = (universalIdentifier: string): string => {
   const baseUrl =
     process.env.TWENTY_APP_BASE_URL ?? DEFAULT_TWENTY_APP_BASE_URL;
 
-  return `${baseUrl.replace(/\/$/, '')}/settings/applications/available/${universalIdentifier}`;
+  const returnToPath = `/settings/applications/available/${universalIdentifier}`;
+
+  return `${baseUrl.replace(/\/$/, '')}/?returnToPath=${encodeURIComponent(returnToPath)}`;
 };
