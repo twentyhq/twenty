@@ -48,7 +48,7 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     warnings.push(
       `Application category "${category}" is not a known ApplicationCategory (${APPLICATION_CATEGORIES.join(
         ', ',
-      )}). Arbitrary category strings are kept for backward compatibility and may be removed.`,
+      )}). Arbitrary category strings are kept for backward compatibility and may be removed. Ask for a new category at https://github.com/twentyhq/twenty.`,
     );
   }
 
