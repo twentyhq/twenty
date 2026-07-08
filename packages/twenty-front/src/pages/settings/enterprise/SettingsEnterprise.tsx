@@ -510,7 +510,7 @@ export const SettingsEnterprise = ({
     <Section>
       <H2Title
         title={t`Activate Enterprise Key`}
-        description={t`Paste your enterprise key below to activate`}
+        description={t`Paste your enterprise key below to activate. Keep a copy of this key somewhere safe: the same key is reused to set up a development instance or to move your license to a replacement server.`}
       />
       <StyledInputContainer>
         <StyledInputWrapper>
@@ -559,14 +559,23 @@ export const SettingsEnterprise = ({
     </Section>
   );
 
+  const enterpriseKeyInfoSection = (
+    <Section>
+      <H2Title
+        title={t`Your enterprise key`}
+        description={t`Your enterprise key is safely stored on this server, so you do not need to re-enter it here. Make sure you keep a copy of it somewhere safe: you will need the same key to activate a development instance or to move your license to a replacement server. If you lose it, contact support to recover it.`}
+      />
+    </Section>
+  );
+
   const instanceTypeSection = (
     <Section>
       <H2Title
         title={t`Development instance`}
         description={
           instanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT
-            ? t`This instance is registered as a development instance and is not billed. A subscription can have a single free development instance in addition to its production one.`
-            : t`Register this server as a free development instance (for a staging or test environment). Development instances unlock enterprise features without being billed, and do not affect your production seat count.`
+            ? t`This server is registered as a development instance and is not billed additionally. A subscription can have a single development instance in addition to its production one. Switching it back to a production instance will make its seats count toward billing.`
+            : t`One enterprise key powers all of your instances. To run a staging or test environment, install Twenty on a second server, activate it with this same enterprise key, then register that server as a development instance. Development instances unlock enterprise features without extra billing and do not count toward your production seats. Each subscription can have one development instance alongside its production one, as long as the production instance stays active.`
         }
       />
       {instanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT ? (
@@ -955,6 +964,7 @@ export const SettingsEnterprise = ({
         onConfirmClick={handleReleaseBinding}
       />
       {renderContent()}
+      {hasSignedEnterpriseKey && enterpriseKeyInfoSection}
       {hasEnterpriseLicense && instanceTypeSection}
     </>
   );
