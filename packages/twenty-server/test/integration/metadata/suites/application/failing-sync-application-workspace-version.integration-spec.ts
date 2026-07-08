@@ -1,21 +1,19 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
-import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
-import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
-import { installApplication } from 'test/integration/metadata/suites/application/utils/install-application.util';
-import { uploadAppTarball } from 'test/integration/metadata/suites/application/utils/upload-app-tarball.util';
+import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { scrubSemverVersions } from 'test/utils/scrub-semver-versions.util';
+import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { TWENTY_CURRENT_VERSION } from 'src/engine/core-modules/upgrade/constants/twenty-current-version.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-// The full install flow runs cache-lock retries with real delays, so fake
-// timers would hang it — mirror the other install suites.
+// The sync flow can run cache-lock retries with real delays, so fake timers
+// would hang it — mirror the other application suites.
 jest.setTimeout(120000);
 
-const INJECTED_CURSOR_MARKER = 'integration-test-workspace-version-gate';
+const INJECTED_CURSOR_MARKER = 'integration-test-sync-workspace-version-gate';
 
 const injectWorkspaceCursor = async (
   name: string,
@@ -40,37 +38,24 @@ const clearInjectedWorkspaceCursors = async (): Promise<void> => {
   );
 };
 
-const uploadTarballApp = async ({
-  universalIdentifier,
+const buildManifestWithRequiredServerVersionRange = ({
+  appId,
   roleId,
-  requiredServerVersion,
+  requiredServerVersionRange,
 }: {
-  universalIdentifier: string;
+  appId: string;
   roleId: string;
-  requiredServerVersion: string;
-}): Promise<void> => {
-  const tarball = await createAppTarball({
-    'manifest.json': JSON.stringify(
-      buildBaseManifest({ appId: universalIdentifier, roleId }),
-    ),
-    'package.json': JSON.stringify({
-      name: `test-workspace-version-gate-${universalIdentifier}`,
-      version: '1.0.0',
-      engines: { twenty: requiredServerVersion },
-    }),
-  });
+  requiredServerVersionRange: string;
+}): Manifest => {
+  const manifest = buildBaseManifest({ appId, roleId });
 
-  const uploadResult = await uploadAppTarball({
-    tarballBuffer: tarball,
-    universalIdentifier,
-  });
+  manifest.application.requiredServerVersionRange = requiredServerVersionRange;
 
-  expect(uploadResult.errors).toBeUndefined();
+  return manifest;
 };
 
-describe('Install application is gated by the workspace completed upgrade version', () => {
+describe('Sync application is gated by the workspace completed upgrade version', () => {
   let currentVersionCommandName: string;
-  const createdApplicationUniversalIdentifiers: string[] = [];
 
   beforeAll(async () => {
     jest.useRealTimers();
@@ -99,34 +84,23 @@ describe('Install application is gated by the workspace completed upgrade versio
     await clearInjectedWorkspaceCursors();
   });
 
-  afterAll(async () => {
-    for (const universalIdentifier of createdApplicationUniversalIdentifiers) {
-      await cleanupApplicationAndAppRegistration({
-        applicationUniversalIdentifier: universalIdentifier,
-      });
-    }
-
+  afterAll(() => {
     jest.useFakeTimers();
   });
 
-  it('rejects installation when the workspace has not completed the required upgrade version', async () => {
-    const universalIdentifier = uuidv4();
-    const roleId = uuidv4();
-
-    await uploadTarballApp({
-      universalIdentifier,
-      roleId,
-      requiredServerVersion: `>=${TWENTY_CURRENT_VERSION}`,
+  it('rejects sync when the workspace has not completed the required upgrade version', async () => {
+    const manifest = buildManifestWithRequiredServerVersionRange({
+      appId: uuidv4(),
+      roleId: uuidv4(),
+      requiredServerVersionRange: `>=${TWENTY_CURRENT_VERSION}`,
     });
-
-    createdApplicationUniversalIdentifiers.push(universalIdentifier);
 
     // The workspace failed mid-way through the current version's upgrade
     // segment, so its last completed version is the previous one.
     await injectWorkspaceCursor(currentVersionCommandName, 'failed');
 
-    const { errors } = await installApplication({
-      input: { universalIdentifier },
+    const { errors } = await syncApplication({
+      manifest,
       expectToFail: true,
     });
 
@@ -136,17 +110,12 @@ describe('Install application is gated by the workspace completed upgrade versio
     });
   });
 
-  it('rejects installation when the workspace upgrade cursor cannot be interpreted', async () => {
-    const universalIdentifier = uuidv4();
-    const roleId = uuidv4();
-
-    await uploadTarballApp({
-      universalIdentifier,
-      roleId,
-      requiredServerVersion: '>=1.0.0',
+  it('rejects sync when the workspace upgrade cursor cannot be interpreted', async () => {
+    const manifest = buildManifestWithRequiredServerVersionRange({
+      appId: uuidv4(),
+      roleId: uuidv4(),
+      requiredServerVersionRange: '>=1.0.0',
     });
-
-    createdApplicationUniversalIdentifiers.push(universalIdentifier);
 
     // A cursor pointing at a command outside the supported upgrade sequence
     // cannot be mapped to a completed version.
@@ -155,8 +124,8 @@ describe('Install application is gated by the workspace completed upgrade versio
       'completed',
     );
 
-    const { errors } = await installApplication({
-      input: { universalIdentifier },
+    const { errors } = await syncApplication({
+      manifest,
       expectToFail: true,
     });
 

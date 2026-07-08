@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Install application is gated by the workspace completed upgrade version rejects installation when the workspace has not completed the required upgrade version 1`] = `
+exports[`Sync application is gated by the workspace completed upgrade version rejects sync when the workspace has not completed the required upgrade version 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
@@ -12,7 +12,7 @@ exports[`Install application is gated by the workspace completed upgrade version
 }
 `;
 
-exports[`Install application is gated by the workspace completed upgrade version rejects installation when the workspace upgrade cursor cannot be interpreted 1`] = `
+exports[`Sync application is gated by the workspace completed upgrade version rejects sync when the workspace upgrade cursor cannot be interpreted 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
