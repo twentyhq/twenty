@@ -14,7 +14,7 @@ import {
   ApplicationRegistrationService,
 } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import {
-  getMarketplaceAppsCacheKey,
+  MARKETPLACE_APPS_CACHE_KEY,
   MARKETPLACE_APPS_CACHE_TTL_MS,
 } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
@@ -45,11 +45,25 @@ export class MarketplaceQueryService {
   async findManyMarketplaceApps(
     isFeatured?: boolean,
   ): Promise<MarketplaceAppDTO[]> {
-    const cacheKey = getMarketplaceAppsCacheKey(isFeatured);
+    const appsByUniversalIdentifier =
+      await this.getMarketplaceAppsByUniversalIdentifier();
 
+    const apps = Object.values(appsByUniversalIdentifier);
+
+    if (!isDefined(isFeatured)) {
+      return apps;
+    }
+
+    return apps.filter((app) => app.isFeatured === isFeatured);
+  }
+
+  private async getMarketplaceAppsByUniversalIdentifier(): Promise<
+    Record<string, MarketplaceAppDTO>
+  > {
     try {
-      const cachedApps =
-        await this.cacheStorage.get<MarketplaceAppDTO[]>(cacheKey);
+      const cachedApps = await this.cacheStorage.get<
+        Record<string, MarketplaceAppDTO>
+      >(MARKETPLACE_APPS_CACHE_KEY);
 
       if (isDefined(cachedApps)) {
         return cachedApps;
@@ -59,9 +73,7 @@ export class MarketplaceQueryService {
     }
 
     const registrations =
-      await this.applicationRegistrationService.findManyListedCatalogCards(
-        isFeatured,
-      );
+      await this.applicationRegistrationService.findManyListedCatalogCards();
 
     if (registrations.length === 0) {
       if (!this.hasSyncBeenEnqueued) {
@@ -76,7 +88,7 @@ export class MarketplaceQueryService {
         );
       }
 
-      return [];
+      return {};
     }
 
     const configuredStatuses =
@@ -84,21 +96,29 @@ export class MarketplaceQueryService {
         registrations.map((registration) => registration.id),
       );
 
-    const apps = registrations
+    const appsByUniversalIdentifier = registrations
       .filter((registration) => configuredStatuses.get(registration.id) ?? true)
-      .map((registration) => this.toMarketplaceAppDTO(registration));
+      .reduce<Record<string, MarketplaceAppDTO>>(
+        (accumulator, registration) => {
+          accumulator[registration.universalIdentifier] =
+            this.toMarketplaceAppDTO(registration);
+
+          return accumulator;
+        },
+        {},
+      );
 
     try {
       await this.cacheStorage.set(
-        cacheKey,
-        apps,
+        MARKETPLACE_APPS_CACHE_KEY,
+        appsByUniversalIdentifier,
         MARKETPLACE_APPS_CACHE_TTL_MS,
       );
     } catch (error) {
       this.logger.error('Failed to write marketplace apps cache', error);
     }
 
-    return apps;
+    return appsByUniversalIdentifier;
   }
 
   async findMarketplaceAppDetail(

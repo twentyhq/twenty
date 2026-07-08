@@ -32,7 +32,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
-import { MARKETPLACE_APPS_CACHE_KEYS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
+import { MARKETPLACE_APPS_CACHE_KEY } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-featured-applications.constant';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -102,7 +102,7 @@ export class ApplicationRegistrationService {
 
   private async invalidateMarketplaceAppsCache(): Promise<void> {
     try {
-      await this.marketplaceCacheStorage.mdel(MARKETPLACE_APPS_CACHE_KEYS);
+      await this.marketplaceCacheStorage.del(MARKETPLACE_APPS_CACHE_KEY);
     } catch (error) {
       this.logger.error('Failed to invalidate marketplace apps cache', error);
     }
@@ -496,9 +496,9 @@ export class ApplicationRegistrationService {
     return saved;
   }
 
-  async findManyListedCatalogCards(
-    isFeatured?: boolean,
-  ): Promise<ApplicationRegistrationCatalogCard[]> {
+  async findManyListedCatalogCards(): Promise<
+    ApplicationRegistrationCatalogCard[]
+  > {
     const registrations = await this.applicationRegistrationRepository.find({
       select: [
         'id',
@@ -514,7 +514,6 @@ export class ApplicationRegistrationService {
       where: {
         isListed: true,
         sourceType: ApplicationRegistrationSourceType.NPM,
-        ...(isDefined(isFeatured) && { isFeatured }),
       },
     });
 
