@@ -5,7 +5,6 @@ import postInstallLogicFunction, {
 } from 'src/logic-functions/start-post-install-backfills';
 
 const requestCallRecordingSummariesBackfillMock = vi.hoisted(() => vi.fn());
-const requestCallRecordingApplicationIdsBackfillMock = vi.hoisted(() => vi.fn());
 const requestUpcomingCalendarEventsReconciliationMock = vi.hoisted(() =>
   vi.fn(),
 );
@@ -15,14 +14,6 @@ vi.mock(
   () => ({
     requestCallRecordingSummariesBackfill:
       requestCallRecordingSummariesBackfillMock,
-  }),
-);
-
-vi.mock(
-  'src/logic-functions/data/request-call-recording-application-ids-backfill.util',
-  () => ({
-    requestCallRecordingApplicationIdsBackfill:
-      requestCallRecordingApplicationIdsBackfillMock,
   }),
 );
 
@@ -38,7 +29,6 @@ describe('start-post-install-backfills', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     requestCallRecordingSummariesBackfillMock.mockResolvedValue(true);
-    requestCallRecordingApplicationIdsBackfillMock.mockResolvedValue(true);
     requestUpcomingCalendarEventsReconciliationMock.mockResolvedValue(true);
   });
 
@@ -60,18 +50,14 @@ describe('start-post-install-backfills', () => {
     expect(result).toEqual({
       calendarEventSweepOutcome: 'sweep-requested',
       summaryBackfillOutcome: 'skipped-initial-install',
-      applicationIdBackfillOutcome: 'skipped-initial-install',
     });
     expect(
       requestUpcomingCalendarEventsReconciliationMock,
     ).toHaveBeenCalledTimes(1);
     expect(requestCallRecordingSummariesBackfillMock).not.toHaveBeenCalled();
-    expect(
-      requestCallRecordingApplicationIdsBackfillMock,
-    ).not.toHaveBeenCalled();
   });
 
-  it('backfills summaries and applicationId and skips the sweep on an upgrade', async () => {
+  it('backfills summaries and skips the sweep on an upgrade', async () => {
     const result = await startPostInstallBackfillsHandler({
       previousVersion: '1.0.6',
       newVersion: '1.0.7',
@@ -80,12 +66,8 @@ describe('start-post-install-backfills', () => {
     expect(result).toEqual({
       calendarEventSweepOutcome: 'skipped-upgrade',
       summaryBackfillOutcome: 'backfill-requested',
-      applicationIdBackfillOutcome: 'backfill-requested',
     });
     expect(requestCallRecordingSummariesBackfillMock).toHaveBeenCalledTimes(1);
-    expect(
-      requestCallRecordingApplicationIdsBackfillMock,
-    ).toHaveBeenCalledTimes(1);
     expect(
       requestUpcomingCalendarEventsReconciliationMock,
     ).not.toHaveBeenCalled();
@@ -112,22 +94,6 @@ describe('start-post-install-backfills', () => {
       }),
     ).rejects.toThrow(
       'Failed to start post-install backfills: call recording summary backfill',
-    );
-    expect(
-      requestUpcomingCalendarEventsReconciliationMock,
-    ).not.toHaveBeenCalled();
-  });
-
-  it('throws when the upgrade applicationId backfill kickoff fails', async () => {
-    requestCallRecordingApplicationIdsBackfillMock.mockResolvedValue(false);
-
-    await expect(
-      startPostInstallBackfillsHandler({
-        previousVersion: '1.0.6',
-        newVersion: '1.0.7',
-      }),
-    ).rejects.toThrow(
-      'Failed to start post-install backfills: call recording applicationId backfill',
     );
     expect(
       requestUpcomingCalendarEventsReconciliationMock,
