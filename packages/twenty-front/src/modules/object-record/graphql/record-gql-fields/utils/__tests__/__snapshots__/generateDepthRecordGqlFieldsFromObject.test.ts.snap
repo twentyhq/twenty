@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`generateDepthRecordGqlFieldsFromObject should generate depth one record gql fields from object 1`] = `
 {
@@ -42,7 +42,6 @@ exports[`generateDepthRecordGqlFieldsFromObject should generate depth one record
     "name": true,
   },
   "people": {
-    "avatarFile": true,
     "id": true,
     "name": true,
   },
@@ -50,7 +49,6 @@ exports[`generateDepthRecordGqlFieldsFromObject should generate depth one record
   "previousEmployees": {
     "id": true,
     "person": {
-      "avatarFile": true,
       "id": true,
       "name": true,
     },
