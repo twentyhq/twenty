@@ -262,9 +262,16 @@ export class ApplicationInstallService {
 
       return true;
     } catch (error) {
-      this.logger.error(
-        `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,
-      );
+      if (error instanceof ApplicationException) {
+        this.logger.warn(
+          `Application install failed for app ${appRegistration.universalIdentifier} in workspace ${params.workspaceId} with code ${error.code}: ${error.message}`,
+        );
+      } else {
+        this.logger.error(
+          `Application install failed for app ${appRegistration.universalIdentifier} in workspace ${params.workspaceId}`,
+          error instanceof Error ? error.stack : undefined,
+        );
+      }
 
       if (!isVersionUpgrade) {
         await this.applicationSyncService.uninstallApplication({

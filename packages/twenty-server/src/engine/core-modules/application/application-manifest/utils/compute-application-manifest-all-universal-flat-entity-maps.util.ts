@@ -427,7 +427,21 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
     }
   }
 
+  const seenNavigationMenuItemUniversalIdentifiers = new Set<string>();
+
   for (const navigationMenuItemManifest of manifest.navigationMenuItems ?? []) {
+    if (
+      seenNavigationMenuItemUniversalIdentifiers.has(
+        navigationMenuItemManifest.universalIdentifier,
+      )
+    ) {
+      continue;
+    }
+
+    seenNavigationMenuItemUniversalIdentifiers.add(
+      navigationMenuItemManifest.universalIdentifier,
+    );
+
     addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
       universalFlatEntity:
         fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem({
