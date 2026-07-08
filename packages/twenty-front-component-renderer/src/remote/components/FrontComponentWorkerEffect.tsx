@@ -1,7 +1,6 @@
 import { release, retain } from '@quilted/threads';
 import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 import { buildHostFetchPolicyFromFrontComponentUrls } from '@/host/utils/buildHostFetchPolicyFromFrontComponentUrls';
 import { createFrontComponentHostThread } from '@/host/utils/createFrontComponentHostThread';
@@ -93,9 +92,7 @@ export const FrontComponentWorkerEffect = ({
       window.removeEventListener('message', handleSandboxMessage);
       setThread(null);
       channel.port1.close();
-      if (isDefined(sandboxIframe.parentNode)) {
-        sandboxIframe.remove();
-      }
+      sandboxIframe.remove();
       isInitializedRef.current = false;
     };
   }, [

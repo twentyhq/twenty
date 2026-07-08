@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from 'twenty-shared/constants';
+import { type CommandMenuConfirmationModalResultBrowserEventDetail } from 'twenty-shared/types';
 
-import { type CommandMenuConfirmationModalResultBrowserEventDetail } from '@/types/CommandMenuConfirmationModalResultBrowserEventDetail';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 
 type FrontComponentConfirmationModalResultEffectProps = {

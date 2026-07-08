@@ -4,7 +4,7 @@ import { commandMenuItemConfirmationModalConfigState } from '@/command-menu-item
 import {
   type CommandMenuConfirmationModalResult,
   type CommandMenuConfirmationModalResultBrowserEventDetail,
-} from '@/command-menu-item/confirmation-modal/types/CommandMenuConfirmationModalResultBrowserEventDetail';
+} from 'twenty-shared/types';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';

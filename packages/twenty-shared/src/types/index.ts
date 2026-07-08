@@ -55,6 +55,8 @@ export {
   richTextCompositeType,
   richTextValueSchema,
 } from './composite-types/rich-text.composite-type';
+export type { CommandMenuConfirmationModalResult } from './CommandMenuConfirmationModalResult';
+export type { CommandMenuConfirmationModalResultBrowserEventDetail } from './CommandMenuConfirmationModalResultBrowserEventDetail';
 export type { CompositeFieldSubFieldName } from './CompositeFieldSubFieldNameType';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export type { ConfirmationModalCaller } from './ConfirmationModalCaller';
