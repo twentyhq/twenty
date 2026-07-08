@@ -12,15 +12,6 @@ type BuildFlatFieldMetadataForCustomObjectArgs = {
   >;
 };
 
-type BuildDefaultFlatFieldMetadataForCustomObjectArgs =
-  BuildFlatFieldMetadataForCustomObjectArgs & {
-    skipNameField?: boolean;
-  };
-
-export type DefaultFlatFieldForCustomObjectMaps = ReturnType<
-  typeof buildDefaultFlatFieldMetadatasForCustomObject
->;
-
 export const buildReservedSystemFlatFieldMetadatasForCustomObject = ({
   flatObjectMetadata: {
     applicationUniversalIdentifier,
@@ -179,28 +170,5 @@ export const buildNameFlatFieldMetadataForCustomObject = ({
     universalSettings: null,
     viewSortUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
-  };
-};
-
-export const buildDefaultFlatFieldMetadatasForCustomObject = ({
-  flatObjectMetadata,
-  skipNameField = false,
-}: BuildDefaultFlatFieldMetadataForCustomObjectArgs) => {
-  const nameField = skipNameField
-    ? null
-    : buildNameFlatFieldMetadataForCustomObject({ flatObjectMetadata });
-
-  return {
-    fields: {
-      ...(nameField && { nameField }),
-      ...buildReservedSystemFlatFieldMetadatasForCustomObject({
-        flatObjectMetadata,
-      }),
-      searchVector: buildSearchVectorFlatFieldMetadataForCustomObject({
-        flatObjectMetadata,
-      }),
-    },
-  } as const satisfies {
-    fields: Record<string, UniversalFlatFieldMetadata>;
   };
 };

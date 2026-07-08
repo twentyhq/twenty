@@ -42,7 +42,7 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { buildDefaultFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util';
+import { buildReservedSystemFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util';
 import { computeFlatDefaultRecordPageLayoutToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-default-record-page-layout-to-create.util';
 import { computeFlatRecordPageFieldsViewToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-record-page-fields-view-to-create.util';
 import { computeFlatViewFieldsToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-view-fields-to-create.util';
@@ -507,27 +507,22 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
     });
 
-    // The system fields themselves are engine-owned side effects and are NOT
-    // submitted here; this builder is used only to re-derive their deterministic
-    // universal identifiers so we can wire up the default view / viewField
-    // references below. This lives in the service (rather than a self-contained
-    // side effect handler like searchVector) because the default views still use
-    // random v4 identifiers, which a handler could not re-derive without reading
-    // another handler's output. Once views migrate to deterministic universal
-    // identifiers + isSystemSideEffect, this whole block moves into a
-    // self-contained default-views handler and this call is removed.
-    const defaultFlatFieldForCustomObjectMaps =
-      buildDefaultFlatFieldMetadatasForCustomObject({
-        flatObjectMetadata: {
-          applicationUniversalIdentifier:
-            resolvedOwnerFlatApplication.universalIdentifier,
-          universalIdentifier: flatObjectMetadataToCreate.universalIdentifier,
-        },
-        skipNameField: createObjectInput.skipNameField,
-      });
-    const defaultFlatFieldMetadatasForViewFields = Object.values(
-      defaultFlatFieldForCustomObjectMaps.fields,
-    );
+    // Default view fields reference the caller-provided fields (reused as-is from
+    // the transpiler output) plus the engine-owned reserved system fields, whose
+    // deterministic identifiers we re-derive here (searchVector is never shown).
+    // TODO: remove once default view fields move to the metadata side effect engine.
+    const defaultFlatFieldMetadatasForViewFields: UniversalFlatFieldMetadata[] = [
+      ...flatFieldMetadataToCreateOnObject,
+      ...Object.values(
+        buildReservedSystemFlatFieldMetadatasForCustomObject({
+          flatObjectMetadata: {
+            applicationUniversalIdentifier:
+              resolvedOwnerFlatApplication.universalIdentifier,
+            universalIdentifier: flatObjectMetadataToCreate.universalIdentifier,
+          },
+        }),
+      ),
+    ];
 
     const flatDefaultViewToCreate = this.computeFlatViewToCreate({
       objectMetadata: flatObjectMetadataToCreate,
