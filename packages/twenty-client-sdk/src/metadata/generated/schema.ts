@@ -1396,7 +1396,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MARKETPLACE_SETTING_TAB_VISIBLE' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' | 'IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED'
+export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' | 'IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -6575,7 +6575,7 @@ export interface CreateApplicationRegistrationInput {name: Scalars['String'],uni
 
 export interface UpdateApplicationRegistrationInput {id: Scalars['String'],update: UpdateApplicationRegistrationPayload}
 
-export interface UpdateApplicationRegistrationPayload {name?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null),isListed?: (Scalars['Boolean'] | null),isPreInstalled?: (Scalars['Boolean'] | null)}
+export interface UpdateApplicationRegistrationPayload {name?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null),isListed?: (Scalars['Boolean'] | null),isPreInstalled?: (Scalars['Boolean'] | null),isFeatured?: (Scalars['Boolean'] | null)}
 
 export interface CreateApplicationRegistrationVariableInput {applicationRegistrationId: Scalars['String'],key: Scalars['String'],value: Scalars['String'],description?: (Scalars['String'] | null),isSecret?: (Scalars['Boolean'] | null)}
 
@@ -9238,13 +9238,13 @@ export const enumLogicFunctionExecutionStatus = {
 export const enumFeatureFlagKey = {
    IS_UNIQUE_INDEXES_ENABLED: 'IS_UNIQUE_INDEXES_ENABLED' as const,
    IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,
-   IS_MARKETPLACE_SETTING_TAB_VISIBLE: 'IS_MARKETPLACE_SETTING_TAB_VISIBLE' as const,
    IS_EMAIL_GROUP_ENABLED: 'IS_EMAIL_GROUP_ENABLED' as const,
    IS_JUNCTION_RELATIONS_ENABLED: 'IS_JUNCTION_RELATIONS_ENABLED' as const,
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const,
    IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' as const,
    IS_SETTINGS_DISCOVERY_HERO_ENABLED: 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' as const,
-   IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED: 'IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED' as const
+   IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED: 'IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED' as const,
+   IS_WORKFLOW_VERSION_IN_CORE_ENABLED: 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' as const
 }
 
 export const enumIdentityProviderType = {

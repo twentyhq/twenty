@@ -12,10 +12,6 @@ export class MessageCampaignWorkspaceEntity extends BaseWorkspaceEntity {
   fromAddress: EmailsMetadata | null;
   status: string;
   sentAt: Date | null;
-  sentCount: number;
-  failedCount: number;
-  bouncedCount: number;
-  complainedCount: number;
   unsubscribeTopicId: string | null;
   list: EntityRelation<MessageListWorkspaceEntity> | null;
   listId: string | null;

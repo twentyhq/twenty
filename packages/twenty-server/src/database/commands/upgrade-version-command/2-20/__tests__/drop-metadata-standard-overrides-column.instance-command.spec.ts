@@ -1,6 +1,6 @@
 import { type QueryRunner } from 'typeorm';
 
-import { DropMetadataStandardOverridesColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-instance-command-fast-1782991100000-drop-metadata-standard-overrides-column';
+import { DropMetadataStandardOverridesColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-instance-command-fast-1783511477234-drop-metadata-standard-overrides-column';
 import { DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/drop-metadata-standard-overrides-column-upgrade-command-name.constant';
 import { getRegisteredInstanceCommandMetadata } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 
@@ -19,7 +19,7 @@ describe('DropMetadataStandardOverridesColumnFastInstanceCommand', () => {
 
       expect(metadata).toEqual({
         version: '2.20.0',
-        timestamp: 1782991100000,
+        timestamp: 1783511477234,
         type: 'fast',
       });
     });

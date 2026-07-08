@@ -14,6 +14,7 @@ import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-reso
 import { WorkspaceResolverBuilderService } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver-builder.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
 
@@ -56,6 +57,7 @@ export class WorkspaceResolverFactory {
   async create(
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>,
     objectIdByNameSingular: Record<string, string>,
     workspaceResolverBuilderMethods: WorkspaceResolverBuilderMethods,
   ): Promise<IResolvers> {
@@ -113,6 +115,7 @@ export class WorkspaceResolverFactory {
             flatObjectMetadata,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
+            flatIndexMaps,
             objectIdByNameSingular,
           });
         }
@@ -144,6 +147,7 @@ export class WorkspaceResolverFactory {
             flatObjectMetadata,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
+            flatIndexMaps,
             objectIdByNameSingular,
           });
         }

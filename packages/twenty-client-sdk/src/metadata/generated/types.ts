@@ -11096,6 +11096,9 @@ export default {
             "isPreInstalled": [
                 6
             ],
+            "isFeatured": [
+                6
+            ],
             "__typename": [
                 1
             ]

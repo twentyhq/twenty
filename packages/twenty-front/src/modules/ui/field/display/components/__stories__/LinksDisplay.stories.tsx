@@ -125,12 +125,12 @@ export const SocialMediaLinks: Story = {
   args: {
     value: {
       primaryLinkUrl: 'https://www.linkedin.com/company/twenty',
-      primaryLinkLabel: 'Twenty on LinkedIn',
+      primaryLinkLabel: '',
       secondaryLinks: [
-        { url: 'https://twitter.com/twentycrm', label: 'Twenty on Twitter' },
+        { url: 'https://twitter.com/twentycrm', label: null },
         {
           url: 'https://www.instagram.com/twenty_hq',
-          label: 'Twenty on Instagram',
+          label: null,
         },
       ],
     },
@@ -170,10 +170,10 @@ export const InstagramLinks: Story = {
   args: {
     value: {
       primaryLinkUrl: 'https://www.instagram.com/twenty_hq',
-      primaryLinkLabel: 'Twenty on Instagram',
+      primaryLinkLabel: '',
       secondaryLinks: [
-        { url: 'https://instagram.com/p/ABC123', label: 'A post' },
-        { url: 'https://instagram.com/reel/XYZ789', label: 'A reel' },
+        { url: 'https://instagram.com/p/ABC123', label: null },
+        { url: 'https://instagram.com/reel/XYZ789', label: null },
       ],
     },
   },
@@ -194,6 +194,43 @@ export const InstagramLinks: Story = {
 
     const fallbackLinks = await canvas.findAllByText('Instagram');
     expect(fallbackLinks).toHaveLength(2);
+  },
+};
+
+export const SocialLinksWithCustomLabels: Story = {
+  args: {
+    value: {
+      primaryLinkUrl: 'https://www.linkedin.com/company/twenty',
+      primaryLinkLabel: 'Twenty on LinkedIn',
+      secondaryLinks: [
+        {
+          url: 'https://www.instagram.com/twenty_hq',
+          label: 'Twenty on Instagram',
+        },
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await waitFor(() => {
+      const links = canvas.queryAllByRole('link');
+      expect(links).toHaveLength(2);
+    });
+
+    const linkedinLink = await canvas.findByText('Twenty on LinkedIn');
+    expect(linkedinLink).toBeVisible();
+    expect(linkedinLink).toHaveAttribute(
+      'href',
+      'https://www.linkedin.com/company/twenty',
+    );
+
+    const instagramLink = await canvas.findByText('Twenty on Instagram');
+    expect(instagramLink).toBeVisible();
+    expect(instagramLink).toHaveAttribute(
+      'href',
+      'https://www.instagram.com/twenty_hq',
+    );
   },
 };
 

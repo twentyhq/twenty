@@ -5,7 +5,8 @@
   "engines": {
     "node": "^24.5.0",
     "npm": "please-use-yarn",
-    "yarn": ">=4.0.2"
+    "yarn": ">=4.0.2",
+    "twenty": ">=2.19.0"
   },
   "keywords": [],
   "packageManager": "yarn@4.13.0",
@@ -24,8 +25,8 @@
     "rls:configure:prod": "ENV_FILE=.env.prod tsx src/scripts/configure-partner-rls.ts"
   },
   "dependencies": {
-    "twenty-client-sdk": "2.13.0",
-    "twenty-sdk": "2.13.0",
+    "twenty-client-sdk": "2.19.0-alpha.1",
+    "twenty-sdk": "2.19.0-alpha.1",
     "zod": "^4.1.11"
   },
   "devDependencies": {

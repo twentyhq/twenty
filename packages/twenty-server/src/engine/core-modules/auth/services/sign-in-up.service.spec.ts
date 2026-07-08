@@ -109,6 +109,9 @@ const createSignInUpServiceForTests = () => {
       creditWorkspaceBalance: jest.fn(),
     } as any,
     {
+      isBillingEnabled: jest.fn(),
+    } as any,
+    {
       createQueryRunner: jest.fn(() => queryRunnerMock),
     } as any,
   );
