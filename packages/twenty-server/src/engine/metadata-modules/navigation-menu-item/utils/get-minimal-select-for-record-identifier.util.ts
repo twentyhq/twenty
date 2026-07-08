@@ -45,6 +45,12 @@ export const getMinimalSelectForRecordIdentifier = ({
     }
   }
 
+  if (flatObjectMetadata.nameSingular === 'workspaceMember') {
+    selectColumns.push('avatarUrl');
+
+    return selectColumns;
+  }
+
   const imageIdentifierFieldMetadataId =
     getEffectiveImageIdentifierFieldMetadataId(flatObjectMetadata);
 
