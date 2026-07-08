@@ -1,0 +1,19 @@
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_2a545fd7be32ce::t_02dfa16e973688 703
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "be41e91cc3f98ba34b541d1afe64943796373da3",
+  "prompts": {},
+  "sessions": {
+    "s_2a545fd7be32ce": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "509bbba6-585f-497d-a103-1da780e33b43",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
