@@ -13,10 +13,17 @@ import {
   type ApplicationRegistrationCatalogCard,
   ApplicationRegistrationService,
 } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import {
+  getMarketplaceAppsCacheKey,
+  MARKETPLACE_APPS_CACHE_TTL_MS,
+} from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
 import { MarketplaceAppRoleDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-role.dto';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -29,6 +36,8 @@ export class MarketplaceQueryService {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
+    @InjectCacheStorage(CacheStorageNamespace.EngineMarketplace)
+    private readonly cacheStorage: CacheStorageService,
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -36,6 +45,19 @@ export class MarketplaceQueryService {
   async findManyMarketplaceApps(
     isFeatured?: boolean,
   ): Promise<MarketplaceAppDTO[]> {
+    const cacheKey = getMarketplaceAppsCacheKey(isFeatured);
+
+    try {
+      const cachedApps =
+        await this.cacheStorage.get<MarketplaceAppDTO[]>(cacheKey);
+
+      if (isDefined(cachedApps)) {
+        return cachedApps;
+      }
+    } catch (error) {
+      this.logger.error('Failed to read marketplace apps cache', error);
+    }
+
     const registrations =
       await this.applicationRegistrationService.findManyListedCatalogCards(
         isFeatured,
@@ -62,9 +84,21 @@ export class MarketplaceQueryService {
         registrations.map((registration) => registration.id),
       );
 
-    return registrations
+    const apps = registrations
       .filter((registration) => configuredStatuses.get(registration.id) ?? true)
       .map((registration) => this.toMarketplaceAppDTO(registration));
+
+    try {
+      await this.cacheStorage.set(
+        cacheKey,
+        apps,
+        MARKETPLACE_APPS_CACHE_TTL_MS,
+      );
+    } catch (error) {
+      this.logger.error('Failed to write marketplace apps cache', error);
+    }
+
+    return apps;
   }
 
   async findMarketplaceAppDetail(
