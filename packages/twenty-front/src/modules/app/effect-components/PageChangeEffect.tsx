@@ -227,6 +227,22 @@ export const PageChangeEffect = () => {
         }
         break;
       }
+      case isMatchingLocation(location, AppPath.PageLayoutPage): {
+        resetFocusStackToFocusItem({
+          focusStackItem: {
+            focusId: PageFocusId.PageLayoutPage,
+            componentInstance: {
+              componentType: FocusComponentType.PAGE,
+              componentInstanceId: PageFocusId.PageLayoutPage,
+            },
+            globalHotkeysConfig: {
+              enableGlobalHotkeysWithModifiers: true,
+              enableGlobalHotkeysConflictingWithKeyboard: true,
+            },
+          },
+        });
+        break;
+      }
       case isMatchingLocation(location, AppPath.SignInUp): {
         resetFocusStackToFocusItem({
           focusStackItem: {
