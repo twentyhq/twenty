@@ -46,6 +46,10 @@ export class WorkspaceCacheService implements OnModuleInit {
     string,
     WorkspaceLocalCacheEntry<CacheDataType>
   >();
+  // Bumped on every flush; lets in-flight reads detect that their Redis
+  // snapshot or provider computation predates an invalidation, so they never
+  // repopulate the caches with stale data.
+  private readonly invalidationEpochByLocalKey = new Map<string, number>();
   private readonly workspaceCacheProviders = new Map<
     WorkspaceCacheKeyName,
     WorkspaceCacheProvider<CacheDataType>
@@ -122,6 +126,11 @@ export class WorkspaceCacheService implements OnModuleInit {
     const result = await this.memoizer.memoizePromiseAndExecute(
       memoKey,
       async () => {
+        const epochSnapshot = this.captureInvalidationEpochs(
+          workspaceId,
+          cacheKeyNames,
+        );
+
         // Stage 1: Check local TTL
         const { freshKeys, staleKeys } = this.checkLocalTTL(
           workspaceId,
@@ -135,13 +144,18 @@ export class WorkspaceCacheService implements OnModuleInit {
 
         // Stage 2: Validate ttl stale keys against Redis hash
         const { validKeys, keysNeedingDataFromRedis, keysNeedingRecompute } =
-          await this.validateLocalHashAgainstRedisHash(workspaceId, staleKeys);
+          await this.validateLocalHashAgainstRedisHash(
+            workspaceId,
+            staleKeys,
+            epochSnapshot,
+          );
         const validatedData = this.getFromLocalCache(workspaceId, validKeys);
 
         // Stage 3: Fetch data from Redis
         const { redisData, missingInRedis } = await this.fetchDataFromRedis(
           workspaceId,
           keysNeedingDataFromRedis,
+          epochSnapshot,
         );
 
         // Stage 4: Recompute remaining
@@ -206,9 +220,56 @@ export class WorkspaceCacheService implements OnModuleInit {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<void> {
+    for (const keyName of cacheKeyNames) {
+      const localKey = this.buildCacheKey(workspaceId, keyName);
+
+      this.invalidationEpochByLocalKey.set(
+        localKey,
+        (this.invalidationEpochByLocalKey.get(localKey) ?? 0) + 1,
+      );
+    }
+
     await this.deleteFromRedis(workspaceId, cacheKeyNames);
 
     this.deleteFromLocalCache(workspaceId, cacheKeyNames);
+  }
+
+  private getInvalidationEpoch(
+    workspaceId: string,
+    keyName: WorkspaceCacheKeyName,
+  ): number {
+    return (
+      this.invalidationEpochByLocalKey.get(
+        this.buildCacheKey(workspaceId, keyName),
+      ) ?? 0
+    );
+  }
+
+  private captureInvalidationEpochs(
+    workspaceId: string,
+    cacheKeyNames: readonly WorkspaceCacheKeyName[],
+  ): Map<WorkspaceCacheKeyName, number> {
+    const epochSnapshot = new Map<WorkspaceCacheKeyName, number>();
+
+    for (const keyName of cacheKeyNames) {
+      epochSnapshot.set(
+        keyName,
+        this.getInvalidationEpoch(workspaceId, keyName),
+      );
+    }
+
+    return epochSnapshot;
+  }
+
+  private hasBeenInvalidatedSince(
+    workspaceId: string,
+    keyName: WorkspaceCacheKeyName,
+    epochSnapshot: Map<WorkspaceCacheKeyName, number>,
+  ): boolean {
+    return (
+      this.getInvalidationEpoch(workspaceId, keyName) !==
+      epochSnapshot.get(keyName)
+    );
   }
 
   private checkLocalTTL<K extends WorkspaceCacheKeyName>(
@@ -236,6 +297,7 @@ export class WorkspaceCacheService implements OnModuleInit {
   private async validateLocalHashAgainstRedisHash(
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
+    epochSnapshot: Map<WorkspaceCacheKeyName, number>,
   ): Promise<{
     validKeys: WorkspaceCacheKeyName[];
     keysNeedingDataFromRedis: WorkspaceCacheKeyName[];
@@ -256,6 +318,13 @@ export class WorkspaceCacheService implements OnModuleInit {
     const redisHashes = await this.cacheStorage.mget<string>(hashKeys);
 
     for (const [index, keyName] of cacheKeyNames.entries()) {
+      // An invalidation ran while we were reading Redis: the hashes we got
+      // back may predate it, so recompute from the source of truth instead.
+      if (this.hasBeenInvalidatedSince(workspaceId, keyName, epochSnapshot)) {
+        keysNeedingRecompute.push(keyName);
+        continue;
+      }
+
       const redisHash = redisHashes[index];
       const localKey = this.buildCacheKey(workspaceId, keyName);
       const localEntry = this.localCache.get(localKey);
@@ -280,6 +349,7 @@ export class WorkspaceCacheService implements OnModuleInit {
   private async fetchDataFromRedis(
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
+    epochSnapshot: Map<WorkspaceCacheKeyName, number>,
   ): Promise<{
     redisData: Partial<WorkspaceCacheDataMap>;
     missingInRedis: WorkspaceCacheKeyName[];
@@ -303,6 +373,14 @@ export class WorkspaceCacheService implements OnModuleInit {
     );
 
     for (const [index, keyName] of cacheKeyNames.entries()) {
+      // An invalidation ran while we were reading Redis: writing the fetched
+      // data to the local cache could overwrite a fresher recomputation with
+      // pre-invalidation data. Fall back to recomputing instead.
+      if (this.hasBeenInvalidatedSince(workspaceId, keyName, epochSnapshot)) {
+        missingInRedis.push(keyName);
+        continue;
+      }
+
       const data = allValues[index * 2] as CacheDataType | undefined;
       const hash = allValues[index * 2 + 1] as string | undefined;
 
@@ -327,6 +405,11 @@ export class WorkspaceCacheService implements OnModuleInit {
       return result;
     }
 
+    const epochSnapshot = this.captureInvalidationEpochs(
+      workspaceId,
+      cacheKeyNames,
+    );
+
     const computePromises = cacheKeyNames.map(async (keyName) => {
       const provider = this.getProviderOrThrow(keyName);
       const data = await provider.computeForCache(workspaceId);
@@ -341,6 +424,13 @@ export class WorkspaceCacheService implements OnModuleInit {
 
     for (const { keyName, data, hash } of computed) {
       Object.assign(result, { [keyName]: data });
+
+      // An invalidation ran while we were computing: the computation may have
+      // read the database before the invalidating write committed. Return the
+      // data to the caller but don't persist it.
+      if (this.hasBeenInvalidatedSince(workspaceId, keyName, epochSnapshot)) {
+        continue;
+      }
 
       const baseKey = this.buildCacheKey(workspaceId, keyName);
 

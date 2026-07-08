@@ -142,6 +142,34 @@ describe('PromiseMemoizer', () => {
       expect(result2).toBe('test-value');
       expect(mockFactory).toHaveBeenCalledTimes(1);
     });
+
+    it('should not cache a value cleared while its factory was in flight', async () => {
+      let resolveFactory: (value: string) => void;
+      const factoryPromise = new Promise<string>((resolve) => {
+        resolveFactory = resolve;
+      });
+
+      mockFactory.mockImplementation(() => factoryPromise);
+
+      const inFlightPromise = memoizer.memoizePromiseAndExecute(
+        'test-key-1',
+        mockFactory,
+      );
+
+      await memoizer.clearKeys('test-key');
+
+      resolveFactory!('stale-value');
+      await inFlightPromise;
+
+      mockFactory.mockResolvedValue('fresh-value');
+
+      const result = await memoizer.memoizePromiseAndExecute(
+        'test-key-1',
+        mockFactory,
+      );
+
+      expect(result).toBe('fresh-value');
+    });
   });
 
   describe('clearKey', () => {

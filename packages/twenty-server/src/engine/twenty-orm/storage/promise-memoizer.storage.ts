@@ -11,6 +11,9 @@ export class PromiseMemoizer<T> {
   private cache = new Map<CacheKey, { value: T; expiresAt: number }>();
   private pending = new Map<CacheKey, Promise<T | null>>();
   private ttlMs: number;
+  // Bumped on every explicit clear; lets in-flight factories detect that a
+  // clear ran after they started, so they never cache a stale result.
+  private clearGeneration = 0;
 
   constructor(ttlMs: Milliseconds = ONE_HOUR_IN_MS) {
     this.ttlMs = ttlMs;
@@ -21,6 +24,8 @@ export class PromiseMemoizer<T> {
     factory: AsyncFactoryCallback<T>,
     onDelete?: (value: T) => Promise<void> | void,
   ): Promise<T | null> {
+    const generationAtStart = this.clearGeneration;
+
     await this.clearExpiredKeys(onDelete);
 
     const cachedEntry = this.cache.get(cacheKey);
@@ -39,7 +44,9 @@ export class PromiseMemoizer<T> {
       try {
         const value = await factory();
 
-        if (value) {
+        // If a clear ran while the factory was in flight (e.g. a cache
+        // invalidation), caching the result would resurrect stale data.
+        if (value && this.clearGeneration === generationAtStart) {
           this.cache.set(cacheKey, {
             value,
             expiresAt: Date.now() + this.ttlMs,
@@ -48,7 +55,9 @@ export class PromiseMemoizer<T> {
 
         return value;
       } finally {
-        this.pending.delete(cacheKey);
+        if (this.pending.get(cacheKey) === newPromise) {
+          this.pending.delete(cacheKey);
+        }
       }
     })();
 
@@ -62,7 +71,9 @@ export class PromiseMemoizer<T> {
 
     for (const [cacheKey, cachedEntry] of this.cache.entries()) {
       if (cachedEntry.expiresAt <= now) {
-        await this.clearKey(cacheKey, onDelete);
+        // TTL expiry is not an invalidation: no generation bump, in-flight
+        // factories may still cache their result.
+        await this.deleteKey(cacheKey, onDelete);
       }
     }
   }
@@ -71,21 +82,20 @@ export class PromiseMemoizer<T> {
     cacheKey: CacheKey,
     onDelete?: (value: T) => Promise<void> | void,
   ): Promise<void> {
-    const cachedValue = this.cache.get(cacheKey);
+    this.clearGeneration += 1;
 
-    if (isDefined(cachedValue)) {
-      await onDelete?.(cachedValue.value);
-    }
-    this.cache.delete(cacheKey);
+    await this.deleteKey(cacheKey, onDelete);
   }
 
   async clearKeys(
     cacheKeyPrefix: CacheKey,
     onDelete?: (value: T) => Promise<void> | void,
   ): Promise<void> {
+    this.clearGeneration += 1;
+
     for (const cacheKey of [...this.cache.keys()]) {
       if (cacheKey.startsWith(cacheKeyPrefix)) {
-        await this.clearKey(cacheKey, onDelete);
+        await this.deleteKey(cacheKey, onDelete);
       }
     }
 
@@ -97,10 +107,24 @@ export class PromiseMemoizer<T> {
   }
 
   async clearAll(onDelete?: (value: T) => Promise<void> | void): Promise<void> {
+    this.clearGeneration += 1;
+
     for (const [, entry] of this.cache.entries()) {
       await onDelete?.(entry.value);
     }
 
     this.cache.clear();
+  }
+
+  private async deleteKey(
+    cacheKey: CacheKey,
+    onDelete?: (value: T) => Promise<void> | void,
+  ): Promise<void> {
+    const cachedValue = this.cache.get(cacheKey);
+
+    if (isDefined(cachedValue)) {
+      await onDelete?.(cachedValue.value);
+    }
+    this.cache.delete(cacheKey);
   }
 }
