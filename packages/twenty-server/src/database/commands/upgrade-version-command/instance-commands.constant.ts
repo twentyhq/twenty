@@ -108,9 +108,9 @@ import { CreateWorkflowCoreTableFastInstanceCommand } from './2-20/2-20-instance
 import { AddGalleryImagesToApplicationRegistrationFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783615890055-add-gallery-images-to-application-registration';
 import { BackfillGalleryImagesOnApplicationRegistrationSlowInstanceCommand } from './2-20/2-20-instance-command-slow-1783615890056-backfill-gallery-images-on-application-registration';
 import { AddWorkflowVersionSyncableColumnsFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783603454480-add-workflow-version-syncable-columns';
-import { CreateApplicationRegistrationClaimCoreTableFastInstanceCommand } from './2-19/2-19-instance-command-fast-1783200000000-create-application-registration-claim-core-table';
-import { AddListingRequestFieldsToApplicationRegistrationFastInstanceCommand } from './2-19/2-19-instance-command-fast-1783200100000-add-listing-request-fields-to-application-registration';
-import { UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand } from './2-19/2-19-instance-command-slow-1783200100001-unlist-unclaimed-npm-application-registrations';
+import { CreateApplicationRegistrationClaimCoreTableFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783200000000-create-application-registration-claim-core-table';
+import { AddListingRequestFieldsToApplicationRegistrationFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783200100000-add-listing-request-fields-to-application-registration';
+import { UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand } from './2-20/2-20-instance-command-slow-1783200100001-unlist-unclaimed-npm-application-registrations';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
