@@ -32,11 +32,9 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
-import { MARKETPLACE_APPS_CACHE_KEY } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-featured-applications.constant';
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 
 const BCRYPT_SALT_ROUNDS = 10;
 
@@ -96,13 +94,15 @@ export class ApplicationRegistrationService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly cacheLockService: CacheLockService,
-    @InjectCacheStorage(CacheStorageNamespace.EngineMarketplace)
-    private readonly marketplaceCacheStorage: CacheStorageService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   private async invalidateMarketplaceAppsCache(): Promise<void> {
     try {
-      await this.marketplaceCacheStorage.del(MARKETPLACE_APPS_CACHE_KEY);
+      await this.coreEntityCacheService.invalidate(
+        'marketplaceCatalog',
+        MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
+      );
     } catch (error) {
       this.logger.error('Failed to invalidate marketplace apps cache', error);
     }
