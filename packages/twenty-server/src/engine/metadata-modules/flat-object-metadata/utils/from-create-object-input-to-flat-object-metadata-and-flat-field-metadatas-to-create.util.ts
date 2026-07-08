@@ -9,7 +9,7 @@ import { v4 } from 'uuid';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
-import { buildDefaultFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util';
+import { buildNameFlatFieldMetadataForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util';
 import { buildDefaultRelationFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-relation-flat-field-metadatas-for-custom-object.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
@@ -101,20 +101,19 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       imageIdentifierFieldMetadataUniversalIdentifier: null,
     };
 
-    // The default field builder produces the reserved system fields AND the name
-    // field, but the system fields are engine-owned side effects here: we only
-    // keep the caller-provided name field and let the engine synthesize the rest.
-    const defaultFlatFieldForCustomObjectMaps =
-      buildDefaultFlatFieldMetadatasForCustomObject({
-        flatObjectMetadata: {
-          applicationUniversalIdentifier: flatApplication.universalIdentifier,
-          universalIdentifier,
-        },
-        skipNameField: createObjectInput.skipNameField,
-      });
-
+    // Only the caller-provided name field is produced here; the reserved system
+    // fields and the searchVector surface are engine-owned side effects synthesized
+    // by the metadata side effect engine.
     const nameFlatFieldMetadata =
-      defaultFlatFieldForCustomObjectMaps.fields.nameField;
+      createObjectInput.skipNameField === true
+        ? null
+        : buildNameFlatFieldMetadataForCustomObject({
+            flatObjectMetadata: {
+              applicationUniversalIdentifier:
+                flatApplication.universalIdentifier,
+              universalIdentifier,
+            },
+          });
 
     const {
       standardSourceFlatFieldMetadatas,

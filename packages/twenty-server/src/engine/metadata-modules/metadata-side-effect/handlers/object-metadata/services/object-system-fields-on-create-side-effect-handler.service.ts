@@ -6,7 +6,7 @@ import {
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
-import { buildDefaultFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util';
+import { buildReservedSystemFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util';
 
 @Injectable()
 export class ObjectSystemFieldsOnCreateSideEffectHandlerService extends MetadataSideEffectHandler(
@@ -24,35 +24,26 @@ export class ObjectSystemFieldsOnCreateSideEffectHandlerService extends Metadata
     const { applicationUniversalIdentifier, universalIdentifier } =
       flatObjectMetadata;
 
-    // Only the reserved system fields are engine-owned. The name field is
-    // caller-provided, so we always skip it here (skipNameField: true).
-    const defaultFlatFieldForCustomObjectMaps =
-      buildDefaultFlatFieldMetadatasForCustomObject({
+    const reservedSystemFlatFieldMetadatas =
+      buildReservedSystemFlatFieldMetadatasForCustomObject({
         flatObjectMetadata: {
           applicationUniversalIdentifier,
           universalIdentifier,
         },
-        skipNameField: true,
       });
 
     // System fields are pure engine output: we always emit them. When a legacy
     // manifest also declares them they carry isSystemSideEffect too, so the
     // engine merge dedups the identical deterministic universal identifiers
     // silently (first-writer wins) rather than raising a collision.
-    // The searchVector field is excluded here: it is owned by the self-contained
-    // search-vector handler alongside its GIN index and searchFieldMetadata.
     const flatEntityToCreate: Record<
       string,
       MetadataUniversalFlatEntity<'fieldMetadata'>
     > = {};
 
-    for (const [fieldName, flatFieldMetadata] of Object.entries(
-      defaultFlatFieldForCustomObjectMaps.fields,
+    for (const flatFieldMetadata of Object.values(
+      reservedSystemFlatFieldMetadatas,
     )) {
-      if (fieldName === 'searchVector') {
-        continue;
-      }
-
       flatEntityToCreate[flatFieldMetadata.universalIdentifier] =
         flatFieldMetadata;
     }

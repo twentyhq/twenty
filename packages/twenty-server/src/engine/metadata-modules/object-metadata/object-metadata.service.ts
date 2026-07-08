@@ -507,9 +507,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
     });
 
-    // The system field universal identifiers, names and types are resolved from
-    // the pure builder only to compute the default view / viewField side effects
-    // (relation fields are filtered out downstream).
+    // The system fields themselves are engine-owned side effects and are NOT
+    // submitted here; this builder is used only to re-derive their deterministic
+    // universal identifiers so we can wire up the default view / viewField
+    // references below. This lives in the service (rather than a self-contained
+    // side effect handler like searchVector) because the default views still use
+    // random v4 identifiers, which a handler could not re-derive without reading
+    // another handler's output. Once views migrate to deterministic universal
+    // identifiers + isSystemSideEffect, this whole block moves into a
+    // self-contained default-views handler and this call is removed.
     const defaultFlatFieldForCustomObjectMaps =
       buildDefaultFlatFieldMetadatasForCustomObject({
         flatObjectMetadata: {

@@ -5,36 +5,39 @@ import { PARTIAL_SYSTEM_FLAT_FIELD_METADATAS } from 'src/engine/metadata-modules
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
-type BuildDefaultFlatFieldMetadataForCustomObjectArgs = {
+type BuildFlatFieldMetadataForCustomObjectArgs = {
   flatObjectMetadata: Pick<
     UniversalFlatObjectMetadata,
     'universalIdentifier' | 'applicationUniversalIdentifier'
   >;
-  skipNameField?: boolean;
 };
+
+type BuildDefaultFlatFieldMetadataForCustomObjectArgs =
+  BuildFlatFieldMetadataForCustomObjectArgs & {
+    skipNameField?: boolean;
+  };
 
 export type DefaultFlatFieldForCustomObjectMaps = ReturnType<
   typeof buildDefaultFlatFieldMetadatasForCustomObject
 >;
 
-const buildObjectSystemFlatFieldMetadatas = ({
-  applicationUniversalIdentifier,
-  objectMetadataUniversalIdentifier,
-  now,
-  searchVectorUniversalSettings,
-}: {
-  applicationUniversalIdentifier: string;
-  objectMetadataUniversalIdentifier: string;
-  now: string;
-  searchVectorUniversalSettings: UniversalFlatFieldMetadata<FieldMetadataType.TS_VECTOR>['universalSettings'];
-}) => {
+export const buildReservedSystemFlatFieldMetadatasForCustomObject = ({
+  flatObjectMetadata: {
+    applicationUniversalIdentifier,
+    universalIdentifier: objectMetadataUniversalIdentifier,
+  },
+}: BuildFlatFieldMetadataForCustomObjectArgs): Record<
+  string,
+  UniversalFlatFieldMetadata
+> => {
+  const now = new Date().toISOString();
+
   const {
     createdAt,
     createdBy,
     deletedAt,
     id,
     position,
-    searchVector,
     updatedAt,
     updatedBy,
   } = PARTIAL_SYSTEM_FLAT_FIELD_METADATAS;
@@ -87,15 +90,6 @@ const buildObjectSystemFlatFieldMetadatas = ({
       createdAt: now,
       updatedAt: now,
     },
-    searchVector: {
-      ...searchVector,
-      universalIdentifier: computeFieldUniversalIdentifier(searchVector.name),
-      applicationUniversalIdentifier,
-      objectMetadataUniversalIdentifier,
-      createdAt: now,
-      updatedAt: now,
-      universalSettings: searchVectorUniversalSettings,
-    },
     updatedAt: {
       ...updatedAt,
       universalIdentifier: computeFieldUniversalIdentifier(updatedAt.name),
@@ -115,73 +109,95 @@ const buildObjectSystemFlatFieldMetadatas = ({
   } as const satisfies Record<string, UniversalFlatFieldMetadata>;
 };
 
-// This could be replaced totally by an import schema + its transpilation when it's ready
-export const buildDefaultFlatFieldMetadatasForCustomObject = ({
+export const buildSearchVectorFlatFieldMetadataForCustomObject = ({
   flatObjectMetadata: {
     applicationUniversalIdentifier,
     universalIdentifier: objectMetadataUniversalIdentifier,
   },
-  skipNameField = false,
-}: BuildDefaultFlatFieldMetadataForCustomObjectArgs) => {
+}: BuildFlatFieldMetadataForCustomObjectArgs): UniversalFlatFieldMetadata<FieldMetadataType.TS_VECTOR> => {
   const now = new Date().toISOString();
 
-  const nameField: UniversalFlatFieldMetadata<FieldMetadataType.TEXT> | null =
-    skipNameField
-      ? null
-      : {
-          type: FieldMetadataType.TEXT,
-          isLabelSyncedWithName: false,
-          isUnique: false,
-          universalIdentifier: getFieldUniversalIdentifier({
-            applicationUniversalIdentifier,
-            objectUniversalIdentifier: objectMetadataUniversalIdentifier,
-            name: 'name',
-          }),
-          name: 'name',
-          label: 'Name',
-          icon: 'IconAbc',
-          description: 'Name',
-          isNullable: true,
-          isActive: true,
-          isSystem: false,
-          // The name field is a caller-provided default field (SDK auto-complete
-          // on the manifest path, input transpiler on the API path), not an
-          // engine side effect, so it is authorable and subject to normal
-          // deletion inference like any other declared field.
-          isSystemSideEffect: false,
-          isUIEditable: true,
-          defaultValue: null,
-          createdAt: now,
-          updatedAt: now,
-          options: null,
-          overrides: null,
-          morphId: null,
-          applicationUniversalIdentifier,
-          objectMetadataUniversalIdentifier,
-          relationTargetObjectMetadataUniversalIdentifier: null,
-          relationTargetFieldMetadataUniversalIdentifier: null,
-          viewFilterUniversalIdentifiers: [],
-          viewFieldUniversalIdentifiers: [],
-          kanbanAggregateOperationViewUniversalIdentifiers: [],
-          calendarViewUniversalIdentifiers: [],
-          mainGroupByFieldMetadataViewUniversalIdentifiers: [],
-          fieldPermissionUniversalIdentifiers: [],
-          universalSettings: null,
-          viewSortUniversalIdentifiers: [],
-          searchFieldMetadataUniversalIdentifiers: [],
-        };
+  const { searchVector } = PARTIAL_SYSTEM_FLAT_FIELD_METADATAS;
 
-  const searchVectorUniversalSettings: UniversalFlatFieldMetadata<FieldMetadataType.TS_VECTOR>['universalSettings'] =
-    null;
+  return {
+    ...searchVector,
+    universalIdentifier: getFieldUniversalIdentifier({
+      applicationUniversalIdentifier,
+      objectUniversalIdentifier: objectMetadataUniversalIdentifier,
+      name: searchVector.name,
+    }),
+    applicationUniversalIdentifier,
+    objectMetadataUniversalIdentifier,
+    createdAt: now,
+    updatedAt: now,
+    universalSettings: null,
+  };
+};
+
+export const buildNameFlatFieldMetadataForCustomObject = ({
+  flatObjectMetadata: {
+    applicationUniversalIdentifier,
+    universalIdentifier: objectMetadataUniversalIdentifier,
+  },
+}: BuildFlatFieldMetadataForCustomObjectArgs): UniversalFlatFieldMetadata<FieldMetadataType.TEXT> => {
+  const now = new Date().toISOString();
+
+  return {
+    type: FieldMetadataType.TEXT,
+    isLabelSyncedWithName: false,
+    isUnique: false,
+    universalIdentifier: getFieldUniversalIdentifier({
+      applicationUniversalIdentifier,
+      objectUniversalIdentifier: objectMetadataUniversalIdentifier,
+      name: 'name',
+    }),
+    name: 'name',
+    label: 'Name',
+    icon: 'IconAbc',
+    description: 'Name',
+    isNullable: true,
+    isActive: true,
+    isSystem: false,
+    isSystemSideEffect: false,
+    isUIEditable: true,
+    defaultValue: null,
+    createdAt: now,
+    updatedAt: now,
+    options: null,
+    overrides: null,
+    morphId: null,
+    applicationUniversalIdentifier,
+    objectMetadataUniversalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier: null,
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    viewFilterUniversalIdentifiers: [],
+    viewFieldUniversalIdentifiers: [],
+    kanbanAggregateOperationViewUniversalIdentifiers: [],
+    calendarViewUniversalIdentifiers: [],
+    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    fieldPermissionUniversalIdentifiers: [],
+    universalSettings: null,
+    viewSortUniversalIdentifiers: [],
+    searchFieldMetadataUniversalIdentifiers: [],
+  };
+};
+
+export const buildDefaultFlatFieldMetadatasForCustomObject = ({
+  flatObjectMetadata,
+  skipNameField = false,
+}: BuildDefaultFlatFieldMetadataForCustomObjectArgs) => {
+  const nameField = skipNameField
+    ? null
+    : buildNameFlatFieldMetadataForCustomObject({ flatObjectMetadata });
 
   return {
     fields: {
       ...(nameField && { nameField }),
-      ...buildObjectSystemFlatFieldMetadatas({
-        applicationUniversalIdentifier,
-        objectMetadataUniversalIdentifier,
-        now,
-        searchVectorUniversalSettings,
+      ...buildReservedSystemFlatFieldMetadatasForCustomObject({
+        flatObjectMetadata,
+      }),
+      searchVector: buildSearchVectorFlatFieldMetadataForCustomObject({
+        flatObjectMetadata,
       }),
     },
   } as const satisfies {

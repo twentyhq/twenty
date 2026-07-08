@@ -1,36 +1,32 @@
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { generateDeterministicFlatIndexMetadataOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-flat-index.util';
-import { type DefaultFlatFieldForCustomObjectMaps } from 'src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
-export const buildDefaultIndexesForCustomObject = ({
+export const buildSearchVectorGinIndexForCustomObject = ({
   flatObjectMetadata,
-  defaultFlatFieldForCustomObjectMaps,
-  objectFlatFieldMetadatas,
+  searchVectorFlatFieldMetadata,
 }: {
   flatObjectMetadata: UniversalFlatObjectMetadata;
-  objectFlatFieldMetadatas: UniversalFlatFieldMetadata[];
-  defaultFlatFieldForCustomObjectMaps: DefaultFlatFieldForCustomObjectMaps;
-}) => {
+  searchVectorFlatFieldMetadata: UniversalFlatFieldMetadata;
+}): UniversalFlatIndexMetadata => {
   const createdAt = new Date().toISOString();
-  const tsVectorFlatIndex = generateDeterministicFlatIndexMetadataOrThrow({
-    objectFlatFieldMetadatas,
+
+  return generateDeterministicFlatIndexMetadataOrThrow({
+    objectFlatFieldMetadatas: [searchVectorFlatFieldMetadata],
     flatIndex: {
       createdAt,
       universalFlatIndexFieldMetadatas: [
         {
           createdAt,
           fieldMetadataUniversalIdentifier:
-            defaultFlatFieldForCustomObjectMaps.fields.searchVector
-              .universalIdentifier,
+            searchVectorFlatFieldMetadata.universalIdentifier,
           order: 0,
           subFieldName: null,
           updatedAt: createdAt,
         },
       ],
-
       indexType: IndexType.GIN,
       indexWhereClause: null,
       isCustom: false,
@@ -43,10 +39,4 @@ export const buildDefaultIndexesForCustomObject = ({
     },
     flatObjectMetadata,
   });
-
-  return {
-    indexes: {
-      tsVectorFlatIndex,
-    },
-  } as const satisfies { indexes: Record<string, UniversalFlatIndexMetadata> };
 };

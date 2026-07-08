@@ -11,8 +11,8 @@ import {
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectOperationsByMetadataName } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-operations-by-metadata-name.type';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
-import { buildDefaultFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util';
-import { buildDefaultIndexesForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-index-for-custom-object.util';
+import { buildSearchVectorFlatFieldMetadataForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util';
+import { buildSearchVectorGinIndexForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-search-vector-gin-index-for-custom-object.util';
 import { type UniversalFlatSearchFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-search-field-metadata.type';
 
 @Injectable()
@@ -33,27 +33,18 @@ export class ObjectSearchVectorOnCreateSideEffectHandlerService extends Metadata
     const { applicationUniversalIdentifier, universalIdentifier } =
       flatObjectMetadata;
 
-    const defaultFlatFieldForCustomObjectMaps =
-      buildDefaultFlatFieldMetadatasForCustomObject({
+    const searchVectorFlatFieldMetadata =
+      buildSearchVectorFlatFieldMetadataForCustomObject({
         flatObjectMetadata: {
           applicationUniversalIdentifier,
           universalIdentifier,
         },
-        skipNameField: true,
       });
 
-    const searchVectorFlatFieldMetadata =
-      defaultFlatFieldForCustomObjectMaps.fields.searchVector;
-
-    const { indexes } = buildDefaultIndexesForCustomObject({
+    const tsVectorFlatIndex = buildSearchVectorGinIndexForCustomObject({
       flatObjectMetadata,
-      defaultFlatFieldForCustomObjectMaps,
-      objectFlatFieldMetadatas: Object.values(
-        defaultFlatFieldForCustomObjectMaps.fields,
-      ),
+      searchVectorFlatFieldMetadata,
     });
-
-    const tsVectorFlatIndex = indexes.tsVectorFlatIndex;
 
     // The searchVector field and its GIN index are pure engine output with
     // deterministic isSystemSideEffect universal identifiers, so the engine merge
