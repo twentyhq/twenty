@@ -14,10 +14,6 @@ import sdkPackageJson from '../../../../package.json';
 
 const LOCAL_REMOTE_NAME = 'local';
 
-// Cheap, network-free check: is the CLI-managed container the one actually
-// serving the configured apiUrl? If it's running and bound to the same port,
-// its baked-in APP_VERSION is authoritative (two processes can't share a port),
-// so we can read it locally instead of paying the API fetch timeout.
 const isContainerServingApiUrl = async (
   containerName: string,
 ): Promise<boolean> => {
@@ -41,10 +37,6 @@ const isContainerServingApiUrl = async (
   }
 };
 
-// Resolves the version of the server the CLI is connected to. Prefers a local
-// Docker read when the CLI-managed container is the server (fast, no network),
-// otherwise asks the connected server over HTTP and only falls back to Docker
-// inspection when it can't be reached.
 const resolveLocalServerVersion = async (
   containerName: string,
 ): Promise<string | null> => {
