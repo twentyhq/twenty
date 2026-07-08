@@ -132,6 +132,13 @@ export class ApplicationRegistrationEntity {
   @Column({ type: 'boolean', default: false })
   isPreInstalled: boolean;
 
+  /**
+   * @deprecated Superseded by file storage via `manifestFileId`; kept as
+   * dual-written fallback while readers migrate. Dropped by the dormant
+   * DropApplicationRegistrationManifestColumnFastInstanceCommand when 2.21 is
+   * current; add @WasRemovedInUpgrade then (its validator rejects a dormant
+   * 2.21 step).
+   */
   @Column({ type: 'jsonb', nullable: true })
   manifest: Manifest | null;
 
