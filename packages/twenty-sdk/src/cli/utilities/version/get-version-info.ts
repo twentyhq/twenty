@@ -14,6 +14,16 @@ import sdkPackageJson from '../../../../package.json';
 
 const LOCAL_REMOTE_NAME = 'local';
 
+const LOOPBACK_HOSTS = new Set([
+  'localhost',
+  '127.0.0.1',
+  '[::1]',
+  '0.0.0.0',
+]);
+
+const isLoopbackHost = (hostname: string): boolean =>
+  LOOPBACK_HOSTS.has(hostname);
+
 const isContainerServingApiUrl = async (
   containerName: string,
 ): Promise<boolean> => {
@@ -27,10 +37,12 @@ const isContainerServingApiUrl = async (
 
   try {
     const { apiUrl } = await new ConfigService().getConfig();
-    const apiPort = new URL(apiUrl).port;
+    const { hostname, port: apiPort } = new URL(apiUrl);
 
     return (
-      apiPort !== '' && String(getContainerPort(containerName)) === apiPort
+      isLoopbackHost(hostname) &&
+      apiPort !== '' &&
+      String(getContainerPort(containerName)) === apiPort
     );
   } catch {
     return false;
