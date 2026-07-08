@@ -34,6 +34,10 @@ const StyledSide = styled.div`
 const StyledLeftSide = styled(StyledSide)`
   justify-content: flex-end;
   padding-right: ${themeCssVariables.spacing[1]};
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    justify-content: flex-start;
+  }
 `;
 
 const StyledCenter = styled.div`
@@ -42,6 +46,10 @@ const StyledCenter = styled.div`
   flex: 0 1 ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
   justify-content: flex-start;
   min-width: 0;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    flex-basis: auto;
+  }
 `;
 
 const StyledRightSide = styled(StyledSide)`
