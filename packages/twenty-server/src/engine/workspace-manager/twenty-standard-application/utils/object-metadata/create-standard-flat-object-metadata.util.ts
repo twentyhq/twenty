@@ -605,7 +605,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
           ['emailsPrimaryEmail'],
         ],
         labelIdentifierFieldMetadataName: 'name',
-        imageIdentifierFieldMetadataName: 'avatarUrl',
+        imageIdentifierFieldMetadataName: 'avatarFile',
       },
       workspaceId,
       standardObjectMetadataRelatedEntityIds,
