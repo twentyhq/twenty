@@ -186,9 +186,9 @@ export type ApplicationRegistration = {
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['UUID']['output'];
   isConfigured: Scalars['Boolean']['output'];
-  isVetted: Scalars['Boolean']['output'];
   isListed: Scalars['Boolean']['output'];
   isPreInstalled: Scalars['Boolean']['output'];
+  isVetted: Scalars['Boolean']['output'];
   latestAvailableVersion?: Maybe<Scalars['String']['output']>;
   logoUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
@@ -834,9 +834,9 @@ export type UpdateApplicationRegistrationInput = {
 };
 
 export type UpdateApplicationRegistrationPayload = {
-  isVetted?: InputMaybe<Scalars['Boolean']['input']>;
   isListed?: InputMaybe<Scalars['Boolean']['input']>;
   isPreInstalled?: InputMaybe<Scalars['Boolean']['input']>;
+  isVetted?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   oAuthRedirectUris?: InputMaybe<Array<Scalars['String']['input']>>;
   oAuthScopes?: InputMaybe<Array<Scalars['String']['input']>>;

@@ -23,6 +23,7 @@ import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/a
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -121,17 +122,15 @@ export class ApplicationRegistrationEntity {
   @Column({ type: 'boolean', default: false })
   isListed: boolean;
 
-  // Deprecated in favor of isVetted. Kept (values reset to false) in case we
-  // need it again; no longer exposed through GraphQL.
-  @Column({ name: 'isFeatured', type: 'boolean', default: false })
-  isFeatured: boolean;
-
   @Field(() => Boolean)
   @Column({ name: 'isVetted', type: 'boolean', default: false })
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      '2.20.0_AddIsVettedToApplicationRegistrationFastInstanceCommand_1783520000000',
-  })
+  @WasRenamedInUpgrade([
+    {
+      previousName: 'isFeatured',
+      upgradeCommandName:
+        '2.20.0_RenameIsFeaturedToIsVettedOnApplicationRegistrationFastInstanceCommand_1783520000000',
+    },
+  ])
   isVetted: boolean;
 
   // Auto-installed on every new workspace; existing workspaces are

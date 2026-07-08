@@ -4,18 +4,18 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.20.0', 1783520000000)
-export class AddIsVettedToApplicationRegistrationFastInstanceCommand
+export class RenameIsFeaturedToIsVettedOnApplicationRegistrationFastInstanceCommand
   implements FastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."applicationRegistration" ADD "isVetted" boolean NOT NULL DEFAULT false',
+      'ALTER TABLE "core"."applicationRegistration" RENAME COLUMN "isFeatured" TO "isVetted"',
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."applicationRegistration" DROP COLUMN "isVetted"',
+      'ALTER TABLE "core"."applicationRegistration" RENAME COLUMN "isVetted" TO "isFeatured"',
     );
   }
 }
