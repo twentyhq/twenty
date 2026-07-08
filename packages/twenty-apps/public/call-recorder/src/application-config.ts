@@ -137,7 +137,13 @@ export default defineApplication({
     [RECALL_REGION_ENV_VAR_NAME]: {
       description: `Recall.ai region used for API requests. Defaults to ${DEFAULT_RECALL_REGION} when unset. Europe Frankfurt is eu-central-1.`,
       isSecret: false,
-      type: FieldType.TEXT,
+      type: FieldType.SELECT,
+      options: [
+        { label: 'US West (us-west-2)', value: 'us-west-2' },
+        { label: 'US East (us-east-1)', value: 'us-east-1' },
+        { label: 'EU Frankfurt (eu-central-1)', value: 'eu-central-1' },
+        { label: 'Asia Tokyo (ap-northeast-1)', value: 'ap-northeast-1' },
+      ],
     },
     [CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME]: {
       description: `How many hours Recall.ai retains recording media after processing. Defaults to ${DEFAULT_CALL_RECORDER_RECORDING_RETENTION_HOURS} hours (6 days and 22 hours) to stay below Recall.ai's 7-day free storage window. Values above 168 hours may incur Recall.ai storage charges.`,
