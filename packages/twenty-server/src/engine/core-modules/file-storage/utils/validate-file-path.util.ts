@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { type FileFolder } from 'twenty-shared/types';
+import { type FileFolder, type ServerFileFolder } from 'twenty-shared/types';
 
 import { type ResourcePathValidationResult } from 'src/engine/core-modules/file-storage/types/resource-path-validation-result.type';
 import { validateFileExtension } from 'src/engine/core-modules/file-storage/utils/validate-file-extension.util';
@@ -11,7 +11,7 @@ export const validateFilePath = ({
   fileFolder,
 }: {
   resourcePath: string;
-  fileFolder: FileFolder;
+  fileFolder: FileFolder | ServerFileFolder;
 }): ResourcePathValidationResult => {
   const safePathResult = validateSafeRelativePath({ resourcePath });
 

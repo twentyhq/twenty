@@ -1,6 +1,6 @@
 import { signJwt } from './sign-jwt';
 
-const DEFAULT_VALIDITY_TOKEN_DURATION_DAYS = 30;
+const DEFAULT_VALIDITY_TOKEN_DURATION_DAYS = 7;
 const SECONDS_PER_DAY = 24 * 60 * 60;
 
 type EnterpriseValidityPayload = {

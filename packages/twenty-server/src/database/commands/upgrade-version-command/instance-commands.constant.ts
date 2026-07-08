@@ -43,7 +43,9 @@ import { AddTsVectorFieldMetadataIdToSearchFieldMetadataFastInstanceCommand } fr
 import { BackfillTsVectorFieldMetadataIdOnSearchFieldMetadataSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-18/2-18-instance-command-slow-1810000003000-backfill-ts-vector-field-metadata-id-on-search-field-metadata';
 import { AddMetadataOverridesColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1782986475000-add-metadata-overrides-column';
 import { AddLastStreamErrorToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1782996657000-add-last-stream-error-to-agent-chat-thread';
+import { AddLogoFileIdToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1783062755137-add-logo-file-id-to-application';
 import { BackfillMetadataOverridesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-slow-1782986476000-backfill-metadata-overrides';
+import { AddTypeAndOptionsToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1783065514000-add-type-and-options-to-application-variables';
 import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777455269302-add-cache-tokens-to-agent-chat-thread';
 import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777539664664-add-logo-to-application';
 import { AddSubFieldNameToViewSortEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234200000-add-sub-field-name-to-view-sort';
@@ -89,9 +91,18 @@ import { AddFolderImportToMessageFolderPendingSyncActionFastInstanceCommand } fr
 import { AddViewKanbanColumnWidthFastInstanceCommand } from './2-15/2-15-instance-command-fast-1781900000000-add-view-kanban-column-width';
 import { AddPendingQuestionMessageIdToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1782999138000-add-pending-question-to-agent-chat-thread';
 import { AddWorkspaceDiscoverabilityToWorkspaceFastInstanceCommand } from './2-19/2-19-instance-command-fast-1783004140000-add-workspace-discoverability-to-workspace';
-import { DropMetadataStandardOverridesColumnFastInstanceCommand } from './2-20/2-20-instance-command-fast-1825000000000-drop-metadata-standard-overrides-column';
-import { MakePageLayoutWidgetPositionNotNullSlowInstanceCommand } from './2-19/2-19-instance-command-slow-1826000000000-make-page-layout-widget-position-not-null';
-import { DropPageLayoutWidgetGridPositionColumnFastInstanceCommand } from './2-20/2-20-instance-command-fast-1826500000000-drop-page-layout-widget-grid-position-column';
+import { AddStatusToFileFastInstanceCommand } from './2-19/2-19-instance-command-fast-1783082964705-add-status-to-file';
+import { AddPendingMimeCheckToFileFastInstanceCommand } from './2-19/2-19-instance-command-fast-1783094691548-add-pending-mime-check-to-file';
+import { DropMetadataStandardOverridesColumnFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783511477234-drop-metadata-standard-overrides-column';
+import { AddLogoToApplicationRegistrationFastInstanceCommand } from './2-19/2-19-instance-command-fast-1783069672191-add-logo-to-application-registration';
+import { BackfillLogoOnApplicationRegistrationSlowInstanceCommand } from './2-19/2-19-instance-command-slow-1783069673191-backfill-logo-on-application-registration';
+import { AddDisplayFieldsToApplicationRegistrationFastInstanceCommand } from './2-19/2-19-instance-command-fast-1783073776590-add-display-fields-to-application-registration';
+import { BackfillDisplayFieldsOnApplicationRegistrationSlowInstanceCommand } from './2-19/2-19-instance-command-slow-1783073776591-backfill-display-fields-on-application-registration';
+import { BackfillIsFeaturedOnApplicationRegistrationSlowInstanceCommand } from './2-19/2-19-instance-command-slow-1783120000000-backfill-is-featured-on-application-registration';
+import { AllowServerScopedFileFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-instance-command-fast-1783499671541-allow-server-scoped-file';
+import { CreateWorkflowVersionCoreTableFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783512000000-create-workflow-version-core-table';
+import { MakePageLayoutWidgetPositionNotNullSlowInstanceCommand } from './2-20/2-20-instance-command-slow-1783516500000-make-page-layout-widget-position-not-null';
+import { DropPageLayoutWidgetGridPositionColumnFastInstanceCommand } from './2-21/2-21-instance-command-fast-1783516600000-drop-page-layout-widget-grid-position-column';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -183,7 +194,18 @@ export const INSTANCE_COMMANDS = [
   AddMetadataOverridesColumnFastInstanceCommand,
   BackfillMetadataOverridesSlowInstanceCommand,
   AddLastStreamErrorToAgentChatThreadFastInstanceCommand,
+  AddLogoFileIdToApplicationFastInstanceCommand,
   DropMetadataStandardOverridesColumnFastInstanceCommand,
+  AddTypeAndOptionsToApplicationVariablesFastInstanceCommand,
+  AddLogoToApplicationRegistrationFastInstanceCommand,
+  BackfillLogoOnApplicationRegistrationSlowInstanceCommand,
+  AddDisplayFieldsToApplicationRegistrationFastInstanceCommand,
+  BackfillDisplayFieldsOnApplicationRegistrationSlowInstanceCommand,
+  AddStatusToFileFastInstanceCommand,
+  AddPendingMimeCheckToFileFastInstanceCommand,
+  BackfillIsFeaturedOnApplicationRegistrationSlowInstanceCommand,
+  AllowServerScopedFileFastInstanceCommand,
+  CreateWorkflowVersionCoreTableFastInstanceCommand,
   MakePageLayoutWidgetPositionNotNullSlowInstanceCommand,
   DropPageLayoutWidgetGridPositionColumnFastInstanceCommand,
 ];

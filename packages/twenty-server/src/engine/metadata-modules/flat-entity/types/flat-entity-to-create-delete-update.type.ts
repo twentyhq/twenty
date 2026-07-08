@@ -7,3 +7,7 @@ export type FlatEntityToCreateDeleteUpdate<T extends AllMetadataName> = {
   flatEntityToCreate: (MetadataUniversalFlatEntity<T> & { id?: string })[];
   flatEntityToDelete: MetadataUniversalFlatEntity<T>[];
 };
+
+export type AllFlatEntityOperationByMetadataName = {
+  [P in AllMetadataName]?: FlatEntityToCreateDeleteUpdate<P>;
+};

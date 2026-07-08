@@ -9,6 +9,10 @@ type CalendarEventRecordingState = {
   errorMessage: string | undefined;
 };
 
+type CalendarEventRecordingResult = CalendarEventRecordingState & {
+  refetchCalendarEventRecording: () => void;
+};
+
 type CalendarEventRecordingVideoFile = {
   fileId: string;
   label: string | null;
@@ -31,13 +35,18 @@ const CALENDAR_EVENT_RECORDING_ERROR_MESSAGE = 'Please try again later.';
 
 export const useCalendarEventRecording = (
   calendarEventId: string | undefined,
-): CalendarEventRecordingState => {
+): CalendarEventRecordingResult => {
   const [state, setState] = useState<CalendarEventRecordingState>({
     transcript: undefined,
     videoFile: undefined,
     isCalendarEventRecordingQueryLoading: !isUndefined(calendarEventId),
     errorMessage: undefined,
   });
+  const [refetchToken, setRefetchToken] = useState(0);
+
+  const refetchCalendarEventRecording = () => {
+    setRefetchToken((previousRefetchToken) => previousRefetchToken + 1);
+  };
 
   useEffect(() => {
     if (isUndefined(calendarEventId)) {
@@ -123,9 +132,9 @@ export const useCalendarEventRecording = (
     return () => {
       cancelled = true;
     };
-  }, [calendarEventId]);
+  }, [calendarEventId, refetchToken]);
 
-  return state;
+  return { ...state, refetchCalendarEventRecording };
 };
 
 const hasTranscript = (

@@ -2,7 +2,8 @@
   align-items: center;
   background-color: var(--t-background-transparent-lighter);
   border: 1px solid var(--t-border-color-strong);
-  border-radius: 50px;
+  border-radius: var(--t-border-radius-pill);
+  corner-shape: round;
   // Height and max-width are sized against the content box.
   box-sizing: content-box;
   color: var(--t-font-color-primary);

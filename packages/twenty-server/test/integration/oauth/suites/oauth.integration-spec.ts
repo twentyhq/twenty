@@ -29,7 +29,7 @@ const insertRegistration = async (
   ds: DataSource,
   params: {
     name: string;
-    clientSecretHash: string;
+    clientSecretHash: string | null;
     redirectUris: string[];
     scopes: string[];
   },
@@ -129,6 +129,8 @@ describe('OAuth (integration)', () => {
   let testClientSecret: string;
   let testApplication: TestApplication;
 
+  let publicRegistration: TestRegistration;
+
   let autoInstallRegistration: TestRegistration;
   let autoInstallClientSecret: string;
 
@@ -158,6 +160,22 @@ describe('OAuth (integration)', () => {
       workspaceId: TEST_WORKSPACE_ID,
       applicationRegistrationId: testRegistration.id,
     });
+
+    publicRegistration = await insertRegistration(ds, {
+      name: 'OAuth Public PKCE Test App',
+      clientSecretHash: null,
+      redirectUris: ['https://example.com/callback'],
+      scopes: ['read', 'write'],
+    });
+    createdEntityIds.registrations.push(publicRegistration.id);
+
+    const publicApplication = await insertApplication(ds, {
+      universalIdentifier: publicRegistration.universalIdentifier,
+      name: publicRegistration.name,
+      workspaceId: TEST_WORKSPACE_ID,
+      applicationRegistrationId: publicRegistration.id,
+    });
+    createdEntityIds.applications.push(publicApplication.id);
 
     autoInstallClientSecret = crypto.randomBytes(32).toString('hex');
     const autoInstallSecretHash = await bcrypt.hash(
@@ -430,13 +448,13 @@ describe('OAuth (integration)', () => {
 
     it('should require either client_secret or code_verifier', async () => {
       const code = await createAuthorizationCode(
-        testRegistration.oAuthClientId,
+        publicRegistration.oAuthClientId,
       );
 
       const res = await postToken({
         grant_type: 'authorization_code',
         code,
-        client_id: testRegistration.oAuthClientId,
+        client_id: publicRegistration.oAuthClientId,
         redirect_uri: 'https://example.com/callback',
       }).expect(400);
 
@@ -479,13 +497,13 @@ describe('OAuth (integration)', () => {
 
     it('should exchange code with valid PKCE verifier', async () => {
       const { code, codeVerifier } = await createAuthCodeWithPkce(
-        testRegistration.oAuthClientId,
+        publicRegistration.oAuthClientId,
       );
 
       const res = await postToken({
         grant_type: 'authorization_code',
         code,
-        client_id: testRegistration.oAuthClientId,
+        client_id: publicRegistration.oAuthClientId,
         code_verifier: codeVerifier,
         redirect_uri: 'https://example.com/callback',
       }).expect(200);
@@ -497,13 +515,13 @@ describe('OAuth (integration)', () => {
 
     it('should reject code with wrong PKCE verifier', async () => {
       const { code } = await createAuthCodeWithPkce(
-        testRegistration.oAuthClientId,
+        publicRegistration.oAuthClientId,
       );
 
       const res = await postToken({
         grant_type: 'authorization_code',
         code,
-        client_id: testRegistration.oAuthClientId,
+        client_id: publicRegistration.oAuthClientId,
         code_verifier: 'wrong-verifier',
         redirect_uri: 'https://example.com/callback',
       }).expect(400);
@@ -513,6 +531,22 @@ describe('OAuth (integration)', () => {
 
     it('should require code_verifier when PKCE was used in authorization', async () => {
       const { code } = await createAuthCodeWithPkce(
+        publicRegistration.oAuthClientId,
+      );
+
+      const res = await postToken({
+        grant_type: 'authorization_code',
+        code,
+        client_id: publicRegistration.oAuthClientId,
+        redirect_uri: 'https://example.com/callback',
+      }).expect(400);
+
+      expect(res.body.error).toBe('invalid_request');
+      expect(res.body.error_description).toContain('code_verifier is required');
+    });
+
+    it('should reject a confidential client that presents only PKCE and no client_secret', async () => {
+      const { code, codeVerifier } = await createAuthCodeWithPkce(
         testRegistration.oAuthClientId,
       );
 
@@ -520,12 +554,11 @@ describe('OAuth (integration)', () => {
         grant_type: 'authorization_code',
         code,
         client_id: testRegistration.oAuthClientId,
-        client_secret: testClientSecret,
+        code_verifier: codeVerifier,
         redirect_uri: 'https://example.com/callback',
-      }).expect(400);
+      }).expect(401);
 
-      expect(res.body.error).toBe('invalid_request');
-      expect(res.body.error_description).toContain('code_verifier is required');
+      expect(res.body.error).toBe('invalid_client');
     });
   });
 

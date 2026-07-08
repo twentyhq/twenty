@@ -1,9 +1,13 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import {
   ALL_METADATA_NAME,
   type AllMetadataName,
 } from 'twenty-shared/metadata';
+
+registerEnumType(ALL_METADATA_NAME, {
+  name: 'AllMetadataName',
+});
 
 @ObjectType('CollectionHash')
 export class CollectionHashDTO {

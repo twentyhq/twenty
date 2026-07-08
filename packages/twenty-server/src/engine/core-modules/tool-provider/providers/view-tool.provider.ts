@@ -58,11 +58,12 @@ export class ViewToolProvider implements ToolProvider {
 
   private async buildToolSet(context: ToolProviderContext): Promise<ToolSet> {
     const workspaceMemberId = context.actorContext?.workspaceMemberId;
+    const userWorkspaceId = context.userWorkspaceId;
 
     const readTools = {
       ...this.viewToolsFactory.generateReadTools(
         context.workspaceId,
-        workspaceMemberId ?? undefined,
+        userWorkspaceId,
         workspaceMemberId ?? undefined,
       ),
       ...this.viewFieldToolsFactory.generateReadTools(context.workspaceId),
@@ -84,7 +85,7 @@ export class ViewToolProvider implements ToolProvider {
     const writeTools = {
       ...this.viewToolsFactory.generateWriteTools(
         context.workspaceId,
-        workspaceMemberId ?? undefined,
+        userWorkspaceId,
       ),
       ...this.viewFieldToolsFactory.generateWriteTools(context.workspaceId),
       ...this.viewFilterToolsFactory.generateWriteTools(context.workspaceId),

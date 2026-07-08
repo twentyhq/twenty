@@ -25,8 +25,12 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "key",
       "description",
       "isSecret",
+      "type",
+      "options",
     ],
-    "propertiesToStringify": [],
+    "propertiesToStringify": [
+      "options",
+    ],
   },
   "commandMenuItem": {
     "propertiesToCompare": [
@@ -356,6 +360,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "aggregateOperation",
       "viewFieldGroupUniversalIdentifier",
       "deletedAt",
+      "viewUniversalIdentifier",
       "isActive",
       "universalOverrides",
     ],
@@ -370,6 +375,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isVisible",
       "isActive",
       "deletedAt",
+      "viewUniversalIdentifier",
       "overrides",
     ],
     "propertiesToStringify": [
@@ -408,6 +414,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "fieldValue",
       "position",
       "deletedAt",
+      "viewUniversalIdentifier",
     ],
     "propertiesToStringify": [],
   },

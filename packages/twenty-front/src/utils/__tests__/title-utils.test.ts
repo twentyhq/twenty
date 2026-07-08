@@ -43,6 +43,9 @@ describe('title-utils', () => {
     expect(getPageTitleFromPath('/settings/accounts/emails/:accountUuid')).toBe(
       'Account - Settings',
     );
+    expect(getPageTitleFromPath('/settings/billing/plans')).toBe(
+      'Billing - Settings',
+    );
     expect(getPageTitleFromPath('/settings/members')).toBe(
       'Members - Settings',
     );

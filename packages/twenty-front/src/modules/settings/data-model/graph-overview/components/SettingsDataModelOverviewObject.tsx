@@ -46,7 +46,8 @@ const StyledHeader = styled.div`
 
 const StyledObjectName = styled.div`
   border: 0;
-  border-radius: 4px 4px 0 0;
+  border-radius: ${themeCssVariables.border.radius.sm}
+    ${themeCssVariables.border.radius.sm} 0 0;
   display: flex;
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[1]};

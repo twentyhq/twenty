@@ -25,9 +25,7 @@ const meta: Meta<PageDecoratorArgs> = {
         graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
           return HttpResponse.json({
             data: {
-              currentUser: mockedOnboardingUserData(
-                OnboardingStatus.PLAN_REQUIRED,
-              ),
+              currentUser: mockedOnboardingUserData(OnboardingStatus.COMPLETED),
             },
           });
         }),
@@ -45,7 +43,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
 
-    await canvas.findByText('Choose your Trial', undefined, {
+    await canvas.findByText('Upgrade your free trial', undefined, {
       timeout: 3000,
     });
   },
