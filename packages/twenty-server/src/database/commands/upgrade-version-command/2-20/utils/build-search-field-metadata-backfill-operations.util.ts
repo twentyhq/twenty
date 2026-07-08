@@ -9,7 +9,6 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
@@ -17,42 +16,32 @@ import { buildFlatSearchFieldMetadataForField } from 'src/engine/metadata-module
 import { findTsVectorFlatFieldMetadataForObject } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/find-ts-vector-flat-field-metadata-for-object.util';
 import { type UniversalFlatSearchFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-search-field-metadata.type';
 
-export type SearchFieldMetadataUniversalIdentifierUpdate = {
-  id: string;
-  deterministicUniversalIdentifier: string;
-};
-
-type BuildSearchFieldMetadataReconciliationArgs = {
+type BuildSearchFieldMetadataBackfillOperationsArgs = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatSearchFieldMetadataMaps: FlatEntityMaps<FlatSearchFieldMetadata>;
   applicationUniversalIdentifierById: Map<string, string>;
-  installedApplicationIds: Set<string>;
+  twentyStandardApplicationId: string;
+  workspaceCustomApplicationId: string;
 };
 
-type BuildSearchFieldMetadataReconciliationReturnType = {
-  searchFieldMetadataUniversalIdentifierUpdates: SearchFieldMetadataUniversalIdentifierUpdate[];
-  flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier: Record<
-    string,
-    UniversalFlatSearchFieldMetadata[]
-  >;
-};
-
-// Reconciles the deterministic universal identifier of searchFieldMetadata rows.
-// Re-own is global (every application): existing rows carrying a legacy v4 identifier
-// are converged to getSearchFieldUniversalIdentifier. Creation is limited to installed-app
-// searchable objects, whose row was never provisioned by the manifest funnel. The
-// creation rule mirrors the object-create side effect handler (label-identifier field of
-// a searchable type; junction/id-label objects have no search surface).
-export const buildSearchFieldMetadataReconciliation = ({
+// Backfill skips the twenty-standard and workspace-custom applications (their row is
+// already provisioned by the manifest funnel) and targets every other (installed)
+// application's searchable objects that have no row yet. The creation rule mirrors the
+// object-create side effect handler (label-identifier field of a searchable type;
+// junction/id-label objects have no search surface). Grouped by application universal
+// identifier for the per-application migration run.
+export const buildSearchFieldMetadataBackfillOperations = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   flatSearchFieldMetadataMaps,
   applicationUniversalIdentifierById,
-  installedApplicationIds,
-}: BuildSearchFieldMetadataReconciliationArgs): BuildSearchFieldMetadataReconciliationReturnType => {
-  const searchFieldMetadataUniversalIdentifierUpdates: SearchFieldMetadataUniversalIdentifierUpdate[] =
-    [];
+  twentyStandardApplicationId,
+  workspaceCustomApplicationId,
+}: BuildSearchFieldMetadataBackfillOperationsArgs): Record<
+  string,
+  UniversalFlatSearchFieldMetadata[]
+> => {
   const existingSearchFieldMetadataKeys = new Set<string>();
 
   for (const flatSearchFieldMetadata of Object.values(
@@ -61,40 +50,6 @@ export const buildSearchFieldMetadataReconciliation = ({
     existingSearchFieldMetadataKeys.add(
       `${flatSearchFieldMetadata.objectMetadataId}:${flatSearchFieldMetadata.fieldMetadataId}`,
     );
-
-    const applicationUniversalIdentifier =
-      applicationUniversalIdentifierById.get(
-        flatSearchFieldMetadata.applicationId,
-      );
-    const indexedFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityId: flatSearchFieldMetadata.fieldMetadataId,
-    });
-
-    if (
-      !isDefined(applicationUniversalIdentifier) ||
-      !isDefined(indexedFlatFieldMetadata)
-    ) {
-      continue;
-    }
-
-    const deterministicUniversalIdentifier = getSearchFieldUniversalIdentifier({
-      applicationUniversalIdentifier,
-      fieldMetadataUniversalIdentifier:
-        indexedFlatFieldMetadata.universalIdentifier,
-    });
-
-    if (
-      deterministicUniversalIdentifier ===
-      flatSearchFieldMetadata.universalIdentifier
-    ) {
-      continue;
-    }
-
-    searchFieldMetadataUniversalIdentifierUpdates.push({
-      id: flatSearchFieldMetadata.id,
-      deterministicUniversalIdentifier,
-    });
   }
 
   const flatSearchFieldMetadatasToCreate: UniversalFlatSearchFieldMetadata[] =
@@ -103,7 +58,10 @@ export const buildSearchFieldMetadataReconciliation = ({
   for (const flatObjectMetadata of Object.values(
     flatObjectMetadataMaps.byUniversalIdentifier,
   ).filter(isDefined)) {
-    if (!installedApplicationIds.has(flatObjectMetadata.applicationId)) {
+    if (
+      flatObjectMetadata.applicationId === twentyStandardApplicationId ||
+      flatObjectMetadata.applicationId === workspaceCustomApplicationId
+    ) {
       continue;
     }
 
@@ -177,12 +135,8 @@ export const buildSearchFieldMetadataReconciliation = ({
     );
   }
 
-  return {
-    searchFieldMetadataUniversalIdentifierUpdates,
-    flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier:
-      fromArrayToValuesByKeyRecord({
-        array: flatSearchFieldMetadatasToCreate,
-        key: 'applicationUniversalIdentifier',
-      }),
-  };
+  return fromArrayToValuesByKeyRecord({
+    array: flatSearchFieldMetadatasToCreate,
+    key: 'applicationUniversalIdentifier',
+  });
 };

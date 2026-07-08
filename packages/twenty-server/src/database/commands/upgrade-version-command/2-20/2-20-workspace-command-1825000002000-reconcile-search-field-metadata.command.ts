@@ -7,8 +7,11 @@ import { Repository } from 'typeorm';
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildSearchFieldMetadataReconciliation } from 'src/database/commands/upgrade-version-command/2-20/utils/build-search-field-metadata-reconciliation.util';
-import { getInstalledApplicationIds } from 'src/database/commands/upgrade-version-command/2-20/utils/get-installed-application-ids.util';
+import { buildSearchFieldMetadataBackfillOperations } from 'src/database/commands/upgrade-version-command/2-20/utils/build-search-field-metadata-backfill-operations.util';
+import {
+  buildSearchFieldMetadataReOwnOperations,
+  type SearchFieldMetadataUniversalIdentifierUpdate,
+} from 'src/database/commands/upgrade-version-command/2-20/utils/build-search-field-metadata-re-own-operations.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -17,13 +20,22 @@ import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type UniversalFlatSearchFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-search-field-metadata.type';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+type SearchFieldMetadataReconciliationOperations = {
+  searchFieldMetadataUniversalIdentifierUpdates: SearchFieldMetadataUniversalIdentifierUpdate[];
+  flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier: Record<
+    string,
+    UniversalFlatSearchFieldMetadata[]
+  >;
+};
 
 @RegisteredWorkspaceCommand('2.20.0', 1825000002000)
 @Command({
   name: 'upgrade:2-20:reconcile-search-field-metadata',
   description:
-    'Converge every searchFieldMetadata universal identifier to its deterministic derivation (re-own, all applications) and create the missing searchFieldMetadata row for installed-app searchable objects (create). Idempotent, re-own runs before create to avoid a unique-identifier collision.',
+    'Converge every searchFieldMetadata universal identifier to its deterministic derivation (re-own, all applications) and create the missing searchFieldMetadata row for installed-app searchable objects (backfill). Idempotent, re-own runs before backfill to avoid a unique-identifier collision.',
 })
 export class ReconcileSearchFieldMetadataCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
@@ -46,6 +58,54 @@ export class ReconcileSearchFieldMetadataCommand extends ActiveOrSuspendedWorksp
     const isDryRun = options.dryRun ?? false;
 
     const {
+      searchFieldMetadataUniversalIdentifierUpdates,
+      flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier,
+    } = await this.computeOperations({ workspaceId });
+
+    const totalRowsToBackfill = Object.values(
+      flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier,
+    ).reduce(
+      (total, flatSearchFieldMetadatas) =>
+        total + flatSearchFieldMetadatas.length,
+      0,
+    );
+
+    if (
+      searchFieldMetadataUniversalIdentifierUpdates.length === 0 &&
+      totalRowsToBackfill === 0
+    ) {
+      this.logger.log(
+        `No searchFieldMetadata to reconcile for workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    this.logger.log(
+      `${isDryRun ? '[DRY RUN] ' : ''}Reconciling ${searchFieldMetadataUniversalIdentifierUpdates.length} searchFieldMetadata universal identifier(s) and creating ${totalRowsToBackfill} missing row(s) across ${Object.keys(flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier).length} application(s) for workspace ${workspaceId}`,
+    );
+
+    if (isDryRun) {
+      return;
+    }
+
+    await this.applyOperations({
+      workspaceId,
+      searchFieldMetadataUniversalIdentifierUpdates,
+      flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier,
+    });
+
+    this.logger.log(
+      `Reconciled searchFieldMetadata for workspace ${workspaceId}`,
+    );
+  }
+
+  private async computeOperations({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<SearchFieldMetadataReconciliationOperations> {
+    const {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatSearchFieldMetadataMaps,
@@ -62,112 +122,119 @@ export class ReconcileSearchFieldMetadataCommand extends ActiveOrSuspendedWorksp
         { workspaceId },
       );
 
-    const flatApplications = Object.values(flatApplicationMaps.byId).filter(
-      isDefined,
-    );
     const applicationUniversalIdentifierById = new Map(
-      flatApplications.map((flatApplication) => [
-        flatApplication.id,
-        flatApplication.universalIdentifier,
-      ]),
+      Object.values(flatApplicationMaps.byId)
+        .filter(isDefined)
+        .map((flatApplication) => [
+          flatApplication.id,
+          flatApplication.universalIdentifier,
+        ]),
     );
-    const installedApplicationIds = getInstalledApplicationIds({
-      applicationIds: flatApplications.map((flatApplication) => flatApplication.id),
-      twentyStandardApplicationId: twentyStandardFlatApplication.id,
-      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
-    });
 
-    const {
+    const searchFieldMetadataUniversalIdentifierUpdates =
+      buildSearchFieldMetadataReOwnOperations({
+        flatFieldMetadataMaps,
+        flatSearchFieldMetadataMaps,
+        applicationUniversalIdentifierById,
+      });
+
+    const flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier =
+      buildSearchFieldMetadataBackfillOperations({
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatSearchFieldMetadataMaps,
+        applicationUniversalIdentifierById,
+        twentyStandardApplicationId: twentyStandardFlatApplication.id,
+        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+      });
+
+    return {
       searchFieldMetadataUniversalIdentifierUpdates,
       flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier,
-    } = buildSearchFieldMetadataReconciliation({
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatSearchFieldMetadataMaps,
-      applicationUniversalIdentifierById,
-      installedApplicationIds,
-    });
+    };
+  }
 
-    const applicationUniversalIdentifiersToCreate = Object.keys(
-      flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier,
-    );
-    const totalRowsToCreate = applicationUniversalIdentifiersToCreate.reduce(
-      (total, applicationUniversalIdentifier) =>
-        total +
-        (flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier[
-          applicationUniversalIdentifier
-        ]?.length ?? 0),
-      0,
-    );
-
-    if (
-      searchFieldMetadataUniversalIdentifierUpdates.length === 0 &&
-      totalRowsToCreate === 0
-    ) {
-      this.logger.log(
-        `No searchFieldMetadata to reconcile for workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
-    this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Reconciling ${searchFieldMetadataUniversalIdentifierUpdates.length} searchFieldMetadata universal identifier(s) and creating ${totalRowsToCreate} missing row(s) across ${applicationUniversalIdentifiersToCreate.length} application(s) for workspace ${workspaceId}`,
-    );
-
-    if (isDryRun) {
-      return;
-    }
-
-    // Re-own first: a deterministic row created next to a surviving legacy v4 row
-    // (which the deletion-inference short-circuit keeps alive) would collide on the
+  private async applyOperations({
+    workspaceId,
+    searchFieldMetadataUniversalIdentifierUpdates,
+    flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+  } & SearchFieldMetadataReconciliationOperations): Promise<void> {
+    // Re-own before backfill: a deterministic row created next to a surviving legacy v4
+    // row (which the deletion-inference short-circuit keeps alive) would collide on the
     // unique universal identifier constraint.
-    if (searchFieldMetadataUniversalIdentifierUpdates.length > 0) {
-      try {
-        await this.searchFieldMetadataRepository.manager.transaction(
-          async (entityManager) => {
-            const transactionalSearchFieldMetadataRepository =
-              entityManager.getRepository(SearchFieldMetadataEntity);
+    await this.applyReOwn({
+      workspaceId,
+      searchFieldMetadataUniversalIdentifierUpdates,
+    });
+    await this.applyBackfill({
+      workspaceId,
+      flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier,
+    });
+  }
 
-            for (const {
-              id,
-              deterministicUniversalIdentifier,
-            } of searchFieldMetadataUniversalIdentifierUpdates) {
-              await transactionalSearchFieldMetadataRepository.update(
-                { id, workspaceId },
-                { universalIdentifier: deterministicUniversalIdentifier },
-              );
-            }
-          },
-        );
-      } catch (error) {
-        // Stop before the create step: creating a deterministic row next to a
-        // surviving legacy row (re-own rolled back) would collide on the unique
-        // universal identifier constraint.
-        this.logger.error(
-          `Failed to re-own ${searchFieldMetadataUniversalIdentifierUpdates.length} searchFieldMetadata universal identifier(s) for workspace ${workspaceId}, aborting: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
-
-        throw error;
-      }
-
-      await this.flushSearchFieldMetadataCacheAndBumpMetadataVersion(
-        workspaceId,
-      );
+  private async applyReOwn({
+    workspaceId,
+    searchFieldMetadataUniversalIdentifierUpdates,
+  }: {
+    workspaceId: string;
+    searchFieldMetadataUniversalIdentifierUpdates: SearchFieldMetadataUniversalIdentifierUpdate[];
+  }): Promise<void> {
+    if (searchFieldMetadataUniversalIdentifierUpdates.length === 0) {
+      return;
     }
 
-    for (const applicationUniversalIdentifier of applicationUniversalIdentifiersToCreate) {
-      const flatSearchFieldMetadatasToCreate =
-        flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier[
-          applicationUniversalIdentifier
-        ];
+    try {
+      await this.searchFieldMetadataRepository.manager.transaction(
+        async (entityManager) => {
+          const transactionalSearchFieldMetadataRepository =
+            entityManager.getRepository(SearchFieldMetadataEntity);
 
-      if (
-        !isDefined(flatSearchFieldMetadatasToCreate) ||
-        flatSearchFieldMetadatasToCreate.length === 0
-      ) {
+          for (const {
+            id,
+            deterministicUniversalIdentifier,
+          } of searchFieldMetadataUniversalIdentifierUpdates) {
+            await transactionalSearchFieldMetadataRepository.update(
+              { id, workspaceId },
+              { universalIdentifier: deterministicUniversalIdentifier },
+            );
+          }
+        },
+      );
+    } catch (error) {
+      // Abort before backfill: creating a deterministic row next to a surviving legacy
+      // row (re-own rolled back) would collide on the unique universal identifier
+      // constraint.
+      this.logger.error(
+        `Failed to re-own ${searchFieldMetadataUniversalIdentifierUpdates.length} searchFieldMetadata universal identifier(s) for workspace ${workspaceId}, aborting: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+
+      throw error;
+    }
+
+    await this.flushSearchFieldMetadataCacheAndBumpMetadataVersion(workspaceId);
+  }
+
+  private async applyBackfill({
+    workspaceId,
+    flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier: Record<
+      string,
+      UniversalFlatSearchFieldMetadata[]
+    >;
+  }): Promise<void> {
+    for (const [
+      applicationUniversalIdentifier,
+      flatSearchFieldMetadatasToCreate,
+    ] of Object.entries(
+      flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier,
+    )) {
+      if (flatSearchFieldMetadatasToCreate.length === 0) {
         continue;
       }
 
@@ -201,10 +268,6 @@ export class ReconcileSearchFieldMetadataCommand extends ActiveOrSuspendedWorksp
         );
       }
     }
-
-    this.logger.log(
-      `Reconciled searchFieldMetadata for workspace ${workspaceId}`,
-    );
   }
 
   private async flushSearchFieldMetadataCacheAndBumpMetadataVersion(

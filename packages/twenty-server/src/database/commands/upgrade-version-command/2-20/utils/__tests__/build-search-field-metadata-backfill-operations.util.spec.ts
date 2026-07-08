@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { buildSearchFieldMetadataReconciliation } from 'src/database/commands/upgrade-version-command/2-20/utils/build-search-field-metadata-reconciliation.util';
+import { buildSearchFieldMetadataBackfillOperations } from 'src/database/commands/upgrade-version-command/2-20/utils/build-search-field-metadata-backfill-operations.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -13,9 +13,9 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 
-const STANDARD_APPLICATION_ID = 'standard-application-id';
 // Application universal identifiers must be valid UUIDs: they are used as the v5
 // namespace by the deterministic identifier helpers.
+const STANDARD_APPLICATION_ID = 'standard-application-id';
 const STANDARD_APPLICATION_UID = '11111111-1111-4111-8111-111111111111';
 const CUSTOM_APPLICATION_ID = 'custom-application-id';
 const CUSTOM_APPLICATION_UID = '22222222-2222-4222-8222-222222222222';
@@ -27,7 +27,6 @@ const applicationUniversalIdentifierById = new Map([
   [CUSTOM_APPLICATION_ID, CUSTOM_APPLICATION_UID],
   [INSTALLED_APPLICATION_ID, INSTALLED_APPLICATION_UID],
 ]);
-const installedApplicationIds = new Set([INSTALLED_APPLICATION_ID]);
 
 const buildFlatObjectMetadataMaps = (
   flatObjectMetadatas: FlatObjectMetadata[],
@@ -175,55 +174,7 @@ const buildSearchableObjectFixture = ({
   };
 };
 
-describe('buildSearchFieldMetadataReconciliation', () => {
-  it('re-owns an existing searchFieldMetadata carrying a non-deterministic universal identifier (all applications)', () => {
-    const { flatObjectMetadata, nameFlatFieldMetadata } =
-      buildSearchableObjectFixture({
-        objectId: 'standard-object-id',
-        objectUniversalIdentifier: 'standard-object-uid',
-        applicationId: STANDARD_APPLICATION_ID,
-        applicationUniversalIdentifier: STANDARD_APPLICATION_UID,
-      });
-
-    const existingSearchFieldMetadata = buildFlatSearchFieldMetadata({
-      id: 'existing-search-field-metadata-id',
-      universalIdentifier: 'legacy-v4-search-field-metadata-uid',
-      objectMetadataId: flatObjectMetadata.id,
-      fieldMetadataId: nameFlatFieldMetadata.id,
-      applicationId: STANDARD_APPLICATION_ID,
-      applicationUniversalIdentifier: STANDARD_APPLICATION_UID,
-    });
-
-    const {
-      searchFieldMetadataUniversalIdentifierUpdates,
-      flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier,
-    } = buildSearchFieldMetadataReconciliation({
-      flatObjectMetadataMaps: buildFlatObjectMetadataMaps([flatObjectMetadata]),
-      flatFieldMetadataMaps: buildFlatFieldMetadataMaps([nameFlatFieldMetadata]),
-      flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([
-        existingSearchFieldMetadata,
-      ]),
-      applicationUniversalIdentifierById,
-      installedApplicationIds,
-    });
-
-    expect(searchFieldMetadataUniversalIdentifierUpdates).toEqual([
-      {
-        id: existingSearchFieldMetadata.id,
-        deterministicUniversalIdentifier: getSearchFieldUniversalIdentifier({
-          applicationUniversalIdentifier: STANDARD_APPLICATION_UID,
-          fieldMetadataUniversalIdentifier:
-            nameFlatFieldMetadata.universalIdentifier,
-        }),
-      },
-    ]);
-    expect(
-      Object.keys(
-        flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier,
-      ),
-    ).toHaveLength(0);
-  });
-
+describe('buildSearchFieldMetadataBackfillOperations', () => {
   it('creates the searchFieldMetadata row for an installed-app searchable object that has none, grouped under its application', () => {
     const {
       flatObjectMetadata,
@@ -236,21 +187,20 @@ describe('buildSearchFieldMetadataReconciliation', () => {
       applicationUniversalIdentifier: INSTALLED_APPLICATION_UID,
     });
 
-    const {
-      searchFieldMetadataUniversalIdentifierUpdates,
-      flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier,
-    } = buildSearchFieldMetadataReconciliation({
-      flatObjectMetadataMaps: buildFlatObjectMetadataMaps([flatObjectMetadata]),
-      flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
-        nameFlatFieldMetadata,
-        searchVectorFlatFieldMetadata,
-      ]),
-      flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([]),
-      applicationUniversalIdentifierById,
-      installedApplicationIds,
-    });
-
-    expect(searchFieldMetadataUniversalIdentifierUpdates).toHaveLength(0);
+    const flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier =
+      buildSearchFieldMetadataBackfillOperations({
+        flatObjectMetadataMaps: buildFlatObjectMetadataMaps([
+          flatObjectMetadata,
+        ]),
+        flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
+          nameFlatFieldMetadata,
+          searchVectorFlatFieldMetadata,
+        ]),
+        flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([]),
+        applicationUniversalIdentifierById,
+        twentyStandardApplicationId: STANDARD_APPLICATION_ID,
+        workspaceCustomApplicationId: CUSTOM_APPLICATION_ID,
+      });
 
     const createdRows =
       flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier[
@@ -299,8 +249,8 @@ describe('buildSearchFieldMetadataReconciliation', () => {
         }),
     };
 
-    const { flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier } =
-      buildSearchFieldMetadataReconciliation({
+    const flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier =
+      buildSearchFieldMetadataBackfillOperations({
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps([junctionObject]),
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
           nameFlatFieldMetadata,
@@ -308,7 +258,8 @@ describe('buildSearchFieldMetadataReconciliation', () => {
         ]),
         flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([]),
         applicationUniversalIdentifierById,
-        installedApplicationIds,
+        twentyStandardApplicationId: STANDARD_APPLICATION_ID,
+        workspaceCustomApplicationId: CUSTOM_APPLICATION_ID,
       });
 
     expect(
@@ -331,8 +282,8 @@ describe('buildSearchFieldMetadataReconciliation', () => {
       labelIdentifierFieldType: FieldMetadataType.RELATION,
     });
 
-    const { flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier } =
-      buildSearchFieldMetadataReconciliation({
+    const flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier =
+      buildSearchFieldMetadataBackfillOperations({
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps([
           flatObjectMetadata,
         ]),
@@ -342,7 +293,8 @@ describe('buildSearchFieldMetadataReconciliation', () => {
         ]),
         flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([]),
         applicationUniversalIdentifierById,
-        installedApplicationIds,
+        twentyStandardApplicationId: STANDARD_APPLICATION_ID,
+        workspaceCustomApplicationId: CUSTOM_APPLICATION_ID,
       });
 
     expect(
@@ -352,7 +304,41 @@ describe('buildSearchFieldMetadataReconciliation', () => {
     ).toHaveLength(0);
   });
 
-  it('does not create a row for a non-installed (workspace-custom) searchable object that has none', () => {
+  it('does not create a row for a twenty-standard searchable object that has none', () => {
+    const {
+      flatObjectMetadata,
+      nameFlatFieldMetadata,
+      searchVectorFlatFieldMetadata,
+    } = buildSearchableObjectFixture({
+      objectId: 'standard-object-id',
+      objectUniversalIdentifier: 'standard-object-uid',
+      applicationId: STANDARD_APPLICATION_ID,
+      applicationUniversalIdentifier: STANDARD_APPLICATION_UID,
+    });
+
+    const flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier =
+      buildSearchFieldMetadataBackfillOperations({
+        flatObjectMetadataMaps: buildFlatObjectMetadataMaps([
+          flatObjectMetadata,
+        ]),
+        flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
+          nameFlatFieldMetadata,
+          searchVectorFlatFieldMetadata,
+        ]),
+        flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([]),
+        applicationUniversalIdentifierById,
+        twentyStandardApplicationId: STANDARD_APPLICATION_ID,
+        workspaceCustomApplicationId: CUSTOM_APPLICATION_ID,
+      });
+
+    expect(
+      Object.keys(
+        flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier,
+      ),
+    ).toHaveLength(0);
+  });
+
+  it('does not create a row for a workspace-custom searchable object that has none', () => {
     const {
       flatObjectMetadata,
       nameFlatFieldMetadata,
@@ -364,8 +350,8 @@ describe('buildSearchFieldMetadataReconciliation', () => {
       applicationUniversalIdentifier: CUSTOM_APPLICATION_UID,
     });
 
-    const { flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier } =
-      buildSearchFieldMetadataReconciliation({
+    const flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier =
+      buildSearchFieldMetadataBackfillOperations({
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps([
           flatObjectMetadata,
         ]),
@@ -375,7 +361,8 @@ describe('buildSearchFieldMetadataReconciliation', () => {
         ]),
         flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([]),
         applicationUniversalIdentifierById,
-        installedApplicationIds,
+        twentyStandardApplicationId: STANDARD_APPLICATION_ID,
+        workspaceCustomApplicationId: CUSTOM_APPLICATION_ID,
       });
 
     expect(
@@ -410,23 +397,23 @@ describe('buildSearchFieldMetadataReconciliation', () => {
       applicationUniversalIdentifier: INSTALLED_APPLICATION_UID,
     });
 
-    const {
-      searchFieldMetadataUniversalIdentifierUpdates,
-      flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier,
-    } = buildSearchFieldMetadataReconciliation({
-      flatObjectMetadataMaps: buildFlatObjectMetadataMaps([flatObjectMetadata]),
-      flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
-        nameFlatFieldMetadata,
-        searchVectorFlatFieldMetadata,
-      ]),
-      flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([
-        existingSearchFieldMetadata,
-      ]),
-      applicationUniversalIdentifierById,
-      installedApplicationIds,
-    });
+    const flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier =
+      buildSearchFieldMetadataBackfillOperations({
+        flatObjectMetadataMaps: buildFlatObjectMetadataMaps([
+          flatObjectMetadata,
+        ]),
+        flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
+          nameFlatFieldMetadata,
+          searchVectorFlatFieldMetadata,
+        ]),
+        flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([
+          existingSearchFieldMetadata,
+        ]),
+        applicationUniversalIdentifierById,
+        twentyStandardApplicationId: STANDARD_APPLICATION_ID,
+        workspaceCustomApplicationId: CUSTOM_APPLICATION_ID,
+      });
 
-    expect(searchFieldMetadataUniversalIdentifierUpdates).toHaveLength(0);
     expect(
       Object.keys(
         flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier,

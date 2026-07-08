@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { getInstalledApplicationIds } from 'src/database/commands/upgrade-version-command/2-20/utils/get-installed-application-ids.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -36,24 +35,15 @@ export class RebuildInstalledAppSearchVectorsCommand extends ActiveOrSuspendedWo
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
-    const { flatFieldMetadataMaps, flatApplicationMaps } =
+    const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldMetadataMaps',
-        'flatApplicationMaps',
       ]);
 
     const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
-
-    const installedApplicationIds = getInstalledApplicationIds({
-      applicationIds: Object.values(flatApplicationMaps.byId)
-        .filter(isDefined)
-        .map((flatApplication) => flatApplication.id),
-      twentyStandardApplicationId: twentyStandardFlatApplication.id,
-      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
-    });
 
     const installedAppTsVectorFlatFieldMetadatas = Object.values(
       flatFieldMetadataMaps.byUniversalIdentifier,
@@ -62,7 +52,9 @@ export class RebuildInstalledAppSearchVectorsCommand extends ActiveOrSuspendedWo
       .filter(
         (flatFieldMetadata) =>
           flatFieldMetadata.type === FieldMetadataType.TS_VECTOR &&
-          installedApplicationIds.has(flatFieldMetadata.applicationId),
+          flatFieldMetadata.applicationId !==
+            twentyStandardFlatApplication.id &&
+          flatFieldMetadata.applicationId !== workspaceCustomFlatApplication.id,
       );
 
     if (installedAppTsVectorFlatFieldMetadatas.length === 0) {
