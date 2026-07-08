@@ -4,7 +4,7 @@ import { createElement } from 'react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { WelcomeOverlay } from '@/onboarding/components/WelcomeOverlay/WelcomeOverlay';
-import { welcomeAnimationVisibleState } from '@/onboarding/states/welcomeAnimationVisibleState';
+import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -31,7 +31,7 @@ describe('WelcomeOverlay', () => {
   });
 
   it('should render the welcome message and the member full name when visible', () => {
-    jotaiStore.set(welcomeAnimationVisibleState.atom, true);
+    jotaiStore.set(isWelcomeAnimationVisibleState.atom, true);
 
     render(<WelcomeOverlay />, { wrapper: Wrapper });
 
@@ -41,7 +41,7 @@ describe('WelcomeOverlay', () => {
   });
 
   it('should let keyboard users skip the animation with the Escape key', () => {
-    jotaiStore.set(welcomeAnimationVisibleState.atom, true);
+    jotaiStore.set(isWelcomeAnimationVisibleState.atom, true);
 
     render(<WelcomeOverlay />, { wrapper: Wrapper });
     expect(screen.getByText('Welcome')).toBeInTheDocument();

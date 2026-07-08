@@ -2,20 +2,20 @@ import { styled } from '@linaria/react';
 import {
   type AnimationEvent,
   type CSSProperties,
-  useEffect,
+  useCallback,
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { WelcomeAnimationDismissEffect } from '@/onboarding/components/WelcomeOverlay/WelcomeAnimationDismissEffect';
 import { WelcomeHalftoneCanvas } from '@/onboarding/components/WelcomeOverlay/WelcomeHalftoneCanvas';
 import { WelcomePersonChip } from '@/onboarding/components/WelcomeOverlay/WelcomePersonChip';
-import { welcomeAnimationVisibleState } from '@/onboarding/states/welcomeAnimationVisibleState';
+import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-const WELCOME_HOLD_DURATION_MS = 2900;
 const WELCOME_TITLE_WORDS = ['Welcome', 'to', 'your', 'workspace'];
 
 const StyledOverlay = styled.div`
@@ -142,53 +142,25 @@ const StyledWord = styled.span`
 `;
 
 export const WelcomeOverlay = () => {
-  const welcomeAnimationVisible = useAtomStateValue(
-    welcomeAnimationVisibleState,
+  const isWelcomeAnimationVisible = useAtomStateValue(
+    isWelcomeAnimationVisibleState,
   );
-  const setWelcomeAnimationVisible = useSetAtomState(
-    welcomeAnimationVisibleState,
+  const setIsWelcomeAnimationVisible = useSetAtomState(
+    isWelcomeAnimationVisibleState,
   );
   const [isLeaving, setIsLeaving] = useState(false);
 
-  useEffect(() => {
-    if (!welcomeAnimationVisible) {
-      return;
-    }
+  const startLeaving = useCallback(() => setIsLeaving(true), []);
 
-    const timer = setTimeout(
-      () => setIsLeaving(true),
-      WELCOME_HOLD_DURATION_MS,
-    );
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (
-        event.key === 'Escape' ||
-        event.key === 'Enter' ||
-        event.key === ' '
-      ) {
-        setIsLeaving(true);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [welcomeAnimationVisible]);
-
-  if (!welcomeAnimationVisible) {
+  if (!isWelcomeAnimationVisible) {
     return null;
   }
-
-  const handleSkip = () => setIsLeaving(true);
 
   const handleBackdropAnimationEnd = (
     event: AnimationEvent<HTMLDivElement>,
   ) => {
     if (event.target === event.currentTarget && isLeaving) {
-      setWelcomeAnimationVisible(false);
+      setIsWelcomeAnimationVisible(false);
       setIsLeaving(false);
     }
   };
@@ -196,7 +168,8 @@ export const WelcomeOverlay = () => {
   const leavingClassName = isLeaving ? 'is-leaving' : undefined;
 
   return createPortal(
-    <StyledOverlay role="presentation" onClick={handleSkip}>
+    <StyledOverlay role="presentation" onClick={startLeaving}>
+      <WelcomeAnimationDismissEffect onDismiss={startLeaving} />
       <StyledBackdrop
         className={leavingClassName}
         onAnimationEnd={handleBackdropAnimationEnd}

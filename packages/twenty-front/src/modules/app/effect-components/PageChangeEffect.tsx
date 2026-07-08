@@ -22,7 +22,7 @@ import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/use
 import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
-import { welcomeAnimationVisibleState } from '@/onboarding/states/welcomeAnimationVisibleState';
+import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { shouldShowWelcomeAnimationOnNavigate } from '@/onboarding/utils/shouldShowWelcomeAnimationOnNavigate';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
@@ -181,7 +181,7 @@ export const PageChangeEffect = () => {
           isNavigatingToOnboardingOrAuthPath,
         })
       ) {
-        store.set(welcomeAnimationVisibleState.atom, true);
+        store.set(isWelcomeAnimationVisibleState.atom, true);
       }
 
       navigate(pageChangeEffectNavigateLocation);

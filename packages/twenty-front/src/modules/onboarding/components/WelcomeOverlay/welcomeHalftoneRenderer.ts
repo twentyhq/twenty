@@ -1,41 +1,22 @@
-const TAU = Math.PI * 2;
-const VIEWBOX_WIDTH = 297.037;
-const VIEWBOX_CENTER_X = 148.5;
-const VIEWBOX_CENTER_Y = 119.5;
+import { isDefined } from 'twenty-shared/utils';
 
-const DASH_DURATION_SECONDS = 0.62;
-const ASSEMBLE_STAGGER_SECONDS = 0.18;
-const ASSEMBLE_JITTER_SECONDS = 0.12;
+import { buildWelcomeHalftoneParticles } from '@/onboarding/components/WelcomeOverlay/buildWelcomeHalftoneParticles';
+import { createWelcomeHalftoneAnimationFrameLoop } from '@/onboarding/components/WelcomeOverlay/createWelcomeHalftoneAnimationFrameLoop';
+import { type WelcomeHalftoneParticle } from '@/onboarding/components/WelcomeOverlay/welcomeHalftoneParticle.type';
+
+const DASH_ASSEMBLE_DURATION_SECONDS = 0.62;
 const BURST_DURATION_SECONDS = 0.75;
+const SETTLE_DRIFT_DURATION_SECONDS = 0.6;
+const SHIMMER_BAND_HALF_WIDTH = 0.028;
+const MINIMUM_VISIBLE_OPACITY = 0.01;
 
-const clamp01 = (value: number) => Math.max(0, Math.min(1, value));
-const lerp = (from: number, to: number, ratio: number) =>
+const clampToUnitRange = (value: number) => Math.max(0, Math.min(1, value));
+const interpolate = (from: number, to: number, ratio: number) =>
   from + (to - from) * ratio;
-const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
-const easeOutExpo = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
-const smootherStep = (t: number) => t * t * (3 - 2 * t);
-
-const pseudoRandom = (seed: number) => {
-  const value = Math.sin(seed) * 43758.5453;
-  return value - Math.floor(value);
-};
-
-type WelcomeHalftoneParticle = {
-  targetX: number;
-  targetY: number;
-  startX: number;
-  startY: number;
-  length: number;
-  strokeWidth: number;
-  directionX: number;
-  directionY: number;
-  distanceToCenter: number;
-  delaySeconds: number;
-  phase: number;
-  leaveX: number;
-  leaveY: number;
-  leaveAlpha: number;
-};
+const easeOutCubic = (ratio: number) => 1 - Math.pow(1 - ratio, 3);
+const easeOutExpo = (ratio: number) =>
+  ratio >= 1 ? 1 : 1 - Math.pow(2, -10 * ratio);
+const smootherStep = (ratio: number) => ratio * ratio * (3 - 2 * ratio);
 
 type WelcomeHalftoneRendererOptions = {
   context: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
@@ -55,210 +36,192 @@ export const createWelcomeHalftoneRenderer = (
   const baseColor = options.color;
   const highlightColor = options.highlightColor;
 
-  let width = options.width;
-  let height = options.height;
+  let canvasWidth = options.width;
+  let canvasHeight = options.height;
   let devicePixelRatio = options.devicePixelRatio;
 
   let particles: WelcomeHalftoneParticle[] = [];
   let halftoneSize = 0;
-  let centerX = 0;
-  let centerY = 0;
   let maxDistanceToCenter = 1;
 
-  let startTimeMs: number | null = null;
-  let leaveTimeSeconds: number | null = null;
-  let leaveRequested = false;
-  let frameHandle = 0;
+  let firstFrameTimeMs: number | null = null;
+  let leaveStartSeconds: number | null = null;
+  let hasLeaveBeenRequested = false;
 
-  const supportsAnimationFrame = typeof requestAnimationFrame === 'function';
+  const animationFrameLoop = createWelcomeHalftoneAnimationFrameLoop();
 
-  const requestFrame = (callback: (time: number) => void) => {
-    frameHandle = supportsAnimationFrame
-      ? requestAnimationFrame(callback)
-      : (setTimeout(
-          () => callback(performance.now()),
-          16,
-        ) as unknown as number);
-  };
-
-  const cancelFrame = () => {
-    if (supportsAnimationFrame) {
-      cancelAnimationFrame(frameHandle);
-    } else {
-      clearTimeout(frameHandle);
-    }
-  };
-
-  const build = () => {
+  const rebuildParticlesForCurrentSize = () => {
     context.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
     context.lineCap = 'round';
-    halftoneSize = Math.max(width * 1.05, height * 1.3);
-    const scale = halftoneSize / VIEWBOX_WIDTH;
-    centerX = width / 2;
-    centerY = height / 2;
-    maxDistanceToCenter =
-      Math.hypot(VIEWBOX_CENTER_X, VIEWBOX_CENTER_Y) * scale || 1;
-
-    particles = dashes.map(([x1, x2, y, strokeWidth], index) => {
-      const targetX = centerX + ((x1 + x2) / 2 - VIEWBOX_CENTER_X) * scale;
-      const targetY = centerY + (y - VIEWBOX_CENTER_Y) * scale;
-      const distanceToCenter = Math.hypot(targetX - centerX, targetY - centerY);
-      const scatterAngle = pseudoRandom(index * 1.3) * TAU;
-      const scatterRadius =
-        halftoneSize * (0.35 + 0.5 * pseudoRandom(index * 2.1));
-
-      return {
-        targetX,
-        targetY,
-        startX: centerX + Math.cos(scatterAngle) * scatterRadius,
-        startY: centerY + Math.sin(scatterAngle) * scatterRadius,
-        length: Math.max(x2 - x1, 0) * scale,
-        strokeWidth: Math.max(strokeWidth * scale, 0.6),
-        directionX:
-          distanceToCenter > 0 ? (targetX - centerX) / distanceToCenter : 0,
-        directionY:
-          distanceToCenter > 0 ? (targetY - centerY) / distanceToCenter : -1,
-        distanceToCenter,
-        delaySeconds:
-          ASSEMBLE_STAGGER_SECONDS * (distanceToCenter / maxDistanceToCenter) +
-          ASSEMBLE_JITTER_SECONDS * pseudoRandom(index * 3.7),
-        phase: pseudoRandom(index * 5.1) * TAU,
-        leaveX: 0,
-        leaveY: 0,
-        leaveAlpha: 0,
-      };
-    });
+    const layout = buildWelcomeHalftoneParticles(
+      dashes,
+      canvasWidth,
+      canvasHeight,
+    );
+    particles = layout.particles;
+    halftoneSize = layout.halftoneSize;
+    maxDistanceToCenter = layout.maxDistanceToCenter;
   };
 
   const computeAssembleState = (
     particle: WelcomeHalftoneParticle,
-    seconds: number,
+    elapsedSeconds: number,
   ) => {
-    const progress = easeOutExpo(
-      clamp01((seconds - particle.delaySeconds) / DASH_DURATION_SECONDS),
+    const assembleProgress = easeOutExpo(
+      clampToUnitRange(
+        (elapsedSeconds - particle.assembleDelaySeconds) /
+          DASH_ASSEMBLE_DURATION_SECONDS,
+      ),
     );
-    let x = lerp(particle.startX, particle.targetX, progress);
-    let y = lerp(particle.startY, particle.targetY, progress);
-    const settled = clamp01(
-      (seconds - (particle.delaySeconds + DASH_DURATION_SECONDS)) / 0.6,
+    let particleX = interpolate(
+      particle.scatterStartX,
+      particle.targetX,
+      assembleProgress,
     );
-    x += Math.sin(seconds * 1.6 + particle.phase) * settled * 1.2;
-    y += Math.cos(seconds * 1.4 + particle.phase) * settled * 0.8;
-    return { x, y, alpha: progress };
+    let particleY = interpolate(
+      particle.scatterStartY,
+      particle.targetY,
+      assembleProgress,
+    );
+    const settleDriftProgress = clampToUnitRange(
+      (elapsedSeconds -
+        (particle.assembleDelaySeconds + DASH_ASSEMBLE_DURATION_SECONDS)) /
+        SETTLE_DRIFT_DURATION_SECONDS,
+    );
+    particleX +=
+      Math.sin(elapsedSeconds * 1.6 + particle.driftPhase) *
+      settleDriftProgress *
+      1.2;
+    particleY +=
+      Math.cos(elapsedSeconds * 1.4 + particle.driftPhase) *
+      settleDriftProgress *
+      0.8;
+    return { particleX, particleY, opacity: assembleProgress };
   };
 
-  const draw = (timeMs: number) => {
-    if (startTimeMs === null) {
-      startTimeMs = timeMs;
+  const drawFrame = (timeMs: number) => {
+    if (!isDefined(firstFrameTimeMs)) {
+      firstFrameTimeMs = timeMs;
     }
-    const elapsedSeconds = (timeMs - startTimeMs) / 1000;
+    const elapsedSeconds = (timeMs - firstFrameTimeMs) / 1000;
 
-    if (leaveRequested && leaveTimeSeconds === null) {
-      leaveTimeSeconds = elapsedSeconds;
+    if (hasLeaveBeenRequested && !isDefined(leaveStartSeconds)) {
+      leaveStartSeconds = elapsedSeconds;
       for (const particle of particles) {
         if (reducedMotion) {
-          particle.leaveX = particle.targetX;
-          particle.leaveY = particle.targetY;
-          particle.leaveAlpha = 1;
+          particle.positionAtLeaveStartX = particle.targetX;
+          particle.positionAtLeaveStartY = particle.targetY;
+          particle.opacityAtLeaveStart = 1;
         } else {
-          const state = computeAssembleState(particle, elapsedSeconds);
-          particle.leaveX = state.x;
-          particle.leaveY = state.y;
-          particle.leaveAlpha = state.alpha;
+          const assembleState = computeAssembleState(particle, elapsedSeconds);
+          particle.positionAtLeaveStartX = assembleState.particleX;
+          particle.positionAtLeaveStartY = assembleState.particleY;
+          particle.opacityAtLeaveStart = assembleState.opacity;
         }
       }
     }
 
-    const burst =
-      leaveTimeSeconds !== null
-        ? clamp01((elapsedSeconds - leaveTimeSeconds) / BURST_DURATION_SECONDS)
-        : 0;
-    const isLeaving = leaveTimeSeconds !== null;
+    const isLeaving = isDefined(leaveStartSeconds);
+    const burstProgress = isDefined(leaveStartSeconds)
+      ? clampToUnitRange(
+          (elapsedSeconds - leaveStartSeconds) / BURST_DURATION_SECONDS,
+        )
+      : 0;
 
-    context.clearRect(0, 0, width, height);
+    context.clearRect(0, 0, canvasWidth, canvasHeight);
 
-    const sweepPosition = ((elapsedSeconds * 0.5) % 1.3) / 1.3;
-    const sweepActive = !reducedMotion && !isLeaving;
-    const spanInverse = 1 / (width + height);
-    let currentStroke = '';
+    const shimmerSweepPosition = ((elapsedSeconds * 0.5) % 1.3) / 1.3;
+    const isShimmerActive = !reducedMotion && !isLeaving;
+    const inverseViewportSpan = 1 / (canvasWidth + canvasHeight);
+    let currentStrokeColor = '';
 
     for (const particle of particles) {
-      let x: number;
-      let y: number;
-      let alpha: number;
-      let length = particle.length;
-      let directionalX = 1;
-      let directionalY = 0;
+      let particleX: number;
+      let particleY: number;
+      let particleOpacity: number;
+      let capsuleLength = particle.dashLength;
+      let capsuleDirectionX = 1;
+      let capsuleDirectionY = 0;
 
       if (reducedMotion) {
-        x = particle.targetX;
-        y = particle.targetY;
-        alpha = isLeaving ? 1 - burst : 1;
+        particleX = particle.targetX;
+        particleY = particle.targetY;
+        particleOpacity = isLeaving ? 1 - burstProgress : 1;
       } else if (!isLeaving) {
-        const state = computeAssembleState(particle, elapsedSeconds);
-        x = state.x;
-        y = state.y;
-        alpha = state.alpha;
+        const assembleState = computeAssembleState(particle, elapsedSeconds);
+        particleX = assembleState.particleX;
+        particleY = assembleState.particleY;
+        particleOpacity = assembleState.opacity;
       } else {
-        const eased = smootherStep(burst);
-        const push =
-          eased *
+        const easedBurstProgress = smootherStep(burstProgress);
+        const outwardPushDistance =
+          easedBurstProgress *
           halftoneSize *
           1.1 *
           (0.6 + 0.8 * (particle.distanceToCenter / maxDistanceToCenter));
-        x = particle.leaveX + particle.directionX * push;
-        y = particle.leaveY + particle.directionY * push;
-        alpha = particle.leaveAlpha * (1 - easeOut(clamp01(burst / 0.85)));
-        length = particle.length + push * 0.12 * burst;
-        directionalX = particle.directionX;
-        directionalY = particle.directionY;
+        particleX =
+          particle.positionAtLeaveStartX +
+          particle.burstDirectionX * outwardPushDistance;
+        particleY =
+          particle.positionAtLeaveStartY +
+          particle.burstDirectionY * outwardPushDistance;
+        particleOpacity =
+          particle.opacityAtLeaveStart *
+          (1 - easeOutCubic(clampToUnitRange(burstProgress / 0.85)));
+        capsuleLength =
+          particle.dashLength + outwardPushDistance * 0.12 * burstProgress;
+        capsuleDirectionX = particle.burstDirectionX;
+        capsuleDirectionY = particle.burstDirectionY;
       }
 
-      if (alpha <= 0.01) {
+      if (particleOpacity <= MINIMUM_VISIBLE_OPACITY) {
         continue;
       }
 
-      const isInSweep =
-        sweepActive && Math.abs((x + y) * spanInverse - sweepPosition) < 0.028;
-      const stroke = isInSweep ? highlightColor : baseColor;
-      if (stroke !== currentStroke) {
-        context.strokeStyle = stroke;
-        currentStroke = stroke;
+      const isParticleInShimmerBand =
+        isShimmerActive &&
+        Math.abs(
+          (particleX + particleY) * inverseViewportSpan - shimmerSweepPosition,
+        ) < SHIMMER_BAND_HALF_WIDTH;
+      const strokeColor = isParticleInShimmerBand ? highlightColor : baseColor;
+      if (strokeColor !== currentStrokeColor) {
+        context.strokeStyle = strokeColor;
+        currentStrokeColor = strokeColor;
       }
 
-      context.globalAlpha = alpha;
+      context.globalAlpha = particleOpacity;
       context.lineWidth = particle.strokeWidth;
       context.beginPath();
-      const halfX = (directionalX * length) / 2;
-      const halfY = (directionalY * length) / 2;
-      context.moveTo(x - halfX, y - halfY);
-      context.lineTo(x + halfX, y + halfY);
+      const halfCapsuleX = (capsuleDirectionX * capsuleLength) / 2;
+      const halfCapsuleY = (capsuleDirectionY * capsuleLength) / 2;
+      context.moveTo(particleX - halfCapsuleX, particleY - halfCapsuleY);
+      context.lineTo(particleX + halfCapsuleX, particleY + halfCapsuleY);
       context.stroke();
     }
 
     context.globalAlpha = 1;
-    requestFrame(draw);
+    animationFrameLoop.requestNextFrame(drawFrame);
   };
 
-  build();
-  requestFrame(draw);
+  rebuildParticlesForCurrentSize();
+  animationFrameLoop.requestNextFrame(drawFrame);
 
   return {
     leave: () => {
-      leaveRequested = true;
+      hasLeaveBeenRequested = true;
     },
     resize: (
-      nextWidth: number,
-      nextHeight: number,
+      nextCanvasWidth: number,
+      nextCanvasHeight: number,
       nextDevicePixelRatio: number,
     ) => {
-      width = nextWidth;
-      height = nextHeight;
+      canvasWidth = nextCanvasWidth;
+      canvasHeight = nextCanvasHeight;
       devicePixelRatio = nextDevicePixelRatio;
-      build();
+      rebuildParticlesForCurrentSize();
     },
     destroy: () => {
-      cancelFrame();
+      animationFrameLoop.cancelPendingFrame();
     },
   };
 };
