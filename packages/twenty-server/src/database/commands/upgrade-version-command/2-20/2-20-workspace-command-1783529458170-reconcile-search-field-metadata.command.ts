@@ -31,7 +31,7 @@ type SearchFieldMetadataReconciliationOperations = {
   >;
 };
 
-@RegisteredWorkspaceCommand('2.20.0', 1825000002000)
+@RegisteredWorkspaceCommand('2.20.0', 1783529458170)
 @Command({
   name: 'upgrade:2-20:reconcile-search-field-metadata',
   description:

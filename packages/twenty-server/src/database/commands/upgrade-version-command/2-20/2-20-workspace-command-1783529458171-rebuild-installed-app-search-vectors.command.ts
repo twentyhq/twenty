@@ -13,7 +13,7 @@ import { type UniversalUpdateFieldAction } from 'src/engine/workspace-manager/wo
 import { WORKSPACE_MIGRATION_ACTION_TYPE } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/constants/workspace-migration-action-type.constant';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
-@RegisteredWorkspaceCommand('2.20.0', 1825000003000)
+@RegisteredWorkspaceCommand('2.20.0', 1783529458171)
 @Command({
   name: 'upgrade:2-20:rebuild-installed-app-search-vectors',
   description:
