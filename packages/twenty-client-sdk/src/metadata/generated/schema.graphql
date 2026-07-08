@@ -2655,6 +2655,7 @@ type ImapSmtpCaldavPublicConnectionParams {
 }
 
 type ImapSmtpCaldavPublicConnectionParameters {
+  name: String
   IMAP: ImapSmtpCaldavPublicConnectionParams
   SMTP: ImapSmtpCaldavPublicConnectionParams
   CALDAV: ImapSmtpCaldavPublicConnectionParams
@@ -4660,6 +4661,7 @@ input SendEmailAttachmentInput {
 }
 
 input EmailAccountConnectionParameters {
+  name: String
   IMAP: ConnectionParametersInput
   SMTP: ConnectionParametersInput
   CALDAV: ConnectionParametersInput
