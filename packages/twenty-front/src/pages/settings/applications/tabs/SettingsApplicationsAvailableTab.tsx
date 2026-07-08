@@ -152,7 +152,7 @@ export const SettingsApplicationsAvailableTab = () => {
             <StyledNotFeaturedContainer>
               <InlineBanner
                 color={'danger'}
-                message={t`Applications below are not vetted. Use at your own risk.`}
+                message={t`Applications below are not featured. Use at your own risk.`}
               />
               <StyledCardsGrid>
                 {nonFeaturedApplications.map((application) => (

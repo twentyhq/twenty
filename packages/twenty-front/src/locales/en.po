@@ -15974,11 +15974,6 @@ msgstr "There is no activity associated with this record."
 msgid "There was an error while updating password."
 msgstr "There was an error while updating password."
 
-#. js-lingui-id: vg1S0X
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "These apps are not vetted. Use at your own risk."
-msgstr "These apps are not vetted. Use at your own risk."
-
 #. js-lingui-id: AUV+TY
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "Thinking"
