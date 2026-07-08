@@ -14,10 +14,13 @@ import { ApplicationInstallService } from 'src/engine/core-modules/application/a
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { UninstallApplicationInput } from 'src/engine/core-modules/application/application-manifest/dtos/uninstall-application.input';
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
+import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -40,6 +43,7 @@ export class ApplicationInstallResolver {
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly marketplaceQueryService: MarketplaceQueryService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   @Query(() => [ApplicationDTO])
@@ -130,9 +134,42 @@ export class ApplicationInstallResolver {
     @Args() { universalIdentifier }: UninstallApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    await this.applicationSyncService.uninstallApplication({
-      applicationUniversalIdentifier: universalIdentifier,
-      workspaceId,
+    const application = await this.applicationService.findByUniversalIdentifier(
+      {
+        universalIdentifier,
+        workspaceId,
+      },
+    );
+
+    const attributes = {
+      universalIdentifier,
+      appName: application?.name ?? 'unknown',
+      sourceType: application?.sourceType ?? 'unknown',
+    };
+
+    try {
+      await this.applicationSyncService.uninstallApplication({
+        applicationUniversalIdentifier: universalIdentifier,
+        workspaceId,
+      });
+    } catch (error) {
+      await this.metricsService.incrementCounterForEvent({
+        key: MetricsKeys.AppUninstallFailed,
+        attributes: {
+          ...attributes,
+          errorCode:
+            error instanceof ApplicationException ? error.code : 'UNKNOWN',
+        },
+        shouldStoreInCache: false,
+      });
+
+      throw error;
+    }
+
+    await this.metricsService.incrementCounterForEvent({
+      key: MetricsKeys.AppUninstallSucceeded,
+      attributes,
+      shouldStoreInCache: false,
     });
 
     return true;

@@ -33,6 +33,8 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
@@ -56,6 +58,7 @@ export class ApplicationInstallService {
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async installApplication(params: {
@@ -272,11 +275,39 @@ export class ApplicationInstallService {
         `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
       );
 
+      await this.metricsService.incrementCounterForEvent({
+        key: isVersionUpgrade
+          ? MetricsKeys.AppUpgradeSucceeded
+          : MetricsKeys.AppInstallSucceeded,
+        attributes: {
+          universalIdentifier,
+          appName: application.name,
+          sourceType: appRegistration.sourceType,
+          version: newVersion,
+        },
+        shouldStoreInCache: false,
+      });
+
       return true;
     } catch (error) {
       this.logger.error(
         `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,
       );
+
+      await this.metricsService.incrementCounterForEvent({
+        key: isVersionUpgrade
+          ? MetricsKeys.AppUpgradeFailed
+          : MetricsKeys.AppInstallFailed,
+        attributes: {
+          universalIdentifier,
+          appName: application.name,
+          sourceType: appRegistration.sourceType,
+          version: newVersion,
+          errorCode:
+            error instanceof ApplicationException ? error.code : 'UNKNOWN',
+        },
+        shouldStoreInCache: false,
+      });
 
       if (!isVersionUpgrade) {
         await this.applicationSyncService.uninstallApplication({

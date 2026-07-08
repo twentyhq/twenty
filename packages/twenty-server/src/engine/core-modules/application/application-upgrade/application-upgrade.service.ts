@@ -13,6 +13,8 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const npmPackageMetadataSchema = z.object({
@@ -30,6 +32,7 @@ export class ApplicationUpgradeService {
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async checkForUpdates(
@@ -66,9 +69,27 @@ export class ApplicationUpgradeService {
         return null;
       }
 
+      const isNewVersion =
+        appRegistration.latestAvailableVersion !== parsed.data.version;
+
       await this.appRegistrationRepository.update(appRegistration.id, {
         latestAvailableVersion: parsed.data.version,
       });
+
+      // Change-guarded so this fires exactly once per real version bump even
+      // though the catalog-sync path also converges latestAvailableVersion.
+      if (isNewVersion) {
+        await this.metricsService.incrementCounterForEvent({
+          key: MetricsKeys.AppRegistrationVersionPublished,
+          attributes: {
+            universalIdentifier: appRegistration.universalIdentifier,
+            appName: appRegistration.name,
+            sourceType: appRegistration.sourceType,
+            version: parsed.data.version,
+          },
+          shouldStoreInCache: false,
+        });
+      }
 
       return parsed.data.version;
     } catch (error) {
