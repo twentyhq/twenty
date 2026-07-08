@@ -28,7 +28,7 @@ export const SettingsApplicationFunctionDomainSection = ({
   return (
     <Section>
       <H2Title
-        title={t`Public URL`}
+        title={t`App URL`}
         description={t`This app's routes are served from this URL. Add a custom domain to use your own.`}
       />
       <StyledContent>
