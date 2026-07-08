@@ -22,6 +22,8 @@ const StyledFormContainer = styled.div`
   flex-direction: column;
   margin-bottom: ${themeCssVariables.spacing[6]};
   margin-top: ${themeCssVariables.spacing[6]};
+  min-width: 0;
+  width: 100%;
 `;
 
 type SignInUpStandardContentProps = {
