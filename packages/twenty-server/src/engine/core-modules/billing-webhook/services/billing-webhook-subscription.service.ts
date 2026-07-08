@@ -150,7 +150,6 @@ export class BillingWebhookSubscriptionService {
       'currentBillingSubscription',
     ]);
 
-
     if (this.shouldSuspendWorkspace(data)) {
       if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) {
         await this.workspaceService.suspendWorkspace(workspaceId);
