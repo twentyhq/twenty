@@ -15,6 +15,8 @@ export const IMMUTABLE_FILE_CACHE_CONTROL = 'private, max-age=86400, immutable';
 
 export const PUBLIC_ASSET_CACHE_CONTROL = 'public, max-age=3600';
 
+export const PRESIGNED_URL_CACHE_CONTROL = 'private, no-store';
+
 export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.CorePicture]: {
     ignoreExpirationToken: true,

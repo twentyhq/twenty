@@ -115,7 +115,10 @@ describe('FileController', () => {
       expect(mockResponse.redirect).toHaveBeenCalledWith(
         'https://s3.example.com/file?signed=abc',
       );
-      expect(mockResponse.setHeader).not.toHaveBeenCalled();
+      expect(mockResponse.setHeader).toHaveBeenCalledWith(
+        'Cache-Control',
+        'private, no-store',
+      );
     });
 
     it('should stream with headers when no presigned URL (local driver)', async () => {

@@ -25,6 +25,7 @@ import {
   FileByIdGuard,
   SupportedFileFolder,
 } from 'src/engine/core-modules/file/guards/file-by-id.guard';
+import { PRESIGNED_URL_CACHE_CONTROL } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.utils';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -149,6 +150,8 @@ export class FileController {
     }
 
     if (fileResponse.type === 'redirect') {
+      res.setHeader('Cache-Control', PRESIGNED_URL_CACHE_CONTROL);
+
       return res.redirect(fileResponse.presignedUrl);
     }
 

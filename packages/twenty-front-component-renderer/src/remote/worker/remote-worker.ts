@@ -10,6 +10,8 @@ import {
   type RemoteRootElement,
 } from '@remote-dom/core/elements';
 
+import { z } from 'zod';
+
 import { isDefined } from 'twenty-shared/utils';
 
 import { installStyleBridge } from '@/polyfills/installStyleBridge';
@@ -38,6 +40,8 @@ exposeGlobals({
   __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
 });
 
+const componentSourceHandoffSchema = z.object({ url: z.url() });
+
 const fetchComponentSource = async (
   url: string,
   headers?: Record<string, string>,
@@ -48,6 +52,28 @@ const fetchComponentSource = async (
     throw new Error(
       `Failed to fetch ${url}: ${response.status} ${response.statusText}`,
     );
+  }
+
+  const contentType = response.headers.get('content-type') ?? '';
+
+  if (contentType.includes('application/json')) {
+    const handoff = componentSourceHandoffSchema.safeParse(
+      await response.json(),
+    );
+
+    if (!handoff.success) {
+      throw new Error(`Invalid component source handoff response from ${url}`);
+    }
+
+    const presignedResponse = await fetch(handoff.data.url);
+
+    if (!presignedResponse.ok) {
+      throw new Error(
+        `Failed to fetch presigned URL: ${presignedResponse.status} ${presignedResponse.statusText}`,
+      );
+    }
+
+    return presignedResponse.text();
   }
 
   return response.text();
