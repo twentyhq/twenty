@@ -1,0 +1,27 @@
+packages/twenty-server/src/engine/core-modules/message-queue/drivers/bullmq.driver.ts
+  s_fcf080a0680f8f::t_41d7df5ec4df2f 139
+packages/twenty-shared/node_modules
+  s_fcf080a0680f8f::t_aca8d2adbd0768 1
+node_modules
+  s_fcf080a0680f8f::t_9026e33dbacac4 1
+packages/twenty-server/node_modules
+  s_fcf080a0680f8f::t_f7a0dbf47b0c08 1
+packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts
+  s_fcf080a0680f8f::t_8e0a230b8417fc 1291,1297
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "effd1d9491de73be2363f5472081b4bd097d334c",
+  "prompts": {},
+  "sessions": {
+    "s_fcf080a0680f8f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3380b538-f2d8-446b-a6ab-df071b2b07a2",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
