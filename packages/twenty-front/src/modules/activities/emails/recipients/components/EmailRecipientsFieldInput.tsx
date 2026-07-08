@@ -195,7 +195,9 @@ export const EmailRecipientsFieldInput = ({
         enableGlobalHotkeysConflictingWithKeyboard: false,
       },
     });
+  };
 
+  const handleInputClick = () => {
     if (!isEditing && inputValue.length === 0 && suggestions.length > 0) {
       openSuggestions();
     }
@@ -429,6 +431,7 @@ export const EmailRecipientsFieldInput = ({
       onPaste={handleInputPaste}
       onFocus={handleInputFocus}
       onBlur={handleInputBlur}
+      onClick={handleInputClick}
     />
   );
 
