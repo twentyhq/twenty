@@ -89,6 +89,33 @@ const toolCallInputs = async (messages: UIMessage[]): Promise<unknown[]> => {
   return inputs;
 };
 
+const duplicateToolCallIds = async (messages: UIMessage[]): Promise<string[]> => {
+  const modelMessages = await convertToModelMessages(messages);
+  const duplicates = new Set<string>();
+
+  for (const message of modelMessages) {
+    if (!Array.isArray(message.content)) {
+      continue;
+    }
+
+    const seenInMessage = new Set<string>();
+
+    for (const content of message.content) {
+      if (typeof content !== 'object' || content.type !== 'tool-call') {
+        continue;
+      }
+
+      if (seenInMessage.has(content.toolCallId)) {
+        duplicates.add(content.toolCallId);
+      }
+
+      seenInMessage.add(content.toolCallId);
+    }
+  }
+
+  return [...duplicates];
+};
+
 describe('finalizeDanglingToolParts round-trip', () => {
   const interruptedBatch: ExtendedUIMessagePart[] = [
     { type: 'text', text: 'Creating items…' } as ExtendedUIMessagePart,
@@ -186,5 +213,22 @@ describe('finalizeDanglingToolParts round-trip', () => {
     );
 
     expect(dbPart.toolInput).toEqual({});
+  });
+
+  it('drops duplicate tool calls before persistence so later turns can be replayed', async () => {
+    const duplicateBatch: ExtendedUIMessagePart[] = [
+      toolPart('output-available', {
+        toolCallId: 'bulk_archive_call',
+        output: { success: true, archived: 10 },
+      }),
+      toolPart('output-available', {
+        toolCallId: 'bulk_archive_call',
+        output: { success: true, archived: 10 },
+      }),
+    ];
+
+    const reloaded = persistAndReload(finalizeDanglingToolParts(duplicateBatch));
+
+    expect(await duplicateToolCallIds(buildThread(reloaded))).toEqual([]);
   });
 });

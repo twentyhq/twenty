@@ -13,31 +13,44 @@ export const finalizeDanglingToolParts = <
   TPart extends UIMessagePart<UIDataTypes, UITools>,
 >(
   parts: TPart[],
-): TPart[] =>
-  parts
+): TPart[] => {
+  const seenToolCallIds = new Set<string>();
+
+  return parts
     .filter((part) => !(isToolUIPart(part) && part.state === 'input-streaming'))
-    .map((part) => {
+    .flatMap((part) => {
       if (!isToolUIPart(part)) {
-        return part;
+        return [part];
       }
+
+      if (seenToolCallIds.has(part.toolCallId)) {
+        return [];
+      }
+
+      seenToolCallIds.add(part.toolCallId);
 
       // Dangling call interrupted mid-flight: resolve it as an error.
       if (part.state === 'input-available') {
-        return {
-          ...part,
-          state: 'output-error',
-          input: part.input ?? {},
-          errorText: INTERRUPTED_TOOL_ERROR_TEXT,
-        } as TPart;
+        return [
+          {
+            ...part,
+            state: 'output-error',
+            input: part.input ?? {},
+            errorText: INTERRUPTED_TOOL_ERROR_TEXT,
+          } as TPart,
+        ];
       }
 
       // Errored before its input was captured (e.g. failed input validation).
       if (part.state === 'output-error' && part.input == null) {
-        return {
-          ...part,
-          input: {},
-        } as TPart;
+        return [
+          {
+            ...part,
+            input: {},
+          } as TPart,
+        ];
       }
 
-      return part;
+      return [part];
     });
+};
