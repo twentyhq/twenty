@@ -1,0 +1,141 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/utils/__tests__/build-initial-delta-url.util.spec.ts
+  s_7b1c6f2e0e3b83::t_b97cbc3504843a 1-26,29-43
+  s_7b1c6f2e0e3b83::t_d5710a4c1d9cc6 27-28
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service.ts
+  s_7b1c6f2e0e3b83::t_9b08aed05847bc 18
+  s_7b1c6f2e0e3b83::t_d3a924538393d7 74-109,111
+  s_7b1c6f2e0e3b83::t_7c53531df00c23 8-9
+packages/twenty-server/src/modules/calendar/common/query-hooks/calendar-event/services/apply-calendar-events-visibility-restrictions.service.ts
+  s_7b1c6f2e0e3b83::t_5b89df563c45c0 13
+  s_7b1c6f2e0e3b83::t_454e36d737606f 85,89,109,113-123
+packages/twenty-server/src/modules/messaging/message-folder-manager/drivers/imap/services/imap-get-all-folders.service.ts
+  s_7b1c6f2e0e3b83::t_c626178557076b 15-16
+  s_7b1c6f2e0e3b83::t_ef05591a32a40d 134,141
+  s_7b1c6f2e0e3b83::t_bff06aa8a2b6d1 81
+packages/twenty-server/src/modules/messaging/message-folder-manager/drivers/imap/utils/remap-folder-parent-ids.util.ts
+  s_7b1c6f2e0e3b83::t_3f9d998e92d322 1-18
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service.ts
+  s_7b1c6f2e0e3b83::t_ac651e5f15547f 10,50-53,81-84,86,88,93,95-98,109-111,113-126,135-146,148,154-156,165-168,170-180,182-183,187-190,192-194,196-205
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/microsoft/utils/__tests__/escape-odata-string-literal.util.spec.ts
+  s_7b1c6f2e0e3b83::t_9263d0e02955f5 1-19
+packages/twenty-server/src/modules/messaging/message-folder-manager/drivers/imap/utils/__tests__/remap-folder-parent-ids.util.spec.ts
+  s_7b1c6f2e0e3b83::t_81aebffa1ee58b 1-78
+packages/twenty-server/src/modules/messaging/common/query-hooks/message/utils/apply-visibility-to-message.util.ts
+  s_7b1c6f2e0e3b83::t_a453def160b52f 1-39
+packages/twenty-server/src/modules/messaging/message-folder-manager/drivers/imap/utils/is-mailbox-selectable.util.ts
+  s_7b1c6f2e0e3b83::t_0973949b0a703d 1-17
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
+  s_7b1c6f2e0e3b83::t_bc8caad56a72d1 36
+  s_7b1c6f2e0e3b83::t_19e27f7a61fc37 12
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/microsoft/utils/__tests__/compose-microsoft-graph-message.util.spec.ts
+  s_7b1c6f2e0e3b83::t_dacee18f5c9faf 1-79
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/utils/partition-delta-page.util.ts
+  s_7b1c6f2e0e3b83::t_78b0f5b9c5f8f5 1-26
+packages/twenty-server/src/modules/messaging/message-outbound-manager/utils/__tests__/extract-message-id-from-buffer.util.spec.ts
+  s_7b1c6f2e0e3b83::t_b4106687d5eba9 1-49
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/microsoft/utils/compose-microsoft-graph-message.util.ts
+  s_7b1c6f2e0e3b83::t_83c95401834cff 1-27
+packages/twenty-server/src/modules/messaging/message-outbound-manager/utils/__tests__/to-mail-composer-options.util.spec.ts
+  s_7b1c6f2e0e3b83::t_d25614da6dbd18 1-104
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/microsoft/services/microsoft-message-outbound.service.ts
+  s_7b1c6f2e0e3b83::t_d214114a4e1e37 129
+  s_7b1c6f2e0e3b83::t_8b8eb30dd552de 7-8
+  s_7b1c6f2e0e3b83::t_d1261de1729a51 97
+  s_7b1c6f2e0e3b83::t_3bb2b51772435d 130
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-message-list.service.ts
+  s_7b1c6f2e0e3b83::t_630fd35082452d 153-158
+  s_7b1c6f2e0e3b83::t_4ee43429df4922 16-17
+  s_7b1c6f2e0e3b83::t_941e68addc7be4 103
+packages/twenty-server/src/modules/messaging/common/query-hooks/message/apply-messages-visibility-restrictions.service.ts
+  s_7b1c6f2e0e3b83::t_e3a0c1747a4548 12
+  s_7b1c6f2e0e3b83::t_27ebbdc701592e 94,98,123,127-131,133-134,138
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/utils/build-initial-delta-url.util.ts
+  s_7b1c6f2e0e3b83::t_73ce5be0292c95 6,8-9
+  s_7b1c6f2e0e3b83::t_da5239635f43df 1-2,4-5,10-19
+  s_7b1c6f2e0e3b83::t_15a12ea72cf684 3,7
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service.ts
+  s_7b1c6f2e0e3b83::t_d1563ec0e6448b 3
+  s_7b1c6f2e0e3b83::t_31fa657ca5c139 28
+  s_7b1c6f2e0e3b83::t_c38c164eb96e36 85-90
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/map-import-exception-to-sync-outcome.util.ts
+  s_7b1c6f2e0e3b83::t_ce57527e1410f8 1-54
+packages/twenty-server/src/modules/calendar/common/query-hooks/calendar-event/utils/resolve-calendar-event-visibility.util.ts
+  s_7b1c6f2e0e3b83::t_5f61e5536d51b0 1-27
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/utils/__tests__/partition-fetched-calendar-events.util.spec.ts
+  s_7b1c6f2e0e3b83::t_d88a9e6e2cfa4e 1-127
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/imap/utils/can-skip-folder-sync.util.ts
+  s_7b1c6f2e0e3b83::t_775ae50a4da8ea 1-41
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/utils/__tests__/partition-delta-page.util.spec.ts
+  s_7b1c6f2e0e3b83::t_dff3f3d3b0dab9 1-44
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/should-create-contact-from-participant.util.ts
+  s_7b1c6f2e0e3b83::t_25b80e90e05740 1-53
+packages/twenty-server/src/modules/calendar/common/query-hooks/calendar-event/utils/__tests__/resolve-calendar-event-visibility.util.spec.ts
+  s_7b1c6f2e0e3b83::t_97693c90ba7eb8 1-65
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/imap/utils/__tests__/can-skip-folder-sync.util.spec.ts
+  s_7b1c6f2e0e3b83::t_ae0de4ca7ddb96 1-67
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service.ts
+  s_7b1c6f2e0e3b83::t_e68e553a1f0e11 1,5,51-54
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/utils/partition-fetched-calendar-events.util.ts
+  s_7b1c6f2e0e3b83::t_ccc58940c7c594 1-2,5-6,9-27,29-75
+  s_7b1c6f2e0e3b83::t_45e764d318c105 28
+  s_7b1c6f2e0e3b83::t_e3a3d4562a24e6 3-4,7-8
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/utils/format-microsoft-batch-responses-as-messages.util.ts
+  s_7b1c6f2e0e3b83::t_5bff42b82a91b2 1-158
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/__tests__/should-create-contact-from-participant.util.spec.ts
+  s_7b1c6f2e0e3b83::t_501de6d626fc08 29,32-45
+  s_7b1c6f2e0e3b83::t_4357baba76d329 1-28,30-31,46-271
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/drivers/google-calendar/services/google-calendar-create-event.service.ts
+  s_7b1c6f2e0e3b83::t_0909cfb4086d87 7
+  s_7b1c6f2e0e3b83::t_859496086dc19f 37-39
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/__tests__/map-import-exception-to-sync-outcome.util.spec.ts
+  s_7b1c6f2e0e3b83::t_abaf4e43ae1510 1-65
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/utils/__tests__/format-microsoft-batch-responses-as-messages.util.spec.ts
+  s_7b1c6f2e0e3b83::t_917f8e94fd489b 182
+  s_7b1c6f2e0e3b83::t_2f5b277d8b40cf 208
+  s_7b1c6f2e0e3b83::t_aaa3a9fef4bee8 158
+  s_7b1c6f2e0e3b83::t_c9cd7964aeba40 1-2,4-157,159-181,183-192,194-207,209-215,217-236,238-246
+  s_7b1c6f2e0e3b83::t_e295af488e8250 237
+  s_7b1c6f2e0e3b83::t_2f0e8b9d4661d8 193
+  s_7b1c6f2e0e3b83::t_ed42ac48f3ddba 216
+  s_7b1c6f2e0e3b83::t_ca32dada02671e 3
+packages/twenty-server/src/modules/messaging/message-folder-manager/drivers/imap/utils/__tests__/is-mailbox-selectable.util.spec.ts
+  s_7b1c6f2e0e3b83::t_5f1b8de2bd58ec 1-4,6-28
+  s_7b1c6f2e0e3b83::t_303ead53aa5a4f 5
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/microsoft/utils/escape-odata-string-literal.util.ts
+  s_7b1c6f2e0e3b83::t_cf12e8a99f892b 1-2
+packages/twenty-server/src/modules/messaging/common/query-hooks/message/utils/__tests__/apply-visibility-to-message.util.spec.ts
+  s_7b1c6f2e0e3b83::t_3bde25a60ee7b8 1-101
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/drivers/google-calendar/utils/__tests__/to-google-insert-params.util.spec.ts
+  s_7b1c6f2e0e3b83::t_b5bf046e606def 1-57
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/utils/normalize-and-validate-calendar-event-input.util.ts
+  s_7b1c6f2e0e3b83::t_fc134914b4e15b 1-120
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/drivers/google-calendar/utils/to-google-insert-params.util.ts
+  s_7b1c6f2e0e3b83::t_7a08156abaa8fc 1-15
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/utils/__tests__/normalize-and-validate-calendar-event-input.util.spec.ts
+  s_7b1c6f2e0e3b83::t_79f4c77e58af24 1-175
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-message-list.service.ts
+  s_7b1c6f2e0e3b83::t_e9bf6926826174 16
+  s_7b1c6f2e0e3b83::t_dd35034a282040 181
+  s_7b1c6f2e0e3b83::t_2bbffc0527466f 161
+  s_7b1c6f2e0e3b83::t_eb1928cd21456b 92
+node_modules
+  s_7b1c6f2e0e3b83::t_0f2f0596356e9e 1
+packages/twenty-server/node_modules
+  s_7b1c6f2e0e3b83::t_4f7c836198acb4 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ffb1e25c38b0079e27762f0f35931c621ed598b4",
+  "prompts": {},
+  "sessions": {
+    "s_7b1c6f2e0e3b83": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ecb71351-1f99-4bd4-80d0-5ced7c089ea6",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
