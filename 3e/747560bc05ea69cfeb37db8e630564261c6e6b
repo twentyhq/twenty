@@ -1,0 +1,101 @@
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+  s_f50cf24ed5fc3b::t_94feec0b46a43c 97-111
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_f50cf24ed5fc3b::t_be960578fdfc30 206
+  s_f50cf24ed5fc3b::t_9e025bd47cfb03 103
+packages/twenty-shared/src/application/calendarSettingsType.ts
+  s_f50cf24ed5fc3b::t_2e8fab36d943d1 1-3
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/services/calendar-import-calendar-events.service.ts
+  s_f50cf24ed5fc3b::t_6bef8494fac2d4 1-69
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/drivers/app/utils/parse-app-calendar-event-result-or-throw.util.ts
+  s_f50cf24ed5fc3b::t_c4ab7de430c56c 1-52
+packages/twenty-server/src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant.ts
+  s_f50cf24ed5fc3b::t_4cb328657ee6c5 1803-1807
+packages/twenty-server/src/engine/core-modules/application/connection-provider/connection-provider.module.ts
+  s_f50cf24ed5fc3b::t_75e70a1f44d027 28
+  s_f50cf24ed5fc3b::t_a74e1ac3ea7696 14
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/utils/is-calendar-creation-supported-provider.util.ts
+  s_f50cf24ed5fc3b::t_21f37e0760eb0d 8-9
+packages/twenty-shared/src/application/index.ts
+  s_f50cf24ed5fc3b::t_36ae9b32aacdff 22
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/interfaces/calendar-event-creation-driver.interface.ts
+  s_f50cf24ed5fc3b::t_c41a026dc8f592 8-16
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/drivers/app/types/app-create-calendar-event-payload.type.ts
+  s_f50cf24ed5fc3b::t_b0cb55075a6675 1-10
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
+  s_f50cf24ed5fc3b::t_f5e686c4d12dde 211
+  s_f50cf24ed5fc3b::t_c25080399a7ba4 253
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/drivers/app/services/app-calendar-event-creation.service.ts
+  s_f50cf24ed5fc3b::t_fad443b708e59f 1-131
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/drivers/app/utils/__tests__/parse-app-calendar-event-result-or-throw.util.spec.ts
+  s_f50cf24ed5fc3b::t_d3d47c5966ff88 1-111
+packages/twenty-shared/src/application/connectionProviderManifestType.ts
+  s_f50cf24ed5fc3b::t_10f773f0f1103a 12
+  s_f50cf24ed5fc3b::t_591e8b4bf3cdf9 1
+packages/twenty-server/src/engine/core-modules/application/application-manifest/converters/from-connection-provider-manifest-to-universal-flat-connection-provider.util.ts
+  s_f50cf24ed5fc3b::t_f0e0f7292135e0 47
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/calendar-event-import-manager.module.ts
+  s_f50cf24ed5fc3b::t_a3d449b22b6bc8 34,37
+  s_f50cf24ed5fc3b::t_1b3d36f92bfa7d 72
+  s_f50cf24ed5fc3b::t_ef76eaa063b618 83-84
+  s_f50cf24ed5fc3b::t_b2b1af11f1a411 12
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/resolvers/import-calendar-events.resolver.ts
+  s_f50cf24ed5fc3b::t_66f66b66fd2a41 1-55
+packages/twenty-server/src/engine/core-modules/application/connection-provider/connection-provider.entity.ts
+  s_f50cf24ed5fc3b::t_110ca8d3533074 47-49
+  s_f50cf24ed5fc3b::t_ffca65e44514c6 2
+packages/twenty-server/src/database/commands/upgrade-version-command/2-20/2-20-instance-command-fast-1783515520392-add-app-channel-support.ts
+  s_f50cf24ed5fc3b::t_3645f8af4d831c 7-13
+  s_f50cf24ed5fc3b::t_11d5ddaba5d48a 14-15,17-18,20-21,23,28,30-31,33,35,37-41,43
+packages/twenty-sdk/src/sdk/define/connection-providers/define-connection-provider.ts
+  s_f50cf24ed5fc3b::t_194c26a1318f73 87-94
+packages/twenty-server/src/engine/core-modules/application/application-manifest/converters/__tests__/from-connection-provider-manifest-to-universal-flat-connection-provider.util.spec.ts
+  s_f50cf24ed5fc3b::t_e76606c03e4a33 54
+  s_f50cf24ed5fc3b::t_cc99107d3ed2d7 79-97
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/services/create-calendar-event.service.ts
+  s_f50cf24ed5fc3b::t_2253eea6c604ea 25
+  s_f50cf24ed5fc3b::t_e5f8b21c166406 5
+  s_f50cf24ed5fc3b::t_e6f2e7af12582e 48-51
+  s_f50cf24ed5fc3b::t_d1c8e563393727 47
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/calendar-event-creation-manager.module.ts
+  s_f50cf24ed5fc3b::t_c5544478547709 4-5,8-10
+  s_f50cf24ed5fc3b::t_b51b34cdd6f052 22-26,30-32,40
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/services/__tests__/create-calendar-event.service.spec.ts
+  s_f50cf24ed5fc3b::t_56e0cd824cbf2c 40
+  s_f50cf24ed5fc3b::t_3341f533b5144b 60-62
+  s_f50cf24ed5fc3b::t_e753bc29a1ebae 5
+  s_f50cf24ed5fc3b::t_f68ea28221e7f4 114-124
+  s_f50cf24ed5fc3b::t_71bbdcadd2392d 59
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/dtos/import-calendar-events-output.dto.ts
+  s_f50cf24ed5fc3b::t_bb0286e1bf0958 1-10
+packages/twenty-server/src/engine/core-modules/application/connection-provider/connection-provider-oauth-flow.service.ts
+  s_f50cf24ed5fc3b::t_a68c3bc06423b4 337-353
+  s_f50cf24ed5fc3b::t_8722356d248198 39
+  s_f50cf24ed5fc3b::t_354c1aaaebc87b 7-10
+  s_f50cf24ed5fc3b::t_f283cddfcd7d89 82-83
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/dtos/import-calendar-events.input.ts
+  s_f50cf24ed5fc3b::t_e8c0aab1b1cc97 1-70
+packages/twenty-server/src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
+  s_f50cf24ed5fc3b::t_1290ade4ea362a 10-14
+  s_f50cf24ed5fc3b::t_321db5884eb6c0 25-34
+packages/twenty-sdk/src/sdk/define/connection-providers/__tests__/define-connection-provider.spec.ts
+  s_f50cf24ed5fc3b::t_3befa5cbeb1bfe 114-142
+packages/twenty-server/src/engine/metadata-modules/flat-entity/constant/__tests__/__snapshots__/all-universal-flat-entity-properties-to-compare-and-stringify.constant.spec.ts.snap
+  s_f50cf24ed5fc3b::t_3f5bf98caac78b 64,69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3e747560bc05ea69cfeb37db8e630564261c6e6b",
+  "prompts": {},
+  "sessions": {
+    "s_f50cf24ed5fc3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c2ba5cc7-0588-443f-84fd-cc232e1987ed",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
