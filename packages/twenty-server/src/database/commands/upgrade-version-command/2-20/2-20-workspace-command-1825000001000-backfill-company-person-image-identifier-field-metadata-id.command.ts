@@ -30,9 +30,9 @@ const IMAGE_IDENTIFIER_BACKFILL_TARGETS = [
   },
 ] as const;
 
-@RegisteredWorkspaceCommand('2.19.0', 1783200000000)
+@RegisteredWorkspaceCommand('2.20.0', 1825000001000)
 @Command({
-  name: 'upgrade:2-19:backfill-company-person-image-identifier-field-metadata-id',
+  name: 'upgrade:2-20:backfill-company-person-image-identifier-field-metadata-id',
   description:
     'Backfill imageIdentifierFieldMetadataId on company (domainName) and person (avatarFile) for existing workspaces.',
 })
