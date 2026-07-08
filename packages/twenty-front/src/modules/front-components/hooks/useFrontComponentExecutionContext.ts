@@ -1,17 +1,18 @@
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { isNonEmptyString } from '@sniptt/guards';
+import { useApolloClient } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRef } from 'react';
 import {
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
 } from 'twenty-front-component-renderer';
+import { type AppLocale } from 'twenty-shared/translations';
 import {
   AppPath,
   SidePanelPages,
   type EnqueueSnackbarParams,
 } from 'twenty-shared/types';
-import { type AppLocale } from 'twenty-shared/translations';
 
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -37,6 +38,7 @@ import { useStore } from 'jotai';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { FindManyFrontComponentsDocument } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -61,6 +63,7 @@ export const useFrontComponentExecutionContext = ({
   const currentUser = useAtomStateValue(currentUserState);
   const navigateApp = useNavigateApp();
   const store = useStore();
+  const apolloClient = useApolloClient();
   const { requestAccessTokenRefresh } = useRequestApplicationTokenRefresh({
     frontComponentId,
   });
@@ -188,6 +191,30 @@ export const useFrontComponentExecutionContext = ({
       }
 
       if (params.page === SidePanelPages.ViewFrontComponent) {
+        let frontComponentIdToOpen = params.frontComponentId;
+
+        if (
+          !isDefined(frontComponentIdToOpen) &&
+          isDefined(params.frontComponentUniversalIdentifier)
+        ) {
+          const { data } = await apolloClient.query({
+            query: FindManyFrontComponentsDocument,
+            fetchPolicy: 'network-only',
+          });
+
+          frontComponentIdToOpen = data?.frontComponents.find(
+            (frontComponent) =>
+              frontComponent.universalIdentifier ===
+              params.frontComponentUniversalIdentifier,
+          )?.id;
+        }
+
+        if (!isDefined(frontComponentIdToOpen)) {
+          enqueueErrorSnackBar({ message: t`Front component not found` });
+
+          return;
+        }
+
         const recordContext =
           isDefined(params.recordId) && isDefined(params.objectNameSingular)
             ? {
@@ -197,7 +224,7 @@ export const useFrontComponentExecutionContext = ({
             : undefined;
 
         openFrontComponentInSidePanel({
-          frontComponentId: params.frontComponentId,
+          frontComponentId: frontComponentIdToOpen,
           pageTitle: params.pageTitle,
           pageIcon: getIcon(params.pageIcon),
           resetNavigationStack: params.resetNavigationStack,

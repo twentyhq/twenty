@@ -1,8 +1,8 @@
 import {
   type AppPath,
-  type SidePanelPages,
   type EnqueueSnackbarParams,
   type NavigateOptions,
+  type SidePanelPages,
 } from 'twenty-shared/types';
 import { type getAppPath } from 'twenty-shared/utils';
 
@@ -37,15 +37,23 @@ export type OpenSidePanelPageParams =
       pageTitle?: string;
       pageIcon?: string;
     }
-  | {
+  | ({
       page: SidePanelPages.ViewFrontComponent;
-      frontComponentId: string;
       recordId?: string;
       objectNameSingular?: string;
       pageTitle: string;
       pageIcon?: string;
       resetNavigationStack?: boolean;
-    }
+    } & (
+      | {
+          frontComponentId: string;
+          frontComponentUniversalIdentifier?: never;
+        }
+      | {
+          frontComponentId?: never;
+          frontComponentUniversalIdentifier: string;
+        }
+    ))
   | {
       page: SidePanelPages.AskAI;
       pageTitle: string;

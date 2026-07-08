@@ -105,13 +105,13 @@ describe('FrontComponentService', () => {
       expect(result?.id).toBe(frontComponentDatabaseId);
     });
 
-    it('should return a front component by its universal identifier', async () => {
+    it('should not resolve a universal identifier (id-only lookup)', async () => {
       const result = await frontComponentService.findById(
         frontComponentUniversalIdentifier,
         workspaceId,
       );
 
-      expect(result?.id).toBe(frontComponentDatabaseId);
+      expect(result).toBeNull();
     });
 
     it('should return null when no front component matches the identifier', async () => {

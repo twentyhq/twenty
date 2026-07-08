@@ -12,7 +12,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { fromCreateFrontComponentInputToFlatFrontComponentToCreate } from 'src/engine/metadata-modules/flat-front-component/utils/from-create-front-component-input-to-flat-front-component-to-create.util';
 import { fromFlatFrontComponentToFrontComponentDto } from 'src/engine/metadata-modules/flat-front-component/utils/from-flat-front-component-to-front-component-dto.util';
@@ -64,15 +63,10 @@ export class FrontComponentService {
         },
       );
 
-    const flatFrontComponent =
-      findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: id,
-        flatEntityMaps: flatFrontComponentMaps,
-      }) ??
-      findFlatEntityByUniversalIdentifier({
-        universalIdentifier: id,
-        flatEntityMaps: flatFrontComponentMaps,
-      });
+    const flatFrontComponent = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatFrontComponentMaps,
+    });
 
     if (!isDefined(flatFrontComponent)) {
       return null;
