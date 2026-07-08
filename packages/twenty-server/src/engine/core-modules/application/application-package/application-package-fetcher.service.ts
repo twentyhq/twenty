@@ -10,7 +10,7 @@ import { type Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type PackageJson } from 'type-fest';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -24,7 +24,7 @@ import { assertValidNpmPackageName } from 'src/engine/core-modules/application/a
 import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
 import { readJsonFileOrThrow } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
@@ -178,12 +178,22 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
 
     try {
       const file = await this.fileRepository.findOneOrFail({
-        where: { id: appRegistration.tarballFileId },
+        where: {
+          id: appRegistration.tarballFileId,
+          workspaceId: Not(IsNull()),
+        },
       });
 
       const application = await this.applicationRepository.findOneOrFail({
         where: { id: file.applicationId },
       });
+
+      if (!isDefined(file.workspaceId)) {
+        throw new ApplicationException(
+          `Tarball file ${file.id} for app registration ${appRegistration.id} has no workspaceId`,
+          ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED,
+        );
+      }
 
       const tarballStream = await this.fileStorageService.readFile({
         workspaceId: file.workspaceId,
