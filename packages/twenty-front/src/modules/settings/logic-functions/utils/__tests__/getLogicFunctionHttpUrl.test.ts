@@ -7,28 +7,31 @@ describe('getFunctionsBaseUrl', () => {
   it('builds the isolated base from subdomain + public domain', () => {
     expect(
       getFunctionsBaseUrl({
+        serverBaseUrl: 'https://api.twenty.com',
         publicFunctionDomain: 'withtwenty.com',
         workspaceSubdomain: 'acme',
       }),
     ).toBe('https://acme.withtwenty.com');
   });
 
-  it('returns undefined when the public domain is missing', () => {
+  it('falls back to the /s server route when the public domain is missing', () => {
     expect(
       getFunctionsBaseUrl({
+        serverBaseUrl: 'https://api.twenty.com',
         publicFunctionDomain: null,
         workspaceSubdomain: 'acme',
       }),
-    ).toBeUndefined();
+    ).toBe('https://api.twenty.com/s');
   });
 
-  it('returns undefined when the subdomain is missing', () => {
+  it('falls back to the /s server route when the subdomain is missing', () => {
     expect(
       getFunctionsBaseUrl({
+        serverBaseUrl: 'https://api.twenty.com',
         publicFunctionDomain: 'withtwenty.com',
         workspaceSubdomain: undefined,
       }),
-    ).toBeUndefined();
+    ).toBe('https://api.twenty.com/s');
   });
 });
 
