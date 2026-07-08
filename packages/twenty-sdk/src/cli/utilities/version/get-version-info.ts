@@ -2,6 +2,7 @@ import { CONTAINER_NAME } from '@/cli/utilities/server/docker-container';
 import { compareSemver } from '@/cli/utilities/version/compare-semver';
 import { getLocalServerVersion } from '@/cli/utilities/version/get-local-server-version';
 import { getPublishedServerVersions } from '@/cli/utilities/version/get-published-server-versions';
+import { getServerVersionFromApi } from '@/cli/utilities/version/get-server-version-from-api';
 import { parseSemver } from '@/cli/utilities/version/parse-semver';
 import { type VersionInfo } from '@/cli/utilities/version/version-info';
 import sdkPackageJson from '../../../../package.json';
@@ -17,10 +18,13 @@ export const getVersionInfo = async (
   containerName: string = CONTAINER_NAME,
 ): Promise<VersionInfo> => {
   const cliVersion = sdkPackageJson.version;
-  const [localServerVersion, publishedVersions] = await Promise.all([
-    getLocalServerVersion(containerName),
+
+  const [apiServerVersion, publishedVersions] = await Promise.all([
+    getServerVersionFromApi(),
     getPublishedServerVersions(),
   ]);
+  const localServerVersion =
+    apiServerVersion ?? (await getLocalServerVersion(containerName));
   const latestServerVersion = publishedVersions[0]?.name ?? null;
 
   const localParsed = localServerVersion
