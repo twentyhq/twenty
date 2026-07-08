@@ -14,7 +14,6 @@ import { Brackets, type ObjectLiteral } from 'typeorm';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { FileOutput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import {
   decodeCursor,
@@ -658,11 +657,9 @@ export class SearchService {
 
     switch (imageIdentifierField.type) {
       case FieldMetadataType.FILES: {
-        const avatarFileId = (
-          record[imageIdentifierField.name] as FileOutput[]
-        )?.[0]?.fileId;
+        const avatarFileId = record[imageIdentifierField.name]?.[0]?.fileId;
 
-        if (!isDefined(avatarFileId)) {
+        if (!isNonEmptyString(avatarFileId)) {
           return '';
         }
 
