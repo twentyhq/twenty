@@ -54,10 +54,23 @@ export type SerializedEventData = {
   files?: SerializedFileData[];
 };
 
+const ensureEventTargetMethod = (
+  element: Record<string, unknown>,
+  methodName: 'blur' | 'focus',
+): void => {
+  if (typeof element[methodName] === 'function') {
+    return;
+  }
+
+  element[methodName] = () => undefined;
+};
+
 export const applySerializedEventTargetProperties = (
   element: Record<string, unknown>,
   eventData: SerializedEventData,
 ): void => {
+  ensureEventTargetMethod(element, 'blur');
+  ensureEventTargetMethod(element, 'focus');
   if ('value' in eventData) {
     element.value = eventData.value;
   }

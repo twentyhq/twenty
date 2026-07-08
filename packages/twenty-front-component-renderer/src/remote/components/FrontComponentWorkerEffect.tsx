@@ -19,6 +19,20 @@ type CommandMenuItemConfirmationModalResultBrowserEventDetail = {
 
 const noopAsync = async () => {};
 
+const getFrontComponentBuiltComponentChecksum = (componentUrl: string) => {
+  try {
+    const parsedComponentUrl = new URL(componentUrl);
+
+    return parsedComponentUrl.searchParams.get('checksum') ?? undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+const getErrorSignature = (error: Error, label: string) => {
+  return `${label}:${error.name}:${error.message}`;
+};
+
 const HOST_COMMUNICATION_API_NOOP_INITIALIZATION: FrontComponentHostCommunicationApi =
   {
     navigate: noopAsync,
@@ -61,11 +75,39 @@ export const FrontComponentWorkerEffect = ({
   setError,
 }: FrontComponentWorkerEffectProps) => {
   const isInitializedRef = useRef(false);
+  const isMountedRef = useRef(false);
+  const reportedErrorSignaturesRef = useRef(new Set<string>());
+  const hasLoggedMessageErrorRef = useRef(false);
 
   useEffect(() => {
     if (isInitializedRef.current) {
       return;
     }
+
+    isMountedRef.current = true;
+
+    const reportWorkerError = (error: Error, label: string) => {
+      if (!isMountedRef.current) {
+        return;
+      }
+
+      const errorSignature = getErrorSignature(error, label);
+
+      if (reportedErrorSignaturesRef.current.has(errorSignature)) {
+        return;
+      }
+
+      reportedErrorSignaturesRef.current.add(errorSignature);
+
+      console.error(`[FrontComponentRenderer] ${label}`, {
+        frontComponentId,
+        builtComponentChecksum:
+          getFrontComponentBuiltComponentChecksum(componentUrl),
+        componentUrl,
+        error,
+      });
+      setError(error);
+    };
 
     const newReceiver = new RemoteReceiver({ retain, release });
 
@@ -75,8 +117,22 @@ export const FrontComponentWorkerEffect = ({
       const workerError =
         event.error ?? new Error(event.message || 'Unknown worker error');
 
-      console.error('[FrontComponentRenderer] Worker error:', workerError);
-      setError(workerError);
+      reportWorkerError(workerError, 'Worker error');
+    };
+
+    worker.onmessageerror = () => {
+      if (!isMountedRef.current || hasLoggedMessageErrorRef.current) {
+        return;
+      }
+
+      hasLoggedMessageErrorRef.current = true;
+
+      console.warn('[FrontComponentRenderer] Worker message error', {
+        frontComponentId,
+        builtComponentChecksum:
+          getFrontComponentBuiltComponentChecksum(componentUrl),
+        componentUrl,
+      });
     };
 
     const thread = new ThreadWebWorker<
@@ -107,7 +163,7 @@ export const FrontComponentWorkerEffect = ({
           commandMenuItemConfirmationModalResultBrowserEventDetail.confirmationResult,
         )
         .catch((error: Error) => {
-          setError(error);
+          reportWorkerError(error, 'Failed to handle confirmation modal result');
         });
     };
 
@@ -127,7 +183,7 @@ export const FrontComponentWorkerEffect = ({
         applicationVariables,
       })
       .catch((error: Error) => {
-        setError(error);
+        reportWorkerError(error, 'Failed to render front component');
       });
 
     setReceiver(newReceiver);
@@ -139,6 +195,9 @@ export const FrontComponentWorkerEffect = ({
         handleCommandMenuItemConfirmationModalResultBrowserEvent as EventListener,
       );
       setThread(null);
+      isMountedRef.current = false;
+      hasLoggedMessageErrorRef.current = false;
+      reportedErrorSignaturesRef.current.clear();
       worker.terminate();
       isInitializedRef.current = false;
     };
