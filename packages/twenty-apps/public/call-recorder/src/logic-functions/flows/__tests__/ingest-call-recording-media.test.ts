@@ -6,6 +6,7 @@ import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-
 
 const mutationMock = vi.hoisted(() => vi.fn());
 const getRecallRecordingMock = vi.hoisted(() => vi.fn());
+const putMediaDownloadBodyToUploadTargetMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-client-sdk/metadata', () => ({
   MetadataApiClient: class {
@@ -16,6 +17,13 @@ vi.mock('twenty-client-sdk/metadata', () => ({
 vi.mock('src/logic-functions/recall-api/get-recall-recording.util', () => ({
   getRecallRecording: getRecallRecordingMock,
 }));
+
+vi.mock(
+  'src/logic-functions/flows/put-media-download-body-to-upload-target.util',
+  () => ({
+    putMediaDownloadBodyToUploadTarget: putMediaDownloadBodyToUploadTargetMock,
+  }),
+);
 
 const VIDEO_URL = 'https://media.example.com/video.mp4';
 const AUDIO_URL = 'https://media.example.com/audio.mp3';
@@ -70,8 +78,6 @@ type DirectUploadMutationRequest =
   | { createFileUpload: { __args: { filename: string } } }
   | { completeFileUpload: { __args: { fileId: string } } };
 
-// Routes GET calls to Recall download responses and PUT calls to the presigned
-// storage responses, mirroring the direct-to-storage upload flow.
 const stubFetch = ({
   downloadsByUrl,
 }: {
@@ -81,7 +87,7 @@ const stubFetch = ({
   fetchMock.mockImplementation(
     (url: string, init?: { method?: string }) => {
       if (init?.method === 'PUT') {
-        return Promise.resolve({ ok: true, status: 200 });
+        throw new Error('Upload requests should go through the upload bridge');
       }
 
       const downloadResponse = downloadsByUrl[url];
@@ -136,9 +142,9 @@ const stubDirectUpload = ({
   });
 };
 
-const getPutCall = (url: string) =>
-  fetchMock.mock.calls.find(
-    ([callUrl, init]) => callUrl === url && init?.method === 'PUT',
+const getUploadBridgeCall = (fileName: string) =>
+  putMediaDownloadBodyToUploadTargetMock.mock.calls.find(
+    ([uploadInput]) => uploadInput.fileName === fileName,
   );
 
 describe('ingestCallRecordingMedia', () => {
@@ -147,6 +153,8 @@ describe('ingestCallRecordingMedia', () => {
     vi.spyOn(console, 'log').mockImplementation(() => {});
     mutationMock.mockReset();
     getRecallRecordingMock.mockReset();
+    putMediaDownloadBodyToUploadTargetMock.mockReset();
+    putMediaDownloadBodyToUploadTargetMock.mockResolvedValue(undefined);
     getRecallRecordingMock.mockResolvedValue({
       ok: true,
       recording: RECORDING_WITH_MEDIA,
@@ -182,6 +190,24 @@ describe('ingestCallRecordingMedia', () => {
       video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
     });
+    expect(getUploadBridgeCall('video.mp4')).toMatchObject([
+      expect.objectContaining({
+        fileName: 'video.mp4',
+        sizeBytes: 8,
+        uploadTarget: expect.objectContaining({
+          uploadUrl: uploadUrlForFilename('video.mp4'),
+        }),
+      }),
+    ]);
+    expect(getUploadBridgeCall('audio.mp3')).toMatchObject([
+      expect.objectContaining({
+        fileName: 'audio.mp3',
+        sizeBytes: 8,
+        uploadTarget: expect.objectContaining({
+          uploadUrl: uploadUrlForFilename('audio.mp3'),
+        }),
+      }),
+    ]);
   });
 
   it('declares the presigned upload with the download size, folder and field identifier', async () => {
@@ -225,7 +251,7 @@ describe('ingestCallRecordingMedia', () => {
     expect(updateFields).toEqual({
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
     });
-    expect(getPutCall(uploadUrlForFilename('video.mp4'))).toBeUndefined();
+    expect(getUploadBridgeCall('video.mp4')).toBeUndefined();
   });
 
   it('does not fetch the recording when both artifacts are present', async () => {
@@ -274,7 +300,7 @@ describe('ingestCallRecordingMedia', () => {
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
     });
     expect(cancelMock).toHaveBeenCalledTimes(1);
-    expect(getPutCall(uploadUrlForFilename('video.mp4'))).toBeUndefined();
+    expect(getUploadBridgeCall('video.mp4')).toBeUndefined();
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('upload target exploded'),
     );
@@ -302,7 +328,7 @@ describe('ingestCallRecordingMedia', () => {
     expect(updateFields).toEqual({
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
     });
-    expect(getPutCall(uploadUrlForFilename('video.mp4'))).toBeUndefined();
+    expect(getUploadBridgeCall('video.mp4')).toBeUndefined();
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('content-length'),
     );
@@ -373,7 +399,7 @@ describe('ingestCallRecordingMedia', () => {
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
       callRecorderFailureReason: 'video_file_too_large',
     });
-    expect(getPutCall(uploadUrlForFilename('video.mp4'))).toBeUndefined();
+    expect(getUploadBridgeCall('video.mp4')).toBeUndefined();
     expect(cancelMock).toHaveBeenCalled();
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('artifact-too-large'),

@@ -1,8 +1,31 @@
+import { type ClientRequest, type IncomingMessage } from 'node:http';
+import { PassThrough, Readable } from 'node:stream';
+
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+const requestOverHttpMock = vi.hoisted(() => vi.fn());
+const requestOverHttpsMock = vi.hoisted(() => vi.fn());
+
+vi.mock('node:http', async () => {
+  const actualHttp = await vi.importActual<typeof import('node:http')>(
+    'node:http',
+  );
+
+  return { ...actualHttp, request: requestOverHttpMock };
+});
+
+vi.mock('node:https', async () => {
+  const actualHttps = await vi.importActual<typeof import('node:https')>(
+    'node:https',
+  );
+
+  return { ...actualHttps, request: requestOverHttpsMock };
+});
 
 import { putMediaDownloadBodyToUploadTarget } from 'src/logic-functions/flows/put-media-download-body-to-upload-target.util';
 
-const UPLOAD_URL = 'https://storage.example.com/video.mp4';
+const HTTPS_UPLOAD_URL = 'https://storage.example.com/video.mp4';
+const HTTP_UPLOAD_URL = 'http://storage.example.com/video.mp4';
 
 const buildMediaDownloadBody = ({
   chunks = [new Uint8Array([1, 2, 3]), new Uint8Array([4])],
@@ -26,124 +49,159 @@ const buildMediaDownloadBody = ({
     cancel,
   });
 
-const readStreamBytes = async (
-  stream: ReadableStream<Uint8Array>,
-): Promise<number[]> => {
-  const reader = stream.getReader();
-  const bytes: number[] = [];
+const buildUploadResponse = ({
+  statusCode = 200,
+  chunks = [],
+}: {
+  statusCode?: number;
+  chunks?: Buffer[];
+} = {}): IncomingMessage => {
+  const uploadResponse = Readable.from(chunks) as IncomingMessage;
 
-  for (;;) {
-    const { done, value } = await reader.read();
+  uploadResponse.statusCode = statusCode;
 
-    if (done) {
-      return bytes;
-    }
-
-    bytes.push(...value);
-  }
+  return uploadResponse;
 };
 
-describe('putMediaDownloadBodyToUploadTarget', () => {
-  const fetchMock = vi.fn();
+const buildUploadRequest = ({
+  response,
+  emitResponseOnFinish = true,
+}: {
+  response?: IncomingMessage;
+  emitResponseOnFinish?: boolean;
+} = {}) => {
+  const uploadRequest = new PassThrough();
+  const uploadedBytes: number[] = [];
 
+  uploadRequest.on('data', (chunk: Buffer) => {
+    uploadedBytes.push(...chunk);
+  });
+
+  if (response !== undefined) {
+    if (emitResponseOnFinish) {
+      uploadRequest.on('finish', () => {
+        uploadRequest.emit('response', response);
+      });
+    } else {
+      queueMicrotask(() => {
+        uploadRequest.emit('response', response);
+      });
+    }
+  }
+
+  return {
+    uploadedBytes,
+    uploadRequest: uploadRequest as unknown as ClientRequest,
+  };
+};
+
+const putDefaultMediaDownloadBodyToUploadTarget = ({
+  mediaDownloadBody = buildMediaDownloadBody(),
+  uploadUrl = HTTPS_UPLOAD_URL,
+}: {
+  mediaDownloadBody?: ReadableStream<Uint8Array>;
+  uploadUrl?: string;
+} = {}) =>
+  putMediaDownloadBodyToUploadTarget({
+    fileName: 'video.mp4',
+    mediaDownloadBody,
+    sizeBytes: 4,
+    uploadTarget: {
+      uploadUrl,
+      contentType: 'application/octet-stream',
+    },
+  });
+
+describe('putMediaDownloadBodyToUploadTarget', () => {
   beforeEach(() => {
-    fetchMock.mockReset();
-    vi.spyOn(console, 'warn').mockImplementation(() => {});
-    vi.stubGlobal('fetch', fetchMock);
+    requestOverHttpMock.mockReset();
+    requestOverHttpsMock.mockReset();
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
-    vi.unstubAllGlobals();
   });
 
-  it('puts the media download body to the upload target with declared upload headers', async () => {
-    fetchMock.mockImplementation(async (_url, init) => {
-      const requestInit = init as {
-        body: ReadableStream<Uint8Array>;
-        duplex?: string;
-        headers: Record<string, string>;
-        method?: string;
-      };
-
-      expect(requestInit.method).toBe('PUT');
-      expect(requestInit.duplex).toBe('half');
-      expect(requestInit.headers['Content-Length']).toBe('4');
-      expect(requestInit.headers['Content-Type']).toBe(
-        'application/octet-stream',
-      );
-      expect(await readStreamBytes(requestInit.body)).toEqual([1, 2, 3, 4]);
-
-      return { ok: true, status: 200 };
+  it('streams the media download body to the upload target with declared headers', async () => {
+    const { uploadRequest, uploadedBytes } = buildUploadRequest({
+      response: buildUploadResponse(),
     });
 
-    await putMediaDownloadBodyToUploadTarget({
-      callRecordingId: 'call-recording-1',
-      fileName: 'video.mp4',
-      mediaDownloadBody: buildMediaDownloadBody(),
-      sizeBytes: 4,
-      uploadTarget: {
-        uploadUrl: UPLOAD_URL,
-        contentType: 'application/octet-stream',
+    requestOverHttpsMock.mockReturnValue(uploadRequest);
+
+    await putDefaultMediaDownloadBodyToUploadTarget();
+
+    const [uploadUrl, uploadRequestOptions] = requestOverHttpsMock.mock.calls[0];
+
+    expect(uploadUrl.href).toBe(HTTPS_UPLOAD_URL);
+    expect(uploadRequestOptions).toMatchObject({
+      method: 'PUT',
+      headers: {
+        'Content-Length': 4,
+        'Content-Type': 'application/octet-stream',
       },
     });
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      UPLOAD_URL,
-      expect.objectContaining({ method: 'PUT' }),
-    );
+    expect(uploadRequestOptions.signal).toBeInstanceOf(AbortSignal);
+    expect(uploadedBytes).toEqual([1, 2, 3, 4]);
   });
 
-  it('cancels the failed upload response body and media download body when storage returns non-ok', async () => {
-    const mediaDownloadBodyCancelMock = vi.fn().mockResolvedValue(undefined);
-    const uploadResponseBodyCancelMock = vi.fn().mockResolvedValue(undefined);
+  it('uses the http client for http upload targets', async () => {
+    const { uploadRequest } = buildUploadRequest({
+      response: buildUploadResponse(),
+    });
 
-    fetchMock.mockResolvedValue({
-      ok: false,
-      status: 500,
-      body: new ReadableStream<Uint8Array>({
-        cancel: uploadResponseBodyCancelMock,
+    requestOverHttpMock.mockReturnValue(uploadRequest);
+
+    await putDefaultMediaDownloadBodyToUploadTarget({
+      uploadUrl: HTTP_UPLOAD_URL,
+    });
+
+    expect(requestOverHttpMock).toHaveBeenCalledTimes(1);
+    expect(requestOverHttpsMock).not.toHaveBeenCalled();
+  });
+
+  it('destroys the media download readable when storage returns a failed status', async () => {
+    const mediaDownloadBodyCancelMock = vi.fn().mockResolvedValue(undefined);
+    const uploadResponse = buildUploadResponse({
+      statusCode: 500,
+      chunks: [Buffer.from('storage failed')],
+    });
+    const { uploadRequest } = buildUploadRequest({
+      emitResponseOnFinish: false,
+      response: uploadResponse,
+    });
+
+    requestOverHttpsMock.mockReturnValue(uploadRequest);
+
+    await expect(
+      putDefaultMediaDownloadBodyToUploadTarget({
+        mediaDownloadBody: buildMediaDownloadBody({
+          cancel: mediaDownloadBodyCancelMock,
+          close: false,
+        }),
       }),
+    ).rejects.toThrow('upload of video.mp4 failed with status 500');
+
+    expect(mediaDownloadBodyCancelMock).toHaveBeenCalledTimes(1);
+    expect(uploadResponse.readableEnded).toBe(true);
+  });
+
+  it('destroys the media download readable when the upload request fails', async () => {
+    const mediaDownloadBodyCancelMock = vi.fn().mockResolvedValue(undefined);
+    const { uploadRequest } = buildUploadRequest();
+
+    requestOverHttpsMock.mockReturnValue(uploadRequest);
+
+    queueMicrotask(() => {
+      uploadRequest.emit('error', new Error('upload socket closed'));
     });
 
     await expect(
-      putMediaDownloadBodyToUploadTarget({
-        callRecordingId: 'call-recording-1',
-        fileName: 'video.mp4',
+      putDefaultMediaDownloadBodyToUploadTarget({
         mediaDownloadBody: buildMediaDownloadBody({
           cancel: mediaDownloadBodyCancelMock,
           close: false,
         }),
-        sizeBytes: 4,
-        uploadTarget: {
-          uploadUrl: UPLOAD_URL,
-          contentType: 'application/octet-stream',
-        },
-      }),
-    ).rejects.toThrow('upload failed with status 500');
-
-    expect(uploadResponseBodyCancelMock).toHaveBeenCalledTimes(1);
-    expect(mediaDownloadBodyCancelMock).toHaveBeenCalledTimes(1);
-  });
-
-  it('cancels the media download body when the upload request rejects', async () => {
-    const mediaDownloadBodyCancelMock = vi.fn().mockResolvedValue(undefined);
-
-    fetchMock.mockRejectedValue(new Error('upload socket closed'));
-
-    await expect(
-      putMediaDownloadBodyToUploadTarget({
-        callRecordingId: 'call-recording-1',
-        fileName: 'video.mp4',
-        mediaDownloadBody: buildMediaDownloadBody({
-          cancel: mediaDownloadBodyCancelMock,
-          close: false,
-        }),
-        sizeBytes: 4,
-        uploadTarget: {
-          uploadUrl: UPLOAD_URL,
-          contentType: 'application/octet-stream',
-        },
       }),
     ).rejects.toThrow('upload socket closed');
 

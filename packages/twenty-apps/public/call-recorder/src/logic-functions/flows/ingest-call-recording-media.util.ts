@@ -264,7 +264,6 @@ const uploadMediaStreamToStorage = async ({
   );
 
   await putMediaDownloadBodyToUploadTarget({
-    callRecordingId,
     fileName,
     mediaDownloadBody: body,
     sizeBytes,

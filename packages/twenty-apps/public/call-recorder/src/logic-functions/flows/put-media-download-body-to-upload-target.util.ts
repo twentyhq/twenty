@@ -1,129 +1,144 @@
+import {
+  request as requestOverHttp,
+  type ClientRequest,
+  type IncomingMessage,
+} from 'node:http';
+import { request as requestOverHttps } from 'node:https';
+import { Readable } from 'node:stream';
+import { finished, pipeline } from 'node:stream/promises';
+import { type ReadableStream as NodeWebReadableStream } from 'node:stream/web';
+
 type MediaUploadTarget = {
   uploadUrl: string;
   contentType: string;
 };
 
-type MediaDownloadBodyUploadRequest = {
-  uploadRequestBody: ReadableStream<Uint8Array>;
-  cancelMediaDownloadBodyReader: () => Promise<void>;
-};
-
-// duplex is required by fetch when the body is a stream but is missing from the DOM lib's RequestInit
-type StreamingRequestInit = RequestInit & { duplex: 'half' };
-
 const MEDIA_UPLOAD_TIMEOUT_MS = 120_000;
+const HTTP_STATUS_OK_LOWER_BOUND = 200;
+const HTTP_STATUS_OK_UPPER_BOUND = 300;
 
 export const putMediaDownloadBodyToUploadTarget = async ({
-  callRecordingId,
-  fileName,
   mediaDownloadBody,
+  fileName,
   sizeBytes,
   uploadTarget,
 }: {
-  callRecordingId: string;
-  fileName: string;
   mediaDownloadBody: ReadableStream<Uint8Array>;
+  fileName: string;
   sizeBytes: number;
   uploadTarget: MediaUploadTarget;
 }): Promise<void> => {
-  const { uploadRequestBody, cancelMediaDownloadBodyReader } =
-    createUploadRequestBodyFromMediaDownloadBody({
-      callRecordingId,
-      fileName,
-      mediaDownloadBody,
-    });
-  const uploadRequestInit: StreamingRequestInit = {
+  // Stream via node http, not fetch: undici buffers a whole ReadableStream
+  // request body in memory and OOMs the 512MB Lambda on large media.
+  const mediaDownloadReadable = Readable.fromWeb(
+    mediaDownloadBody as NodeWebReadableStream<Uint8Array>,
+  );
+
+  await streamMediaDownloadReadableToUploadTarget({
+    fileName,
+    mediaDownloadReadable,
+    sizeBytes,
+    uploadTarget,
+  });
+};
+
+const streamMediaDownloadReadableToUploadTarget = async ({
+  fileName,
+  mediaDownloadReadable,
+  sizeBytes,
+  uploadTarget,
+}: {
+  fileName: string;
+  mediaDownloadReadable: Readable;
+  sizeBytes: number;
+  uploadTarget: MediaUploadTarget;
+}): Promise<void> => {
+  const uploadUrl = new URL(uploadTarget.uploadUrl);
+  const requestUpload =
+    uploadUrl.protocol === 'http:' ? requestOverHttp : requestOverHttps;
+  const uploadRequest = requestUpload(uploadUrl, {
     method: 'PUT',
-    body: uploadRequestBody,
-    duplex: 'half',
     headers: {
       'Content-Type': uploadTarget.contentType,
-      'Content-Length': String(sizeBytes),
+      'Content-Length': sizeBytes,
     },
     signal: AbortSignal.timeout(MEDIA_UPLOAD_TIMEOUT_MS),
-  };
+  });
 
-  const uploadResponse = await fetch(
-    uploadTarget.uploadUrl,
-    uploadRequestInit,
-  ).catch(async (error) => {
-    await cancelMediaDownloadBodyReader();
+  const uploadResponsePromise = waitForUploadResponse({ uploadRequest });
+  const uploadPipelinePromise = pipeline(mediaDownloadReadable, uploadRequest);
+
+  let uploadResponse: IncomingMessage;
+
+  try {
+    uploadResponse = await waitForUploadResponseOrPipelineFailure({
+      uploadPipelinePromise,
+      uploadResponsePromise,
+    });
+  } catch (error) {
+    mediaDownloadReadable.destroy();
+    uploadRequest.destroy();
+    await uploadPipelinePromise.catch(() => undefined);
 
     throw error;
-  });
-
-  if (!uploadResponse.ok) {
-    await cancelFailedUploadResponseBody({
-      callRecordingId,
-      fileName,
-      uploadResponse,
-    });
-    await cancelMediaDownloadBodyReader();
-
-    throw new Error(`upload failed with status ${uploadResponse.status}`);
   }
+
+  const uploadResponseBodyDrainPromise = drainUploadResponseBody({
+    uploadResponse,
+  });
+  const uploadStatusCode = uploadResponse.statusCode ?? 0;
+
+  if (!isSuccessfulUploadStatusCode(uploadStatusCode)) {
+    const uploadError = new Error(
+      `upload of ${fileName} failed with status ${uploadStatusCode}`,
+    );
+
+    mediaDownloadReadable.destroy(uploadError);
+    uploadRequest.destroy(uploadError);
+
+    await Promise.allSettled([
+      uploadPipelinePromise,
+      uploadResponseBodyDrainPromise,
+    ]);
+
+    throw uploadError;
+  }
+
+  await Promise.all([uploadPipelinePromise, uploadResponseBodyDrainPromise]);
 };
 
-const createUploadRequestBodyFromMediaDownloadBody = ({
-  callRecordingId,
-  fileName,
-  mediaDownloadBody,
+const waitForUploadResponse = ({
+  uploadRequest,
 }: {
-  callRecordingId: string;
-  fileName: string;
-  mediaDownloadBody: ReadableStream<Uint8Array>;
-}): MediaDownloadBodyUploadRequest => {
-  const mediaDownloadBodyReader = mediaDownloadBody.getReader();
-  let isMediaDownloadBodyReaderClosed = false;
-
-  const cancelMediaDownloadBodyReader = async () => {
-    if (isMediaDownloadBodyReaderClosed) {
-      return;
-    }
-
-    isMediaDownloadBodyReaderClosed = true;
-
-    await mediaDownloadBodyReader.cancel().catch((error) => {
-      console.warn(
-        `[call-recorder] media-ingestion phase=media-download-body-reader-cancel-failed callRecordingId=${callRecordingId} fileName=${fileName}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    });
-  };
-
-  const uploadRequestBody = new ReadableStream<Uint8Array>({
-    async pull(controller) {
-      const { done, value } = await mediaDownloadBodyReader.read();
-
-      if (done) {
-        isMediaDownloadBodyReaderClosed = true;
-        mediaDownloadBodyReader.releaseLock();
-        controller.close();
-
-        return;
-      }
-
-      controller.enqueue(value);
-    },
-    async cancel() {
-      await cancelMediaDownloadBodyReader();
-    },
+  uploadRequest: ClientRequest;
+}): Promise<IncomingMessage> =>
+  new Promise<IncomingMessage>((resolve, reject) => {
+    uploadRequest.once('response', resolve);
+    uploadRequest.once('error', reject);
   });
 
-  return { uploadRequestBody, cancelMediaDownloadBodyReader };
-};
+const waitForUploadResponseOrPipelineFailure = async ({
+  uploadPipelinePromise,
+  uploadResponsePromise,
+}: {
+  uploadPipelinePromise: Promise<void>;
+  uploadResponsePromise: Promise<IncomingMessage>;
+}): Promise<IncomingMessage> =>
+  Promise.race([
+    uploadResponsePromise,
+    uploadPipelinePromise.then(async () => await uploadResponsePromise),
+  ]);
 
-const cancelFailedUploadResponseBody = async ({
-  callRecordingId,
-  fileName,
+const drainUploadResponseBody = async ({
   uploadResponse,
 }: {
-  callRecordingId: string;
-  fileName: string;
-  uploadResponse: Response;
-}) => {
-  await uploadResponse.body?.cancel().catch((error) => {
-    console.warn(
-      `[call-recorder] media-ingestion phase=upload-response-body-cancel-failed callRecordingId=${callRecordingId} fileName=${fileName}: ${error instanceof Error ? error.message : String(error)}`,
-    );
-  });
+  uploadResponse: IncomingMessage;
+}): Promise<void> => {
+  uploadResponse.resume();
+
+  await finished(uploadResponse);
 };
+
+const isSuccessfulUploadStatusCode = (uploadStatusCode: number): boolean =>
+  uploadStatusCode >= HTTP_STATUS_OK_LOWER_BOUND &&
+  uploadStatusCode < HTTP_STATUS_OK_UPPER_BOUND;
