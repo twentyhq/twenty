@@ -5,6 +5,7 @@ import { ApplicationRegistrationModule } from 'src/engine/core-modules/applicati
 import { MarketplaceCatalogSyncCronCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.cron.command';
 import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
 import { MarketplaceCatalogSyncService } from 'src/engine/core-modules/application/application-marketplace/marketplace-catalog-sync.service';
+import { MarketplacePublicResolver } from 'src/engine/core-modules/application/application-marketplace/marketplace-public.resolver';
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
 import { MarketplaceResolver } from 'src/engine/core-modules/application/application-marketplace/marketplace.resolver';
 import { MarketplaceService } from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
@@ -29,6 +30,7 @@ import { MarketplaceCatalogSyncCommand } from 'src/engine/core-modules/applicati
     MarketplaceCatalogSyncCronCommand,
     MarketplaceCatalogSyncCommand,
     MarketplaceResolver,
+    MarketplacePublicResolver,
   ],
   exports: [
     MarketplaceCatalogSyncService,
