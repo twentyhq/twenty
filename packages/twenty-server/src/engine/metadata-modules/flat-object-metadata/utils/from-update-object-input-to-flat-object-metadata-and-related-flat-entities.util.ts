@@ -82,6 +82,16 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
       }
 
       if (
+        imageIdentifierFlatFieldMetadata.objectMetadataId !==
+        existingFlatObjectMetadata.id
+      ) {
+        throw new ObjectMetadataException(
+          'Field declared as image identifier does not belong to this object',
+          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        );
+      }
+
+      if (
         !isImageIdentifierFieldMetadataType(
           imageIdentifierFlatFieldMetadata.type,
         )
