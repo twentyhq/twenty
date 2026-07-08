@@ -3,9 +3,12 @@ import {
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
 
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
+  GRID_POSITIONS,
   TAB_PROPS,
+  VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
 import {
@@ -25,6 +28,18 @@ const CALL_RECORDING_PAGE_TABS = {
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage
             .tabs.home.widgets.fields.universalIdentifier,
         ...WIDGET_PROPS.fields,
+      },
+      calendarEvent: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage
+            .tabs.home.widgets.calendarEvent.universalIdentifier,
+        title: 'Calendar Event',
+        type: WidgetType.FIELD,
+        gridPosition: GRID_POSITIONS.FULL_WIDTH,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
+        fieldUniversalIdentifier:
+          STANDARD_OBJECTS.callRecording.fields.calendarEvent
+            .universalIdentifier,
       },
     },
   },

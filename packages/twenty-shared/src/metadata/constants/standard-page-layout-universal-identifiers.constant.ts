@@ -483,6 +483,9 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           fields: {
             universalIdentifier: 'e490d2dd-5b69-4518-b867-9dde815f9cb6',
           },
+          calendarEvent: {
+            universalIdentifier: '9d335066-4d70-4d05-911f-7446d84a2d7f',
+          },
         },
       },
       timeline: {

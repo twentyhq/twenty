@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { AddCallRecordingCalendarEventWidgetCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783528000000-add-call-recording-calendar-event-widget.command';
 import { BackfillActorSourceEnumValuesCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783499671542-backfill-actor-source-enum-values.command';
 import { BackfillWorkflowVersionToCoreCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783526282685-backfill-workflow-version-to-core.command';
 import { AddMessageCampaignStatFieldsCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783525261000-add-message-campaign-stat-fields.command';
@@ -25,6 +26,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     CreateMessageListViewCommand,
     BackfillActorSourceEnumValuesCommand,
     BackfillWorkflowVersionToCoreCommand,
+    AddCallRecordingCalendarEventWidgetCommand,
   ],
 })
 export class V2_20_UpgradeVersionCommandModule {}
