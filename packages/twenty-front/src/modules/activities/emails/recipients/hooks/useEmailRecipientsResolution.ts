@@ -16,8 +16,7 @@ export type EmailRecipientResolution = {
   workspaceMember?: PartialWorkspaceMember;
 };
 
-const escapeLikeWildcards = (value: string) =>
-  value.replace(/[\\%_]/g, '\\$&');
+const escapeLikeWildcards = (value: string) => value.replace(/[\\%_]/g, '\\$&');
 
 export const useEmailRecipientsResolution = ({
   recipients,

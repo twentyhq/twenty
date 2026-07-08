@@ -83,6 +83,7 @@ type EmailRecipientsFieldInputProps = {
   placeholder: string;
   recipients: EmailRecipient[];
   onChange: (recipients: EmailRecipient[]) => void;
+  onSubmit?: () => void;
   excludedSuggestionKeys?: string[];
   contextRecord?: EmailComposerContextRecord | null;
 };
@@ -92,6 +93,7 @@ export const EmailRecipientsFieldInput = ({
   placeholder,
   recipients,
   onChange,
+  onSubmit,
   excludedSuggestionKeys = [],
   contextRecord,
 }: EmailRecipientsFieldInputProps) => {
@@ -284,8 +286,12 @@ export const EmailRecipientsFieldInput = ({
 
   const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.ctrlKey || event.metaKey) {
-      if (event.key === 'Enter' && inputValue.length > 0) {
-        commitInputAndCloseSuggestions();
+      if (event.key === 'Enter') {
+        if (inputValue.length > 0) {
+          commitInputAndCloseSuggestions();
+        } else {
+          onSubmit?.();
+        }
       }
       return;
     }

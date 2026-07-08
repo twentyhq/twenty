@@ -91,6 +91,7 @@ export const EmailComposerFields = ({
           placeholder={t`Recipients`}
           recipients={composerState.to}
           onChange={composerState.setTo}
+          onSubmit={composerState.handleSend}
           excludedSuggestionKeys={allRecipientKeys}
           contextRecord={contextRecord}
         />
@@ -107,6 +108,7 @@ export const EmailComposerFields = ({
             placeholder={t`Cc`}
             recipients={composerState.cc}
             onChange={composerState.setCc}
+            onSubmit={composerState.handleSend}
             excludedSuggestionKeys={allRecipientKeys}
             contextRecord={contextRecord}
           />
@@ -115,6 +117,7 @@ export const EmailComposerFields = ({
             placeholder={t`Bcc`}
             recipients={composerState.bcc}
             onChange={composerState.setBcc}
+            onSubmit={composerState.handleSend}
             excludedSuggestionKeys={allRecipientKeys}
             contextRecord={contextRecord}
           />

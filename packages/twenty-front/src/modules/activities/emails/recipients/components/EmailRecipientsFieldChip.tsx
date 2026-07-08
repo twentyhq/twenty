@@ -3,12 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
-import {
-  IconCopy,
-  IconPencil,
-  IconTrash,
-  IconUserPlus,
-} from 'twenty-ui/icon';
+import { IconCopy, IconPencil, IconTrash, IconUserPlus } from 'twenty-ui/icon';
 import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
 
 import { EmailRecipientChip } from '@/activities/emails/recipients/components/EmailRecipientChip';
@@ -17,7 +12,7 @@ import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailR
 import { formatEmailRecipient } from '@/activities/emails/recipients/utils/formatEmailRecipient';
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -52,7 +47,7 @@ export const EmailRecipientsFieldChip = ({
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
   const { copyToClipboard } = useCopyToClipboard();
-  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+  const { enqueueSuccessSnackBar } = useSnackBar();
 
   const { createOneRecord: createPerson } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Person,
@@ -88,18 +83,6 @@ export const EmailRecipientsFieldChip = ({
       />
     ) : undefined;
 
-  const handleOpenPerson = () => {
-    if (!isDefined(person)) {
-      return;
-    }
-
-    closeDropdown(dropdownId);
-    openRecordInSidePanel({
-      recordId: person.id,
-      objectNameSingular: CoreObjectNameSingular.Person,
-    });
-  };
-
   const handleAddAsPerson = async () => {
     closeDropdown(dropdownId);
 
@@ -113,10 +96,7 @@ export const EmailRecipientsFieldChip = ({
     });
 
     if (isDefined(createdPerson)) {
-      openRecordInSidePanel({
-        recordId: createdPerson.id,
-        objectNameSingular: CoreObjectNameSingular.Person,
-      });
+      enqueueSuccessSnackBar({ message: t`Person created` });
     }
   };
 
@@ -165,7 +145,7 @@ export const EmailRecipientsFieldChip = ({
         />
       }
       dropdownComponents={
-        <DropdownContent>
+        <DropdownContent widthInPixels={280}>
           {(isDefined(person) ||
             isDefined(workspaceMember) ||
             showAddAsPerson) && (
@@ -182,7 +162,6 @@ export const EmailRecipientsFieldChip = ({
                     }}
                     text={resolvedLabel}
                     contextualText={recipient.address}
-                    onClick={handleOpenPerson}
                   />
                 ) : isDefined(workspaceMember) ? (
                   <MenuItemAvatar

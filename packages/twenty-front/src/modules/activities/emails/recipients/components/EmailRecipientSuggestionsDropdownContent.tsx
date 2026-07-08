@@ -24,7 +24,7 @@ export const EmailRecipientSuggestionsDropdownContent = ({
 
   return (
     <div onMouseDown={(event) => event.preventDefault()}>
-      <DropdownContent widthInPixels={280}>
+      <DropdownContent widthInPixels={340}>
         <DropdownMenuItemsContainer hasMaxHeight>
           {suggestions.length === 0 ? (
             <MenuItem text={t`No results`} />

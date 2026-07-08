@@ -52,10 +52,12 @@ Working notes for the To/Cc/Bcc field rebuild. To be deleted before opening the 
   house rules forbid.
 - Suggestion rows call `event.preventDefault()` on mousedown so picking a suggestion never blurs
   the input (blur would commit the half-typed buffer as a junk chip first).
-- Cmd/Ctrl+Enter with a non-empty buffer commits the buffer but does not send in the same
-  keystroke: the send hotkey handler holds a same-render closure over composer state, so sending
-  in the same event would read the pre-commit recipients. Pressing it again sends. Gmail commits
-  and sends in one stroke; doing that here needs the send path to read live state.
+- Cmd/Ctrl+Enter inside a recipient field: with a non-empty buffer it commits the buffer only,
+  with an empty buffer it sends (via an onSubmit prop wired to handleSend). Not commit+send in
+  one stroke: handleSend holds a same-render closure over composer state, so sending in the same
+  event as the commit would read the pre-commit recipients. E2E also showed the side panel's own
+  ctrl+Enter hotkey never fires while any form field is focused (focus-stack scoping, applies to
+  the old composer too), which is why the field triggers the submit itself.
 - Enter with the suggestions open picks the highlighted (or top) suggestion, Gmail-style. When
   the typed buffer is itself a valid email, the literal "Use this email" row is ranked first so
   Enter keeps meaning "add what I typed".
@@ -69,6 +71,12 @@ Working notes for the To/Cc/Bcc field rebuild. To be deleted before opening the 
   ambiguity UI). Rare enough to not warrant the extra state.
 - "Add as person" splits the display name on the first space for firstName/lastName. Same
   heuristic the contact-creation manager uses server-side.
+- Chip menu actions never navigate. E2E testing showed that navigating the side panel (or the
+  main view) unmounts the composer and silently destroys the draft, because composer state is
+  component-local with no draft persistence. So "Add as person" creates the record and shows a
+  snackbar while the chip upgrades in place, and the person header row in the chip menu is
+  informational. "Open person" navigation should come back once drafts survive navigation
+  (deferred).
 
 ## Deferred (out of scope for this PR)
 
