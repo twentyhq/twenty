@@ -1,10 +1,10 @@
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingPublicDomainRowDropdownMenu } from '@/settings/domains/components/SettingPublicDomainRowDropdownMenu';
+import { useGetAddedRelativeDateDescription } from '@/settings/hooks/useGetAddedRelativeDateDescription';
 import { selectedApplicationIdForPublicDomainState } from '@/settings/domains/states/selectedApplicationIdForPublicDomainState';
 import { selectedPublicDomainState } from '@/settings/domains/states/selectedPublicDomainState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { Status } from 'twenty-ui/data-display';
@@ -15,8 +15,6 @@ import {
   FindManyPublicDomainsDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 export const SettingsPublicDomainsListCard = ({
   applicationId,
@@ -26,7 +24,8 @@ export const SettingsPublicDomainsListCard = ({
   const navigate = useNavigateSettings();
 
   const { t } = useLingui();
-  const { localeCatalog } = useAtomStateValue(dateLocaleState);
+  const { getAddedRelativeDateDescription } =
+    useGetAddedRelativeDateDescription();
 
   const setSelectedPublicDomain = useSetAtomState(selectedPublicDomainState);
   const setSelectedApplicationIdForPublicDomain = useSetAtomState(
@@ -49,14 +48,6 @@ export const SettingsPublicDomainsListCard = ({
     navigate(SettingsPath.PublicDomain);
   };
 
-  const getItemDescription = (createdAt: string) => {
-    const beautifiedCreatedAt = beautifyPastDateRelativeToNow(
-      createdAt,
-      localeCatalog,
-    );
-    return t`Added ${beautifiedCreatedAt}`;
-  };
-
   if (publicDomains.length === 0) {
     return (
       <SettingsCard
@@ -71,7 +62,9 @@ export const SettingsPublicDomainsListCard = ({
     <SettingsListCard
       items={publicDomains}
       getItemLabel={({ domain }) => domain}
-      getItemDescription={({ createdAt }) => getItemDescription(createdAt)}
+      getItemDescription={({ createdAt }) =>
+        getAddedRelativeDateDescription(createdAt)
+      }
       RowIcon={IconWorld}
       onRowClick={(publicDomain: PublicDomain) => {
         setSelectedPublicDomain(publicDomain);
