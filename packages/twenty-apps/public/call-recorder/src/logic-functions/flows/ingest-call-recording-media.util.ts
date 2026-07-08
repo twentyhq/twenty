@@ -8,6 +8,7 @@ import {
   AUDIO_FILE_TOO_LARGE_FAILURE_REASON,
   VIDEO_FILE_TOO_LARGE_FAILURE_REASON,
 } from 'src/logic-functions/constants/media-file-too-large-failure-reasons';
+import { putMediaDownloadBodyToUploadTarget } from 'src/logic-functions/flows/put-media-download-body-to-upload-target.util';
 import { extractRecallMediaUrls } from 'src/logic-functions/recall-api/extract-recall-media-urls.util';
 import { getRecallRecording } from 'src/logic-functions/recall-api/get-recall-recording.util';
 import { type CallRecordingMediaFile } from 'src/logic-functions/types/call-recording-media-file.type';
@@ -28,11 +29,13 @@ type OpenMediaDownloadResult =
   | { outcome: 'opened'; body: ReadableStream<Uint8Array>; sizeBytes: number }
   | { outcome: 'too-large'; sizeBytes: number };
 
-// duplex is required by fetch when the body is a stream but is missing from the DOM lib's RequestInit
-type StreamingRequestInit = RequestInit & { duplex: 'half' };
+type MediaUploadTarget = {
+  fileId: string;
+  uploadUrl: string;
+  contentType: string;
+};
 
 const MEDIA_DOWNLOAD_TIMEOUT_MS = 120_000;
-const MEDIA_UPLOAD_TIMEOUT_MS = 120_000;
 const MEDIA_FILE_FOLDER = 'FilesField';
 
 export const ingestCallRecordingMedia = async ({
@@ -190,19 +193,31 @@ const openMediaDownload = async ({
   );
 
   if (!response.ok) {
-    await response.body?.cancel();
+    await cancelMediaDownloadBody({
+      callRecordingId,
+      fileName,
+      body: response.body,
+    });
 
     throw new Error(`download failed with status ${response.status}`);
   }
 
   if (isUndefined(contentLengthBytes)) {
-    await response.body?.cancel();
+    await cancelMediaDownloadBody({
+      callRecordingId,
+      fileName,
+      body: response.body,
+    });
 
     throw new Error('download response is missing content-length');
   }
 
   if (contentLengthBytes > maxMediaFileSizeBytes) {
-    await response.body?.cancel();
+    await cancelMediaDownloadBody({
+      callRecordingId,
+      fileName,
+      body: response.body,
+    });
 
     return { outcome: 'too-large', sizeBytes: contentLengthBytes };
   }
@@ -248,22 +263,13 @@ const uploadMediaStreamToStorage = async ({
     `[call-recorder] media-ingestion phase=artifact-upload-start callRecordingId=${callRecordingId} fileName=${fileName} declaredBytes=${sizeBytes} ${formatMemoryUsageForLog()}`,
   );
 
-  const uploadRequestInit: StreamingRequestInit = {
-    method: 'PUT',
-    body,
-    duplex: 'half',
-    headers: {
-      'Content-Type': uploadTarget.contentType,
-      'Content-Length': String(sizeBytes),
-    },
-    signal: AbortSignal.timeout(MEDIA_UPLOAD_TIMEOUT_MS),
-  };
-
-  const uploadResponse = await fetch(uploadTarget.uploadUrl, uploadRequestInit);
-
-  if (!uploadResponse.ok) {
-    throw new Error(`upload failed with status ${uploadResponse.status}`);
-  }
+  await putMediaDownloadBodyToUploadTarget({
+    callRecordingId,
+    fileName,
+    mediaDownloadBody: body,
+    sizeBytes,
+    uploadTarget,
+  });
 
   return completeFileUpload({ metadataClient, fileId: uploadTarget.fileId });
 };
@@ -275,8 +281,12 @@ const cancelMediaDownloadBody = async ({
 }: {
   callRecordingId: string;
   fileName: string;
-  body: ReadableStream<Uint8Array>;
+  body: ReadableStream<Uint8Array> | null;
 }) => {
+  if (isNull(body)) {
+    return;
+  }
+
   await body.cancel().catch((error) => {
     console.warn(
       `[call-recorder] media-ingestion phase=download-body-cancel-failed callRecordingId=${callRecordingId} fileName=${fileName}: ${error instanceof Error ? error.message : String(error)}`,
@@ -294,7 +304,7 @@ const createFileUploadTarget = async ({
   fileName: string;
   sizeBytes: number;
   fieldMetadataUniversalIdentifier: string;
-}): Promise<{ fileId: string; uploadUrl: string; contentType: string }> => {
+}): Promise<MediaUploadTarget> => {
   const mutationResult = await metadataClient.mutation({
     createFileUpload: {
       __args: {

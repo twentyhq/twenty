@@ -74,16 +74,14 @@ type DirectUploadMutationRequest =
 // storage responses, mirroring the direct-to-storage upload flow.
 const stubFetch = ({
   downloadsByUrl,
-  uploadsByUrl,
 }: {
   downloadsByUrl: Record<string, unknown>;
-  uploadsByUrl?: Record<string, unknown>;
 }) => {
   fetchMock.mockReset();
   fetchMock.mockImplementation(
     (url: string, init?: { method?: string }) => {
       if (init?.method === 'PUT') {
-        return Promise.resolve(uploadsByUrl?.[url] ?? { ok: true, status: 200 });
+        return Promise.resolve({ ok: true, status: 200 });
       }
 
       const downloadResponse = downloadsByUrl[url];
@@ -216,30 +214,6 @@ describe('ingestCallRecordingMedia', () => {
     );
   });
 
-  it('pipes the download body to the presigned url with its exact content length', async () => {
-    await ingestCallRecordingMedia({
-      callRecordingId: 'call-recording-1',
-      externalRecordingId: 'recall-recording-1',
-      hasAudio: false,
-      hasVideo: true,
-    });
-
-    const putCall = getPutCall(uploadUrlForFilename('audio.mp3'));
-
-    expect(putCall).toBeDefined();
-
-    const putInit = putCall?.[1] as {
-      body: unknown;
-      duplex?: string;
-      headers: Record<string, string>;
-    };
-
-    expect(putInit.body).toBeInstanceOf(ReadableStream);
-    expect(putInit.duplex).toBe('half');
-    expect(putInit.headers['Content-Length']).toBe('8');
-    expect(putInit.headers['Content-Type']).toBe('application/octet-stream');
-  });
-
   it('skips artifacts already on the record', async () => {
     const updateFields = await ingestCallRecordingMedia({
       callRecordingId: 'call-recording-1',
@@ -265,33 +239,6 @@ describe('ingestCallRecordingMedia', () => {
     expect(updateFields).toEqual({});
     expect(getRecallRecordingMock).not.toHaveBeenCalled();
     expect(mutationMock).not.toHaveBeenCalled();
-  });
-
-  it('omits an artifact and warns when its upload fails', async () => {
-    stubFetch({
-      downloadsByUrl: {
-        [VIDEO_URL]: buildDownloadResponse({ contentLengthBytes: 8 }),
-        [AUDIO_URL]: buildDownloadResponse({ contentLengthBytes: 8 }),
-      },
-      uploadsByUrl: {
-        [uploadUrlForFilename('video.mp4')]: { ok: false, status: 500 },
-      },
-    });
-
-    const updateFields = await ingestCallRecordingMedia({
-      callRecordingId: 'call-recording-1',
-      externalRecordingId: 'recall-recording-1',
-      hasAudio: false,
-      hasVideo: false,
-    });
-
-    expect(updateFields).toEqual({
-      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-    });
-    expect(Object.keys(updateFields)).toEqual(['audio']);
-    expect(console.warn).toHaveBeenCalledWith(
-      expect.stringContaining('upload failed with status 500'),
-    );
   });
 
   it('cancels the opened download body when creating its upload target fails', async () => {
@@ -334,9 +281,13 @@ describe('ingestCallRecordingMedia', () => {
   });
 
   it('omits an artifact and warns when the download has no content length', async () => {
+    const cancelMock = vi.fn().mockRejectedValue(new Error('cancel exploded'));
+
     stubFetch({
       downloadsByUrl: {
-        [VIDEO_URL]: buildDownloadResponse(),
+        [VIDEO_URL]: buildDownloadResponse({
+          body: { cancel: cancelMock },
+        }),
         [AUDIO_URL]: buildDownloadResponse({ contentLengthBytes: 8 }),
       },
     });
@@ -354,6 +305,9 @@ describe('ingestCallRecordingMedia', () => {
     expect(getPutCall(uploadUrlForFilename('video.mp4'))).toBeUndefined();
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('content-length'),
+    );
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining('download-body-cancel-failed'),
     );
   });
 
@@ -396,7 +350,7 @@ describe('ingestCallRecordingMedia', () => {
   });
 
   it('skips an oversized file without reading its body and records the reason', async () => {
-    const cancelMock = vi.fn().mockResolvedValue(undefined);
+    const cancelMock = vi.fn().mockRejectedValue(new Error('cancel exploded'));
 
     stubFetch({
       downloadsByUrl: {
@@ -423,6 +377,9 @@ describe('ingestCallRecordingMedia', () => {
     expect(cancelMock).toHaveBeenCalled();
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('artifact-too-large'),
+    );
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining('download-body-cancel-failed'),
     );
   });
 
