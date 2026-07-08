@@ -48,13 +48,24 @@ describe('resolveRecallApiRetryDelayMs', () => {
     ).toBe(RECALL_API_ADHOC_POOL_RETRY_DELAY_MS);
   });
 
-  it('backs off linearly by attempt for everything else', () => {
+  it('applies equal jitter around the linear backoff for everything else', () => {
+    const baseDelayMs = RECALL_API_RETRY_DELAY_MS * 2;
+
     expect(
       resolveRecallApiRetryDelayMs({
         retryAfterMs: undefined,
         status: 409,
         attemptNumber: 2,
+        random: () => 0,
       }),
-    ).toBe(RECALL_API_RETRY_DELAY_MS * 2);
+    ).toBe(baseDelayMs / 2);
+    expect(
+      resolveRecallApiRetryDelayMs({
+        retryAfterMs: undefined,
+        status: 409,
+        attemptNumber: 2,
+        random: () => 1,
+      }),
+    ).toBe(baseDelayMs);
   });
 });

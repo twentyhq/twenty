@@ -1,6 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 
 import { RECALL_API_MAX_ATTEMPTS } from 'src/logic-functions/constants/recall-api-max-attempts';
+import { RECALL_API_MAX_IN_PROCESS_RETRY_WAIT_MS } from 'src/logic-functions/constants/recall-api-max-in-process-retry-wait-ms';
 import { type RecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { parseRecallRetryAfterMs } from 'src/logic-functions/recall-api/parse-recall-retry-after.util';
 import { reserveRecallApiRateLimitSlotMs } from 'src/logic-functions/recall-api/recall-api-rate-limiter.util';
@@ -45,13 +46,19 @@ export const recallBotApiRequest = async <TData>(
       return result;
     }
 
-    await sleep(
-      resolveRecallApiRetryDelayMs({
-        retryAfterMs,
-        status: result.status,
-        attemptNumber,
-      }),
-    );
+    const retryDelayMs = resolveRecallApiRetryDelayMs({
+      retryAfterMs,
+      status: result.status,
+      attemptNumber,
+    });
+
+    // Blocking longer than one invocation can safely spare would sleep straight
+    // into a timeout kill, so defer to the reconcilers, which re-drive the row.
+    if (retryDelayMs > RECALL_API_MAX_IN_PROCESS_RETRY_WAIT_MS) {
+      return result;
+    }
+
+    await sleep(retryDelayMs);
   }
 };
 

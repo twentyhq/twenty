@@ -17,10 +17,12 @@ export const resolveRecallApiRetryDelayMs = ({
   retryAfterMs,
   status,
   attemptNumber,
+  random = Math.random,
 }: {
   retryAfterMs: number | undefined;
   status: number | null;
   attemptNumber: number;
+  random?: () => number;
 }): number => {
   if (retryAfterMs !== undefined) {
     return retryAfterMs;
@@ -30,5 +32,9 @@ export const resolveRecallApiRetryDelayMs = ({
     return RECALL_API_ADHOC_POOL_RETRY_DELAY_MS;
   }
 
-  return RECALL_API_RETRY_DELAY_MS * attemptNumber;
+  // Equal jitter around the linear backoff so retries that share a failure
+  // instant do not fire in lockstep and re-collide on the next attempt.
+  const baseDelayMs = RECALL_API_RETRY_DELAY_MS * attemptNumber;
+
+  return Math.round(baseDelayMs / 2 + random() * (baseDelayMs / 2));
 };

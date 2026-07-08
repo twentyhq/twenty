@@ -752,6 +752,48 @@ describe('recall bot api', () => {
       expect(fetchMock).toHaveBeenCalledTimes(3);
     });
 
+    it('defers instead of sleeping when a Retry-After exceeds the in-process ceiling', async () => {
+      fetchMock.mockResolvedValue({
+        ok: false,
+        status: 429,
+        headers: new Headers({ 'retry-after': '45' }),
+        json: async () => ({ detail: 'too many requests' }),
+      });
+
+      const result = await getRecallBot({ externalBotId: 'recall-bot-id' });
+
+      expect(result).toEqual({
+        ok: false,
+        status: 429,
+        errorMessage:
+          'Recall API responded with HTTP 429: {"detail":"too many requests"}',
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('defers a 507 ad-hoc pool exhaustion to the reconcilers rather than blocking', async () => {
+      fetchMock.mockResolvedValue({
+        ok: false,
+        status: 507,
+        headers: new Headers(),
+        json: async () => ({ detail: 'ad-hoc pool exhausted' }),
+      });
+
+      const result = await scheduleRecallBot({
+        meetingUrl: 'https://meet.google.com/abc-defg-hij',
+        joinAt: '2026-01-01T13:00:00.000Z',
+        metadata: RECALL_ROUTING_METADATA,
+      });
+
+      expect(result).toEqual({
+        ok: false,
+        status: 507,
+        errorMessage:
+          'Recall API responded with HTTP 507: {"detail":"ad-hoc pool exhausted"}',
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
     it('does not retry client errors', async () => {
       fetchMock.mockResolvedValue({
         ok: false,
