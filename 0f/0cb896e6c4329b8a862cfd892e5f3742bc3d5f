@@ -1,0 +1,25 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/utils/build-initial-delta-url.util.ts
+  s_7b1c6f2e0e3b83::t_16cdc92bac799a 16,18
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util.ts
+  s_7b1c6f2e0e3b83::t_7f46357e99bbc1 7-16,19
+.gitignore
+  s_7b1c6f2e0e3b83::t_87efa8927a2f7b 8
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/utils/__tests__/build-initial-delta-url.util.spec.ts
+  s_7b1c6f2e0e3b83::t_a237b295942fe1 22,32,42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "0f0cb896e6c4329b8a862cfd892e5f3742bc3d5f",
+  "prompts": {},
+  "sessions": {
+    "s_7b1c6f2e0e3b83": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ecb71351-1f99-4bd4-80d0-5ced7c089ea6",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
