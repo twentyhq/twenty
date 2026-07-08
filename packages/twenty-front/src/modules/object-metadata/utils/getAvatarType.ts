@@ -25,9 +25,6 @@ export const getAvatarType = (
     }
   }
 
-  // Name-based fallbacks when the image identifier type doesn't resolve a shape.
-  // Company stays as a safety net until the backfill command has seeded its
-  // imageIdentifierFieldMetadataId on existing workspaces.
   if (
     objectMetadataItem.nameSingular === CoreObjectNameSingular.WorkspaceMember
   ) {
