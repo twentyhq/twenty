@@ -8,7 +8,7 @@ icon: terminal
 
 | Komut                                           | Ne yapar                                                                              | Şurada belgelenmiştir                                                                                      |
 | ----------------------------------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `dev`                                           | Kaynak dosyaları izleyin ve değişiklikleri canlı olarak eşitleyin                     | [Hızlı Başlangıç](/l/tr/developers/extend/apps/getting-started/quick-start)                                     |
+| `dev`                                           | Kaynak dosyaları izleyin ve değişiklikleri gerçek zamanlı olarak eşitleyin            | [Hızlı Başlangıç](/l/tr/developers/extend/apps/getting-started/quick-start)                                     |
 | `plan`                                          | Meta veri değişikliklerini uygulamadan önizleyin                                      | [Senkronizasyon ve kurtarma](/l/tr/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) |
 | `apply`                                         | Planı gösterdikten sonra meta veri değişikliklerini uygulayın                         | [Senkronizasyon ve kurtarma](/l/tr/developers/extend/apps/operations/sync-and-recovery)                         |
 | `dev:build`                                     | Uygulamayı derleyin ve API istemcisini oluşturun (`.tgz` paketlemek için `--tarball`) | [Yayınlama](/l/tr/developers/extend/apps/operations/publishing)                                                 |
@@ -18,11 +18,11 @@ icon: terminal
 | `dev:function:exec` / `dev:function:logs`       | Fonksiyonları çalıştırın ve günlüklerini akış halinde alın                            | bu sayfa                                                                                                   |
 | `dev:translations-extract`                      | Çevrilebilir dizeleri `locales/` kataloglarına çıkarın                                | [Çeviriler](/l/tr/developers/extend/apps/translations/overview)                                                 |
 | `dev:catalog-sync`                              | Pazar yeri katalog eşitlemesini tetikleyin                                            | [Yayınlama](/l/tr/developers/extend/apps/operations/publishing#how-marketplace-discovery-works)                 |
-| `app:publish` / `app:install` / `app:uninstall` | Yayın yaşam döngüsü                                                                   | [Yayınlama](/l/tr/developers/extend/apps/operations/publishing) ve bu sayfa                                     |
+| `app:publish` / `app:install` / `app:uninstall` | Sürüm yaşam döngüsü                                                                   | [Yayınlama](/l/tr/developers/extend/apps/operations/publishing) ve bu sayfa                                     |
 | `docker:*`                                      | Yerel Twenty sunucu konteynerini yönetin                                              | [Yerel Sunucu](/l/tr/developers/extend/apps/getting-started/local-server)                                       |
 | `remote:*`                                      | Sunucu bağlantılarını yönetin                                                         | bu sayfa                                                                                                   |
 
-Her komut, varsayılan yerine belirli bir uzak sunucuyu hedeflemek için `-r, --remote \<name>` kabul eder.
+Her komut, varsayılan yerine belirli bir uzak sunucuyu hedeflemek için `-r, --remote \<name>` parametresini kabul eder.
 
 ## Fonksiyonları çalıştırma (`yarn twenty dev:function:exec`)
 
