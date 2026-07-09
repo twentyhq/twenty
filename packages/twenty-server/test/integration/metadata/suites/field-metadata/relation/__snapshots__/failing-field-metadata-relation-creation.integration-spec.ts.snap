@@ -555,13 +555,14 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
         {
           "errors": [
             {
-              "code": "FIELD_METADATA_NOT_FOUND",
-              "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
-              "userFriendlyMessage": "Relation field target metadata not found",
+              "code": "NOT_AVAILABLE",
+              "message": "Name "fieldNameBisId" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
+              "value": "fieldNameBisId",
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "defaulttargetfieldlabel",
+            "name": "fieldNameBisId",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -572,14 +573,13 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
         {
           "errors": [
             {
-              "code": "NOT_AVAILABLE",
-              "message": "Name "fieldNameBisId" is not available as it is already used by another field",
-              "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
-              "value": "fieldNameBisId",
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
+              "userFriendlyMessage": "Relation field target metadata not found",
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "fieldNameBisId",
+            "name": "defaulttargetfieldlabel",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -1625,13 +1625,14 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
           {
             "errors": [
               {
-                "code": "FIELD_METADATA_NOT_FOUND",
-                "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
-                "userFriendlyMessage": "Relation field target metadata not found",
+                "code": "NOT_AVAILABLE",
+                "message": "Name "fieldNameBisId" is not available as it is already used by another field",
+                "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
+                "value": "fieldNameBisId",
               },
             ],
             "flatEntityMinimalInformation": {
-              "name": "defaulttargetfieldlabel",
+              "name": "fieldNameBisId",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
             },
@@ -1642,14 +1643,13 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
           {
             "errors": [
               {
-                "code": "NOT_AVAILABLE",
-                "message": "Name "fieldNameBisId" is not available as it is already used by another field",
-                "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
-                "value": "fieldNameBisId",
+                "code": "FIELD_METADATA_NOT_FOUND",
+                "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
+                "userFriendlyMessage": "Relation field target metadata not found",
               },
             ],
             "flatEntityMinimalInformation": {
-              "name": "fieldNameBisId",
+              "name": "defaulttargetfieldlabel",
               "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
             },

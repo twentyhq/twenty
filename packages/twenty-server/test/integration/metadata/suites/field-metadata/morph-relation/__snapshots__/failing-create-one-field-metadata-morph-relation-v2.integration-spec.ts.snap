@@ -10,13 +10,13 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morph r
           "errors": [
             {
               "code": "NOT_AVAILABLE",
-              "message": "Name "tata" is not available as it is already used by another field",
-              "userFriendlyMessage": "Name "tata" is not available as it is already used by another field",
-              "value": "tata",
+              "message": "Name "toto" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "toto" is not available as it is already used by another field",
+              "value": "toto",
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "tata",
+            "name": "toto",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -28,13 +28,13 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morph r
           "errors": [
             {
               "code": "NOT_AVAILABLE",
-              "message": "Name "toto" is not available as it is already used by another field",
-              "userFriendlyMessage": "Name "toto" is not available as it is already used by another field",
-              "value": "toto",
+              "message": "Name "tata" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "tata" is not available as it is already used by another field",
+              "value": "tata",
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "toto",
+            "name": "tata",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -53,7 +53,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morph r
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "IDX_247f630f4f88242063a98b01371",
+            "name": "IDX_4a59b92546a3dbf54abee51283a",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "index",
@@ -69,7 +69,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morph r
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "IDX_4a59b92546a3dbf54abee51283a",
+            "name": "IDX_247f630f4f88242063a98b01371",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "index",
