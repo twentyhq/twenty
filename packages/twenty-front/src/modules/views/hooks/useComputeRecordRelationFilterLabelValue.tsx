@@ -5,6 +5,7 @@ import { MAX_RECORDS_TO_DISPLAY } from '@/object-record/object-filter-dropdown/c
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { useGetRecordFilterChipLabelValue } from '@/views/hooks/useGetRecordFilterChipLabelValue';
+import { reportRelationFilterMetadataResolutionError } from '@/views/utils/reportRelationFilterMetadataResolutionError';
 
 import { t } from '@lingui/core/macro';
 import {
@@ -46,7 +47,16 @@ export const useComputeRecordRelationFilterLabelValue = ({
     });
 
   if (!isDefined(relationObjectMetadataNameSingular)) {
-    throw new Error('relationObjectMetadataNameSingular is not defined');
+    void reportRelationFilterMetadataResolutionError({
+      cause: 'missing-relation-object-metadata-name-singular',
+      recordFilter,
+    });
+
+    return {
+      labelValue: getRecordFilterChipLabelValue({
+        recordFilter,
+      }),
+    };
   }
 
   const relationObjectMetadataItem = objectMetadataItems.find(
@@ -55,7 +65,17 @@ export const useComputeRecordRelationFilterLabelValue = ({
   );
 
   if (!isDefined(relationObjectMetadataItem)) {
-    throw new Error('relationObjectMetadataItem is not defined');
+    void reportRelationFilterMetadataResolutionError({
+      cause: 'missing-relation-object-metadata-item',
+      recordFilter,
+      relationObjectMetadataNameSingular,
+    });
+
+    return {
+      labelValue: getRecordFilterChipLabelValue({
+        recordFilter,
+      }),
+    };
   }
 
   const relationObjectLabelPlural = relationObjectMetadataItem.labelPlural;
