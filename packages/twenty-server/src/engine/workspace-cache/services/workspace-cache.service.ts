@@ -360,9 +360,7 @@ export class WorkspaceCacheService implements OnModuleInit {
 
       const baseKey = this.buildCacheKey(workspaceId, keyName);
 
-      if (
-        this.flushGenerationByKey.get(baseKey) !== generationAtComputeStart
-      ) {
+      if (this.flushGenerationByKey.get(baseKey) !== generationAtComputeStart) {
         continue;
       }
 
