@@ -24,19 +24,15 @@ msgid "Test email"
 msgstr "Тест имејл"
 
 #. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "Enabled"
-msgstr "Омогућено"
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr "Потврдите домен"
 
 #. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "Disabled"
-msgstr "Онемогућено"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "Server administrator access changed"
-msgstr "Приступ администратора сервера је измењен"
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
+msgstr "{senderName} (<0>{senderEmail}</0>): Потврдите овај домен да бисте дозволили корисницима са <1>@{domain}</1> имејл адресама да се придруже вашем радном простору без потребе за позивницом."
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
@@ -83,15 +79,19 @@ msgid "Reactivate workspace"
 msgstr "Поново активирај радни простор"
 
 #. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "Validate domain"
-msgstr "Потврдите домен"
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Enabled"
+msgstr "Омогућено"
 
 #. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
-msgstr "{senderName} (<0>{senderEmail}</0>): Потврдите овај домен да бисте дозволили корисницима са <1>@{domain}</1> имејл адресама да се придруже вашем радном простору без потребе за позивницом."
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Disabled"
+msgstr "Онемогућено"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Server administrator access changed"
+msgstr "Приступ администратора сервера је измењен"
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -107,31 +107,6 @@ msgstr "{senderName} (<0>{senderEmail}</0>) вас је позвао да се �
 #: src/emails/send-invite-link.email.tsx
 msgid "Accept invite"
 msgstr "Прихвати позив"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset your password 🗝"
-msgstr "Ресетујте вашу шифру 🗝"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set your password 🗝"
-msgstr "Подесите своју лозинку 🗝"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset"
-msgstr "Ресетуј"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set"
-msgstr "Подесити"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "Овај линк је валидан само следећих {duration}. Ако линк не функционише, моћи ћете директно користити линк за верификацију пријаве:"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -229,30 +204,29 @@ msgid "Add a payment method"
 msgstr "Додај начин плаћања"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Your plan renews soon"
-msgstr "Ваш пакет ће ускоро бити обновљен"
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset your password 🗝"
+msgstr "Ресетујте вашу шифру 🗝"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Just so it's never a surprise, here's a heads up about your annual plan."
-msgstr "Како никада не би било изненађења, ево најаве у вези са вашим годишњим пакетом."
+#: src/emails/password-reset-link.email.tsx
+msgid "Set your password 🗝"
+msgstr "Подесите своју лозинку 🗝"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
-msgstr "Ваш годишњи пакет за <0>{workspaceDisplayName}</0> биће обновљен {formattedDate}."
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset"
+msgstr "Ресетуј"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
-msgstr "Не морате ништа да предузимате ако желите да наставите. Ако ипак не желите обнову, можете отказати у било ком тренутку пре тог датума."
+#: src/emails/password-reset-link.email.tsx
+msgid "Set"
+msgstr "Подесити"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Manage subscription"
-msgstr "Управљај претплатом"
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "Овај линк је валидан само следећих {duration}. Ако линк не функционише, моћи ћете директно користити линк за верификацију пријаве:"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -278,6 +252,32 @@ msgstr "Ваш бесплатни пробни период за <0>{workspaceDi
 #: src/emails/billing-trial-converting.email.tsx
 msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
 msgstr "Ако вам Twenty одговара, све је спремно — не морате ништа да радите. Ако ипак није прави избор, можете отказати једним кликом пре тог датума и нећете бити терећени."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "Управљај претплатом"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your plan renews soon"
+msgstr "Ваш пакет ће ускоро бити обновљен"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Just so it's never a surprise, here's a heads up about your annual plan."
+msgstr "Како никада не би било изненађења, ево најаве у вези са вашим годишњим пакетом."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
+msgstr "Ваш годишњи пакет за <0>{workspaceDisplayName}</0> биће обновљен {formattedDate}."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
+msgstr "Не морате ништа да предузимате ако желите да наставите. Ако ипак не желите обнову, можете отказати у било ком тренутку пре тог датума."
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx

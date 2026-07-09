@@ -24,19 +24,15 @@ msgid "Test email"
 msgstr "Testowy email"
 
 #. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "Enabled"
-msgstr "Włączone"
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr "Sprawdź domenę"
 
 #. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "Disabled"
-msgstr "Wyłączony"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "Server administrator access changed"
-msgstr "Zmieniono dostęp administratora serwera"
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
+msgstr "{senderName} (<0>{senderEmail}</0>): Proszę zweryfikować tę domenę, aby umożliwić użytkownikom z adresami e-mail <1>@{domain}</1> dołączenie do Twojej przestrzeni roboczej bez potrzeby zaproszenia."
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
@@ -83,15 +79,19 @@ msgid "Reactivate workspace"
 msgstr "Aktywuj ponownie miejsce pracy"
 
 #. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "Validate domain"
-msgstr "Sprawdź domenę"
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Enabled"
+msgstr "Włączone"
 
 #. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
-msgstr "{senderName} (<0>{senderEmail}</0>): Proszę zweryfikować tę domenę, aby umożliwić użytkownikom z adresami e-mail <1>@{domain}</1> dołączenie do Twojej przestrzeni roboczej bez potrzeby zaproszenia."
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Disabled"
+msgstr "Wyłączony"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Server administrator access changed"
+msgstr "Zmieniono dostęp administratora serwera"
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -107,31 +107,6 @@ msgstr "{senderName} (<0>{senderEmail}</0>) zaprosił Cię do dołączenia do pr
 #: src/emails/send-invite-link.email.tsx
 msgid "Accept invite"
 msgstr "Zaakceptuj zaproszenie"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset your password 🗝"
-msgstr "Zresetuj swoje hasło 🗝"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set your password 🗝"
-msgstr "Ustaw swoje hasło 🗝"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset"
-msgstr "Zresetuj"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set"
-msgstr "Ustaw"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "Ten link jest ważny tylko przez {duration}. Jeśli link nie działa, można bezpośrednio użyć linku weryfikacyjnego logowania:"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -229,30 +204,29 @@ msgid "Add a payment method"
 msgstr "Dodaj metodę płatności"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Your plan renews soon"
-msgstr "Twój plan wkrótce się odnowi"
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset your password 🗝"
+msgstr "Zresetuj swoje hasło 🗝"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Just so it's never a surprise, here's a heads up about your annual plan."
-msgstr "Aby nigdy nie było niespodzianek, przesyłamy powiadomienie dotyczące Twojego rocznego planu."
+#: src/emails/password-reset-link.email.tsx
+msgid "Set your password 🗝"
+msgstr "Ustaw swoje hasło 🗝"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
-msgstr "Twój roczny plan dla <0>{workspaceDisplayName}</0> zostanie odnowiony {formattedDate}."
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset"
+msgstr "Zresetuj"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
-msgstr "Jeśli chcesz kontynuować, nie są wymagane żadne działania. Jeśli wolisz nie odnawiać, możesz anulować w dowolnym momencie przed tą datą."
+#: src/emails/password-reset-link.email.tsx
+msgid "Set"
+msgstr "Ustaw"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Manage subscription"
-msgstr "Zarządzaj subskrypcją"
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "Ten link jest ważny tylko przez {duration}. Jeśli link nie działa, można bezpośrednio użyć linku weryfikacyjnego logowania:"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -278,6 +252,32 @@ msgstr "Twój bezpłatny okres próbny dla <0>{workspaceDisplayName}</0> kończy
 #: src/emails/billing-trial-converting.email.tsx
 msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
 msgstr "Jeśli Twenty dobrze się u Ciebie sprawdza, wszystko jest gotowe — nie musisz nic robić. Jeśli to jednak nie jest odpowiednie rozwiązanie, możesz anulować jednym kliknięciem przed tym terminem i nie zostaniesz obciążony."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "Zarządzaj subskrypcją"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your plan renews soon"
+msgstr "Twój plan wkrótce się odnowi"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Just so it's never a surprise, here's a heads up about your annual plan."
+msgstr "Aby nigdy nie było niespodzianek, przesyłamy powiadomienie dotyczące Twojego rocznego planu."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
+msgstr "Twój roczny plan dla <0>{workspaceDisplayName}</0> zostanie odnowiony {formattedDate}."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
+msgstr "Jeśli chcesz kontynuować, nie są wymagane żadne działania. Jeśli wolisz nie odnawiać, możesz anulować w dowolnym momencie przed tą datą."
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
