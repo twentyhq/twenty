@@ -14,6 +14,7 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useContext, useState } from 'react';
+import { useDebounce } from 'use-debounce';
 import { assertUnreachable, getSettingsPath } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { IconChevronRight, IconPinned, IconRefresh } from 'twenty-ui/icon';
@@ -35,17 +36,33 @@ const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
 `;
 
+const StyledPaginationContainer = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: ${themeCssVariables.spacing[2]};
+`;
+
 const TABLE_GRID = '1fr 100px 100px 100px 40px';
 const TABLE_GRID_MOBILE = '3fr 3fr 1fr 1fr 40px';
+const PAGE_SIZE = 25;
 
 export const SettingsAdminApps = () => {
   const apolloAdminClient = useApolloAdminClient();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
   const [showPreInstalledOnly, setShowPreInstalledOnly] = useState(false);
+  const [page, setPage] = useState(0);
 
-  const { data } = useQuery(FindAllApplicationRegistrationsDocument, {
+  const { data, loading } = useQuery(FindAllApplicationRegistrationsDocument, {
     client: apolloAdminClient,
+    variables: {
+      limit: PAGE_SIZE,
+      offset: page * PAGE_SIZE,
+      searchTerm: debouncedSearchQuery,
+      isPreInstalledOnly: showPreInstalledOnly,
+    },
   });
 
   const [syncMarketplaceCatalog, { loading: isSyncing }] = useMutation(
@@ -66,27 +83,24 @@ export const SettingsAdminApps = () => {
     }
   };
 
-  const registrations = data?.findAllApplicationRegistrations ?? [];
+  const registrations =
+    data?.findAllApplicationRegistrations.registrations ?? [];
+  const totalCount = data?.findAllApplicationRegistrations.totalCount ?? 0;
+  const hasMore = data?.findAllApplicationRegistrations.hasMore ?? false;
 
-  const query = searchQuery.trim().toLowerCase();
+  const sortedRegistrations = registrations.toSorted(
+    (a, b) => Number(a.isConfigured) - Number(b.isConfigured),
+  );
 
-  const filtered = registrations
-    .filter((registration) => {
-      if (showPreInstalledOnly && !registration.isPreInstalled) {
-        return false;
-      }
+  const handleSearchChange = (nextSearchQuery: string) => {
+    setSearchQuery(nextSearchQuery);
+    setPage(0);
+  };
 
-      if (query.length === 0) {
-        return true;
-      }
-
-      return (
-        registration.name.toLowerCase().includes(query) ||
-        (registration.sourcePackage ?? '').toLowerCase().includes(query) ||
-        registration.universalIdentifier.toLowerCase().includes(query)
-      );
-    })
-    .toSorted((a, b) => Number(a.isConfigured) - Number(b.isConfigured));
+  const handleTogglePreInstalledOnly = () => {
+    setShowPreInstalledOnly(!showPreInstalledOnly);
+    setPage(0);
+  };
 
   const getFormattedSource = (
     registration: ApplicationRegistrationFragmentFragment,
@@ -134,7 +148,7 @@ export const SettingsAdminApps = () => {
         <SearchInput
           placeholder={t`Search registrations...`}
           value={searchQuery}
-          onChange={setSearchQuery}
+          onChange={handleSearchChange}
           filterDropdown={(filterButton: ReactNode) => (
             <Dropdown
               dropdownId="settings-admin-apps-filter-dropdown"
@@ -146,9 +160,7 @@ export const SettingsAdminApps = () => {
                   <DropdownMenuItemsContainer>
                     <MenuItemToggle
                       LeftIcon={IconPinned}
-                      onToggleChange={() =>
-                        setShowPreInstalledOnly(!showPreInstalledOnly)
-                      }
+                      onToggleChange={handleTogglePreInstalledOnly}
                       toggled={showPreInstalledOnly}
                       text={t`Pre-installed only`}
                       toggleSize="small"
@@ -172,7 +184,7 @@ export const SettingsAdminApps = () => {
               <TableHeader></TableHeader>
             </TableRow>
             <TableBody>
-              {filtered.map((registration) => (
+              {sortedRegistrations.map((registration) => (
                 <SettingsAdminAppsTableRow
                   key={registration.id}
                   registration={registration}
@@ -182,6 +194,28 @@ export const SettingsAdminApps = () => {
             </TableBody>
           </Table>
         </StyledTableContainer>
+        {totalCount > PAGE_SIZE && (
+          <StyledPaginationContainer>
+            <Button
+              title={t`Previous`}
+              onClick={() => setPage(Math.max(0, page - 1))}
+              disabled={page === 0 || loading}
+              size="small"
+              variant="secondary"
+            />
+            <div>
+              {t`Page`} {page + 1} {t`of`}{' '}
+              {Math.max(1, Math.ceil(totalCount / PAGE_SIZE))}
+            </div>
+            <Button
+              title={t`Next`}
+              onClick={() => setPage(page + 1)}
+              disabled={!hasMore || loading}
+              size="small"
+              variant="secondary"
+            />
+          </StyledPaginationContainer>
+        )}
       </Section>
     </>
   );

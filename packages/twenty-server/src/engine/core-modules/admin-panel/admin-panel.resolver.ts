@@ -55,6 +55,7 @@ import { ApplicationRegistrationService } from 'src/engine/core-modules/applicat
 import { ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { FindApplicationRegistrationInstalledWorkspacesInput } from 'src/engine/core-modules/application/application-registration/dtos/find-application-registration-installed-workspaces.input';
+import { PaginatedApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import {
   BACKFILL_APPLICATION_INSTALLATION_JOB_NAME,
@@ -480,11 +481,23 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(AdminPanelGuard)
-  @Query(() => [ApplicationRegistrationEntity])
-  async findAllApplicationRegistrations(): Promise<
-    ApplicationRegistrationEntity[]
-  > {
-    return this.applicationRegistrationService.findAll();
+  @Query(() => PaginatedApplicationRegistrationsDTO)
+  async findAllApplicationRegistrations(
+    @Args('limit', { type: () => Int, nullable: true, defaultValue: 25 })
+    limit: number,
+    @Args('offset', { type: () => Int, nullable: true, defaultValue: 0 })
+    offset: number,
+    @Args('searchTerm', { type: () => String, nullable: true })
+    searchTerm?: string,
+    @Args('isPreInstalledOnly', { type: () => Boolean, nullable: true })
+    isPreInstalledOnly?: boolean,
+  ): Promise<PaginatedApplicationRegistrationsDTO> {
+    return this.applicationRegistrationService.findAll({
+      limit,
+      offset,
+      searchTerm: searchTerm ?? undefined,
+      isPreInstalledOnly: isPreInstalledOnly ?? undefined,
+    });
   }
 
   @UseGuards(AdminPanelGuard)

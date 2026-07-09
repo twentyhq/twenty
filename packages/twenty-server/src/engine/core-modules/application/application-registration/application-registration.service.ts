@@ -6,7 +6,13 @@ import crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { ILike, IsNull, type FindOptionsWhere, type Repository } from 'typeorm';
+import {
+  ILike,
+  IsNull,
+  Raw,
+  type FindOptionsWhere,
+  type Repository,
+} from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -19,6 +25,7 @@ import {
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { type ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
+import { type PaginatedApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { type PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
@@ -118,11 +125,51 @@ export class ApplicationRegistrationService {
     });
   }
 
-  async findAll(): Promise<ApplicationRegistrationEntity[]> {
-    return this.applicationRegistrationRepository.find({
-      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
-      order: { createdAt: 'DESC' },
-    });
+  async findAll({
+    limit,
+    offset,
+    searchTerm,
+    isPreInstalledOnly,
+  }: {
+    limit: number;
+    offset: number;
+    searchTerm?: string;
+    isPreInstalledOnly?: boolean;
+  }): Promise<PaginatedApplicationRegistrationsDTO> {
+    const baseWhere: FindOptionsWhere<ApplicationRegistrationEntity> =
+      isPreInstalledOnly === true ? { isPreInstalled: true } : {};
+
+    const trimmedSearch = searchTerm?.trim();
+
+    const whereClauses: FindOptionsWhere<ApplicationRegistrationEntity>[] =
+      isDefined(trimmedSearch) && trimmedSearch.length > 0
+        ? [
+            { ...baseWhere, name: ILike(`%${trimmedSearch}%`) },
+            { ...baseWhere, sourcePackage: ILike(`%${trimmedSearch}%`) },
+            {
+              ...baseWhere,
+              universalIdentifier: Raw(
+                (alias) => `${alias}::text ILIKE :searchTerm`,
+                { searchTerm: `%${trimmedSearch}%` },
+              ),
+            },
+          ]
+        : [baseWhere];
+
+    const [registrations, totalCount] =
+      await this.applicationRegistrationRepository.findAndCount({
+        select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
+        where: whereClauses,
+        order: { createdAt: 'DESC' },
+        skip: offset,
+        take: limit,
+      });
+
+    return {
+      registrations,
+      totalCount,
+      hasMore: offset + registrations.length < totalCount,
+    };
   }
 
   async findOneById(
