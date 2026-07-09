@@ -6,15 +6,16 @@ export const mergeDefaultFunctionInputAndFunctionInput = ({
   oldInput,
 }: {
   newInput: FunctionInput;
-  oldInput: FunctionInput;
+  oldInput: FunctionInput | undefined;
 }): FunctionInput => {
   const result: FunctionInput = {};
+  const safeOldInput = oldInput ?? {};
 
   for (const key of Object.keys(newInput)) {
     const newValue = newInput[key];
-    const oldValue = oldInput[key];
+    const oldValue = safeOldInput[key];
 
-    if (!(key in oldInput)) {
+    if (!(key in safeOldInput)) {
       result[key] = newValue;
     } else if (newValue === null && isObject(oldValue)) {
       result[key] = null;

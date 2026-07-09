@@ -17,11 +17,28 @@ describe('mergeDefaultFunctionInputAndFunctionInput', () => {
       d: null,
       e: { ee: 'ee' },
     };
+
     expect(
       mergeDefaultFunctionInputAndFunctionInput({
         newInput: newInput,
         oldInput: oldInput,
       }),
     ).toEqual(expectedResult);
+  });
+
+  it('should return defaults when old input is undefined', () => {
+    const newInput = {
+      responseTemperature: null,
+      nested: {
+        value: null,
+      },
+    };
+
+    expect(
+      mergeDefaultFunctionInputAndFunctionInput({
+        newInput: newInput,
+        oldInput: undefined,
+      }),
+    ).toEqual(newInput);
   });
 });
