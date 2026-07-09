@@ -51,8 +51,12 @@ export default defineLogicFunction({
 ```
 
 Dostupné typy spouštěčů:
-* **httpRoute**: Zpřístupní vaši funkci na HTTP cestě a metodě **pod koncovým bodem `/s/`**:
-> např. `path: '/post-card/create'` je volatelné na `https://your-twenty-server.com/s/post-card/create`
+* **httpRoute**: Expose your function on the HTTP path and method at a **functions base URL** of your workspace — value Twenty injects as `TWENTY_FUNCTIONS_URL` (na dvaceti Cloudu), vyhrazená doména na pracovní plochu):
+> např. `path: '/post-card/create'` je volatelné na `https://your-workspace.withtwenty.com/post-card/create`
+
+<Warning>
+Starší trasa `/s/` prefixu (`https://your-twenty-server.com/s/post-card/create`) je **zastaralá na dvacet Cloud** a bude deaktivována na **2026-07-24**. Zůstává k dispozici pro vlastní hostované a místní instance, které nenastavují izolovanou doménu funkcí – použijte při nastavení `TWENTY_FUNCTIONS_URL`, a přejděte zpět na `\<server-url>/s/\<path>` v opačném případě.
+</Warning>
 
 <Note>
 Chcete-li vyvolat logickou funkci spuštěnou trasou z (bezhlavé) front-endové komponenty, podívejte se na [Volání logické funkce](/l/cs/developers/extend/apps/layout/front-components#calling-a-logic-function).

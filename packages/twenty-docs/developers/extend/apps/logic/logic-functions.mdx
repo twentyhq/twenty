@@ -51,8 +51,12 @@ export default defineLogicFunction({
 ```
 
 Available trigger types:
-- **httpRoute**: Exposes your function on an HTTP path and method **under the `/s/` endpoint**:
-> e.g. `path: '/post-card/create'` is callable at `https://your-twenty-server.com/s/post-card/create`
+- **httpRoute**: Exposes your function on an HTTP path and method at your workspace's **functions base URL** — the value Twenty injects as `TWENTY_FUNCTIONS_URL` (on Twenty Cloud, a dedicated per-workspace domain):
+> e.g. `path: '/post-card/create'` is callable at `https://your-workspace.withtwenty.com/post-card/create`
+
+<Warning>
+The legacy `/s/` prefix route (`https://your-twenty-server.com/s/post-card/create`) is **deprecated on Twenty Cloud** and will be deactivated on **2026-07-24**. It remains available for self-hosted and local instances that don't configure an isolated functions domain — use `TWENTY_FUNCTIONS_URL` when it's set, and fall back to `<server-url>/s/<path>` otherwise.
+</Warning>
 
 <Note>
 To invoke a route-triggered logic function from a (headless) front component, see [Calling a logic function](/developers/extend/apps/layout/front-components#calling-a-logic-function).

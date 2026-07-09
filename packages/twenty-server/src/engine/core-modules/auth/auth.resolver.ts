@@ -398,6 +398,7 @@ export class AuthResolver {
     const user = await this.signInUpService.signUpWithoutWorkspace(
       {
         email: signUpInput.email,
+        locale: signUpInput.locale,
       },
       {
         provider: AuthProviderEnum.Password,
