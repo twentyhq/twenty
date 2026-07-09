@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { InstallAppsContent } from '~/pages/onboarding/InstallAppsContent';
 
 export const InstallApps = () => {
-  const { data: marketplaceApps, isLoading } = useMarketplaceApps();
+  const { data: marketplaceApps, isLoading, error } = useMarketplaceApps();
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const {
     selectedUniversalIdentifiers,
@@ -38,7 +38,13 @@ export const InstallApps = () => {
     return null;
   }
 
-  if (availableApps.length === 0 && !hasAutoSkipFailed) {
+  const hasLoadedAvailabilitySuccessfully = !isDefined(error);
+  const shouldAutoSkip =
+    hasLoadedAvailabilitySuccessfully &&
+    availableApps.length === 0 &&
+    !hasAutoSkipFailed;
+
+  if (shouldAutoSkip) {
     return <InstallAppsAutoSkipEffect onError={handleAutoSkipError} />;
   }
 

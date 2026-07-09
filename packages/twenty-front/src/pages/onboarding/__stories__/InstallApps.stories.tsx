@@ -61,7 +61,10 @@ const meta: Meta<PageDecoratorArgs> = {
   parameters: {
     msw: {
       handlers: buildHandlers([
-        buildMarketplaceApp(CALL_RECORDER_UNIVERSAL_IDENTIFIER, 'Call recorder'),
+        buildMarketplaceApp(
+          CALL_RECORDER_UNIVERSAL_IDENTIFIER,
+          'Call recorder',
+        ),
         buildMarketplaceApp(ENRICHMENT_UNIVERSAL_IDENTIFIER, 'Enrichment'),
         buildMarketplaceApp(LAST_CONTACT_UNIVERSAL_IDENTIFIER, 'Last contact'),
       ]),
@@ -87,7 +90,10 @@ export const OnlyAvailableApps: Story = {
   parameters: {
     msw: {
       handlers: buildHandlers([
-        buildMarketplaceApp(CALL_RECORDER_UNIVERSAL_IDENTIFIER, 'Call recorder'),
+        buildMarketplaceApp(
+          CALL_RECORDER_UNIVERSAL_IDENTIFIER,
+          'Call recorder',
+        ),
       ]),
     },
   },
