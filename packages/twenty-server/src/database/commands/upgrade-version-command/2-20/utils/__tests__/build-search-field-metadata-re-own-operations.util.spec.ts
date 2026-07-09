@@ -77,6 +77,7 @@ const buildFlatSearchFieldMetadata = ({
     applicationId: STANDARD_APPLICATION_ID,
     applicationUniversalIdentifier: STANDARD_APPLICATION_UID,
     position: 0,
+    isSystemSideEffect: true,
     workspaceId: 'workspace-id',
     createdAt,
     updatedAt: createdAt,

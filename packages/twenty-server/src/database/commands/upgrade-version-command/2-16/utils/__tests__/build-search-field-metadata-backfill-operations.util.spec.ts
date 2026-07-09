@@ -129,6 +129,7 @@ const buildSearchFieldMetadata = ({
     applicationId: 'unused-application-id',
     applicationUniversalIdentifier,
     position,
+    isSystemSideEffect: true,
     workspaceId: 'workspace-id',
     createdAt,
     updatedAt: createdAt,

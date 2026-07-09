@@ -60,15 +60,12 @@ const buildFlatEntityOperationRecordForMetadata = <T extends AllMetadataName>({
               toByUniversalIdentifier[fromFlatEntity.universalIdentifier],
             ),
         )
-        .filter((fromFlatEntity) => {
-          if (metadataName === ALL_METADATA_NAME.searchFieldMetadata) {
-            return false;
-          }
-
-          return !isSystemSideEffectFlatEntity(
-            fromFlatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
-          );
-        })
+        .filter(
+          (fromFlatEntity) =>
+            !isSystemSideEffectFlatEntity(
+              fromFlatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
+            ),
+        )
     : [];
 
   const flatEntityToUpdate = Object.values(fromByUniversalIdentifier)

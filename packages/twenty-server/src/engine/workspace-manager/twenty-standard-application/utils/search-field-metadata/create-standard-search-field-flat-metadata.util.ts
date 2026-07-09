@@ -83,6 +83,7 @@ export const createStandardSearchFieldFlatMetadata = <
     tsVectorFieldMetadataId,
     tsVectorFieldMetadataUniversalIdentifier,
     position,
+    isSystemSideEffect: true,
     workspaceId,
     createdAt: now,
     updatedAt: now,

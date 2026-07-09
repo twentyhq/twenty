@@ -28,6 +28,7 @@ export const buildFlatSearchFieldMetadataForField = ({
     createdAt,
     updatedAt: createdAt,
     position,
+    isSystemSideEffect: true,
     applicationUniversalIdentifier:
       flatObjectMetadata.applicationUniversalIdentifier,
     objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
