@@ -21,10 +21,8 @@ import { ManifestAssetUrlResolverService } from 'src/engine/core-modules/applica
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
-import {
-  ApplicationVersionValidationService,
-  type VersionValidationFailureReason,
-} from 'src/engine/core-modules/application/application-package/application-version-validation.service';
+import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
+import { VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -42,20 +40,6 @@ import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-func
 @Injectable()
 export class ApplicationInstallService {
   private readonly logger = new Logger(ApplicationInstallService.name);
-
-  private static readonly VERSION_REASON_TO_EXCEPTION_CODE: Record<
-    VersionValidationFailureReason,
-    ApplicationExceptionCode
-  > = {
-    INVALID_REQUIRED_VERSION:
-      ApplicationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT,
-    INVALID_SERVER_VERSION: ApplicationExceptionCode.INVALID_SERVER_VERSION,
-    INVALID_WORKSPACE_VERSION:
-      ApplicationExceptionCode.INVALID_WORKSPACE_VERSION,
-    INSTANCE_INCOMPATIBLE: ApplicationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
-    WORKSPACE_INCOMPATIBLE:
-      ApplicationExceptionCode.WORKSPACE_VERSION_INCOMPATIBLE,
-  };
 
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
@@ -157,9 +141,7 @@ export class ApplicationInstallService {
 
       throw new ApplicationException(
         versionValidation.message,
-        ApplicationInstallService.VERSION_REASON_TO_EXCEPTION_CODE[
-          versionValidation.reason
-        ],
+        VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE[versionValidation.reason],
       );
     }
 

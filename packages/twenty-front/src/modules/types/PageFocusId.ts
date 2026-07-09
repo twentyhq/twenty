@@ -8,4 +8,5 @@ export enum PageFocusId {
   PlanRequired = 'plan-required',
   RecordShowPage = 'record-show-page',
   RecordIndex = 'record-index',
+  PageLayoutPage = 'page-layout-page',
 }

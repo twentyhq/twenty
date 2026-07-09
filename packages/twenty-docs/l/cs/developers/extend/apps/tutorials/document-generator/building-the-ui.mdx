@@ -91,9 +91,11 @@ const GenerateDocumentForm = () => {
   }, []);
 
   const generate = async () => {
-    const apiBaseUrl = process.env.TWENTY_API_URL;
+    // Prefer the injected functions URL; fall back to the legacy /s prefix (self-hosted/local)
+    const functionsBaseUrl =
+      process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL}/s`;
     const token = process.env.TWENTY_APP_ACCESS_TOKEN ?? process.env.TWENTY_API_KEY;
-    const res = await fetch(`${apiBaseUrl}/s/documents/generate`, {
+    const res = await fetch(`${functionsBaseUrl}/documents/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ templateId, recordId }),
@@ -186,7 +188,9 @@ const DocumentViewer = () => {
   const recordId = useFrontComponentExecutionContext((c) => c.recordId ?? null);
   // ...load { content, file } for recordId, then derive the links:
   const pdfUrl = document.file?.[0]?.url;
-  const webUrl = `${process.env.TWENTY_API_URL ?? ''}/s/documents/view?id=${recordId}`;
+  const functionsBaseUrl =
+    process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL ?? ''}/s`;
+  const webUrl = `${functionsBaseUrl}/documents/view?id=${recordId}`;
 
   // Render the template body, plus quick links to the web page and the PDF.
   // Links open in a new tab so they don't navigate the embedded component.

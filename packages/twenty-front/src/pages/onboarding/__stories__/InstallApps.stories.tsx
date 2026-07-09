@@ -30,7 +30,7 @@ const buildMarketplaceApp = (id: string, name: string) => ({
   category: 'productivity',
   logo: null,
   sourcePackage: name,
-  isFeatured: true,
+  isVetted: true,
 });
 
 const currentUserHandler = graphql.query(

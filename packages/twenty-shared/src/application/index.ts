@@ -9,6 +9,14 @@
 
 export type { AgentManifest } from './agentManifestType';
 export type { AppConnection } from './appConnectionType';
+export type {
+  KnownApplicationCategory,
+  ApplicationCategory,
+} from './applicationCategoryType';
+export {
+  APPLICATION_CATEGORIES,
+  isKnownApplicationCategory,
+} from './applicationCategoryType';
 export type { ApplicationManifest } from './applicationType';
 export type {
   ApplicationVariableType,

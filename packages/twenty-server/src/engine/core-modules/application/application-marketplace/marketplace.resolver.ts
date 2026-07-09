@@ -36,9 +36,9 @@ export class MarketplaceResolver {
     })
     universalIdentifiers?: string[],
   ): Promise<MarketplaceAppDTO[]> {
-    return this.marketplaceQueryService.findManyMarketplaceApps(
+    return this.marketplaceQueryService.findManyMarketplaceApps({
       universalIdentifiers,
-    );
+    });
   }
 
   @Query(() => MarketplaceAppDetailDTO)

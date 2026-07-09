@@ -5,14 +5,8 @@ import crypto from 'crypto';
 
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import {
-  ILike,
-  In,
-  IsNull,
-  type FindOptionsWhere,
-  type Repository,
-} from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+import { ILike, IsNull, type FindOptionsWhere, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -38,7 +32,9 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
-import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-featured-applications.constant';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
+import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
 
 const BCRYPT_SALT_ROUNDS = 10;
 
@@ -57,7 +53,7 @@ const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegist
     'tarballFileId',
     'latestAvailableVersion',
     'isListed',
-    'isFeatured',
+    'isVetted',
     'isPreInstalled',
     'logo',
     'description',
@@ -78,7 +74,7 @@ export type ApplicationRegistrationCatalogCard = {
   universalIdentifier: string;
   name: string;
   sourcePackage: string | null;
-  isFeatured: boolean;
+  isVetted: boolean;
   description: string | null;
   author: string | null;
   category: string | null;
@@ -98,7 +94,19 @@ export class ApplicationRegistrationService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly cacheLockService: CacheLockService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
+
+  private async invalidateMarketplaceAppsCache(): Promise<void> {
+    try {
+      await this.coreEntityCacheService.invalidate(
+        'marketplaceCatalog',
+        MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
+      );
+    } catch (error) {
+      this.logger.error('Failed to invalidate marketplace apps cache', error);
+    }
+  }
 
   async findMany(
     ownerWorkspaceId: string,
@@ -239,6 +247,8 @@ export class ApplicationRegistrationService {
       applicationRegistration,
     );
 
+    await this.invalidateMarketplaceAppsCache();
+
     return { applicationRegistration: saved, clientSecret };
   }
 
@@ -287,10 +297,11 @@ export class ApplicationRegistrationService {
     if (isDefined(update.isListed)) updateData.isListed = update.isListed;
     if (isDefined(update.isPreInstalled))
       updateData.isPreInstalled = update.isPreInstalled;
-    if (isDefined(update.isFeatured)) updateData.isFeatured = update.isFeatured;
+    if (isDefined(update.isVetted)) updateData.isVetted = update.isVetted;
 
     if (Object.keys(updateData).length > 0) {
       await this.applicationRegistrationRepository.update(id, updateData);
+      await this.invalidateMarketplaceAppsCache();
     }
   }
 
@@ -338,12 +349,16 @@ export class ApplicationRegistrationService {
           latestAvailableVersion,
         }),
       });
+
+      await this.invalidateMarketplaceAppsCache();
     }, `application-registration-update:${applicationRegistrationId}`);
   }
 
   async delete(id: string, ownerWorkspaceId: string): Promise<boolean> {
     await this.findOneById(id, ownerWorkspaceId);
     await this.applicationRegistrationRepository.softDelete(id);
+
+    await this.invalidateMarketplaceAppsCache();
 
     return true;
   }
@@ -360,6 +375,8 @@ export class ApplicationRegistrationService {
     await this.applicationRegistrationRepository.update(id, {
       oAuthClientSecretHash: clientSecretHash,
     });
+
+    await this.invalidateMarketplaceAppsCache();
 
     return clientSecret;
   }
@@ -390,13 +407,11 @@ export class ApplicationRegistrationService {
       params.universalIdentifier,
     );
 
-    const featuredIdentifiers = new Set(
-      MARKETPLACE_FEATURED_APPLICATIONS.map(
-        (entry) => entry.universalIdentifier,
-      ),
+    const vettedIdentifiers = new Set(
+      MARKETPLACE_VETTED_APPLICATIONS.map((entry) => entry.universalIdentifier),
     );
 
-    const isFeatured = featuredIdentifiers.has(params.universalIdentifier);
+    const isVetted = vettedIdentifiers.has(params.universalIdentifier);
 
     if (isDefined(existing)) {
       await this.applicationRegistrationRepository.save({
@@ -405,6 +420,7 @@ export class ApplicationRegistrationService {
         sourceType: params.sourceType,
         sourcePackage: params.sourcePackage,
         latestAvailableVersion: params.latestAvailableVersion,
+        isVetted,
         manifest: params.manifest,
         ...fromManifestApplicationToDisplayFields(params.manifest?.application),
       });
@@ -416,7 +432,7 @@ export class ApplicationRegistrationService {
         sourcePackage: params.sourcePackage,
         latestAvailableVersion: params.latestAvailableVersion,
         isListed: true,
-        isFeatured,
+        isVetted,
         manifest: params.manifest,
         ...fromManifestApplicationToDisplayFields(params.manifest?.application),
         oAuthClientId: v4(),
@@ -427,6 +443,8 @@ export class ApplicationRegistrationService {
 
       await this.applicationRegistrationRepository.save(registration);
     }
+
+    await this.invalidateMarketplaceAppsCache();
 
     if (!isDefined(params.manifest?.application?.serverVariables)) {
       return;
@@ -468,21 +486,24 @@ export class ApplicationRegistrationService {
       createdByUserId: null,
     });
 
-    return this.applicationRegistrationRepository.save(registration);
+    const saved =
+      await this.applicationRegistrationRepository.save(registration);
+
+    await this.invalidateMarketplaceAppsCache();
+
+    return saved;
   }
 
-  async findManyListedCatalogCards({
-    universalIdentifiers,
-  }: {
-    universalIdentifiers?: string[];
-  } = {}): Promise<ApplicationRegistrationCatalogCard[]> {
+  async findManyListedCatalogCards(): Promise<
+    ApplicationRegistrationCatalogCard[]
+  > {
     const registrations = await this.applicationRegistrationRepository.find({
       select: [
         'id',
         'universalIdentifier',
         'name',
         'sourcePackage',
-        'isFeatured',
+        'isVetted',
         'logo',
         'description',
         'author',
@@ -491,9 +512,6 @@ export class ApplicationRegistrationService {
       where: {
         isListed: true,
         sourceType: ApplicationRegistrationSourceType.NPM,
-        ...(isNonEmptyArray(universalIdentifiers)
-          ? { universalIdentifier: In(universalIdentifiers) }
-          : {}),
       },
     });
 
@@ -502,7 +520,7 @@ export class ApplicationRegistrationService {
       universalIdentifier: registration.universalIdentifier,
       name: registration.name,
       sourcePackage: registration.sourcePackage,
-      isFeatured: registration.isFeatured,
+      isVetted: registration.isVetted,
       description: registration.description,
       author: registration.author,
       category: registration.category,
@@ -656,6 +674,8 @@ export class ApplicationRegistrationService {
       );
     }
 
+    await this.invalidateMarketplaceAppsCache();
+
     return this.applicationRegistrationRepository.findOneOrFail({
       where: { id: registration.id },
     });
@@ -692,6 +712,8 @@ export class ApplicationRegistrationService {
     await this.applicationRegistrationRepository.update(registration.id, {
       ownerWorkspaceId: targetWorkspace.id,
     });
+
+    await this.invalidateMarketplaceAppsCache();
 
     return this.applicationRegistrationRepository.findOneOrFail({
       where: { id: registration.id },

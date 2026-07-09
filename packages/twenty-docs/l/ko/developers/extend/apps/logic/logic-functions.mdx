@@ -51,8 +51,12 @@ export default defineLogicFunction({
 ```
 
 사용 가능한 트리거 유형:
-* **httpRoute**: **`/s/` 엔드포인트** 아래의 HTTP 경로와 메서드로 함수를 노출합니다:
-> 예: `path: '/post-card/create'`는 `https://your-twenty-server.com/s/post-card/create`에서 호출할 수 있습니다
+* **httpRoute**: 워크스페이스의 **functions base URL**(Twenty가 `TWENTY_FUNCTIONS_URL`로 주입하는 값, Twenty Cloud에서는 워크스페이스별 전용 도메인임)에서 HTTP 경로와 메서드로 함수를 노출합니다.
+> 예: `path: '/post-card/create'`는 `https://your-workspace.withtwenty.com/post-card/create`에서 호출할 수 있습니다
+
+<Warning>
+레거시 `/s/` prefix 경로(`https://your-twenty-server.com/s/post-card/create`)는 **Twenty Cloud에서 사용 중단(deprecated)** 되었으며 **2026-07-24**에 비활성화됩니다. 격리된 functions 도메인을 구성하지 않는 셀프 호스팅 및 로컬 인스턴스에서는 계속 사용할 수 있습니다. `TWENTY_FUNCTIONS_URL`이 설정되어 있을 경우 해당 값을 사용하고, 그렇지 않은 경우에는 `\<server-url>/s/\<path>`를 대신 사용하십시오.
+</Warning>
 
 <Note>
 (헤드리스) 프런트 컴포넌트에서 라우트로 트리거되는 로직 함수를 호출하려면 [로직 함수 호출하기](/l/ko/developers/extend/apps/layout/front-components#calling-a-logic-function)를 참고하세요.

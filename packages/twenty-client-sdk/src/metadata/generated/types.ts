@@ -208,7 +208,7 @@ export default {
             "isListed": [
                 6
             ],
-            "isFeatured": [
+            "isVetted": [
                 6
             ],
             "isPreInstalled": [
@@ -4303,7 +4303,7 @@ export default {
             "sourcePackage": [
                 1
             ],
-            "isFeatured": [
+            "isVetted": [
                 6
             ],
             "__typename": [
@@ -4419,7 +4419,7 @@ export default {
             "isListed": [
                 6
             ],
-            "isFeatured": [
+            "isVetted": [
                 6
             ],
             "description": [
@@ -6538,6 +6538,24 @@ export default {
                 }
             ],
             "findMarketplaceAppDetail": [
+                232,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "publicMarketplaceApps": [
+                228,
+                {
+                    "isVetted": [
+                        6,
+                        "Boolean!"
+                    ]
+                }
+            ],
+            "publicMarketplaceAppDetail": [
                 232,
                 {
                     "universalIdentifier": [
@@ -11105,7 +11123,7 @@ export default {
             "isPreInstalled": [
                 6
             ],
-            "isFeatured": [
+            "isVetted": [
                 6
             ],
             "__typename": [
