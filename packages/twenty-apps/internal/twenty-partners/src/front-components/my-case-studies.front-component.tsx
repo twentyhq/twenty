@@ -63,12 +63,37 @@ const skeletonStyle: CSSProperties = {
   background: COLORS.surfaceAlt,
   marginBottom: 12,
 };
+const errorStyle: CSSProperties = {
+  border: `1px solid ${COLORS.border}`,
+  borderRadius: 8,
+  background: COLORS.surfaceAlt,
+  padding: 28,
+  textAlign: 'center',
+  color: COLORS.muted,
+  fontSize: 14,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: 12,
+};
+const retryButtonStyle: CSSProperties = {
+  height: 32,
+  padding: '0 16px',
+  borderRadius: 6,
+  border: `1px solid ${COLORS.border}`,
+  background: COLORS.surface,
+  color: COLORS.fg,
+  fontSize: 13,
+  fontFamily: FONT,
+  cursor: 'pointer',
+};
 
 const MyCaseStudies = () => {
   const [rows, setRows] = useState<CaseStudyRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
   const [busyKey, setBusyKey] = useState<string | null>(null);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -76,10 +101,13 @@ const MyCaseStudies = () => {
       const res = (await callAppRoute('/my-partner-profile', {})) as LoadResult;
       if (res.ok) {
         setRows(buildInitialRows(res.profile.caseStudies));
+        setLoadFailed(false);
       } else {
+        setLoadFailed(true);
         await enqueueSnackbar({ message: `Could not load case studies: ${res.reason}`, variant: 'error' });
       }
     } catch (error) {
+      setLoadFailed(true);
       await enqueueSnackbar({
         message: error instanceof Error ? error.message : 'Failed to load case studies',
         variant: 'error',
@@ -115,6 +143,7 @@ const MyCaseStudies = () => {
   }, []);
 
   const handleSave = async (key: string) => {
+    if (loadFailed) return;
     setBusyKey(key);
     try {
       await persist(rows, 'Case study saved');
@@ -130,6 +159,7 @@ const MyCaseStudies = () => {
   };
 
   const handleDelete = async (key: string) => {
+    if (loadFailed) return;
     const target = rows.find((r) => r.key === key);
     if (!target) return;
 
@@ -167,7 +197,12 @@ const MyCaseStudies = () => {
           <h1 style={titleStyle}>My Case Studies</h1>
           <div style={subtitleStyle}>Showcase your work on your public partner profile.</div>
         </div>
-        <button type="button" style={addButtonStyle} onClick={handleAdd}>
+        <button
+          type="button"
+          style={addButtonStyle}
+          onClick={handleAdd}
+          disabled={loading || loadFailed}
+        >
           + Add case study
         </button>
       </div>
@@ -176,6 +211,13 @@ const MyCaseStudies = () => {
         <div>
           <div style={skeletonStyle} />
           <div style={skeletonStyle} />
+        </div>
+      ) : loadFailed ? (
+        <div style={errorStyle}>
+          <div>We couldn't load your case studies. Please try again.</div>
+          <button type="button" style={retryButtonStyle} onClick={() => void load()}>
+            Retry
+          </button>
         </div>
       ) : rows.length === 0 ? (
         <div style={emptyStyle}>
