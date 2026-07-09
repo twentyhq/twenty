@@ -16,7 +16,9 @@ export const InstallApps = () => {
     data: marketplaceApps,
     isLoading,
     error,
-  } = useMarketplaceApps(ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS);
+  } = useMarketplaceApps({
+    universalIdentifiers: ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS,
+  });
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const {
     selectedUniversalIdentifiers,
