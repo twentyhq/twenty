@@ -40,6 +40,35 @@ const getMetadataValidationUserFriendlyMessage = (
   return METADATA_VALIDATION_FAILED_MESSAGE;
 };
 
+const getFailedValidationSortKey = (failedValidation: {
+  flatEntityMinimalInformation: { name?: unknown };
+}): string => {
+  const { name } = failedValidation.flatEntityMinimalInformation;
+
+  return typeof name === 'string' ? name : '';
+};
+
+// Failed validations come out of the migration builder in a nondeterministic
+// order (entity maps are keyed by freshly generated universal identifiers), so
+// the payload is sorted to keep API responses stable across runs.
+const sortFailedValidations = <
+  TFailedValidation extends {
+    flatEntityMinimalInformation: { name?: unknown };
+  },
+>(
+  failedValidations: TFailedValidation[],
+): TFailedValidation[] =>
+  [...failedValidations].sort((first, second) => {
+    const firstKey = getFailedValidationSortKey(first);
+    const secondKey = getFailedValidationSortKey(second);
+
+    if (firstKey === secondKey) {
+      return 0;
+    }
+
+    return firstKey < secondKey ? -1 : 1;
+  });
+
 export const buildMetadataValidationErrorPayload = (
   exception: WorkspaceMigrationBuilderException,
 ): MetadataValidationErrorPayloadDescriptor => {
@@ -56,7 +85,10 @@ export const buildMetadataValidationErrorPayload = (
       }
 
       return {
-        errors: { ...acc.errors, [metadataName]: failedMetadataValidation },
+        errors: {
+          ...acc.errors,
+          [metadataName]: sortFailedValidations(failedMetadataValidation),
+        },
         summary: {
           ...acc.summary,
           totalErrors:
