@@ -4,8 +4,11 @@ import { isNewer } from 'src/utils/is-newer.util';
 export const updateRelatedOpportunityLastInteraction = async (
   client: CoreApiClient,
   personId: string,
-  occurredAt: string,
+  occurredAt: string | null,
 ) => {
+  if (!occurredAt) {
+    return;
+  }
   const { opportunities } = await client.query({
     opportunities: {
       __args: {
@@ -28,7 +31,7 @@ export const updateRelatedOpportunityLastInteraction = async (
     !opportunities?.edges[0].node.id ||
     !isNewer(occurredAt, opportunities?.edges[0].node.lastInteraction)
   ) {
-    return {};
+    return;
   }
 
   await client.mutation({

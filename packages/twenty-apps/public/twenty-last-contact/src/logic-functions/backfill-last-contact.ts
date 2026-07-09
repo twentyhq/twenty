@@ -2,6 +2,8 @@ import { definePostInstallLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { updateRelatedCompanyLastInteraction } from 'src/utils/update-related-company-last-interaction';
+import { updateRelatedOpportunityLastInteraction } from 'src/utils/update-related-opportunity-last-interaction';
 
 const PAGE_SIZE = 200;
 const UPDATE_BATCH_SIZE = 20;
@@ -359,13 +361,16 @@ const handler = async (): Promise<void> => {
 
   for (const batch of chunk(updates, UPDATE_BATCH_SIZE)) {
     await Promise.all(
-      batch.map(({ personId, data }) =>
+      batch.map(({ personId, data }) => {
         client.mutation({
           updatePerson: {
             __args: { id: personId, data },
             id: true,
           },
-        }),
+        });
+        updateRelatedCompanyLastInteraction(client, personId, data['lastContact']);
+        updateRelatedOpportunityLastInteraction(client, personId, data['lastContact']);
+        }
       ),
     );
   }

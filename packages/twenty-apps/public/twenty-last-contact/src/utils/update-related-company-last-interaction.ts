@@ -4,8 +4,11 @@ import { isNewer } from 'src/utils/is-newer.util';
 export const updateRelatedCompanyLastInteraction = async (
   client: CoreApiClient,
   personId: string,
-  occurredAt: string,
+  occurredAt: string | null,
 ) => {
+  if (!occurredAt) {
+    return;
+  }
   const { person } = await client.query({
     person: {
       __args: {
