@@ -2,7 +2,7 @@ import { type MetadataApiClient } from 'twenty-client-sdk/metadata';
 
 import { fetchWhatsappMessageChannels } from 'src/logic-functions/utils/fetch-whatsapp-message-channels.util';
 
-export const resolveWhatsappMessageChannelId = async ({
+export const resolveWhatsappMessageChannelIdOrThrow = async ({
   metadataClient,
 }: {
   metadataClient?: MetadataApiClient;

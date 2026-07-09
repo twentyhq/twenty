@@ -1,4 +1,4 @@
-export const normalizeWhatsappRecipient = (to: string | string[]): string => {
+export const normalizeWhatsappRecipientOrThrow = (to: string | string[]): string => {
   const recipient = Array.isArray(to) ? to[0] : to;
   const digits = (recipient ?? '').replace(/\D/g, '');
 

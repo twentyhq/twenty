@@ -11,23 +11,10 @@ import {
   MessageComposerException,
   MessageComposerExceptionCode,
 } from 'src/engine/core-modules/tool/tools/message-composer/exceptions/message-composer.exception';
+import { buildComposerFailure } from 'src/engine/core-modules/tool/tools/message-composer/utils/build-composer-failure.util';
+import { splitCommaSeparatedHandles } from 'src/engine/core-modules/tool/tools/message-composer/utils/split-comma-separated-handles.util';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { parsePhoneHandle } from 'src/utils/parse-phone-handle';
-
-const buildComposerFailure = (message: string): EmailComposerResult => ({
-  success: false,
-  output: {
-    success: false,
-    message,
-    error: message,
-  },
-});
-
-const splitCommaSeparatedHandles = (value: string | undefined): string[] =>
-  (value ?? '')
-    .split(',')
-    .map((handle) => handle.trim())
-    .filter((handle) => handle.length > 0);
 
 @Injectable()
 export class AppMessageComposerService {

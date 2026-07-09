@@ -25,8 +25,7 @@ const getMessageComposerExceptionUserFriendlyMessage = (
 export class MessageComposerException extends CustomException<MessageComposerExceptionCode> {
   constructor(message: string, code: MessageComposerExceptionCode) {
     super(message, code, {
-      userFriendlyMessage:
-        getMessageComposerExceptionUserFriendlyMessage(code),
+      userFriendlyMessage: getMessageComposerExceptionUserFriendlyMessage(code),
     });
   }
 }

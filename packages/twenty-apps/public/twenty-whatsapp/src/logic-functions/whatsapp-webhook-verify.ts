@@ -2,14 +2,14 @@ import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
 import { WHATSAPP_ENVIRONMENT_VARIABLE_NAMES } from 'src/constants/environment-variable-names';
 import { WHATSAPP_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
-import { getRequiredEnvironmentVariable } from 'src/logic-functions/utils/get-required-environment-variable.util';
+import { getEnvironmentVariableOrThrow } from 'src/logic-functions/utils/get-environment-variable-or-throw.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 const handler = async (event: RoutePayload) => {
   const mode = event.queryStringParameters['hub.mode'];
   const verifyToken = event.queryStringParameters['hub.verify_token'];
   const challenge = event.queryStringParameters['hub.challenge'];
-  const expectedVerifyToken = getRequiredEnvironmentVariable(
+  const expectedVerifyToken = getEnvironmentVariableOrThrow(
     WHATSAPP_ENVIRONMENT_VARIABLE_NAMES.webhookVerifyToken,
   );
 

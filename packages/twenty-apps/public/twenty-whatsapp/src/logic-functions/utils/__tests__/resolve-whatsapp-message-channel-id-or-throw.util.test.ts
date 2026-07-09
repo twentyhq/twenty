@@ -1,7 +1,7 @@
 import { type MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { describe, expect, it, vi } from 'vitest';
 
-import { resolveWhatsappMessageChannelId } from 'src/logic-functions/utils/resolve-whatsapp-message-channel-id.util';
+import { resolveWhatsappMessageChannelIdOrThrow } from 'src/logic-functions/utils/resolve-whatsapp-message-channel-id-or-throw.util';
 
 type ConnectedAccountFixture = {
   id: string;
@@ -16,7 +16,7 @@ const buildMetadataClient = (
     query: vi.fn(() => Promise.resolve({ appConnectedAccounts })),
   }) as unknown as MetadataApiClient;
 
-describe('resolveWhatsappMessageChannelId', () => {
+describe('resolveWhatsappMessageChannelIdOrThrow', () => {
   it('returns the channel id when a single APP message channel exists', async () => {
     const metadataClient = buildMetadataClient([
       {
@@ -27,7 +27,7 @@ describe('resolveWhatsappMessageChannelId', () => {
     ]);
 
     await expect(
-      resolveWhatsappMessageChannelId({ metadataClient }),
+      resolveWhatsappMessageChannelIdOrThrow({ metadataClient }),
     ).resolves.toBe('channel-1');
   });
 
@@ -44,7 +44,7 @@ describe('resolveWhatsappMessageChannelId', () => {
     ]);
 
     await expect(
-      resolveWhatsappMessageChannelId({ metadataClient }),
+      resolveWhatsappMessageChannelIdOrThrow({ metadataClient }),
     ).resolves.toBe('channel-app');
   });
 
@@ -52,7 +52,7 @@ describe('resolveWhatsappMessageChannelId', () => {
     const metadataClient = buildMetadataClient([]);
 
     await expect(
-      resolveWhatsappMessageChannelId({ metadataClient }),
+      resolveWhatsappMessageChannelIdOrThrow({ metadataClient }),
     ).rejects.toThrow('No WhatsApp message channel found');
   });
 
@@ -71,7 +71,7 @@ describe('resolveWhatsappMessageChannelId', () => {
     ]);
 
     await expect(
-      resolveWhatsappMessageChannelId({ metadataClient }),
+      resolveWhatsappMessageChannelIdOrThrow({ metadataClient }),
     ).rejects.toThrow('WhatsApp #1 (channel-1), WhatsApp #2 (channel-2)');
   });
 });

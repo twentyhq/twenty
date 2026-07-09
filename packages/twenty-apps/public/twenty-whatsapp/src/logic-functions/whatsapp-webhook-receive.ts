@@ -3,15 +3,15 @@ import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { WHATSAPP_ENVIRONMENT_VARIABLE_NAMES } from 'src/constants/environment-variable-names';
 import { WHATSAPP_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
 import { type WhatsappWebhookBody } from 'src/logic-functions/types/whatsapp-webhook-body.type';
-import { getRequiredEnvironmentVariable } from 'src/logic-functions/utils/get-required-environment-variable.util';
+import { getEnvironmentVariableOrThrow } from 'src/logic-functions/utils/get-environment-variable-or-throw.util';
 import { importWhatsappMessages } from 'src/logic-functions/utils/import-whatsapp-messages.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { parseWhatsappWebhookImportMessages } from 'src/logic-functions/utils/parse-whatsapp-webhook-import-messages.util';
-import { resolveWhatsappMessageChannelId } from 'src/logic-functions/utils/resolve-whatsapp-message-channel-id.util';
+import { resolveWhatsappMessageChannelIdOrThrow } from 'src/logic-functions/utils/resolve-whatsapp-message-channel-id-or-throw.util';
 import { verifyMetaSignature } from 'src/logic-functions/utils/verify-meta-signature.util';
 
 const handler = async (event: RoutePayload<WhatsappWebhookBody>) => {
-  const appSecret = getRequiredEnvironmentVariable(
+  const appSecret = getEnvironmentVariableOrThrow(
     WHATSAPP_ENVIRONMENT_VARIABLE_NAMES.metaAppSecret,
   );
   const signatureHeader =
@@ -39,7 +39,7 @@ const handler = async (event: RoutePayload<WhatsappWebhookBody>) => {
     return { success: true, importedCount: 0 };
   }
 
-  const messageChannelId = await resolveWhatsappMessageChannelId();
+  const messageChannelId = await resolveWhatsappMessageChannelIdOrThrow();
 
   const importedCount = await importWhatsappMessages({
     messageChannelId,

@@ -1,6 +1,6 @@
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
-export const getRequiredEnvironmentVariable = (name: string): string => {
+export const getEnvironmentVariableOrThrow = (name: string): string => {
   const value = process.env[name];
 
   if (!isNonEmptyString(value)) {
