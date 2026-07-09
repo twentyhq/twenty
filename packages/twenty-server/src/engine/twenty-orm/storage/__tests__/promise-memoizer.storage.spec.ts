@@ -211,13 +211,16 @@ describe('PromiseMemoizer', () => {
 
       mockFactory.mockResolvedValue('fresh-value');
 
-      const result = await memoizer.memoizePromiseAndExecute(
+      // Resolve the stale factory only after the second call is issued, so a
+      // regression fails the assertion instead of deadlocking the test.
+      const resultPromise = memoizer.memoizePromiseAndExecute(
         'test-key-1',
         mockFactory,
       );
 
       resolveFactory!('stale-value');
-      await inFlightPromise;
+
+      const [result] = await Promise.all([resultPromise, inFlightPromise]);
 
       expect(result).toBe('fresh-value');
     });
