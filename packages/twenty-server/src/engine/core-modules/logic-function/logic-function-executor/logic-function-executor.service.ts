@@ -59,9 +59,24 @@ export enum LogicFunctionExecutionExceptionCode {
   RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
 }
 
+const SERVER_VARIABLE_ENV_CACHE_TTL_MS = 30_000;
+
+type ServerVariableEnvCacheEntry = {
+  envMap: Record<string, string>;
+  expiresAt: number;
+};
+
 @Injectable()
 export class LogicFunctionExecutorService {
   private readonly logger = new Logger(LogicFunctionExecutorService.name);
+  private readonly serverVariableEnvCache = new Map<
+    string,
+    ServerVariableEnvCacheEntry
+  >();
+  private readonly serverVariableEnvCacheInFlight = new Map<
+    string,
+    Promise<Record<string, string>>
+  >();
 
   constructor(
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
@@ -272,12 +287,6 @@ export class LogicFunctionExecutorService {
   // Resolves encrypted server-level variables (ApplicationRegistrationVariable)
   // for the application's registration. Returns an empty object when the
   // application isn't linked to a registration (legacy LOCAL apps).
-  //
-  // Runs on every logic function execution — the query is indexed on
-  // applicationRegistrationId and filters unfilled rows server-side. Most
-  // apps have 0-3 server variables so the round-trip is cheap, but if this
-  // becomes a hot path, move to a WorkspaceCacheProvider mirroring
-  // WorkspaceApplicationVariableMapCacheService.
   private async buildServerVariableEnvMap(
     applicationRegistrationId: string | null,
   ): Promise<Record<string, string>> {
@@ -285,33 +294,77 @@ export class LogicFunctionExecutorService {
       return {};
     }
 
-    const serverVariables =
-      await this.applicationRegistrationVariableRepository.find({
-        where: {
-          applicationRegistrationId,
-          encryptedValue: Not(''),
-        },
-      });
+    const now = Date.now();
+    const cachedServerVariableEnv = this.serverVariableEnvCache.get(
+      applicationRegistrationId,
+    );
 
-    const envMap: Record<string, string> = {};
-
-    // ApplicationRegistrationVariable.encryptedValue is always written
-    // encrypted (ApplicationRegistrationVariableService.createVariable and
-    // .updateVariable call encrypt unconditionally), independent of
-    // `isSecret`. `isSecret` is display metadata — the storage contract is
-    // not conditional, so decryption isn't either.
-    //
-    // Registration variables are server-level config — any installed
-    // application across any workspace must be able to read them — so they
-    // use the instance-scoped versioned envelope (no workspaceId in the HKDF
-    // info).
-    for (const variable of serverVariables) {
-      envMap[variable.key] = this.secretEncryptionService.decryptVersioned(
-        variable.encryptedValue,
-      );
+    if (
+      isDefined(cachedServerVariableEnv) &&
+      cachedServerVariableEnv.expiresAt > now
+    ) {
+      return { ...cachedServerVariableEnv.envMap };
     }
 
-    return envMap;
+    const inFlightServerVariableEnv = this.serverVariableEnvCacheInFlight.get(
+      applicationRegistrationId,
+    );
+
+    if (isDefined(inFlightServerVariableEnv)) {
+      return inFlightServerVariableEnv;
+    }
+
+    const fetchServerVariableEnvPromise = this.fetchServerVariableEnvMap(
+      applicationRegistrationId,
+    );
+
+    this.serverVariableEnvCacheInFlight.set(
+      applicationRegistrationId,
+      fetchServerVariableEnvPromise,
+    );
+
+    return fetchServerVariableEnvPromise;
+  }
+
+  private async fetchServerVariableEnvMap(
+    applicationRegistrationId: string,
+  ): Promise<Record<string, string>> {
+    try {
+      const serverVariables =
+        await this.applicationRegistrationVariableRepository.find({
+          where: {
+            applicationRegistrationId,
+            encryptedValue: Not(''),
+          },
+        });
+
+      const envMap: Record<string, string> = {};
+
+      // ApplicationRegistrationVariable.encryptedValue is always written
+      // encrypted (ApplicationRegistrationVariableService.createVariable and
+      // .updateVariable call encrypt unconditionally), independent of
+      // `isSecret`. `isSecret` is display metadata — the storage contract is
+      // not conditional, so decryption isn't either.
+      //
+      // Registration variables are server-level config — any installed
+      // application across any workspace must be able to read them — so they
+      // use the instance-scoped versioned envelope (no workspaceId in the HKDF
+      // info).
+      for (const variable of serverVariables) {
+        envMap[variable.key] = this.secretEncryptionService.decryptVersioned(
+          variable.encryptedValue,
+        );
+      }
+
+      this.serverVariableEnvCache.set(applicationRegistrationId, {
+        envMap,
+        expiresAt: Date.now() + SERVER_VARIABLE_ENV_CACHE_TTL_MS,
+      });
+
+      return { ...envMap };
+    } finally {
+      this.serverVariableEnvCacheInFlight.delete(applicationRegistrationId);
+    }
   }
 
   private async handleExecutionResult({
