@@ -26,7 +26,7 @@ export class MarketplacePublicResolver {
     @Args('isVetted', { type: () => Boolean, defaultValue: true })
     isVetted: boolean,
   ): Promise<MarketplaceAppDTO[]> {
-    return this.marketplaceQueryService.findManyMarketplaceApps(isVetted);
+    return this.marketplaceQueryService.findManyMarketplaceApps({ isVetted });
   }
 
   @Query(() => MarketplaceAppDetailDTO, { name: 'publicMarketplaceAppDetail' })

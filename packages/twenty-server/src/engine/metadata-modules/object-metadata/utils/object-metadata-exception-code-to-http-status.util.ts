@@ -14,8 +14,6 @@ export const objectMetadataExceptionCodeToHttpStatus = (
     case ObjectMetadataExceptionCode.NAME_CONFLICT:
       return 403;
     case ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT:
-    case ObjectMetadataExceptionCode.MISSING_SYSTEM_FIELD:
-    case ObjectMetadataExceptionCode.INVALID_SYSTEM_FIELD:
     case ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD:
     case ObjectMetadataExceptionCode.APPLICATION_NOT_FOUND:
       return 400;

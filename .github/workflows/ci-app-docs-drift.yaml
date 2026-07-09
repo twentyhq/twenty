@@ -3,7 +3,7 @@ name: CI App Docs Drift
 # When a PR changes the app-development surface (twenty-sdk, create-twenty-app,
 # twenty-client-sdk, or the shared manifest types), an agent checks whether the
 # app documentation under packages/twenty-docs/developers/extend/apps is
-# impacted and posts a single sticky comment with its findings.
+# impacted and, only when it is, posts a single sticky comment with its findings.
 
 on:
   pull_request:
@@ -47,10 +47,12 @@ jobs:
           fetch-depth: 0
 
       - name: Run docs drift agent
+        id: drift-agent
         uses: anthropics/claude-code-action@ac7e24bf2938964b8ab203e417a2773802392ddd # v1.0.146
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          claude_args: '--max-turns 60 --allowedTools "Bash(git diff *),Bash(git log *),Bash(git show *),Bash(grep *),Bash(cat *),Bash(ls *),Bash(find *),Bash(head *),Bash(tail *),Bash(gh pr comment *)"'
+          claude_args: |
+            --max-turns 60 --json-schema '{"type":"object","properties":{"hasDrift":{"type":"boolean"},"summary":{"type":"string"}},"required":["hasDrift","summary"]}' --allowedTools "Bash(git diff *),Bash(git log *),Bash(git show *),Bash(grep *),Bash(cat *),Bash(ls *),Bash(find *),Bash(head *),Bash(tail *),Bash(gh pr comment *)"
           prompt: |
             You are the app-documentation drift checker for the twenty repository.
 
@@ -107,20 +109,33 @@ jobs:
 
             ## Step 3 — Report
 
-            Post exactly one comment on PR #${{ github.event.pull_request.number }} with:
+            If there is NO documentation impact, do NOT post or create any comment.
+            Skip the comment entirely and go straight to Step 4.
+
+            Only when the documentation is impacted, post exactly one comment on PR
+            #${{ github.event.pull_request.number }} with:
             `gh pr comment ${{ github.event.pull_request.number }} --edit-last --create-if-none --body ...`
             (this updates the previous drift-check comment in place on subsequent runs).
             Start the comment body with the marker `<!-- app-docs-drift-check -->`.
 
             Comment format:
             - Title line: `### App docs drift check`
-            - If no documentation impact: one sentence saying so and why.
-            - If impacted: a table with columns **Change** (what changed in the code),
+            - A table with columns **Change** (what changed in the code),
               **Docs page** (repo-relative path), **Status** (`✅ already updated in this PR`
               / `⚠️ needs update`), and **Suggested fix** (one concrete sentence, e.g. the
               exact value to add to a table).
             - Be terse. No preamble, no sign-off. Only report genuine drift — if unsure
               whether something is user-facing, say it's uncertain rather than asserting.
+
+            ## Step 4 — Return the verdict
+
+            After posting the comment, return your final answer as the structured
+            output the CI gate consumes:
+            - `hasDrift`: `true` if at least one impacted docs page still needs updating
+              (drift is NOT fully resolved by this PR); `false` if there is no
+              documentation impact, or every impacted page is already correctly updated
+              in this PR.
+            - `summary`: one terse sentence describing the verdict.
 
             Environment: GH_TOKEN is available for `gh`. The PR branch is checked out.
           settings: |
@@ -129,3 +144,29 @@ jobs:
                 "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
               }
             }
+
+      - name: Gate on drift verdict
+        if: always()
+        env:
+          AGENT_OUTCOME: ${{ steps.drift-agent.outcome }}
+          STRUCTURED_OUTPUT: ${{ steps.drift-agent.outputs.structured_output }}
+        run: |
+          if [ "$AGENT_OUTCOME" != "success" ]; then
+            echo "::error::Docs drift checker did not complete (agent step outcome: $AGENT_OUTCOME)."
+            exit 1
+          fi
+          if [ -z "$STRUCTURED_OUTPUT" ]; then
+            echo "::error::Docs drift checker did not return a structured verdict."
+            exit 1
+          fi
+          has_drift=$(printf '%s' "$STRUCTURED_OUTPUT" | jq -r '.hasDrift')
+          if [ "$has_drift" = "true" ]; then
+            echo "::error::App docs drift detected. See the app-docs-drift-check comment on this PR."
+            exit 1
+          fi
+          if [ "$has_drift" = "false" ]; then
+            echo "No app docs drift."
+            exit 0
+          fi
+          echo "::error::Structured verdict present but 'hasDrift' was not a recognizable boolean: $has_drift"
+          exit 1

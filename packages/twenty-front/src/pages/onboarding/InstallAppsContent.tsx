@@ -10,7 +10,7 @@ import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/Onboardin
 import { type OnboardingInstallableApp } from '@/onboarding/types/OnboardingInstallableApp';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';
 import { IconButton, MainButton } from 'twenty-ui/input';
@@ -118,6 +118,8 @@ export const InstallAppsContent = ({
   const { t } = useLingui();
   const theme = useTheme();
 
+  const hasApps = isNonEmptyArray(apps);
+
   return (
     <StyledOnboardingStepPage>
       <StyledOnboardingStepHeading>
@@ -129,10 +131,12 @@ export const InstallAppsContent = ({
         </OnboardingStepAnimatedItem>
         <OnboardingStepAnimatedItem index={1}>
           <StyledOnboardingStepSubtitle>
-            {t`Get the most out of your CRM by installing some apps`}
+            {hasApps
+              ? t`Get the most out of your CRM by installing some apps`
+              : t`No apps are available to install right now`}
           </StyledOnboardingStepSubtitle>
         </OnboardingStepAnimatedItem>
-        {isDefined(creditsRewardPerApp) && (
+        {isDefined(creditsRewardPerApp) && hasApps && (
           <OnboardingStepAnimatedItem index={2}>
             <StyledOnboardingStepTagsRow>
               <OnboardingCreditsRewardTag
@@ -144,63 +148,67 @@ export const InstallAppsContent = ({
         )}
       </StyledOnboardingStepHeading>
 
-      <OnboardingStepAnimatedItem index={3}>
-        <StyledCard>
-          {apps.map((app) => {
-            const labelText = t(app.label);
-            const isSelected = selectedUniversalIdentifiers.includes(
-              app.universalIdentifier,
-            );
+      {hasApps && (
+        <OnboardingStepAnimatedItem index={3}>
+          <StyledCard>
+            {apps.map((app) => {
+              const labelText = t(app.label);
+              const isSelected = selectedUniversalIdentifiers.includes(
+                app.universalIdentifier,
+              );
 
-            return (
-              <StyledAppRow key={app.universalIdentifier}>
-                <Avatar
-                  avatarUrl={getAbsoluteImageUrl(app.logo)}
-                  placeholder={labelText}
-                  placeholderColorSeed={app.universalIdentifier}
-                  size="lg"
-                  type="squared"
-                />
-                <StyledAppText>
-                  <StyledAppLabel>{labelText}</StyledAppLabel>
-                  <StyledAppDescription>
-                    {t(app.description)}
-                  </StyledAppDescription>
-                </StyledAppText>
-                <IconButton
-                  size="small"
-                  variant="secondary"
-                  accent={isSelected ? 'blue' : 'default'}
-                  ariaLabel={
-                    isSelected
-                      ? t`Deselect ${labelText}`
-                      : t`Select ${labelText}`
-                  }
-                  onClick={() => onToggleApp(app.universalIdentifier)}
-                >
-                  <AnimatedIconCrossfade
-                    isActive={isSelected}
-                    ActiveIcon={IconCheck}
-                    InactiveIcon={IconPlus}
-                    size={theme.icon.size.md}
+              return (
+                <StyledAppRow key={app.universalIdentifier}>
+                  <Avatar
+                    avatarUrl={getAbsoluteImageUrl(app.logo)}
+                    placeholder={labelText}
+                    placeholderColorSeed={app.universalIdentifier}
+                    size="lg"
+                    type="squared"
                   />
-                </IconButton>
-              </StyledAppRow>
-            );
-          })}
-        </StyledCard>
-      </OnboardingStepAnimatedItem>
+                  <StyledAppText>
+                    <StyledAppLabel>{labelText}</StyledAppLabel>
+                    <StyledAppDescription>
+                      {t(app.description)}
+                    </StyledAppDescription>
+                  </StyledAppText>
+                  <IconButton
+                    size="small"
+                    variant="secondary"
+                    accent={isSelected ? 'blue' : 'default'}
+                    ariaLabel={
+                      isSelected
+                        ? t`Deselect ${labelText}`
+                        : t`Select ${labelText}`
+                    }
+                    onClick={() => onToggleApp(app.universalIdentifier)}
+                  >
+                    <AnimatedIconCrossfade
+                      isActive={isSelected}
+                      ActiveIcon={IconCheck}
+                      InactiveIcon={IconPlus}
+                      size={theme.icon.size.md}
+                    />
+                  </IconButton>
+                </StyledAppRow>
+              );
+            })}
+          </StyledCard>
+        </OnboardingStepAnimatedItem>
+      )}
 
       <OnboardingStepAnimatedItem index={4}>
         <StyledFooter>
-          <StyledInstallButton>
-            <MainButton
-              title={t`Install`}
-              onClick={onInstall}
-              disabled={isCompleting}
-              fullWidth
-            />
-          </StyledInstallButton>
+          {hasApps && (
+            <StyledInstallButton>
+              <MainButton
+                title={t`Install`}
+                onClick={onInstall}
+                disabled={isCompleting}
+                fullWidth
+              />
+            </StyledInstallButton>
+          )}
           <OnboardingSkipButton onClick={onSkip} disabled={isCompleting} />
         </StyledFooter>
       </OnboardingStepAnimatedItem>
