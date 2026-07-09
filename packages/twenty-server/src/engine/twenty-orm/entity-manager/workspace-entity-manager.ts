@@ -62,6 +62,7 @@ import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { buildUpdatedRecordsForEvent } from 'src/engine/twenty-orm/utils/build-updated-records-for-event.util';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -1263,9 +1264,11 @@ export class WorkspaceEntityManager extends EntityManager {
         this.internalContext.flatFieldMetadataMaps,
       );
 
-      const updatedColumns = formattedEntityOrEntities
-        .map((e) => Object.keys(e))
-        .flat();
+      const writtenColumnNamesByRecordIndex = formattedEntityOrEntities.map(
+        (formattedEntity) => Object.keys(formattedEntity),
+      );
+
+      const updatedColumns = writtenColumnNamesByRecordIndex.flat();
 
       this.validatePermissions({
         target: targetOrEntity,
@@ -1301,12 +1304,20 @@ export class WorkspaceEntityManager extends EntityManager {
         this.internalContext.flatFieldMetadataMaps,
       );
 
-      const updatedEntities = formattedResult.filter(
-        (entity) => beforeUpdateMapById[entity.id],
-      );
       const createdEntities = formattedResult.filter(
         (entity) => !beforeUpdateMapById[entity.id],
       );
+
+      const {
+        recordsAfter: updatedRecordsAfter,
+        recordsBefore: updatedRecordsBefore,
+      } = buildUpdatedRecordsForEvent({
+        persistedRecords: formattedResult,
+        writtenColumnNamesByRecordIndex,
+        recordsBeforeUpdateById: beforeUpdateMapById,
+        objectMetadataItem,
+        flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+      });
 
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
         formatTwentyOrmEventToDatabaseBatchEvent({
@@ -1314,10 +1325,8 @@ export class WorkspaceEntityManager extends EntityManager {
           objectMetadataItem,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          recordsAfter: updatedEntities,
-          recordsBefore: updatedEntities.map(
-            (entity) => beforeUpdateMapById[entity.id],
-          ),
+          recordsAfter: updatedRecordsAfter,
+          recordsBefore: updatedRecordsBefore,
         }),
       );
 
