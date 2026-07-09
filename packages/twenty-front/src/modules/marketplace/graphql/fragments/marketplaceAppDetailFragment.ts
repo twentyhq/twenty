@@ -9,7 +9,7 @@ export const MARKETPLACE_APP_DETAIL_FRAGMENT = gql`
     sourcePackage
     latestAvailableVersion
     isListed
-    isFeatured
+    isVetted
     description
     author
     category

@@ -34,6 +34,7 @@ export default defineNavigationMenuItem({
   | `NavigationMenuItemType.PAGE_LAYOUT` | Opens a standalone page layout | `pageLayoutUniversalIdentifier` |
 
 - `position` controls ordering in the sidebar.
+- The enum also contains `NavigationMenuItemType.RECORD`, used internally for user-created record favorites — it isn't usable from an app manifest (there is no field to reference a record).
 - `icon` and `color` are optional and customize how the entry looks.
 - `folderUniversalIdentifier` is also available on any item to nest it inside a `FOLDER`-type parent.
 

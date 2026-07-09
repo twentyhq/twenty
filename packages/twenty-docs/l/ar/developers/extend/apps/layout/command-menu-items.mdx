@@ -13,7 +13,6 @@ export default defineCommandMenuItem({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   label: 'Open Dashboard',
   shortLabel: 'Dashboard',
-  icon: 'IconLayoutDashboard',
   isPinned: true,
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
@@ -22,51 +21,23 @@ export default defineCommandMenuItem({
 
 ## حقول التكوين
 
-| الحقل                                   | مطلوب | الوصف                                                                                                                                                  |
-| --------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `universalIdentifier`                   | نعم   | معرّف فريد ثابت للأمر                                                                                                                                  |
-| `label`                                 | نعم   | التسمية الكاملة المعروضة في قائمة الأوامر (Cmd+K)                                                                                                      |
-| `frontComponentUniversalIdentifier`     | نعم   | قيمة `universalIdentifier` للمكوّن الأمامي الذي يفتحه هذا الأمر                                                                                        |
-| `shortLabel`                            | لا    | تسمية أقصر تُعرَض على زر الإجراء السريع المثبّت                                                                                                        |
-| `icon`                                  | لا    | اسم الأيقونة المعروض بجانب التسمية (مثل `'IconBolt'` و`'IconSend'`)                                                                                    |
-| `isPinned`                              | لا    | عند كونها `true`، يعرض الأمر كزر إجراء سريع في الزاوية العلوية اليمنى من الصفحة                                                                        |
-| `availabilityType`                      | لا    | تتحكّم في مكان ظهور الأمر: `'GLOBAL'` (متاح دائمًا)، و`'RECORD_SELECTION'` (فقط عند تحديد سجلات)، أو `'FALLBACK'` (يُعرَض عند عدم تطابق أي أوامر أخرى) |
-| `availabilityObjectUniversalIdentifier` | لا    | تقييد الأمر بصفحات نوع كائن معيّن (مثل سجلات Company فقط)                                                                                              |
-| `conditionalAvailabilityExpression`     | لا    | تعبير منطقي يتحكّم ديناميكيًا في الظهور (انظر أدناه)                                                                                                   |
+| الحقل                                   | مطلوب | الوصف                                                                                                                                                                                                                                     |
+| --------------------------------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | نعم   | معرّف فريد ثابت للأمر                                                                                                                                                                                                                     |
+| `label`                                 | نعم   | التسمية الكاملة المعروضة في قائمة الأوامر (Cmd+K)                                                                                                                                                                                         |
+| `frontComponentUniversalIdentifier`     | نعم   | قيمة `universalIdentifier` للمكوّن الأمامي الذي يفتحه هذا الأمر                                                                                                                                                                           |
+| `shortLabel`                            | لا    | تسمية أقصر تُعرَض على زر الإجراء السريع المثبّت                                                                                                                                                                                           |
+| `icon`                                  | لا    | **مهمل** — يتم تجاهله لصالح أيقونة التطبيق؛ يُصدر البناء تحذيرًا إذا تم تعيينه                                                                                                                                                            |
+| `isPinned`                              | لا    | عند كونها `true`، يعرض الأمر كزر إجراء سريع في الزاوية العلوية اليمنى من الصفحة                                                                                                                                                           |
+| `availabilityType`                      | لا    | يتحكّم في مكان ظهور الأمر: `'GLOBAL'` (متاح دائمًا)، و`'GLOBAL_OBJECT_CONTEXT'` (فقط في الصفحات ذات سياق الكائن — صفحات الفهرس والسجل)، و`'RECORD_SELECTION'` (فقط عند تحديد سجلات)، أو `'FALLBACK'` (يُعرَض عند عدم تطابق أي أوامر أخرى) |
+| `availabilityObjectUniversalIdentifier` | لا    | تقييد الأمر بصفحات نوع كائن معيّن (مثل سجلات Company فقط)                                                                                                                                                                                 |
+| `conditionalAvailabilityExpression`     | لا    | تعبير منطقي يتحكّم ديناميكيًا في الظهور (انظر أدناه)                                                                                                                                                                                      |
 
 ## أوامر بدون واجهة
 
 يُعَدّ عنصر قائمة الأوامر المقترن بـ[مكوّن واجهة أمامية بدون واجهة](/l/ar/developers/extend/apps/layout/front-components#headless-vs-non-headless) الطريقة القياسية لتوفير إجراء بنقرة واحدة — لتشغيل الشفرة أو التنقّل أو التأكيد ثم التنفيذ. تغطي صفحة مكوّنات الواجهة الأمامية [مكوّنات الأوامر في SDK](/l/ar/developers/extend/apps/layout/front-components#sdk-command-components) ‎(`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`)‎ التي تتعامل مع نمط الإجراء-ثم-إلغاء التركيب.
 
-تدفق نموذجي:
-
-```tsx src/front-components/run-action.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { Command } from 'twenty-sdk/command';
-import { CoreApiClient } from 'twenty-sdk/clients';
-
-const RunAction = () => {
-  const execute = async () => {
-    const client = new CoreApiClient();
-    await client.mutation({
-      createTask: {
-        __args: { data: { title: 'Created by my app' } },
-        id: true,
-      },
-    });
-  };
-
-  return <Command execute={execute} />;
-};
-
-export default defineFrontComponent({
-  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
-  name: 'run-action',
-  description: 'Creates a task from the command menu',
-  component: RunAction,
-  isHeadless: true,
-});
-```
+تدفق نموذجي: يقوم مكوّن عديم الواجهة بعرض `<Command execute={...} />` (اطّلع على [المثال الكامل](/l/ar/developers/extend/apps/layout/front-components#sdk-command-components))، ويشير عنصر قائمة الأوامر إليه:
 
 ```ts src/command-menu-items/run-action.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -74,7 +45,6 @@ import { defineCommandMenuItem } from 'twenty-sdk/define';
 export default defineCommandMenuItem({
   universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
   label: 'Run my action',
-  icon: 'IconPlayerPlay',
   frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
 });
 ```

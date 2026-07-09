@@ -19,43 +19,53 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-msgid "Suspended Workspace"
-msgstr "Приостановленная рабочая область"
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "Тестовое письмо"
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
-#: src/emails/password-update-notify.email.tsx
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Dear {userName},"
-msgstr "Уважаемый {userName},"
+msgid "Your workspace is paused"
+msgstr ""
 
 #. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-#: src/emails/password-update-notify.email.tsx
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+#: src/emails/billing-trial-ending.email.tsx
 #: src/emails/clean-suspended-workspace.email.tsx
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Hi {userName},"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+#: src/emails/billing-trial-ending.email.tsx
+#: src/emails/clean-suspended-workspace.email.tsx
+#: src/emails/password-update-notify.email.tsx
+#: src/emails/warn-suspended-workspace.email.tsx
 msgid "Hello,"
 msgstr "Здравствуйте,"
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
-msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
-msgstr "Похоже, что ваше рабочее пространство <0>{workspaceDisplayName}</0> было приостановлено на {daysSinceInactive} {daysSinceInactive, plural, one {день} few {дня} many {дней} other {дня}}."
+msgid "Good news first: your workspace <0>{workspaceDisplayName}</0> is only paused — none of your data is gone."
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
-msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
-msgstr "Рабочее пространство будет деактивировано через {remainingDays} {remainingDays, plural, one {день} few {дня} many {дней} other {дней}}, и все его данные будут удалены."
+msgid "Reactivate it within the next {remainingDays} {dayOrDays} and you'll pick up exactly where you left off, with every record, view and setting right where you left it."
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
-msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
-msgstr "Если вы хотите продолжить использование Twenty, пожалуйста, обновите вашу подписку в течение следующих {remainingDays} {dayOrDays}."
+msgid "After that, the workspace and all of its data will be permanently deleted — and we won't be able to bring it back."
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
-msgid "Update your subscription"
-msgstr "Обновите вашу подписку"
+msgid "Reactivate workspace"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
@@ -69,24 +79,19 @@ msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow
 msgstr "{senderName} (<0>{senderEmail}</0>): Пожалуйста, проверьте этот домен, чтобы пользователи с <1>@{domain}</1> адресами электронной почты могли присоединяться к вашему рабочему пространству без приглашения."
 
 #. js-lingui-explicit-id
-#: src/emails/test.email.tsx
-msgid "Test email"
-msgstr "Тестовое письмо"
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Enabled"
+msgstr ""
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Присоединяйтесь к вашей команде на Twenty"
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Disabled"
+msgstr ""
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) пригласил вас присоединиться к рабочему пространству под названием <1>{workspaceName}</1>."
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "Принять приглашение"
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Server administrator access changed"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -109,9 +114,29 @@ msgid "Verify Email"
 msgstr "Подтвердить электронную почту"
 
 #. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Присоединяйтесь к вашей команде на Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) пригласил вас присоединиться к рабочему пространству под названием <1>{workspaceName}</1>."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "Принять приглашение"
+
+#. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
 msgid "Password updated"
 msgstr "Пароль обновлен"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Dear {userName},"
+msgstr "Уважаемый {userName},"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -155,28 +180,84 @@ msgstr "Эта ссылка действительна только в тече�
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
-msgid "Deleted Workspace"
-msgstr "Удаленное рабочее пространство"
+msgid "Your workspace has been deleted"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
-msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
-msgstr "Ваше рабочее пространство <0>{workspaceDisplayName}</0> было удалено, так как ваша подписка истекла {daysSinceInactive} {inactiveDaysBeforeDelete, plural, one {день} few {дня} many {дней} other {дней}} назад."
+msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
-msgid "All data in this workspace has been permanently deleted."
-msgstr "Все данные в этом рабочем пространстве были окончательно удалены."
+msgid "Its data has been removed and can no longer be recovered."
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
-msgid "If you wish to use Twenty again, you can create a new workspace."
-msgstr "Если вы захотите снова использовать Twenty, вы сможете создать новое рабочее пространство."
+msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
-msgid "Create a new workspace"
-msgstr "Создать новое рабочее пространство"
+msgid "Start a new workspace"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your trial is ending soon"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "If you do nothing, we'll pause your workspace and keep your data safe for {dataRetentionDays} days in case you change your mind — no card will be charged."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Add a payment method"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "A heads up before your trial ends"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "We don't like surprise charges, so here's a friendly heads up."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
@@ -187,6 +268,26 @@ msgstr "Что такое Twenty?"
 #: src/components/WhatIsTwenty.tsx
 msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
 msgstr "Это CRM, программное обеспечение для эффективного управления данными и взаимоотношениями с клиентами."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your plan renews soon"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Just so it's never a surprise, here's a heads up about your annual plan."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -237,3 +338,23 @@ msgstr "Twenty.com, Общественная корпорация"
 #: src/components/Footer.tsx
 msgid "San Francisco / Paris"
 msgstr "Сан-Франциско / Париж"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.summary"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.fullAdmin"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.warning"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.impersonation"
+msgstr ""

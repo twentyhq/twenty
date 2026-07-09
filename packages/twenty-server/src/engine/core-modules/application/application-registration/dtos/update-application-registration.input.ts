@@ -50,7 +50,7 @@ export class UpdateApplicationRegistrationPayload {
   @Field(() => Boolean, { nullable: true })
   @IsBoolean()
   @IsOptional()
-  isFeatured?: boolean;
+  isVetted?: boolean;
 }
 
 @InputType()

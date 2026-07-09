@@ -1,4 +1,4 @@
-import { defineApplication } from 'twenty-sdk/define';
+import { defineApplication, FieldType } from 'twenty-sdk/define';
 
 import { APP_DESCRIPTION } from 'src/constants/app-description';
 import { APP_DISPLAY_NAME } from 'src/constants/app-display-name';
@@ -51,6 +51,7 @@ export default defineApplication({
       universalIdentifier: CALL_RECORDER_NAME_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
       description: 'Display name the call recorder uses when it joins a call.',
       isSecret: false,
+      type: FieldType.TEXT,
       value: DEFAULT_CALL_RECORDER_NAME,
     },
     [CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME]: {
@@ -59,7 +60,8 @@ export default defineApplication({
       description:
         'How many minutes before the meeting start time the bot should join. Set to 0 to join at the scheduled start time.',
       isSecret: false,
-      value: String(DEFAULT_CALL_RECORDER_JOIN_EARLY_MINUTES),
+      type: FieldType.NUMBER,
+      value: DEFAULT_CALL_RECORDER_JOIN_EARLY_MINUTES,
     },
     [CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME]: {
       universalIdentifier:
@@ -67,7 +69,8 @@ export default defineApplication({
       description:
         'How many seconds the bot waits in a meeting lobby before giving up and leaving.',
       isSecret: false,
-      value: String(CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS),
+      type: FieldType.NUMBER,
+      value: CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS,
     },
     [CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME]: {
       universalIdentifier:
@@ -75,7 +78,8 @@ export default defineApplication({
       description:
         'How many seconds the bot stays in an empty meeting when no one else ever joins.',
       isSecret: false,
-      value: String(CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS),
+      type: FieldType.NUMBER,
+      value: CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS,
     },
     [CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME]: {
       universalIdentifier:
@@ -83,7 +87,8 @@ export default defineApplication({
       description:
         'How many seconds the bot keeps recording after everyone else leaves the meeting.',
       isSecret: false,
-      value: String(CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS),
+      type: FieldType.NUMBER,
+      value: CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS,
     },
     [CALL_RECORDER_SUMMARY_ENABLED_ENV_VAR_NAME]: {
       universalIdentifier:
@@ -91,7 +96,8 @@ export default defineApplication({
       description:
         'Whether AI summaries are generated for call recordings. Set to false to disable and avoid AI credit usage.',
       isSecret: false,
-      value: String(DEFAULT_CALL_RECORDER_SUMMARY_ENABLED),
+      type: FieldType.BOOLEAN,
+      value: DEFAULT_CALL_RECORDER_SUMMARY_ENABLED,
     },
     [CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_ENV_VAR_NAME]: {
       universalIdentifier:
@@ -99,6 +105,7 @@ export default defineApplication({
       description:
         'Extra instructions appended to the built-in summary prompt (tone, language, focus areas). Leave empty to use the built-in prompt alone.',
       isSecret: false,
+      type: FieldType.RICH_TEXT,
     },
     [CALL_RECORDER_USE_WORKSPACE_LOGO_ENV_VAR_NAME]: {
       universalIdentifier:
@@ -106,7 +113,8 @@ export default defineApplication({
       description:
         'Whether the bot displays the workspace logo on its camera tile while in a call. Set to false to disable.',
       isSecret: false,
-      value: String(DEFAULT_CALL_RECORDER_USE_WORKSPACE_LOGO),
+      type: FieldType.BOOLEAN,
+      value: DEFAULT_CALL_RECORDER_USE_WORKSPACE_LOGO,
     },
     [CALL_RECORDER_BOT_IMAGE_BACKGROUND_ENV_VAR_NAME]: {
       universalIdentifier:
@@ -114,6 +122,7 @@ export default defineApplication({
       description:
         'Hex color (e.g. #ffffff) drawn behind the workspace logo on the bot camera tile. Defaults to dark gray when unset or invalid.',
       isSecret: false,
+      type: FieldType.TEXT,
       value: DEFAULT_CALL_RECORDER_BOT_IMAGE_BACKGROUND,
     },
   },
@@ -123,24 +132,35 @@ export default defineApplication({
         'Recall.ai API key for the configured region. Set by the server admin on this registration after installation; used to create, update, and cancel scheduled recording bots.',
       isSecret: true,
       isRequired: true,
+      type: FieldType.TEXT,
     },
     [RECALL_REGION_ENV_VAR_NAME]: {
       description: `Recall.ai region used for API requests. Defaults to ${DEFAULT_RECALL_REGION} when unset. Europe Frankfurt is eu-central-1.`,
       isSecret: false,
+      type: FieldType.SELECT,
+      options: [
+        { label: 'US West (us-west-2)', value: 'us-west-2' },
+        { label: 'US East (us-east-1)', value: 'us-east-1' },
+        { label: 'EU Frankfurt (eu-central-1)', value: 'eu-central-1' },
+        { label: 'Asia Tokyo (ap-northeast-1)', value: 'ap-northeast-1' },
+      ],
     },
     [CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME]: {
       description: `How many hours Recall.ai retains recording media after processing. Defaults to ${DEFAULT_CALL_RECORDER_RECORDING_RETENTION_HOURS} hours (6 days and 22 hours) to stay below Recall.ai's 7-day free storage window. Values above 168 hours may incur Recall.ai storage charges.`,
       isSecret: false,
+      type: FieldType.NUMBER,
     },
     [CALL_RECORDER_MAX_MEDIA_FILE_SIZE_MB_ENV_VAR_NAME]: {
       description: `Maximum size in megabytes for a single recording media file (video or audio) ingested from Recall.ai. Larger files are skipped and noted in the call recording failure reason; the recording still completes with its remaining artifacts. Defaults to ${DEFAULT_CALL_RECORDER_MAX_MEDIA_FILE_SIZE_MB} MB to keep media ingestion within the logic function memory limit.`,
       isSecret: false,
+      type: FieldType.NUMBER,
     },
     [RECALL_WEBHOOK_SECRET_ENV_VAR_NAME]: {
       description:
         'Recall.ai webhook signing secret (whsec_...). Set by the server admin from the Recall webhook endpoint settings; used to verify the Svix signature of incoming Recall webhook deliveries.',
       isSecret: true,
       isRequired: true,
+      type: FieldType.TEXT,
     },
   },
 });

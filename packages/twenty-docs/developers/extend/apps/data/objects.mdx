@@ -86,6 +86,22 @@ export default defineObject({
 **Base fields are added automatically.** When you define a custom object, Twenty creates standard fields like `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy`, and `deletedAt` for you. You don't need to declare them in your `fields` array — only your custom fields. You can override a default field by declaring one with the same name, but this is rarely a good idea.
 </Note>
 
+## Field types
+
+The full set of `FieldType` values, exported from `twenty-sdk/define`:
+
+| Category | Types |
+|----------|-------|
+| Text | `TEXT`, `RICH_TEXT`, `ARRAY` (of strings), `RAW_JSON` |
+| Numeric | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (arbitrary precision), `RATING`, `POSITION` |
+| Dates | `DATE`, `DATE_TIME` |
+| Choice | `BOOLEAN`, `SELECT`, `MULTI_SELECT` |
+| Composite | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES` |
+| Identifiers & relations | `UUID`, `RELATION`, `MORPH_RELATION` (see [Relations](/developers/extend/apps/data/relations)) |
+| System | `TS_VECTOR` (full-text search vector, managed by the server) |
+
+Composite types store multiple sub-fields (e.g. `FULL_NAME` = first + last name; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` and `MULTI_SELECT` require an `options` array as in the example above.
+
 ## Default values
 
 Literal string defaults must be wrapped in single quotes **inside** the string — `defaultValue: "'Draft'"`, not `defaultValue: "Draft"`. That's why the `status` field above uses `` `'${PostCardStatus.DRAFT}'` ``.
