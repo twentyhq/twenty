@@ -12,6 +12,8 @@ import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-int
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
+import { AppMessageComposerService } from 'src/engine/core-modules/tool/tools/message-composer/app-message-composer.service';
+import { MessageComposerService } from 'src/engine/core-modules/tool/tools/message-composer/message-composer.service';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
 import { ExtractJsonPathsTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/extract-json-paths-tool';
@@ -49,6 +51,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     DraftEmailTool,
     CreateCalendarEventTool,
     EmailComposerService,
+    AppMessageComposerService,
+    MessageComposerService,
     SearchHelpCenterTool,
     CodeInterpreterTool,
     NavigateAppTool,
@@ -63,6 +67,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     DraftEmailTool,
     CreateCalendarEventTool,
     EmailComposerService,
+    MessageComposerService,
     SearchHelpCenterTool,
     CodeInterpreterTool,
     NavigateAppTool,

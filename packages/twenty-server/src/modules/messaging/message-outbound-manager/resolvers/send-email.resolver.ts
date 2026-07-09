@@ -14,7 +14,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { FileEmailAttachmentService } from 'src/engine/core-modules/file/file-email-attachment/services/file-email-attachment.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
+import { MessageComposerService } from 'src/engine/core-modules/tool/tools/message-composer/message-composer.service';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -38,7 +38,7 @@ export class SendEmailResolver {
 
   constructor(
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
-    private readonly emailComposerService: EmailComposerService,
+    private readonly messageComposerService: MessageComposerService,
     private readonly fileEmailAttachmentService: FileEmailAttachmentService,
     private readonly sendEmailService: SendEmailService,
   ) {}
@@ -56,7 +56,7 @@ export class SendEmailResolver {
         workspaceId: workspace.id,
       });
 
-      const result = await this.emailComposerService.composeEmail(
+      const result = await this.messageComposerService.composeMessage(
         {
           recipients: {
             to: input.to,

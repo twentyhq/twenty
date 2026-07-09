@@ -1,7 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
+import { MessageComposerService } from 'src/engine/core-modules/tool/tools/message-composer/message-composer.service';
 import { type EmailToolInput } from 'src/engine/core-modules/tool/tools/email-tool/types/email-tool-input.type';
 import { SendEmailService } from 'src/modules/messaging/message-outbound-manager/services/send-email.service';
 
@@ -32,14 +32,14 @@ const baseInput: EmailToolInput = {
 
 describe('SendEmailTool', () => {
   let tool: SendEmailTool;
-  let mockComposeEmail: jest.Mock;
+  let mockComposeMessage: jest.Mock;
   let mockSendComposedEmail: jest.Mock;
   let mockPersistSentMessage: jest.Mock;
 
   beforeEach(async () => {
     jest.clearAllMocks();
 
-    mockComposeEmail = jest.fn();
+    mockComposeMessage = jest.fn();
     mockSendComposedEmail = jest.fn().mockResolvedValue(sendResult);
     mockPersistSentMessage = jest.fn().mockResolvedValue({
       messageId: 'message-record-id',
@@ -50,8 +50,8 @@ describe('SendEmailTool', () => {
       providers: [
         SendEmailTool,
         {
-          provide: EmailComposerService,
-          useValue: { composeEmail: mockComposeEmail },
+          provide: MessageComposerService,
+          useValue: { composeMessage: mockComposeMessage },
         },
         {
           provide: SendEmailService,
@@ -67,7 +67,7 @@ describe('SendEmailTool', () => {
   });
 
   it('returns the sent message identifiers when the message is persisted', async () => {
-    mockComposeEmail.mockResolvedValue({
+    mockComposeMessage.mockResolvedValue({
       success: true,
       data: buildComposedEmail(true),
     });
@@ -86,7 +86,7 @@ describe('SendEmailTool', () => {
   });
 
   it('returns the send identifiers without record ids when persistence is disabled', async () => {
-    mockComposeEmail.mockResolvedValue({
+    mockComposeMessage.mockResolvedValue({
       success: true,
       data: buildComposedEmail(false),
     });
@@ -106,7 +106,7 @@ describe('SendEmailTool', () => {
   });
 
   it('still succeeds without record ids when persistence fails', async () => {
-    mockComposeEmail.mockResolvedValue({
+    mockComposeMessage.mockResolvedValue({
       success: true,
       data: buildComposedEmail(true),
     });

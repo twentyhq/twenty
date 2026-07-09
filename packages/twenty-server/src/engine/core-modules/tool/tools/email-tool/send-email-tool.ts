@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
 import { EmailToolInputZodSchema } from 'src/engine/core-modules/tool/tools/email-tool/email-tool.schema';
 import { EmailToolException } from 'src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception';
 import { isInsufficientPermissionsError } from 'src/engine/core-modules/tool/tools/email-tool/utils/is-insufficient-permissions-error.util';
@@ -8,6 +7,7 @@ import { type EmailToolInput } from 'src/engine/core-modules/tool/tools/email-to
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
+import { MessageComposerService } from 'src/engine/core-modules/tool/tools/message-composer/message-composer.service';
 import { SendEmailService } from 'src/modules/messaging/message-outbound-manager/services/send-email.service';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class SendEmailTool implements Tool {
   inputSchema = EmailToolInputZodSchema;
 
   constructor(
-    private readonly emailComposerService: EmailComposerService,
+    private readonly messageComposerService: MessageComposerService,
     private readonly sendEmailService: SendEmailService,
   ) {}
 
@@ -28,7 +28,7 @@ export class SendEmailTool implements Tool {
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
     try {
-      const result = await this.emailComposerService.composeEmail(
+      const result = await this.messageComposerService.composeMessage(
         parameters,
         context,
       );
