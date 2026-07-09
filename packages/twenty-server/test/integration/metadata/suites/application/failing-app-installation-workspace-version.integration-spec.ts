@@ -4,6 +4,7 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
 import { installApplication } from 'test/integration/metadata/suites/application/utils/install-application.util';
 import { uploadAppTarball } from 'test/integration/metadata/suites/application/utils/upload-app-tarball.util';
+import { scrubSemverVersions } from 'test/utils/scrub-semver-versions.util';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -129,7 +130,10 @@ describe('Install application is gated by the workspace completed upgrade versio
       expectToFail: true,
     });
 
-    expectOneNotInternalServerErrorSnapshot({ errors });
+    expectOneNotInternalServerErrorSnapshot({
+      errors,
+      normalizeMessage: scrubSemverVersions,
+    });
   });
 
   it('rejects installation when the workspace upgrade cursor cannot be interpreted', async () => {
@@ -156,6 +160,9 @@ describe('Install application is gated by the workspace completed upgrade versio
       expectToFail: true,
     });
 
-    expectOneNotInternalServerErrorSnapshot({ errors });
+    expectOneNotInternalServerErrorSnapshot({
+      errors,
+      normalizeMessage: scrubSemverVersions,
+    });
   });
 });

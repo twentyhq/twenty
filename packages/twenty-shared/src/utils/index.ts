@@ -34,6 +34,7 @@ export {
   ACCEPTED_DATE_FORMATS,
   ACCEPTED_DATE_TIME_FORMATS,
 } from './date/dateInputFormats';
+export { getValidTimeZoneOrUndefined } from './date/getValidTimeZoneOrUndefined';
 export { isDateWithoutTime } from './date/isDateWithoutTime';
 export { isPlainDateAfter } from './date/isPlainDateAfter';
 export { isPlainDateBefore } from './date/isPlainDateBefore';

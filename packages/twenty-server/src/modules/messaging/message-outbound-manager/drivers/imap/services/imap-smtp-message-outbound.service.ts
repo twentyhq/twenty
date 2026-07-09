@@ -18,6 +18,7 @@ import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
 import { extractMessageIdFromBuffer } from 'src/modules/messaging/message-outbound-manager/utils/extract-message-id-from-buffer.util';
+import { formatMessageFromHeader } from 'src/modules/messaging/message-outbound-manager/utils/format-message-from-header.util';
 import { toMailComposerOptions } from 'src/modules/messaging/message-outbound-manager/utils/to-mail-composer-options.util';
 
 @Injectable()
@@ -46,13 +47,15 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
 
     this.assertHandleIsDefined(handle);
 
-    const messageBuffer = await this.compileRawMessage(
-      handle,
-      sendMessageInput,
-    );
+    const from = formatMessageFromHeader({
+      fromEmail: handle,
+      fromName: connectionParameters?.name,
+    });
+
+    const messageBuffer = await this.compileRawMessage(from, sendMessageInput);
 
     await smtpClient.sendMail({
-      from: handle,
+      from,
       to: sendMessageInput.to,
       cc: sendMessageInput.cc,
       bcc: sendMessageInput.bcc,
@@ -108,10 +111,12 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
       throw new Error('IMAP connection is required to create drafts');
     }
 
-    const messageBuffer = await this.compileRawMessage(
-      handle,
-      sendMessageInput,
-    );
+    const from = formatMessageFromHeader({
+      fromEmail: handle,
+      fromName: connectionParameters?.name,
+    });
+
+    const messageBuffer = await this.compileRawMessage(from, sendMessageInput);
 
     const imapClient = await this.imapClientProvider.getClient(
       connectedAccount.id,

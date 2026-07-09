@@ -2,6 +2,7 @@ import { FieldType } from '@/sdk/define';
 import type { Manifest } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import {
+  AggregateOperations,
   FieldMetadataType,
   NavigationMenuItemType,
   PageLayoutTabLayoutMode,
@@ -32,6 +33,18 @@ export const EXPECTED_MANIFEST: Manifest = {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:
               '370ae182-743f-4ecb-b625-7ac48e21f0e5',
+          },
+        },
+        {
+          universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000012',
+          title: 'Total Priority',
+          type: 'GRAPH',
+          objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+          configuration: {
+            configurationType: 'AGGREGATE_CHART',
+            aggregateFieldMetadataUniversalIdentifier:
+              '7b57bd63-5a4c-46ca-9d52-42c8f02d1df6',
+            aggregateOperation: AggregateOperations.SUM,
           },
         },
       ],
@@ -220,6 +233,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
     yarnLockChecksum: 'd41d8cd98f00b204e9800998ecf8427e',
     packageJsonChecksum: '2851d0e2c3621a57e1fd103a245b6fde',
+    requiredServerVersionRange: null,
   },
   frontComponents: [
     {

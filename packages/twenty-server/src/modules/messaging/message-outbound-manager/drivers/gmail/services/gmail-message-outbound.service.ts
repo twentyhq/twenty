@@ -9,10 +9,10 @@ import { type MessageOutboundDriver } from 'src/modules/messaging/message-outbou
 
 import { GoogleOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client.provider';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
 import { extractMessageIdFromBuffer } from 'src/modules/messaging/message-outbound-manager/utils/extract-message-id-from-buffer.util';
+import { formatMessageFromHeader } from 'src/modules/messaging/message-outbound-manager/utils/format-message-from-header.util';
 import { toMailComposerOptions } from 'src/modules/messaging/message-outbound-manager/utils/to-mail-composer-options.util';
 
 @Injectable()
@@ -169,6 +169,10 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
 
     const fromEmail = gmailData.emailAddress;
 
+    if (!isNonEmptyString(fromEmail)) {
+      throw new Error('Gmail profile did not return an email address');
+    }
+
     const { data: peopleData } = await peopleClient.people.get({
       resourceName: 'people/me',
       personFields: 'names',
@@ -176,9 +180,10 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
 
     const fromName = peopleData?.names?.[0]?.displayName;
 
-    const from = isDefined(fromName)
-      ? `"${mimeEncode(fromName)}" <${fromEmail}>`
-      : `${fromEmail}`;
+    const from = formatMessageFromHeader({
+      fromEmail,
+      fromName,
+    });
 
     const mail = new MailComposer(
       toMailComposerOptions(from, sendMessageInput),
