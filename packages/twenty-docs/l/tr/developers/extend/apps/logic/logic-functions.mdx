@@ -51,8 +51,12 @@ export default defineLogicFunction({
 ```
 
 Kullanılabilir tetikleyici türleri:
-* **httpRoute**: İşlevinizi bir HTTP yolu ve yöntemiyle **`/s/` uç noktasının altında** kullanıma sunar:
-> örn. `path: '/post-card/create'` `https://your-twenty-server.com/s/post-card/create` adresinden çağrılabilir
+* **httpRoute**: İşlevinizi çalışma alanınızın **işlevler temel URL'sinde** bir HTTP yolunda ve yönteminde açığa çıkarır — Twenty'nin `TWENTY_FUNCTIONS_URL` olarak enjekte ettiği değer (Twenty Cloud'da, çalışma alanı başına ayrılmış özel bir alan adı):
+> örn. `path: '/post-card/create'` `https://your-workspace.withtwenty.com/post-card/create` adresinden çağrılabilir
+
+<Warning>
+Eski `/s/` ön ekli rota (`https://your-twenty-server.com/s/post-card/create`) **Twenty Cloud üzerinde kullanım dışıdır (deprecated)** ve **2026-07-24** tarihinde devre dışı bırakılacaktır. Yalıtılmış bir işlev alanı yapılandırmayan kendi kendine barındırılan ve yerel örnekler için kullanılabilir durumda kalır — ayarlanmışsa `TWENTY_FUNCTIONS_URL` kullanın ve aksi takdirde `\<server-url>/s/\<path>` rotasına geri dönün.
+</Warning>
 
 <Note>
 Arayüzsüz bir ön uç bileşeninden rota tarafından tetiklenen mantık fonksiyonunu çağırmak için bkz. [Mantık fonksiyonu çağırma](/l/tr/developers/extend/apps/layout/front-components#calling-a-logic-function).

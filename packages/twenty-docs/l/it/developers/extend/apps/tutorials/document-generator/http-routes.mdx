@@ -9,8 +9,15 @@ Lo stesso gestore può anche rispondere alle richieste HTTP. Aggiungeremo due pe
 * un endpoint **POST** per generare un documento, e
 * un endpoint pubblico **GET** che rende un documento come una pagina web stampabile.
 
-Entrambi usano `httpRouteTriggerSettings`. Gli itinerari delle app sono serviti sotto `/s` sul tuo server
-Twenty (es. `http://localhost:2020/s/documents/generate`).
+Entrambi usano `httpRouteTriggerSettings`. Sul server dev locale, gli itinerari delle app sono
+serviti sotto il prefisso `/s` (ad es. `http://localhost:2020/s/documents/generate`).
+
+<Note>
+Su Twenty Cloud, i percorsi sono serviti sul dominio delle funzioni dedicate
+dello spazio di lavoro — l'URL Twenty inietta come `TWENTY_FUNCTIONS_URL`, senza prefisso `/s`. Il prefisso `/s`
+è deprecato e rimane solo per le istanze autosostenute e locali.
+Vedi [Chiamare una funzione logica](/l/it/developers/extend/apps/layout/front-components#calling-a-logic-function).
+</Note>
 
 ## Percorso POST — generare su richiesta
 

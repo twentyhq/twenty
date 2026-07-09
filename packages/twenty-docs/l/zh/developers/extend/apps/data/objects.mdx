@@ -86,6 +86,22 @@ export default defineObject({
 **基础字段会自动添加。** 当你定义自定义对象时，Twenty 会为你创建标准字段，例如 `id`、`name`、`createdAt`、`updatedAt`、`createdBy`、`updatedBy` 和 `deletedAt`。 你无需在 `fields` 数组中声明这些字段——只需声明你的自定义字段。 你可以通过声明一个同名字段来覆盖默认字段，但这么做通常并不是一个好主意。
 </Note>
 
+## 字段类型
+
+从 `twenty-sdk/define` 导出的完整 `FieldType` 值集合：
+
+| 类别     | 类型                                                                                                          |
+| ------ | ----------------------------------------------------------------------------------------------------------- |
+| 文本     | `TEXT`、`RICH_TEXT`、`ARRAY`（字符串数组）、`RAW_JSON`                                                                |
+| 数值     | `NUMBER`（`universalSettings.dataType`：`'float'` / `'int'` / `'bigint'`）、`NUMERIC`（任意精度）、`RATING`、`POSITION` |
+| 日期     | `DATE`, `DATE_TIME`                                                                                         |
+| 选项     | `BOOLEAN`、`SELECT`、`MULTI_SELECT`                                                                           |
+| 复合     | `FULL_NAME`、`ADDRESS`、`EMAILS`、`PHONES`、`LINKS`、`CURRENCY`、`ACTOR`、`FILES`                                  |
+| 标识符和关联 | `UUID`、`RELATION`、`MORPH_RELATION`（参见 [Relations](/l/zh/developers/extend/apps/data/relations)）                  |
+| 系统     | `TS_VECTOR`（全文搜索向量，由服务器管理）                                                                                  |
+
+复合类型会存储多个子字段（例如，`FULL_NAME` = 名 + 姓；`CURRENCY` = `amountMicros` + `currencyCode`）。 `SELECT` 和 `MULTI_SELECT` 需要一个如上示例所示的 `options` 数组。
+
 ## 默认值
 
 字面量字符串默认值必须在字符串**内部**用单引号包裹——应写成 `defaultValue: "'Draft'"`，而不是 `defaultValue: "Draft"`。 这就是上面的 `status` 字段使用 `` `'${PostCardStatus.DRAFT}'` `` 的原因。
