@@ -137,7 +137,9 @@ describe('reconcileUpcomingCalendarEventBatches', () => {
       deadlineAtMs: Date.now() + 60_000,
     });
 
-    expect(result.failedCalendarEventIds).toEqual(calendarEventIds.slice(0, 25));
+    expect(result.failedCalendarEventIds).toEqual(
+      calendarEventIds.slice(0, 25),
+    );
     expect(result.reconciledCalendarEventIds).toEqual(
       calendarEventIds.slice(25),
     );

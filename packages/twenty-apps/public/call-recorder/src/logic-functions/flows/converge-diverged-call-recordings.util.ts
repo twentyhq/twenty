@@ -124,6 +124,12 @@ export const convergeDivergedCallRecordings = async ({
   }
 
   const listedBotsById = await listConvergenceBotsById(now);
+
+  // A failed list means Recall is degraded; fanning out per-id reads would add load exactly when the provider asks for less.
+  if (isUndefined(listedBotsById)) {
+    return result;
+  }
+
   const orderedActionableCandidates = rotateActionableCandidatesForFallback({
     candidates: actionableCandidates,
     now,
@@ -187,7 +193,7 @@ const rotateActionableCandidatesForFallback = <
 
 const listConvergenceBotsById = async (
   now: Date,
-): Promise<Map<string, Record<string, unknown>>> => {
+): Promise<Map<string, Record<string, unknown>> | undefined> => {
   const currentWorkspaceId = getCurrentWorkspaceId();
 
   if (isUndefined(currentWorkspaceId)) {
@@ -206,15 +212,17 @@ const listConvergenceBotsById = async (
 
   if (!listResult.ok) {
     console.warn(
-      `[call-recorder] failed to list Recall bots for convergence, falling back to capped per-id fetches: ${listResult.errorMessage}`,
+      `[call-recorder] failed to list Recall bots for convergence, deferring to the next run: ${listResult.errorMessage}`,
     );
 
-    return new Map();
+    return undefined;
   }
 
   return new Map(
     listResult.bots
-      .filter((bot) => isCurrentWorkspaceManagedBot({ bot, currentWorkspaceId }))
+      .filter((bot) =>
+        isCurrentWorkspaceManagedBot({ bot, currentWorkspaceId }),
+      )
       .map((bot) => [bot.id, bot.raw]),
   );
 };

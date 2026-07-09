@@ -10,9 +10,12 @@ import { type RecallWebhookArtifactContinuationRequest } from 'src/logic-functio
 const processRecallWebhookArtifactsMock = vi.hoisted(() => vi.fn());
 const coreApiClientMock = vi.hoisted(() => vi.fn());
 
-vi.mock('src/logic-functions/flows/process-recall-webhook-artifacts.util', () => ({
-  processRecallWebhookArtifacts: processRecallWebhookArtifactsMock,
-}));
+vi.mock(
+  'src/logic-functions/flows/process-recall-webhook-artifacts.util',
+  () => ({
+    processRecallWebhookArtifacts: processRecallWebhookArtifactsMock,
+  }),
+);
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: coreApiClientMock,
@@ -47,7 +50,8 @@ describe('process-recall-webhook-artifacts', () => {
   it('declares an authenticated own-route trigger for continuation requests', () => {
     expect(processRecallWebhookArtifactsLogicFunction.success).toBe(true);
     expect(
-      processRecallWebhookArtifactsLogicFunction.config.httpRouteTriggerSettings,
+      processRecallWebhookArtifactsLogicFunction.config
+        .httpRouteTriggerSettings,
     ).toEqual({
       path: PROCESS_RECALL_WEBHOOK_ARTIFACTS_ROUTE_PATH,
       httpMethod: 'POST',

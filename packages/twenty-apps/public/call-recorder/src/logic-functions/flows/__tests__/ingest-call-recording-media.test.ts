@@ -84,21 +84,19 @@ const stubFetch = ({
   downloadsByUrl: Record<string, unknown>;
 }) => {
   fetchMock.mockReset();
-  fetchMock.mockImplementation(
-    (url: string, init?: { method?: string }) => {
-      if (init?.method === 'PUT') {
-        throw new Error('Upload requests should go through the upload bridge');
-      }
+  fetchMock.mockImplementation((url: string, init?: { method?: string }) => {
+    if (init?.method === 'PUT') {
+      throw new Error('Upload requests should go through the upload bridge');
+    }
 
-      const downloadResponse = downloadsByUrl[url];
+    const downloadResponse = downloadsByUrl[url];
 
-      if (downloadResponse === undefined) {
-        throw new Error(`Unhandled fetch url in test: ${url}`);
-      }
+    if (downloadResponse === undefined) {
+      throw new Error(`Unhandled fetch url in test: ${url}`);
+    }
 
-      return Promise.resolve(downloadResponse);
-    },
-  );
+    return Promise.resolve(downloadResponse);
+  });
 
   vi.stubGlobal('fetch', fetchMock);
 };

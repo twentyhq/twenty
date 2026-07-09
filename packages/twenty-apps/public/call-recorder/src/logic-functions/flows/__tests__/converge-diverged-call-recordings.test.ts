@@ -16,9 +16,12 @@ vi.mock('src/logic-functions/recall-api/get-recall-bot.util', () => ({
   getRecallBot: getRecallBotMock,
 }));
 
-vi.mock('src/logic-functions/recall-api/list-scheduled-recall-bots.util', () => ({
-  listScheduledRecallBots: listScheduledRecallBotsMock,
-}));
+vi.mock(
+  'src/logic-functions/recall-api/list-scheduled-recall-bots.util',
+  () => ({
+    listScheduledRecallBots: listScheduledRecallBotsMock,
+  }),
+);
 
 vi.mock('src/logic-functions/data/get-current-workspace-id.util', () => ({
   getCurrentWorkspaceId: getCurrentWorkspaceIdMock,
@@ -250,6 +253,25 @@ describe('convergeDivergedCallRecordings', () => {
     });
     expect(getRecallBotMock).not.toHaveBeenCalled();
     expect(result.updatedCallRecordingIds).toEqual(['call-recording-1']);
+  });
+
+  it('defers convergence without per-id fetches when the Recall bot list fails', async () => {
+    listScheduledRecallBotsMock.mockResolvedValue({
+      ok: false,
+      status: 429,
+      errorMessage: 'Recall API responded with HTTP 429',
+    });
+    const client = buildClient([buildStuckRecordingNode()]);
+
+    const result = await convergeDivergedCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(getRecallBotMock).not.toHaveBeenCalled();
+    expect(client.mutations).toEqual([]);
+    expect(result.updatedCallRecordingIds).toEqual([]);
+    expect(console.warn).toHaveBeenCalled();
   });
 
   it('keeps a done Recall bot retryable when the recording artifact is not visible yet', async () => {

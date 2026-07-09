@@ -226,7 +226,11 @@ const openMediaDownload = async ({
     throw new Error('download returned no body');
   }
 
-  return { outcome: 'opened', body: response.body, sizeBytes: contentLengthBytes };
+  return {
+    outcome: 'opened',
+    body: response.body,
+    sizeBytes: contentLengthBytes,
+  };
 };
 
 const uploadMediaStreamToStorage = async ({
@@ -320,7 +324,9 @@ const createFileUploadTarget = async ({
   const uploadTarget = mutationResult.createFileUpload;
 
   if (isUndefined(uploadTarget)) {
-    throw new Error('createFileUpload mutation did not return an upload target');
+    throw new Error(
+      'createFileUpload mutation did not return an upload target',
+    );
   }
 
   return uploadTarget;
