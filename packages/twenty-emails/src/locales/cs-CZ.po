@@ -19,6 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "Zkušební e-mail"
+
+#. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Your workspace is paused"
 msgstr ""
@@ -63,11 +68,6 @@ msgid "Reactivate workspace"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/emails/test.email.tsx
-msgid "Test email"
-msgstr "Zkušební e-mail"
-
-#. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
@@ -94,6 +94,21 @@ msgid "Server administrator access changed"
 msgstr ""
 
 #. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Připojte se k svému týmu na Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) vás pozval/a připojit se k pracovnímu prostoru nazvanému <1>{workspaceName}</1>."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "Přijměte pozvánku"
+
+#. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your new email address"
 msgstr ""
@@ -112,21 +127,6 @@ msgstr ""
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Verify Email"
 msgstr "Ověřit e-mail"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Připojte se k svému týmu na Twenty"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) vás pozval/a připojit se k pracovnímu prostoru nazvanému <1>{workspaceName}</1>."
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "Přijměte pozvánku"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -179,31 +179,6 @@ msgid "This link is only valid for the next {duration}. If the link does not wor
 msgstr "Tento odkaz je platný pouze následující {duration}. Pokud odkaz nefunguje, můžete přímo použít odkaz pro ověření přihlášení:"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "Your trial is ending soon"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}."
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "If you do nothing, we'll pause your workspace and keep your data safe for {dataRetentionDays} days in case you change your mind — no card will be charged."
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "Add a payment method"
-msgstr ""
-
-#. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Your workspace has been deleted"
 msgstr ""
@@ -229,6 +204,67 @@ msgid "Start a new workspace"
 msgstr ""
 
 #. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your plan renews soon"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Just so it's never a surprise, here's a heads up about your annual plan."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your trial is ending soon"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "If you do nothing, we'll pause your workspace and keep your data safe for {dataRetentionDays} days in case you change your mind — no card will be charged."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Add a payment method"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Co je Twenty?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "Je to CRM, software, který pomáhá firmám efektivně spravovat jejich zákaznická data a vztahy."
+
+#. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "A heads up before your trial ends"
 msgstr ""
@@ -251,42 +287,6 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Manage subscription"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Co je Twenty?"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "Je to CRM, software, který pomáhá firmám efektivně spravovat jejich zákaznická data a vztahy."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Your plan renews soon"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Just so it's never a surprise, here's a heads up about your annual plan."
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr ""
 
 #. js-lingui-explicit-id
