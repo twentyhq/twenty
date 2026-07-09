@@ -3,33 +3,17 @@ import { fetchComponentSource } from '@/remote/worker/utils/fetchComponentSource
 const FINGERPRINTED_URL =
   'https://api.twenty.com/rest/front-components/component-id/checksum-abc.js';
 const BARE_URL = 'https://api.twenty.com/rest/front-components/component-id';
-const PRESIGNED_URL = 'https://s3.example.com/component.js?signed=abc';
 
-type FakeResponseInit = {
-  ok?: boolean;
-  status?: number;
-  statusText?: string;
-  contentType?: string;
-  body?: string;
-  json?: unknown;
-};
-
-const createFakeResponse = ({
-  ok = true,
-  status = 200,
-  statusText = 'OK',
-  contentType = 'application/javascript',
-  body = '',
-  json,
-}: FakeResponseInit) => ({
-  ok,
-  status,
-  statusText,
+const createFakeJsResponse = (body: string) => ({
+  ok: true,
+  status: 200,
+  statusText: 'OK',
   headers: {
-    get: (name: string) => (name === 'content-type' ? contentType : null),
+    get: (name: string) =>
+      name === 'content-type' ? 'application/javascript' : null,
   },
   text: jest.fn(async () => body),
-  json: jest.fn(async () => json),
+  json: jest.fn(async () => undefined),
 });
 
 class FakeCache {
@@ -83,50 +67,22 @@ describe('fetchComponentSource', () => {
     jest.clearAllMocks();
   });
 
-  it('returns the raw body for a direct JS response and caches it', async () => {
+  it('fetches from the network and caches the result on a miss', async () => {
     const cache = new FakeCache();
 
     setupCaches(cache);
 
     const fetchMock = jest.fn(async () =>
-      createFakeResponse({ body: 'export default () => {};' }),
+      createFakeJsResponse('export default () => {};'),
     );
 
     globalThis.fetch = fetchMock as unknown as typeof fetch;
 
-    const source = await fetchComponentSource(FINGERPRINTED_URL);
+    const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
 
     expect(source).toBe('export default () => {};');
     expect(cache.put).toHaveBeenCalledTimes(1);
     expect(cache.put.mock.calls[0][0]).toBe(FINGERPRINTED_URL);
-  });
-
-  it('follows the JSON handoff to fetch the presigned URL', async () => {
-    setupCaches(new FakeCache());
-
-    const fetchMock = jest
-      .fn()
-      .mockResolvedValueOnce(
-        createFakeResponse({
-          contentType: 'application/json',
-          json: { url: PRESIGNED_URL },
-        }),
-      )
-      .mockResolvedValueOnce(
-        createFakeResponse({ body: 'presigned bundle source' }),
-      );
-
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
-
-    const source = await fetchComponentSource(FINGERPRINTED_URL, {
-      Authorization: 'Bearer token',
-    });
-
-    expect(source).toBe('presigned bundle source');
-    expect(fetchMock).toHaveBeenNthCalledWith(1, FINGERPRINTED_URL, {
-      headers: { Authorization: 'Bearer token' },
-    });
-    expect(fetchMock).toHaveBeenNthCalledWith(2, PRESIGNED_URL);
   });
 
   it('serves a cache hit without hitting the network', async () => {
@@ -142,7 +98,7 @@ describe('fetchComponentSource', () => {
 
     globalThis.fetch = fetchMock as unknown as typeof fetch;
 
-    const source = await fetchComponentSource(FINGERPRINTED_URL);
+    const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
 
     expect(source).toBe('cached bundle source');
     expect(fetchMock).not.toHaveBeenCalled();
@@ -154,12 +110,12 @@ describe('fetchComponentSource', () => {
     setupCaches(cache);
 
     const fetchMock = jest.fn(async () =>
-      createFakeResponse({ body: 'bare url source' }),
+      createFakeJsResponse('bare url source'),
     );
 
     globalThis.fetch = fetchMock as unknown as typeof fetch;
 
-    const source = await fetchComponentSource(BARE_URL);
+    const source = await fetchComponentSource({ url: BARE_URL });
 
     expect(source).toBe('bare url source');
     expect(cache.match).not.toHaveBeenCalled();
@@ -170,12 +126,12 @@ describe('fetchComponentSource', () => {
     (globalThis as unknown as { caches?: unknown }).caches = undefined;
 
     const fetchMock = jest.fn(async () =>
-      createFakeResponse({ body: 'no-cache source' }),
+      createFakeJsResponse('no-cache source'),
     );
 
     globalThis.fetch = fetchMock as unknown as typeof fetch;
 
-    const source = await fetchComponentSource(FINGERPRINTED_URL);
+    const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
 
     expect(source).toBe('no-cache source');
     expect(fetchMock).toHaveBeenCalledTimes(1);

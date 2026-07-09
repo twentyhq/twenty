@@ -108,10 +108,10 @@ const render: WorkerExports['render'] = async (
     ? { Authorization: `Bearer ${renderContext.applicationAccessToken}` }
     : undefined;
 
-  const componentSource = await fetchComponentSource(
-    renderContext.componentUrl,
-    authHeaders,
-  );
+  const componentSource = await fetchComponentSource({
+    url: renderContext.componentUrl,
+    headers: authHeaders,
+  });
 
   const hasSdkImports =
     isDefined(renderContext.sdkClientUrls) &&
