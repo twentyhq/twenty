@@ -52,8 +52,10 @@ import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { AllApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/all-application-registrations.dto';
 import { ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
+import { FindAllApplicationRegistrationsInput } from 'src/engine/core-modules/application/application-registration/dtos/find-all-application-registrations.input';
 import { FindApplicationRegistrationInstalledWorkspacesInput } from 'src/engine/core-modules/application/application-registration/dtos/find-application-registration-installed-workspaces.input';
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import {
@@ -106,6 +108,7 @@ import { QueueMetricsDataDTO } from './dtos/queue-metrics-data.dto';
 import { SetMaintenanceModeInput } from './dtos/set-maintenance-mode.input';
 
 const INSTALLED_WORKSPACES_PAGE_SIZE = 10;
+const APPLICATION_REGISTRATIONS_PAGE_SIZE = 25;
 
 @UsePipes(ResolverValidationPipe)
 @AdminResolver()
@@ -480,11 +483,16 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(AdminPanelGuard)
-  @Query(() => [ApplicationRegistrationEntity])
-  async findAllApplicationRegistrations(): Promise<
-    ApplicationRegistrationEntity[]
-  > {
-    return this.applicationRegistrationService.findAll();
+  @Query(() => AllApplicationRegistrationsDTO)
+  async findAllApplicationRegistrations(
+    @Args('input') input: FindAllApplicationRegistrationsInput,
+  ): Promise<AllApplicationRegistrationsDTO> {
+    return this.applicationRegistrationService.findAllPaginated({
+      page: input.page ?? 1,
+      pageSize: APPLICATION_REGISTRATIONS_PAGE_SIZE,
+      searchTerm: input.searchTerm,
+      isPreInstalledOnly: input.isPreInstalledOnly,
+    });
   }
 
   @UseGuards(AdminPanelGuard)

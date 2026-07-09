@@ -1,5 +1,6 @@
 import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -14,9 +15,19 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useContext, useState } from 'react';
-import { assertUnreachable, getSettingsPath } from 'twenty-shared/utils';
+import { useDebounce } from 'use-debounce';
+import {
+  assertUnreachable,
+  getSettingsPath,
+  isDefined,
+} from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
-import { IconChevronRight, IconPinned, IconRefresh } from 'twenty-ui/icon';
+import {
+  IconChevronRight,
+  IconDotsVertical,
+  IconPinned,
+  IconRefresh,
+} from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -35,6 +46,12 @@ const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
 `;
 
+const StyledShowMoreButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: ${themeCssVariables.spacing[2]};
+`;
+
 const TABLE_GRID = '1fr 100px 100px 100px 40px';
 const TABLE_GRID_MOBILE = '3fr 3fr 1fr 1fr 40px';
 
@@ -42,11 +59,23 @@ export const SettingsAdminApps = () => {
   const apolloAdminClient = useApolloAdminClient();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
   const [showPreInstalledOnly, setShowPreInstalledOnly] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const { data } = useQuery(FindAllApplicationRegistrationsDocument, {
-    client: apolloAdminClient,
-  });
+  const { data, loading, fetchMore } = useQuery(
+    FindAllApplicationRegistrationsDocument,
+    {
+      client: apolloAdminClient,
+      variables: {
+        input: {
+          page: 1,
+          searchTerm: debouncedSearchQuery,
+          isPreInstalledOnly: showPreInstalledOnly,
+        },
+      },
+    },
+  );
 
   const [syncMarketplaceCatalog, { loading: isSyncing }] = useMutation(
     SyncMarketplaceCatalogDocument,
@@ -66,27 +95,59 @@ export const SettingsAdminApps = () => {
     }
   };
 
-  const registrations = data?.findAllApplicationRegistrations ?? [];
+  const result = data?.findAllApplicationRegistrations;
+  const registrations = result?.applicationRegistrations ?? [];
+  const hasMore = result?.hasMore ?? false;
 
-  const query = searchQuery.trim().toLowerCase();
+  const handleSearchChange = (nextSearchQuery: string) => {
+    setSearchQuery(nextSearchQuery);
+    setCurrentPage(1);
+  };
 
-  const filtered = registrations
-    .filter((registration) => {
-      if (showPreInstalledOnly && !registration.isPreInstalled) {
-        return false;
-      }
+  const handleTogglePreInstalledOnly = () => {
+    setShowPreInstalledOnly(!showPreInstalledOnly);
+    setCurrentPage(1);
+  };
 
-      if (query.length === 0) {
-        return true;
-      }
+  const handleShowMore = () => {
+    const nextPage = currentPage + 1;
 
-      return (
-        registration.name.toLowerCase().includes(query) ||
-        (registration.sourcePackage ?? '').toLowerCase().includes(query) ||
-        registration.universalIdentifier.toLowerCase().includes(query)
-      );
-    })
-    .toSorted((a, b) => Number(a.isConfigured) - Number(b.isConfigured));
+    fetchMore({
+      variables: {
+        input: {
+          page: nextPage,
+          searchTerm: debouncedSearchQuery,
+          isPreInstalledOnly: showPreInstalledOnly,
+        },
+      },
+      updateQuery: (previousData, { fetchMoreResult }) => {
+        if (!isDefined(fetchMoreResult)) {
+          return previousData;
+        }
+
+        const previousRegistrations =
+          previousData.findAllApplicationRegistrations.applicationRegistrations;
+
+        const previousIds = new Set(
+          previousRegistrations.map((registration) => registration.id),
+        );
+
+        return {
+          findAllApplicationRegistrations: {
+            ...fetchMoreResult.findAllApplicationRegistrations,
+            applicationRegistrations: [
+              ...previousRegistrations,
+              ...fetchMoreResult.findAllApplicationRegistrations.applicationRegistrations.filter(
+                (registration) => !previousIds.has(registration.id),
+              ),
+            ],
+          },
+        };
+      },
+    });
+
+    setCurrentPage(nextPage);
+  };
 
   const getFormattedSource = (
     registration: ApplicationRegistrationFragmentFragment,
@@ -134,7 +195,7 @@ export const SettingsAdminApps = () => {
         <SearchInput
           placeholder={t`Search registrations...`}
           value={searchQuery}
-          onChange={setSearchQuery}
+          onChange={handleSearchChange}
           filterDropdown={(filterButton: ReactNode) => (
             <Dropdown
               dropdownId="settings-admin-apps-filter-dropdown"
@@ -146,9 +207,7 @@ export const SettingsAdminApps = () => {
                   <DropdownMenuItemsContainer>
                     <MenuItemToggle
                       LeftIcon={IconPinned}
-                      onToggleChange={() =>
-                        setShowPreInstalledOnly(!showPreInstalledOnly)
-                      }
+                      onToggleChange={handleTogglePreInstalledOnly}
                       toggled={showPreInstalledOnly}
                       text={t`Pre-installed only`}
                       toggleSize="small"
@@ -160,28 +219,43 @@ export const SettingsAdminApps = () => {
           )}
         />
         <StyledTableContainer>
-          <Table>
-            <TableRow
-              gridAutoColumns={TABLE_GRID}
-              mobileGridAutoColumns={TABLE_GRID_MOBILE}
-            >
-              <TableHeader>{t`Name`}</TableHeader>
-              <TableHeader align="right">{t`Source`}</TableHeader>
-              <TableHeader align="right">{t`Listed`}</TableHeader>
-              <TableHeader align="right">{t`Configured`}</TableHeader>
-              <TableHeader></TableHeader>
-            </TableRow>
-            <TableBody>
-              {filtered.map((registration) => (
-                <SettingsAdminAppsTableRow
-                  key={registration.id}
-                  registration={registration}
-                  getFormattedSource={getFormattedSource}
-                />
-              ))}
-            </TableBody>
-          </Table>
+          {loading ? (
+            <SettingsSectionSkeletonLoader />
+          ) : (
+            <Table>
+              <TableRow
+                gridAutoColumns={TABLE_GRID}
+                mobileGridAutoColumns={TABLE_GRID_MOBILE}
+              >
+                <TableHeader>{t`Name`}</TableHeader>
+                <TableHeader align="right">{t`Source`}</TableHeader>
+                <TableHeader align="right">{t`Listed`}</TableHeader>
+                <TableHeader align="right">{t`Configured`}</TableHeader>
+                <TableHeader></TableHeader>
+              </TableRow>
+              <TableBody>
+                {registrations.map((registration) => (
+                  <SettingsAdminAppsTableRow
+                    key={registration.id}
+                    registration={registration}
+                    getFormattedSource={getFormattedSource}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </StyledTableContainer>
+        {!loading && hasMore && (
+          <StyledShowMoreButtonContainer>
+            <Button
+              title={t`Show more`}
+              Icon={IconDotsVertical}
+              variant="secondary"
+              size="small"
+              onClick={handleShowMore}
+            />
+          </StyledShowMoreButtonContainer>
+        )}
       </Section>
     </>
   );

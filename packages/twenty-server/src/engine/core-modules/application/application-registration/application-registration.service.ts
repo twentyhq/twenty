@@ -6,7 +6,13 @@ import crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { ILike, IsNull, type FindOptionsWhere, type Repository } from 'typeorm';
+import {
+  Brackets,
+  ILike,
+  IsNull,
+  type FindOptionsWhere,
+  type Repository,
+} from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -18,6 +24,7 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
+import { type AllApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/all-application-registrations.dto';
 import { type ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
@@ -118,11 +125,60 @@ export class ApplicationRegistrationService {
     });
   }
 
-  async findAll(): Promise<ApplicationRegistrationEntity[]> {
-    return this.applicationRegistrationRepository.find({
-      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
-      order: { createdAt: 'DESC' },
-    });
+  async findAllPaginated({
+    page,
+    pageSize,
+    searchTerm,
+    isPreInstalledOnly,
+  }: {
+    page: number;
+    pageSize: number;
+    searchTerm?: string;
+    isPreInstalledOnly?: boolean;
+  }): Promise<AllApplicationRegistrationsDTO> {
+    const safePage = page < 1 ? 1 : page;
+    const offset = (safePage - 1) * pageSize;
+
+    const queryBuilder = this.applicationRegistrationRepository
+      .createQueryBuilder('applicationRegistration')
+      .select(
+        APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT.map(
+          (column) => `applicationRegistration.${column}`,
+        ),
+      )
+      .orderBy('applicationRegistration.createdAt', 'DESC')
+      .addOrderBy('applicationRegistration.id', 'ASC')
+      .skip(offset)
+      .take(pageSize);
+
+    if (isPreInstalledOnly === true) {
+      queryBuilder.andWhere('applicationRegistration.isPreInstalled = true');
+    }
+
+    const trimmedSearch = searchTerm?.trim();
+
+    if (isDefined(trimmedSearch) && trimmedSearch.length > 0) {
+      queryBuilder.andWhere(
+        new Brackets((whereBuilder) => {
+          whereBuilder
+            .where('applicationRegistration.name ILIKE :searchTerm')
+            .orWhere('applicationRegistration.sourcePackage ILIKE :searchTerm')
+            .orWhere(
+              'CAST(applicationRegistration.universalIdentifier AS text) ILIKE :searchTerm',
+            );
+        }),
+        { searchTerm: `%${trimmedSearch}%` },
+      );
+    }
+
+    const [applicationRegistrations, totalCount] =
+      await queryBuilder.getManyAndCount();
+
+    return {
+      applicationRegistrations,
+      totalCount,
+      hasMore: offset + applicationRegistrations.length < totalCount,
+    };
   }
 
   async findOneById(
