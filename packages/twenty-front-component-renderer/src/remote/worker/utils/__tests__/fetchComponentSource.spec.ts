@@ -1,8 +1,23 @@
+import { createHash, webcrypto } from 'node:crypto';
+import { TextEncoder as NodeTextEncoder } from 'node:util';
+
 import { fetchComponentSource } from '@/remote/worker/utils/fetchComponentSource';
 
-const FINGERPRINTED_URL =
-  'https://api.twenty.com/rest/front-components/component-id/checksum-abc.js';
+const COMPONENT_SOURCE = 'export default () => {};';
+
+const computeSha256Hex = (content: string): string =>
+  createHash('sha256').update(content).digest('hex');
+
+const buildFingerprintedUrl = (checksum: string): string =>
+  `https://api.twenty.com/rest/front-components/component-id/${checksum}.js`;
+
+const FINGERPRINTED_URL = buildFingerprintedUrl(
+  computeSha256Hex(COMPONENT_SOURCE),
+);
 const BARE_URL = 'https://api.twenty.com/rest/front-components/component-id';
+const LEGACY_MD5_URL = buildFingerprintedUrl(
+  createHash('md5').update(COMPONENT_SOURCE).digest('hex'),
+);
 
 const createFakeJsResponse = (body: string) => ({
   ok: true,
@@ -30,6 +45,8 @@ class FakeCache {
       this.store.set(key, await response.text());
     },
   );
+
+  delete = jest.fn(async (key: string) => this.store.delete(key));
 }
 
 const isDefinedString = (value: string | undefined): value is string =>
@@ -46,6 +63,10 @@ describe('fetchComponentSource', () => {
   const originalCaches = (globalThis as unknown as { caches?: unknown }).caches;
   const originalResponse = (globalThis as unknown as { Response?: unknown })
     .Response;
+  const originalCrypto = Object.getOwnPropertyDescriptor(globalThis, 'crypto');
+  const originalTextEncoder = (
+    globalThis as unknown as { TextEncoder?: unknown }
+  ).TextEncoder;
 
   beforeEach(() => {
     (globalThis as unknown as { Response: unknown }).Response = class {
@@ -57,6 +78,13 @@ describe('fetchComponentSource', () => {
         return this.body;
       }
     };
+
+    Object.defineProperty(globalThis, 'crypto', {
+      value: webcrypto,
+      configurable: true,
+    });
+    (globalThis as unknown as { TextEncoder: unknown }).TextEncoder =
+      NodeTextEncoder;
   });
 
   afterEach(() => {
@@ -64,6 +92,13 @@ describe('fetchComponentSource', () => {
     (globalThis as unknown as { caches?: unknown }).caches = originalCaches;
     (globalThis as unknown as { Response?: unknown }).Response =
       originalResponse;
+
+    if (originalCrypto !== undefined) {
+      Object.defineProperty(globalThis, 'crypto', originalCrypto);
+    }
+
+    (globalThis as unknown as { TextEncoder?: unknown }).TextEncoder =
+      originalTextEncoder;
     jest.clearAllMocks();
   });
 
@@ -73,23 +108,23 @@ describe('fetchComponentSource', () => {
     setupCaches(cache);
 
     const fetchMock = jest.fn(async () =>
-      createFakeJsResponse('export default () => {};'),
+      createFakeJsResponse(COMPONENT_SOURCE),
     );
 
     globalThis.fetch = fetchMock as unknown as typeof fetch;
 
     const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
 
-    expect(source).toBe('export default () => {};');
+    expect(source).toBe(COMPONENT_SOURCE);
     expect(cache.put).toHaveBeenCalledTimes(1);
     expect(cache.put.mock.calls[0][0]).toBe(FINGERPRINTED_URL);
   });
 
-  it('serves a cache hit without hitting the network', async () => {
+  it('serves a verified cache hit without hitting the network', async () => {
     const cache = new FakeCache();
 
     await cache.put(FINGERPRINTED_URL, {
-      text: async () => 'cached bundle source',
+      text: async () => COMPONENT_SOURCE,
     });
 
     setupCaches(cache);
@@ -100,8 +135,51 @@ describe('fetchComponentSource', () => {
 
     const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
 
-    expect(source).toBe('cached bundle source');
+    expect(source).toBe(COMPONENT_SOURCE);
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('evicts a poisoned cache entry and refetches from the network', async () => {
+    const cache = new FakeCache();
+
+    await cache.put(FINGERPRINTED_URL, {
+      text: async () => 'globalThis.injectedByAnotherComponent = true;',
+    });
+
+    setupCaches(cache);
+
+    const fetchMock = jest.fn(async () =>
+      createFakeJsResponse(COMPONENT_SOURCE),
+    );
+
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
+
+    expect(source).toBe(COMPONENT_SOURCE);
+    expect(cache.delete).toHaveBeenCalledWith(FINGERPRINTED_URL);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not cache a network response whose checksum does not match the URL', async () => {
+    const cache = new FakeCache();
+
+    setupCaches(cache);
+
+    const staleUrl = buildFingerprintedUrl(
+      computeSha256Hex('some other build output'),
+    );
+
+    const fetchMock = jest.fn(async () =>
+      createFakeJsResponse(COMPONENT_SOURCE),
+    );
+
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    const source = await fetchComponentSource({ url: staleUrl });
+
+    expect(source).toBe(COMPONENT_SOURCE);
+    expect(cache.put).not.toHaveBeenCalled();
   });
 
   it('never touches the cache for a non-fingerprinted URL', async () => {
@@ -122,18 +200,64 @@ describe('fetchComponentSource', () => {
     expect(cache.put).not.toHaveBeenCalled();
   });
 
+  it('never touches the cache for a legacy md5-fingerprinted URL', async () => {
+    const cache = new FakeCache();
+
+    setupCaches(cache);
+
+    const fetchMock = jest.fn(async () =>
+      createFakeJsResponse(COMPONENT_SOURCE),
+    );
+
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    const source = await fetchComponentSource({ url: LEGACY_MD5_URL });
+
+    expect(source).toBe(COMPONENT_SOURCE);
+    expect(cache.match).not.toHaveBeenCalled();
+    expect(cache.put).not.toHaveBeenCalled();
+  });
+
   it('falls back to the network when CacheStorage is unavailable', async () => {
     (globalThis as unknown as { caches?: unknown }).caches = undefined;
 
     const fetchMock = jest.fn(async () =>
-      createFakeJsResponse('no-cache source'),
+      createFakeJsResponse(COMPONENT_SOURCE),
     );
 
     globalThis.fetch = fetchMock as unknown as typeof fetch;
 
     const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
 
-    expect(source).toBe('no-cache source');
+    expect(source).toBe(COMPONENT_SOURCE);
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not trust the cache when WebCrypto is unavailable', async () => {
+    const cache = new FakeCache();
+
+    await cache.put(FINGERPRINTED_URL, {
+      text: async () => COMPONENT_SOURCE,
+    });
+    cache.put.mockClear();
+
+    setupCaches(cache);
+
+    Object.defineProperty(globalThis, 'crypto', {
+      value: undefined,
+      configurable: true,
+    });
+
+    const fetchMock = jest.fn(async () =>
+      createFakeJsResponse(COMPONENT_SOURCE),
+    );
+
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
+
+    expect(source).toBe(COMPONENT_SOURCE);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(cache.put).not.toHaveBeenCalled();
   });
 });
