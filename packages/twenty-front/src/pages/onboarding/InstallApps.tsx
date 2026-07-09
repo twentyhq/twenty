@@ -29,15 +29,15 @@ export const InstallApps = () => {
   } = useInstallOnboardingApps();
   const [hasAutoSkipFailed, setHasAutoSkipFailed] = useState(false);
 
-  const availableApps = ONBOARDING_INSTALLABLE_APPS.map((app) => {
+  const availableApps = ONBOARDING_INSTALLABLE_APPS.flatMap((app) => {
     const marketplaceApp = marketplaceApps.find(
       (marketplaceApp) => marketplaceApp.id === app.universalIdentifier,
     );
 
     return isDefined(marketplaceApp)
-      ? { ...app, logo: marketplaceApp.logo ?? null }
-      : null;
-  }).filter(isDefined);
+      ? [{ ...app, logo: marketplaceApp.logo ?? null }]
+      : [];
+  });
 
   const handleAutoSkipError = useCallback(() => {
     setHasAutoSkipFailed(true);
