@@ -1,0 +1,22 @@
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/jobs/create-webhook-subscription.job.ts
+  s_0cd87c29efaba6::t_fca2d71d106c9d 6,21,26-33
+packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts
+  s_0cd87c29efaba6::t_d1db16192c0b6f 214-221
+  s_0cd87c29efaba6::t_13bb5770e643b6 212-213
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6c961a2b47d0e944530f01dfdb19d93e5c77d445",
+  "prompts": {},
+  "sessions": {
+    "s_0cd87c29efaba6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c9fb3032-f885-4660-a0b6-b45aac02aa9b",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
