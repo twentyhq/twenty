@@ -4,7 +4,7 @@ import { FileTypeParser } from 'file-type';
 import { isNonEmptyString } from '@sniptt/guards';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { MoreThan } from 'typeorm';
+import { IsNull, MoreThan, Not } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -90,6 +90,7 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ActiveOrSuspended
       );
 
     let cursor = MIN_UUID;
+    let candidateCount = 0;
     let migratedCount = 0;
     let skippedCount = 0;
     let failedCount = 0;
@@ -97,7 +98,7 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ActiveOrSuspended
     for (;;) {
       const persons = await personRepository.find({
         select: ['id', 'avatarUrl', 'avatarFile'],
-        where: { id: MoreThan(cursor) },
+        where: { id: MoreThan(cursor), avatarUrl: Not(IsNull()) },
         order: { id: 'ASC' },
         take: PERSON_BATCH_SIZE,
       });
@@ -119,7 +120,7 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ActiveOrSuspended
         }
 
         if (isDryRun) {
-          migratedCount++;
+          candidateCount++;
 
           continue;
         }
@@ -142,9 +143,19 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ActiveOrSuspended
       }
     }
 
+    if (isDryRun) {
+      if (candidateCount > 0) {
+        this.logger.log(
+          `[DRY RUN] person avatarUrl -> avatarFile for workspace ${workspaceId}: ${candidateCount} candidate(s) would be attempted (download/upload not performed, so migrated/skipped/failed is unknown)`,
+        );
+      }
+
+      return;
+    }
+
     if (migratedCount > 0 || skippedCount > 0 || failedCount > 0) {
       this.logger.log(
-        `${isDryRun ? '[DRY RUN] ' : ''}person avatarUrl -> avatarFile for workspace ${workspaceId}: ${migratedCount} migrated, ${skippedCount} skipped (unreachable/non-image), ${failedCount} failed`,
+        `person avatarUrl -> avatarFile for workspace ${workspaceId}: ${migratedCount} migrated, ${skippedCount} skipped (unreachable/non-image), ${failedCount} failed`,
       );
     }
   }
