@@ -1,0 +1,41 @@
+packages/twenty-server/src/engine/core-modules/tool/tools/email-tool/__tests__/send-email-tool.spec.ts
+  s_f50cf24ed5fc3b::t_c1ea173a837b61 35
+  s_f50cf24ed5fc3b::t_db4e5b69d8ae60 4
+  s_f50cf24ed5fc3b::t_0e65ace988f5bf 42
+  s_f50cf24ed5fc3b::t_7ec35ba3b35db0 53-54
+  s_f50cf24ed5fc3b::t_5314f02444dd71 70,89,109
+packages/twenty-server/src/engine/core-modules/tool/tools/email-tool/send-email-tool.ts
+  s_f50cf24ed5fc3b::t_811ccdf950e45a 10
+  s_f50cf24ed5fc3b::t_597564aadda4dd 31
+  s_f50cf24ed5fc3b::t_6b42a78393d058 22
+packages/twenty-server/src/engine/core-modules/tool/tool.module.ts
+  s_f50cf24ed5fc3b::t_15e1bfd70a220f 54-55
+  s_f50cf24ed5fc3b::t_b3b8f787d9bc5c 70
+  s_f50cf24ed5fc3b::t_713ce5aadb0d1b 15-16
+packages/twenty-server/src/engine/core-modules/tool/tools/message-composer/message-composer.service.ts
+  s_f50cf24ed5fc3b::t_9dcd83cf99efa7 1-87
+packages/twenty-server/src/modules/messaging/message-outbound-manager/resolvers/send-email.resolver.ts
+  s_f50cf24ed5fc3b::t_352002b17f182b 59
+  s_f50cf24ed5fc3b::t_d9578f848e8252 17
+  s_f50cf24ed5fc3b::t_81c93e595278f6 41
+packages/twenty-server/src/engine/core-modules/tool/tools/message-composer/app-message-composer.service.ts
+  s_f50cf24ed5fc3b::t_e79b0e03bca479 1-109
+packages/twenty-server/src/engine/core-modules/tool/tools/message-composer/exceptions/message-composer.exception.ts
+  s_f50cf24ed5fc3b::t_790aceecebf000 1-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ca387ea9993cf3f8c49ec49d34fcd9a0019362aa",
+  "prompts": {},
+  "sessions": {
+    "s_f50cf24ed5fc3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c2ba5cc7-0588-443f-84fd-cc232e1987ed",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
