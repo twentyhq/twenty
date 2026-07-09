@@ -24,7 +24,6 @@ export type SettingsBillingSubscriptionInfoCardHeaderActionsProps = {
   onEndTrialPeriod: () => void;
   onUpdatePayment: () => void;
   shouldUpdatePayment: boolean;
-  startSubscriptionNeedsPaymentMethod: boolean;
 };
 
 export const SettingsBillingSubscriptionInfoCardHeaderActions = ({
@@ -42,7 +41,6 @@ export const SettingsBillingSubscriptionInfoCardHeaderActions = ({
   onEndTrialPeriod,
   onUpdatePayment,
   shouldUpdatePayment,
-  startSubscriptionNeedsPaymentMethod,
 }: SettingsBillingSubscriptionInfoCardHeaderActionsProps) => {
   const { t } = useLingui();
 
@@ -98,14 +96,8 @@ export const SettingsBillingSubscriptionInfoCardHeaderActions = ({
       )}
       {canStartSubscription && (
         <Button
-          Icon={
-            startSubscriptionNeedsPaymentMethod ? IconCreditCard : IconArrowUp
-          }
-          title={
-            startSubscriptionNeedsPaymentMethod
-              ? t`Add Credit Card`
-              : t`Subscribe Now`
-          }
+          Icon={IconArrowUp}
+          title={t`Subscribe Now`}
           variant="primary"
           accent="blue"
           size="small"

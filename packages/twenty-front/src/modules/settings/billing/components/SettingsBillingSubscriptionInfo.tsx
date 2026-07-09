@@ -503,9 +503,6 @@ export const SettingsBillingSubscriptionInfo = ({
             onEndTrialPeriod={() => openModal(BILLING_MODAL_IDS.endTrialPeriod)}
             onUpdatePayment={onUpdatePayment}
             shouldUpdatePayment={shouldUpdatePayment}
-            startSubscriptionNeedsPaymentMethod={
-              billingHasPaymentMethod === false
-            }
           />
         }
         isSubscriptionActionDisabled={isSubscriptionActionDisabled}
