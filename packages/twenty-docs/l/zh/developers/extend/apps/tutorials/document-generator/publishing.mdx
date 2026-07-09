@@ -76,11 +76,11 @@ export default defineApplication({
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty dev --once --dry-run   # preview the metadata diff
+yarn twenty plan   # preview the metadata diff
 ```
 
-干线运行正是在不应用它的情况下打印服务器上会改变的内容——
-是一个很好的最后智能检查。 见
+该计划会精确列出在服务器上将发生的更改，而不会实际应用这些更改——
+这是一次很好的最终健全性检查。 见
 [Testing](/l/zh/developers/extend/apps/operations/testing) 和
 [同步和恢复](/l/zh/developers/extend/apps/operations/sync-and-recovery)。
 

@@ -6,17 +6,17 @@ description: 几分钟内创建你的第一个 Twenty 应用。
 
 ## 先决条件
 
-* **Node.js 24+** — [在此下载](https://nodejs.org/)
+* **Node.js 24.5+** — [在此下载](https://nodejs.org/)
 * **Yarn 4** — 通过 Corepack 随 Node.js 提供。 启用它：`corepack enable`
 * **Docker** — [在此下载](https://www.docker.com/products/docker-desktop/)。 运行本地 Twenty 服务器所需。 如果你已经在其他地方运行了 Twenty，请跳过。
 
 构建一个 Twenty 应用包含三个阶段。 脚手架工具将它们合并为一个理想路径的命令，但每个阶段都是独立的概念——当出现问题时，知道自己处于哪个阶段可以指明需要修复什么。
 
-| 阶段           | 你要做什么                | 工具                            | 结果                   |
-| ------------ | -------------------- | ----------------------------- | -------------------- |
-| **1. 脚手架**   | 生成应用的源代码             | `npx create-twenty-app`       | 磁盘上的一个 TypeScript 项目 |
-| **2. 运行服务器** | 启动一个 Twenty 服务器以进行同步 | Docker + `yarn twenty server` | 一个正在运行的 Twenty 实例    |
-| **3. 同步**    | 将你的代码实时同步到服务器        | `yarn twenty dev`             | 你的更改会出现在 UI 中        |
+| 阶段           | 你要做什么                | 工具                                  | 结果                   |
+| ------------ | -------------------- | ----------------------------------- | -------------------- |
+| **1. 脚手架**   | 生成应用的源代码             | `npx create-twenty-app`             | 磁盘上的一个 TypeScript 项目 |
+| **2. 运行服务器** | 启动一个 Twenty 服务器以进行同步 | Docker + `yarn twenty docker:start` | 一个正在运行的 Twenty 实例    |
+| **3. 同步**    | 将你的代码实时同步到服务器        | `yarn twenty dev`                   | 你的更改会出现在 UI 中        |
 
 ---
 
@@ -28,7 +28,7 @@ description: 几分钟内创建你的第一个 Twenty 应用。
 npx create-twenty-app@latest my-twenty-app
 ```
 
-系统会提示你输入名称和描述——按下 **Enter** 采用默认值。 这将在 `my-twenty-app/` 中生成一个 TypeScript 项目，包含一个入门版的 `application-config.ts`、一个默认角色、一个 CI 工作流，以及一个集成测试。
+脚手架是非交互式的：目录名称会成为应用名称。 传递 `--display-name` 和 `--description` 来自定义生成的元数据（你也可以稍后在 `src/constants/universal-identifiers.ts` 中进行编辑）。 这将在 `my-twenty-app/` 中生成一个 TypeScript 项目，包含一个入门版的 `application-config.ts`、一个默认角色、CI/CD 工作流，以及一个集成测试。
 
 **完成此阶段后：** 你的机器上已有该应用的源代码。 它还未运行——那是第 2 阶段的内容。
 
@@ -38,27 +38,13 @@ npx create-twenty-app@latest my-twenty-app
 
 你的应用需要一个 Twenty 服务器来进行同步。 该服务器是一个完整的 Twenty 实例——包含 UI、GraphQL API、PostgreSQL——在本地的 Docker 中运行。 你的本地代码会将其定义上传到该服务器，从而使其显示在 UI 中。
 
-脚手架工具会为你提供启动它的选项：
+脚手架会为你启动一个：在 Docker 正在运行的情况下，它会拉取 `twentycrm/twenty-app-dev` 镜像，在端口 `2020` 上启动，并将 CLI 认证到预置的演示工作区（`tim@apple.dev`）——无需登录。
 
-> **是否要设置本地 Twenty 实例？**
-
-* **是（推荐）** — 将拉取 `twentycrm/twenty-app-dev` Docker 镜像，并在端口 `2020` 上启动它。 请先确保 Docker 正在运行。
-* **否** — 如果你已经有一个想要连接的 Twenty 服务器，请选择此项。 你可以稍后通过 `yarn twenty remote:add` 将其连接起来。
-
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="是否启动本地实例？" />
-</div>
-
-服务器启动后，浏览器会打开登录页面。 使用预置的演示账户：
-
-* **邮箱：** `tim@apple.dev`
-* **密码：** `tim@apple.dev`
+若要改为连接到现有的 Twenty 服务器，请传入 `--url \<your-server-url>`。 远程服务器通过 OAuth 进行身份验证：会打开一个浏览器窗口，你可以登录并点击 **Authorize**，从而授予 CLI 访问你工作区的权限。 （你也可以在本地选择使用 OAuth，方式是添加 `--authentication-method oauth` —— 使用 `tim@apple.dev` / `tim@apple.dev` 登录。）
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/login.png" alt="Twenty 登录界面" />
 </div>
-
-在下一屏点击 **Authorize** —— 这将授予 CLI 访问你工作区的权限。
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/authorize.png" alt="Twenty CLI 授权界面" />
@@ -117,28 +103,32 @@ yarn twenty dev
 
 ### 用于 CI 和脚本的一次性同步
 
-传入 `--once` 以执行一次构建与同步后退出——相同的流水线，无文件监视器：
+使用 `plan` 和 `apply` 在无监视器的情况下各运行一次相同的流水线：
 
 ```bash filename="Terminal"
-yarn twenty dev --once
+yarn twenty plan   # preview the metadata changes without applying them
+yarn twenty apply  # show the plan, then apply it
 ```
 
-| 命令                                 | 行为                               | 适用场景                            |
-| ---------------------------------- | -------------------------------- | ------------------------------- |
-| `yarn twenty dev`                  | 监视并在每次更改时重新同步。 持续运行，直到你将其停止。     | 交互式本地开发。                        |
-| `yarn twenty dev --once`           | 单次构建与同步，成功时以 `0` 退出，失败时以 `1` 退出。 | CI、pre-commit 钩子、AI 智能体、脚本化工作流。 |
-| `yarn twenty dev --once --dry-run` | 构建并打印元数据更改，**但不会应用这些更改**。        | 在提交同步之前检查它会更改哪些内容。              |
+| 命令                  | 行为                                                                 | 适用场景                            |
+| ------------------- | ------------------------------------------------------------------ | ------------------------------- |
+| `yarn twenty dev`   | 监视并在每次更改时重新同步。 持续运行，直到你将其停止。                                       | 交互式本地开发。                        |
+| `yarn twenty apply` | 单次构建与同步，成功时以 `0` 退出，失败时以 `1` 退出。 在执行破坏性变更前会要求确认（传入 `--force` 可跳过）。 | CI、pre-commit 钩子、AI 智能体、脚本化工作流。 |
+| `yarn twenty plan`  | 构建并打印元数据更改，**但不会应用这些更改**。                                          | 在提交同步之前检查它会更改哪些内容。              |
 
-两种模式都需要经过身份验证的远程仓库。 有关 `--dry-run` 的更多信息，请参见 [同步与恢复](/l/zh/developers/extend/apps/operations/sync-and-recovery#previewing-changes-dry-run)。
+所有模式都需要经过身份验证的远程服务器。 有关 `plan` 的更多信息，请参见 [同步与恢复](/l/zh/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan)。
+
+<Note>
+`yarn twenty dev --once` 和 `yarn twenty dev --once --dry-run` 是 `yarn twenty apply` 和 `yarn twenty plan` 的已弃用别名。
+</Note>
 
 ### 开发模式选项
 
-| 标志                                    | 描述                                           |
-| ------------------------------------- | -------------------------------------------- |
-| `--once`                              | 仅构建并同步一次，然后退出。                               |
-| `--dry-run`                           | 使用 `--once` 时，可在不应用元数据更改的情况下预览这些更改。 不写入任何内容。 |
-| `--debounceMs \<ms>` | 以毫秒为单位设置文件更改的防抖延迟（默认值：`2000`）。               |
-| `--verbose` / `--debug`               | 显示详细的构建日志、同步请求和错误跟踪。                         |
+| 标志                                    | 描述                             |
+| ------------------------------------- | ------------------------------ |
+| `--force`                             | 在不经确认的情况下应用破坏性变更（删除）。          |
+| `--debounceMs \<ms>` | 以毫秒为单位设置文件更改的防抖延迟（默认值：`1000`）。 |
+| `--verbose` / `--debug`               | 显示详细的构建日志、同步请求和错误跟踪。           |
 
 ## 你可以构建的内容
 

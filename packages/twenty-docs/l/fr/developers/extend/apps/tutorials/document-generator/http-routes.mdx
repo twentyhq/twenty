@@ -9,8 +9,15 @@ Le même gestionnaire peut également répondre aux requêtes HTTP. Nous allons 
 * un point de terminaison **POST** que l'interface utilisateur appelle pour générer un document, et
 * un point de terminaison public **GET** qui rend un document en tant que page web imprimable.
 
-Les deux utilisent `httpRouteTriggerSettings`. Les routes des applis sont servies dans `/s` sur votre
-Serveur Vingt (par exemple `http://localhost:2020/s/documents/generate`).
+Les deux utilisent `httpRouteTriggerSettings`. Sur le serveur de développement local, les routes des applications sont
+servies sous le préfixe `/s` (par exemple `http://localhost:2020/s/documents/generate`).
+
+<Note>
+Sur Twenty Cloud, les routes sont servies sur le domaine de fonctions dédiées à l'espace de travail
+— l'URL 20 injecte en tant que `TWENTY_FUNCTIONS_URL`, sans préfixe `/s`. Le préfixe `/s`
+est déprécié là-bas et ne reste que pour les instances auto-hébergées et locales.
+Voir [Appel à une fonction logique] (/developers/extend/apps/layout/front-components#calling-a-logic-function).
+</Note>
 
 ## Itinéraire POST — générer à la demande
 

@@ -4,7 +4,25 @@ description: příkazy `yarn twenty` pro spouštění funkcí, streamování log
 icon: terminal
 ---
 
-Kromě `dev`, `dev:build`, `dev:add` a `dev:typecheck` poskytuje `yarn twenty` CLI příkazy pro spouštění funkcí, zobrazení logů a správu instalací aplikací.
+CLI `yarn twenty` je vaše rozhraní ke všemu, co souvisí s aplikací. Úplný seznam příkazů:
+
+| Příkaz                                          | K čemu slouží                                                                       | Zdokumentováno v                                                                                         |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `dev`                                           | Sleduje zdrojové soubory a živě synchronizuje změny                                 | [Rychlý start](/l/cs/developers/extend/apps/getting-started/quick-start)                                      |
+| `plán`                                          | Náhled změn metadat bez jejich aplikování                                           | [Synchronizace a obnovení](/l/cs/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) |
+| `použít`                                        | Aplikovat změny metadat po zobrazení plánu                                          | [Synchronizace a obnovení](/l/cs/developers/extend/apps/operations/sync-and-recovery)                         |
+| `dev:build`                                     | Zkompilovat aplikaci a vygenerovat API klienta (`--tarball` pro zabalení do `.tgz`) | [Publikování](/l/cs/developers/extend/apps/operations/publishing)                                             |
+| `dev:typecheck`                                 | Spustit kontrolu typů TypeScriptu                                                   | [Testování](/l/cs/developers/extend/apps/operations/testing)                                                  |
+| `dev:add`                                       | Vytvořit kostru nové entity                                                         | [Scaffolding](/l/cs/developers/extend/apps/getting-started/scaffolding)                                       |
+| `dev:generate-client`                           | Znovu vygenerovat typovaného API klienta                                            | tato stránka                                                                                             |
+| `dev:function:exec` / `dev:function:logs`       | Spustit funkce a streamovat jejich logy                                             | tato stránka                                                                                             |
+| `dev:translations-extract`                      | Extrahovat přeložitelné řetězce do katalogů v `locales/`                            | [Překlady](/l/cs/developers/extend/apps/translations/overview)                                                |
+| `dev:catalog-sync`                              | Spustit synchronizaci katalogu tržiště                                              | [Publikování](/l/cs/developers/extend/apps/operations/publishing#how-marketplace-discovery-works)             |
+| `app:publish` / `app:install` / `app:uninstall` | Životní cyklus vydání                                                               | [Publikování](/l/cs/developers/extend/apps/operations/publishing) a tato stránka                              |
+| `docker:*`                                      | Spravovat kontejner lokálního serveru Twenty                                        | [Lokální server](/l/cs/developers/extend/apps/getting-started/local-server)                                   |
+| `remote:*`                                      | Spravovat připojení k serveru                                                       | tato stránka                                                                                             |
+
+Každý příkaz přijímá `-r, --remote \<name>` pro zacílení na konkrétní vzdálené připojení místo výchozího.
 
 ## Spouštění funkcí (`yarn twenty dev:function:exec`)
 
@@ -20,8 +38,9 @@ yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 # Pass a JSON payload
 yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
 
-# Execute the post-install function
+# Execute the install hooks
 yarn twenty dev:function:exec --postInstall
+yarn twenty dev:function:exec --preInstall
 ```
 
 ## Zobrazení logů funkcí (`yarn twenty dev:function:logs`)
@@ -100,6 +119,12 @@ yarn twenty remote:list
 
 # Set the active remote
 yarn twenty remote:use <name>
+
+# Check that the active remote's authentication is still valid
+yarn twenty remote:status
+
+# Remove a remote
+yarn twenty remote:remove <name>
 ```
 
 Vaše přihlašovací údaje jsou uloženy v `~/.twenty/config.json`.

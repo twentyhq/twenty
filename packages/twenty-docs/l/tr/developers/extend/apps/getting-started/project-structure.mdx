@@ -14,26 +14,39 @@ my-twenty-app/
     default-role.ts                         # Permissions for logic functions
     constants/
       universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    front-components/
+      main-page.tsx                         # Welcome page component
+    navigation-menu-items/
+      main-page.navigation-menu-item.ts     # Sidebar entry for the welcome page
+    page-layouts/
+      main-page.page-layout.ts              # Standalone page hosting the component
     __tests__/
-      setup-test.ts
-      app-install.integration-test.ts
-  .github/workflows/ci.yml                  # GitHub Actions
-  public/                                   # Static assets
-  vitest.config.ts                          # Test runner config
+      application-config.test.ts            # Unit test
+      global-setup.ts                       # Integration test setup (sync + uninstall)
+      schema.integration-test.ts            # Integration test against a live server
+  .github/workflows/
+    ci.yml                                  # Lint, typecheck, unit + integration tests
+    cd.yml                                  # Deploy + install on push to main
+  public/
+    logo.svg                                # Static assets
+  vitest.config.ts                          # Integration test runner config
+  vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
   .nvmrc, .yarnrc.yml, .oxlintrc.json
-  README.md, LLMS.md
+  README.md, AGENTS.md, CLAUDE.md
 ```
 
 ## Temel dosyalar
 
-| Dosya / Klasör                           | Amaç                                                                        |
-| ---------------------------------------- | --------------------------------------------------------------------------- |
-| `src/application-config.ts`              | **Gerekli.** Uygulamanızın ana yapılandırma dosyası.                        |
-| `src/default-role.ts`                    | Mantık işlevlerinizin neye erişebileceğini denetleyen varsayılan rol.       |
-| `src/constants/universal-identifiers.ts` | Otomatik oluşturulan UUID'ler ve meta veriler (görünen ad, açıklama).       |
-| `src/__tests__/`                         | Entegrasyon testleri (kurulum + örnek test).                                |
-| `public/`                                | Uygulamanızla birlikte sunulan statik varlıklar (görüntüler, yazı tipleri). |
+| Dosya / Klasör                                                             | Amaç                                                                                                                             |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `src/application-config.ts`                                                | **Gerekli.** Uygulamanızın ana yapılandırma dosyası.                                                                             |
+| `src/default-role.ts`                                                      | Mantık işlevlerinizin neye erişebileceğini denetleyen varsayılan rol.                                                            |
+| `src/constants/universal-identifiers.ts`                                   | Otomatik oluşturulan UUID'ler ve meta veriler (görünen ad, açıklama).                                                            |
+| `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | Bir başlangıç karşılama sayfası: kenar çubuğundan erişilebilen, bağımsız bir sayfa düzeni tarafından oluşturulan bir ön bileşen. |
+| `src/__tests__/`                                                           | Uygulamayı gerçek bir sunucuya karşı senkronize eden (genel kurulumu ile birlikte) bir birim testi artı bir entegrasyon testi.   |
+| `public/`                                                                  | Uygulamanızla birlikte sunulan statik varlıklar (görüntüler, yazı tipleri).                                                      |
+| `AGENTS.md` / `CLAUDE.md`                                                  | Uygulama üzerinde çalışan yapay zekâ kodlama ajanları için yönergeler.                                                           |
 
 <Note>
 **Dosya organizasyonu size kalmış.** Yukarıdaki klasörler birer konvansiyondur — SDK, dosyanın nerede olduğundan bağımsız olarak `export default defineEntity(...)` çağrılarını AST analizi yoluyla algılar.
@@ -47,15 +60,18 @@ Her iki Twenty SDK paketi de `dependencies` değil, `devDependencies` altında o
 {
   "dependencies": {},
   "devDependencies": {
-    "twenty-client-sdk": "^2.13.0",
-    "twenty-sdk": "^2.13.0"
+    "twenty-client-sdk": "2.20.0",
+    "twenty-sdk": "2.20.0",
+    "twenty-ui": "1.0.0-alpha.1"
   }
 }
 ```
 
+İskele oluşturucu, `twenty-sdk` ve `twenty-client-sdk` paketlerini kendi sürümüne sabitler — yükseltme yaparken bu ikisini senkron tutun.
+
 * **`twenty-sdk`**, `twenty` CLI'yi ve derleme/iskelet oluşturma araçlarını sağlar. Yalnızca geliştirme ve derleme zamanında çalışır ve yayımlanmış uygulamanızın çalışma zamanında asla içe aktarılmaz.
 * **`twenty-client-sdk`** uygulama kodunuz tarafından (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`) içe aktarılır, ancak Twenty bunu çalışma zamanında sağlar — mantık fonksiyonları bunu oluşturulan bir SDK katmanından alır ve ön yüz bileşenleri bunu sunucu tarafından sunulan modüllerden çözümler. Yüklediğiniz kopya yalnızca tür denetimi ve dağıtım zamanındaki derleme için kullanılır, bu yüzden dağıtılan paket ile birlikte gönderilmesine gerek yoktur.
 
-`dependencies` altında bu paketlerden herhangi birinin tutulması, onu kurulu uygulamanın çalışma zamanı paketine dahil eder ve orada gereksiz yük haline getirir. `twenty build`, bunlardan herhangi biri hâlâ `dependencies` altında listelendiğinde bir uyarı verir.
+`dependencies` altında bu paketlerden herhangi birinin tutulması, onu kurulu uygulamanın çalışma zamanı paketine dahil eder ve orada gereksiz yük haline getirir. `twenty dev:build`, bunlardan herhangi biri hâlâ `dependencies` altında listelendiğinde bir uyarı verir.
 
 Uygulamanızın kendi çalışma zamanı bağımlılıklarını (mantık fonksiyonlarınızın çalışma zamanında gerçekten içe aktardığı kütüphaneler) her zamanki gibi `dependencies` altına ekleyin.

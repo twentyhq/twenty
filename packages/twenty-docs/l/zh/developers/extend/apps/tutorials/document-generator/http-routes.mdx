@@ -9,8 +9,12 @@ description: 通过 HTTP 触发函数并将文档渲染为 web 页面。
 * a **POST** 让UI 调用来生成文档的端点，和
 * 一个公开的 **GET** 端点，将文档作为可打印的网页。
 
-两者都使用 `httpRouteTriggerSettings` 。 App rough are served under `/s` under your
-20 server (e.g. `http://localhost:2020/s/documents/generate`).
+两者都使用 `httpRouteTriggerSettings` 。 在本地开发服务器上，应用路由在带有 `/s` 前缀的路径下提供服务（例如 `http://localhost:2020/s/documents/generate`）。
+
+<Note>
+在 Twenty Cloud 上，路由通过工作区专用的函数域名提供服务——即 Twenty 注入的、作为 `TWENTY_FUNCTIONS_URL` 的 URL，且没有 `/s` 前缀。 在那里，`/s` 前缀已被弃用，仅保留用于自托管和本地实例。
+参见[调用逻辑函数](/l/zh/developers/extend/apps/layout/front-components#calling-a-logic-function)。
+</Note>
 
 ## POST 路由 — 按需生成
 
