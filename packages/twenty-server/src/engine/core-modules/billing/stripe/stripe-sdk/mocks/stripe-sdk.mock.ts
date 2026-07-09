@@ -6,6 +6,12 @@ export class StripeSDKMock {
   constructor(private readonly _apiKey: string) {}
 
   customers = {
+    create: (params?: Stripe.CustomerCreateParams) => {
+      return {
+        id: `cus_mock_${crypto.randomUUID()}`,
+        ...params,
+      };
+    },
     update: (_id: string, _params?: Stripe.CustomerUpdateParams) => {
       return;
     },
