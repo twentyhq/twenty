@@ -112,6 +112,14 @@ jobs:
             (this updates the previous drift-check comment in place on subsequent runs).
             Start the comment body with the marker `<!-- app-docs-drift-check -->`.
 
+            On the SECOND line, emit exactly one machine-readable status marker (a
+            downstream CI step parses it to pass or fail the build):
+            - `<!-- drift-status:IMPACT -->` if at least one impacted docs page still
+              needs updating (drift is NOT fully resolved by this PR).
+            - `<!-- drift-status:NO_IMPACT -->` if there is no documentation impact, or
+              every impacted page is already correctly updated in this PR.
+            Always emit exactly one of these two markers.
+
             Comment format:
             - Title line: `### App docs drift check`
             - If no documentation impact: one sentence saying so and why.
@@ -129,3 +137,24 @@ jobs:
                 "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
               }
             }
+
+      - name: Gate on drift verdict
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          body=$(gh pr view ${{ github.event.pull_request.number }} --json comments \
+            --jq '.comments[] | select(.body | contains("app-docs-drift-check")) | .body' | tail -1)
+          if [ -z "$body" ]; then
+            echo "::error::Docs drift checker did not post a verdict comment (agent may have failed or timed out)."
+            exit 1
+          fi
+          if printf '%s' "$body" | grep -q 'drift-status:IMPACT'; then
+            echo "::error::App docs drift detected. See the app-docs-drift-check comment on this PR."
+            exit 1
+          fi
+          if printf '%s' "$body" | grep -q 'drift-status:NO_IMPACT'; then
+            echo "No app docs drift."
+            exit 0
+          fi
+          echo "::error::Drift comment present but no recognizable drift-status marker was found."
+          exit 1
