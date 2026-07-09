@@ -54,6 +54,45 @@ describe('resolveJsonBodyVariables', () => {
     expect(JSON.parse(result)).toEqual({ path: 'C:\\Users\\john' });
   });
 
+  it('should escape tabs and control characters coming from resolved values', () => {
+    const contextWithControlChars = {
+      trigger: { text: 'col1\tcol2\r\nrow2' },
+    };
+
+    const body = '{"text":"{{trigger.text}}"}';
+
+    const result = resolveJsonBodyVariables(body, contextWithControlChars);
+
+    expect(JSON.parse(result)).toEqual({ text: 'col1\tcol2\r\nrow2' });
+  });
+
+  it('should preserve values byte-for-byte after a JSON round-trip', () => {
+    const contextWithMixedSpecialChars = {
+      trigger: { text: 'Quote " tab \t newline \n backslash \\ end' },
+    };
+
+    const body = '{"text":"{{trigger.text}}"}';
+
+    const result = resolveJsonBodyVariables(body, contextWithMixedSpecialChars);
+
+    expect(JSON.parse(result).text).toBe(
+      'Quote " tab \t newline \n backslash \\ end',
+    );
+  });
+
+  it('should preserve boolean type when used outside of a string literal', () => {
+    const contextWithBoolean = {
+      trigger: { active: true },
+    };
+
+    const body = '{"active":{{trigger.active}}}';
+
+    const result = resolveJsonBodyVariables(body, contextWithBoolean);
+
+    expect(result).toBe('{"active":true}');
+    expect(JSON.parse(result)).toEqual({ active: true });
+  });
+
   it('should keep the JSON valid for multiline pretty-printed bodies', () => {
     const contextWithSpecialChars = {
       trigger: {
