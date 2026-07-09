@@ -4,17 +4,13 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/stale-bot-state-logic-function-universal-identifier';
 import { STALE_BOT_STATE_CRON_PATTERN } from 'src/logic-functions/constants/stale-bot-state-cron-pattern';
 import {
+  finishFailedRecallCancellations,
+  type FinishFailedRecallCancellationsResult,
+} from 'src/logic-functions/flows/finish-failed-recall-cancellations.util';
+import {
   healCallRecordingsMissingBot,
   type HealCallRecordingsMissingBotResult,
 } from 'src/logic-functions/flows/heal-call-recordings-missing-bot.util';
-import {
-  reapOrphanedCallRecorders,
-  type ReapOrphanedCallRecordersResult,
-} from 'src/logic-functions/flows/reap-orphaned-call-recorders.util';
-
-// Every unwanted bot passes through this join_at window before it can attend.
-const REAPER_JOIN_AT_LOOKBACK_HOURS = 4;
-const REAPER_JOIN_AT_LOOKAHEAD_HOURS = 24;
 
 type StepFailure = { error: string };
 
@@ -26,12 +22,12 @@ const reconcileStaleBotStateHandler = async (): Promise<object> => {
     client,
     now,
   );
-  const orphanedBotReapingResult =
-    await reapOrphanedCallRecordersInJoinAtWindow(client, now);
+  const failedCancellationResult =
+    await finishFailedRecallCancellationsSafely(client);
 
   return {
     botlessHealResult,
-    orphanedBotReapingResult,
+    failedCancellationResult,
   };
 };
 
@@ -46,22 +42,13 @@ const healCallRecordingsMissingBotSafely = async (
   }
 };
 
-const reapOrphanedCallRecordersInJoinAtWindow = async (
+const finishFailedRecallCancellationsSafely = async (
   client: CoreApiClient,
-  now: Date,
-): Promise<ReapOrphanedCallRecordersResult | StepFailure> => {
+): Promise<FinishFailedRecallCancellationsResult | StepFailure> => {
   try {
-    return await reapOrphanedCallRecorders({
-      client,
-      joinAtAfter: new Date(
-        now.getTime() - REAPER_JOIN_AT_LOOKBACK_HOURS * 60 * 60 * 1000,
-      ).toISOString(),
-      joinAtBefore: new Date(
-        now.getTime() + REAPER_JOIN_AT_LOOKAHEAD_HOURS * 60 * 60 * 1000,
-      ).toISOString(),
-    });
+    return await finishFailedRecallCancellations({ client });
   } catch (error) {
-    return buildStepFailure('orphaned bot reaping', error);
+    return buildStepFailure('failed cancellation finishing', error);
   }
 };
 
@@ -79,7 +66,7 @@ export default defineLogicFunction({
   universalIdentifier: STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'reconcile-stale-bot-state',
   description:
-    'Finishes failed cancellations, schedules bots for recordings still missing one, and reaps unclaimed bots. Reads calendar events only to heal already-decided recordings, never to discover meetings.',
+    'Finishes failed cancellations and adopts or schedules bots for recordings still missing one, reading only local records unless a recording actually diverged.',
   timeoutSeconds: 250,
   handler: reconcileStaleBotStateHandler,
   cronTriggerSettings: {

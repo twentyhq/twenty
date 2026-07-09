@@ -4,7 +4,6 @@ import { RECALL_API_MAX_IN_PROCESS_RETRY_WAIT_MS } from 'src/logic-functions/con
 import { RECALL_API_MAX_ATTEMPTS } from 'src/logic-functions/constants/recall-api-max-attempts';
 import { type RecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { parseRecallRetryAfterMs } from 'src/logic-functions/recall-api/parse-recall-retry-after.util';
-import { reserveRecallApiRateLimitSlotMs } from 'src/logic-functions/recall-api/recall-api-rate-limiter.util';
 import {
   isRetryableRecallApiStatus,
   resolveRecallApiRetryDelayMs,
@@ -73,16 +72,6 @@ const performRecallBotApiRequestAttempt = async <TData>({
   isRetryable: boolean;
   retryAfterMs?: number;
 }> => {
-  const rateLimitWaitMs = reserveRecallApiRateLimitSlotMs({
-    method,
-    path,
-    nowMs: Date.now(),
-  });
-
-  if (rateLimitWaitMs > 0) {
-    await sleep(rateLimitWaitMs);
-  }
-
   let response: Response;
 
   try {

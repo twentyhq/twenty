@@ -794,6 +794,27 @@ describe('handleRecallWebhook', () => {
     ]);
   });
 
+  it('throws when the artifact continuation dispatch fails so Svix redelivers', async () => {
+    requestArtifactContinuationMock.mockResolvedValue(false);
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'PROCESSING',
+        externalBotId: 'recall-bot-1',
+        transcript: null,
+      },
+    ]);
+
+    await expect(
+      handleRecallWebhook({
+        client: client as unknown as CoreApiClient,
+        body: buildRecordingDoneWebhookBody(),
+      }),
+    ).rejects.toThrow(
+      'failed to request Recall artifact continuation for call recording call-recording-1',
+    );
+  });
+
   it('queues redelivered done events without touching transcript APIs inline', async () => {
     const client = new FakeCoreApiClient([
       {

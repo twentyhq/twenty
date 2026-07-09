@@ -1,0 +1,1 @@
+export const REAP_ORPHANED_CALL_RECORDERS_CRON_PATTERN = '30 4 * * *';

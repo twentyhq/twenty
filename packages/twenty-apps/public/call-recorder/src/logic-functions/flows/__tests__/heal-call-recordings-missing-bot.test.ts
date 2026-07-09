@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { healCallRecordingsMissingBot } from 'src/logic-functions/flows/heal-call-recordings-missing-bot.util';
 
 const scheduleRecallBotMock = vi.hoisted(() => vi.fn());
+const listScheduledRecallBotsMock = vi.hoisted(() => vi.fn());
 const getCurrentWorkspaceIdMock = vi.hoisted(() => vi.fn());
 
 vi.mock('src/logic-functions/data/get-current-workspace-id.util', () => ({
@@ -13,6 +14,13 @@ vi.mock('src/logic-functions/data/get-current-workspace-id.util', () => ({
 vi.mock('src/logic-functions/recall-api/schedule-recall-bot.util', () => ({
   scheduleRecallBot: scheduleRecallBotMock,
 }));
+
+vi.mock(
+  'src/logic-functions/recall-api/list-scheduled-recall-bots.util',
+  () => ({
+    listScheduledRecallBots: listScheduledRecallBotsMock,
+  }),
+);
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
 const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
@@ -140,6 +148,8 @@ describe('healCallRecordingsMissingBot', () => {
       ok: true,
       externalBotId: 'recall-bot-1',
     });
+    listScheduledRecallBotsMock.mockReset();
+    listScheduledRecallBotsMock.mockResolvedValue({ ok: true, bots: [] });
   });
 
   it('schedules a bot and writes the id for an upcoming botless recording', async () => {
@@ -154,6 +164,7 @@ describe('healCallRecordingsMissingBot', () => {
     });
 
     expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
+    expect(result.adoptedCallRecordingIds).toEqual([]);
     expect(scheduleRecallBotMock).toHaveBeenCalledTimes(1);
     expect(scheduleRecallBotMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -162,6 +173,65 @@ describe('healCallRecordingsMissingBot', () => {
         }),
       }),
     );
+    expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
+  });
+
+  it('adopts an existing bot claiming the recording instead of scheduling a duplicate', async () => {
+    listScheduledRecallBotsMock.mockResolvedValue({
+      ok: true,
+      bots: [
+        {
+          id: 'recall-bot-existing',
+          metadata: {
+            twentyWorkspaceId: WORKSPACE_ID,
+            twentyCallRecordingId: 'call-recording-1',
+          },
+          raw: {},
+        },
+      ],
+    });
+    const client = new FakeCoreApiClient({
+      callRecordings: [buildBotlessCallRecording()],
+      calendarEvents: [buildCalendarEvent()],
+    });
+
+    const result = await healCallRecordingsMissingBot({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(result.adoptedCallRecordingIds).toEqual(['call-recording-1']);
+    expect(result.scheduledCallRecordingIds).toEqual([]);
+    expect(listScheduledRecallBotsMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        metadata: {
+          twentyWorkspaceId: WORKSPACE_ID,
+          twentyCallRecordingId: 'call-recording-1',
+        },
+      }),
+    );
+    expect(scheduleRecallBotMock).not.toHaveBeenCalled();
+    expect(client.callRecordings[0].externalBotId).toBe('recall-bot-existing');
+  });
+
+  it('falls back to scheduling when the adoption lookup fails', async () => {
+    listScheduledRecallBotsMock.mockResolvedValue({
+      ok: false,
+      status: 500,
+      errorMessage: 'Recall API responded with HTTP 500',
+    });
+    const client = new FakeCoreApiClient({
+      callRecordings: [buildBotlessCallRecording()],
+      calendarEvents: [buildCalendarEvent()],
+    });
+
+    const result = await healCallRecordingsMissingBot({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(result.adoptedCallRecordingIds).toEqual([]);
+    expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
     expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
   });
 

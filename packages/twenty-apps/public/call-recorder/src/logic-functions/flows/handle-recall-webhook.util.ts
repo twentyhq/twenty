@@ -136,7 +136,7 @@ const handleRecallStatusEvent = async ({
       statusCode,
     })
   ) {
-    await requestArtifactContinuationWithWarning({
+    await requestArtifactContinuationOrThrow({
       callRecordingId: callRecording.id,
       webhookEvent,
     });
@@ -181,7 +181,7 @@ const queueRecallArtifactContinuation = async ({
     };
   }
 
-  await requestArtifactContinuationWithWarning({
+  await requestArtifactContinuationOrThrow({
     callRecordingId: callRecording.id,
     webhookEvent,
   });
@@ -193,7 +193,8 @@ const queueRecallArtifactContinuation = async ({
   };
 };
 
-const requestArtifactContinuationWithWarning = async ({
+// A throw bubbles to a non-2xx so Svix redelivers; the preceding status update re-applies idempotently.
+const requestArtifactContinuationOrThrow = async ({
   callRecordingId,
   webhookEvent,
 }: {
@@ -211,8 +212,8 @@ const requestArtifactContinuationWithWarning = async ({
   });
 
   if (!continuationRequested) {
-    console.warn(
-      `[call-recorder] failed to request Recall artifact continuation for call recording ${callRecordingId}`,
+    throw new Error(
+      `failed to request Recall artifact continuation for call recording ${callRecordingId}`,
     );
   }
 };

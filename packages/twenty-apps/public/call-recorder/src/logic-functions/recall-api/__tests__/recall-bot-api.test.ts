@@ -10,7 +10,6 @@ import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-r
 import { retrieveRecallTranscript } from 'src/logic-functions/recall-api/retrieve-recall-transcript.util';
 import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 import { CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-retention-hours-env-var-name';
-import { resetRecallApiRateLimiter } from 'src/logic-functions/recall-api/recall-api-rate-limiter.util';
 
 const getRecallApiConfigMock = vi.hoisted(() => vi.fn());
 const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
@@ -27,7 +26,6 @@ describe('recall bot api', () => {
   const fetchMock = vi.fn();
 
   beforeEach(() => {
-    resetRecallApiRateLimiter();
     delete process.env[CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME];
     getRecallApiConfigMock.mockReset();
     getRecallApiConfigMock.mockReturnValue({
