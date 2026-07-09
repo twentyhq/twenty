@@ -478,6 +478,16 @@ jobs:
           tasks: 'test:integration'
           configuration: 'with-db-reset'
           args: --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
+      # GitHub drops most of the buffered nx output when a shard fails with
+      # heavy logging, hiding the jest failure details; keep the full log.
+      - name: Upload integration test logs
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: server-integration-test-logs-shard-${{ matrix.shard }}
+          path: |
+            packages/twenty-server/integration-test-logs.log
+            packages/twenty-server/reset-logs.log
 
   cross-version-upgrade:
     needs: [upgrade-changed-files-check, server-build]
