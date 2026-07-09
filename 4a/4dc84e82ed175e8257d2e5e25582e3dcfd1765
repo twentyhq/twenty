@@ -1,0 +1,26 @@
+packages/twenty-server/src/modules/connected-account/channel-sync/services/channel-sync.service.ts
+  s_0cd87c29efaba6::t_7ced5c051ee4ee 16
+  s_0cd87c29efaba6::t_b4dffbd3df9f51 157-172
+  s_0cd87c29efaba6::t_4d1648d4c87ee7 57,60-64
+  s_0cd87c29efaba6::t_fdc42d2a40a9da 103-118
+  s_0cd87c29efaba6::t_e7201c8aca6bc2 65
+packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts
+  s_0cd87c29efaba6::t_13bb5770e643b6 212-213
+  s_0cd87c29efaba6::t_d1db16192c0b6f 214-221
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4a4dc84e82ed175e8257d2e5e25582e3dcfd1765",
+  "prompts": {},
+  "sessions": {
+    "s_0cd87c29efaba6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c9fb3032-f885-4660-a0b6-b45aac02aa9b",
+        "model": "claude-fable-5"
+      },
+      "human_author": null
+    }
+  }
+}
