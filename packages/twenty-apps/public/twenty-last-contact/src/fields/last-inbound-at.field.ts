@@ -17,4 +17,5 @@ export default defineField({
     'When this person last reached out to you (an inbound email, or a meeting they organized).',
   icon: 'IconMessageDown',
   isNullable: true,
+  isUIEditable: false,
 });
