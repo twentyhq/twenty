@@ -47,10 +47,12 @@ jobs:
           fetch-depth: 0
 
       - name: Run docs drift agent
+        id: drift-agent
         uses: anthropics/claude-code-action@ac7e24bf2938964b8ab203e417a2773802392ddd # v1.0.146
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          claude_args: '--max-turns 60 --allowedTools "Bash(git diff *),Bash(git log *),Bash(git show *),Bash(grep *),Bash(cat *),Bash(ls *),Bash(find *),Bash(head *),Bash(tail *),Bash(gh pr comment *)"'
+          claude_args: |
+            --max-turns 60 --json-schema '{"type":"object","properties":{"hasDrift":{"type":"boolean"},"summary":{"type":"string"}},"required":["hasDrift","summary"]}' --allowedTools "Bash(git diff *),Bash(git log *),Bash(git show *),Bash(grep *),Bash(cat *),Bash(ls *),Bash(find *),Bash(head *),Bash(tail *),Bash(gh pr comment *)"
           prompt: |
             You are the app-documentation drift checker for the twenty repository.
 
@@ -112,14 +114,6 @@ jobs:
             (this updates the previous drift-check comment in place on subsequent runs).
             Start the comment body with the marker `<!-- app-docs-drift-check -->`.
 
-            On the SECOND line, emit exactly one machine-readable status marker (a
-            downstream CI step parses it to pass or fail the build):
-            - `<!-- drift-status:IMPACT -->` if at least one impacted docs page still
-              needs updating (drift is NOT fully resolved by this PR).
-            - `<!-- drift-status:NO_IMPACT -->` if there is no documentation impact, or
-              every impacted page is already correctly updated in this PR.
-            Always emit exactly one of these two markers.
-
             Comment format:
             - Title line: `### App docs drift check`
             - If no documentation impact: one sentence saying so and why.
@@ -130,6 +124,16 @@ jobs:
             - Be terse. No preamble, no sign-off. Only report genuine drift — if unsure
               whether something is user-facing, say it's uncertain rather than asserting.
 
+            ## Step 4 — Return the verdict
+
+            After posting the comment, return your final answer as the structured
+            output the CI gate consumes:
+            - `hasDrift`: `true` if at least one impacted docs page still needs updating
+              (drift is NOT fully resolved by this PR); `false` if there is no
+              documentation impact, or every impacted page is already correctly updated
+              in this PR.
+            - `summary`: one terse sentence describing the verdict.
+
             Environment: GH_TOKEN is available for `gh`. The PR branch is checked out.
           settings: |
             {
@@ -139,22 +143,27 @@ jobs:
             }
 
       - name: Gate on drift verdict
+        if: always()
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AGENT_OUTCOME: ${{ steps.drift-agent.outcome }}
+          STRUCTURED_OUTPUT: ${{ steps.drift-agent.outputs.structured_output }}
         run: |
-          body=$(gh pr view ${{ github.event.pull_request.number }} --json comments \
-            --jq '.comments[] | select(.body | contains("app-docs-drift-check")) | .body' | tail -1)
-          if [ -z "$body" ]; then
-            echo "::error::Docs drift checker did not post a verdict comment (agent may have failed or timed out)."
+          if [ "$AGENT_OUTCOME" != "success" ]; then
+            echo "::error::Docs drift checker did not complete (agent step outcome: $AGENT_OUTCOME)."
             exit 1
           fi
-          if printf '%s' "$body" | grep -q 'drift-status:IMPACT'; then
+          if [ -z "$STRUCTURED_OUTPUT" ]; then
+            echo "::error::Docs drift checker did not return a structured verdict."
+            exit 1
+          fi
+          has_drift=$(printf '%s' "$STRUCTURED_OUTPUT" | jq -r '.hasDrift')
+          if [ "$has_drift" = "true" ]; then
             echo "::error::App docs drift detected. See the app-docs-drift-check comment on this PR."
             exit 1
           fi
-          if printf '%s' "$body" | grep -q 'drift-status:NO_IMPACT'; then
+          if [ "$has_drift" = "false" ]; then
             echo "No app docs drift."
             exit 0
           fi
-          echo "::error::Drift comment present but no recognizable drift-status marker was found."
+          echo "::error::Structured verdict present but 'hasDrift' was not a recognizable boolean: $has_drift"
           exit 1
