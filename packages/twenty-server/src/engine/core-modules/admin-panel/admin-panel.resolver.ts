@@ -851,14 +851,15 @@ export class AdminPanelResolver {
     @Args('input')
     {
       id,
-      page,
+      limit,
+      offset,
       searchTerm,
     }: FindApplicationRegistrationInstalledWorkspacesInput,
   ): Promise<ApplicationRegistrationInstalledWorkspacesDTO> {
     return this.applicationRegistrationService.getInstalledWorkspacesGlobal(
       id,
-      page ?? 1,
-      INSTALLED_WORKSPACES_PAGE_SIZE,
+      limit ?? INSTALLED_WORKSPACES_PAGE_SIZE,
+      offset ?? 0,
       searchTerm,
     );
   }

@@ -1,5 +1,6 @@
 import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -15,9 +16,18 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useContext, useState } from 'react';
 import { useDebounce } from 'use-debounce';
-import { assertUnreachable, getSettingsPath } from 'twenty-shared/utils';
+import {
+  assertUnreachable,
+  getSettingsPath,
+  isDefined,
+} from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
-import { IconChevronRight, IconPinned, IconRefresh } from 'twenty-ui/icon';
+import {
+  IconChevronRight,
+  IconDotsVertical,
+  IconPinned,
+  IconRefresh,
+} from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -36,16 +46,16 @@ const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledPaginationContainer = styled.div`
-  align-items: center;
+const StyledShowMoreContainer = styled.div`
   display: flex;
-  justify-content: space-between;
-  padding: ${themeCssVariables.spacing[2]};
+  justify-content: center;
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 const TABLE_GRID = '1fr 100px 100px 100px 40px';
 const TABLE_GRID_MOBILE = '3fr 3fr 1fr 1fr 40px';
-const PAGE_SIZE = 25;
+const INITIAL_PAGE_SIZE = 25;
+const SHOW_MORE_PAGE_SIZE = 100;
 
 export const SettingsAdminApps = () => {
   const apolloAdminClient = useApolloAdminClient();
@@ -53,17 +63,19 @@ export const SettingsAdminApps = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
   const [showPreInstalledOnly, setShowPreInstalledOnly] = useState(false);
-  const [page, setPage] = useState(0);
 
-  const { data, loading } = useQuery(FindAllApplicationRegistrationsDocument, {
-    client: apolloAdminClient,
-    variables: {
-      limit: PAGE_SIZE,
-      offset: page * PAGE_SIZE,
-      searchTerm: debouncedSearchQuery,
-      isPreInstalledOnly: showPreInstalledOnly,
+  const { data, loading, fetchMore } = useQuery(
+    FindAllApplicationRegistrationsDocument,
+    {
+      client: apolloAdminClient,
+      variables: {
+        limit: INITIAL_PAGE_SIZE,
+        offset: 0,
+        searchTerm: debouncedSearchQuery,
+        isPreInstalledOnly: showPreInstalledOnly,
+      },
     },
-  });
+  );
 
   const [syncMarketplaceCatalog, { loading: isSyncing }] = useMutation(
     SyncMarketplaceCatalogDocument,
@@ -85,21 +97,30 @@ export const SettingsAdminApps = () => {
 
   const registrations =
     data?.findAllApplicationRegistrations.registrations ?? [];
-  const totalCount = data?.findAllApplicationRegistrations.totalCount ?? 0;
   const hasMore = data?.findAllApplicationRegistrations.hasMore ?? false;
 
-  const sortedRegistrations = registrations.toSorted(
-    (a, b) => Number(a.isConfigured) - Number(b.isConfigured),
-  );
+  const handleShowMore = () => {
+    fetchMore({
+      variables: {
+        limit: SHOW_MORE_PAGE_SIZE,
+        offset: registrations.length,
+      },
+      updateQuery: (previousData, { fetchMoreResult }) => {
+        if (!isDefined(fetchMoreResult)) {
+          return previousData;
+        }
 
-  const handleSearchChange = (nextSearchQuery: string) => {
-    setSearchQuery(nextSearchQuery);
-    setPage(0);
-  };
-
-  const handleTogglePreInstalledOnly = () => {
-    setShowPreInstalledOnly(!showPreInstalledOnly);
-    setPage(0);
+        return {
+          findAllApplicationRegistrations: {
+            ...fetchMoreResult.findAllApplicationRegistrations,
+            registrations: [
+              ...previousData.findAllApplicationRegistrations.registrations,
+              ...fetchMoreResult.findAllApplicationRegistrations.registrations,
+            ],
+          },
+        };
+      },
+    });
   };
 
   const getFormattedSource = (
@@ -148,7 +169,7 @@ export const SettingsAdminApps = () => {
         <SearchInput
           placeholder={t`Search registrations...`}
           value={searchQuery}
-          onChange={handleSearchChange}
+          onChange={setSearchQuery}
           filterDropdown={(filterButton: ReactNode) => (
             <Dropdown
               dropdownId="settings-admin-apps-filter-dropdown"
@@ -160,7 +181,9 @@ export const SettingsAdminApps = () => {
                   <DropdownMenuItemsContainer>
                     <MenuItemToggle
                       LeftIcon={IconPinned}
-                      onToggleChange={handleTogglePreInstalledOnly}
+                      onToggleChange={() =>
+                        setShowPreInstalledOnly(!showPreInstalledOnly)
+                      }
                       toggled={showPreInstalledOnly}
                       text={t`Pre-installed only`}
                       toggleSize="small"
@@ -171,50 +194,46 @@ export const SettingsAdminApps = () => {
             />
           )}
         />
-        <StyledTableContainer>
-          <Table>
-            <TableRow
-              gridAutoColumns={TABLE_GRID}
-              mobileGridAutoColumns={TABLE_GRID_MOBILE}
-            >
-              <TableHeader>{t`Name`}</TableHeader>
-              <TableHeader align="right">{t`Source`}</TableHeader>
-              <TableHeader align="right">{t`Listed`}</TableHeader>
-              <TableHeader align="right">{t`Configured`}</TableHeader>
-              <TableHeader></TableHeader>
-            </TableRow>
-            <TableBody>
-              {sortedRegistrations.map((registration) => (
-                <SettingsAdminAppsTableRow
-                  key={registration.id}
-                  registration={registration}
-                  getFormattedSource={getFormattedSource}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </StyledTableContainer>
-        {totalCount > PAGE_SIZE && (
-          <StyledPaginationContainer>
+        {loading && registrations.length === 0 ? (
+          <SettingsEmptyPlaceholder>{t`Loading apps...`}</SettingsEmptyPlaceholder>
+        ) : registrations.length === 0 ? (
+          <SettingsEmptyPlaceholder>{t`No apps found`}</SettingsEmptyPlaceholder>
+        ) : (
+          <StyledTableContainer>
+            <Table>
+              <TableRow
+                gridAutoColumns={TABLE_GRID}
+                mobileGridAutoColumns={TABLE_GRID_MOBILE}
+              >
+                <TableHeader>{t`Name`}</TableHeader>
+                <TableHeader align="right">{t`Source`}</TableHeader>
+                <TableHeader align="right">{t`Listed`}</TableHeader>
+                <TableHeader align="right">{t`Configured`}</TableHeader>
+                <TableHeader></TableHeader>
+              </TableRow>
+              <TableBody>
+                {registrations.map((registration) => (
+                  <SettingsAdminAppsTableRow
+                    key={registration.id}
+                    registration={registration}
+                    getFormattedSource={getFormattedSource}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </StyledTableContainer>
+        )}
+        {hasMore && (
+          <StyledShowMoreContainer>
             <Button
-              title={t`Previous`}
-              onClick={() => setPage(Math.max(0, page - 1))}
-              disabled={page === 0 || loading}
+              title={t`Show more`}
+              Icon={IconDotsVertical}
+              onClick={handleShowMore}
+              disabled={loading}
               size="small"
               variant="secondary"
             />
-            <div>
-              {t`Page`} {page + 1} {t`of`}{' '}
-              {Math.max(1, Math.ceil(totalCount / PAGE_SIZE))}
-            </div>
-            <Button
-              title={t`Next`}
-              onClick={() => setPage(page + 1)}
-              disabled={!hasMore || loading}
-              size="small"
-              variant="secondary"
-            />
-          </StyledPaginationContainer>
+          </StyledShowMoreContainer>
         )}
       </Section>
     </>

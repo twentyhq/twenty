@@ -11,6 +11,7 @@ import { Section } from 'twenty-ui/layout';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -25,6 +26,7 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { SettingsPath } from 'twenty-shared/types';
 
 const INITIAL_VISIBLE_WORKSPACES = 3;
+const SHOW_MORE_PAGE_SIZE = 100;
 const INSTALLED_WORKSPACES_GRID_TEMPLATE_COLUMNS = '1fr 120px';
 
 const StyledSection = styled(Section)`
@@ -52,7 +54,6 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm] = useDebounce(searchTerm, 300);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
 
   const applicationRegistrationId = registration.id;
 
@@ -63,7 +64,6 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
       variables: {
         input: {
           id: applicationRegistrationId,
-          page: 1,
           searchTerm: debouncedSearchTerm,
         },
       },
@@ -96,18 +96,16 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
 
   const handleSearchChange = (nextSearchTerm: string) => {
     setSearchTerm(nextSearchTerm);
-    setCurrentPage(1);
     setIsExpanded(false);
   };
 
   const handleShowMore = () => {
-    const nextPage = currentPage + 1;
-
     fetchMore({
       variables: {
         input: {
           id: applicationRegistrationId,
-          page: nextPage,
+          limit: SHOW_MORE_PAGE_SIZE,
+          offset: workspaces.length,
           searchTerm: debouncedSearchTerm,
         },
       },
@@ -129,8 +127,6 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
         };
       },
     });
-
-    setCurrentPage(nextPage);
   };
 
   return (
@@ -146,6 +142,8 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
       </StyledSearchInputContainer>
       {loading ? (
         <SettingsSectionSkeletonLoader />
+      ) : workspaces.length === 0 ? (
+        <SettingsEmptyPlaceholder>{t`No workspaces found`}</SettingsEmptyPlaceholder>
       ) : (
         <Table>
           <TableRow
