@@ -4,7 +4,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -35,7 +34,6 @@ const StyledTitleContainer = styled.div`
 
 export const SettingsAiPrompts = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const { userTimezone } = useUserTimezone();
 
   const { data: previewData, loading: previewLoading } = useQuery(
     GetAiSystemPromptPreviewDocument,
@@ -54,7 +52,9 @@ export const SettingsAiPrompts = () => {
       `**${t`Locale`}:** ${currentWorkspaceMember.locale ?? 'en'}`,
     ];
 
-    const validTimeZone = getValidTimeZoneOrUndefined(userTimezone);
+    const validTimeZone = getValidTimeZoneOrUndefined(
+      currentWorkspaceMember.timeZone,
+    );
 
     if (isDefined(validTimeZone)) {
       parts.push(`**${t`Timezone`}:** ${validTimeZone}`);
