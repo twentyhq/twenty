@@ -19,9 +19,15 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
-#: src/emails/test.email.tsx
-msgid "Test email"
-msgstr "Correu electrònic de prova"
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr "Valida el domini"
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
+msgstr "{senderName} (<0>{senderEmail}</0>): Si us plau, valida aquest domini per permetre als usuaris amb adreces de correu electrònic <1>@{domain}</1> unir-se al teu espai de treball sense requerir una invitació."
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
@@ -68,30 +74,9 @@ msgid "Reactivate workspace"
 msgstr "Reactiva l'espai de treball"
 
 #. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "Validate domain"
-msgstr "Valida el domini"
-
-#. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
-msgstr "{senderName} (<0>{senderEmail}</0>): Si us plau, valida aquest domini per permetre als usuaris amb adreces de correu electrònic <1>@{domain}</1> unir-se al teu espai de treball sense requerir una invitació."
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Uneix-te al teu equip a Twenty"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) t'ha convidat a unir-te a un espai de treball anomenat <1>{workspaceName}</1>."
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "Accepta la invitació"
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "Correu electrònic de prova"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -107,6 +92,21 @@ msgstr "Desactivat"
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Server administrator access changed"
 msgstr "S'ha canviat l'accés d'administrador del servidor"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Uneix-te al teu equip a Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) t'ha convidat a unir-te a un espai de treball anomenat <1>{workspaceName}</1>."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "Accepta la invitació"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -154,31 +154,6 @@ msgid "Connect to Twenty"
 msgstr "Connecta't a Twenty"
 
 #. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Your workspace has been deleted"
-msgstr "El vostre espai de treball s'ha suprimit"
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
-msgstr "El vostre espai de treball <0>{workspaceDisplayName}</0> s'ha suprimit de manera permanent — es va posar en pausa fa {daysSinceInactive} dies i no es va reactivar a temps."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Its data has been removed and can no longer be recovered."
-msgstr "Les seves dades s'han suprimit i ja no es poden recuperar."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
-msgstr "Si mai voleu tornar a provar Twenty, podeu iniciar un espai de treball nou en pocs minuts — ens encantaria tenir-vos de nou."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Start a new workspace"
-msgstr "Inicia un espai de treball nou"
-
-#. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
 msgstr "Restableix la teva contrasenya 🗝"
@@ -202,6 +177,31 @@ msgstr "Estableix"
 #: src/emails/password-reset-link.email.tsx
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 msgstr "Aquest enllaç només és vàlid durant els propers {duration}. Si l'enllaç no funciona, pots fer servir directament l'enllaç de verificació d'inici de sessió:"
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace has been deleted"
+msgstr "El vostre espai de treball s'ha suprimit"
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
+msgstr "El vostre espai de treball <0>{workspaceDisplayName}</0> s'ha suprimit de manera permanent — es va posar en pausa fa {daysSinceInactive} dies i no es va reactivar a temps."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Its data has been removed and can no longer be recovered."
+msgstr "Les seves dades s'han suprimit i ja no es poden recuperar."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
+msgstr "Si mai voleu tornar a provar Twenty, podeu iniciar un espai de treball nou en pocs minuts — ens encantaria tenir-vos de nou."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Start a new workspace"
+msgstr "Inicia un espai de treball nou"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
@@ -260,16 +260,6 @@ msgid "Manage subscription"
 msgstr "Gestiona la subscripció"
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Què és Twenty?"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "És un CRM, un programari per ajudar les empreses a gestionar les seves dades de clients i relacions de manera eficient."
-
-#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "El vostre pla es renovarà aviat"
@@ -288,6 +278,16 @@ msgstr "El vostre pla anual per a <0>{workspaceDisplayName}</0> es renovarà el 
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "No cal fer res si voleu continuar. Si preferiu no renovar, podeu cancel·lar en qualsevol moment abans d'aquesta data."
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Què és Twenty?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "És un CRM, un programari per ajudar les empreses a gestionar les seves dades de clients i relacions de manera eficient."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
