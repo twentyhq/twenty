@@ -21,7 +21,7 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Your workspace is paused"
-msgstr ""
+msgstr "מרחב העבודה שלך הושהה"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -30,7 +30,7 @@ msgstr ""
 #: src/emails/clean-suspended-workspace.email.tsx
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Hi {userName},"
-msgstr ""
+msgstr "היי {userName},"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -45,22 +45,22 @@ msgstr "שלום,"
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Good news first: your workspace <0>{workspaceDisplayName}</0> is only paused — none of your data is gone."
-msgstr ""
+msgstr "קודם כל חדשות טובות: מרחב העבודה שלך <0>{workspaceDisplayName}</0> רק הושהה — שום נתון שלך לא אבד."
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Reactivate it within the next {remainingDays} {dayOrDays} and you'll pick up exactly where you left off, with every record, view and setting right where you left it."
-msgstr ""
+msgstr "הפעל אותו מחדש בתוך {remainingDays} {dayOrDays} ותוכל להמשיך בדיוק מהמקום שבו הפסקת, כאשר כל הרשומות, התצוגות וההגדרות יהיו בדיוק במקום שבו השארת אותן."
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "After that, the workspace and all of its data will be permanently deleted — and we won't be able to bring it back."
-msgstr ""
+msgstr "לאחר מכן, מרחב העבודה וכל הנתונים שבו יימחקו לצמיתות — ולא נוכל לשחזר אותם."
 
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Reactivate workspace"
-msgstr ""
+msgstr "הפעל מחדש את מרחב העבודה"
 
 #. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
@@ -81,17 +81,17 @@ msgstr "הודעת דוא\"ל מבחן"
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Enabled"
-msgstr ""
+msgstr "מופעל"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Disabled"
-msgstr ""
+msgstr "לא פעיל"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Server administrator access changed"
-msgstr ""
+msgstr "גישה של מנהל השרת השתנתה"
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -156,83 +156,83 @@ msgstr "התחבר ל-Twenty"
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Your workspace has been deleted"
-msgstr ""
+msgstr "מרחב העבודה שלך נמחק"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
-msgstr ""
+msgstr "מרחב העבודה שלך <0>{workspaceDisplayName}</0> נמחק כעת לצמיתות — הוא הושהה לפני {daysSinceInactive} ימים ולא הופעל מחדש בזמן."
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Its data has been removed and can no longer be recovered."
-msgstr ""
+msgstr "הנתונים שלו הוסרו ואי אפשר עוד לשחזר אותם."
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
-msgstr ""
+msgstr "אם תרצה אי פעם לתת ל-Twenty הזדמנות נוספת, תוכל להתחיל מרחב עבודה חדש תוך דקות — נשמח לקבל אותך בחזרה."
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Start a new workspace"
-msgstr ""
+msgstr "התחל מרחב עבודה חדש"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
-msgstr ""
+msgstr "תקופת הניסיון שלך מסתיימת בקרוב"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}."
-msgstr ""
+msgstr "תקופת הניסיון החינמית שלך עבור <0>{workspaceDisplayName}</0> מסתיימת ב-{formattedDate}."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
-msgstr ""
+msgstr "כדי לשמור על מרחב העבודה שלך ועל כל מה שבנית, הוסף אמצעי תשלום ובחר תוכנית."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "If you do nothing, we'll pause your workspace and keep your data safe for {dataRetentionDays} days in case you change your mind — no card will be charged."
-msgstr ""
+msgstr "אם לא תעשה דבר, נשהה את מרחב העבודה שלך ונשמור על הנתונים שלך בטוחים למשך {dataRetentionDays} ימים למקרה שתתחרט — הכרטיס לא יחויב."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Add a payment method"
-msgstr ""
+msgstr "הוסף אמצעי תשלום"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "A heads up before your trial ends"
-msgstr ""
+msgstr "תזכורת לפני שתקופת הניסיון שלך מסתיימת"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "We don't like surprise charges, so here's a friendly heads up."
-msgstr ""
+msgstr "אנחנו לא אוהבים חיובים מפתיעים, אז זו תזכורת ידידותית."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
-msgstr ""
+msgstr "תקופת הניסיון החינמית שלך עבור <0>{workspaceDisplayName}</0> מסתיימת ב-{formattedDate}. אם לא תבטל עד אז, הכרטיס השמור במערכת יחויב עבור תוכנית שנתית."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
-msgstr ""
+msgstr "תקופת הניסיון החינמית שלך עבור <0>{workspaceDisplayName}</0> מסתיימת ב-{formattedDate}. אם לא תבטל עד אז, הכרטיס השמור במערכת יחויב עבור תוכנית חודשית."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
-msgstr ""
+msgstr "אם Twenty מתאימה לך, אתה מסודר — אין צורך לעשות דבר. אם זה לא מתאים, תוכל לבטל בלחיצה אחת לפני כן ולא תחויב."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 #: src/emails/billing-trial-converting.email.tsx
 msgid "Manage subscription"
-msgstr ""
+msgstr "נהל מנוי"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -262,22 +262,22 @@ msgstr "הקישור הזה תקף רק ל-{duration} הבאים. אם הקיש�
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
-msgstr ""
+msgstr "התוכנית שלך מתחדשת בקרוב"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Just so it's never a surprise, here's a heads up about your annual plan."
-msgstr ""
+msgstr "כדי שלא יהיו הפתעות, הנה תזכורת לגבי התוכנית השנתית שלך."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
-msgstr ""
+msgstr "התוכנית השנתית שלך עבור <0>{workspaceDisplayName}</0> תתחדש ב-{formattedDate}."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
-msgstr ""
+msgstr "אם תרצה להמשיך, אין צורך לבצע שום פעולה. אם אינך מעוניין לחדש, תוכל לבטל בכל זמן לפני כן."
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
@@ -342,19 +342,19 @@ msgstr "סן פרנסיסקו / פריז"
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.summary"
-msgstr ""
+msgstr "serverAdminAccessChanged.summary"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.fullAdmin"
-msgstr ""
+msgstr "serverAdminAccessChanged.fullAdmin"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.warning"
-msgstr ""
+msgstr "serverAdminAccessChanged.warning"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "serverAdminAccessChanged.impersonation"
-msgstr ""
+msgstr "serverAdminAccessChanged.impersonation"

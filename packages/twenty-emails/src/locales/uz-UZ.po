@@ -1,0 +1,360 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-02-01 18:53+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: uz\n"
+"Project-Id-Version: cf448e737e0d6d7b78742f963d761c61\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-01-01 00:00\n"
+"Last-Translator: \n"
+"Language-Team: Uzbek\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Crowdin-Project: cf448e737e0d6d7b78742f963d761c61\n"
+"X-Crowdin-Project-ID: 1\n"
+"X-Crowdin-Language: uz\n"
+"X-Crowdin-File: /packages/twenty-emails/src/locales/en.po\n"
+"X-Crowdin-File-ID: 27\n"
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Your workspace is paused"
+msgstr "Ish maydoningiz pauza qilingan"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+#: src/emails/billing-trial-ending.email.tsx
+#: src/emails/clean-suspended-workspace.email.tsx
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Hi {userName},"
+msgstr "Salom, {userName},"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+#: src/emails/billing-trial-ending.email.tsx
+#: src/emails/clean-suspended-workspace.email.tsx
+#: src/emails/password-update-notify.email.tsx
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Hello,"
+msgstr "Salom,"
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Good news first: your workspace <0>{workspaceDisplayName}</0> is only paused — none of your data is gone."
+msgstr "Avval yaxshi xabar: ish maydoningiz <0>{workspaceDisplayName}</0> faqat pauza qilingan — hech qanday maʼlumotlaringiz yoʻqolmagan."
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Reactivate it within the next {remainingDays} {dayOrDays} and you'll pick up exactly where you left off, with every record, view and setting right where you left it."
+msgstr "Uni keyingi {remainingDays} {dayOrDays} ichida qayta faollashtirsangiz, barcha yozuvlar, koʻrinishlar va sozlamalar bilan aynan qoldirgan joyingizdan davom etasiz."
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "After that, the workspace and all of its data will be permanently deleted — and we won't be able to bring it back."
+msgstr "Shundan soʻng ish maydoni va uning barcha maʼlumotlari butunlay oʻchirib tashlanadi — biz ularni qayta tiklay olmaymiz."
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Reactivate workspace"
+msgstr "Ish maydonini qayta faollashtirish"
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr "Domenni tasdiqlang"
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
+msgstr "{senderName} (<0>{senderEmail}</0>): Iltimos, ushbu domenni tasdiqlang, shunda <1>@{domain}</1> elektron pochta manzillariga ega foydalanuvchilar taklifnomasiz ish maydoningizga qoʻshila oladilar."
+
+#. js-lingui-explicit-id
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "Sinov xati"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Enabled"
+msgstr "Faollashtirilgan"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Disabled"
+msgstr "O‘chirilgan"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Server administrator access changed"
+msgstr "Server administratori huquqlari oʻzgartirildi"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Jamoangizga Twenty da qoʻshiling"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) sizni <1>{workspaceName}</1> nomli ish maydoniga qoʻshilishga taklif qildi."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "Taklifni qabul qiling"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr "Yangi elektron pochta manzilingizni tasdiqlang"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your email address"
+msgstr "Elektron pochta manzilingizni tasdiqlang"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm new email"
+msgstr "Yangi elektron pochtani tasdiqlang"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Verify Email"
+msgstr "Elektron pochtani tasdiqlang"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Password updated"
+msgstr "Parol yangilandi"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Dear {userName},"
+msgstr "Hurmatli {userName},"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "Bu sizning hisobingiz ({email}) uchun parol {formattedDate} sanasida muvaffaqiyatli oʻzgartirilganini tasdiqlashdir."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "Agar siz bu oʻzgarishni boshlamagan boʻlsangiz, darhol ish maydoni egasi bilan bogʻlaning."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Connect to Twenty"
+msgstr "Twenty ga ulaning"
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace has been deleted"
+msgstr "Ish maydoningiz oʻchirib tashlandi"
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
+msgstr "Ish maydoningiz <0>{workspaceDisplayName}</0> endi butunlay oʻchirib tashlandi — u {daysSinceInactive} kun oldin pauza qilingan edi va vaqtida qayta faollashtirilmagan."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Its data has been removed and can no longer be recovered."
+msgstr "Uning maʼlumotlari olib tashlangan va endi qayta tiklab boʻlmaydi."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
+msgstr "Agar qachondir Twentyʼga yana bir bor imkon berishni istasangiz, bir necha daqiqada yangi ish maydonini boshlashingiz mumkin — sizni yana koʻrishdan mamnun boʻlamiz."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Start a new workspace"
+msgstr "Yangi ish maydonini boshlash"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your trial is ending soon"
+msgstr "Sinov muddati tez orada tugaydi"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}."
+msgstr "<0>{workspaceDisplayName}</0> uchun bepul sinov muddati {formattedDate} kuni yakunlanadi."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
+msgstr "Ish maydoningiz va unda yaratganlaringizni saqlab qolish uchun toʻlov usulini qoʻshing va rejani tanlang."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "If you do nothing, we'll pause your workspace and keep your data safe for {dataRetentionDays} days in case you change your mind — no card will be charged."
+msgstr "Hech narsa qilmasangiz, biz ish maydoningizni pauza holatiga oʻtkazamiz va fikringiz oʻzgarib qolishi mumkinligiga qarshi maʼlumotlaringizni {dataRetentionDays} kun davomida xavfsiz saqlaymiz — kartangizdan hech qanday toʻlov yechilmaydi."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Add a payment method"
+msgstr "Toʻlov usulini qoʻshish"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "A heads up before your trial ends"
+msgstr "Sinov muddati tugashidan oldin ogohlantirish"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "We don't like surprise charges, so here's a friendly heads up."
+msgstr "Kutilmagan toʻlovlarni yoqtirmaymiz, shuning uchun sizni doʻstona tarzda oldindan ogohlantiramiz."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
+msgstr "<0>{workspaceDisplayName}</0> uchun bepul sinov muddati {formattedDate} kuni yakunlanadi. Agar shu vaqtdan oldin bekor qilmasangiz, hisobdagi kartangizdan yillik rejangiz uchun toʻlov yechiladi."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
+msgstr "<0>{workspaceDisplayName}</0> uchun bepul sinov muddati {formattedDate} kuni yakunlanadi. Agar shu vaqtdan oldin bekor qilmasangiz, hisobdagi kartangizdan oylik rejangiz uchun toʻlov yechiladi."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
+msgstr "Agar Twenty siz uchun mos boʻlsa, hammasi tayyor — siz hech narsa qilishingiz shart emas. Agar u sizga toʻgʻri kelmasa, shu muddatgacha bir marta bosish bilan bekor qilishingiz mumkin va sizdan toʻlov olinmaydi."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "Obunani boshqarish"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset your password 🗝"
+msgstr "Parolingizni qayta oʻrnating 🗝"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set your password 🗝"
+msgstr "Parolingizni oʻrnating 🗝"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset"
+msgstr "Qayta oʻrnatish"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set"
+msgstr "Oʻrnatish"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "Ushbu havola faqat keyingi {duration} davomida amal qiladi. Agar havola ishlamasa, siz tizimga kirish tasdiqlash havolasidan bevosita foydalanishingiz mumkin:"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your plan renews soon"
+msgstr "Rejangiz tez orada yangilanadi"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Just so it's never a surprise, here's a heads up about your annual plan."
+msgstr "Hech qachon kutilmagan holat boʻlmasligi uchun, yillik rejangiz haqida oldindan ogohlantiramiz."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
+msgstr "<0>{workspaceDisplayName}</0> uchun yillik rejangiz {formattedDate} kuni yangilanadi."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
+msgstr "Davom ettirmoqchi boʻlsangiz, hech qanday harakat zarur emas. Agar yangilashni istamasangiz, shu muddatgacha istalgan vaqtda bekor qilishingiz mumkin."
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Twenty nima?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "Bu mijozlar bilan munosabatlarni boshqarish tizimi, bizneslarga mijozlar maʼlumotlari va munosabatlarini samarali boshqarishda yordam beradigan dasturiy taʼminot."
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Website"
+msgstr "Veb-sayt"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Visit Twenty's website"
+msgstr "Twenty veb-saytiga tashrif buyuring"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Github"
+msgstr "Github"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Visit Twenty's GitHub repository"
+msgstr "Twenty’ning GitHub repozitoriyasiga tashrif buyuring"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "User guide"
+msgstr "Foydalanuvchi qoʻllanmasi"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Read Twenty's user guide"
+msgstr "Twenty foydalanuvchi qoʻllanmasini oʻqing"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Developers"
+msgstr "Dasturchilar"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Visit Twenty's developer documentation"
+msgstr "Twenty’ning dasturchilar uchun hujjatlariga tashrif buyuring"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Twenty.com, Public Benefit Corporation"
+msgstr "Twenty.com, Public Benefit Corporation"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "San Francisco / Paris"
+msgstr "San-Fransisko / Parij"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.summary"
+msgstr "serverAdminAccessChanged.summary"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.fullAdmin"
+msgstr "serverAdminAccessChanged.fullAdmin"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.warning"
+msgstr "serverAdminAccessChanged.warning"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.impersonation"
+msgstr "serverAdminAccessChanged.impersonation"
