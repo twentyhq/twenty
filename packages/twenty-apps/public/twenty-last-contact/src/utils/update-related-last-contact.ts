@@ -58,58 +58,18 @@ export const updateRelatedLastContact = async (
     });
   }
 
-  const opportunityIds = await collectRelatedOpportunityIds(client, {
-    personId,
-    companyId,
-  });
-
-  if (opportunityIds.length === 0) {
-    return;
-  }
-
   await client.mutation({
     updateOpportunities: {
       __args: {
         data,
         filter: {
-          and: [{ id: { in: opportunityIds } }, recencyGuard(occurredAt)],
+          and: [
+            { pointOfContactId: { eq: personId } },
+            recencyGuard(occurredAt),
+          ],
         },
       },
       id: true,
     },
   });
-};
-
-const collectRelatedOpportunityIds = async (
-  client: CoreApiClient,
-  { personId, companyId }: { personId: string; companyId: string | null },
-): Promise<string[]> => {
-  const filters: Record<string, { eq: string }>[] = [
-    { pointOfContactId: { eq: personId } },
-  ];
-  if (companyId) {
-    filters.push({ companyId: { eq: companyId } });
-  }
-
-  const results = await Promise.all(
-    filters.map((filter) =>
-      client.query({
-        opportunities: {
-          __args: { filter, first: 200 },
-          edges: { node: { id: true } },
-        },
-      }),
-    ),
-  );
-
-  const ids = new Set<string>();
-  for (const result of results) {
-    for (const edge of result?.opportunities?.edges ?? []) {
-      if (edge?.node?.id) {
-        ids.add(edge.node.id);
-      }
-    }
-  }
-
-  return [...ids];
 };

@@ -16,7 +16,7 @@
 - **Last contact by** — the teammate connected to this person
 - **Last contact item** / **Last email** / **Last meeting** — one click to the actual record
 
-On **Companies** and **Opportunities** you also get **Last contact** and **Last contact item** columns reflecting the most recent email or meeting with a related person (a company's people; an opportunity's point of contact and its company's people).
+On **Companies** and **Opportunities** you also get **Last contact** and **Last contact item** columns reflecting the most recent email or meeting with a related person (a company's people; an opportunity's point of contact).
 
 ## 💳 Billing
 
