@@ -3,6 +3,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useState } from 'react';
 import { type ApplicationVariableOption } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 import { IconInfoCircle } from 'twenty-ui/icon';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { H2Title } from 'twenty-ui/typography';
@@ -55,7 +56,17 @@ export const SettingsApplicationDetailEnvironmentVariablesTable = ({
   const getVariableCategory = (variable: ApplicationVariable) =>
     isNonEmptyString(variable.category) ? variable.category : t`Configuration`;
 
-  const categories = editedEnvVariables.reduce<string[]>((acc, variable) => {
+  const getVariablePosition = (variable: ApplicationVariable) =>
+    isDefined(variable.position) ? variable.position : Number.POSITIVE_INFINITY;
+
+  const sortedEnvVariables = [...editedEnvVariables].sort((a, b) => {
+    const positionDifference = getVariablePosition(a) - getVariablePosition(b);
+    return positionDifference !== 0
+      ? positionDifference
+      : a.key.localeCompare(b.key);
+  });
+
+  const categories = sortedEnvVariables.reduce<string[]>((acc, variable) => {
     const category = getVariableCategory(variable);
     if (!acc.includes(category)) {
       acc.push(category);
@@ -126,7 +137,7 @@ export const SettingsApplicationDetailEnvironmentVariablesTable = ({
   return (
     <>
       {categories.map((category, categoryIndex) => {
-        const variablesInCategory = editedEnvVariables.filter(
+        const variablesInCategory = sortedEnvVariables.filter(
           (variable) => getVariableCategory(variable) === category,
         );
         return (

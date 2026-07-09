@@ -31,6 +31,8 @@ type ApplicationRegistrationVariable {
   isRequired: Boolean!
   type: String!
   options: JSON
+  category: String
+  position: Float
   isFilled: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -302,6 +304,7 @@ type ApplicationVariable {
   type: String!
   options: JSON
   category: String
+  position: Float
 }
 
 type AuthToken {
@@ -1776,6 +1779,8 @@ type ApplicationRegistrationVariableDTO {
   isFilled: Boolean!
   type: String!
   options: JSON
+  category: String
+  position: Float
   createdAt: DateTime!
   updatedAt: DateTime!
 }

@@ -72,6 +72,14 @@ export class ApplicationRegistrationVariableEntity {
   @Column({ nullable: true, type: 'jsonb', default: null })
   options: ApplicationVariableOption[] | null;
 
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true, type: 'text', default: null })
+  category: string | null;
+
+  @Field(() => Number, { nullable: true })
+  @Column({ nullable: true, type: 'double precision', default: null })
+  position: number | null;
+
   @Field()
   get isFilled(): boolean {
     return this.encryptedValue !== '';

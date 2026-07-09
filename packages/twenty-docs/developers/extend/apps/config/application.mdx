@@ -41,7 +41,7 @@ Notes:
 
 Both `applicationVariables` and `serverVariables` accept an optional `type` (and, for `SELECT` / `MULTI_SELECT`, an `options` list). Supported types: `TEXT` (default), `BOOLEAN`, `NUMBER`, `NUMERIC`, `DATE`, `DATE_TIME`, `SELECT`, `MULTI_SELECT`, `ARRAY`, `RAW_JSON`, `RICH_TEXT`.
 
-`applicationVariables` also accept an optional `category` string that groups them under a named section in the workspace settings UI. Variables without a `category` fall under the default `Configuration` section.
+Both `applicationVariables` and `serverVariables` also accept an optional `category` string and an optional `position` number. `category` groups variables under a named section in the workspace settings UI (variables without one fall under the default section), and `position` orders variables within their section (lowest first; variables without one come last).
 
 ```ts src/application-config.ts
 import { defineApplication, FieldType } from 'twenty-sdk/define';

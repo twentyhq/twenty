@@ -34,6 +34,7 @@ export const APPLICATION_FRAGMENT = gql`
       type
       options
       category
+      position
     }
     agents {
       ...AgentFields

@@ -16,6 +16,8 @@ export const FIND_ADMIN_APPLICATION_REGISTRATION_VARIABLES = gql`
       isFilled
       type
       options
+      category
+      position
       createdAt
       updatedAt
     }

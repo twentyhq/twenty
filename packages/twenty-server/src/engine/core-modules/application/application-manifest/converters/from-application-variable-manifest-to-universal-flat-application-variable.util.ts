@@ -17,6 +17,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     type,
     options,
     category,
+    position,
     applicationUniversalIdentifier,
     now,
   }: {
@@ -28,6 +29,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     type?: ApplicationVariableType;
     options?: ApplicationVariableOption[];
     category?: string;
+    position?: number;
     applicationUniversalIdentifier: string;
     now: string;
   }): UniversalFlatApplicationVariable => {
@@ -41,6 +43,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
       type: type ?? FieldMetadataType.TEXT,
       options: options ?? null,
       category: category ?? null,
+      position: position ?? null,
       createdAt: now,
       updatedAt: now,
     };

@@ -18,6 +18,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useState } from 'react';
 import { type ApplicationVariableOption } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { SettingsApplicationVariableInput } from '~/pages/settings/applications/components/SettingsApplicationVariableInput';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
@@ -30,6 +31,9 @@ type ConfigVariable = {
   options?: ApplicationVariableOption[] | null;
   isSecret?: boolean | null;
   isFilled?: boolean | null;
+  description?: string | null;
+  category?: string | null;
+  position?: number | null;
 };
 
 const ConfigVariableInput = ({
@@ -130,9 +134,34 @@ export const SettingsApplicationRegistrationConfigTab = ({
     },
   );
 
-  const variables = fromAdmin
-    ? (adminVariablesData?.findAdminApplicationRegistrationVariables ?? [])
-    : (workspaceVariablesData?.findApplicationRegistrationVariables ?? []);
+  const variables = (
+    fromAdmin
+      ? (adminVariablesData?.findAdminApplicationRegistrationVariables ?? [])
+      : (workspaceVariablesData?.findApplicationRegistrationVariables ?? [])
+  ) as ConfigVariable[];
+
+  const getVariableCategory = (variable: ConfigVariable) =>
+    isNonEmptyString(variable.category)
+      ? variable.category
+      : t`Server Variables`;
+
+  const getVariablePosition = (variable: ConfigVariable) =>
+    isDefined(variable.position) ? variable.position : Number.POSITIVE_INFINITY;
+
+  const sortedVariables = [...variables].sort((a, b) => {
+    const positionDifference = getVariablePosition(a) - getVariablePosition(b);
+    return positionDifference !== 0
+      ? positionDifference
+      : a.key.localeCompare(b.key);
+  });
+
+  const categories = sortedVariables.reduce<string[]>((acc, variable) => {
+    const category = getVariableCategory(variable);
+    if (!acc.includes(category)) {
+      acc.push(category);
+    }
+    return acc;
+  }, []);
 
   const handleUpdate = (id: string, value: string) => {
     if (fromAdmin === true) {
@@ -146,49 +175,64 @@ export const SettingsApplicationRegistrationConfigTab = ({
     }
   };
 
+  if (sortedVariables.length === 0) {
+    return null;
+  }
+
   return (
-    variables.length > 0 && (
-      <Section>
-        <H2Title
-          title={t`Server Variables`}
-          description={t`Server variables are applied to all workspace installations.`}
-        />
-        <StyledContainer>
-          {variables.map((variable) => {
-            const tooltipId = `config-var-desc-${variable.key}`;
-            return (
-              <div key={variable.key}>
-                <StyledLabelRow>
-                  <StyledLabel>{variable.key}</StyledLabel>
-                  {isNonEmptyString(variable.description) && (
-                    <>
-                      <IconInfoCircle
-                        id={tooltipId}
-                        size={theme.icon.size.sm}
-                        color={theme.font.color.tertiary}
-                        style={{ outline: 'none', cursor: 'pointer' }}
-                      />
-                      <AppTooltip
-                        anchorSelect={`#${tooltipId}`}
-                        content={variable.description}
-                        offset={5}
-                        noArrow
-                        place="bottom"
-                        positionStrategy="fixed"
-                        delay={TooltipDelay.shortDelay}
-                      />
-                    </>
-                  )}
-                </StyledLabelRow>
-                <ConfigVariableInput
-                  variable={variable as ConfigVariable}
-                  onUpdate={handleUpdate}
-                />
-              </div>
-            );
-          })}
-        </StyledContainer>
-      </Section>
-    )
+    <>
+      {categories.map((category, categoryIndex) => {
+        const variablesInCategory = sortedVariables.filter(
+          (variable) => getVariableCategory(variable) === category,
+        );
+        return (
+          <Section key={category}>
+            <H2Title
+              title={category}
+              description={
+                categoryIndex === 0
+                  ? t`Server variables are applied to all workspace installations.`
+                  : undefined
+              }
+            />
+            <StyledContainer>
+              {variablesInCategory.map((variable) => {
+                const tooltipId = `config-var-desc-${variable.key}`;
+                return (
+                  <div key={variable.key}>
+                    <StyledLabelRow>
+                      <StyledLabel>{variable.key}</StyledLabel>
+                      {isNonEmptyString(variable.description) && (
+                        <>
+                          <IconInfoCircle
+                            id={tooltipId}
+                            size={theme.icon.size.sm}
+                            color={theme.font.color.tertiary}
+                            style={{ outline: 'none', cursor: 'pointer' }}
+                          />
+                          <AppTooltip
+                            anchorSelect={`#${tooltipId}`}
+                            content={variable.description}
+                            offset={5}
+                            noArrow
+                            place="bottom"
+                            positionStrategy="fixed"
+                            delay={TooltipDelay.shortDelay}
+                          />
+                        </>
+                      )}
+                    </StyledLabelRow>
+                    <ConfigVariableInput
+                      variable={variable}
+                      onUpdate={handleUpdate}
+                    />
+                  </div>
+                );
+              })}
+            </StyledContainer>
+          </Section>
+        );
+      })}
+    </>
   );
 };

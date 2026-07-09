@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { type ApplicationVariableOption } from 'twenty-shared/application';
@@ -40,4 +40,9 @@ export class ApplicationVariableEntityDTO {
   @IsString()
   @Field(() => String, { nullable: true })
   category?: string | null;
+
+  @IsOptional()
+  @IsNumber()
+  @Field(() => Number, { nullable: true })
+  position?: number | null;
 }

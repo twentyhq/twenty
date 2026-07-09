@@ -4,8 +4,8 @@ export type Scalars = {
     UUID: string,
     DateTime: string,
     Boolean: boolean,
-    JSON: Record<string, unknown>,
     Float: number,
+    JSON: Record<string, unknown>,
     Int: number,
     ConnectionCursor: any,
     JSONObject: any,
@@ -34,6 +34,8 @@ export interface ApplicationRegistrationVariable {
     isRequired: Scalars['Boolean']
     type: Scalars['String']
     options?: Scalars['JSON']
+    category?: Scalars['String']
+    position?: Scalars['Float']
     isFilled: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
@@ -251,6 +253,7 @@ export interface ApplicationVariable {
     type: Scalars['String']
     options?: Scalars['JSON']
     category?: Scalars['String']
+    position?: Scalars['Float']
     __typename: 'ApplicationVariable'
 }
 
@@ -1415,6 +1418,8 @@ export interface ApplicationRegistrationVariableDTO {
     isFilled: Scalars['Boolean']
     type: Scalars['String']
     options?: Scalars['JSON']
+    category?: Scalars['String']
+    position?: Scalars['Float']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     __typename: 'ApplicationRegistrationVariableDTO'
@@ -3100,6 +3105,8 @@ export interface ApplicationRegistrationVariableGenqlSelection{
     isRequired?: boolean | number
     type?: boolean | number
     options?: boolean | number
+    category?: boolean | number
+    position?: boolean | number
     isFilled?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
@@ -3312,6 +3319,7 @@ export interface ApplicationVariableGenqlSelection{
     type?: boolean | number
     options?: boolean | number
     category?: boolean | number
+    position?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4527,6 +4535,8 @@ export interface ApplicationRegistrationVariableDTOGenqlSelection{
     isFilled?: boolean | number
     type?: boolean | number
     options?: boolean | number
+    category?: boolean | number
+    position?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     __typename?: boolean | number

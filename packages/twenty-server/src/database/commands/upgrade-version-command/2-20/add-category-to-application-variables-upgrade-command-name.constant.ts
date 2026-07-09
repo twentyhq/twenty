@@ -1,2 +1,0 @@
-export const ADD_CATEGORY_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME =
-  '2.20.0_AddCategoryToApplicationVariablesFastInstanceCommand_1783600000000';

@@ -139,6 +139,8 @@ export class ApplicationRegistrationVariableService {
           isRequired: schema.isRequired ?? false,
           type: schema.type ?? FieldMetadataType.TEXT,
           options: schema.options ?? null,
+          category: schema.category ?? null,
+          position: schema.position ?? null,
         });
       } else {
         await this.variableRepository.save(
@@ -151,6 +153,8 @@ export class ApplicationRegistrationVariableService {
             isRequired: schema.isRequired ?? false,
             type: schema.type ?? FieldMetadataType.TEXT,
             options: schema.options ?? null,
+            category: schema.category ?? null,
+            position: schema.position ?? null,
           }),
         );
       }

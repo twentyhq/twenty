@@ -35,6 +35,7 @@ type TypedApplicationVariable = {
   type?: ApplicationVariableType;
   options?: ApplicationVariableOption[];
   category?: string;
+  position?: number;
 };
 
 type SecretApplicationVariable = SyncableEntityOptions &

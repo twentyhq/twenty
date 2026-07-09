@@ -16,7 +16,7 @@ import {
   type ApplicationVariableType,
 } from 'twenty-shared/application';
 
-import { ADD_CATEGORY_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/add-category-to-application-variables-upgrade-command-name.constant';
+import { ADD_CATEGORY_AND_POSITION_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/add-category-and-position-to-application-variables-upgrade-command-name.constant';
 import { ADD_TYPE_AND_OPTIONS_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-type-and-options-to-application-variables-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
@@ -67,10 +67,17 @@ export class ApplicationVariableEntity extends SyncableEntity {
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      ADD_CATEGORY_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME,
+      ADD_CATEGORY_AND_POSITION_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME,
   })
   @Column({ nullable: true, type: 'text', default: null })
   category: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_CATEGORY_AND_POSITION_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'double precision', default: null })
+  position: number | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -601,6 +601,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             type,
             options: applicationVariableManifest.options,
             category: applicationVariableManifest.category,
+            position: applicationVariableManifest.position,
             applicationUniversalIdentifier,
             now,
           }),
