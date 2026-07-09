@@ -45,6 +45,7 @@ import {
 import { computeFlatDefaultRecordPageLayoutToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-default-record-page-layout-to-create.util';
 import { computeFlatRecordPageFieldsViewToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-record-page-fields-view-to-create.util';
 import { computeFlatViewFieldsToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-view-fields-to-create.util';
+import { DEFAULT_INDEX_VIEW_NAME_TEMPLATE } from 'src/engine/metadata-modules/view/constants/default-index-view-name-template.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -690,7 +691,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     return {
       id: v4(),
       objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
-      name: `All {objectLabelPlural}`,
+      name: DEFAULT_INDEX_VIEW_NAME_TEMPLATE,
       key: ViewKey.INDEX,
       icon: 'IconList',
       type: ViewType.TABLE,
