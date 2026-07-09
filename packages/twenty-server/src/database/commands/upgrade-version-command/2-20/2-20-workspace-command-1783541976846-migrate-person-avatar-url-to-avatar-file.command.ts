@@ -215,8 +215,6 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ActiveOrSuspended
         return 'migrated';
       }
 
-      // The uploaded file is still temporary; the pending-file cleanup cron only
-      // reaps PENDING files, so delete the orphan explicitly to keep re-runs clean.
       await this.safeDeleteUploadedFile(uploadedFile.id, workspaceId);
 
       return 'failed';
