@@ -38,6 +38,87 @@ const createPerson = async (client: CoreApiClient): Promise<string> => {
   return requireId(result.createPerson?.id, 'createPerson');
 };
 
+const createCompany = async (client: CoreApiClient): Promise<string> => {
+  const result = await client.mutation({
+    createCompany: {
+      __args: { data: { name: `[test-last-contact] company ${Date.now()}` } },
+      id: true,
+    },
+  });
+
+  return requireId(result.createCompany?.id, 'createCompany');
+};
+
+const createOpportunity = async (
+  client: CoreApiClient,
+  {
+    pointOfContactId,
+    companyId,
+  }: { pointOfContactId?: string; companyId?: string },
+): Promise<string> => {
+  const result = await client.mutation({
+    createOpportunity: {
+      __args: {
+        data: {
+          name: `[test-last-contact] opportunity ${Date.now()}`,
+          ...(pointOfContactId ? { pointOfContactId } : {}),
+          ...(companyId ? { companyId } : {}),
+        },
+      },
+      id: true,
+    },
+  });
+
+  return requireId(result.createOpportunity?.id, 'createOpportunity');
+};
+
+const setPersonCompany = async (
+  client: CoreApiClient,
+  { personId, companyId }: { personId: string; companyId: string },
+): Promise<void> => {
+  await client.mutation({
+    updatePerson: {
+      __args: { id: personId, data: { companyId } },
+      id: true,
+    },
+  });
+};
+
+type RelatedLastContact = {
+  lastContactAt: string | null;
+  lastContactItemMessageId: string | null;
+  lastContactItemCalendarEventId: string | null;
+};
+
+const getRelatedLastContact = async (
+  client: CoreApiClient,
+  objectNameSingular: 'company' | 'opportunity',
+  recordId: string,
+): Promise<RelatedLastContact> => {
+  const result = await client.query({
+    [objectNameSingular]: {
+      __args: { filter: { id: { eq: recordId } } },
+      id: true,
+      lastContactAt: true,
+      lastContactItemMessage: { id: true },
+      lastContactItemCalendarEvent: { id: true },
+    },
+  });
+
+  const record = result[objectNameSingular] as {
+    lastContactAt?: string | null;
+    lastContactItemMessage?: { id: string } | null;
+    lastContactItemCalendarEvent?: { id: string } | null;
+  } | null;
+
+  return {
+    lastContactAt: record?.lastContactAt ?? null,
+    lastContactItemMessageId: record?.lastContactItemMessage?.id ?? null,
+    lastContactItemCalendarEventId:
+      record?.lastContactItemCalendarEvent?.id ?? null,
+  };
+};
+
 const createCalendarEvent = async (
   client: CoreApiClient,
   { startsAt, isCanceled = false }: { startsAt: string; isCanceled?: boolean },
@@ -329,6 +410,8 @@ describe('last contact handlers', () => {
   const createdMessageAssociationIds: string[] = [];
   const createdMessageIds: string[] = [];
   const createdPersonIds: string[] = [];
+  const createdOpportunityIds: string[] = [];
+  const createdCompanyIds: string[] = [];
 
   const createLinkedMessage = async (
     receivedAt: string,
@@ -476,12 +559,26 @@ describe('last contact handlers', () => {
     }
     createdMessageIds.length = 0;
 
+    for (const id of createdOpportunityIds) {
+      await client
+        .mutation({ destroyOpportunity: { __args: { id }, id: true } })
+        .catch(() => {});
+    }
+    createdOpportunityIds.length = 0;
+
     for (const id of createdPersonIds) {
       await client
         .mutation({ destroyPerson: { __args: { id }, id: true } })
         .catch(() => {});
     }
     createdPersonIds.length = 0;
+
+    for (const id of createdCompanyIds) {
+      await client
+        .mutation({ destroyCompany: { __args: { id }, id: true } })
+        .catch(() => {});
+    }
+    createdCompanyIds.length = 0;
   });
 
   it('should expose a lastContactAt field on people, unset by default', async () => {
@@ -762,6 +859,109 @@ describe('last contact handlers', () => {
       lastEmailId: outboundMessageId,
       lastMeetingId: calendarEventId,
     });
+  });
+
+  it("sets the company and opportunity last contact from a related person's email", async () => {
+    const workspaceMemberId = await getWorkspaceMemberId(client);
+    const companyId = await createCompany(client);
+    createdCompanyIds.push(companyId);
+    const personId = await createPerson(client);
+    createdPersonIds.push(personId);
+    await setPersonCompany(client, { personId, companyId });
+    const opportunityId = await createOpportunity(client, {
+      pointOfContactId: personId,
+      companyId,
+    });
+    createdOpportunityIds.push(opportunityId);
+    const receivedAt = new Date(Date.now() - 2 * DAY_IN_MS).toISOString();
+
+    const messageId = await recordEmail({
+      personId,
+      workspaceMemberId,
+      receivedAt,
+      direction: 'outbound',
+    });
+
+    const companyContact = await getRelatedLastContact(
+      client,
+      'company',
+      companyId,
+    );
+    expect(asTime(companyContact.lastContactAt)).toBe(asTime(receivedAt));
+    expect(companyContact.lastContactItemMessageId).toBe(messageId);
+    expect(companyContact.lastContactItemCalendarEventId).toBeNull();
+
+    const opportunityContact = await getRelatedLastContact(
+      client,
+      'opportunity',
+      opportunityId,
+    );
+    expect(asTime(opportunityContact.lastContactAt)).toBe(asTime(receivedAt));
+    expect(opportunityContact.lastContactItemMessageId).toBe(messageId);
+  });
+
+  it("lets a later meeting supersede an email on the company's last contact", async () => {
+    const workspaceMemberId = await getWorkspaceMemberId(client);
+    const companyId = await createCompany(client);
+    createdCompanyIds.push(companyId);
+    const personId = await createPerson(client);
+    createdPersonIds.push(personId);
+    await setPersonCompany(client, { personId, companyId });
+    const emailAt = new Date(Date.now() - 3 * DAY_IN_MS).toISOString();
+    const meetingAt = new Date(Date.now() - 2 * DAY_IN_MS).toISOString();
+
+    await recordEmail({
+      personId,
+      workspaceMemberId,
+      receivedAt: emailAt,
+      direction: 'outbound',
+    });
+    const calendarEventId = await recordMeeting({
+      personId,
+      workspaceMemberId,
+      startsAt: meetingAt,
+    });
+
+    const companyContact = await getRelatedLastContact(
+      client,
+      'company',
+      companyId,
+    );
+    expect(asTime(companyContact.lastContactAt)).toBe(asTime(meetingAt));
+    expect(companyContact.lastContactItemCalendarEventId).toBe(calendarEventId);
+    expect(companyContact.lastContactItemMessageId).toBeNull();
+  });
+
+  it('does not overwrite a company last contact with an older interaction', async () => {
+    const workspaceMemberId = await getWorkspaceMemberId(client);
+    const companyId = await createCompany(client);
+    createdCompanyIds.push(companyId);
+    const personId = await createPerson(client);
+    createdPersonIds.push(personId);
+    await setPersonCompany(client, { personId, companyId });
+    const newerAt = new Date(Date.now() - DAY_IN_MS).toISOString();
+    const olderAt = new Date(Date.now() - 3 * DAY_IN_MS).toISOString();
+
+    const newerMessageId = await recordEmail({
+      personId,
+      workspaceMemberId,
+      receivedAt: newerAt,
+      direction: 'outbound',
+    });
+    await recordEmail({
+      personId,
+      workspaceMemberId,
+      receivedAt: olderAt,
+      direction: 'inbound',
+    });
+
+    const companyContact = await getRelatedLastContact(
+      client,
+      'company',
+      companyId,
+    );
+    expect(asTime(companyContact.lastContactAt)).toBe(asTime(newerAt));
+    expect(companyContact.lastContactItemMessageId).toBe(newerMessageId);
   });
 
   it('lets a later meeting supersede an earlier outbound email', async () => {

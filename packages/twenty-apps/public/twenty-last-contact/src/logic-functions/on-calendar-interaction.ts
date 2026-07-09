@@ -29,7 +29,7 @@ export default defineLogicFunction({
   universalIdentifier: CALENDAR_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'on-calendar-interaction',
   description:
-    "Updates a person's last-contacted fields when a new calendar event participant is created (past events only).",
+    "Updates a person's last-contacted fields, and the last contact on their company and opportunities, when a new calendar event participant is created (past events only).",
   timeoutSeconds: 60,
   databaseEventTriggerSettings: {
     eventName: 'calendarEventParticipant.updated',

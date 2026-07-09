@@ -104,6 +104,7 @@ import { CreateWorkflowVersionCoreTableFastInstanceCommand } from './2-20/2-20-i
 import { BackfillNameFieldIsSystemSideEffectSlowInstanceCommand } from './2-20/2-20-instance-command-slow-1783529458168-backfill-name-field-is-system-side-effect';
 import { RenameIsFeaturedToIsVettedOnApplicationRegistrationFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783527064000-rename-is-featured-to-is-vetted-on-application-registration';
 import { AddIsSystemSideEffectToSearchFieldMetadataFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783580127637-add-is-system-side-effect-to-search-field-metadata';
+import { CreateWorkflowCoreTableFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783603454479-create-workflow-core-table';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -210,4 +211,5 @@ export const INSTANCE_COMMANDS = [
   BackfillNameFieldIsSystemSideEffectSlowInstanceCommand,
   RenameIsFeaturedToIsVettedOnApplicationRegistrationFastInstanceCommand,
   AddIsSystemSideEffectToSearchFieldMetadataFastInstanceCommand,
+  CreateWorkflowCoreTableFastInstanceCommand,
 ];
