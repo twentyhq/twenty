@@ -42,7 +42,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
       ? [SEED_APPLE_WORKSPACE_ID]
       : [SEED_APPLE_WORKSPACE_ID, SEED_YCOMBINATOR_WORKSPACE_ID];
 
-    const failedWorkspaceIds: string[] = [];
+    const seedErrors: { workspaceId: string; error: Error }[] = [];
 
     for (const workspaceId of workspaceIds) {
       try {
@@ -52,15 +52,17 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
       } catch (error) {
         this.logger.error(error);
         this.logger.error(error.stack);
-        failedWorkspaceIds.push(workspaceId);
+        seedErrors.push({ workspaceId, error: error as Error });
       }
     }
 
     // Failing silently here would let dependent steps (e.g. integration
     // tests) run against a half-seeded database.
-    if (failedWorkspaceIds.length > 0) {
+    if (seedErrors.length > 0) {
       throw new Error(
-        `Workspace seeding failed for: ${failedWorkspaceIds.join(', ')}`,
+        `Workspace seeding failed for: ${seedErrors
+          .map(({ workspaceId, error }) => `${workspaceId} (${error.message})`)
+          .join(', ')}`,
       );
     }
   }

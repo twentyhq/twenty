@@ -64,8 +64,12 @@ export class PromiseMemoizer<T> {
       }
     })();
 
-    registeredPromise = newPromise;
-    this.pending.set(cacheKey, newPromise);
+    // Only share this promise with other callers if no clear ran since this
+    // call started; otherwise they would join a pre-clear, stale computation.
+    if (this.clearGeneration === generationAtStart) {
+      registeredPromise = newPromise;
+      this.pending.set(cacheKey, newPromise);
+    }
 
     return newPromise;
   }
@@ -87,6 +91,8 @@ export class PromiseMemoizer<T> {
     onDelete?: (value: T) => Promise<void> | void,
   ): Promise<void> {
     this.clearGeneration += 1;
+
+    this.pending.delete(cacheKey);
 
     await this.deleteKey(cacheKey, onDelete);
   }

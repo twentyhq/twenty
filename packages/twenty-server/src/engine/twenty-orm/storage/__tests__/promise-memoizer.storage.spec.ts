@@ -193,6 +193,34 @@ describe('PromiseMemoizer', () => {
       await memoizer.clearKey('non-existent-key-1', mockOnDelete);
       expect(mockOnDelete).not.toHaveBeenCalled();
     });
+
+    it('should not return a pre-clear in-flight promise after clearKey', async () => {
+      let resolveFactory: (value: string) => void;
+      const factoryPromise = new Promise<string>((resolve) => {
+        resolveFactory = resolve;
+      });
+
+      mockFactory.mockImplementation(() => factoryPromise);
+
+      const inFlightPromise = memoizer.memoizePromiseAndExecute(
+        'test-key-1',
+        mockFactory,
+      );
+
+      await memoizer.clearKey('test-key-1');
+
+      mockFactory.mockResolvedValue('fresh-value');
+
+      const result = await memoizer.memoizePromiseAndExecute(
+        'test-key-1',
+        mockFactory,
+      );
+
+      resolveFactory!('stale-value');
+      await inFlightPromise;
+
+      expect(result).toBe('fresh-value');
+    });
   });
 
   describe('clearKeys', () => {
