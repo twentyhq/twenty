@@ -10,10 +10,8 @@ import {
   streamText,
   type SystemModelMessage,
   type ToolSet,
-  type UIDataTypes,
-  type UIMessage,
-  type UITools,
 } from 'ai';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
@@ -66,6 +64,7 @@ import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/se
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import { type ExtractedFile } from 'src/engine/metadata-modules/ai/ai-chat/types/extracted-file.type';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
+import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
 import {
   getCacheProviderOptions,
   getCallLevelProviderOptions,
@@ -83,7 +82,7 @@ export type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
   userWorkspaceId: string;
   threadId?: string;
-  messages: UIMessage<unknown, UIDataTypes, UITools>[];
+  messages: ExtendedUIMessage[];
   browsingContext: BrowsingContextType | null;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
   onCompaction?: () => void;
@@ -236,7 +235,7 @@ export class ChatExecutionService {
 
     const isCodeInterpreterEnabled = this.codeInterpreterService.isEnabled();
 
-    let processedMessages: UIMessage[] = replaceUnsupportedFileParts(
+    let processedMessages: ExtendedUIMessage[] = replaceUnsupportedFileParts(
       messages,
       modelConfig.modalities,
       isCodeInterpreterEnabled,
@@ -271,6 +270,11 @@ export class ChatExecutionService {
         contextString,
       );
     }
+
+    processedMessages = injectMessageTimestamps(
+      processedMessages,
+      userContext.timezone,
+    );
 
     const systemPrompt = this.systemPromptBuilder.buildFullPrompt(
       toolCatalog,
@@ -622,9 +626,9 @@ export class ChatExecutionService {
   }
 
   private injectBrowsingContextIntoLastUserMessage(
-    messages: UIMessage[],
+    messages: ExtendedUIMessage[],
     contextString: string,
-  ): UIMessage[] {
+  ): ExtendedUIMessage[] {
     const lastUserIndex = messages
       .map((message) => message.role)
       .lastIndexOf('user');
