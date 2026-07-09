@@ -5,6 +5,8 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { EMAIL_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { pickContactTeamMemberId } from 'src/utils/pick-contact-team-member';
 import { updatePersonForInteraction } from 'src/utils/update-person-last-contact';
+import { updateRelatedCompanyLastInteraction } from 'src/utils/update-related-company-last-interaction';
+import { updateRelatedOpportunityLastInteraction } from 'src/utils/update-related-opportunity-last-interaction';
 
 type MessageParticipantUpdate = {
   personId?: string | null;
@@ -69,6 +71,9 @@ const handler = async (
     workspaceMemberId,
     direction,
   });
+
+  await updateRelatedCompanyLastInteraction(client, personId, occurredAt);
+  await updateRelatedOpportunityLastInteraction(client, personId, occurredAt);
 };
 
 export default defineLogicFunction({

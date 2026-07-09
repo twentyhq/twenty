@@ -1,4 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isNewer } from 'src/utils/is-newer.util';
 
 export type InteractionKind = 'email' | 'meeting';
 export type InteractionDirection = 'outbound' | 'inbound';
@@ -9,11 +10,6 @@ export type Interaction = {
   itemId: string;
   workspaceMemberId: string | null;
 } & ({ kind: 'email'; direction: InteractionDirection } | { kind: 'meeting' });
-
-const isNewer = (
-  candidate: string,
-  current: string | null | undefined,
-): boolean => !current || current < candidate;
 
 export const updatePersonForInteraction = async (
   client: CoreApiClient,
