@@ -9,6 +9,7 @@ export const QUEUE_WORKER_OPTIONS: Partial<
     concurrency: 20,
     lockDuration: AI_STREAM_LOCK_DURATION_MS,
     maxStalledCount: 0,
+    boundedShutdownDrain: true,
   },
   [MessageQueue.logicFunctionQueue]: { concurrency: 10 },
 };
