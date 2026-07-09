@@ -67,35 +67,21 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     };
 
     if (isDefined(labelIdentifierFieldMetadataUniversalIdentifier)) {
-      const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
-        flatEntityMaps: allFlatEntityMaps.flatFieldMetadataMaps,
-        universalIdentifier: labelIdentifierFieldMetadataUniversalIdentifier,
-      });
-
-      if (!isDefined(flatFieldMetadata)) {
-        throw new FlatEntityMapsException(
-          `Could not resolve labelIdentifierFieldMetadataUniversalIdentifier to labelIdentifierFieldMetadataId: no fieldMetadata found for universal identifier ${labelIdentifierFieldMetadataUniversalIdentifier}`,
-          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-        );
-      }
-
-      transpiledUpdate.labelIdentifierFieldMetadataId = flatFieldMetadata.id;
+      transpiledUpdate.labelIdentifierFieldMetadataId =
+        this.resolveFieldMetadataIdOrThrow({
+          context,
+          universalIdentifier: labelIdentifierFieldMetadataUniversalIdentifier,
+          foreignKeyName: 'labelIdentifierFieldMetadataId',
+        });
     }
 
     if (isDefined(imageIdentifierFieldMetadataUniversalIdentifier)) {
-      const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
-        flatEntityMaps: allFlatEntityMaps.flatFieldMetadataMaps,
-        universalIdentifier: imageIdentifierFieldMetadataUniversalIdentifier,
-      });
-
-      if (!isDefined(flatFieldMetadata)) {
-        throw new FlatEntityMapsException(
-          `Could not resolve imageIdentifierFieldMetadataUniversalIdentifier to imageIdentifierFieldMetadataId: no fieldMetadata found for universal identifier ${imageIdentifierFieldMetadataUniversalIdentifier}`,
-          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-        );
-      }
-
-      transpiledUpdate.imageIdentifierFieldMetadataId = flatFieldMetadata.id;
+      transpiledUpdate.imageIdentifierFieldMetadataId =
+        this.resolveFieldMetadataIdOrThrow({
+          context,
+          universalIdentifier: imageIdentifierFieldMetadataUniversalIdentifier,
+          foreignKeyName: 'imageIdentifierFieldMetadataId',
+        });
     }
 
     return {
@@ -104,6 +90,44 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       entityId: flatObjectMetadata.id,
       update: transpiledUpdate,
     };
+  }
+
+  private resolveFieldMetadataIdOrThrow({
+    context,
+    universalIdentifier,
+    foreignKeyName,
+  }: {
+    context: WorkspaceMigrationActionRunnerArgs<UniversalUpdateObjectAction>;
+    universalIdentifier: string;
+    foreignKeyName: string;
+  }): string {
+    const {
+      allFlatEntityMaps,
+      preallocatedIdByUniversalIdentifierByMetadataName,
+    } = context;
+
+    const preallocatedFieldMetadataId =
+      preallocatedIdByUniversalIdentifierByMetadataName?.fieldMetadata?.[
+        universalIdentifier
+      ];
+
+    if (isDefined(preallocatedFieldMetadataId)) {
+      return preallocatedFieldMetadataId;
+    }
+
+    const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
+      flatEntityMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+      universalIdentifier,
+    });
+
+    if (!isDefined(flatFieldMetadata)) {
+      throw new FlatEntityMapsException(
+        `Could not resolve ${foreignKeyName}: no fieldMetadata found for universal identifier ${universalIdentifier}`,
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+
+    return flatFieldMetadata.id;
   }
 
   async executeForMetadata(
