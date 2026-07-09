@@ -23,16 +23,27 @@ export class MarketplaceQueryService {
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
-  async findManyMarketplaceApps(
-    isVetted?: boolean,
-  ): Promise<MarketplaceAppDTO[]> {
+  async findManyMarketplaceApps({
+    universalIdentifiers,
+    isVetted,
+  }: {
+    universalIdentifiers?: string[];
+    isVetted?: boolean;
+  } = {}): Promise<MarketplaceAppDTO[]> {
     const appsByUniversalIdentifier =
       (await this.coreEntityCacheService.get(
         'marketplaceCatalog',
         MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
       )) ?? {};
 
-    const apps = Object.values(appsByUniversalIdentifier);
+    const apps = isNonEmptyArray(universalIdentifiers)
+      ? universalIdentifiers
+          .map(
+            (universalIdentifier) =>
+              appsByUniversalIdentifier[universalIdentifier],
+          )
+          .filter(isDefined)
+      : Object.values(appsByUniversalIdentifier);
 
     if (!isDefined(isVetted)) {
       return apps;

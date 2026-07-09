@@ -6532,7 +6532,13 @@ export default {
                 }
             ],
             "findManyMarketplaceApps": [
-                228
+                228,
+                {
+                    "universalIdentifiers": [
+                        1,
+                        "[String!]"
+                    ]
+                }
             ],
             "findMarketplaceAppDetail": [
                 232,

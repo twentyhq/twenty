@@ -28,8 +28,17 @@ export class MarketplaceResolver {
   ) {}
 
   @Query(() => [MarketplaceAppDTO])
-  async findManyMarketplaceApps(): Promise<MarketplaceAppDTO[]> {
-    return this.marketplaceQueryService.findManyMarketplaceApps();
+  async findManyMarketplaceApps(
+    @Args({
+      name: 'universalIdentifiers',
+      type: () => [String],
+      nullable: true,
+    })
+    universalIdentifiers?: string[],
+  ): Promise<MarketplaceAppDTO[]> {
+    return this.marketplaceQueryService.findManyMarketplaceApps({
+      universalIdentifiers,
+    });
   }
 
   @Query(() => MarketplaceAppDetailDTO)
