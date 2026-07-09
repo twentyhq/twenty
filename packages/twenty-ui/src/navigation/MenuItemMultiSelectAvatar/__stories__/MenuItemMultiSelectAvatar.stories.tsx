@@ -32,9 +32,6 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
-// Base UI re-dispatches a bubbling click on the checkbox's hidden input, so a
-// single checkbox click must still result in exactly one selection change and
-// not toggle the row's handler twice.
 export const ClickingCheckboxSelectsOnce: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
