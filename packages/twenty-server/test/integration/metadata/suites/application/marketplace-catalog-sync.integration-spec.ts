@@ -22,7 +22,7 @@ const MARKETPLACE_QUERY = `
       sourcePackage
       category
       logo
-      isFeatured
+      isVetted
     }
   }
 `;

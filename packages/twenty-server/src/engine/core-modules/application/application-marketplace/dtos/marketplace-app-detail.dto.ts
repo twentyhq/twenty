@@ -43,7 +43,7 @@ export class MarketplaceAppDetailDTO {
 
   @IsBoolean()
   @Field(() => Boolean)
-  isFeatured: boolean;
+  isVetted: boolean;
 
   @IsOptional()
   @IsString()

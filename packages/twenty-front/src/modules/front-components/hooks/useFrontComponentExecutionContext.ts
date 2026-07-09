@@ -203,6 +203,7 @@ export const useFrontComponentExecutionContext = ({
         openAskAiPageWithPreprompt({
           text: params.preprompt.text,
           mode: params.preprompt.mode,
+          model: params.preprompt.model,
         });
 
         if (params.shouldResetSearchState === true) {

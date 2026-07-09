@@ -125,7 +125,9 @@ export class ConnectedAccountTokenEncryptionService {
     connectionParameters: PlaintextImapSmtpCaldavParams;
     workspaceId: string;
   }): EncryptedImapSmtpCaldavParams {
-    const result: EncryptedImapSmtpCaldavParams = {};
+    const result: EncryptedImapSmtpCaldavParams = {
+      name: connectionParameters.name ?? null,
+    };
 
     for (const protocol of ACCOUNT_TYPES) {
       const params = connectionParameters[protocol];
@@ -150,7 +152,9 @@ export class ConnectedAccountTokenEncryptionService {
     connectionParameters: EncryptedImapSmtpCaldavParams;
     workspaceId: string;
   }): PlaintextImapSmtpCaldavParams {
-    const result: PlaintextImapSmtpCaldavParams = {};
+    const result: PlaintextImapSmtpCaldavParams = {
+      name: connectionParameters.name ?? null,
+    };
 
     for (const protocol of ACCOUNT_TYPES) {
       const params = connectionParameters[protocol];
