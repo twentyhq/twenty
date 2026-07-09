@@ -49,14 +49,13 @@ export default defineCommandMenuItem({
   universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
   shortLabel: 'Hello',
   label: 'Hello World',
-  icon: 'IconBolt',
   isPinned: true,
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
 });
 ```
 
-Après la synchronisation avec `yarn twenty dev` (ou en exécutant une seule fois `yarn twenty dev --once`), l'action rapide apparaît dans le coin supérieur droit de la page :
+Après la synchronisation avec `yarn twenty dev` (ou en exécutant une seule fois `yarn twenty apply`), l'action rapide apparaît dans le coin supérieur droit de la page :
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Bouton d'action rapide dans le coin supérieur droit" />
@@ -88,11 +87,11 @@ Les composants frontaux existent en deux modes de rendu contrôlés par l’opti
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useRecordId, enqueueSnackbar } from 'twenty-sdk/front-component';
+import { useSelectedRecordIds, enqueueSnackbar } from 'twenty-sdk/front-component';
 import { useEffect } from 'react';
 
 const SyncTracker = () => {
-  const recordId = useRecordId();
+  const [recordId] = useSelectedRecordIds();
 
   useEffect(() => {
     enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
@@ -116,7 +115,7 @@ Comme le composant retourne `null`, Twenty n'affiche pas de conteneur pour celui
 
 Le package `twenty-sdk` fournit quatre composants utilitaires Command conçus pour les composants frontaux headless. Chaque composant exécute une action au montage, gère les erreurs en affichant une notification snackbar et démonte automatiquement le composant frontal une fois terminé.
 
-Importez-les depuis `twenty-sdk/command` :
+Importez-les depuis `twenty-sdk/front-component` :
 
 * **`Command`** — Exécute un callback asynchrone via la prop `execute`.
 * **`CommandLink`** — Navigue vers un chemin d'application. Props : `to`, `params`, `queryParams`, `options`.
@@ -127,8 +126,8 @@ Voici un exemple complet d'un composant frontal headless utilisant `Command` pou
 
 ```tsx src/front-components/run-action.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Command } from 'twenty-sdk/command';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { Command } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const RunAction = () => {
   const execute = async () => {
@@ -160,7 +159,6 @@ import { defineCommandMenuItem } from 'twenty-sdk/define';
 export default defineCommandMenuItem({
   universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
   label: 'Run my action',
-  icon: 'IconPlayerPlay',
   frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
 });
 ```
@@ -169,7 +167,7 @@ Et un exemple utilisant `CommandModal` pour demander une confirmation avant l'ex
 
 ```tsx src/front-components/delete-draft.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { CommandModal } from 'twenty-sdk/command';
+import { CommandModal } from 'twenty-sdk/front-component';
 
 const DeleteDraft = () => {
   const execute = async () => {
@@ -202,7 +200,7 @@ Les composants front s’exécutent côté navigateur dans un Web Worker isolé 
 
 Une fonction logique déclarée avec `httpRouteTriggerSettings` est accessible via HTTP à son chemin de route. Twenty injecte dans le worker l’URL de base à partir de laquelle vos fonctions sont servies sous la forme de `TWENTY_FUNCTIONS_URL`, ainsi que le `TWENTY_APP_ACCESS_TOKEN` qui authentifie l’appel. Il n’existe pas encore de client SDK dédié pour invoquer vos propres fonctions, donc appelez-les avec un simple `fetch` :
 
-> **Sur Twenty Cloud, les fonctions logiques déclenchées par HTTP sont servies sur un domaine dédié par espace de travail** à l’adresse `https://\<your-workspace-subdomain>.twenty.com\<path>` — c’est exactement ce à quoi `TWENTY_FUNCTIONS_URL` correspond. Pour les appelants externes, copiez l’URL exacte à partir des paramètres **HTTP trigger** de la fonction ou de l’onglet **Settings** de l’application.
+> **Sur Twenty Cloud, les fonctions logiques déclenchées par HTTP sont servies sur un domaine dédié par espace de travail** à l’adresse `https://\<your-workspace-subdomain>.withtwenty.com\<path>` — c’est exactement ce à quoi `TWENTY_FUNCTIONS_URL` correspond. Pour les appelants externes, copiez l’URL exacte à partir des paramètres **HTTP trigger** de la fonction ou de l’onglet **Settings** de l’application.
 
 <Warning>
   L’ancienne route de fonction `/s/` est **obsolète** et sera **désactivée le 2026-07-24**. Utilisez plutôt `TWENTY_FUNCTIONS_URL` (ci-dessus), et migrez toutes les URL `/s/` en dur avant cette date. La route `/s/` reste disponible pour l’auto-hébergement.
@@ -212,7 +210,7 @@ Un composant front sans interface (headless) peut effectuer l’appel au montage
 
 ```tsx src/front-components/sync-prs.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Command } from 'twenty-sdk/command';
+import { Command } from 'twenty-sdk/front-component';
 
 const SyncPrs = () => {
   const execute = async () => {
@@ -316,13 +314,13 @@ Dans votre composant, utilisez les hooks du SDK pour accéder à l'utilisateur a
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   useUserId,
-  useRecordId,
+  useSelectedRecordIds,
   useFrontComponentId,
 } from 'twenty-sdk/front-component';
 
 const RecordInfo = () => {
   const userId = useUserId();
-  const recordId = useRecordId();
+  const [recordId] = useSelectedRecordIds();
   const componentId = useFrontComponentId();
 
   return (
@@ -405,12 +403,11 @@ Voici un exemple qui utilise l'API hôte pour afficher une snackbar et fermer le
 
 ```tsx src/front-components/archive-record.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useRecordId } from 'twenty-sdk/front-component';
-import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { enqueueSnackbar, closeSidePanel, useSelectedRecordIds } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const ArchiveRecord = () => {
-  const recordId = useRecordId();
+  const [recordId] = useSelectedRecordIds();
 
   const handleArchive = async () => {
     const client = new CoreApiClient();
@@ -451,10 +448,10 @@ export default defineFrontComponent({
 Utilisez `useSelectedRecordIds()` pour gérer plusieurs enregistrements sélectionnés. C'est utile pour les opérations groupées :
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const BulkExport = () => {
   const selectedRecordIds = useSelectedRecordIds();
@@ -492,12 +489,19 @@ export default defineFrontComponent({
   name: 'bulk-export',
   description: 'Export selected records',
   component: BulkExport,
-  command: {
-    universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
-    label: 'Bulk Export',
-    availabilityType: 'RECORD_SELECTION',
-    conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
-  },
+});
+```
+
+Affichez-la avec un [élément de menu de commande](/l/fr/developers/extend/apps/layout/command-menu-items) limité aux sélections d'enregistrements :
+
+```ts src/command-menu-items/bulk-export.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
+  label: 'Bulk Export',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
 });
 ```
 

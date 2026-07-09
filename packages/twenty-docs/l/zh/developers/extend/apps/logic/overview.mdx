@@ -40,13 +40,13 @@ Twenty 应用的 **逻辑层** 是实际*运行*的代码——用于响应 HTTP
 
 逻辑函数选择一个或多个触发器——下面的每一项都是 `defineLogicFunction()` 上的一个独立字段：
 
-| 触发器         | 触发时机                                    | 设置                              |
-| ----------- | --------------------------------------- | ------------------------------- |
-| **HTTP 路由** | 请求命中你的 `/s/\<path>` 端点 | `httpRouteTriggerSettings`      |
-| **Cron**    | 匹配到一个 CRON 表达式时                         | `cronTriggerSettings`           |
-| **数据库事件**   | 当工作区记录被创建、更新或删除时                        | `databaseEventTriggerSettings`  |
-| **AI 工具**   | 某个 Twenty AI 功能决定调用你的函数时                | `toolTriggerSettings`           |
-| **工作流动作**   | 当工作流步骤调用你的函数时                           | `workflowActionTriggerSettings` |
+| 触发器         | 触发时机                     | 设置                              |
+| ----------- | ------------------------ | ------------------------------- |
+| **HTTP 路由** | 一个请求点击你的公開的 URL          | `httpRouteTriggerSettings`      |
+| **Cron**    | 匹配到一个 CRON 表达式时          | `cronTriggerSettings`           |
+| **数据库事件**   | 当工作区记录被创建、更新或删除时         | `databaseEventTriggerSettings`  |
+| **AI 工具**   | 某个 Twenty AI 功能决定调用你的函数时 | `toolTriggerSettings`           |
+| **工作流动作**   | 当工作流步骤调用你的函数时            | `workflowActionTriggerSettings` |
 
 函数在隔离的 Node.js 进程沙箱中运行，并通过限定在 [`defineApplication()`](/l/zh/developers/extend/apps/config/application) 上声明角色范围内的类型化 API 客户端访问工作区。
 

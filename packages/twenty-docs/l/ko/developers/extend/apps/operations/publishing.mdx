@@ -229,7 +229,7 @@ yarn twenty dev:catalog-sync
 # yarn twenty dev:catalog-sync --remote production
 ```
 
-마켓플레이스에 표시되는 메타데이터는 `defineApplication()` 구성에서 가져옵니다 — `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl`, `termsUrl` 같은 필드입니다.
+마켓플레이스에 표시되는 메타데이터는 `defineApplication()` 구성에서 가져옵니다. 위의 [Marketplace metadata](#marketplace-metadata)를 참고하세요.
 
 <Note>
 앱에서 `defineApplication()`에 `aboutDescription`을 정의하지 않으면, 마켓플레이스는 소개 페이지 콘텐츠로 npm에 게시된 패키지의 `README.md`를 자동으로 사용합니다. 즉, npm과 Twenty 마켓플레이스 모두에서 하나의 README만 관리하면 됩니다. 마켓플레이스에서 다른 설명을 사용하려면 `aboutDescription`을 명시적으로 설정하세요.

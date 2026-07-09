@@ -9,7 +9,12 @@ Aynı işleyici HTTP isteklerine de yanıt verebilir. İki rota ekleyeceğiz:
 * belge oluşturmak için arayüzün çağırdığı bir **POST** uç noktası ve
 * belgeyi yazdırılabilir bir web sayfası olarak oluşturan herkese açık bir **GET** uç noktası.
 
-Her ikisi de `httpRouteTriggerSettings` kullanır. Uygulama rotaları Twenty sunucunuzda `/s` altında sunulur (ör. `http://localhost:2020/s/documents/generate`).
+Her ikisi de `httpRouteTriggerSettings` kullanır. Yerel geliştirme sunucusunda, uygulama yönlendirmeleri `/s` öneki altında sunulur (örneğin, `http://localhost:2020/s/documents/generate`).
+
+<Note>
+Twenty Cloud üzerinde yönlendirmeler, çalışma alanına ayrılmış fonksiyon alan adında sunulur — Twenty'nin `/s` öneki olmadan `TWENTY_FUNCTIONS_URL` olarak eklediği URL'de. `/s` öneki orada kullanım dışıdır ve yalnızca kendi barındırılan ve yerel örneklerde kalmıştır.
+[Mantık fonksiyonunu çağırma](/l/tr/developers/extend/apps/layout/front-components#calling-a-logic-function) bölümüne bakın.
+</Note>
 
 ## POST rotası — istek üzerine oluşturma
 

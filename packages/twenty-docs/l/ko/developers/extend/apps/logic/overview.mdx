@@ -40,13 +40,13 @@ Twenty 앱의 **로직 계층**은 *실행되는* 코드로, HTTP 요청, 크론
 
 로직 함수는 하나 이상의 트리거를 선택합니다. 아래의 각 항목은 `defineLogicFunction()`의 개별 필드입니다:
 
-| 트리거            | 실행 시점                                          | 설정                              |
-| -------------- | ---------------------------------------------- | ------------------------------- |
-| **HTTP 경로**    | 요청이 `/s/\<path>` 엔드포인트에 도달할 때 | `httpRouteTriggerSettings`      |
-| **크론**         | CRON 표현식이 일치할 때                                | `cronTriggerSettings`           |
-| **데이터베이스 이벤트** | 워크스페이스 레코드가 생성, 업데이트 또는 삭제될 때                  | `databaseEventTriggerSettings`  |
-| **AI 도구**      | Twenty AI 기능이 사용자의 함수를 호출하기로 결정할 때             | `toolTriggerSettings`           |
-| **워크플로우 액션**   | 워크플로우 단계가 사용자의 함수를 호출할 때                       | `workflowActionTriggerSettings` |
+| 트리거            | 실행 시점                              | 설정                              |
+| -------------- | ---------------------------------- | ------------------------------- |
+| **HTTP 경로**    | 요청이 함수의 공개 URL에 도달합니다.             | `httpRouteTriggerSettings`      |
+| **크론**         | CRON 표현식이 일치할 때                    | `cronTriggerSettings`           |
+| **데이터베이스 이벤트** | 워크스페이스 레코드가 생성, 업데이트 또는 삭제될 때      | `databaseEventTriggerSettings`  |
+| **AI 도구**      | Twenty AI 기능이 사용자의 함수를 호출하기로 결정할 때 | `toolTriggerSettings`           |
+| **워크플로우 액션**   | 워크플로우 단계가 사용자의 함수를 호출할 때           | `workflowActionTriggerSettings` |
 
 함수는 격리된 Node.js 프로세스의 샌드박스 환경에서 실행되며, [`defineApplication()`](/l/ko/developers/extend/apps/config/application)에 선언된 역할 범위에 맞춰 지정된 타입의 API 클라이언트를 통해 워크스페이스에 접근합니다.
 
