@@ -5,6 +5,7 @@
 ## ✨ What you get
 
 - **Seven live columns** — last contact, who reached out (you or them), the owning teammate, and the exact email or meeting behind it
+- **Last email on Companies and Opportunities** — the most recent email with any related person, so accounts and deals show the same activity you already see in their Emails tab
 - **Zero upkeep** — updates in real time from every synced email and meeting, with your full history backfilled the moment you install
 - **Follow-ups made obvious** — sort by recency to catch cold relationships and see who owes whom a reply
 
@@ -14,6 +15,8 @@
 - **Last outbound** / **Last inbound** — when you last reached out vs. when they last did
 - **Last contact by** — the teammate connected to this person
 - **Last contact item** / **Last email** / **Last meeting** — one click to the actual record
+
+On **Companies** and **Opportunities** you also get a **Last email** column pointing to the most recent email exchanged with a related person.
 
 ## 💳 Billing
 

@@ -1,6 +1,6 @@
 export const APP_DISPLAY_NAME = 'Last contact';
 export const APP_DESCRIPTION =
-  'Know where every relationship stands. Adds Last contact, Last outbound, Last inbound, Last contact by, and the last email and meeting to People, kept up to date automatically from your synced emails and meetings.';
+  'Know where every relationship stands. Adds Last contact, Last outbound, Last inbound, Last contact by, and the last email and meeting to People, plus the last email on Companies and Opportunities, kept up to date automatically from your synced emails and meetings.';
 export const APPLICATION_UNIVERSAL_IDENTIFIER = '66a504cc-0a75-410e-a43f-cdeae1db1522';
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER = '34187abe-1b98-4153-85cd-4808e0aebf30';
 export const LAST_CONTACT_AT_FIELD_UNIVERSAL_IDENTIFIER =
@@ -50,3 +50,25 @@ export const LAST_MEETING_FIELD_UNIVERSAL_IDENTIFIER =
   'c8882287-f638-4a96-a235-1819e793e373';
 export const LAST_MEETING_FOR_PEOPLE_ON_CALENDAR_EVENT_FIELD_UNIVERSAL_IDENTIFIER =
   '257dd874-d834-403d-9cb8-f3db7e587d02';
+
+export const COMPANY_LAST_EMAIL_AT_FIELD_UNIVERSAL_IDENTIFIER =
+  '767ad717-9675-4955-bb6c-969a69c0455a';
+export const COMPANY_LAST_EMAIL_FIELD_UNIVERSAL_IDENTIFIER =
+  'a90bbf5e-954a-4801-96c8-5833f840b6ff';
+export const LAST_EMAIL_FOR_COMPANIES_ON_MESSAGE_FIELD_UNIVERSAL_IDENTIFIER =
+  'b14911f7-90a5-4960-b513-d4d72640bf36';
+export const COMPANY_LAST_EMAIL_AT_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
+  'd84be5b8-2eaa-4f81-bb86-df1a10275780';
+export const COMPANY_LAST_EMAIL_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
+  'ecf220d6-1e45-4931-9883-bcb951ee3e4f';
+
+export const OPPORTUNITY_LAST_EMAIL_AT_FIELD_UNIVERSAL_IDENTIFIER =
+  'b51dbba4-0871-4e89-b9ff-6dfe3f6daedf';
+export const OPPORTUNITY_LAST_EMAIL_FIELD_UNIVERSAL_IDENTIFIER =
+  '5b5afb2a-8b9f-4129-bf1b-d02867214d5b';
+export const LAST_EMAIL_FOR_OPPORTUNITIES_ON_MESSAGE_FIELD_UNIVERSAL_IDENTIFIER =
+  '16711b36-49c2-4756-8e33-52ca86eb8caa';
+export const OPPORTUNITY_LAST_EMAIL_AT_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
+  '95fc1222-92d4-42e2-8c3d-3f94ae2c8087';
+export const OPPORTUNITY_LAST_EMAIL_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
+  'e0053488-1e4d-417c-b30f-fc22d905cc7d';

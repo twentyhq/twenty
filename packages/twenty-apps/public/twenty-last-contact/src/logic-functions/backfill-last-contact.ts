@@ -17,6 +17,12 @@ type MeetingInteraction = {
   startsAt: string;
 };
 type MessageMemberInfo = { ownerId: string; fromIsMember: boolean };
+type LastEmail = { at: string; id: string };
+type OpportunityRow = {
+  id: string;
+  pointOfContactId: string | null;
+  companyId: string | null;
+};
 
 type PersonAgg = {
   lastContactAt?: string;
@@ -30,6 +36,7 @@ type PersonAgg = {
 type AggByPersonId = Map<string, PersonAgg>;
 
 type PersonUpdateData = Record<string, string | null>;
+type RecordUpdate = { id: string; data: PersonUpdateData };
 
 const chunk = <T>(items: T[], size: number): T[][] => {
   const chunks: T[][] = [];
@@ -237,6 +244,86 @@ const collectCalendarOwners = async (
   return ownerByCalendarEventId;
 };
 
+const collectPersonCompanies = async (
+  client: CoreApiClient,
+): Promise<Map<string, string>> => {
+  const companyByPersonId = new Map<string, string>();
+  let after: string | undefined;
+
+  do {
+    const { people } = await client.query({
+      people: {
+        __args: {
+          filter: { companyId: { is: 'NOT_NULL' } },
+          first: PAGE_SIZE,
+          after,
+        },
+        edges: { node: { id: true, companyId: true } },
+        pageInfo: { hasNextPage: true, endCursor: true },
+      },
+    });
+
+    for (const edge of people?.edges ?? []) {
+      const { id, companyId } = edge.node;
+      if (id && companyId) {
+        companyByPersonId.set(id, companyId);
+      }
+    }
+
+    after = people?.pageInfo.hasNextPage
+      ? (people.pageInfo.endCursor ?? undefined)
+      : undefined;
+  } while (after);
+
+  return companyByPersonId;
+};
+
+const collectOpportunities = async (
+  client: CoreApiClient,
+): Promise<OpportunityRow[]> => {
+  const opportunities: OpportunityRow[] = [];
+  let after: string | undefined;
+
+  do {
+    const { opportunities: page } = await client.query({
+      opportunities: {
+        __args: { first: PAGE_SIZE, after },
+        edges: {
+          node: { id: true, pointOfContactId: true, companyId: true },
+        },
+        pageInfo: { hasNextPage: true, endCursor: true },
+      },
+    });
+
+    for (const edge of page?.edges ?? []) {
+      const { id, pointOfContactId, companyId } = edge.node;
+      if (id) {
+        opportunities.push({
+          id,
+          pointOfContactId: pointOfContactId ?? null,
+          companyId: companyId ?? null,
+        });
+      }
+    }
+
+    after = page?.pageInfo.hasNextPage
+      ? (page.pageInfo.endCursor ?? undefined)
+      : undefined;
+  } while (after);
+
+  return opportunities;
+};
+
+const mostRecentEmail = (
+  candidates: (LastEmail | undefined)[],
+): LastEmail | undefined =>
+  candidates.reduce<LastEmail | undefined>((best, candidate) => {
+    if (!candidate) {
+      return best;
+    }
+    return !best || candidate.at > best.at ? candidate : best;
+  }, undefined);
+
 const foldEmail = (
   agg: PersonAgg,
   receivedAt: string,
@@ -306,12 +393,33 @@ const buildData = (agg: PersonAgg): PersonUpdateData => ({
       : {}),
 });
 
+const applyUpdates = async (
+  client: CoreApiClient,
+  mutationName: string,
+  updates: RecordUpdate[],
+): Promise<void> => {
+  for (const batch of chunk(updates, UPDATE_BATCH_SIZE)) {
+    await Promise.all(
+      batch.map(({ id, data }) =>
+        client.mutation({
+          [mutationName]: {
+            __args: { id, data },
+            id: true,
+          },
+        }),
+      ),
+    );
+  }
+};
+
 const handler = async (): Promise<void> => {
   const client = new CoreApiClient();
 
-  const [emails, meetings] = await Promise.all([
+  const [emails, meetings, personCompanies, opportunities] = await Promise.all([
     collectEmailInteractions(client),
     collectMeetingInteractions(client),
+    collectPersonCompanies(client),
+    collectOpportunities(client),
   ]);
 
   const messageIds = [...new Set(emails.map((email) => email.messageId))];
@@ -352,30 +460,61 @@ const handler = async (): Promise<void> => {
     );
   }
 
-  const updates = [...aggByPersonId.entries()].map(([personId, agg]) => ({
-    personId,
+  const personUpdates = [...aggByPersonId.entries()].map(([personId, agg]) => ({
+    id: personId,
     data: buildData(agg),
   }));
 
-  for (const batch of chunk(updates, UPDATE_BATCH_SIZE)) {
-    await Promise.all(
-      batch.map(({ personId, data }) =>
-        client.mutation({
-          updatePerson: {
-            __args: { id: personId, data },
-            id: true,
-          },
-        }),
-      ),
-    );
+  const companyLastEmail = new Map<string, LastEmail>();
+  for (const [personId, agg] of aggByPersonId) {
+    if (!agg.lastEmail) {
+      continue;
+    }
+    const companyId = personCompanies.get(personId);
+    if (!companyId) {
+      continue;
+    }
+    const existing = companyLastEmail.get(companyId);
+    if (!existing || agg.lastEmail.at > existing.at) {
+      companyLastEmail.set(companyId, agg.lastEmail);
+    }
   }
+
+  const opportunityUpdates = opportunities
+    .map((opportunity): RecordUpdate | undefined => {
+      const pointOfContactEmail = opportunity.pointOfContactId
+        ? aggByPersonId.get(opportunity.pointOfContactId)?.lastEmail
+        : undefined;
+      const companyEmail = opportunity.companyId
+        ? companyLastEmail.get(opportunity.companyId)
+        : undefined;
+      const lastEmail = mostRecentEmail([pointOfContactEmail, companyEmail]);
+      return lastEmail
+        ? {
+            id: opportunity.id,
+            data: { lastEmailAt: lastEmail.at, lastEmailId: lastEmail.id },
+          }
+        : undefined;
+    })
+    .filter((update): update is RecordUpdate => Boolean(update));
+
+  const companyUpdates: RecordUpdate[] = [...companyLastEmail.entries()].map(
+    ([companyId, email]) => ({
+      id: companyId,
+      data: { lastEmailAt: email.at, lastEmailId: email.id },
+    }),
+  );
+
+  await applyUpdates(client, 'updatePerson', personUpdates);
+  await applyUpdates(client, 'updateCompany', companyUpdates);
+  await applyUpdates(client, 'updateOpportunity', opportunityUpdates);
 };
 
 export default definePostInstallLogicFunction({
   universalIdentifier: BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'backfill-last-contact',
   description:
-    'Fills person last-contact fields from existing messages and calendar events after installation.',
+    'Fills person last-contact fields, and company and opportunity last-email fields, from existing messages and calendar events after installation.',
   timeoutSeconds: 300,
   shouldRunOnVersionUpgrade: true,
   handler,
