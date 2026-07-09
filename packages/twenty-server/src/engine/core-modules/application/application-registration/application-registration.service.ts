@@ -5,8 +5,14 @@ import crypto from 'crypto';
 
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
-import { ILike, IsNull, type FindOptionsWhere, type Repository } from 'typeorm';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  ILike,
+  In,
+  IsNull,
+  type FindOptionsWhere,
+  type Repository,
+} from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -465,9 +471,9 @@ export class ApplicationRegistrationService {
     return this.applicationRegistrationRepository.save(registration);
   }
 
-  async findManyListedCatalogCards(): Promise<
-    ApplicationRegistrationCatalogCard[]
-  > {
+  async findManyListedCatalogCards(
+    universalIdentifiers?: string[],
+  ): Promise<ApplicationRegistrationCatalogCard[]> {
     const registrations = await this.applicationRegistrationRepository.find({
       select: [
         'id',
@@ -483,6 +489,9 @@ export class ApplicationRegistrationService {
       where: {
         isListed: true,
         sourceType: ApplicationRegistrationSourceType.NPM,
+        ...(isNonEmptyArray(universalIdentifiers)
+          ? { universalIdentifier: In(universalIdentifiers) }
+          : {}),
       },
     });
 

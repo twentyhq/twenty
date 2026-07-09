@@ -33,12 +33,19 @@ export class MarketplaceQueryService {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  async findManyMarketplaceApps(): Promise<MarketplaceAppDTO[]> {
+  async findManyMarketplaceApps(
+    universalIdentifiers?: string[],
+  ): Promise<MarketplaceAppDTO[]> {
     const registrations =
-      await this.applicationRegistrationService.findManyListedCatalogCards();
+      await this.applicationRegistrationService.findManyListedCatalogCards(
+        universalIdentifiers,
+      );
 
     if (registrations.length === 0) {
-      if (!this.hasSyncBeenEnqueued) {
+      const isFilteredByUniversalIdentifiers =
+        isNonEmptyArray(universalIdentifiers);
+
+      if (!isFilteredByUniversalIdentifiers && !this.hasSyncBeenEnqueued) {
         this.hasSyncBeenEnqueued = true;
         this.logger.log(
           'No marketplace registrations found, enqueuing one-time sync job',

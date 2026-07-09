@@ -8,8 +8,15 @@ import { useCallback, useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { InstallAppsContent } from '~/pages/onboarding/InstallAppsContent';
 
+const ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS =
+  ONBOARDING_INSTALLABLE_APPS.map((app) => app.universalIdentifier);
+
 export const InstallApps = () => {
-  const { data: marketplaceApps, isLoading, error } = useMarketplaceApps();
+  const {
+    data: marketplaceApps,
+    isLoading,
+    error,
+  } = useMarketplaceApps(ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS);
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const {
     selectedUniversalIdentifiers,
