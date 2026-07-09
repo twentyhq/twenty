@@ -691,6 +691,7 @@ export class StreamAgentChatJob {
         threadId,
         workspaceId,
         streamUsage,
+        modelId: modelConfig.modelId,
       });
     }
 
@@ -779,6 +780,7 @@ export class StreamAgentChatJob {
     threadId,
     workspaceId,
     streamUsage,
+    modelId,
   }: {
     responseMessage: Omit<ExtendedUIMessage, 'id'>;
     isAborted: boolean;
@@ -791,6 +793,7 @@ export class StreamAgentChatJob {
       inputTokens: number;
       outputTokens: number;
     };
+    modelId: string;
   }): void {
     const reason = isAborted
       ? 'user-cancelled'
@@ -804,7 +807,7 @@ export class StreamAgentChatJob {
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.AiChatTurnFailed,
         amount: 1,
-        attributes: { failure_phase: 'no_text' },
+        attributes: { model: modelId, failure_phase: 'no_text' },
       });
     }
 

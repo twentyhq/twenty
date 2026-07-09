@@ -32,6 +32,7 @@ import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/a
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
+import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
 import {
   AiException,
   AiExceptionCode,
@@ -278,10 +279,16 @@ export class AgentChatStreamingService {
       };
     } catch (error) {
       await this.releaseStreamClaim(threadId, workspace.id, streamId);
+      const streamError = mapErrorToStreamError(error);
+
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.AiChatTurnFailed,
         amount: 1,
-        attributes: { model: modelId ?? 'unknown', failure_phase: 'enqueue' },
+        attributes: {
+          model: modelId ?? 'unknown',
+          failure_phase: 'enqueue',
+          error_code: streamError.code,
+        },
       });
       throw error;
     }
@@ -400,10 +407,16 @@ export class AgentChatStreamingService {
       await this.releaseStreamClaim(threadId, workspace.id, streamId, {
         lastStreamError: thread.lastStreamError,
       });
+      const streamError = mapErrorToStreamError(error);
+
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.AiChatTurnFailed,
         amount: 1,
-        attributes: { model: modelId ?? 'unknown', failure_phase: 'enqueue' },
+        attributes: {
+          model: modelId ?? 'unknown',
+          failure_phase: 'enqueue',
+          error_code: streamError.code,
+        },
       });
       throw error;
     }
@@ -579,10 +592,16 @@ export class AgentChatStreamingService {
       );
     } catch (error) {
       await this.releaseStreamClaim(threadId, workspaceId, streamId);
+      const streamError = mapErrorToStreamError(error);
+
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.AiChatTurnFailed,
         amount: 1,
-        attributes: { model: 'unknown', failure_phase: 'enqueue' },
+        attributes: {
+          model: 'unknown',
+          failure_phase: 'enqueue',
+          error_code: streamError.code,
+        },
       });
       throw error;
     }
