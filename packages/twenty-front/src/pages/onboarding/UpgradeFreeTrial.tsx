@@ -28,7 +28,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Info, Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type Billing,
   type BillingPlanKey,
@@ -38,6 +38,10 @@ import {
 const StyledPage = styled(StyledOnboardingStepPage)`
   gap: ${themeCssVariables.spacing[5]};
   padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[8]};
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[4]};
+  }
 `;
 
 const StyledCards = styled(StyledOnboardingContentBlock)`

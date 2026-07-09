@@ -22,6 +22,8 @@ import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/appli
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
+import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
+import { VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -64,6 +66,7 @@ export class ApplicationDevelopmentResolver {
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
+    private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly fileStorageService: FileStorageService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -117,6 +120,22 @@ export class ApplicationDevelopmentResolver {
       manifest.application.universalIdentifier,
       workspaceId,
     );
+
+    const versionValidation =
+      await this.applicationVersionValidationService.validateWorkspaceCompatibility(
+        {
+          requiredServerVersion:
+            manifest.application.requiredServerVersionRange ?? undefined,
+          workspaceId,
+        },
+      );
+
+    if (!versionValidation.compatible) {
+      throw new ApplicationException(
+        versionValidation.message,
+        VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE[versionValidation.reason],
+      );
+    }
 
     if (dryRun === true) {
       const { workspaceMigration } =

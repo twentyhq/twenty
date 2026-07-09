@@ -51,8 +51,12 @@ export default defineLogicFunction({
 ```
 
 可用的触发器类型：
-* **httpRoute**：在 **`/s/` 端点**下通过 HTTP 路径和方法公开你的函数：
-> 例如 `path: '/post-card/create'` 可在 `https://your-twenty-server.com/s/post-card/create` 调用
+* **httpRoute**：在你工作区的 HTTP 路径和方法上显示你的函数。**函数基础的 URL** ——`TWENTY_FUNCTIONS_URL` (在20个云上) a 专用工作区：
+> 例如 `path: '/post-card/create'` 可在 `https://your-workspace.withtwenty.com/post-card/create` 调用
+
+<Warning>
+旧的 `/s/` 前缀路由 (`https://your-twentserver.com/s/post-card/create`) **在 20 Cloud** 上被废弃，并将在 **2026-07-24**被停用。 它仍可用于不配置一个孤立函数域的自托管和本地实例——在设置时使用 `TWENTY_FUNCTIONS_URL` 。 然后回到\<server-url>/s/\<path>。
+</Warning>
 
 <Note>
 要从（无头）前端组件调用由路由触发的逻辑函数，请参见[调用逻辑函数](/l/zh/developers/extend/apps/layout/front-components#calling-a-logic-function)。

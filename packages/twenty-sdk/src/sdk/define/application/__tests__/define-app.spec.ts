@@ -73,6 +73,33 @@ describe('defineApplication', () => {
     expect(warnings[0]).toMatch(/defineApplicationRole/);
   });
 
+  it('should warn when category is not a known ApplicationCategory', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      category: 'NotARealCategory',
+    });
+
+    const warnings = result.warnings ?? [];
+
+    expect(result.success).toBe(true);
+    expect(
+      warnings.some((warning) => warning.includes('NotARealCategory')),
+    ).toBe(true);
+  });
+
+  it('should not warn when category is a known ApplicationCategory', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      category: 'Data',
+    });
+
+    expect(result.warnings ?? []).toEqual([]);
+  });
+
   it('should return error when universalIdentifier is missing', () => {
     const config = {
       displayName: 'My App',
