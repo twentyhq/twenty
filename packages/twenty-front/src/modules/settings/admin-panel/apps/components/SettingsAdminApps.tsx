@@ -54,7 +54,7 @@ const StyledShowMoreContainer = styled.div`
 
 const TABLE_GRID = '1fr 100px 100px 100px 40px';
 const TABLE_GRID_MOBILE = '3fr 3fr 1fr 1fr 40px';
-const INITIAL_PAGE_SIZE = 25;
+const INITIAL_PAGE_SIZE = 10;
 const SHOW_MORE_PAGE_SIZE = 100;
 
 export const SettingsAdminApps = () => {
