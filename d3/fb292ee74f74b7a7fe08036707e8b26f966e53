@@ -1,0 +1,25 @@
+packages/twenty-server/test/integration/metadata/suites/object-metadata/failing-create-one-object-metadata-v2.integration-spec.ts
+  s_0cd87c29efaba6::t_878d8e665bff95 15,17,22-41
+packages/twenty-server/test/integration/metadata/suites/object-metadata/common/failing-object-metadata-creation-test-case.type.ts
+  s_0cd87c29efaba6::t_07fc6d28279d3f 1-14
+packages/twenty-server/test/integration/metadata/suites/object-metadata/common/object-metadata-names-failing-tests-cases.ts
+  s_0cd87c29efaba6::t_c82edc8c14c8e1 3,5-135,137-148,150
+packages/twenty-server/test/integration/metadata/suites/object-metadata/common/object-metadata-label-failing-tests-cases.ts
+  s_0cd87c29efaba6::t_3e7515e2e5f6bd 3,5-70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d3fb292ee74f74b7a7fe08036707e8b26f966e53",
+  "prompts": {},
+  "sessions": {
+    "s_0cd87c29efaba6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c9fb3032-f885-4660-a0b6-b45aac02aa9b",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
