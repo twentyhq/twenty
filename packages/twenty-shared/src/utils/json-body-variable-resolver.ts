@@ -31,11 +31,6 @@ const encodeResolvedValue = (value: unknown, insideString: boolean): string => {
   return JSON.stringify(isDefined(value) ? value : null);
 };
 
-// Resolves {{variables}} inside a raw JSON body while keeping the result valid
-// JSON. Values injected inside a JSON string literal are escaped so that
-// quotes, backslashes or newlines coming from the resolved value don't break
-// the surrounding JSON. Values injected outside of a string literal are encoded
-// as JSON so numbers, booleans and objects keep their type.
 export const resolveJsonBodyVariables = (
   jsonBody: string,
   context: Record<string, unknown>,
