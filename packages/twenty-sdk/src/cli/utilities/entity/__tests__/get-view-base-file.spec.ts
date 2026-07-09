@@ -1,6 +1,7 @@
 import { getViewBaseFile } from '@/cli/utilities/entity/entity-view-template';
+import { getFieldUniversalIdentifier } from 'twenty-shared/application';
 
-const APPLICATION_UNIVERSAL_IDENTIFIER = 'app-abc-123';
+const APPLICATION_UNIVERSAL_IDENTIFIER = 'a1a2a3a4-a5a6-4000-8000-000000000001';
 
 const getTestViewBaseFile = (
   overrides: Omit<
@@ -127,10 +128,11 @@ describe('getViewBaseFile', () => {
     expect(matches!.length).toBeGreaterThanOrEqual(2);
   });
 
-  it('should emit a generateDefaultFieldUniversalIdentifier call for fields using defaultFieldName', () => {
+  it('should resolve a deterministic universal identifier literal for fields using defaultFieldName', () => {
+    const objectUniversalIdentifier = 'b1b2b3b4-b5b6-4000-8000-000000000001';
     const result = getTestViewBaseFile({
       name: 'view-default-field',
-      objectUniversalIdentifier: 'obj-abc-123',
+      objectUniversalIdentifier,
       fields: [
         {
           defaultFieldName: 'createdAt',
@@ -139,18 +141,20 @@ describe('getViewBaseFile', () => {
       ],
     });
 
+    const expectedFieldUniversalIdentifier = getFieldUniversalIdentifier({
+      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      objectUniversalIdentifier,
+      name: 'createdAt',
+    });
+
+    expect(result).toContain("import { defineView } from 'twenty-sdk/define';");
+    expect(result).not.toContain('generateDefaultFieldUniversalIdentifier');
     expect(result).toContain(
-      "import {\n  defineView,\n  generateDefaultFieldUniversalIdentifier,\n} from 'twenty-sdk/define';",
+      `fieldMetadataUniversalIdentifier: '${expectedFieldUniversalIdentifier}'`,
     );
-    expect(result).toContain(
-      'fieldMetadataUniversalIdentifier: generateDefaultFieldUniversalIdentifier({',
-    );
-    expect(result).toContain("applicationUniversalIdentifier: 'app-abc-123'");
-    expect(result).toContain("objectUniversalIdentifier: 'obj-abc-123'");
-    expect(result).toContain("fieldName: 'createdAt'");
   });
 
-  it('should not import generateDefaultFieldUniversalIdentifier when no field uses defaultFieldName', () => {
+  it('should not import any helper when no field uses defaultFieldName', () => {
     const result = getTestViewBaseFile({
       name: 'view-literal-only',
       fields: [

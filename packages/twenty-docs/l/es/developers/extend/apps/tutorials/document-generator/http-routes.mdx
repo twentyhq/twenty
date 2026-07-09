@@ -9,8 +9,15 @@ El mismo manejador también puede responder a peticiones HTTP. Añadiremos dos r
 * un endpoint **POST** para generar un documento, y
 * un endpoint público **GET** que renderiza un documento como una página web imprimible.
 
-Ambos usan `httpRouteTriggerSettings`. Las rutas de la aplicación se sirven bajo `/s` en tu servidor
-Veenty (por ejemplo, `http://localhost:2020/s/documents/generate`).
+Ambos usan `httpRouteTriggerSettings`. En el servidor dev local, las rutas de la aplicación son
+servidas bajo el prefijo `/s` (por ejemplo, `http://localhost:2020/s/documents/generate`).
+
+<Note>
+En 20 nubes las rutas se sirven en el dominio
+de funciones dedicadas del espacio de trabajo — la URL Veinte inyectos como `TWENTY_FUNCTIONS_URL`, sin prefijo `/s`. El prefijo
+`/s` está obsoleto allí y sólo permanece para instancias locales y autoalojadas.
+Ver [Llamar a una función lógica](/l/es/developers/extend/apps/layout/front-components#calling-a-logic-function).
+</Note>
 
 ## Ruta POST — generar bajo demanda
 

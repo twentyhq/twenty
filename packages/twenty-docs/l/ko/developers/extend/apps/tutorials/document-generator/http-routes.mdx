@@ -9,7 +9,12 @@ description: HTTP를 통해 함수를 트리거하고 문서를 웹 페이지로
 * UI가 문서를 생성하기 위해 호출하는 **POST** 엔드포인트, 그리고
 * 문서를 인쇄 가능한 웹 페이지로 렌더링하는 공개 **GET** 엔드포인트입니다.
 
-둘 다 `httpRouteTriggerSettings`를 사용합니다. 앱 경로는 Twenty 서버의 `/s` 아래에서 제공됩니다 (예: `http://localhost:2020/s/documents/generate`).
+둘 다 `httpRouteTriggerSettings`를 사용합니다. 로컬 개발 서버에서는 앱 라우트가 `/s` 프리픽스 아래에서 제공됩니다(예: `http://localhost:2020/s/documents/generate`).
+
+<Note>
+Twenty Cloud에서는 워크스페이스 전용 Functions 도메인에서 라우트가 제공됩니다. 이 도메인은 Twenty가 `/s` 프리픽스 없이 `TWENTY_FUNCTIONS_URL`로 주입하는 URL입니다. 해당 환경에서 `/s` 프리픽스는 더 이상 사용되지(deprecated) 않으며, 셀프 호스팅 및 로컬 인스턴스에서만 유지됩니다.
+[로직 함수 호출하기](/l/ko/developers/extend/apps/layout/front-components#calling-a-logic-function)를 참고하세요.
+</Note>
 
 ## POST 경로 — 온디맨드로 생성하기
 

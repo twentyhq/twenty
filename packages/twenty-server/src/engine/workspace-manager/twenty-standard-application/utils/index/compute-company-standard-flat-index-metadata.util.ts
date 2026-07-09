@@ -50,6 +50,7 @@ export const buildCompanyStandardFlatIndexMetadatas = ({
       indexName: 'searchVectorGinIndex',
       relatedFieldNames: ['searchVector'],
       indexType: IndexType.GIN,
+      hasDeterministicUniversalIdentifier: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
