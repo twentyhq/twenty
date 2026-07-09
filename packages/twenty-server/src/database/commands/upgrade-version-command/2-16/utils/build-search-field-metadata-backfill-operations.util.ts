@@ -96,10 +96,6 @@ export const buildSearchFieldMetadataBackfillOperations = ({
 
     candidateSearchFieldMetadataKeys.add(searchFieldMetadataKey);
 
-    // Deliberate behavior change of this committed command: the shared builder now
-    // derives the universal identifier deterministically (uuid v5) instead of v4.
-    // Safe here because rows created with either derivation are converged by the
-    // 2-20 reconcile-search-field-metadata re-own command that always runs after.
     flatSearchFieldMetadatasToCreate.push(
       buildFlatSearchFieldMetadataForField({
         flatObjectMetadata,
