@@ -38,13 +38,17 @@ const getQueues = (): Queue[] => {
   return queues;
 };
 
-const getDueSoonDelayedJobCount = async (queue: Queue): Promise<number> => {
-  const delayedJobs = await queue.getDelayed();
-  const dueSoonThreshold = Date.now() + DELAYED_JOB_DUE_SOON_HORIZON_MS;
+// BullMQ stores delayed jobs in a zset scored with the due timestamp shifted
+// 12 bits left (see bullmq's getDelayedScore.lua), so the score is the source
+// of truth for when a job actually runs, including retry/backoff reschedules.
+const DELAYED_SCORE_PER_MS = 0x1000;
 
-  return delayedJobs.filter(
-    (job) => job.timestamp + (job.delay ?? 0) <= dueSoonThreshold,
-  ).length;
+const getDueSoonDelayedJobCount = async (queue: Queue): Promise<number> => {
+  const client = await queue.client;
+  const dueSoonThreshold = Date.now() + DELAYED_JOB_DUE_SOON_HORIZON_MS;
+  const maxScore = (dueSoonThreshold + 1) * DELAYED_SCORE_PER_MS - 1;
+
+  return client.zcount(queue.toKey('delayed'), 0, maxScore);
 };
 
 const getPendingJobCountsByQueue = async (): Promise<

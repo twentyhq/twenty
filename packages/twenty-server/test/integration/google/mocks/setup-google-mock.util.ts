@@ -11,6 +11,7 @@ import {
   GOOGLE_TOKEN_URLS,
   googleTokenHandlers,
 } from 'test/integration/google/mocks/google-token-handlers.util';
+import { googleWebhookSubscriptionHandlers } from 'test/integration/google/mocks/google-webhook-subscription-handlers.util';
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
 import {
   createMockEntityStore,
@@ -51,6 +52,7 @@ export const setupGoogleMock = ({
     ...googleTokenHandlers(),
     ...googleIdentityHandlers(handle),
     ...googleCalendarEventsHandlers([], 'mock-calendar-sync-token'),
+    ...googleWebhookSubscriptionHandlers(),
     ...gmailMailboxHandlers(inbox, labelStore),
   );
 
