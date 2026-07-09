@@ -19,6 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "測試電子郵件"
+
+#. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Your workspace is paused"
 msgstr "您的工作區已被暫停"
@@ -74,9 +79,19 @@ msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow
 msgstr "{senderName} (<0>{senderEmail}</0>): 請驗證此網域，以允許擁有<1>@{domain}</1>電子郵件地址的使用者在不需要邀請的情況下加入您的工作區。"
 
 #. js-lingui-explicit-id
-#: src/emails/test.email.tsx
-msgid "Test email"
-msgstr "測試電子郵件"
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "加入您的團隊，使用 Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) 已邀請您加入一個名為<1>{workspaceName}</1>的工作區。"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "接受邀請"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -92,21 +107,6 @@ msgstr "禁用"
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Server administrator access changed"
 msgstr "伺服器管理員存取權已變更"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "加入您的團隊，使用 Twenty"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) 已邀請您加入一個名為<1>{workspaceName}</1>的工作區。"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "接受邀請"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -179,6 +179,31 @@ msgid "Start a new workspace"
 msgstr "開始新的工作區"
 
 #. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset your password 🗝"
+msgstr "重設您的密碼 🗝"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set your password 🗝"
+msgstr "設置您的密碼🗝"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset"
+msgstr "重設"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set"
+msgstr "設置"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "此鏈接僅在接下來的 {duration} 內有效。如果鏈接無效，您可以直接使用登錄驗證鏈接："
+
+#. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
 msgstr "您的試用即將結束"
@@ -235,29 +260,14 @@ msgid "Manage subscription"
 msgstr "管理訂閱"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset your password 🗝"
-msgstr "重設您的密碼 🗝"
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "什麼是Twenty？"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set your password 🗝"
-msgstr "設置您的密碼🗝"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset"
-msgstr "重設"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set"
-msgstr "設置"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "此鏈接僅在接下來的 {duration} 內有效。如果鏈接無效，您可以直接使用登錄驗證鏈接："
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "它是一個CRM，是一款幫助企業有效管理客戶資料和關係的軟件。"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -278,16 +288,6 @@ msgstr "您針對 <0>{workspaceDisplayName}</0> 的年度方案將於 {formatted
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "如果您想繼續使用，無需採取任何行動。若您不想續約，您可以在此之前的任何時間取消。"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "什麼是Twenty？"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "它是一個CRM，是一款幫助企業有效管理客戶資料和關係的軟件。"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

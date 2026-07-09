@@ -19,6 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "Testowy email"
+
+#. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Your workspace is paused"
 msgstr "Twoje miejsce pracy jest wstrzymane"
@@ -74,9 +79,19 @@ msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow
 msgstr "{senderName} (<0>{senderEmail}</0>): Proszę zweryfikować tę domenę, aby umożliwić użytkownikom z adresami e-mail <1>@{domain}</1> dołączenie do Twojej przestrzeni roboczej bez potrzeby zaproszenia."
 
 #. js-lingui-explicit-id
-#: src/emails/test.email.tsx
-msgid "Test email"
-msgstr "Testowy email"
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Dołącz do swojego zespołu w Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) zaprosił Cię do dołączenia do przestrzeni roboczej o nazwie <1>{workspaceName}</1>."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "Zaakceptuj zaproszenie"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -92,21 +107,6 @@ msgstr "Wyłączony"
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Server administrator access changed"
 msgstr "Zmieniono dostęp administratora serwera"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Dołącz do swojego zespołu w Twenty"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) zaprosił Cię do dołączenia do przestrzeni roboczej o nazwie <1>{workspaceName}</1>."
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "Zaakceptuj zaproszenie"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -179,6 +179,31 @@ msgid "Start a new workspace"
 msgstr "Rozpocznij nowe miejsce pracy"
 
 #. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset your password 🗝"
+msgstr "Zresetuj swoje hasło 🗝"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set your password 🗝"
+msgstr "Ustaw swoje hasło 🗝"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset"
+msgstr "Zresetuj"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set"
+msgstr "Ustaw"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "Ten link jest ważny tylko przez {duration}. Jeśli link nie działa, można bezpośrednio użyć linku weryfikacyjnego logowania:"
+
+#. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
 msgstr "Twój okres próbny wkrótce się kończy"
@@ -235,29 +260,14 @@ msgid "Manage subscription"
 msgstr "Zarządzaj subskrypcją"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset your password 🗝"
-msgstr "Zresetuj swoje hasło 🗝"
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Czym jest Twenty?"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set your password 🗝"
-msgstr "Ustaw swoje hasło 🗝"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset"
-msgstr "Zresetuj"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set"
-msgstr "Ustaw"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "Ten link jest ważny tylko przez {duration}. Jeśli link nie działa, można bezpośrednio użyć linku weryfikacyjnego logowania:"
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "To jest CRM, oprogramowanie pomagające firmom w zarządzaniu danymi i relacjami z klientami."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -278,16 +288,6 @@ msgstr "Twój roczny plan dla <0>{workspaceDisplayName}</0> zostanie odnowiony {
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "Jeśli chcesz kontynuować, nie są wymagane żadne działania. Jeśli wolisz nie odnawiać, możesz anulować w dowolnym momencie przed tą datą."
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Czym jest Twenty?"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "To jest CRM, oprogramowanie pomagające firmom w zarządzaniu danymi i relacjami z klientami."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

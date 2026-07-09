@@ -9139,20 +9139,29 @@ msgstr ""
 
 #. js-lingui-id: WOXdI6
 #: src/pages/settings/applications/utils/getCustomApplicationDescription.ts
-msgid "Host your workspace's customizations and overrides.\n\n"
+msgid ""
+"Host your workspace's customizations and overrides.\n"
+"\n"
 "#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n\n"
+"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
+"\n"
 "- Custom objects and fields for your own data model\n"
 "- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n\n"
+"- Logic functions, front components, and agents that automate or extend the workspace\n"
+"\n"
 "#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n\n"
-"#### Build your own app\n\n"
-"Scaffold a new app in one command:\n\n"
+"Use this app for workspace-specific customization that should stay local to this workspace.\n"
+"\n"
+"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
+"\n"
+"#### Build your own app\n"
+"\n"
+"Scaffold a new app in one command:\n"
+"\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n\n"
+"```\n"
+"\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
 msgstr ""
 
@@ -17300,25 +17309,36 @@ msgstr "用于 Bedrock 的 AWS 区域"
 
 #. js-lingui-id: HP7per
 #: src/pages/settings/applications/utils/getStandardApplicationDescription.ts
-msgid "The base data model every Twenty workspace runs on.\n\n"
-"#### What \"foundation\" means\n\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n\n"
+msgid ""
+"The base data model every Twenty workspace runs on.\n"
+"\n"
+"#### What \"foundation\" means\n"
+"\n"
+"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
+"\n"
 "#### Included objects\n"
 "- **People & Companies**: contact and account records\n"
 "- **Opportunities**: your sales pipeline\n"
 "- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n\n"
-"#### Build your own app\n\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n\n"
+"- **Workflows & Dashboards**: automation and reporting\n"
+"\n"
+"Remove this app and the rest of Twenty has nothing to hang off.\n"
+"\n"
+"#### Build your own app\n"
+"\n"
+"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
+"\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n\n"
-"Then inside the folder:\n\n"
+"```\n"
+"\n"
+"Then inside the folder:\n"
+"\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n\n"
+"```\n"
+"\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
 msgstr ""
 
@@ -17547,7 +17567,8 @@ msgstr "此操作无法撤销。该成员将被移除，并从其记录中取消
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid "This action cannot be undone. This will permanently delete your\n"
+msgid ""
+"This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "此操作无法撤销。这将永久删除您的整个账户。"
 
@@ -20261,9 +20282,11 @@ msgstr "您即将更改工作区子域名。这一操作将会注销所有用户
 
 #. js-lingui-id: Z5uTAF
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "You've hit your usage limit. \n"
+msgid ""
+"You've hit your usage limit. \n"
 "Reach to our support team to upgrade."
-msgstr "你已达到使用上限。\n"
+msgstr ""
+"你已达到使用上限。\n"
 "请联系我们的支持团队以升级。"
 
 #. js-lingui-id: NTyvVW
@@ -20271,9 +20294,11 @@ msgstr "你已达到使用上限。\n"
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "You've hit your usage limit. \n"
+msgid ""
+"You've hit your usage limit. \n"
 "Upgrade to {0} credits for ${1}/{2}."
-msgstr "你已达到使用上限。\n"
+msgstr ""
+"你已达到使用上限。\n"
 "升级至 {0} 积分，价格为 ${1}/{2}。"
 
 #. js-lingui-id: yZ0wRS

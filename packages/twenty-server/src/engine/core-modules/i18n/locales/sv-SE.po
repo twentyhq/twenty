@@ -4893,7 +4893,8 @@ msgstr "Modell-ID får inte vara tomt"
 #. js-lingui-id: hty0d5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Monday"
-msgstr "M\n"
+msgstr ""
+"M\n"
 "ndags"
 
 #. js-lingui-id: Er0m61
@@ -6681,7 +6682,8 @@ msgstr "Körningar"
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Saturday"
-msgstr "L\n"
+msgstr ""
+"L\n"
 "urdag"
 
 #. js-lingui-id: 4ba0NE
@@ -7108,7 +7110,8 @@ msgstr "Sammanfattning"
 #. js-lingui-id: DBC3t5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Sunday"
-msgstr "S\n"
+msgstr ""
+"S\n"
 "nd"
 
 #. js-lingui-id: D+NlUC

@@ -19,6 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "Teszt e-mail"
+
+#. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Your workspace is paused"
 msgstr "A munkaterületed szüneteltetve van"
@@ -74,9 +79,19 @@ msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow
 msgstr "{senderName} (<0>{senderEmail}</0>): Kérjük, érvényesítse ezt a domaint annak érdekében, hogy az <1>@{domain}</1> e-mail címmel rendelkező felhasználók meghívó nélkül csatlakozhassanak a munkaterületéhez."
 
 #. js-lingui-explicit-id
-#: src/emails/test.email.tsx
-msgid "Test email"
-msgstr "Teszt e-mail"
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Csatlakozzon a csapatához a Twentyn"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) meghívta önt, hogy csatlakozzon egy <1>{workspaceName}</1> nevű munkaterülethez."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "Meghívó elfogadása"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -92,21 +107,6 @@ msgstr "Letiltott"
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Server administrator access changed"
 msgstr "A kiszolgáló‑adminisztrátori hozzáférés megváltozott"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Csatlakozzon a csapatához a Twentyn"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) meghívta önt, hogy csatlakozzon egy <1>{workspaceName}</1> nevű munkaterülethez."
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "Meghívó elfogadása"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -179,6 +179,31 @@ msgid "Start a new workspace"
 msgstr "Új munkaterület indítása"
 
 #. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset your password 🗝"
+msgstr "Jelszó visszaállítása 🗝"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set your password 🗝"
+msgstr "Adja meg a jelszavát 🗝"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset"
+msgstr "Visszaállítás"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set"
+msgstr "Beállítás"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "Ez a hivatkozás csak a következő {duration} ideig érvényes. Ha a hivatkozás nem működik, használhatja közvetlenül a belépés ellenőrző hivatkozását:"
+
+#. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
 msgstr "A próbaidőszakod hamarosan lejár"
@@ -235,29 +260,14 @@ msgid "Manage subscription"
 msgstr "Előfizetés kezelése"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset your password 🗝"
-msgstr "Jelszó visszaállítása 🗝"
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Mi az a Twenty?"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set your password 🗝"
-msgstr "Adja meg a jelszavát 🗝"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset"
-msgstr "Visszaállítás"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set"
-msgstr "Beállítás"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "Ez a hivatkozás csak a következő {duration} ideig érvényes. Ha a hivatkozás nem működik, használhatja közvetlenül a belépés ellenőrző hivatkozását:"
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "Ez egy CRM, egy szoftver, amely segíti a vállalkozásokat az ügyféladataik és kapcsolataik hatékony kezelésében."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -278,16 +288,6 @@ msgstr "A(z) <0>{workspaceDisplayName}</0> éves csomagod {formattedDate}-kor me
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "Ha folytatni szeretnéd, nincs szükség semmilyen lépésre. Ha inkább nem szeretnéd megújítani, addig bármikor lemondhatod."
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Mi az a Twenty?"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "Ez egy CRM, egy szoftver, amely segíti a vállalkozásokat az ügyféladataik és kapcsolataik hatékony kezelésében."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
