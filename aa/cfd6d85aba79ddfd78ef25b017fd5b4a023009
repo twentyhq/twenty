@@ -1,0 +1,28 @@
+packages/twenty-server/src/engine/workspace-cache/services/__tests__/workspace-cache.service.spec.ts
+  s_0cd87c29efaba6::t_16f652e6e376a1 362-371,376-378,386-391,395-414
+  s_0cd87c29efaba6::t_e8b85455ce8e4b 372-375,379-385,392-394
+packages/twenty-server/src/engine/workspace-cache/services/workspace-cache.service.ts
+  s_0cd87c29efaba6::t_5b32238bc2c74d 49-52
+  s_0cd87c29efaba6::t_c2812897f7565d 213-221
+  s_0cd87c29efaba6::t_f01b2f2a5d7d63 345-347,351,358,363-367
+  s_0cd87c29efaba6::t_672ae545e09c3a 368
+packages/twenty-server/src/engine/twenty-orm/storage/promise-memoizer.storage.ts
+  s_0cd87c29efaba6::t_d5d7f754972465 48-50,61-62
+  s_0cd87c29efaba6::t_6e6606b96bd1f1 38-44,51,60,66,68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "aacfd6d85aba79ddfd78ef25b017fd5b4a023009",
+  "prompts": {},
+  "sessions": {
+    "s_0cd87c29efaba6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c9fb3032-f885-4660-a0b6-b45aac02aa9b",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
