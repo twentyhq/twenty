@@ -4,6 +4,7 @@ import { setupHttpMock } from 'test/integration/utils/http-mock.util';
 import { microsoftAuthHandlers } from 'test/integration/microsoft/mocks/microsoft-auth-handlers.util';
 import { microsoftCalendarEventsHandlers } from 'test/integration/microsoft/mocks/microsoft-calendar-events-handlers.util';
 import { microsoftMailboxHandlers } from 'test/integration/microsoft/mocks/microsoft-mailbox-handlers.util';
+import { microsoftWebhookSubscriptionHandlers } from 'test/integration/microsoft/mocks/microsoft-webhook-subscription-handlers.util';
 import {
   createMockEntityStore,
   type MockEntityStore,
@@ -37,6 +38,7 @@ export const setupMicrosoftMock = ({
   const httpMock = setupHttpMock(
     ...microsoftAuthHandlers(handle),
     ...microsoftMailboxHandlers(folderStore),
+    ...microsoftWebhookSubscriptionHandlers(),
   );
 
   return {
