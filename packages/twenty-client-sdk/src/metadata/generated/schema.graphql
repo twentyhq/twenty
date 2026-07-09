@@ -301,6 +301,7 @@ type ApplicationVariable {
   isSecret: Boolean!
   type: String!
   options: JSON
+  category: String
 }
 
 type AuthToken {

@@ -600,6 +600,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             isSecret,
             type,
             options: applicationVariableManifest.options,
+            category: applicationVariableManifest.category,
             applicationUniversalIdentifier,
             now,
           }),

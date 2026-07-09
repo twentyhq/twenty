@@ -34,6 +34,7 @@ export type ApplicationVariableValue =
 type TypedApplicationVariable = {
   type?: ApplicationVariableType;
   options?: ApplicationVariableOption[];
+  category?: string;
 };
 
 type SecretApplicationVariable = SyncableEntityOptions &

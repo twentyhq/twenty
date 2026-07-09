@@ -250,6 +250,7 @@ export interface ApplicationVariable {
     isSecret: Scalars['Boolean']
     type: Scalars['String']
     options?: Scalars['JSON']
+    category?: Scalars['String']
     __typename: 'ApplicationVariable'
 }
 
@@ -3310,6 +3311,7 @@ export interface ApplicationVariableGenqlSelection{
     isSecret?: boolean | number
     type?: boolean | number
     options?: boolean | number
+    category?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

@@ -16,6 +16,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     isSecret,
     type,
     options,
+    category,
     applicationUniversalIdentifier,
     now,
   }: {
@@ -26,6 +27,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     isSecret?: boolean;
     type?: ApplicationVariableType;
     options?: ApplicationVariableOption[];
+    category?: string;
     applicationUniversalIdentifier: string;
     now: string;
   }): UniversalFlatApplicationVariable => {
@@ -38,6 +40,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
       isSecret: isSecret ?? false,
       type: type ?? FieldMetadataType.TEXT,
       options: options ?? null,
+      category: category ?? null,
       createdAt: now,
       updatedAt: now,
     };

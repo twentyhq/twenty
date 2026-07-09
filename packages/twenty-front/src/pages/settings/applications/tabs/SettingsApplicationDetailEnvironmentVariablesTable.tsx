@@ -51,62 +51,96 @@ export const SettingsApplicationDetailEnvironmentVariablesTable = ({
     editedEnvVariables.length > 0
       ? t`Set your application configuration variables`
       : t`No variables to set for this application`;
-  return (
-    <Section>
-      <H2Title title={t`Configuration`} description={sectionDescription} />
-      <StyledContainer>
-        {editedEnvVariables.map((editedEnvVariable) => {
-          const tooltipId = `env-var-desc-${editedEnvVariable.key}`;
-          return (
-            <div key={editedEnvVariable.key}>
-              <StyledLabelRow>
-                <StyledLabel>{editedEnvVariable.key}</StyledLabel>
-                {isNonEmptyString(editedEnvVariable.description) && (
-                  <>
-                    <IconInfoCircle
-                      id={`env-var-desc-${editedEnvVariable.key}`}
-                      size={theme.icon.size.sm}
-                      color={theme.font.color.tertiary}
-                      style={{ outline: 'none', cursor: 'pointer' }}
-                    />
-                    <AppTooltip
-                      anchorSelect={`#${tooltipId}`}
-                      content={editedEnvVariable.description}
-                      offset={5}
-                      noArrow
-                      place="bottom"
-                      positionStrategy="fixed"
-                      delay={TooltipDelay.shortDelay}
-                    />
-                  </>
-                )}
-              </StyledLabelRow>
-              <SettingsApplicationVariableInput
-                type={editedEnvVariable.type}
-                value={editedEnvVariable.value}
-                options={
-                  editedEnvVariable.options as
-                    | ApplicationVariableOption[]
-                    | null
-                    | undefined
-                }
-                onChange={(newValue) => {
-                  setEditedEnvVariables((prevState) =>
-                    prevState.map((val) => {
-                      if (val.key === editedEnvVariable.key) {
-                        return { ...val, value: newValue };
-                      }
-                      return val;
-                    }),
-                  );
-                  onUpdateDebounced({ ...editedEnvVariable, value: newValue });
-                }}
-                placeholder={t`Value`}
+
+  const getVariableCategory = (variable: ApplicationVariable) =>
+    isNonEmptyString(variable.category) ? variable.category : t`Configuration`;
+
+  const categories = editedEnvVariables.reduce<string[]>((acc, variable) => {
+    const category = getVariableCategory(variable);
+    if (!acc.includes(category)) {
+      acc.push(category);
+    }
+    return acc;
+  }, []);
+
+  const renderVariable = (editedEnvVariable: ApplicationVariable) => {
+    const tooltipId = `env-var-desc-${editedEnvVariable.key}`;
+    return (
+      <div key={editedEnvVariable.key}>
+        <StyledLabelRow>
+          <StyledLabel>{editedEnvVariable.key}</StyledLabel>
+          {isNonEmptyString(editedEnvVariable.description) && (
+            <>
+              <IconInfoCircle
+                id={`env-var-desc-${editedEnvVariable.key}`}
+                size={theme.icon.size.sm}
+                color={theme.font.color.tertiary}
+                style={{ outline: 'none', cursor: 'pointer' }}
               />
-            </div>
-          );
-        })}
-      </StyledContainer>
-    </Section>
+              <AppTooltip
+                anchorSelect={`#${tooltipId}`}
+                content={editedEnvVariable.description}
+                offset={5}
+                noArrow
+                place="bottom"
+                positionStrategy="fixed"
+                delay={TooltipDelay.shortDelay}
+              />
+            </>
+          )}
+        </StyledLabelRow>
+        <SettingsApplicationVariableInput
+          type={editedEnvVariable.type}
+          value={editedEnvVariable.value}
+          options={
+            editedEnvVariable.options as
+              | ApplicationVariableOption[]
+              | null
+              | undefined
+          }
+          onChange={(newValue) => {
+            setEditedEnvVariables((prevState) =>
+              prevState.map((val) => {
+                if (val.key === editedEnvVariable.key) {
+                  return { ...val, value: newValue };
+                }
+                return val;
+              }),
+            );
+            onUpdateDebounced({ ...editedEnvVariable, value: newValue });
+          }}
+          placeholder={t`Value`}
+        />
+      </div>
+    );
+  };
+
+  if (editedEnvVariables.length === 0) {
+    return (
+      <Section>
+        <H2Title title={t`Configuration`} description={sectionDescription} />
+      </Section>
+    );
+  }
+
+  return (
+    <>
+      {categories.map((category, categoryIndex) => {
+        const variablesInCategory = editedEnvVariables.filter(
+          (variable) => getVariableCategory(variable) === category,
+        );
+        return (
+          <Section key={category}>
+            <H2Title
+              title={category}
+              description={categoryIndex === 0 ? sectionDescription : undefined}
+            />
+            <StyledContainer>
+              {variablesInCategory.map(renderVariable)}
+            </StyledContainer>
+          </Section>
+        );
+      })}
+    </>
   );
 };

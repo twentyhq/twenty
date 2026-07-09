@@ -35,4 +35,9 @@ export class ApplicationVariableEntityDTO {
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   options?: ApplicationVariableOption[] | null;
+
+  @IsOptional()
+  @IsString()
+  @Field(() => String, { nullable: true })
+  category?: string | null;
 }

@@ -653,6 +653,9 @@ export default {
             "options": [
                 7
             ],
+            "category": [
+                1
+            ],
             "__typename": [
                 1
             ]

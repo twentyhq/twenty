@@ -413,6 +413,7 @@ export type ApplicationTokenPair = {
 
 export type ApplicationVariable = {
   __typename?: 'ApplicationVariable';
+  category?: Maybe<Scalars['String']['output']>;
   description: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   isSecret: Scalars['Boolean']['output'];

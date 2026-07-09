@@ -14,6 +14,7 @@ const makeFlatVariable = (
   isSecret: false,
   type: FieldMetadataType.TEXT,
   options: null,
+  category: null,
   applicationId: 'app-1',
   workspaceId: '00000000-0000-0000-0000-000000000000',
   universalIdentifier: '00000000-0000-0000-0000-000000000000',
