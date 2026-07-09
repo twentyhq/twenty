@@ -182,7 +182,7 @@ export class TimelineMessagingService {
                   lastName: threadParticipant.person?.nameLastName,
                 },
                 avatarUrl:
-                  personAvatarFileUrl ?? threadParticipant.person?.avatarUrl,
+                  personAvatarFileUrl || threadParticipant.person?.avatarUrl,
               },
               workspaceMember: {
                 id: threadParticipant.workspaceMember?.id,
