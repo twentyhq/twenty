@@ -7,7 +7,6 @@ const RECALL_STATUS_ADHOC_POOL_EXHAUSTED = 507;
 
 const isRecallServerError = (status: number): boolean => status >= 500;
 
-// Client errors (400/401/402/403/405) cannot succeed on a retry, so they are excluded.
 export const isRetryableRecallApiStatus = (status: number): boolean =>
   status === RECALL_STATUS_RATE_LIMITED ||
   status === RECALL_STATUS_CONFLICT ||

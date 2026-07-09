@@ -173,6 +173,7 @@ describe('StreamAgentChatJob', () => {
       cancelSubscriberService as never,
       agentChatStreamingService as never,
       streamHeartbeatService as never,
+      { incrementCounterBy: jest.fn() } as never,
     );
 
     return {

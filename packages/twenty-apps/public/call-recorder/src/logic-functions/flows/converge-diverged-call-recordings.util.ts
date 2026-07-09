@@ -68,7 +68,6 @@ type DivergedCallRecordingNode = {
   calendarEvent?: { startsAt?: string | null; endsAt?: string | null } | null;
 };
 
-// Webhook deliveries get lost; this pull pass re-derives state from Recall.
 export const convergeDivergedCallRecordings = async ({
   client,
   now,
@@ -186,8 +185,6 @@ const rotateActionableCandidatesForFallback = <
   ];
 };
 
-// Batches the status pull: one list call over the convergence window replaces a
-// per-id fetch for every bot it returns. Misses fall back to a small capped budget.
 const listConvergenceBotsById = async (
   now: Date,
 ): Promise<Map<string, Record<string, unknown>>> => {
@@ -330,7 +327,6 @@ const isOutsideConvergenceBound = (
   );
 };
 
-// Until the meeting starts the bot has recorded nothing, so there is nothing to pull yet.
 const isBeforeMeetingStart = (
   candidate: DivergedCallRecordingCandidate,
   now: Date,
@@ -438,7 +434,6 @@ const convergeCallRecording = async ({
   result.updatedCallRecordingIds.push(candidate.id);
 };
 
-// Pure merge: fill only unset candidate fields and never downgrade status.
 const buildConvergenceFieldUpdates = ({
   candidate,
   convergence,
@@ -493,7 +488,6 @@ const markCallRecordingFailedAfterBotLoss = async ({
   externalBotId: string;
   result: ConvergeDivergedCallRecordingsResult;
 }): Promise<void> => {
-  // externalBotId is kept for audit even though the bot is gone at Recall.
   console.warn(
     `[call-recorder] Recall bot ${externalBotId} for call recording ${candidate.id} no longer exists; it will not converge automatically`,
   );
