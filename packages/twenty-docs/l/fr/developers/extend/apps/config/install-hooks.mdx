@@ -4,7 +4,7 @@ description: Exécutez de la logique avant ou après l'installation — initiali
 icon: wrench
 ---
 
-Les hooks d'installation sont des fonctions logiques spéciales qui s'exécutent pendant le cycle de vie d'installation ou de mise à niveau. Ils partagent le même environnement d'exécution de gestionnaire que les [fonctions logiques](/l/fr/developers/extend/apps/logic/logic-functions) classiques et reçoivent un `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` est `undefined` lors d'une nouvelle installation), mais ils sont déclarés avec leurs propres fonctions de définition et vivent en dehors du modèle de déclencheur normal (HTTP, cron, événements de base de données).
+Les hooks d'installation sont des fonctions logiques spéciales qui s'exécutent pendant le cycle de vie d'installation ou de mise à niveau. Ils partagent le même environnement d'exécution que les [fonctions logiques](/l/fr/developers/extend/apps/logic/logic-functions) classiques et reçoivent un `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` est `undefined` lors d'une nouvelle installation), mais ils sont déclarés avec leurs propres fonctions de définition et ne relèvent pas du modèle de déclencheur habituel (HTTP, cron, événements de base de données).
 
 Chaque application peut définir **au maximum une pré-installation** et **au maximum une post-installation**. La génération du manifeste renvoie une erreur si plus d'une fonction de l'un ou l'autre type est détectée.
 
@@ -21,12 +21,12 @@ Chaque application peut définir **au maximum une pré-installation** et **au ma
 
 ## En un coup d'œil
 
-|                     | `definePreInstallLogicFunction`                                                                                                | `definePostInstallLogicFunction`                                                                                                                          |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Exécutions          | Avant la migration des métadonnées — le schéma et les données **précédents** sont toujours intacts                             | Après la migration et la génération du SDK — le **nouveau** schéma est en place                                                                           |
-| Exécution           | Toujours synchrone ; bloque l'installation                                                                                     | Asynchrone par défaut (mis en file d'attente, 3 nouvelles tentatives) ; mode synchrone en option via `shouldRunSynchronously: true`                       |
-| En cas d'échec      | L'installation est **abandonnée** avant toute modification du schéma                                                           | Asynchrone : nouvelle tentative jusqu'à 3 fois. Synchrone : l'appelant reçoit `POST_INSTALL_ERROR` (les modifications de schéma **ne** sont pas annulées) |
-| Utilisation typique | Sauvegarder ou corriger les données qu'une migration ferait perdre ; refuser une mise à niveau risquée en levant une exception | Initialiser des données par défaut, configurer l'espace de travail, enregistrer des ressources externes                                                   |
+|                     | `definePreInstallLogicFunction`                                                                                                | `definePostInstallLogicFunction`                                                                                                           |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Exécutions          | Avant la migration des métadonnées — le schéma et les données **précédents** sont toujours intacts                             | Après la migration et la génération du SDK — le **nouveau** schéma est en place                                                            |
+| Exécution           | Toujours synchrone ; bloque l'installation                                                                                     | Asynchrone par défaut (mis en file d'attente, 3 nouvelles tentatives) ; mode synchrone en option via `shouldRunSynchronously: true`        |
+| En cas d'échec      | L'installation est **abandonnée** avant toute modification du schéma                                                           | Asynchrone : jusqu'à 3 réessais. Synchrone : l'appelant reçoit `POST_INSTALL_ERROR` (les modifications de schéma **ne** sont pas annulées) |
+| Utilisation typique | Sauvegarder ou corriger les données qu'une migration ferait perdre ; refuser une mise à niveau risquée en levant une exception | Initialiser des données par défaut, configurer l'espace de travail, enregistrer des ressources externes                                    |
 
 **Règle empirique :** privilégiez post-install par défaut. Ne recourez à la pré-installation que lorsque la migration elle-même est destructive et que vous devez intercepter l'état précédent avant qu'il ne disparaisse.
 

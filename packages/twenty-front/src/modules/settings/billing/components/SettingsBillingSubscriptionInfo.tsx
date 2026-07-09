@@ -17,6 +17,7 @@ import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResour
 import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhase';
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
+import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -136,6 +137,14 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const { endTrialPeriod, isLoading: isEndTrialPeriodLoading } =
     useEndSubscriptionTrialPeriod();
+
+  const billingHasPaymentMethod = useAtomStateValue(
+    billingHasPaymentMethodSelector,
+  );
+
+  const startSubscriptionAfterPaymentMethodAdded = async () => {
+    await endTrialPeriod({ skipPaymentMethodRedirect: true });
+  };
 
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
     usePermissionFlagMap();
@@ -517,6 +526,7 @@ export const SettingsBillingSubscriptionInfo = ({
         workspaceMembers={currentWorkspaceMembers}
       />
       <SettingsBillingSubscriptionInfoModals
+        billingHasPaymentMethod={billingHasPaymentMethod}
         cancelIntervalSwitchingSubtitle={confirmationModalCancelIntervalSwitchingMessage()}
         cancelPlanSwitchingSubtitle={confirmationModalCancelPlanSwitchingMessage()}
         isCancellingIntervalSwitch={isCancellingIntervalSwitch}
@@ -528,6 +538,7 @@ export const SettingsBillingSubscriptionInfo = ({
         onCancelPlanSwitching={cancelPlanSwitching}
         onCancelResourceCreditSwitching={cancelResourceCreditSwitching}
         onEndTrialPeriod={endTrialPeriod}
+        onPaymentMethodAdded={startSubscriptionAfterPaymentMethodAdded}
         onSwitchInterval={switchInterval}
         startSubscriptionSubtitle={startSubscriptionSubtitle}
         switchToMonthlySubtitle={confirmationModalSwitchToMonthlyMessage()}

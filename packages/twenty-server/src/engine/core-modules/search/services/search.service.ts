@@ -8,7 +8,11 @@ import {
   FileFolder,
   ObjectRecord,
 } from 'twenty-shared/types';
-import { getLogoUrlFromDomainName, isDefined } from 'twenty-shared/utils';
+import {
+  escapeForIlike,
+  getLogoUrlFromDomainName,
+  isDefined,
+} from 'twenty-shared/utils';
 import { Brackets, type ObjectLiteral } from 'typeorm';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -33,7 +37,6 @@ import {
   SearchExceptionCode,
 } from 'src/engine/core-modules/search/exceptions/search.exception';
 import { type RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item';
-import { escapeForIlike } from 'src/engine/core-modules/search/utils/escape-for-ilike';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
