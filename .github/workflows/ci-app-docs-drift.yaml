@@ -3,7 +3,7 @@ name: CI App Docs Drift
 # When a PR changes the app-development surface (twenty-sdk, create-twenty-app,
 # twenty-client-sdk, or the shared manifest types), an agent checks whether the
 # app documentation under packages/twenty-docs/developers/extend/apps is
-# impacted and posts a single sticky comment with its findings.
+# impacted and, only when it is, posts a single sticky comment with its findings.
 
 on:
   pull_request:
@@ -109,15 +109,18 @@ jobs:
 
             ## Step 3 — Report
 
-            Post exactly one comment on PR #${{ github.event.pull_request.number }} with:
+            If there is NO documentation impact, do NOT post or create any comment.
+            Skip the comment entirely and go straight to Step 4.
+
+            Only when the documentation is impacted, post exactly one comment on PR
+            #${{ github.event.pull_request.number }} with:
             `gh pr comment ${{ github.event.pull_request.number }} --edit-last --create-if-none --body ...`
             (this updates the previous drift-check comment in place on subsequent runs).
             Start the comment body with the marker `<!-- app-docs-drift-check -->`.
 
             Comment format:
             - Title line: `### App docs drift check`
-            - If no documentation impact: one sentence saying so and why.
-            - If impacted: a table with columns **Change** (what changed in the code),
+            - A table with columns **Change** (what changed in the code),
               **Docs page** (repo-relative path), **Status** (`✅ already updated in this PR`
               / `⚠️ needs update`), and **Suggested fix** (one concrete sentence, e.g. the
               exact value to add to a table).
