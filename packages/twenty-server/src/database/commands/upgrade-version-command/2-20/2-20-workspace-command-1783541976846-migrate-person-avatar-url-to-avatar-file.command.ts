@@ -7,6 +7,7 @@ import { IsNull, MoreThan, Not } from 'typeorm';
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { type FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FilesFieldService } from 'src/engine/core-modules/file/files-field/services/files-field.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -168,7 +169,7 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ActiveOrSuspended
     personId: string;
     avatarUrl: string;
     workspaceId: string;
-    fieldMetadataUniversalIdentifier: string | undefined;
+    fieldMetadataUniversalIdentifier: string;
     personRepository: WorkspaceRepository<PersonWorkspaceEntity>;
   }): Promise<'migrated' | 'skipped' | 'failed'> {
     const imageData = await this.downloadImage({
@@ -183,20 +184,15 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ActiveOrSuspended
 
     const filename = `avatar.${imageData.extension}`;
 
-    let uploadedFile;
+    const uploadedFile = await this.uploadAvatarFile({
+      buffer: imageData.buffer,
+      filename,
+      workspaceId,
+      fieldMetadataUniversalIdentifier,
+      personId,
+    });
 
-    try {
-      uploadedFile = await this.filesFieldService.uploadFile({
-        file: imageData.buffer,
-        filename,
-        workspaceId,
-        fieldMetadataUniversalIdentifier,
-      });
-    } catch (error) {
-      this.logger.warn(
-        `Failed to upload migrated avatar for person ${personId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-
+    if (!isDefined(uploadedFile)) {
       return 'failed';
     }
 
@@ -231,6 +227,35 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ActiveOrSuspended
       await this.safeDeleteUploadedFile(uploadedFile.id, workspaceId);
 
       return 'failed';
+    }
+  }
+
+  private async uploadAvatarFile({
+    buffer,
+    filename,
+    workspaceId,
+    fieldMetadataUniversalIdentifier,
+    personId,
+  }: {
+    buffer: Buffer;
+    filename: string;
+    workspaceId: string;
+    fieldMetadataUniversalIdentifier: string;
+    personId: string;
+  }): Promise<FileWithSignedUrlDTO | undefined> {
+    try {
+      return await this.filesFieldService.uploadFile({
+        file: buffer,
+        filename,
+        workspaceId,
+        fieldMetadataUniversalIdentifier,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to upload migrated avatar for person ${personId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+      return undefined;
     }
   }
 
