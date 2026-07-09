@@ -1,0 +1,42 @@
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service.ts
+  s_0cd87c29efaba6::t_ea258120a57884 121-124
+  s_0cd87c29efaba6::t_f526fd871f84f7 64-67
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type.ts
+  s_0cd87c29efaba6::t_377847bcfd190d 18-19
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/google/google-webhook-subscription.driver.ts
+  s_0cd87c29efaba6::t_b04a2fec24779b 30-46
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/crons/jobs/webhook-subscription-renewal.cron.job.ts
+  s_0cd87c29efaba6::t_67e481d59b8bbc 39-46
+  s_0cd87c29efaba6::t_f8ea247ee11c7f 11
+  s_0cd87c29efaba6::t_11e14503b69416 30
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/microsoft/microsoft-webhook-subscription.driver.ts
+  s_0cd87c29efaba6::t_1d461cbcc5df8b 52-55
+packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts
+  s_0cd87c29efaba6::t_6a1f7ac82421f0 214-221
+  s_0cd87c29efaba6::t_89ecd0bab3bd5b 212-213
+packages/twenty-server/src/modules/connected-account/channel-sync/services/channel-sync.service.ts
+  s_0cd87c29efaba6::t_272dc41663c1df 103-118
+  s_0cd87c29efaba6::t_0c617c2783eb81 16
+  s_0cd87c29efaba6::t_6376715f3c7fe3 157-172
+  s_0cd87c29efaba6::t_dcb4d27c9ff466 57,60-64
+  s_0cd87c29efaba6::t_c5c6fa20b2abce 65
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service.ts
+  s_0cd87c29efaba6::t_742d94d7ded536 118-121
+  s_0cd87c29efaba6::t_c78174a189fb3e 64-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3fa81a0f1ef98491148c09c978a496c80e868339",
+  "prompts": {},
+  "sessions": {
+    "s_0cd87c29efaba6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c9fb3032-f885-4660-a0b6-b45aac02aa9b",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
