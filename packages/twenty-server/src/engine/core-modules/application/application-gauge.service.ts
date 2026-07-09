@@ -37,9 +37,9 @@ export class ApplicationGaugeService implements OnModuleInit {
           return installedApps.map((installedApp) => ({
             value: installedApp.installedWorkspaceCount,
             attributes: {
-              universalIdentifier: installedApp.universalIdentifier,
-              appName: installedApp.name,
-              sourceType: installedApp.sourceType,
+              universal_identifier: installedApp.universalIdentifier,
+              app_name: installedApp.name,
+              source_type: installedApp.sourceType,
             },
           }));
         } catch (error) {

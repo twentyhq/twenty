@@ -142,9 +142,9 @@ export class ApplicationInstallResolver {
     );
 
     const attributes = {
-      universalIdentifier,
-      appName: application?.name ?? 'unknown',
-      sourceType: application?.sourceType ?? 'unknown',
+      universal_identifier: universalIdentifier,
+      app_name: application?.name ?? 'unknown',
+      source_type: application?.sourceType ?? 'unknown',
     };
 
     try {
@@ -153,23 +153,23 @@ export class ApplicationInstallResolver {
         workspaceId,
       });
     } catch (error) {
-      await this.metricsService.incrementCounterForEvent({
+      this.metricsService.incrementCounterBy({
         key: MetricsKeys.AppUninstallFailed,
+        amount: 1,
         attributes: {
           ...attributes,
-          errorCode:
+          error_code:
             error instanceof ApplicationException ? error.code : 'UNKNOWN',
         },
-        shouldStoreInCache: false,
       });
 
       throw error;
     }
 
-    await this.metricsService.incrementCounterForEvent({
+    this.metricsService.incrementCounterBy({
       key: MetricsKeys.AppUninstallSucceeded,
+      amount: 1,
       attributes,
-      shouldStoreInCache: false,
     });
 
     return true;

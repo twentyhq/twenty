@@ -139,17 +139,17 @@ export class ApplicationRegistrationService {
     sourceType: string;
     version?: string | null;
   }): void {
-    void this.metricsService.incrementCounterForEvent({
+    this.metricsService.incrementCounterBy({
       key: isNewRegistration
         ? MetricsKeys.AppRegistrationCreated
         : MetricsKeys.AppRegistrationVersionPublished,
+      amount: 1,
       attributes: {
-        universalIdentifier,
-        appName: name,
-        sourceType,
+        universal_identifier: universalIdentifier,
+        app_name: name,
+        source_type: sourceType,
         version: version ?? 'unknown',
       },
-      shouldStoreInCache: false,
     });
   }
 

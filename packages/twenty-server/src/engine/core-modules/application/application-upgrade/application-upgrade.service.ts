@@ -79,15 +79,15 @@ export class ApplicationUpgradeService {
       // Change-guarded so this fires exactly once per real version bump even
       // though the catalog-sync path also converges latestAvailableVersion.
       if (isNewVersion) {
-        await this.metricsService.incrementCounterForEvent({
+        this.metricsService.incrementCounterBy({
           key: MetricsKeys.AppRegistrationVersionPublished,
+          amount: 1,
           attributes: {
-            universalIdentifier: appRegistration.universalIdentifier,
-            appName: appRegistration.name,
-            sourceType: appRegistration.sourceType,
+            universal_identifier: appRegistration.universalIdentifier,
+            app_name: appRegistration.name,
+            source_type: appRegistration.sourceType,
             version: parsed.data.version,
           },
-          shouldStoreInCache: false,
         });
       }
 

@@ -275,17 +275,17 @@ export class ApplicationInstallService {
         `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
       );
 
-      await this.metricsService.incrementCounterForEvent({
+      this.metricsService.incrementCounterBy({
         key: isVersionUpgrade
           ? MetricsKeys.AppUpgradeSucceeded
           : MetricsKeys.AppInstallSucceeded,
+        amount: 1,
         attributes: {
-          universalIdentifier,
-          appName: application.name,
-          sourceType: appRegistration.sourceType,
+          universal_identifier: universalIdentifier,
+          app_name: application.name,
+          source_type: appRegistration.sourceType,
           version: newVersion,
         },
-        shouldStoreInCache: false,
       });
 
       return true;
@@ -294,19 +294,19 @@ export class ApplicationInstallService {
         `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,
       );
 
-      await this.metricsService.incrementCounterForEvent({
+      this.metricsService.incrementCounterBy({
         key: isVersionUpgrade
           ? MetricsKeys.AppUpgradeFailed
           : MetricsKeys.AppInstallFailed,
+        amount: 1,
         attributes: {
-          universalIdentifier,
-          appName: application.name,
-          sourceType: appRegistration.sourceType,
+          universal_identifier: universalIdentifier,
+          app_name: application.name,
+          source_type: appRegistration.sourceType,
           version: newVersion,
-          errorCode:
+          error_code:
             error instanceof ApplicationException ? error.code : 'UNKNOWN',
         },
-        shouldStoreInCache: false,
       });
 
       if (!isVersionUpgrade) {
