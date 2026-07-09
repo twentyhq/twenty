@@ -1,2 +1,2 @@
 export const DROP_PAGE_LAYOUT_WIDGET_GRID_POSITION_COLUMN_UPGRADE_COMMAND_NAME =
-  '2.20.0_DropPageLayoutWidgetGridPositionColumnFastInstanceCommand_1783589900000';
+  '2.20.0_DropPageLayoutWidgetGridPositionColumnSlowInstanceCommand_1783589900000';

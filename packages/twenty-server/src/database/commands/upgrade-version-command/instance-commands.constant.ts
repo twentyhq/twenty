@@ -103,7 +103,7 @@ import { AllowServerScopedFileFastInstanceCommand } from 'src/database/commands/
 import { CreateWorkflowVersionCoreTableFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783512000000-create-workflow-version-core-table';
 import { RenameIsFeaturedToIsVettedOnApplicationRegistrationFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783527064000-rename-is-featured-to-is-vetted-on-application-registration';
 import { MakePageLayoutWidgetPositionNotNullSlowInstanceCommand } from './2-20/2-20-instance-command-slow-1783589800000-make-page-layout-widget-position-not-null';
-import { DropPageLayoutWidgetGridPositionColumnFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783589900000-drop-page-layout-widget-grid-position-column';
+import { DropPageLayoutWidgetGridPositionColumnSlowInstanceCommand } from './2-20/2-20-instance-command-slow-1783589900000-drop-page-layout-widget-grid-position-column';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -209,5 +209,5 @@ export const INSTANCE_COMMANDS = [
   CreateWorkflowVersionCoreTableFastInstanceCommand,
   RenameIsFeaturedToIsVettedOnApplicationRegistrationFastInstanceCommand,
   MakePageLayoutWidgetPositionNotNullSlowInstanceCommand,
-  DropPageLayoutWidgetGridPositionColumnFastInstanceCommand,
+  DropPageLayoutWidgetGridPositionColumnSlowInstanceCommand,
 ];
