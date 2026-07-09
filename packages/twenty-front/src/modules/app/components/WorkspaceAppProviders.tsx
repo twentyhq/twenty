@@ -20,6 +20,7 @@ import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components
 import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/MinimalMetadataLoadEffect';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
 import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
+import { WelcomeOverlay } from '@/onboarding/components/WelcomeOverlay/WelcomeOverlay';
 import { ApolloAdminProvider } from '@/settings/admin-panel/apollo/components/ApolloAdminProvider';
 import { EndTrialAfterPaymentMethodGater } from '@/settings/billing/components/EndTrialAfterPaymentMethodGater';
 import { SSEProvider } from '@/sse-db-event/components/SSEProvider';
@@ -80,6 +81,7 @@ export const WorkspaceAppProviders = () => {
                   <TrackPageViewEffect />
                   <RequestFreshCaptchaTokenEffect />
                   <PageChangeEffect />
+                  <WelcomeOverlay />
                   <SignOutOnOtherTabSignOutEffect />
                 </SSEProvider>
               </ApolloAdminProvider>
