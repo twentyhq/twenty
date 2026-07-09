@@ -204,11 +204,51 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ActiveOrSuspended
         `Failed to attach migrated avatar for person ${personId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
       );
 
+      const isFileReferencedByPerson = await this.isAvatarFileReferenced({
+        personId,
+        fileId: uploadedFile.id,
+        workspaceId,
+        personRepository,
+      });
+
+      if (isFileReferencedByPerson) {
+        return 'migrated';
+      }
+
       // The uploaded file is still temporary; the pending-file cleanup cron only
       // reaps PENDING files, so delete the orphan explicitly to keep re-runs clean.
       await this.safeDeleteUploadedFile(uploadedFile.id, workspaceId);
 
       return 'failed';
+    }
+  }
+
+  private async isAvatarFileReferenced({
+    personId,
+    fileId,
+    workspaceId,
+    personRepository,
+  }: {
+    personId: string;
+    fileId: string;
+    workspaceId: string;
+    personRepository: WorkspaceRepository<PersonWorkspaceEntity>;
+  }): Promise<boolean> {
+    try {
+      const person = await personRepository.findOne({
+        select: ['id', 'avatarFile'],
+        where: { id: personId },
+      });
+
+      return (
+        person?.avatarFile?.some((file) => file.fileId === fileId) ?? false
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to verify avatar file reference for person ${personId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+      return true;
     }
   }
 
