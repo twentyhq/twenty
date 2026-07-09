@@ -13,6 +13,7 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockedApolloClient } from '~/testing/mockedApolloClient';
 import { mockedOnboardingUserData } from '~/testing/mock-data/users';
 
 const CALL_RECORDER_UNIVERSAL_IDENTIFIER =
@@ -63,6 +64,9 @@ const meta: Meta<PageDecoratorArgs> = {
   component: InstallApps,
   decorators: [PageDecorator],
   args: { routePath: AppPath.InstallApps },
+  beforeEach: async () => {
+    await mockedApolloClient.clearStore();
+  },
   parameters: {
     msw: {
       handlers: buildHandlers([
