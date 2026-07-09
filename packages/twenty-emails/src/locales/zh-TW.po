@@ -129,31 +129,6 @@ msgid "Accept invite"
 msgstr "接受邀請"
 
 #. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Password updated"
-msgstr "密碼已更新"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Dear {userName},"
-msgstr "親愛的 {userName},"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "這是確認您的帳戶（{email}）的密碼已於 {formattedDate} 成功更改。"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "如果您未發起此更改，請立即聯繫您的工作區擁有者。"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Connect to Twenty"
-msgstr "連接到 Twenty"
-
-#. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
 msgstr "重設您的密碼 🗝"
@@ -204,6 +179,31 @@ msgid "Start a new workspace"
 msgstr ""
 
 #. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Password updated"
+msgstr "密碼已更新"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Dear {userName},"
+msgstr "親愛的 {userName},"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "這是確認您的帳戶（{email}）的密碼已於 {formattedDate} 成功更改。"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "如果您未發起此更改，請立即聯繫您的工作區擁有者。"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Connect to Twenty"
+msgstr "連接到 Twenty"
+
+#. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
 msgstr ""
@@ -226,6 +226,32 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Add a payment method"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your plan renews soon"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Just so it's never a surprise, here's a heads up about your annual plan."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -254,12 +280,6 @@ msgid "If Twenty is working for you, you're all set — there's nothing to do. I
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Manage subscription"
-msgstr ""
-
-#. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
 msgid "What is Twenty?"
 msgstr "什麼是Twenty？"
@@ -268,26 +288,6 @@ msgstr "什麼是Twenty？"
 #: src/components/WhatIsTwenty.tsx
 msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
 msgstr "它是一個CRM，是一款幫助企業有效管理客戶資料和關係的軟件。"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Your plan renews soon"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Just so it's never a surprise, here's a heads up about your annual plan."
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
-msgstr ""
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

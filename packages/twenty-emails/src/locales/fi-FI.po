@@ -129,31 +129,6 @@ msgid "Accept invite"
 msgstr "Hyväksy kutsu"
 
 #. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Password updated"
-msgstr "Salasana päivitetty"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Dear {userName},"
-msgstr "Hyvä {userName},"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "Tämä on vahvistus siitä, että tilisi ({email}) salasana on vaihdettu onnistuneesti {formattedDate}."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "Jos et itse aloittanut tätä muutosta, ota heti yhteyttä työtilasi omistajaan."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Connect to Twenty"
-msgstr "Yhdistä Twenty"
-
-#. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
 msgstr "Nollaa salasanasi 🗝"
@@ -204,6 +179,31 @@ msgid "Start a new workspace"
 msgstr ""
 
 #. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Password updated"
+msgstr "Salasana päivitetty"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Dear {userName},"
+msgstr "Hyvä {userName},"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "Tämä on vahvistus siitä, että tilisi ({email}) salasana on vaihdettu onnistuneesti {formattedDate}."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "Jos et itse aloittanut tätä muutosta, ota heti yhteyttä työtilasi omistajaan."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Connect to Twenty"
+msgstr "Yhdistä Twenty"
+
+#. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
 msgstr ""
@@ -226,6 +226,32 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Add a payment method"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your plan renews soon"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Just so it's never a surprise, here's a heads up about your annual plan."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -254,12 +280,6 @@ msgid "If Twenty is working for you, you're all set — there's nothing to do. I
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Manage subscription"
-msgstr ""
-
-#. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
 msgid "What is Twenty?"
 msgstr "Mikä on Twenty?"
@@ -268,26 +288,6 @@ msgstr "Mikä on Twenty?"
 #: src/components/WhatIsTwenty.tsx
 msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
 msgstr "Se on CRM, ohjelmisto, joka auttaa yrityksiä hallitsemaan asiakastietojaan ja -suhteitaan tehokkaasti."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Your plan renews soon"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Just so it's never a surprise, here's a heads up about your annual plan."
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
-msgstr ""
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
