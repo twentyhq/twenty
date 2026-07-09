@@ -121,7 +121,10 @@ describe('isFirstOverflowingChildElement', () => {
 
     expect(
       isFirstOverflowingChildElement({
-        containerElement: buildContainer({ clientWidth: 145, scrollWidth: 200 }),
+        containerElement: buildContainer({
+          clientWidth: 145,
+          scrollWidth: 200,
+        }),
         childElement: null,
       }),
     ).toBe(false);
