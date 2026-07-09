@@ -1178,6 +1178,11 @@ msgstr "Thêm tài khoản"
 msgid "Add Approved Access Domain"
 msgstr "Thêm Miền Truy Cập Đã Được Phê Duyệt"
 
+#. js-lingui-id: U76pXW
+#: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
+msgid "Add as person"
+msgstr ""
+
 #. js-lingui-id: Qi4JMf
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Add BCC"
@@ -4594,6 +4599,11 @@ msgstr "Sao chép lệnh"
 msgid "Copy commands"
 msgstr "Sao chép lệnh"
 
+#. js-lingui-id: rz6LK0
+#: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
+msgid "Copy email"
+msgstr ""
+
 #. js-lingui-id: 4jdeR0
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 msgid "Copy key ID"
@@ -6583,6 +6593,7 @@ msgid "eddy@gmail.com, @apple.com"
 msgstr "eddy@gmail.com, @apple.com"
 
 #. js-lingui-id: ePK91l
+#: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/hooks/useNavigationMenuItemEditOrganizeActions.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
@@ -6760,6 +6771,7 @@ msgid "Email categories recipients can opt out of"
 msgstr ""
 
 #. js-lingui-id: UZQ5eW
+#: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/EmailsFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
 #: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
@@ -9819,6 +9831,11 @@ msgstr "Tên miền không hợp lệ. Vui lòng bao gồm ít nhất một tên
 msgid "Invalid email"
 msgstr "Email không hợp lệ"
 
+#. js-lingui-id: XILg0L
+#: src/modules/activities/emails/recipients/components/EmailRecipientsFieldChip.tsx
+msgid "Invalid email address"
+msgstr ""
+
 #. js-lingui-id: /m52AE
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
 msgid "Invalid email or domain"
@@ -12462,6 +12479,7 @@ msgid "No response body"
 msgstr ""
 
 #. js-lingui-id: Ev2r9A
+#: src/modules/activities/emails/recipients/components/EmailRecipientSuggestionsDropdownContent.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownOptionSelect.tsx
@@ -13650,6 +13668,11 @@ msgstr "Quyền"
 msgid "Permissions · {objectLabelSingular}"
 msgstr "Quyền · {objectLabelSingular}"
 
+#. js-lingui-id: qrGMTi
+#: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
+msgid "Person created"
+msgstr ""
+
 #. js-lingui-id: zmwvG2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
 msgid "Phone"
@@ -14576,6 +14599,7 @@ msgid "Remote"
 msgstr ""
 
 #. js-lingui-id: t/YqKh
+#: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -14583,6 +14607,12 @@ msgstr ""
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Remove"
 msgstr "Loại bỏ"
+
+#. js-lingui-id: w61W3L
+#. placeholder {0}: recipient.address
+#: src/modules/activities/emails/recipients/components/EmailRecipientsFieldChip.tsx
+msgid "Remove {0}"
+msgstr ""
 
 #. js-lingui-id: UG0bdD
 #. placeholder {0}: favoritesEdit.navigationMenuItemCount
@@ -17196,6 +17226,12 @@ msgstr "Tiêu đề nhiệm vụ"
 msgid "Team"
 msgstr ""
 
+#. js-lingui-id: nLqMRA
+#: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
+#: src/modules/activities/emails/recipients/hooks/useEmailRecipientSuggestions.ts
+msgid "Team member"
+msgstr ""
+
 #. js-lingui-id: lKXcJz
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Temporary Failure"
@@ -17947,6 +17983,13 @@ msgstr "Cà chua"
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "Ngày mai"
+
+#. js-lingui-id: x+3/CM
+#. placeholder {0}: composerState.recipientCount
+#. placeholder {1}: composerState.maxRecipients
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Too many recipients ({0}/{1})."
+msgstr ""
 
 #. js-lingui-id: WrMXsY
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
@@ -19029,6 +19072,11 @@ msgstr ""
 #. js-lingui-id: f6QOcg
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
 msgid "Use the whole list"
+msgstr ""
+
+#. js-lingui-id: fyA3o0
+#: src/modules/activities/emails/recipients/hooks/useEmailRecipientSuggestions.ts
+msgid "Use this email"
 msgstr ""
 
 #. js-lingui-id: 664z2C
