@@ -1,3 +1,5 @@
+import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
+
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import {
@@ -36,8 +38,8 @@ const buildWidgetPosition = (
         layoutMode: PageLayoutTabLayoutMode.GRID,
         row: gridPosition?.row ?? 0,
         column: gridPosition?.column ?? 0,
-        rowSpan: gridPosition?.rowSpan ?? 1,
-        columnSpan: gridPosition?.columnSpan ?? 1,
+        rowSpan: gridPosition?.rowSpan ?? DEFAULT_WIDGET_SIZE.default.h,
+        columnSpan: gridPosition?.columnSpan ?? DEFAULT_WIDGET_SIZE.default.w,
       };
     }
   }

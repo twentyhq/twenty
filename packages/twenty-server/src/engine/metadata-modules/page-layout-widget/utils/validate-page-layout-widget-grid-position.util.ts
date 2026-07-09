@@ -18,6 +18,32 @@ export const validatePageLayoutWidgetGridPosition = (
 
   const { row, column, rowSpan, columnSpan } = position;
 
+  const numericFields: [string, number][] = [
+    ['row', row],
+    ['column', column],
+    ['rowSpan', rowSpan],
+    ['columnSpan', columnSpan],
+  ];
+
+  for (const [fieldName, value] of numericFields) {
+    if (!Number.isFinite(value)) {
+      errors.push({
+        code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+        message: generatePageLayoutWidgetExceptionMessage(
+          PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_POSITION,
+          widgetTitle,
+          undefined,
+          `${fieldName} must be a number`,
+        ),
+        userFriendlyMessage: msg`Widget position is missing required grid coordinates`,
+      });
+    }
+  }
+
+  if (errors.length > 0) {
+    return errors;
+  }
+
   if (row < 0) {
     errors.push({
       code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,

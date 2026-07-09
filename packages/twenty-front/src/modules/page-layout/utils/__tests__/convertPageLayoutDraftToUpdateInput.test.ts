@@ -322,8 +322,8 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
       layoutMode: PageLayoutTabLayoutMode.GRID,
       row: 0,
       column: 0,
-      rowSpan: 1,
-      columnSpan: 1,
+      rowSpan: 4,
+      columnSpan: 4,
     });
   });
 

@@ -99,7 +99,7 @@ See create_complete_dashboard for full configuration examples.`,
           widgetId: widget.id,
           title: widget.title,
           type: widget.type,
-          gridPosition: parameters.gridPosition,
+          position: widget.position,
           pageLayoutTabId: parameters.pageLayoutTabId,
         },
       };

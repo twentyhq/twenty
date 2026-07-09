@@ -1,7 +1,3 @@
-import {
-  PageLayoutTabLayoutMode,
-  type PageLayoutWidgetPosition,
-} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -20,18 +16,6 @@ import { buildResolvedGroupBy } from 'src/modules/dashboard/tools/utils/build-re
 const getDashboardSchema = z.object({
   dashboardId: z.string().uuid().describe('The UUID of the dashboard to fetch'),
 });
-
-const extractGridPositionFromWidgetPosition = (
-  position: PageLayoutWidgetPosition | null | undefined,
-) =>
-  isDefined(position) && position.layoutMode === PageLayoutTabLayoutMode.GRID
-    ? {
-        row: position.row,
-        column: position.column,
-        rowSpan: position.rowSpan,
-        columnSpan: position.columnSpan,
-      }
-    : undefined;
 
 export const createGetDashboardTool = (
   deps: Pick<
@@ -136,9 +120,7 @@ export const createGetDashboardTool = (
                   id: w.id,
                   title: w.title,
                   type: w.type,
-                  gridPosition: extractGridPositionFromWidgetPosition(
-                    w.position,
-                  ),
+                  position: w.position,
                   objectMetadataId: w.objectMetadataId,
                   configuration: w.configuration,
                 };
@@ -208,7 +190,7 @@ export const createGetDashboardTool = (
                 id: w.id,
                 title: w.title,
                 type: w.type,
-                gridPosition: extractGridPositionFromWidgetPosition(w.position),
+                position: w.position,
                 objectMetadataId: w.objectMetadataId,
                 configuration: enrichedConfiguration,
               };
