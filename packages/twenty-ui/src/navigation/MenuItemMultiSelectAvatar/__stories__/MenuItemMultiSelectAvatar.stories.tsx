@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { Avatar } from '@ui/data-display';
 import {
@@ -29,6 +30,27 @@ export const Default: Story = {
     avatar: <Avatar avatarUrl={AVATAR_URL_MOCK} placeholder="L" />,
   },
   decorators: [ComponentDecorator],
+};
+
+// Base UI re-dispatches a bubbling click on the checkbox's hidden input, so a
+// single checkbox click must still result in exactly one selection change and
+// not toggle the row's handler twice.
+export const ClickingCheckboxSelectsOnce: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  args: {
+    text: 'First option',
+    selected: false,
+    onSelectChange: fn(),
+  },
+  decorators: [ComponentDecorator],
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(canvas.getByRole('checkbox'));
+
+    await expect(args.onSelectChange).toHaveBeenCalledTimes(1);
+    await expect(args.onSelectChange).toHaveBeenCalledWith(true);
+  },
 };
 
 export const Catalog: CatalogStory<Story, typeof MenuItemMultiSelectAvatar> = {

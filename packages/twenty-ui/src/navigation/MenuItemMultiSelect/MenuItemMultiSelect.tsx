@@ -1,7 +1,7 @@
 import { Tag } from '@ui/data-display';
 import { type IconComponent } from '@ui/icon';
-import { Checkbox } from '@ui/input/Checkbox/Checkbox';
 import { MenuItemLeftContent } from '@ui/navigation/MenuItem/parts/MenuItemLeftContent';
+import { MenuItemMultiSelectCheckbox } from '@ui/navigation/MenuItem/parts/MenuItemMultiSelectCheckbox';
 import { type ThemeColor } from '@ui/theme';
 import { StyledMenuItemBase } from '@ui/navigation/MenuItem/parts/StyledMenuItemBase';
 
@@ -41,7 +41,11 @@ export const MenuItemMultiSelect = ({
       onClick={handleOnClick}
     >
       <div className={styles.leftContentWithCheckboxContainer}>
-        <Checkbox checked={selected} aria-label={text} />
+        <MenuItemMultiSelectCheckbox
+          selected={selected}
+          onSelectChange={onSelectChange}
+          ariaLabel={text}
+        />
         {color ? (
           <Tag color={color} text={text} Icon={LeftIcon} />
         ) : (
