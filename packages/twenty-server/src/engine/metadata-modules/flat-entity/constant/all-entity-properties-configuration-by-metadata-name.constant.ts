@@ -477,7 +477,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
     },
     viewId: {
-      toCompare: false,
+      toCompare: true,
       universalProperty: 'viewUniversalIdentifier',
       toStringify: false,
     },
@@ -544,7 +544,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'fieldMetadataUniversalIdentifier',
     },
     viewId: {
-      toCompare: false,
+      toCompare: true,
       toStringify: false,
       universalProperty: 'viewUniversalIdentifier',
     },
@@ -592,7 +592,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     viewId: {
-      toCompare: false,
+      toCompare: true,
       toStringify: false,
       universalProperty: 'viewUniversalIdentifier',
     },

@@ -32,6 +32,37 @@ describe('WorkspaceSchemaEnumManagerService', () => {
     >;
   });
 
+  describe('addEnumValue', () => {
+    it('emits a plain ADD VALUE statement', async () => {
+      await service.addEnumValue({
+        queryRunner: queryRunner as unknown as QueryRunner,
+        schemaName: 'workspace_adhj7eaegq93fzpgbfpdm8ok3',
+        enumName: 'company_createdBySource_enum',
+        value: 'AGENT',
+      });
+
+      expect(executedSql).toHaveLength(1);
+      expect(executedSql[0]).toContain('ADD VALUE ');
+      expect(executedSql[0]).not.toContain('IF NOT EXISTS');
+      expect(executedSql[0]).toContain("'AGENT'");
+    });
+  });
+
+  describe('upsertEnumValue', () => {
+    it('emits ADD VALUE IF NOT EXISTS', async () => {
+      await service.upsertEnumValue({
+        queryRunner: queryRunner as unknown as QueryRunner,
+        schemaName: 'workspace_adhj7eaegq93fzpgbfpdm8ok3',
+        enumName: 'company_createdBySource_enum',
+        value: 'AGENT',
+      });
+
+      expect(executedSql).toHaveLength(1);
+      expect(executedSql[0]).toContain('ADD VALUE IF NOT EXISTS');
+      expect(executedSql[0]).toContain("'AGENT'");
+    });
+  });
+
   describe('alterEnumValues', () => {
     it('should not generate an enum rename whose target collides with the source when the name exceeds the identifier length limit', async () => {
       // Real-world case: long object + field names produce an enum name over

@@ -117,29 +117,14 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
       filterValue: anyFieldFilterValue,
     });
 
-  const serializedRequestFilters = JSON.stringify(requestFilters);
-  const serializedRecordGroupFilter = JSON.stringify(recordGroupFilter);
-  const serializedAnyFieldFilter = JSON.stringify(anyFieldFilter);
-
-  const filter = useMemo(() => {
-    const parsedRequestFilters = JSON.parse(serializedRequestFilters);
-    const parsedRecordGroupFilter = JSON.parse(serializedRecordGroupFilter);
-    const parsedAnyFieldFilter = JSON.parse(serializedAnyFieldFilter);
-    return {
-      ...parsedRequestFilters,
-      ...parsedRecordGroupFilter,
-      ...parsedAnyFieldFilter,
-    };
-  }, [
-    serializedRequestFilters,
-    serializedRecordGroupFilter,
-    serializedAnyFieldFilter,
-  ]);
-
   const { data, loading } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
-    filter,
+    filter: {
+      ...requestFilters,
+      ...recordGroupFilter,
+      ...anyFieldFilter,
+    },
     skip: !isDefined(aggregateOperationForViewField),
   });
 

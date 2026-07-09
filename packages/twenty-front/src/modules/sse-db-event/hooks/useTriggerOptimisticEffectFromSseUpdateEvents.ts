@@ -9,12 +9,11 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueriesForObjectMetadataItem } from '@/object-record/hooks/useRefetchAggregateQueriesForObjectMetadataItem';
-import { recentLocalMutationsState } from '@/sse-db-event/states/recentLocalMutationsState';
+import { hasRecordChanged } from '@/object-record/utils/hasRecordChanged';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getUnknownRecordInputFields } from '@/object-record/utils/getUnknownRecordInputFields';
 import { captureMessage } from '@sentry/react';
-import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
@@ -29,7 +28,6 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
   const { refetchAggregateQueriesForObjectMetadataItem } =
     useRefetchAggregateQueriesForObjectMetadataItem();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const store = useStore();
 
   const triggerOptimisticEffectFromSseUpdateEvents = useCallback(
     ({
@@ -42,6 +40,8 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
       const updateEvents = objectRecordEvents.filter((objectRecordEvent) => {
         return objectRecordEvent.action === DatabaseEventAction.UPDATED;
       });
+
+      let hasAnyRealChanges = false;
 
       for (const updateEvent of updateEvents) {
         const recordFromEvent = updateEvent.properties.after;
@@ -110,6 +110,16 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
           continue;
         }
 
+        const hasChanged = hasRecordChanged({
+          cachedRecord,
+          newRecord: computedOptimisticRecord,
+          objectMetadataItem,
+        });
+
+        if (hasChanged) {
+          hasAnyRealChanges = true;
+        }
+
         const cachedRecordWithConnection = getRecordNodeFromRecord({
           record: cachedRecord,
           objectMetadataItem,
@@ -158,30 +168,7 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
         });
       }
 
-      const recentLocalMutations = store.get(recentLocalMutationsState.atom);
-
-      const isRecentMutation = (
-        objectNameSingular: string,
-        recordId: string,
-      ) => {
-        const key = `${objectNameSingular}:${recordId}`;
-        const timestamp = recentLocalMutations[key];
-        if (!timestamp) return false;
-        return Date.now() - timestamp < 10000;
-      };
-
-      const hasOnlyLocalUpdates =
-        updateEvents.length > 0 &&
-        updateEvents.every((updateEvent) => {
-          const recordId =
-            updateEvent.recordId ?? updateEvent.properties.after?.id;
-          return (
-            isDefined(recordId) &&
-            isRecentMutation(objectMetadataItem.nameSingular, recordId)
-          );
-        });
-
-      if (isNonEmptyArray(updateEvents) && !hasOnlyLocalUpdates) {
+      if (isNonEmptyArray(updateEvents) && hasAnyRealChanges) {
         refetchAggregateQueriesForObjectMetadataItem({
           objectMetadataItem,
         });
@@ -195,7 +182,6 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
       objectPermissionsByObjectMetadataId,
       refetchAggregateQueriesForObjectMetadataItem,
       upsertRecordsInStore,
-      store,
     ],
   );
 

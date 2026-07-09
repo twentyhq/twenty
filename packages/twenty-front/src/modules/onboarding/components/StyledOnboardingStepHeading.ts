@@ -1,11 +1,7 @@
-import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
+import { StyledOnboardingContentBlock } from '@/onboarding/components/StyledOnboardingContentBlock';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-export const StyledOnboardingStepHeading = styled.div`
-  display: flex;
-  flex-direction: column;
+export const StyledOnboardingStepHeading = styled(StyledOnboardingContentBlock)`
   gap: ${themeCssVariables.spacing[4]};
-  max-width: 100%;
-  width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;

@@ -10,6 +10,7 @@ import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/service
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/services/upgrade-status-cache.service';
 import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
+import { extractVersionFromCommandName } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name.util';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { In, Repository } from 'typeorm';
@@ -136,6 +137,54 @@ export class UpgradeStatusService {
         displayName: workspace.displayName ?? null,
       })),
     );
+  }
+
+  async getWorkspaceCompletedVersion(
+    workspaceId: string,
+  ): Promise<string | null> {
+    const cursors =
+      await this.upgradeMigrationService.getWorkspaceLastAttemptedCommandName([
+        workspaceId,
+      ]);
+    const cursor = cursors.get(workspaceId);
+
+    if (!isDefined(cursor)) {
+      return null;
+    }
+
+    const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
+    const cursorIndex = sequence.findIndex((step) => step.name === cursor.name);
+
+    if (cursorIndex === -1) {
+      return null;
+    }
+
+    const cursorVersion = extractVersionFromCommandName(cursor.name);
+
+    if (!isDefined(cursorVersion)) {
+      return null;
+    }
+
+    const isLastStepOfItsVersion =
+      cursorIndex === sequence.length - 1 ||
+      extractVersionFromCommandName(sequence[cursorIndex + 1].name) !==
+        cursorVersion;
+
+    if (cursor.status === 'completed' && isLastStepOfItsVersion) {
+      return cursorVersion;
+    }
+
+    for (let stepIndex = cursorIndex - 1; stepIndex >= 0; stepIndex--) {
+      const stepVersion = extractVersionFromCommandName(
+        sequence[stepIndex].name,
+      );
+
+      if (stepVersion !== cursorVersion) {
+        return stepVersion;
+      }
+    }
+
+    return null;
   }
 
   async getInstanceAndAllWorkspacesStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatus> {

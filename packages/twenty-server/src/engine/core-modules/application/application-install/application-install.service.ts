@@ -27,7 +27,7 @@ import {
 } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import {
   LogicFunctionTriggerJob,
   type LogicFunctionTriggerJobData,
@@ -50,7 +50,11 @@ export class ApplicationInstallService {
     INVALID_REQUIRED_VERSION:
       ApplicationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT,
     INVALID_SERVER_VERSION: ApplicationExceptionCode.INVALID_SERVER_VERSION,
-    INCOMPATIBLE: ApplicationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
+    INVALID_WORKSPACE_VERSION:
+      ApplicationExceptionCode.INVALID_WORKSPACE_VERSION,
+    INSTANCE_INCOMPATIBLE: ApplicationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
+    WORKSPACE_INCOMPATIBLE:
+      ApplicationExceptionCode.WORKSPACE_VERSION_INCOMPATIBLE,
   };
 
   constructor(
@@ -139,8 +143,11 @@ export class ApplicationInstallService {
       resolvedPackage.packageJson.engines?.['twenty'];
 
     const versionValidation =
-      await this.applicationVersionValidationService.validateServerCompatibility(
-        requiredServerVersion,
+      await this.applicationVersionValidationService.validateWorkspaceCompatibility(
+        {
+          requiredServerVersion,
+          workspaceId: params.workspaceId,
+        },
       );
 
     if (!versionValidation.compatible) {

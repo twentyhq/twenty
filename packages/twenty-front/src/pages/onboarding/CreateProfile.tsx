@@ -87,6 +87,8 @@ export const CreateProfile = () => {
   );
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
 
+  const [isNavigating, setIsNavigating] = useState(false);
+
   const {
     control,
     handleSubmit,
@@ -151,7 +153,9 @@ export const CreateProfile = () => {
         });
 
         setNextOnboardingStatus();
+        setIsNavigating(true);
       } catch (error: any) {
+        setIsNavigating(false);
         enqueueErrorSnackBar({
           apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
         });
@@ -279,7 +283,7 @@ export const CreateProfile = () => {
           <MainButton
             title={t`Continue`}
             onClick={handleSubmit(onSubmit)}
-            disabled={!isValid || isSubmitting}
+            disabled={!isValid || isSubmitting || isNavigating}
             fullWidth
           />
         </StyledButtonContainer>

@@ -1,7 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FileFolder } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
@@ -44,7 +43,7 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 import { assert } from 'src/utils/assert';
 import { getDomainFromEmailOrThrow } from 'src/utils/get-domain-from-email-or-throw';
 
-export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntity> {
+export class UserWorkspaceService {
   private readonly logger = new Logger(UserWorkspaceService.name);
 
   constructor(
@@ -67,8 +66,10 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly fileUrlService: FileUrlService,
     private readonly onboardingService: OnboardingService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
-  ) {
-    super(userWorkspaceRepository);
+  ) {}
+
+  async findById(id: string): Promise<UserWorkspaceEntity | null> {
+    return this.userWorkspaceRepository.findOne({ where: { id } });
   }
 
   async updateUserWorkspaceLocaleForUserWorkspace({

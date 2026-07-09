@@ -160,6 +160,9 @@
             "appsGettingStarted": {
               "label": "البدء"
             },
+            "appsTutorial": {
+              "label": "البرنامج التعليمي"
+            },
             "appsConfig": {
               "label": "التهيئة"
             },

@@ -72,11 +72,6 @@ describe('useUpdateOneRecord', () => {
       expect(res).toHaveProperty('name', updateInput.name);
     });
 
-    // Wait for the 100ms debounce timeout to execute
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 150));
-    });
-
     expect(mocks[0].result).toHaveBeenCalled();
     expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
   });

@@ -34,14 +34,21 @@ export class EnterpriseKeyValidationCronJob {
       'Starting enterprise validity token refresh and seat report...',
     );
 
-    const refreshSuccess =
-      await this.enterprisePlanService.refreshValidityToken();
+    try {
+      const refreshSuccess =
+        await this.enterprisePlanService.refreshValidityToken();
 
-    if (refreshSuccess) {
-      this.logger.log('Enterprise validity token refreshed successfully');
-    } else {
+      if (refreshSuccess) {
+        this.logger.log('Enterprise validity token refreshed successfully');
+      } else {
+        this.logger.warn(
+          'Enterprise validity token refresh did not succeed. ' +
+            'Existing validity token will continue to work until expiration.',
+        );
+      }
+    } catch (error) {
       this.logger.warn(
-        'Enterprise validity token refresh did not succeed. ' +
+        `Enterprise validity token refresh failed: ${error instanceof Error ? error.message : 'Unknown error'}. ` +
           'Existing validity token will continue to work until expiration.',
       );
     }

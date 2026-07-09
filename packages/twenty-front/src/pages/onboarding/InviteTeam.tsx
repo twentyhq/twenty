@@ -51,6 +51,7 @@ export const InviteTeam = () => {
     getPlaceholder,
     isValid,
     isSubmitting,
+    isNavigating,
   } = useInviteTeam();
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const creditsRewardPerUser = onboardingConfig?.inviteTeamCreditsRewardPerUser;
@@ -123,11 +124,14 @@ export const InviteTeam = () => {
         <StyledFooter>
           <MainButton
             title={t`Invite`}
-            disabled={!isValid || isSubmitting}
+            disabled={!isValid || isSubmitting || isNavigating}
             onClick={handleSubmit(onSubmit)}
             fullWidth
           />
-          <OnboardingSkipButton onClick={handleSkip} />
+          <OnboardingSkipButton
+            onClick={handleSkip}
+            disabled={isSubmitting || isNavigating}
+          />
         </StyledFooter>
       </OnboardingStepAnimatedItem>
     </StyledOnboardingStepPage>

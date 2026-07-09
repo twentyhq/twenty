@@ -47,7 +47,9 @@ describe('Sync application should fail when creating permissions on a standard r
             label: 'Stolen Admin Role',
             description:
               'Attempts to add permissions to the standard admin role',
-            permissionFlagUniversalIdentifiers: [SystemPermissionFlag.WORKSPACE],
+            permissionFlagUniversalIdentifiers: [
+              SystemPermissionFlag.WORKSPACE,
+            ],
           },
         ],
       },

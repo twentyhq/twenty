@@ -31,7 +31,7 @@ describe('buildWhereConditions', () => {
   it('builds a single where condition for a flat field using all defined values', () => {
     const groups: ConflictingFieldGroup[] = [
       {
-        baseField: 'uniqueText',
+        baseFields: ['uniqueText'],
         conflictingProperties: [
           { fullPath: 'uniqueText', column: 'uniqueText' },
         ],
@@ -54,7 +54,7 @@ describe('buildWhereConditions', () => {
   it('skips adding a condition when all values for a field are undefined', () => {
     const groups: ConflictingFieldGroup[] = [
       {
-        baseField: 'uniqueText',
+        baseFields: ['uniqueText'],
         conflictingProperties: [
           { fullPath: 'uniqueText', column: 'uniqueText' },
         ],
@@ -69,7 +69,7 @@ describe('buildWhereConditions', () => {
   it('builds conditions for nested paths', () => {
     const groups: ConflictingFieldGroup[] = [
       {
-        baseField: 'emailsField',
+        baseFields: ['emailsField'],
         conflictingProperties: [
           {
             fullPath: 'emailsField.primaryEmail',
@@ -95,13 +95,13 @@ describe('buildWhereConditions', () => {
   it('builds multiple conditions when multiple conflicting fields are provided', () => {
     const groups: ConflictingFieldGroup[] = [
       {
-        baseField: 'uniqueText',
+        baseFields: ['uniqueText'],
         conflictingProperties: [
           { fullPath: 'uniqueText', column: 'uniqueText' },
         ],
       },
       {
-        baseField: 'emailsField',
+        baseFields: ['emailsField'],
         conflictingProperties: [
           {
             fullPath: 'emailsField.primaryEmail',

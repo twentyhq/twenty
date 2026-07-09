@@ -26,7 +26,7 @@ const FAKE_OBJECT_METADATA = {
   universalIdentifier: 'call-recording-object',
   applicationId: null,
   dataSourceId: null,
-  standardOverrides: null,
+  overrides: null,
   isCustom: false,
   isRemote: false,
   isActive: true,
