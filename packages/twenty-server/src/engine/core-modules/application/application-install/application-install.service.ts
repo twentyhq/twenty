@@ -20,7 +20,10 @@ import { ApplicationRegistrationService } from 'src/engine/core-modules/applicat
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
+import {
+  ApplicationPackageFetcherService,
+  type ResolvedPackage,
+} from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
@@ -125,69 +128,145 @@ export class ApplicationInstallService {
       return true;
     }
 
-    const universalIdentifier = appRegistration.universalIdentifier;
-
-    // Tracked outside the try so the catch can pick the install-vs-upgrade
-    // failure key and only roll back an application this call actually created.
-    let isVersionUpgrade = false;
-    let didCreateApplication = false;
-
     try {
-      const requiredServerVersion =
-        resolvedPackage.packageJson.engines?.['twenty'];
-
-      const versionValidation =
-        await this.applicationVersionValidationService.validateWorkspaceCompatibility(
-          {
-            requiredServerVersion,
-            workspaceId: params.workspaceId,
-          },
-        );
-
-      if (!versionValidation.compatible) {
-        throw new ApplicationException(
-          versionValidation.message,
-          VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE[
-            versionValidation.reason
-          ],
-        );
-      }
-
       const existingApplication =
         await this.applicationService.findByUniversalIdentifier({
-          universalIdentifier,
+          universalIdentifier: appRegistration.universalIdentifier,
           workspaceId: params.workspaceId,
         });
 
-      isVersionUpgrade = isDefined(existingApplication);
+      return await this.recordInstallMetrics(
+        {
+          appRegistration,
+          resolvedPackage,
+          isVersionUpgrade: isDefined(existingApplication),
+        },
+        () =>
+          this.runInstall({
+            appRegistration,
+            params,
+            resolvedPackage,
+            existingApplication,
+          }),
+      );
+    } finally {
+      await this.applicationPackageFetcherService.cleanupExtractedDir(
+        resolvedPackage.cleanupDir,
+      );
+    }
+  }
 
-      const previousVersion = existingApplication?.version ?? undefined;
+  // Wraps an install/upgrade attempt so its success/failure counter is emitted
+  // from one place, keeping the install logic itself metrics-free. The
+  // install-vs-upgrade key and app attributes come from the pre-resolved
+  // context, so a failure at any point (compatibility, version checks,
+  // creation, hooks) is still counted with the right label.
+  private async recordInstallMetrics(
+    context: {
+      appRegistration: ApplicationRegistrationEntity;
+      resolvedPackage: ResolvedPackage;
+      isVersionUpgrade: boolean;
+    },
+    install: () => Promise<boolean>,
+  ): Promise<boolean> {
+    const { appRegistration, resolvedPackage, isVersionUpgrade } = context;
 
-      const newVersion = resolvedPackage.packageJson.version;
+    const attributes = {
+      universal_identifier: appRegistration.universalIdentifier,
+      app_name: resolvedPackage.manifest.application.displayName,
+      source_type: appRegistration.sourceType,
+      version: resolvedPackage.packageJson.version ?? 'unknown',
+    };
 
-      if (!isDefined(newVersion)) {
-        throw new ApplicationException(
-          `Package ${universalIdentifier} has no version`,
-          ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
-        );
-      }
+    try {
+      const result = await install();
 
-      const application = await this.ensureApplicationExists({
-        existingApplication,
-        universalIdentifier,
-        name: resolvedPackage.manifest.application.displayName,
-        logo: resolvedPackage.manifest.application.logoUrl ?? null,
-        workspaceId: params.workspaceId,
-        applicationRegistrationId: appRegistration.id,
-        sourceType: appRegistration.sourceType,
+      this.metricsService.incrementCounterBy({
+        key: isVersionUpgrade
+          ? MetricsKeys.AppUpgradeSucceeded
+          : MetricsKeys.AppInstallSucceeded,
+        amount: 1,
+        attributes,
       });
 
-      if (!isVersionUpgrade) {
-        didCreateApplication = true;
-      }
+      return result;
+    } catch (error) {
+      this.metricsService.incrementCounterBy({
+        key: isVersionUpgrade
+          ? MetricsKeys.AppUpgradeFailed
+          : MetricsKeys.AppInstallFailed,
+        amount: 1,
+        attributes: {
+          ...attributes,
+          error_code:
+            error instanceof ApplicationException ? error.code : 'UNKNOWN',
+        },
+      });
 
-      const incomingVersion = resolvedPackage.packageJson.version;
+      throw error;
+    }
+  }
 
+  private async runInstall({
+    appRegistration,
+    params,
+    resolvedPackage,
+    existingApplication,
+  }: {
+    appRegistration: ApplicationRegistrationEntity;
+    params: { version?: string; workspaceId: string };
+    resolvedPackage: ResolvedPackage;
+    existingApplication: ApplicationEntity | null;
+  }): Promise<boolean> {
+    const universalIdentifier = appRegistration.universalIdentifier;
+
+    const requiredServerVersion =
+      resolvedPackage.packageJson.engines?.['twenty'];
+
+    const versionValidation =
+      await this.applicationVersionValidationService.validateWorkspaceCompatibility(
+        {
+          requiredServerVersion,
+          workspaceId: params.workspaceId,
+        },
+      );
+
+    if (!versionValidation.compatible) {
+      throw new ApplicationException(
+        versionValidation.message,
+        VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE[versionValidation.reason],
+      );
+    }
+
+    const isVersionUpgrade = isDefined(existingApplication);
+
+    const previousVersion = existingApplication?.version ?? undefined;
+
+    const newVersion = resolvedPackage.packageJson.version;
+
+    if (!isDefined(newVersion)) {
+      throw new ApplicationException(
+        `Package ${universalIdentifier} has no version`,
+        ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+      );
+    }
+
+    const application = await this.ensureApplicationExists({
+      existingApplication,
+      universalIdentifier,
+      name: resolvedPackage.manifest.application.displayName,
+      logo: resolvedPackage.manifest.application.logoUrl ?? null,
+      workspaceId: params.workspaceId,
+      applicationRegistrationId: appRegistration.id,
+      sourceType: appRegistration.sourceType,
+    });
+
+    const incomingVersion = resolvedPackage.packageJson.version;
+
+    // Rollback is scoped to the work after the application row exists: reaching
+    // this catch means creation succeeded, so a fresh install (not an upgrade)
+    // is the only case that needs uninstalling.
+    try {
       if (
         isVersionUpgrade &&
         isDefined(application.version) &&
@@ -282,56 +361,20 @@ export class ApplicationInstallService {
         `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
       );
 
-      this.metricsService.incrementCounterBy({
-        key: isVersionUpgrade
-          ? MetricsKeys.AppUpgradeSucceeded
-          : MetricsKeys.AppInstallSucceeded,
-        amount: 1,
-        attributes: {
-          universal_identifier: universalIdentifier,
-          app_name: application.name,
-          source_type: appRegistration.sourceType,
-          version: newVersion,
-        },
-      });
-
       return true;
     } catch (error) {
       this.logger.error(
         `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,
       );
 
-      // Roll back before recording metrics so a half-applied fresh install is
-      // always cleaned up, even if the metrics emission were to misbehave.
-      if (didCreateApplication) {
+      if (!isVersionUpgrade) {
         await this.applicationSyncService.uninstallApplication({
           applicationUniversalIdentifier: universalIdentifier,
           workspaceId: params.workspaceId,
         });
       }
 
-      this.metricsService.incrementCounterBy({
-        key: isVersionUpgrade
-          ? MetricsKeys.AppUpgradeFailed
-          : MetricsKeys.AppInstallFailed,
-        amount: 1,
-        attributes: {
-          universal_identifier: universalIdentifier,
-          app_name: resolvedPackage.manifest.application.displayName,
-          source_type: appRegistration.sourceType,
-          version: resolvedPackage.packageJson.version ?? 'unknown',
-          error_code:
-            error instanceof ApplicationException ? error.code : 'UNKNOWN',
-        },
-      });
-
       throw error;
-    } finally {
-      if (resolvedPackage) {
-        await this.applicationPackageFetcherService.cleanupExtractedDir(
-          resolvedPackage.cleanupDir,
-        );
-      }
     }
   }
 
