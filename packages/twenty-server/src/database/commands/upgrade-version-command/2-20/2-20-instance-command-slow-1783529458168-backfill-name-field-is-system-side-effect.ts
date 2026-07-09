@@ -20,9 +20,7 @@ import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 // flush and recompute the fieldMetadata flat-entity cache (the UPDATE itself
 // does not invalidate the per-workspace cache).
 @RegisteredInstanceCommand('2.20.0', 1783529458168, { type: 'slow' })
-export class BackfillNameFieldIsSystemSideEffectSlowInstanceCommand
-  implements SlowInstanceCommand
-{
+export class BackfillNameFieldIsSystemSideEffectSlowInstanceCommand implements SlowInstanceCommand {
   async runDataMigration(dataSource: DataSource): Promise<void> {
     await dataSource.query(
       `UPDATE "core"."fieldMetadata" SET "isSystemSideEffect" = false WHERE "name" = 'name' AND "isSystemSideEffect" = true`,
@@ -33,12 +31,8 @@ export class BackfillNameFieldIsSystemSideEffectSlowInstanceCommand
     return;
   }
 
-  // Best-effort inverse: restores the 2.15 → 2.19 status quo where `name` fields
-  // were flagged true. Over-approximates on rollback because pre-2.15 `name` rows
-  // were legitimately false and are indistinguishable from the ones flipped above.
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `UPDATE "core"."fieldMetadata" SET "isSystemSideEffect" = true WHERE "name" = 'name' AND "isSystemSideEffect" = false`,
-    );
+  // Intentional no-op: this backfill cannot be safely reversed. Pre-2.15 `name`
+  public async down(_queryRunner: QueryRunner): Promise<void> {
+    return;
   }
 }

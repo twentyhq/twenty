@@ -48,6 +48,7 @@ const buildFlatIndexFieldMetadata = ({
 
 const SEARCH_VECTOR_FIELD_ID = 'search-vector-field-id';
 const TEXT_FIELD_ID = 'text-field-id';
+const OTHER_TS_VECTOR_FIELD_ID = 'other-ts-vector-field-id';
 
 const searchVectorFlatFieldMetadata = getFlatFieldMetadataMock({
   id: SEARCH_VECTOR_FIELD_ID,
@@ -65,9 +66,18 @@ const textFlatFieldMetadata = getFlatFieldMetadataMock({
   name: 'name',
 });
 
+const otherTsVectorFlatFieldMetadata = getFlatFieldMetadataMock({
+  id: OTHER_TS_VECTOR_FIELD_ID,
+  universalIdentifier: 'other-ts-vector-field-uid',
+  objectMetadataId: 'object-id',
+  type: FieldMetadataType.TS_VECTOR,
+  name: 'customSearchVector',
+});
+
 const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([
   searchVectorFlatFieldMetadata,
   textFlatFieldMetadata,
+  otherTsVectorFlatFieldMetadata,
 ]);
 
 describe('isSearchVectorGinFlatIndexMetadata', () => {
@@ -120,6 +130,28 @@ describe('isSearchVectorGinFlatIndexMetadata', () => {
       indexType: IndexType.BTREE,
       flatIndexFieldMetadatas: [
         buildFlatIndexFieldMetadata({ fieldMetadataId: SEARCH_VECTOR_FIELD_ID }),
+      ],
+    });
+
+    expect(
+      isSearchVectorGinFlatIndexMetadata({
+        flatIndexMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(false);
+  });
+
+  it('returns false for a single-field GIN index on a TS_VECTOR field that is not the searchVector field', () => {
+    const flatIndexMetadata = getFlatIndexMetadataMock({
+      universalIdentifier: 'gin-index-uid',
+      objectMetadataId: 'object-id',
+      objectMetadataUniversalIdentifier: 'object-uid',
+      applicationUniversalIdentifier: 'application-uid',
+      indexType: IndexType.GIN,
+      flatIndexFieldMetadatas: [
+        buildFlatIndexFieldMetadata({
+          fieldMetadataId: OTHER_TS_VECTOR_FIELD_ID,
+        }),
       ],
     });
 

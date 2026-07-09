@@ -6,6 +6,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 
 // The searchVector GIN index is the single-column GIN index whose only field is
 // the object's TS_VECTOR searchVector field (see build-search-vector-gin-index-for-custom-object.util).
@@ -31,6 +32,7 @@ export const isSearchVectorGinFlatIndexMetadata = ({
 
   return (
     isDefined(indexedFlatFieldMetadata) &&
-    indexedFlatFieldMetadata.type === FieldMetadataType.TS_VECTOR
+    indexedFlatFieldMetadata.type === FieldMetadataType.TS_VECTOR &&
+    indexedFlatFieldMetadata.name === SEARCH_VECTOR_FIELD.name
   );
 };
