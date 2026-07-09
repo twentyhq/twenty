@@ -7,12 +7,6 @@ name: CI App Docs Drift
 
 on:
   pull_request:
-    paths:
-      - 'packages/twenty-sdk/**'
-      - 'packages/create-twenty-app/**'
-      - 'packages/twenty-client-sdk/**'
-      - 'packages/twenty-shared/src/application/**'
-      - 'packages/twenty-shared/src/types/**'
 
 permissions:
   contents: read
@@ -22,9 +16,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changed-files-check:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        packages/twenty-sdk/**
+        packages/create-twenty-app/**
+        packages/twenty-client-sdk/**
+        packages/twenty-shared/src/application/**
+        packages/twenty-shared/src/types/**
+
   docs-drift-check:
-    # Secrets are unavailable on fork PRs; skip there and on release bots.
+    needs: changed-files-check
+    # Secrets are unavailable on fork PRs; skip there and on bot PRs.
     if: >-
+      needs.changed-files-check.outputs.any_changed == 'true' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.event.pull_request.user.type != 'Bot'
     timeout-minutes: 30
@@ -54,8 +60,9 @@ jobs:
 
             ## Step 1 — Understand the change
 
-            Run `git diff --stat origin/${{ github.base_ref }}...HEAD` and then read the
-            relevant diffs in full. Only these kinds of changes are documentation-relevant:
+            The PR branch is checked out with full history; the base branch is
+            `origin/${{ github.base_ref }}`. Inspect what the PR changes however you
+            see fit. Only these kinds of changes are documentation-relevant:
 
             - CLI commands, subcommands, flags, defaults, or help text
               (`packages/twenty-sdk/src/cli/commands/**`)
@@ -74,7 +81,7 @@ jobs:
             - Error codes surfaced to app developers
 
             Internal refactors, tests, and implementation-only changes are NOT relevant —
-            if the diff contains only those, say so and stop.
+            if the changes contain only those, say so and stop.
 
             ## Step 2 — Map to documentation
 
