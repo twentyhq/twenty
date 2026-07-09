@@ -33,10 +33,9 @@ const buildMarketplaceApp = (id: string, name: string) => ({
   isFeatured: true,
 });
 
-const buildHandlers = (
-  marketplaceApps: ReturnType<typeof buildMarketplaceApp>[],
-) => [
-  graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
+const currentUserHandler = graphql.query(
+  getOperationName(GET_CURRENT_USER) ?? '',
+  () => {
     return HttpResponse.json({
       data: {
         currentUser: mockedOnboardingUserData(
@@ -44,7 +43,13 @@ const buildHandlers = (
         ),
       },
     });
-  }),
+  },
+);
+
+const buildHandlers = (
+  marketplaceApps: ReturnType<typeof buildMarketplaceApp>[],
+) => [
+  currentUserHandler,
   graphql.query(getOperationName(FIND_MANY_MARKETPLACE_APPS) ?? '', () => {
     return HttpResponse.json({
       data: { findManyMarketplaceApps: marketplaceApps },
@@ -102,5 +107,30 @@ export const OnlyAvailableApps: Story = {
     await canvas.findByText('Call recorder');
     expect(canvas.queryByText('Enrichment')).toBeNull();
     expect(canvas.queryByText('Last contact')).toBeNull();
+  },
+};
+
+export const MarketplaceUnavailable: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        currentUserHandler,
+        graphql.query(
+          getOperationName(FIND_MANY_MARKETPLACE_APPS) ?? '',
+          () => {
+            return HttpResponse.json({
+              errors: [{ message: 'Marketplace unavailable' }],
+            });
+          },
+        ),
+        graphqlMocks.handlers,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+    await canvas.findByText('No apps are available to install right now');
+    expect(canvas.queryByText('Install')).toBeNull();
+    await canvas.findByText('Skip');
   },
 };
