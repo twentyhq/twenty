@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import {
+  IconApps,
   IconBook,
   IconBrandLinkedin,
   IconBrandX,
@@ -67,6 +68,20 @@ export const MENU: {
             imageScale: 1.6,
             title: msg`Build on an open platform`,
             description: msg`APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data.`,
+          },
+        },
+        {
+          label: msg`Apps`,
+          description: msg`Extend your CRM`,
+          href: '/apps',
+          icon: IconApps,
+          preview: {
+            image: '/images/menu/developers.webp',
+            imageAlt: msg`Twenty apps marketplace`,
+            imagePosition: 'center',
+            imageScale: 1.6,
+            title: msg`Vetted apps for your workspace`,
+            description: msg`Install call recording, enrichment, Slack, Linear and more — every app built and maintained by Twenty.`,
           },
         },
         {

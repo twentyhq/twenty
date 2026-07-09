@@ -9,10 +9,8 @@ import {
   streamText,
   type SystemModelMessage,
   type ToolSet,
-  type UIDataTypes,
-  type UIMessage,
-  type UITools,
 } from 'ai';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
@@ -40,14 +38,10 @@ import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/g
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
 import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
-import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
+import { BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
@@ -57,14 +51,15 @@ import {
   extractCacheCreationTokensFromSteps,
 } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-tool-names-to-preload.const';
+import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
+import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import {
   ASK_QUESTIONS_TOOL_NAME,
   createAskQuestionsTool,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
-import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
-import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import { type ExtractedFile } from 'src/engine/metadata-modules/ai/ai-chat/types/extracted-file.type';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
+import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
 import {
   getCacheProviderOptions,
   getCallLevelProviderOptions,
@@ -76,6 +71,10 @@ import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models
 import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
 export type ChatExecutionOptions = {
@@ -84,7 +83,7 @@ export type ChatExecutionOptions = {
   threadId?: string;
   streamId?: string;
   turnId?: string;
-  messages: UIMessage<unknown, UIDataTypes, UITools>[];
+  messages: ExtendedUIMessage[];
   browsingContext: BrowsingContextType | null;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
   onCompaction?: () => void;
@@ -239,7 +238,7 @@ export class ChatExecutionService {
 
     const isCodeInterpreterEnabled = this.codeInterpreterService.isEnabled();
 
-    let processedMessages: UIMessage[] = replaceUnsupportedFileParts(
+    let processedMessages: ExtendedUIMessage[] = replaceUnsupportedFileParts(
       messages,
       modelConfig.modalities,
       isCodeInterpreterEnabled,
@@ -274,6 +273,11 @@ export class ChatExecutionService {
         contextString,
       );
     }
+
+    processedMessages = injectMessageTimestamps(
+      processedMessages,
+      userContext.timezone,
+    );
 
     const systemPrompt = this.systemPromptBuilder.buildFullPrompt(
       toolCatalog,
@@ -588,9 +592,9 @@ export class ChatExecutionService {
   }
 
   private injectBrowsingContextIntoLastUserMessage(
-    messages: UIMessage[],
+    messages: ExtendedUIMessage[],
     contextString: string,
-  ): UIMessage[] {
+  ): ExtendedUIMessage[] {
     const lastUserIndex = messages
       .map((message) => message.role)
       .lastIndexOf('user');

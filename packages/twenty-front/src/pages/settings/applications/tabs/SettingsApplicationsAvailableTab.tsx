@@ -24,7 +24,7 @@ const StyledContentContainer = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledNotFeaturedContainer = styled.div`
+const StyledNotVettedContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
 `;
 
@@ -51,7 +51,7 @@ const StyledHintLink = styled.button`
 export const SettingsApplicationsAvailableTab = () => {
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
-  const [showFeaturedOnly, setShowFeaturedOnly] = useState(true);
+  const [showVettedOnly, setShowVettedOnly] = useState(true);
 
   const { data: marketplaceApps, isLoading } = useMarketplaceApps();
 
@@ -67,12 +67,12 @@ export const SettingsApplicationsAvailableTab = () => {
       })
     : marketplaceApps;
 
-  const featuredApplications = textFilteredApplications.filter(
-    (application) => application.isFeatured,
+  const vettedApplications = textFilteredApplications.filter(
+    (application) => application.isVetted,
   );
 
-  const nonFeaturedApplications = textFilteredApplications.filter(
-    (application) => !application.isFeatured,
+  const nonVettedApplications = textFilteredApplications.filter(
+    (application) => !application.isVetted,
   );
 
   if (isLoading) {
@@ -83,10 +83,10 @@ export const SettingsApplicationsAvailableTab = () => {
     );
   }
 
-  const showNonFeaturedHint =
-    showFeaturedOnly &&
-    featuredApplications.length === 0 &&
-    nonFeaturedApplications.length > 0;
+  const showNonVettedHint =
+    showVettedOnly &&
+    vettedApplications.length === 0 &&
+    nonVettedApplications.length > 0;
 
   const hasNoApplications = textFilteredApplications.length === 0;
 
@@ -108,11 +108,9 @@ export const SettingsApplicationsAvailableTab = () => {
                   <DropdownMenuItemsContainer>
                     <MenuItemToggle
                       LeftIcon={IconSparkles}
-                      onToggleChange={() =>
-                        setShowFeaturedOnly(!showFeaturedOnly)
-                      }
-                      toggled={showFeaturedOnly}
-                      text={t`Featured only`}
+                      onToggleChange={() => setShowVettedOnly(!showVettedOnly)}
+                      toggled={showVettedOnly}
+                      text={t`Vetted only`}
                       toggleSize="small"
                     />
                   </DropdownMenuItemsContainer>
@@ -124,22 +122,22 @@ export const SettingsApplicationsAvailableTab = () => {
       </StyledSearchInputContainer>
 
       {hasNoApplications ||
-      (showFeaturedOnly && featuredApplications.length === 0) ? (
+      (showVettedOnly && vettedApplications.length === 0) ? (
         <SettingsEmptyPlaceholder padding="4">
-          {showNonFeaturedHint
-            ? t`No featured applications found. ${nonFeaturedApplications.length} non-featured result(s) available — `
+          {showNonVettedHint
+            ? t`No vetted applications found. ${nonVettedApplications.length} non-vetted result(s) available — `
             : t`No applications available`}
-          {showNonFeaturedHint && (
-            <StyledHintLink onClick={() => setShowFeaturedOnly(false)}>
+          {showNonVettedHint && (
+            <StyledHintLink onClick={() => setShowVettedOnly(false)}>
               {t`show all`}
             </StyledHintLink>
           )}
         </SettingsEmptyPlaceholder>
       ) : (
         <StyledContentContainer>
-          {featuredApplications.length > 0 && (
+          {vettedApplications.length > 0 && (
             <StyledCardsGrid>
-              {featuredApplications.map((application) => (
+              {vettedApplications.map((application) => (
                 <SettingsAvailableApplicationCard
                   key={application.id}
                   application={application}
@@ -148,21 +146,21 @@ export const SettingsApplicationsAvailableTab = () => {
             </StyledCardsGrid>
           )}
 
-          {!showFeaturedOnly && nonFeaturedApplications.length > 0 && (
-            <StyledNotFeaturedContainer>
+          {!showVettedOnly && nonVettedApplications.length > 0 && (
+            <StyledNotVettedContainer>
               <InlineBanner
                 color={'danger'}
-                message={t`Applications below are not featured. Use at your own risk.`}
+                message={t`Applications below are not vetted. Use at your own risk.`}
               />
               <StyledCardsGrid>
-                {nonFeaturedApplications.map((application) => (
+                {nonVettedApplications.map((application) => (
                   <SettingsAvailableApplicationCard
                     key={application.id}
                     application={application}
                   />
                 ))}
               </StyledCardsGrid>
-            </StyledNotFeaturedContainer>
+            </StyledNotVettedContainer>
           )}
         </StyledContentContainer>
       )}

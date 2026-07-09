@@ -1,66 +1,43 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { type RoleManifest } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
+import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
+import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
+import { MarketplaceAppRoleDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-role.dto';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
-import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
-import {
-  type ApplicationRegistrationCatalogCard,
-  ApplicationRegistrationService,
-} from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
-import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
-import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
-import { MarketplaceAppRoleDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-role.dto';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 
 @Injectable()
 export class MarketplaceQueryService {
-  private readonly logger = new Logger(MarketplaceQueryService.name);
-  private hasSyncBeenEnqueued = false;
-
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
-    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
-    @InjectMessageQueue(MessageQueue.cronQueue)
-    private readonly messageQueueService: MessageQueueService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
-  async findManyMarketplaceApps(): Promise<MarketplaceAppDTO[]> {
-    const registrations =
-      await this.applicationRegistrationService.findManyListedCatalogCards();
+  async findManyMarketplaceApps(
+    isVetted?: boolean,
+  ): Promise<MarketplaceAppDTO[]> {
+    const appsByUniversalIdentifier =
+      (await this.coreEntityCacheService.get(
+        'marketplaceCatalog',
+        MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
+      )) ?? {};
 
-    if (registrations.length === 0) {
-      if (!this.hasSyncBeenEnqueued) {
-        this.hasSyncBeenEnqueued = true;
-        this.logger.log(
-          'No marketplace registrations found, enqueuing one-time sync job',
-        );
-        await this.messageQueueService.add(
-          MarketplaceCatalogSyncCronJob.name,
-          {},
-          { id: 'marketplace-catalog-sync' }, // Avoids triggering multiple pending jobs
-        );
-      }
+    const apps = Object.values(appsByUniversalIdentifier);
 
-      return [];
+    if (!isDefined(isVetted)) {
+      return apps;
     }
 
-    const configuredStatuses =
-      await this.applicationRegistrationVariableService.isConfiguredBatch(
-        registrations.map((registration) => registration.id),
-      );
-
-    return registrations
-      .filter((registration) => configuredStatuses.get(registration.id) ?? true)
-      .map((registration) => this.toMarketplaceAppDTO(registration));
+    return apps.filter((app) => app.isVetted === isVetted);
   }
 
   async findMarketplaceAppDetail(
@@ -90,21 +67,6 @@ export class MarketplaceQueryService {
     return registration;
   }
 
-  private toMarketplaceAppDTO(
-    catalogCard: ApplicationRegistrationCatalogCard,
-  ): MarketplaceAppDTO {
-    return {
-      id: catalogCard.universalIdentifier,
-      name: catalogCard.name,
-      description: catalogCard.description ?? '',
-      author: catalogCard.author ?? 'Unknown',
-      category: catalogCard.category ?? '',
-      logo: catalogCard.logoUrl ?? undefined,
-      sourcePackage: catalogCard.sourcePackage ?? undefined,
-      isFeatured: catalogCard.isFeatured,
-    };
-  }
-
   private toMarketplaceAppDetailDTO(
     registration: ApplicationRegistrationEntity,
   ): MarketplaceAppDetailDTO {
@@ -116,7 +78,7 @@ export class MarketplaceQueryService {
       sourcePackage: registration.sourcePackage ?? undefined,
       latestAvailableVersion: registration.latestAvailableVersion ?? undefined,
       isListed: registration.isListed,
-      isFeatured: registration.isFeatured,
+      isVetted: registration.isVetted,
       description:
         registration.description ??
         registration.manifest?.application?.description ??

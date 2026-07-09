@@ -1,3 +1,8 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import {
+  APPLICATION_CATEGORIES,
+  isKnownApplicationCategory,
+} from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -34,6 +39,16 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
   if (config.defaultRoleUniversalIdentifier) {
     warnings.push(
       '`defaultRoleUniversalIdentifier` on defineApplication() is deprecated. Use defineApplicationRole() in your role file instead.',
+    );
+  }
+
+  const { category } = config;
+
+  if (isNonEmptyString(category) && !isKnownApplicationCategory(category)) {
+    warnings.push(
+      `Application category "${category}" is not a known ApplicationCategory (${APPLICATION_CATEGORIES.join(
+        ', ',
+      )}). Arbitrary category strings are kept for backward compatibility and may be removed. Ask for a new category at https://github.com/twentyhq/twenty.`,
     );
   }
 
