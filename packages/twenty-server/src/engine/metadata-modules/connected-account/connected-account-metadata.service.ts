@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, IsNull, Repository } from 'typeorm';
 
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+
 import { AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
 import { CALENDAR_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/calendar-channel/constants/calendar-channel-deleted.constant';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
@@ -43,6 +45,22 @@ export class ConnectedAccountMetadataService {
   }): Promise<ConnectedAccountEntity[]> {
     return this.repository.find({
       where: { userWorkspaceId, workspaceId },
+    });
+  }
+
+  async findByApplicationId({
+    applicationId,
+    workspaceId,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+  }): Promise<ConnectedAccountEntity[]> {
+    return this.repository.find({
+      where: {
+        applicationId,
+        workspaceId,
+        provider: ConnectedAccountProvider.APP,
+      },
     });
   }
 

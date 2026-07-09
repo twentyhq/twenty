@@ -305,6 +305,44 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
       },
     );
   });
+  it('should create contacts for phone handles even when non-professional emails are excluded', async () => {
+    await service.saveMessagesAndEnqueueContactCreation(
+      [
+        {
+          ...mockMessages[1],
+          participants: [
+            {
+              role: MessageParticipantRole.FROM,
+              handle: '14155552671',
+              displayName: 'WhatsApp Contact',
+            },
+          ],
+        },
+      ],
+      mockMessageChannel,
+      mockConnectedAccount,
+      workspaceId,
+    );
+
+    expect(messageQueueService.add).toHaveBeenCalledWith(
+      CreateCompanyAndContactJob.name,
+      {
+        workspaceId,
+        connectedAccount: mockConnectedAccount,
+        source: FieldActorSource.EMAIL,
+        contactsToCreate: [
+          {
+            handle: '14155552671',
+            displayName: 'WhatsApp Contact',
+            role: MessageParticipantRole.FROM,
+            shouldCreateContact: true,
+            messageId: 'db-message-id-2',
+          },
+        ],
+      },
+    );
+  });
+
   it('should not create contact if the participant is the connected account', async () => {
     const mockMessagesWithConnectedAccount = [
       {

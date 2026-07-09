@@ -11,6 +11,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { CreateCompanyAndPersonService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
 import { CreateCompanyService } from 'src/modules/contact-creation-manager/services/create-company.service';
 import { CreatePersonService } from 'src/modules/contact-creation-manager/services/create-person.service';
+import { CreatePhonePersonService } from 'src/modules/contact-creation-manager/services/create-phone-person.service';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CreatePersonService } from 'src/modules/contact-creation-manager/servic
   providers: [
     CreateCompanyService,
     CreatePersonService,
+    CreatePhonePersonService,
     CreateCompanyAndPersonService,
   ],
   exports: [CreateCompanyAndPersonService],

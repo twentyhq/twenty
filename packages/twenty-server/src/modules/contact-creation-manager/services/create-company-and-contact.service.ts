@@ -22,11 +22,13 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { CONTACTS_CREATION_BATCH_SIZE } from 'src/modules/contact-creation-manager/constants/contacts-creation-batch-size.constant';
 import { CreateCompanyService } from 'src/modules/contact-creation-manager/services/create-company.service';
 import { CreatePersonService } from 'src/modules/contact-creation-manager/services/create-person.service';
+import { CreatePhonePersonService } from 'src/modules/contact-creation-manager/services/create-phone-person.service';
 import { type Contact } from 'src/modules/contact-creation-manager/types/contact.type';
 import { filterOutContactsThatBelongToSelfOrWorkspaceMembers } from 'src/modules/contact-creation-manager/utils/filter-out-contacts-that-belong-to-self-or-workspace-members.util';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
 import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/modules/contact-creation-manager/utils/get-first-name-and-last-name-from-handle-and-display-name.util';
 import { getUniqueContactsAndHandles } from 'src/modules/contact-creation-manager/utils/get-unique-contacts-and-handles.util';
+import { splitContactsByHandleType } from 'src/modules/contact-creation-manager/utils/split-contacts-by-handle-type.util';
 import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -37,6 +39,7 @@ import { isWorkDomain, isWorkEmail } from 'src/utils/is-work-email';
 export class CreateCompanyAndPersonService {
   constructor(
     private readonly createPersonService: CreatePersonService,
+    private readonly createPhonePersonService: CreatePhonePersonService,
     private readonly createCompaniesService: CreateCompanyService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly exceptionHandlerService: ExceptionHandlerService,
@@ -176,10 +179,10 @@ export class CreateCompanyAndPersonService {
     workspaceId: string,
     source: FieldActorSource,
   ) {
-    const contactsBatches = chunk(
-      contactsToCreate,
-      CONTACTS_CREATION_BATCH_SIZE,
-    );
+    const { emailContacts, phoneContacts } =
+      splitContactsByHandleType(contactsToCreate);
+
+    const contactsBatches = chunk(emailContacts, CONTACTS_CREATION_BATCH_SIZE);
 
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -227,6 +230,14 @@ export class CreateCompanyAndPersonService {
         });
       }
     }
+
+    await this.createPhonePersonService.createAndRestorePeople({
+      connectedAccount,
+      contactsToCreate: phoneContacts,
+      workspaceId,
+      source,
+      accountOwner,
+    });
   }
 
   computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate(

@@ -6,14 +6,17 @@ import { Any, In } from 'typeorm';
 
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { findPersonByPrimaryOrAdditionalEmail } from 'src/modules/match-participant/utils/find-person-by-primary-or-additional-email';
+import { findPersonByPrimaryOrAdditionalPhone } from 'src/modules/match-participant/utils/find-person-by-primary-or-additional-phone';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { parsePhoneHandle } from 'src/utils/parse-phone-handle';
 
 type ObjectMetadataName = 'messageParticipant' | 'calendarEventParticipant';
 
@@ -29,6 +32,7 @@ type MatchParticipantsForPeopleArgs = {
   participantMatching: {
     personIds: string[];
     personEmails: string[];
+    personPhones?: string[];
   };
   objectMetadataName: ObjectMetadataName;
   workspaceId: string;
@@ -118,14 +122,25 @@ export class MatchParticipantService<
         ...new Set(participants.map((participant) => participant.handle)),
       ].filter(isDefined);
 
-      const queryBuilder = addPersonEmailFiltersToQueryBuilder({
-        queryBuilder: personRepository.createQueryBuilder('person'),
-        emails: uniqueParticipantsHandles,
-      });
+      const uniqueEmailHandles = uniqueParticipantsHandles.filter(
+        (handle) => !isDefined(parsePhoneHandle(handle)),
+      );
+      const uniquePhoneNumbers = [
+        ...new Set(
+          uniqueParticipantsHandles
+            .map((handle) => parsePhoneHandle(handle)?.primaryPhoneNumber)
+            .filter(isDefined),
+        ),
+      ];
 
-      const people = await queryBuilder
-        .orderBy('person.createdAt', 'ASC')
-        .getMany();
+      const peopleMatchedByEmail = await this.findPeopleMatchingEmailHandles({
+        personRepository,
+        emailHandles: uniqueEmailHandles,
+      });
+      const peopleMatchedByPhone = await this.findPeopleMatchingPhoneNumbers({
+        personRepository,
+        phoneNumbers: uniquePhoneNumbers,
+      });
 
       const workspaceMembers = await workspaceMemberRepository.find(
         {
@@ -142,9 +157,10 @@ export class MatchParticipantService<
           handle: participant.handle ?? '',
         }))
         .map((participant) => {
-          const person = findPersonByPrimaryOrAdditionalEmail({
-            people,
-            email: participant.handle,
+          const person = this.findPersonMatchingParticipantHandle({
+            handle: participant.handle,
+            peopleMatchedByEmail,
+            peopleMatchedByPhone,
           });
 
           const workspaceMember = workspaceMembers.find(
@@ -206,6 +222,88 @@ export class MatchParticipantService<
     }
   }
 
+  private async findPeopleMatchingEmailHandles({
+    personRepository,
+    emailHandles,
+  }: {
+    personRepository: WorkspaceRepository<PersonWorkspaceEntity>;
+    emailHandles: string[];
+  }): Promise<PersonWorkspaceEntity[]> {
+    if (emailHandles.length === 0) {
+      return [];
+    }
+
+    const queryBuilder = addPersonEmailFiltersToQueryBuilder({
+      queryBuilder: personRepository.createQueryBuilder('person'),
+      emails: emailHandles,
+    });
+
+    return queryBuilder.orderBy('person.createdAt', 'ASC').getMany();
+  }
+
+  private async findPeopleMatchingPhoneNumbers({
+    personRepository,
+    phoneNumbers,
+  }: {
+    personRepository: WorkspaceRepository<PersonWorkspaceEntity>;
+    phoneNumbers: string[];
+  }): Promise<PersonWorkspaceEntity[]> {
+    if (phoneNumbers.length === 0) {
+      return [];
+    }
+
+    const queryBuilder = personRepository
+      .createQueryBuilder('person')
+      .select([
+        'person.id',
+        'person.phonesPrimaryPhoneNumber',
+        'person.phonesPrimaryPhoneCallingCode',
+        'person.phonesAdditionalPhones',
+        'person.deletedAt',
+      ])
+      .where('person.phonesPrimaryPhoneNumber IN (:...phoneNumbers)', {
+        phoneNumbers,
+      })
+      .withDeleted();
+
+    for (const [index, phoneNumber] of phoneNumbers.entries()) {
+      const phoneNumberParamName = `phoneNumber${index}`;
+
+      queryBuilder.orWhere(
+        `person.phonesAdditionalPhones @> :${phoneNumberParamName}::jsonb`,
+        {
+          [phoneNumberParamName]: JSON.stringify([{ number: phoneNumber }]),
+        },
+      );
+    }
+
+    return queryBuilder.orderBy('person.createdAt', 'ASC').getMany();
+  }
+
+  private findPersonMatchingParticipantHandle({
+    handle,
+    peopleMatchedByEmail,
+    peopleMatchedByPhone,
+  }: {
+    handle: string;
+    peopleMatchedByEmail: PersonWorkspaceEntity[];
+    peopleMatchedByPhone: PersonWorkspaceEntity[];
+  }): PersonWorkspaceEntity | undefined {
+    const parsedPhone = parsePhoneHandle(handle);
+
+    if (isDefined(parsedPhone)) {
+      return findPersonByPrimaryOrAdditionalPhone({
+        people: peopleMatchedByPhone,
+        phoneNumber: parsedPhone.primaryPhoneNumber,
+      });
+    }
+
+    return findPersonByPrimaryOrAdditionalEmail({
+      people: peopleMatchedByEmail,
+      email: handle,
+    });
+  }
+
   public async matchParticipantsForWorkspaceMembers({
     participantMatching,
     objectMetadataName,
@@ -255,7 +353,10 @@ export class MatchParticipantService<
       );
 
       let participantsMatchingPersonEmails: ParticipantWorkspaceEntity[] = [];
+      let participantsMatchingPersonPhones: ParticipantWorkspaceEntity[] = [];
       let participantsMatchingPersonId: ParticipantWorkspaceEntity[] = [];
+
+      const personPhones = participantMatching.personPhones ?? [];
 
       if (participantMatching.personIds.length > 0) {
         participantsMatchingPersonId = (await participantRepository.find({
@@ -273,10 +374,19 @@ export class MatchParticipantService<
         })) as ParticipantWorkspaceEntity[];
       }
 
+      if (personPhones.length > 0) {
+        participantsMatchingPersonPhones = (await participantRepository.find({
+          where: {
+            handle: In(personPhones),
+          },
+        })) as ParticipantWorkspaceEntity[];
+      }
+
       const uniqueParticipants = [
         ...new Set([
           ...participantsMatchingPersonId,
           ...participantsMatchingPersonEmails,
+          ...participantsMatchingPersonPhones,
         ]),
       ];
 

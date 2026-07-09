@@ -31,6 +31,7 @@ import { MessagingMessageService } from 'src/modules/messaging/message-import-ma
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
 import { isWorkEmail } from 'src/utils/is-work-email';
+import { parsePhoneHandle } from 'src/utils/parse-phone-handle';
 
 @Injectable()
 export class MessagingSaveMessagesAndEnqueueContactCreationService {
@@ -101,7 +102,8 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
                       const isExcludedByNonProfessionalEmails =
                         messageChannel.excludeNonProfessionalEmails &&
-                        !isWorkEmail(participant.handle);
+                        !isWorkEmail(participant.handle) &&
+                        !isDefined(parsePhoneHandle(participant.handle));
 
                       // Drafts are outgoing, so don't turn recipients of an
                       // unsent email into CRM contacts.

@@ -11,6 +11,7 @@ import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connect
 import { CreateCompanyAndPersonService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
 import { CreateCompanyService } from 'src/modules/contact-creation-manager/services/create-company.service';
 import { CreatePersonService } from 'src/modules/contact-creation-manager/services/create-person.service';
+import { CreatePhonePersonService } from 'src/modules/contact-creation-manager/services/create-phone-person.service';
 import { type Contact } from 'src/modules/contact-creation-manager/types/contact.type';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
@@ -43,6 +44,10 @@ describe('CreateCompanyAndPersonService', () => {
         {
           provide: CreatePersonService,
           useValue: mockCreatePersonService,
+        },
+        {
+          provide: CreatePhonePersonService,
+          useValue: {},
         },
         {
           provide: GlobalWorkspaceOrmManager,

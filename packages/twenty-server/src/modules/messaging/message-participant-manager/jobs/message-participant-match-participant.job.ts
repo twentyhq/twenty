@@ -11,6 +11,7 @@ export type MessageParticipantMatchParticipantJobData = {
   participantMatching: {
     personIds: string[];
     personEmails: string[];
+    personPhones?: string[];
     workspaceMemberIds: string[];
   };
 };
@@ -30,7 +31,8 @@ export class MessageParticipantMatchParticipantJob {
 
     if (
       participantMatching.personIds.length > 0 ||
-      participantMatching.personEmails.length > 0
+      participantMatching.personEmails.length > 0 ||
+      (participantMatching.personPhones ?? []).length > 0
     ) {
       await this.matchParticipantService.matchParticipantsForPeople({
         participantMatching,
