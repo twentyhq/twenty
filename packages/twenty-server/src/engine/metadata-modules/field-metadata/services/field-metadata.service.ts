@@ -106,13 +106,16 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       },
     );
 
-    const { flatFieldMetadatasToDelete, flatIndexesToDelete, flatIndexesToUpdate } =
-      fromDeleteFieldInputToFlatFieldMetadatasToDelete({
-        deleteOneFieldInput,
-        flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-        flatIndexMaps: existingFlatIndexMaps,
-        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      });
+    const {
+      flatFieldMetadatasToDelete,
+      flatIndexesToDelete,
+      flatIndexesToUpdate,
+    } = fromDeleteFieldInputToFlatFieldMetadatasToDelete({
+      deleteOneFieldInput,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      flatIndexMaps: existingFlatIndexMaps,
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+    });
 
     const deletedFlatFieldMetadata = findFlatEntityByUniversalIdentifierOrThrow(
       {

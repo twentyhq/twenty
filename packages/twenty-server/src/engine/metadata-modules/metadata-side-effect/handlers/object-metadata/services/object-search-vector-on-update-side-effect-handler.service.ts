@@ -126,8 +126,7 @@ export class ObjectSearchVectorOnUpdateSideEffectHandlerService extends Metadata
     const searchFieldMetadata = buildFlatSearchFieldMetadataForField({
       flatObjectMetadata: updatedFlatObjectMetadata,
       flatFieldMetadata: {
-        universalIdentifier:
-          newLabelIdentifierFieldMetadataUniversalIdentifier,
+        universalIdentifier: newLabelIdentifierFieldMetadataUniversalIdentifier,
       },
       tsVectorFlatFieldMetadata: {
         universalIdentifier: tsVectorFlatFieldMetadata.universalIdentifier,

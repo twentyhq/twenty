@@ -55,7 +55,8 @@ const buildArgs = ({
     [SEARCH_VECTOR_FIELD_UNIVERSAL_IDENTIFIER]: SEARCH_VECTOR_FLAT_FIELD,
   },
   existingSearchFieldMetadataByUniversalIdentifier = {
-    [NAME_SEARCH_FIELD_METADATA_UNIVERSAL_IDENTIFIER]: NAME_SEARCH_FIELD_METADATA,
+    [NAME_SEARCH_FIELD_METADATA_UNIVERSAL_IDENTIFIER]:
+      NAME_SEARCH_FIELD_METADATA,
   },
   existingObjectSearchFieldMetadataUniversalIdentifiers = [
     NAME_SEARCH_FIELD_METADATA_UNIVERSAL_IDENTIFIER,
@@ -114,8 +115,7 @@ const buildArgs = ({
         byUniversalIdentifier: existingFlatFieldMetadataByUniversalIdentifier,
       },
       flatSearchFieldMetadataMaps: {
-        byUniversalIdentifier:
-          existingSearchFieldMetadataByUniversalIdentifier,
+        byUniversalIdentifier: existingSearchFieldMetadataByUniversalIdentifier,
       },
     },
     context: {},
