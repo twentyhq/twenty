@@ -36,7 +36,7 @@ const mockObjectMetadata: FlatObjectMetadata = {
   updatedAt: new Date().toISOString(),
   shortcut: null,
   description: null,
-  standardOverrides: null,
+  overrides: null,
   isUIEditable: true,
   isUICreatable: true,
   labelIdentifierFieldMetadataId: null,

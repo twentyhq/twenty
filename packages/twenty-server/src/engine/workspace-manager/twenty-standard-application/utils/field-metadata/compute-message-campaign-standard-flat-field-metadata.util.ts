@@ -14,9 +14,6 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/search-fields-by-standard-object-name.constant';
-
 export const buildMessageCampaignStandardFlatFieldMetadatas = ({
   now,
   objectName,
@@ -160,12 +157,6 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         icon: 'IconSend',
         isSystem: true,
         isNullable: true,
-        settings: {
-          generatedType: 'STORED',
-          asExpression: getTsVectorColumnExpressionFromFields(
-            SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME[objectName],
-          ),
-        },
       },
     }),
     subject: createStandardFieldFlatMetadata({
@@ -268,6 +259,58 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         isNullable: true,
         isUIEditable: false,
         settings: { displayFormat: DateDisplayFormat.RELATIVE },
+      },
+    }),
+    sentCount: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'sentCount',
+        type: FieldMetadataType.NUMBER,
+        label: i18nLabel(msg`Sent count`),
+        description: i18nLabel(msg`Number of emails sent`),
+        icon: 'IconMailFast',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: 0,
+      },
+    }),
+    failedCount: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'failedCount',
+        type: FieldMetadataType.NUMBER,
+        label: i18nLabel(msg`Failed count`),
+        description: i18nLabel(msg`Number of emails that failed to send`),
+        icon: 'IconMailX',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: 0,
+      },
+    }),
+    bouncedCount: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'bouncedCount',
+        type: FieldMetadataType.NUMBER,
+        label: i18nLabel(msg`Bounced count`),
+        description: i18nLabel(msg`Number of emails that bounced`),
+        icon: 'IconMailOff',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: 0,
+      },
+    }),
+    complainedCount: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'complainedCount',
+        type: FieldMetadataType.NUMBER,
+        label: i18nLabel(msg`Complained count`),
+        description: i18nLabel(msg`Number of spam complaints received`),
+        icon: 'IconMoodSad',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: 0,
       },
     }),
     unsubscribeTopicId: createStandardFieldFlatMetadata({

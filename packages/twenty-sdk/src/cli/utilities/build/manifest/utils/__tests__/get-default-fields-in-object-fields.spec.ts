@@ -14,15 +14,32 @@ const baseObjectConfig: ObjectConfig = {
   fields: [],
 };
 
+const applicationUniversalIdentifier = 'b7f8a9c0-1d2e-4f40-8a6b-7c8d9e0f1a2b';
+
+const getMockDefaultFieldsInObjectFields = (objectConfig: ObjectConfig) =>
+  getDefaultFieldsInObjectFields({
+    objectConfig,
+    applicationUniversalIdentifier,
+  });
+
+const getMockDefaultObjectFields = (objectConfig: ObjectConfig) =>
+  getDefaultObjectFields({ objectConfig, applicationUniversalIdentifier });
+
+const getMockDefaultRelationObjectFields = (objectConfig: ObjectConfig) =>
+  getDefaultRelationObjectFields({
+    objectConfig,
+    applicationUniversalIdentifier,
+  });
+
 describe('getDefaultFieldsInObjectFields', () => {
   it('should return all default fields when objectConfig has no fields', () => {
     const { objectFields, fields } =
-      getDefaultFieldsInObjectFields(baseObjectConfig);
-    const defaultFields = getDefaultObjectFields(baseObjectConfig);
+      getMockDefaultFieldsInObjectFields(baseObjectConfig);
+    const defaultFields = getMockDefaultObjectFields(baseObjectConfig);
     const {
       objectFields: defaultRelationObjectFields,
       fields: expectedReverseFields,
-    } = getDefaultRelationObjectFields(baseObjectConfig);
+    } = getMockDefaultRelationObjectFields(baseObjectConfig);
 
     expect(objectFields).toEqual([
       ...defaultFields,
@@ -56,10 +73,10 @@ describe('getDefaultFieldsInObjectFields', () => {
       fields: [customField],
     };
 
-    const { objectFields } = getDefaultFieldsInObjectFields(objectConfig);
-    const defaultFields = getDefaultObjectFields(objectConfig);
+    const { objectFields } = getMockDefaultFieldsInObjectFields(objectConfig);
+    const defaultFields = getMockDefaultObjectFields(objectConfig);
     const { objectFields: defaultRelationObjectFields } =
-      getDefaultRelationObjectFields(objectConfig);
+      getMockDefaultRelationObjectFields(objectConfig);
 
     expect(objectFields[0]).toEqual(customField);
     expect(objectFields).toHaveLength(
@@ -80,7 +97,7 @@ describe('getDefaultFieldsInObjectFields', () => {
       fields: [customIdField],
     };
 
-    const { objectFields } = getDefaultFieldsInObjectFields(objectConfig);
+    const { objectFields } = getMockDefaultFieldsInObjectFields(objectConfig);
 
     const idFields = objectFields.filter((f) => f.name === 'id');
 
@@ -115,10 +132,10 @@ describe('getDefaultFieldsInObjectFields', () => {
       fields: customFields,
     };
 
-    const { objectFields } = getDefaultFieldsInObjectFields(objectConfig);
-    const defaultFields = getDefaultObjectFields(objectConfig);
+    const { objectFields } = getMockDefaultFieldsInObjectFields(objectConfig);
+    const defaultFields = getMockDefaultObjectFields(objectConfig);
     const { objectFields: defaultRelationObjectFields } =
-      getDefaultRelationObjectFields(objectConfig);
+      getMockDefaultRelationObjectFields(objectConfig);
     const overriddenCount = defaultFields.filter((df) =>
       customFields.some((cf) => cf.name === df.name),
     ).length;
@@ -148,7 +165,7 @@ describe('getDefaultFieldsInObjectFields', () => {
       fields: [customField],
     };
 
-    const { objectFields } = getDefaultFieldsInObjectFields(objectConfig);
+    const { objectFields } = getMockDefaultFieldsInObjectFields(objectConfig);
 
     expect(objectFields[0]).toEqual(customField);
   });
@@ -168,13 +185,13 @@ describe('getDefaultFieldsInObjectFields', () => {
 
     const originalLength = objectConfig.fields.length;
 
-    getDefaultFieldsInObjectFields(objectConfig);
+    getMockDefaultFieldsInObjectFields(objectConfig);
 
     expect(objectConfig.fields).toHaveLength(originalLength);
   });
 
   it('should return reverse relation fields for each default relation', () => {
-    const { fields } = getDefaultFieldsInObjectFields(baseObjectConfig);
+    const { fields } = getMockDefaultFieldsInObjectFields(baseObjectConfig);
 
     expect(fields).toHaveLength(4);
 

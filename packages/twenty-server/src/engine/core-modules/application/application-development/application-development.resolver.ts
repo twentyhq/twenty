@@ -17,13 +17,13 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { ApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/application.input';
 import { CreateDevelopmentApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/create-development-application.input';
 import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/application-development/dtos/development-application.dto';
-import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/application-development/dtos/generate-application-token.input';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
 import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
-import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
+import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
+import { VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -32,9 +32,8 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -42,8 +41,6 @@ import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/s
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -65,11 +62,11 @@ const APP_SYNC_LOCK_OPTIONS = { ttl: 60_000, ms: 500, maxRetries: 120 };
 )
 export class ApplicationDevelopmentResolver {
   constructor(
-    private readonly applicationTokenService: ApplicationTokenService,
     private readonly applicationService: ApplicationService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
+    private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly fileStorageService: FileStorageService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -114,23 +111,6 @@ export class ApplicationDevelopmentResolver {
     };
   }
 
-  @Mutation(() => ApplicationTokenPairDTO)
-  async generateApplicationToken(
-    @Args() { applicationId }: GenerateApplicationTokenInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUser({ allowUndefined: true }) user?: { id: string },
-    @AuthUserWorkspaceId({ allowUndefined: true }) userWorkspaceId?: string,
-  ): Promise<ApplicationTokenPairDTO> {
-    await this.throttlePerApplication(applicationId, workspaceId);
-
-    return this.applicationTokenService.generateApplicationTokenPair({
-      workspaceId,
-      applicationId,
-      userId: user?.id,
-      userWorkspaceId,
-    });
-  }
-
   @Mutation(() => WorkspaceMigrationDTO)
   async syncApplication(
     @Args() { manifest, dryRun }: ApplicationInput,
@@ -140,6 +120,22 @@ export class ApplicationDevelopmentResolver {
       manifest.application.universalIdentifier,
       workspaceId,
     );
+
+    const versionValidation =
+      await this.applicationVersionValidationService.validateWorkspaceCompatibility(
+        {
+          requiredServerVersion:
+            manifest.application.requiredServerVersionRange ?? undefined,
+          workspaceId,
+        },
+      );
+
+    if (!versionValidation.compatible) {
+      throw new ApplicationException(
+        versionValidation.message,
+        VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE[versionValidation.reason],
+      );
+    }
 
     if (dryRun === true) {
       const { workspaceMigration } =

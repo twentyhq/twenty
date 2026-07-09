@@ -55,6 +55,7 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
       text: 'Test content 1',
       receivedAt: new Date(),
       attachments: [],
+      isDraft: false,
       messageThreadExternalId: 'thread-1',
       direction: MessageDirection.OUTGOING,
       participants: [
@@ -77,6 +78,7 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
       text: 'Test content 2',
       receivedAt: new Date(),
       attachments: [],
+      isDraft: false,
       messageThreadExternalId: 'thread-1',
       direction: MessageDirection.INCOMING,
       participants: [
@@ -140,6 +142,10 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
                 ['message-1', 'db-message-id-1'],
                 ['message-2', 'db-message-id-2'],
               ]),
+              messageExternalIdToMessageThreadIdMap: new Map([
+                ['message-1', 'db-thread-id-1'],
+                ['message-2', 'db-thread-id-1'],
+              ]),
               createdMessages: [
                 { id: 'db-message-id-1' },
                 { id: 'db-message-id-2' },
@@ -190,7 +196,7 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
   });
 
   it('should save messages and enqueue contact creation', async () => {
-    await service.saveMessagesAndEnqueueContactCreation(
+    const result = await service.saveMessagesAndEnqueueContactCreation(
       mockMessages,
       mockMessageChannel,
       mockConnectedAccount,
@@ -208,6 +214,13 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
       messageParticipantService.saveMessageParticipants,
     ).toHaveBeenCalled();
     expect(messageQueueService.add).toHaveBeenCalled();
+
+    expect(result?.messageExternalIdsAndIdsMap.get('message-1')).toBe(
+      'db-message-id-1',
+    );
+    expect(result?.messageExternalIdToMessageThreadIdMap.get('message-1')).toBe(
+      'db-thread-id-1',
+    );
   });
 
   it('should not enqueue contact creation when it is disabled', async () => {
@@ -324,6 +337,42 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
           ...mockConnectedAccount,
           handle: 'connected@account.com',
         },
+        source: FieldActorSource.EMAIL,
+        contactsToCreate: [],
+      },
+    );
+  });
+
+  it('should not create contacts for unsent drafts', async () => {
+    await service.saveMessagesAndEnqueueContactCreation(
+      [
+        {
+          ...mockMessages[0],
+          isDraft: true,
+          participants: [
+            {
+              role: MessageParticipantRole.FROM,
+              handle: 'test@example.com',
+              displayName: 'Test User',
+            },
+            {
+              role: MessageParticipantRole.TO,
+              handle: 'prospect@company.com',
+              displayName: 'Prospect',
+            },
+          ],
+        },
+      ],
+      mockMessageChannel,
+      mockConnectedAccount,
+      workspaceId,
+    );
+
+    expect(messageQueueService.add).toHaveBeenCalledWith(
+      CreateCompanyAndContactJob.name,
+      {
+        workspaceId,
+        connectedAccount: mockConnectedAccount,
         source: FieldActorSource.EMAIL,
         contactsToCreate: [],
       },

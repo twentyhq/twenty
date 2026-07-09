@@ -1,0 +1,66 @@
+---
+title: "Tutorial: Generatore di documenti"
+icon: wand-magic-sparkles
+description: Crea una vera app Twenty che genera documenti personalizzati a partire dai dati del tuo CRM.
+---
+
+In questo tutorial creerai **Document Generator**, un'app che trasforma modelli riutilizzabili in documenti personalizzati usando i dati già presenti nel tuo CRM.
+
+Scrivi un modello una sola volta con `{{placeholders}}`, quindi genera un documento compilato per qualsiasi Persona o Azienda con un solo clic — dal menu dei comandi, da un agente IA o da un workflow.
+
+<Frame caption="Un modello, generato per una persona specifica, aperto come pagina stampabile.">
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="Un documento di proposta di vendita generato" />
+</Frame>
+
+## Cosa imparerai
+
+Ogni capitolo aggiunge una funzionalità. Alla fine avrai esplorato gran parte dell’SDK.
+
+| Capitolo                                                                                               | Funzionalità                                                                                                                 | Riferimento                                                         |
+| ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| [1. Modello dati](/l/it/developers/extend/apps/tutorials/document-generator/data-model)                     | Oggetti, campi e una relazione                                                                                               | [Dati](/l/it/developers/extend/apps/data/overview)                       |
+| [2. Generare documenti](/l/it/developers/extend/apps/tutorials/document-generator/generating-documents)     | Una funzione logica (strumento IA + azione del workflow) che compila un modello Markdown e allega un PDF rifinito            | [Funzioni logiche](/l/it/developers/extend/apps/logic/logic-functions)   |
+| [3. Rotte HTTP](/l/it/developers/extend/apps/tutorials/document-generator/http-routes)                      | Servire JSON e una pagina HTML condivisibile dalle rotte                                                                     | [Funzioni logiche](/l/it/developers/extend/apps/logic/logic-functions)   |
+| [4. Creare l’interfaccia utente](/l/it/developers/extend/apps/tutorials/document-generator/building-the-ui) | Viste, navigazione, menu dei comandi e componenti front-end che mostrano l’anteprima di un documento e modificano un modello | [Layout](/l/it/developers/extend/apps/layout/overview)                   |
+| [5. Un agente IA](/l/it/developers/extend/apps/tutorials/document-generator/ai-agent)                       | Agente + abilità                                                                                                             | [Abilità e agenti](/l/it/developers/extend/apps/logic/skills-and-agents) |
+| [6. Pubblicazione](/l/it/developers/extend/apps/tutorials/document-generator/publishing)                    | Pubblicala nel marketplace                                                                                                   | [Pubblicazione](/l/it/developers/extend/apps/operations/publishing)      |
+
+## Prerequisiti
+
+Dovresti aver completato il [Quick Start](/l/it/developers/extend/apps/getting-started/quick-start):
+un server Twenty locale in esecuzione sulla porta `2020` e la CLI autenticata ad esso.
+
+In caso contrario, esegui ora lo scaffold e avvialo:
+
+```bash filename="Terminal"
+npx create-twenty-app@latest document-generator
+cd document-generator
+yarn twenty dev
+```
+
+<Note>
+Preferisci leggere il codice finito? L’app completa si trova in
+[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+Ogni snippet qui sotto è copiato da lì.
+</Note>
+
+## Come è strutturata l’app
+
+<Frame>
+  <img src="/images/docs/developers/extends/apps/document-generator/how-it-fits.svg" alt="Un modello con segnaposto viene trasformato in un documento rifinito con un PDF, attivato dal menu dei comandi, da un agente IA, da un workflow o da un link condivisibile" />
+</Frame>
+
+Scrivi un **modello** una sola volta in un editor rich text, con `{{placeholders}}`. Scegliendo un
+modello e un record del CRM si compilano i segnaposto e si salva un
+**documento** rifinito (con un file PDF). Tutto il resto — il menu dei comandi, l’agente IA,
+lo step del workflow, il link condivisibile — è solo un modo diverso di attivare quell’unico generatore.
+
+## Mantieni attivo questo ciclo
+
+Lascia `yarn twenty dev` in esecuzione in un terminale per l’intero tutorial. Ogni volta che
+aggiungi o modifichi un file sotto `src/`, viene nuovamente sincronizzato con il tuo server entro pochi
+secondi, così puoi vedere ogni funzionalità comparire nell’interfaccia utente mentre la costruisci.
+
+<Card title="Inizia a sviluppare →" icon="database" href="/l/it/developers/extend/apps/tutorials/document-generator/data-model">
+  Capitolo 1: modella documenti e modelli.
+</Card>

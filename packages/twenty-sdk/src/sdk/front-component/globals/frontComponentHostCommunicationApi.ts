@@ -46,12 +46,24 @@ export type OpenSidePanelPageParams =
       resetNavigationStack?: boolean;
     }
   | {
+      page: SidePanelPages.AskAI;
+      pageTitle: string;
+      pageIcon?: string;
+      shouldResetSearchState?: boolean;
+      preprompt?: {
+        text: string;
+        mode?: 'PREFILL' | 'SEND';
+        model?: 'FAST' | 'SMART';
+      };
+    }
+  | {
       page: Exclude<
         SidePanelPages,
         | SidePanelPages.ViewRecord
         | SidePanelPages.EditRichText
         | SidePanelPages.ComposeEmail
         | SidePanelPages.ViewFrontComponent
+        | SidePanelPages.AskAI
       >;
       pageTitle: string;
       pageIcon?: string;

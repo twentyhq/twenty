@@ -86,6 +86,22 @@ export default defineObject({
 **Os campos base são adicionados automaticamente.** Quando você define um objeto personalizado, o Twenty cria campos padrão como `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` e `deletedAt` para você. Você não precisa declará‑los no seu array `fields` — apenas seus campos personalizados. Você pode substituir um campo padrão declarando um com o mesmo nome, mas isso raramente é uma boa ideia.
 </Note>
 
+## Tipos de campo
+
+O conjunto completo de valores de `FieldType`, exportados de `twenty-sdk/define`:
+
+| Categoria                  | Tipos                                                                                                                            |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Texto                      | `TEXT`, `RICH_TEXT`, `ARRAY` (de strings), `RAW_JSON`                                                                            |
+| Numérico                   | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (precisão arbitrária), `RATING`, `POSITION` |
+| Datas                      | `DATE`, `DATE_TIME`                                                                                                              |
+| Escolha                    | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                              |
+| Composto                   | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES`                                                |
+| Identificadores e relações | `UUID`, `RELATION`, `MORPH_RELATION` (veja [Relações](/l/pt/developers/extend/apps/data/relations))                                   |
+| Sistema                    | `TS_VECTOR` (vetor de pesquisa de texto completo, gerenciado pelo servidor)                                                      |
+
+Tipos compostos armazenam vários subcampos (por exemplo, `FULL_NAME` = primeiro + último nome; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` e `MULTI_SELECT` exigem um array `options`, como no exemplo acima.
+
 ## Valores padrão
 
 Valores padrão de strings literais devem ser colocados entre aspas simples **dentro** da string — `defaultValue: "'Draft'"`, não `defaultValue: "Draft"`. É por isso que o campo `status` acima usa `` `'${PostCardStatus.DRAFT}'` ``.
@@ -96,6 +112,27 @@ Strings sem aspas são reservadas para valores padrão computados, avaliados qua
 * `'now'` — o carimbo de data/hora atual (para campos `DATE_TIME`)
 
 A mesma convenção se aplica a subcampos de string de valores padrão compostos (por exemplo, `{ source: "'MANUAL'" }` em um campo `ACTOR`) e a valores de `SELECT`/`MULTI_SELECT`. Uma string literal padrão deixada sem aspas gera um aviso quando seu app é compilado.
+
+## Nulabilidade
+
+`isNullable` controla se um campo aceita `NULL`. O valor padrão é `true` — omita-o para campos opcionais. Defina `isNullable: false` para tornar um campo obrigatório no nível do banco de dados.
+
+Alterações em `isNullable` são aplicadas em todas as sincronizações, incluindo sincronizações que atualizam um campo existente — assim, você pode alternar a nulabilidade de um campo editando o manifesto e sincronizando novamente.
+
+<Note>
+**Tornar um campo existente obrigatório requer um valor padrão.** Quando você altera um campo para `isNullable: false`, também deve fornecer um `defaultValue` não nulo. O valor padrão preenche retroativamente quaisquer linhas `NULL` existentes antes de a restrição `NOT NULL` ser aplicada; sem ele a sincronização falha com `Default value cannot be null for non-nullable fields`. Campos de relação e campos `TS_VECTOR` sempre aceitam nulos, portanto `isNullable` não tem efeito sobre eles.
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
 
 ## O que vem depois
 

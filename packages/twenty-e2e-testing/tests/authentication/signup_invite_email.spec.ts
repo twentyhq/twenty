@@ -39,6 +39,8 @@ test('Sign up with invite link via email', async ({
     await loginPage.clickContinueButton();
     await loginPage.typePassword(process.env.DEFAULT_PASSWORD);
     await loginPage.clickSignUpButton();
+    await expect(page.getByText('Create profile')).toBeVisible();
+    await expect(page.getByPlaceholder('Head of Partnerships')).toBeVisible();
     await loginPage.typeFirstName(firstName);
     await loginPage.typeLastName(lastName);
     await loginPage.clickContinueButton();

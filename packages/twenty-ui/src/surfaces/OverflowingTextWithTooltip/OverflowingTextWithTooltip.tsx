@@ -1,4 +1,10 @@
-import { type CSSProperties, type ReactNode, useRef, useState } from 'react';
+import {
+  type CSSProperties,
+  type ReactNode,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -35,7 +41,7 @@ export const OverflowingTextWithTooltip = ({
   tooltipDelay = TooltipDelay.mediumDelay,
   alwaysShowTooltip = false,
 }: OverflowingTextWithTooltipProps) => {
-  const textElementId = `title-id-${+new Date()}`;
+  const textElementId = `title-id-${useId().replace(/:/g, '')}`;
 
   const textRef = useRef<HTMLDivElement>(null);
 

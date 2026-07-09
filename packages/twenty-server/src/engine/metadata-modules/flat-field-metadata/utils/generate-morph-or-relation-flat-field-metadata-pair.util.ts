@@ -62,6 +62,8 @@ type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
   flatApplication: FlatApplication;
   targetFieldName?: string;
   junctionTargetFlatFieldMetadata?: FlatFieldMetadata;
+  sourceFieldUniversalIdentifier?: string;
+  targetFieldUniversalIdentifier?: string;
 };
 
 export type SourceTargetMorphOrRelationFlatFieldAndFlatIndex = {
@@ -79,6 +81,8 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   morphId = null,
   targetFieldName,
   junctionTargetFlatFieldMetadata,
+  sourceFieldUniversalIdentifier: providedSourceFieldUniversalIdentifier,
+  targetFieldUniversalIdentifier: providedTargetFieldUniversalIdentifier,
 }: GenerateMorphOrRelationFlatFieldMetadataPairArgs): SourceTargetMorphOrRelationFlatFieldAndFlatIndex => {
   const sourceFlatFieldMetadataType = createFieldInput.type;
 
@@ -91,8 +95,10 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
       junctionTargetFieldUniversalIdentifier:
         junctionTargetFlatFieldMetadata?.universalIdentifier,
     });
-  const sourceFieldUniversalIdentifier = v4();
-  const targetFieldUniversalIdentifier = v4();
+  const sourceFieldUniversalIdentifier =
+    providedSourceFieldUniversalIdentifier ?? v4();
+  const targetFieldUniversalIdentifier =
+    providedTargetFieldUniversalIdentifier ?? v4();
 
   const defaultDescriptionFromField =
     buildDescriptionForRelationFieldMetadataOnFromField({

@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { IconCoins } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
@@ -8,9 +7,10 @@ const StyledTag = styled.div`
   align-items: center;
   background-color: ${themeCssVariables.color.green3};
   border: 1px solid ${themeCssVariables.color.green4};
-  border-radius: ${themeCssVariables.border.radius.pill};
+  border-radius: ${themeCssVariables.border.radius.xxl};
   box-sizing: border-box;
   color: ${themeCssVariables.color.green9};
+  corner-shape: round;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[6]};
@@ -21,21 +21,23 @@ const StyledTag = styled.div`
 const StyledLabel = styled.span`
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
+  line-height: 1.4;
 `;
 
 const StyledSuffix = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.regular};
+  line-height: 1.4;
 `;
 
 type OnboardingCreditsRewardTagProps = {
   amount: number;
-  perUserAmount?: number;
+  suffix?: string;
 };
 
 export const OnboardingCreditsRewardTag = ({
   amount,
-  perUserAmount,
+  suffix,
 }: OnboardingCreditsRewardTagProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -47,11 +49,7 @@ export const OnboardingCreditsRewardTag = ({
         color={themeCssVariables.color.green9}
       />
       <StyledLabel>{t`Earn +${amount}`}</StyledLabel>
-      <StyledSuffix>
-        {isDefined(perUserAmount)
-          ? t`free credits (${perUserAmount} per user)`
-          : t`free credits`}
-      </StyledSuffix>
+      <StyledSuffix>{suffix ?? t`free credits`}</StyledSuffix>
     </StyledTag>
   );
 };

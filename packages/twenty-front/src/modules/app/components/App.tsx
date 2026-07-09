@@ -1,4 +1,5 @@
-import { AppRouter } from '@/app/components/AppRouter';
+import { DomainShell } from '@/app/components/DomainShell';
+import { I18nActivationGate } from '@/app/components/I18nActivationGate';
 import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppRootErrorFallback } from '@/error-handler/components/AppRootErrorFallback';
@@ -22,24 +23,26 @@ export const App = () => {
         resetOnLocationChange={false}
         FallbackComponent={AppRootErrorFallback}
       >
-        <I18nProvider i18n={i18n}>
-          <ApolloDevLogEffect />
-          <SnackBarComponentInstanceContext.Provider
-            value={{ instanceId: 'snack-bar-manager' }}
-          >
-            <IconsProvider>
-              <ExceptionHandlerProvider>
-                <HelmetProvider>
-                  <ClickOutsideListenerContext.Provider
-                    value={{ excludedClickOutsideId: undefined }}
-                  >
-                    <AppRouter />
-                  </ClickOutsideListenerContext.Provider>
-                </HelmetProvider>
-              </ExceptionHandlerProvider>
-            </IconsProvider>
-          </SnackBarComponentInstanceContext.Provider>
-        </I18nProvider>
+        <I18nActivationGate>
+          <I18nProvider i18n={i18n}>
+            <ApolloDevLogEffect />
+            <SnackBarComponentInstanceContext.Provider
+              value={{ instanceId: 'snack-bar-manager' }}
+            >
+              <IconsProvider>
+                <ExceptionHandlerProvider>
+                  <HelmetProvider>
+                    <ClickOutsideListenerContext.Provider
+                      value={{ excludedClickOutsideId: undefined }}
+                    >
+                      <DomainShell />
+                    </ClickOutsideListenerContext.Provider>
+                  </HelmetProvider>
+                </ExceptionHandlerProvider>
+              </IconsProvider>
+            </SnackBarComponentInstanceContext.Provider>
+          </I18nProvider>
+        </I18nActivationGate>
       </AppErrorBoundary>
     </JotaiProvider>
   );

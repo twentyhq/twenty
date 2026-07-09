@@ -20,8 +20,8 @@ import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeO
 import { getUpdatedFieldsFromRecordInput } from '@/object-record/utils/getUpdatedFieldsFromRecordInput';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
-import { isNull } from '@sniptt/guards';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 
@@ -237,6 +237,28 @@ export const useUpdateOneRecord = () => {
           objectMetadataItems,
           objectPermissionsByObjectMetadataId,
           upsertRecordsInStore,
+        });
+
+        const optimisticallyUpdatedFieldsToRestore = Object.keys(
+          optimisticRecordInput,
+        ).reduce<Partial<ObjectRecord>>(
+          (restoredFields, fieldName) => ({
+            ...restoredFields,
+            [fieldName]: cachedRecordKeys.has(fieldName)
+              ? cachedRecord?.[fieldName]
+              : null,
+          }),
+          {},
+        );
+
+        upsertRecordsInStore({
+          partialRecords: [
+            {
+              id: idToUpdate,
+              __typename: getObjectTypename(objectMetadataItem.nameSingular),
+              ...optimisticallyUpdatedFieldsToRestore,
+            },
+          ],
         });
 
         throw error;

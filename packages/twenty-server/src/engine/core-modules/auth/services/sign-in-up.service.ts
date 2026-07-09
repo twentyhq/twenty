@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
@@ -19,8 +19,13 @@ import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { USER_SIGNUP_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/user/user-signup';
 import { WORKSPACE_CREATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/workspace/workspace-created';
-import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
+import {
+  type AppTokenEntity,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -68,6 +73,8 @@ import { isWorkEmail } from 'src/utils/is-work-email';
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
 export class SignInUpService {
+  private readonly logger = new Logger(SignInUpService.name);
+
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
@@ -86,6 +93,8 @@ export class SignInUpService {
     private readonly fileCorePictureService: FileCorePictureService,
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly eventLogEmitterService: EventLogEmitterService,
+    private readonly billingCreditService: BillingCreditService,
+    private readonly billingService: BillingService,
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
@@ -231,6 +240,25 @@ export class SignInUpService {
       roleId: params.invitation.context?.roleId,
     });
 
+    if (
+      params.invitation.type === AppTokenType.OnboardingInvitationToken &&
+      params.userData.type === 'newUserWithPicture'
+    ) {
+      try {
+        await this.billingCreditService.creditWorkspaceBalance({
+          workspaceId: invitationValidation.workspace.id,
+          amountMicro: this.twentyConfigService.get(
+            'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
+          ),
+        });
+      } catch (error) {
+        this.logger.error(
+          `Failed to credit onboarding invite reward for workspace ${invitationValidation.workspace.id}`,
+          error,
+        );
+      }
+    }
+
     await this.workspaceInvitationService.invalidateWorkspaceInvitation(
       invitationValidation.workspace.id,
       email,
@@ -350,6 +378,15 @@ export class SignInUpService {
     }
 
     await this.onboardingService.setOnboardingCreateProfilePending(
+      {
+        userId: user.id,
+        workspaceId: workspace.id,
+        value: true,
+      },
+      queryRunner,
+    );
+
+    await this.onboardingService.setOnboardingInstallAppsPending(
       {
         userId: user.id,
         workspaceId: workspace.id,
@@ -672,6 +709,14 @@ export class SignInUpService {
       void this.eventLogEmitterService
         .createContext({ workspaceId })
         .insertWorkspaceEvent(WORKSPACE_CREATED_EVENT, {});
+
+      if (this.billingService.isBillingEnabled()) {
+        await this.billingService.ensureBillingCustomer({
+          userEmail: email,
+          workspaceId: workspace.id,
+          workspaceDisplayName: workspace.displayName,
+        });
+      }
 
       return { user, workspace };
     } catch (error) {

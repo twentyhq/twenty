@@ -9,6 +9,7 @@ import {
   updateWebhook,
 } from 'test/integration/metadata/suites/utils/webhook-test.util';
 import { makeAdminPanelAPIRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
+import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { v4 as uuidv4 } from 'uuid';
 
 import { type UpdateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/update-webhook.input';
@@ -329,21 +330,26 @@ describe('webhooksResolver (e2e)', () => {
         expect(createPersonResponse.body.errors).toBeUndefined();
         createdPersonId = createPersonResponse.body.data.createPerson.id;
 
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
-        expect(receiver.receivedPayloads.length).toBe(1);
-        expect(receiver.receivedPayloads[0]).toMatchObject({
-          targetUrl: `http://127.0.0.1:${WEBHOOK_RECEIVER_PORT}/webhook`,
-          eventName: 'person.created',
-        });
+        // Delivery crosses two BullMQ hops behind a fire-and-forget event
+        // emit, so poll the receiver instead of guessing at the latency.
+        await expectEventually(
+          () => {
+            expect(receiver.receivedPayloads.length).toBe(1);
+            expect(receiver.receivedPayloads[0]).toMatchObject({
+              targetUrl: `http://127.0.0.1:${WEBHOOK_RECEIVER_PORT}/webhook`,
+              eventName: 'person.created',
+            });
+          },
+          { timeoutMs: 30_000, intervalMs: 100 },
+        );
       } finally {
         await receiver.close();
         await makeAdminPanelAPIRequest({
           query: DELETE_CONFIG_VARIABLE_MUTATION,
-          variables: { key: 'HTTP_TOOL_SAFE_MODE_ENABLED' },
+          variables: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED' },
         }).catch(() => {});
         jest.useFakeTimers();
       }
-    });
+    }, 60_000);
   });
 });

@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
 
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
+import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { ApplicationTranslationSyncService } from 'src/engine/core-modules/application/application-translation/application-translation-sync.service';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
@@ -17,7 +18,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
@@ -65,13 +66,24 @@ export class ApplicationSyncService {
           applicationRegistrationId,
         });
 
-    const syncResult =
-      await this.applicationManifestMigrationService.syncMetadataFromManifest({
-        manifest,
-        workspaceId,
-        ownerFlatApplication,
-        dryRun,
-      });
+    let syncResult: {
+      workspaceMigration: WorkspaceMigration;
+      hasSchemaMetadataChanged: boolean;
+    };
+
+    try {
+      syncResult =
+        await this.applicationManifestMigrationService.syncMetadataFromManifest(
+          {
+            manifest,
+            workspaceId,
+            ownerFlatApplication,
+            dryRun,
+          },
+        );
+    } catch (error) {
+      throw enrichApplicationManifestSyncError({ error, manifest });
+    }
 
     if (!dryRun && isDefined(ownerFlatApplication.applicationRegistrationId)) {
       // Translation sync runs after the metadata migration is already applied

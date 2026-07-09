@@ -1,6 +1,8 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo } from 'react';
 
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
+import { formatEmailRecipient } from '@/activities/emails/recipients/utils/formatEmailRecipient';
 import {
   type ReplyContext,
   type ReplyContextReady,
@@ -32,24 +34,42 @@ export const useReplyContext = (
       return null;
     }
 
-    const lastMessage = messages[messages.length - 1];
+    const sentMessages = messages.filter((message) => !message.isDraft);
+    const lastSentMessage = sentMessages[sentMessages.length - 1];
 
-    if (!isDefined(lastMessage)) {
-      return null;
+    if (!isDefined(lastSentMessage)) {
+      if (messages.length === 0) {
+        return null;
+      }
+
+      return {
+        loading: false,
+        to: '',
+        subject: '',
+        inReplyTo: '',
+        connectedAccountId,
+        connectedAccountProvider,
+      };
     }
 
-    const senderHandle = lastMessage.sender?.handle ?? '';
+    const senderHandle = lastSentMessage.sender?.handle ?? '';
+    const replyTo = isNonEmptyString(senderHandle)
+      ? formatEmailRecipient({
+          address: senderHandle,
+          displayName: lastSentMessage.sender?.displayName,
+        })
+      : '';
 
-    const rawSubject = lastMessage.subject ?? '';
+    const rawSubject = lastSentMessage.subject ?? '';
     const subject = rawSubject.startsWith('Re: ')
       ? rawSubject
       : `Re: ${rawSubject}`;
 
     return {
       loading: false,
-      to: senderHandle,
+      to: replyTo,
       subject,
-      inReplyTo: lastMessage.headerMessageId ?? '',
+      inReplyTo: lastSentMessage.headerMessageId ?? '',
       connectedAccountId,
       connectedAccountProvider,
     };

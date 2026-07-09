@@ -30,7 +30,7 @@ $gray-scale-light-gray1: color(display-p3 1 1 1);
   align-items: center;
   background: var(--btn-bg, transparent);
   border-color: var(--btn-border-color, transparent);
-  border-radius: var(--btn-radius, var(--t-border-radius-sm));
+  border-radius: var(--btn-radius, var(--t-border-radius-md));
   border-style: solid;
   border-width: var(--btn-border-width, 1px 1px 1px 1px);
   box-shadow: var(--btn-box-shadow, none);
@@ -87,7 +87,7 @@ $gray-scale-light-gray1: color(display-p3 1 1 1);
 // '1px 1px' override for primary/danger is omitted: it computes to the same
 // 1px on every side as the default.
 .button[data-position='left'] {
-  --btn-radius: var(--t-border-radius-sm) 0px 0px var(--t-border-radius-sm);
+  --btn-radius: var(--t-border-radius-md) 0px 0px var(--t-border-radius-md);
   --btn-border-width: 1px 0px 1px 1px;
 }
 
@@ -97,7 +97,7 @@ $gray-scale-light-gray1: color(display-p3 1 1 1);
 }
 
 .button[data-position='right'] {
-  --btn-radius: 0px var(--t-border-radius-sm) var(--t-border-radius-sm) 0px;
+  --btn-radius: 0px var(--t-border-radius-md) var(--t-border-radius-md) 0px;
   --btn-border-width: 1px 1px 1px 0px;
 }
 
@@ -107,8 +107,8 @@ $gray-scale-light-gray1: color(display-p3 1 1 1);
 // danger keep the focus border even when disabled.
 $primary-accents: (
   'default': (
-    bg: var(--t-background-secondary),
-    bg-disabled: var(--t-background-secondary),
+    bg: var(--t-background-transparent-lighter),
+    bg-disabled: var(--t-background-transparent-lighter),
     border: var(--t-background-transparent-light),
     border-focus: var(--t-color-blue),
     focus-needs-enabled: true,
@@ -141,6 +141,18 @@ $primary-accents: (
     color-disabled: var(--t-background-primary),
     hover: var(--t-color-red8),
     active: var(--t-color-red10),
+  ),
+  'green': (
+    bg: var(--t-color-green9),
+    bg-disabled: var(--t-color-green3),
+    border: var(--t-background-transparent-light),
+    border-focus: var(--t-color-green9),
+    focus-needs-enabled: false,
+    shadow-focus: var(--t-color-green3),
+    color: $gray-scale-light-gray1,
+    color-disabled: var(--t-color-green9),
+    hover: var(--t-color-green10),
+    active: var(--t-color-green12),
   ),
 );
 
@@ -183,6 +195,7 @@ $primary-inverted-colors: (
   'default': var(--t-font-color-secondary),
   'blue': var(--t-color-blue),
   'danger': var(--t-color-red),
+  'green': var(--t-color-green9),
 );
 
 .button[data-variant='primary'][data-inverted] {
@@ -243,6 +256,16 @@ $secondary-accents: (
     color-disabled: var(--t-color-red5),
     hover: var(--t-background-danger),
     active: var(--t-background-danger),
+  ),
+  'green': (
+    border-secondary: var(--t-color-green9),
+    border-focus: var(--t-color-green9),
+    focus-needs-enabled-secondary: false,
+    shadow-focus: var(--t-color-green3),
+    color: var(--t-color-green9),
+    color-disabled: var(--t-color-green3),
+    hover: var(--t-color-green3),
+    active: var(--t-color-green4),
   ),
 );
 

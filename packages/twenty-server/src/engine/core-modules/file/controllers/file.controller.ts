@@ -92,7 +92,7 @@ export class FileController {
       return res.redirect(fileResponse.presignedUrl);
     }
 
-    setFileResponseHeaders(res, fileResponse.mimeType);
+    setFileResponseHeaders(res, fileResponse.mimeType, FileFolder.PublicAsset);
 
     try {
       await pipeline(fileResponse.stream, res);
@@ -152,7 +152,7 @@ export class FileController {
       return res.redirect(fileResponse.presignedUrl);
     }
 
-    setFileResponseHeaders(res, fileResponse.mimeType);
+    setFileResponseHeaders(res, fileResponse.mimeType, fileFolder);
 
     try {
       await pipeline(fileResponse.stream, res);

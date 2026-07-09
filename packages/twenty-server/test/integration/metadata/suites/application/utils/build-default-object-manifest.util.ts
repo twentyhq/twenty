@@ -1,7 +1,12 @@
-import { type ObjectManifest } from 'twenty-shared/application';
+import {
+  getFieldUniversalIdentifier,
+  type ObjectManifest,
+} from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
+// System field universal identifiers are server-owned and validated against
+// the deterministic derivation, so the manifest must carry the derived values.
 export const buildDefaultObjectManifest = ({
   nameSingular,
   namePlural,
@@ -12,6 +17,7 @@ export const buildDefaultObjectManifest = ({
   additionalFields = [],
   universalIdentifier,
   labelIdentifierFieldMetadataUniversalIdentifier,
+  applicationUniversalIdentifier,
 }: {
   nameSingular: string;
   namePlural: string;
@@ -22,11 +28,22 @@ export const buildDefaultObjectManifest = ({
   additionalFields?: ObjectManifest['fields'];
   universalIdentifier?: string;
   labelIdentifierFieldMetadataUniversalIdentifier?: string;
+  applicationUniversalIdentifier: string;
 }): ObjectManifest => {
-  const idFieldUniversalIdentifier = uuidv4();
+  const objectUniversalIdentifier = universalIdentifier ?? uuidv4();
+
+  const computeSystemFieldUniversalIdentifier = (fieldName: string) =>
+    getFieldUniversalIdentifier({
+      applicationUniversalIdentifier,
+      objectUniversalIdentifier,
+      name: fieldName,
+    });
+
+  const idFieldUniversalIdentifier =
+    computeSystemFieldUniversalIdentifier('id');
 
   return {
-    universalIdentifier: universalIdentifier ?? uuidv4(),
+    universalIdentifier: objectUniversalIdentifier,
     labelIdentifierFieldMetadataUniversalIdentifier:
       labelIdentifierFieldMetadataUniversalIdentifier ??
       idFieldUniversalIdentifier,
@@ -44,43 +61,44 @@ export const buildDefaultObjectManifest = ({
         label: 'Id',
       },
       {
-        universalIdentifier: uuidv4(),
+        universalIdentifier: computeSystemFieldUniversalIdentifier('createdAt'),
         type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
         label: 'Creation date',
       },
       {
-        universalIdentifier: uuidv4(),
+        universalIdentifier: computeSystemFieldUniversalIdentifier('updatedAt'),
         type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
         label: 'Last update',
       },
       {
-        universalIdentifier: uuidv4(),
+        universalIdentifier: computeSystemFieldUniversalIdentifier('deletedAt'),
         type: FieldMetadataType.DATE_TIME,
         name: 'deletedAt',
         label: 'Deleted at',
       },
       {
-        universalIdentifier: uuidv4(),
+        universalIdentifier: computeSystemFieldUniversalIdentifier('createdBy'),
         type: FieldMetadataType.ACTOR,
         name: 'createdBy',
         label: 'Created by',
       },
       {
-        universalIdentifier: uuidv4(),
+        universalIdentifier: computeSystemFieldUniversalIdentifier('updatedBy'),
         type: FieldMetadataType.ACTOR,
         name: 'updatedBy',
         label: 'Updated by',
       },
       {
-        universalIdentifier: uuidv4(),
+        universalIdentifier: computeSystemFieldUniversalIdentifier('position'),
         type: FieldMetadataType.POSITION,
         name: 'position',
         label: 'Position',
       },
       {
-        universalIdentifier: uuidv4(),
+        universalIdentifier:
+          computeSystemFieldUniversalIdentifier('searchVector'),
         type: FieldMetadataType.TS_VECTOR,
         name: 'searchVector',
         label: 'Search vector',

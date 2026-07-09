@@ -28,6 +28,7 @@ export const getMockFieldMetadataEntity = <
     viewFields: [],
     kanbanAggregateOperationViews: [],
     viewSorts: [],
+    searchFieldMetadatas: [],
     morphId: null,
     fieldPermissions: [],
     icon: null,
@@ -42,7 +43,9 @@ export const getMockFieldMetadataEntity = <
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadata: null,
     relationTargetObjectMetadataId: null,
-    standardOverrides: null,
+    overrides: null,
+    standardOverrides:
+      null as unknown as FieldMetadataEntity['standardOverrides'],
     id: faker.string.uuid(),
     name: 'defaultFieldMetadataName',
     label: 'Default field metadata entity label',

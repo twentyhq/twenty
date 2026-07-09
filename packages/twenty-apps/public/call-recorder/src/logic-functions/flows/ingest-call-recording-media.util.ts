@@ -1,19 +1,42 @@
-import { isUndefined } from '@sniptt/guards';
+import { isNull, isUndefined } from '@sniptt/guards';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
 import { CALL_RECORDING_AUDIO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-audio-field-universal-identifier';
 import { CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-video-field-universal-identifier';
+import { getMaxMediaFileSizeBytes } from 'src/logic-functions/constants/get-max-media-file-size-bytes';
+import {
+  AUDIO_FILE_TOO_LARGE_FAILURE_REASON,
+  VIDEO_FILE_TOO_LARGE_FAILURE_REASON,
+} from 'src/logic-functions/constants/media-file-too-large-failure-reasons';
+import { putMediaDownloadBodyToUploadTarget } from 'src/logic-functions/flows/put-media-download-body-to-upload-target.util';
 import { extractRecallMediaUrls } from 'src/logic-functions/recall-api/extract-recall-media-urls.util';
 import { getRecallRecording } from 'src/logic-functions/recall-api/get-recall-recording.util';
 import { type CallRecordingMediaFile } from 'src/logic-functions/types/call-recording-media-file.type';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
+import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 type CallRecordingMediaUpdateFields = Pick<
   CallRecordingUpdateFields,
-  'audio' | 'video'
+  'audio' | 'video' | 'callRecorderFailureReason'
 >;
 
+type IngestMediaArtifactResult =
+  | { outcome: 'ingested'; files: CallRecordingMediaFile[] }
+  | { outcome: 'too-large' }
+  | { outcome: 'failed' };
+
+type OpenMediaDownloadResult =
+  | { outcome: 'opened'; body: ReadableStream<Uint8Array>; sizeBytes: number }
+  | { outcome: 'too-large'; sizeBytes: number };
+
+type MediaUploadTarget = {
+  fileId: string;
+  uploadUrl: string;
+  contentType: string;
+};
+
 const MEDIA_DOWNLOAD_TIMEOUT_MS = 120_000;
+const MEDIA_FILE_FOLDER = 'FilesField';
 
 export const ingestCallRecordingMedia = async ({
   callRecordingId,
@@ -42,7 +65,10 @@ export const ingestCallRecordingMedia = async ({
 
   const mediaUrls = extractRecallMediaUrls(recordingResult.recording);
   const metadataClient = new MetadataApiClient();
+  // TODO: raise this cap via config, monitor streamed uploads in prod, then remove the cap once verified.
+  const maxMediaFileSizeBytes = getMaxMediaFileSizeBytes();
   const updateFields: CallRecordingMediaUpdateFields = {};
+  const tooLargeFailureReasons: string[] = [];
 
   if (!hasVideo && !isUndefined(mediaUrls.videoUrl)) {
     const video = await ingestMediaArtifact({
@@ -52,10 +78,15 @@ export const ingestCallRecordingMedia = async ({
       fileName: 'video.mp4',
       fieldMetadataUniversalIdentifier:
         CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER,
+      maxMediaFileSizeBytes,
     });
 
-    if (!isUndefined(video)) {
-      updateFields.video = video;
+    if (video.outcome === 'ingested') {
+      updateFields.video = video.files;
+    }
+
+    if (video.outcome === 'too-large') {
+      tooLargeFailureReasons.push(VIDEO_FILE_TOO_LARGE_FAILURE_REASON);
     }
   }
 
@@ -67,11 +98,20 @@ export const ingestCallRecordingMedia = async ({
       fileName: 'audio.mp3',
       fieldMetadataUniversalIdentifier:
         CALL_RECORDING_AUDIO_FIELD_UNIVERSAL_IDENTIFIER,
+      maxMediaFileSizeBytes,
     });
 
-    if (!isUndefined(audio)) {
-      updateFields.audio = audio;
+    if (audio.outcome === 'ingested') {
+      updateFields.audio = audio.files;
     }
+
+    if (audio.outcome === 'too-large') {
+      tooLargeFailureReasons.push(AUDIO_FILE_TOO_LARGE_FAILURE_REASON);
+    }
+  }
+
+  if (tooLargeFailureReasons.length > 0) {
+    updateFields.callRecorderFailureReason = tooLargeFailureReasons.join(',');
   }
 
   return updateFields;
@@ -83,72 +123,243 @@ const ingestMediaArtifact = async ({
   url,
   fileName,
   fieldMetadataUniversalIdentifier,
+  maxMediaFileSizeBytes,
 }: {
   callRecordingId: string;
   metadataClient: InstanceType<typeof MetadataApiClient>;
   url: string;
   fileName: string;
   fieldMetadataUniversalIdentifier: string;
-}): Promise<CallRecordingMediaFile[] | undefined> => {
+  maxMediaFileSizeBytes: number;
+}): Promise<IngestMediaArtifactResult> => {
   try {
-    const { buffer, contentType } = await downloadMediaFile({
+    const download = await openMediaDownload({
       callRecordingId,
       fileName,
       url,
+      maxMediaFileSizeBytes,
     });
 
-    console.log(
-      `[call-recorder] media-ingestion phase=artifact-upload-start callRecordingId=${callRecordingId} fileName=${fileName} downloadedBytes=${buffer.byteLength} contentType=${contentType} ${formatMemoryUsageForLog()}`,
-    );
+    if (download.outcome === 'too-large') {
+      console.warn(
+        `[call-recorder] media-ingestion phase=artifact-too-large callRecordingId=${callRecordingId} fileName=${fileName} sizeBytes=${download.sizeBytes} maxMediaFileSizeBytes=${maxMediaFileSizeBytes}`,
+      );
 
-    const uploadedFile = await metadataClient.uploadFile(
-      buffer,
+      return { outcome: 'too-large' };
+    }
+
+    const fileId = await uploadMediaStreamToStorage({
+      callRecordingId,
+      metadataClient,
       fileName,
-      contentType,
       fieldMetadataUniversalIdentifier,
-    );
+      body: download.body,
+      sizeBytes: download.sizeBytes,
+    });
 
-    return [{ fileId: uploadedFile.id, label: fileName }];
+    return {
+      outcome: 'ingested',
+      files: [{ fileId, label: fileName }],
+    };
   } catch (error) {
     console.warn(
       `[call-recorder] failed to ingest ${fileName} for call recording ${callRecordingId}: ${error instanceof Error ? error.message : String(error)}`,
     );
 
-    return undefined;
+    return { outcome: 'failed' };
   }
 };
 
-const downloadMediaFile = async ({
+const openMediaDownload = async ({
   callRecordingId,
   fileName,
   url,
+  maxMediaFileSizeBytes,
 }: {
   callRecordingId: string;
   fileName: string;
   url: string;
-}): Promise<{ buffer: Buffer; contentType: string }> => {
+  maxMediaFileSizeBytes: number;
+}): Promise<OpenMediaDownloadResult> => {
   const response = await fetch(url, {
     signal: AbortSignal.timeout(MEDIA_DOWNLOAD_TIMEOUT_MS),
   });
-  const contentType =
-    response.headers.get('content-type') ?? 'application/octet-stream';
-  const contentLength = response.headers.get('content-length') ?? 'unknown';
+  const contentLengthBytes = parseContentLengthBytes(
+    response.headers.get('content-length'),
+  );
 
   console.log(
-    `[call-recorder] media-ingestion phase=artifact-download-response callRecordingId=${callRecordingId} fileName=${fileName} responseStatus=${response.status} contentLengthBytes=${contentLength} contentType=${contentType} ${formatMemoryUsageForLog()}`,
+    `[call-recorder] media-ingestion phase=artifact-download-response callRecordingId=${callRecordingId} fileName=${fileName} responseStatus=${response.status} contentLengthBytes=${contentLengthBytes ?? 'unknown'} ${formatMemoryUsageForLog()}`,
   );
 
   if (!response.ok) {
+    await cancelMediaDownloadBody({
+      callRecordingId,
+      fileName,
+      body: response.body,
+    });
+
     throw new Error(`download failed with status ${response.status}`);
   }
 
-  const arrayBuffer = await response.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
+  if (isUndefined(contentLengthBytes)) {
+    await cancelMediaDownloadBody({
+      callRecordingId,
+      fileName,
+      body: response.body,
+    });
 
-  return {
-    buffer,
-    contentType,
-  };
+    throw new Error('download response is missing content-length');
+  }
+
+  if (contentLengthBytes > maxMediaFileSizeBytes) {
+    await cancelMediaDownloadBody({
+      callRecordingId,
+      fileName,
+      body: response.body,
+    });
+
+    return { outcome: 'too-large', sizeBytes: contentLengthBytes };
+  }
+
+  if (isNull(response.body)) {
+    throw new Error('download returned no body');
+  }
+
+  return { outcome: 'opened', body: response.body, sizeBytes: contentLengthBytes };
+};
+
+const uploadMediaStreamToStorage = async ({
+  callRecordingId,
+  metadataClient,
+  fileName,
+  fieldMetadataUniversalIdentifier,
+  body,
+  sizeBytes,
+}: {
+  callRecordingId: string;
+  metadataClient: InstanceType<typeof MetadataApiClient>;
+  fileName: string;
+  fieldMetadataUniversalIdentifier: string;
+  body: ReadableStream<Uint8Array>;
+  sizeBytes: number;
+}): Promise<string> => {
+  const uploadTarget = await createFileUploadTarget({
+    metadataClient,
+    fileName,
+    sizeBytes,
+    fieldMetadataUniversalIdentifier,
+  }).catch(async (error) => {
+    await cancelMediaDownloadBody({
+      callRecordingId,
+      fileName,
+      body,
+    });
+
+    throw error;
+  });
+
+  console.log(
+    `[call-recorder] media-ingestion phase=artifact-upload-start callRecordingId=${callRecordingId} fileName=${fileName} declaredBytes=${sizeBytes} ${formatMemoryUsageForLog()}`,
+  );
+
+  await putMediaDownloadBodyToUploadTarget({
+    fileName,
+    mediaDownloadBody: body,
+    sizeBytes,
+    uploadTarget,
+  });
+
+  return completeFileUpload({ metadataClient, fileId: uploadTarget.fileId });
+};
+
+const cancelMediaDownloadBody = async ({
+  callRecordingId,
+  fileName,
+  body,
+}: {
+  callRecordingId: string;
+  fileName: string;
+  body: ReadableStream<Uint8Array> | null;
+}) => {
+  if (isNull(body)) {
+    return;
+  }
+
+  await body.cancel().catch((error) => {
+    console.warn(
+      `[call-recorder] media-ingestion phase=download-body-cancel-failed callRecordingId=${callRecordingId} fileName=${fileName}: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  });
+};
+
+const createFileUploadTarget = async ({
+  metadataClient,
+  fileName,
+  sizeBytes,
+  fieldMetadataUniversalIdentifier,
+}: {
+  metadataClient: InstanceType<typeof MetadataApiClient>;
+  fileName: string;
+  sizeBytes: number;
+  fieldMetadataUniversalIdentifier: string;
+}): Promise<MediaUploadTarget> => {
+  const mutationResult = await metadataClient.mutation({
+    createFileUpload: {
+      __args: {
+        filename: fileName,
+        size: sizeBytes,
+        fileFolder: MEDIA_FILE_FOLDER,
+        fieldMetadataUniversalIdentifier,
+      },
+      fileId: true,
+      uploadUrl: true,
+      contentType: true,
+    },
+  });
+  const uploadTarget = mutationResult.createFileUpload;
+
+  if (isUndefined(uploadTarget)) {
+    throw new Error('createFileUpload mutation did not return an upload target');
+  }
+
+  return uploadTarget;
+};
+
+const completeFileUpload = async ({
+  metadataClient,
+  fileId,
+}: {
+  metadataClient: InstanceType<typeof MetadataApiClient>;
+  fileId: string;
+}): Promise<string> => {
+  const mutationResult = await metadataClient.mutation({
+    completeFileUpload: {
+      __args: { fileId },
+      id: true,
+    },
+  });
+  const uploadedFileId = mutationResult.completeFileUpload?.id;
+
+  if (isUndefined(uploadedFileId)) {
+    throw new Error('completeFileUpload mutation did not return a file id');
+  }
+
+  return uploadedFileId;
+};
+
+const parseContentLengthBytes = (
+  headerValue: string | null,
+): number | undefined => {
+  if (!isNonEmptyString(headerValue)) {
+    return undefined;
+  }
+
+  const parsedBytes = Number(headerValue.trim());
+
+  return Number.isFinite(parsedBytes) && parsedBytes >= 0
+    ? parsedBytes
+    : undefined;
 };
 
 const formatMemoryUsageForLog = (): string => {

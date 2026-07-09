@@ -9,41 +9,29 @@ import semver from 'semver';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
+import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
+import { VERSION_REASON_TO_APPLICATION_REGISTRATION_EXCEPTION_CODE } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
+import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
+import { readJsonFile } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
+import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
-import { readJsonFile } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
-import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
-import {
-  ApplicationVersionValidationService,
-  type VersionValidationFailureReason,
-} from 'src/engine/core-modules/application/application-package/application-version-validation.service';
+import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import type { ApplicationManifest } from 'twenty-shared/application';
-import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 
 @Injectable()
 export class ApplicationTarballService {
   private readonly logger = new Logger(ApplicationTarballService.name);
-
-  private static readonly VERSION_REASON_TO_EXCEPTION_CODE: Record<
-    VersionValidationFailureReason,
-    ApplicationRegistrationExceptionCode
-  > = {
-    INVALID_REQUIRED_VERSION:
-      ApplicationRegistrationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT,
-    INVALID_SERVER_VERSION:
-      ApplicationRegistrationExceptionCode.INVALID_SERVER_VERSION,
-    INCOMPATIBLE:
-      ApplicationRegistrationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
-  };
 
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
@@ -101,7 +89,7 @@ export class ApplicationTarballService {
       if (!versionValidation.compatible) {
         throw new ApplicationRegistrationException(
           versionValidation.message,
-          ApplicationTarballService.VERSION_REASON_TO_EXCEPTION_CODE[
+          VERSION_REASON_TO_APPLICATION_REGISTRATION_EXCEPTION_CODE[
             versionValidation.reason
           ],
         );
@@ -169,9 +157,10 @@ export class ApplicationTarballService {
           name: manifest.application?.displayName ?? 'Unknown App',
           sourceType: ApplicationRegistrationSourceType.TARBALL,
           manifest,
+          ...fromManifestApplicationToDisplayFields(manifest.application),
           latestAvailableVersion: packageJson?.version ?? null,
           isListed: false,
-          isFeatured: false,
+          isVetted: false,
           oAuthClientId: v4(),
           oAuthRedirectUris: [],
           oAuthScopes: [],
@@ -206,11 +195,12 @@ export class ApplicationTarballService {
         tarballFileId: savedFile.id,
         name: manifest.application?.displayName ?? 'Unknown App',
         manifest,
+        ...fromManifestApplicationToDisplayFields(manifest.application),
         latestAvailableVersion: packageJson?.version ?? null,
         isListed: false,
-        isFeatured: false,
+        isVetted: false,
         ownerWorkspaceId: params.ownerWorkspaceId,
-      });
+      } as QueryDeepPartialEntity<ApplicationRegistrationEntity>);
 
       if (manifest.application?.serverVariables) {
         await this.applicationRegistrationVariableService.syncVariableSchemas(

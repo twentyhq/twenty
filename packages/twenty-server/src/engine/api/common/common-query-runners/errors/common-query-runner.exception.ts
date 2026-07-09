@@ -3,6 +3,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum CommonQueryRunnerExceptionCode {
+  MISSING_FLAT_INDEX_MAPS = 'MISSING_FLAT_INDEX_MAPS',
   RECORD_NOT_FOUND = 'RECORD_NOT_FOUND',
   INVALID_QUERY_INPUT = 'INVALID_QUERY_INPUT',
   INVALID_AUTH_CONTEXT = 'INVALID_AUTH_CONTEXT',

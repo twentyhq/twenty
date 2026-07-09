@@ -14,7 +14,7 @@ type FrontComponentRendererWithSdkClientProps = {
   componentUrl: string;
   applicationAccessToken: string;
   applicationId: string;
-  functionsBaseUrl?: string;
+  functionsBaseUrl: string;
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
   applicationVariables?: Record<string, string>;

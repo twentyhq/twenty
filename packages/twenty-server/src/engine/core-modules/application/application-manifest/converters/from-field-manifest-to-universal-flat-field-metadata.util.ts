@@ -88,7 +88,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     label: fieldManifest.label,
     description: fieldManifest.description ?? null,
     icon: fieldManifest.icon ?? null,
-    standardOverrides: null,
+    overrides: null,
     options: fieldManifest.options ?? null,
     defaultValue,
     universalSettings: fieldManifest.universalSettings ?? null,
@@ -114,6 +114,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     calendarViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     viewSortUniversalIdentifiers: [],
+    searchFieldMetadataUniversalIdentifiers: [],
     createdAt: now,
     updatedAt: now,
   };

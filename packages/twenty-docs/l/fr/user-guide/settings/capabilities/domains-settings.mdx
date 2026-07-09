@@ -1,6 +1,6 @@
 ---
 title: Paramètres des domaines
-description: Configurez le domaine de l'espace de travail, les domaines d'accès approuvés et les domaines publics.
+description: Configurez le domaine de l'espace de travail, les domaines d'accès approuvés et les domaines personnalisés des applications.
 ---
 
 Les paramètres de domaine se trouvent à trois endroits, en fonction de ce que vous configurez.
@@ -37,18 +37,17 @@ Une fois configuré, toute personne ayant une adresse e-mail de ce domaine peut 
 Cela est utile pour permettre à toute votre équipe de s'auto-inscrire tout en gardant l'espace de travail restreint à votre organisation.
 </Note>
 
-## Domaines publics
+## Domaines personnalisés des applications
 
-Configurez dans **Paramètres → Applications → Développeur**.
+Configurez dans **Paramètres → Applications → votre application → Paramètres → URL de l'application**.
 
-Provisionner un environnement d'hébergement complet et sécurisé sur ces domaines. Un domaine public peut être lié à une application spécifique — lorsqu’il est lié, seules les fonctions logiques acheminées via HTTP de cette application sont accessibles sur le domaine. Laissez la liaison vide pour exposer toutes les routes HTTP de l’espace de travail.
+Les applications qui exposent des routes sur le Web sont accessibles via une URL dédiée, indiquée dans la section **URL de l'application**. Vous pouvez plutôt héberger une application sur un domaine que vous possédez.
 
-### Ajouter domaine public
+### Ajouter un domaine personnalisé
 
-1. Cliquez sur **Ajouter un domaine public**
-2. Saisissez le domaine que vous souhaitez utiliser
-3. Facultatif : liez-le à une application
-4. Configurez les paramètres DNS comme indiqué
-5. Vérifiez le domaine
+1. Cliquez sur **Ajouter un domaine personnalisé**
+2. Saisissez le domaine que vous souhaitez utiliser (par exemple, `app.yourcompany.com`)
+3. Configurez les paramètres DNS comme indiqué
+4. Vérifiez le domaine
 
-Les certificats SSL sont automatiquement fournis pour les domaines publics.
+Seules les routes de cette application sont accessibles sur le domaine. Les certificats SSL sont fournis automatiquement.

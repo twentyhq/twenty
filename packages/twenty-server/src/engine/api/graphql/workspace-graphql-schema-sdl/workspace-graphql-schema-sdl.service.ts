@@ -25,6 +25,7 @@ export type WorkspaceGraphqlSchemaSDLResult = {
   usedScalarNames: string[];
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
 };
 
 @Injectable()
@@ -168,6 +169,7 @@ export class WorkspaceGraphqlSchemaSDLService {
       usedScalarNames,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatIndexMaps,
     };
   }
 

@@ -107,7 +107,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const {
       otherObjectFlatFieldMetadatasToUpdate,
-      sameObjectFlatFieldMetadatasToUpdate,
       flatObjectMetadataToUpdate,
       flatIndexMetadatasToUpdate,
       flatViewFieldsToCreate,
@@ -171,10 +170,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             fieldMetadata: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [
-                ...otherObjectFlatFieldMetadatasToUpdate,
-                ...sameObjectFlatFieldMetadatasToUpdate,
-              ],
+              flatEntityToUpdate: [...otherObjectFlatFieldMetadatasToUpdate],
             },
             viewField: {
               flatEntityToCreate: flatViewFieldsToCreate,
@@ -993,12 +989,19 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     workspaceId: string,
     options?: FindManyOptions<ObjectMetadataEntity>,
   ): Promise<FlatObjectMetadata[]> {
+    const whereWithWorkspaceId = Array.isArray(options?.where)
+      ? options.where.map((whereCondition) => ({
+          ...whereCondition,
+          workspaceId,
+        }))
+      : {
+          ...options?.where,
+          workspaceId,
+        };
+
     const objectMetadataEntities = await this.objectMetadataRepository.find({
       ...options,
-      where: {
-        ...options?.where,
-        workspaceId,
-      },
+      where: whereWithWorkspaceId,
       order: {
         ...options?.order,
       },

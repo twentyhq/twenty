@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { InformationBannerBillingSubscriptionPaused } from '@/information-banner/components/billing/InformationBannerBillingSubscriptionPaused';
+import { InformationBannerNonProductionInstance } from '@/information-banner/components/enterprise/InformationBannerNonProductionInstance';
 import { InformationBannerEndTrialPeriod } from '@/information-banner/components/billing/InformationBannerEndTrialPeriod';
 import { InformationBannerFailPaymentInfo } from '@/information-banner/components/billing/InformationBannerFailPaymentInfo';
 import { InformationBannerNoBillingSubscription } from '@/information-banner/components/billing/InformationBannerNoBillingSubscription';
@@ -63,6 +64,7 @@ export const InformationBannerWrapper = () => {
 
   return (
     <StyledInformationBannerWrapper>
+      <InformationBannerNonProductionInstance />
       <InformationBannerMaintenance />
       {isAccountSyncEnabled && (
         <InformationBannerReconnectAccountInsufficientPermissions />

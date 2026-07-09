@@ -74,8 +74,27 @@ describe('updateWorkspaceMemberSettings and profile onboarding', () => {
   it('should clear PROFILE_CREATION onboarding after saving first and last name via updateWorkspaceMemberSettings', async () => {
     const uniqueEmail = `profile-onboarding-${randomUUID()}@example.com`;
 
-    newUserAccessToken =
-      await signUpInWorkspaceAndGetAccessToken(uniqueEmail);
+    newUserAccessToken = await signUpInWorkspaceAndGetAccessToken(uniqueEmail);
+
+    const triggerInstallAppsOnboardingStepMutation = gql`
+      mutation TriggerInstallAppsOnboardingStep(
+        $universalIdentifiers: [String!]!
+      ) {
+        triggerInstallAppsOnboardingStep(
+          universalIdentifiers: $universalIdentifiers
+        ) {
+          success
+        }
+      }
+    `;
+
+    await makeMetadataAPIRequest(
+      {
+        query: triggerInstallAppsOnboardingStepMutation,
+        variables: { universalIdentifiers: [] },
+      },
+      newUserAccessToken,
+    );
 
     const currentUserWithOnboardingQuery = gql`
       query CurrentUserWithOnboarding {

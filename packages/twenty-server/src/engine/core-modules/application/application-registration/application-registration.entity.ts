@@ -22,6 +22,8 @@ import { type Manifest } from 'twenty-shared/application';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -121,8 +123,15 @@ export class ApplicationRegistrationEntity {
   isListed: boolean;
 
   @Field(() => Boolean)
-  @Column({ name: 'isFeatured', type: 'boolean', default: false })
-  isFeatured: boolean;
+  @Column({ name: 'isVetted', type: 'boolean', default: false })
+  @WasRenamedInUpgrade([
+    {
+      previousName: 'isFeatured',
+      upgradeCommandName:
+        '2.20.0_RenameIsFeaturedToIsVettedOnApplicationRegistrationFastInstanceCommand_1783527064000',
+    },
+  ])
+  isVetted: boolean;
 
   // Auto-installed on every new workspace; existing workspaces are
   // backfilled by the `install-pre-installed-apps` CLI command.
@@ -133,9 +142,79 @@ export class ApplicationRegistrationEntity {
   @Column({ type: 'jsonb', nullable: true })
   manifest: Manifest | null;
 
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddLogoToApplicationRegistrationFastInstanceCommand_1783069672191',
+  })
+  logo: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
+  })
+  description: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
+  })
+  author: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
+  })
+  category: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
+  })
+  websiteUrl: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
+  })
+  aboutDescription: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
+  })
+  termsUrl: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
+  })
+  emailSupport: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
+  })
+  issueReportUrl: string | null;
+
+  @Column({ type: 'text', array: true, default: '{}' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
+  })
+  screenshots: string[];
+
   @Field(() => String, { nullable: true })
   get logoUrl(): string | null {
-    return this.manifest?.application?.logoUrl ?? null;
+    return this.logo ?? this.manifest?.application?.logoUrl ?? null;
   }
 
   @OneToMany(

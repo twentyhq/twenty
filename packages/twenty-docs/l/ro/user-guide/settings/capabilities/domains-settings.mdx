@@ -1,6 +1,6 @@
 ---
 title: Setări domeniu
-description: Configurați domeniul spațiului de lucru, domeniile de acces aprobate și domeniile publice.
+description: Configurați domeniul spațiului de lucru, domeniile de acces aprobate și domeniile personalizate ale aplicației.
 ---
 
 Setările de domeniu se află în trei locuri, în funcție de ceea ce configurați.
@@ -37,18 +37,17 @@ După configurare, oricine are o adresă de email pe acel domeniu se poate alăt
 Acest lucru este util pentru a permite întregii echipe să se înregistreze singură, menținând în același timp spațiul de lucru restricționat la organizația dvs.
 </Note>
 
-## Domenii Publice
+## Domenii personalizate ale aplicației
 
-Configurați în **Setări → Aplicații → Dezvoltator**.
+Configurați în **Setări → Aplicații → aplicația dvs. → Setări → URL aplicație**.
 
-Provisionați un mediu de găzduire complet și sigur pe aceste domenii. Un domeniu public poate fi asociat cu o anumită aplicație — când este asociat, numai funcțiile de logică rutată HTTP ale acelei aplicații sunt accesibile pe domeniu. Lăsați asocierea goală pentru a expune toate rutele HTTP ale spațiului de lucru.
+Aplicațiile care expun rute pe web sunt disponibile la un URL dedicat, afișat în secțiunea **URL aplicație**. Puteți publica o aplicație pe un domeniu pe care îl dețineți.
 
-### Adaugă Domeniu Public
+### Adăugați domeniu personalizat
 
-1. Faceți clic pe **Adăugați domeniu public**
-2. Introduceți domeniul pe care doriți să îl utilizați
-3. Opțional, asociați-l unei aplicații
-4. Configurați setările DNS conform instrucțiunilor
-5. Verificați domeniul
+1. Faceți clic pe **Adăugați domeniu personalizat**
+2. Introduceți domeniul pe care doriți să îl utilizați (de ex., `app.yourcompany.com`)
+3. Configurați setările DNS conform instrucțiunilor
+4. Verificați domeniul
 
-Certificatele SSL sunt furnizate automat pentru domeniile publice.
+Numai rutele acelei aplicații sunt accesibile pe domeniu. Certificatele SSL sunt furnizate automat.
