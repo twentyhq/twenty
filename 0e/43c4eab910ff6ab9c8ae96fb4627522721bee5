@@ -1,0 +1,25 @@
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/utils/sort-failed-flat-entity-validations.util.ts
+  s_0cd87c29efaba6::t_5bb3119dea1bb1 1-42
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/interceptors/utils/build-metadata-validation-error-payload.util.ts
+  s_0cd87c29efaba6::t_ab8e43cb735c91 3,8
+  s_0cd87c29efaba6::t_cac1255c373289 62-64
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/utils/__tests__/sort-failed-flat-entity-validations.util.spec.ts
+  s_0cd87c29efaba6::t_a68bdca9051244 1-8,18-67
+  s_0cd87c29efaba6::t_b159ded05c8468 9-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "0e43c4eab910ff6ab9c8ae96fb4627522721bee5",
+  "prompts": {},
+  "sessions": {
+    "s_0cd87c29efaba6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c9fb3032-f885-4660-a0b6-b45aac02aa9b",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
