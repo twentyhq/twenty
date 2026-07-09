@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type WhatsappMessageItem } from 'src/front-components/types/whatsapp-message-item.type';
+import { resolveWhatsappReplyRecipient } from 'src/front-components/utils/resolve-whatsapp-reply-recipient.util';
 import { fetchWhatsappMessageChannels } from 'src/logic-functions/utils/fetch-whatsapp-message-channels.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
@@ -9,21 +10,35 @@ type WhatsappMessagesState = {
   whatsappMessages: WhatsappMessageItem[];
   isWhatsappMessagesQueryLoading: boolean;
   errorMessage: string | undefined;
+  connectedAccountId: string | undefined;
+  replyRecipientHandle: string | undefined;
 };
 
 const PEOPLE_LOOKUP_LIMIT = 50;
 const MESSAGES_LOOKUP_LIMIT = 200;
+const WHATSAPP_MESSAGES_REFRESH_INTERVAL_MS = 10_000;
 const WHATSAPP_MESSAGES_ERROR_MESSAGE = 'Please try again later.';
 const CHANNEL_NOT_CONFIGURED_MESSAGE =
   'Connect a WhatsApp Business account to see messages.';
 
-const fetchWhatsappMessages = async ({
+const EMPTY_WHATSAPP_MESSAGES_STATE: WhatsappMessagesState = {
+  whatsappMessages: [],
+  isWhatsappMessagesQueryLoading: false,
+  errorMessage: undefined,
+  connectedAccountId: undefined,
+  replyRecipientHandle: undefined,
+};
+
+const fetchWhatsappConversation = async ({
   recordId,
   messageChannelIds,
 }: {
   recordId: string;
   messageChannelIds: string[];
-}): Promise<WhatsappMessageItem[]> => {
+}): Promise<{
+  whatsappMessages: WhatsappMessageItem[];
+  replyRecipientHandle: string | undefined;
+}> => {
   const client = new CoreApiClient();
 
   const peopleQueryResult = await client.query({
@@ -37,17 +52,48 @@ const fetchWhatsappMessages = async ({
       edges: {
         node: {
           id: true,
+          phones: {
+            primaryPhoneCallingCode: true,
+            primaryPhoneNumber: true,
+          },
         },
       },
     },
   });
 
-  const personIds = (peopleQueryResult.people?.edges ?? [])
-    .map((personEdge: { node: { id?: string | null } }) => personEdge.node.id)
-    .filter(isNonEmptyString);
+  type PersonNode = {
+    id?: string | null;
+    phones?: {
+      primaryPhoneCallingCode?: string | null;
+      primaryPhoneNumber?: string | null;
+    } | null;
+  };
+
+  const people: PersonNode[] = (peopleQueryResult.people?.edges ?? []).map(
+    (personEdge: { node: PersonNode }) => personEdge.node,
+  );
+
+  const personIds = people.map((person) => person.id).filter(isNonEmptyString);
+
+  const phonesWithNumber = people
+    .map((person) => person.phones)
+    .find((phones) => isNonEmptyString(phones?.primaryPhoneNumber));
+
+  const personPhones = isNonEmptyString(phonesWithNumber?.primaryPhoneNumber)
+    ? {
+        primaryPhoneCallingCode: phonesWithNumber.primaryPhoneCallingCode ?? '',
+        primaryPhoneNumber: phonesWithNumber.primaryPhoneNumber,
+      }
+    : undefined;
 
   if (personIds.length === 0) {
-    return [];
+    return {
+      whatsappMessages: [],
+      replyRecipientHandle: resolveWhatsappReplyRecipient({
+        whatsappParticipants: [],
+        personPhones,
+      }),
+    };
   }
 
   const participantsQueryResult = await client.query({
@@ -59,6 +105,8 @@ const fetchWhatsappMessages = async ({
       edges: {
         node: {
           id: true,
+          handle: true,
+          role: true,
           message: {
             id: true,
             text: true,
@@ -73,10 +121,14 @@ const fetchWhatsappMessages = async ({
     string,
     { id: string; text: string; receivedAt: string }
   >();
+  const participantsByMessageId = new Map<
+    string,
+    { handle: string; role: string }[]
+  >();
 
   for (const participantEdge of participantsQueryResult.messageParticipants
     ?.edges ?? []) {
-    const message = participantEdge.node.message;
+    const { handle, role, message } = participantEdge.node;
 
     if (
       isNonEmptyString(message?.id) &&
@@ -88,13 +140,24 @@ const fetchWhatsappMessages = async ({
         text: message.text,
         receivedAt: message.receivedAt,
       });
+
+      participantsByMessageId.set(message.id, [
+        ...(participantsByMessageId.get(message.id) ?? []),
+        { handle: handle ?? '', role: role ?? '' },
+      ]);
     }
   }
 
   const messageIds = [...messageById.keys()];
 
   if (messageIds.length === 0) {
-    return [];
+    return {
+      whatsappMessages: [],
+      replyRecipientHandle: resolveWhatsappReplyRecipient({
+        whatsappParticipants: [],
+        personPhones,
+      }),
+    };
   }
 
   const associationsQueryResult = await client.query({
@@ -132,31 +195,50 @@ const fetchWhatsappMessages = async ({
     }
   }
 
-  return whatsappMessages.sort(
-    (left, right) =>
-      new Date(right.receivedAt).getTime() -
-      new Date(left.receivedAt).getTime(),
+  const whatsappParticipants = whatsappMessages.flatMap(
+    (whatsappMessage) => participantsByMessageId.get(whatsappMessage.id) ?? [],
   );
+
+  return {
+    whatsappMessages: whatsappMessages.sort(
+      (left, right) =>
+        new Date(right.receivedAt).getTime() -
+        new Date(left.receivedAt).getTime(),
+    ),
+    replyRecipientHandle: resolveWhatsappReplyRecipient({
+      whatsappParticipants,
+      personPhones,
+    }),
+  };
 };
 
 export const useWhatsappMessages = (
   recordId: string,
-): WhatsappMessagesState => {
+): WhatsappMessagesState & { refetchWhatsappMessages: () => void } => {
   const [state, setState] = useState<WhatsappMessagesState>({
-    whatsappMessages: [],
+    ...EMPTY_WHATSAPP_MESSAGES_STATE,
     isWhatsappMessagesQueryLoading: true,
-    errorMessage: undefined,
   });
+  const [refreshCount, setRefreshCount] = useState(0);
+
+  const refetchWhatsappMessages = useCallback(() => {
+    setRefreshCount((currentRefreshCount) => currentRefreshCount + 1);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
 
-    const fetchMessages = async () => {
-      setState({
-        whatsappMessages: [],
-        isWhatsappMessagesQueryLoading: true,
-        errorMessage: undefined,
-      });
+    const fetchMessages = async ({
+      showLoadingState,
+    }: {
+      showLoadingState: boolean;
+    }) => {
+      if (showLoadingState) {
+        setState({
+          ...EMPTY_WHATSAPP_MESSAGES_STATE,
+          isWhatsappMessagesQueryLoading: true,
+        });
+      }
 
       try {
         const whatsappMessageChannels = await fetchWhatsappMessageChannels();
@@ -167,19 +249,19 @@ export const useWhatsappMessages = (
           }
 
           setState({
-            whatsappMessages: [],
-            isWhatsappMessagesQueryLoading: false,
+            ...EMPTY_WHATSAPP_MESSAGES_STATE,
             errorMessage: CHANNEL_NOT_CONFIGURED_MESSAGE,
           });
           return;
         }
 
-        const whatsappMessages = await fetchWhatsappMessages({
-          recordId,
-          messageChannelIds: whatsappMessageChannels.map(
-            ({ messageChannelId }) => messageChannelId,
-          ),
-        });
+        const { whatsappMessages, replyRecipientHandle } =
+          await fetchWhatsappConversation({
+            recordId,
+            messageChannelIds: whatsappMessageChannels.map(
+              ({ messageChannelId }) => messageChannelId,
+            ),
+          });
 
         if (cancelled) {
           return;
@@ -189,26 +271,33 @@ export const useWhatsappMessages = (
           whatsappMessages,
           isWhatsappMessagesQueryLoading: false,
           errorMessage: undefined,
+          connectedAccountId: whatsappMessageChannels[0].connectedAccountId,
+          replyRecipientHandle,
         });
       } catch {
-        if (cancelled) {
+        if (cancelled || !showLoadingState) {
           return;
         }
 
         setState({
-          whatsappMessages: [],
-          isWhatsappMessagesQueryLoading: false,
+          ...EMPTY_WHATSAPP_MESSAGES_STATE,
           errorMessage: WHATSAPP_MESSAGES_ERROR_MESSAGE,
         });
       }
     };
 
-    fetchMessages();
+    fetchMessages({ showLoadingState: refreshCount === 0 });
+
+    const refreshIntervalId = setInterval(
+      () => fetchMessages({ showLoadingState: false }),
+      WHATSAPP_MESSAGES_REFRESH_INTERVAL_MS,
+    );
 
     return () => {
       cancelled = true;
+      clearInterval(refreshIntervalId);
     };
-  }, [recordId]);
+  }, [recordId, refreshCount]);
 
-  return state;
+  return { ...state, refetchWhatsappMessages };
 };

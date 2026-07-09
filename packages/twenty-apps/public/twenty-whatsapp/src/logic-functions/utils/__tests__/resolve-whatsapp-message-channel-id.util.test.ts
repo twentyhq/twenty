@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { resolveWhatsappMessageChannelId } from 'src/logic-functions/utils/resolve-whatsapp-message-channel-id.util';
 
 type ConnectedAccountFixture = {
+  id: string;
   handle: string;
   messageChannels: { id: string; type: string }[];
 };
@@ -19,6 +20,7 @@ describe('resolveWhatsappMessageChannelId', () => {
   it('returns the channel id when a single APP message channel exists', async () => {
     const metadataClient = buildMetadataClient([
       {
+        id: 'account-1',
         handle: 'WhatsApp #1',
         messageChannels: [{ id: 'channel-1', type: 'APP' }],
       },
@@ -32,6 +34,7 @@ describe('resolveWhatsappMessageChannelId', () => {
   it('ignores non-APP message channels', async () => {
     const metadataClient = buildMetadataClient([
       {
+        id: 'account-1',
         handle: 'WhatsApp #1',
         messageChannels: [
           { id: 'channel-email', type: 'EMAIL' },
@@ -56,10 +59,12 @@ describe('resolveWhatsappMessageChannelId', () => {
   it('throws listing candidates when multiple APP message channels exist', async () => {
     const metadataClient = buildMetadataClient([
       {
+        id: 'account-1',
         handle: 'WhatsApp #1',
         messageChannels: [{ id: 'channel-1', type: 'APP' }],
       },
       {
+        id: 'account-2',
         handle: 'WhatsApp #2',
         messageChannels: [{ id: 'channel-2', type: 'APP' }],
       },

@@ -1,13 +1,16 @@
 import styled from '@emotion/styled';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { WhatsappReplyComposer } from 'src/front-components/components/WhatsappReplyComposer';
 import { useWhatsappMessages } from 'src/front-components/hooks/use-whatsapp-messages';
+import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 const StyledCenteredState = styled.div`
   align-items: center;
   box-sizing: border-box;
   color: ${() => themeCssVariables.font.color.tertiary};
   display: flex;
+  flex: 1;
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.sm};
   height: 100%;
@@ -15,13 +18,20 @@ const StyledCenteredState = styled.div`
   padding: ${() => themeCssVariables.spacing[4]};
 `;
 
+const StyledConversation = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
 const StyledMessageList = styled.div`
   box-sizing: border-box;
   display: flex;
+  flex: 1;
   flex-direction: column;
   font-family: ${() => themeCssVariables.font.family};
   gap: ${() => themeCssVariables.spacing[2]};
-  height: 100%;
+  min-height: 0;
   overflow-y: auto;
   padding: ${() => themeCssVariables.spacing[4]};
 `;
@@ -56,8 +66,14 @@ export const WhatsappMessagesContent = ({
 }: {
   recordId: string;
 }) => {
-  const { whatsappMessages, isWhatsappMessagesQueryLoading, errorMessage } =
-    useWhatsappMessages(recordId);
+  const {
+    whatsappMessages,
+    isWhatsappMessagesQueryLoading,
+    errorMessage,
+    connectedAccountId,
+    replyRecipientHandle,
+    refetchWhatsappMessages,
+  } = useWhatsappMessages(recordId);
 
   if (isWhatsappMessagesQueryLoading) {
     return <StyledCenteredState>Loading WhatsApp messages…</StyledCenteredState>;
@@ -67,23 +83,37 @@ export const WhatsappMessagesContent = ({
     return <StyledCenteredState>{errorMessage}</StyledCenteredState>;
   }
 
-  if (whatsappMessages.length === 0) {
-    return <StyledCenteredState>No WhatsApp messages yet.</StyledCenteredState>;
-  }
-
   return (
-    <StyledMessageList>
-      {whatsappMessages.map((whatsappMessage) => (
-        <StyledMessageRow key={whatsappMessage.id}>
-          <StyledMessageMeta>
-            <span>
-              {whatsappMessage.direction === 'INCOMING' ? 'Received' : 'Sent'}
-            </span>
-            <span>{new Date(whatsappMessage.receivedAt).toLocaleString()}</span>
-          </StyledMessageMeta>
-          <StyledMessageText>{whatsappMessage.text}</StyledMessageText>
-        </StyledMessageRow>
-      ))}
-    </StyledMessageList>
+    <StyledConversation>
+      {whatsappMessages.length === 0 ? (
+        <StyledCenteredState>No WhatsApp messages yet.</StyledCenteredState>
+      ) : (
+        <StyledMessageList>
+          {whatsappMessages.map((whatsappMessage) => (
+            <StyledMessageRow key={whatsappMessage.id}>
+              <StyledMessageMeta>
+                <span>
+                  {whatsappMessage.direction === 'INCOMING'
+                    ? 'Received'
+                    : 'Sent'}
+                </span>
+                <span>
+                  {new Date(whatsappMessage.receivedAt).toLocaleString()}
+                </span>
+              </StyledMessageMeta>
+              <StyledMessageText>{whatsappMessage.text}</StyledMessageText>
+            </StyledMessageRow>
+          ))}
+        </StyledMessageList>
+      )}
+      {isNonEmptyString(connectedAccountId) &&
+        isNonEmptyString(replyRecipientHandle) && (
+          <WhatsappReplyComposer
+            connectedAccountId={connectedAccountId}
+            recipientHandle={replyRecipientHandle}
+            onReplySent={refetchWhatsappMessages}
+          />
+        )}
+    </StyledConversation>
   );
 };

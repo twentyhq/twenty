@@ -9,6 +9,7 @@ export const fetchWhatsappMessageChannels = async ({
 } = {}): Promise<WhatsappMessageChannel[]> => {
   const { appConnectedAccounts } = await metadataClient.query({
     appConnectedAccounts: {
+      id: true,
       handle: true,
       messageChannels: {
         id: true,
@@ -22,6 +23,7 @@ export const fetchWhatsappMessageChannels = async ({
       .filter((messageChannel) => messageChannel.type === 'APP')
       .map((messageChannel) => ({
         messageChannelId: messageChannel.id,
+        connectedAccountId: connectedAccount.id,
         connectedAccountHandle: connectedAccount.handle,
       })),
   );
