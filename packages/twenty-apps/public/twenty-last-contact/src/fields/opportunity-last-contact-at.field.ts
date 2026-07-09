@@ -17,4 +17,5 @@ export default defineField({
     'When the most recent contact (email or meeting) with a person related to this opportunity occurred, in either direction.',
   icon: 'IconClock',
   isNullable: true,
+  isUIEditable: false,
 });

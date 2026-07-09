@@ -31,4 +31,5 @@ export default defineField({
     onDelete: OnDeleteAction.SET_NULL,
     joinColumnName: 'lastContactById',
   },
+  isUIEditable: false,
 });
