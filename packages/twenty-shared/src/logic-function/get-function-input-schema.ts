@@ -1,12 +1,14 @@
 import {
   type ArrayTypeNode,
   type ArrowFunction,
+  type BindingElement,
   createSourceFile,
   type FunctionDeclaration,
   type FunctionLikeDeclaration,
   type Identifier,
   type LiteralTypeNode,
   type Node,
+  type ObjectBindingPattern,
   type PropertySignature,
   ScriptTarget,
   type StringLiteral,
@@ -130,6 +132,26 @@ const getTypeString = (typeNode: TypeNode): InputJsonSchema => {
   }
 };
 
+const getObjectBindingPatternSchema = (
+  bindingPattern: ObjectBindingPattern,
+): InputJsonSchema => {
+  const properties: InputJsonSchema['properties'] = {};
+
+  bindingPattern.elements.forEach((element: BindingElement) => {
+    if (isDefined(element.dotDotDotToken)) {
+      return;
+    }
+
+    const propertyNameNode = element.propertyName ?? element.name;
+
+    if (propertyNameNode.kind === SyntaxKind.Identifier) {
+      properties[(propertyNameNode as Identifier).text] = {};
+    }
+  });
+
+  return { type: 'object', properties };
+};
+
 const computeFunctionParameters = (
   funcNode: FunctionDeclaration | FunctionLikeDeclaration | ArrowFunction,
   schema: InputJsonSchema[],
@@ -141,9 +163,16 @@ const computeFunctionParameters = (
 
     if (isDefined(typeNode)) {
       return [...updatedSchema, getTypeString(typeNode)];
-    } else {
-      return [...updatedSchema, {}];
     }
+
+    if (param.name.kind === SyntaxKind.ObjectBindingPattern) {
+      return [
+        ...updatedSchema,
+        getObjectBindingPatternSchema(param.name as ObjectBindingPattern),
+      ];
+    }
+
+    return [...updatedSchema, {}];
   }, schema);
 };
 

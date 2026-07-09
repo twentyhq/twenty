@@ -159,6 +159,53 @@ describe('getFunctionInputSchema', () => {
     ]);
   });
 
+  it('should extract properties from an untyped object destructuring parameter', () => {
+    const fileContent = `
+        export const main = async ({
+          toAddress,
+          subject,
+          body,
+          messageId,
+          messageThreadId,
+        }) => {
+          return {};
+        };
+      `;
+    const result = getFunctionInputSchema(fileContent);
+
+    expect(result).toEqual([
+      {
+        type: 'object',
+        properties: {
+          toAddress: {},
+          subject: {},
+          body: {},
+          messageId: {},
+          messageThreadId: {},
+        },
+      },
+    ]);
+  });
+
+  it('should use the source property name and skip rest elements when destructuring', () => {
+    const fileContent = `
+        export const main = async ({ a: renamedA, b, ...rest }) => {
+          return {};
+        };
+      `;
+    const result = getFunctionInputSchema(fileContent);
+
+    expect(result).toEqual([
+      {
+        type: 'object',
+        properties: {
+          a: {},
+          b: {},
+        },
+      },
+    ]);
+  });
+
   it('should analyze a complex function correctly', () => {
     const fileContent = `
         function testFunction(
