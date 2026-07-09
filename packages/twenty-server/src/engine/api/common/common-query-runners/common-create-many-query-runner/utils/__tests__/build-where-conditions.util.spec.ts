@@ -59,7 +59,11 @@ describe('buildWhereConditions', () => {
     ];
 
     const where = buildWhereConditions(
-      [{ uniqueText: 'alpha' }, { uniqueText: 'alpha' }, { uniqueText: 'beta' }],
+      [
+        { uniqueText: 'alpha' },
+        { uniqueText: 'alpha' },
+        { uniqueText: 'beta' },
+      ],
       groups,
     );
 
@@ -102,10 +106,7 @@ describe('buildWhereConditions', () => {
     const operator = where[0].emailsFieldPrimaryEmail;
 
     expect(operator.type.toLowerCase()).toBe('in');
-    expect(operator.value).toEqual([
-      'alpha@example.com',
-      'beta@example.com',
-    ]);
+    expect(operator.value).toEqual(['alpha@example.com', 'beta@example.com']);
   });
 
   it('builds one IN condition per single-column conflicting field group', () => {
