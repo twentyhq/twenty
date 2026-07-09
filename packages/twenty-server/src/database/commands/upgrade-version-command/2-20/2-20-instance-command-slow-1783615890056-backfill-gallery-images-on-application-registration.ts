@@ -3,7 +3,7 @@ import { type DataSource, type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
-@RegisteredInstanceCommand('2.20.0', 1783592420700, { type: 'slow' })
+@RegisteredInstanceCommand('2.20.0', 1783615890056, { type: 'slow' })
 export class BackfillGalleryImagesOnApplicationRegistrationSlowInstanceCommand
   implements SlowInstanceCommand
 {

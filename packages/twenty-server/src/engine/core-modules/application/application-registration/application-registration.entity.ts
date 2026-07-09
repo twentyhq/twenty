@@ -233,7 +233,7 @@ export class ApplicationRegistrationEntity {
   @Column({ type: 'jsonb', nullable: true })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.20.0_AddGalleryImagesToApplicationRegistrationFastInstanceCommand_1783592420699',
+      '2.20.0_AddGalleryImagesToApplicationRegistrationFastInstanceCommand_1783615890055',
   })
   galleryImages: ApplicationRegistrationGalleryImage[] | null;
 
