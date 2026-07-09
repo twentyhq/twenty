@@ -11,7 +11,13 @@ import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isObject, isString } from '@sniptt/guards';
 import { useState } from 'react';
-import { isDefined, parseJson, resolveInput } from 'twenty-shared/utils';
+import {
+  isDefined,
+  parseJson,
+  resolveInput,
+  resolveJsonBodyVariables,
+} from 'twenty-shared/utils';
+import { CONTENT_TYPE_VALUES_HTTP_REQUEST } from 'twenty-shared/workflow';
 import {
   type TestHttpRequestInput,
   type TestHttpRequestMutation,
@@ -76,10 +82,17 @@ export const useTestHttpRequest = (actionId: string) => {
         httpRequestFormData.headers,
         nestedVariableContext,
       );
-      const substitutedBodyRaw = resolveInput(
-        httpRequestFormData.body,
-        nestedVariableContext,
-      );
+      const isJsonBody =
+        isString(httpRequestFormData.body) &&
+        httpRequestFormData.headers?.['content-type'] ===
+          CONTENT_TYPE_VALUES_HTTP_REQUEST.rawJson;
+
+      const substitutedBodyRaw = isJsonBody
+        ? resolveJsonBodyVariables(
+            httpRequestFormData.body as string,
+            nestedVariableContext,
+          )
+        : resolveInput(httpRequestFormData.body, nestedVariableContext);
 
       const substitutedBody: HttpRequestBody | string | undefined =
         isString(substitutedBodyRaw) ||

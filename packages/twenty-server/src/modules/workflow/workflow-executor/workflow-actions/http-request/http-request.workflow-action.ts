@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
+import { resolveJsonBodyVariables } from 'twenty-shared/utils';
+import {
+  CONTENT_TYPE_VALUES_HTTP_REQUEST,
+  type WorkflowRunStepLog,
+} from 'twenty-shared/workflow';
 
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -27,6 +31,24 @@ export class HttpRequestWorkflowAction extends ToolBackedWorkflowAction<Workflow
 
   protected getTool(): Tool {
     return this.httpTool;
+  }
+
+  protected override async preprocessInput(
+    rawInput: WorkflowHttpRequestActionInput,
+    context: Record<string, unknown>,
+  ): Promise<WorkflowHttpRequestActionInput> {
+    if (
+      typeof rawInput.body !== 'string' ||
+      rawInput.headers?.['content-type'] !==
+        CONTENT_TYPE_VALUES_HTTP_REQUEST.rawJson
+    ) {
+      return rawInput;
+    }
+
+    return {
+      ...rawInput,
+      body: resolveJsonBodyVariables(rawInput.body, context),
+    };
   }
 
   protected assertStep(step: WorkflowAction): void {

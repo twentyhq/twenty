@@ -78,6 +78,34 @@ describe('HttpRequestWorkflowAction', () => {
     );
   });
 
+  it('escapes special characters when resolving variables in a JSON body', async () => {
+    await action.execute({
+      currentStepId: 'step-1',
+      steps: [
+        buildHttpRequestStep({
+          url: 'https://api.example.com/inbound',
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: '{\n  "subject": "{{trigger.subject}}",\n  "body": "{{trigger.text}}"\n}',
+        }),
+      ],
+      context: {
+        trigger: {
+          subject: 'Say "hello"',
+          text: 'line 1\nline 2',
+        },
+      },
+      runInfo: { workspaceId: 'workspace-1', workflowRunId: 'run-1' },
+    });
+
+    const forwardedBody = mockHttpTool.execute.mock.calls[0][0].body as string;
+
+    expect(JSON.parse(forwardedBody)).toEqual({
+      subject: 'Say "hello"',
+      body: 'line 1\nline 2',
+    });
+  });
+
   it('persists an HTTP_REQUEST step log', async () => {
     await action.execute({
       currentStepId: 'step-1',
