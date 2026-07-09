@@ -138,7 +138,6 @@ const handleRecallStatusEvent = async ({
   ) {
     await requestArtifactContinuationOrThrow({
       callRecordingId: callRecording.id,
-      webhookEvent,
     });
   }
 
@@ -172,7 +171,6 @@ const queueRecallArtifactContinuation = async ({
 
   await requestArtifactContinuationOrThrow({
     callRecordingId: callRecording.id,
-    webhookEvent,
   });
 
   return {
@@ -185,13 +183,10 @@ const queueRecallArtifactContinuation = async ({
 // A throw bubbles to a non-2xx so Svix redelivers; the preceding status update re-applies idempotently.
 const requestArtifactContinuationOrThrow = async ({
   callRecordingId,
-  webhookEvent,
 }: {
   callRecordingId: string;
-  webhookEvent: RecallWebhookEvent;
 }): Promise<void> => {
   const continuationRequested = await requestRecallWebhookArtifactContinuation({
-    event: webhookEvent.event,
     callRecordingId,
     requestedAt: new Date().toISOString(),
   });

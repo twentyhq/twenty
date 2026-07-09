@@ -774,7 +774,6 @@ describe('handleRecallWebhook', () => {
     expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
     expect(ingestCallRecordingMediaMock).not.toHaveBeenCalled();
     expect(requestArtifactContinuationMock).toHaveBeenCalledWith({
-      event: 'recording.done',
       callRecordingId: 'call-recording-1',
       requestedAt: expect.any(String),
     });
@@ -879,7 +878,6 @@ describe('handleRecallWebhook', () => {
     expect(getRecallBotMock).not.toHaveBeenCalled();
     expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
     expect(requestArtifactContinuationMock).toHaveBeenCalledWith({
-      event: 'bot.status_change',
       callRecordingId: 'call-recording-1',
       requestedAt: expect.any(String),
     });
@@ -1013,7 +1011,6 @@ describe('handleRecallWebhook', () => {
     });
     expect(retrieveRecallTranscriptMock).not.toHaveBeenCalled();
     expect(requestArtifactContinuationMock).toHaveBeenCalledWith({
-      event: 'transcript.done',
       callRecordingId: 'call-recording-1',
       requestedAt: expect.any(String),
     });
@@ -1063,7 +1060,6 @@ describe('handleRecallWebhook', () => {
       callRecordingId: 'call-recording-1',
     });
     expect(requestArtifactContinuationMock).toHaveBeenCalledWith({
-      event: 'transcript.failed',
       callRecordingId: 'call-recording-1',
       requestedAt: expect.any(String),
     });

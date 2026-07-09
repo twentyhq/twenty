@@ -147,7 +147,6 @@ describe('processRecallWebhookArtifacts', () => {
     const result = await processRecallWebhookArtifacts({
       client: client as unknown as CoreApiClient,
       request: {
-        event: 'recording.done',
         callRecordingId: 'call-recording-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
       },
@@ -176,7 +175,6 @@ describe('processRecallWebhookArtifacts', () => {
     ]);
     expect(result).toEqual({
       status: 'processed',
-      event: 'recording.done',
       callRecordingId: 'call-recording-1',
       outcome: 'recording-artifacts-reconciled',
     });
@@ -196,7 +194,6 @@ describe('processRecallWebhookArtifacts', () => {
     await processRecallWebhookArtifacts({
       client: client as unknown as CoreApiClient,
       request: {
-        event: 'bot.status_change',
         callRecordingId: 'call-recording-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
       },
@@ -232,7 +229,6 @@ describe('processRecallWebhookArtifacts', () => {
     const result = await processRecallWebhookArtifacts({
       client: client as unknown as CoreApiClient,
       request: {
-        event: 'recording.done',
         callRecordingId: 'call-recording-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
       },
@@ -243,7 +239,6 @@ describe('processRecallWebhookArtifacts', () => {
     expect(client.mutations).toEqual([]);
     expect(result).toEqual({
       status: 'skipped',
-      event: 'recording.done',
       callRecordingId: 'call-recording-1',
       reason: 'no artifact updates',
     });
@@ -263,7 +258,6 @@ describe('processRecallWebhookArtifacts', () => {
     await processRecallWebhookArtifacts({
       client: client as unknown as CoreApiClient,
       request: {
-        event: 'recording.done',
         callRecordingId: 'call-recording-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
       },
@@ -301,7 +295,6 @@ describe('processRecallWebhookArtifacts', () => {
     await processRecallWebhookArtifacts({
       client: client as unknown as CoreApiClient,
       request: {
-        event: 'recording.done',
         callRecordingId: 'call-recording-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
       },
@@ -347,7 +340,6 @@ describe('processRecallWebhookArtifacts', () => {
     const result = await processRecallWebhookArtifacts({
       client: client as unknown as CoreApiClient,
       request: {
-        event: 'transcript.done',
         callRecordingId: 'call-recording-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
       },
@@ -368,7 +360,6 @@ describe('processRecallWebhookArtifacts', () => {
     ]);
     expect(result).toEqual({
       status: 'processed',
-      event: 'transcript.done',
       callRecordingId: 'call-recording-1',
       outcome: 'recording-artifacts-reconciled',
     });
@@ -385,7 +376,6 @@ describe('processRecallWebhookArtifacts', () => {
     const result = await processRecallWebhookArtifacts({
       client: client as unknown as CoreApiClient,
       request: {
-        event: 'transcript.failed',
         callRecordingId: 'call-recording-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
       },
@@ -393,7 +383,6 @@ describe('processRecallWebhookArtifacts', () => {
 
     expect(result).toEqual({
       status: 'skipped',
-      event: 'transcript.failed',
       callRecordingId: 'call-recording-1',
       reason: 'no artifact updates',
     });
@@ -424,7 +413,6 @@ describe('processRecallWebhookArtifacts', () => {
     const result = await processRecallWebhookArtifacts({
       client: client as unknown as CoreApiClient,
       request: {
-        event: 'transcript.failed',
         callRecordingId: 'call-recording-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
       },
@@ -446,7 +434,6 @@ describe('processRecallWebhookArtifacts', () => {
     ]);
     expect(result).toEqual({
       status: 'processed',
-      event: 'transcript.failed',
       callRecordingId: 'call-recording-1',
       outcome: 'recording-artifacts-reconciled',
     });

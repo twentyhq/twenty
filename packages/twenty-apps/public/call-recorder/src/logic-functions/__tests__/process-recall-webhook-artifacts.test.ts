@@ -40,7 +40,6 @@ describe('process-recall-webhook-artifacts', () => {
     processRecallWebhookArtifactsMock.mockReset();
     processRecallWebhookArtifactsMock.mockResolvedValue({
       status: 'processed',
-      event: 'recording.done',
       callRecordingId: 'call-recording-1',
       outcome: 'recording-artifacts-reconciled',
     });
@@ -61,7 +60,6 @@ describe('process-recall-webhook-artifacts', () => {
 
   it('forwards a valid continuation request to the worker flow', async () => {
     const body = {
-      event: 'recording.done',
       callRecordingId: 'call-recording-1',
       requestedAt: '2026-01-01T14:06:00.000Z',
     };
@@ -77,7 +75,6 @@ describe('process-recall-webhook-artifacts', () => {
     });
     expect(result).toEqual({
       status: 'processed',
-      event: 'recording.done',
       callRecordingId: 'call-recording-1',
       outcome: 'recording-artifacts-reconciled',
     });
@@ -86,9 +83,9 @@ describe('process-recall-webhook-artifacts', () => {
   it('ignores caller-supplied provider ids instead of forwarding them', async () => {
     const result = await processRecallWebhookArtifactsHandler(
       buildRoutePayload({
-        event: 'transcript.done',
         callRecordingId: 'call-recording-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
+        event: 'transcript.done',
         externalBotId: 'forged-bot-id',
         externalRecordingId: 'forged-recording-id',
         transcriptId: 'forged-transcript-id',
@@ -98,7 +95,6 @@ describe('process-recall-webhook-artifacts', () => {
     expect(processRecallWebhookArtifactsMock).toHaveBeenCalledWith({
       client: coreApiClientMock.mock.instances[0],
       request: {
-        event: 'transcript.done',
         callRecordingId: 'call-recording-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
       },
@@ -108,13 +104,12 @@ describe('process-recall-webhook-artifacts', () => {
 
   it('skips invalid continuation requests without touching the worker flow', async () => {
     const result = await processRecallWebhookArtifactsHandler(
-      buildRoutePayload({ event: 'recording.done' }),
+      buildRoutePayload({ requestedAt: '2026-01-01T14:06:00.000Z' }),
     );
 
     expect(processRecallWebhookArtifactsMock).not.toHaveBeenCalled();
     expect(result).toEqual({
       status: 'skipped',
-      event: 'recording.done',
       callRecordingId: 'unknown',
       reason: 'invalid artifact continuation request',
     });

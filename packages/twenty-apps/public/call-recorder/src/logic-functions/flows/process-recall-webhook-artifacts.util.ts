@@ -1,29 +1,17 @@
-import { isNonEmptyArray, isNull, isUndefined } from '@sniptt/guards';
+import { isNull, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
-import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-recording-media.util';
-import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-call-recording-progress.util';
-import { reconcileCallRecordingTranscriptArtifact } from 'src/logic-functions/flows/reconcile-call-recording-transcript-artifact.util';
-import { shouldCompleteCallRecordingIngestion } from 'src/logic-functions/domain/should-complete-call-recording-ingestion.util';
-import { extractRecallBotConvergence } from 'src/logic-functions/recall-api/extract-recall-bot-convergence.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
+import {
+  reconcileCallRecording,
+  type ReconcilableCallRecording,
+} from 'src/logic-functions/flows/reconcile-call-recording.util';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import { type RecallWebhookArtifactContinuationRequest } from 'src/logic-functions/types/recall-webhook-artifact-continuation-request.type';
-import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 
-type CallRecordingForArtifactProcessing = {
-  id: string;
-  status?: string;
-  startedAt?: string;
-  endedAt?: string;
-  externalBotId?: string;
-  externalRecordingId?: string;
-  callRecorderFailureReason?: string | null;
-  transcript?: unknown;
-  audio?: FilesFieldValue;
-  video?: FilesFieldValue;
+type CallRecordingForArtifactProcessing = ReconcilableCallRecording & {
+  externalBotId: string | undefined;
 };
 
 type CallRecordingForArtifactProcessingNode = {
@@ -42,18 +30,17 @@ type CallRecordingForArtifactProcessingNode = {
 export type ProcessRecallWebhookArtifactsResult =
   | {
       status: 'processed';
-      event: string;
       callRecordingId: string;
       outcome: 'recording-artifacts-reconciled';
     }
   | {
       status: 'skipped';
-      event: string;
       callRecordingId: string;
       reason: string;
     };
 
-// Route callers can forge payload provider ids, so artifacts resolve only from the recording's own persisted bot.
+// Route callers can forge payload provider ids, so reconciliation resolves only
+// from the recording's own persisted bot.
 export const processRecallWebhookArtifacts = async ({
   client,
   request,
@@ -69,75 +56,59 @@ export const processRecallWebhookArtifacts = async ({
   if (isUndefined(callRecording)) {
     return {
       status: 'skipped',
-      event: request.event,
       callRecordingId: request.callRecordingId,
       reason: 'no matching call recording',
     };
   }
 
-  const externalRecordingId = await resolveExternalRecordingId(callRecording);
-  const updateData: CallRecordingUpdateFields = {
-    ...(isUndefined(callRecording.externalRecordingId) &&
-    !isUndefined(externalRecordingId)
-      ? { externalRecordingId }
-      : {}),
-  };
-
-  if (!isUndefined(externalRecordingId)) {
-    const transcriptArtifactResult =
-      await reconcileCallRecordingTranscriptArtifact({
-        callRecordingId: callRecording.id,
-        currentStatus: callRecording.status,
-        externalRecordingId,
-        requestedAt: request.requestedAt,
-        transcript: callRecording.transcript,
-      });
-
-    Object.assign(updateData, transcriptArtifactResult.updateData);
-
-    const mediaIngestionUpdate = await ingestCallRecordingMedia({
-      callRecordingId: callRecording.id,
-      externalRecordingId,
-      hasAudio: isNonEmptyArray(callRecording.audio),
-      hasVideo: isNonEmptyArray(callRecording.video),
-    });
-
-    if (
-      callRecording.status === CallRecordingStatus.FAILED ||
-      updateData.status === CallRecordingStatus.FAILED
-    ) {
-      delete mediaIngestionUpdate.callRecorderFailureReason;
-    }
-
-    Object.assign(updateData, mediaIngestionUpdate);
-  }
-
-  const completesIngestion = shouldCompleteCallRecordingIngestion({
-    current: callRecording,
-    updateData,
+  const bot = await fetchRecallBotWhenRecordingIdMissing(callRecording);
+  const reconcileResult = await reconcileCallRecording({
+    client,
+    callRecording,
+    bot,
+    treatRecordingAsDone: true,
+    requestedAt: request.requestedAt,
   });
 
-  if (Object.keys(updateData).length === 0 && !completesIngestion) {
+  if (!reconcileResult.updated) {
     return {
       status: 'skipped',
-      event: request.event,
       callRecordingId: callRecording.id,
       reason: 'no artifact updates',
     };
   }
 
-  await persistCallRecordingProgress(client, {
-    id: callRecording.id,
-    current: callRecording,
-    updateData,
-  });
-
   return {
     status: 'processed',
-    event: request.event,
     callRecordingId: callRecording.id,
     outcome: 'recording-artifacts-reconciled',
   };
+};
+
+const fetchRecallBotWhenRecordingIdMissing = async (
+  callRecording: CallRecordingForArtifactProcessing,
+): Promise<Record<string, unknown> | undefined> => {
+  if (!isUndefined(callRecording.externalRecordingId)) {
+    return undefined;
+  }
+
+  if (isUndefined(callRecording.externalBotId)) {
+    return undefined;
+  }
+
+  const botResult = await getRecallBot({
+    externalBotId: callRecording.externalBotId,
+  });
+
+  if (!botResult.ok) {
+    console.warn(
+      `[call-recorder] failed to fetch Recall bot ${callRecording.externalBotId} while resolving a recording id: ${botResult.errorMessage}`,
+    );
+
+    return undefined;
+  }
+
+  return botResult.bot;
 };
 
 const findCallRecordingForArtifactProcessing = async (
@@ -189,30 +160,4 @@ const findCallRecordingForArtifactProcessing = async (
     audio: node.audio ?? undefined,
     video: node.video ?? undefined,
   };
-};
-
-const resolveExternalRecordingId = async (
-  callRecording: CallRecordingForArtifactProcessing,
-): Promise<string | undefined> => {
-  if (!isUndefined(callRecording.externalRecordingId)) {
-    return callRecording.externalRecordingId;
-  }
-
-  if (isUndefined(callRecording.externalBotId)) {
-    return undefined;
-  }
-
-  const botResult = await getRecallBot({
-    externalBotId: callRecording.externalBotId,
-  });
-
-  if (!botResult.ok) {
-    console.warn(
-      `[call-recorder] failed to fetch Recall bot ${callRecording.externalBotId} while resolving a recording id: ${botResult.errorMessage}`,
-    );
-
-    return undefined;
-  }
-
-  return extractRecallBotConvergence(botResult.bot).externalRecordingId;
 };

@@ -1,4 +1,4 @@
-import { isNonEmptyArray, isUndefined } from '@sniptt/guards';
+import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
@@ -6,10 +6,6 @@ import { CallRecordingStatus } from 'src/logic-functions/constants/call-recordin
 import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
-import {
-  extractRecallBotConvergence,
-  type RecallBotConvergence,
-} from 'src/logic-functions/recall-api/extract-recall-bot-convergence.util';
 import {
   fetchAllNodes,
   type ConnectionPage,
@@ -20,15 +16,14 @@ import {
   listScheduledRecallBots,
   type RecallScheduledBot,
 } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
-import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-recording-media.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
-import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-call-recording-progress.util';
-import { reconcileCallRecordingTranscriptArtifact } from 'src/logic-functions/flows/reconcile-call-recording-transcript-artifact.util';
+import {
+  reconcileCallRecording,
+  type ReconcilableCallRecording,
+} from 'src/logic-functions/flows/reconcile-call-recording.util';
 import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/flows/converge-diverged-call-recordings-result.type';
-import { shouldCompleteCallRecordingIngestion } from 'src/logic-functions/domain/should-complete-call-recording-ingestion.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
-import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
 const CONVERGENCE_LOOKBACK_DAYS = 7;
 // One extra day so a bot whose join time precedes its meeting-end anchor still lists.
@@ -37,20 +32,15 @@ const CONVERGENCE_BOT_LIST_LOOKAHEAD_MS = 60 * 60 * 1000;
 const CONVERGENCE_PER_ID_FALLBACK_LIMIT = 25;
 const CONVERGENCE_PER_ID_FALLBACK_ROTATION_INTERVAL_MS = 15 * 60 * 1000;
 
-type DivergedCallRecordingCandidate = {
-  id: string;
-  status: string | undefined;
-  startedAt: string | undefined;
-  endedAt: string | undefined;
+type DivergedCallRecordingCandidate = ReconcilableCallRecording & {
   externalBotId: string | undefined;
-  externalRecordingId: string | undefined;
-  callRecorderFailureReason: string | undefined;
-  transcript: unknown;
-  audio: FilesFieldValue | undefined;
-  video: FilesFieldValue | undefined;
   createdAt: string | undefined;
   calendarEventStartsAt: string | undefined;
   calendarEventEndsAt: string | undefined;
+};
+
+type ActionableCallRecordingCandidate = DivergedCallRecordingCandidate & {
+  externalBotId: string;
 };
 
 type DivergedCallRecordingNode = {
@@ -68,6 +58,18 @@ type DivergedCallRecordingNode = {
   calendarEvent?: { startsAt?: string | null; endsAt?: string | null } | null;
 };
 
+type ConvergenceCandidateTriage = {
+  actionableCandidates: ActionableCallRecordingCandidate[];
+  unconvergeableCallRecordingIds: string[];
+  skippedNotStartedCallRecordingIds: string[];
+};
+
+type ConvergeActionableCandidateOutcome =
+  | { outcome: 'reconciled'; updated: boolean; requestedTranscript: boolean }
+  | { outcome: 'marked-failed-after-bot-loss' }
+  | { outcome: 'unconvergeable-after-bot-loss' }
+  | { outcome: 'bot-state-unavailable' };
+
 export const convergeDivergedCallRecordings = async ({
   client,
   now,
@@ -76,50 +78,17 @@ export const convergeDivergedCallRecordings = async ({
   now: Date;
 }): Promise<ConvergeDivergedCallRecordingsResult> => {
   const candidates = await fetchDivergedCallRecordingCandidates(client);
-  const convergenceLowerBound = new Date(
-    now.getTime() - CONVERGENCE_LOOKBACK_DAYS * 24 * 60 * 60 * 1000,
-  );
+  const triage = triageConvergenceCandidates({ candidates, now });
   const result: ConvergeDivergedCallRecordingsResult = {
     candidateCount: candidates.length,
     updatedCallRecordingIds: [],
     markedFailedCallRecordingIds: [],
     requestedTranscriptCallRecordingIds: [],
-    unconvergeableCallRecordingIds: [],
-    skippedNotStartedCallRecordingIds: [],
+    unconvergeableCallRecordingIds: triage.unconvergeableCallRecordingIds,
+    skippedNotStartedCallRecordingIds: triage.skippedNotStartedCallRecordingIds,
   };
-  const actionableCandidates: Array<
-    DivergedCallRecordingCandidate & { externalBotId: string }
-  > = [];
 
-  for (const candidate of candidates) {
-    if (isOutsideConvergenceBound(candidate, convergenceLowerBound)) {
-      console.warn(
-        `[call-recorder] call recording ${candidate.id} diverged but its meeting ended more than ${CONVERGENCE_LOOKBACK_DAYS} days ago; it will not converge automatically`,
-      );
-      result.unconvergeableCallRecordingIds.push(candidate.id);
-      continue;
-    }
-
-    if (isUndefined(candidate.externalBotId)) {
-      console.warn(
-        `[call-recorder] call recording ${candidate.id} diverged but has no Recall bot id; it will not converge automatically`,
-      );
-      result.unconvergeableCallRecordingIds.push(candidate.id);
-      continue;
-    }
-
-    if (isBeforeMeetingStart(candidate, now)) {
-      result.skippedNotStartedCallRecordingIds.push(candidate.id);
-      continue;
-    }
-
-    actionableCandidates.push({
-      ...candidate,
-      externalBotId: candidate.externalBotId,
-    });
-  }
-
-  if (actionableCandidates.length === 0) {
+  if (triage.actionableCandidates.length === 0) {
     return result;
   }
 
@@ -131,21 +100,15 @@ export const convergeDivergedCallRecordings = async ({
   }
 
   const orderedActionableCandidates = rotateActionableCandidatesForFallback({
-    candidates: actionableCandidates,
+    candidates: triage.actionableCandidates,
     now,
   });
   let remainingPerIdFallbackCount = CONVERGENCE_PER_ID_FALLBACK_LIMIT;
 
   for (const candidate of orderedActionableCandidates) {
     const listedBot = listedBotsById.get(candidate.externalBotId);
-    const canFallbackToPerIdFetch =
-      isUndefined(listedBot) && remainingPerIdFallbackCount > 0;
 
-    if (canFallbackToPerIdFetch) {
-      remainingPerIdFallbackCount -= 1;
-    }
-
-    if (isUndefined(listedBot) && !canFallbackToPerIdFetch) {
+    if (isUndefined(listedBot) && remainingPerIdFallbackCount === 0) {
       console.warn(
         `[call-recorder] skipping Recall bot ${candidate.externalBotId} for call recording ${candidate.id}: per-id convergence fallback budget exhausted`,
       );
@@ -153,29 +116,165 @@ export const convergeDivergedCallRecordings = async ({
       continue;
     }
 
-    await convergeCallRecording({
+    if (isUndefined(listedBot)) {
+      remainingPerIdFallbackCount -= 1;
+    }
+
+    const candidateOutcome = await convergeActionableCandidate({
       client,
       candidate,
-      externalBotId: candidate.externalBotId,
       listedBot,
-      canFallbackToPerIdFetch,
       now,
-      result,
     });
+
+    if (candidateOutcome.outcome === 'reconciled') {
+      if (candidateOutcome.updated) {
+        result.updatedCallRecordingIds.push(candidate.id);
+      }
+
+      if (candidateOutcome.requestedTranscript) {
+        result.requestedTranscriptCallRecordingIds.push(candidate.id);
+      }
+    }
+
+    if (candidateOutcome.outcome === 'marked-failed-after-bot-loss') {
+      result.markedFailedCallRecordingIds.push(candidate.id);
+    }
+
+    if (candidateOutcome.outcome === 'unconvergeable-after-bot-loss') {
+      result.unconvergeableCallRecordingIds.push(candidate.id);
+    }
   }
 
   return result;
 };
 
-const rotateActionableCandidatesForFallback = <
-  Candidate extends DivergedCallRecordingCandidate,
->({
+const triageConvergenceCandidates = ({
   candidates,
   now,
 }: {
-  candidates: Candidate[];
+  candidates: DivergedCallRecordingCandidate[];
   now: Date;
-}): Candidate[] => {
+}): ConvergenceCandidateTriage => {
+  const convergenceLowerBound = new Date(
+    now.getTime() - CONVERGENCE_LOOKBACK_DAYS * 24 * 60 * 60 * 1000,
+  );
+  const triage: ConvergenceCandidateTriage = {
+    actionableCandidates: [],
+    unconvergeableCallRecordingIds: [],
+    skippedNotStartedCallRecordingIds: [],
+  };
+
+  for (const candidate of candidates) {
+    if (isOutsideConvergenceBound(candidate, convergenceLowerBound)) {
+      console.warn(
+        `[call-recorder] call recording ${candidate.id} diverged but its meeting ended more than ${CONVERGENCE_LOOKBACK_DAYS} days ago; it will not converge automatically`,
+      );
+      triage.unconvergeableCallRecordingIds.push(candidate.id);
+
+      continue;
+    }
+
+    if (isUndefined(candidate.externalBotId)) {
+      console.warn(
+        `[call-recorder] call recording ${candidate.id} diverged but has no Recall bot id; it will not converge automatically`,
+      );
+      triage.unconvergeableCallRecordingIds.push(candidate.id);
+
+      continue;
+    }
+
+    if (isBeforeMeetingStart(candidate, now)) {
+      triage.skippedNotStartedCallRecordingIds.push(candidate.id);
+
+      continue;
+    }
+
+    triage.actionableCandidates.push({
+      ...candidate,
+      externalBotId: candidate.externalBotId,
+    });
+  }
+
+  return triage;
+};
+
+const convergeActionableCandidate = async ({
+  client,
+  candidate,
+  listedBot,
+  now,
+}: {
+  client: CoreApiClient;
+  candidate: ActionableCallRecordingCandidate;
+  listedBot: Record<string, unknown> | undefined;
+  now: Date;
+}): Promise<ConvergeActionableCandidateOutcome> => {
+  const botResult = isUndefined(listedBot)
+    ? await getRecallBot({ externalBotId: candidate.externalBotId })
+    : ({ ok: true, bot: listedBot } as const);
+
+  if (!botResult.ok) {
+    if (botResult.status === 404) {
+      return markCallRecordingFailedAfterBotLoss({ client, candidate });
+    }
+
+    console.warn(
+      `[call-recorder] failed to fetch Recall bot ${candidate.externalBotId} for call recording ${candidate.id}: ${botResult.errorMessage}`,
+    );
+
+    return { outcome: 'bot-state-unavailable' };
+  }
+
+  const reconcileResult = await reconcileCallRecording({
+    client,
+    callRecording: candidate,
+    bot: botResult.bot,
+    treatRecordingAsDone: false,
+    requestedAt: now.toISOString(),
+  });
+
+  return { outcome: 'reconciled', ...reconcileResult };
+};
+
+const markCallRecordingFailedAfterBotLoss = async ({
+  client,
+  candidate,
+}: {
+  client: CoreApiClient;
+  candidate: ActionableCallRecordingCandidate;
+}): Promise<ConvergeActionableCandidateOutcome> => {
+  console.warn(
+    `[call-recorder] Recall bot ${candidate.externalBotId} for call recording ${candidate.id} no longer exists; it will not converge automatically`,
+  );
+
+  if (
+    isCallRecordingStatusDowngrade({
+      fromStatus: candidate.status,
+      toStatus: CallRecordingStatus.FAILED,
+    })
+  ) {
+    return { outcome: 'unconvergeable-after-bot-loss' };
+  }
+
+  await updateCallRecording(client, {
+    id: candidate.id,
+    data: {
+      status: CallRecordingStatus.FAILED,
+      callRecorderFailureReason: 'recall_bot_not_found',
+    },
+  });
+
+  return { outcome: 'marked-failed-after-bot-loss' };
+};
+
+const rotateActionableCandidatesForFallback = ({
+  candidates,
+  now,
+}: {
+  candidates: ActionableCallRecordingCandidate[];
+  now: Date;
+}): ActionableCallRecordingCandidate[] => {
   if (candidates.length <= CONVERGENCE_PER_ID_FALLBACK_LIMIT) {
     return candidates;
   }
@@ -347,208 +446,3 @@ const isBeforeMeetingStart = (
 ): boolean =>
   !isUndefined(candidate.calendarEventStartsAt) &&
   new Date(candidate.calendarEventStartsAt).getTime() > now.getTime();
-
-const convergeCallRecording = async ({
-  client,
-  candidate,
-  externalBotId,
-  listedBot,
-  canFallbackToPerIdFetch,
-  now,
-  result,
-}: {
-  client: CoreApiClient;
-  candidate: DivergedCallRecordingCandidate;
-  externalBotId: string;
-  listedBot: Record<string, unknown> | undefined;
-  canFallbackToPerIdFetch: boolean;
-  now: Date;
-  result: ConvergeDivergedCallRecordingsResult;
-}): Promise<void> => {
-  const botResult = isUndefined(listedBot)
-    ? canFallbackToPerIdFetch
-      ? await getRecallBot({ externalBotId })
-      : undefined
-    : ({ ok: true, bot: listedBot } as const);
-
-  if (isUndefined(botResult)) {
-    return;
-  }
-
-  if (!botResult.ok) {
-    if (botResult.status === 404) {
-      await markCallRecordingFailedAfterBotLoss({
-        client,
-        candidate,
-        externalBotId,
-        result,
-      });
-
-      return;
-    }
-
-    console.warn(
-      `[call-recorder] failed to fetch Recall bot ${externalBotId} for call recording ${candidate.id}: ${botResult.errorMessage}`,
-    );
-
-    return;
-  }
-
-  const convergence = extractRecallBotConvergence(botResult.bot);
-  const updateData = buildConvergenceFieldUpdates({ candidate, convergence });
-
-  const externalRecordingId =
-    candidate.externalRecordingId ?? convergence.externalRecordingId;
-
-  if (convergence.isRecallRecordingDone && isUndefined(externalRecordingId)) {
-    applyMissingArtifactsFailure({ candidate, updateData });
-  }
-
-  if (convergence.isRecallRecordingDone && !isUndefined(externalRecordingId)) {
-    const transcriptArtifactResult =
-      await reconcileCallRecordingTranscriptArtifact({
-        callRecordingId: candidate.id,
-        currentStatus: candidate.status,
-        externalRecordingId,
-        requestedAt: now.toISOString(),
-        transcript: candidate.transcript,
-      });
-
-    Object.assign(updateData, transcriptArtifactResult.updateData);
-
-    if (transcriptArtifactResult.requestedTranscript) {
-      result.requestedTranscriptCallRecordingIds.push(candidate.id);
-    }
-
-    const mediaIngestionUpdate = await ingestCallRecordingMedia({
-      callRecordingId: candidate.id,
-      externalRecordingId,
-      hasAudio: isNonEmptyArray(candidate.audio),
-      hasVideo: isNonEmptyArray(candidate.video),
-    });
-
-    if (updateData.status === CallRecordingStatus.FAILED) {
-      delete mediaIngestionUpdate.callRecorderFailureReason;
-    }
-
-    Object.assign(updateData, mediaIngestionUpdate);
-  }
-
-  const completesIngestion = shouldCompleteCallRecordingIngestion({
-    current: candidate,
-    updateData,
-  });
-
-  if (Object.keys(updateData).length === 0 && !completesIngestion) {
-    return;
-  }
-
-  await persistCallRecordingProgress(client, {
-    id: candidate.id,
-    current: candidate,
-    updateData,
-  });
-
-  result.updatedCallRecordingIds.push(candidate.id);
-};
-
-// The bot completed without ever recording; FAILED rather than COMPLETED because completion bills.
-const applyMissingArtifactsFailure = ({
-  candidate,
-  updateData,
-}: {
-  candidate: DivergedCallRecordingCandidate;
-  updateData: CallRecordingUpdateFields;
-}): void => {
-  if (
-    updateData.status === CallRecordingStatus.FAILED ||
-    isCallRecordingStatusDowngrade({
-      fromStatus: candidate.status,
-      toStatus: CallRecordingStatus.FAILED,
-    })
-  ) {
-    return;
-  }
-
-  updateData.status = CallRecordingStatus.FAILED;
-  updateData.callRecorderFailureReason = 'recording_artifacts_unavailable';
-};
-
-const buildConvergenceFieldUpdates = ({
-  candidate,
-  convergence,
-}: {
-  candidate: DivergedCallRecordingCandidate;
-  convergence: RecallBotConvergence;
-}): CallRecordingUpdateFields => {
-  const updateData: CallRecordingUpdateFields = {};
-
-  if (
-    !isUndefined(convergence.status) &&
-    convergence.status !== candidate.status &&
-    !isCallRecordingStatusDowngrade({
-      fromStatus: candidate.status,
-      toStatus: convergence.status,
-    })
-  ) {
-    updateData.status = convergence.status;
-
-    if (convergence.status === CallRecordingStatus.FAILED) {
-      updateData.callRecorderFailureReason =
-        convergence.failureReason ?? 'recall_bot_failed';
-    }
-  }
-
-  if (isUndefined(candidate.startedAt) && !isUndefined(convergence.startedAt)) {
-    updateData.startedAt = convergence.startedAt;
-  }
-
-  if (isUndefined(candidate.endedAt) && !isUndefined(convergence.endedAt)) {
-    updateData.endedAt = convergence.endedAt;
-  }
-
-  if (
-    isUndefined(candidate.externalRecordingId) &&
-    !isUndefined(convergence.externalRecordingId)
-  ) {
-    updateData.externalRecordingId = convergence.externalRecordingId;
-  }
-
-  return updateData;
-};
-
-const markCallRecordingFailedAfterBotLoss = async ({
-  client,
-  candidate,
-  externalBotId,
-  result,
-}: {
-  client: CoreApiClient;
-  candidate: DivergedCallRecordingCandidate;
-  externalBotId: string;
-  result: ConvergeDivergedCallRecordingsResult;
-}): Promise<void> => {
-  console.warn(
-    `[call-recorder] Recall bot ${externalBotId} for call recording ${candidate.id} no longer exists; it will not converge automatically`,
-  );
-
-  if (
-    isCallRecordingStatusDowngrade({
-      fromStatus: candidate.status,
-      toStatus: CallRecordingStatus.FAILED,
-    })
-  ) {
-    result.unconvergeableCallRecordingIds.push(candidate.id);
-
-    return;
-  }
-
-  await updateCallRecording(client, {
-    id: candidate.id,
-    data: {
-      status: CallRecordingStatus.FAILED,
-      callRecorderFailureReason: 'recall_bot_not_found',
-    },
-  });
-  result.markedFailedCallRecordingIds.push(candidate.id);
-};

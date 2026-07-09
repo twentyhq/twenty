@@ -19,7 +19,6 @@ export const processRecallWebhookArtifactsHandler = async (
   if (isUndefined(request)) {
     return {
       status: 'skipped',
-      event: getString(payload.body?.event) ?? 'unknown',
       callRecordingId: getString(payload.body?.callRecordingId) ?? 'unknown',
       reason: 'invalid artifact continuation request',
     };
@@ -38,19 +37,14 @@ const parseRecallWebhookArtifactContinuationRequest = (
     return undefined;
   }
 
-  const event = getString(body.event);
   const callRecordingId = getString(body.callRecordingId);
   const requestedAt = getString(body.requestedAt);
 
-  if (
-    isUndefined(event) ||
-    isUndefined(callRecordingId) ||
-    isUndefined(requestedAt)
-  ) {
+  if (isUndefined(callRecordingId) || isUndefined(requestedAt)) {
     return undefined;
   }
 
-  return { event, callRecordingId, requestedAt };
+  return { callRecordingId, requestedAt };
 };
 
 export default defineLogicFunction({
