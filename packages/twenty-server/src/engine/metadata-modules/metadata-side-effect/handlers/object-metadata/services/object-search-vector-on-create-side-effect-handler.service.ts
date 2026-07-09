@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { getFieldUniversalIdentifier } from 'twenty-shared/application';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isSearchableFieldType } from 'twenty-shared/utils';
 
 import { buildFlatSearchFieldMetadataForField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/build-flat-search-field-metadata-for-field.util';
@@ -103,12 +103,10 @@ export class ObjectSearchVectorOnCreateSideEffectHandlerService extends Metadata
       return undefined;
     }
 
-    const { applicationUniversalIdentifier, universalIdentifier } =
-      flatObjectMetadata;
-
     const derivedIdFieldUniversalIdentifier = getFieldUniversalIdentifier({
-      applicationUniversalIdentifier,
-      objectUniversalIdentifier: universalIdentifier,
+      applicationUniversalIdentifier:
+        flatObjectMetadata.applicationUniversalIdentifier,
+      objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       name: 'id',
     });
 
@@ -120,8 +118,6 @@ export class ObjectSearchVectorOnCreateSideEffectHandlerService extends Metadata
     }
 
     const labelIdentifierFieldType = this.resolveLabelIdentifierFieldType({
-      applicationUniversalIdentifier,
-      objectUniversalIdentifier: universalIdentifier,
       labelIdentifierFieldMetadataUniversalIdentifier,
       allFlatEntityOperationRecordByMetadataName,
       relatedFlatEntityMaps,
@@ -147,31 +143,14 @@ export class ObjectSearchVectorOnCreateSideEffectHandlerService extends Metadata
   }
 
   private resolveLabelIdentifierFieldType({
-    applicationUniversalIdentifier,
-    objectUniversalIdentifier,
     labelIdentifierFieldMetadataUniversalIdentifier,
     allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
   }: {
-    applicationUniversalIdentifier: string;
-    objectUniversalIdentifier: string;
     labelIdentifierFieldMetadataUniversalIdentifier: string;
     allFlatEntityOperationRecordByMetadataName: BuildSideEffectsArgs<'objectMetadata'>['allFlatEntityOperationRecordByMetadataName'];
     relatedFlatEntityMaps: BuildSideEffectsArgs<'objectMetadata'>['relatedFlatEntityMaps'];
   }): FieldMetadataType | undefined {
-    const derivedNameFieldUniversalIdentifier = getFieldUniversalIdentifier({
-      applicationUniversalIdentifier,
-      objectUniversalIdentifier,
-      name: 'name',
-    });
-
-    if (
-      labelIdentifierFieldMetadataUniversalIdentifier ===
-      derivedNameFieldUniversalIdentifier
-    ) {
-      return FieldMetadataType.TEXT;
-    }
-
     const pendingField =
       allFlatEntityOperationRecordByMetadataName.fieldMetadata
         ?.flatEntityToCreate[labelIdentifierFieldMetadataUniversalIdentifier];

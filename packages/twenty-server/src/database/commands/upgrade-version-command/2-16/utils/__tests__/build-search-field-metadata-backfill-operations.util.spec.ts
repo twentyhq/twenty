@@ -13,7 +13,11 @@ import {
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
 
-const CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER = 'custom-application-uid';
+// Must be a valid UUID: buildFlatSearchFieldMetadataForField derives the row's
+// universal identifier via uuid v5 with the application universal identifier as
+// namespace.
+const CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
+  'c0c1c2c3-c4c5-4000-8000-000000000001';
 const CUSTOM_APPLICATION_ID = 'custom-application-id';
 
 const buildUniversalIdentifiersByApplicationId = (
