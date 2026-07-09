@@ -1,23 +1,37 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-export type RelatedEmail = {
+import { type InteractionKind } from 'src/utils/update-person-last-contact';
+
+export type RelatedInteraction = {
   personId: string;
-  messageId: string;
   occurredAt: string;
+  itemId: string;
+  kind: InteractionKind;
 };
 
 const recencyGuard = (occurredAt: string) => ({
   or: [
-    { lastEmailAt: { is: 'NULL' } },
-    { lastEmailAt: { lt: occurredAt } },
+    { lastContactAt: { is: 'NULL' } },
+    { lastContactAt: { lt: occurredAt } },
   ],
 });
 
-// Companies and opportunities surface emails from their related people, so their
-// last email mirrors the most recent email of any person connected to them.
-export const updateRelatedLastEmail = async (
+const buildData = ({
+  occurredAt,
+  itemId,
+  kind,
+}: Omit<RelatedInteraction, 'personId'>): Record<string, string | null> => ({
+  lastContactAt: occurredAt,
+  lastContactItemMessageId: kind === 'email' ? itemId : null,
+  lastContactItemCalendarEventId: kind === 'meeting' ? itemId : null,
+});
+
+// Companies and opportunities surface emails and meetings from their related
+// people, so their last contact mirrors the most recent contact of any person
+// connected to them.
+export const updateRelatedLastContact = async (
   client: CoreApiClient,
-  { personId, messageId, occurredAt }: RelatedEmail,
+  { personId, occurredAt, itemId, kind }: RelatedInteraction,
 ): Promise<void> => {
   const personResult = await client.query({
     person: {
@@ -30,7 +44,7 @@ export const updateRelatedLastEmail = async (
   const companyId =
     (personResult?.person as { companyId?: string | null } | null | undefined)
       ?.companyId ?? null;
-  const data = { lastEmailAt: occurredAt, lastEmailId: messageId };
+  const data = buildData({ occurredAt, itemId, kind });
 
   if (companyId) {
     await client.mutation({

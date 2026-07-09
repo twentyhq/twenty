@@ -6,25 +6,25 @@ import {
 } from 'twenty-sdk/define';
 
 import {
-  LAST_EMAIL_FOR_OPPORTUNITIES_ON_MESSAGE_FIELD_UNIVERSAL_IDENTIFIER,
-  OPPORTUNITY_LAST_EMAIL_FIELD_UNIVERSAL_IDENTIFIER,
+  LAST_CONTACT_FOR_OPPORTUNITIES_ON_CALENDAR_EVENT_FIELD_UNIVERSAL_IDENTIFIER,
+  OPPORTUNITY_LAST_CONTACT_ITEM_CALENDAR_EVENT_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
 export default defineField({
   universalIdentifier:
-    LAST_EMAIL_FOR_OPPORTUNITIES_ON_MESSAGE_FIELD_UNIVERSAL_IDENTIFIER,
+    LAST_CONTACT_FOR_OPPORTUNITIES_ON_CALENDAR_EVENT_FIELD_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier:
-    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.message.universalIdentifier,
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEvent.universalIdentifier,
   type: FieldType.RELATION,
-  name: 'lastEmailForOpportunities',
-  label: 'Last email for opportunities',
-  description: 'Opportunities whose most recent email is this one.',
+  name: 'lastContactForOpportunities',
+  label: 'Last contact for opportunities',
+  description: 'Opportunities whose most recent contact was this meeting.',
   icon: 'IconTargetArrow',
   isNullable: true,
   relationTargetObjectMetadataUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
   relationTargetFieldMetadataUniversalIdentifier:
-    OPPORTUNITY_LAST_EMAIL_FIELD_UNIVERSAL_IDENTIFIER,
+    OPPORTUNITY_LAST_CONTACT_ITEM_CALENDAR_EVENT_FIELD_UNIVERSAL_IDENTIFIER,
   universalSettings: {
     relationType: RelationType.ONE_TO_MANY,
   },

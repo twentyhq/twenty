@@ -5,7 +5,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { EMAIL_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { pickContactTeamMemberId } from 'src/utils/pick-contact-team-member';
 import { updatePersonForInteraction } from 'src/utils/update-person-last-contact';
-import { updateRelatedLastEmail } from 'src/utils/update-related-last-email';
+import { updateRelatedLastContact } from 'src/utils/update-related-last-contact';
 
 type MessageParticipantUpdate = {
   personId?: string | null;
@@ -71,10 +71,11 @@ const handler = async (
     direction,
   });
 
-  await updateRelatedLastEmail(client, {
+  await updateRelatedLastContact(client, {
     personId,
-    messageId,
     occurredAt,
+    itemId: messageId,
+    kind: 'email',
   });
 };
 
@@ -82,7 +83,7 @@ export default defineLogicFunction({
   universalIdentifier: EMAIL_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'on-email-interaction',
   description:
-    "Updates a person's last-contacted fields, and the last email on their company and opportunities, when a new email participant is created.",
+    "Updates a person's last-contacted fields, and the last contact on their company and opportunities, when a new email participant is created.",
   timeoutSeconds: 60,
   databaseEventTriggerSettings: {
     eventName: 'messageParticipant.updated',

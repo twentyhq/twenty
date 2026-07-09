@@ -17,7 +17,8 @@ type MeetingInteraction = {
   startsAt: string;
 };
 type MessageMemberInfo = { ownerId: string; fromIsMember: boolean };
-type LastEmail = { at: string; id: string };
+type ContactItem = { kind: 'email' | 'meeting'; id: string };
+type LastContact = { at: string; item: ContactItem };
 type OpportunityRow = {
   id: string;
   pointOfContactId: string | null;
@@ -314,15 +315,26 @@ const collectOpportunities = async (
   return opportunities;
 };
 
-const mostRecentEmail = (
-  candidates: (LastEmail | undefined)[],
-): LastEmail | undefined =>
-  candidates.reduce<LastEmail | undefined>((best, candidate) => {
+const mostRecentContact = (
+  candidates: (LastContact | undefined)[],
+): LastContact | undefined =>
+  candidates.reduce<LastContact | undefined>((best, candidate) => {
     if (!candidate) {
       return best;
     }
     return !best || candidate.at > best.at ? candidate : best;
   }, undefined);
+
+const buildRelatedData = ({ at, item }: LastContact): PersonUpdateData => ({
+  lastContactAt: at,
+  lastContactItemMessageId: item.kind === 'email' ? item.id : null,
+  lastContactItemCalendarEventId: item.kind === 'meeting' ? item.id : null,
+});
+
+const personLastContact = (agg: PersonAgg): LastContact | undefined =>
+  agg.lastContactAt && agg.item
+    ? { at: agg.lastContactAt, item: agg.item }
+    : undefined;
 
 const foldEmail = (
   agg: PersonAgg,
@@ -465,43 +477,44 @@ const handler = async (): Promise<void> => {
     data: buildData(agg),
   }));
 
-  const companyLastEmail = new Map<string, LastEmail>();
+  const companyLastContact = new Map<string, LastContact>();
   for (const [personId, agg] of aggByPersonId) {
-    if (!agg.lastEmail) {
+    const contact = personLastContact(agg);
+    if (!contact) {
       continue;
     }
     const companyId = personCompanies.get(personId);
     if (!companyId) {
       continue;
     }
-    const existing = companyLastEmail.get(companyId);
-    if (!existing || agg.lastEmail.at > existing.at) {
-      companyLastEmail.set(companyId, agg.lastEmail);
+    const existing = companyLastContact.get(companyId);
+    if (!existing || contact.at > existing.at) {
+      companyLastContact.set(companyId, contact);
     }
   }
 
   const opportunityUpdates = opportunities
     .map((opportunity): RecordUpdate | undefined => {
-      const pointOfContactEmail = opportunity.pointOfContactId
-        ? aggByPersonId.get(opportunity.pointOfContactId)?.lastEmail
+      const pointOfContactAgg = opportunity.pointOfContactId
+        ? aggByPersonId.get(opportunity.pointOfContactId)
         : undefined;
-      const companyEmail = opportunity.companyId
-        ? companyLastEmail.get(opportunity.companyId)
+      const companyContact = opportunity.companyId
+        ? companyLastContact.get(opportunity.companyId)
         : undefined;
-      const lastEmail = mostRecentEmail([pointOfContactEmail, companyEmail]);
-      return lastEmail
-        ? {
-            id: opportunity.id,
-            data: { lastEmailAt: lastEmail.at, lastEmailId: lastEmail.id },
-          }
+      const lastContact = mostRecentContact([
+        pointOfContactAgg ? personLastContact(pointOfContactAgg) : undefined,
+        companyContact,
+      ]);
+      return lastContact
+        ? { id: opportunity.id, data: buildRelatedData(lastContact) }
         : undefined;
     })
     .filter((update): update is RecordUpdate => Boolean(update));
 
-  const companyUpdates: RecordUpdate[] = [...companyLastEmail.entries()].map(
-    ([companyId, email]) => ({
+  const companyUpdates: RecordUpdate[] = [...companyLastContact.entries()].map(
+    ([companyId, contact]) => ({
       id: companyId,
-      data: { lastEmailAt: email.at, lastEmailId: email.id },
+      data: buildRelatedData(contact),
     }),
   );
 
@@ -514,7 +527,7 @@ export default definePostInstallLogicFunction({
   universalIdentifier: BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'backfill-last-contact',
   description:
-    'Fills person last-contact fields, and company and opportunity last-email fields, from existing messages and calendar events after installation.',
+    'Fills person, company and opportunity last-contact fields from existing messages and calendar events after installation.',
   timeoutSeconds: 300,
   shouldRunOnVersionUpgrade: true,
   handler,

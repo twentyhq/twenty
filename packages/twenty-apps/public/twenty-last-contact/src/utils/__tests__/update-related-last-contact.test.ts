@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { updateRelatedLastEmail } from 'src/utils/update-related-last-email';
+import { updateRelatedLastContact } from 'src/utils/update-related-last-contact';
 
 const PERSON_ID = '11111111-1111-1111-1111-111111111111';
 const MESSAGE_ID = '22222222-2222-2222-2222-222222222222';
+const CALENDAR_EVENT_ID = '66666666-6666-6666-6666-666666666666';
 const COMPANY_ID = '33333333-3333-3333-3333-333333333333';
 const OPPORTUNITY_POC_ID = '44444444-4444-4444-4444-444444444444';
 const OPPORTUNITY_COMPANY_ID = '55555555-5555-5555-5555-555555555555';
@@ -29,25 +30,27 @@ beforeEach(() => {
   client = buildClient();
 });
 
-describe('updateRelatedLastEmail', () => {
-  it('updates the company and related opportunities with the email', async () => {
+describe('updateRelatedLastContact', () => {
+  it('updates the company and related opportunities for an email', async () => {
     client.query
       .mockResolvedValueOnce({ person: { id: PERSON_ID, companyId: COMPANY_ID } })
       .mockResolvedValueOnce(opportunityEdges([OPPORTUNITY_POC_ID]))
       .mockResolvedValueOnce(opportunityEdges([OPPORTUNITY_COMPANY_ID]));
 
-    await updateRelatedLastEmail(client as never, {
+    await updateRelatedLastContact(client as never, {
       personId: PERSON_ID,
-      messageId: MESSAGE_ID,
       occurredAt: OCCURRED_AT,
+      itemId: MESSAGE_ID,
+      kind: 'email',
     });
 
     const companyCall = client.mutation.mock.calls.find(
       (call) => call[0].updateCompanies,
     );
     expect(companyCall?.[0].updateCompanies.__args.data).toEqual({
-      lastEmailAt: OCCURRED_AT,
-      lastEmailId: MESSAGE_ID,
+      lastContactAt: OCCURRED_AT,
+      lastContactItemMessageId: MESSAGE_ID,
+      lastContactItemCalendarEventId: null,
     });
     expect(companyCall?.[0].updateCompanies.__args.filter.and[0]).toEqual({
       id: { eq: COMPANY_ID },
@@ -61,16 +64,40 @@ describe('updateRelatedLastEmail', () => {
     ).toEqual([OPPORTUNITY_COMPANY_ID, OPPORTUNITY_POC_ID].sort());
   });
 
-  it('only guards against newer emails', async () => {
+  it('sets the calendar event item for a meeting', async () => {
     client.query
       .mockResolvedValueOnce({ person: { id: PERSON_ID, companyId: COMPANY_ID } })
       .mockResolvedValueOnce(opportunityEdges([]))
       .mockResolvedValueOnce(opportunityEdges([]));
 
-    await updateRelatedLastEmail(client as never, {
+    await updateRelatedLastContact(client as never, {
       personId: PERSON_ID,
-      messageId: MESSAGE_ID,
       occurredAt: OCCURRED_AT,
+      itemId: CALENDAR_EVENT_ID,
+      kind: 'meeting',
+    });
+
+    const companyCall = client.mutation.mock.calls.find(
+      (call) => call[0].updateCompanies,
+    );
+    expect(companyCall?.[0].updateCompanies.__args.data).toEqual({
+      lastContactAt: OCCURRED_AT,
+      lastContactItemMessageId: null,
+      lastContactItemCalendarEventId: CALENDAR_EVENT_ID,
+    });
+  });
+
+  it('only guards against newer contacts', async () => {
+    client.query
+      .mockResolvedValueOnce({ person: { id: PERSON_ID, companyId: COMPANY_ID } })
+      .mockResolvedValueOnce(opportunityEdges([]))
+      .mockResolvedValueOnce(opportunityEdges([]));
+
+    await updateRelatedLastContact(client as never, {
+      personId: PERSON_ID,
+      occurredAt: OCCURRED_AT,
+      itemId: MESSAGE_ID,
+      kind: 'email',
     });
 
     const companyCall = client.mutation.mock.calls.find(
@@ -78,8 +105,8 @@ describe('updateRelatedLastEmail', () => {
     );
     expect(companyCall?.[0].updateCompanies.__args.filter.and[1]).toEqual({
       or: [
-        { lastEmailAt: { is: 'NULL' } },
-        { lastEmailAt: { lt: OCCURRED_AT } },
+        { lastContactAt: { is: 'NULL' } },
+        { lastContactAt: { lt: OCCURRED_AT } },
       ],
     });
     expect(
@@ -92,10 +119,11 @@ describe('updateRelatedLastEmail', () => {
       .mockResolvedValueOnce({ person: { id: PERSON_ID, companyId: null } })
       .mockResolvedValueOnce(opportunityEdges([OPPORTUNITY_POC_ID]));
 
-    await updateRelatedLastEmail(client as never, {
+    await updateRelatedLastContact(client as never, {
       personId: PERSON_ID,
-      messageId: MESSAGE_ID,
       occurredAt: OCCURRED_AT,
+      itemId: MESSAGE_ID,
+      kind: 'email',
     });
 
     expect(

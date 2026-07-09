@@ -42,6 +42,10 @@ const setupQueryMock = ({
       return Promise.resolve({ person: null });
     }
 
+    if (query.opportunities) {
+      return Promise.resolve({ opportunities: { edges: [] } });
+    }
+
     const filter = query.calendarEventParticipants.__args.filter;
 
     if (filter.calendarEventId && filter.workspaceMemberId) {

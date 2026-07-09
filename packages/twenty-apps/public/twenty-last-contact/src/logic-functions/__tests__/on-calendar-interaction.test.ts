@@ -64,11 +64,13 @@ describe('on-calendar-interaction handler', () => {
       .mockResolvedValueOnce({
         calendarEventParticipants: { edges: [] },
       })
-      .mockResolvedValueOnce({ person: null });
+      .mockResolvedValueOnce({ person: null })
+      .mockResolvedValueOnce({ person: null })
+      .mockResolvedValueOnce({ opportunities: { edges: [] } });
 
     await handler(buildEvent(PERSON_ID));
 
-    expect(queryMock).toHaveBeenCalledTimes(3);
+    expect(queryMock).toHaveBeenCalledTimes(5);
     const queryArgs = queryMock.mock.calls[0][0];
     expect(queryArgs.calendarEventParticipants.__args.filter.personId).toEqual(
       { eq: PERSON_ID },
