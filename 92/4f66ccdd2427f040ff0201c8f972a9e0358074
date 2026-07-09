@@ -1,0 +1,19 @@
+packages/twenty-server/test/integration/utils/http-mock.util.ts
+  s_0cd87c29efaba6::t_c0a65fb6b04a96 1,9-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "924f66ccdd2427f040ff0201c8f972a9e0358074",
+  "prompts": {},
+  "sessions": {
+    "s_0cd87c29efaba6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c9fb3032-f885-4660-a0b6-b45aac02aa9b",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
