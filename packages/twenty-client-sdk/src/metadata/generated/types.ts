@@ -208,7 +208,7 @@ export default {
             "isListed": [
                 6
             ],
-            "isFeatured": [
+            "isVetted": [
                 6
             ],
             "isPreInstalled": [
@@ -4303,7 +4303,7 @@ export default {
             "sourcePackage": [
                 1
             ],
-            "isFeatured": [
+            "isVetted": [
                 6
             ],
             "__typename": [
@@ -4419,7 +4419,7 @@ export default {
             "isListed": [
                 6
             ],
-            "isFeatured": [
+            "isVetted": [
                 6
             ],
             "description": [
@@ -5228,6 +5228,9 @@ export default {
             ]
         },
         "ImapSmtpCaldavPublicConnectionParameters": {
+            "name": [
+                1
+            ],
             "IMAP": [
                 293
             ],
@@ -6526,9 +6529,33 @@ export default {
                 }
             ],
             "findManyMarketplaceApps": [
-                228
+                228,
+                {
+                    "universalIdentifiers": [
+                        1,
+                        "[String!]"
+                    ]
+                }
             ],
             "findMarketplaceAppDetail": [
+                232,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "publicMarketplaceApps": [
+                228,
+                {
+                    "isVetted": [
+                        6,
+                        "Boolean!"
+                    ]
+                }
+            ],
+            "publicMarketplaceAppDetail": [
                 232,
                 {
                     "universalIdentifier": [
@@ -11096,7 +11123,7 @@ export default {
             "isPreInstalled": [
                 6
             ],
-            "isFeatured": [
+            "isVetted": [
                 6
             ],
             "__typename": [
@@ -11885,6 +11912,9 @@ export default {
             ]
         },
         "EmailAccountConnectionParameters": {
+            "name": [
+                1
+            ],
             "IMAP": [
                 493
             ],

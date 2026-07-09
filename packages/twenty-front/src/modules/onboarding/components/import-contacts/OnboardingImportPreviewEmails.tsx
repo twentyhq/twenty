@@ -8,7 +8,7 @@ import {
 } from '@/onboarding/constants/ImportContactsPreviewEmails';
 import { styled } from '@linaria/react';
 import { IconStar } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const EMAIL_ROW_HEIGHT = 32;
 const EMAIL_CHECKBOX_SIZE = 12;
@@ -94,6 +94,10 @@ const StyledEventCard = styled.div<{ color: 'orange' | 'sky' }>`
   padding: ${themeCssVariables.spacing[2]};
   position: absolute;
   width: 160px;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    display: none;
+  }
 `;
 
 const StyledEventTitle = styled.span`

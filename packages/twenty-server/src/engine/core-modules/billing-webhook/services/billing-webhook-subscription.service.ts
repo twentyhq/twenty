@@ -150,9 +150,7 @@ export class BillingWebhookSubscriptionService {
       'currentBillingSubscription',
     ]);
 
-    const shouldSuspend = this.shouldSuspendWorkspace(data);
-
-    if (shouldSuspend) {
+    if (this.shouldSuspendWorkspace(data)) {
       if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) {
         await this.workspaceService.suspendWorkspace(workspaceId);
       } else if (
@@ -162,6 +160,7 @@ export class BillingWebhookSubscriptionService {
         await this.workspaceService.deleteWorkspace(workspace.id);
       }
     } else if (
+      this.shouldReactivateWorkspace(data) &&
       workspace.activationStatus === WorkspaceActivationStatus.SUSPENDED
     ) {
       await this.workspaceService.reactivateWorkspace(workspaceId);
@@ -214,6 +213,22 @@ export class BillingWebhookSubscriptionService {
       hasTrialJustEnded &&
       (status === SubscriptionStatus.PastDue || canceledDuringTrial)
     );
+  }
+
+  shouldReactivateWorkspace(
+    data:
+      | Stripe.CustomerSubscriptionUpdatedEvent.Data
+      | Stripe.CustomerSubscriptionCreatedEvent.Data
+      | Stripe.CustomerSubscriptionDeletedEvent.Data,
+  ): boolean {
+    const status = data.object.status as SubscriptionStatus;
+
+    const activeStatuses = [
+      SubscriptionStatus.Active,
+      SubscriptionStatus.Trialing,
+    ];
+
+    return activeStatuses.includes(status);
   }
 
   async updateBillingSubscriptionItems(

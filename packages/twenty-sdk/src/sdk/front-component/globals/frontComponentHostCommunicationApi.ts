@@ -53,6 +53,7 @@ export type OpenSidePanelPageParams =
       preprompt?: {
         text: string;
         mode?: 'PREFILL' | 'SEND';
+        model?: 'FAST' | 'SMART';
       };
     }
   | {

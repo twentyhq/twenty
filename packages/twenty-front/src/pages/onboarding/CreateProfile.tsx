@@ -28,7 +28,7 @@ import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { MainButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { z } from 'zod';
 
 const StyledForm = styled.div`
@@ -45,6 +45,11 @@ const StyledNameRow = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   width: 100%;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    align-items: stretch;
+    flex-direction: column;
+  }
 `;
 
 const StyledNameField = styled.div`

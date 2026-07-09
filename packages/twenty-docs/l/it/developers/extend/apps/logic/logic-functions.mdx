@@ -51,8 +51,12 @@ export default defineLogicFunction({
 ```
 
 Tipi di trigger disponibili:
-* **httpRoute**: Espone la tua funzione su un percorso e metodo HTTP **sotto l'endpoint `/s/`**:
-> ad es. `path: '/post-card/create'` è invocabile su `https://your-twenty-server.com/s/post-card/create`
+* **httpRoute**: Espone la tua funzione su un percorso HTTP e un metodo al **URL di base delle funzioni del tuo workspace** — il valore Twenty inietta come `TWENTY_FUNCTIONS_URL` (su Twenty Cloud, un dominio dedicato per workspace
+> ad es. `path: '/post-card/create'` è invocabile su `https://your-workspace.withtwenty.com/post-card/create`
+
+<Warning>
+Il prefisso tradizionale `/s/` (`https://your-twenty-server.com/s/post-card/create`) è **deprecato su Twenty Cloud** e sarà disattivato il **2026-07-24**. Rimane disponibile per le istanze locali e self-hosted che non configurano un dominio di funzioni isolate — usa `TWENTY_FUNCTIONS_URL` quando è impostato, e torna a `\<server-url>/s/\<path>` altrimenti.
+</Warning>
 
 <Note>
 Per richiamare, da un componente front-end (headless), una funzione logica attivata da una rotta, vedi [Chiamare una funzione logica](/l/it/developers/extend/apps/layout/front-components#calling-a-logic-function).
