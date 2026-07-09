@@ -44,6 +44,17 @@ describe('cleanMorphRelationsTargetingObjectMetadataId', () => {
     ]);
   });
 
+  it('should keep a morph field with an empty morphRelations array when all its targets are deleted', () => {
+    const result = cleanMorphRelationsTargetingObjectMetadataId(
+      [buildField('exclusive-morph', [buildMorphRelation('meeting-id')])],
+      'meeting-id',
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe('exclusive-morph');
+    expect(result[0].morphRelations).toEqual([]);
+  });
+
   it('should return an empty array when no morph relation targets the deleted object', () => {
     const result = cleanMorphRelationsTargetingObjectMetadataId(
       [buildField('morph-field', [buildMorphRelation('company-id')])],
