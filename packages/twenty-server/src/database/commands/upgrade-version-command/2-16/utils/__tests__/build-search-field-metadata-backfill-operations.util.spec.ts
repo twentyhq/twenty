@@ -5,15 +5,16 @@ import { buildSearchFieldMetadataBackfillOperations } from 'src/database/command
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import {
   getFlatObjectMetadataMock,
   getStandardFlatObjectMetadataMock,
 } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 
-const CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER = 'custom-application-uid';
+const CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
+  'c0c1c2c3-c4c5-4000-8000-000000000001';
 const CUSTOM_APPLICATION_ID = 'custom-application-id';
 
 const buildUniversalIdentifiersByApplicationId = (
@@ -129,6 +130,7 @@ const buildSearchFieldMetadata = ({
     applicationId: 'unused-application-id',
     applicationUniversalIdentifier,
     position,
+    isSystemSideEffect: true,
     workspaceId: 'workspace-id',
     createdAt,
     updatedAt: createdAt,
@@ -221,8 +223,9 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
           searchVectorField,
         ]),
         flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([]),
-        standardFlatSearchFieldMetadataMaps:
-          buildFlatSearchFieldMetadataMaps([]),
+        standardFlatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps(
+          [],
+        ),
         customApplicationId: CUSTOM_APPLICATION_ID,
       });
 
@@ -288,8 +291,9 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps([junctionObject]),
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([idField]),
         flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([]),
-        standardFlatSearchFieldMetadataMaps:
-          buildFlatSearchFieldMetadataMaps([]),
+        standardFlatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps(
+          [],
+        ),
         customApplicationId: CUSTOM_APPLICATION_ID,
       });
 
@@ -592,8 +596,7 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
       fieldMetadataId: nameField.id,
       objectMetadataUniversalIdentifier: customObject.universalIdentifier,
       fieldMetadataUniversalIdentifier: nameField.universalIdentifier,
-      applicationUniversalIdentifier:
-        CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     });
 
     const { flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier } =
@@ -606,8 +609,9 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
         flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([
           existingSearchFieldMetadata,
         ]),
-        standardFlatSearchFieldMetadataMaps:
-          buildFlatSearchFieldMetadataMaps([]),
+        standardFlatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps(
+          [],
+        ),
         customApplicationId: CUSTOM_APPLICATION_ID,
       });
 
@@ -650,8 +654,9 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps([customObject]),
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([relationNameField]),
         flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([]),
-        standardFlatSearchFieldMetadataMaps:
-          buildFlatSearchFieldMetadataMaps([]),
+        standardFlatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps(
+          [],
+        ),
         customApplicationId: CUSTOM_APPLICATION_ID,
       });
 
@@ -685,8 +690,9 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
           nameDescriptionField,
         ]),
         flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([]),
-        standardFlatSearchFieldMetadataMaps:
-          buildFlatSearchFieldMetadataMaps([]),
+        standardFlatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps(
+          [],
+        ),
         customApplicationId: CUSTOM_APPLICATION_ID,
       });
 
@@ -716,8 +722,9 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
           nameDescriptionField,
         ]),
         flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([]),
-        standardFlatSearchFieldMetadataMaps:
-          buildFlatSearchFieldMetadataMaps([]),
+        standardFlatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps(
+          [],
+        ),
         customApplicationId: CUSTOM_APPLICATION_ID,
       });
 

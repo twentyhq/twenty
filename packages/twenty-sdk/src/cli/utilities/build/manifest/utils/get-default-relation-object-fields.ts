@@ -1,8 +1,8 @@
 import { RelationType } from '@/sdk/define';
-import { generateDefaultFieldUniversalIdentifier } from '@/sdk/define/objects/generate-default-field-universal-identifier';
 import type { ObjectConfig } from '@/sdk/define/objects/object-config';
 import {
   type FieldManifest,
+  getFieldUniversalIdentifier,
   type ObjectFieldManifest,
 } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -132,19 +132,17 @@ export const getDefaultRelationObjectFields = ({
   for (const config of DEFAULT_RELATION_CONFIGS) {
     const standardObject = STANDARD_OBJECTS[config.standardObjectKey];
 
-    const forwardFieldUniversalIdentifier =
-      generateDefaultFieldUniversalIdentifier({
-        applicationUniversalIdentifier,
-        objectUniversalIdentifier: objectConfig.universalIdentifier,
-        fieldName: config.fieldName,
-      });
+    const forwardFieldUniversalIdentifier = getFieldUniversalIdentifier({
+      applicationUniversalIdentifier,
+      objectUniversalIdentifier: objectConfig.universalIdentifier,
+      name: config.fieldName,
+    });
 
-    const reverseFieldUniversalIdentifier =
-      generateDefaultFieldUniversalIdentifier({
-        applicationUniversalIdentifier,
-        objectUniversalIdentifier: standardObject.universalIdentifier,
-        fieldName: config.targetFieldName(objectConfig),
-      });
+    const reverseFieldUniversalIdentifier = getFieldUniversalIdentifier({
+      applicationUniversalIdentifier,
+      objectUniversalIdentifier: standardObject.universalIdentifier,
+      name: config.targetFieldName(objectConfig),
+    });
 
     const forwardField: ObjectFieldManifest = {
       name: config.fieldName,
