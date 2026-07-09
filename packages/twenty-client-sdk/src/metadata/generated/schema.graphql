@@ -53,7 +53,7 @@ type ApplicationRegistration {
   sourcePackage: String
   latestAvailableVersion: String
   isListed: Boolean!
-  isFeatured: Boolean!
+  isVetted: Boolean!
   isPreInstalled: Boolean!
   logoUrl: String
   createdAt: DateTime!
@@ -1749,7 +1749,6 @@ enum FeatureFlagKey {
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
   IS_SETTINGS_DISCOVERY_HERO_ENABLED
-  IS_MESSAGING_CALENDAR_WEBHOOK_ENABLED
   IS_WORKFLOW_VERSION_IN_CORE_ENABLED
 }
 
@@ -2192,7 +2191,7 @@ type MarketplaceApp {
   category: String!
   logo: String
   sourcePackage: String
-  isFeatured: Boolean!
+  isVetted: Boolean!
 }
 
 type MarketplaceAppRoleObjectPermission {
@@ -2236,7 +2235,7 @@ type MarketplaceAppDetail {
   sourcePackage: String
   latestAvailableVersion: String
   isListed: Boolean!
-  isFeatured: Boolean!
+  isVetted: Boolean!
   description: String
   author: String
   category: String
@@ -2647,6 +2646,7 @@ type ImapSmtpCaldavPublicConnectionParams {
 }
 
 type ImapSmtpCaldavPublicConnectionParameters {
+  name: String
   IMAP: ImapSmtpCaldavPublicConnectionParams
   SMTP: ImapSmtpCaldavPublicConnectionParams
   CALDAV: ImapSmtpCaldavPublicConnectionParams
@@ -3145,6 +3145,8 @@ type Query {
   findOneApplication(id: UUID, universalIdentifier: UUID): Application!
   findManyMarketplaceApps: [MarketplaceApp!]!
   findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
+  publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
+  publicMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
   findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
   findManyApplicationRegistrations: [ApplicationRegistration!]!
@@ -4308,7 +4310,7 @@ input UpdateApplicationRegistrationPayload {
   oAuthScopes: [String!]
   isListed: Boolean
   isPreInstalled: Boolean
-  isFeatured: Boolean
+  isVetted: Boolean
 }
 
 input CreateApplicationRegistrationVariableInput {
@@ -4642,6 +4644,7 @@ input SendEmailAttachmentInput {
 }
 
 input EmailAccountConnectionParameters {
+  name: String
   IMAP: ConnectionParametersInput
   SMTP: ConnectionParametersInput
   CALDAV: ConnectionParametersInput

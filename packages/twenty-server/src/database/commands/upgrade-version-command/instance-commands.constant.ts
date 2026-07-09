@@ -101,8 +101,9 @@ import { BackfillDisplayFieldsOnApplicationRegistrationSlowInstanceCommand } fro
 import { BackfillIsFeaturedOnApplicationRegistrationSlowInstanceCommand } from './2-19/2-19-instance-command-slow-1783120000000-backfill-is-featured-on-application-registration';
 import { AllowServerScopedFileFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-instance-command-fast-1783499671541-allow-server-scoped-file';
 import { CreateWorkflowVersionCoreTableFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783512000000-create-workflow-version-core-table';
-import { MakePageLayoutWidgetPositionNotNullSlowInstanceCommand } from './2-20/2-20-instance-command-slow-1783516500000-make-page-layout-widget-position-not-null';
-import { DropPageLayoutWidgetGridPositionColumnFastInstanceCommand } from './2-21/2-21-instance-command-fast-1783516600000-drop-page-layout-widget-grid-position-column';
+import { RenameIsFeaturedToIsVettedOnApplicationRegistrationFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783527064000-rename-is-featured-to-is-vetted-on-application-registration';
+import { MakePageLayoutWidgetPositionNotNullSlowInstanceCommand } from './2-20/2-20-instance-command-slow-1783589800000-make-page-layout-widget-position-not-null';
+import { DropPageLayoutWidgetGridPositionColumnFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783589900000-drop-page-layout-widget-grid-position-column';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -206,6 +207,7 @@ export const INSTANCE_COMMANDS = [
   BackfillIsFeaturedOnApplicationRegistrationSlowInstanceCommand,
   AllowServerScopedFileFastInstanceCommand,
   CreateWorkflowVersionCoreTableFastInstanceCommand,
+  RenameIsFeaturedToIsVettedOnApplicationRegistrationFastInstanceCommand,
   MakePageLayoutWidgetPositionNotNullSlowInstanceCommand,
   DropPageLayoutWidgetGridPositionColumnFastInstanceCommand,
 ];

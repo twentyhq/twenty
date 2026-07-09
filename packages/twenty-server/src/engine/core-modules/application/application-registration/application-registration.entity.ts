@@ -23,6 +23,7 @@ import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/a
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -122,8 +123,15 @@ export class ApplicationRegistrationEntity {
   isListed: boolean;
 
   @Field(() => Boolean)
-  @Column({ name: 'isFeatured', type: 'boolean', default: false })
-  isFeatured: boolean;
+  @Column({ name: 'isVetted', type: 'boolean', default: false })
+  @WasRenamedInUpgrade([
+    {
+      previousName: 'isFeatured',
+      upgradeCommandName:
+        '2.20.0_RenameIsFeaturedToIsVettedOnApplicationRegistrationFastInstanceCommand_1783527064000',
+    },
+  ])
+  isVetted: boolean;
 
   // Auto-installed on every new workspace; existing workspaces are
   // backfilled by the `install-pre-installed-apps` CLI command.

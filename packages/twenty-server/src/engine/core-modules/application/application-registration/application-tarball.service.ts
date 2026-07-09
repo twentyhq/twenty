@@ -12,10 +12,8 @@ import { Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
-import {
-  ApplicationVersionValidationService,
-  type VersionValidationFailureReason,
-} from 'src/engine/core-modules/application/application-package/application-version-validation.service';
+import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
+import { VERSION_REASON_TO_APPLICATION_REGISTRATION_EXCEPTION_CODE } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
 import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
 import { readJsonFile } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
@@ -34,22 +32,6 @@ import type { ApplicationManifest } from 'twenty-shared/application';
 @Injectable()
 export class ApplicationTarballService {
   private readonly logger = new Logger(ApplicationTarballService.name);
-
-  private static readonly VERSION_REASON_TO_EXCEPTION_CODE: Record<
-    VersionValidationFailureReason,
-    ApplicationRegistrationExceptionCode
-  > = {
-    INVALID_REQUIRED_VERSION:
-      ApplicationRegistrationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT,
-    INVALID_SERVER_VERSION:
-      ApplicationRegistrationExceptionCode.INVALID_SERVER_VERSION,
-    INVALID_WORKSPACE_VERSION:
-      ApplicationRegistrationExceptionCode.INVALID_SERVER_VERSION,
-    INSTANCE_INCOMPATIBLE:
-      ApplicationRegistrationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
-    WORKSPACE_INCOMPATIBLE:
-      ApplicationRegistrationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
-  };
 
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
@@ -107,7 +89,7 @@ export class ApplicationTarballService {
       if (!versionValidation.compatible) {
         throw new ApplicationRegistrationException(
           versionValidation.message,
-          ApplicationTarballService.VERSION_REASON_TO_EXCEPTION_CODE[
+          VERSION_REASON_TO_APPLICATION_REGISTRATION_EXCEPTION_CODE[
             versionValidation.reason
           ],
         );
@@ -178,7 +160,7 @@ export class ApplicationTarballService {
           ...fromManifestApplicationToDisplayFields(manifest.application),
           latestAvailableVersion: packageJson?.version ?? null,
           isListed: false,
-          isFeatured: false,
+          isVetted: false,
           oAuthClientId: v4(),
           oAuthRedirectUris: [],
           oAuthScopes: [],
@@ -216,7 +198,7 @@ export class ApplicationTarballService {
         ...fromManifestApplicationToDisplayFields(manifest.application),
         latestAvailableVersion: packageJson?.version ?? null,
         isListed: false,
-        isFeatured: false,
+        isVetted: false,
         ownerWorkspaceId: params.ownerWorkspaceId,
       } as QueryDeepPartialEntity<ApplicationRegistrationEntity>);
 

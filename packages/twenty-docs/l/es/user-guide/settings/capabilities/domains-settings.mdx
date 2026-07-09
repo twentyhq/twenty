@@ -1,6 +1,6 @@
 ---
 title: Configuración de Dominios
-description: Configura el dominio del espacio de trabajo, los dominios de acceso aprobado y los dominios públicos.
+description: Configura el dominio del espacio de trabajo, los dominios de acceso aprobados y los dominios personalizados de la app.
 ---
 
 La configuración de dominios se encuentra en tres lugares, según lo que estés configurando.
@@ -37,18 +37,17 @@ Una vez configurado, cualquiera con una dirección de correo electrónico en ese
 Esto es útil para permitir que todo tu equipo se autorregistre y, al mismo tiempo, mantener el espacio de trabajo restringido a tu organización.
 </Note>
 
-## Dominios Públicos
+## Dominios personalizados de la app
 
-Configura en **Ajustes → Aplicaciones → Desarrollador**.
+Configura en **Ajustes → Aplicaciones → tu app → Ajustes → URL de la app**.
 
-Provisiona un entorno de alojamiento completo y seguro en estos dominios. Un dominio público puede vincularse a una aplicación específica; cuando está vinculado, solo las funciones lógicas enrutadas por HTTP de esa aplicación son accesibles en el dominio. Deja la vinculación vacía para exponer todas las rutas HTTP del espacio de trabajo.
+Las apps que exponen rutas en la web se sirven desde una URL dedicada, que se muestra en la sección **URL de la app**. En su lugar, puedes servir una app desde un dominio que poseas.
 
-### Agregar Dominio Público
+### Agregar dominio personalizado
 
-1. Haz clic en **Agregar Dominio Público**
-2. Introduce el dominio que quieres usar
-3. Vincúlalo opcionalmente a una aplicación
-4. Configura los ajustes de DNS según las instrucciones
-5. Verifica el dominio
+1. Haz clic en **Agregar Dominio Personalizado**
+2. Introduce el dominio que quieres usar (p. ej., `app.yourcompany.com`)
+3. Configura los ajustes de DNS según las instrucciones
+4. Verifica el dominio
 
-Los certificados SSL se aprovisionan automáticamente para los dominios públicos.
+Solo las rutas de esa app son accesibles en el dominio. Los certificados SSL se aprovisionan automáticamente.

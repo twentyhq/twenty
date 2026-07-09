@@ -208,7 +208,7 @@ export default {
             "isListed": [
                 6
             ],
-            "isFeatured": [
+            "isVetted": [
                 6
             ],
             "isPreInstalled": [
@@ -4283,7 +4283,7 @@ export default {
             "sourcePackage": [
                 1
             ],
-            "isFeatured": [
+            "isVetted": [
                 6
             ],
             "__typename": [
@@ -4399,7 +4399,7 @@ export default {
             "isListed": [
                 6
             ],
-            "isFeatured": [
+            "isVetted": [
                 6
             ],
             "description": [
@@ -5208,6 +5208,9 @@ export default {
             ]
         },
         "ImapSmtpCaldavPublicConnectionParameters": {
+            "name": [
+                1
+            ],
             "IMAP": [
                 292
             ],
@@ -6509,6 +6512,24 @@ export default {
                 227
             ],
             "findMarketplaceAppDetail": [
+                231,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "publicMarketplaceApps": [
+                227,
+                {
+                    "isVetted": [
+                        6,
+                        "Boolean!"
+                    ]
+                }
+            ],
+            "publicMarketplaceAppDetail": [
                 231,
                 {
                     "universalIdentifier": [
@@ -11050,7 +11071,7 @@ export default {
             "isPreInstalled": [
                 6
             ],
-            "isFeatured": [
+            "isVetted": [
                 6
             ],
             "__typename": [
@@ -11839,6 +11860,9 @@ export default {
             ]
         },
         "EmailAccountConnectionParameters": {
+            "name": [
+                1
+            ],
             "IMAP": [
                 491
             ],
