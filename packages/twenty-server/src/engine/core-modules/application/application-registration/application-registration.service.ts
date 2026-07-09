@@ -6,13 +6,7 @@ import crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  ILike,
-  IsNull,
-  Raw,
-  type FindOptionsWhere,
-  type Repository,
-} from 'typeorm';
+import { ILike, IsNull, type FindOptionsWhere, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -144,34 +138,34 @@ export class ApplicationRegistrationService {
     );
     const safeOffset = Math.max(offset, 0);
 
-    const baseWhere: FindOptionsWhere<ApplicationRegistrationEntity> =
-      isPreInstalledOnly === true ? { isPreInstalled: true } : {};
-
     const trimmedSearch = searchTerm?.trim();
 
-    const whereClauses: FindOptionsWhere<ApplicationRegistrationEntity>[] =
-      isDefined(trimmedSearch) && trimmedSearch.length > 0
-        ? [
-            { ...baseWhere, name: ILike(`%${trimmedSearch}%`) },
-            { ...baseWhere, sourcePackage: ILike(`%${trimmedSearch}%`) },
-            {
-              ...baseWhere,
-              universalIdentifier: Raw(
-                (alias) => `${alias}::text ILIKE :searchTerm`,
-                { searchTerm: `%${trimmedSearch}%` },
-              ),
-            },
-          ]
-        : [baseWhere];
+    const queryBuilder = this.applicationRegistrationRepository
+      .createQueryBuilder('applicationRegistration')
+      .select(
+        APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT.map(
+          (column) => `applicationRegistration.${column}`,
+        ),
+      )
+      .orderBy('applicationRegistration.createdAt', 'DESC')
+      .addOrderBy('applicationRegistration.id', 'ASC')
+      .skip(safeOffset)
+      .take(safeLimit);
 
-    const [registrations, totalCount] =
-      await this.applicationRegistrationRepository.findAndCount({
-        select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
-        where: whereClauses,
-        order: { createdAt: 'DESC', id: 'ASC' },
-        skip: safeOffset,
-        take: safeLimit,
-      });
+    if (isPreInstalledOnly === true) {
+      queryBuilder.andWhere('applicationRegistration.isPreInstalled = true');
+    }
+
+    if (isDefined(trimmedSearch) && trimmedSearch.length > 0) {
+      queryBuilder.andWhere(
+        `(applicationRegistration.name ILIKE :searchTerm
+          OR applicationRegistration.sourcePackage ILIKE :searchTerm
+          OR applicationRegistration.universalIdentifier::text ILIKE :searchTerm)`,
+        { searchTerm: `%${trimmedSearch}%` },
+      );
+    }
+
+    const [registrations, totalCount] = await queryBuilder.getManyAndCount();
 
     return {
       registrations,
