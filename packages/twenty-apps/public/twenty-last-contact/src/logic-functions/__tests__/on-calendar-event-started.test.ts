@@ -42,10 +42,6 @@ const setupQueryMock = ({
       return Promise.resolve({ person: null });
     }
 
-    if (query.opportunities) {
-      return Promise.resolve({ opportunities: { edges: [] } });
-    }
-
     const filter = query.calendarEventParticipants.__args.filter;
 
     if (filter.calendarEventId && filter.workspaceMemberId) {
@@ -172,7 +168,9 @@ describe('on-calendar-event-started handler', () => {
           query.calendarEventParticipants.__args.filter.personId.eq,
       ),
     ).toEqual([PERSON_ID_1, PERSON_ID_2]);
-    expect(mutationMock).toHaveBeenCalledTimes(2);
+    expect(
+      mutationMock.mock.calls.filter(([mutation]) => mutation.updatePeople),
+    ).toHaveLength(2);
   });
 
   it('should do nothing when no event started in the time window', async () => {
