@@ -1,11 +1,20 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import {
+  ALL_METADATA_NAME,
+  type AllMetadataName,
+} from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type WorkspaceMigrationActionType } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 import { type WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { type MetadataValidationErrorResponseDescriptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/types/metadata-validation-error-response-descriptor.type';
-import { sortFailedFlatEntityValidations } from 'src/engine/workspace-manager/workspace-migration/utils/sort-failed-flat-entity-validations.util';
+import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
+
+type AnyFailedValidation = FailedFlatEntityValidation<
+  AllMetadataName,
+  WorkspaceMigrationActionType
+>;
 
 export type MetadataValidationErrorPayloadDescriptor =
   MetadataValidationErrorResponseDescriptor & {
@@ -41,6 +50,38 @@ const getMetadataValidationUserFriendlyMessage = (
   return METADATA_VALIDATION_FAILED_MESSAGE;
 };
 
+const getFailedValidationSortKey = (
+  failedValidation: AnyFailedValidation,
+): string => {
+  const { flatEntityMinimalInformation } = failedValidation;
+
+  if (
+    'name' in flatEntityMinimalInformation &&
+    typeof flatEntityMinimalInformation.name === 'string'
+  ) {
+    return flatEntityMinimalInformation.name;
+  }
+
+  return '';
+};
+
+// Failed validations come out of the migration builder in a nondeterministic
+// order (entity maps are keyed by freshly generated universal identifiers), so
+// the payload is sorted to keep API responses stable across runs.
+const sortFailedValidations = (
+  failedValidations: readonly AnyFailedValidation[],
+): AnyFailedValidation[] =>
+  [...failedValidations].sort((first, second) => {
+    const firstKey = getFailedValidationSortKey(first);
+    const secondKey = getFailedValidationSortKey(second);
+
+    if (firstKey === secondKey) {
+      return 0;
+    }
+
+    return firstKey < secondKey ? -1 : 1;
+  });
+
 export const buildMetadataValidationErrorPayload = (
   exception: WorkspaceMigrationBuilderException,
 ): MetadataValidationErrorPayloadDescriptor => {
@@ -59,9 +100,7 @@ export const buildMetadataValidationErrorPayload = (
       return {
         errors: {
           ...acc.errors,
-          [metadataName]: sortFailedFlatEntityValidations(
-            failedMetadataValidation,
-          ),
+          [metadataName]: sortFailedValidations(failedMetadataValidation),
         },
         summary: {
           ...acc.summary,
