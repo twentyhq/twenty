@@ -280,10 +280,8 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ActiveOrSuspended
       }
 
       return { buffer, extension: type.ext };
-    } catch (error) {
-      this.logger.warn(
-        `Failed to fetch image from URL: ${imageUrl} — ${error instanceof Error ? error.message : String(error)}`,
-      );
+    } catch {
+      this.logger.warn('Failed to fetch avatar image.');
 
       return undefined;
     }
