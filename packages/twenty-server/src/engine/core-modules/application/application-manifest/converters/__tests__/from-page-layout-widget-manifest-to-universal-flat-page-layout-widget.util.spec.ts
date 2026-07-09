@@ -18,6 +18,8 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
         configuration: { configurationType: 'VIEW' },
       },
       pageLayoutTabUniversalIdentifier,
+      pageLayoutTabLayoutMode: PageLayoutTabLayoutMode.GRID,
+      widgetIndex: 0,
       applicationUniversalIdentifier,
       now,
     });
@@ -58,6 +60,8 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
         },
       },
       pageLayoutTabUniversalIdentifier,
+      pageLayoutTabLayoutMode: PageLayoutTabLayoutMode.GRID,
+      widgetIndex: 0,
       applicationUniversalIdentifier,
       now,
     });
@@ -88,6 +92,8 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
         configuration: { configurationType: 'VIEW' },
       },
       pageLayoutTabUniversalIdentifier,
+      pageLayoutTabLayoutMode: PageLayoutTabLayoutMode.GRID,
+      widgetIndex: 0,
       applicationUniversalIdentifier,
       now,
     });
@@ -98,6 +104,51 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
       column: 6,
       rowSpan: 4,
       columnSpan: 6,
+    });
+  });
+
+  it('should build a vertical list position matching the tab layout mode', () => {
+    const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+      pageLayoutWidgetManifest: {
+        universalIdentifier: 'widget-uuid-4',
+        title: 'Fields Widget',
+        type: WidgetType.FIELDS,
+        configuration: { configurationType: 'FIELDS' },
+      },
+      pageLayoutTabUniversalIdentifier,
+      pageLayoutTabLayoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      widgetIndex: 2,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      index: 2,
+    });
+  });
+
+  it('should default to a grid position when the tab layout mode is undefined', () => {
+    const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+      pageLayoutWidgetManifest: {
+        universalIdentifier: 'widget-uuid-5',
+        title: 'Default Widget',
+        type: WidgetType.VIEW,
+        configuration: { configurationType: 'VIEW' },
+      },
+      pageLayoutTabUniversalIdentifier,
+      pageLayoutTabLayoutMode: undefined,
+      widgetIndex: 0,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: 0,
+      column: 0,
+      rowSpan: DEFAULT_WIDGET_SIZE.default.h,
+      columnSpan: DEFAULT_WIDGET_SIZE.default.w,
     });
   });
 });
