@@ -17,7 +17,7 @@ type RecallBotListResponse = {
 };
 
 type ListScheduledRecallBotsResult =
-  | { ok: true; bots: RecallScheduledBot[] }
+  | { ok: true; bots: RecallScheduledBot[]; truncated: boolean }
   | RecallBotOperationFailure;
 
 const RECALL_BOT_LIST_MAX_PAGES = 10;
@@ -68,15 +68,15 @@ export const listScheduledRecallBots = async ({
     path = extractNextPath(result.data, configResult.config.baseUrl);
   }
 
-  if (!isUndefined(path)) {
-    if (process.env.NODE_ENV !== 'test') {
-      console.warn(
-        `[call-recorder] Recall bot list exceeded ${RECALL_BOT_LIST_MAX_PAGES} pages; continuing with ${bots.length} fetched bots and capped per-id fallback for misses`,
-      );
-    }
+  const truncated = !isUndefined(path);
+
+  if (truncated && process.env.NODE_ENV !== 'test') {
+    console.warn(
+      `[call-recorder] Recall bot list exceeded ${RECALL_BOT_LIST_MAX_PAGES} pages; continuing with ${bots.length} fetched bots and capped per-id fallback for misses`,
+    );
   }
 
-  return { ok: true, bots };
+  return { ok: true, bots, truncated };
 };
 
 const extractRecallBots = (

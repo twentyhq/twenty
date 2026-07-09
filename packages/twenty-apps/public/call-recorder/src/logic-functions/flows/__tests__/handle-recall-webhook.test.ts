@@ -777,10 +777,6 @@ describe('handleRecallWebhook', () => {
       event: 'recording.done',
       callRecordingId: 'call-recording-1',
       requestedAt: expect.any(String),
-      externalBotId: 'recall-bot-1',
-      externalRecordingId: 'recall-recording-1',
-      transcriptId: undefined,
-      transcriptFailureSubCode: null,
     });
     expect(client.mutations).toEqual([
       {
@@ -886,10 +882,6 @@ describe('handleRecallWebhook', () => {
       event: 'bot.status_change',
       callRecordingId: 'call-recording-1',
       requestedAt: expect.any(String),
-      externalBotId: 'recall-bot-1',
-      externalRecordingId: undefined,
-      transcriptId: undefined,
-      transcriptFailureSubCode: null,
     });
     expect(client.mutations).toEqual([
       expect.objectContaining({
@@ -1024,10 +1016,6 @@ describe('handleRecallWebhook', () => {
       event: 'transcript.done',
       callRecordingId: 'call-recording-1',
       requestedAt: expect.any(String),
-      externalBotId: 'recall-bot-1',
-      externalRecordingId: undefined,
-      transcriptId: 'recall-transcript-1',
-      transcriptFailureSubCode: null,
     });
     expect(client.mutations).toEqual([]);
   });
@@ -1078,10 +1066,6 @@ describe('handleRecallWebhook', () => {
       event: 'transcript.failed',
       callRecordingId: 'call-recording-1',
       requestedAt: expect.any(String),
-      externalBotId: 'recall-bot-1',
-      externalRecordingId: undefined,
-      transcriptId: 'recall-transcript-1',
-      transcriptFailureSubCode: 'transcription_failed',
     });
     expect(client.mutations).toEqual([]);
   });

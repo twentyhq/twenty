@@ -65,6 +65,9 @@ describe('finishFailedRecallCancellations', () => {
     expect(client.filters).toEqual([
       expect.objectContaining({
         recordingRequestStatus: { eq: 'CANCELED' },
+        status: {
+          in: ['SCHEDULED', 'JOINING', 'RECORDING', 'PROCESSING'],
+        },
         externalBotId: { is: 'NOT_NULL' },
       }),
     ]);

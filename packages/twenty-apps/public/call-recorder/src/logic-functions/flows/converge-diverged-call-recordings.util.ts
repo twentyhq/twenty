@@ -323,15 +323,21 @@ const fetchDivergedCallRecordingCandidates = async (
   }));
 };
 
-// Anchored to meeting end: createdAt is scheduling time and can predate the meeting by weeks.
+// createdAt is scheduling time and can predate the meeting by weeks, so it bounds only candidates with no other dates left.
 const isOutsideConvergenceBound = (
   candidate: DivergedCallRecordingCandidate,
   convergenceLowerBound: Date,
 ): boolean => {
+  const boundReference =
+    candidate.calendarEventEndsAt ??
+    candidate.calendarEventStartsAt ??
+    candidate.endedAt ??
+    candidate.startedAt ??
+    candidate.createdAt;
+
   return (
-    !isUndefined(candidate.calendarEventEndsAt) &&
-    new Date(candidate.calendarEventEndsAt).getTime() <
-      convergenceLowerBound.getTime()
+    !isUndefined(boundReference) &&
+    new Date(boundReference).getTime() < convergenceLowerBound.getTime()
   );
 };
 
@@ -394,6 +400,10 @@ const convergeCallRecording = async ({
   const externalRecordingId =
     candidate.externalRecordingId ?? convergence.externalRecordingId;
 
+  if (convergence.isRecallRecordingDone && isUndefined(externalRecordingId)) {
+    applyMissingArtifactsFailure({ candidate, updateData });
+  }
+
   if (convergence.isRecallRecordingDone && !isUndefined(externalRecordingId)) {
     const transcriptArtifactResult =
       await reconcileCallRecordingTranscriptArtifact({
@@ -440,6 +450,28 @@ const convergeCallRecording = async ({
   });
 
   result.updatedCallRecordingIds.push(candidate.id);
+};
+
+// The bot completed without ever recording; FAILED rather than COMPLETED because completion bills.
+const applyMissingArtifactsFailure = ({
+  candidate,
+  updateData,
+}: {
+  candidate: DivergedCallRecordingCandidate;
+  updateData: CallRecordingUpdateFields;
+}): void => {
+  if (
+    updateData.status === CallRecordingStatus.FAILED ||
+    isCallRecordingStatusDowngrade({
+      fromStatus: candidate.status,
+      toStatus: CallRecordingStatus.FAILED,
+    })
+  ) {
+    return;
+  }
+
+  updateData.status = CallRecordingStatus.FAILED;
+  updateData.callRecorderFailureReason = 'recording_artifacts_unavailable';
 };
 
 const buildConvergenceFieldUpdates = ({

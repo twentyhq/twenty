@@ -1,5 +1,9 @@
 import { listScheduledRecallBots } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
 
+export type FindScheduledRecallBotIdResult =
+  | { ok: true; externalBotId: string | undefined }
+  | { ok: false };
+
 export const findScheduledRecallBotIdForCallRecording = async ({
   callRecordingId,
   workspaceId,
@@ -10,7 +14,7 @@ export const findScheduledRecallBotIdForCallRecording = async ({
   workspaceId: string;
   joinAtAfter: string;
   joinAtBefore: string;
-}): Promise<string | undefined> => {
+}): Promise<FindScheduledRecallBotIdResult> => {
   const listResult = await listScheduledRecallBots({
     joinAtAfter,
     joinAtBefore,
@@ -25,8 +29,8 @@ export const findScheduledRecallBotIdForCallRecording = async ({
       `[call-recorder] failed to look up existing Recall bot for call recording ${callRecordingId}: ${listResult.errorMessage}`,
     );
 
-    return undefined;
+    return { ok: false };
   }
 
-  return listResult.bots[0]?.id;
+  return { ok: true, externalBotId: listResult.bots[0]?.id };
 };

@@ -214,7 +214,33 @@ describe('healCallRecordingsMissingBot', () => {
     expect(client.callRecordings[0].externalBotId).toBe('recall-bot-existing');
   });
 
-  it('falls back to scheduling when the adoption lookup fails', async () => {
+  it('widens the adoption lookup window when the join-early offset exceeds the 24h floor', async () => {
+    process.env.CALL_RECORDER_JOIN_EARLY_MINUTES = '2880';
+
+    try {
+      const client = new FakeCoreApiClient({
+        callRecordings: [buildBotlessCallRecording()],
+        calendarEvents: [buildCalendarEvent()],
+      });
+
+      await healCallRecordingsMissingBot({
+        client: client as unknown as CoreApiClient,
+        now: NOW,
+      });
+
+      expect(listScheduledRecallBotsMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          joinAtAfter: new Date(
+            new Date(UPCOMING_STARTS_AT).getTime() - 2880 * 60 * 1000,
+          ).toISOString(),
+        }),
+      );
+    } finally {
+      delete process.env.CALL_RECORDER_JOIN_EARLY_MINUTES;
+    }
+  });
+
+  it('defers scheduling when the adoption lookup fails so no duplicate bot is created', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: false,
       status: 500,
@@ -231,8 +257,9 @@ describe('healCallRecordingsMissingBot', () => {
     });
 
     expect(result.adoptedCallRecordingIds).toEqual([]);
-    expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
-    expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
+    expect(result.scheduledCallRecordingIds).toEqual([]);
+    expect(scheduleRecallBotMock).not.toHaveBeenCalled();
+    expect(client.callRecordings[0].externalBotId).toBeNull();
   });
 
   it('does not report a recording as scheduled when Recall scheduling fails', async () => {

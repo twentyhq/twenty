@@ -53,13 +53,18 @@ export const healCallRecordingsMissingBot = async ({
       continue;
     }
 
-    const didAdoptCallRecorder = await adoptScheduledCallRecorder(client, {
+    const adoptionResult = await adoptScheduledCallRecorder(client, {
       callRecording,
       calendarEvent,
     });
 
-    if (didAdoptCallRecorder) {
+    if (adoptionResult === 'adopted') {
       adoptedCallRecordingIds.push(callRecording.id);
+      continue;
+    }
+
+    // A failed lookup can hide an existing bot; creating one now could duplicate it, so defer to the next run.
+    if (adoptionResult === 'lookup-failed') {
       continue;
     }
 

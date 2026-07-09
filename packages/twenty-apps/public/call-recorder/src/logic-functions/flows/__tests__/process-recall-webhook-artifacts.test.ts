@@ -149,8 +149,6 @@ describe('processRecallWebhookArtifacts', () => {
       request: {
         event: 'recording.done',
         callRecordingId: 'call-recording-1',
-        externalBotId: 'recall-bot-1',
-        externalRecordingId: 'recall-recording-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
       },
     });
@@ -200,7 +198,6 @@ describe('processRecallWebhookArtifacts', () => {
       request: {
         event: 'bot.status_change',
         callRecordingId: 'call-recording-1',
-        externalBotId: 'recall-bot-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
       },
     });
@@ -237,7 +234,6 @@ describe('processRecallWebhookArtifacts', () => {
       request: {
         event: 'recording.done',
         callRecordingId: 'call-recording-1',
-        externalBotId: 'recall-bot-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
       },
     });
@@ -269,7 +265,6 @@ describe('processRecallWebhookArtifacts', () => {
       request: {
         event: 'recording.done',
         callRecordingId: 'call-recording-1',
-        externalRecordingId: 'recall-recording-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
       },
     });
@@ -308,7 +303,6 @@ describe('processRecallWebhookArtifacts', () => {
       request: {
         event: 'recording.done',
         callRecordingId: 'call-recording-1',
-        externalRecordingId: 'recall-recording-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
       },
     });
@@ -355,8 +349,6 @@ describe('processRecallWebhookArtifacts', () => {
       request: {
         event: 'transcript.done',
         callRecordingId: 'call-recording-1',
-        externalBotId: 'recall-bot-1',
-        transcriptId: 'recall-transcript-1',
         requestedAt: '2026-01-01T14:06:00.000Z',
       },
     });
@@ -378,7 +370,7 @@ describe('processRecallWebhookArtifacts', () => {
       status: 'processed',
       event: 'transcript.done',
       callRecordingId: 'call-recording-1',
-      outcome: 'transcript-filled',
+      outcome: 'recording-artifacts-reconciled',
     });
   });
 
@@ -395,8 +387,6 @@ describe('processRecallWebhookArtifacts', () => {
       request: {
         event: 'transcript.failed',
         callRecordingId: 'call-recording-1',
-        transcriptId: 'recall-transcript-1',
-        transcriptFailureSubCode: 'transcription_failed',
         requestedAt: '2026-01-01T14:06:00.000Z',
       },
     });
@@ -405,12 +395,22 @@ describe('processRecallWebhookArtifacts', () => {
       status: 'skipped',
       event: 'transcript.failed',
       callRecordingId: 'call-recording-1',
-      reason: 'transcript already filled',
+      reason: 'no artifact updates',
     });
     expect(client.mutations).toEqual([]);
   });
 
-  it('writes a failed transcript marker when transcript.failed omits the transcript id', async () => {
+  it('writes a failed transcript marker from the listed transcript on transcript.failed', async () => {
+    listRecallTranscriptsMock.mockResolvedValue({
+      ok: true,
+      transcripts: [
+        {
+          id: 'recall-transcript-1',
+          statusCode: 'failed',
+          statusSubCode: 'transcription_failed',
+        },
+      ],
+    });
     const client = buildClient([
       buildProcessingCallRecording({
         transcript: {
@@ -426,7 +426,6 @@ describe('processRecallWebhookArtifacts', () => {
       request: {
         event: 'transcript.failed',
         callRecordingId: 'call-recording-1',
-        transcriptFailureSubCode: 'transcription_failed',
         requestedAt: '2026-01-01T14:06:00.000Z',
       },
     });
@@ -449,7 +448,7 @@ describe('processRecallWebhookArtifacts', () => {
       status: 'processed',
       event: 'transcript.failed',
       callRecordingId: 'call-recording-1',
-      outcome: 'transcript-failed',
+      outcome: 'recording-artifacts-reconciled',
     });
   });
 });

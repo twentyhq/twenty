@@ -2,11 +2,6 @@ import { isNonEmptyArray, isNull, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
-import { buildFailedTranscriptMarker } from 'src/logic-functions/domain/build-failed-transcript-marker.util';
-import { buildTranscriptFailureReason } from 'src/logic-functions/domain/build-transcript-failure-reason.util';
-import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
-import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
-import { downloadTranscript } from 'src/logic-functions/flows/download-transcript.util';
 import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-recording-media.util';
 import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-call-recording-progress.util';
 import { reconcileCallRecordingTranscriptArtifact } from 'src/logic-functions/flows/reconcile-call-recording-transcript-artifact.util';
@@ -44,19 +39,12 @@ type CallRecordingForArtifactProcessingNode = {
   video?: FilesFieldValue | null;
 };
 
-type ExternalRecordingIdResolution = {
-  externalRecordingId: string | undefined;
-};
-
 export type ProcessRecallWebhookArtifactsResult =
   | {
       status: 'processed';
       event: string;
       callRecordingId: string;
-      outcome:
-        | 'recording-artifacts-reconciled'
-        | 'transcript-filled'
-        | 'transcript-failed';
+      outcome: 'recording-artifacts-reconciled';
     }
   | {
       status: 'skipped';
@@ -65,6 +53,7 @@ export type ProcessRecallWebhookArtifactsResult =
       reason: string;
     };
 
+// Route callers can forge payload provider ids, so artifacts resolve only from the recording's own persisted bot.
 export const processRecallWebhookArtifacts = async ({
   client,
   request,
@@ -86,81 +75,7 @@ export const processRecallWebhookArtifacts = async ({
     };
   }
 
-  if (request.event === 'transcript.done') {
-    return processTranscriptDoneEvent({ client, callRecording, request });
-  }
-
-  if (request.event === 'transcript.failed') {
-    return processTranscriptFailedEvent({ client, callRecording, request });
-  }
-
-  return processRecordingArtifactEvent({ client, callRecording, request });
-};
-
-const findCallRecordingForArtifactProcessing = async (
-  client: CoreApiClient,
-  callRecordingId: string,
-): Promise<CallRecordingForArtifactProcessing | undefined> => {
-  const queryResult = await client.query({
-    callRecordings: {
-      __args: {
-        filter: { id: { eq: callRecordingId } },
-        first: 1,
-      },
-      edges: {
-        node: {
-          id: true,
-          status: true,
-          startedAt: true,
-          endedAt: true,
-          externalBotId: true,
-          externalRecordingId: true,
-          callRecorderFailureReason: true,
-          transcript: true,
-          audio: { fileId: true },
-          video: { fileId: true },
-        },
-      },
-    },
-  });
-
-  const node = queryResult.callRecordings?.edges?.[0]?.node as
-    | CallRecordingForArtifactProcessingNode
-    | null
-    | undefined;
-  const id = getString(node?.id);
-
-  if (isUndefined(node) || isNull(node) || isUndefined(id)) {
-    return undefined;
-  }
-
-  return {
-    id,
-    status: getString(node.status),
-    startedAt: getString(node.startedAt),
-    endedAt: getString(node.endedAt),
-    externalBotId: getString(node.externalBotId),
-    externalRecordingId: getString(node.externalRecordingId),
-    callRecorderFailureReason: getString(node.callRecorderFailureReason),
-    transcript: node.transcript ?? undefined,
-    audio: node.audio ?? undefined,
-    video: node.video ?? undefined,
-  };
-};
-
-const processRecordingArtifactEvent = async ({
-  client,
-  callRecording,
-  request,
-}: {
-  client: CoreApiClient;
-  callRecording: CallRecordingForArtifactProcessing;
-  request: RecallWebhookArtifactContinuationRequest;
-}): Promise<ProcessRecallWebhookArtifactsResult> => {
-  const { externalRecordingId } = await resolveExternalRecordingId({
-    callRecording,
-    request,
-  });
+  const externalRecordingId = await resolveExternalRecordingId(callRecording);
   const updateData: CallRecordingUpdateFields = {
     ...(isUndefined(callRecording.externalRecordingId) &&
     !isUndefined(externalRecordingId)
@@ -225,199 +140,79 @@ const processRecordingArtifactEvent = async ({
   };
 };
 
-const resolveExternalRecordingId = async ({
-  callRecording,
-  request,
-}: {
-  callRecording: CallRecordingForArtifactProcessing;
-  request: RecallWebhookArtifactContinuationRequest;
-}): Promise<ExternalRecordingIdResolution> => {
-  const externalRecordingId =
-    request.externalRecordingId ?? callRecording.externalRecordingId;
+const findCallRecordingForArtifactProcessing = async (
+  client: CoreApiClient,
+  callRecordingId: string,
+): Promise<CallRecordingForArtifactProcessing | undefined> => {
+  const queryResult = await client.query({
+    callRecordings: {
+      __args: {
+        filter: { id: { eq: callRecordingId } },
+        first: 1,
+      },
+      edges: {
+        node: {
+          id: true,
+          status: true,
+          startedAt: true,
+          endedAt: true,
+          externalBotId: true,
+          externalRecordingId: true,
+          callRecorderFailureReason: true,
+          transcript: true,
+          audio: { fileId: true },
+          video: { fileId: true },
+        },
+      },
+    },
+  });
 
-  if (!isUndefined(externalRecordingId)) {
-    return { externalRecordingId };
+  const node = queryResult.callRecordings?.edges?.[0]?.node as
+    | CallRecordingForArtifactProcessingNode
+    | null
+    | undefined;
+  const id = getString(node?.id);
+
+  if (isUndefined(node) || isNull(node) || isUndefined(id)) {
+    return undefined;
   }
 
-  const externalBotId = request.externalBotId ?? callRecording.externalBotId;
+  return {
+    id,
+    status: getString(node.status),
+    startedAt: getString(node.startedAt),
+    endedAt: getString(node.endedAt),
+    externalBotId: getString(node.externalBotId),
+    externalRecordingId: getString(node.externalRecordingId),
+    callRecorderFailureReason: getString(node.callRecorderFailureReason),
+    transcript: node.transcript ?? undefined,
+    audio: node.audio ?? undefined,
+    video: node.video ?? undefined,
+  };
+};
 
-  if (isUndefined(externalBotId)) {
-    return { externalRecordingId: undefined };
+const resolveExternalRecordingId = async (
+  callRecording: CallRecordingForArtifactProcessing,
+): Promise<string | undefined> => {
+  if (!isUndefined(callRecording.externalRecordingId)) {
+    return callRecording.externalRecordingId;
   }
 
-  const botResult = await getRecallBot({ externalBotId });
+  if (isUndefined(callRecording.externalBotId)) {
+    return undefined;
+  }
+
+  const botResult = await getRecallBot({
+    externalBotId: callRecording.externalBotId,
+  });
 
   if (!botResult.ok) {
     console.warn(
-      `[call-recorder] failed to fetch Recall bot ${externalBotId} while resolving a recording id: ${botResult.errorMessage}`,
+      `[call-recorder] failed to fetch Recall bot ${callRecording.externalBotId} while resolving a recording id: ${botResult.errorMessage}`,
     );
 
-    return { externalRecordingId: undefined };
+    return undefined;
   }
 
-  return {
-    externalRecordingId: extractRecallBotConvergence(botResult.bot)
-      .externalRecordingId,
-  };
+  return extractRecallBotConvergence(botResult.bot).externalRecordingId;
 };
-
-const processTranscriptDoneEvent = async ({
-  client,
-  callRecording,
-  request,
-}: {
-  client: CoreApiClient;
-  callRecording: CallRecordingForArtifactProcessing;
-  request: RecallWebhookArtifactContinuationRequest;
-}): Promise<ProcessRecallWebhookArtifactsResult> => {
-  if (isUndefined(request.transcriptId)) {
-    return {
-      status: 'skipped',
-      event: request.event,
-      callRecordingId: callRecording.id,
-      reason: 'missing transcript id',
-    };
-  }
-
-  const downloadResult = await downloadTranscript({
-    transcriptId: request.transcriptId,
-  });
-
-  if (downloadResult.outcome === 'filled') {
-    await persistCallRecordingProgress(client, {
-      id: callRecording.id,
-      current: callRecording,
-      updateData: {
-        transcript: downloadResult.content as Record<string, unknown>,
-        ...(isUndefined(callRecording.externalRecordingId) &&
-        !isUndefined(request.externalRecordingId)
-          ? { externalRecordingId: request.externalRecordingId }
-          : {}),
-      },
-    });
-
-    return {
-      status: 'processed',
-      event: request.event,
-      callRecordingId: callRecording.id,
-      outcome: 'transcript-filled',
-    };
-  }
-
-  if (downloadResult.outcome === 'failed') {
-    return applyTranscriptFailure({
-      client,
-      callRecording,
-      request,
-      transcriptId: request.transcriptId,
-      subCode: downloadResult.subCode,
-    });
-  }
-
-  const reason =
-    downloadResult.outcome === 'pending'
-      ? 'transcript not downloadable yet'
-      : downloadResult.errorMessage;
-
-  console.warn(
-    `[call-recorder] could not fill transcript for call recording ${callRecording.id}: ${reason}`,
-  );
-
-  return {
-    status: 'skipped',
-    event: request.event,
-    callRecordingId: callRecording.id,
-    reason,
-  };
-};
-
-const processTranscriptFailedEvent = async ({
-  client,
-  callRecording,
-  request,
-}: {
-  client: CoreApiClient;
-  callRecording: CallRecordingForArtifactProcessing;
-  request: RecallWebhookArtifactContinuationRequest;
-}): Promise<ProcessRecallWebhookArtifactsResult> =>
-  applyTranscriptFailure({
-    client,
-    callRecording,
-    request,
-    transcriptId: request.transcriptId,
-    subCode: request.transcriptFailureSubCode ?? null,
-  });
-
-const applyTranscriptFailure = async ({
-  client,
-  callRecording,
-  request,
-  transcriptId,
-  subCode,
-}: {
-  client: CoreApiClient;
-  callRecording: CallRecordingForArtifactProcessing;
-  request: RecallWebhookArtifactContinuationRequest;
-  transcriptId: string | undefined;
-  subCode: string | null;
-}): Promise<ProcessRecallWebhookArtifactsResult> => {
-  const existingMarker = parseTranscriptMarker(callRecording.transcript);
-  const resolvedTranscriptId =
-    transcriptId ?? existingMarker?.recallTranscriptId ?? null;
-
-  if (!isTranscriptUnset(callRecording) && isUndefined(existingMarker)) {
-    return {
-      status: 'skipped',
-      event: request.event,
-      callRecordingId: callRecording.id,
-      reason: 'transcript already filled',
-    };
-  }
-
-  await persistCallRecordingProgress(client, {
-    id: callRecording.id,
-    current: callRecording,
-    updateData: buildTranscriptFailureUpdate({
-      currentStatus: callRecording.status,
-      transcriptId: resolvedTranscriptId,
-      subCode,
-    }),
-  });
-
-  console.warn(
-    `[call-recorder] Recall transcript ${resolvedTranscriptId ?? 'unknown'} failed for call recording ${callRecording.id}: ${subCode ?? 'unknown'}`,
-  );
-
-  return {
-    status: 'processed',
-    event: request.event,
-    callRecordingId: callRecording.id,
-    outcome: 'transcript-failed',
-  };
-};
-
-const isTranscriptUnset = (
-  callRecording: CallRecordingForArtifactProcessing,
-): boolean => isUndefined(callRecording.transcript);
-
-const buildTranscriptFailureUpdate = ({
-  currentStatus,
-  transcriptId,
-  subCode,
-}: {
-  currentStatus: string | undefined;
-  transcriptId: string | null;
-  subCode: string | null;
-}): CallRecordingUpdateFields => ({
-  transcript: buildFailedTranscriptMarker({
-    recallTranscriptId: transcriptId,
-    subCode,
-  }),
-  callRecorderFailureReason: buildTranscriptFailureReason(subCode),
-  ...(isCallRecordingStatusDowngrade({
-    fromStatus: currentStatus,
-    toStatus: CallRecordingStatus.FAILED,
-  })
-    ? {}
-    : { status: CallRecordingStatus.FAILED }),
-});

@@ -230,6 +230,7 @@ describe('recall bot api', () => {
         },
         { id: 'bot-2', metadata: {}, raw: { id: 'bot-2' } },
       ],
+      truncated: false,
     });
     expect(fetchMock).toHaveBeenNthCalledWith(
       1,
@@ -243,7 +244,7 @@ describe('recall bot api', () => {
     );
   });
 
-  it('returns the fetched scheduled bots when the pagination cap leaves more pages', async () => {
+  it('flags the result as truncated when the pagination cap leaves more pages', async () => {
     for (let pageIndex = 1; pageIndex <= 10; pageIndex++) {
       fetchMock.mockResolvedValueOnce({
         ok: true,
@@ -267,6 +268,7 @@ describe('recall bot api', () => {
         metadata: {},
         raw: { id: `bot-${index + 1}` },
       })),
+      truncated: true,
     });
     expect(fetchMock).toHaveBeenCalledTimes(10);
   });
@@ -289,6 +291,7 @@ describe('recall bot api', () => {
     expect(result).toEqual({
       ok: true,
       bots: [{ id: 'bot-1', metadata: {}, raw: { id: 'bot-1' } }],
+      truncated: false,
     });
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });

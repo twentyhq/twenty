@@ -5,8 +5,10 @@ import { CONVERGE_DIVERGED_CALL_RECORDINGS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER }
 import { CONVERGE_DIVERGED_CALL_RECORDINGS_CRON_PATTERN } from 'src/logic-functions/constants/converge-diverged-call-recordings-cron-pattern';
 import { convergeDivergedCallRecordings } from 'src/logic-functions/flows/converge-diverged-call-recordings.util';
 import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/flows/converge-diverged-call-recordings-result.type';
-
-type StepFailure = { error: string };
+import {
+  buildStepFailure,
+  type StepFailure,
+} from 'src/logic-functions/utils/build-step-failure.util';
 
 export const convergeDivergedCallRecordingsHandler = async (): Promise<
   ConvergeDivergedCallRecordingsResult | StepFailure
@@ -19,16 +21,6 @@ export const convergeDivergedCallRecordingsHandler = async (): Promise<
   } catch (error) {
     return buildStepFailure('call recording status convergence', error);
   }
-};
-
-const buildStepFailure = (stepLabel: string, error: unknown): StepFailure => {
-  const errorMessage = error instanceof Error ? error.message : String(error);
-
-  if (process.env.NODE_ENV !== 'test') {
-    console.error(`[call-recorder] ${stepLabel} failed: ${errorMessage}`);
-  }
-
-  return { error: `${stepLabel} failed` };
 };
 
 export default defineLogicFunction({

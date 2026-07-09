@@ -104,6 +104,7 @@ describe('reapOrphanedCallRecorders', () => {
   it('keeps bots that their call recording still references', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
+      truncated: false,
       bots: [
         buildCurrentWorkspaceBot({
           id: 'claimed-bot',
@@ -127,6 +128,7 @@ describe('reapOrphanedCallRecorders', () => {
     expect(result).toEqual({
       scannedBotCount: 1,
       canceledExternalBotIds: [],
+      truncatedBotList: false,
     });
     expect(cancelRecallBotMock).not.toHaveBeenCalled();
   });
@@ -134,6 +136,7 @@ describe('reapOrphanedCallRecorders', () => {
   it('cancels bots whose call recording request was canceled locally', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
+      truncated: false,
       bots: [
         buildCurrentWorkspaceBot({
           id: 'stale-cancel-bot',
@@ -157,6 +160,7 @@ describe('reapOrphanedCallRecorders', () => {
     expect(result).toEqual({
       scannedBotCount: 1,
       canceledExternalBotIds: ['stale-cancel-bot'],
+      truncatedBotList: false,
     });
     expect(cancelRecallBotMock).toHaveBeenCalledWith({
       externalBotId: 'stale-cancel-bot',
@@ -166,6 +170,7 @@ describe('reapOrphanedCallRecorders', () => {
   it('cancels bots whose call recording references another bot', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
+      truncated: false,
       bots: [
         buildCurrentWorkspaceBot({
           id: 'superseded-bot',
@@ -193,6 +198,7 @@ describe('reapOrphanedCallRecorders', () => {
     expect(result).toEqual({
       scannedBotCount: 2,
       canceledExternalBotIds: ['superseded-bot'],
+      truncatedBotList: false,
     });
     expect(cancelRecallBotMock).toHaveBeenCalledTimes(1);
     expect(cancelRecallBotMock).toHaveBeenCalledWith({
@@ -203,6 +209,7 @@ describe('reapOrphanedCallRecorders', () => {
   it('cancels bots whose call recording no longer exists', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
+      truncated: false,
       bots: [
         buildCurrentWorkspaceBot({
           id: 'orphan-bot',
@@ -220,12 +227,14 @@ describe('reapOrphanedCallRecorders', () => {
     expect(result).toEqual({
       scannedBotCount: 1,
       canceledExternalBotIds: ['orphan-bot'],
+      truncatedBotList: false,
     });
   });
 
   it('grants a grace round to requested recordings without a bot id yet', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
+      truncated: false,
       bots: [
         buildCurrentWorkspaceBot({
           id: 'pending-bot',
@@ -249,6 +258,7 @@ describe('reapOrphanedCallRecorders', () => {
     expect(result).toEqual({
       scannedBotCount: 1,
       canceledExternalBotIds: [],
+      truncatedBotList: false,
     });
     expect(cancelRecallBotMock).not.toHaveBeenCalled();
   });
@@ -256,6 +266,7 @@ describe('reapOrphanedCallRecorders', () => {
   it('ignores bots that were not created by this app', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
+      truncated: false,
       bots: [buildBot({ id: 'unrelated-bot' })],
     });
 
@@ -268,6 +279,7 @@ describe('reapOrphanedCallRecorders', () => {
     expect(result).toEqual({
       scannedBotCount: 1,
       canceledExternalBotIds: [],
+      truncatedBotList: false,
     });
     expect(cancelRecallBotMock).not.toHaveBeenCalled();
   });
@@ -275,6 +287,7 @@ describe('reapOrphanedCallRecorders', () => {
   it('ignores untagged bots even when they carry call recording metadata', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
+      truncated: false,
       bots: [
         buildBot({
           id: 'untagged-bot',
@@ -292,6 +305,7 @@ describe('reapOrphanedCallRecorders', () => {
     expect(result).toEqual({
       scannedBotCount: 1,
       canceledExternalBotIds: [],
+      truncatedBotList: false,
     });
     expect(cancelRecallBotMock).not.toHaveBeenCalled();
   });
@@ -299,6 +313,7 @@ describe('reapOrphanedCallRecorders', () => {
   it('ignores bots claimed by another workspace', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
+      truncated: false,
       bots: [
         buildBot({
           id: 'other-workspace-bot',
@@ -317,6 +332,7 @@ describe('reapOrphanedCallRecorders', () => {
     expect(result).toEqual({
       scannedBotCount: 1,
       canceledExternalBotIds: [],
+      truncatedBotList: false,
     });
     expect(cancelRecallBotMock).not.toHaveBeenCalled();
   });
@@ -324,6 +340,7 @@ describe('reapOrphanedCallRecorders', () => {
   it('cancels orphaned bots claimed by this workspace', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
+      truncated: false,
       bots: [
         buildCurrentWorkspaceBot({
           id: 'same-workspace-bot',
@@ -341,6 +358,7 @@ describe('reapOrphanedCallRecorders', () => {
     expect(result).toEqual({
       scannedBotCount: 1,
       canceledExternalBotIds: ['same-workspace-bot'],
+      truncatedBotList: false,
     });
     expect(cancelRecallBotMock).toHaveBeenCalledWith({
       externalBotId: 'same-workspace-bot',
@@ -350,6 +368,7 @@ describe('reapOrphanedCallRecorders', () => {
   it('ejects an orphaned bot that already joined when deletion is rejected', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
+      truncated: false,
       bots: [
         buildCurrentWorkspaceBot({
           id: 'in-call-orphan',
@@ -372,9 +391,41 @@ describe('reapOrphanedCallRecorders', () => {
     expect(result).toEqual({
       scannedBotCount: 1,
       canceledExternalBotIds: ['in-call-orphan'],
+      truncatedBotList: false,
     });
     expect(ejectRecallBotMock).toHaveBeenCalledWith({
       externalBotId: 'in-call-orphan',
+    });
+  });
+
+  it('reports a truncated bot list so partial scans are visible', async () => {
+    listScheduledRecallBotsMock.mockResolvedValue({
+      ok: true,
+      truncated: true,
+      bots: [
+        buildCurrentWorkspaceBot({
+          id: 'claimed-bot',
+          twentyCallRecordingId: 'call-recording-1',
+        }),
+      ],
+    });
+
+    const result = await reapOrphanedCallRecorders({
+      client: buildClient([
+        {
+          id: 'call-recording-1',
+          recordingRequestStatus: 'REQUESTED',
+          externalBotId: 'claimed-bot',
+        },
+      ]),
+      joinAtAfter: JOIN_AT_AFTER,
+      joinAtBefore: JOIN_AT_BEFORE,
+    });
+
+    expect(result).toEqual({
+      scannedBotCount: 1,
+      canceledExternalBotIds: [],
+      truncatedBotList: true,
     });
   });
 
@@ -394,6 +445,7 @@ describe('reapOrphanedCallRecorders', () => {
     expect(result).toEqual({
       scannedBotCount: 0,
       canceledExternalBotIds: [],
+      truncatedBotList: false,
     });
     expect(cancelRecallBotMock).not.toHaveBeenCalled();
   });
@@ -402,6 +454,7 @@ describe('reapOrphanedCallRecorders', () => {
     getCurrentWorkspaceIdMock.mockReturnValue(undefined);
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
+      truncated: false,
       bots: [
         buildCurrentWorkspaceBot({
           id: 'same-workspace-bot',
@@ -419,6 +472,7 @@ describe('reapOrphanedCallRecorders', () => {
     expect(result).toEqual({
       scannedBotCount: 1,
       canceledExternalBotIds: [],
+      truncatedBotList: false,
     });
     expect(cancelRecallBotMock).not.toHaveBeenCalled();
   });

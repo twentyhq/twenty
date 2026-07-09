@@ -50,17 +50,7 @@ const parseRecallWebhookArtifactContinuationRequest = (
     return undefined;
   }
 
-  return {
-    event,
-    callRecordingId,
-    requestedAt,
-    externalBotId: getString(body.externalBotId),
-    externalRecordingId: getString(body.externalRecordingId),
-    transcriptId: getString(body.transcriptId),
-    transcriptFailureSubCode: isNull(body.transcriptFailureSubCode)
-      ? null
-      : getString(body.transcriptFailureSubCode),
-  };
+  return { event, callRecordingId, requestedAt };
 };
 
 export default defineLogicFunction({

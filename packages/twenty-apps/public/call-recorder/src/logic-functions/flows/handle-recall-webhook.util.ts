@@ -170,17 +170,6 @@ const queueRecallArtifactContinuation = async ({
     };
   }
 
-  if (
-    webhookEvent.event === 'transcript.done' &&
-    isUndefined(webhookEvent.transcriptId)
-  ) {
-    return {
-      status: 'skipped',
-      event: webhookEvent.event,
-      reason: 'missing transcript id',
-    };
-  }
-
   await requestArtifactContinuationOrThrow({
     callRecordingId: callRecording.id,
     webhookEvent,
@@ -205,10 +194,6 @@ const requestArtifactContinuationOrThrow = async ({
     event: webhookEvent.event,
     callRecordingId,
     requestedAt: new Date().toISOString(),
-    externalBotId: webhookEvent.externalBotId,
-    externalRecordingId: webhookEvent.externalRecordingId,
-    transcriptId: webhookEvent.transcriptId,
-    transcriptFailureSubCode: webhookEvent.transcriptFailureSubCode ?? null,
   });
 
   if (!continuationRequested) {

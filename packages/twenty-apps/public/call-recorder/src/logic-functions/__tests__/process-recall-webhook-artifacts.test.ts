@@ -63,8 +63,6 @@ describe('process-recall-webhook-artifacts', () => {
     const body = {
       event: 'recording.done',
       callRecordingId: 'call-recording-1',
-      externalBotId: 'recall-bot-1',
-      externalRecordingId: 'recall-recording-1',
       requestedAt: '2026-01-01T14:06:00.000Z',
     };
 
@@ -75,11 +73,7 @@ describe('process-recall-webhook-artifacts', () => {
     expect(coreApiClientMock).toHaveBeenCalledTimes(1);
     expect(processRecallWebhookArtifactsMock).toHaveBeenCalledWith({
       client: coreApiClientMock.mock.instances[0],
-      request: {
-        ...body,
-        transcriptId: undefined,
-        transcriptFailureSubCode: undefined,
-      },
+      request: body,
     });
     expect(result).toEqual({
       status: 'processed',
@@ -87,6 +81,29 @@ describe('process-recall-webhook-artifacts', () => {
       callRecordingId: 'call-recording-1',
       outcome: 'recording-artifacts-reconciled',
     });
+  });
+
+  it('ignores caller-supplied provider ids instead of forwarding them', async () => {
+    const result = await processRecallWebhookArtifactsHandler(
+      buildRoutePayload({
+        event: 'transcript.done',
+        callRecordingId: 'call-recording-1',
+        requestedAt: '2026-01-01T14:06:00.000Z',
+        externalBotId: 'forged-bot-id',
+        externalRecordingId: 'forged-recording-id',
+        transcriptId: 'forged-transcript-id',
+      } as never),
+    );
+
+    expect(processRecallWebhookArtifactsMock).toHaveBeenCalledWith({
+      client: coreApiClientMock.mock.instances[0],
+      request: {
+        event: 'transcript.done',
+        callRecordingId: 'call-recording-1',
+        requestedAt: '2026-01-01T14:06:00.000Z',
+      },
+    });
+    expect(result).toEqual(expect.objectContaining({ status: 'processed' }));
   });
 
   it('skips invalid continuation requests without touching the worker flow', async () => {

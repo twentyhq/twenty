@@ -11,8 +11,10 @@ import {
   healCallRecordingsMissingBot,
   type HealCallRecordingsMissingBotResult,
 } from 'src/logic-functions/flows/heal-call-recordings-missing-bot.util';
-
-type StepFailure = { error: string };
+import {
+  buildStepFailure,
+  type StepFailure,
+} from 'src/logic-functions/utils/build-step-failure.util';
 
 const reconcileStaleBotStateHandler = async (): Promise<object> => {
   const now = new Date();
@@ -50,16 +52,6 @@ const finishFailedRecallCancellationsSafely = async (
   } catch (error) {
     return buildStepFailure('failed cancellation finishing', error);
   }
-};
-
-const buildStepFailure = (stepLabel: string, error: unknown): StepFailure => {
-  const errorMessage = error instanceof Error ? error.message : String(error);
-
-  if (process.env.NODE_ENV !== 'test') {
-    console.error(`[call-recorder] ${stepLabel} failed: ${errorMessage}`);
-  }
-
-  return { error: `${stepLabel} failed` };
 };
 
 export default defineLogicFunction({

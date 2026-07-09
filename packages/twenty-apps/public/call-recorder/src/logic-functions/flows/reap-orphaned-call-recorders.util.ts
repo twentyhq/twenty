@@ -16,6 +16,7 @@ import {
 export type ReapOrphanedCallRecordersResult = {
   scannedBotCount: number;
   canceledExternalBotIds: string[];
+  truncatedBotList: boolean;
 };
 
 // Bots no open CallRecording request claims would still join; cancel them on Recall.
@@ -38,7 +39,11 @@ export const reapOrphanedCallRecorders = async ({
       `[call-recorder] failed to list Recall bots for orphan reaping: ${listResult.errorMessage}`,
     );
 
-    return { scannedBotCount: 0, canceledExternalBotIds: [] };
+    return {
+      scannedBotCount: 0,
+      canceledExternalBotIds: [],
+      truncatedBotList: false,
+    };
   }
 
   const currentWorkspaceId = getCurrentWorkspaceId();
@@ -51,6 +56,7 @@ export const reapOrphanedCallRecorders = async ({
     return {
       scannedBotCount: listResult.bots.length,
       canceledExternalBotIds: [],
+      truncatedBotList: listResult.truncated,
     };
   }
 
@@ -62,6 +68,7 @@ export const reapOrphanedCallRecorders = async ({
     return {
       scannedBotCount: listResult.bots.length,
       canceledExternalBotIds: [],
+      truncatedBotList: listResult.truncated,
     };
   }
 
@@ -98,6 +105,7 @@ export const reapOrphanedCallRecorders = async ({
   return {
     scannedBotCount: listResult.bots.length,
     canceledExternalBotIds,
+    truncatedBotList: listResult.truncated,
   };
 };
 

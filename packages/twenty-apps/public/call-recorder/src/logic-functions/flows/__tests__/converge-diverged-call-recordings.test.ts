@@ -274,7 +274,7 @@ describe('convergeDivergedCallRecordings', () => {
     expect(console.warn).toHaveBeenCalled();
   });
 
-  it('keeps a done Recall bot retryable when the recording artifact is not visible yet', async () => {
+  it('fails the row when the bot completed without ever recording instead of looping forever', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
@@ -297,11 +297,41 @@ describe('convergeDivergedCallRecordings', () => {
       {
         id: 'call-recording-1',
         data: {
-          status: 'PROCESSING',
+          status: 'FAILED',
+          callRecorderFailureReason: 'recording_artifacts_unavailable',
         },
       },
     ]);
     expect(result.updatedCallRecordingIds).toEqual(['call-recording-1']);
+  });
+
+  it('keeps the bot failure reason when a failed bot also has no recording', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: {
+        status_changes: [
+          { code: 'done', created_at: '2026-06-09T14:04:00.000Z' },
+          { code: 'fatal', created_at: '2026-06-09T14:05:00.000Z' },
+        ],
+        recordings: [],
+      },
+    });
+    const client = buildClient([buildStuckRecordingNode()]);
+
+    await convergeDivergedCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'FAILED',
+          callRecorderFailureReason: 'fatal',
+        },
+      },
+    ]);
   });
 
   it('completes and charges when convergence lands the last artifact', async () => {
@@ -678,6 +708,24 @@ describe('convergeDivergedCallRecordings', () => {
       externalBotId: 'recall-bot-1',
     });
     expect(result.unconvergeableCallRecordingIds).toEqual([]);
+  });
+
+  it('prunes an eventless candidate that never started once createdAt passes the bound', async () => {
+    const client = buildClient([
+      buildStuckRecordingNode({
+        calendarEvent: null,
+        createdAt: '2026-06-01T12:00:00.000Z',
+      }),
+    ]);
+
+    const result = await convergeDivergedCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(getRecallBotMock).not.toHaveBeenCalled();
+    expect(client.mutations).toEqual([]);
+    expect(result.unconvergeableCallRecordingIds).toEqual(['call-recording-1']);
   });
 
   it('rotates the capped per-id fallback window so the same tail is not always skipped', async () => {

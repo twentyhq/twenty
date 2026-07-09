@@ -7,12 +7,14 @@ import {
   reapOrphanedCallRecorders,
   type ReapOrphanedCallRecordersResult,
 } from 'src/logic-functions/flows/reap-orphaned-call-recorders.util';
+import {
+  buildStepFailure,
+  type StepFailure,
+} from 'src/logic-functions/utils/build-step-failure.util';
 
 // Failed cancellations and bot-id write-back crashes are healed DB-first within minutes; this daily list scan only catches bots no local record points at anymore.
 const REAPER_JOIN_AT_LOOKBACK_HOURS = 25;
 const REAPER_JOIN_AT_LOOKAHEAD_HOURS = 24;
-
-type StepFailure = { error: string };
 
 const reapOrphanedCallRecordersHandler = async (): Promise<
   ReapOrphanedCallRecordersResult | StepFailure
@@ -32,16 +34,6 @@ const reapOrphanedCallRecordersHandler = async (): Promise<
   } catch (error) {
     return buildStepFailure('orphaned bot reaping', error);
   }
-};
-
-const buildStepFailure = (stepLabel: string, error: unknown): StepFailure => {
-  const errorMessage = error instanceof Error ? error.message : String(error);
-
-  if (process.env.NODE_ENV !== 'test') {
-    console.error(`[call-recorder] ${stepLabel} failed: ${errorMessage}`);
-  }
-
-  return { error: `${stepLabel} failed` };
 };
 
 export default defineLogicFunction({
