@@ -202,7 +202,7 @@ Front components run browser-side in a sandboxed Web Worker, while [logic functi
 
 A logic function declared with `httpRouteTriggerSettings` is reachable over HTTP at its route path. Twenty injects the base URL your functions are served from into the worker as `TWENTY_FUNCTIONS_URL`, together with the `TWENTY_APP_ACCESS_TOKEN` that authenticates the call. There is no dedicated SDK client for invoking your own functions yet, so call them with a plain `fetch`:
 
-> **On Twenty Cloud, HTTP-triggered logic functions are served on a dedicated per-workspace domain** at `https://<your-workspace-subdomain>.twenty.com<path>` — this is exactly what `TWENTY_FUNCTIONS_URL` resolves to. For external callers, copy the exact URL from the function's **HTTP trigger** settings or the application's **Settings** tab.
+> **On Twenty Cloud, HTTP-triggered logic functions are served on a dedicated per-workspace domain** at `https://<your-workspace-subdomain>.withtwenty.com<path>` — this is exactly what `TWENTY_FUNCTIONS_URL` resolves to. For external callers, copy the exact URL from the function's **HTTP trigger** settings or the application's **Settings** tab.
 
 <Warning>
   The legacy `/s/` function route is **deprecated** and will be **deactivated on 2026-07-24**. Use `TWENTY_FUNCTIONS_URL` (above) instead, and migrate any hard-coded `/s/` URLs before that date. The `/s/` route remains available for self-hosting.
