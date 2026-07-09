@@ -1,6 +1,4 @@
-import { detectPdf } from '@file-type/pdf';
 import { Command } from 'nest-commander';
-import { FileTypeParser } from 'file-type';
 import { isNonEmptyString } from '@sniptt/guards';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -17,7 +15,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { getImageBufferFromUrl } from 'src/utils/image';
+import { fetchImageWithTypeFromUrl } from 'src/utils/image';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
@@ -173,7 +171,11 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ActiveOrSuspended
     fieldMetadataUniversalIdentifier: string | undefined;
     personRepository: WorkspaceRepository<PersonWorkspaceEntity>;
   }): Promise<'migrated' | 'skipped' | 'failed'> {
-    const imageData = await this.downloadImage(avatarUrl);
+    const imageData = await this.downloadImage({
+      imageUrl: avatarUrl,
+      personId,
+      workspaceId,
+    });
 
     if (!isDefined(imageData)) {
       return 'skipped';
@@ -261,27 +263,26 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ActiveOrSuspended
     }
   }
 
-  private async downloadImage(
-    imageUrl: string,
-  ): Promise<{ buffer: Buffer; extension: string } | undefined> {
+  private async downloadImage({
+    imageUrl,
+    personId,
+    workspaceId,
+  }: {
+    imageUrl: string;
+    personId: string;
+    workspaceId: string;
+  }): Promise<{ buffer: Buffer; extension: string } | undefined> {
+    const httpClient = this.secureHttpClientService.getHttpClient({
+      retries: 2,
+      shouldResetTimeout: true,
+    });
+
     try {
-      const httpClient = this.secureHttpClientService.getHttpClient({
-        retries: 2,
-        shouldResetTimeout: true,
-      });
-
-      const buffer = await getImageBufferFromUrl(imageUrl, httpClient);
-
-      const parser = new FileTypeParser({ customDetectors: [detectPdf] });
-      const type = await parser.fromBuffer(buffer);
-
-      if (!isDefined(type) || !type.mime.startsWith('image/')) {
-        return undefined;
-      }
-
-      return { buffer, extension: type.ext };
+      return await fetchImageWithTypeFromUrl(imageUrl, httpClient);
     } catch {
-      this.logger.warn('Failed to fetch avatar image.');
+      this.logger.warn(
+        `Failed to fetch avatar image for person ${personId} in workspace ${workspaceId}, skipping`,
+      );
 
       return undefined;
     }
