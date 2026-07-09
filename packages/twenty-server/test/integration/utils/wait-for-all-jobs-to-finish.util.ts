@@ -44,11 +44,14 @@ const getQueues = (): Queue[] => {
 const DELAYED_SCORE_PER_MS = 0x1000;
 
 const getDueSoonDelayedJobCount = async (queue: Queue): Promise<number> => {
-  const client = await queue.client;
+  if (!redisConnection) {
+    return 0;
+  }
+
   const dueSoonThreshold = Date.now() + DELAYED_JOB_DUE_SOON_HORIZON_MS;
   const maxScore = (dueSoonThreshold + 1) * DELAYED_SCORE_PER_MS - 1;
 
-  return client.zcount(queue.toKey('delayed'), 0, maxScore);
+  return redisConnection.zcount(queue.toKey('delayed'), 0, maxScore);
 };
 
 const getPendingJobCountsByQueue = async (): Promise<
