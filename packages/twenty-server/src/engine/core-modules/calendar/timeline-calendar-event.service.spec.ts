@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 
 import { CalendarChannelVisibility } from 'twenty-shared/types';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { RelatedPersonIdsService } from 'src/engine/core-modules/related-person-ids/services/related-person-ids.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
@@ -100,6 +101,12 @@ describe('TimelineCalendarEventService', () => {
         {
           provide: RelatedPersonIdsService,
           useValue: { getRelatedPersonIds: jest.fn().mockResolvedValue([]) },
+        },
+        {
+          provide: FileUrlService,
+          useValue: {
+            signFirstFilesFieldFileUrl: jest.fn().mockResolvedValue(null),
+          },
         },
       ],
     }).compile();

@@ -32,6 +32,26 @@ export class FileUrlService {
     });
   }
 
+  async signFirstFilesFieldFileUrl({
+    filesFieldValue,
+    workspaceId,
+  }: {
+    filesFieldValue: { fileId: string }[] | null | undefined;
+    workspaceId: string;
+  }): Promise<string | null> {
+    const firstFileId = filesFieldValue?.[0]?.fileId;
+
+    if (!isDefined(firstFileId)) {
+      return null;
+    }
+
+    return this.signFileByIdUrl({
+      fileId: firstFileId,
+      workspaceId,
+      fileFolder: FileFolder.FilesField,
+    });
+  }
+
   async signFileByIdUrl({
     fileId,
     workspaceId,
