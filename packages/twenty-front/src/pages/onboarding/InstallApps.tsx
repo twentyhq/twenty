@@ -5,7 +5,7 @@ import { InstallAppsAutoSkipEffect } from '@/onboarding/effect-components/Instal
 import { useInstallOnboardingApps } from '@/onboarding/hooks/useInstallOnboardingApps';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCallback, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { InstallAppsContent } from '~/pages/onboarding/InstallAppsContent';
 
 export const InstallApps = () => {
@@ -41,7 +41,7 @@ export const InstallApps = () => {
   const hasLoadedAvailabilitySuccessfully = !isDefined(error);
   const shouldAutoSkip =
     hasLoadedAvailabilitySuccessfully &&
-    availableApps.length === 0 &&
+    !isNonEmptyArray(availableApps) &&
     !hasAutoSkipFailed;
 
   if (shouldAutoSkip) {

@@ -10,7 +10,7 @@ import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/Onboardin
 import { type OnboardingInstallableApp } from '@/onboarding/types/OnboardingInstallableApp';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';
 import { IconButton, MainButton } from 'twenty-ui/input';
@@ -118,7 +118,7 @@ export const InstallAppsContent = ({
   const { t } = useLingui();
   const theme = useTheme();
 
-  const hasApps = apps.length > 0;
+  const hasApps = isNonEmptyArray(apps);
 
   return (
     <StyledOnboardingStepPage>
