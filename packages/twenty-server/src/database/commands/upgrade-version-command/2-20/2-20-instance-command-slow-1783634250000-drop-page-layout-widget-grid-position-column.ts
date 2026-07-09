@@ -8,7 +8,7 @@ import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 // every fast command before any slow command in a version, and the not-null
 // command's data migration must still read "gridPosition" before this drop
 // removes it.
-@RegisteredInstanceCommand('2.20.0', 1783589900000, { type: 'slow' })
+@RegisteredInstanceCommand('2.20.0', 1783634250000, { type: 'slow' })
 export class DropPageLayoutWidgetGridPositionColumnSlowInstanceCommand
   implements SlowInstanceCommand
 {
