@@ -1,4 +1,4 @@
-import fs from 'fs';
+import { readFileSync } from 'node:fs';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
@@ -30,7 +30,7 @@ const innerAppDeploy = async (
 
   onProgress?.(`Uploading ${tarballPath}...`);
 
-  const tarballBuffer = fs.readFileSync(tarballPath);
+  const tarballBuffer = readFileSync(tarballPath);
 
   const apiService = new ApiService({
     serverUrl: options.serverUrl,
