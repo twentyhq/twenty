@@ -320,7 +320,9 @@ export class ApplicationService {
       .addSelect('MAX(application.name)', 'name')
       .addSelect('MAX(application.sourceType)', 'sourceType')
       .addSelect('COUNT(*)', 'count')
+      .innerJoin('application.workspace', 'workspace')
       .where('application.deletedAt IS NULL')
+      .andWhere('workspace.deletedAt IS NULL')
       .andWhere('application.sourceType != :localSourceType', {
         localSourceType: ApplicationRegistrationSourceType.LOCAL,
       })

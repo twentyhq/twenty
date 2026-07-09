@@ -153,6 +153,28 @@ export class ApplicationRegistrationService {
     });
   }
 
+  // Atomically moves latestAvailableVersion to `newVersion` and reports whether
+  // this call is the one that changed it. Because catalog sync and the
+  // version-check cron can both observe the same stale version concurrently, a
+  // read-then-write guard would let both emit; the conditional UPDATE makes the
+  // publish metric fire exactly once per real version bump.
+  async setLatestAvailableVersionIfChanged(
+    applicationRegistrationId: string,
+    newVersion: string | null,
+  ): Promise<boolean> {
+    const result = await this.applicationRegistrationRepository
+      .createQueryBuilder()
+      .update(ApplicationRegistrationEntity)
+      .set({ latestAvailableVersion: newVersion })
+      .where('id = :id', { id: applicationRegistrationId })
+      .andWhere('"latestAvailableVersion" IS DISTINCT FROM :newVersion', {
+        newVersion,
+      })
+      .execute();
+
+    return (result.affected ?? 0) > 0;
+  }
+
   async findMany(
     ownerWorkspaceId: string,
   ): Promise<ApplicationRegistrationEntity[]> {
@@ -555,8 +577,13 @@ export class ApplicationRegistrationService {
         ]),
       );
 
-      const isNewVersion =
-        existing.latestAvailableVersion !== params.latestAvailableVersion;
+      // Claim the version bump atomically first so only one of the concurrent
+      // sync paths emits the publish metric; the save below then refreshes the
+      // remaining catalog fields.
+      const isNewVersion = await this.setLatestAvailableVersionIfChanged(
+        existing.id,
+        params.latestAvailableVersion ?? null,
+      );
 
       await this.applicationRegistrationRepository.save({
         ...existing,

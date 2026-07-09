@@ -69,15 +69,21 @@ export class ApplicationUpgradeService {
         return null;
       }
 
-      const isNewVersion =
-        appRegistration.latestAvailableVersion !== parsed.data.version;
+      // Atomic conditional update so this fires exactly once per real version
+      // bump even when the catalog-sync path converges latestAvailableVersion
+      // concurrently: only the write that actually changes the row emits.
+      const updateResult = await this.appRegistrationRepository
+        .createQueryBuilder()
+        .update(ApplicationRegistrationEntity)
+        .set({ latestAvailableVersion: parsed.data.version })
+        .where('id = :id', { id: appRegistration.id })
+        .andWhere('"latestAvailableVersion" IS DISTINCT FROM :newVersion', {
+          newVersion: parsed.data.version,
+        })
+        .execute();
 
-      await this.appRegistrationRepository.update(appRegistration.id, {
-        latestAvailableVersion: parsed.data.version,
-      });
+      const isNewVersion = (updateResult.affected ?? 0) > 0;
 
-      // Change-guarded so this fires exactly once per real version bump even
-      // though the catalog-sync path also converges latestAvailableVersion.
       if (isNewVersion) {
         this.metricsService.incrementCounterBy({
           key: MetricsKeys.AppRegistrationVersionPublished,

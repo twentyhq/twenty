@@ -117,6 +117,8 @@ export class ApplicationTarballService {
       });
 
       const isNewRegistration = !isDefined(appRegistration);
+      const previousLatestAvailableVersion =
+        appRegistration?.latestAvailableVersion ?? null;
 
       if (isDefined(appRegistration)) {
         if (
@@ -227,13 +229,22 @@ export class ApplicationTarballService {
 
       // A tarball deploy is an explicit publish: first upload creates the
       // registration, a re-deploy is a monotonic version bump (enforced above).
-      this.applicationRegistrationService.emitRegistrationPublishMetric({
-        isNewRegistration,
-        universalIdentifier,
-        name: manifest.application?.displayName ?? 'Unknown App',
-        sourceType: ApplicationRegistrationSourceType.TARBALL,
-        version: packageJson?.version ?? null,
-      });
+      // Skip re-uploads that don't move the version (e.g. no readable
+      // package.json version) so we don't over-count version publishes.
+      const incomingVersion = packageJson?.version ?? null;
+
+      if (
+        isNewRegistration ||
+        previousLatestAvailableVersion !== incomingVersion
+      ) {
+        this.applicationRegistrationService.emitRegistrationPublishMetric({
+          isNewRegistration,
+          universalIdentifier,
+          name: manifest.application?.displayName ?? 'Unknown App',
+          sourceType: ApplicationRegistrationSourceType.TARBALL,
+          version: incomingVersion,
+        });
+      }
 
       return this.appRegistrationRepository.findOneOrFail({
         where: { id: appRegistration.id },
