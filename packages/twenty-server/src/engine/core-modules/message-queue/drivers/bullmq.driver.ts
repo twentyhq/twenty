@@ -48,9 +48,6 @@ export class BullMQDriver
     MessageQueue,
     Worker
   >;
-  private workerOptionsMap: Partial<
-    Record<MessageQueue, MessageQueueWorkerOptions>
-  > = {};
 
   constructor(
     private options: BullMQDriverOptions,
@@ -138,14 +135,8 @@ export class BullMQDriver
     queueName: MessageQueue,
     worker: Worker,
   ): Promise<void> {
-    if (!this.workerOptionsMap[queueName]?.boundedShutdownDrain) {
-      await worker.close();
-
-      return;
-    }
-
     const shutdownTimeoutMs = this.twentyConfigService.get(
-      'AI_STREAM_SHUTDOWN_DRAIN_MS',
+      'WORKER_SHUTDOWN_DRAIN_MS',
     );
 
     const abortTimer = setTimeout(() => {
@@ -183,8 +174,6 @@ export class BullMQDriver
         collectInterval: 60000,
       },
     };
-
-    this.workerOptionsMap[queueName] = options;
 
     this.workerMap[queueName] = new Worker(
       queueName,
