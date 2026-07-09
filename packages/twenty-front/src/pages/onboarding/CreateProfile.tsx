@@ -9,6 +9,7 @@ import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnbo
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { usePrefetchInviteSuggestions } from '@/onboarding/hooks/usePrefetchInviteSuggestions';
+import { usePreloadStripeForPlanRequiredStep } from '@/onboarding/hooks/usePreloadStripeForPlanRequiredStep';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
 import { PageFocusId } from '@/types/PageFocusId';
@@ -83,6 +84,7 @@ export const CreateProfile = () => {
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
 
   usePrefetchInviteSuggestions();
+  usePreloadStripeForPlanRequiredStep();
 
   const { enqueueErrorSnackBar } = useSnackBar();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);

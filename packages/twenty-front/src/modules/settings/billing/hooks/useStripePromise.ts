@@ -6,7 +6,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 const stripePromiseByKey = new Map<string, Promise<Stripe | null>>();
 
-const getStripePromise = (publishableKey: string): Promise<Stripe | null> => {
+export const getStripePromise = (
+  publishableKey: string,
+): Promise<Stripe | null> => {
   const existingPromise = stripePromiseByKey.get(publishableKey);
 
   if (isDefined(existingPromise)) {
@@ -16,6 +18,12 @@ const getStripePromise = (publishableKey: string): Promise<Stripe | null> => {
   const stripePromise = loadStripe(publishableKey);
 
   stripePromiseByKey.set(publishableKey, stripePromise);
+
+  // A failed script load (e.g. while preloading on a flaky network) must not
+  // be cached, so the payment step can retry
+  stripePromise.catch(() => {
+    stripePromiseByKey.delete(publishableKey);
+  });
 
   return stripePromise;
 };
