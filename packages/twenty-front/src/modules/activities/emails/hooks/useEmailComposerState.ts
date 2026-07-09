@@ -3,6 +3,10 @@ import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { type EmailAttachment } from 'twenty-shared/types';
 
 import { useSendEmail } from '@/activities/emails/hooks/useSendEmail';
+import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
+import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
+import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
+import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/serializeEmailRecipients';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 
 type UseEmailComposerStateArgs = {
@@ -14,11 +18,10 @@ type UseEmailComposerStateArgs = {
   onSent?: (messageThreadId: string | null) => void;
 };
 
-const countRecipients = (csv: string): number =>
-  csv
-    .split(',')
-    .map((entry) => entry.trim())
-    .filter((entry) => entry.length > 0).length;
+const hasInvalidRecipient = (recipients: EmailRecipient[]): boolean =>
+  recipients.some(
+    (recipient) => !isValidEmailRecipientAddress(recipient.address),
+  );
 
 export const useEmailComposerState = ({
   connectedAccountId: initialConnectedAccountId,
@@ -37,9 +40,15 @@ export const useEmailComposerState = ({
   const [connectedAccountId, setConnectedAccountId] = useState(
     initialConnectedAccountId,
   );
-  const [to, setTo] = useState(initialTo);
-  const [cc, setCc] = useState(initialCc);
-  const [bcc, setBcc] = useState(initialBcc);
+  const [to, setTo] = useState<EmailRecipient[]>(() =>
+    parseEmailRecipients(initialTo),
+  );
+  const [cc, setCc] = useState<EmailRecipient[]>(() =>
+    parseEmailRecipients(initialCc),
+  );
+  const [bcc, setBcc] = useState<EmailRecipient[]>(() =>
+    parseEmailRecipients(initialBcc),
+  );
   const [subject, setSubject] = useState(initialSubject);
   const [body, setBody] = useState(initialBody);
   const [showCcBcc, setShowCcBcc] = useState(
@@ -49,33 +58,38 @@ export const useEmailComposerState = ({
 
   const { sendEmail, loading } = useSendEmail();
 
-  const recipientCount = useMemo(
-    () => countRecipients(to) + countRecipients(cc) + countRecipients(bcc),
-    [to, cc, bcc],
-  );
+  const recipientCount = to.length + cc.length + bcc.length;
 
   const exceedsRecipientLimit = recipientCount > MAX_EMAIL_RECIPIENTS;
 
+  const hasInvalidRecipients = useMemo(
+    () =>
+      hasInvalidRecipient(to) ||
+      hasInvalidRecipient(cc) ||
+      hasInvalidRecipient(bcc),
+    [to, cc, bcc],
+  );
+
   const canSend =
-    to.trim().length > 0 &&
+    to.length > 0 &&
     connectedAccountId.length > 0 &&
     !loading &&
-    !exceedsRecipientLimit;
+    !exceedsRecipientLimit &&
+    !hasInvalidRecipients;
 
   const handleSend = useCallback(async () => {
-    if (!to.trim() || !connectedAccountId || exceedsRecipientLimit) {
+    if (!canSend) {
       return;
     }
 
-    const trimmedTo = to.trim();
-    const trimmedCc = cc.trim();
-    const trimmedBcc = bcc.trim();
+    const serializedCc = serializeEmailRecipients(cc);
+    const serializedBcc = serializeEmailRecipients(bcc);
 
     const { success, messageThreadId } = await sendEmail({
       connectedAccountId,
-      to: trimmedTo,
-      cc: trimmedCc || undefined,
-      bcc: trimmedBcc || undefined,
+      to: serializeEmailRecipients(to),
+      cc: serializedCc || undefined,
+      bcc: serializedBcc || undefined,
       subject,
       body,
       inReplyTo: defaultInReplyTo,
@@ -87,6 +101,7 @@ export const useEmailComposerState = ({
       onSent?.(messageThreadId);
     }
   }, [
+    canSend,
     connectedAccountId,
     to,
     cc,
@@ -98,7 +113,6 @@ export const useEmailComposerState = ({
     files,
     sendEmail,
     onSent,
-    exceedsRecipientLimit,
   ]);
 
   return {
@@ -121,9 +135,6 @@ export const useEmailComposerState = ({
     handleSend,
     loading,
     canSend,
-    initialTo,
-    initialCc,
-    initialBcc,
     initialSubject,
     initialBody,
     recipientCount,

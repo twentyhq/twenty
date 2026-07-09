@@ -1807,6 +1807,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
   },
   searchFieldMetadata: {
+    isSystemSideEffect: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     objectMetadataId: {
       toCompare: false,
       toStringify: false,
