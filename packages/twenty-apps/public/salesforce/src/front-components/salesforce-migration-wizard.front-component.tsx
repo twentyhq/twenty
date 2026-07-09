@@ -460,7 +460,7 @@ export const SalesforceMigrationWizard = () => {
             <div style={styles.subtle}>
               {busy
                 ? 'Testing the Salesforce connection…'
-                : 'Not connected yet. A server admin must configure the Salesforce credentials in the app settings.'}
+                : 'Not connected yet. Connect Salesforce from the application settings (Connections tab), then retest.'}
             </div>
           )}
           <div style={styles.buttonRow}>

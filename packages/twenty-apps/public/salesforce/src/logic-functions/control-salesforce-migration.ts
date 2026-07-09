@@ -3,12 +3,13 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { type RoutePayload } from 'twenty-sdk/logic-function';
 
 import { MIGRATION_STATUS } from 'src/constants/migration-status';
-import { CONTROL_MIGRATION_ROUTE_PATH } from 'src/constants/route-paths';
+import {
+  CONTROL_MIGRATION_ROUTE_PATH,
+  RUN_MIGRATION_TICK_ROUTE_PATH,
+} from 'src/constants/route-paths';
 import { CONTROL_MIGRATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { runMigrationTick } from 'src/logic-functions/migration/run-migration-tick';
 import { getErrorMessage } from 'src/logic-functions/salesforce/salesforce-errors';
-
-const INLINE_TICK_BUDGET_MS = 10_000;
+import { postToOwnRoute } from 'src/logic-functions/utils/post-to-own-route';
 
 type ControlAction = 'start' | 'pause' | 'resume' | 'cancel';
 
@@ -104,12 +105,9 @@ const handler = async (
     });
 
     if (targetStatus === MIGRATION_STATUS.RUNNING) {
-      // Process a first slice inline so the user sees progress immediately;
-      // the cron worker takes over from there.
-      await runMigrationTick({
-        timeBudgetMs: INLINE_TICK_BUDGET_MS,
-        ignoreFreshHeartbeat: true,
-      });
+      // Kick the self-chaining worker; it processes slices back to back
+      // until the migration completes, pauses, or fails.
+      await postToOwnRoute({ path: RUN_MIGRATION_TICK_ROUTE_PATH, body: {} });
     }
 
     return { success: true, status: targetStatus };
@@ -122,7 +120,7 @@ export default defineLogicFunction({
   universalIdentifier: CONTROL_MIGRATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'control-salesforce-migration',
   description:
-    'Starts, pauses, resumes, or cancels a Salesforce migration. Starting and resuming also processes a first batch inline for immediate feedback.',
+    'Starts, pauses, resumes, or cancels a Salesforce migration. Starting and resuming kick the self-chaining migration worker.',
   timeoutSeconds: 60,
   handler,
   httpRouteTriggerSettings: {

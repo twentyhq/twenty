@@ -135,17 +135,6 @@ const updateMigrationItem = async (
   });
 };
 
-const clearHeartbeat = async (
-  client: CoreApiClient,
-  migrationId: string,
-): Promise<void> => {
-  try {
-    await updateMigration(client, migrationId, { heartbeatAt: null });
-  } catch {
-    // A leftover heartbeat only delays the next tick; never fail on cleanup.
-  }
-};
-
 const isHeartbeatFresh = (heartbeatAt: string | null): boolean => {
   if (heartbeatAt === null) {
     return false;
@@ -179,10 +168,14 @@ const finalizeMigration = async (
 };
 
 export type MigrationTickSummary = {
+  // 'progressed' means work remains and the caller should chain another tick;
+  // 'stalled' means a transient error occurred and the watchdog should retry
+  // later instead of hot-looping.
   outcome:
     | 'no-running-migration'
     | 'heartbeat-fresh'
     | 'progressed'
+    | 'stalled'
     | 'completed'
     | 'failed';
   migrationId?: string;
@@ -351,22 +344,15 @@ export const runMigrationTick = async ({
       });
 
       if (!itemHasFailed) {
-        // Transient failure: stop this tick and let the next cron run retry.
-        await clearHeartbeat(client, migration.id);
-
+        // Transient failure: stop this tick and let the watchdog retry later.
         return {
-          outcome: 'progressed',
+          outcome: 'stalled',
           migrationId: migration.id,
           processedInTick,
         };
       }
     }
   }
-
-  // Clearing the heartbeat on a clean exit lets the next cron tick start
-  // immediately; only a crashed tick leaves a heartbeat behind, and it goes
-  // stale after HEARTBEAT_STALE_MS.
-  await clearHeartbeat(client, migration.id);
 
   return { outcome: 'progressed', migrationId: migration.id, processedInTick };
 };

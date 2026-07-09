@@ -1,18 +1,20 @@
+import { listConnections } from 'twenty-sdk/logic-function';
+
+import { SALESFORCE_CONNECTION_PROVIDER_NAME } from 'src/connection-providers/salesforce-connection';
 import {
   SalesforceApiError,
   SalesforceAuthError,
   SalesforceConfigError,
 } from 'src/logic-functions/salesforce/salesforce-errors';
 
+const SALESFORCE_LOGIN_URL = 'https://login.salesforce.com';
 const DEFAULT_API_VERSION = '62.0';
 const MAX_API_RETRIES = 2;
 const RETRY_BASE_DELAY_MS = 1_000;
 
-export type SalesforceConfig = {
+export type SalesforceSession = {
+  accessToken: string;
   instanceUrl: string;
-  clientId: string;
-  clientSecret: string;
-  apiVersion: string;
 };
 
 export type SalesforceQueryResult<TRecord> = {
@@ -30,31 +32,9 @@ export type SalesforceOrgInfo = {
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === 'string' && value.trim().length > 0;
 
-export const getSalesforceConfig = (): SalesforceConfig => {
-  const instanceUrl = process.env.SALESFORCE_INSTANCE_URL?.trim();
-  const clientId = process.env.SALESFORCE_CLIENT_ID?.trim();
-  const clientSecret = process.env.SALESFORCE_CLIENT_SECRET?.trim();
-  const apiVersion =
-    process.env.SALESFORCE_API_VERSION?.trim().replace(/^v/i, '') ||
-    DEFAULT_API_VERSION;
-
-  if (
-    !isNonEmptyString(instanceUrl) ||
-    !isNonEmptyString(clientId) ||
-    !isNonEmptyString(clientSecret)
-  ) {
-    throw new SalesforceConfigError(
-      'Salesforce connection is not configured. A server admin must set SALESFORCE_INSTANCE_URL, SALESFORCE_CLIENT_ID and SALESFORCE_CLIENT_SECRET in the app settings.',
-    );
-  }
-
-  return {
-    instanceUrl: instanceUrl.replace(/\/+$/, ''),
-    clientId,
-    clientSecret,
-    apiVersion,
-  };
-};
+export const getSalesforceApiVersion = (): string =>
+  process.env.SALESFORCE_API_VERSION?.trim().replace(/^v/i, '') ||
+  DEFAULT_API_VERSION;
 
 const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -97,70 +77,102 @@ const parseSalesforceErrorBody = (
   return { message: body };
 };
 
+// Reads the freshest OAuth token from the app's Salesforce connection. The
+// server refreshes the access token on read, so every call gets a live token.
+const fetchConnectionAccessToken = async (): Promise<string> => {
+  const connections = await listConnections({
+    providerName: SALESFORCE_CONNECTION_PROVIDER_NAME,
+  });
+
+  if (connections.length === 0) {
+    throw new SalesforceConfigError(
+      'No Salesforce connection found. Connect Salesforce from the application settings (Connections tab) before running a migration.',
+    );
+  }
+
+  const usableConnections = connections.filter(
+    (connection) => !connection.authFailedAt,
+  );
+
+  if (usableConnections.length === 0) {
+    throw new SalesforceAuthError(
+      'The Salesforce connection failed authentication. Reconnect Salesforce from the application settings (Connections tab).',
+    );
+  }
+
+  const connection =
+    usableConnections.find(
+      (usableConnection) => usableConnection.visibility === 'workspace',
+    ) ?? usableConnections[0];
+
+  return connection.accessToken;
+};
+
 export class SalesforceClient {
-  private readonly config: SalesforceConfig;
-  private accessToken: string | null = null;
+  readonly apiVersion: string;
+  private session: SalesforceSession | null;
 
-  constructor(config?: SalesforceConfig) {
-    this.config = config ?? getSalesforceConfig();
+  constructor(session?: SalesforceSession) {
+    this.apiVersion = getSalesforceApiVersion();
+    this.session = session ?? null;
   }
 
-  get apiVersion(): string {
-    return this.config.apiVersion;
-  }
-
-  private async authenticate(): Promise<string> {
-    const tokenUrl = `${this.config.instanceUrl}/services/oauth2/token`;
-    const body = new URLSearchParams({
-      grant_type: 'client_credentials',
-      client_id: this.config.clientId,
-      client_secret: this.config.clientSecret,
-    });
-
+  // Salesforce API calls must target the org's own instance URL, which the
+  // connection framework does not persist; the OpenID userinfo endpoint
+  // resolves it from the access token.
+  private async resolveInstanceUrl(accessToken: string): Promise<string> {
     let response: Response;
 
     try {
-      response = await fetch(tokenUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: body.toString(),
+      response = await fetch(`${SALESFORCE_LOGIN_URL}/services/oauth2/userinfo`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
     } catch (error) {
-      throw new SalesforceAuthError(
-        `Could not reach Salesforce at ${this.config.instanceUrl}: ${
+      throw new SalesforceApiError(
+        `Could not reach Salesforce to resolve the org instance: ${
           error instanceof Error ? error.message : String(error)
         }`,
+        0,
       );
     }
-
-    const responseText = await response.text();
 
     if (!response.ok) {
-      const { message } = parseSalesforceErrorBody(responseText);
+      const { message } = parseSalesforceErrorBody(await response.text());
 
       throw new SalesforceAuthError(
-        `Salesforce authentication failed (${response.status}): ${message}. Check the Connected App credentials and make sure the Client Credentials flow is enabled with a run-as user.`,
+        `Could not resolve the Salesforce instance (${response.status}): ${message}. Make sure the Connected App grants the openid scope and reconnect Salesforce.`,
       );
     }
 
-    const tokenResponse = JSON.parse(responseText) as {
-      access_token?: string;
+    const userInfo = (await response.json()) as {
+      urls?: Record<string, string>;
     };
+    const restUrl = userInfo.urls?.rest ?? userInfo.urls?.profile;
 
-    if (!isNonEmptyString(tokenResponse.access_token)) {
+    if (!isNonEmptyString(restUrl)) {
       throw new SalesforceAuthError(
-        'Salesforce returned no access token for the Client Credentials flow.',
+        'Salesforce userinfo did not include the org instance URLs.',
       );
     }
 
-    this.accessToken = tokenResponse.access_token;
+    return new URL(restUrl.replace('{version}', this.apiVersion)).origin;
+  }
 
-    return this.accessToken;
+  private async openSession(): Promise<SalesforceSession> {
+    if (this.session !== null) {
+      return this.session;
+    }
+
+    const accessToken = await fetchConnectionAccessToken();
+    const instanceUrl = await this.resolveInstanceUrl(accessToken);
+
+    this.session = { accessToken, instanceUrl };
+
+    return this.session;
   }
 
   private async request<TResponse>(path: string): Promise<TResponse> {
-    const token = this.accessToken ?? (await this.authenticate());
-    const url = `${this.config.instanceUrl}${path}`;
+    let session = await this.openSession();
 
     let lastError: Error = new SalesforceApiError(
       'Salesforce request was not attempted.',
@@ -175,9 +187,9 @@ export class SalesforceClient {
       let response: Response;
 
       try {
-        response = await fetch(url, {
+        response = await fetch(`${session.instanceUrl}${path}`, {
           headers: {
-            Authorization: `Bearer ${this.accessToken ?? token}`,
+            Authorization: `Bearer ${session.accessToken}`,
             'Content-Type': 'application/json',
           },
         });
@@ -198,10 +210,11 @@ export class SalesforceClient {
       const responseText = await response.text();
       const { message, errorCode } = parseSalesforceErrorBody(responseText);
 
-      // Expired or invalid session: refresh the token once and retry.
+      // Expired session: re-read the connection (the server refreshes the
+      // token on read) and retry.
       if (response.status === 401) {
-        this.accessToken = null;
-        await this.authenticate();
+        this.session = null;
+        session = await this.openSession();
         lastError = new SalesforceAuthError(
           `Salesforce session error: ${message}`,
         );
@@ -220,7 +233,7 @@ export class SalesforceClient {
   }
 
   async query<TRecord>(soql: string): Promise<SalesforceQueryResult<TRecord>> {
-    const path = `/services/data/v${this.config.apiVersion}/query?q=${encodeURIComponent(soql)}`;
+    const path = `/services/data/v${this.apiVersion}/query?q=${encodeURIComponent(soql)}`;
 
     return await this.request<SalesforceQueryResult<TRecord>>(path);
   }

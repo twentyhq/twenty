@@ -4,6 +4,7 @@
 
 ## ✨ What you get
 
+- **One-click connection** — connect Salesforce with OAuth from the app settings; no API keys to paste, tokens refresh automatically
 - **Automatic analysis** — the app inspects your Salesforce org and builds a migration plan: which objects, how many records, which fields map where, and which relations are preserved
 - **Full transparency before anything is written** — review the plan (record counts, field mappings, relation notes, warnings), then start the migration with one click
 - **Live progress** — per-object progress bars, created / updated / failed counters updating in real time, plus a `Salesforce Migrations` view in your workspace
@@ -25,19 +26,20 @@ Opportunity stages are mapped heuristically to Twenty's pipeline; the original S
 
 ## 🚀 How it works
 
-1. Open the command menu and run **Migrate from Salesforce**
-2. The wizard tests the connection and lets you pick the objects to migrate
-3. **Analyze** builds the plan from your live org: review counts, mappings, and warnings
-4. **Start migration** — a background worker processes records in batches and streams progress to the wizard and to the `Salesforce Migrations` views
+1. Connect Salesforce from the app settings (Connections tab)
+2. Open the command menu and run **Migrate from Salesforce**
+3. The wizard tests the connection and lets you pick the objects to migrate
+4. **Analyze** builds the plan from your live org: review counts, mappings, and warnings
+5. **Start migration** — a background worker processes records slice by slice, chaining slices back to back and streaming progress to the wizard and the `Salesforce Migrations` views; a watchdog revives the worker if it is ever interrupted
 
-## ⚙️ Setup (server admin)
+## ⚙️ Setup (server admin, once per server)
 
-The app connects to Salesforce with the OAuth 2.0 Client Credentials flow:
+The OAuth connection needs a Salesforce Connected App:
 
-1. In Salesforce Setup, create a **Connected App** with *Enable OAuth Settings* and *Enable Client Credentials Flow*, scope `api`, and assign a run-as integration user with read access to the objects you want to migrate
-2. In Twenty, open the app's settings and fill in `SALESFORCE_INSTANCE_URL` (your My Domain URL), `SALESFORCE_CLIENT_ID`, and `SALESFORCE_CLIENT_SECRET`
+1. In Salesforce Setup, create a **Connected App** with OAuth enabled, callback URL `https://<your-twenty-server>/auth/apps/callback`, and scopes `api`, `refresh_token`, `openid`
+2. In Twenty, fill in `SALESFORCE_CLIENT_ID` and `SALESFORCE_CLIENT_SECRET` on the application registration
 
-See [SETUP.md](./SETUP.md) for the detailed walkthrough.
+See [SETUP.md](./SETUP.md) for the detailed walkthrough. After that, each workspace connects with one click.
 
 ## 💳 Billing
 
@@ -49,3 +51,4 @@ See [SETUP.md](./SETUP.md) for the detailed walkthrough.
 - ContentNotes (enhanced notes), attachments, cases, campaigns, and custom objects are not migrated in this version
 - Twenty's default pipeline has no "Closed Lost" stage: closed-lost opportunities land in `New` with their original stage kept in `Salesforce Stage`
 - Phone numbers are imported as raw text without country-code parsing
+- Production and Developer Edition orgs are supported; sandbox orgs (test.salesforce.com) are not yet
