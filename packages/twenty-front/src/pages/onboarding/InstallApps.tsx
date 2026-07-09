@@ -1,12 +1,15 @@
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useMarketplaceApps } from '@/marketplace/hooks/useMarketplaceApps';
 import { ONBOARDING_INSTALLABLE_APPS } from '@/onboarding/constants/OnboardingInstallableApps';
+import { InstallAppsAutoSkipEffect } from '@/onboarding/effect-components/InstallAppsAutoSkipEffect';
 import { useInstallOnboardingApps } from '@/onboarding/hooks/useInstallOnboardingApps';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useCallback, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { InstallAppsContent } from '~/pages/onboarding/InstallAppsContent';
 
 export const InstallApps = () => {
-  const { data: marketplaceApps } = useMarketplaceApps();
+  const { data: marketplaceApps, isLoading } = useMarketplaceApps();
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const {
     selectedUniversalIdentifiers,
@@ -15,18 +18,33 @@ export const InstallApps = () => {
     installSelectedAppsAndContinue,
     skip,
   } = useInstallOnboardingApps();
+  const [hasAutoSkipFailed, setHasAutoSkipFailed] = useState(false);
 
-  const apps = ONBOARDING_INSTALLABLE_APPS.map((app) => ({
-    ...app,
-    logo:
-      marketplaceApps.find(
-        (marketplaceApp) => marketplaceApp.id === app.universalIdentifier,
-      )?.logo ?? null,
-  }));
+  const availableApps = ONBOARDING_INSTALLABLE_APPS.map((app) => {
+    const marketplaceApp = marketplaceApps.find(
+      (marketplaceApp) => marketplaceApp.id === app.universalIdentifier,
+    );
+
+    return isDefined(marketplaceApp)
+      ? { ...app, logo: marketplaceApp.logo ?? null }
+      : null;
+  }).filter(isDefined);
+
+  const handleAutoSkipError = useCallback(() => {
+    setHasAutoSkipFailed(true);
+  }, []);
+
+  if (isLoading) {
+    return null;
+  }
+
+  if (availableApps.length === 0 && !hasAutoSkipFailed) {
+    return <InstallAppsAutoSkipEffect onError={handleAutoSkipError} />;
+  }
 
   return (
     <InstallAppsContent
-      apps={apps}
+      apps={availableApps}
       selectedUniversalIdentifiers={selectedUniversalIdentifiers}
       creditsRewardPerApp={onboardingConfig?.installAppsCreditsRewardPerApp}
       isCompleting={isCompleting}

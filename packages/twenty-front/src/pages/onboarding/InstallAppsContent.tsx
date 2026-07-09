@@ -132,7 +132,7 @@ export const InstallAppsContent = ({
             {t`Get the most out of your CRM by installing some apps`}
           </StyledOnboardingStepSubtitle>
         </OnboardingStepAnimatedItem>
-        {isDefined(creditsRewardPerApp) && (
+        {isDefined(creditsRewardPerApp) && apps.length > 0 && (
           <OnboardingStepAnimatedItem index={2}>
             <StyledOnboardingStepTagsRow>
               <OnboardingCreditsRewardTag
