@@ -86,6 +86,22 @@ export default defineObject({
 **ベースフィールドは自動的に追加されます。** カスタムオブジェクトを定義すると、Twenty は `id`、`name`、`createdAt`、`updatedAt`、`createdBy`、`updatedBy`、`deletedAt` などの標準フィールドを自動的に作成します。 これらを `fields` 配列で宣言する必要はありません。カスタムフィールドのみを追加してください。 同じ名前でフィールドを宣言することでデフォルトフィールドを上書きすることもできますが、これはほとんどの場合お勧めできません。
 </Note>
 
+## フィールドタイプ
+
+`twenty-sdk/define` からエクスポートされる、`FieldType` 値の完全な一覧:
+
+| カテゴリ       | タイプ                                                                                                          |
+| ---------- | ------------------------------------------------------------------------------------------------------------ |
+| テキスト       | `TEXT`、`RICH_TEXT`、`ARRAY`（文字列の配列）、`RAW_JSON`                                                                |
+| 数値         | `NUMBER`（`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`）、`NUMERIC`（任意精度）、`RATING`、`POSITION` |
+| 日付         | `DATE`, `DATE_TIME`                                                                                          |
+| 選択         | `BOOLEAN`、`SELECT`、`MULTI_SELECT`                                                                            |
+| 複合         | `FULL_NAME`、`ADDRESS`、`EMAILS`、`PHONES`、`LINKS`、`CURRENCY`、`ACTOR`、`FILES`                                   |
+| 識別子とリレーション | `UUID`、`RELATION`、`MORPH_RELATION`（[Relations](/l/ja/developers/extend/apps/data/relations) を参照）                  |
+| システム       | `TS_VECTOR`（サーバーによって管理される全文検索ベクター）                                                                           |
+
+複合タイプは複数のサブフィールドを保持します（例: `FULL_NAME` = 名 + 姓、`CURRENCY` = `amountMicros` + `currencyCode`）。 `SELECT` と `MULTI_SELECT` は、上記の例のように `options` 配列を必要とします。
+
 ## デフォルト値
 
 文字列リテラルのデフォルト値は、文字列**の内部で**シングルクォートで囲む必要があります。つまり、`defaultValue: "'Draft'"` のように書き、`defaultValue: "Draft"` のようには書きません。 そのため上記の `status` フィールドでは、`` `'${PostCardStatus.DRAFT}'` `` を使用しています。

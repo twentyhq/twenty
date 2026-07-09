@@ -61,6 +61,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       { publish: jest.fn() } as never,
       { signFileByIdUrl: jest.fn() } as never,
       streamHeartbeatService as never,
+      { incrementCounterBy: jest.fn() } as never,
     );
 
     return { service, threadRepository, messageQueueService, agentChatService };
@@ -153,5 +154,6 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       { activeStreamId: result.streamId, lastStreamError: null },
     );
     expect(result.messageId).toBe('user-message-id');
+    expect(result.turnId).toBe('turn-id');
   });
 });

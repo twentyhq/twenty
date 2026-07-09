@@ -229,7 +229,7 @@ yarn twenty dev:catalog-sync
 # yarn twenty dev:catalog-sync --remote production
 ```
 
-市场中显示的元数据来自你的 `defineApplication()` 配置——例如 `displayName`、`description`、`author`、`category`、`logoUrl`、`screenshots`、`aboutDescription`、`websiteUrl` 和 `termsUrl` 等字段。
+市场中显示的元数据来自你的 `defineApplication()` 配置——参见上面的 [Marketplace 元数据](#marketplace-metadata)。
 
 <Note>
 如果您的应用未在 `defineApplication()` 中定义 `aboutDescription`，市场将自动使用 npm 上您的软件包的 `README.md` 作为关于页面内容。 这意味着您可以为 npm 和 Twenty 市场维护同一个 README。 如果您希望在市场中使用不同的描述，请显式设置 `aboutDescription`。

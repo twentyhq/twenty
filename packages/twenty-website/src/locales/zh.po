@@ -28,6 +28,12 @@ msgstr "立减 33%"
 msgid "...with AI that actually helps you *work faster*"
 msgstr "……配合真正帮你*加快工作节奏*的 AI"
 
+#. js-lingui-id: PtoUO1
+#. placeholder {0}: app.name
+#: src/app/[locale]/(site)/apps/[slug]/page.tsx
+msgid "{0} — Twenty Apps"
+msgstr ""
+
 #. js-lingui-id: Z6mKXu
 #. placeholder {0}: partner.name
 #: src/app/[locale]/(site)/partners/profile/[slug]/page.tsx
@@ -39,6 +45,12 @@ msgstr "{0} — Twenty 合作伙伴"
 #: src/sections/three-cards/IllustrationCard.tsx
 msgid "{0} case study"
 msgstr "{0} 案例研究"
+
+#. js-lingui-id: tYTgTe
+#. placeholder {0}: app.name
+#: src/apps-marketplace/AppDetail.tsx
+msgid "{0} screenshot"
+msgstr ""
 
 #. js-lingui-id: jC5JCB
 #: src/sections/case-study-promo/CaseStudyPromo.tsx
@@ -699,6 +711,11 @@ msgstr "阿尔巴尼亚 🇦🇱"
 msgid "Algeria 🇩🇿"
 msgstr "阿尔及利亚 🇩🇿"
 
+#. js-lingui-id: N40H+G
+#: src/apps-marketplace/AppsMarketplaceClient.tsx
+msgid "All"
+msgstr ""
+
 #. js-lingui-id: LIGwFL
 #: src/sections/three-cards/three-cards.data.ts
 #: src/case-studies/case-study-stories.ts
@@ -805,6 +822,11 @@ msgstr "API 需额外付费。简洁也有代价。"
 msgid "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
 msgstr "通过 API、SDK 和 webhook 扩展 Twenty，并在你的 CRM 数据之上构建应用。"
 
+#. js-lingui-id: L/34fX
+#: src/app/[locale]/(site)/apps/[slug]/page.tsx
+msgid "App not found — Twenty"
+msgstr ""
+
 #. js-lingui-id: k8I7/G
 #: src/partner-application/partner-application-copy.ts
 msgid ""
@@ -818,6 +840,16 @@ msgstr ""
 #: src/platform/routing/static-website-routes.ts
 msgid "Apply to join the Twenty partner ecosystem and grow your practice with the #1 open source CRM."
 msgstr "申请加入 Twenty 合作伙伴生态系统，与全球排名第 1 的开源 CRM 一起发展你的业务。"
+
+#. js-lingui-id: VDvaN2
+#: src/sections/menu/data/menu.ts
+msgid "Apps"
+msgstr ""
+
+#. js-lingui-id: lAg+Wy
+#: src/apps-marketplace/AppsMarketplaceHeader.tsx
+msgid "Apps for *Twenty*"
+msgstr ""
 
 #. js-lingui-id: 1AsfMD
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -1223,6 +1255,11 @@ msgstr "加泰罗尼亚语"
 #: src/partners-marketplace/FilterBar.tsx
 msgid "Categories"
 msgstr "类别"
+
+#. js-lingui-id: K7tIrx
+#: src/apps-marketplace/AppDetail.tsx
+msgid "Category"
+msgstr ""
 
 #. js-lingui-id: dBApoS
 #: src/partner-application/data/partner-country-options.ts
@@ -1963,6 +2000,11 @@ msgstr "专为财务数据设计的 <0>货币字段</0>，确保货币数值的�
 msgid "Dev teams power company-wide *change with Twenty*"
 msgstr "开发团队用 Twenty 推动公司范围的*变革*"
 
+#. js-lingui-id: 7aDnUb
+#: src/apps-marketplace/AppDetail.tsx
+msgid "Developer"
+msgstr ""
+
 #. js-lingui-id: n+SX4g
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/menu/data/menu.ts
@@ -2394,6 +2436,21 @@ msgstr "专业能力与经验"
 msgid "Explore customer stories"
 msgstr "查看客户案例"
 
+#. js-lingui-id: qu9kGK
+#: src/platform/routing/static-website-routes.ts
+msgid "Extend Twenty with vetted apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click."
+msgstr ""
+
+#. js-lingui-id: ZToPid
+#: src/sections/menu/data/menu.ts
+msgid "Extend your CRM"
+msgstr ""
+
+#. js-lingui-id: wmJ4p4
+#: src/apps-marketplace/AppsMarketplaceHeader.tsx
+msgid "Extend your CRM with apps built and maintained by Twenty. Every app here is vetted by our team — install one in a click and it's live in your workspace."
+msgstr ""
+
 #. js-lingui-id: weFouS
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Extended run!"
@@ -2498,6 +2555,11 @@ msgstr "记录中的文件"
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
 msgid "Filter"
 msgstr "筛选器"
+
+#. js-lingui-id: tr2ZvJ
+#: src/apps-marketplace/AppsMarketplaceClient.tsx
+msgid "Filter apps by category"
+msgstr ""
 
 #. js-lingui-id: 1t0xRH
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3161,6 +3223,22 @@ msgstr "无限滚动"
 msgid "Infinite scroll is still coming soon, unlike the invoice."
 msgstr "无限滚动仍然“敬请期待”，但发票不会。"
 
+#. js-lingui-id: TKQ7K+
+#: src/apps-marketplace/AppDetail.tsx
+#: src/apps-marketplace/AppCard.tsx
+msgid "Install"
+msgstr ""
+
+#. js-lingui-id: qq1x6K
+#: src/sections/menu/data/menu.ts
+msgid "Install call recording, enrichment, Slack, Linear and more — every app built and maintained by Twenty."
+msgstr ""
+
+#. js-lingui-id: R6HbUq
+#: src/apps-marketplace/AppDetail.tsx
+msgid "Install on Twenty"
+msgstr ""
+
 #. js-lingui-id: K8iwJx
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Install shared tarball app"
@@ -3478,6 +3556,17 @@ msgstr "布局"
 msgid "Learn how to use Twenty"
 msgstr "了解如何使用 Twenty"
 
+#. js-lingui-id: zwWKhA
+#: src/apps-marketplace/AppCard.tsx
+msgid "Learn more"
+msgstr ""
+
+#. js-lingui-id: Pd/m1Q
+#. placeholder {0}: app.name
+#: src/apps-marketplace/AppCard.tsx
+msgid "Learn more about {0}"
+msgstr ""
+
 #. js-lingui-id: wB0DGn
 #: src/partner-application/data/partner-country-options.ts
 msgid "Lebanon 🇱🇧"
@@ -3685,6 +3774,7 @@ msgstr "Mar"
 
 #. js-lingui-id: Zt5PUS
 #: src/partners-marketplace/MarketplaceHeader.tsx
+#: src/apps-marketplace/AppsMarketplaceHeader.tsx
 msgid "Marketplace"
 msgstr "市场"
 
@@ -4030,6 +4120,11 @@ msgstr "Nine Dots Ventures"
 msgid "No"
 msgstr "否"
 
+#. js-lingui-id: UVo4Xv
+#: src/apps-marketplace/AppsMarketplaceClient.tsx
+msgid "No apps are available right now. Check back soon."
+msgstr ""
+
 #. js-lingui-id: 6tRXQ4
 #: src/partner-application/partner-application-copy.ts
 msgid "No matching country."
@@ -4249,6 +4344,11 @@ msgstr "所有权"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Owning your stack remains mysteriously out of stock."
 msgstr "对你自有技术栈的掌控始终莫名其妙地处于缺货状态。"
+
+#. js-lingui-id: mGYa19
+#: src/apps-marketplace/AppDetail.tsx
+msgid "Package"
+msgstr ""
 
 #. js-lingui-id: h/oMMb
 #: src/platform/routing/static-website-routes.ts
@@ -5928,6 +6028,16 @@ msgstr "图瓦卢 🇹🇻"
 msgid "Twenty | #1 Open Source CRM"
 msgstr "Twenty | 全球排名第 1 的开源 CRM"
 
+#. js-lingui-id: XxKVz4
+#: src/platform/routing/static-website-routes.ts
+msgid "Twenty Apps — Vetted Apps for the Open Source CRM"
+msgstr ""
+
+#. js-lingui-id: jwNPEV
+#: src/sections/menu/data/menu.ts
+msgid "Twenty apps marketplace"
+msgstr ""
+
 #. js-lingui-id: NalB1c
 #: src/sections/testimonials/partner-testimonials.data.ts
 msgid "Twenty Apps opens the door to building products, not just implementations. For example, we're developing a WhatsApp Business integration that any Twenty's client could get. That's a recurring revenue stream we wouldn't have if we were just configuring someone else's platform."
@@ -6252,6 +6362,16 @@ msgstr "委内瑞拉 🇻🇪"
 msgid "Version control"
 msgstr "版本控制"
 
+#. js-lingui-id: vNIHYX
+#: src/sections/menu/data/menu.ts
+msgid "Vetted apps for your workspace"
+msgstr ""
+
+#. js-lingui-id: k5HTQK
+#: src/apps-marketplace/AppDetail.tsx
+msgid "Vetted by Twenty"
+msgstr ""
+
 #. js-lingui-id: FlQ1vR
 #: src/partner-application/data/partner-country-options.ts
 msgid "Vietnam 🇻🇳"
@@ -6424,6 +6544,11 @@ msgstr "Webhooks 筛选器"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Webhooks multi-object filtering"
 msgstr "Webhooks 多对象筛选"
+
+#. js-lingui-id: On0aF2
+#: src/apps-marketplace/AppDetail.tsx
+msgid "Website"
+msgstr ""
 
 #. js-lingui-id: 7kkV4O
 #: src/partner-application/partner-application-copy.ts

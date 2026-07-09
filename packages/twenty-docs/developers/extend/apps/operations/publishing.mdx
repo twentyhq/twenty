@@ -229,7 +229,7 @@ yarn twenty dev:catalog-sync
 # yarn twenty dev:catalog-sync --remote production
 ```
 
-The metadata shown in the marketplace comes from your `defineApplication()` config — fields like `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl`, and `termsUrl`.
+The metadata shown in the marketplace comes from your `defineApplication()` config — see [Marketplace metadata](#marketplace-metadata) above.
 
 <Note>
 If your app does not define an `aboutDescription` in `defineApplication()`, the marketplace will automatically use your package's `README.md` from npm as the about page content. This means you can maintain a single README for both npm and the Twenty marketplace. If you want a different description in the marketplace, explicitly set `aboutDescription`.

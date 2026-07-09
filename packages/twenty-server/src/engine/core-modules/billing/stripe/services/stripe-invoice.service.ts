@@ -67,21 +67,23 @@ export class StripeInvoiceService {
       subscription: stripeSubscriptionId,
     });
 
-    await this.stripe.invoices.finalizeInvoice(invoice.id, {
-      auto_advance: true,
-    });
+    const finalizedInvoice = await this.stripe.invoices.finalizeInvoice(
+      invoice.id,
+      {
+        auto_advance: true,
+      },
+    );
+
+    if (finalizedInvoice.status === 'paid') {
+      return;
+    }
 
     try {
       await this.stripe.invoices.pay(invoice.id);
     } catch (error) {
-      // With auto_advance Stripe may already have collected payment by the time
-      // we explicitly request it. Only swallow that case, rethrow real failures.
-      if (
-        !(
-          error instanceof this.stripe.errors.StripeInvalidRequestError &&
-          error.code === 'invoice_already_paid'
-        )
-      ) {
+      const refreshedInvoice = await this.stripe.invoices.retrieve(invoice.id);
+
+      if (refreshedInvoice.status !== 'paid') {
         throw error;
       }
     }
