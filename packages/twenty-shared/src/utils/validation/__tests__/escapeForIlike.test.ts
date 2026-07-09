@@ -1,4 +1,4 @@
-import { escapeForIlike } from 'src/engine/core-modules/search/utils/escape-for-ilike';
+import { escapeForIlike } from '@/utils/validation/escapeForIlike';
 
 describe('escapeForIlike', () => {
   it('should escape percent signs', () => {
