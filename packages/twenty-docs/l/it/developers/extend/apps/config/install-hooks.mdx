@@ -4,7 +4,7 @@ description: Esegui logica prima o dopo l'installazione — popola i dati, esegu
 icon: wrench
 ---
 
-Gli hook di installazione sono funzioni logiche speciali che vengono eseguite durante il ciclo di vita di installazione o aggiornamento. Condividono lo stesso runtime del gestore delle [logic functions](/l/it/developers/extend/apps/logic/logic-functions) normali e ricevono un `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` è `undefined` in una nuova installazione), ma sono dichiarati con le proprie funzioni di definizione e vivono al di fuori del normale modello di trigger (HTTP, eventi cron, eventi del database).
+Gli hook di installazione sono funzioni logiche speciali che vengono eseguite durante il ciclo di vita di installazione o aggiornamento. Condividono lo stesso runtime del gestore delle [logic functions](/l/it/developers/extend/apps/logic/logic-functions) normali e ricevono un `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` è `undefined` in una nuova installazione), ma sono dichiarati con le proprie funzioni di definizione e vivono al di fuori del normale modello di trigger (HTTP, cron, eventi del database).
 
 Ogni app può definire **al massimo una funzione di pre-installazione** e **al massimo una funzione di post-installazione**. La build del manifesto genera un errore se ne viene rilevata più di una per ciascun tipo.
 
@@ -21,12 +21,12 @@ Ogni app può definire **al massimo una funzione di pre-installazione** e **al m
 
 ## A colpo d'occhio
 
-|                   | `definePreInstallLogicFunction`                                                                                                 | `definePostInstallLogicFunction`                                                                                                     |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Esecuzioni        | Prima della migrazione dei metadati — lo schema e i dati **precedenti** sono ancora intatti                                     | Dopo la migrazione e la generazione dell'SDK — il **nuovo** schema è in vigore                                                       |
-| Esecuzione        | Sempre sincrona; blocca l'installazione                                                                                         | Async per impostazione predefinita (in coda, 3 tentativi); modalità sync tramite opt-in con `shouldRunSynchronously: true`           |
-| In caso di errore | L'installazione viene **annullata** prima di qualsiasi modifica allo schema                                                     | Async: ritentato fino a 3 volte. Sync: il chiamante riceve `POST_INSTALL_ERROR` (le modifiche allo schema **non** vengono annullate) |
-| Uso tipico        | Eseguire il backup o correggere dati che una migrazione perderebbe; rifiutare un aggiornamento rischioso lanciando un'eccezione | Popolare dati predefiniti, configurare il workspace, registrare risorse esterne                                                      |
+|                       | `definePreInstallLogicFunction`                                                                                                 | `definePostInstallLogicFunction`                                                                                                     |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Quando viene eseguito | Prima della migrazione dei metadati — lo schema e i dati **precedenti** sono ancora intatti                                     | Dopo la migrazione e la generazione dell'SDK — il **nuovo** schema è in vigore                                                       |
+| Esecuzione            | Sempre sincrona; blocca l'installazione                                                                                         | Async per impostazione predefinita (in coda, 3 tentativi); modalità sync tramite opt-in con `shouldRunSynchronously: true`           |
+| In caso di errore     | L'installazione viene **annullata** prima di qualsiasi modifica allo schema                                                     | Async: ritentato fino a 3 volte. Sync: il chiamante riceve `POST_INSTALL_ERROR` (le modifiche allo schema **non** vengono annullate) |
+| Uso tipico            | Eseguire il backup o correggere dati che una migrazione perderebbe; rifiutare un aggiornamento rischioso lanciando un'eccezione | Popolare dati predefiniti, configurare il workspace, registrare risorse esterne                                                      |
 
 **Regola generale:** usa post-install come impostazione predefinita. Ricorri al pre-install solo quando la migrazione stessa è distruttiva e devi intercettare lo stato precedente prima che vada perso.
 
