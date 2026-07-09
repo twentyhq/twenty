@@ -49,14 +49,13 @@ export default defineCommandMenuItem({
   universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
   shortLabel: 'Hello',
   label: 'Hello World',
-  icon: 'IconBolt',
   isPinned: true,
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
 });
 ```
 
-Después de sincronizar con `yarn twenty dev` (o ejecutar una sola vez `yarn twenty dev --once`), la acción rápida aparece en la esquina superior derecha de la página:
+Después de sincronizar con `yarn twenty dev` (o ejecutar una sola vez `yarn twenty apply`), la acción rápida aparece en la esquina superior derecha de la página:
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Botón de acción rápida en la esquina superior derecha" />
@@ -88,11 +87,11 @@ Los componentes de front vienen en dos modos de renderizado controlados por la o
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useRecordId, enqueueSnackbar } from 'twenty-sdk/front-component';
+import { useSelectedRecordIds, enqueueSnackbar } from 'twenty-sdk/front-component';
 import { useEffect } from 'react';
 
 const SyncTracker = () => {
-  const recordId = useRecordId();
+  const [recordId] = useSelectedRecordIds();
 
   useEffect(() => {
     enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
@@ -116,7 +115,7 @@ Como el componente devuelve `null`, Twenty omite renderizar un contenedor para �
 
 El paquete `twenty-sdk` proporciona cuatro componentes auxiliares Command diseñados para componentes de front headless. Cada componente ejecuta una acción al montarse, gestiona los errores mostrando una notificación tipo snackbar y desmonta automáticamente el componente de front al finalizar.
 
-Impórtalos desde `twenty-sdk/command`:
+Impórtalos desde `twenty-sdk/front-component`:
 
 * **`Command`** — Ejecuta un callback asíncrono mediante la prop `execute`.
 * **`CommandLink`** — Navega a una ruta de la aplicación. Props: `to`, `params`, `queryParams`, `options`.
@@ -127,8 +126,8 @@ Aquí tienes un ejemplo completo de un componente de front headless que usa `Com
 
 ```tsx src/front-components/run-action.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Command } from 'twenty-sdk/command';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { Command } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const RunAction = () => {
   const execute = async () => {
@@ -160,7 +159,6 @@ import { defineCommandMenuItem } from 'twenty-sdk/define';
 export default defineCommandMenuItem({
   universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
   label: 'Run my action',
-  icon: 'IconPlayerPlay',
   frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
 });
 ```
@@ -169,7 +167,7 @@ Y un ejemplo que usa `CommandModal` para pedir confirmación antes de ejecutar:
 
 ```tsx src/front-components/delete-draft.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { CommandModal } from 'twenty-sdk/command';
+import { CommandModal } from 'twenty-sdk/front-component';
 
 const DeleteDraft = () => {
   const execute = async () => {
@@ -202,7 +200,7 @@ Los componentes de front se ejecutan en el navegador dentro de un Web Worker ais
 
 Una función de lógica declarada con `httpRouteTriggerSettings` es accesible por HTTP en su ruta. Twenty inyecta en el worker la URL base desde la que se sirven tus funciones como `TWENTY_FUNCTIONS_URL`, junto con el `TWENTY_APP_ACCESS_TOKEN` que autentica la llamada. Todavía no hay un cliente SDK dedicado para invocar tus propias funciones, así que llámalas con un simple `fetch`:
 
-> **En Twenty Cloud, las funciones de lógica activadas por HTTP se sirven en un dominio dedicado por espacio de trabajo** en `https://\<your-workspace-subdomain>.twenty.com\<path>` — esto es exactamente a lo que se resuelve `TWENTY_FUNCTIONS_URL`. Para clientes externos, copia la URL exacta desde la configuración de **HTTP trigger** de la función o desde la pestaña **Settings** de la aplicación.
+> **En Twenty Cloud, las funciones de lógica activadas por HTTP se sirven en un dominio dedicado por espacio de trabajo** en `https://\<your-workspace-subdomain>.withtwenty.com\<path>` — esto es exactamente a lo que se resuelve `TWENTY_FUNCTIONS_URL`. Para clientes externos, copia la URL exacta desde la configuración de **HTTP trigger** de la función o desde la pestaña **Settings** de la aplicación.
 
 <Warning>
   La ruta heredada de la función `/s/` está **obsoleta** y será **desactivada el 2026-07-24**. En su lugar, utiliza `TWENTY_FUNCTIONS_URL` (arriba) y migra cualquier URL de `/s/` codificada de forma fija antes de esa fecha. La ruta `/s/` sigue disponible para autoalojamiento.
@@ -212,7 +210,7 @@ Un componente de front sin interfaz (headless) puede ejecutar la llamada al mont
 
 ```tsx src/front-components/sync-prs.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Command } from 'twenty-sdk/command';
+import { Command } from 'twenty-sdk/front-component';
 
 const SyncPrs = () => {
   const execute = async () => {
@@ -316,13 +314,13 @@ Dentro de tu componente, usa hooks del SDK para acceder al usuario actual, el re
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   useUserId,
-  useRecordId,
+  useSelectedRecordIds,
   useFrontComponentId,
 } from 'twenty-sdk/front-component';
 
 const RecordInfo = () => {
   const userId = useUserId();
-  const recordId = useRecordId();
+  const [recordId] = useSelectedRecordIds();
   const componentId = useFrontComponentId();
 
   return (
@@ -405,12 +403,11 @@ Aquí tienes un ejemplo que usa la API del host para mostrar un snackbar y cerra
 
 ```tsx src/front-components/archive-record.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useRecordId } from 'twenty-sdk/front-component';
-import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { enqueueSnackbar, closeSidePanel, useSelectedRecordIds } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const ArchiveRecord = () => {
-  const recordId = useRecordId();
+  const [recordId] = useSelectedRecordIds();
 
   const handleArchive = async () => {
     const client = new CoreApiClient();
@@ -451,10 +448,10 @@ export default defineFrontComponent({
 Usa `useSelectedRecordIds()` para manejar varios registros seleccionados. Esto es útil para operaciones por lotes:
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const BulkExport = () => {
   const selectedRecordIds = useSelectedRecordIds();
@@ -492,12 +489,19 @@ export default defineFrontComponent({
   name: 'bulk-export',
   description: 'Export selected records',
   component: BulkExport,
-  command: {
-    universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
-    label: 'Bulk Export',
-    availabilityType: 'RECORD_SELECTION',
-    conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
-  },
+});
+```
+
+Muéstralo con un [elemento de menú de comando](/l/es/developers/extend/apps/layout/command-menu-items) restringido a selecciones de registros:
+
+```ts src/command-menu-items/bulk-export.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
+  label: 'Bulk Export',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
 });
 ```
 

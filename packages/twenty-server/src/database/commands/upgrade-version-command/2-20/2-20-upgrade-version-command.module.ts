@@ -1,9 +1,14 @@
 import { Module } from '@nestjs/common';
+
 import { BackfillActorSourceEnumValuesCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783499671542-backfill-actor-source-enum-values.command';
-import { BackfillWorkflowVersionToCoreCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783526282685-backfill-workflow-version-to-core.command';
 import { AddMessageCampaignStatFieldsCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783525261000-add-message-campaign-stat-fields.command';
 import { CreateMessageListViewCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783525261001-create-message-list-view.command';
+import { BackfillWorkflowVersionToCoreCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783526282685-backfill-workflow-version-to-core.command';
+import { ReconcileSearchVectorGinIndexUniversalIdentifierCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783529458169-reconcile-search-vector-gin-index-universal-identifier.command';
+import { ReconcileSearchFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783529458170-reconcile-search-field-metadata.command';
+import { RebuildInstalledAppSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783529458171-rebuild-installed-app-search-vectors.command';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
+import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -27,6 +32,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
       ApplicationEntity,
       FieldMetadataEntity,
       IndexMetadataEntity,
+      SearchFieldMetadataEntity,
     ]),
     WorkspaceIteratorModule,
     WorkspaceCacheModule,
@@ -38,6 +44,12 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     WorkspaceMigrationModule,
     WorkspaceSchemaManagerModule,
     WorkflowVersionCoreModule,
+    WorkspaceCacheModule,
+    WorkspaceIteratorModule,
+    WorkspaceMetadataVersionModule,
+    WorkspaceMigrationModule,
+    WorkspaceMigrationRunnerModule,
+    WorkspaceSchemaManagerModule,
   ],
   providers: [
     AddMessageCampaignStatFieldsCommand,
@@ -45,6 +57,9 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     BackfillActorSourceEnumValuesCommand,
     BackfillWorkflowVersionToCoreCommand,
     BackfillCompanyPersonImageIdentifierFieldMetadataIdCommand,
+    ReconcileSearchVectorGinIndexUniversalIdentifierCommand,
+    ReconcileSearchFieldMetadataCommand,
+    RebuildInstalledAppSearchVectorsCommand,
   ],
 })
 export class V2_20_UpgradeVersionCommandModule {}

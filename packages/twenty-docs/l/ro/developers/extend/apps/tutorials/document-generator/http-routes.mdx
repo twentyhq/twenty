@@ -9,8 +9,15 @@ Același gestionar poate răspunde și la solicitările HTTP. Vom adăuga două 
 * a **POST** final apeluri interfață pentru a genera un document, și
 * un obiectiv public **GET** care face un document ca o pagină web printabilă.
 
-Ambele folosesc `httpRouteTriggerSettings`. Rutele aplicațiilor sunt servite sub `/s` pe
-Douăzeci de servere (ex. `http://localhost:2020/s/documents/generate`).
+Ambele folosesc `httpRouteTriggerSettings`. Pe server-ul local dev, rutele aplicației sunt servite
+sub prefixul `/s` (ex. `http://localhost:2020/s/documents/generate`).
+
+<Note>
+În 22 de Cloud, rutele sunt servite pe domeniul funcțiilor dedicate din spațiul de lucru
+— URL-ul Douăzeci injectează ca `TWENTY_FUNCTIONS_URL`, fără prefixul `/s`. Prefixul
+este învechit acolo şi rămâne doar pentru instanţele auto-găzduite şi locale.
+Vedeți [Apelarea unei funcții logice](/l/ro/developers/extend/apps/layout/front-components#calling-a-logic-function).
+</Note>
 
 ## Ruta POST – generarea la cerere
 

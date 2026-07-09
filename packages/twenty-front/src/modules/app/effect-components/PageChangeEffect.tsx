@@ -1,5 +1,7 @@
 import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
+import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
+import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
 import { useReturnToPath } from '@/auth/hooks/useReturnToPath';
 import { useIsOnAuthOrOnboardingPage } from '@/auth/hooks/useIsOnAuthOrOnboardingPage';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -19,6 +21,9 @@ import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useA
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
+import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
+import { shouldShowWelcomeAnimationOnNavigate } from '@/onboarding/utils/shouldShowWelcomeAnimationOnNavigate';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -38,6 +43,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { getPageLayoutIdForLocation } from '~/modules/app/utils/getPageLayoutIdForLocation';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
+
+const ONBOARDING_OR_AUTH_NAVIGATE_PATHS = [
+  ...ONBOARDING_PATHS,
+  ...ONGOING_USER_CREATION_PATHS,
+  AppPath.ResetPassword,
+];
 
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
@@ -94,6 +105,12 @@ export const PageChangeEffect = () => {
     useReturnToPath();
 
   const isOnAuthOrOnboardingPage = useIsOnAuthOrOnboardingPage();
+
+  const onboardingStatus = useOnboardingStatus();
+
+  const isOnOnboardingPage = ONBOARDING_PATHS.some((appPath) =>
+    isMatchingLocation(location, appPath),
+  );
 
   const closeSidePanelUnlessNotRelevant = useCallback(() => {
     const currentPage = store.get(sidePanelPageState.atom);
@@ -152,6 +169,21 @@ export const PageChangeEffect = () => {
       const consumedReturnToPath =
         getReturnToPath() === pageChangeEffectNavigateLocation;
 
+      const isNavigatingToOnboardingOrAuthPath =
+        ONBOARDING_OR_AUTH_NAVIGATE_PATHS.some(
+          (appPath) => pageChangeEffectNavigateLocation === appPath,
+        );
+
+      if (
+        shouldShowWelcomeAnimationOnNavigate({
+          onboardingStatus,
+          isOnOnboardingPage,
+          isNavigatingToOnboardingOrAuthPath,
+        })
+      ) {
+        store.set(isWelcomeAnimationVisibleState.atom, true);
+      }
+
       navigate(pageChangeEffectNavigateLocation);
 
       if (consumedReturnToPath) {
@@ -163,9 +195,12 @@ export const PageChangeEffect = () => {
     pageChangeEffectNavigateLocation,
     isAppEffectRedirectEnabled,
     isOnAuthOrOnboardingPage,
+    isOnOnboardingPage,
+    onboardingStatus,
     saveReturnToPath,
     getReturnToPath,
     clearReturnToPath,
+    store,
   ]);
 
   useEffect(() => {

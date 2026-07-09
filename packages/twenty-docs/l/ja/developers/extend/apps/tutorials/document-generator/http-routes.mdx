@@ -9,8 +9,14 @@ description: HTTP 経由で関数をトリガーし、ドキュメントを Web 
 * ドキュメントを生成するUI呼び出しの **POST** エンドポイントと
 * ドキュメントを印刷可能なウェブページとしてレンダリングするパブリック**GET** エンドポイント。
 
-どちらも `httpRouteTriggerSettings` を使用します。 アプリのルートはあなたの
-20のサーバーの`/s`の下で提供されます（例：`http://localhost:2020/s/documents/generate`）。
+どちらも `httpRouteTriggerSettings` を使用します。 ローカル開発サーバーでは、アプリのルートは `/s` プレフィックスの下で提供されます（例：`http://localhost:2020/s/documents/generate`）。
+
+<Note>
+Twenty Cloud では、ルートはワークスペースの専用関数ドメイン
+で提供されます。URL Twenty は `TWENTY_FUNCTIONS_URL` として挿入され、`/s` プレフィックスはありません。 `/s`
+プレフィックスは非推奨で、自己ホストおよびローカルインスタンスのみが使用できます。
+[ロジック関数の呼び出し](/l/ja/developers/extend/apps/layout/front-components#calling-a-logic-function)を参照してください。
+</Note>
 
 ## POST route — オンデマンドで生成
 
