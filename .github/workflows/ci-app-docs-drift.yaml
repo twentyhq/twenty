@@ -42,7 +42,7 @@ jobs:
         uses: anthropics/claude-code-action@ac7e24bf2938964b8ab203e417a2773802392ddd # v1.0.146
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          claude_args: '--max-turns 60 --allowedTools "Bash(git diff *),Bash(git log *),Bash(git show *),Bash(grep *),Bash(cat *),Bash(ls *),Bash(find *),Bash(head *),Bash(tail *),Bash(gh pr comment *),Bash(gh api *)"'
+          claude_args: '--max-turns 60 --allowedTools "Bash(git diff *),Bash(git log *),Bash(git show *),Bash(grep *),Bash(cat *),Bash(ls *),Bash(find *),Bash(head *),Bash(tail *),Bash(gh pr comment *)"'
           prompt: |
             You are the app-documentation drift checker for the twenty repository.
 
@@ -98,12 +98,10 @@ jobs:
 
             ## Step 3 — Report
 
-            Post exactly one comment on PR #${{ github.event.pull_request.number }} using
-            `gh pr comment`. Start the comment body with the marker
-            `<!-- app-docs-drift-check -->` so future runs can find it. If a comment
-            containing that marker already exists (check with
-            `gh api repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments`),
-            update it with `gh api --method PATCH` instead of posting a new one.
+            Post exactly one comment on PR #${{ github.event.pull_request.number }} with:
+            `gh pr comment ${{ github.event.pull_request.number }} --edit-last --create-if-none --body ...`
+            (this updates the previous drift-check comment in place on subsequent runs).
+            Start the comment body with the marker `<!-- app-docs-drift-check -->`.
 
             Comment format:
             - Title line: `### App docs drift check`
