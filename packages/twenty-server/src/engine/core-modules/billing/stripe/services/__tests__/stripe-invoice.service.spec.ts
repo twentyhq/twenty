@@ -26,7 +26,8 @@ describe('StripeInvoiceService', () => {
     stripeSubscriptionId: 'sub_1',
     diffAmountInCents: 2000,
     currency: 'usd',
-    description: 'Resource usage - Upgrade resource credit price from $0 to $20',
+    description:
+      'Resource usage - Upgrade resource credit price from $0 to $20',
   };
 
   beforeEach(async () => {
