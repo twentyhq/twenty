@@ -8,6 +8,38 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
+type SentryEventExceptionValue = {
+  type?: string;
+  value?: string;
+};
+
+type SentryEvent = {
+  exception?: {
+    values?: SentryEventExceptionValue[];
+  };
+  fingerprint?: string[];
+  level?: string;
+  tags?: Record<string, string>;
+};
+
+const getExceptionValues = (event: SentryEvent) => {
+  return event.exception?.values ?? [];
+};
+
+const isAbortErrorEvent = (event: SentryEvent) => {
+  return getExceptionValues(event).some(
+    (exception) => exception.type === 'AbortError',
+  );
+};
+
+const isObjectRenderedAsReactChildEvent = (event: SentryEvent) => {
+  return getExceptionValues(event).some(
+    (exception) =>
+      exception.value?.includes('Objects are not valid as a React child') ??
+      false,
+  );
+};
+
 export const SentryInitEffect = () => {
   const sentryConfig = useAtomStateValue(sentryConfigState);
 
@@ -54,6 +86,26 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
+            beforeSend: (event) => {
+              if (isAbortErrorEvent(event)) {
+                return null;
+              }
+
+              if (isObjectRenderedAsReactChildEvent(event)) {
+                event.fingerprint = [
+                  'react-render',
+                  'object-rendered-as-child',
+                ];
+                event.level = 'warning';
+                event.tags = {
+                  ...event.tags,
+                  feature: 'react-render',
+                  cause: 'object-rendered-as-child',
+                };
+              }
+
+              return event;
+            },
           });
 
           setIsSentryInitialized(true);

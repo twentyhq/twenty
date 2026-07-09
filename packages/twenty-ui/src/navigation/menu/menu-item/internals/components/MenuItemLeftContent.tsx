@@ -1,5 +1,5 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode, isValidElement, useContext } from 'react';
 
 import { styled } from '@linaria/react';
 import {
@@ -51,6 +51,15 @@ type MenuItemLeftContentProps = {
   text: ReactNode;
   contextualText?: ReactNode;
   contextualTextPosition?: 'left' | 'right';
+};
+
+const isNonRenderableObject = (value: ReactNode) => {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    !isValidElement(value)
+  );
 };
 
 export const MenuItemLeftContent = ({
@@ -117,7 +126,7 @@ export const MenuItemLeftContent = ({
           <StyledMainText>
             <OverflowingTextWithTooltip text={text} />
           </StyledMainText>
-        ) : (
+        ) : isNonRenderableObject(text) ? null : (
           text
         )}
         {contextualTextPosition === 'left' && (
@@ -131,7 +140,9 @@ export const MenuItemLeftContent = ({
                     />
                   </StyledMenuItemContextualText>
                 )
-              : contextualText}
+              : isNonRenderableObject(contextualText)
+                ? null
+                : contextualText}
           </>
         )}
       </StyledMenuItemLabel>
@@ -140,7 +151,7 @@ export const MenuItemLeftContent = ({
           <StyledRightMenuItemContextualText>
             {isString(contextualText) ? (
               <OverflowingTextWithTooltip text={contextualText} />
-            ) : (
+            ) : isNonRenderableObject(contextualText) ? null : (
               contextualText
             )}
           </StyledRightMenuItemContextualText>
