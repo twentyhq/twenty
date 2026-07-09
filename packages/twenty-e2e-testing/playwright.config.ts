@@ -55,10 +55,14 @@ export default defineConfig({
       dependencies: ['setup'],
     },
 
-    //{
-    //  name: 'webkit',
-    //  use: { ...devices['Desktop Safari'] },
-    //},
+    {
+      name: 'safari',
+      use: {
+        ...devices['Desktop Safari'],
+        storageState: path.resolve(__dirname, '.auth', 'user.json'),
+      },
+      dependencies: ['setup'],
+    },
 
     /* Test against mobile viewports. */
     // {
