@@ -37,9 +37,9 @@ export class MarketplaceQueryService {
     universalIdentifiers?: string[],
   ): Promise<MarketplaceAppDTO[]> {
     const registrations =
-      await this.applicationRegistrationService.findManyListedCatalogCards(
+      await this.applicationRegistrationService.findManyListedCatalogCards({
         universalIdentifiers,
-      );
+      });
 
     if (registrations.length === 0) {
       const isFilteredByUniversalIdentifiers =

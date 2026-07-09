@@ -471,9 +471,11 @@ export class ApplicationRegistrationService {
     return this.applicationRegistrationRepository.save(registration);
   }
 
-  async findManyListedCatalogCards(
-    universalIdentifiers?: string[],
-  ): Promise<ApplicationRegistrationCatalogCard[]> {
+  async findManyListedCatalogCards({
+    universalIdentifiers,
+  }: {
+    universalIdentifiers?: string[];
+  } = {}): Promise<ApplicationRegistrationCatalogCard[]> {
     const registrations = await this.applicationRegistrationRepository.find({
       select: [
         'id',
