@@ -22,7 +22,6 @@ type LastContact = { at: string; item: ContactItem };
 type OpportunityRow = {
   id: string;
   pointOfContactId: string | null;
-  companyId: string | null;
 };
 
 type PersonAgg = {
@@ -290,19 +289,18 @@ const collectOpportunities = async (
       opportunities: {
         __args: { first: PAGE_SIZE, after },
         edges: {
-          node: { id: true, pointOfContactId: true, companyId: true },
+          node: { id: true, pointOfContactId: true },
         },
         pageInfo: { hasNextPage: true, endCursor: true },
       },
     });
 
     for (const edge of page?.edges ?? []) {
-      const { id, pointOfContactId, companyId } = edge.node;
+      const { id, pointOfContactId } = edge.node;
       if (id) {
         opportunities.push({
           id,
           pointOfContactId: pointOfContactId ?? null,
-          companyId: companyId ?? null,
         });
       }
     }
@@ -314,16 +312,6 @@ const collectOpportunities = async (
 
   return opportunities;
 };
-
-const mostRecentContact = (
-  candidates: (LastContact | undefined)[],
-): LastContact | undefined =>
-  candidates.reduce<LastContact | undefined>((best, candidate) => {
-    if (!candidate) {
-      return best;
-    }
-    return !best || candidate.at > best.at ? candidate : best;
-  }, undefined);
 
 const buildRelatedData = ({ at, item }: LastContact): PersonUpdateData => ({
   lastContactAt: at,
@@ -498,13 +486,7 @@ const handler = async (): Promise<void> => {
       const pointOfContactAgg = opportunity.pointOfContactId
         ? aggByPersonId.get(opportunity.pointOfContactId)
         : undefined;
-      const companyContact = opportunity.companyId
-        ? companyLastContact.get(opportunity.companyId)
-        : undefined;
-      const lastContact = mostRecentContact([
-        pointOfContactAgg ? personLastContact(pointOfContactAgg) : undefined,
-        companyContact,
-      ]);
+      const lastContact = pointOfContactAgg ? personLastContact(pointOfContactAgg) : undefined;
       return lastContact
         ? { id: opportunity.id, data: buildRelatedData(lastContact) }
         : undefined;
