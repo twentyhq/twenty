@@ -13,6 +13,7 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
+import { toGalleryImagePaths } from 'src/engine/core-modules/application/application-registration/utils/to-gallery-image-paths.util';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 
 @Injectable()
@@ -70,6 +71,14 @@ export class MarketplaceQueryService {
   private toMarketplaceAppDetailDTO(
     registration: ApplicationRegistrationEntity,
   ): MarketplaceAppDetailDTO {
+    // TODO: simplify in a follow-up PR to read galleryImages only, once the
+    // deprecated screenshots column and manifest fallback are backfilled away.
+    const galleryImagePaths = isNonEmptyArray(registration.galleryImages)
+      ? registration.galleryImages.map((galleryImage) => galleryImage.path)
+      : isNonEmptyArray(registration.screenshots)
+        ? registration.screenshots
+        : toGalleryImagePaths(registration.manifest?.application);
+
     return {
       id: registration.id,
       universalIdentifier: registration.universalIdentifier,
@@ -112,9 +121,8 @@ export class MarketplaceQueryService {
         registration.issueReportUrl ??
         registration.manifest?.application?.issueReportUrl ??
         undefined,
-      screenshots: isNonEmptyArray(registration.screenshots)
-        ? registration.screenshots
-        : (registration.manifest?.application?.screenshots ?? []),
+      screenshots: galleryImagePaths,
+      galleryImages: galleryImagePaths,
       defaultRoleUniversalIdentifier:
         registration.manifest?.application?.defaultRoleUniversalIdentifier,
       roles: registration.manifest?.roles?.map((role) =>
