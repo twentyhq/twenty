@@ -1,7 +1,7 @@
-import { QueryRunner } from 'typeorm';
+import { DataSource, QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
-import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
 // The default `name` field used to be provisioned with isSystemSideEffect: true
 // (2.15 → 2.19). It is now a caller-provided default (isSystemSideEffect: false),
@@ -11,19 +11,26 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 // reserved set is id/createdAt/updatedAt/deletedAt/createdBy/updatedBy/position/
 // searchVector), and API-created custom fields are always false already.
 //
-// Registered at 1783529458168 so it runs immediately before the 2.20 search
-// reconcile workspace commands (…169/170/171): those flush and recompute the
-// fieldMetadata flat-entity cache, so scheduling the raw UPDATE ahead of them
-// lets the fresh value be picked up (the UPDATE itself does not invalidate the
-// per-workspace cache).
-@RegisteredInstanceCommand('2.20.0', 1783529458168)
-export class BackfillNameFieldIsSystemSideEffectFastInstanceCommand
-  implements FastInstanceCommand
+// This is a pure data backfill, so the write lives in runDataMigration() (slow
+// instance command) rather than up(): keeping the bulk UPDATE out of the fast
+// schema transaction avoids holding an ACCESS EXCLUSIVE lock that could stall
+// reads during the deploy. Slow instance commands still run before every
+// workspace command of the version (order is fast → slow → workspace), so the
+// fresh value is in place before the 2.20 search reconcile workspace commands
+// flush and recompute the fieldMetadata flat-entity cache (the UPDATE itself
+// does not invalidate the per-workspace cache).
+@RegisteredInstanceCommand('2.20.0', 1783529458168, { type: 'slow' })
+export class BackfillNameFieldIsSystemSideEffectSlowInstanceCommand
+  implements SlowInstanceCommand
 {
-  public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
+  async runDataMigration(dataSource: DataSource): Promise<void> {
+    await dataSource.query(
       `UPDATE "core"."fieldMetadata" SET "isSystemSideEffect" = false WHERE "name" = 'name' AND "isSystemSideEffect" = true`,
     );
+  }
+
+  public async up(_queryRunner: QueryRunner): Promise<void> {
+    return;
   }
 
   // Best-effort inverse: restores the 2.15 → 2.19 status quo where `name` fields
