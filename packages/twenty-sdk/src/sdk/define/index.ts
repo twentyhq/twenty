@@ -1,8 +1,5 @@
 export { defineAgent } from '@/sdk/define/agents/define-agent';
 
-export type { ApplicationConfig } from '@/sdk/define/application/application-config';
-export { defineApplication } from '@/sdk/define/application/define-application';
-
 export type {
   DefinableEntity,
   DefineEntity,
