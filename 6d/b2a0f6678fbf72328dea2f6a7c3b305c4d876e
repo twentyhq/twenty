@@ -1,0 +1,40 @@
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/utils/__tests__/resolve-whatsapp-message-channel-id.util.test.ts
+  s_f50cf24ed5fc3b::t_c6bc5a16ea21b0 37
+  s_f50cf24ed5fc3b::t_00430d66a38e93 7
+  s_f50cf24ed5fc3b::t_3ae0fab021e7f4 62,67
+  s_f50cf24ed5fc3b::t_2068ee36df8055 23
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/types/whatsapp-message-channel.type.ts
+  s_f50cf24ed5fc3b::t_3232858ec2b506 3
+packages/twenty-apps/public/twenty-whatsapp/src/front-components/utils/send-whatsapp-reply.util.ts
+  s_f50cf24ed5fc3b::t_86d4a3ae57438f 1-38
+packages/twenty-apps/public/twenty-whatsapp/src/front-components/hooks/use-whatsapp-messages.ts
+  s_f50cf24ed5fc3b::t_9a80f512929ab7 1,5,13-14,19,24-32,38-41,55-58,64-71,73-87,90-96,108-109,124-127,131,143-147,154-160,198-199,201-212,217,219,222-226,231-241,252,258-264,274-275,278,283,289-294,298,300,302
+  s_f50cf24ed5fc3b::t_dfe0efcdfc98a5 72
+packages/twenty-apps/public/twenty-whatsapp/src/front-components/utils/resolve-whatsapp-reply-recipient.util.ts
+  s_f50cf24ed5fc3b::t_55a1f6f8a21ca3 1-45
+packages/twenty-apps/public/twenty-whatsapp/src/front-components/utils/__tests__/resolve-whatsapp-reply-recipient.util.test.ts
+  s_f50cf24ed5fc3b::t_f480b8b7eb129d 1-59
+packages/twenty-apps/public/twenty-whatsapp/src/front-components/components/WhatsappMessagesContent.tsx
+  s_f50cf24ed5fc3b::t_52d20258f9f979 4,6,13,21-26,30,34
+  s_f50cf24ed5fc3b::t_5fb68f96083728 69-76,87-117
+packages/twenty-apps/public/twenty-whatsapp/src/logic-functions/utils/fetch-whatsapp-message-channels.util.ts
+  s_f50cf24ed5fc3b::t_a52178b358016d 12,26
+packages/twenty-apps/public/twenty-whatsapp/src/front-components/components/WhatsappReplyComposer.tsx
+  s_f50cf24ed5fc3b::t_ea4320c7933ab3 1-131
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6db2a0f6678fbf72328dea2f6a7c3b305c4d876e",
+  "prompts": {},
+  "sessions": {
+    "s_f50cf24ed5fc3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c2ba5cc7-0588-443f-84fd-cc232e1987ed",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
