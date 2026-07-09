@@ -141,26 +141,26 @@ export class ApplicationRegistrationService {
     const trimmedSearch = searchTerm?.trim();
 
     const queryBuilder = this.applicationRegistrationRepository
-      .createQueryBuilder('applicationRegistration')
+      .createQueryBuilder('registration')
       .select(
         APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT.map(
-          (column) => `applicationRegistration.${column}`,
+          (column) => `registration.${column}`,
         ),
       )
-      .orderBy('applicationRegistration.createdAt', 'DESC')
-      .addOrderBy('applicationRegistration.id', 'ASC')
+      .orderBy('registration.createdAt', 'DESC')
+      .addOrderBy('registration.id', 'ASC')
       .skip(safeOffset)
       .take(safeLimit);
 
     if (isPreInstalledOnly === true) {
-      queryBuilder.andWhere('applicationRegistration.isPreInstalled = true');
+      queryBuilder.andWhere('registration."isPreInstalled" = true');
     }
 
     if (isDefined(trimmedSearch) && trimmedSearch.length > 0) {
       queryBuilder.andWhere(
-        `(applicationRegistration.name ILIKE :searchTerm
-          OR applicationRegistration.sourcePackage ILIKE :searchTerm
-          OR applicationRegistration.universalIdentifier::text ILIKE :searchTerm)`,
+        `(registration.name ILIKE :searchTerm
+          OR registration."sourcePackage" ILIKE :searchTerm
+          OR registration."universalIdentifier"::text ILIKE :searchTerm)`,
         { searchTerm: `%${trimmedSearch}%` },
       );
     }
