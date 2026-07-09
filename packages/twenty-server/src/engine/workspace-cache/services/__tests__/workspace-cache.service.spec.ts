@@ -359,6 +359,59 @@ describe('WorkspaceCacheService', () => {
 
       expect(secondResult).toEqual({ featureFlagsMap: recomputedData });
     });
+
+    it('should not let a recompute that started before the invalidation overwrite the recomputed cache', async () => {
+      cacheStorageService.mget.mockResolvedValue([undefined]);
+      cacheStorageService.mset.mockResolvedValue(undefined);
+      cacheStorageService.mdel.mockResolvedValue(undefined);
+
+      const staleData = { testData: 'stale-pre-flush-value' };
+      const freshData = { testData: 'fresh-post-flush-value' };
+
+      let resolveStaleCompute: (data: { testData: string }) => void = () => {};
+      let signalStaleComputeStarted: () => void = () => {};
+      const staleComputeStarted = new Promise<void>((resolve) => {
+        signalStaleComputeStarted = resolve;
+      });
+
+      jest
+        .spyOn(mockProvider, 'computeForCache')
+        .mockImplementationOnce(() => {
+          signalStaleComputeStarted();
+
+          return new Promise((resolve) => {
+            resolveStaleCompute = resolve;
+          });
+        })
+        .mockResolvedValue(freshData);
+
+      const staleRead = service.getOrRecompute(WORKSPACE_ID, [
+        'featureFlagsMap',
+      ]);
+
+      // The stale read must be inside its computeForCache call (snapshot taken
+      // before the flush) for the write fence to be what protects the cache.
+      await staleComputeStarted;
+
+      await service.invalidateAndRecompute(WORKSPACE_ID, ['featureFlagsMap']);
+
+      resolveStaleCompute(staleData);
+      await staleRead;
+
+      const readAfterRace = await service.getOrRecompute(WORKSPACE_ID, [
+        'featureFlagsMap',
+      ]);
+
+      expect(readAfterRace).toEqual({ featureFlagsMap: freshData });
+
+      const msetEntries = cacheStorageService.mset.mock.calls.flatMap(
+        ([entries]) => entries,
+      );
+
+      expect(msetEntries).not.toContainEqual(
+        expect.objectContaining({ value: staleData }),
+      );
+    });
   });
 
   describe('flush', () => {

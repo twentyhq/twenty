@@ -46,6 +46,10 @@ export class WorkspaceCacheService implements OnModuleInit {
     string,
     WorkspaceLocalCacheEntry<CacheDataType>
   >();
+  // Guards against a recompute that started before a flush finishing after it
+  // and clobbering the cache with a pre-flush snapshot (e.g. an event listener
+  // racing a workspace migration in the same process).
+  private readonly flushGenerationByKey = new Map<string, number>();
   private readonly workspaceCacheProviders = new Map<
     WorkspaceCacheKeyName,
     WorkspaceCacheProvider<CacheDataType>
@@ -206,6 +210,15 @@ export class WorkspaceCacheService implements OnModuleInit {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<void> {
+    for (const keyName of cacheKeyNames) {
+      const localKey = this.buildCacheKey(workspaceId, keyName);
+
+      this.flushGenerationByKey.set(
+        localKey,
+        (this.flushGenerationByKey.get(localKey) ?? 0) + 1,
+      );
+    }
+
     await this.deleteFromRedis(workspaceId, cacheKeyNames);
 
     this.deleteFromLocalCache(workspaceId, cacheKeyNames);
@@ -329,20 +342,29 @@ export class WorkspaceCacheService implements OnModuleInit {
 
     const computePromises = cacheKeyNames.map(async (keyName) => {
       const provider = this.getProviderOrThrow(keyName);
+      const generationAtComputeStart = this.flushGenerationByKey.get(
+        this.buildCacheKey(workspaceId, keyName),
+      );
       const data = await provider.computeForCache(workspaceId);
       const hash = crypto.randomUUID();
 
-      return { keyName, data, hash };
+      return { keyName, data, hash, generationAtComputeStart };
     });
 
     const computed = await Promise.all(computePromises);
 
     const redisEntries: Array<{ key: string; value: unknown }> = [];
 
-    for (const { keyName, data, hash } of computed) {
+    for (const { keyName, data, hash, generationAtComputeStart } of computed) {
       Object.assign(result, { [keyName]: data });
 
       const baseKey = this.buildCacheKey(workspaceId, keyName);
+
+      if (
+        this.flushGenerationByKey.get(baseKey) !== generationAtComputeStart
+      ) {
+        continue;
+      }
 
       redisEntries.push({ key: `${baseKey}:hash`, value: hash });
 

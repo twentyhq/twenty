@@ -35,11 +35,20 @@ export class PromiseMemoizer<T> {
       return existingPromise;
     }
 
-    const newPromise = (async () => {
+    const promiseHolder: { promise?: Promise<T | null> } = {};
+
+    const isStillRegisteredPending = () =>
+      isDefined(promiseHolder.promise) &&
+      this.pending.get(cacheKey) === promiseHolder.promise;
+
+    promiseHolder.promise = (async () => {
       try {
         const value = await factory();
 
-        if (value) {
+        // Only cache if this promise is still the registered pending one:
+        // clearKeys may have invalidated it mid-flight, and caching then would
+        // resurrect a stale value computed before the invalidation.
+        if (value && isStillRegisteredPending()) {
           this.cache.set(cacheKey, {
             value,
             expiresAt: Date.now() + this.ttlMs,
@@ -48,13 +57,15 @@ export class PromiseMemoizer<T> {
 
         return value;
       } finally {
-        this.pending.delete(cacheKey);
+        if (isStillRegisteredPending()) {
+          this.pending.delete(cacheKey);
+        }
       }
     })();
 
-    this.pending.set(cacheKey, newPromise);
+    this.pending.set(cacheKey, promiseHolder.promise);
 
-    return newPromise;
+    return promiseHolder.promise;
   }
 
   async clearExpiredKeys(onDelete?: (value: T) => Promise<void> | void) {
