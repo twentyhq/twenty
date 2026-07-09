@@ -8,6 +8,10 @@ jest.mock('node:stream/promises', () => ({
   pipeline: jest.fn(),
 }));
 
+import {
+  FileStorageException,
+  FileStorageExceptionCode,
+} from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { FrontComponentRestApiExceptionFilter } from 'src/engine/metadata-modules/front-component/filters/front-component-rest-api-exception.filter';
 import {
@@ -169,9 +173,9 @@ describe('FrontComponentController', () => {
       jest
         .spyOn(frontComponentService, 'getBuiltComponentPresignedUrlOrStream')
         .mockRejectedValue(
-          new FrontComponentException(
+          new FileStorageException(
             'Front component built file not found',
-            FrontComponentExceptionCode.FRONT_COMPONENT_NOT_FOUND,
+            FileStorageExceptionCode.FILE_NOT_FOUND,
           ),
         );
 
