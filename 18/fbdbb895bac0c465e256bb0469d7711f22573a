@@ -1,0 +1,19 @@
+packages/twenty-server/test/integration/utils/teardown-test.ts
+  s_e2aa10f90c146a::t_9023cf633700c6 3-4,6-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "18fbdbb895bac0c465e256bb0469d7711f22573a",
+  "prompts": {},
+  "sessions": {
+    "s_e2aa10f90c146a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "76476855-2e62-448a-9265-0ee66e9ee8f1",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
