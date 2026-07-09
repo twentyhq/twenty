@@ -7,12 +7,16 @@ const POLL_INTERVAL_MS = 25;
 const REQUIRED_CONSECUTIVE_QUIET_CHECKS = 2;
 const STALL_TIMEOUT_MS = 15_000;
 const HARD_TIMEOUT_MS = 120_000;
+// Delayed jobs due later than this are intentionally scheduled for the far
+// future (e.g. the 24h billing seats settling job) and would otherwise make
+// every subsequent hook fail with a stall error; they are not in-flight work,
+// so they don't count as pending.
+const DELAYED_JOB_DUE_SOON_HORIZON_MS = STALL_TIMEOUT_MS;
 const PENDING_JOB_STATES = [
   'waiting',
   'active',
   'prioritized',
   'waiting-children',
-  'delayed',
 ] as const;
 
 let redisConnection: IORedis | null = null;
@@ -34,16 +38,24 @@ const getQueues = (): Queue[] => {
   return queues;
 };
 
+const getDueSoonDelayedJobCount = async (queue: Queue): Promise<number> => {
+  const delayedJobs = await queue.getDelayed();
+  const dueSoonThreshold = Date.now() + DELAYED_JOB_DUE_SOON_HORIZON_MS;
+
+  return delayedJobs.filter(
+    (job) => job.timestamp + (job.delay ?? 0) <= dueSoonThreshold,
+  ).length;
+};
+
 const getPendingJobCountsByQueue = async (): Promise<
   Record<string, number>
 > => {
   const countsByQueue = await Promise.all(
     getQueues().map(async (queue) => {
       const jobCounts = await queue.getJobCounts(...PENDING_JOB_STATES);
-      const pendingCount = Object.values(jobCounts).reduce(
-        (sum, count) => sum + count,
-        0,
-      );
+      const pendingCount =
+        Object.values(jobCounts).reduce((sum, count) => sum + count, 0) +
+        (await getDueSoonDelayedJobCount(queue));
 
       return [queue.name, pendingCount] as const;
     }),
