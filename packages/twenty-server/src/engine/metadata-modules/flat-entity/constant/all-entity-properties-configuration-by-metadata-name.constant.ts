@@ -1003,6 +1003,15 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'objectMetadataUniversalIdentifier',
     },
+    // gridPosition is removed by DropPageLayoutWidgetGridPositionColumn (2.20),
+    // but stays writable so the still-NOT-NULL column is populated (from
+    // `position`) on instances mid-upgrade. toCompare is false so it never
+    // drives a diff once the @WasRemovedInUpgrade adapter hides the column.
+    gridPosition: {
+      toCompare: false,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     position: {
       toCompare: true,
       toStringify: true,

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { getGridPositionFromPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/get-grid-position-from-position.util';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
@@ -72,6 +73,7 @@ export class CreatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,
+        gridPosition: getGridPositionFromPosition(action.flatEntity.position),
         ...emptyUniversalForeignKeyAggregators,
       },
     };
