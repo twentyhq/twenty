@@ -95,8 +95,10 @@ export const SettingsAdminApps = () => {
     }
   };
 
-  const registrations =
-    data?.findAllApplicationRegistrations.registrations ?? [];
+  const registrations = [
+    ...(data?.findAllApplicationRegistrations.registrations ?? []),
+  ].sort((a, b) => (a.isConfigured ? 1 : b.isConfigured ? -1 : 0));
+
   const hasMore = data?.findAllApplicationRegistrations.hasMore ?? false;
 
   const handleShowMore = () => {
