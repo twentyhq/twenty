@@ -48,7 +48,9 @@ export const frontComponentCacheStorageService = {
     try {
       const cachedResponse = await cache.match(url);
 
-      return isDefined(cachedResponse) ? cachedResponse.text() : undefined;
+      return isDefined(cachedResponse)
+        ? await cachedResponse.text()
+        : undefined;
     } catch {
       return undefined;
     }
