@@ -9,6 +9,8 @@ import { contextStoreFilterGroupsComponentState } from '@/context-store/states/c
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
+import { detectTimeZone } from '@/localization/utils/detection/detectTimeZone';
+import { normalizeTimeZone } from '@/localization/utils/normalizeTimeZone';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -85,12 +87,14 @@ export const buildHeadlessCommandContextApi = ({
 
   const currentWorkspaceMember = store.get(currentWorkspaceMemberState.atom);
 
-  const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const systemTimeZone = normalizeTimeZone(detectTimeZone());
 
-  const userTimezone =
+  const rawUserTimezone =
     currentWorkspaceMember?.timeZone !== 'system'
       ? (currentWorkspaceMember?.timeZone ?? systemTimeZone)
       : systemTimeZone;
+
+  const userTimezone = normalizeTimeZone(rawUserTimezone);
 
   const flattenedFieldMetadataItems = store.get(
     flattenedFieldMetadataItemsSelector.atom,

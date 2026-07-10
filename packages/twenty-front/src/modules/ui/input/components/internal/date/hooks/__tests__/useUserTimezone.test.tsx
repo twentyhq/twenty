@@ -2,8 +2,15 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { normalizeTimeZone } from '@/localization/utils/normalizeTimeZone';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+
+jest.mock('@/localization/utils/normalizeTimeZone', () => ({
+  normalizeTimeZone: jest.fn((timeZone: string) => timeZone),
+}));
+
+const mockNormalizeTimeZone = jest.mocked(normalizeTimeZone);
 
 describe('useUserTimezone', () => {
   const originalIntl = global.Intl;
@@ -17,6 +24,10 @@ describe('useUserTimezone', () => {
         resolvedOptions: () => ({ timeZone: mockSystemTimezone }),
       })),
     } as any;
+  });
+
+  beforeEach(() => {
+    mockNormalizeTimeZone.mockImplementation((timeZone: string) => timeZone);
   });
 
   afterAll(() => {
@@ -98,5 +109,40 @@ describe('useUserTimezone', () => {
 
     expect(result.current.userTimezone).toBe(userTimezone);
     expect(result.current.isSystemTimezone).toBe(false);
+  });
+
+  it('should normalize a legacy alias stored on the workspace member', () => {
+    mockNormalizeTimeZone.mockImplementation((timeZone: string) =>
+      timeZone === 'CET' ? 'Europe/Paris' : timeZone,
+    );
+
+    jotaiStore.set(currentWorkspaceMemberState.atom, {
+      id: 'workspace-member-id',
+      name: {
+        firstName: 'John',
+        lastName: 'Doe',
+      },
+      colorScheme: 'Light',
+      locale: 'en-US',
+      userEmail: 'john@example.com',
+      timeZone: 'CET',
+      dateFormat: null,
+      timeFormat: null,
+      numberFormat: null,
+      calendarStartDay: null,
+    });
+
+    const WrapperWithLegacyTimezone = ({
+      children,
+    }: {
+      children: React.ReactNode;
+    }) => <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>;
+
+    const { result } = renderHook(() => useUserTimezone(), {
+      wrapper: WrapperWithLegacyTimezone,
+    });
+
+    expect(mockNormalizeTimeZone).toHaveBeenCalledWith('CET');
+    expect(result.current.userTimezone).toBe('Europe/Paris');
   });
 });
