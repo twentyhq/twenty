@@ -37,7 +37,7 @@ export default defineCommandMenuItem({
 
 Un element din meniul de comenzi asociat cu un [headless front component](/l/ro/developers/extend/apps/layout/front-components#headless-vs-non-headless) este modalitatea standard de a oferi o acțiune cu un singur clic — de a rula cod, de a naviga sau de a confirma și executa. Pagina Front Components acoperă [SDK Command components](/l/ro/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`) care gestionează modelul acțiune-și-demontare.
 
-Un flux tipic: un component headless redă `<Command execute={...} />` (vezi [exemplul complet](/l/ro/developers/extend/apps/layout/front-components#sdk-command-components)), iar elementul de meniu de comandă îl indică:
+Un flux tipic: o componentă headless afișează `<Command execute={...} />` (vezi [exemplul complet](/l/ro/developers/extend/apps/layout/front-components#sdk-command-components)), iar elementul de meniu de comandă îl indică:
 
 ```ts src/command-menu-items/run-action.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
