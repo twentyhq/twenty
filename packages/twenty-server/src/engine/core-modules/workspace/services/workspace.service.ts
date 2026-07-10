@@ -150,10 +150,6 @@ export class WorkspaceService {
     private readonly sdkClientGenerationService: SdkClientGenerationService,
   ) {}
 
-  async findById(id: string): Promise<WorkspaceEntity | null> {
-    return this.workspaceRepository.findOne({ where: { id } });
-  }
-
   async updateWorkspaceById({
     payload,
     userWorkspaceId,
