@@ -2,16 +2,16 @@ import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { RecordTableHeaderDndContext } from '@/object-record/record-table/record-table-header/dnd/context/RecordTableHeaderDndContext';
-import { isDefined } from 'twenty-shared/utils';
+import { DragDropColumnDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropColumnDndContext';
 
 const StyledDropTarget = styled.div<{
   $compact?: boolean;
+  $overlay?: boolean;
 }>`
   height: 100%;
   min-height: ${({ $compact }) =>
     $compact ? '100%' : themeCssVariables.spacing[2]};
-  position: relative;
+  position: ${({ $overlay }) => ($overlay ? 'absolute' : 'relative')};
   transition: background-color 120ms ease-out;
   width: 100%;
 
@@ -43,26 +43,27 @@ const StyledDropTarget = styled.div<{
   }
 `;
 
-type RecordTableHeaderDropTargetProps = {
-  index: number;
+type DragDropColumnDropTargetProps = {
   children?: ReactNode;
   compact?: boolean;
+  index: number;
+  overlay?: boolean;
 };
 
-export const RecordTableHeaderDropTarget = ({
-  index,
+export const DragDropColumnDropTarget = ({
   children,
   compact = false,
-}: RecordTableHeaderDropTargetProps) => {
-  const { activeDropTargetIndex } = useContext(RecordTableHeaderDndContext);
+  index,
+  overlay = false,
+}: DragDropColumnDropTargetProps) => {
+  const { activeDropTargetIndex } = useContext(DragDropColumnDndContext);
 
-  const isDragOver = isDefined(activeDropTargetIndex)
-    ? activeDropTargetIndex === index
-    : false;
+  const isDragOver = activeDropTargetIndex === index;
 
   return (
     <StyledDropTarget
       $compact={compact}
+      $overlay={overlay}
       data-drag-over={isDragOver ? 'true' : undefined}
     >
       {children}
