@@ -19,11 +19,6 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
-#: src/emails/test.email.tsx
-msgid "Test email"
-msgstr "Kiểm tra email"
-
-#. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Your workspace is paused"
 msgstr "Không gian làm việc của bạn đang bị tạm dừng"
@@ -68,6 +63,11 @@ msgid "Reactivate workspace"
 msgstr "Kích hoạt lại không gian làm việc"
 
 #. js-lingui-explicit-id
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "Kiểm tra email"
+
+#. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Enabled"
 msgstr "Đã bật"
@@ -94,21 +94,6 @@ msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow
 msgstr "{senderName} (<0>{senderEmail}</0>): Vui lòng xác thực tên miền này để cho phép người dùng có địa chỉ email <1>@{domain}</1> tham gia không gian làm việc của bạn mà không cần lời mời."
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Tham gia vào đội ngũ của bạn trên Twenty"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) đã mời bạn tham gia vào không gian làm việc gọi là <1>{workspaceName}</1>."
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "Chấp nhận lời mời"
-
-#. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your new email address"
 msgstr ""
@@ -129,29 +114,19 @@ msgid "Verify Email"
 msgstr "Xác minh Email"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset your password 🗝"
-msgstr "Đặt lại mật khẩu của bạn 🗝"
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Tham gia vào đội ngũ của bạn trên Twenty"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set your password 🗝"
-msgstr "Thiết lập mật khẩu của bạn 🗝"
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) đã mời bạn tham gia vào không gian làm việc gọi là <1>{workspaceName}</1>."
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset"
-msgstr "Đặt lại"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set"
-msgstr "Thiết lập"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "Liên kết này chỉ có hiệu lực trong thời gian {duration} kế tiếp. Nếu liên kết không hoạt động, bạn có thể sử dụng liên kết xác minh đăng nhập trực tiếp:"
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "Chấp nhận lời mời"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -179,6 +154,31 @@ msgid "Connect to Twenty"
 msgstr "Kết nối với Twenty"
 
 #. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset your password 🗝"
+msgstr "Đặt lại mật khẩu của bạn 🗝"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set your password 🗝"
+msgstr "Thiết lập mật khẩu của bạn 🗝"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset"
+msgstr "Đặt lại"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set"
+msgstr "Thiết lập"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "Liên kết này chỉ có hiệu lực trong thời gian {duration} kế tiếp. Nếu liên kết không hoạt động, bạn có thể sử dụng liên kết xác minh đăng nhập trực tiếp:"
+
+#. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Your workspace has been deleted"
 msgstr "Không gian làm việc của bạn đã bị xóa"
@@ -202,6 +202,31 @@ msgstr "Nếu một ngày nào đó bạn muốn dùng thử Twenty lần nữa,
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Start a new workspace"
 msgstr "Bắt đầu không gian làm việc mới"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your trial is ending soon"
+msgstr "Bản dùng thử của bạn sắp kết thúc"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}."
+msgstr "Bản dùng thử miễn phí không gian làm việc <0>{workspaceDisplayName}</0> của bạn sẽ kết thúc vào {formattedDate}."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
+msgstr "Để giữ không gian làm việc và mọi thứ bạn đã xây dựng, hãy thêm phương thức thanh toán và chọn một gói."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "If you do nothing, we'll pause your workspace and keep your data safe for {dataRetentionDays} days in case you change your mind — no card will be charged."
+msgstr "Nếu bạn không làm gì, chúng tôi sẽ tạm dừng không gian làm việc của bạn và giữ an toàn dữ liệu của bạn trong {dataRetentionDays} ngày phòng khi bạn đổi ý — thẻ của bạn sẽ không bị tính phí."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Add a payment method"
+msgstr "Thêm phương thức thanh toán"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -233,31 +258,6 @@ msgstr "Nếu Twenty phù hợp với nhu cầu của bạn, mọi thứ đã s�
 #: src/emails/billing-trial-converting.email.tsx
 msgid "Manage subscription"
 msgstr "Quản lý gói đăng ký"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "Your trial is ending soon"
-msgstr "Bản dùng thử của bạn sắp kết thúc"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}."
-msgstr "Bản dùng thử miễn phí không gian làm việc <0>{workspaceDisplayName}</0> của bạn sẽ kết thúc vào {formattedDate}."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
-msgstr "Để giữ không gian làm việc và mọi thứ bạn đã xây dựng, hãy thêm phương thức thanh toán và chọn một gói."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "If you do nothing, we'll pause your workspace and keep your data safe for {dataRetentionDays} days in case you change your mind — no card will be charged."
-msgstr "Nếu bạn không làm gì, chúng tôi sẽ tạm dừng không gian làm việc của bạn và giữ an toàn dữ liệu của bạn trong {dataRetentionDays} ngày phòng khi bạn đổi ý — thẻ của bạn sẽ không bị tính phí."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "Add a payment method"
-msgstr "Thêm phương thức thanh toán"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
