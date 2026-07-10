@@ -2253,7 +2253,8 @@ type MarketplaceAppDetail {
   termsUrl: String
   emailSupport: String
   issueReportUrl: String
-  screenshots: [String!]!
+  screenshots: [String!]! @deprecated(reason: "Use galleryImages instead")
+  galleryImages: [String!]!
   defaultRoleUniversalIdentifier: String
   roles: [MarketplaceAppRole!]
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
@@ -3151,7 +3152,7 @@ type Query {
   getViewGroup(id: String!): ViewGroup
   findManyApplications: [Application!]!
   findOneApplication(id: UUID, universalIdentifier: UUID): Application!
-  findManyMarketplaceApps: [MarketplaceApp!]!
+  findManyMarketplaceApps(universalIdentifiers: [String!]): [MarketplaceApp!]!
   findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
   publicMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!

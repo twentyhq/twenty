@@ -33,7 +33,7 @@ my-twenty-app/
   vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
   .nvmrc, .yarnrc.yml, .oxlintrc.json
-  README.md, AGENTS.md, CLAUDE.md
+  README.md, AGENTS.md, CLAUDE.md, CHANGELOG.md, SETUP.md
 ```
 
 ## 주요 파일
@@ -44,9 +44,10 @@ my-twenty-app/
 | `src/default-role.ts`                                                      | 로직 함수가 접근할 수 있는 범위를 제어하는 기본 역할                                    |
 | `src/constants/universal-identifiers.ts`                                   | 자동 생성된 UUID와 앱 메타데이터(표시 이름, 설명).                                  |
 | `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | 시작용 환영 페이지: 사이드바에서 접근할 수 있는, 독립적인 페이지 레이아웃에 의해 렌더링되는 프런트 컴포넌트입니다. |
-| `src/__tests__/`                                                           | 실제 서버에 대해 앱을 동기화하는 통합 테스트(글로벌 설정 포함)와 단위 테스트입니다.                  |
+| `src/__tests__/`                                                           | 실제 서버와 앱을 동기화하는 통합 테스트(글로벌 설정 포함)와 단위 테스트입니다.                     |
 | `public/`                                                                  | 앱과 함께 제공되는 정적 에셋(이미지, 폰트).                                        |
 | `AGENTS.md` / `CLAUDE.md`                                                  | 앱에서 작업하는 AI 코딩 에이전트를 위한 안내서입니다.                                   |
+| `CHANGELOG.md` / `SETUP.md`                                                | 주요 변경 로그와 로컬 개발을 위한 설정 지침입니다.                                     |
 
 <Note>
 **파일 구성은 사용자의 선택입니다.** 위 폴더들은 관례일 뿐이며, SDK는 파일 위치와 관계없이 `export default defineEntity(...)` 호출에 대한 AST 분석을 통해 엔티티를 감지합니다.

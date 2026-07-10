@@ -43,8 +43,8 @@ Fiecare aplicație poate defini **cel mult o funcție de pre-instalare** și **c
 
 * Configurația este o configurație `defineLogicFunction` minus setările de declanșare, plus `shouldRunOnVersionUpgrade`.
 * **Când rulează**: doar la instalări noi, în mod implicit. Setați `shouldRunOnVersionUpgrade: true` pentru a rula și la upgrade-uri. Folosiți `previousVersion` / `newVersion` pentru a ramifica în funcție de calea de upgrade.
-* **Idempotența contează**: post-install async poate fi reîncercat, iar oricare hook rulează din nou la upgrade-uri când `shouldRunOnVersionUpgrade` este activat.
-* Mediul obișnuit de logic-function (`APPLICATION_ID`, `APP_ACCESS_TOKEN`, `API_URL`) este injectat, astfel încât puteți apela Twenty API cu tokenul aplicației voastre.
+* **Idempotența contează**: post-install asincron poate fi reîncercat, iar oricare hook rulează din nou la upgrade-uri când `shouldRunOnVersionUpgrade` este activat.
+* Mediul obișnuit al funcțiilor logice (`APPLICATION_ID`, `APP_ACCESS_TOKEN`, `API_URL`) este injectat, astfel încât puteți apela API-ul Twenty cu tokenul aplicației voastre.
 * Hook-ul este atașat automat la manifestul aplicației la build (`preInstallLogicFunction` / `postInstallLogicFunction`) — nu este nevoie să fie referențiat în [`defineApplication()`](/l/ro/developers/extend/apps/config/application).
 * Valoarea implicită pentru `timeoutSeconds` este 300 pentru a permite sarcini de configurare mai lungi, cum ar fi popularea datelor.
 * **Nu este executat în modul dev**: `yarn twenty dev` sare peste fluxul de instalare și sincronizează fișierele direct, astfel încât hook-urile nu rulează acolo. Declanșați-le manual în schimb:
@@ -89,7 +89,7 @@ export default definePostInstallLogicFunction({
 Flag-ul `shouldRunSynchronously` controlează modelul de execuție:
 
 * `false` *(implicit)* — pus în coada de mesaje (`retryLimit: 3`) și rulat de un worker. Răspunsul la instalare este returnat imediat ce jobul este pus în coadă. **Folosiți pentru muncă de durată** — popularea unor seturi mari de date, API-uri lente ale terților.
-* `true` — executat inline în timpul fluxului de instalare. Requestul de instalare este blocat până când handlerul se termină; o eroare aruncată este expusă apelantului ca `POST_INSTALL_ERROR` (fără reîncercări). **Folosiți pentru muncă rapidă, care trebuie să fie finalizată înainte de răspuns.** Migrarea a fost deja aplicată în acest punct, astfel încât un eșec nu anulează modificările de schemă — doar expune eroarea.
+* `true` — executat inline în timpul fluxului de instalare. Cererea de instalare este blocată până când handlerul se termină; o eroare aruncată este expusă apelantului ca `POST_INSTALL_ERROR` (fără reîncercări). **Folosiți pentru muncă rapidă, care trebuie să fie finalizată înainte de răspuns.** Migrarea a fost deja aplicată în acest punct, astfel încât un eșec nu anulează modificările de schemă — doar expune eroarea.
 
 </Accordion>
 <Accordion title="definePreInstallLogicFunction" description="Rulează înainte ca migrarea metadatelor workspace-ului să fie aplicată">

@@ -33,7 +33,7 @@ my-twenty-app/
   vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
   .nvmrc, .yarnrc.yml, .oxlintrc.json
-  README.md, AGENTS.md, CLAUDE.md
+  README.md, AGENTS.md, CLAUDE.md, CHANGELOG.md, SETUP.md
 ```
 
 ## الملفات الرئيسية
@@ -47,6 +47,7 @@ my-twenty-app/
 | `src/__tests__/`                                                           | اختبار وحدة بالإضافة إلى اختبار تكامل (مع إعداده العام) يقوم بمزامنة التطبيق مع خادم حقيقي.                  |
 | `public/`                                                                  | أصول ثابتة (صور، خطوط) تُقدَّم مع تطبيقك.                                                                    |
 | `AGENTS.md` / `CLAUDE.md`                                                  | إرشادات لوكلاء برمجة الذكاء الاصطناعي الذين يعملون على التطبيق.                                              |
+| `CHANGELOG.md` / `SETUP.md`                                                | سجل بأبرز التغييرات وتعليمات الإعداد للتطوير المحلي.                                                         |
 
 <Note>
 **تنظيم الملفات متروك لك.** المجلدات المذكورة أعلاه هي أعراف متَّبعة — يكتشف SDK الكيانات عبر تحليل AST على استدعاءات `export default defineEntity(...)` بغض النظر عن مكان وجود الملف.
@@ -67,7 +68,7 @@ my-twenty-app/
 }
 ```
 
-يقوم أداة إنشاء الهيكل بتثبيت إصداري `twenty-sdk` و `twenty-client-sdk` على الإصدار الخاص بها — حافظ على تزامن الاثنين عند الترقية.
+تقوم أداة إنشاء الهيكل بتثبيت الحزمتين `twenty-sdk` و `twenty-client-sdk` على إصدارها الخاص — حافظ على تزامنهما عند الترقية.
 
 * توفّر **`twenty-sdk`** أداة `twenty` CLI وأدوات البناء/إنشاء الهياكل (scaffolding). يعمل فقط أثناء التطوير ووقت البناء، ولا يتم استيراده أبدًا في وقت تشغيل تطبيقك المنشور.
 * يتم استيراد **`twenty-client-sdk`** بواسطة كود تطبيقك (`CoreApiClient`، `MetadataApiClient`، `RestApiClient`)؛ لكن Twenty توفّره في وقت التشغيل — حيث تحصل عليه دوال المنطق من طبقة SDK مُولَّدة، وتحصل عليه مكوّنات الواجهة من وحدات يتم تقديمها من الخادم. يُستخدَم الإصدار المثبّت لديك فقط لفحص الأنواع (typechecking) ولبناء النشر (deploy-time build)، لذا لا يلزم أبدًا أن يتم تضمينه في حزمة النشر.

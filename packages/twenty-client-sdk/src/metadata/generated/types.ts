@@ -4452,6 +4452,9 @@ export default {
             "screenshots": [
                 1
             ],
+            "galleryImages": [
+                1
+            ],
             "defaultRoleUniversalIdentifier": [
                 1
             ],
@@ -6529,7 +6532,13 @@ export default {
                 }
             ],
             "findManyMarketplaceApps": [
-                228
+                228,
+                {
+                    "universalIdentifiers": [
+                        1,
+                        "[String!]"
+                    ]
+                }
             ],
             "findMarketplaceAppDetail": [
                 232,

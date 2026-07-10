@@ -69,7 +69,6 @@ msgstr "Kích hoạt lại không gian làm việc"
 
 #. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
 msgstr "Xác thực tên miền"
 

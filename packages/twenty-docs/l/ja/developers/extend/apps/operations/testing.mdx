@@ -106,7 +106,7 @@ export default defineConfig({
 });
 ```
 
-サーバーに到達可能であることを検証し、SDK 用のテスト用コンフィグ（`~/.twenty/config.test.json`）を書き込み、テストが実行される前にアプリを同期するグローバルセットアップファイルを作成します。
+サーバーに到達可能であることを検証し、SDK 用のテスト設定（`~/.twenty/config.test.json`）を書き込み、テストの実行前にアプリを同期するグローバルセットアップファイルを作成します。
 
 ```ts src/__tests__/global-setup.ts
 import * as fs from 'fs';
