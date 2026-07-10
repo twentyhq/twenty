@@ -9,7 +9,7 @@ const isPlainObject = (value: unknown): value is InputData =>
 
 const getFieldTypeByName = (node?: Node): Map<string, FieldMetadataType> =>
   new Map(
-    (node?.fields.edges ?? []).map((edge) => [edge.node.name, edge.node.type]),
+    (node?.fieldsList ?? []).map((field) => [field.name, field.type]),
   );
 
 const nestCompositeFields = (inputData: InputData): InputData => {

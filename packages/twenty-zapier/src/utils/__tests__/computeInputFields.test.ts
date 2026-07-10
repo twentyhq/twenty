@@ -8,120 +8,98 @@ describe('computeInputFields', () => {
       nameSingular: 'person',
       namePlural: 'people',
       labelSingular: 'Person',
-      fields: {
-        edges: [
-          {
-            node: {
-              type: FieldMetadataType.RELATION,
-              name: 'favorites',
-              label: 'Favorites',
-              description: 'Favorites linked to the contact',
-              isNullable: true,
-              defaultValue: null,
-            },
+      fieldsList: [
+        {
+          type: FieldMetadataType.RELATION,
+          name: 'favorites',
+          label: 'Favorites',
+          description: 'Favorites linked to the contact',
+          isNullable: true,
+          defaultValue: null,
+        },
+        {
+          type: FieldMetadataType.CURRENCY,
+          name: 'annualSalary',
+          label: 'Annual Salary',
+          description: 'Annual Salary of the Person',
+          isNullable: true,
+          defaultValue: null,
+        },
+        {
+          type: FieldMetadataType.TEXT,
+          name: 'jobTitle',
+          label: 'Job Title',
+          description: 'Contact’s job title',
+          isNullable: false,
+          defaultValue: {
+            value: '',
           },
-          {
-            node: {
-              type: FieldMetadataType.CURRENCY,
-              name: 'annualSalary',
-              label: 'Annual Salary',
-              description: 'Annual Salary of the Person',
-              isNullable: true,
-              defaultValue: null,
-            },
+        },
+        {
+          type: FieldMetadataType.DATE_TIME,
+          name: 'updatedAt',
+          label: 'Update date',
+          description: null,
+          isNullable: false,
+          defaultValue: {
+            type: 'now',
           },
-          {
-            node: {
-              type: FieldMetadataType.TEXT,
-              name: 'jobTitle',
-              label: 'Job Title',
-              description: 'Contact’s job title',
-              isNullable: false,
-              defaultValue: {
-                value: '',
-              },
-            },
+        },
+        {
+          type: FieldMetadataType.FULL_NAME,
+          name: 'name',
+          label: 'Name',
+          description: 'Contact’s name',
+          isNullable: true,
+          defaultValue: {
+            lastName: '',
+            firstName: '',
           },
-          {
-            node: {
-              type: FieldMetadataType.DATE_TIME,
-              name: 'updatedAt',
-              label: 'Update date',
-              description: null,
-              isNullable: false,
-              defaultValue: {
-                type: 'now',
-              },
-            },
+        },
+        {
+          type: FieldMetadataType.UUID,
+          name: 'id',
+          label: 'Id',
+          description: null,
+          icon: null,
+          isNullable: false,
+          defaultValue: {
+            type: 'uuid',
           },
-          {
-            node: {
-              type: FieldMetadataType.FULL_NAME,
-              name: 'name',
-              label: 'Name',
-              description: 'Contact’s name',
-              isNullable: true,
-              defaultValue: {
-                lastName: '',
-                firstName: '',
-              },
-            },
-          },
-          {
-            node: {
-              type: FieldMetadataType.UUID,
-              name: 'id',
-              label: 'Id',
-              description: null,
-              icon: null,
-              isNullable: false,
-              defaultValue: {
-                type: 'uuid',
-              },
-            },
-          },
-          {
-            node: {
-              type: FieldMetadataType.NUMBER,
-              name: 'recordPosition',
-              label: 'RecordPosition',
-              description: 'Record Position',
-              isNullable: true,
-              defaultValue: null,
-            },
-          },
-          {
-            node: {
-              type: FieldMetadataType.LINKS,
-              name: 'whatsapp',
-              label: 'Whatsapp',
-              description: 'Contact’s Whatsapp account',
-              isNullable: true,
-              defaultValue: null,
-            },
-          },
-          {
-            node: {
-              type: FieldMetadataType.UUID,
-              name: 'companyId',
-              label: 'Company id (foreign key)',
-              description: 'Contact’s company id foreign key',
-              isNullable: true,
-              defaultValue: null,
-            },
-          },
-          {
-            node: {
-              type: FieldMetadataType.BOOLEAN,
-              name: 'ICP',
-              label: 'ICP',
-              description: 'ICP',
-              isNullable: false,
-              defaultValue: false,
-            },
-          },
-        ],
-      },
+        },
+        {
+          type: FieldMetadataType.NUMBER,
+          name: 'recordPosition',
+          label: 'RecordPosition',
+          description: 'Record Position',
+          isNullable: true,
+          defaultValue: null,
+        },
+        {
+          type: FieldMetadataType.LINKS,
+          name: 'whatsapp',
+          label: 'Whatsapp',
+          description: 'Contact’s Whatsapp account',
+          isNullable: true,
+          defaultValue: null,
+        },
+        {
+          type: FieldMetadataType.UUID,
+          name: 'companyId',
+          label: 'Company id (foreign key)',
+          description: 'Contact’s company id foreign key',
+          isNullable: true,
+          defaultValue: null,
+        },
+        {
+          type: FieldMetadataType.BOOLEAN,
+          name: 'ICP',
+          label: 'ICP',
+          description: 'ICP',
+          isNullable: false,
+          defaultValue: false,
+        },
+      ],
     };
     const baseExpectedResult: InputField[] = [
       {
@@ -258,38 +236,32 @@ describe('computeInputFields', () => {
       nameSingular: 'opportunity',
       namePlural: 'opportunities',
       labelSingular: 'Opportunity',
-      fields: {
-        edges: [
-          {
-            node: {
-              type: FieldMetadataType.SELECT,
-              name: 'stage',
-              label: 'Stage',
-              description: 'Opportunity stage',
-              isNullable: true,
-              defaultValue: null,
-              options: [
-                { value: 'NEW', label: 'New' },
-                { value: 'SCREENING', label: 'Screening' },
-              ],
-            },
-          },
-          {
-            node: {
-              type: FieldMetadataType.MULTI_SELECT,
-              name: 'tags',
-              label: 'Tags',
-              description: 'Opportunity tags',
-              isNullable: true,
-              defaultValue: null,
-              options: [
-                { value: 'URGENT', label: 'Urgent' },
-                { value: 'VIP', label: 'VIP' },
-              ],
-            },
-          },
-        ],
-      },
+      fieldsList: [
+        {
+          type: FieldMetadataType.SELECT,
+          name: 'stage',
+          label: 'Stage',
+          description: 'Opportunity stage',
+          isNullable: true,
+          defaultValue: null,
+          options: [
+            { value: 'NEW', label: 'New' },
+            { value: 'SCREENING', label: 'Screening' },
+          ],
+        },
+        {
+          type: FieldMetadataType.MULTI_SELECT,
+          name: 'tags',
+          label: 'Tags',
+          description: 'Opportunity tags',
+          isNullable: true,
+          defaultValue: null,
+          options: [
+            { value: 'URGENT', label: 'Urgent' },
+            { value: 'VIP', label: 'VIP' },
+          ],
+        },
+      ],
     };
     const expectedResult: InputField[] = [
       {

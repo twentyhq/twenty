@@ -65,50 +65,40 @@ describe('utils.handleQueryParams', () => {
       nameSingular: 'opportunity',
       namePlural: 'opportunities',
       labelSingular: 'Opportunity',
-      fields: {
-        edges: [
-          {
-            node: {
-              type: FieldMetadataType.TEXT,
-              name: 'name',
-              label: 'Name',
-              description: null,
-              isNullable: true,
-              defaultValue: null,
-            },
-          },
-          {
-            node: {
-              type: FieldMetadataType.SELECT,
-              name: 'stage',
-              label: 'Stage',
-              description: null,
-              isNullable: true,
-              defaultValue: null,
-            },
-          },
-          {
-            node: {
-              type: FieldMetadataType.MULTI_SELECT,
-              name: 'tags',
-              label: 'Tags',
-              description: null,
-              isNullable: true,
-              defaultValue: null,
-            },
-          },
-          {
-            node: {
-              type: FieldMetadataType.RATING,
-              name: 'rating',
-              label: 'Rating',
-              description: null,
-              isNullable: true,
-              defaultValue: null,
-            },
-          },
-        ],
-      },
+      fieldsList: [
+        {
+          type: FieldMetadataType.TEXT,
+          name: 'name',
+          label: 'Name',
+          description: null,
+          isNullable: true,
+          defaultValue: null,
+        },
+        {
+          type: FieldMetadataType.SELECT,
+          name: 'stage',
+          label: 'Stage',
+          description: null,
+          isNullable: true,
+          defaultValue: null,
+        },
+        {
+          type: FieldMetadataType.MULTI_SELECT,
+          name: 'tags',
+          label: 'Tags',
+          description: null,
+          isNullable: true,
+          defaultValue: null,
+        },
+        {
+          type: FieldMetadataType.RATING,
+          name: 'rating',
+          label: 'Rating',
+          description: null,
+          isNullable: true,
+          defaultValue: null,
+        },
+      ],
     };
     const result = handleQueryParams(inputData, node);
     const expectedResult =

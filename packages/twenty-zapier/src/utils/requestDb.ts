@@ -13,24 +13,45 @@ export const requestSchema = async (
           nameSingular
           namePlural
           labelSingular
-          fields(paging: {first: 1000}, filter: {isActive: {is:true}}) {
-            edges {
-              node {
-                type
-                name
-                label
-                description
-                isNullable
-                defaultValue
-                options
-              }
-            }
+          fieldsList {
+            type
+            name
+            label
+            description
+            isActive
+            isNullable
+            defaultValue
+            options
           }
         }
       }
     }
   }`;
-  return await requestDb({ z, bundle, query, endpoint: 'metadata' });
+
+  const schema: Schema = await requestDb({
+    z,
+    bundle,
+    query,
+    endpoint: 'metadata',
+  });
+
+  // fieldsList returns every field, so filter to active ones to preserve the
+  // behavior of the previous isActive-filtered fields cursor connection.
+  return {
+    ...schema,
+    data: {
+      ...schema.data,
+      objects: {
+        ...schema.data.objects,
+        edges: schema.data.objects.edges.map((edge) => ({
+          node: {
+            ...edge.node,
+            fieldsList: edge.node.fieldsList.filter((field) => field.isActive),
+          },
+        })),
+      },
+    },
+  };
 };
 
 const requestDb = async ({

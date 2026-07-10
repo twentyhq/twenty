@@ -17,17 +17,16 @@ export type NodeField = {
   list?: boolean;
   placeholder?: string;
   options?: NodeFieldOption[] | null;
+  // Only set on metadata fields fetched from the API; synthetic composite
+  // subfields (e.g. firstName, amountMicros) do not carry it.
+  isActive?: boolean;
 };
 
 export type Node = {
   nameSingular: string;
   namePlural: string;
   labelSingular: string;
-  fields: {
-    edges: {
-      node: NodeField;
-    }[];
-  };
+  fieldsList: NodeField[];
 };
 
 export type InputField = {

@@ -94,22 +94,10 @@ type ObjectInfo = {
   partnerUserFieldMetadataId: string;
 };
 
-type FieldEdge = {
-  node: {
-    id: string;
-    name: string;
-    type: string;
-  };
-};
-
-type PageInfo = {
-  hasNextPage: boolean;
-  endCursor: string | null;
-};
-
-type FieldsPage = {
-  edges: FieldEdge[];
-  pageInfo: PageInfo;
+type FieldNode = {
+  id: string;
+  name: string;
+  type: string;
 };
 
 type MetadataResponse<T> = {
@@ -143,9 +131,26 @@ async function metadataFetch<T>(
   return json.data;
 }
 
-// Pages through an object's fields until it finds a field with the given name.
-// Uses cursor-based pagination to avoid truncation on large objects (company/opportunity
-// have >200 fields, so a single 200-cap request may miss partnerUser).
+// Fetches every field on an object via the fieldsList resolver, which returns
+// all fields in a single response (no cursor pagination needed).
+async function collectAllFields(
+  metadataUrl: string,
+  apiKey: string,
+  objectId: string,
+): Promise<FieldNode[]> {
+  const query = `{
+    object(id: "${objectId}") {
+      fieldsList { id name type }
+    }
+  }`;
+
+  const data = await metadataFetch<{
+    object: { fieldsList: FieldNode[] };
+  }>(metadataUrl, apiKey, query);
+
+  return data.object.fieldsList;
+}
+
 async function findFieldByName(
   metadataUrl: string,
   apiKey: string,
@@ -153,94 +158,24 @@ async function findFieldByName(
   objectName: string,
   fieldName: string,
 ): Promise<string> {
-  let after: string | null = null;
-  let page = 0;
+  const fields = await collectAllFields(metadataUrl, apiKey, objectId);
+  const match = fields.find((field) => field.name === fieldName);
 
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    page++;
-    const pagingArg = after
-      ? `paging:{first:200, after:"${after}"}`
-      : `paging:{first:200}`;
-
-    const query = `{
-      object(id: "${objectId}") {
-        fields(${pagingArg}) {
-          edges { node { id name type } }
-          pageInfo { hasNextPage endCursor }
-        }
-      }
-    }`;
-
-    const data = await metadataFetch<{
-      object: { fields: FieldsPage };
-    }>(metadataUrl, apiKey, query);
-
-    const match = data.object.fields.edges.find(
-      (e) => e.node.name === fieldName,
+  if (!match) {
+    // Print available fields to help diagnose a schema mismatch.
+    const names = fields.map((field) => field.name).join(', ');
+    throw new Error(
+      `Field "${fieldName}" not found on object "${objectName}". ` +
+        `Available fields: ${names}`,
     );
-
-    if (match) {
-      console.log(
-        `  [rls:configure] ${objectName}.${fieldName} found on page ${page} ` +
-          `(type=${match.node.type}, id=${match.node.id})`,
-      );
-      return match.node.id;
-    }
-
-    if (!data.object.fields.pageInfo.hasNextPage) {
-      // Print available fields to help diagnose a schema mismatch.
-      const names = data.object.fields.edges
-        .map((e) => e.node.name)
-        .join(', ');
-      throw new Error(
-        `Field "${fieldName}" not found on object "${objectName}" after ${page} page(s). ` +
-          `Last-page fields: ${names}`,
-      );
-    }
-
-    after = data.object.fields.pageInfo.endCursor;
-  }
-}
-
-// Collects every field on an object across all cursor pages.
-// Required for Opportunity which can grow; always paginate fully.
-async function collectAllFields(
-  metadataUrl: string,
-  apiKey: string,
-  objectId: string,
-): Promise<{ id: string; name: string; type: string }[]> {
-  const all: { id: string; name: string; type: string }[] = [];
-  let after: string | null = null;
-
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    const pagingArg = after
-      ? `paging:{first:200, after:"${after}"}`
-      : `paging:{first:200}`;
-
-    const query = `{
-      object(id: "${objectId}") {
-        fields(${pagingArg}) {
-          edges { node { id name type } }
-          pageInfo { hasNextPage endCursor }
-        }
-      }
-    }`;
-
-    const data = await metadataFetch<{
-      object: { fields: FieldsPage };
-    }>(metadataUrl, apiKey, query);
-
-    for (const edge of data.object.fields.edges) {
-      all.push(edge.node);
-    }
-
-    if (!data.object.fields.pageInfo.hasNextPage) break;
-    after = data.object.fields.pageInfo.endCursor;
   }
 
-  return all;
+  console.log(
+    `  [rls:configure] ${objectName}.${fieldName} found ` +
+      `(type=${match.type}, id=${match.id})`,
+  );
+
+  return match.id;
 }
 
 type FieldPermissionResult = {
