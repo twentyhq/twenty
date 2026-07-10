@@ -42,19 +42,21 @@ export const EmailRecipientsFieldChip = ({
   const workspaceMember = resolution?.workspaceMember;
   const person = resolution?.person;
 
-  const displayName = getDisplayNameFromParticipant({
+  const resolvedFullName = getDisplayNameFromParticipant({
     participant: {
       person,
       workspaceMember,
-      displayName: recipient.displayName ?? '',
-      handle: recipient.address,
+      displayName: '',
+      handle: '',
     },
     shouldUseFullName: true,
   }).trim();
 
-  const resolvedLabel = isNonEmptyString(displayName)
-    ? displayName
-    : recipient.address;
+  // A resolved record can have an empty name; fall back to the parsed
+  // display name before the raw address
+  const resolvedLabel =
+    [resolvedFullName, recipient.displayName ?? ''].find(isNonEmptyString) ??
+    recipient.address;
 
   const avatar =
     isDefined(person) || isDefined(workspaceMember) ? (

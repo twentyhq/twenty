@@ -17,6 +17,7 @@ type MultiItemFieldMenuContentProps = {
   onCopy?: () => void;
   showSetAsPrimaryButton?: boolean;
   showCopyButton?: boolean;
+  deleteLabel?: string;
 };
 
 export const MultiItemFieldMenuContent = ({
@@ -27,6 +28,7 @@ export const MultiItemFieldMenuContent = ({
   onCopy,
   showSetAsPrimaryButton = false,
   showCopyButton = false,
+  deleteLabel,
 }: MultiItemFieldMenuContentProps) => {
   const { closeDropdown } = useCloseDropdown();
 
@@ -67,7 +69,7 @@ export const MultiItemFieldMenuContent = ({
       <MenuItem
         accent="danger"
         LeftIcon={IconTrash}
-        text={t`Delete`}
+        text={deleteLabel ?? t`Delete`}
         onClick={handleDeleteClick}
       />
       {showCopyButton && (

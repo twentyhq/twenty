@@ -143,6 +143,7 @@ export const EmailRecipientChipMenuContent = ({
           onDelete={onRemove}
           onCopy={handleCopy}
           showCopyButton
+          deleteLabel={t`Remove`}
         />
       </DropdownMenuItemsContainer>
     </DropdownContent>

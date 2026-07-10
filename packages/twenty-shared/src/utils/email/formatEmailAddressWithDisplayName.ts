@@ -10,9 +10,9 @@ export const formatEmailAddressWithDisplayName = ({
     return address;
   }
 
-  const requiresQuoting = /[,;<>@"]/.test(displayName);
+  const requiresQuoting = /[()<>[\]:;@\\,."]/.test(displayName);
   const formattedDisplayName = requiresQuoting
-    ? `"${displayName.replace(/"/g, '\\"')}"`
+    ? `"${displayName.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`
     : displayName;
 
   return `${formattedDisplayName} <${address}>`;
