@@ -535,71 +535,12 @@ type Index {
   createdAt: DateTime!
   updatedAt: DateTime!
   indexFieldMetadataList: [IndexField!]!
-  objectMetadata(
-    """Limit or page results."""
-    paging: CursorPaging! = {first: 10}
-
-    """Specify to filter the records returned."""
-    filter: ObjectFilter! = {}
-  ): IndexObjectMetadataConnection!
 }
 
 """Type of the index"""
 enum IndexType {
   BTREE
   GIN
-}
-
-input CursorPaging {
-  """Paginate before opaque cursor"""
-  before: ConnectionCursor
-
-  """Paginate after opaque cursor"""
-  after: ConnectionCursor
-
-  """Paginate first"""
-  first: Int
-
-  """Paginate last"""
-  last: Int
-}
-
-"""Cursor for paging through collections"""
-scalar ConnectionCursor
-
-input ObjectFilter {
-  and: [ObjectFilter!]
-  or: [ObjectFilter!]
-  id: UUIDFilterComparison
-  isRemote: BooleanFieldComparison
-  isActive: BooleanFieldComparison
-  isSystem: BooleanFieldComparison
-  isUIEditable: BooleanFieldComparison
-  isUICreatable: BooleanFieldComparison
-  isUIReadOnly: BooleanFieldComparison
-  isSearchable: BooleanFieldComparison
-}
-
-input UUIDFilterComparison {
-  is: Boolean
-  isNot: Boolean
-  eq: UUID
-  neq: UUID
-  gt: UUID
-  gte: UUID
-  lt: UUID
-  lte: UUID
-  like: UUID
-  notLike: UUID
-  iLike: UUID
-  notILike: UUID
-  in: [UUID!]
-  notIn: [UUID!]
-}
-
-input BooleanFieldComparison {
-  is: Boolean
-  isNot: Boolean
 }
 
 type Object {
@@ -646,6 +587,23 @@ type Object {
   ): ObjectIndexMetadatasConnection!
 }
 
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
 input FieldFilter {
   and: [FieldFilter!]
   or: [FieldFilter!]
@@ -655,6 +613,28 @@ input FieldFilter {
   isUIEditable: BooleanFieldComparison
   isUIReadOnly: BooleanFieldComparison
   objectMetadataId: UUIDFilterComparison
+}
+
+input UUIDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: UUID
+  neq: UUID
+  gt: UUID
+  gte: UUID
+  lt: UUID
+  lte: UUID
+  like: UUID
+  notLike: UUID
+  iLike: UUID
+  notILike: UUID
+  in: [UUID!]
+  notIn: [UUID!]
+}
+
+input BooleanFieldComparison {
+  is: Boolean
+  isNot: Boolean
 }
 
 input IndexFilter {
@@ -2001,9 +1981,23 @@ type IndexField {
   updatedAt: DateTime!
 }
 
-type IndexEdge {
-  """The node containing the Index"""
-  node: Index!
+type ObjectRecordCount {
+  objectNamePlural: String!
+  totalCount: Int!
+}
+
+type SearchField {
+  id: UUID!
+  fieldMetadataId: UUID!
+  tsVectorFieldMetadataId: UUID!
+  position: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ObjectEdge {
+  """The node containing the Object"""
+  node: Object!
 
   """Cursor for this node."""
   cursor: ConnectionCursor!
@@ -2023,50 +2017,20 @@ type PageInfo {
   endCursor: ConnectionCursor
 }
 
-type IndexConnection {
-  """Paging information"""
-  pageInfo: PageInfo!
-
-  """Array of edges."""
-  edges: [IndexEdge!]!
-}
-
-type ObjectEdge {
-  """The node containing the Object"""
-  node: Object!
-
-  """Cursor for this node."""
-  cursor: ConnectionCursor!
-}
-
-type IndexObjectMetadataConnection {
-  """Paging information"""
-  pageInfo: PageInfo!
-
-  """Array of edges."""
-  edges: [ObjectEdge!]!
-}
-
-type ObjectRecordCount {
-  objectNamePlural: String!
-  totalCount: Int!
-}
-
-type SearchField {
-  id: UUID!
-  fieldMetadataId: UUID!
-  tsVectorFieldMetadataId: UUID!
-  position: Float!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
 type ObjectConnection {
   """Paging information"""
   pageInfo: PageInfo!
 
   """Array of edges."""
   edges: [ObjectEdge!]!
+}
+
+type IndexEdge {
+  """The node containing the Index"""
+  node: Index!
+
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
 }
 
 type ObjectIndexMetadatasConnection {
@@ -3107,17 +3071,6 @@ type Query {
     """Specify to filter the records returned."""
     filter: ObjectFilter! = {}
   ): ObjectConnection!
-  index(
-    """The id of the record to find."""
-    id: UUID!
-  ): Index!
-  indexMetadatas(
-    """Limit or page results."""
-    paging: CursorPaging! = {first: 10}
-
-    """Specify to filter the records returned."""
-    filter: IndexFilter! = {}
-  ): IndexConnection!
   findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
   findManyLogicFunctions: [LogicFunction!]!
   getAvailablePackages(input: LogicFunctionIdInput!): JSON!
@@ -3206,6 +3159,19 @@ input GetApiKeyInput {
 input AgentIdInput {
   """The id of the agent."""
   id: UUID!
+}
+
+input ObjectFilter {
+  and: [ObjectFilter!]
+  or: [ObjectFilter!]
+  id: UUIDFilterComparison
+  isRemote: BooleanFieldComparison
+  isActive: BooleanFieldComparison
+  isSystem: BooleanFieldComparison
+  isUIEditable: BooleanFieldComparison
+  isUICreatable: BooleanFieldComparison
+  isUIReadOnly: BooleanFieldComparison
+  isSearchable: BooleanFieldComparison
 }
 
 input LogicFunctionIdInput {
