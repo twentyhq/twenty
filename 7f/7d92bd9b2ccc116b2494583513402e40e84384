@@ -1,0 +1,106 @@
+packages/twenty-front/src/modules/activities/emails/recipients/hooks/useEmailRecipientSuggestions.ts
+  s_d7efdfca82e0dc::t_a78e2e404acc93 57
+  s_d7efdfca82e0dc::t_11a67b5caef6d1 6,12,37-43,45-51,53-56,58-75,118,123-126,128,131-136,142,148-150,158-168,170-184,187-192,194,196-197,199-201,204-206,209
+  s_d7efdfca82e0dc::t_32244abfd2717c 17
+  s_d7efdfca82e0dc::t_f6802b76fe9d76 169
+packages/twenty-front/src/modules/activities/emails/utils/getDisplayNameFromParticipant.ts
+  s_d7efdfca82e0dc::t_7bd741c40c5f18 4-5,8-15,20
+packages/twenty-front/src/modules/activities/emails/recipients/components/EmailRecipientsFieldInput.tsx
+  s_d7efdfca82e0dc::t_0b6aa926816a18 282
+  s_d7efdfca82e0dc::t_695a95ea7af9a1 67-70
+  s_d7efdfca82e0dc::t_bc91eb62e449b5 512
+  s_d7efdfca82e0dc::t_ac51eed846791e 527
+  s_d7efdfca82e0dc::t_9f16932bd60c74 15
+packages/twenty-shared/src/utils/email/parseEmailAddressList.ts
+  s_d7efdfca82e0dc::t_2d720cff3772ac 1,4
+  s_d7efdfca82e0dc::t_12b057eb6ce5bc 14-20
+  s_d7efdfca82e0dc::t_e10099294f8e20 2-3,5-13,21-24
+packages/twenty-front/src/modules/activities/emails/hooks/useEmailComposerState.ts
+  s_d7efdfca82e0dc::t_0b6aa926816a18 8,44,47,50
+packages/twenty-front/src/modules/activities/emails/recipients/types/EmailRecipientPerson.ts
+  s_d7efdfca82e0dc::t_27e6038dec5834 1-4
+packages/twenty-server/src/modules/messaging/message-outbound-manager/utils/format-message-from-header.util.ts
+  s_d7efdfca82e0dc::t_b5133bcf274cc4 2,6-7,15-26
+packages/twenty-front/src/modules/activities/emails/recipients/constants/EmailRecipientSuggestionsLimit.ts
+  s_d7efdfca82e0dc::t_c1aeba32e91e4d 1
+packages/twenty-front/src/modules/object-record/record-field/ui/form-types/components/BaseChip.tsx
+  s_d7efdfca82e0dc::t_21bcd822c73619 68
+  s_d7efdfca82e0dc::t_5fb3c0b210f957 137
+packages/twenty-shared/package.json
+  s_d7efdfca82e0dc::t_6398dacd803f5f 48
+  s_d7efdfca82e0dc::t_c9514b573b3952 24
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
+  s_d7efdfca82e0dc::t_25c3489a9e3f2f 8-10,50,67-71,73-74
+  s_d7efdfca82e0dc::t_2a521285049ee0 7
+  s_d7efdfca82e0dc::t_d84b6223424b2b 72
+packages/twenty-front/src/modules/activities/emails/recipients/utils/getEmailRecipientPersonFromRecord.ts
+  s_d7efdfca82e0dc::t_8d023942063f88 8-13
+packages/twenty-server/src/modules/messaging/message-outbound-manager/utils/__tests__/format-message-from-header.util.spec.ts
+  s_d7efdfca82e0dc::t_d9e49749b5acbf 10-28
+packages/twenty-front/src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
+  s_d7efdfca82e0dc::t_98faf5b0910eec 10
+  s_d7efdfca82e0dc::t_9c6a359a216d18 51-54,57-60
+  s_d7efdfca82e0dc::t_7ff4c4c9e51cc0 5,12,140-145
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/safe-parse-email-addresses.util.ts
+  s_d7efdfca82e0dc::t_50cf315bed3f41 1,6-9
+packages/twenty-shared/src/utils/index.ts
+  s_d7efdfca82e0dc::t_c9514b573b3952 52-53
+packages/twenty-shared/src/utils/email/__tests__/formatEmailAddressWithDisplayName.test.ts
+  s_d7efdfca82e0dc::t_f6802b76fe9d76 1-4
+  s_d7efdfca82e0dc::t_f6a5b923eb491e 5-41
+packages/twenty-shared/src/utils/email/formatEmailAddressWithDisplayName.ts
+  s_d7efdfca82e0dc::t_e945b20e759355 1,3-4,9
+  s_d7efdfca82e0dc::t_6d15a4a0b830a0 15
+  s_d7efdfca82e0dc::t_9f1434503ebdb3 2,5-8,10-14,16-19
+packages/twenty-front/src/modules/activities/emails/recipients/components/EmailRecipientsFieldChip.tsx
+  s_d7efdfca82e0dc::t_0b6aa926816a18 83
+  s_d7efdfca82e0dc::t_ad0e14a331284c 12,45-53,55-57,60,63,66
+  s_d7efdfca82e0dc::t_56162def933e1e 3-6
+packages/twenty-front/src/modules/activities/emails/recipients/hooks/useEmailRecipientsResolution.ts
+  s_d7efdfca82e0dc::t_0aa9f216f231cd 65
+packages/twenty-front/src/modules/activities/emails/recipients/hooks/useEmailRecipientsField.ts
+  s_d7efdfca82e0dc::t_ce77dcc3d10d5c 1
+  s_d7efdfca82e0dc::t_0b6aa926816a18 3-6,96
+  s_d7efdfca82e0dc::t_439b71f62c213c 77-87
+packages/twenty-front/src/modules/activities/emails/recipients/types/EmailRecipient.ts
+  s_d7efdfca82e0dc::t_a20beaee49c693 1-3
+packages/twenty-front/src/modules/activities/emails/hooks/useReplyContext.ts
+  s_d7efdfca82e0dc::t_f6802b76fe9d76 5-8
+  s_d7efdfca82e0dc::t_0b6aa926816a18 59
+packages/twenty-shared/src/types/EmailAddressWithDisplayName.ts
+  s_d7efdfca82e0dc::t_1fd10b0bbe30e8 1-4
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/input/hooks/useMultiItemFieldInput.ts
+  s_d7efdfca82e0dc::t_4456a7cfc9f62e 119-125
+  s_d7efdfca82e0dc::t_962e30a4405566 1-118,126-180
+packages/twenty-shared/src/utils/email/__tests__/parseEmailAddressList.test.ts
+  s_d7efdfca82e0dc::t_e1367d2b942ffc 70-74
+  s_d7efdfca82e0dc::t_888a8012b6528b 1-69,75
+packages/twenty-front/src/modules/activities/emails/utils/getEmailDraftPrefillFromMessage.ts
+  s_d7efdfca82e0dc::t_0b6aa926816a18 3,16
+packages/twenty-shared/src/types/index.ts
+  s_d7efdfca82e0dc::t_c9514b573b3952 65
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInput.tsx
+  s_d7efdfca82e0dc::t_142b5d9bc8b30f 9,112-135,137-145,147-155,157-158,160-162,181
+  s_d7efdfca82e0dc::t_7ad09e94fd4b1e 22
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuContent.tsx
+  s_d7efdfca82e0dc::t_f6802b76fe9d76 62-66
+  s_d7efdfca82e0dc::t_6d503ff905efd9 1-61,67-82
+yarn.lock
+  s_d7efdfca82e0dc::t_4ab8db7e7d5992 53325,53334
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "7f7d92bd9b2ccc116b2494583513402e40e84384",
+  "prompts": {},
+  "sessions": {
+    "s_d7efdfca82e0dc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8597b8f-384d-4561-a6dd-8d19f0804e31",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
