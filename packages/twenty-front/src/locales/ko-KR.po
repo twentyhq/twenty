@@ -12075,6 +12075,11 @@ msgstr "검색 조건에 맞는 API 키 없음"
 msgid "No applications available"
 msgstr "사용 가능한 애플리케이션이 없습니다"
 
+#. js-lingui-id: zLbFMr
+#: src/pages/onboarding/InstallAppsContent.tsx
+msgid "No apps are available to install right now"
+msgstr ""
+
 #. js-lingui-id: tFxVHz
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "No available fields to select"

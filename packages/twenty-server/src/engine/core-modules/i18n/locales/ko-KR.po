@@ -251,16 +251,6 @@ msgstr "이 이름의 스킬이 이미 존재합니다"
 msgid "A skill with this name already exists."
 msgstr "이 이름의 스킬이 이미 존재합니다."
 
-#. js-lingui-id: 73tqJw
-#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
-msgid "A system field has invalid properties."
-msgstr "시스템 필드에 유효하지 않은 속성이 있습니다."
-
-#. js-lingui-id: WYnYE1
-#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
-msgid "A system field is missing."
-msgstr "시스템 필드가 누락되었습니다."
-
 #. js-lingui-id: mkFXEH
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A task"
@@ -7115,21 +7105,6 @@ msgstr "일요일"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "System"
 msgstr "시스템"
-
-#. js-lingui-id: Bhmfez
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
-msgid "System field {expectedFieldName} has invalid {property}"
-msgstr "시스템 필드 {expectedFieldName}의 {property}가 유효하지 않습니다."
-
-#. js-lingui-id: 1gOTOh
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
-msgid "System field {expectedFieldName} is missing"
-msgstr "시스템 필드 {expectedFieldName}이 누락되었습니다."
-
-#. js-lingui-id: LKiQVw
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
-msgid "System field {expectedFieldName} universal identifier is not deterministic; it is derived by the server and cannot be customized"
-msgstr "시스템 필드 {expectedFieldName} 범용 식별자는 비결정적이며, 서버에서 파생되므로 사용자 지정할 수 없습니다."
 
 #. js-lingui-id: q1oDDx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts

@@ -251,16 +251,6 @@ msgstr "已存在同名技能"
 msgid "A skill with this name already exists."
 msgstr "已存在同名技能。"
 
-#. js-lingui-id: 73tqJw
-#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
-msgid "A system field has invalid properties."
-msgstr "系统字段包含无效属性。"
-
-#. js-lingui-id: WYnYE1
-#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
-msgid "A system field is missing."
-msgstr "缺少系统字段。"
-
 #. js-lingui-id: mkFXEH
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A task"
@@ -7115,21 +7105,6 @@ msgstr "星期日"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "System"
 msgstr "系统"
-
-#. js-lingui-id: Bhmfez
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
-msgid "System field {expectedFieldName} has invalid {property}"
-msgstr "系统字段 {expectedFieldName} 的 {property} 无效"
-
-#. js-lingui-id: 1gOTOh
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
-msgid "System field {expectedFieldName} is missing"
-msgstr "系统字段 {expectedFieldName} 缺失"
-
-#. js-lingui-id: LKiQVw
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
-msgid "System field {expectedFieldName} universal identifier is not deterministic; it is derived by the server and cannot be customized"
-msgstr "系统字段 {expectedFieldName} 的通用标识符是非确定性的；它由服务器派生，不能自定义"
 
 #. js-lingui-id: q1oDDx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts

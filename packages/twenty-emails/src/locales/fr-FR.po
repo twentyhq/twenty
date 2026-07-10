@@ -69,6 +69,7 @@ msgstr "Réactiver l’espace de travail"
 
 #. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
 msgstr "Valider le domaine"
 
@@ -106,51 +107,6 @@ msgstr "{senderName} (<0>{senderEmail}</0>) vous a invité à rejoindre un espac
 #: src/emails/send-invite-link.email.tsx
 msgid "Accept invite"
 msgstr "Accepter l'invitation"
-
-#. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your new email address"
-msgstr "Confirmez votre nouvelle adresse courriel"
-
-#. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your email address"
-msgstr "Confirmez votre adresse e-mail"
-
-#. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm new email"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Verify Email"
-msgstr "Vérifiez l'e-mail"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset your password 🗝"
-msgstr "Réinitialisez votre mot de passe 🗝"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set your password 🗝"
-msgstr "Définir votre mot de passe 🗝"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset"
-msgstr "Réinitialiser"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set"
-msgstr "Définir"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "Ce lien n'est valable que pour les {duration} suivants. Si le lien ne fonctionne pas, vous pouvez utiliser directement le lien de vérification de connexion :"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -203,6 +159,51 @@ msgid "Start a new workspace"
 msgstr "Créer un nouvel espace de travail"
 
 #. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset your password 🗝"
+msgstr "Réinitialisez votre mot de passe 🗝"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set your password 🗝"
+msgstr "Définir votre mot de passe 🗝"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset"
+msgstr "Réinitialiser"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set"
+msgstr "Définir"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "Ce lien n'est valable que pour les {duration} suivants. Si le lien ne fonctionne pas, vous pouvez utiliser directement le lien de vérification de connexion :"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr "Confirmez votre nouvelle adresse courriel"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your email address"
+msgstr "Confirmez votre adresse e-mail"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm new email"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Verify Email"
+msgstr "Vérifiez l'e-mail"
+
+#. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
 msgstr "Votre période d’essai se termine bientôt"
@@ -226,32 +227,6 @@ msgstr "Si vous ne faites rien, nous mettrons votre espace de travail en pause e
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Add a payment method"
 msgstr "Ajouter un mode de paiement"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Your plan renews soon"
-msgstr "Votre formule sera bientôt renouvelée"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Just so it's never a surprise, here's a heads up about your annual plan."
-msgstr "Pour éviter toute mauvaise surprise, voici un rappel concernant votre formule annuelle."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
-msgstr "Votre formule annuelle pour <0>{workspaceDisplayName}</0> sera renouvelée le {formattedDate}."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
-msgstr "Aucune action n’est nécessaire si vous souhaitez continuer. Si vous préférez ne pas renouveler, vous pouvez annuler à tout moment avant cette date."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Manage subscription"
-msgstr "Gérer l’abonnement"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -279,6 +254,12 @@ msgid "If Twenty is working for you, you're all set — there's nothing to do. I
 msgstr "Si Twenty vous convient, tout est en ordre — vous n’avez rien à faire. Si ce n’est pas la bonne solution pour vous, vous pouvez annuler en un clic avant cette date et vous ne serez pas facturé."
 
 #. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "Gérer l’abonnement"
+
+#. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
 msgid "What is Twenty?"
 msgstr "Qu'est-ce que Twenty ?"
@@ -287,6 +268,26 @@ msgstr "Qu'est-ce que Twenty ?"
 #: src/components/WhatIsTwenty.tsx
 msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
 msgstr "C'est un CRM, un logiciel qui aide les entreprises à gérer efficacement leurs données clients et leurs relations."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your plan renews soon"
+msgstr "Votre formule sera bientôt renouvelée"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Just so it's never a surprise, here's a heads up about your annual plan."
+msgstr "Pour éviter toute mauvaise surprise, voici un rappel concernant votre formule annuelle."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
+msgstr "Votre formule annuelle pour <0>{workspaceDisplayName}</0> sera renouvelée le {formattedDate}."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
+msgstr "Aucune action n’est nécessaire si vous souhaitez continuer. Si vous préférez ne pas renouveler, vous pouvez annuler à tout moment avant cette date."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

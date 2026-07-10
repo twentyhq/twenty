@@ -251,16 +251,6 @@ msgstr "Er bestaat al een vaardigheid met deze naam"
 msgid "A skill with this name already exists."
 msgstr "Er bestaat al een vaardigheid met deze naam."
 
-#. js-lingui-id: 73tqJw
-#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
-msgid "A system field has invalid properties."
-msgstr "Een systeemveld heeft ongeldige eigenschappen."
-
-#. js-lingui-id: WYnYE1
-#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
-msgid "A system field is missing."
-msgstr "Een systeemveld ontbreekt."
-
 #. js-lingui-id: mkFXEH
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A task"
@@ -7115,21 +7105,6 @@ msgstr "Zondag"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "System"
 msgstr "Systeem"
-
-#. js-lingui-id: Bhmfez
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
-msgid "System field {expectedFieldName} has invalid {property}"
-msgstr "Systeemveld {expectedFieldName} heeft een ongeldige {property}"
-
-#. js-lingui-id: 1gOTOh
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
-msgid "System field {expectedFieldName} is missing"
-msgstr "Systeemveld {expectedFieldName} ontbreekt"
-
-#. js-lingui-id: LKiQVw
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
-msgid "System field {expectedFieldName} universal identifier is not deterministic; it is derived by the server and cannot be customized"
-msgstr "Universele identifier van systeemveld {expectedFieldName} is niet deterministisch; deze wordt door de server afgeleid en kan niet worden aangepast"
 
 #. js-lingui-id: q1oDDx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts

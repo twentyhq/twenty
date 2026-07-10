@@ -12075,6 +12075,11 @@ msgstr "Cap clau d'API concorda amb la teva cerca"
 msgid "No applications available"
 msgstr "No hi ha aplicacions disponibles"
 
+#. js-lingui-id: zLbFMr
+#: src/pages/onboarding/InstallAppsContent.tsx
+msgid "No apps are available to install right now"
+msgstr ""
+
 #. js-lingui-id: tFxVHz
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "No available fields to select"

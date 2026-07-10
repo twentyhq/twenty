@@ -251,16 +251,6 @@ msgstr "Une compétence portant ce nom existe déjà"
 msgid "A skill with this name already exists."
 msgstr "Une compétence portant ce nom existe déjà."
 
-#. js-lingui-id: 73tqJw
-#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
-msgid "A system field has invalid properties."
-msgstr "Un champ système a des propriétés non valides."
-
-#. js-lingui-id: WYnYE1
-#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
-msgid "A system field is missing."
-msgstr "Il manque un champ système."
-
 #. js-lingui-id: mkFXEH
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A task"
@@ -7115,21 +7105,6 @@ msgstr "Dimanche"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "System"
 msgstr "Système"
-
-#. js-lingui-id: Bhmfez
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
-msgid "System field {expectedFieldName} has invalid {property}"
-msgstr "Le champ système {expectedFieldName} possède une valeur non valide pour {property}"
-
-#. js-lingui-id: 1gOTOh
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
-msgid "System field {expectedFieldName} is missing"
-msgstr "Le champ système {expectedFieldName} est manquant"
-
-#. js-lingui-id: LKiQVw
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
-msgid "System field {expectedFieldName} universal identifier is not deterministic; it is derived by the server and cannot be customized"
-msgstr "L'identifiant universel du champ système {expectedFieldName} n'est pas déterministe ; il est dérivé par le serveur et ne peut pas être personnalisé"
 
 #. js-lingui-id: q1oDDx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
