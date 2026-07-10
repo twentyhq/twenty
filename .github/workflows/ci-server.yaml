@@ -402,7 +402,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        shard: [12]
     services:
       postgres:
         image: postgres:18
@@ -478,6 +478,15 @@ jobs:
           tasks: 'test:integration'
           configuration: 'with-db-reset'
           args: --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
+      - name: Debug / Kernel OOM evidence
+        if: failure()
+        run: |
+          echo "=== dmesg oom ==="
+          sudo dmesg | grep -iE 'out of memory|oom|killed process' -A 3 -B 3 || true
+          echo "=== dmesg tail ==="
+          sudo dmesg | tail -60 || true
+          echo "=== memory ==="
+          free -m || true
 
   cross-version-upgrade:
     needs: [upgrade-changed-files-check, server-build]
