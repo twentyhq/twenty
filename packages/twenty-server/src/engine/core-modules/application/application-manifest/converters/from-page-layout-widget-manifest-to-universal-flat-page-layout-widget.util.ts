@@ -25,6 +25,12 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
 }): UniversalFlatPageLayoutWidget => {
   const layoutMode = pageLayoutTabLayoutMode ?? PageLayoutTabLayoutMode.GRID;
 
+  const manifestGridPosition =
+    pageLayoutWidgetManifest.position?.layoutMode ===
+    PageLayoutTabLayoutMode.GRID
+      ? pageLayoutWidgetManifest.position
+      : undefined;
+
   const position: PageLayoutWidgetPosition =
     layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST
       ? {
@@ -35,14 +41,12 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
         ? { layoutMode: PageLayoutTabLayoutMode.CANVAS }
         : {
             layoutMode: PageLayoutTabLayoutMode.GRID,
-            row: pageLayoutWidgetManifest.gridPosition?.row ?? 0,
-            column: pageLayoutWidgetManifest.gridPosition?.column ?? 0,
+            row: manifestGridPosition?.row ?? 0,
+            column: manifestGridPosition?.column ?? 0,
             rowSpan:
-              pageLayoutWidgetManifest.gridPosition?.rowSpan ??
-              DEFAULT_WIDGET_SIZE.default.h,
+              manifestGridPosition?.rowSpan ?? DEFAULT_WIDGET_SIZE.default.h,
             columnSpan:
-              pageLayoutWidgetManifest.gridPosition?.columnSpan ??
-              DEFAULT_WIDGET_SIZE.default.w,
+              manifestGridPosition?.columnSpan ?? DEFAULT_WIDGET_SIZE.default.w,
           };
 
   return {

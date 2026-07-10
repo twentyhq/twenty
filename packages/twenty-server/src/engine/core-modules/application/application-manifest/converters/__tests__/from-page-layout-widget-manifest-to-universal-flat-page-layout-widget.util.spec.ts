@@ -82,13 +82,19 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
     });
   });
 
-  it('should use manifest gridPosition when provided', () => {
+  it('should use manifest position when provided', () => {
     const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
       pageLayoutWidgetManifest: {
         universalIdentifier: 'widget-uuid-3',
         title: 'Positioned Widget',
         type: WidgetType.GRAPH,
-        gridPosition: { row: 2, column: 6, rowSpan: 4, columnSpan: 6 },
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.GRID,
+          row: 2,
+          column: 6,
+          rowSpan: 4,
+          columnSpan: 6,
+        },
         configuration: { configurationType: 'VIEW' },
       },
       pageLayoutTabUniversalIdentifier,

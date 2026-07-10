@@ -46,7 +46,13 @@ export default definePageLayout({
           universalIdentifier: TEMPLATE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
           title: 'Template',
           type: 'FIELD',
-          gridPosition: { row: 0, column: 0, rowSpan: 12, columnSpan: 12 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 0,
+            column: 0,
+            rowSpan: 12,
+            columnSpan: 12,
+          },
           configuration: {
             configurationType: 'FIELD',
             fieldMetadataId: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
