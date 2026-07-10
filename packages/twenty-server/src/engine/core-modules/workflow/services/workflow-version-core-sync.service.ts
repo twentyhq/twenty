@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { In, Repository } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   WorkflowVersionEntity,
   WorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -17,6 +20,8 @@ export class WorkflowVersionCoreSyncService {
   constructor(
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly workflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -28,6 +33,8 @@ export class WorkflowVersionCoreSyncService {
       return;
     }
 
+    const applicationId = await this.getCustomApplicationIdOrThrow(workspaceId);
+
     await this.workflowVersionRepository.upsert(
       workspaceId,
       workflowVersions.map((workflowVersion) => ({
@@ -38,11 +45,30 @@ export class WorkflowVersionCoreSyncService {
           : null,
         steps: workflowVersion.steps ?? null,
         status: workflowVersion.status as unknown as WorkflowVersionStatus,
+        universalIdentifier: uuidv4(),
+        applicationId,
       })),
       ['id'],
     );
 
     await this.invalidateAutomatedTriggerMaps(workspaceId);
+  }
+
+  private async getCustomApplicationIdOrThrow(
+    workspaceId: string,
+  ): Promise<string> {
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+      select: ['id', 'workspaceCustomApplicationId'],
+    });
+
+    if (!isDefined(workspace?.workspaceCustomApplicationId)) {
+      throw new Error(
+        `Workspace custom application not found for workspace ${workspaceId}`,
+      );
+    }
+
+    return workspace.workspaceCustomApplicationId;
   }
 
   async deleteFromCore(
