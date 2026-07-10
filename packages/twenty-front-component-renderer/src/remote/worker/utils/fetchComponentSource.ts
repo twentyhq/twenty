@@ -1,14 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  computeSourceChecksum,
-  deleteComponentSourceFromCache,
-  extractComponentChecksumFromUrl,
-  openComponentSourceCache,
-  readComponentSourceFromCache,
-  writeComponentSourceToCache,
-} from '@/remote/worker/utils/componentSourceCache';
+import { extractComponentChecksumFromUrl } from '@/remote/worker/utils/extractComponentChecksumFromUrl';
 import { fetchComponentSourceFromNetwork } from '@/remote/worker/utils/fetchComponentSourceFromNetwork';
+import { frontComponentCacheStorageService } from '@/remote/worker/utils/frontComponentCacheStorageService';
 
 export const fetchComponentSource = async ({
   url,
@@ -20,16 +14,20 @@ export const fetchComponentSource = async ({
   const expectedChecksum = extractComponentChecksumFromUrl({ url });
 
   const cache = isDefined(expectedChecksum)
-    ? await openComponentSourceCache()
+    ? await frontComponentCacheStorageService.open()
     : undefined;
 
   if (isDefined(cache) && isDefined(expectedChecksum)) {
-    const cachedSource = await readComponentSourceFromCache({ cache, url });
+    const cachedSource = await frontComponentCacheStorageService.read({
+      cache,
+      url,
+    });
 
     if (isDefined(cachedSource)) {
-      const cachedSourceChecksum = await computeSourceChecksum({
-        source: cachedSource,
-      });
+      const cachedSourceChecksum =
+        await frontComponentCacheStorageService.computeChecksum({
+          source: cachedSource,
+        });
 
       if (cachedSourceChecksum === expectedChecksum) {
         return cachedSource;
@@ -37,17 +35,18 @@ export const fetchComponentSource = async ({
 
       // Poisoned or corrupt entry: any same-origin code can write to
       // CacheStorage, so a mismatch means the content cannot be trusted.
-      deleteComponentSourceFromCache({ cache, url });
+      frontComponentCacheStorageService.delete({ cache, url });
     }
   }
 
   const source = await fetchComponentSourceFromNetwork({ url, headers });
 
   if (isDefined(cache) && isDefined(expectedChecksum)) {
-    const sourceChecksum = await computeSourceChecksum({ source });
+    const sourceChecksum =
+      await frontComponentCacheStorageService.computeChecksum({ source });
 
     if (sourceChecksum === expectedChecksum) {
-      writeComponentSourceToCache({ cache, url, source });
+      frontComponentCacheStorageService.write({ cache, url, source });
     }
   }
 
