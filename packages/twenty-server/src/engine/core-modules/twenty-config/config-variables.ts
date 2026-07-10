@@ -211,6 +211,16 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Enable webhook-based sync for connected accounts (provider push ' +
+      'notifications on top of polling). Requires publicly reachable ' +
+      'webhook endpoints.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  IS_CONNECTED_ACCOUNT_WEBHOOK_SUBSCRIPTION_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Enable or disable the IMAP messaging integration',
     type: ConfigVariableType.BOOLEAN,
   })

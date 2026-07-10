@@ -33,7 +33,7 @@ my-twenty-app/
   vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
   .nvmrc, .yarnrc.yml, .oxlintrc.json
-  README.md, AGENTS.md, CLAUDE.md
+  README.md, AGENTS.md, CLAUDE.md, CHANGELOG.md, SETUP.md
 ```
 
 ## 关键文件
@@ -47,6 +47,7 @@ my-twenty-app/
 | `src/__tests__/`                                                           | 一个单元测试加一个集成测试（带有其全局设置），用于将应用与真实服务器进行同步。 |
 | `public/`                                                                  | 随应用一起提供的静态资源（图像、字体）。                    |
 | `AGENTS.md` / `CLAUDE.md`                                                  | 为在该应用上工作的 AI 编码代理提供指导。                  |
+| `CHANGELOG.md` / `SETUP.md`                                                | 显著更改的更新日志以及用于本地开发的设置说明。                 |
 
 <Note>
 **文件组织由你决定。** 上述文件夹只是约定——SDK 通过对 `export default defineEntity(...)` 调用进行 AST 分析来检测实体，而不受文件所在位置影响。

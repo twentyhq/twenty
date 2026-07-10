@@ -7,7 +7,6 @@ import {
 
 import {
   Authorize,
-  CursorConnection,
   FilterableField,
   IDField,
   QueryOptions,
@@ -25,13 +24,14 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 
 registerEnumType(IndexType, {
   name: 'IndexType',
   description: 'Type of the index',
 });
 
+// TODO: drop these nestjs-query decorators once ObjectMetadataDTO's
+// @CursorConnection('indexMetadatas') relation is migrated off nestjs-query.
 @ObjectType('Index')
 @Authorize({
   // oxlint-disable-next-line typescript/no-explicit-any
@@ -44,7 +44,6 @@ registerEnumType(IndexType, {
   disableSort: true,
   maxResultsSize: 1000,
 })
-@CursorConnection('objectMetadata', () => ObjectMetadataDTO)
 export class IndexMetadataDTO {
   @IsUUID()
   @IsNotEmpty()

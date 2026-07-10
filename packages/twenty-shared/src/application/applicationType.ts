@@ -13,8 +13,16 @@ export type ApplicationManifest = SyncableEntityOptions & {
   serverVariables?: ServerVariables;
   author?: string;
   category?: ApplicationCategory;
+  /**
+   * @deprecated Use `logo` instead.
+   */
   logoUrl?: string;
+  logo?: string;
+  /**
+   * @deprecated Use `galleryImages` instead.
+   */
   screenshots?: string[];
+  galleryImages?: string[];
   aboutDescription?: string;
   websiteUrl?: string;
   termsUrl?: string;

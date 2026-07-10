@@ -13,6 +13,7 @@ import { Not, Repository } from 'typeorm';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -53,6 +54,7 @@ export class ChannelSyncService {
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async startChannelSync(input: StartChannelSyncInput): Promise<void> {
@@ -91,6 +93,14 @@ export class ChannelSyncService {
             messageChannelId: messageChannel.id,
           },
         );
+
+        if (
+          !this.twentyConfigService.get(
+            'IS_CONNECTED_ACCOUNT_WEBHOOK_SUBSCRIPTION_ENABLED',
+          )
+        ) {
+          continue;
+        }
 
         try {
           await this.webhookQueueService.add<CreateWebhookSubscriptionJobData>(
@@ -143,6 +153,14 @@ export class ChannelSyncService {
             calendarChannelId: calendarChannel.id,
           },
         );
+
+        if (
+          !this.twentyConfigService.get(
+            'IS_CONNECTED_ACCOUNT_WEBHOOK_SUBSCRIPTION_ENABLED',
+          )
+        ) {
+          continue;
+        }
 
         try {
           await this.webhookQueueService.add<CreateWebhookSubscriptionJobData>(

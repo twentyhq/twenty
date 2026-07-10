@@ -106,7 +106,7 @@ export default defineConfig({
 });
 ```
 
-أنشئ ملف إعداد عالمي يتحقق من إمكانية الوصول إلى الخادم، ويكتب إعداد اختبار لحزمة SDK (`~/.twenty/config.test.json`)، ويُجري مزامنة للتطبيق قبل تشغيل الاختبارات:
+أنشئ ملف إعداد عام يتحقق من إمكانية الوصول إلى الخادم، ويكتب ملف إعداد اختبار لـ SDK (`~/.twenty/config.test.json`)، ويزامن التطبيق قبل تشغيل الاختبارات:
 
 ```ts src/__tests__/global-setup.ts
 import * as fs from 'fs';
@@ -253,7 +253,7 @@ yarn test:watch
 yarn twenty dev:typecheck
 ```
 
-يشغِّل هذا الأمر `tsc --noEmit` على ملف `tsconfig.json` الخاص بتطبيقك ويبلغ عن أي أخطاء في الأنواع. التطبيقات المُنشأة بالهيكل تأتي أيضًا مع سكربت `yarn typecheck` الذي يشمل ملفات الاختبار أيضًا (`tsconfig.spec.json`).
+يشغِّل هذا الأمر `tsc --noEmit` على ملف `tsconfig.json` الخاص بتطبيقك ويبلغ عن أي أخطاء في الأنواع. كما تتضمن التطبيقات المُنشأة بالهيكل برنامج نصي `yarn typecheck` يشمل ملفات الاختبار (`tsconfig.spec.json`) أيضًا.
 
 ## التكامل المستمر (CI) باستخدام GitHub Actions
 

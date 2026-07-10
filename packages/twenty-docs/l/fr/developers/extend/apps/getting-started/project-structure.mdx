@@ -33,20 +33,21 @@ my-twenty-app/
   vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
   .nvmrc, .yarnrc.yml, .oxlintrc.json
-  README.md, AGENTS.md, CLAUDE.md
+  README.md, AGENTS.md, CLAUDE.md, CHANGELOG.md, SETUP.md
 ```
 
 ## Fichiers clés
 
-| Fichier / Dossier                                                          | Objectif                                                                                                                                 |
-| -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/application-config.ts`                                                | **Requis.** Le fichier de configuration principal de votre application.                                                                  |
-| `src/default-role.ts`                                                      | Rôle par défaut qui contrôle ce à quoi vos fonctions de logique peuvent accéder.                                                         |
-| `src/constants/universal-identifiers.ts`                                   | UUID générés automatiquement et métadonnées de l’application (nom d’affichage, description).                                             |
-| `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | Une page d’accueil de démarrage : un composant frontal rendu par une mise en page de page autonome, accessible depuis la barre latérale. |
-| `src/__tests__/`                                                           | Un test unitaire plus un test d’intégration (avec sa configuration globale) qui synchronise l’application avec un serveur réel.          |
-| `public/`                                                                  | Ressources statiques (images, polices) servies avec votre application.                                                                   |
-| `AGENTS.md` / `CLAUDE.md`                                                  | Consignes pour les agents d’écriture de code IA qui travaillent sur l’application.                                                       |
+| Fichier / Dossier                                                          | Objectif                                                                                                                         |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `src/application-config.ts`                                                | **Requis.** Le fichier de configuration principal de votre application.                                                          |
+| `src/default-role.ts`                                                      | Rôle par défaut qui contrôle ce à quoi vos fonctions de logique peuvent accéder.                                                 |
+| `src/constants/universal-identifiers.ts`                                   | UUID générés automatiquement et métadonnées de l’application (nom d’affichage, description).                                     |
+| `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | Une page d’accueil de démarrage : un composant frontal rendu par une mise en page autonome, accessible depuis la barre latérale. |
+| `src/__tests__/`                                                           | Un test unitaire plus un test d’intégration (avec sa configuration globale) qui synchronise l’application avec un serveur réel.  |
+| `public/`                                                                  | Ressources statiques (images, polices) servies avec votre application.                                                           |
+| `AGENTS.md` / `CLAUDE.md`                                                  | Consignes pour les agents IA de programmation travaillant sur l’application.                                                     |
+| `CHANGELOG.md` / `SETUP.md`                                                | Journal des modifications notables et instructions de configuration pour le développement local.                                 |
 
 <Note>
 **L’organisation des fichiers vous revient.** Les dossiers ci-dessus sont des conventions — le SDK détecte les entités via une analyse AST sur les appels à `export default defineEntity(...)` quel que soit l’emplacement du fichier.

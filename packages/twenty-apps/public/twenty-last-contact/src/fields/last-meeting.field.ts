@@ -30,4 +30,5 @@ export default defineField({
     onDelete: OnDeleteAction.SET_NULL,
     joinColumnName: 'lastMeetingId',
   },
+  isUIEditable: false,
 });

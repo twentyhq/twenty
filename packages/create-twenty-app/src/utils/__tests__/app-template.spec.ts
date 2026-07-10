@@ -212,6 +212,23 @@ describe('copyBaseApplicationProject', () => {
     expect(content).toContain("APP_DESCRIPTION = ''");
   });
 
+  it.each(['CHANGELOG.md', 'SETUP.md'])(
+    'should seed %s in the base template',
+    async (seedFileName) => {
+      const templateDirectory = join(
+        __dirname,
+        '..',
+        '..',
+        'constants',
+        'template',
+      );
+
+      expect(await fs.pathExists(join(templateDirectory, seedFileName))).toBe(
+        true,
+      );
+    },
+  );
+
   it('should generate unique UUIDs across different scaffolds', async () => {
     const firstAppDir = join(testAppDirectory, 'app1');
     await fs.ensureDir(join(firstAppDir, 'src', 'constants'));
