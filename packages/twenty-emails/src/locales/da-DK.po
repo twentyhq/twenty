@@ -35,6 +35,50 @@ msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow
 msgstr "{senderName} (<0>{senderEmail}</0>): Bekræft venligst dette domæne for at tillade brugere med <1>@{domain}</1> e-mailadresser at tilslutte sig dit arbejdsområde uden at kræve en invitation."
 
 #. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Your workspace is paused"
+msgstr "Dit arbejdsområde er sat på pause"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+#: src/emails/billing-trial-ending.email.tsx
+#: src/emails/clean-suspended-workspace.email.tsx
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Hi {userName},"
+msgstr "Hej {userName},"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+#: src/emails/billing-trial-ending.email.tsx
+#: src/emails/clean-suspended-workspace.email.tsx
+#: src/emails/password-update-notify.email.tsx
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Hello,"
+msgstr "Hej,"
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Good news first: your workspace <0>{workspaceDisplayName}</0> is only paused — none of your data is gone."
+msgstr "Gode nyheder først: Dit arbejdsområde <0>{workspaceDisplayName}</0> er kun sat på pause — ingen af dine data er forsvundet."
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Reactivate it within the next {remainingDays} {dayOrDays} and you'll pick up exactly where you left off, with every record, view and setting right where you left it."
+msgstr "Genaktiver det inden for de næste {remainingDays} {dayOrDays}, så kan du fortsætte præcis hvor du slap, med alle poster, visninger og indstillinger, som du efterlod dem."
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "After that, the workspace and all of its data will be permanently deleted — and we won't be able to bring it back."
+msgstr "Derefter vil arbejdsområdet og alle dets data blive permanent slettet — og vi vil ikke kunne gendanne det."
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Reactivate workspace"
+msgstr "Genaktiver arbejdsområdet"
+
+#. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Enabled"
 msgstr "Aktiveret"
@@ -48,21 +92,6 @@ msgstr "Deaktiveret"
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Server administrator access changed"
 msgstr "Adgang for serveradministrator ændret"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Deltag i dit team på Twenty"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) har inviteret dig til at deltage i et arbejdsområde kaldet <1>{workspaceName}</1>."
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "Accepter invitation"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -83,6 +112,46 @@ msgstr ""
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Verify Email"
 msgstr "Bekræft e-mail"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Deltag i dit team på Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) har inviteret dig til at deltage i et arbejdsområde kaldet <1>{workspaceName}</1>."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "Accepter invitation"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Password updated"
+msgstr "Adgangskode opdateret"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Dear {userName},"
+msgstr "Kære {userName},"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "Dette er en bekræftelse på, at adgangskoden til din konto ({email}) er blevet ændret den {formattedDate}."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "Hvis du ikke har initieret denne ændring, bedes du straks kontakte ejeren af dit arbejdsområde."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Connect to Twenty"
+msgstr "Forbind til Twenty"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -108,75 +177,6 @@ msgstr "Angiv"
 #: src/emails/password-reset-link.email.tsx
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 msgstr "Dette link er kun gyldigt i de næste {duration}. Hvis linket ikke fungerer, kan du bruge loginbekræftelseslinket direkte:"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Password updated"
-msgstr "Adgangskode opdateret"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Dear {userName},"
-msgstr "Kære {userName},"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-#: src/emails/billing-trial-ending.email.tsx
-#: src/emails/clean-suspended-workspace.email.tsx
-#: src/emails/password-update-notify.email.tsx
-#: src/emails/warn-suspended-workspace.email.tsx
-msgid "Hello,"
-msgstr "Hej,"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "Dette er en bekræftelse på, at adgangskoden til din konto ({email}) er blevet ændret den {formattedDate}."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "Hvis du ikke har initieret denne ændring, bedes du straks kontakte ejeren af dit arbejdsområde."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Connect to Twenty"
-msgstr "Forbind til Twenty"
-
-#. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-msgid "Your workspace is paused"
-msgstr "Dit arbejdsområde er sat på pause"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-#: src/emails/billing-trial-ending.email.tsx
-#: src/emails/clean-suspended-workspace.email.tsx
-#: src/emails/warn-suspended-workspace.email.tsx
-msgid "Hi {userName},"
-msgstr "Hej {userName},"
-
-#. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-msgid "Good news first: your workspace <0>{workspaceDisplayName}</0> is only paused — none of your data is gone."
-msgstr "Gode nyheder først: Dit arbejdsområde <0>{workspaceDisplayName}</0> er kun sat på pause — ingen af dine data er forsvundet."
-
-#. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-msgid "Reactivate it within the next {remainingDays} {dayOrDays} and you'll pick up exactly where you left off, with every record, view and setting right where you left it."
-msgstr "Genaktiver det inden for de næste {remainingDays} {dayOrDays}, så kan du fortsætte præcis hvor du slap, med alle poster, visninger og indstillinger, som du efterlod dem."
-
-#. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-msgid "After that, the workspace and all of its data will be permanently deleted — and we won't be able to bring it back."
-msgstr "Derefter vil arbejdsområdet og alle dets data blive permanent slettet — og vi vil ikke kunne gendanne det."
-
-#. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-msgid "Reactivate workspace"
-msgstr "Genaktiver arbejdsområdet"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -260,16 +260,6 @@ msgid "Manage subscription"
 msgstr "Administrer abonnement"
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Hvad er Twenty?"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "Det er et CRM, en software til at hjælpe virksomheder med effektivt at administrere deres kundedata og forretningsforbindelser."
-
-#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "Dit abonnement fornyes snart"
@@ -288,6 +278,16 @@ msgstr "Dit årlige abonnement for <0>{workspaceDisplayName}</0> fornyes den {fo
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "Du behøver ikke gøre noget, hvis du vil fortsætte. Hvis du ikke ønsker at forny, kan du opsige når som helst inden da."
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Hvad er Twenty?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "Det er et CRM, en software til at hjælpe virksomheder med effektivt at administrere deres kundedata og forretningsforbindelser."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
