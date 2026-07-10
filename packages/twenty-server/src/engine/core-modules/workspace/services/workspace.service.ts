@@ -4,7 +4,6 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { msg } from '@lingui/core/macro';
-import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -83,7 +82,7 @@ const WORKSPACE_ACTIVATION_STALE_LOCK_TIMEOUT_MS = 5 * 60 * 1000;
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
-export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
+export class WorkspaceService {
   protected readonly logger = new Logger(WorkspaceService.name);
 
   private readonly WORKSPACE_FIELD_PERMISSIONS: Record<
@@ -149,9 +148,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly upgradeMigrationService: UpgradeMigrationService,
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
-  ) {
-    super(workspaceRepository);
-  }
+  ) {}
 
   async updateWorkspaceById({
     payload,

@@ -2061,22 +2061,7 @@ export type Index = {
   isCustom?: Maybe<Scalars['Boolean']['output']>;
   isUnique: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
-  objectMetadata: IndexObjectMetadataConnection;
   updatedAt: Scalars['DateTime']['output'];
-};
-
-
-export type IndexObjectMetadataArgs = {
-  filter?: ObjectFilter;
-  paging?: CursorPaging;
-};
-
-export type IndexConnection = {
-  __typename?: 'IndexConnection';
-  /** Array of edges. */
-  edges: Array<IndexEdge>;
-  /** Paging information */
-  pageInfo: PageInfo;
 };
 
 export type IndexEdge = {
@@ -2102,14 +2087,6 @@ export type IndexFilter = {
   id?: InputMaybe<UuidFilterComparison>;
   isCustom?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<IndexFilter>>;
-};
-
-export type IndexObjectMetadataConnection = {
-  __typename?: 'IndexObjectMetadataConnection';
-  /** Array of edges. */
-  edges: Array<ObjectEdge>;
-  /** Paging information */
-  pageInfo: PageInfo;
 };
 
 /** Type of the index */
@@ -4420,8 +4397,6 @@ export type Query = {
   getViewSorts: Array<ViewSort>;
   getViews: Array<View>;
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDto;
-  index: Index;
-  indexMetadatas: IndexConnection;
   lineChartData: LineChartData;
   listPlans: Array<BillingPlan>;
   minimalMetadata: MinimalMetadata;
@@ -4760,17 +4735,6 @@ export type QueryGetViewSortsArgs = {
 export type QueryGetViewsArgs = {
   objectMetadataId?: InputMaybe<Scalars['String']['input']>;
   viewTypes?: InputMaybe<Array<ViewType>>;
-};
-
-
-export type QueryIndexArgs = {
-  id: Scalars['UUID']['input'];
-};
-
-
-export type QueryIndexMetadatasArgs = {
-  filter?: IndexFilter;
-  paging?: CursorPaging;
 };
 
 
