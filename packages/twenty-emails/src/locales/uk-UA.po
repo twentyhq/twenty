@@ -68,15 +68,19 @@ msgid "Reactivate workspace"
 msgstr "Повторно активувати робочий простір"
 
 #. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "Validate domain"
-msgstr "Перевірити домен"
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Enabled"
+msgstr "Увімкнено"
 
 #. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
-msgstr "{senderName} (<0>{senderEmail}</0>): Будь ласка, перевірте цей домен, щоб дозволити користувачам з електронними адресами <1>@{domain}</1> приєднатися до вашого робочого простору без запрошення."
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Disabled"
+msgstr "Відключено"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Server administrator access changed"
+msgstr "Доступ адміністратора сервера змінено"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -99,19 +103,15 @@ msgid "Verify Email"
 msgstr "Підтвердіть Email"
 
 #. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "Enabled"
-msgstr "Увімкнено"
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr "Перевірити домен"
 
 #. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "Disabled"
-msgstr "Відключено"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "Server administrator access changed"
-msgstr "Доступ адміністратора сервера змінено"
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
+msgstr "{senderName} (<0>{senderEmail}</0>): Будь ласка, перевірте цей домен, щоб дозволити користувачам з електронними адресами <1>@{domain}</1> приєднатися до вашого робочого простору без запрошення."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -154,31 +154,6 @@ msgid "Connect to Twenty"
 msgstr "Підключитися до Twenty"
 
 #. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Your workspace has been deleted"
-msgstr "Ваш робочий простір було видалено"
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
-msgstr "Ваш робочий простір <0>{workspaceDisplayName}</0> щойно було остаточно видалено — його було призупинено {daysSinceInactive} днів тому і не встигли повторно активувати вчасно."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Its data has been removed and can no longer be recovered."
-msgstr "Його дані було видалено, і їх більше неможливо відновити."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
-msgstr "Якщо ви колись захочете знову спробувати Twenty, ви зможете запустити новий робочий простір за кілька хвилин — ми будемо раді вашому поверненню."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Start a new workspace"
-msgstr "Створити новий робочий простір"
-
-#. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
 msgstr "Скинути ваш пароль 🗝"
@@ -202,6 +177,31 @@ msgstr "Встановіть"
 #: src/emails/password-reset-link.email.tsx
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 msgstr "Це посилання дійсне протягом наступних {duration}. Якщо посилання не працює, ви можете напряму використовувати посилання для перевірки логіна:"
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace has been deleted"
+msgstr "Ваш робочий простір було видалено"
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
+msgstr "Ваш робочий простір <0>{workspaceDisplayName}</0> щойно було остаточно видалено — його було призупинено {daysSinceInactive} днів тому і не встигли повторно активувати вчасно."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Its data has been removed and can no longer be recovered."
+msgstr "Його дані було видалено, і їх більше неможливо відновити."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
+msgstr "Якщо ви колись захочете знову спробувати Twenty, ви зможете запустити новий робочий простір за кілька хвилин — ми будемо раді вашому поверненню."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Start a new workspace"
+msgstr "Створити новий робочий простір"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
