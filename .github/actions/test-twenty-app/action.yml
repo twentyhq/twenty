@@ -59,6 +59,19 @@ runs:
           }, null, 2));
         "
 
+    - name: Validate mode
+      shell: bash
+      env:
+        MODE: ${{ inputs.mode }}
+      run: |
+        case "$MODE" in
+          installation-and-integration-test|integration-test-only|installation-only) ;;
+          *)
+            echo "::error::Unknown mode '$MODE' (expected 'installation-and-integration-test', 'integration-test-only' or 'installation-only')"
+            exit 1
+            ;;
+        esac
+
     - name: Integration tests
       if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'integration-test-only'
       shell: bash
