@@ -19,22 +19,6 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "Validate domain"
-msgstr "도메인 검증"
-
-#. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
-msgstr "{senderName} (<0>{senderEmail}</0>): <1>@{domain}</1> 이메일 주소를 가진 사용자가 초대 없이 워크스페이스에 참여할 수 있도록 이 도메인을 검증해 주세요."
-
-#. js-lingui-explicit-id
-#: src/emails/test.email.tsx
-msgid "Test email"
-msgstr "테스트 이메일"
-
-#. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Your workspace is paused"
 msgstr "워크스페이스가 일시 중지되었습니다"
@@ -79,6 +63,21 @@ msgid "Reactivate workspace"
 msgstr "워크스페이스 다시 활성화"
 
 #. js-lingui-explicit-id
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "테스트 이메일"
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr "도메인 검증"
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
+msgstr "{senderName} (<0>{senderEmail}</0>): <1>@{domain}</1> 이메일 주소를 가진 사용자가 초대 없이 워크스페이스에 참여할 수 있도록 이 도메인을 검증해 주세요."
+
+#. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Enabled"
 msgstr "사용 설정됨"
@@ -92,6 +91,21 @@ msgstr "비활성화"
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Server administrator access changed"
 msgstr "서버 관리자 액세스가 변경되었습니다"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Twenty에서 팀에 합류하세요"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>)님이 <1>{workspaceName}</1>이라는 워크스페이스에 가입하도록 초대했습니다."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "초대 수락"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -139,19 +153,29 @@ msgid "Connect to Twenty"
 msgstr "Twenty에 연결하세요"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Twenty에서 팀에 합류하세요"
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset your password 🗝"
+msgstr "비밀번호를 재설정하세요 🗝"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>)님이 <1>{workspaceName}</1>이라는 워크스페이스에 가입하도록 초대했습니다."
+#: src/emails/password-reset-link.email.tsx
+msgid "Set your password 🗝"
+msgstr "비밀번호 설정 🗝"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "초대 수락"
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset"
+msgstr "초기화"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set"
+msgstr "설정"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "이 링크는 다음 {duration} 동안만 유효합니다. 링크가 작동하지 않으면 로그인 인증 링크를 직접 사용할 수 있습니다:"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -179,29 +203,29 @@ msgid "Start a new workspace"
 msgstr "새 워크스페이스 시작"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset your password 🗝"
-msgstr "비밀번호를 재설정하세요 🗝"
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your trial is ending soon"
+msgstr "체험판이 곧 종료됩니다"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set your password 🗝"
-msgstr "비밀번호 설정 🗝"
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}."
+msgstr "<0>{workspaceDisplayName}</0>의 무료 체험판은 {formattedDate}에 종료됩니다."
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset"
-msgstr "초기화"
+#: src/emails/billing-trial-ending.email.tsx
+msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
+msgstr "워크스페이스와 지금까지 구축한 모든 내용을 유지하려면 결제 수단을 추가하고 요금제를 선택하세요."
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set"
-msgstr "설정"
+#: src/emails/billing-trial-ending.email.tsx
+msgid "If you do nothing, we'll pause your workspace and keep your data safe for {dataRetentionDays} days in case you change your mind — no card will be charged."
+msgstr "아무 작업도 하지 않으시면, 워크스페이스를 일시 중지하고 데이터를 {dataRetentionDays}일 동안 안전하게 보관해 드립니다. 마음이 바뀌면 그동안 언제든지 다시 활성화하실 수 있으며, 카드로 결제되지는 않습니다."
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "이 링크는 다음 {duration} 동안만 유효합니다. 링크가 작동하지 않으면 로그인 인증 링크를 직접 사용할 수 있습니다:"
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Add a payment method"
+msgstr "결제 수단 추가"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -228,31 +252,6 @@ msgstr "계속 이용하시려면 별도의 조치가 필요하지 않습니다.
 #: src/emails/billing-trial-converting.email.tsx
 msgid "Manage subscription"
 msgstr "구독 관리"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "Your trial is ending soon"
-msgstr "체험판이 곧 종료됩니다"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}."
-msgstr "<0>{workspaceDisplayName}</0>의 무료 체험판은 {formattedDate}에 종료됩니다."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
-msgstr "워크스페이스와 지금까지 구축한 모든 내용을 유지하려면 결제 수단을 추가하고 요금제를 선택하세요."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "If you do nothing, we'll pause your workspace and keep your data safe for {dataRetentionDays} days in case you change your mind — no card will be charged."
-msgstr "아무 작업도 하지 않으시면, 워크스페이스를 일시 중지하고 데이터를 {dataRetentionDays}일 동안 안전하게 보관해 드립니다. 마음이 바뀌면 그동안 언제든지 다시 활성화하실 수 있으며, 카드로 결제되지는 않습니다."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "Add a payment method"
-msgstr "결제 수단 추가"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx

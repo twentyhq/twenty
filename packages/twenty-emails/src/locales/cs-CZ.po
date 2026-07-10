@@ -19,22 +19,6 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "Validate domain"
-msgstr "Ověřit doménu"
-
-#. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
-msgstr "{senderName} (<0>{senderEmail}</0>): Ověřte prosím tuto doménu, aby uživatelé s <1>@{domain}</1> e-mailovými adresami mohli vstoupit do vašeho pracovního prostoru bez nutnosti pozvání."
-
-#. js-lingui-explicit-id
-#: src/emails/test.email.tsx
-msgid "Test email"
-msgstr "Zkušební e-mail"
-
-#. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Your workspace is paused"
 msgstr "Váš pracovní prostor je pozastavený"
@@ -79,6 +63,21 @@ msgid "Reactivate workspace"
 msgstr "Znovu aktivovat pracovní prostor"
 
 #. js-lingui-explicit-id
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "Zkušební e-mail"
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr "Ověřit doménu"
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
+msgstr "{senderName} (<0>{senderEmail}</0>): Ověřte prosím tuto doménu, aby uživatelé s <1>@{domain}</1> e-mailovými adresami mohli vstoupit do vašeho pracovního prostoru bez nutnosti pozvání."
+
+#. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Enabled"
 msgstr "Povoleno"
@@ -92,6 +91,21 @@ msgstr "Neaktivní"
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Server administrator access changed"
 msgstr "Přístup administrátora serveru byl změněn"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Připojte se k svému týmu na Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) vás pozval/a připojit se k pracovnímu prostoru nazvanému <1>{workspaceName}</1>."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "Přijměte pozvánku"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -139,19 +153,29 @@ msgid "Connect to Twenty"
 msgstr "Připojte se k Twenty"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Připojte se k svému týmu na Twenty"
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset your password 🗝"
+msgstr "Obnovte své heslo 🗝"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) vás pozval/a připojit se k pracovnímu prostoru nazvanému <1>{workspaceName}</1>."
+#: src/emails/password-reset-link.email.tsx
+msgid "Set your password 🗝"
+msgstr "Nastavte své heslo 🗝"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "Přijměte pozvánku"
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset"
+msgstr "Obnovit"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set"
+msgstr "Nastavit"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "Tento odkaz je platný pouze následující {duration}. Pokud odkaz nefunguje, můžete přímo použít odkaz pro ověření přihlášení:"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -179,29 +203,29 @@ msgid "Start a new workspace"
 msgstr "Vytvořit nový pracovní prostor"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset your password 🗝"
-msgstr "Obnovte své heslo 🗝"
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your trial is ending soon"
+msgstr "Vaše zkušební období brzy skončí"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set your password 🗝"
-msgstr "Nastavte své heslo 🗝"
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}."
+msgstr "Vaše bezplatné zkušební období pracovního prostoru <0>{workspaceDisplayName}</0> končí {formattedDate}."
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset"
-msgstr "Obnovit"
+#: src/emails/billing-trial-ending.email.tsx
+msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
+msgstr "Abyste si zachovali svůj pracovní prostor a vše, co jste vytvořili, přidejte platební metodu a vyberte si tarif."
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set"
-msgstr "Nastavit"
+#: src/emails/billing-trial-ending.email.tsx
+msgid "If you do nothing, we'll pause your workspace and keep your data safe for {dataRetentionDays} days in case you change your mind — no card will be charged."
+msgstr "Pokud neuděláte nic, pozastavíme váš pracovní prostor a vaše data budeme po dobu {dataRetentionDays} dní uchovávat v bezpečí pro případ, že si to rozmyslíte — z karty vám nebude nic účtováno."
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "Tento odkaz je platný pouze následující {duration}. Pokud odkaz nefunguje, můžete přímo použít odkaz pro ověření přihlášení:"
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Add a payment method"
+msgstr "Přidat platební metodu"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -228,31 +252,6 @@ msgstr "Pokud chcete pokračovat, není potřeba nic dělat. Pokud nechcete obno
 #: src/emails/billing-trial-converting.email.tsx
 msgid "Manage subscription"
 msgstr "Spravovat předplatné"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "Your trial is ending soon"
-msgstr "Vaše zkušební období brzy skončí"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}."
-msgstr "Vaše bezplatné zkušební období pracovního prostoru <0>{workspaceDisplayName}</0> končí {formattedDate}."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
-msgstr "Abyste si zachovali svůj pracovní prostor a vše, co jste vytvořili, přidejte platební metodu a vyberte si tarif."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "If you do nothing, we'll pause your workspace and keep your data safe for {dataRetentionDays} days in case you change your mind — no card will be charged."
-msgstr "Pokud neuděláte nic, pozastavíme váš pracovní prostor a vaše data budeme po dobu {dataRetentionDays} dní uchovávat v bezpečí pro případ, že si to rozmyslíte — z karty vám nebude nic účtováno."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "Add a payment method"
-msgstr "Přidat platební metodu"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
