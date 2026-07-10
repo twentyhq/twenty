@@ -102,8 +102,10 @@ export class PrefillFrontComponentService {
         },
       });
 
+      // sha-256 (not md5) so the renderer can verify cached bundles against
+      // the URL checksum with WebCrypto, which has no md5 support
       const checksum = crypto
-        .createHash('md5')
+        .createHash('sha256')
         .update(builtFile.content)
         .digest('hex');
 
