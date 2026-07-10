@@ -19,11 +19,6 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
-#: src/emails/test.email.tsx
-msgid "Test email"
-msgstr "Testisähköposti"
-
-#. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Your workspace is paused"
 msgstr "Työtilasi on keskeytetty"
@@ -68,6 +63,17 @@ msgid "Reactivate workspace"
 msgstr "Aktivoi työtila uudelleen"
 
 #. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr "Vahvista verkkotunnus"
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
+msgstr "{senderName} (<0>{senderEmail}</0>): Vahvista tämä verkkotunnus, jotta käyttäjät, joilla on <1>@{domain}</1> sähköpostiosoitteet, voivat liittyä työtilaasi ilman kutsua."
+
+#. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Enabled"
 msgstr "Käytössä"
@@ -81,17 +87,6 @@ msgstr "Pois käytöstä"
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Server administrator access changed"
 msgstr "Palvelinylläpitäjän käyttöoikeuksia on muutettu"
-
-#. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "Validate domain"
-msgstr "Vahvista verkkotunnus"
-
-#. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
-msgstr "{senderName} (<0>{senderEmail}</0>): Vahvista tämä verkkotunnus, jotta käyttäjät, joilla on <1>@{domain}</1> sähköpostiosoitteet, voivat liittyä työtilaasi ilman kutsua."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -109,24 +104,9 @@ msgid "Accept invite"
 msgstr "Hyväksy kutsu"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your new email address"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your email address"
-msgstr "Vahvista sähköpostiosoitteesi"
-
-#. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm new email"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Verify Email"
-msgstr "Vahvista sähköposti"
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "Testisähköposti"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -202,6 +182,26 @@ msgstr "Jos haluat joskus kokeilla Twentyä uudelleen, voit aloittaa uuden työt
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Start a new workspace"
 msgstr "Aloita uusi työtila"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your email address"
+msgstr "Vahvista sähköpostiosoitteesi"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm new email"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Verify Email"
+msgstr "Vahvista sähköposti"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
