@@ -1,6 +1,7 @@
 import { IANA_TIME_ZONES } from 'twenty-shared/constants';
 import { formatTimeZoneLabel } from '@/localization/utils/formatTimeZoneLabel';
-import { normalizeTimeZone } from '@/localization/utils/normalizeTimeZone';
+import { isTimeZoneSupported } from '@/localization/utils/isTimeZoneSupported';
+import { LEGACY_TIME_ZONE_TO_IANA } from '@/localization/utils/normalizeTimeZone';
 import { type SelectOption } from 'twenty-ui/input';
 
 export const buildAvailableTimeZoneOptionsByLabel = (): Record<
@@ -9,13 +10,15 @@ export const buildAvailableTimeZoneOptionsByLabel = (): Record<
 > =>
   IANA_TIME_ZONES.reduce<Record<string, SelectOption>>(
     (result, ianaTimeZone) => {
-      // Skip zones that don't survive normalization: legacy aliases (CET, MET,
-      // WET, EET) crash WebKit's ICU and duplicate their canonical region zone,
-      // and zones unknown to the running engine can't be formatted at all.
-      // Offering only pass-through zones keeps persisted preferences safe on
-      // every engine. This runs at module init, so any throw here would blank
+      // Skip legacy aliases (CET, MET, WET, EET) on every engine: picking one
+      // persists a zone that crashes WebKit's ICU, and their canonical region
+      // zones are already in the list. Also skip zones the running engine
+      // can't format. This runs at module init, so any throw here would blank
       // the whole app on engines rejecting one of the listed zones.
-      if (normalizeTimeZone(ianaTimeZone) !== ianaTimeZone) {
+      if (
+        ianaTimeZone in LEGACY_TIME_ZONE_TO_IANA ||
+        !isTimeZoneSupported(ianaTimeZone)
+      ) {
         return result;
       }
 

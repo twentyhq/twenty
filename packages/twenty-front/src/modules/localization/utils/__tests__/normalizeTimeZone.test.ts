@@ -30,8 +30,18 @@ describe('normalizeTimeZone', () => {
     expect(normalizeTimeZone('Europe/Paris')).toBe('Europe/Paris');
   });
 
-  it('should remap a legacy alias to its canonical IANA zone on every engine', () => {
+  it('should return a legacy alias unchanged when the engine supports it', () => {
+    // V8 accepts the alias; keeping it preserves historical-date rendering.
     mockIsTimeZoneSupported.mockReturnValue(true);
+
+    expect(normalizeTimeZone('CET')).toBe('CET');
+  });
+
+  it('should remap a legacy alias to its canonical zone when the engine rejects it', () => {
+    // Simulate WebKit: aliases unsupported, region zones supported.
+    mockIsTimeZoneSupported.mockImplementation(
+      (timeZone) => !['CET', 'MET', 'WET', 'EET'].includes(timeZone),
+    );
 
     expect(normalizeTimeZone('CET')).toBe('Europe/Paris');
     expect(normalizeTimeZone('MET')).toBe('Europe/Berlin');
@@ -47,7 +57,7 @@ describe('normalizeTimeZone', () => {
     expect(normalizeTimeZone('Mars/Olympus')).toBe('America/New_York');
   });
 
-  it('should canonicalize the detected time zone when it is itself a legacy alias', () => {
+  it('should canonicalize the detected time zone when it is itself a rejected legacy alias', () => {
     // Simulate WebKit detecting the host zone as `CET` while rejecting it.
     mockDetectedTimeZone('CET');
     mockIsTimeZoneSupported.mockImplementation(

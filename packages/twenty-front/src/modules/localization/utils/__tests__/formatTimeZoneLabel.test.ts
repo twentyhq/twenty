@@ -20,9 +20,29 @@ describe('formatTimeZoneLabel', () => {
     expect(formattedLabel).toEqual(expectedLabel);
   });
 
-  it('should format a legacy alias as its canonical zone instead of throwing', () => {
+  it('should format a legacy alias as its canonical zone when the engine rejects it', () => {
+    // Simulate WebKit, whose ICU rejects the alias that V8 accepts.
+    const originalDateTimeFormat = global.Intl.DateTimeFormat;
+    function webKitLikeDateTimeFormat(
+      this: unknown,
+      locales?: Intl.LocalesArgument,
+      options?: Intl.DateTimeFormatOptions,
+    ) {
+      if (options?.timeZone === 'CET') {
+        throw new RangeError('Invalid time zone specified: CET');
+      }
+
+      return new originalDateTimeFormat(locales, options);
+    }
+    webKitLikeDateTimeFormat.supportedLocalesOf =
+      originalDateTimeFormat.supportedLocalesOf;
+    global.Intl.DateTimeFormat =
+      webKitLikeDateTimeFormat as unknown as typeof Intl.DateTimeFormat;
+
     expect(formatTimeZoneLabel('CET')).toEqual(
       formatTimeZoneLabel('Europe/Paris'),
     );
+
+    global.Intl.DateTimeFormat = originalDateTimeFormat;
   });
 });
