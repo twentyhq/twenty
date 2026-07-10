@@ -4,7 +4,7 @@ description: Kurulumdan önce veya sonra mantığı çalıştırın — veri toh
 icon: wrench
 ---
 
-Kurulum kancaları, kurulum veya yükseltme yaşam döngüsü sırasında çalışan özel mantık işlevleridir. Bunlar, normal [mantık işlevleri](/l/tr/developers/extend/apps/logic/logic-functions) ile aynı işleyici çalışma zamanını paylaşır ve bir `InstallPayload` alırlar (`{ previousVersion?: string; newVersion: string }` — yeni bir kurulumda `previousVersion` `undefined` olur), ancak kendi define işlevleriyle bildirilirler ve normal tetikleyici modelinin (HTTP, cron, veritabanı olayları) dışında yer alırlar.
+Kurulum kancaları, kurulum veya yükseltme yaşam döngüsü sırasında çalışan özel mantık işlevleridir. Bunlar, normal [mantık işlevleri](/l/tr/developers/extend/apps/logic/logic-functions) ile aynı işleyici çalışma zamanını paylaşır ve bir `InstallPayload` alırlar (`{ previousVersion?: string; newVersion: string }` — yeni bir kurulumda `previousVersion` `undefined` olur), ancak kendi tanımlama işlevleriyle bildirilirler ve normal tetikleyici modelinin (HTTP, cron, veritabanı olayları) dışında yer alırlar.
 
 Her uygulama **en fazla bir kurulum öncesi** ve **en fazla bir kurulum sonrası** işlev tanımlayabilir. Her ikisinden de birden fazla tespit edilirse manifest oluşturma hataya düşer.
 
@@ -21,33 +21,33 @@ Her uygulama **en fazla bir kurulum öncesi** ve **en fazla bir kurulum sonrası
 
 ## Bir bakışta
 
-|                        | `definePreInstallLogicFunction`                                                                         | `definePostInstallLogicFunction`                                                                                      |
-| ---------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| Çalıştırmalar          | Üstveri geçişinden önce — **önceki** şema ve veriler hâlâ sağlamdır                                     | Geçişten ve SDK oluşturmasından sonra — **yeni** şema devrededir                                                      |
-| Yürütme                | Her zaman senkron; kurulumu bloke eder                                                                  | Varsayılan olarak async (kuyruğa alınır, 3 yeniden deneme); `shouldRunSynchronously: true` ile isteğe bağlı senkron   |
-| Başarısızlık durumunda | Kurulum, herhangi bir şema değişikliğinden önce **iptal edilir**                                        | Async: en fazla 3 kez yeniden denenir. Sync: çağıran `POST_INSTALL_ERROR` alır (şema değişiklikleri **geri alınmaz**) |
-| Tipik kullanım         | Bir geçişin kaybedeceği verileri yedeklemek veya düzeltmek; fırlatarak riskli bir yükseltmeyi reddetmek | Varsayılan verileri tohumlamak, çalışma alanını yapılandırmak, harici kaynakları kaydetmek                            |
+|                        | `definePreInstallLogicFunction`                                                                              | `definePostInstallLogicFunction`                                                                                            |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| Çalışma zamanı         | Üstveri geçişinden önce — **önceki** şema ve veriler hâlâ sağlamdır                                          | Geçişten ve SDK oluşturmasından sonra — **yeni** şema yürürlüktedir                                                         |
+| Yürütme                | Her zaman senkron; kurulumu bloke eder                                                                       | Varsayılan olarak asenkron (kuyruğa alınır, 3 yeniden deneme); `shouldRunSynchronously: true` ile isteğe bağlı senkron      |
+| Başarısızlık durumunda | Kurulum, herhangi bir şema değişikliğinden önce **iptal edilir**                                             | Asenkron: en fazla 3 kez yeniden denenir. Senkron: çağıran `POST_INSTALL_ERROR` alır (şema değişiklikleri **geri alınmaz**) |
+| Tipik kullanım         | Bir geçişin kaybedeceği verileri yedeklemek veya düzeltmek; hata fırlatarak riskli bir yükseltmeyi reddetmek | Varsayılan verileri tohumlamak, çalışma alanını yapılandırmak, harici kaynakları kaydetmek                                  |
 
 **Kural:** varsayılan olarak post-install kullanın. Yalnızca geçişin kendisi yıkıcıysa ve önceki durum yok olmadan önce onu yakalamanız gerekiyorsa kurulum öncesine başvurun.
 
-| Şunu yapmak istiyorsunuz...                                                       | Kullan                                                              |
-| --------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Verileri tohumlamak, çalışma alanını yapılandırmak, harici kaynakları kaydetmek   | `post-install`                                                      |
-| Kurulum yanıtını engellememesi gereken uzun süreli işleri yürütmek                | `post-install` (varsayılan async mod, worker yeniden denemeleriyle) |
-| Kurulum döndükten hemen sonra çağıranın güveneceği hızlı kurulumu gerçekleştirmek | `post-install` ile `shouldRunSynchronously: true`                   |
-| Yaklaşan geçişin kaybedeceği verileri okumak veya yedeklemek                      | `pre-install`                                                       |
-| Mevcut verileri bozacak bir yükseltmeyi reddetmek                                 | `pre-install` (işleyiciden hata fırlatmak)                          |
-| Her yükseltmede uzlaştırma çalıştırmak                                            | `shouldRunOnVersionUpgrade: true` ile her iki kancadan biri         |
+| Şunu yapmak istiyorsunuz...                                                       | Kullan                                                                 |
+| --------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Verileri tohumlamak, çalışma alanını yapılandırmak, harici kaynakları kaydetmek   | `post-install`                                                         |
+| Kurulum yanıtını engellememesi gereken uzun süreli işleri yürütmek                | `post-install` (varsayılan asenkron mod, worker yeniden denemeleriyle) |
+| Kurulum döndükten hemen sonra çağıranın güveneceği hızlı kurulumu gerçekleştirmek | `post-install` ile `shouldRunSynchronously: true`                      |
+| Yaklaşan geçişin kaybedeceği verileri okumak veya yedeklemek                      | `pre-install`                                                          |
+| Mevcut verileri bozacak bir yükseltmeyi reddetmek                                 | `pre-install` (işleyiciden hata fırlatmak)                             |
+| Her yükseltmede uzlaştırma çalıştırmak                                            | `shouldRunOnVersionUpgrade: true` ile her iki kancadan biri            |
 
 ## Her iki kanca tarafından paylaşılan davranış
 
 * Yapılandırma, tetikleyici ayarları çıkarılmış bir `defineLogicFunction` yapılandırmasıdır ve buna ek olarak `shouldRunOnVersionUpgrade` içerir.
 * **Ne zaman çalışır**: varsayılan olarak yalnızca ilk kurulumlarda. Yükseltmelerde de çalışması için `shouldRunOnVersionUpgrade: true` olarak ayarlayın. Yükseltme yoluna göre dallanmak için `previousVersion` / `newVersion` kullanın.
-* **İdempotans önemlidir**: async post-install yeniden denenebilir ve `shouldRunOnVersionUpgrade` açıkken her iki kanca da yükseltmelerde yeniden çalıştırılır.
+* **İdempotans önemlidir**: asenkron post-install yeniden denenebilir ve `shouldRunOnVersionUpgrade` açıkken her iki kanca da yükseltmelerde yeniden çalıştırılır.
 * Alışıldık mantık işlevi ortamı (`APPLICATION_ID`, `APP_ACCESS_TOKEN`, `API_URL`) enjekte edilir, böylece Twenty API'sini uygulamanızın jetonuyla çağırabilirsiniz.
 * Kanca, derleme zamanında otomatik olarak uygulama manifestine (`preInstallLogicFunction` / `postInstallLogicFunction`) eklenir — [`defineApplication()`](/l/tr/developers/extend/apps/config/application) içinde referans verilecek bir şey yoktur.
 * Varsayılan `timeoutSeconds`, veri tohumlama gibi daha uzun kurulum görevlerine izin vermek için 300 olarak ayarlanmıştır.
-* **Geliştirme modunda yürütülmez**: `yarn twenty dev` kurulum akışını atlar ve dosyaları doğrudan eşitler, bu nedenle kancalar burada asla çalışmaz. Bunları bunun yerine manuel olarak tetikleyin:
+* **Geliştirme modunda yürütülmez**: `yarn twenty dev` kurulum akışını atlar ve dosyaları doğrudan senkronize eder, bu nedenle kancalar burada asla çalışmaz. Bunları bunun yerine manuel olarak tetikleyin:
 
 ```bash filename="Terminal"
 yarn twenty dev:function:exec --postInstall
@@ -57,7 +57,7 @@ yarn twenty dev:function:exec --preInstall
 <AccordionGroup>
 <Accordion title="definePostInstallLogicFunction" description="Çalışma alanı üstveri (metadata) geçişi uygulanıp tamamlandıktan sonra çalışır">
 
-Uygulamanızın kurulumu tamamlandıktan sonra bir kez çalışır: üstveri eşitlenmiştir, SDK istemcisi oluşturulmuştur, yeni şema sorgulanabilir durumdadır. Örnek — ilk kurulumlarda varsayılan bir kaydı tohumlamak:
+Uygulamanızın kurulumu tamamlandıktan sonra bir kez çalışır: üstveri senkronize edilmiştir, SDK istemcisi oluşturulmuştur, yeni şema sorgulanabilir durumdadır. Örnek — ilk kurulumlarda varsayılan bir kaydı tohumlamak:
 
 ```ts src/logic-functions/post-install.ts
 import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
