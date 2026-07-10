@@ -161,6 +161,29 @@ describe('fetchComponentSource', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
+  it('falls back to the network when the cached response body is unreadable', async () => {
+    const cache = new FakeCache();
+
+    setupCaches(cache);
+
+    cache.match.mockResolvedValueOnce({
+      text: async () => {
+        throw new Error('body unreadable');
+      },
+    });
+
+    const fetchMock = jest.fn(async () =>
+      createFakeJsResponse(COMPONENT_SOURCE),
+    );
+
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
+
+    expect(source).toBe(COMPONENT_SOURCE);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it('does not cache a network response whose checksum does not match the URL', async () => {
     const cache = new FakeCache();
 
