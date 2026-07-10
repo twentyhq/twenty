@@ -7,6 +7,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type ApplicationConfig } from '@/sdk/define/application/application-config';
+import { normalizeApplicationAssets } from '@/sdk/define/application/utils/normalize-application-assets';
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 
@@ -52,8 +53,16 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     );
   }
 
+  const assetNormalization = normalizeApplicationAssets(config);
+
+  warnings.push(...assetNormalization.warnings);
+
   return createValidationResult({
-    config,
+    config: {
+      ...config,
+      logo: assetNormalization.logo,
+      galleryImages: assetNormalization.galleryImages,
+    },
     errors,
     warnings,
   });
