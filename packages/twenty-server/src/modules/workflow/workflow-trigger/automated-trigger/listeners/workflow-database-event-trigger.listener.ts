@@ -8,13 +8,14 @@ import {
   type ObjectRecordUpdateEvent,
   type ObjectRecordUpsertEvent,
 } from 'twenty-shared/database-events';
-import { type ObjectRecord } from 'twenty-shared/types';
+import { FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { In, Raw } from 'typeorm';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -26,6 +27,7 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import {
   AutomatedTriggerType,
@@ -42,9 +44,14 @@ import {
   type WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
 
+type WorkflowAutomatedTriggerEventListener = Pick<
+  WorkflowAutomatedTriggerWorkspaceEntity,
+  'settings' | 'workflowId'
+>;
+
 type TriggerEvaluationArgs = {
   eventPayload: ObjectRecordEvent;
-  eventListener: WorkflowAutomatedTriggerWorkspaceEntity;
+  eventListener: WorkflowAutomatedTriggerEventListener;
   action: DatabaseEventAction;
 };
 
@@ -59,6 +66,8 @@ export class WorkflowDatabaseEventTriggerListener {
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
@@ -343,11 +352,83 @@ export class WorkflowDatabaseEventTriggerListener {
   }) {
     const workspaceId = payload.workspaceId;
     const databaseEventName = payload.name;
-    const automatedTriggerTableName = 'workflowAutomatedTrigger';
 
+    const eventListeners = await this.getDatabaseEventListeners(
+      workspaceId,
+      databaseEventName,
+    );
+
+    for (const eventListener of eventListeners) {
+      for (const eventPayload of payload.events) {
+        const shouldTriggerJob = this.shouldTriggerJob({
+          eventPayload,
+          eventListener,
+          action,
+        });
+
+        if (shouldTriggerJob) {
+          await this.messageQueueService.add<WorkflowTriggerJobData>(
+            WorkflowTriggerJob.name,
+            {
+              workspaceId,
+              workflowId: eventListener.workflowId,
+              payload: eventPayload,
+            },
+            { retryLimit: 3 },
+          );
+        }
+      }
+    }
+  }
+
+  private async getDatabaseEventListeners(
+    workspaceId: string,
+    databaseEventName: string,
+  ): Promise<WorkflowAutomatedTriggerEventListener[]> {
+    const isWorkflowVersionInCoreEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKFLOW_VERSION_IN_CORE_ENABLED,
+        workspaceId,
+      );
+
+    if (isWorkflowVersionInCoreEnabled) {
+      return this.getDatabaseEventListenersFromCore(
+        workspaceId,
+        databaseEventName,
+      );
+    }
+
+    return this.getDatabaseEventListenersFromWorkspace(
+      workspaceId,
+      databaseEventName,
+    );
+  }
+
+  private async getDatabaseEventListenersFromCore(
+    workspaceId: string,
+    databaseEventName: string,
+  ): Promise<WorkflowAutomatedTriggerEventListener[]> {
+    const { workflowAutomatedTriggerMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'workflowAutomatedTriggerMaps',
+      ]);
+
+    return Object.values(workflowAutomatedTriggerMaps.byWorkflowId).filter(
+      (automatedTrigger) =>
+        automatedTrigger.type === AutomatedTriggerType.DATABASE_EVENT &&
+        (automatedTrigger.settings as BaseDatabaseEventTriggerSettings)
+          .eventName === databaseEventName,
+    );
+  }
+
+  private async getDatabaseEventListenersFromWorkspace(
+    workspaceId: string,
+    databaseEventName: string,
+  ): Promise<WorkflowAutomatedTriggerEventListener[]> {
+    const automatedTriggerTableName = 'workflowAutomatedTrigger';
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowAutomatedTriggerRepository =
         await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
           workspaceId,
@@ -355,7 +436,7 @@ export class WorkflowDatabaseEventTriggerListener {
           { shouldBypassPermissionChecks: true },
         );
 
-      const eventListeners = await workflowAutomatedTriggerRepository.find({
+      return workflowAutomatedTriggerRepository.find({
         where: {
           type: AutomatedTriggerType.DATABASE_EVENT,
           settings: Raw(
@@ -365,28 +446,6 @@ export class WorkflowDatabaseEventTriggerListener {
           ),
         },
       });
-
-      for (const eventListener of eventListeners) {
-        for (const eventPayload of payload.events) {
-          const shouldTriggerJob = this.shouldTriggerJob({
-            eventPayload,
-            eventListener,
-            action,
-          });
-
-          if (shouldTriggerJob) {
-            await this.messageQueueService.add<WorkflowTriggerJobData>(
-              WorkflowTriggerJob.name,
-              {
-                workspaceId,
-                workflowId: eventListener.workflowId,
-                payload: eventPayload,
-              },
-              { retryLimit: 3 },
-            );
-          }
-        }
-      }
     }, authContext);
   }
 
