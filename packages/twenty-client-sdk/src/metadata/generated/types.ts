@@ -4382,6 +4382,9 @@ export default {
             "screenshots": [
                 1
             ],
+            "galleryImages": [
+                1
+            ],
             "defaultRoleUniversalIdentifier": [
                 1
             ],

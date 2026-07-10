@@ -12,7 +12,11 @@ describe('defineApplication', () => {
     const result = defineApplication(config);
 
     expect(result.success).toBe(true);
-    expect(result.config).toEqual(config);
+    expect(result.config).toEqual({
+      ...config,
+      logo: undefined,
+      galleryImages: [],
+    });
     expect(result.errors).toEqual([]);
   });
 
@@ -34,7 +38,11 @@ describe('defineApplication', () => {
     const result = defineApplication(config);
 
     expect(result.success).toBe(true);
-    expect(result.config).toEqual(config);
+    expect(result.config).toEqual({
+      ...config,
+      logo: undefined,
+      galleryImages: [],
+    });
     expect(result.config?.applicationVariables).toBeDefined();
     expect(result.config?.defaultRoleUniversalIdentifier).toBe(
       '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',

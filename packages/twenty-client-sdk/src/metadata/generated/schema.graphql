@@ -2217,7 +2217,8 @@ type MarketplaceAppDetail {
   termsUrl: String
   emailSupport: String
   issueReportUrl: String
-  screenshots: [String!]!
+  screenshots: [String!]! @deprecated(reason: "Use galleryImages instead")
+  galleryImages: [String!]!
   defaultRoleUniversalIdentifier: String
   roles: [MarketplaceAppRole!]
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")

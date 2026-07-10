@@ -1895,7 +1895,9 @@ export interface MarketplaceAppDetail {
     termsUrl?: Scalars['String']
     emailSupport?: Scalars['String']
     issueReportUrl?: Scalars['String']
+    /** @deprecated Use galleryImages instead */
     screenshots: Scalars['String'][]
+    galleryImages: Scalars['String'][]
     defaultRoleUniversalIdentifier?: Scalars['String']
     roles?: MarketplaceAppRole[]
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
@@ -5018,7 +5020,9 @@ export interface MarketplaceAppDetailGenqlSelection{
     termsUrl?: boolean | number
     emailSupport?: boolean | number
     issueReportUrl?: boolean | number
+    /** @deprecated Use galleryImages instead */
     screenshots?: boolean | number
+    galleryImages?: boolean | number
     defaultRoleUniversalIdentifier?: boolean | number
     roles?: MarketplaceAppRoleGenqlSelection
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
