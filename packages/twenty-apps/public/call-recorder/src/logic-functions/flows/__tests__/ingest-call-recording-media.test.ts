@@ -172,7 +172,6 @@ describe('ingestCallRecordingMedia', () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
-    vi.unstubAllEnvs();
   });
 
   it('streams and uploads every missing artifact', async () => {
@@ -370,5 +369,85 @@ describe('ingestCallRecordingMedia', () => {
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('recording boom'),
     );
+  });
+
+  it('skips an oversized file without reading its body and records the reason', async () => {
+    const cancelMock = vi.fn().mockRejectedValue(new Error('cancel exploded'));
+
+    stubFetch({
+      downloadsByUrl: {
+        [VIDEO_URL]: buildDownloadResponse({
+          contentLengthBytes: 500 * 1024 * 1024 + 1,
+          body: { cancel: cancelMock },
+        }),
+        [AUDIO_URL]: buildDownloadResponse({ contentLengthBytes: 8 }),
+      },
+    });
+
+    const updateFields = await ingestCallRecordingMedia({
+      callRecordingId: 'call-recording-1',
+      externalRecordingId: 'recall-recording-1',
+      hasAudio: false,
+      hasVideo: false,
+    });
+
+    expect(updateFields).toEqual({
+      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+      callRecorderFailureReason: 'video_file_too_large',
+    });
+    expect(getUploadBridgeCall('video.mp4')).toBeUndefined();
+    expect(cancelMock).toHaveBeenCalled();
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining('artifact-too-large'),
+    );
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining('download-body-cancel-failed'),
+    );
+  });
+
+  it('records both markers when video and audio exceed the cap', async () => {
+    stubFetch({
+      downloadsByUrl: {
+        [VIDEO_URL]: buildDownloadResponse({
+          contentLengthBytes: 500 * 1024 * 1024 + 1,
+        }),
+        [AUDIO_URL]: buildDownloadResponse({
+          contentLengthBytes: 500 * 1024 * 1024 + 1,
+        }),
+      },
+    });
+
+    const updateFields = await ingestCallRecordingMedia({
+      callRecordingId: 'call-recording-1',
+      externalRecordingId: 'recall-recording-1',
+      hasAudio: false,
+      hasVideo: false,
+    });
+
+    expect(updateFields).toEqual({
+      callRecorderFailureReason: 'video_file_too_large,audio_file_too_large',
+    });
+    expect(mutationMock).not.toHaveBeenCalled();
+  });
+
+  it('accepts a file at the 500 MB cap', async () => {
+    stubFetch({
+      downloadsByUrl: {
+        [VIDEO_URL]: buildDownloadResponse({
+          contentLengthBytes: 500 * 1024 * 1024,
+        }),
+      },
+    });
+
+    const updateFields = await ingestCallRecordingMedia({
+      callRecordingId: 'call-recording-1',
+      externalRecordingId: 'recall-recording-1',
+      hasAudio: true,
+      hasVideo: false,
+    });
+
+    expect(updateFields).toEqual({
+      video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
+    });
   });
 });

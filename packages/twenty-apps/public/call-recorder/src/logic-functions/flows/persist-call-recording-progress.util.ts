@@ -13,6 +13,7 @@ type PersistCallRecordingProgressCurrent = {
   transcript?: unknown;
   audio?: FilesFieldValue;
   video?: FilesFieldValue;
+  callRecorderFailureReason?: string | null;
 };
 
 export const persistCallRecordingProgress = async (
