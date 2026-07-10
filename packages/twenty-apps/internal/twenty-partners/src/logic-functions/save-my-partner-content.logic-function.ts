@@ -43,18 +43,18 @@ export type SaveContentResult =
   | { ok: false; reason: string };
 
 // Partner self-controls visibility: published → APPROVED (public), draft → WIP (hidden).
+// Ownership (partnerId/partnerUser) and contentType are stamped server-side by the
+// on-partner-content-created trigger, never written by the caller — so a partner cannot
+// repoint a case study onto another partner's public marketplace profile.
 export function buildContentCreateData(
   item: CaseStudyItem,
-  partnerId: string,
 ): CoreSchema.PartnerContentCreateInput {
   return {
-    partnerId,
     name: item.name,
     clientName: item.clientName,
     headline: item.headline,
     body: { markdown: item.bodyMarkdown ?? '' },
     caseStudyLink: item.caseStudyLink ? { primaryLinkUrl: item.caseStudyLink } : undefined,
-    contentType: ['CASE_STUDY'],
     status: item.published ? 'APPROVED' : 'WIP',
   };
 }
@@ -139,13 +139,29 @@ export const handler = async (event: RoutePayload<unknown>): Promise<SaveContent
     const plan = buildReconcilePlan(existingIds, parsed.data.caseStudies);
     if (!plan) return errorResponse('FORBIDDEN');
 
+    // A just-created row isn't owner-stamped by the trigger yet, so the caller's own re-read
+    // (RLS-scoped) can't see it. Return it optimistically from the input + new id.
+    const createdRows: CaseStudyRow[] = [];
     for (const item of plan.toCreate) {
-      await client.mutation({
+      const created = await client.mutation({
         createPartnerContent: {
-          __args: { data: buildContentCreateData(item, resolved.partnerId) },
+          __args: { data: buildContentCreateData(item) },
           id: true,
         },
       });
+      const newId = created.createPartnerContent?.id;
+      if (newId !== undefined) {
+        createdRows.push({
+          id: newId,
+          name: item.name,
+          clientName: item.clientName ?? null,
+          headline: item.headline ?? null,
+          bodyMarkdown: item.bodyMarkdown ?? null,
+          coverImageUrl: null,
+          caseStudyLink: item.caseStudyLink ?? null,
+          status: item.published ? 'APPROVED' : 'WIP',
+        });
+      }
     }
 
     for (const item of plan.toUpdate) {
@@ -165,8 +181,8 @@ export const handler = async (event: RoutePayload<unknown>): Promise<SaveContent
       });
     }
 
-    const caseStudies = await queryContentRows(client, resolved.partnerId);
-    return { ok: true, caseStudies };
+    const existingRows = await queryContentRows(client, resolved.partnerId);
+    return { ok: true, caseStudies: [...existingRows, ...createdRows] };
   } catch (err) {
     return errorResponse(err instanceof Error ? err.message : String(err));
   }

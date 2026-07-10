@@ -26,38 +26,39 @@ describe('saveContentSchema', () => {
 });
 
 describe('buildContentCreateData', () => {
-  it('includes contentType: [CASE_STUDY] and status: WIP', () => {
-    const data = buildContentCreateData({ name: 'Acme rollout' }, 'partner-1');
-    expect(data.contentType).toEqual(['CASE_STUDY']);
+  it('creates status: WIP and never writes partnerId/contentType (trigger stamps them)', () => {
+    const data = buildContentCreateData({ name: 'Acme rollout' });
     expect(data.status).toBe('WIP');
-    expect(data.partnerId).toBe('partner-1');
     expect(data.name).toBe('Acme rollout');
+    expect(data).not.toHaveProperty('partnerId');
+    expect(data).not.toHaveProperty('contentType');
   });
 
   it('wraps bodyMarkdown into { markdown } (empty string when omitted)', () => {
-    expect(buildContentCreateData({ name: 'x' }, 'p-1').body).toEqual({ markdown: '' });
+    expect(buildContentCreateData({ name: 'x' }).body).toEqual({ markdown: '' });
     expect(
-      buildContentCreateData({ name: 'x', bodyMarkdown: 'Hello **world**' }, 'p-1').body,
+      buildContentCreateData({ name: 'x', bodyMarkdown: 'Hello **world**' }).body,
     ).toEqual({ markdown: 'Hello **world**' });
   });
 
   it('wraps caseStudyLink into { primaryLinkUrl } when present', () => {
-    const data = buildContentCreateData(
-      { name: 'x', caseStudyLink: 'https://example.com/case-study' },
-      'p-1',
-    );
+    const data = buildContentCreateData({
+      name: 'x',
+      caseStudyLink: 'https://example.com/case-study',
+    });
     expect(data.caseStudyLink).toEqual({ primaryLinkUrl: 'https://example.com/case-study' });
   });
 
   it('leaves caseStudyLink undefined when not provided', () => {
-    expect(buildContentCreateData({ name: 'x' }, 'p-1').caseStudyLink).toBeUndefined();
+    expect(buildContentCreateData({ name: 'x' }).caseStudyLink).toBeUndefined();
   });
 
   it('carries clientName and headline through untouched', () => {
-    const data = buildContentCreateData(
-      { name: 'x', clientName: 'Acme Corp', headline: 'A great migration' },
-      'p-1',
-    );
+    const data = buildContentCreateData({
+      name: 'x',
+      clientName: 'Acme Corp',
+      headline: 'A great migration',
+    });
     expect(data.clientName).toBe('Acme Corp');
     expect(data.headline).toBe('A great migration');
   });
@@ -94,17 +95,13 @@ describe('buildContentUpdateData', () => {
 
 describe('partner-controlled publish', () => {
   it('creates a published case study as APPROVED', () => {
-    const data = buildContentCreateData(
-      { name: 'x', published: true },
-      'partner-1',
-    );
+    const data = buildContentCreateData({ name: 'x', published: true });
     expect(data.status).toBe('APPROVED');
-    expect(data.contentType).toEqual(['CASE_STUDY']);
   });
 
   it('creates a draft (published false or omitted) as WIP', () => {
-    expect(buildContentCreateData({ name: 'x', published: false }, 'p').status).toBe('WIP');
-    expect(buildContentCreateData({ name: 'x' }, 'p').status).toBe('WIP');
+    expect(buildContentCreateData({ name: 'x', published: false }).status).toBe('WIP');
+    expect(buildContentCreateData({ name: 'x' }).status).toBe('WIP');
   });
 
   it('updates status from the published flag', () => {
