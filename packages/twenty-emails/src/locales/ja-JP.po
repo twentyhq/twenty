@@ -19,6 +19,17 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr "ドメインを検証する"
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
+msgstr "{senderName} (<0>{senderEmail}</0>): このドメインを検証して、<1>@{domain}</1> のメールアドレスを持つユーザーが招待なしでワークスペースに参加できるようにしてください。"
+
+#. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Your workspace is paused"
 msgstr "ワークスペースは一時停止中です"
@@ -63,17 +74,6 @@ msgid "Reactivate workspace"
 msgstr "ワークスペースを再有効化"
 
 #. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "Validate domain"
-msgstr "ドメインを検証する"
-
-#. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
-msgstr "{senderName} (<0>{senderEmail}</0>): このドメインを検証して、<1>@{domain}</1> のメールアドレスを持つユーザーが招待なしでワークスペースに参加できるようにしてください。"
-
-#. js-lingui-explicit-id
 #: src/emails/test.email.tsx
 msgid "Test email"
 msgstr "テストメール"
@@ -114,29 +114,29 @@ msgid "Verify Email"
 msgstr "メールを確認"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset your password 🗝"
-msgstr "パスワードをリセット"
+#: src/emails/password-update-notify.email.tsx
+msgid "Password updated"
+msgstr "パスワードが更新されました"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set your password 🗝"
-msgstr "パスワードを設定してください 🗝"
+#: src/emails/password-update-notify.email.tsx
+msgid "Dear {userName},"
+msgstr "{userName}様,"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset"
-msgstr "リセット"
+#: src/emails/password-update-notify.email.tsx
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "アカウント（{email}）のパスワードが{formattedDate}に正常に変更されたことを確認しました。"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set"
-msgstr "設定"
+#: src/emails/password-update-notify.email.tsx
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "この変更を行っていない場合は、すぐにワークスペースの所有者に連絡してください。"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "このリンクは{duration}のみ有効です。リンクが機能しない場合は、ログイン認証リンクを直接ご利用ください："
+#: src/emails/password-update-notify.email.tsx
+msgid "Connect to Twenty"
+msgstr "Twentyに接続"
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -179,29 +179,54 @@ msgid "Start a new workspace"
 msgstr "新しいワークスペースを開始"
 
 #. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Password updated"
-msgstr "パスワードが更新されました"
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset your password 🗝"
+msgstr "パスワードをリセット"
 
 #. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Dear {userName},"
-msgstr "{userName}様,"
+#: src/emails/password-reset-link.email.tsx
+msgid "Set your password 🗝"
+msgstr "パスワードを設定してください 🗝"
 
 #. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "アカウント（{email}）のパスワードが{formattedDate}に正常に変更されたことを確認しました。"
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset"
+msgstr "リセット"
 
 #. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "この変更を行っていない場合は、すぐにワークスペースの所有者に連絡してください。"
+#: src/emails/password-reset-link.email.tsx
+msgid "Set"
+msgstr "設定"
 
 #. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Connect to Twenty"
-msgstr "Twentyに接続"
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "このリンクは{duration}のみ有効です。リンクが機能しない場合は、ログイン認証リンクを直接ご利用ください："
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your trial is ending soon"
+msgstr "お試し期間がまもなく終了します"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}."
+msgstr "<0>{workspaceDisplayName}</0> の無料トライアルは {formattedDate} に終了します。"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
+msgstr "ワークスペースとこれまでに構築された内容を保持するには、お支払い方法を追加し、プランをお選びください。"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "If you do nothing, we'll pause your workspace and keep your data safe for {dataRetentionDays} days in case you change your mind — no card will be charged."
+msgstr "何も操作されない場合、こちらでワークスペースを一時停止し、{dataRetentionDays} 日間はデータを安全に保管します。その間に気が変わっても、クレジットカードが請求されることはありません。"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Add a payment method"
+msgstr "お支払い方法を追加"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -235,41 +260,6 @@ msgid "Manage subscription"
 msgstr "サブスクリプションを管理"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "Your trial is ending soon"
-msgstr "お試し期間がまもなく終了します"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}."
-msgstr "<0>{workspaceDisplayName}</0> の無料トライアルは {formattedDate} に終了します。"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
-msgstr "ワークスペースとこれまでに構築された内容を保持するには、お支払い方法を追加し、プランをお選びください。"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "If you do nothing, we'll pause your workspace and keep your data safe for {dataRetentionDays} days in case you change your mind — no card will be charged."
-msgstr "何も操作されない場合、こちらでワークスペースを一時停止し、{dataRetentionDays} 日間はデータを安全に保管します。その間に気が変わっても、クレジットカードが請求されることはありません。"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-ending.email.tsx
-msgid "Add a payment method"
-msgstr "お支払い方法を追加"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Twentyとは？"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "Twentyは、企業が顧客データと関係を効率的に管理するためのソフトウェアであるCRMです。"
-
-#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "ご利用中のプランがまもなく更新されます"
@@ -288,6 +278,16 @@ msgstr "<0>{workspaceDisplayName}</0> 向けの年間プランは {formattedDate
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "ご利用を継続される場合、お客様側での操作は必要ありません。更新を希望されない場合は、その日までいつでも解約できます。"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Twentyとは？"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "Twentyは、企業が顧客データと関係を効率的に管理するためのソフトウェアであるCRMです。"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
