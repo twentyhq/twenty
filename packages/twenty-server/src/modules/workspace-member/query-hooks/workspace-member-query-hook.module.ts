@@ -15,6 +15,7 @@ import { WorkspaceMemberDestroyOnePreQueryHook } from 'src/modules/workspace-mem
 import { WorkspaceMemberRestoreManyPreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-restore-many.pre-query.hook';
 import { WorkspaceMemberRestoreOnePreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-restore-one.pre-query.hook';
 import { WorkspaceMemberUpdateManyPreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-update-many.pre-query.hook';
+import { WorkspaceMemberUpdateOnePreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-update-one.pre-query.hook';
 
 @Module({
   providers: [
@@ -28,6 +29,7 @@ import { WorkspaceMemberUpdateManyPreQueryHook } from 'src/modules/workspace-mem
     WorkspaceMemberRestoreOnePreQueryHook,
     WorkspaceMemberRestoreManyPreQueryHook,
     WorkspaceMemberUpdateManyPreQueryHook,
+    WorkspaceMemberUpdateOnePreQueryHook,
   ],
   imports: [
     CoreEntityCacheModule,

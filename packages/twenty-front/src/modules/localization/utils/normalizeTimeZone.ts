@@ -1,16 +1,7 @@
+import { LEGACY_TIME_ZONE_TO_IANA } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isTimeZoneSupported } from '@/localization/utils/isTimeZoneSupported';
-
-// Legacy IANA abbreviation zones that V8 (Chrome/Node) accepts but WebKit's ICU
-// rejects with a RangeError. Each maps to a canonical region zone with the same
-// current UTC offset and DST rules.
-export const LEGACY_TIME_ZONE_TO_IANA: Record<string, string> = {
-  CET: 'Europe/Paris',
-  MET: 'Europe/Berlin',
-  WET: 'Europe/Lisbon',
-  EET: 'Europe/Bucharest',
-};
 
 // Supported zones pass through unchanged so rendering never changes on engines
 // that accept the zone (the region mappings only match the alias rules for

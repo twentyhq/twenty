@@ -1,7 +1,9 @@
-import { IANA_TIME_ZONES } from 'twenty-shared/constants';
+import {
+  IANA_TIME_ZONES,
+  LEGACY_TIME_ZONE_TO_IANA,
+} from 'twenty-shared/constants';
 import { formatTimeZoneLabel } from '@/localization/utils/formatTimeZoneLabel';
 import { isTimeZoneSupported } from '@/localization/utils/isTimeZoneSupported';
-import { LEGACY_TIME_ZONE_TO_IANA } from '@/localization/utils/normalizeTimeZone';
 import { type SelectOption } from 'twenty-ui/input';
 
 export const buildAvailableTimeZoneOptionsByLabel = (): Record<
