@@ -1,6 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { encodeCursorData } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { encodeCursorData } from 'src/engine/api/common/utils/cursor.util';
 import {
   mockFlatFieldMetadataMaps,
   mockFlatObjectMetadatas,

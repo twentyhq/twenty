@@ -5,33 +5,16 @@ import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query
 import { type FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
-  CommonQueryRunnerException,
-  CommonQueryRunnerExceptionCode,
-} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+  type CursorData,
+  decodeCursor,
+  encodeCursorData,
+} from 'src/engine/api/common/utils/cursor.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-
-export interface CursorData {
-  // oxlint-disable-next-line typescript/no-explicit-any
-  [key: string]: any;
-}
-
-export const decodeCursor = <T = CursorData>(cursor: string): T => {
-  try {
-    return JSON.parse(Buffer.from(cursor, 'base64').toString());
-  } catch {
-    throw new CommonQueryRunnerException(
-      `Invalid cursor: ${cursor}`,
-      CommonQueryRunnerExceptionCode.INVALID_CURSOR,
-      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-    );
-  }
-};
 
 export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
   objectRecord,
@@ -98,10 +81,6 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
   return encodeCursorData(cursorData);
 };
 
-export const encodeCursorData = (cursorData: CursorData) => {
-  return Buffer.from(JSON.stringify(cursorData)).toString('base64');
-};
-
 export const getCursor = (
   // oxlint-disable-next-line typescript/no-explicit-any
   args: FindManyResolverArgs<any, any>,
@@ -111,18 +90,4 @@ export const getCursor = (
   if (args.before) return decodeCursor(args.before);
 
   return undefined;
-};
-
-export const getPaginationInfo = (
-  objectRecords: ObjectRecord[],
-  limit: number,
-  isForwardPagination: boolean,
-) => {
-  const hasMoreRecords = objectRecords.length > limit;
-
-  return {
-    hasNextPage: isForwardPagination && hasMoreRecords,
-    hasPreviousPage: !isForwardPagination && hasMoreRecords,
-    hasMoreRecords,
-  };
 };
