@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
@@ -9,7 +8,7 @@ import {
   DEFAULT_FUNCTIONS_URL_NAME,
 } from 'twenty-shared/application';
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Not, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -35,7 +34,6 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-env-var';
-import { buildSameSiteFunctionBaseUrl } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-same-site-function-base-url';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -55,6 +53,7 @@ import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
@@ -348,7 +347,7 @@ export class LogicFunctionExecutorService {
       [DEFAULT_API_URL_NAME]: baseUrl ?? '',
       [DEFAULT_APP_ACCESS_TOKEN_NAME]: applicationAccessToken.token,
       [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
-      [DEFAULT_FUNCTIONS_URL_NAME]: functionsBaseUrl ?? '',
+      [DEFAULT_FUNCTIONS_URL_NAME]: functionsBaseUrl,
       APPLICATION_ID: flatApplication.id,
       ...serverVariables,
       ...workspaceVariables,
@@ -361,15 +360,13 @@ export class LogicFunctionExecutorService {
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
-  }): Promise<string | undefined> {
+  }): Promise<string> {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
       select: { subdomain: true },
     });
 
-    if (!isDefined(workspace)) {
-      return undefined;
-    }
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     const primaryPublicDomain =
       await this.applicationService.findPrimaryPublicDomainName({
@@ -377,31 +374,9 @@ export class LogicFunctionExecutorService {
         workspaceId,
       });
 
-    const publicFunctionBaseUrl =
-      this.workspaceDomainsService.buildPublicFunctionBaseUrl({
-        workspace,
-        primaryPublicDomain,
-      });
-
-    if (isDefined(publicFunctionBaseUrl)) {
-      return publicFunctionBaseUrl;
-    }
-
-    const serverUrl = cleanServerUrl(
-      this.twentyConfigService.get('SERVER_URL'),
-    );
-
-    if (!isNonEmptyString(serverUrl)) {
-      return undefined;
-    }
-
-    // No isolated public domain configured; functions are served same-site on /s (#22045).
-    return buildSameSiteFunctionBaseUrl({
-      serverUrl,
-      subdomain: workspace.subdomain,
-      isMultiWorkspaceEnabled: this.twentyConfigService.get(
-        'IS_MULTIWORKSPACE_ENABLED',
-      ),
+    return this.workspaceDomainsService.buildFunctionsBaseUrl({
+      workspace,
+      primaryPublicDomain,
     });
   }
 

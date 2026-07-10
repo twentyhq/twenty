@@ -185,6 +185,86 @@ describe('WorkspaceDomainsService', () => {
     });
   });
 
+  describe('buildPublicFunctionBaseUrl', () => {
+    it('should keep the isolated public URL undefined when PUBLIC_DOMAIN_URL is not configured', () => {
+      expect(
+        workspaceDomainsService.buildPublicFunctionBaseUrl({
+          workspace: { subdomain: 'acme' },
+        }),
+      ).toBeUndefined();
+    });
+  });
+
+  describe('buildFunctionsBaseUrl', () => {
+    it('should return the primary public domain when the application has one', () => {
+      const result = workspaceDomainsService.buildFunctionsBaseUrl({
+        workspace: { subdomain: 'acme' },
+        primaryPublicDomain: 'functions.acme.com',
+      });
+
+      expect(result).toBe('https://functions.acme.com');
+    });
+
+    it('should return the isolated workspace domain when PUBLIC_DOMAIN_URL is configured', () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) => {
+          const configValues = {
+            PUBLIC_DOMAIN_URL: 'https://withtwenty.com',
+          };
+
+          // @ts-expect-error legacy noImplicitAny
+          return configValues[key];
+        });
+
+      const result = workspaceDomainsService.buildFunctionsBaseUrl({
+        workspace: { subdomain: 'acme' },
+      });
+
+      expect(result).toBe('https://acme.withtwenty.com');
+    });
+
+    it('should return the same-site route when PUBLIC_DOMAIN_URL is not configured', () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) => {
+          const configValues = {
+            SERVER_URL: 'https://api.example.com',
+            IS_MULTIWORKSPACE_ENABLED: false,
+          };
+
+          // @ts-expect-error legacy noImplicitAny
+          return configValues[key];
+        });
+
+      const result = workspaceDomainsService.buildFunctionsBaseUrl({
+        workspace: { subdomain: 'acme' },
+      });
+
+      expect(result).toBe('https://api.example.com/s');
+    });
+
+    it('should include the workspace subdomain in the same-site route when multi-workspace is enabled', () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) => {
+          const configValues = {
+            SERVER_URL: 'https://api.example.com/base/',
+            IS_MULTIWORKSPACE_ENABLED: true,
+          };
+
+          // @ts-expect-error legacy noImplicitAny
+          return configValues[key];
+        });
+
+      const result = workspaceDomainsService.buildFunctionsBaseUrl({
+        workspace: { subdomain: 'acme' },
+      });
+
+      expect(result).toBe('https://acme.api.example.com/base/s');
+    });
+  });
+
   describe('getWorkspaceByOriginOrDefaultWorkspace', () => {
     it('should return default workspace if IS_MULTIWORKSPACE_ENABLED=false', async () => {
       jest

@@ -34,18 +34,18 @@ describe('getFunctionsBaseUrl', () => {
     ).toBe('https://api.twenty.com/s');
   });
 
-  it('prepends the workspace subdomain to the /s fallback in multi-workspace mode', () => {
+  it('should preserve the server path and prepend the workspace subdomain in multi-workspace mode', () => {
     expect(
       getFunctionsBaseUrl({
-        serverBaseUrl: 'http://localhost:3000',
+        serverBaseUrl: 'http://localhost:3000/base/',
         publicFunctionDomain: null,
         workspaceSubdomain: 'acme',
         isMultiWorkspaceEnabled: true,
       }),
-    ).toBe('http://acme.localhost:3000/s');
+    ).toBe('http://acme.localhost:3000/base/s');
   });
 
-  it('does not prepend a subdomain to the /s fallback in single-workspace mode', () => {
+  it('should not prepend a subdomain in single-workspace mode', () => {
     expect(
       getFunctionsBaseUrl({
         serverBaseUrl: 'http://localhost:3000',

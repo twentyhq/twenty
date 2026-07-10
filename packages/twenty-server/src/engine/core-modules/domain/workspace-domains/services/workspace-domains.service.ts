@@ -210,6 +210,38 @@ export class WorkspaceDomainsService {
     return url.origin;
   }
 
+  buildFunctionsBaseUrl({
+    workspace,
+    primaryPublicDomain,
+  }: {
+    workspace: Pick<WorkspaceEntity, 'subdomain'>;
+    primaryPublicDomain?: string | null;
+  }): string {
+    const publicFunctionBaseUrl = this.buildPublicFunctionBaseUrl({
+      workspace,
+      primaryPublicDomain,
+    });
+
+    if (isDefined(publicFunctionBaseUrl)) {
+      return publicFunctionBaseUrl;
+    }
+
+    const sameSiteFunctionsBaseUrl = new URL(
+      this.twentyConfigService.get('SERVER_URL'),
+    );
+
+    sameSiteFunctionsBaseUrl.pathname = `${sameSiteFunctionsBaseUrl.pathname.replace(
+      /\/+$/,
+      '',
+    )}/s`;
+
+    if (this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
+      sameSiteFunctionsBaseUrl.hostname = `${workspace.subdomain}.${sameSiteFunctionsBaseUrl.hostname}`;
+    }
+
+    return sameSiteFunctionsBaseUrl.toString();
+  }
+
   buildPublicFunctionUrl({
     workspace,
     path,

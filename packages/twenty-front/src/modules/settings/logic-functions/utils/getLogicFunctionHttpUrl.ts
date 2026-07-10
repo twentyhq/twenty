@@ -18,16 +18,18 @@ export const getFunctionsBaseUrl = ({
     return `https://${workspaceSubdomain}.${publicFunctionDomain}`;
   }
 
-  const url = new URL(serverBaseUrl);
+  const sameSiteFunctionsBaseUrl = new URL(serverBaseUrl);
 
   if (
     isMultiWorkspaceEnabled === true &&
     isNonEmptyString(workspaceSubdomain)
   ) {
-    url.hostname = `${workspaceSubdomain}.${url.hostname}`;
+    sameSiteFunctionsBaseUrl.hostname = `${workspaceSubdomain}.${sameSiteFunctionsBaseUrl.hostname}`;
   }
 
-  return `${url.origin}/s`;
+  sameSiteFunctionsBaseUrl.pathname = `${sameSiteFunctionsBaseUrl.pathname.replace(/\/+$/, '')}/s`;
+
+  return sameSiteFunctionsBaseUrl.toString();
 };
 
 export const getLogicFunctionHttpUrl = ({
