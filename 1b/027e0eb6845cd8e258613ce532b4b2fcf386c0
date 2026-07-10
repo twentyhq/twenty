@@ -1,0 +1,40 @@
+packages/twenty-front/src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
+  s_d7efdfca82e0dc::t_bea4753d780259 69,73,76,79-83,87,89
+  s_d7efdfca82e0dc::t_58ba32d8e11893 9,88
+  s_d7efdfca82e0dc::t_19986c682152c2 90
+  s_d7efdfca82e0dc::t_eb5c193b028fa2 46
+packages/twenty-front/src/modules/activities/emails/recipients/hooks/useEmailRecipientsResolution.ts
+  s_d7efdfca82e0dc::t_320b0c42cac04d 17
+packages/twenty-front/src/modules/activities/emails/recipients/hooks/useEmailRecipientSuggestions.ts
+  s_d7efdfca82e0dc::t_a142ce8be1f299 55-56
+  s_d7efdfca82e0dc::t_6aa56997781339 37
+packages/twenty-front/src/modules/activities/emails/recipients/types/EmailRecipientIdentity.ts
+  s_d7efdfca82e0dc::t_a734ad1f78f894 1-10
+packages/twenty-front/src/modules/activities/emails/recipients/utils/__tests__/getEmailRecipientIdentity.test.ts
+  s_d7efdfca82e0dc::t_b8d9c12c925bca 22,30-34,46-47,62-64,66-68,74,76,80-84
+  s_d7efdfca82e0dc::t_5770301675cd81 19
+  s_d7efdfca82e0dc::t_9420217630e428 1-18,20-21,23-29,35-45,48-61,65,69-73,75,77-79,85-86
+packages/twenty-front/src/modules/activities/emails/recipients/components/EmailRecipientsFieldChip.tsx
+  s_d7efdfca82e0dc::t_54d5ae1f81b7b2 2,8
+  s_d7efdfca82e0dc::t_e17dc60b32f5dc 58
+  s_d7efdfca82e0dc::t_02ed87208589ad 38,41,43-45
+packages/twenty-front/src/modules/activities/emails/recipients/utils/getEmailRecipientIdentity.ts
+  s_d7efdfca82e0dc::t_4054bdb4520e59 31-32,39-43,47
+  s_d7efdfca82e0dc::t_c81b2ae4b96921 1-30,33-38,44-46,48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "1b027e0eb6845cd8e258613ce532b4b2fcf386c0",
+  "prompts": {},
+  "sessions": {
+    "s_d7efdfca82e0dc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8597b8f-384d-4561-a6dd-8d19f0804e31",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
