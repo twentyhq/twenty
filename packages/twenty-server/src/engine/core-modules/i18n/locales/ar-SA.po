@@ -7808,6 +7808,7 @@ msgstr "هذا النطاق مُسجَّل بالفعل كنطاق مخصص."
 
 #. js-lingui-id: s6batt
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This domain is already registered."
 msgstr "هذا النطاق مُسجَّل بالفعل."
 
