@@ -1,0 +1,73 @@
+packages/twenty-front/src/modules/activities/emails/hooks/useEmailComposerState.ts
+  s_d7efdfca82e0dc::t_41b68f72159ab0 4,44,47,50
+packages/twenty-front/src/modules/activities/emails/hooks/useReplyContext.ts
+  s_d7efdfca82e0dc::t_2bac433ddb3f96 3-6,59
+packages/twenty-front/src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
+  s_d7efdfca82e0dc::t_038242033a4154 4,9,11,46-49,72,76,79,82-84,88-91,107-113
+packages/twenty-front/src/modules/activities/emails/recipients/components/EmailRecipientSuggestionMenuItem.tsx
+  s_d7efdfca82e0dc::t_45fd97732a7ef4 4
+packages/twenty-front/src/modules/activities/emails/recipients/components/EmailRecipientSuggestionsDropdownContent.tsx
+  s_d7efdfca82e0dc::t_c6472975a1e7b4 5
+packages/twenty-front/src/modules/activities/emails/recipients/components/EmailRecipientsFieldChip.tsx
+  s_d7efdfca82e0dc::t_f6d77778634127 2-5,11,41-44,46-54,63,67
+packages/twenty-front/src/modules/activities/emails/recipients/components/EmailRecipientsFieldInput.tsx
+  s_d7efdfca82e0dc::t_19e92b4ad00941 15,23,26,65-70,282,512,527
+packages/twenty-front/src/modules/activities/emails/recipients/constants/EmailRecipientSuggestionsLimit.ts
+  s_d7efdfca82e0dc::t_0243ba22b7639e 1
+packages/twenty-front/src/modules/activities/emails/recipients/hooks/useEmailComposerContextPeople.ts
+  s_d7efdfca82e0dc::t_a13c83b07d8c18 1-53
+packages/twenty-front/src/modules/activities/emails/recipients/hooks/useEmailRecipientSuggestions.ts
+  s_d7efdfca82e0dc::t_2694144ac50a66 1,6-7,9,12-14,25-30,33,35,37-39,42-48,51-56,58,62-63,66,70-71,74-117,120-143
+packages/twenty-front/src/modules/activities/emails/recipients/hooks/useEmailRecipientsField.ts
+  s_d7efdfca82e0dc::t_bfcbe3a35c4c27 1,3-7,13-17,32-34,38-57,61-71,74-77,82-87,90-94,97-105,114-115,118-128,138-139,142-143,146-147,150,153,155,159-171
+packages/twenty-front/src/modules/activities/emails/recipients/hooks/useEmailRecipientsResolution.ts
+  s_d7efdfca82e0dc::t_2e51da1918104e 3,17,24,37,52-54,56-57,61-62,64-72
+packages/twenty-front/src/modules/activities/emails/recipients/types/EmailRecipient.ts
+  s_d7efdfca82e0dc::t_c2ac5759e679a5 1-3
+packages/twenty-front/src/modules/activities/emails/recipients/types/EmailRecipientIdentity.ts
+  s_d7efdfca82e0dc::t_b30c4af7271f7b 1-8
+packages/twenty-front/src/modules/activities/emails/recipients/types/EmailRecipientPerson.ts
+  s_d7efdfca82e0dc::t_d930407f9587a8 1-4
+packages/twenty-front/src/modules/activities/emails/recipients/types/EmailRecipientSuggestion.ts
+  s_d7efdfca82e0dc::t_781c729bdeb6b3 3-9
+packages/twenty-front/src/modules/activities/emails/recipients/utils/__tests__/getEmailRecipientIdentity.test.ts
+  s_d7efdfca82e0dc::t_b8729884bb7733 1-19,21-22,24-26,28-35,38,40-42,44-51,54-58,60-87
+packages/twenty-front/src/modules/activities/emails/recipients/utils/__tests__/getEmailRecipientSuggestionList.test.ts
+  s_d7efdfca82e0dc::t_4a986bc285f45d 1-2,4-13,15-27,30-31,34-43,45,48-57,59-61,64-70,72-74,77-83,85-87
+packages/twenty-front/src/modules/activities/emails/recipients/utils/__tests__/mergeEmailRecipients.test.ts
+  s_d7efdfca82e0dc::t_a71c43728b2b19 4-12,14,16-17,19,22-27,29-30,33-44,46,48,52-57,59-61,65-70,72,75-80,82-83,85-86,88-102
+packages/twenty-front/src/modules/activities/emails/recipients/utils/getEmailRecipientFullName.ts
+  s_d7efdfca82e0dc::t_48c0bf6ab60a2a 1-3
+packages/twenty-front/src/modules/activities/emails/recipients/utils/getEmailRecipientIdentity.ts
+  s_d7efdfca82e0dc::t_3eac14a5b897e1 2,4,6-7,9-17,19-44,46-47
+packages/twenty-front/src/modules/activities/emails/recipients/utils/getEmailRecipientPersonFromRecord.ts
+  s_d7efdfca82e0dc::t_fd74513878d2e1 8-13
+packages/twenty-front/src/modules/activities/emails/recipients/utils/getEmailRecipientSuggestionFromPerson.ts
+  s_d7efdfca82e0dc::t_4eb560fbc4c843 1-24
+packages/twenty-front/src/modules/activities/emails/recipients/utils/getEmailRecipientSuggestionFromWorkspaceMember.ts
+  s_d7efdfca82e0dc::t_2026f1df743999 1-28
+packages/twenty-front/src/modules/activities/emails/recipients/utils/getEmailRecipientSuggestionList.ts
+  s_d7efdfca82e0dc::t_199d71753bbbd0 1-62
+packages/twenty-front/src/modules/activities/emails/recipients/utils/mergeEmailRecipients.ts
+  s_d7efdfca82e0dc::t_64e22b593dd569 7-12,14-15,18-27,29-30,32-35,37-38,40-41,45,47-50,52-59,64-66,68,70
+packages/twenty-front/src/modules/activities/emails/utils/getEmailDraftPrefillFromMessage.ts
+  s_d7efdfca82e0dc::t_a86b8de547ec34 2-3,16
+packages/twenty-front/src/modules/object-record/record-field/ui/form-types/components/BaseChip.tsx
+  s_d7efdfca82e0dc::t_1439ba80cc687a 68,137
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8d074d672eced6db2d301365969a47f2aaa04ad4",
+  "prompts": {},
+  "sessions": {
+    "s_d7efdfca82e0dc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8597b8f-384d-4561-a6dd-8d19f0804e31",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
