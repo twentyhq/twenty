@@ -468,81 +468,6 @@ enum LogicFunctionExecutionMode {
   PREBUILT
 }
 
-type Field {
-  id: UUID!
-  universalIdentifier: String!
-  type: FieldMetadataType!
-  name: String!
-  label: String!
-  description: String
-  icon: String
-  isActive: Boolean
-  isSystem: Boolean
-  isUIEditable: Boolean
-  isUIReadOnly: Boolean @deprecated(reason: "Use isUIEditable")
-  isNullable: Boolean
-  isUnique: Boolean
-  defaultValue: JSON
-  options: JSON
-  settings: JSON
-  objectMetadataId: UUID!
-  isLabelSyncedWithName: Boolean
-  morphId: UUID
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  applicationId: UUID!
-  relation: Relation
-  morphRelations: [Relation!]
-  object: Object
-}
-
-"""Type of the field"""
-enum FieldMetadataType {
-  ACTOR
-  ADDRESS
-  ARRAY
-  BOOLEAN
-  CURRENCY
-  DATE
-  DATE_TIME
-  EMAILS
-  FILES
-  FULL_NAME
-  LINKS
-  MORPH_RELATION
-  MULTI_SELECT
-  NUMBER
-  NUMERIC
-  PHONES
-  POSITION
-  RATING
-  RAW_JSON
-  RELATION
-  RICH_TEXT
-  SELECT
-  TEXT
-  TS_VECTOR
-  UUID
-}
-
-type Index {
-  id: UUID!
-  name: String!
-  isCustom: Boolean
-  isUnique: Boolean!
-  indexWhereClause: String
-  indexType: IndexType!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  indexFieldMetadataList: [IndexField!]!
-}
-
-"""Type of the index"""
-enum IndexType {
-  BTREE
-  GIN
-}
-
 type Object {
   id: UUID!
   universalIdentifier: String!
@@ -571,77 +496,6 @@ type Object {
   fieldsList: [Field!]!
   indexMetadataList: [Index!]!
   searchFieldMetadataList: [SearchField!]!
-  fields(
-    """Limit or page results."""
-    paging: CursorPaging! = {first: 10}
-
-    """Specify to filter the records returned."""
-    filter: FieldFilter! = {}
-  ): ObjectFieldsConnection!
-  indexMetadatas(
-    """Limit or page results."""
-    paging: CursorPaging! = {first: 10}
-
-    """Specify to filter the records returned."""
-    filter: IndexFilter! = {}
-  ): ObjectIndexMetadatasConnection!
-}
-
-input CursorPaging {
-  """Paginate before opaque cursor"""
-  before: ConnectionCursor
-
-  """Paginate after opaque cursor"""
-  after: ConnectionCursor
-
-  """Paginate first"""
-  first: Int
-
-  """Paginate last"""
-  last: Int
-}
-
-"""Cursor for paging through collections"""
-scalar ConnectionCursor
-
-input FieldFilter {
-  and: [FieldFilter!]
-  or: [FieldFilter!]
-  id: UUIDFilterComparison
-  isActive: BooleanFieldComparison
-  isSystem: BooleanFieldComparison
-  isUIEditable: BooleanFieldComparison
-  isUIReadOnly: BooleanFieldComparison
-  objectMetadataId: UUIDFilterComparison
-}
-
-input UUIDFilterComparison {
-  is: Boolean
-  isNot: Boolean
-  eq: UUID
-  neq: UUID
-  gt: UUID
-  gte: UUID
-  lt: UUID
-  lte: UUID
-  like: UUID
-  notLike: UUID
-  iLike: UUID
-  notILike: UUID
-  in: [UUID!]
-  notIn: [UUID!]
-}
-
-input BooleanFieldComparison {
-  is: Boolean
-  isNot: Boolean
-}
-
-input IndexFilter {
-  and: [IndexFilter!]
-  or: [IndexFilter!]
-  id: UUIDFilterComparison
-  isCustom: BooleanFieldComparison
 }
 
 type Application {
@@ -1958,6 +1812,63 @@ type RotateClientSecret {
   clientSecret: String!
 }
 
+type Field {
+  id: UUID!
+  universalIdentifier: String!
+  type: FieldMetadataType!
+  name: String!
+  label: String!
+  description: String
+  icon: String
+  isActive: Boolean
+  isSystem: Boolean
+  isUIEditable: Boolean
+  isUIReadOnly: Boolean @deprecated(reason: "Use isUIEditable")
+  isNullable: Boolean
+  isUnique: Boolean
+  defaultValue: JSON
+  options: JSON
+  settings: JSON
+  objectMetadataId: UUID!
+  isLabelSyncedWithName: Boolean
+  morphId: UUID
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  applicationId: UUID!
+  relation: Relation
+  morphRelations: [Relation!]
+  object: Object
+}
+
+"""Type of the field"""
+enum FieldMetadataType {
+  ACTOR
+  ADDRESS
+  ARRAY
+  BOOLEAN
+  CURRENCY
+  DATE
+  DATE_TIME
+  EMAILS
+  FILES
+  FULL_NAME
+  LINKS
+  MORPH_RELATION
+  MULTI_SELECT
+  NUMBER
+  NUMERIC
+  PHONES
+  POSITION
+  RATING
+  RAW_JSON
+  RELATION
+  RICH_TEXT
+  SELECT
+  TEXT
+  TS_VECTOR
+  UUID
+}
+
 type Relation {
   type: RelationType!
   sourceObjectMetadata: Object!
@@ -1970,6 +1881,24 @@ type Relation {
 enum RelationType {
   ONE_TO_MANY
   MANY_TO_ONE
+}
+
+type Index {
+  id: UUID!
+  name: String!
+  isCustom: Boolean
+  isUnique: Boolean!
+  indexWhereClause: String
+  indexType: IndexType!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  indexFieldMetadataList: [IndexField!]!
+}
+
+"""Type of the index"""
+enum IndexType {
+  BTREE
+  GIN
 }
 
 type IndexField {
@@ -2003,6 +1932,9 @@ type ObjectEdge {
   cursor: ConnectionCursor!
 }
 
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
 type PageInfo {
   """true if paging forward and there are more records."""
   hasNextPage: Boolean
@@ -2025,36 +1957,12 @@ type ObjectConnection {
   edges: [ObjectEdge!]!
 }
 
-type IndexEdge {
-  """The node containing the Index"""
-  node: Index!
-
-  """Cursor for this node."""
-  cursor: ConnectionCursor!
-}
-
-type ObjectIndexMetadatasConnection {
-  """Paging information"""
-  pageInfo: PageInfo!
-
-  """Array of edges."""
-  edges: [IndexEdge!]!
-}
-
 type FieldEdge {
   """The node containing the Field"""
   node: Field!
 
   """Cursor for this node."""
   cursor: ConnectionCursor!
-}
-
-type ObjectFieldsConnection {
-  """Paging information"""
-  pageInfo: PageInfo!
-
-  """Array of edges."""
-  edges: [FieldEdge!]!
 }
 
 type FieldConnection {
@@ -3161,6 +3069,20 @@ input AgentIdInput {
   id: UUID!
 }
 
+input CursorPaging {
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
 input ObjectFilter {
   and: [ObjectFilter!]
   or: [ObjectFilter!]
@@ -3174,9 +3096,42 @@ input ObjectFilter {
   isSearchable: BooleanFieldComparison
 }
 
+input UUIDFilterComparison {
+  is: Boolean
+  isNot: Boolean
+  eq: UUID
+  neq: UUID
+  gt: UUID
+  gte: UUID
+  lt: UUID
+  lte: UUID
+  like: UUID
+  notLike: UUID
+  iLike: UUID
+  notILike: UUID
+  in: [UUID!]
+  notIn: [UUID!]
+}
+
+input BooleanFieldComparison {
+  is: Boolean
+  isNot: Boolean
+}
+
 input LogicFunctionIdInput {
   """The id of the function."""
   id: ID!
+}
+
+input FieldFilter {
+  and: [FieldFilter!]
+  or: [FieldFilter!]
+  id: UUIDFilterComparison
+  isActive: BooleanFieldComparison
+  isSystem: BooleanFieldComparison
+  isUIEditable: BooleanFieldComparison
+  isUIReadOnly: BooleanFieldComparison
+  objectMetadataId: UUIDFilterComparison
 }
 
 input PreviewMessageCampaignAudienceInput {

@@ -2064,14 +2064,6 @@ export type Index = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type IndexEdge = {
-  __typename?: 'IndexEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor']['output'];
-  /** The node containing the Index */
-  node: Index;
-};
-
 export type IndexField = {
   __typename?: 'IndexField';
   createdAt: Scalars['DateTime']['output'];
@@ -2080,13 +2072,6 @@ export type IndexField = {
   order: Scalars['Float']['output'];
   subFieldName?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
-};
-
-export type IndexFilter = {
-  and?: InputMaybe<Array<IndexFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  isCustom?: InputMaybe<BooleanFieldComparison>;
-  or?: InputMaybe<Array<IndexFilter>>;
 };
 
 /** Type of the index */
@@ -3886,13 +3871,11 @@ export type Object = {
   createdAt: Scalars['DateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
   duplicateCriteria?: Maybe<Array<Array<Scalars['String']['output']>>>;
-  fields: ObjectFieldsConnection;
   fieldsList: Array<Field>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   imageIdentifierFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   indexMetadataList: Array<Index>;
-  indexMetadatas: ObjectIndexMetadatasConnection;
   isActive: Scalars['Boolean']['output'];
   isLabelSyncedWithName: Scalars['Boolean']['output'];
   isRemote: Scalars['Boolean']['output'];
@@ -3913,18 +3896,6 @@ export type Object = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
-
-export type ObjectFieldsArgs = {
-  filter?: FieldFilter;
-  paging?: CursorPaging;
-};
-
-
-export type ObjectIndexMetadatasArgs = {
-  filter?: IndexFilter;
-  paging?: CursorPaging;
-};
-
 export type ObjectConnection = {
   __typename?: 'ObjectConnection';
   /** Array of edges. */
@@ -3941,14 +3912,6 @@ export type ObjectEdge = {
   node: Object;
 };
 
-export type ObjectFieldsConnection = {
-  __typename?: 'ObjectFieldsConnection';
-  /** Array of edges. */
-  edges: Array<FieldEdge>;
-  /** Paging information */
-  pageInfo: PageInfo;
-};
-
 export type ObjectFilter = {
   and?: InputMaybe<Array<ObjectFilter>>;
   id?: InputMaybe<UuidFilterComparison>;
@@ -3960,14 +3923,6 @@ export type ObjectFilter = {
   isUIEditable?: InputMaybe<BooleanFieldComparison>;
   isUIReadOnly?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<ObjectFilter>>;
-};
-
-export type ObjectIndexMetadatasConnection = {
-  __typename?: 'ObjectIndexMetadatasConnection';
-  /** Array of edges. */
-  edges: Array<IndexEdge>;
-  /** Paging information */
-  pageInfo: PageInfo;
 };
 
 export type ObjectMetadataCommandMenuItemPayload = {
