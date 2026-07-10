@@ -19,6 +19,12 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     headless: true,
     testIdAttribute: 'data-testid',
+    // The workspace member timezone defaults to 'system', which resolves to the
+    // CI runner's OS zone (CET). WebKit's ICU rejects the legacy `CET` alias and
+    // throws while formatting dates, crashing the record page before the front
+    // component can render. Pin a WebKit-supported IANA zone so the happy path
+    // is exercised deterministically regardless of the runner's OS timezone.
+    timezoneId: 'Europe/Paris',
   },
   expect: {
     timeout: 15_000,
