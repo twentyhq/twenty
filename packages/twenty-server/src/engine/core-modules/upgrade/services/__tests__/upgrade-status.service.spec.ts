@@ -5,6 +5,7 @@ import { UpgradeHealthEnum } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { TWENTY_CURRENT_VERSION } from 'src/engine/core-modules/upgrade/constants/twenty-current-version.constant';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/services/upgrade-status-cache.service';
@@ -220,14 +221,14 @@ describe('UpgradeStatusService', () => {
       );
     };
 
-    it('should return the cursor version when at the last step of its segment with completed status', async () => {
+    it('should return the current version when completed at the last step of the whole sequence', async () => {
       mockWorkspaceCursor({
         name: V1_23_WORKSPACE_COMMAND,
         status: 'completed',
       });
 
       await expect(service.getWorkspaceCompletedVersion('ws-1')).resolves.toBe(
-        '1.23.0',
+        TWENTY_CURRENT_VERSION,
       );
     });
 
@@ -319,6 +320,56 @@ describe('UpgradeStatusService', () => {
       await expect(
         service.getWorkspaceCompletedVersion('ws-1'),
       ).resolves.toBeNull();
+    });
+  });
+
+  describe('getInstanceCompletedVersion', () => {
+    it('should return the current version when the last instance step completed', async () => {
+      getLastAttemptedInstanceCommand.mockResolvedValue({
+        name: V1_23_INSTANCE_COMMAND,
+        status: 'completed',
+        executedByVersion: '1.23.0',
+        errorMessage: null,
+        createdAt: new Date('2025-06-01T00:00:00Z'),
+      });
+
+      await expect(service.getInstanceCompletedVersion()).resolves.toBe(
+        TWENTY_CURRENT_VERSION,
+      );
+    });
+
+    it('should return the cursor version when the instance is behind the last instance step', async () => {
+      getLastAttemptedInstanceCommand.mockResolvedValue({
+        name: V1_22_INSTANCE_COMMAND,
+        status: 'completed',
+        executedByVersion: '1.22.0',
+        errorMessage: null,
+        createdAt: new Date('2025-06-01T00:00:00Z'),
+      });
+
+      await expect(service.getInstanceCompletedVersion()).resolves.toBe(
+        '1.22.0',
+      );
+    });
+
+    it('should not advance to the current version when the last instance step failed', async () => {
+      getLastAttemptedInstanceCommand.mockResolvedValue({
+        name: V1_23_INSTANCE_COMMAND,
+        status: 'failed',
+        executedByVersion: '1.23.0',
+        errorMessage: 'boom',
+        createdAt: new Date('2025-06-01T00:00:00Z'),
+      });
+
+      await expect(service.getInstanceCompletedVersion()).resolves.toBe(
+        '1.23.0',
+      );
+    });
+
+    it('should return null when no instance migration exists', async () => {
+      getLastAttemptedInstanceCommand.mockResolvedValue(null);
+
+      await expect(service.getInstanceCompletedVersion()).resolves.toBeNull();
     });
   });
 

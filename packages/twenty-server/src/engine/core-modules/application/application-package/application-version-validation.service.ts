@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import semver from 'semver';
-import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -22,10 +21,7 @@ export type VersionValidationResult =
 
 @Injectable()
 export class ApplicationVersionValidationService {
-  constructor(
-    private readonly upgradeMigrationService: UpgradeMigrationService,
-    private readonly upgradeStatusService: UpgradeStatusService,
-  ) {}
+  constructor(private readonly upgradeStatusService: UpgradeStatusService) {}
 
   async validateServerCompatibility(
     requiredServerVersion: string | undefined,
@@ -42,11 +38,11 @@ export class ApplicationVersionValidationService {
       };
     }
 
-    const inferredServerVersion =
-      await this.upgradeMigrationService.getInferredVersion();
+    const instanceCompletedVersion =
+      await this.upgradeStatusService.getInstanceCompletedVersion();
 
     return this.validateVersionAgainstRange({
-      version: inferredServerVersion,
+      version: instanceCompletedVersion,
       requiredVersionRange: requiredServerVersion,
       scope: 'instance',
     });

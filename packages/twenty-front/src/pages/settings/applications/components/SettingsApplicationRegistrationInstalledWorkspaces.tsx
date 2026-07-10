@@ -26,7 +26,7 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { SettingsPath } from 'twenty-shared/types';
 
 const INITIAL_VISIBLE_WORKSPACES = 3;
-const SHOW_MORE_PAGE_SIZE = 100;
+const SHOW_MORE_PAGE_SIZE = 20;
 const INSTALLED_WORKSPACES_GRID_TEMPLATE_COLUMNS = '1fr 120px';
 
 const StyledSection = styled(Section)`
