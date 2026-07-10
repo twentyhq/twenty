@@ -43,7 +43,10 @@ export const EmailRecipientChipMenuContent = ({
     objectNameSingular: CoreObjectNameSingular.Person,
   });
 
-  const identity = getEmailRecipientIdentity({ recipient, resolution });
+  const { label, resolvedRecord } = getEmailRecipientIdentity({
+    recipient,
+    resolution,
+  });
 
   const handleAddAsPerson = async () => {
     closeDropdown(dropdownId);
@@ -66,27 +69,25 @@ export const EmailRecipientChipMenuContent = ({
     copyToClipboard(recipient.address, t`Email copied to clipboard`);
   };
 
-  const showAddAsPerson = identity.kind === 'unknown' && !isInvalid;
+  const showAddAsPerson = !isDefined(resolvedRecord) && !isInvalid;
 
   return (
     <DropdownContent widthInPixels={280}>
-      {(identity.kind !== 'unknown' || showAddAsPerson) && (
+      {(isDefined(resolvedRecord) || showAddAsPerson) && (
         <>
           <DropdownMenuItemsContainer>
-            {identity.kind !== 'unknown' ? (
+            {isDefined(resolvedRecord) ? (
               <MenuItemAvatar
                 avatar={{
-                  avatarUrl: getAbsoluteImageUrl(
-                    identity.resolvedRecord.avatarUrl,
-                  ),
-                  placeholder: identity.label,
-                  placeholderColorSeed: identity.resolvedRecord.id,
+                  avatarUrl: getAbsoluteImageUrl(resolvedRecord.avatarUrl),
+                  placeholder: label,
+                  placeholderColorSeed: resolvedRecord.id,
                   size: 'md',
                   type: 'rounded',
                 }}
-                text={identity.label}
+                text={label}
                 contextualText={
-                  identity.kind === 'workspaceMember'
+                  resolvedRecord.kind === 'workspaceMember'
                     ? t`Team member`
                     : recipient.address
                 }

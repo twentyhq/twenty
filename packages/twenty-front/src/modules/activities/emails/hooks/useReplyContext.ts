@@ -1,11 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo } from 'react';
-
-import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import {
   formatEmailAddressWithDisplayName,
   isDefined,
 } from 'twenty-shared/utils';
+
+import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import {
   type ReplyContext,
   type ReplyContextReady,

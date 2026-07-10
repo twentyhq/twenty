@@ -165,7 +165,6 @@ export const useMultiItemFieldInput = <T>({
   return {
     isInputDisplayed,
     inputValue,
-    itemToEditIndex,
     isAddingNewItem,
     errorData,
     isLimitReached,

@@ -1,5 +1,8 @@
 import { useLingui } from '@lingui/react/macro';
-import { formatEmailAddressWithDisplayName } from 'twenty-shared/utils';
+import {
+  formatEmailAddressWithDisplayName,
+  isDefined,
+} from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 
 import { EmailRecipientChipMenuContent } from '@/activities/emails/recipients/components/EmailRecipientChipMenuContent';
@@ -35,18 +38,20 @@ export const EmailRecipientsFieldChip = ({
 }: EmailRecipientsFieldChipProps) => {
   const { t } = useLingui();
 
-  const identity = getEmailRecipientIdentity({ recipient, resolution });
+  const { label, resolvedRecord } = getEmailRecipientIdentity({
+    recipient,
+    resolution,
+  });
 
-  const avatar =
-    identity.kind !== 'unknown' ? (
-      <Avatar
-        avatarUrl={getAbsoluteImageUrl(identity.resolvedRecord.avatarUrl)}
-        placeholder={identity.label}
-        placeholderColorSeed={identity.resolvedRecord.id}
-        size="sm"
-        type="rounded"
-      />
-    ) : undefined;
+  const avatar = isDefined(resolvedRecord) ? (
+    <Avatar
+      avatarUrl={getAbsoluteImageUrl(resolvedRecord.avatarUrl)}
+      placeholder={label}
+      placeholderColorSeed={resolvedRecord.id}
+      size="sm"
+      type="rounded"
+    />
+  ) : undefined;
 
   return (
     <Dropdown
@@ -55,7 +60,7 @@ export const EmailRecipientsFieldChip = ({
       clickableComponent={
         <BaseChip
           chipId={chipId}
-          label={identity.label}
+          label={label}
           title={
             isInvalid
               ? t`Invalid email address`

@@ -26,9 +26,9 @@ describe('getEmailRecipientIdentity', () => {
         resolution: { person },
       }),
     ).toEqual({
-      kind: 'person',
       label: 'Jane Doe',
       resolvedRecord: {
+        kind: 'person',
         id: 'person-id',
         avatarUrl: 'https://example.com/jane.png',
       },
@@ -42,9 +42,12 @@ describe('getEmailRecipientIdentity', () => {
         resolution: { workspaceMember },
       }),
     ).toEqual({
-      kind: 'workspaceMember',
       label: 'John Smith',
-      resolvedRecord: { id: 'member-id', avatarUrl: undefined },
+      resolvedRecord: {
+        kind: 'workspaceMember',
+        id: 'member-id',
+        avatarUrl: undefined,
+      },
     });
   });
 
@@ -55,7 +58,7 @@ describe('getEmailRecipientIdentity', () => {
     });
 
     expect(identity.label).toBe('Jane Doe');
-    expect(identity.kind).toBe('person');
+    expect(identity.resolvedRecord?.kind).toBe('person');
   });
 
   it('should fall back to the typed display name when the resolved record has no name', () => {
@@ -65,7 +68,7 @@ describe('getEmailRecipientIdentity', () => {
     });
 
     expect(identity.label).toBe('Typed Name');
-    expect(identity.kind).toBe('person');
+    expect(identity.resolvedRecord?.kind).toBe('person');
   });
 
   it('should fall back to the address when nothing else is available', () => {
@@ -73,7 +76,7 @@ describe('getEmailRecipientIdentity', () => {
       getEmailRecipientIdentity({
         recipient: { address: 'someone@example.com' },
       }),
-    ).toEqual({ kind: 'unknown', label: 'someone@example.com' });
+    ).toEqual({ label: 'someone@example.com' });
   });
 
   it('should use the typed display name for an unresolved recipient', () => {
@@ -81,6 +84,6 @@ describe('getEmailRecipientIdentity', () => {
       getEmailRecipientIdentity({
         recipient: { address: 'someone@example.com', displayName: 'Someone' },
       }),
-    ).toEqual({ kind: 'unknown', label: 'Someone' });
+    ).toEqual({ label: 'Someone' });
   });
 });

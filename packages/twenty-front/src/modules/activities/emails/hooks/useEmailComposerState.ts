@@ -1,11 +1,11 @@
 import { useCallback, useMemo, useState } from 'react';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { type EmailAttachment } from 'twenty-shared/types';
+import { parseEmailAddressList } from 'twenty-shared/utils';
 
 import { useSendEmail } from '@/activities/emails/hooks/useSendEmail';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
-import { parseEmailAddressList } from 'twenty-shared/utils';
 import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/serializeEmailRecipients';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 

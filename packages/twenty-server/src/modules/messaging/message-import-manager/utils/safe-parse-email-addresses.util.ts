@@ -5,6 +5,6 @@ import { type EmailAddress } from 'src/modules/messaging/message-import-manager/
 export const safeParseEmailAddresses = (header: string): EmailAddress[] => {
   return parseEmailAddressList(header).map(({ address, displayName }) => ({
     address,
-    name: displayName ?? '',
+    name: displayName,
   }));
 };

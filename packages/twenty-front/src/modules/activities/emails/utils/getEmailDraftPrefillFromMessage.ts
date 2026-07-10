@@ -1,9 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
-
+import { MessageParticipantRole } from 'twenty-shared/types';
 import { formatEmailAddressWithDisplayName } from 'twenty-shared/utils';
+
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
-import { MessageParticipantRole } from 'twenty-shared/types';
 
 export const getEmailDraftPrefillFromMessage = (
   message: EmailThreadMessageWithSender,

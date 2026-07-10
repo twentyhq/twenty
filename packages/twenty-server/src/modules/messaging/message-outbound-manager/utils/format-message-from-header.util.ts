@@ -23,5 +23,6 @@ export const formatMessageFromHeader = ({
     });
   }
 
+  // Non-ascii names need RFC 2047 encoding; encoded words never require quoting
   return `${mimeEncode(fromName)} <${fromEmail}>`;
 };
