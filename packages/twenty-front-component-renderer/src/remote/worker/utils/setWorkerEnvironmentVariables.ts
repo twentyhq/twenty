@@ -1,4 +1,6 @@
-export const setWorkerEnv = (variables: Record<string, string>) => {
+export const setWorkerEnvironmentVariables = (
+  variables: Record<string, string>,
+) => {
   const globalObject = globalThis as Record<string, unknown>;
   const processObject =
     (globalObject['process'] as Record<string, unknown> | undefined) ?? {};
