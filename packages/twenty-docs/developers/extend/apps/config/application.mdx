@@ -43,6 +43,8 @@ Both `applicationVariables` and `serverVariables` accept an optional `type` (and
 
 Both `applicationVariables` and `serverVariables` also accept an optional `category` string and an optional `position` number. `category` groups variables under a named section in the workspace settings UI (variables without one fall under the default section), and `position` orders variables within their section (lowest first; variables without one come last).
 
+Sections are ordered by the lowest `position` of the variables they contain, so a category holding a `position: 1` variable appears above one whose lowest is `position: 2`. To control section order, give the first variable of each category the position you want that section to have.
+
 ```ts src/application-config.ts
 import { defineApplication, FieldType } from 'twenty-sdk/define';
 
