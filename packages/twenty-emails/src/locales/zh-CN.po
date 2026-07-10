@@ -19,11 +19,6 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
-#: src/emails/test.email.tsx
-msgid "Test email"
-msgstr "测试邮箱"
-
-#. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Your workspace is paused"
 msgstr "您的工作区已被暂停"
@@ -68,6 +63,11 @@ msgid "Reactivate workspace"
 msgstr "重新激活工作区"
 
 #. js-lingui-explicit-id
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "测试邮箱"
+
+#. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
@@ -94,19 +94,24 @@ msgid "Server administrator access changed"
 msgstr "服务器管理员访问权限已变更"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "加入您的团队，使用 Twenty"
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr ""
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) 邀请您加入名为 <1>{workspaceName}</1> 的工作区。"
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your email address"
+msgstr "确认您的邮箱地址"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "接受邀请"
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm new email"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Verify Email"
+msgstr "验证邮箱"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -134,29 +139,19 @@ msgid "Connect to Twenty"
 msgstr "连接 Twenty"
 
 #. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Your workspace has been deleted"
-msgstr "您的工作区已被删除"
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "加入您的团队，使用 Twenty"
 
 #. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
-msgstr "您的工作区 <0>{workspaceDisplayName}</0> 现已被永久删除——它在 {daysSinceInactive} 天前被暂停，但未能及时重新激活。"
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) 邀请您加入名为 <1>{workspaceName}</1> 的工作区。"
 
 #. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Its data has been removed and can no longer be recovered."
-msgstr "其数据已被移除，无法再恢复。"
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
-msgstr "如果您想再次尝试 Twenty，您可以在几分钟内创建一个全新的工作区——我们非常期待您回归。"
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Start a new workspace"
-msgstr "开始新工作区"
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "接受邀请"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -184,24 +179,29 @@ msgid "This link is only valid for the next {duration}. If the link does not wor
 msgstr "此链接仅在接下来的 {duration} 内有效。如果链接无效，您可以直接使用登录验证链接："
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your new email address"
-msgstr ""
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace has been deleted"
+msgstr "您的工作区已被删除"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your email address"
-msgstr "确认您的邮箱地址"
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
+msgstr "您的工作区 <0>{workspaceDisplayName}</0> 现已被永久删除——它在 {daysSinceInactive} 天前被暂停，但未能及时重新激活。"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm new email"
-msgstr ""
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Its data has been removed and can no longer be recovered."
+msgstr "其数据已被移除，无法再恢复。"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Verify Email"
-msgstr "验证邮箱"
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
+msgstr "如果您想再次尝试 Twenty，您可以在几分钟内创建一个全新的工作区——我们非常期待您回归。"
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Start a new workspace"
+msgstr "开始新工作区"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
@@ -260,16 +260,6 @@ msgid "Manage subscription"
 msgstr "管理订阅"
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "什么是 Twenty？"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "它是一个 CRM 软件，帮助企业高效管理客户数据和关系。"
-
-#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "您的方案即将续订"
@@ -288,6 +278,16 @@ msgstr "您针对 <0>{workspaceDisplayName}</0> 的年度方案将于 {formatted
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "如果您希望继续使用，无需执行任何操作。如果您不想续订，可以在此之前的任何时间取消。"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "什么是 Twenty？"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "它是一个 CRM 软件，帮助企业高效管理客户数据和关系。"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
