@@ -20,7 +20,6 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserResolver } from 'src/engine/core-modules/user/user.resolver';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -29,7 +28,7 @@ import { UserService } from './services/user.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserEntity, ObjectMetadataEntity]),
+    TypeOrmModule.forFeature([UserEntity]),
     TypeORMModule,
     FileModule,
     WorkspaceModule,
