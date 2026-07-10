@@ -38,15 +38,15 @@ my-twenty-app/
 
 ## File principali
 
-| File / Cartella                                                            | Scopo                                                                                                                   |
-| -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `src/application-config.ts`                                                | **Obbligatorio.** Il file di configurazione principale della tua app.                                                   |
-| `src/default-role.ts`                                                      | Ruolo predefinito che controlla a cosa possono accedere le tue funzioni logiche.                                        |
-| `src/constants/universal-identifiers.ts`                                   | UUID generati automaticamente e metadati (nome visualizzato, descrizione).                                              |
-| `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | Una pagina di benvenuto iniziale: un front component eseguito da un page layout autonomo, raggiungibile dalla sidebar.  |
-| `src/__tests__/`                                                           | Un test unitario più un test di integrazione (con il relativo setup globale) che sincronizza l'app con un server reale. |
-| `public/`                                                                  | Asset statici (immagini, font) serviti insieme alla tua app.                                                            |
-| `AGENTS.md` / `CLAUDE.md`                                                  | Linee guida per gli agenti di codice AI che lavorano sull'app.                                                          |
+| File / Cartella                                                            | Scopo                                                                                                                      |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `src/application-config.ts`                                                | **Obbligatorio.** Il file di configurazione principale della tua app.                                                      |
+| `src/default-role.ts`                                                      | Ruolo predefinito che controlla a cosa possono accedere le tue funzioni logiche.                                           |
+| `src/constants/universal-identifiers.ts`                                   | UUID generati automaticamente e metadati (nome visualizzato, descrizione).                                                 |
+| `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | Una pagina di benvenuto iniziale: un front component renderizzato da un page layout autonomo, raggiungibile dalla sidebar. |
+| `src/__tests__/`                                                           | Un test unitario più un test di integrazione (con il relativo setup globale) che sincronizza l'app con un server reale.    |
+| `public/`                                                                  | Asset statici (immagini, font) serviti insieme alla tua app.                                                               |
+| `AGENTS.md` / `CLAUDE.md`                                                  | Linee guida per gli agenti di codice AI che lavorano sull'app.                                                             |
 
 <Note>
 **L'organizzazione dei file dipende da te.** Le cartelle sopra sono convenzioni — l'SDK rileva le entità tramite analisi AST sulle chiamate a `export default defineEntity(...)` indipendentemente da dove si trova il file.

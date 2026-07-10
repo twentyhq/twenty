@@ -37,7 +37,7 @@ export default defineCommandMenuItem({
 
 Un elemento del menú de comandos emparejado con un [headless front component](/l/es/developers/extend/apps/layout/front-components#headless-vs-non-headless) es la forma idónea de ofrecer una acción de un solo clic: ejecutar código, navegar o confirmar y ejecutar. La página Front Components abarca los [SDK Command components](/l/es/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`) que gestionan el patrón de acción y desmontaje.
 
-Un flujo típico: un componente sin interfaz gráfica renderiza `<Command execute={...} />` (consulta el [ejemplo completo](/l/es/developers/extend/apps/layout/front-components#sdk-command-components)), y el elemento del menú de comandos lo señala:
+Un flujo típico: un componente sin interfaz gráfica renderiza `<Command execute={...} />` (consulta el [ejemplo completo](/l/es/developers/extend/apps/layout/front-components#sdk-command-components)), y el elemento del menú de comandos apunta a él:
 
 ```ts src/command-menu-items/run-action.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
