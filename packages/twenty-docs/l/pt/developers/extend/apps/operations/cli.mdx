@@ -4,23 +4,23 @@ description: comandos `yarn twenty` para executar funções, transmitir logs, ge
 icon: terminal
 ---
 
-A CLI `yarn twenty` é sua interface para tudo relacionado a apps. Lista completa de comandos:
+A CLI `yarn twenty` é a sua interface para tudo relacionado a aplicativos. Lista completa de comandos:
 
-| Comando                                         | O que faz                                                                    | Documentado em                                                                                              |
-| ----------------------------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `dev`                                           | Monitora arquivos-fonte e sincroniza alterações em tempo real                | [Início rápido](/l/pt/developers/extend/apps/getting-started/quick-start)                                        |
-| `plan`                                          | Visualize as alterações de metadados sem aplicá-las                          | [Sincronização e recuperação](/l/pt/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) |
-| `apply`                                         | Aplicar alterações de metadados após exibir o plano                          | [Sincronização e recuperação](/l/pt/developers/extend/apps/operations/sync-and-recovery)                         |
-| `dev:build`                                     | Compile o app e gere o cliente de API (`--tarball` para empacotar um `.tgz`) | [Publicação](/l/pt/developers/extend/apps/operations/publishing)                                                 |
-| `dev:typecheck`                                 | Executar verificação de tipos TypeScript                                     | [Testes](/l/pt/developers/extend/apps/operations/testing)                                                        |
-| `dev:add`                                       | Criar o esqueleto de uma nova entidade                                       | [Scaffolding](/l/pt/developers/extend/apps/getting-started/scaffolding)                                          |
-| `dev:generate-client`                           | Regenerar o cliente de API tipado                                            | esta página                                                                                                 |
-| `dev:function:exec` / `dev:function:logs`       | Executar funções e transmitir seus logs                                      | esta página                                                                                                 |
-| `dev:translations-extract`                      | Extrair strings traduzíveis para catálogos em `locales/`                     | [Traduções](/l/pt/developers/extend/apps/translations/overview)                                                  |
-| `dev:catalog-sync`                              | Acionar a sincronização do catálogo do marketplace                           | [Publicação](/l/pt/developers/extend/apps/operations/publishing#how-marketplace-discovery-works)                 |
-| `app:publish` / `app:install` / `app:uninstall` | Ciclo de vida de lançamento                                                  | [Publicação](/l/pt/developers/extend/apps/operations/publishing) e esta página                                   |
-| `docker:*`                                      | Gerenciar o contêiner do servidor local Twenty                               | [Servidor local](/l/pt/developers/extend/apps/getting-started/local-server)                                      |
-| `remote:*`                                      | Gerenciar conexões de servidor                                               | esta página                                                                                                 |
+| Comando                                         | O que faz                                                                           | Documentado em                                                                                              |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `dev`                                           | Monitora arquivos-fonte e sincroniza alterações em tempo real                       | [Início rápido](/l/pt/developers/extend/apps/getting-started/quick-start)                                        |
+| `plan`                                          | Visualize as alterações de metadados sem aplicá-las                                 | [Sincronização e recuperação](/l/pt/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) |
+| `apply`                                         | Aplicar alterações de metadados após exibir o plano                                 | [Sincronização e recuperação](/l/pt/developers/extend/apps/operations/sync-and-recovery)                         |
+| `dev:build`                                     | Compile o aplicativo e gere o cliente da API (`--tarball` para empacotar um `.tgz`) | [Publicação](/l/pt/developers/extend/apps/operations/publishing)                                                 |
+| `dev:typecheck`                                 | Executar a verificação de tipos do TypeScript                                       | [Testes](/l/pt/developers/extend/apps/operations/testing)                                                        |
+| `dev:add`                                       | Criar a estrutura inicial de uma nova entidade                                      | [Scaffolding](/l/pt/developers/extend/apps/getting-started/scaffolding)                                          |
+| `dev:generate-client`                           | Regenerar o cliente da API tipado                                                   | esta página                                                                                                 |
+| `dev:function:exec` / `dev:function:logs`       | Executar funções e transmitir seus logs                                             | esta página                                                                                                 |
+| `dev:translations-extract`                      | Extrair strings traduzíveis para catálogos em `locales/`                            | [Traduções](/l/pt/developers/extend/apps/translations/overview)                                                  |
+| `dev:catalog-sync`                              | Acionar a sincronização do catálogo do marketplace                                  | [Publicação](/l/pt/developers/extend/apps/operations/publishing#how-marketplace-discovery-works)                 |
+| `app:publish` / `app:install` / `app:uninstall` | Ciclo de vida de versões                                                            | [Publicação](/l/pt/developers/extend/apps/operations/publishing) e esta página                                   |
+| `docker:*`                                      | Gerenciar o contêiner do servidor local do Twenty                                   | [Servidor local](/l/pt/developers/extend/apps/getting-started/local-server)                                      |
+| `remote:*`                                      | Gerenciar conexões de servidor                                                      | esta página                                                                                                 |
 
 Todo comando aceita `-r, --remote \<name>` para direcionar a um remoto específico em vez do padrão.
 

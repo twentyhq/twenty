@@ -27,4 +27,5 @@ export default defineField({
   universalSettings: {
     relationType: RelationType.ONE_TO_MANY,
   },
+  isUIEditable: false,
 });

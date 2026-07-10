@@ -17,4 +17,5 @@ export default defineField({
     'When your team last reached out to this person (an outbound email, or a meeting your team organized).',
   icon: 'IconMessageUp',
   isNullable: true,
+  isUIEditable: false,
 });
