@@ -2,13 +2,13 @@ import { Fragment } from 'react';
 
 import { RecordBoardAddGroupColumn } from '@/object-record/record-board/components/RecordBoardAddGroupColumn';
 import { RecordBoardColumnHeaderWrapper } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderWrapper';
-import { RecordBoardColumnDropTarget } from '@/object-record/record-board/record-board-column/dnd/components/RecordBoardColumnDropTarget';
-import { RecordBoardColumnDroppableSlot } from '@/object-record/record-board/record-board-column/dnd/components/RecordBoardColumnDroppableSlot';
-import { RecordBoardColumnSortableCell } from '@/object-record/record-board/record-board-column/dnd/components/RecordBoardColumnSortableCell';
 import { RECORD_BOARD_COLUMN_DROPPABLE_ID } from '@/object-record/record-board/record-board-column/dnd/constants/RecordBoardColumnDroppableId';
 import { RecordBoardColumnDndKitProvider } from '@/object-record/record-board/record-board-column/dnd/providers/RecordBoardColumnDndKitProvider';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
+import { DragDropColumnDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropColumnDropTarget';
+import { DragDropColumnDroppableSlot } from '@/ui/utilities/drag-and-drop/components/DragDropColumnDroppableSlot';
+import { DragDropColumnSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropColumnSortableCell';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { ViewType } from '@/views/types/ViewType';
 
@@ -20,18 +20,19 @@ export const RecordBoardColumnDnd = () => {
 
   return (
     <RecordBoardColumnDndKitProvider>
-      <RecordBoardColumnDroppableSlot
+      <DragDropColumnDroppableSlot
         droppableId={RECORD_BOARD_COLUMN_DROPPABLE_ID}
         index={0}
       >
-        <RecordBoardColumnDropTarget index={0} />
-      </RecordBoardColumnDroppableSlot>
+        <DragDropColumnDropTarget index={0} compact overlay />
+      </DragDropColumnDroppableSlot>
       {visibleRecordGroupIds.map((recordGroupId, index) => (
         <Fragment key={recordGroupId}>
-          <RecordBoardColumnSortableCell
+          <DragDropColumnSortableCell
             id={recordGroupId}
             index={index}
             group={RECORD_BOARD_COLUMN_DROPPABLE_ID}
+            fill
           >
             <RecordGroupContext.Provider value={{ recordGroupId }}>
               <RecordBoardColumnHeaderWrapper
@@ -39,13 +40,13 @@ export const RecordBoardColumnDnd = () => {
                 columnIndex={index}
               />
             </RecordGroupContext.Provider>
-          </RecordBoardColumnSortableCell>
-          <RecordBoardColumnDroppableSlot
+          </DragDropColumnSortableCell>
+          <DragDropColumnDroppableSlot
             droppableId={RECORD_BOARD_COLUMN_DROPPABLE_ID}
             index={index + 1}
           >
-            <RecordBoardColumnDropTarget index={index + 1} />
-          </RecordBoardColumnDroppableSlot>
+            <DragDropColumnDropTarget index={index + 1} compact overlay />
+          </DragDropColumnDroppableSlot>
         </Fragment>
       ))}
       <RecordBoardAddGroupColumn />

@@ -6,7 +6,7 @@ import { RecordTableColumnHead } from '@/object-record/record-table/record-table
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
 import { RecordTableHeaderCellContainer } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCellContainer';
 import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderResizeHandler';
-import { RecordTableHeaderSortableHandle } from '@/object-record/record-table/record-table-header/dnd/components/RecordTableHeaderSortableHandle';
+import { DragDropColumnSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropColumnSortableHandle';
 import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-record/record-table/states/isRecordTableColumnHeadersReadOnlyComponentState';
 import { isRecordTableColumnResizableComponentState } from '@/object-record/record-table/states/isRecordTableColumnResizableComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
@@ -104,7 +104,7 @@ export const RecordTableHeaderCell = ({
           position="left"
         />
       )}
-      <RecordTableHeaderSortableHandle>
+      <DragDropColumnSortableHandle>
         {isRecordTableColumnHeadersReadOnly ? (
           <RecordTableColumnHead recordField={recordField} />
         ) : (
@@ -113,7 +113,7 @@ export const RecordTableHeaderCell = ({
             objectMetadataId={objectMetadataItem.id}
           />
         )}
-      </RecordTableHeaderSortableHandle>
+      </DragDropColumnSortableHandle>
       {isRecordTableColumnResizable && (
         <RecordTableHeaderResizeHandler
           recordFieldIndex={recordFieldIndex}

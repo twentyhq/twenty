@@ -1,4 +1,4 @@
-export type RecordBoardColumnDndData = {
+export type DragDropColumnData = {
   droppableId: string;
   index: number;
 };

@@ -1,14 +1,12 @@
-import { type RecordField } from '@/object-record/record-field/types/RecordField';
-
-type ResolveRecordTableHeaderDropArgs = {
+type ResolveDragDropColumnDropArgs = {
   pointerX: number;
   sourceIndex: number;
   scrollWrapperElement: HTMLElement;
-  nonSortableColumnsWidth: number;
-  recordFields: RecordField[];
+  columnWidths: number[];
+  leadingOffset?: number;
 };
 
-type ResolvedRecordTableHeaderDrop = {
+type ResolvedDragDropColumnDrop = {
   sourceIndex: number;
   dropTargetIndex: number;
   destinationIndex: number;
@@ -22,26 +20,25 @@ const getDestinationIndexFromDropTargetIndex = ({
   dropTargetIndex: number;
 }) => (dropTargetIndex > sourceIndex ? dropTargetIndex - 1 : dropTargetIndex);
 
-export const resolveRecordTableHeaderDrop = ({
+export const resolveDragDropColumnDrop = ({
   pointerX,
   sourceIndex,
   scrollWrapperElement,
-  nonSortableColumnsWidth,
-  recordFields,
-}: ResolveRecordTableHeaderDropArgs): ResolvedRecordTableHeaderDrop => {
+  columnWidths,
+  leadingOffset = 0,
+}: ResolveDragDropColumnDropArgs): ResolvedDragDropColumnDrop => {
   const scrollContainerRect = scrollWrapperElement.getBoundingClientRect();
 
   const contentX =
     pointerX -
     scrollContainerRect.left +
     scrollWrapperElement.scrollLeft -
-    nonSortableColumnsWidth;
+    leadingOffset;
 
   let left = 0;
 
-  for (const [index, field] of recordFields.entries()) {
-    const width = field.size;
-    const midpoint = left + width / 2;
+  for (const [index, columnWidth] of columnWidths.entries()) {
+    const midpoint = left + columnWidth / 2;
 
     if (contentX < midpoint) {
       return {
@@ -54,10 +51,10 @@ export const resolveRecordTableHeaderDrop = ({
       };
     }
 
-    left += width;
+    left += columnWidth;
   }
 
-  const dropTargetIndex = recordFields.length;
+  const dropTargetIndex = columnWidths.length;
 
   return {
     sourceIndex,

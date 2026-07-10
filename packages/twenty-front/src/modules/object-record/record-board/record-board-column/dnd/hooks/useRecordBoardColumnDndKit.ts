@@ -1,9 +1,7 @@
 import { type DragDropProvider } from '@dnd-kit/react';
-import { type ComponentProps, useCallback, useState } from 'react';
+import { type ComponentProps, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type RecordBoardColumnDndData } from '@/object-record/record-board/record-board-column/dnd/types/RecordBoardColumnDndData';
-import { resolveRecordBoardColumnDrop } from '@/object-record/record-board/record-board-column/dnd/utils/resolveRecordBoardColumnDrop';
 import { RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID } from '@/object-record/record-group/constants/RecordGroupReorderConfirmationModalId';
 import { useReorderRecordGroups } from '@/object-record/record-group/hooks/useReorderRecordGroups';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
@@ -13,6 +11,8 @@ import { recordIndexKanbanColumnWidthComponentState } from '@/object-record/reco
 import { recordIndexRecordGroupIsDraggableSortComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexRecordGroupIsDraggableSortComponentSelector';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { type DragDropColumnData } from '@/ui/utilities/drag-and-drop/types/DragDropColumnData';
+import { resolveDragDropColumnDrop } from '@/ui/utilities/drag-and-drop/utils/resolveDragDropColumnDrop';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -23,23 +23,17 @@ import { ViewType } from '@/views/types/ViewType';
 
 type DragStartPayload = Parameters<
   NonNullable<
-    ComponentProps<
-      typeof DragDropProvider<RecordBoardColumnDndData>
-    >['onDragStart']
+    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragStart']
   >
 >[0];
 type DragMovePayload = Parameters<
   NonNullable<
-    ComponentProps<
-      typeof DragDropProvider<RecordBoardColumnDndData>
-    >['onDragMove']
+    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragMove']
   >
 >[0];
 type DragEndPayload = Parameters<
   NonNullable<
-    ComponentProps<
-      typeof DragDropProvider<RecordBoardColumnDndData>
-    >['onDragEnd']
+    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragEnd']
   >
 >[0];
 
@@ -95,62 +89,58 @@ export const useRecordBoardColumnDndKit = (): {
     null,
   );
 
-  const resolveDropFromPointerX = useCallback(
-    ({ pointerX, sourceIndex }: { pointerX: number; sourceIndex: number }) => {
-      const { scrollWrapperElement } = getScrollWrapperElement();
-      if (!isDefined(scrollWrapperElement)) return null;
+  const resolveDropFromPointerX = ({
+    pointerX,
+    sourceIndex,
+  }: {
+    pointerX: number;
+    sourceIndex: number;
+  }) => {
+    const { scrollWrapperElement } = getScrollWrapperElement();
+    if (!isDefined(scrollWrapperElement)) return null;
 
-      const columnWidths = visibleRecordGroupIds.map(
-        () => recordIndexKanbanColumnWidth,
-      );
+    const columnWidths = visibleRecordGroupIds.map(
+      () => recordIndexKanbanColumnWidth,
+    );
 
-      if (columnWidths.length === 0) {
-        return null;
-      }
+    if (columnWidths.length === 0) {
+      return null;
+    }
 
-      return resolveRecordBoardColumnDrop({
-        pointerX,
-        sourceIndex,
-        scrollWrapperElement,
-        columnWidths,
-      });
-    },
-    [
-      getScrollWrapperElement,
-      recordIndexKanbanColumnWidth,
-      visibleRecordGroupIds,
-    ],
-  );
+    return resolveDragDropColumnDrop({
+      pointerX,
+      sourceIndex,
+      scrollWrapperElement,
+      columnWidths,
+    });
+  };
 
   const handleDragStart = (_event: DragStartPayload) => {
     setActiveDropTargetIndex(null);
   };
 
-  const handleDragMove = useCallback(
-    (event: DragMovePayload) => {
-      const { operation } = event;
-      const sourceIndex = operation.source?.data.index;
+  const handleDragMove = (event: DragMovePayload) => {
+    const { operation } = event;
+    const sourceIndex = operation.source?.data.index;
 
-      if (!isDefined(sourceIndex)) {
-        setActiveDropTargetIndex(null);
-        return;
-      }
+    if (!isDefined(sourceIndex)) {
+      setActiveDropTargetIndex(null);
+      return;
+    }
 
-      const resolvedDrop = resolveDropFromPointerX({
-        pointerX: operation.position.current.x,
-        sourceIndex,
-      });
+    const resolvedDrop = resolveDropFromPointerX({
+      pointerX: operation.position.current.x,
+      sourceIndex,
+    });
 
-      setActiveDropTargetIndex((currentActiveDropTargetIndex) => {
-        const nextActiveDropTargetIndex = resolvedDrop?.dropTargetIndex ?? null;
+    setActiveDropTargetIndex((currentActiveDropTargetIndex) => {
+      const nextActiveDropTargetIndex = resolvedDrop?.dropTargetIndex ?? null;
 
-        return currentActiveDropTargetIndex === nextActiveDropTargetIndex
-          ? currentActiveDropTargetIndex
-          : nextActiveDropTargetIndex;
-      });
-    },
-    [resolveDropFromPointerX, setActiveDropTargetIndex],
-  );
+      return currentActiveDropTargetIndex === nextActiveDropTargetIndex
+        ? currentActiveDropTargetIndex
+        : nextActiveDropTargetIndex;
+    });
+  };
 
   const handleDragEnd = (event: DragEndPayload) => {
     const { operation } = event;

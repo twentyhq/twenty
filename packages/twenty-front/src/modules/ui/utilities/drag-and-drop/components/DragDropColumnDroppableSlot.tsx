@@ -1,8 +1,9 @@
-import { type RecordTableHeaderDndData } from '@/object-record/record-table/record-table-header/dnd/types/RecordTableHeaderDndData';
 import { pointerIntersection } from '@dnd-kit/collision';
 import { useDroppable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
+
+import { type DragDropColumnData } from '@/ui/utilities/drag-and-drop/types/DragDropColumnData';
 
 const StyledSlotWrapper = styled.div`
   align-self: stretch;
@@ -16,23 +17,24 @@ const StyledSlotWrapper = styled.div`
 
 const SLOT_COLLISION_PRIORITY = 1;
 
-type RecordTableHeaderDroppableSlotProps = {
+type DragDropColumnDroppableSlotProps = {
+  children?: ReactNode;
+  collisionPriority?: number;
+  disabled?: boolean;
   droppableId: string;
   index: number;
-  children?: ReactNode;
-  disabled?: boolean;
-  collisionPriority?: number;
 };
 
-export const RecordTableHeaderDroppableSlot = ({
+export const DragDropColumnDroppableSlot = ({
+  children,
+  collisionPriority = SLOT_COLLISION_PRIORITY,
+  disabled = false,
   droppableId,
   index,
-  children,
-  disabled = false,
-  collisionPriority = SLOT_COLLISION_PRIORITY,
-}: RecordTableHeaderDroppableSlotProps) => {
+}: DragDropColumnDroppableSlotProps) => {
   const id = `${droppableId}::${index}`;
-  const data: RecordTableHeaderDndData = { droppableId, index };
+  const data: DragDropColumnData = { droppableId, index };
+
   const { ref } = useDroppable({
     id,
     disabled,
