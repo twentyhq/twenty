@@ -1,6 +1,7 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { RECORD_CALENDAR_WEEK_DIMENSIONS } from '@/object-record/record-calendar/week/constants/RecordCalendarWeekDimensions';
+import { formatRecordCalendarWeekEventTimeRange } from '@/object-record/record-calendar/week/utils/formatRecordCalendarWeekEventTimeRange';
 import { getRecordCalendarWeekTimedEventHeight } from '@/object-record/record-calendar/week/utils/getRecordCalendarWeekTimedEventMetrics';
 import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardClickOutsideId';
 import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
@@ -11,7 +12,6 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
-import { formatInTimeZone } from 'date-fns-tz';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/data-display';
 import { Checkbox, CheckboxVariant } from 'twenty-ui/input';
@@ -89,14 +89,21 @@ const StyledEventContent = styled.div<{ isAllDay: boolean }>`
   width: 100%;
 `;
 
-const StyledRecordChipContainer = styled.div<{ isToday: boolean }>`
+const StyledEventHeader = styled.div`
   align-items: center;
   display: flex;
   height: 20px;
   min-width: 0;
-  overflow: hidden;
-  padding-right: ${themeCssVariables.spacing[5]};
   width: 100%;
+`;
+
+const StyledRecordChipContainer = styled.div<{ isToday: boolean }>`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  height: 20px;
+  min-width: 0;
+  overflow: hidden;
 
   [data-testid='chip'],
   [data-testid='chip'] > * {
@@ -107,15 +114,11 @@ const StyledRecordChipContainer = styled.div<{ isToday: boolean }>`
   }
 `;
 
-const StyledCheckboxContainer = styled.div<{ isAllDay: boolean }>`
+const StyledCheckboxContainer = styled.div`
   align-items: center;
   display: flex;
   height: 20px;
-  position: absolute;
-  right: ${({ isAllDay }) =>
-    isAllDay ? themeCssVariables.spacing['0.5'] : themeCssVariables.spacing[1]};
-  top: 50%;
-  transform: translateY(-50%);
+  margin-left: auto;
 `;
 
 const StyledEventTimeRow = styled.div`
@@ -138,6 +141,7 @@ const StyledEventTime = styled.span<{ isToday: boolean }>`
 `;
 
 type RecordCalendarWeekEventProps = {
+  calendarEndFieldName?: string;
   calendarFieldName: string;
   calendarFieldType: FieldMetadataType;
   columnCount?: number;
@@ -152,6 +156,7 @@ type RecordCalendarWeekEventProps = {
 };
 
 export const RecordCalendarWeekEvent = ({
+  calendarEndFieldName,
   calendarFieldName,
   calendarFieldType,
   columnCount = 1,
@@ -168,6 +173,9 @@ export const RecordCalendarWeekEvent = ({
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
   const recordDate = recordStore?.[calendarFieldName];
+  const recordEndDate = isDefined(calendarEndFieldName)
+    ? recordStore?.[calendarEndFieldName]
+    : undefined;
 
   const [isRecordCalendarCardSelected, setIsRecordCalendarCardSelected] =
     useAtomComponentFamilyState(
@@ -186,7 +194,12 @@ export const RecordCalendarWeekEvent = ({
   }
 
   const eventTime = !isDateOnly
-    ? formatInTimeZone(new Date(recordDate), timeZone, timeFormat)
+    ? formatRecordCalendarWeekEventTimeRange({
+        startDateTime: recordDate,
+        endDateTime: recordEndDate,
+        timeFormat,
+        timeZone,
+      })
     : null;
   const heightInPixels = getRecordCalendarWeekTimedEventHeight({
     endInPixels,
@@ -207,33 +220,32 @@ export const RecordCalendarWeekEvent = ({
         onClick={() => openRecordFromIndexView({ recordId })}
       >
         <StyledEventContent isAllDay={isAllDay}>
-          <StyledRecordChipContainer isToday={isToday}>
-            <RecordChip
-              objectNameSingular={objectNameSingular}
-              record={recordStore}
-              variant={ChipVariant.Transparent}
-              isBold
-              isIconHidden
-              maxWidth={128}
-              forceDisableClick
-              triggerEvent="CLICK"
-            />
-          </StyledRecordChipContainer>
-          <StyledCheckboxContainer
-            className="checkbox-container"
-            isAllDay={isAllDay}
-          >
-            <StopPropagationContainer>
-              <Checkbox
-                hoverable
-                checked={isRecordCalendarCardSelected}
-                onChange={(event) => {
-                  setIsRecordCalendarCardSelected(event.target.checked);
-                }}
-                variant={CheckboxVariant.Secondary}
+          <StyledEventHeader>
+            <StyledRecordChipContainer isToday={isToday}>
+              <RecordChip
+                objectNameSingular={objectNameSingular}
+                record={recordStore}
+                variant={ChipVariant.Transparent}
+                isBold
+                isIconHidden
+                maxWidth={128}
+                forceDisableClick
+                triggerEvent="CLICK"
               />
-            </StopPropagationContainer>
-          </StyledCheckboxContainer>
+            </StyledRecordChipContainer>
+            <StyledCheckboxContainer className="checkbox-container">
+              <StopPropagationContainer>
+                <Checkbox
+                  hoverable
+                  checked={isRecordCalendarCardSelected}
+                  onChange={(event) => {
+                    setIsRecordCalendarCardSelected(event.target.checked);
+                  }}
+                  variant={CheckboxVariant.Secondary}
+                />
+              </StopPropagationContainer>
+            </StyledCheckboxContainer>
+          </StyledEventHeader>
           {!isAllDay && isDefined(eventTime) && (
             <StyledEventTimeRow>
               <StyledEventTime isToday={isToday}>{eventTime}</StyledEventTime>

@@ -3,13 +3,16 @@ import {
   getRecordCalendarWeekTimedEventHeight,
   getRecordCalendarWeekTimedEventMetrics,
 } from '@/object-record/record-calendar/week/utils/getRecordCalendarWeekTimedEventMetrics';
+import { Temporal } from 'temporal-polyfill';
 
 const timeZone = 'Europe/Paris';
+const day = Temporal.PlainDate.from('2026-07-06');
 
 describe('getRecordCalendarWeekTimedEventMetrics', () => {
   it('uses the configured duration', () => {
     expect(
       getRecordCalendarWeekTimedEventMetrics({
+        day,
         startDateTime: '2026-07-06T07:00:00Z',
         endDateTime: '2026-07-06T08:30:00Z',
         timeZone,
@@ -22,6 +25,7 @@ describe('getRecordCalendarWeekTimedEventMetrics', () => {
 
   it('renders a one-hour event with the vertical inset from the design', () => {
     const metrics = getRecordCalendarWeekTimedEventMetrics({
+      day,
       startDateTime: '2026-07-06T07:00:00Z',
       timeZone,
     });
@@ -34,6 +38,7 @@ describe('getRecordCalendarWeekTimedEventMetrics', () => {
     (endDateTime) => {
       expect(
         getRecordCalendarWeekTimedEventMetrics({
+          day,
           startDateTime: '2026-07-06T07:00:00Z',
           endDateTime,
           timeZone,
@@ -47,6 +52,7 @@ describe('getRecordCalendarWeekTimedEventMetrics', () => {
 
   it('keeps short events large enough to interact with', () => {
     const metrics = getRecordCalendarWeekTimedEventMetrics({
+      day,
       startDateTime: '2026-07-06T07:00:00Z',
       endDateTime: '2026-07-06T07:05:00Z',
       timeZone,
@@ -61,22 +67,64 @@ describe('getRecordCalendarWeekTimedEventMetrics', () => {
     );
   });
 
-  it('clips an event ending on a later day to the grid boundary', () => {
+  it('renders the start-day fragment of a multi-day event to midnight', () => {
     expect(
       getRecordCalendarWeekTimedEventMetrics({
-        startDateTime: '2026-07-06T21:00:00Z',
-        endDateTime: '2026-07-07T01:00:00Z',
+        day: Temporal.PlainDate.from('2026-07-08'),
+        startDateTime: '2026-07-08T15:59:00Z',
+        endDateTime: '2026-07-10T18:59:00Z',
         timeZone,
       }),
     ).toEqual({
-      startInPixels: 23 * RECORD_CALENDAR_WEEK_DIMENSIONS.hourHeight,
+      startInPixels:
+        (17 + 59 / 60) * RECORD_CALENDAR_WEEK_DIMENSIONS.hourHeight,
       endInPixels: RECORD_CALENDAR_WEEK_DIMENSIONS.gridHeight,
     });
+  });
+
+  it('renders a full-day middle fragment of a multi-day event', () => {
+    expect(
+      getRecordCalendarWeekTimedEventMetrics({
+        day: Temporal.PlainDate.from('2026-07-09'),
+        startDateTime: '2026-07-08T15:59:00Z',
+        endDateTime: '2026-07-10T18:59:00Z',
+        timeZone,
+      }),
+    ).toEqual({
+      startInPixels: 0,
+      endInPixels: RECORD_CALENDAR_WEEK_DIMENSIONS.gridHeight,
+    });
+  });
+
+  it('renders the end-day fragment of a multi-day event to its end time', () => {
+    expect(
+      getRecordCalendarWeekTimedEventMetrics({
+        day: Temporal.PlainDate.from('2026-07-10'),
+        startDateTime: '2026-07-08T15:59:00Z',
+        endDateTime: '2026-07-10T18:59:00Z',
+        timeZone,
+      }),
+    ).toEqual({
+      startInPixels: 0,
+      endInPixels: (20 + 59 / 60) * RECORD_CALENDAR_WEEK_DIMENSIONS.hourHeight,
+    });
+  });
+
+  it('does not render a multi-day event outside its range', () => {
+    expect(
+      getRecordCalendarWeekTimedEventMetrics({
+        day: Temporal.PlainDate.from('2026-07-11'),
+        startDateTime: '2026-07-08T15:59:00Z',
+        endDateTime: '2026-07-10T18:59:00Z',
+        timeZone,
+      }),
+    ).toBeNull();
   });
 
   it('clips the one-hour fallback at the grid boundary', () => {
     expect(
       getRecordCalendarWeekTimedEventMetrics({
+        day,
         startDateTime: '2026-07-06T21:30:00Z',
         timeZone,
       }),
@@ -89,6 +137,7 @@ describe('getRecordCalendarWeekTimedEventMetrics', () => {
   it('positions instants using the configured timezone', () => {
     expect(
       getRecordCalendarWeekTimedEventMetrics({
+        day,
         startDateTime: '2026-07-06T09:00:00Z',
         timeZone,
       }),
@@ -101,6 +150,7 @@ describe('getRecordCalendarWeekTimedEventMetrics', () => {
   it('returns null for an unusable start value', () => {
     expect(
       getRecordCalendarWeekTimedEventMetrics({
+        day,
         startDateTime: 'not-a-date',
         timeZone,
       }),

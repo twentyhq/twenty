@@ -21,6 +21,7 @@ import {
   turnAnyFieldFilterIntoRecordGqlFilter,
   turnPlainDateIntoUserTimeZoneInstantString,
 } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const DATE_RANGE_FILTER_AFTER_ID = 'DATE_RANGE_FILTER_AFTER_ID';
 const DATE_RANGE_FILTER_BEFORE_ID = 'DATE_RANGE_FILTER_BEFORE_ID';
@@ -95,10 +96,14 @@ export const useRecordCalendarQueryDateRangeFilter = (
     ? getRecordCalendarDateRangeOverlapFilter({
         calendarField: calendarFieldMetadataItem,
         calendarEndField: calendarEndFieldMetadataItem,
-        firstDayOfRange: firstDayOfFirstWeek.toString(),
-        nextDayAfterLastDayOfRange: lastDayOfLastWeek
-          .add({ days: 1 })
-          .toString(),
+        firstDayOfRange:
+          calendarFieldMetadataItem.type === FieldMetadataType.DATE_TIME
+            ? firstDayOfFirstWeekISOString
+            : firstDayOfFirstWeek.toString(),
+        nextDayAfterLastDayOfRange:
+          calendarFieldMetadataItem.type === FieldMetadataType.DATE_TIME
+            ? nextDayAfterLastDayOfLastWeekISOString
+            : lastDayOfLastWeek.add({ days: 1 }).toString(),
       })
     : undefined;
 

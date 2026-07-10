@@ -281,6 +281,7 @@ const RecordCalendarWeekDayColumn = ({
               ? record?.[calendarEndFieldName]
               : undefined;
             const metrics = getRecordCalendarWeekTimedEventMetrics({
+              day,
               startDateTime: recordDate,
               endDateTime: recordEndDate,
               timeZone,
@@ -319,6 +320,7 @@ const RecordCalendarWeekDayColumn = ({
         }) => (
           <RecordCalendarWeekEvent
             key={recordId}
+            calendarEndFieldName={calendarEndFieldName}
             calendarFieldName={calendarFieldName}
             calendarFieldType={calendarFieldType}
             columnCount={columnCount}

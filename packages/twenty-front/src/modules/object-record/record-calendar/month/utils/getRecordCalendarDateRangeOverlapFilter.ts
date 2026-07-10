@@ -23,10 +23,13 @@ export const getRecordCalendarDateRangeOverlapFilter = ({
 }: GetRecordCalendarDateRangeOverlapFilterParams):
   | RecordGqlOperationFilter
   | undefined => {
-  if (
-    calendarField.type !== FieldMetadataType.DATE ||
-    calendarEndField?.type !== FieldMetadataType.DATE
-  ) {
+  const hasCompatibleDateRangeFields =
+    (calendarField.type === FieldMetadataType.DATE &&
+      calendarEndField?.type === FieldMetadataType.DATE) ||
+    (calendarField.type === FieldMetadataType.DATE_TIME &&
+      calendarEndField?.type === FieldMetadataType.DATE_TIME);
+
+  if (!hasCompatibleDateRangeFields) {
     return undefined;
   }
 

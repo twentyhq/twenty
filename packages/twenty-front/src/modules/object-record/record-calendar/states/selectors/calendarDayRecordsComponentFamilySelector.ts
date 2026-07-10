@@ -4,6 +4,7 @@ import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasO
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { recordCalendarRecordIdsComponentState } from '@/object-record/record-calendar/states/recordCalendarRecordIdsComponentState';
 import { isRecordCalendarDayInDateRange } from '@/object-record/record-calendar/utils/isRecordCalendarDayInDateRange';
+import { isRecordCalendarDayInDateTimeRange } from '@/object-record/record-calendar/utils/isRecordCalendarDayInDateTimeRange';
 import { recordIndexCalendarEndFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdState';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -95,13 +96,19 @@ export const calendarDayRecordIdsComponentFamilySelector =
             return isSamePlainDate(day, recordStartDate);
           }
 
-          const recordDateAsPlainDateInTimeZone = Temporal.Instant.from(
-            recordDate,
-          )
-            .toZonedDateTimeISO(timeZone)
-            .toPlainDate();
+          const recordEndDateValue = isDefined(endFieldMetadataItem)
+            ? record?.[endFieldMetadataItem.name]
+            : undefined;
 
-          return isSamePlainDate(day, recordDateAsPlainDateInTimeZone);
+          return isRecordCalendarDayInDateTimeRange({
+            day,
+            startDateTime: recordDate,
+            endDateTime:
+              endFieldMetadataItem?.type === FieldMetadataType.DATE_TIME
+                ? recordEndDateValue
+                : undefined,
+            timeZone,
+          });
         });
 
         if (

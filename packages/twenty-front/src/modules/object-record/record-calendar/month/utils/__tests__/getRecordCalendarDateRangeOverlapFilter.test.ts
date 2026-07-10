@@ -55,7 +55,7 @@ describe('getRecordCalendarDateRangeOverlapFilter', () => {
     ).toBeUndefined();
   });
 
-  it('does not replace the existing range filter for DATE_TIME fields', () => {
+  it('matches DATE_TIME ranges that overlap the visible range', () => {
     expect(
       getRecordCalendarDateRangeOverlapFilter({
         calendarField: {
@@ -66,8 +66,47 @@ describe('getRecordCalendarDateRangeOverlapFilter', () => {
           name: 'endsAt',
           type: FieldMetadataType.DATE_TIME,
         },
-        firstDayOfRange: '2026-06-29',
-        nextDayAfterLastDayOfRange: '2026-08-10',
+        firstDayOfRange: '2026-06-28T22:00:00Z',
+        nextDayAfterLastDayOfRange: '2026-08-09T22:00:00Z',
+      }),
+    ).toEqual({
+      and: [
+        {
+          startsAt: {
+            lt: '2026-08-09T22:00:00Z',
+          },
+        },
+        {
+          or: [
+            {
+              startsAt: {
+                gte: '2026-06-28T22:00:00Z',
+              },
+            },
+            {
+              endsAt: {
+                gte: '2026-06-28T22:00:00Z',
+              },
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('does not replace the existing range filter for incompatible fields', () => {
+    expect(
+      getRecordCalendarDateRangeOverlapFilter({
+        calendarField: {
+          name: 'startsAt',
+          type: FieldMetadataType.DATE_TIME,
+        },
+        calendarEndField: {
+          name: 'endDate',
+          type: FieldMetadataType.DATE,
+        },
+        firstDayOfRange: '2026-06-28T22:00:00Z',
+        nextDayAfterLastDayOfRange: '2026-08-09T22:00:00Z',
       }),
     ).toBeUndefined();
   });

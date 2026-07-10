@@ -1,7 +1,9 @@
 import { RECORD_CALENDAR_WEEK_DIMENSIONS } from '@/object-record/record-calendar/week/constants/RecordCalendarWeekDimensions';
+import { getRecordCalendarDateTimeRange } from '@/object-record/record-calendar/utils/getRecordCalendarDateTimeRange';
 import { Temporal } from 'temporal-polyfill';
 
 type GetRecordCalendarWeekTimedEventMetricsArgs = {
+  day: Temporal.PlainDate;
   endDateTime?: unknown;
   startDateTime: unknown;
   timeZone: string;
@@ -23,57 +25,48 @@ export const getRecordCalendarWeekTimedEventHeight = ({
       RECORD_CALENDAR_WEEK_DIMENSIONS.eventVerticalGap,
   );
 
-const getZonedDateTimeFromValue = (value: unknown, timeZone: string) => {
-  if (typeof value !== 'string') {
-    return null;
-  }
-
-  try {
-    return Temporal.Instant.from(value).toZonedDateTimeISO(timeZone);
-  } catch {
-    return null;
-  }
-};
-
 const getTimeOfDayInPixels = (dateTime: Temporal.ZonedDateTime) =>
   (dateTime.hour + dateTime.minute / 60 + dateTime.second / 3600) *
   RECORD_CALENDAR_WEEK_DIMENSIONS.hourHeight;
 
 export const getRecordCalendarWeekTimedEventMetrics = ({
+  day,
   endDateTime,
   startDateTime,
   timeZone,
 }: GetRecordCalendarWeekTimedEventMetricsArgs): RecordCalendarWeekTimedEventMetrics | null => {
-  const start = getZonedDateTimeFromValue(startDateTime, timeZone);
+  const range = getRecordCalendarDateTimeRange({
+    endDateTime,
+    startDateTime,
+    timeZone,
+  });
 
-  if (start === null) {
+  if (range === null) {
     return null;
   }
 
-  const startInPixels = getTimeOfDayInPixels(start);
-  const end = getZonedDateTimeFromValue(endDateTime, timeZone);
-
-  let endInPixels = startInPixels + RECORD_CALENDAR_WEEK_DIMENSIONS.hourHeight;
+  const dayStart = day.toZonedDateTime({ timeZone });
+  const nextDayStart = day.add({ days: 1 }).toZonedDateTime({ timeZone });
 
   if (
-    end !== null &&
-    Temporal.Instant.compare(end.toInstant(), start.toInstant()) > 0
+    Temporal.Instant.compare(
+      range.start.toInstant(),
+      nextDayStart.toInstant(),
+    ) >= 0 ||
+    Temporal.Instant.compare(range.end.toInstant(), dayStart.toInstant()) <= 0
   ) {
-    const dayComparison = Temporal.PlainDate.compare(
-      end.toPlainDate(),
-      start.toPlainDate(),
-    );
-
-    if (dayComparison > 0) {
-      endInPixels = RECORD_CALENDAR_WEEK_DIMENSIONS.gridHeight;
-    } else if (dayComparison === 0) {
-      const configuredEndInPixels = getTimeOfDayInPixels(end);
-
-      if (configuredEndInPixels > startInPixels) {
-        endInPixels = configuredEndInPixels;
-      }
-    }
+    return null;
   }
+
+  const startInPixels =
+    Temporal.Instant.compare(range.start.toInstant(), dayStart.toInstant()) <= 0
+      ? 0
+      : getTimeOfDayInPixels(range.start);
+  let endInPixels =
+    Temporal.Instant.compare(range.end.toInstant(), nextDayStart.toInstant()) >=
+    0
+      ? RECORD_CALENDAR_WEEK_DIMENSIONS.gridHeight
+      : getTimeOfDayInPixels(range.end);
 
   endInPixels = Math.min(
     RECORD_CALENDAR_WEEK_DIMENSIONS.gridHeight,
