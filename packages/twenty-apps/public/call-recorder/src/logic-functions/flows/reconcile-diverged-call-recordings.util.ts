@@ -297,6 +297,10 @@ const listConvergenceBotsById = async (
   const currentWorkspaceId = getCurrentWorkspaceId();
 
   if (isUndefined(currentWorkspaceId)) {
+    console.warn(
+      '[call-recorder] workspace id unavailable for Recall bot listing; using capped per-id convergence fallback',
+    );
+
     return new Map();
   }
 

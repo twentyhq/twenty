@@ -162,6 +162,10 @@ const queueRecallArtifactContinuation = async ({
   });
 
   if (isUndefined(callRecording)) {
+    console.warn(
+      `[call-recorder] skipping Recall ${webhookEvent.event} webhook: no matching call recording for bot ${webhookEvent.externalBotId ?? 'unknown'}`,
+    );
+
     return {
       status: 'skipped',
       event: webhookEvent.event,
