@@ -1,0 +1,48 @@
+packages/twenty-server/src/modules/connected-account-sync-webhooks/drivers/google/google-webhook-driver.module.ts
+  s_a6543a6e88f043::t_3ada9c3bef2d60 16
+  s_a6543a6e88f043::t_6e52be1e4621e5 4
+packages/twenty-server/src/engine/core-modules/metrics/types/metrics-keys.type.ts
+  s_a6543a6e88f043::t_75115a9c93c1eb 56-57
+packages/twenty-server/src/modules/connected-account-sync-webhooks/drivers/google/google-messaging-notification.handler.ts
+  s_a6543a6e88f043::t_f2ea8dc82a8b86 52
+  s_a6543a6e88f043::t_51f048f26ec8a4 74-77,88-91,98-101
+  s_a6543a6e88f043::t_c91d1a18cbda41 51,53-55
+  s_a6543a6e88f043::t_e6b80156962588 13-14
+  s_a6543a6e88f043::t_868fa668f3fdd3 36-37,40
+  s_a6543a6e88f043::t_5114fcf145e6a6 1
+packages/twenty-server/src/modules/connected-account-sync-webhooks/drivers/microsoft/microsoft-messaging-notification.handler.ts
+  s_a6543a6e88f043::t_58f79650f34d4a 10-11
+  s_a6543a6e88f043::t_33b6fdcb65496d 31,35-36,38-41
+  s_a6543a6e88f043::t_258c4457f39ce9 37
+  s_a6543a6e88f043::t_ae7f76fb864163 108-111
+packages/twenty-server/src/modules/connected-account-sync-webhooks/drivers/microsoft/microsoft-webhook-driver.module.ts
+  s_a6543a6e88f043::t_00a02bbd064713 4
+  s_a6543a6e88f043::t_3121bb65018168 15
+packages/twenty-server/src/modules/connected-account-sync-webhooks/drivers/microsoft/microsoft-calendar-notification.handler.ts
+  s_a6543a6e88f043::t_e0ccfd8e8c3ab5 37
+  s_a6543a6e88f043::t_6fbdc4ba64402b 31,35-36,38-41
+  s_a6543a6e88f043::t_547fabd4297120 10-11
+  s_a6543a6e88f043::t_bddb9e72ffc21a 109-112
+packages/twenty-server/src/modules/connected-account-sync-webhooks/drivers/google/google-calendar-notification.handler.ts
+  s_a6543a6e88f043::t_3e3163205a5d7b 37
+  s_a6543a6e88f043::t_98cdcc38a5be5c 89-92
+  s_a6543a6e88f043::t_23d90b880af9d4 11-12
+  s_a6543a6e88f043::t_0666cb81d3dd36 3
+  s_a6543a6e88f043::t_5183fde7321b58 26-27,32,36,38-40,57-60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3d20f272fabde69dcd8aed610067ebb9c8348796",
+  "prompts": {},
+  "sessions": {
+    "s_a6543a6e88f043": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9a254555-401b-4715-bfa4-c70f902562f3",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
