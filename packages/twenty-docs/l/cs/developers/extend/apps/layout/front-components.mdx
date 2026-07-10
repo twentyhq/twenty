@@ -4,7 +4,7 @@ description: Vytvářejte komponenty Reactu, které se vykreslují uvnitř uživ
 icon: window-maximize
 ---
 
-Frontendové komponenty jsou React komponenty, které se vykreslují přímo v uživatelském rozhraní Twenty. Běží v **izolovaném Web Workeru** s využitím Remote DOM — váš kód je sandboxovaný, ale vykresluje se nativně na stránce, nikoli v iframu.
+Frontendové komponenty jsou React komponenty, které se vykreslují přímo v uživatelském rozhraní Twenty. Běží v **izolovaném Web Workeru** s využitím Remote DOM — váš kód se spouští uvnitř sandboxovaného iframe s nejasným původem (opaque-origin), ale jeho UI se stále vykresluje nativně na stránce, místo aby bylo omezené na tento iframe.
 
 ## Kde lze použít frontendové komponenty
 
@@ -196,7 +196,7 @@ export default defineFrontComponent({
 
 ## Volání logické funkce
 
-Front komponenty běží v prohlížeči v izolovaném web workeru, zatímco [logické funkce](/l/cs/developers/extend/apps/logic/logic-functions) běží na serveru. Neexistuje mezi nimi žádné přímé volání v rámci jednoho procesu — místo toho se front komponenta k logické funkci připojuje přes HTTP.
+Front komponenty běží v prohlížeči v sandboxovaném Web Workeru uvnitř iframe s nejasným původem (opaque-origin), zatímco [logické funkce](/l/cs/developers/extend/apps/logic/logic-functions) běží na serveru. Neexistuje mezi nimi žádné přímé volání v rámci jednoho procesu — místo toho se front komponenta k logické funkci připojuje přes HTTP.
 
 Logická funkce deklarovaná pomocí `httpRouteTriggerSettings` je přes HTTP dostupná na své cestě (route path). Twenty vloží do workeru základní URL, ze které jsou vaše funkce poskytovány, jako `TWENTY_FUNCTIONS_URL` spolu s `TWENTY_APP_ACCESS_TOKEN`, který volání autentizuje. Zatím neexistuje žádný specializovaný klient SDK pro volání vlastních funkcí, takže je volejte pomocí prostého `fetch`:
 
