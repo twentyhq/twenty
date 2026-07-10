@@ -4,11 +4,14 @@ import { RecordCalendarComponentInstanceContext } from '@/object-record/record-c
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
 import {
+  RECORD_CALENDAR_WEEK_EVENT_HEIGHT,
   RECORD_CALENDAR_WEEK_HOUR_HEIGHT,
   RecordCalendarWeekEvent,
 } from '@/object-record/record-calendar/week/components/RecordCalendarWeekEvent';
 import { useRecordCalendarWeekDaysRange } from '@/object-record/record-calendar/week/hooks/useRecordCalendarWeekDaysRange';
+import { computeRecordCalendarWeekEventLayouts } from '@/object-record/record-calendar/week/utils/computeRecordCalendarWeekEventLayouts';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/components/TimeZoneAbbreviation';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
@@ -18,6 +21,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
+import { useStore } from 'jotai';
 import { useEffect, useRef } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import {
@@ -252,18 +256,50 @@ const RecordCalendarWeekDayColumn = ({
   timeFormat,
   timeZone,
 }: RecordCalendarWeekDayColumnProps) => {
+  const store = useStore();
   const recordIds = useAtomComponentFamilySelectorValue(
     calendarDayRecordIdsComponentFamilySelector,
     { day, timeZone },
   );
 
+  const eventLayouts = computeRecordCalendarWeekEventLayouts(
+    calendarFieldType === FieldMetadataType.DATE
+      ? []
+      : recordIds
+          .map((recordId) => {
+            const record = store.get(
+              recordStoreFamilyState.atomFamily(recordId),
+            );
+            const recordDate = record?.[calendarFieldName];
+
+            if (typeof recordDate !== 'string') {
+              return null;
+            }
+
+            const zonedDateTime =
+              Temporal.Instant.from(recordDate).toZonedDateTimeISO(timeZone);
+            const startInPixels =
+              (zonedDateTime.hour + zonedDateTime.minute / 60) *
+              RECORD_CALENDAR_WEEK_HOUR_HEIGHT;
+
+            return {
+              endInPixels: startInPixels + RECORD_CALENDAR_WEEK_EVENT_HEIGHT,
+              recordId,
+              startInPixels,
+            };
+          })
+          .filter(isDefined),
+  );
+
   return (
     <StyledDayColumn isWeekend={isPlainDateInWeekend(day)}>
-      {recordIds.map((recordId) => (
+      {eventLayouts.map(({ columnCount, columnIndex, recordId }) => (
         <RecordCalendarWeekEvent
           key={recordId}
           calendarFieldName={calendarFieldName}
           calendarFieldType={calendarFieldType}
+          columnCount={columnCount}
+          columnIndex={columnIndex}
           isAllDay={false}
           recordId={recordId}
           timeFormat={timeFormat}

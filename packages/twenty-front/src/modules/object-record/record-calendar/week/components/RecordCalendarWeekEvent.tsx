@@ -18,21 +18,53 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const RECORD_CALENDAR_WEEK_HOUR_HEIGHT = 48;
+export const RECORD_CALENDAR_WEEK_EVENT_HEIGHT = 44;
+
+const RECORD_CALENDAR_WEEK_EVENT_HORIZONTAL_INSET = 4;
+const RECORD_CALENDAR_WEEK_EVENT_COLUMN_GAP = 2;
+
+const getTimedEventLeft = (columnIndex: number, columnCount: number) => {
+  const leftPercentage = (columnIndex * 100) / columnCount;
+  const pixelOffset =
+    RECORD_CALENDAR_WEEK_EVENT_HORIZONTAL_INSET -
+    ((RECORD_CALENDAR_WEEK_EVENT_HORIZONTAL_INSET * 2 -
+      RECORD_CALENDAR_WEEK_EVENT_COLUMN_GAP) *
+      columnIndex) /
+      columnCount;
+
+  return `calc(${leftPercentage}% + ${pixelOffset}px)`;
+};
+
+const getTimedEventWidth = (columnCount: number) => {
+  const widthPercentage = 100 / columnCount;
+  const pixelReduction =
+    RECORD_CALENDAR_WEEK_EVENT_COLUMN_GAP +
+    (RECORD_CALENDAR_WEEK_EVENT_HORIZONTAL_INSET * 2 -
+      RECORD_CALENDAR_WEEK_EVENT_COLUMN_GAP) /
+      columnCount;
+
+  return `calc(${widthPercentage}% - ${pixelReduction}px)`;
+};
 
 const StyledEventPositioner = styled.div<{
+  columnCount: number;
+  columnIndex: number;
   isAllDay: boolean;
   topInPixels: number;
 }>`
   box-sizing: border-box;
-  height: ${({ isAllDay }) => (isAllDay ? '22px' : '44px')};
-  left: ${({ isAllDay }) => (isAllDay ? 'auto' : '4px')};
+  height: ${({ isAllDay }) =>
+    isAllDay ? '22px' : `${RECORD_CALENDAR_WEEK_EVENT_HEIGHT}px`};
+  left: ${({ columnCount, columnIndex, isAllDay }) =>
+    isAllDay ? 'auto' : getTimedEventLeft(columnIndex, columnCount)};
   min-width: 0;
   overflow: hidden;
   position: ${({ isAllDay }) => (isAllDay ? 'relative' : 'absolute')};
-  right: ${({ isAllDay }) => (isAllDay ? 'auto' : '4px')};
+  right: auto;
   top: ${({ isAllDay, topInPixels }) =>
     isAllDay ? 'auto' : `${topInPixels + 2}px`};
-  width: ${({ isAllDay }) => (isAllDay ? '100%' : 'auto')};
+  width: ${({ columnCount, isAllDay }) =>
+    isAllDay ? '100%' : getTimedEventWidth(columnCount)};
   z-index: 1;
 
   > div {
@@ -96,6 +128,8 @@ const StyledEventTime = styled.span`
 type RecordCalendarWeekEventProps = {
   calendarFieldName: string;
   calendarFieldType: FieldMetadataType;
+  columnCount?: number;
+  columnIndex?: number;
   isAllDay: boolean;
   recordId: string;
   timeFormat: string;
@@ -105,6 +139,8 @@ type RecordCalendarWeekEventProps = {
 export const RecordCalendarWeekEvent = ({
   calendarFieldName,
   calendarFieldType,
+  columnCount = 1,
+  columnIndex = 0,
   isAllDay,
   recordId,
   timeFormat,
@@ -143,7 +179,12 @@ export const RecordCalendarWeekEvent = ({
     : null;
 
   return (
-    <StyledEventPositioner isAllDay={isAllDay} topInPixels={topInPixels}>
+    <StyledEventPositioner
+      columnCount={columnCount}
+      columnIndex={columnIndex}
+      isAllDay={isAllDay}
+      topInPixels={topInPixels}
+    >
       <RecordCard
         data-click-outside-id={RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID}
         data-selected={isRecordCalendarCardSelected}
