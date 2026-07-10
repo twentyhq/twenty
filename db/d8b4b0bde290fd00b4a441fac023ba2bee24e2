@@ -1,0 +1,46 @@
+packages/twenty-front/src/modules/activities/emails/utils/getEmailDraftPrefillFromMessage.ts
+  s_d7efdfca82e0dc::t_dbf2abe957806b 2,4
+packages/twenty-front/src/modules/activities/emails/recipients/components/EmailRecipientsFieldChip.tsx
+  s_d7efdfca82e0dc::t_a412e46d0c64b1 41-44,46-54
+  s_d7efdfca82e0dc::t_9622029951a93c 2-5
+  s_d7efdfca82e0dc::t_975110b070734f 63
+packages/twenty-front/src/modules/activities/emails/recipients/utils/getEmailRecipientFullName.ts
+  s_d7efdfca82e0dc::t_4c22c2de12fe2d 1-3
+packages/twenty-front/src/modules/activities/emails/recipients/types/EmailRecipientIdentity.ts
+  s_d7efdfca82e0dc::t_8bc9e3a8f98131 1-8
+packages/twenty-front/src/modules/activities/emails/recipients/utils/__tests__/getEmailRecipientIdentity.test.ts
+  s_d7efdfca82e0dc::t_7f46f535150b1e 31,46-50,61,71,79,87
+packages/twenty-front/src/modules/activities/emails/hooks/useEmailComposerState.ts
+  s_d7efdfca82e0dc::t_ee9c5700ff015b 4
+packages/twenty-front/src/modules/activities/emails/recipients/utils/getEmailRecipientIdentity.ts
+  s_d7efdfca82e0dc::t_71790c77cabe22 7
+  s_d7efdfca82e0dc::t_88072d6f08c23b 21
+  s_d7efdfca82e0dc::t_df3a895e1606fc 28-32,40,47
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/safe-parse-email-addresses.util.ts
+  s_d7efdfca82e0dc::t_97dc155db578aa 8
+packages/twenty-server/src/modules/messaging/message-outbound-manager/utils/format-message-from-header.util.ts
+  s_d7efdfca82e0dc::t_adb546a483a115 26
+packages/twenty-front/src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
+  s_d7efdfca82e0dc::t_78f4db2c18dfe8 46-49
+  s_d7efdfca82e0dc::t_9802e4847285de 72,76,79,82-84,88,90
+packages/twenty-front/src/modules/activities/emails/hooks/useReplyContext.ts
+  s_d7efdfca82e0dc::t_e15432afc213b8 7-8
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/__tests__/safe-parse-email-addresses.util.spec.ts
+  s_d7efdfca82e0dc::t_fa7ea61ede0db9 14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "dbd8b4b0bde290fd00b4a441fac023ba2bee24e2",
+  "prompts": {},
+  "sessions": {
+    "s_d7efdfca82e0dc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8597b8f-384d-4561-a6dd-8d19f0804e31",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
