@@ -1,92 +1,104 @@
 import { mergeEmailRecipients } from '@/activities/emails/recipients/utils/mergeEmailRecipients';
 
 describe('mergeEmailRecipients', () => {
-  it('should append unique recipients at the given index', () => {
-    const { mergedRecipients, duplicateKeys } = mergeEmailRecipients(
-      [{ address: 'a@example.com' }],
-      [{ address: 'b@example.com' }],
-      1,
-    );
+  it('should append incoming recipients at the end', () => {
+    const { nextRecipients, duplicateChipKey } = mergeEmailRecipients({
+      recipients: [{ address: 'a@example.com' }],
+      incomingRecipients: [
+        { address: 'b@example.com', displayName: 'Bee' },
+        { address: 'c@example.com' },
+      ],
+      replacedIndex: null,
+    });
 
-    expect(mergedRecipients).toEqual([
+    expect(nextRecipients).toEqual([
       { address: 'a@example.com' },
+      { address: 'b@example.com', displayName: 'Bee' },
+      { address: 'c@example.com' },
+    ]);
+    expect(duplicateChipKey).toBeNull();
+  });
+
+  it('should skip a case-insensitive duplicate and report its chip key', () => {
+    const { nextRecipients, duplicateChipKey } = mergeEmailRecipients({
+      recipients: [{ address: 'jane@example.com' }],
+      incomingRecipients: [{ address: 'JANE@example.com' }],
+      replacedIndex: null,
+    });
+
+    expect(nextRecipients).toEqual([{ address: 'jane@example.com' }]);
+    expect(duplicateChipKey).toBe('jane@example.com');
+  });
+
+  it('should upgrade the display name of an existing recipient when the duplicate carries one', () => {
+    const { nextRecipients } = mergeEmailRecipients({
+      recipients: [
+        { address: 'jane@example.com' },
+        { address: 'john@example.com', displayName: 'John' },
+      ],
+      incomingRecipients: [
+        { address: 'jane@example.com', displayName: 'Jane Doe' },
+        { address: 'john@example.com', displayName: 'Johnny' },
+      ],
+      replacedIndex: null,
+    });
+
+    expect(nextRecipients).toEqual([
+      { address: 'jane@example.com', displayName: 'Jane Doe' },
+      { address: 'john@example.com', displayName: 'John' },
+    ]);
+  });
+
+  it('should replace the recipient at replacedIndex in place', () => {
+    const { nextRecipients } = mergeEmailRecipients({
+      recipients: [{ address: 'a@example.com' }, { address: 'b@example.com' }],
+      incomingRecipients: [{ address: 'c@example.com' }],
+      replacedIndex: 0,
+    });
+
+    expect(nextRecipients).toEqual([
+      { address: 'c@example.com' },
       { address: 'b@example.com' },
     ]);
-    expect(duplicateKeys).toEqual([]);
   });
 
-  it('should insert at an arbitrary position', () => {
-    const { mergedRecipients } = mergeEmailRecipients(
-      [{ address: 'a@example.com' }, { address: 'c@example.com' }],
-      [{ address: 'b@example.com' }],
-      1,
-    );
+  it('should delete the replaced recipient when nothing comes in', () => {
+    const { nextRecipients } = mergeEmailRecipients({
+      recipients: [{ address: 'a@example.com' }, { address: 'b@example.com' }],
+      incomingRecipients: [],
+      replacedIndex: 0,
+    });
 
-    expect(mergedRecipients.map((recipient) => recipient.address)).toEqual([
-      'a@example.com',
-      'b@example.com',
-      'c@example.com',
-    ]);
+    expect(nextRecipients).toEqual([{ address: 'b@example.com' }]);
   });
 
-  it('should report duplicates case-insensitively and keep the existing entry', () => {
-    const { mergedRecipients, duplicateKeys } = mergeEmailRecipients(
-      [{ address: 'jane@example.com' }],
-      [{ address: 'Jane@Example.com' }],
-      1,
-    );
+  it('should dedupe recipients within the incoming batch', () => {
+    const { nextRecipients, duplicateChipKey } = mergeEmailRecipients({
+      recipients: [],
+      incomingRecipients: [
+        { address: 'jane@example.com' },
+        { address: 'Jane@Example.com', displayName: 'Jane Doe' },
+      ],
+      replacedIndex: null,
+    });
 
-    expect(mergedRecipients).toEqual([{ address: 'jane@example.com' }]);
-    expect(duplicateKeys).toEqual(['jane@example.com']);
-  });
-
-  it('should upgrade the display name of an existing recipient from a duplicate', () => {
-    const { mergedRecipients } = mergeEmailRecipients(
-      [{ address: 'jane@example.com' }],
-      [{ address: 'jane@example.com', displayName: 'Jane Doe' }],
-      1,
-    );
-
-    expect(mergedRecipients).toEqual([
+    expect(nextRecipients).toEqual([
       { address: 'jane@example.com', displayName: 'Jane Doe' },
     ]);
+    expect(duplicateChipKey).toBe('jane@example.com');
   });
 
-  it('should not overwrite an existing display name', () => {
-    const { mergedRecipients } = mergeEmailRecipients(
-      [{ address: 'jane@example.com', displayName: 'Jane' }],
-      [{ address: 'jane@example.com', displayName: 'Someone Else' }],
-      1,
-    );
+  it('should not mutate the given recipients array', () => {
+    const recipients = [{ address: 'jane@example.com' }];
 
-    expect(mergedRecipients).toEqual([
-      { address: 'jane@example.com', displayName: 'Jane' },
-    ]);
-  });
-
-  it('should dedupe within the added batch itself', () => {
-    const { mergedRecipients, duplicateKeys } = mergeEmailRecipients(
-      [],
-      [{ address: 'a@example.com' }, { address: 'A@example.com' }],
-      0,
-    );
-
-    expect(mergedRecipients).toEqual([{ address: 'a@example.com' }]);
-    expect(duplicateKeys).toEqual(['a@example.com']);
-  });
-
-  it('should upgrade a display name from a later duplicate within the batch', () => {
-    const { mergedRecipients } = mergeEmailRecipients(
-      [],
-      [
-        { address: 'a@example.com' },
-        { address: 'A@example.com', displayName: 'Aline' },
+    mergeEmailRecipients({
+      recipients,
+      incomingRecipients: [
+        { address: 'jane@example.com', displayName: 'Jane Doe' },
       ],
-      0,
-    );
+      replacedIndex: null,
+    });
 
-    expect(mergedRecipients).toEqual([
-      { address: 'a@example.com', displayName: 'Aline' },
-    ]);
+    expect(recipients).toEqual([{ address: 'jane@example.com' }]);
   });
 });

@@ -4,76 +4,69 @@ import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailR
 import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { toSpliced } from '~/utils/array/toSpliced';
 
-type MergeEmailRecipientsResult = {
-  mergedRecipients: EmailRecipient[];
-  duplicateKeys: string[];
+type MergeEmailRecipientsArgs = {
+  recipients: EmailRecipient[];
+  incomingRecipients: EmailRecipient[];
+  replacedIndex: number | null;
 };
 
-export const mergeEmailRecipients = (
-  baseRecipients: EmailRecipient[],
-  addedRecipients: EmailRecipient[],
-  insertAtIndex: number,
-): MergeEmailRecipientsResult => {
-  const baseRecipientKeys = new Set(
-    baseRecipients.map((baseRecipient) =>
-      getEmailRecipientKey(baseRecipient.address),
-    ),
-  );
+type MergeEmailRecipientsResult = {
+  nextRecipients: EmailRecipient[];
+  duplicateChipKey: string | null;
+};
 
-  const uniqueAddedRecipients: EmailRecipient[] = [];
-  const uniqueAddedRecipientsByKey = new Map<string, EmailRecipient>();
-  const duplicateKeys: string[] = [];
-  const displayNameUpgrades = new Map<string, string>();
+export const mergeEmailRecipients = ({
+  recipients,
+  incomingRecipients,
+  replacedIndex,
+}: MergeEmailRecipientsArgs): MergeEmailRecipientsResult => {
+  const baseRecipients =
+    replacedIndex === null
+      ? [...recipients]
+      : toSpliced(recipients, replacedIndex, 1);
+  const insertionIndex = replacedIndex ?? baseRecipients.length;
 
-  for (const addedRecipient of addedRecipients) {
-    const recipientKey = getEmailRecipientKey(addedRecipient.address);
+  const acceptedRecipients: EmailRecipient[] = [];
+  let duplicateChipKey: string | null = null;
 
-    if (baseRecipientKeys.has(recipientKey)) {
-      duplicateKeys.push(recipientKey);
+  for (const incomingRecipient of incomingRecipients) {
+    const incomingChipKey = getEmailRecipientKey(incomingRecipient.address);
+    const matchesIncomingChipKey = (recipient: EmailRecipient) =>
+      getEmailRecipientKey(recipient.address) === incomingChipKey;
 
-      if (isNonEmptyString(addedRecipient.displayName)) {
-        displayNameUpgrades.set(recipientKey, addedRecipient.displayName);
-      }
+    const baseIndex = baseRecipients.findIndex(matchesIncomingChipKey);
+    const acceptedIndex = acceptedRecipients.findIndex(matchesIncomingChipKey);
+
+    if (baseIndex === -1 && acceptedIndex === -1) {
+      acceptedRecipients.push(incomingRecipient);
       continue;
     }
 
-    const alreadyAddedRecipient = uniqueAddedRecipientsByKey.get(recipientKey);
+    duplicateChipKey = incomingChipKey;
 
-    if (alreadyAddedRecipient !== undefined) {
-      duplicateKeys.push(recipientKey);
+    const targetRecipients =
+      baseIndex === -1 ? acceptedRecipients : baseRecipients;
+    const targetIndex = baseIndex === -1 ? acceptedIndex : baseIndex;
+    const existingRecipient = targetRecipients[targetIndex];
 
-      if (
-        isNonEmptyString(addedRecipient.displayName) &&
-        !isNonEmptyString(alreadyAddedRecipient.displayName)
-      ) {
-        alreadyAddedRecipient.displayName = addedRecipient.displayName;
-      }
-      continue;
+    if (
+      isNonEmptyString(incomingRecipient.displayName) &&
+      !isNonEmptyString(existingRecipient.displayName)
+    ) {
+      targetRecipients[targetIndex] = {
+        ...existingRecipient,
+        displayName: incomingRecipient.displayName,
+      };
     }
-
-    const uniqueAddedRecipient = { ...addedRecipient };
-    uniqueAddedRecipientsByKey.set(recipientKey, uniqueAddedRecipient);
-    uniqueAddedRecipients.push(uniqueAddedRecipient);
   }
 
-  const upgradedBaseRecipients = baseRecipients.map((baseRecipient) => {
-    const upgradedDisplayName = displayNameUpgrades.get(
-      getEmailRecipientKey(baseRecipient.address),
-    );
-
-    return upgradedDisplayName !== undefined &&
-      !isNonEmptyString(baseRecipient.displayName)
-      ? { ...baseRecipient, displayName: upgradedDisplayName }
-      : baseRecipient;
-  });
-
   return {
-    mergedRecipients: toSpliced(
-      upgradedBaseRecipients,
-      insertAtIndex,
+    nextRecipients: toSpliced(
+      baseRecipients,
+      insertionIndex,
       0,
-      ...uniqueAddedRecipients,
+      ...acceptedRecipients,
     ),
-    duplicateKeys,
+    duplicateChipKey,
   };
 };

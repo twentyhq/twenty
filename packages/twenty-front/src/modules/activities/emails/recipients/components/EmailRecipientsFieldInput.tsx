@@ -20,12 +20,10 @@ import { EmailRecipientsFieldChip } from '@/activities/emails/recipients/compone
 import { EmailRecipientSuggestionsDropdownContent } from '@/activities/emails/recipients/components/EmailRecipientSuggestionsDropdownContent';
 import { useEmailRecipientsField } from '@/activities/emails/recipients/hooks/useEmailRecipientsField';
 import { useEmailRecipientsResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
-import {
-  type EmailRecipientSuggestion,
-  useEmailRecipientSuggestions,
-} from '@/activities/emails/recipients/hooks/useEmailRecipientSuggestions';
+import { useEmailRecipientSuggestions } from '@/activities/emails/recipients/hooks/useEmailRecipientSuggestions';
 import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
+import { type EmailRecipientSuggestion } from '@/activities/emails/recipients/types/EmailRecipientSuggestion';
 import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
@@ -64,8 +62,10 @@ const StyledRowContainer = styled.div`
   width: 100%;
 `;
 
+const CHIP_MAX_WIDTH_PX = 240;
+
 const StyledChipContainer = styled.div`
-  max-width: 240px;
+  max-width: ${CHIP_MAX_WIDTH_PX}px;
 `;
 
 const StyledInput = styled.input`
