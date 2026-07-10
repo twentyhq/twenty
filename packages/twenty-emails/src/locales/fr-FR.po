@@ -24,21 +24,6 @@ msgid "Test email"
 msgstr "E-mail de test"
 
 #. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "Enabled"
-msgstr "Activé"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "Disabled"
-msgstr "Désactivé"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "Server administrator access changed"
-msgstr "Accès administrateur au serveur modifié"
-
-#. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Your workspace is paused"
 msgstr "Votre espace de travail est en pause"
@@ -83,6 +68,22 @@ msgid "Reactivate workspace"
 msgstr "Réactiver l’espace de travail"
 
 #. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Enabled"
+msgstr "Activé"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Disabled"
+msgstr "Désactivé"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Server administrator access changed"
+msgstr "Accès administrateur au serveur modifié"
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
 msgstr "Valider le domaine"
@@ -91,6 +92,21 @@ msgstr "Valider le domaine"
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
 msgstr "{senderName} (<0>{senderEmail}</0>) : Veuillez valider ce domaine pour permettre aux utilisateurs avec des adresses e-mail <1>@{domain}</1> de rejoindre votre espace de travail sans nécessiter d'invitation."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Rejoignez votre équipe sur Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) vous a invité à rejoindre un espace de travail appelé <1>{workspaceName}</1>."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "Accepter l'invitation"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -111,46 +127,6 @@ msgstr ""
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Verify Email"
 msgstr "Vérifiez l'e-mail"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Password updated"
-msgstr "Mot de passe mis à jour"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Dear {userName},"
-msgstr "Cher {userName},"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "Ceci est une confirmation que le mot de passe de votre compte ({email}) a été modifié avec succès le {formattedDate}."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "Si vous n'avez pas initié ce changement, veuillez contacter immédiatement le propriétaire de votre espace de travail."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Connect to Twenty"
-msgstr "Connectez-vous à Twenty"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Rejoignez votre équipe sur Twenty"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) vous a invité à rejoindre un espace de travail appelé <1>{workspaceName}</1>."
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "Accepter l'invitation"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -178,6 +154,31 @@ msgid "This link is only valid for the next {duration}. If the link does not wor
 msgstr "Ce lien n'est valable que pour les {duration} suivants. Si le lien ne fonctionne pas, vous pouvez utiliser directement le lien de vérification de connexion :"
 
 #. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Password updated"
+msgstr "Mot de passe mis à jour"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Dear {userName},"
+msgstr "Cher {userName},"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "Ceci est une confirmation que le mot de passe de votre compte ({email}) a été modifié avec succès le {formattedDate}."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "Si vous n'avez pas initié ce changement, veuillez contacter immédiatement le propriétaire de votre espace de travail."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Connect to Twenty"
+msgstr "Connectez-vous à Twenty"
+
+#. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Your workspace has been deleted"
 msgstr "Votre espace de travail a été supprimé"
@@ -201,32 +202,6 @@ msgstr "Si vous souhaitez un jour redonner une chance à Twenty, vous pouvez cr�
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Start a new workspace"
 msgstr "Créer un nouvel espace de travail"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Your plan renews soon"
-msgstr "Votre formule sera bientôt renouvelée"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Just so it's never a surprise, here's a heads up about your annual plan."
-msgstr "Pour éviter toute mauvaise surprise, voici un rappel concernant votre formule annuelle."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
-msgstr "Votre formule annuelle pour <0>{workspaceDisplayName}</0> sera renouvelée le {formattedDate}."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
-msgstr "Aucune action n’est nécessaire si vous souhaitez continuer. Si vous préférez ne pas renouveler, vous pouvez annuler à tout moment avant cette date."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Manage subscription"
-msgstr "Gérer l’abonnement"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -254,6 +229,12 @@ msgid "If Twenty is working for you, you're all set — there's nothing to do. I
 msgstr "Si Twenty vous convient, tout est en ordre — vous n’avez rien à faire. Si ce n’est pas la bonne solution pour vous, vous pouvez annuler en un clic avant cette date et vous ne serez pas facturé."
 
 #. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "Gérer l’abonnement"
+
+#. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
 msgstr "Votre période d’essai se termine bientôt"
@@ -277,6 +258,26 @@ msgstr "Si vous ne faites rien, nous mettrons votre espace de travail en pause e
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Add a payment method"
 msgstr "Ajouter un mode de paiement"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your plan renews soon"
+msgstr "Votre formule sera bientôt renouvelée"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Just so it's never a surprise, here's a heads up about your annual plan."
+msgstr "Pour éviter toute mauvaise surprise, voici un rappel concernant votre formule annuelle."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
+msgstr "Votre formule annuelle pour <0>{workspaceDisplayName}</0> sera renouvelée le {formattedDate}."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
+msgstr "Aucune action n’est nécessaire si vous souhaitez continuer. Si vous préférez ne pas renouveler, vous pouvez annuler à tout moment avant cette date."
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
