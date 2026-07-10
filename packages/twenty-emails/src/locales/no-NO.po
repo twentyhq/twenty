@@ -84,7 +84,6 @@ msgstr "Aktiver arbeidsområde på nytt"
 
 #. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
 msgstr "Valider domene"
 
