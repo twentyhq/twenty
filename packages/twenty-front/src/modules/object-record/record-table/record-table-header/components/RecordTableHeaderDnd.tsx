@@ -75,10 +75,13 @@ export const RecordTableHeaderDnd = () => {
       ))}
       <DragDropColumnDroppableSlot
         droppableId={RECORD_TABLE_HEADER_DROPPABLE_ID}
-        index={visibleRecordFields.length}
+        index={visibleRecordFields.length - 1}
         disabled={isRecordTableColumnHeadersReadOnly}
       >
-        <DragDropColumnDropTarget index={visibleRecordFields.length} compact />
+        <DragDropColumnDropTarget
+          index={visibleRecordFields.length - 1}
+          compact
+        />
       </DragDropColumnDroppableSlot>
       {isRecordTableColumnHeadersReadOnly ? (
         <RecordTableHeaderEmptyLastColumn />
