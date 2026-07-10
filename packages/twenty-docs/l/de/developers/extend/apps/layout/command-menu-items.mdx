@@ -37,7 +37,7 @@ export default defineCommandMenuItem({
 
 Ein Befehlsmenü-Eintrag, der mit einer [Headless-Front-Komponente](/l/de/developers/extend/apps/layout/front-components#headless-vs-non-headless) gekoppelt ist, ist die idiomatische Art, eine One-Click-Aktion bereitzustellen – Code ausführen, navigieren oder bestätigen und ausführen. Die Seite „Front Components“ behandelt die [SDK Command-Komponenten](/l/de/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`), die das Action-and-Unmount-Muster handhaben.
 
-Ein typischer Ablauf: Eine kopflose Komponente rendert `<Command execute={...} />` (siehe das [vollständige Beispiel](/l/de/developers/extend/apps/layout/front-components#sdk-command-components)), und der Befehl-Menüeintrag verweist darauf:
+Ein typischer Ablauf: Eine Headless-Komponente rendert `<Command execute={...} />` (siehe das [vollständige Beispiel](/l/de/developers/extend/apps/layout/front-components#sdk-command-components)), und der Befehlsmenüeintrag verweist darauf:
 
 ```ts src/command-menu-items/run-action.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
