@@ -19,14 +19,12 @@ export class FindApplicationRegistrationInstalledWorkspacesInput {
   @IsInt()
   @Min(1)
   @Max(100)
-  @IsOptional()
-  limit?: number;
+  limit: number;
 
   @Field(() => Int, { defaultValue: 0 })
   @IsInt()
   @Min(0)
-  @IsOptional()
-  offset?: number;
+  offset: number;
 
   @Field({ nullable: true })
   @IsString()

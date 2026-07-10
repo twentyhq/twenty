@@ -54,8 +54,7 @@ const StyledShowMoreContainer = styled.div`
 
 const TABLE_GRID = '1fr 100px 100px 100px 40px';
 const TABLE_GRID_MOBILE = '3fr 3fr 1fr 1fr 40px';
-const INITIAL_PAGE_SIZE = 10;
-const SHOW_MORE_PAGE_SIZE = 100;
+const PAGE_SIZE = 25;
 
 export const SettingsAdminApps = () => {
   const apolloAdminClient = useApolloAdminClient();
@@ -68,8 +67,9 @@ export const SettingsAdminApps = () => {
     FindAllApplicationRegistrationsDocument,
     {
       client: apolloAdminClient,
+      notifyOnNetworkStatusChange: true,
       variables: {
-        limit: INITIAL_PAGE_SIZE,
+        limit: PAGE_SIZE,
         offset: 0,
         searchTerm: debouncedSearchQuery,
         isPreInstalledOnly: showPreInstalledOnly,
@@ -97,14 +97,14 @@ export const SettingsAdminApps = () => {
 
   const registrations = [
     ...(data?.findAllApplicationRegistrations.registrations ?? []),
-  ].sort((a, b) => (a.isConfigured ? 1 : b.isConfigured ? -1 : 0));
+  ].sort((a, b) => Number(a.isConfigured) - Number(b.isConfigured));
 
   const hasMore = data?.findAllApplicationRegistrations.hasMore ?? false;
 
   const handleShowMore = () => {
     fetchMore({
       variables: {
-        limit: SHOW_MORE_PAGE_SIZE,
+        limit: PAGE_SIZE,
         offset: registrations.length,
       },
       updateQuery: (previousData, { fetchMoreResult }) => {

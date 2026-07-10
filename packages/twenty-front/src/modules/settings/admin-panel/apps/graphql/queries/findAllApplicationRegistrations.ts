@@ -18,7 +18,6 @@ export const FIND_ALL_APPLICATION_REGISTRATIONS = gql`
       registrations {
         ...ApplicationRegistrationFragment
       }
-      totalCount
       hasMore
     }
   }

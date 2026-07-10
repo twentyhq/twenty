@@ -106,8 +106,6 @@ import { ModelsDevProviderSuggestionDTO } from './dtos/models-dev-provider-sugge
 import { QueueMetricsDataDTO } from './dtos/queue-metrics-data.dto';
 import { SetMaintenanceModeInput } from './dtos/set-maintenance-mode.input';
 
-const INSTALLED_WORKSPACES_PAGE_SIZE = 10;
-
 @UsePipes(ResolverValidationPipe)
 @AdminResolver()
 @UseFilters(
@@ -495,8 +493,8 @@ export class AdminPanelResolver {
     return this.applicationRegistrationService.findAll({
       limit,
       offset,
-      searchTerm: searchTerm ?? undefined,
-      isPreInstalledOnly: isPreInstalledOnly ?? undefined,
+      searchTerm,
+      isPreInstalledOnly,
     });
   }
 
@@ -858,8 +856,8 @@ export class AdminPanelResolver {
   ): Promise<ApplicationRegistrationInstalledWorkspacesDTO> {
     return this.applicationRegistrationService.getInstalledWorkspacesGlobal(
       id,
-      limit ?? INSTALLED_WORKSPACES_PAGE_SIZE,
-      offset ?? 0,
+      limit,
+      offset,
       searchTerm,
     );
   }
