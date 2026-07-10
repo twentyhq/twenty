@@ -19,6 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "Zkušební e-mail"
+
+#. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Your workspace is paused"
 msgstr "Váš pracovní prostor je pozastavený"
@@ -63,11 +68,6 @@ msgid "Reactivate workspace"
 msgstr "Znovu aktivovat pracovní prostor"
 
 #. js-lingui-explicit-id
-#: src/emails/test.email.tsx
-msgid "Test email"
-msgstr "Zkušební e-mail"
-
-#. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
@@ -77,21 +77,6 @@ msgstr "Ověřit doménu"
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
 msgstr "{senderName} (<0>{senderEmail}</0>): Ověřte prosím tuto doménu, aby uživatelé s <1>@{domain}</1> e-mailovými adresami mohli vstoupit do vašeho pracovního prostoru bez nutnosti pozvání."
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "Enabled"
-msgstr "Povoleno"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "Disabled"
-msgstr "Neaktivní"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "Server administrator access changed"
-msgstr "Přístup administrátora serveru byl změněn"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -112,6 +97,36 @@ msgstr "Potvrďte nový email"
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Verify Email"
 msgstr "Ověřit e-mail"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Enabled"
+msgstr "Povoleno"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Disabled"
+msgstr "Neaktivní"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Server administrator access changed"
+msgstr "Přístup administrátora serveru byl změněn"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Připojte se k svému týmu na Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) vás pozval/a připojit se k pracovnímu prostoru nazvanému <1>{workspaceName}</1>."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "Přijměte pozvánku"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -139,19 +154,29 @@ msgid "Connect to Twenty"
 msgstr "Připojte se k Twenty"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Připojte se k svému týmu na Twenty"
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace has been deleted"
+msgstr "Váš pracovní prostor byl smazán"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) vás pozval/a připojit se k pracovnímu prostoru nazvanému <1>{workspaceName}</1>."
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
+msgstr "Váš pracovní prostor <0>{workspaceDisplayName}</0> byl nyní trvale smazán — byl pozastaven před {daysSinceInactive} dny a nebyl včas znovu aktivován."
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "Přijměte pozvánku"
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Its data has been removed and can no longer be recovered."
+msgstr "Jeho data byla odstraněna a již je nelze obnovit."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
+msgstr "Pokud byste chtěli Twenty někdy znovu vyzkoušet, můžete během pár minut založit nový pracovní prostor — budeme rádi, když se vrátíte."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Start a new workspace"
+msgstr "Vytvořit nový pracovní prostor"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -177,31 +202,6 @@ msgstr "Nastavit"
 #: src/emails/password-reset-link.email.tsx
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 msgstr "Tento odkaz je platný pouze následující {duration}. Pokud odkaz nefunguje, můžete přímo použít odkaz pro ověření přihlášení:"
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Your workspace has been deleted"
-msgstr "Váš pracovní prostor byl smazán"
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
-msgstr "Váš pracovní prostor <0>{workspaceDisplayName}</0> byl nyní trvale smazán — byl pozastaven před {daysSinceInactive} dny a nebyl včas znovu aktivován."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Its data has been removed and can no longer be recovered."
-msgstr "Jeho data byla odstraněna a již je nelze obnovit."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
-msgstr "Pokud byste chtěli Twenty někdy znovu vyzkoušet, můžete během pár minut založit nový pracovní prostor — budeme rádi, když se vrátíte."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Start a new workspace"
-msgstr "Vytvořit nový pracovní prostor"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
@@ -260,6 +260,16 @@ msgid "Manage subscription"
 msgstr "Spravovat předplatné"
 
 #. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Co je Twenty?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "Je to CRM, software, který pomáhá firmám efektivně spravovat jejich zákaznická data a vztahy."
+
+#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "Váš tarif bude brzy obnoven"
@@ -278,16 +288,6 @@ msgstr "Váš roční tarif pro pracovní prostor <0>{workspaceDisplayName}</0> 
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "Pokud chcete pokračovat, není potřeba nic dělat. Pokud nechcete obnovovat, můžete to kdykoli předtím zrušit."
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Co je Twenty?"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "Je to CRM, software, který pomáhá firmám efektivně spravovat jejich zákaznická data a vztahy."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
