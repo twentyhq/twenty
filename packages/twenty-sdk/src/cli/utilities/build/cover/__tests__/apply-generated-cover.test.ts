@@ -41,14 +41,14 @@ describe('applyGeneratedCover', () => {
     await writeFile(join(appPath, relativePath), Buffer.from('logo'));
   };
 
-  it('generates a cover when a local logo exists and no screenshots are set', async () => {
+  it('generates a cover when a local logo exists and no gallery images are set', async () => {
     await writeLogo('public/logo.png');
-    const manifest = buildManifest({ logoUrl: 'public/logo.png' });
+    const manifest = buildManifest({ logo: 'public/logo.png' });
 
     const result = await applyGeneratedCover({ appPath, manifest });
 
     expect(mockedGenerateCoverImage).toHaveBeenCalledTimes(1);
-    expect(result.manifest.application.screenshots).toEqual([
+    expect(result.manifest.application.galleryImages).toEqual([
       GENERATED_COVER_PATH,
     ]);
     expect(
@@ -68,28 +68,28 @@ describe('applyGeneratedCover', () => {
 
     expect(mockedGenerateCoverImage).not.toHaveBeenCalled();
     expect(result.generatedAssets).toEqual([]);
-    expect(result.manifest.application.screenshots).toBeUndefined();
+    expect(result.manifest.application.galleryImages).toBeUndefined();
   });
 
-  it('does nothing when screenshots are already provided', async () => {
+  it('does nothing when gallery images are already provided', async () => {
     await writeLogo('public/logo.png');
     const manifest = buildManifest({
-      logoUrl: 'public/logo.png',
-      screenshots: ['public/shot.png'],
+      logo: 'public/logo.png',
+      galleryImages: ['public/shot.png'],
     });
 
     const result = await applyGeneratedCover({ appPath, manifest });
 
     expect(mockedGenerateCoverImage).not.toHaveBeenCalled();
     expect(result.generatedAssets).toEqual([]);
-    expect(result.manifest.application.screenshots).toEqual([
+    expect(result.manifest.application.galleryImages).toEqual([
       'public/shot.png',
     ]);
   });
 
   it('does nothing when the logo is an absolute url', async () => {
     const manifest = buildManifest({
-      logoUrl: 'https://example.com/logo.png',
+      logo: 'https://example.com/logo.png',
     });
 
     const result = await applyGeneratedCover({ appPath, manifest });
@@ -99,7 +99,7 @@ describe('applyGeneratedCover', () => {
   });
 
   it('does nothing when the logo file is missing', async () => {
-    const manifest = buildManifest({ logoUrl: 'public/missing.png' });
+    const manifest = buildManifest({ logo: 'public/missing.png' });
 
     const result = await applyGeneratedCover({ appPath, manifest });
 

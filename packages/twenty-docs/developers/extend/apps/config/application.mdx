@@ -108,10 +108,14 @@ If you plan to [publish your app](/developers/extend/apps/operations/publishing)
 |-------|-------------|
 | `author` | Author or company name |
 | `category` | App category for marketplace filtering |
-| `logoUrl` | Path to your app logo (e.g., `public/logo.png`) |
-| `screenshots` | Array of screenshot paths (e.g., `public/screenshot-1.png`) |
+| `logo` | Path to your app logo bundled in `public/` (e.g., `public/logo.png`) |
+| `galleryImages` | Array of gallery image paths bundled in `public/` (e.g., `public/screenshot-1.png`) |
 | `aboutDescription` | Longer markdown description for the "About" tab. If omitted, the marketplace uses the package's `README.md` from npm |
 | `websiteUrl` | Link to your website |
 | `termsUrl` | Link to terms of service |
 | `emailSupport` | Support email address |
 | `issueReportUrl` | Link to issue tracker |
+
+<Note>
+`logoUrl` and `screenshots` are deprecated aliases of `logo` and `galleryImages`. External absolute URLs (`http://` or `https://`) are not supported for these fields: they are dropped with a warning at build time. Bundle the images in your app's `public/` folder instead.
+</Note>

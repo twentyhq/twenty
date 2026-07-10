@@ -100,7 +100,7 @@ export const SettingsApplicationDetails = () => {
   const description = detail?.description ?? resolvedDescription;
 
   const getScreenshots = () => {
-    if (detail?.screenshots?.length) return detail.screenshots;
+    if (detail?.galleryImages?.length) return detail.galleryImages;
     if (isStandardApplication) return STANDARD_APPLICATION_ILLUSTRATIONS;
     if (isCustomApplication) return CUSTOM_APPLICATION_ILLUSTRATIONS;
     return undefined;
