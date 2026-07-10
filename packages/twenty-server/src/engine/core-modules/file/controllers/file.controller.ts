@@ -26,9 +26,7 @@ import {
   SupportedFileFolder,
 } from 'src/engine/core-modules/file/guards/file-by-id.guard';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { getPresignedUrlCacheControl } from 'src/engine/core-modules/file/utils/get-presigned-url-cache-control.util';
 import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.utils';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
@@ -37,10 +35,7 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 export class FileController {
   private readonly logger = new Logger(FileController.name);
 
-  constructor(
-    private readonly fileService: FileService,
-    private readonly twentyConfigService: TwentyConfigService,
-  ) {}
+  constructor(private readonly fileService: FileService) {}
 
   @Get('public-assets/:workspaceId/:applicationId/*path')
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
@@ -154,15 +149,6 @@ export class FileController {
     }
 
     if (fileResponse.type === 'redirect') {
-      res.setHeader(
-        'Cache-Control',
-        getPresignedUrlCacheControl({
-          presignedUrlExpiresInSeconds: this.twentyConfigService.get(
-            'STORAGE_S3_PRESIGNED_URL_EXPIRES_IN',
-          ),
-        }),
-      );
-
       return res.redirect(fileResponse.presignedUrl);
     }
 

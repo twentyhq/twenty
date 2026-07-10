@@ -17,7 +17,6 @@ import {
 import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-api-exception.filter';
 import { FileByIdGuard } from 'src/engine/core-modules/file/guards/file-by-id.guard';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
@@ -64,14 +63,6 @@ describe('FileController', () => {
             getFileStreamById: jest.fn(),
             getFilePresignedUrlOrStreamByPath: jest.fn(),
             getFilePresignedUrlOrStreamById: jest.fn(),
-          },
-        },
-        {
-          provide: TwentyConfigService,
-          useValue: {
-            get: jest.fn((key: string) =>
-              key === 'STORAGE_S3_PRESIGNED_URL_EXPIRES_IN' ? 900 : undefined,
-            ),
           },
         },
       ],
@@ -124,10 +115,7 @@ describe('FileController', () => {
       expect(mockResponse.redirect).toHaveBeenCalledWith(
         'https://s3.example.com/file?signed=abc',
       );
-      expect(mockResponse.setHeader).toHaveBeenCalledWith(
-        'Cache-Control',
-        'private, max-age=840',
-      );
+      expect(mockResponse.setHeader).not.toHaveBeenCalled();
     });
 
     it('should stream with headers when no presigned URL (local driver)', async () => {
