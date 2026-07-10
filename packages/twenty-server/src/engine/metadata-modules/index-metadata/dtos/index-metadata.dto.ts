@@ -30,10 +30,8 @@ registerEnumType(IndexType, {
   description: 'Type of the index',
 });
 
-// IndexMetadataDTO is still consumed as a nestjs-query relation DTO by
-// ObjectMetadataDTO's `indexMetadatas` @CursorConnection, so it keeps its
-// @Authorize (row-level workspace filtering), @FilterableField (needed to build
-// the relation's filter type) and @QueryOptions until object-metadata migrates.
+// TODO: drop these nestjs-query decorators once ObjectMetadataDTO's
+// @CursorConnection('indexMetadatas') relation is migrated off nestjs-query.
 @ObjectType('Index')
 @Authorize({
   // oxlint-disable-next-line typescript/no-explicit-any
