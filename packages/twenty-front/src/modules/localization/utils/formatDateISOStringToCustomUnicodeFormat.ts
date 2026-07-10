@@ -1,4 +1,5 @@
 import { formatPlainDateISOString } from '@/localization/utils/formatPlainDateISOString';
+import { normalizeTimeZone } from '@/localization/utils/normalizeTimeZone';
 import { type Locale } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { isDateWithoutTime } from 'twenty-shared/utils';
@@ -19,9 +20,14 @@ export const formatDateISOStringToCustomUnicodeFormat = ({
       return formatPlainDateISOString({ date, dateFormat, localeCatalog });
     }
 
-    return formatInTimeZone(new Date(date), timeZone, dateFormat, {
-      locale: localeCatalog,
-    });
+    return formatInTimeZone(
+      new Date(date),
+      normalizeTimeZone(timeZone),
+      dateFormat,
+      {
+        locale: localeCatalog,
+      },
+    );
   } catch {
     return 'Invalid format string';
   }

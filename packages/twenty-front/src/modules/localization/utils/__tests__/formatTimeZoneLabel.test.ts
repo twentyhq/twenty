@@ -19,4 +19,10 @@ describe('formatTimeZoneLabel', () => {
 
     expect(formattedLabel).toEqual(expectedLabel);
   });
+
+  it('should format a legacy alias as its canonical zone instead of throwing', () => {
+    expect(formatTimeZoneLabel('CET')).toEqual(
+      formatTimeZoneLabel('Europe/Paris'),
+    );
+  });
 });

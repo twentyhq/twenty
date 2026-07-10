@@ -98,7 +98,9 @@ describe('formatDateISOStringToCustomUnicodeFormat', () => {
       expect(result).toBe('2022-01-02 07:00');
     });
 
-    it('should return the fallback string for an unknown timezone', () => {
+    it('should format in a fallback zone instead of erroring for an unknown timezone', () => {
+      // Normalization falls back to the detected zone (UTC in jsdom) so the
+      // value still renders instead of surfacing an error string.
       const result = formatDateISOStringToCustomUnicodeFormat({
         date: '2022-01-01T12:00:00Z',
         timeZone: 'Mars/Olympus',
@@ -106,7 +108,7 @@ describe('formatDateISOStringToCustomUnicodeFormat', () => {
         localeCatalog: enUS,
       });
 
-      expect(result).toBe('Invalid format string');
+      expect(result).toBe('2022-01-01');
     });
   });
 });

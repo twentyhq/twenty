@@ -41,4 +41,17 @@ describe('detectTimeZone', () => {
     expect(detectTimeZone()).toBe('America/New_York');
     global.Intl.DateTimeFormat = originalDateTimeFormat;
   });
+
+  it('should normalize a detected legacy alias to its canonical zone', () => {
+    // WebKit on Linux can resolve the host zone as `CET`, an alias its own ICU
+    // rejects when passed back into a formatter.
+    const originalDateTimeFormat = global.Intl.DateTimeFormat;
+    // @ts-expect-error - Mocking for test
+    global.Intl.DateTimeFormat = jest.fn().mockImplementation(() => ({
+      resolvedOptions: () => ({ timeZone: 'CET' }),
+    }));
+
+    expect(detectTimeZone()).toBe('Europe/Paris');
+    global.Intl.DateTimeFormat = originalDateTimeFormat;
+  });
 });
