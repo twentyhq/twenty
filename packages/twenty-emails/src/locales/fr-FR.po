@@ -68,17 +68,6 @@ msgid "Reactivate workspace"
 msgstr "Réactiver l’espace de travail"
 
 #. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "Validate domain"
-msgstr "Valider le domaine"
-
-#. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
-msgstr "{senderName} (<0>{senderEmail}</0>) : Veuillez valider ce domaine pour permettre aux utilisateurs avec des adresses e-mail <1>@{domain}</1> de rejoindre votre espace de travail sans nécessiter d'invitation."
-
-#. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Enabled"
 msgstr "Activé"
@@ -92,6 +81,32 @@ msgstr "Désactivé"
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Server administrator access changed"
 msgstr "Accès administrateur au serveur modifié"
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr "Valider le domaine"
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
+msgstr "{senderName} (<0>{senderEmail}</0>) : Veuillez valider ce domaine pour permettre aux utilisateurs avec des adresses e-mail <1>@{domain}</1> de rejoindre votre espace de travail sans nécessiter d'invitation."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Rejoignez votre équipe sur Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) vous a invité à rejoindre un espace de travail appelé <1>{workspaceName}</1>."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "Accepter l'invitation"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -112,21 +127,6 @@ msgstr ""
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Verify Email"
 msgstr "Vérifiez l'e-mail"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Rejoignez votre équipe sur Twenty"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) vous a invité à rejoindre un espace de travail appelé <1>{workspaceName}</1>."
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "Accepter l'invitation"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -260,16 +260,6 @@ msgid "Manage subscription"
 msgstr "Gérer l’abonnement"
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Qu'est-ce que Twenty ?"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "C'est un CRM, un logiciel qui aide les entreprises à gérer efficacement leurs données clients et leurs relations."
-
-#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "Votre formule sera bientôt renouvelée"
@@ -288,6 +278,16 @@ msgstr "Votre formule annuelle pour <0>{workspaceDisplayName}</0> sera renouvel�
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "Aucune action n’est nécessaire si vous souhaitez continuer. Si vous préférez ne pas renouveler, vous pouvez annuler à tout moment avant cette date."
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Qu'est-ce que Twenty ?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "C'est un CRM, un logiciel qui aide les entreprises à gérer efficacement leurs données clients et leurs relations."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
