@@ -94,24 +94,19 @@ msgid "Server administrator access changed"
 msgstr "Accesul de administrator al serverului a fost modificat"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your new email address"
-msgstr ""
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Alăturați-vă echipei pe Twenty"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your email address"
-msgstr "Confirmați adresa de email"
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) v-a invitat să vă alăturați unui spațiu de lucru numit <1>{workspaceName}</1>."
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm new email"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Verify Email"
-msgstr "Verificați Email"
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "Acceptați invitația"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -164,19 +159,24 @@ msgid "This link is only valid for the next {duration}. If the link does not wor
 msgstr "Acest link este valabil doar pentru următoarele {duration}. Dacă linkul nu funcționează, puteți folosi direct linkul de verificare a autentificării:"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Alăturați-vă echipei pe Twenty"
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr ""
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) v-a invitat să vă alăturați unui spațiu de lucru numit <1>{workspaceName}</1>."
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your email address"
+msgstr "Confirmați adresa de email"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "Acceptați invitația"
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm new email"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Verify Email"
+msgstr "Verificați Email"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -204,37 +204,6 @@ msgid "Start a new workspace"
 msgstr "Începe un nou spațiu de lucru"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "A heads up before your trial ends"
-msgstr "Un anunț înainte să se încheie perioada de probă"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "We don't like surprise charges, so here's a friendly heads up."
-msgstr "Nu ne plac taxările surpriză, așa că iată un mic anunț prietenos."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
-msgstr "Perioada ta de probă gratuită pentru <0>{workspaceDisplayName}</0> se încheie la {formattedDate}. Dacă nu anulezi până atunci, cardul salvat va fi debitat pentru planul tău anual."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
-msgstr "Perioada ta de probă gratuită pentru <0>{workspaceDisplayName}</0> se încheie la {formattedDate}. Dacă nu anulezi până atunci, cardul salvat va fi debitat pentru planul tău lunar."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
-msgstr "Dacă Twenty funcționează bine pentru tine, ești acoperit — nu trebuie să faci nimic. Dacă nu este potrivit, poți anula cu un singur clic înainte de acea dată și nu vei fi taxat."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Manage subscription"
-msgstr "Gestionează abonamentul"
-
-#. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
 msgstr "Perioada ta de probă se va încheia în curând"
@@ -260,6 +229,16 @@ msgid "Add a payment method"
 msgstr "Adaugă o metodă de plată"
 
 #. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Ce este Twenty?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "Este un CRM, un software care ajută companiile să își gestioneze eficient datele și relațiile cu clienții."
+
+#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "Planul tău va fi reînnoit în curând"
@@ -280,14 +259,35 @@ msgid "No action is needed if you'd like to continue. If you'd rather not renew,
 msgstr "Nu este necesară nicio acțiune dacă dorești să continui. Dacă preferi să nu reînnoiești, poți anula oricând înainte de acea dată."
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Ce este Twenty?"
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "Gestionează abonamentul"
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "Este un CRM, un software care ajută companiile să își gestioneze eficient datele și relațiile cu clienții."
+#: src/emails/billing-trial-converting.email.tsx
+msgid "A heads up before your trial ends"
+msgstr "Un anunț înainte să se încheie perioada de probă"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "We don't like surprise charges, so here's a friendly heads up."
+msgstr "Nu ne plac taxările surpriză, așa că iată un mic anunț prietenos."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
+msgstr "Perioada ta de probă gratuită pentru <0>{workspaceDisplayName}</0> se încheie la {formattedDate}. Dacă nu anulezi până atunci, cardul salvat va fi debitat pentru planul tău anual."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
+msgstr "Perioada ta de probă gratuită pentru <0>{workspaceDisplayName}</0> se încheie la {formattedDate}. Dacă nu anulezi până atunci, cardul salvat va fi debitat pentru planul tău lunar."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
+msgstr "Dacă Twenty funcționează bine pentru tine, ești acoperit — nu trebuie să faci nimic. Dacă nu este potrivit, poți anula cu un singur clic înainte de acea dată și nu vei fi taxat."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

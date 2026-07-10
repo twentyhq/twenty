@@ -94,24 +94,19 @@ msgid "Server administrator access changed"
 msgstr "A kiszolgáló‑adminisztrátori hozzáférés megváltozott"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your new email address"
-msgstr "Erősítsd meg az új e-mail címed"
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Csatlakozzon a csapatához a Twentyn"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your email address"
-msgstr "Erősítse meg email címét"
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) meghívta önt, hogy csatlakozzon egy <1>{workspaceName}</1> nevű munkaterülethez."
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm new email"
-msgstr "Új e-mail megerősítése"
-
-#. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Verify Email"
-msgstr "Email ellenőrzése"
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "Meghívó elfogadása"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -164,19 +159,24 @@ msgid "This link is only valid for the next {duration}. If the link does not wor
 msgstr "Ez a hivatkozás csak a következő {duration} ideig érvényes. Ha a hivatkozás nem működik, használhatja közvetlenül a belépés ellenőrző hivatkozását:"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Csatlakozzon a csapatához a Twentyn"
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr "Erősítsd meg az új e-mail címed"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) meghívta önt, hogy csatlakozzon egy <1>{workspaceName}</1> nevű munkaterülethez."
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your email address"
+msgstr "Erősítse meg email címét"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "Meghívó elfogadása"
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm new email"
+msgstr "Új e-mail megerősítése"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Verify Email"
+msgstr "Email ellenőrzése"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -204,37 +204,6 @@ msgid "Start a new workspace"
 msgstr "Új munkaterület indítása"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "A heads up before your trial ends"
-msgstr "Előzetes figyelmeztetés a próbaidőszak lejárta előtt"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "We don't like surprise charges, so here's a friendly heads up."
-msgstr "Mi sem szeretjük a váratlan levonásokat, ezért küldjük ezt a barátságos előzetes értesítést."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
-msgstr "A(z) <0>{workspaceDisplayName}</0> ingyenes próbaidőszakod {formattedDate}-ig tart. Ha addig nem mondod le, a nyilvántartásban szereplő kártyádról levonjuk az éves csomagod díját."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
-msgstr "A(z) <0>{workspaceDisplayName}</0> ingyenes próbaidőszakod {formattedDate}-ig tart. Ha addig nem mondod le, a nyilvántartásban szereplő kártyádról levonjuk a havi csomagod díját."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
-msgstr "Ha a Twenty bevált számodra, minden rendben — nincs további teendőd. Ha mégsem ez a megfelelő megoldás, egy kattintással lemondhatod addig, és nem számítunk fel díjat."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Manage subscription"
-msgstr "Előfizetés kezelése"
-
-#. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
 msgstr "A próbaidőszakod hamarosan lejár"
@@ -260,6 +229,16 @@ msgid "Add a payment method"
 msgstr "Fizetési mód hozzáadása"
 
 #. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Mi az a Twenty?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "Ez egy CRM, egy szoftver, amely segíti a vállalkozásokat az ügyféladataik és kapcsolataik hatékony kezelésében."
+
+#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "A csomagod hamarosan megújul"
@@ -280,14 +259,35 @@ msgid "No action is needed if you'd like to continue. If you'd rather not renew,
 msgstr "Ha folytatni szeretnéd, nincs szükség semmilyen lépésre. Ha inkább nem szeretnéd megújítani, addig bármikor lemondhatod."
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Mi az a Twenty?"
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "Előfizetés kezelése"
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "Ez egy CRM, egy szoftver, amely segíti a vállalkozásokat az ügyféladataik és kapcsolataik hatékony kezelésében."
+#: src/emails/billing-trial-converting.email.tsx
+msgid "A heads up before your trial ends"
+msgstr "Előzetes figyelmeztetés a próbaidőszak lejárta előtt"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "We don't like surprise charges, so here's a friendly heads up."
+msgstr "Mi sem szeretjük a váratlan levonásokat, ezért küldjük ezt a barátságos előzetes értesítést."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
+msgstr "A(z) <0>{workspaceDisplayName}</0> ingyenes próbaidőszakod {formattedDate}-ig tart. Ha addig nem mondod le, a nyilvántartásban szereplő kártyádról levonjuk az éves csomagod díját."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
+msgstr "A(z) <0>{workspaceDisplayName}</0> ingyenes próbaidőszakod {formattedDate}-ig tart. Ha addig nem mondod le, a nyilvántartásban szereplő kártyádról levonjuk a havi csomagod díját."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
+msgstr "Ha a Twenty bevált számodra, minden rendben — nincs további teendőd. Ha mégsem ez a megfelelő megoldás, egy kattintással lemondhatod addig, és nem számítunk fel díjat."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

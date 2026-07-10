@@ -94,24 +94,19 @@ msgid "Server administrator access changed"
 msgstr "تم تغيير صلاحيات مسؤول الخادم"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your new email address"
-msgstr "تأكيد عنوان بريدك الإلكتروني الجديد"
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "انضم إلى فريقك في Twenty"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your email address"
-msgstr "تأكد من عنوان بريدك الإلكتروني"
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) قد دعوك للانضمام إلى مساحة عمل تسمى <1>{workspaceName}</1>."
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm new email"
-msgstr "تأكيد البريد الإلكتروني الجديد"
-
-#. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Verify Email"
-msgstr "تحقق من البريد الإلكتروني"
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "قبول الدعوة"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -164,19 +159,24 @@ msgid "This link is only valid for the next {duration}. If the link does not wor
 msgstr "هذا الرابط صالح فقط للمدة {duration} القادمة. إذا لم يعمل الرابط، يمكنك استخدام رابط التحقق من تسجيل الدخول مباشرة:"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "انضم إلى فريقك في Twenty"
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr "تأكيد عنوان بريدك الإلكتروني الجديد"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) قد دعوك للانضمام إلى مساحة عمل تسمى <1>{workspaceName}</1>."
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your email address"
+msgstr "تأكد من عنوان بريدك الإلكتروني"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "قبول الدعوة"
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm new email"
+msgstr "تأكيد البريد الإلكتروني الجديد"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Verify Email"
+msgstr "تحقق من البريد الإلكتروني"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -204,37 +204,6 @@ msgid "Start a new workspace"
 msgstr "بدء مساحة عمل جديدة"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "A heads up before your trial ends"
-msgstr "تنبيه قبل انتهاء الفترة التجريبية"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "We don't like surprise charges, so here's a friendly heads up."
-msgstr "لا نحب الرسوم المفاجِئة، لذا نرسل لك هذا التنبيه الودّي."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
-msgstr "الفترة التجريبية المجانية لمساحة العمل <0>{workspaceDisplayName}</0> ستنتهي في {formattedDate}. ما لم تُلغِ قبل ذلك، فسيتم خصم قيمة خطتك السنوية من البطاقة المسجَّلة."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
-msgstr "الفترة التجريبية المجانية لمساحة العمل <0>{workspaceDisplayName}</0> ستنتهي في {formattedDate}. ما لم تُلغِ قبل ذلك، فسيتم خصم قيمة خطتك الشهرية من البطاقة المسجَّلة."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
-msgstr "إذا كانت Twenty مناسبة لك، فأنت جاهز تمامًا — لا تحتاج لفعل أي شيء. وإذا لم تكن كذلك، يمكنك الإلغاء بنقرة واحدة قبل ذلك ولن تُحسَب عليك أي رسوم."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Manage subscription"
-msgstr "إدارة الاشتراك"
-
-#. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
 msgstr "ستَنتهي الفترة التجريبية قريبًا"
@@ -260,6 +229,16 @@ msgid "Add a payment method"
 msgstr "إضافة طريقة دفع"
 
 #. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "ما هو Twenty؟"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "إنه برنامج CRM، لمساعدة الشركات في إدارة بيانات العملاء وعلاقاتهم بكفاءة."
+
+#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "ستتجدد خطتك قريبًا"
@@ -280,14 +259,35 @@ msgid "No action is needed if you'd like to continue. If you'd rather not renew,
 msgstr "لا حاجة لاتخاذ أي إجراء إذا أردت الاستمرار. وإذا كنت لا ترغب في التجديد، يمكنك الإلغاء في أي وقت قبل ذلك."
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "ما هو Twenty؟"
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "إدارة الاشتراك"
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "إنه برنامج CRM، لمساعدة الشركات في إدارة بيانات العملاء وعلاقاتهم بكفاءة."
+#: src/emails/billing-trial-converting.email.tsx
+msgid "A heads up before your trial ends"
+msgstr "تنبيه قبل انتهاء الفترة التجريبية"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "We don't like surprise charges, so here's a friendly heads up."
+msgstr "لا نحب الرسوم المفاجِئة، لذا نرسل لك هذا التنبيه الودّي."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
+msgstr "الفترة التجريبية المجانية لمساحة العمل <0>{workspaceDisplayName}</0> ستنتهي في {formattedDate}. ما لم تُلغِ قبل ذلك، فسيتم خصم قيمة خطتك السنوية من البطاقة المسجَّلة."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
+msgstr "الفترة التجريبية المجانية لمساحة العمل <0>{workspaceDisplayName}</0> ستنتهي في {formattedDate}. ما لم تُلغِ قبل ذلك، فسيتم خصم قيمة خطتك الشهرية من البطاقة المسجَّلة."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
+msgstr "إذا كانت Twenty مناسبة لك، فأنت جاهز تمامًا — لا تحتاج لفعل أي شيء. وإذا لم تكن كذلك، يمكنك الإلغاء بنقرة واحدة قبل ذلك ولن تُحسَب عليك أي رسوم."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

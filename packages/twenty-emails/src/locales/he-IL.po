@@ -94,24 +94,19 @@ msgid "Server administrator access changed"
 msgstr "גישה של מנהל השרת השתנתה"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your new email address"
-msgstr ""
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "הצטרף לצוות שלך ב-Twenty"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your email address"
-msgstr "אמת את כתובת האימייל שלך"
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) הזמין אותך להצטרף למרחב שנקרא <1>{workspaceName}</1>."
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm new email"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Verify Email"
-msgstr "אמת דוא\"ל"
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "קבל הזמנה"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -164,19 +159,24 @@ msgid "This link is only valid for the next {duration}. If the link does not wor
 msgstr "הקישור הזה תקף רק ל-{duration} הבאים. אם הקישור לא עובד, תוכל להשתמש בקישור אימות ההתחברות ישירות:"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "הצטרף לצוות שלך ב-Twenty"
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr ""
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) הזמין אותך להצטרף למרחב שנקרא <1>{workspaceName}</1>."
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your email address"
+msgstr "אמת את כתובת האימייל שלך"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "קבל הזמנה"
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm new email"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Verify Email"
+msgstr "אמת דוא\"ל"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -204,37 +204,6 @@ msgid "Start a new workspace"
 msgstr "התחל מרחב עבודה חדש"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "A heads up before your trial ends"
-msgstr "תזכורת לפני שתקופת הניסיון שלך מסתיימת"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "We don't like surprise charges, so here's a friendly heads up."
-msgstr "אנחנו לא אוהבים חיובים מפתיעים, אז זו תזכורת ידידותית."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
-msgstr "תקופת הניסיון החינמית שלך עבור <0>{workspaceDisplayName}</0> מסתיימת ב-{formattedDate}. אם לא תבטל עד אז, הכרטיס השמור במערכת יחויב עבור תוכנית שנתית."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
-msgstr "תקופת הניסיון החינמית שלך עבור <0>{workspaceDisplayName}</0> מסתיימת ב-{formattedDate}. אם לא תבטל עד אז, הכרטיס השמור במערכת יחויב עבור תוכנית חודשית."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
-msgstr "אם Twenty מתאימה לך, אתה מסודר — אין צורך לעשות דבר. אם זה לא מתאים, תוכל לבטל בלחיצה אחת לפני כן ולא תחויב."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Manage subscription"
-msgstr "נהל מנוי"
-
-#. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
 msgstr "תקופת הניסיון שלך מסתיימת בקרוב"
@@ -260,6 +229,16 @@ msgid "Add a payment method"
 msgstr "הוסף אמצעי תשלום"
 
 #. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "מה זה Twenty?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "זהו CRM, תוכנה שעוזרת לעסקים לנהל את הנתונים והיחסים עם הלקוחות שלהם בצורה יעילה."
+
+#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "התוכנית שלך מתחדשת בקרוב"
@@ -280,14 +259,35 @@ msgid "No action is needed if you'd like to continue. If you'd rather not renew,
 msgstr "אם תרצה להמשיך, אין צורך לבצע שום פעולה. אם אינך מעוניין לחדש, תוכל לבטל בכל זמן לפני כן."
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "מה זה Twenty?"
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "נהל מנוי"
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "זהו CRM, תוכנה שעוזרת לעסקים לנהל את הנתונים והיחסים עם הלקוחות שלהם בצורה יעילה."
+#: src/emails/billing-trial-converting.email.tsx
+msgid "A heads up before your trial ends"
+msgstr "תזכורת לפני שתקופת הניסיון שלך מסתיימת"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "We don't like surprise charges, so here's a friendly heads up."
+msgstr "אנחנו לא אוהבים חיובים מפתיעים, אז זו תזכורת ידידותית."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
+msgstr "תקופת הניסיון החינמית שלך עבור <0>{workspaceDisplayName}</0> מסתיימת ב-{formattedDate}. אם לא תבטל עד אז, הכרטיס השמור במערכת יחויב עבור תוכנית שנתית."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
+msgstr "תקופת הניסיון החינמית שלך עבור <0>{workspaceDisplayName}</0> מסתיימת ב-{formattedDate}. אם לא תבטל עד אז, הכרטיס השמור במערכת יחויב עבור תוכנית חודשית."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
+msgstr "אם Twenty מתאימה לך, אתה מסודר — אין צורך לעשות דבר. אם זה לא מתאים, תוכל לבטל בלחיצה אחת לפני כן ולא תחויב."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

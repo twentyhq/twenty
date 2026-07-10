@@ -94,24 +94,19 @@ msgid "Server administrator access changed"
 msgstr "Η πρόσβαση διαχειριστή διακομιστή άλλαξε"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your new email address"
-msgstr ""
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Συμμετέχετε στην ομάδα σας στο Twenty"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your email address"
-msgstr "Επιβεβαιώστε τη διεύθυνση email σας"
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) σας έχει προσκαλέσει να συμμετάσχετε σε έναν χώρο εργασίας που ονομάζεται <1>{workspaceName}</1>."
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm new email"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Verify Email"
-msgstr "Επαληθεύστε το Email"
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "Αποδοχή πρόσκλησης"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -164,19 +159,24 @@ msgid "This link is only valid for the next {duration}. If the link does not wor
 msgstr "Αυτός ο σύνδεσμος ισχύει μόνο για τις επόμενες {duration}. Εάν ο σύνδεσμος δεν λειτουργεί, μπορείτε να χρησιμοποιήσετε τον σύνδεσμο επαλήθευσης σύνδεσης απευθείας:"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Συμμετέχετε στην ομάδα σας στο Twenty"
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr ""
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) σας έχει προσκαλέσει να συμμετάσχετε σε έναν χώρο εργασίας που ονομάζεται <1>{workspaceName}</1>."
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your email address"
+msgstr "Επιβεβαιώστε τη διεύθυνση email σας"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "Αποδοχή πρόσκλησης"
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm new email"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Verify Email"
+msgstr "Επαληθεύστε το Email"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -204,37 +204,6 @@ msgid "Start a new workspace"
 msgstr "Ξεκινήστε έναν νέο χώρο εργασίας"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "A heads up before your trial ends"
-msgstr "Μια ενημέρωση πριν λήξει η δοκιμαστική περίοδός σας"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "We don't like surprise charges, so here's a friendly heads up."
-msgstr "Δεν μας αρέσουν οι απρόσμενες χρεώσεις, οπότε σας στέλνουμε αυτή τη φιλική υπενθύμιση."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
-msgstr "Η δωρεάν δοκιμαστική περίοδος του <0>{workspaceDisplayName}</0> λήγει στις {formattedDate}. Αν δεν ακυρώσετε πριν από τότε, η αποθηκευμένη κάρτα θα χρεωθεί για το ετήσιο πρόγραμμά σας."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
-msgstr "Η δωρεάν δοκιμαστική περίοδος του <0>{workspaceDisplayName}</0> λήγει στις {formattedDate}. Αν δεν ακυρώσετε πριν από τότε, η αποθηκευμένη κάρτα θα χρεωθεί για το μηνιαίο πρόγραμμά σας."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
-msgstr "Αν το Twenty σας εξυπηρετεί, είστε καλυμμένοι — δεν χρειάζεται να κάνετε τίποτα. Αν δεν είναι η κατάλληλη λύση, μπορείτε να ακυρώσετε με ένα κλικ πριν από τότε και δεν θα χρεωθείτε."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Manage subscription"
-msgstr "Διαχείριση συνδρομής"
-
-#. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
 msgstr "Η δοκιμαστική περίοδός σας λήγει σύντομα"
@@ -260,6 +229,16 @@ msgid "Add a payment method"
 msgstr "Προσθήκη μεθόδου πληρωμής"
 
 #. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Τι είναι το Twenty;"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "Είναι ένα CRM, ένα λογισμικό που βοηθά τις επιχειρήσεις να διαχειρίζονται αποτελεσματικά τα δεδομένα και τις σχέσεις με τους πελάτες τους."
+
+#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "Το πρόγραμμά σας θα ανανεωθεί σύντομα"
@@ -280,14 +259,35 @@ msgid "No action is needed if you'd like to continue. If you'd rather not renew,
 msgstr "Δεν χρειάζεται να κάνετε κάτι αν θέλετε να συνεχίσετε. Αν προτιμάτε να μην ανανεώσετε, μπορείτε να ακυρώσετε οποιαδήποτε στιγμή πριν από τότε."
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Τι είναι το Twenty;"
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "Διαχείριση συνδρομής"
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "Είναι ένα CRM, ένα λογισμικό που βοηθά τις επιχειρήσεις να διαχειρίζονται αποτελεσματικά τα δεδομένα και τις σχέσεις με τους πελάτες τους."
+#: src/emails/billing-trial-converting.email.tsx
+msgid "A heads up before your trial ends"
+msgstr "Μια ενημέρωση πριν λήξει η δοκιμαστική περίοδός σας"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "We don't like surprise charges, so here's a friendly heads up."
+msgstr "Δεν μας αρέσουν οι απρόσμενες χρεώσεις, οπότε σας στέλνουμε αυτή τη φιλική υπενθύμιση."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
+msgstr "Η δωρεάν δοκιμαστική περίοδος του <0>{workspaceDisplayName}</0> λήγει στις {formattedDate}. Αν δεν ακυρώσετε πριν από τότε, η αποθηκευμένη κάρτα θα χρεωθεί για το ετήσιο πρόγραμμά σας."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
+msgstr "Η δωρεάν δοκιμαστική περίοδος του <0>{workspaceDisplayName}</0> λήγει στις {formattedDate}. Αν δεν ακυρώσετε πριν από τότε, η αποθηκευμένη κάρτα θα χρεωθεί για το μηνιαίο πρόγραμμά σας."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
+msgstr "Αν το Twenty σας εξυπηρετεί, είστε καλυμμένοι — δεν χρειάζεται να κάνετε τίποτα. Αν δεν είναι η κατάλληλη λύση, μπορείτε να ακυρώσετε με ένα κλικ πριν από τότε και δεν θα χρεωθείτε."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
