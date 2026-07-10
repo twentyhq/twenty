@@ -1,0 +1,28 @@
+packages/twenty-front/src/modules/activities/emails/recipients/components/EmailRecipientsFieldChip.tsx
+  s_d7efdfca82e0dc::t_6a5338ffb5fc46 45,49-50,55-59
+packages/twenty-shared/src/utils/email/__tests__/formatEmailAddressWithDisplayName.test.ts
+  s_d7efdfca82e0dc::t_fe9bd1525d189f 31-59
+packages/twenty-front/src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
+  s_d7efdfca82e0dc::t_b01aa71c37d38c 146
+packages/twenty-shared/src/utils/email/formatEmailAddressWithDisplayName.ts
+  s_d7efdfca82e0dc::t_8cf03cd66d96c6 13,15
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuContent.tsx
+  s_d7efdfca82e0dc::t_0a3bb5e610e929 72
+  s_d7efdfca82e0dc::t_f18c677f0d1f0d 20,31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "30908b49b16ec5e6981d2d8dbe07e2704d755154",
+  "prompts": {},
+  "sessions": {
+    "s_d7efdfca82e0dc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8597b8f-384d-4561-a6dd-8d19f0804e31",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
