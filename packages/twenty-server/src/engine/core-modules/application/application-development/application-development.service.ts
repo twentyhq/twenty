@@ -152,13 +152,14 @@ export class ApplicationDevelopmentService {
     applicationUniversalIdentifier,
     fileFolder,
     filePath,
-    fileBuffer,
+    getFileBuffer,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
     fileFolder: FileFolder;
     filePath: string;
-    fileBuffer: Buffer;
+    // Lazy so rejected or rate-limited uploads are not buffered into memory.
+    getFileBuffer: () => Promise<Buffer>;
   }): Promise<FileDTO> {
     await this.throttlePerApplication(
       applicationUniversalIdentifier,
@@ -199,7 +200,7 @@ export class ApplicationDevelopmentService {
     }
 
     return await this.fileStorageService.writeFile({
-      sourceFile: fileBuffer,
+      sourceFile: await getFileBuffer(),
       fileFolder,
       applicationUniversalIdentifier,
       workspaceId,

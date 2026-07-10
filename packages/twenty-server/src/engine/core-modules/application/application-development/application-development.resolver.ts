@@ -78,14 +78,12 @@ export class ApplicationDevelopmentResolver {
       filePath,
     }: UploadApplicationFileInput,
   ): Promise<FileDTO> {
-    const fileBuffer = await streamToBuffer(createReadStream());
-
     return this.applicationDevelopmentService.uploadApplicationFile({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder,
       filePath,
-      fileBuffer,
+      getFileBuffer: () => streamToBuffer(createReadStream()),
     });
   }
 }
