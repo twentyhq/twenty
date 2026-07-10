@@ -13,7 +13,6 @@ export default defineCommandMenuItem({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   label: 'Open Dashboard',
   shortLabel: 'Dashboard',
-  icon: 'IconLayoutDashboard',
   isPinned: true,
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
@@ -22,51 +21,23 @@ export default defineCommandMenuItem({
 
 ## 구성 필드
 
-| 필드                                      | 필수  | 설명                                                                                                         |
-| --------------------------------------- | --- | ---------------------------------------------------------------------------------------------------------- |
-| `universalIdentifier`                   | 예   | 명령의 안정적인 고유 ID                                                                                             |
-| `label`                                 | 예   | 명령 메뉴(Cmd+K)에 표시되는 전체 레이블                                                                                  |
-| `frontComponentUniversalIdentifier`     | 예   | 이 명령으로 열리는 프런트 컴포넌트의 `universalIdentifier`                                                                 |
-| `shortLabel`                            | 아니요 | 고정된 빠른 작업 버튼에 표시되는 더 짧은 레이블                                                                                |
-| `icon`                                  | 아니요 | 레이블 옆에 표시되는 아이콘 이름(예: `'IconBolt'`, `'IconSend'`)                                                          |
-| `isPinned`                              | 아니요 | `true`이면 페이지 우측 상단에 빠른 작업 버튼으로 명령을 표시합니다                                                                   |
-| `availabilityType`                      | 아니요 | 명령이 표시되는 위치를 제어합니다: 'GLOBAL'(항상 사용 가능), 'RECORD_SELECTION'(레코드가 선택된 경우에만), 'FALLBACK'(다른 명령이 일치하지 않을 때 표시) |
-| `availabilityObjectUniversalIdentifier` | 아니요 | 명령을 특정 객체 타입의 페이지로 제한합니다(예: Company 레코드에서만)                                                                |
-| `conditionalAvailabilityExpression`     | 아니요 | 표시 여부를 동적으로 제어하는 불리언 표현식(아래 참조)                                                                            |
+| 필드                                      | 필수  | 설명                                                                                                                                                                               |
+| --------------------------------------- | --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | 예   | 명령의 안정적인 고유 ID                                                                                                                                                                   |
+| `label`                                 | 예   | 명령 메뉴(Cmd+K)에 표시되는 전체 레이블                                                                                                                                                        |
+| `frontComponentUniversalIdentifier`     | 예   | 이 명령으로 열리는 프런트 컴포넌트의 `universalIdentifier`                                                                                                                                       |
+| `shortLabel`                            | 아니요 | 고정된 빠른 작업 버튼에 표시되는 더 짧은 레이블                                                                                                                                                      |
+| `icon`                                  | 아니요 | **사용 중단됨** — 애플리케이션 아이콘이 대신 사용되며, 설정된 경우 빌드 시 경고가 발생합니다.                                                                                                                         |
+| `isPinned`                              | 아니요 | `true`이면 페이지 우측 상단에 빠른 작업 버튼으로 명령을 표시합니다                                                                                                                                         |
+| `availabilityType`                      | 아니요 | 명령이 표시되는 위치를 제어합니다: `'GLOBAL'`(항상 사용 가능), `'GLOBAL_OBJECT_CONTEXT'`(객체 컨텍스트가 있는 페이지에서만 — 인덱스 및 레코드 페이지), `'RECORD_SELECTION'`(레코드가 선택된 경우에만), `'FALLBACK'`(다른 명령이 일치하지 않을 때 표시). |
+| `availabilityObjectUniversalIdentifier` | 아니요 | 명령을 특정 객체 타입의 페이지로 제한합니다(예: Company 레코드에서만)                                                                                                                                      |
+| `conditionalAvailabilityExpression`     | 아니요 | 표시 여부를 동적으로 제어하는 불리언 표현식(아래 참조)                                                                                                                                                  |
 
 ## 헤드리스 명령
 
 [헤드리스 프런트 컴포넌트](/l/ko/developers/extend/apps/layout/front-components#headless-vs-non-headless)와 짝을 이룬 명령 메뉴 항목은 원클릭 작업—코드 실행, 이동, 확인 후 실행—을 제공하는 가장 전형적인 방식입니다. 프런트 컴포넌트 페이지에서는 동작 후 언마운트 패턴을 처리하는 [SDK Command 구성 요소](/l/ko/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`)를 다룹니다.
 
-일반적인 흐름:
-
-```tsx src/front-components/run-action.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { Command } from 'twenty-sdk/command';
-import { CoreApiClient } from 'twenty-sdk/clients';
-
-const RunAction = () => {
-  const execute = async () => {
-    const client = new CoreApiClient();
-    await client.mutation({
-      createTask: {
-        __args: { data: { title: 'Created by my app' } },
-        id: true,
-      },
-    });
-  };
-
-  return <Command execute={execute} />;
-};
-
-export default defineFrontComponent({
-  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
-  name: 'run-action',
-  description: 'Creates a task from the command menu',
-  component: RunAction,
-  isHeadless: true,
-});
-```
+일반적인 흐름: 헤드리스 컴포넌트가 `<Command execute={...} />`( [전체 예제](/l/ko/developers/extend/apps/layout/front-components#sdk-command-components)를 참고)와 같이 렌더링하고, 명령 메뉴 항목이 이를 가리킵니다.
 
 ```ts src/command-menu-items/run-action.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -74,7 +45,6 @@ import { defineCommandMenuItem } from 'twenty-sdk/define';
 export default defineCommandMenuItem({
   universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
   label: 'Run my action',
-  icon: 'IconPlayerPlay',
   frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
 });
 ```

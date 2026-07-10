@@ -3,19 +3,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { promises as fs } from 'fs';
 import { tmpdir } from 'os';
-import { join } from 'path';
+import { isAbsolute, join, relative, resolve } from 'path';
 
 import semver from 'semver';
-import { FileFolder } from 'twenty-shared/types';
+import { FileFolder, ServerFileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
-import {
-  ApplicationVersionValidationService,
-  type VersionValidationFailureReason,
-} from 'src/engine/core-modules/application/application-package/application-version-validation.service';
+import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
+import { VERSION_REASON_TO_APPLICATION_REGISTRATION_EXCEPTION_CODE } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
 import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
 import { readJsonFile } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
@@ -26,35 +24,25 @@ import {
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { type ApplicationRegistrationGalleryImage } from 'src/engine/core-modules/application/application-registration/types/application-registration-gallery-image.type';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
+import { isImageFilePath } from 'src/engine/core-modules/application/application-registration/utils/is-image-file-path.util';
+import { toGalleryImagePaths } from 'src/engine/core-modules/application/application-registration/utils/to-gallery-image-paths.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
+import { prepareFileForStorageOrThrow } from 'src/engine/core-modules/file-storage/utils/prepare-file-for-storage-or-throw.util';
 import type { ApplicationManifest } from 'twenty-shared/application';
 
 @Injectable()
 export class ApplicationTarballService {
   private readonly logger = new Logger(ApplicationTarballService.name);
 
-  private static readonly VERSION_REASON_TO_EXCEPTION_CODE: Record<
-    VersionValidationFailureReason,
-    ApplicationRegistrationExceptionCode
-  > = {
-    INVALID_REQUIRED_VERSION:
-      ApplicationRegistrationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT,
-    INVALID_SERVER_VERSION:
-      ApplicationRegistrationExceptionCode.INVALID_SERVER_VERSION,
-    INVALID_WORKSPACE_VERSION:
-      ApplicationRegistrationExceptionCode.INVALID_SERVER_VERSION,
-    INSTANCE_INCOMPATIBLE:
-      ApplicationRegistrationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
-    WORKSPACE_INCOMPATIBLE:
-      ApplicationRegistrationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
-  };
-
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly fileStorageService: FileStorageService,
+    private readonly serverFileStorageService: ServerFileStorageService,
     private readonly applicationService: ApplicationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
@@ -107,7 +95,7 @@ export class ApplicationTarballService {
       if (!versionValidation.compatible) {
         throw new ApplicationRegistrationException(
           versionValidation.message,
-          ApplicationTarballService.VERSION_REASON_TO_EXCEPTION_CODE[
+          VERSION_REASON_TO_APPLICATION_REGISTRATION_EXCEPTION_CODE[
             versionValidation.reason
           ],
         );
@@ -178,7 +166,7 @@ export class ApplicationTarballService {
           ...fromManifestApplicationToDisplayFields(manifest.application),
           latestAvailableVersion: packageJson?.version ?? null,
           isListed: false,
-          isFeatured: false,
+          isVetted: false,
           oAuthClientId: v4(),
           oAuthRedirectUris: [],
           oAuthScopes: [],
@@ -216,9 +204,15 @@ export class ApplicationTarballService {
         ...fromManifestApplicationToDisplayFields(manifest.application),
         latestAvailableVersion: packageJson?.version ?? null,
         isListed: false,
-        isFeatured: false,
+        isVetted: false,
         ownerWorkspaceId: params.ownerWorkspaceId,
       } as QueryDeepPartialEntity<ApplicationRegistrationEntity>);
+
+      await this.storeGalleryImageFiles({
+        applicationRegistrationId: appRegistration.id,
+        manifestApplication: manifest.application,
+        contentDir,
+      });
 
       if (manifest.application?.serverVariables) {
         await this.applicationRegistrationVariableService.syncVariableSchemas(
@@ -236,6 +230,94 @@ export class ApplicationTarballService {
       });
     } finally {
       await fs.rm(tempDir, { recursive: true, force: true });
+    }
+  }
+
+  private async storeGalleryImageFiles({
+    applicationRegistrationId,
+    manifestApplication,
+    contentDir,
+  }: {
+    applicationRegistrationId: string;
+    manifestApplication: ApplicationManifest | undefined;
+    contentDir: string;
+  }): Promise<void> {
+    const galleryImages: ApplicationRegistrationGalleryImage[] = [];
+
+    for (const path of toGalleryImagePaths(manifestApplication)) {
+      const fileId = await this.storeGalleryImageFile({
+        applicationRegistrationId,
+        contentDir,
+        path,
+      });
+
+      if (isDefined(fileId)) {
+        galleryImages.push({ path, fileId });
+      }
+    }
+
+    await this.appRegistrationRepository.update(applicationRegistrationId, {
+      galleryImages,
+    } as QueryDeepPartialEntity<ApplicationRegistrationEntity>);
+  }
+
+  private async storeGalleryImageFile({
+    applicationRegistrationId,
+    contentDir,
+    path,
+  }: {
+    applicationRegistrationId: string;
+    contentDir: string;
+    path: string;
+  }): Promise<string | null> {
+    if (
+      path.startsWith('http://') ||
+      path.startsWith('https://') ||
+      !isImageFilePath(path)
+    ) {
+      return null;
+    }
+
+    const absolutePath = resolve(contentDir, path);
+    const relativeToContentDir = relative(contentDir, absolutePath);
+
+    if (
+      relativeToContentDir === '..' ||
+      relativeToContentDir.startsWith('../') ||
+      isAbsolute(relativeToContentDir)
+    ) {
+      this.logger.warn(
+        `Gallery image "${path}" escapes the package directory; skipping`,
+      );
+
+      return null;
+    }
+
+    try {
+      const contents = await fs.readFile(absolutePath);
+
+      const { sourceFile, mimeType } = await prepareFileForStorageOrThrow({
+        sourceFile: contents,
+        resourcePath: path,
+      });
+
+      const savedFile = await this.serverFileStorageService.writeServerFile({
+        fileFolder: ServerFileFolder.ApplicationRegistration,
+        applicationRegistrationId,
+        resourcePath: path,
+        contents: Buffer.isBuffer(sourceFile)
+          ? sourceFile
+          : Buffer.from(sourceFile),
+        mimeType,
+      });
+
+      return savedFile.id;
+    } catch (error) {
+      this.logger.warn(
+        `Failed to store gallery image "${path}" for registration ${applicationRegistrationId}: ${error.message}`,
+      );
+
+      return null;
     }
   }
 }

@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { EventLogLiveModule } from 'src/engine/core-modules/event-logs/live/event-log-live.module';
@@ -25,8 +23,11 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 
 @Module({
   imports: [
-    NestjsQueryTypeOrmModule.forFeature([LogicFunctionEntity]),
-    TypeOrmModule.forFeature([ApplicationEntity, FeatureFlagEntity]),
+    TypeOrmModule.forFeature([
+      LogicFunctionEntity,
+      ApplicationEntity,
+      FeatureFlagEntity,
+    ]),
     ThrottlerModule,
     ApplicationModule,
     EventLogLiveModule,

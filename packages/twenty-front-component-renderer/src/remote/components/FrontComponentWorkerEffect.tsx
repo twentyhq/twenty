@@ -1,36 +1,15 @@
-import { ThreadWebWorker, release, retain } from '@quilted/threads';
+import { release, retain } from '@quilted/threads';
 import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
-import { type CommandConfirmationModalResult } from 'twenty-sdk/front-component';
-import { type ConfirmationModalCaller } from 'twenty-shared/types';
-import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
-import { type SdkClientUrls } from '../../types/HostToWorkerRenderContext';
-import { type WorkerExports } from '../../types/WorkerExports';
-import { createRemoteWorker } from '../worker/utils/createRemoteWorker';
 
-// Must match COMMAND_MENU_ITEM_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME in twenty-front
-const COMMAND_MENU_ITEM_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME =
-  'command-menu-item-confirmation-modal-result';
-
-type CommandMenuItemConfirmationModalResultBrowserEventDetail = {
-  caller: ConfirmationModalCaller;
-  confirmationResult: CommandConfirmationModalResult;
-};
-
-const noopAsync = async () => {};
-
-const HOST_COMMUNICATION_API_NOOP_INITIALIZATION: FrontComponentHostCommunicationApi =
-  {
-    navigate: noopAsync,
-    requestAccessTokenRefresh: async () => '',
-    openSidePanelPage: noopAsync,
-    openCommandConfirmationModal: noopAsync,
-    unmountFrontComponent: noopAsync,
-    enqueueSnackbar: noopAsync,
-    closeSidePanel: noopAsync,
-    updateProgress: noopAsync,
-    copyToClipboard: noopAsync,
-  };
+import { buildHostFetchPolicyFromFrontComponentUrls } from '@/host/utils/buildHostFetchPolicyFromFrontComponentUrls';
+import { createFrontComponentHostThread } from '@/host/utils/createFrontComponentHostThread';
+import { createHostFetchEnforcingPolicy } from '@/host/utils/createHostFetchEnforcingPolicy';
+import { FRONT_COMPONENT_SANDBOX_DOCUMENT } from '@/remote/sandbox/generated/frontComponentSandboxDocument';
+import { createFrontComponentSandboxIframe } from '@/remote/sandbox/utils/createFrontComponentSandboxIframe';
+import { createFrontComponentSandboxMessageHandler } from '@/remote/sandbox/utils/createFrontComponentSandboxMessageHandler';
+import { type FrontComponentThread } from '@/types/FrontComponentThread';
+import { type SdkClientUrls } from '@/types/SdkClientUrls';
 
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;
@@ -39,14 +18,8 @@ type FrontComponentWorkerEffectProps = {
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
   applicationVariables?: Record<string, string>;
-  frontComponentId: string;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
-  setThread: React.Dispatch<
-    React.SetStateAction<ThreadWebWorker<
-      WorkerExports,
-      FrontComponentHostCommunicationApi
-    > | null>
-  >;
+  setThread: React.Dispatch<React.SetStateAction<FrontComponentThread | null>>;
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
 };
 
@@ -57,7 +30,6 @@ export const FrontComponentWorkerEffect = ({
   functionsBaseUrl,
   sdkClientUrls,
   applicationVariables,
-  frontComponentId,
   setReceiver,
   setThread,
   setError,
@@ -71,52 +43,31 @@ export const FrontComponentWorkerEffect = ({
 
     const newReceiver = new RemoteReceiver({ retain, release });
 
-    const worker = createRemoteWorker();
+    const sandboxIframe = createFrontComponentSandboxIframe(
+      FRONT_COMPONENT_SANDBOX_DOCUMENT,
+    );
+    document.body.append(sandboxIframe);
 
-    worker.onerror = (event: ErrorEvent) => {
-      const workerError =
-        event.error ?? new Error(event.message || 'Unknown worker error');
+    const channel = new MessageChannel();
 
-      console.error('[FrontComponentRenderer] Worker error:', workerError);
-      setError(workerError);
-    };
-
-    const thread = new ThreadWebWorker<
-      WorkerExports,
-      FrontComponentHostCommunicationApi
-    >(worker, {
-      exports: { ...HOST_COMMUNICATION_API_NOOP_INITIALIZATION },
+    const hostFetchPolicy = buildHostFetchPolicyFromFrontComponentUrls({
+      componentUrl,
+      apiUrl,
+      functionsBaseUrl,
+      sdkClientUrls,
     });
 
-    const handleCommandMenuItemConfirmationModalResultBrowserEvent = (
-      event: CustomEvent<CommandMenuItemConfirmationModalResultBrowserEventDetail>,
-    ) => {
-      const commandMenuItemConfirmationModalResultBrowserEventDetail =
-        event.detail;
+    const hostFetch = createHostFetchEnforcingPolicy(hostFetchPolicy);
 
-      const caller =
-        commandMenuItemConfirmationModalResultBrowserEventDetail.caller;
+    const thread = createFrontComponentHostThread(channel.port1, hostFetch);
 
-      if (
-        caller.type !== 'frontComponent' ||
-        caller.frontComponentId !== frontComponentId
-      ) {
-        return;
-      }
+    const handleSandboxMessage = createFrontComponentSandboxMessageHandler({
+      sandboxIframe,
+      workerMessagePort: channel.port2,
+      onSandboxError: setError,
+    });
 
-      thread.imports
-        .onConfirmationModalResult(
-          commandMenuItemConfirmationModalResultBrowserEventDetail.confirmationResult,
-        )
-        .catch((error: Error) => {
-          setError(error);
-        });
-    };
-
-    window.addEventListener(
-      COMMAND_MENU_ITEM_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME,
-      handleCommandMenuItemConfirmationModalResultBrowserEvent as EventListener,
-    );
+    window.addEventListener('message', handleSandboxMessage);
 
     setThread(thread);
 
@@ -127,6 +78,7 @@ export const FrontComponentWorkerEffect = ({
         apiUrl,
         functionsBaseUrl,
         sdkClientUrls,
+        hostFetchOrigins: hostFetchPolicy.allowedOrigins,
         applicationVariables,
       })
       .catch((error: Error) => {
@@ -137,12 +89,10 @@ export const FrontComponentWorkerEffect = ({
     isInitializedRef.current = true;
 
     return () => {
-      window.removeEventListener(
-        COMMAND_MENU_ITEM_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME,
-        handleCommandMenuItemConfirmationModalResultBrowserEvent as EventListener,
-      );
+      window.removeEventListener('message', handleSandboxMessage);
       setThread(null);
-      worker.terminate();
+      channel.port1.close();
+      sandboxIframe.remove();
       isInitializedRef.current = false;
     };
   }, [
@@ -152,7 +102,6 @@ export const FrontComponentWorkerEffect = ({
     functionsBaseUrl,
     sdkClientUrls,
     applicationVariables,
-    frontComponentId,
     setError,
     setReceiver,
     setThread,

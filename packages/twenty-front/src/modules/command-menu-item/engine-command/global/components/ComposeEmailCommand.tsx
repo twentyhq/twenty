@@ -66,6 +66,13 @@ export const ComposeEmailCommand = () => {
     openComposeEmailInSidePanel({
       connectedAccountId,
       defaultTo,
+      contextRecord:
+        isDefined(objectNameSingular) && isDefined(singleSelectedRecordId)
+          ? {
+              objectNameSingular,
+              recordId: singleSelectedRecordId,
+            }
+          : undefined,
     });
   };
 

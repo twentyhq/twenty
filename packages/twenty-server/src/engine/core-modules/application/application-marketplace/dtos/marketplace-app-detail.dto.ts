@@ -43,7 +43,7 @@ export class MarketplaceAppDetailDTO {
 
   @IsBoolean()
   @Field(() => Boolean)
-  isFeatured: boolean;
+  isVetted: boolean;
 
   @IsOptional()
   @IsString()
@@ -90,8 +90,13 @@ export class MarketplaceAppDetailDTO {
   @Field({ nullable: true })
   issueReportUrl?: string;
 
-  @Field(() => [String])
+  @Field(() => [String], {
+    deprecationReason: 'Use galleryImages instead',
+  })
   screenshots: string[];
+
+  @Field(() => [String])
+  galleryImages: string[];
 
   @IsOptional()
   @IsString()

@@ -86,6 +86,22 @@ export default defineObject({
 **Les champs de base sont ajoutés automatiquement.** Lorsque vous définissez un objet personnalisé, Twenty crée pour vous des champs standard comme `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` et `deletedAt`. Vous n’avez pas besoin de les déclarer dans votre tableau `fields` — uniquement vos champs personnalisés. Vous pouvez remplacer un champ par défaut en en déclarant un avec le même nom, mais c’est rarement une bonne idée.
 </Note>
 
+## Types de champ
+
+L’ensemble complet des valeurs de `FieldType`, exportées depuis `twenty-sdk/define` :
+
+| Catégorie                 | Types                                                                                                                              |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Texte                     | `TEXT`, `RICH_TEXT`, `ARRAY` (de chaînes), `RAW_JSON`                                                                              |
+| Numérique                 | `NUMBER` (`universalSettings.dataType` : `'float'` / `'int'` / `'bigint'`), `NUMERIC` (précision arbitraire), `RATING`, `POSITION` |
+| Dates                     | `DATE`, `DATE_TIME`                                                                                                                |
+| Choix                     | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                                |
+| Composés                  | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES`                                                  |
+| Identifiants et relations | `UUID`, `RELATION`, `MORPH_RELATION` (voir [Relations](/l/fr/developers/extend/apps/data/relations))                                    |
+| Système                   | `TS_VECTOR` (vecteur de recherche en texte intégral, géré par le serveur)                                                          |
+
+Les types composés stockent plusieurs sous-champs (par exemple `FULL_NAME` = prénom + nom de famille ; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` et `MULTI_SELECT` nécessitent un tableau `options` comme dans l’exemple ci-dessus.
+
 ## Valeurs par défaut
 
 Les valeurs par défaut de type chaîne littérale doivent être entourées de guillemets simples **à l’intérieur** de la chaîne — `defaultValue: "'Draft'"`, et non `defaultValue: "Draft"`. C’est pourquoi le champ `status` ci-dessus utilise `` `'${PostCardStatus.DRAFT}'` ``.

@@ -2,9 +2,13 @@ import { definePostInstallLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { executeWithRetry } from 'src/utils/execute-with-retry';
 
 const PAGE_SIZE = 200;
-const UPDATE_BATCH_SIZE = 20;
+// Kept low so update bursts stay under Cloudflare rate limiting on hosted
+// workspaces; executeWithRetry absorbs the occasional 429 that still slips
+// through.
+const UPDATE_BATCH_SIZE = 10;
 
 type EmailInteraction = {
   personId: string;
@@ -17,6 +21,12 @@ type MeetingInteraction = {
   startsAt: string;
 };
 type MessageMemberInfo = { ownerId: string; fromIsMember: boolean };
+type ContactItem = { kind: 'email' | 'meeting'; id: string };
+type LastContact = { at: string; item: ContactItem };
+type OpportunityRow = {
+  id: string;
+  pointOfContactId: string | null;
+};
 
 type PersonAgg = {
   lastContactAt?: string;
@@ -30,6 +40,7 @@ type PersonAgg = {
 type AggByPersonId = Map<string, PersonAgg>;
 
 type PersonUpdateData = Record<string, string | null>;
+type RecordUpdate = { id: string; data: PersonUpdateData };
 
 const chunk = <T>(items: T[], size: number): T[][] => {
   const chunks: T[][] = [];
@@ -46,23 +57,25 @@ const collectEmailInteractions = async (
   let after: string | undefined;
 
   do {
-    const { messageParticipants } = await client.query({
-      messageParticipants: {
-        __args: {
-          filter: { personId: { is: 'NOT_NULL' } },
-          first: PAGE_SIZE,
-          after,
-        },
-        edges: {
-          node: {
-            id: true,
-            personId: true,
-            message: { id: true, receivedAt: true },
+    const { messageParticipants } = await executeWithRetry(() =>
+      client.query({
+        messageParticipants: {
+          __args: {
+            filter: { personId: { is: 'NOT_NULL' } },
+            first: PAGE_SIZE,
+            after,
           },
+          edges: {
+            node: {
+              id: true,
+              personId: true,
+              message: { id: true, receivedAt: true },
+            },
+          },
+          pageInfo: { hasNextPage: true, endCursor: true },
         },
-        pageInfo: { hasNextPage: true, endCursor: true },
-      },
-    });
+      }),
+    );
 
     for (const edge of messageParticipants?.edges ?? []) {
       const { personId, message } = edge.node;
@@ -91,23 +104,25 @@ const collectMeetingInteractions = async (
   let after: string | undefined;
 
   do {
-    const { calendarEventParticipants } = await client.query({
-      calendarEventParticipants: {
-        __args: {
-          filter: { personId: { is: 'NOT_NULL' } },
-          first: PAGE_SIZE,
-          after,
-        },
-        edges: {
-          node: {
-            id: true,
-            personId: true,
-            calendarEvent: { id: true, startsAt: true, isCanceled: true },
+    const { calendarEventParticipants } = await executeWithRetry(() =>
+      client.query({
+        calendarEventParticipants: {
+          __args: {
+            filter: { personId: { is: 'NOT_NULL' } },
+            first: PAGE_SIZE,
+            after,
           },
+          edges: {
+            node: {
+              id: true,
+              personId: true,
+              calendarEvent: { id: true, startsAt: true, isCanceled: true },
+            },
+          },
+          pageInfo: { hasNextPage: true, endCursor: true },
         },
-        pageInfo: { hasNextPage: true, endCursor: true },
-      },
-    });
+      }),
+    );
 
     for (const edge of calendarEventParticipants?.edges ?? []) {
       const { personId, calendarEvent } = edge.node;
@@ -144,22 +159,24 @@ const collectMessageMemberInfo = async (
     let after: string | undefined;
 
     do {
-      const { messageParticipants } = await client.query({
-        messageParticipants: {
-          __args: {
-            filter: {
-              messageId: { in: ids },
-              workspaceMemberId: { is: 'NOT_NULL' },
+      const { messageParticipants } = await executeWithRetry(() =>
+        client.query({
+          messageParticipants: {
+            __args: {
+              filter: {
+                messageId: { in: ids },
+                workspaceMemberId: { is: 'NOT_NULL' },
+              },
+              first: PAGE_SIZE,
+              after,
             },
-            first: PAGE_SIZE,
-            after,
+            edges: {
+              node: { messageId: true, role: true, workspaceMemberId: true },
+            },
+            pageInfo: { hasNextPage: true, endCursor: true },
           },
-          edges: {
-            node: { messageId: true, role: true, workspaceMemberId: true },
-          },
-          pageInfo: { hasNextPage: true, endCursor: true },
-        },
-      });
+        }),
+      );
 
       for (const edge of messageParticipants?.edges ?? []) {
         const { messageId, role, workspaceMemberId } = edge.node;
@@ -196,26 +213,28 @@ const collectCalendarOwners = async (
     let after: string | undefined;
 
     do {
-      const { calendarEventParticipants } = await client.query({
-        calendarEventParticipants: {
-          __args: {
-            filter: {
-              calendarEventId: { in: ids },
-              workspaceMemberId: { is: 'NOT_NULL' },
+      const { calendarEventParticipants } = await executeWithRetry(() =>
+        client.query({
+          calendarEventParticipants: {
+            __args: {
+              filter: {
+                calendarEventId: { in: ids },
+                workspaceMemberId: { is: 'NOT_NULL' },
+              },
+              first: PAGE_SIZE,
+              after,
             },
-            first: PAGE_SIZE,
-            after,
-          },
-          edges: {
-            node: {
-              calendarEventId: true,
-              isOrganizer: true,
-              workspaceMemberId: true,
+            edges: {
+              node: {
+                calendarEventId: true,
+                isOrganizer: true,
+                workspaceMemberId: true,
+              },
             },
+            pageInfo: { hasNextPage: true, endCursor: true },
           },
-          pageInfo: { hasNextPage: true, endCursor: true },
-        },
-      });
+        }),
+      );
 
       for (const edge of calendarEventParticipants?.edges ?? []) {
         const { calendarEventId, isOrganizer, workspaceMemberId } = edge.node;
@@ -236,6 +255,90 @@ const collectCalendarOwners = async (
 
   return ownerByCalendarEventId;
 };
+
+const collectPersonCompanies = async (
+  client: CoreApiClient,
+): Promise<Map<string, string>> => {
+  const companyByPersonId = new Map<string, string>();
+  let after: string | undefined;
+
+  do {
+    const { people } = await executeWithRetry(() =>
+      client.query({
+        people: {
+          __args: {
+            filter: { companyId: { is: 'NOT_NULL' } },
+            first: PAGE_SIZE,
+            after,
+          },
+          edges: { node: { id: true, companyId: true } },
+          pageInfo: { hasNextPage: true, endCursor: true },
+        },
+      }),
+    );
+
+    for (const edge of people?.edges ?? []) {
+      const { id, companyId } = edge.node;
+      if (id && companyId) {
+        companyByPersonId.set(id, companyId);
+      }
+    }
+
+    after = people?.pageInfo.hasNextPage
+      ? (people.pageInfo.endCursor ?? undefined)
+      : undefined;
+  } while (after);
+
+  return companyByPersonId;
+};
+
+const collectOpportunities = async (
+  client: CoreApiClient,
+): Promise<OpportunityRow[]> => {
+  const opportunities: OpportunityRow[] = [];
+  let after: string | undefined;
+
+  do {
+    const { opportunities: page } = await executeWithRetry(() =>
+      client.query({
+        opportunities: {
+          __args: { first: PAGE_SIZE, after },
+          edges: {
+            node: { id: true, pointOfContactId: true },
+          },
+          pageInfo: { hasNextPage: true, endCursor: true },
+        },
+      }),
+    );
+
+    for (const edge of page?.edges ?? []) {
+      const { id, pointOfContactId } = edge.node;
+      if (id) {
+        opportunities.push({
+          id,
+          pointOfContactId: pointOfContactId ?? null,
+        });
+      }
+    }
+
+    after = page?.pageInfo.hasNextPage
+      ? (page.pageInfo.endCursor ?? undefined)
+      : undefined;
+  } while (after);
+
+  return opportunities;
+};
+
+const buildRelatedData = ({ at, item }: LastContact): PersonUpdateData => ({
+  lastContactAt: at,
+  lastContactItemMessageId: item.kind === 'email' ? item.id : null,
+  lastContactItemCalendarEventId: item.kind === 'meeting' ? item.id : null,
+});
+
+const personLastContact = (agg: PersonAgg): LastContact | undefined =>
+  agg.lastContactAt && agg.item
+    ? { at: agg.lastContactAt, item: agg.item }
+    : undefined;
 
 const foldEmail = (
   agg: PersonAgg,
@@ -306,12 +409,35 @@ const buildData = (agg: PersonAgg): PersonUpdateData => ({
       : {}),
 });
 
+const applyUpdates = async (
+  client: CoreApiClient,
+  mutationName: string,
+  updates: RecordUpdate[],
+): Promise<void> => {
+  for (const batch of chunk(updates, UPDATE_BATCH_SIZE)) {
+    await Promise.all(
+      batch.map(({ id, data }) =>
+        executeWithRetry(() =>
+          client.mutation({
+            [mutationName]: {
+              __args: { id, data },
+              id: true,
+            },
+          }),
+        ),
+      ),
+    );
+  }
+};
+
 const handler = async (): Promise<void> => {
   const client = new CoreApiClient();
 
-  const [emails, meetings] = await Promise.all([
+  const [emails, meetings, personCompanies, opportunities] = await Promise.all([
     collectEmailInteractions(client),
     collectMeetingInteractions(client),
+    collectPersonCompanies(client),
+    collectOpportunities(client),
   ]);
 
   const messageIds = [...new Set(emails.map((email) => email.messageId))];
@@ -352,30 +478,56 @@ const handler = async (): Promise<void> => {
     );
   }
 
-  const updates = [...aggByPersonId.entries()].map(([personId, agg]) => ({
-    personId,
+  const personUpdates = [...aggByPersonId.entries()].map(([personId, agg]) => ({
+    id: personId,
     data: buildData(agg),
   }));
 
-  for (const batch of chunk(updates, UPDATE_BATCH_SIZE)) {
-    await Promise.all(
-      batch.map(({ personId, data }) =>
-        client.mutation({
-          updatePerson: {
-            __args: { id: personId, data },
-            id: true,
-          },
-        }),
-      ),
-    );
+  const companyLastContact = new Map<string, LastContact>();
+  for (const [personId, agg] of aggByPersonId) {
+    const contact = personLastContact(agg);
+    if (!contact) {
+      continue;
+    }
+    const companyId = personCompanies.get(personId);
+    if (!companyId) {
+      continue;
+    }
+    const existing = companyLastContact.get(companyId);
+    if (!existing || contact.at > existing.at) {
+      companyLastContact.set(companyId, contact);
+    }
   }
+
+  const opportunityUpdates = opportunities
+    .map((opportunity): RecordUpdate | undefined => {
+      const pointOfContactAgg = opportunity.pointOfContactId
+        ? aggByPersonId.get(opportunity.pointOfContactId)
+        : undefined;
+      const lastContact = pointOfContactAgg ? personLastContact(pointOfContactAgg) : undefined;
+      return lastContact
+        ? { id: opportunity.id, data: buildRelatedData(lastContact) }
+        : undefined;
+    })
+    .filter((update): update is RecordUpdate => Boolean(update));
+
+  const companyUpdates: RecordUpdate[] = [...companyLastContact.entries()].map(
+    ([companyId, contact]) => ({
+      id: companyId,
+      data: buildRelatedData(contact),
+    }),
+  );
+
+  await applyUpdates(client, 'updatePerson', personUpdates);
+  await applyUpdates(client, 'updateCompany', companyUpdates);
+  await applyUpdates(client, 'updateOpportunity', opportunityUpdates);
 };
 
 export default definePostInstallLogicFunction({
   universalIdentifier: BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'backfill-last-contact',
   description:
-    'Fills person last-contact fields from existing messages and calendar events after installation.',
+    'Fills person, company and opportunity last-contact fields from existing messages and calendar events after installation.',
   timeoutSeconds: 300,
   shouldRunOnVersionUpgrade: true,
   handler,

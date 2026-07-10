@@ -20,9 +20,11 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type Manifest } from 'twenty-shared/application';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { type ApplicationRegistrationGalleryImage } from 'src/engine/core-modules/application/application-registration/types/application-registration-gallery-image.type';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -122,8 +124,15 @@ export class ApplicationRegistrationEntity {
   isListed: boolean;
 
   @Field(() => Boolean)
-  @Column({ name: 'isFeatured', type: 'boolean', default: false })
-  isFeatured: boolean;
+  @Column({ name: 'isVetted', type: 'boolean', default: false })
+  @WasRenamedInUpgrade([
+    {
+      previousName: 'isFeatured',
+      upgradeCommandName:
+        '2.20.0_RenameIsFeaturedToIsVettedOnApplicationRegistrationFastInstanceCommand_1783527064000',
+    },
+  ])
+  isVetted: boolean;
 
   // Auto-installed on every new workspace; existing workspaces are
   // backfilled by the `install-pre-installed-apps` CLI command.
@@ -206,7 +215,12 @@ export class ApplicationRegistrationEntity {
 
   @Field(() => String, { nullable: true })
   get logoUrl(): string | null {
-    return this.logo ?? this.manifest?.application?.logoUrl ?? null;
+    return (
+      this.logo ??
+      this.manifest?.application?.logo ??
+      this.manifest?.application?.logoUrl ??
+      null
+    );
   }
 
   @OneToMany(
@@ -215,6 +229,13 @@ export class ApplicationRegistrationEntity {
     { onDelete: 'CASCADE' },
   )
   variables: Relation<ApplicationRegistrationVariableEntity[]>;
+
+  @Column({ type: 'jsonb', nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.20.0_AddGalleryImagesToApplicationRegistrationFastInstanceCommand_1783615890055',
+  })
+  galleryImages: ApplicationRegistrationGalleryImage[] | null;
 
   @Field()
   @CreateDateColumn({ type: 'timestamptz' })

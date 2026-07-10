@@ -10,7 +10,7 @@ Ihre App funktioniert. Der letzte Schritt ist, es für den Marktplatz zu beschre
 
 Die [Anwendung config](/l/de/developers/extend/apps/config/application) trägt die
 Identität, die im Marktplatz erscheint: Autor, Kategorie, Logo und Unterstützung von
-Links. Lege ein Logo in `public/` ein und verweise es mit `logoUrl`.
+Links. Lege ein Logo in `public/` ein und verweise es mit `logo`.
 
 ```ts filename="src/application-config.ts"
 import { defineApplication } from 'twenty-sdk/define';
@@ -20,7 +20,7 @@ export default defineApplication({
   displayName: 'Document Generator',
   description:
     'Create reusable document templates and generate personalized documents from your CRM records.',
-  logoUrl: 'public/document-generator.svg',
+  logo: 'public/document-generator.svg',
   author: 'Twenty',
   category: 'Productivity',
   websiteUrl: 'https://docs.twenty.com/l/de/developers/extend/apps',
@@ -43,14 +43,14 @@ Füge auch das Schlüsselwort "twenty-app" zu "package.json" hinzu, damit die Ap
 
 ## Galerie Screenshots hinzufügen
 
-Ein Marktplatz-Listing verkauft sich mit Screenshots. Legen Sie ein paar PNGs in
-`public/gallery/` und verweisen Sie sie mit `screenshots` — sie rendern als Galerie
-auf der Listenseite.
+Ein Marktplatz-Listing verkauft sich mit Screenshots. Lege ein paar PNGs in
+`public/gallery/` und verweise sie mit `galleryImages` — sie rendern als
+Galerie auf der Listenseite, in Array-Reihenfolge.
 
 ```ts filename="src/application-config.ts"
 export default defineApplication({
   // ...identity from above
-  screenshots: [
+  galleryImages: [
     'public/gallery/01-generated-document.png',
     'public/gallery/02-command-menu.png',
     'public/gallery/03-template-editor.png',
@@ -77,11 +77,11 @@ Führe die gleichen Tore CI aus:
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty dev --once --dry-run   # preview the metadata diff
+yarn twenty plan   # preview the metadata diff
 ```
 
-Der Trockenlauf druckt genau das, was sich auf dem Server ändern würde, ohne es anzuwenden —
-eine gute abschließende Vernunftprüfung. Siehe
+Der Plan gibt genau aus, was sich auf dem Server ändern würde, ohne die Änderungen anzuwenden —
+eine gute abschließende Plausibilitätsprüfung. Siehe
 [Testing](/l/de/developers/extend/apps/operations/testing) und
 [Synchronisieren & Wiederherstellen](/l/de/developers/extend/apps/operations/sync-and-recovery).
 

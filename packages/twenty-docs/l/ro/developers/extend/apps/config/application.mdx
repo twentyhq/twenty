@@ -109,10 +109,14 @@ Dacă intenționați să [publicați aplicația](/l/ro/developers/extend/apps/op
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
 | `author`           | Numele autorului sau al companiei                                                                                              |
 | `category`         | Categoria aplicației pentru filtrarea în marketplace                                                                           |
-| `logoUrl`          | Calea către logo-ul aplicației (de ex., `public/logo.png`)                                                                     |
-| `screenshots`      | Array de căi către capturi de ecran (de ex., `public/screenshot-1.png`)                                                        |
+| `logo`             | Calea către logo-ul aplicației tale inclus în `public/` (de ex., `public/logo.png`)                                            |
+| `galleryImages`    | Array de căi către imaginile din galerie incluse în `public/` (de ex., `public/screenshot-1.png`)                              |
 | `aboutDescription` | Descriere markdown mai lungă pentru fila "About". Dacă este omis, marketplace-ul folosește `README.md` al pachetului de pe npm |
 | `websiteUrl`       | Link către site-ul dvs.                                                                                                        |
 | `termsUrl`         | Link către termenii de serviciu                                                                                                |
 | `emailSupport`     | Adresă de e-mail pentru suport                                                                                                 |
 | `issueReportUrl`   | Link către sistemul de urmărire a problemelor                                                                                  |
+
+<Note>
+`logoUrl` și `screenshots` sunt aliasuri învechite pentru `logo` și `galleryImages`. URL-urile absolute externe (`http://` sau `https://`) nu sunt acceptate pentru aceste câmpuri: ele sunt eliminate cu un avertisment în timpul build-ului. În schimb, include imaginile în folderul `public/` al aplicației tale.
+</Note>

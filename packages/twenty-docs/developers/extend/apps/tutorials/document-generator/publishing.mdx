@@ -10,7 +10,7 @@ Your app works. The last step is to describe it for the marketplace and publish.
 
 The [application config](/developers/extend/apps/config/application) carries the
 identity that shows up in the marketplace: author, category, logo, and support
-links. Put a logo in `public/` and reference it with `logoUrl`.
+links. Put a logo in `public/` and reference it with `logo`.
 
 ```ts filename="src/application-config.ts"
 import { defineApplication } from 'twenty-sdk/define';
@@ -20,7 +20,7 @@ export default defineApplication({
   displayName: 'Document Generator',
   description:
     'Create reusable document templates and generate personalized documents from your CRM records.',
-  logoUrl: 'public/document-generator.svg',
+  logo: 'public/document-generator.svg',
   author: 'Twenty',
   category: 'Productivity',
   websiteUrl: 'https://docs.twenty.com/developers/extend/apps',
@@ -44,13 +44,13 @@ Also add the `twenty-app` keyword to `package.json` so the app is discoverable:
 ## Add gallery screenshots
 
 A marketplace listing sells itself with screenshots. Drop a few PNGs in
-`public/gallery/` and reference them with `screenshots` — they render as a gallery
-on the listing page.
+`public/gallery/` and reference them with `galleryImages` — they render as a
+gallery on the listing page, in array order.
 
 ```ts filename="src/application-config.ts"
 export default defineApplication({
   // ...identity from above
-  screenshots: [
+  galleryImages: [
     'public/gallery/01-generated-document.png',
     'public/gallery/02-command-menu.png',
     'public/gallery/03-template-editor.png',
@@ -77,10 +77,10 @@ Run the same gates CI does:
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty dev --once --dry-run   # preview the metadata diff
+yarn twenty plan   # preview the metadata diff
 ```
 
-The dry run prints exactly what would change on the server without applying it —
+The plan prints exactly what would change on the server without applying it —
 a good final sanity check. See
 [Testing](/developers/extend/apps/operations/testing) and
 [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery).

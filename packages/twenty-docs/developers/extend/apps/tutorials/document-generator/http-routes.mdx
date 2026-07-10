@@ -9,8 +9,15 @@ The same handler can also answer HTTP requests. We'll add two routes:
 - a **POST** endpoint the UI calls to generate a document, and
 - a public **GET** endpoint that renders a document as a printable web page.
 
-Both use `httpRouteTriggerSettings`. App routes are served under `/s` on your
-Twenty server (e.g. `http://localhost:2020/s/documents/generate`).
+Both use `httpRouteTriggerSettings`. On the local dev server, app routes are
+served under the `/s` prefix (e.g. `http://localhost:2020/s/documents/generate`).
+
+<Note>
+On Twenty Cloud, routes are served on the workspace's dedicated functions domain
+— the URL Twenty injects as `TWENTY_FUNCTIONS_URL`, with no `/s` prefix. The `/s`
+prefix is deprecated there and only remains for self-hosted and local instances.
+See [Calling a logic function](/developers/extend/apps/layout/front-components#calling-a-logic-function).
+</Note>
 
 ## POST route — generate on demand
 

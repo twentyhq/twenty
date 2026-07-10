@@ -35,6 +35,8 @@ export default defineNavigationMenuItem({
 
 * `position` steuert die Reihenfolge in der Seitenleiste.
 
+* Das Enum enthält außerdem `NavigationMenuItemType.RECORD`, das intern für vom Benutzer erstellte Datensatzfavoriten verwendet wird — es ist in einem App-Manifest nicht verwendbar (es gibt kein Feld, um auf einen Datensatz zu verweisen).
+
 * `icon` und `color` sind optional und passen das Erscheinungsbild des Eintrags an.
 
 * `folderUniversalIdentifier` ist ebenfalls bei jedem Eintrag verfügbar, um ihn innerhalb eines übergeordneten Elements vom Typ `FOLDER` zu verschachteln.

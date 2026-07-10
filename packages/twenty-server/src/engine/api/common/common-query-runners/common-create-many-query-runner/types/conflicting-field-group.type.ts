@@ -1,3 +1,5 @@
+export type ConflictingFieldValue = string | number | boolean;
+
 export type ConflictingProperty = {
   fullPath: string;
   column: string;

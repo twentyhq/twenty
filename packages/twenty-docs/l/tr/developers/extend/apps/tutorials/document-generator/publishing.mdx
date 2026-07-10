@@ -8,7 +8,7 @@ Uygulamanız çalışıyor. Son adım, onu pazaryeri için tanımlamak ve yayım
 
 ## Pazaryeri meta verilerini ekleyin
 
-[Application config](/l/tr/developers/extend/apps/config/application), pazaryerinde görünen kimliği taşır: yazar, kategori, logo ve destek bağlantıları. `public/` içine bir logo yerleştirin ve `logoUrl` ile referans verin.
+[Application config](/l/tr/developers/extend/apps/config/application), pazaryerinde görünen kimliği taşır: yazar, kategori, logo ve destek bağlantıları. `public/` içine bir logo yerleştirin ve `logo` ile referans verin.
 
 ```ts filename="src/application-config.ts"
 import { defineApplication } from 'twenty-sdk/define';
@@ -18,7 +18,7 @@ export default defineApplication({
   displayName: 'Document Generator',
   description:
     'Create reusable document templates and generate personalized documents from your CRM records.',
-  logoUrl: 'public/document-generator.svg',
+  logo: 'public/document-generator.svg',
   author: 'Twenty',
   category: 'Productivity',
   websiteUrl: 'https://docs.twenty.com/l/tr/developers/extend/apps',
@@ -40,12 +40,13 @@ Ayrıca uygulamanın bulunabilir olması için `package.json` dosyasına `twenty
 
 ## Galeri ekran görüntüleri ekleyin
 
-Bir pazaryeri listesi, kendini ekran görüntüleriyle satar. Birkaç PNG dosyasını `public/gallery/` içine bırakın ve bunlara `screenshots` ile referans verin — listeleme sayfasında bir galeri olarak görüntülenirler.
+Bir pazaryeri listesi, kendini ekran görüntüleriyle satar. Birkaç PNG dosyasını
+`public/gallery/` içine bırakın ve bunlara `galleryImages` ile referans verin — listeleme sayfasında, dizi sırasına göre bir galeri olarak görüntülenirler.
 
 ```ts filename="src/application-config.ts"
 export default defineApplication({
   // ...identity from above
-  screenshots: [
+  galleryImages: [
     'public/gallery/01-generated-document.png',
     'public/gallery/02-command-menu.png',
     'public/gallery/03-template-editor.png',
@@ -69,10 +70,11 @@ CI ile aynı denetimleri çalıştırın:
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty dev --once --dry-run   # preview the metadata diff
+yarn twenty plan   # preview the metadata diff
 ```
 
-Deneme çalıştırması, sunucuda neyin değişeceğini uygulamadan tam olarak gösterir — iyi bir son sağlama kontrolüdür. Bkz.
+Plan, sunucuda neyin değişeceğini uygulamadan tam olarak gösterir —
+iyi bir son sağlama kontrolüdür. Bkz.
 [Testing](/l/tr/developers/extend/apps/operations/testing) ve
 [Syncing & recovery](/l/tr/developers/extend/apps/operations/sync-and-recovery).
 

@@ -131,6 +131,47 @@ describe('resolveManifestAssetUrls', () => {
     expect(result.application.screenshots).toEqual([]);
   });
 
+  it('should resolve a relative logo', () => {
+    const manifest = buildMinimalManifest({ logo: 'logo.png' });
+
+    const result = resolveManifestAssetUrls(manifest, urlBuilder);
+
+    expect(result.application.logo).toBe(
+      'https://cdn.example.com/pkg/logo.png',
+    );
+  });
+
+  it('should not modify an absolute logo', () => {
+    const manifest = buildMinimalManifest({
+      logo: 'https://example.com/logo.png',
+    });
+
+    const result = resolveManifestAssetUrls(manifest, urlBuilder);
+
+    expect(result.application.logo).toBe('https://example.com/logo.png');
+  });
+
+  it('should resolve galleryImages paths and leave absolute ones untouched', () => {
+    const manifest = buildMinimalManifest({
+      galleryImages: ['a.png', 'https://example.com/b.png'],
+    });
+
+    const result = resolveManifestAssetUrls(manifest, urlBuilder);
+
+    expect(result.application.galleryImages).toEqual([
+      'https://cdn.example.com/pkg/a.png',
+      'https://example.com/b.png',
+    ]);
+  });
+
+  it('should handle undefined galleryImages', () => {
+    const manifest = buildMinimalManifest();
+
+    const result = resolveManifestAssetUrls(manifest, urlBuilder);
+
+    expect(result.application.galleryImages).toEqual([]);
+  });
+
   it('should preserve all other manifest properties', () => {
     const manifest = buildMinimalManifest({
       logoUrl: 'logo.png',

@@ -51,8 +51,12 @@ export default defineLogicFunction({
 ```
 
 Types de déclencheurs disponibles :
-* **httpRoute** : Expose votre fonction sur un chemin et une méthode HTTP **sous l'endpoint `/s/`** :
-> p. ex. `path: '/post-card/create'` est appelable à `https://your-twenty-server.com/s/post-card/create`
+* **httpRoute** : Expose votre fonction sur un chemin HTTP et une méthode dans l'URL de **fonctions de base** de votre espace de travail — la valeur de 20 injects en tant que `TWENTY_FUNCTIONS_URL` (sur Twenty Cloud, un domaine dédié par espace de travail):
+> p. ex. `path: '/post-card/create'` peut être appelé à l'adresse `https://your-workspace.withtwenty.com/post-card/create`
+
+<Warning>
+L'ancienne route de préfixe `/s/` (`https://your-twenty-server.com/s/post-card/create`) est **obsolète sur Twenty Cloud** et sera désactivée le **2026-07-24**. Il reste disponible pour les instances auto-hébergées et locales qui ne configurent pas un domaine de fonctions isolées — utilisez `TWENTY_FUNCTIONS_URL` quand il est défini, et revenez à `\<server-url>/s/\<path>` autrement.
+</Warning>
 
 <Note>
 Pour appeler une fonction logique déclenchée par une route depuis un composant frontal (sans interface), consultez [Appeler une fonction logique](/l/fr/developers/extend/apps/layout/front-components#calling-a-logic-function).

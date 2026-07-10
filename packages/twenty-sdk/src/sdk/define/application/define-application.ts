@@ -1,7 +1,13 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import {
+  APPLICATION_CATEGORIES,
+  isKnownApplicationCategory,
+} from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type ApplicationConfig } from '@/sdk/define/application/application-config';
+import { normalizeApplicationAssets } from '@/sdk/define/application/utils/normalize-application-assets';
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 
@@ -37,8 +43,26 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     );
   }
 
+  const { category } = config;
+
+  if (isNonEmptyString(category) && !isKnownApplicationCategory(category)) {
+    warnings.push(
+      `Application category "${category}" is not a known ApplicationCategory (${APPLICATION_CATEGORIES.join(
+        ', ',
+      )}). Arbitrary category strings are kept for backward compatibility and may be removed. Ask for a new category at https://github.com/twentyhq/twenty.`,
+    );
+  }
+
+  const assetNormalization = normalizeApplicationAssets(config);
+
+  warnings.push(...assetNormalization.warnings);
+
   return createValidationResult({
-    config,
+    config: {
+      ...config,
+      logo: assetNormalization.logo,
+      galleryImages: assetNormalization.galleryImages,
+    },
     errors,
     warnings,
   });

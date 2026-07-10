@@ -51,8 +51,12 @@ export default defineLogicFunction({
 ```
 
 Tipuri de declanșatoare disponibile:
-* **httpRoute**: Expune funcția pe o cale și metodă HTTP **sub endpoint-ul `/s/`**:
-> de ex. `path: '/post-card/create'` este apelabil la `https://your-twenty-server.com/s/post-card/create`
+* **httpRoute**: Expune funcţia pe o cale HTTP şi pe o metodă în **funcţiunea URL-ul bazei de lucru** - valoarea de douăzeci de injectări ca `TWENTY_FUNCTIONS_URL` (pe douăzeci Cloud, un domeniu specializat pentru spațiul de lucru):
+> de ex. `path: '/post-card/create'` poate fi apelat la `https://your-workspace.withtwenty.com/post-card/create`
+
+<Warning>
+Prefixul moștenirii `/s/` (`https://your-twenty-server.com/s/post-card/create`) este **învechit pe 20 de Cloud** și va fi dezactivat pe **2026-07-24**. Rămâne disponibil pentru instanțe auto-găzduite și locale care nu configurează un domeniu de funcții izolate - utilizați `TWENTY_FUNCTIONS_URL` când este setat, şi întoarceţi-vă la `\<server-url>/s/\<path>` altfel.
+</Warning>
 
 <Note>
 Pentru a apela o funcție logică declanșată de o rută dintr-o componentă front-end (headless), consultă [Apelarea unei funcții logice](/l/ro/developers/extend/apps/layout/front-components#calling-a-logic-function).

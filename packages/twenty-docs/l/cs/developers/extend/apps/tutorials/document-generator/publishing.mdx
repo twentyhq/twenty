@@ -10,7 +10,7 @@ Vaše aplikace funguje. Posledním krokem je popsat jej pro tržiště a publiko
 
 [application config](/l/cs/developers/extend/apps/config/application) nese
 identitu, která se objeví v tržišti: autor, kategorie, logo a podpora
-. Vložte logo do `public/` a odkazujte na `logoUrl`.
+. Umístěte logo do `public/` a odkažte se na něj pomocí `logo`.
 
 ```ts filename="src/application-config.ts"
 import { defineApplication } from 'twenty-sdk/define';
@@ -20,7 +20,7 @@ export default defineApplication({
   displayName: 'Document Generator',
   description:
     'Create reusable document templates and generate personalized documents from your CRM records.',
-  logoUrl: 'public/document-generator.svg',
+  logo: 'public/document-generator.svg',
   author: 'Twenty',
   category: 'Productivity',
   websiteUrl: 'https://docs.twenty.com/l/cs/developers/extend/apps',
@@ -43,14 +43,14 @@ Přidejte také klíčové slovo `dvacet app` do `package.json` tak, aby byla ap
 
 ## Přidat galerii snímků obrazovky
 
-tržiště se prodává se snímky obrazovky. Přetáhněte několik PNGů do
-`public/gallery/` a odkazujte na ně `screenshots` — vykreslují se jako galerie
-na stránce seznamu.
+tržiště se prodává se snímky obrazovky. Vložte několik souborů PNG do
+`public/gallery/` a odkažte se na ně pomocí `galleryImages` — na stránce s výpisem se zobrazí jako
+galerie v pořadí, v jakém jsou v poli.
 
 ```ts filename="src/application-config.ts"
 export default defineApplication({
   // ...identity from above
-  screenshots: [
+  galleryImages: [
     'public/gallery/01-generated-document.png',
     'public/gallery/02-command-menu.png',
     'public/gallery/03-template-editor.png',
@@ -77,11 +77,11 @@ Spustit tytéž brány CI:
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty dev --once --dry-run   # preview the metadata diff
+yarn twenty plan   # preview the metadata diff
 ```
 
-Suchý běh vypíše přesně to, co by se změnilo na serveru bez jeho použití –
-je dobrá závěrečná kontrola. Viz
+Plán vypíše přesně to, co by se na serveru změnilo, aniž by změny provedl —
+dobrá závěrečná kontrola. Viz
 [Testing](/l/cs/developers/extend/apps/operations/testing) a
 [Synchronizace a obnovy](/l/cs/developers/extend/apps/operations/sync-and-recovery).
 
