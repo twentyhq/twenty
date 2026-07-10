@@ -6,7 +6,6 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { TWENTY_CURRENT_VERSION } from 'src/engine/core-modules/upgrade/constants/twenty-current-version.constant';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/services/upgrade-status-cache.service';
@@ -166,13 +165,6 @@ export class UpgradeStatusService {
       return null;
     }
 
-    // A completed cursor at the very end of the sequence means every step has
-    // run: releases that ship no upgrade command leave no trace in
-    // upgradeMigration, so the workspace counts as being at the current version.
-    if (cursor.status === 'completed' && cursorIndex === sequence.length - 1) {
-      return TWENTY_CURRENT_VERSION;
-    }
-
     const isLastStepOfItsVersion =
       cursorIndex === sequence.length - 1 ||
       extractVersionFromCommandName(sequence[cursorIndex + 1].name) !==
@@ -193,35 +185,6 @@ export class UpgradeStatusService {
     }
 
     return null;
-  }
-
-  async getInstanceCompletedVersion(): Promise<string | null> {
-    const migration =
-      await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
-
-    if (!isDefined(migration)) {
-      return null;
-    }
-
-    const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
-    const lastInstanceStep = [...sequence]
-      .reverse()
-      .find(
-        (step) =>
-          step.kind === 'fast-instance' || step.kind === 'slow-instance',
-      );
-
-    // A completed cursor at the last instance step means every instance step
-    // has run: releases that ship no instance command leave no trace in
-    // upgradeMigration, so the instance counts as being at the current version.
-    if (
-      migration.status === 'completed' &&
-      migration.name === lastInstanceStep?.name
-    ) {
-      return TWENTY_CURRENT_VERSION;
-    }
-
-    return this.upgradeMigrationService.getInferredVersion(migration.name);
   }
 
   async getInstanceAndAllWorkspacesStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatus> {

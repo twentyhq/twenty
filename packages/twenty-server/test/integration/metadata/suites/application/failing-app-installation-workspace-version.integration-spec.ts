@@ -8,7 +8,7 @@ import { scrubSemverVersions } from 'test/utils/scrub-semver-versions.util';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
-import { TWENTY_CURRENT_VERSION } from 'src/engine/core-modules/upgrade/constants/twenty-current-version.constant';
+import { extractVersionFromCommandName } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 // The full install flow runs cache-lock retries with real delays, so fake
@@ -70,12 +70,13 @@ const uploadTarballApp = async ({
 
 describe('Install application is gated by the workspace completed upgrade version', () => {
   let currentVersionCommandName: string;
+  let lastSequenceStepVersion: string;
   const createdApplicationUniversalIdentifiers: string[] = [];
 
   beforeAll(async () => {
     jest.useRealTimers();
 
-    // The seeded workspace's cursor is the last step of the current version.
+    // The seeded workspace's cursor is the last step of the upgrade sequence.
     // Re-injecting it as a failed attempt makes the workspace resolve to the
     // previous completed version — i.e. behind the instance.
     const [workspaceCursor] = await global.testDataSource.query(
@@ -93,6 +94,23 @@ describe('Install application is gated by the workspace completed upgrade versio
     }
 
     currentVersionCommandName = workspaceCursor.name;
+
+    // Gate the app on the last sequence step's version, not
+    // TWENTY_CURRENT_VERSION: right after a version bump the new release has
+    // no upgrade commands yet, so the instance's inferred version stays at the
+    // previous release and an app requiring the current version could never
+    // even be uploaded.
+    const cursorVersion = extractVersionFromCommandName(
+      currentVersionCommandName,
+    );
+
+    if (!isDefined(cursorVersion)) {
+      throw new Error(
+        `Expected a version-prefixed command name, got "${currentVersionCommandName}"`,
+      );
+    }
+
+    lastSequenceStepVersion = cursorVersion;
   });
 
   afterEach(async () => {
@@ -116,7 +134,7 @@ describe('Install application is gated by the workspace completed upgrade versio
     await uploadTarballApp({
       universalIdentifier,
       roleId,
-      requiredServerVersion: `>=${TWENTY_CURRENT_VERSION}`,
+      requiredServerVersion: `>=${lastSequenceStepVersion}`,
     });
 
     createdApplicationUniversalIdentifiers.push(universalIdentifier);
