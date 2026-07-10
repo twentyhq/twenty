@@ -33,7 +33,7 @@ my-twenty-app/
   vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
   .nvmrc, .yarnrc.yml, .oxlintrc.json
-  README.md, AGENTS.md, CLAUDE.md
+  README.md, AGENTS.md, CLAUDE.md, CHANGELOG.md, SETUP.md
 ```
 
 ## Fichiers clés
@@ -47,6 +47,7 @@ my-twenty-app/
 | `src/__tests__/`                                                           | Un test unitaire plus un test d’intégration (avec sa configuration globale) qui synchronise l’application avec un serveur réel.  |
 | `public/`                                                                  | Ressources statiques (images, polices) servies avec votre application.                                                           |
 | `AGENTS.md` / `CLAUDE.md`                                                  | Consignes pour les agents IA de programmation travaillant sur l’application.                                                     |
+| `CHANGELOG.md` / `SETUP.md`                                                | Journal des modifications notables et instructions de configuration pour le développement local.                                 |
 
 <Note>
 **L’organisation des fichiers vous revient.** Les dossiers ci-dessus sont des conventions — le SDK détecte les entités via une analyse AST sur les appels à `export default defineEntity(...)` quel que soit l’emplacement du fichier.

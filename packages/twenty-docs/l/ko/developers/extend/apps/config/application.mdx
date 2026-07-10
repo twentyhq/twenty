@@ -109,10 +109,14 @@ const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3
 | ------------------ | ------------------------------------------------------------------- |
 | `author`           | 작성자 또는 회사 이름                                                        |
 | `category`         | 마켓플레이스 필터링을 위한 앱 카테고리                                               |
-| `logoUrl`          | 앱 로고의 경로(예: `public/logo.png`)                                      |
-| `screenshots`      | 스크린샷 경로의 배열(예: `public/screenshot-1.png`)                           |
+| `logo`             | 앱 로고가 번들된 `public/`의 경로(예: `public/logo.png`)                       |
+| `galleryImages`    | 갤러리 이미지 경로 배열이 `public/`에 번들됨(예: `public/screenshot-1.png`)         |
 | `aboutDescription` | "About" 탭에 대한 더 긴 마크다운 설명. 생략하면 마켓플레이스는 npm의 패키지 `README.md`를 사용합니다 |
 | `websiteUrl`       | 웹사이트 링크                                                             |
 | `termsUrl`         | 서비스 약관 링크                                                           |
 | `emailSupport`     | 지원 이메일 주소                                                           |
 | `issueReportUrl`   | 이슈 트래커 링크                                                           |
+
+<Note>
+`logoUrl` 및 `screenshots`는 `logo` 및 `galleryImages`의 더 이상 사용되지 않는 별칭입니다. 다음 필드에는 외부 절대 URL(`http://` 또는 `https://`)이 지원되지 않습니다. 빌드 시 경고와 함께 제거됩니다. 대신 앱의 `public/` 폴더에 이미지를 번들하세요.
+</Note>
