@@ -4,7 +4,7 @@ description: Construiți componente React care se afișează în interfața Twen
 icon: window-maximize
 ---
 
-Componentele front-end sunt componente React care se afișează direct în interfața Twenty. Rulează într-un **Web Worker** izolat folosind Remote DOM — codul este izolat (sandboxed), dar se redă nativ în pagină, nu într-un iframe.
+Componentele front-end sunt componente React care se afișează direct în interfața Twenty. Acestea rulează într-un **Web Worker** izolat folosind Remote DOM — codul se execută într-un iframe cu origine opacă, într-un mediu izolat (sandboxed), însă interfața sa se redă în continuare nativ în pagină, în loc să fie limitată la acel iframe.
 
 ## Unde pot fi utilizate componentele front-end
 
@@ -196,7 +196,7 @@ export default defineFrontComponent({
 
 ## Apelarea unei funcții logice
 
-Componentele de front rulează în browser într-un Web Worker izolat, în timp ce [funcțiile logice](/l/ro/developers/extend/apps/logic/logic-functions) rulează pe server. Nu există un apel direct în același proces între cele două — în schimb, o componentă de front apelează o funcție logică prin HTTP.
+Componentele de front rulează în browser, într-un Web Worker sandboxat în interiorul unui iframe cu origine opacă, în timp ce [funcțiile logice](/l/ro/developers/extend/apps/logic/logic-functions) rulează pe server. Nu există un apel direct în același proces între cele două — în schimb, o componentă de front apelează o funcție logică prin HTTP.
 
 O funcție logică declarată cu `httpRouteTriggerSettings` este accesibilă prin HTTP la ruta sa. Twenty injectează în worker URL-ul de bază de la care sunt deservite funcțiile tale ca `TWENTY_FUNCTIONS_URL`, împreună cu `TWENTY_APP_ACCESS_TOKEN` care autentifică apelul. Nu există încă un client SDK dedicat pentru apelarea propriilor funcții, așa că apelează-le cu un simplu `fetch`:
 
