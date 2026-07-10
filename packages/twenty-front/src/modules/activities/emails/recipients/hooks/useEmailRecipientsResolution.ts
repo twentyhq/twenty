@@ -1,6 +1,6 @@
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { escapeForIlike, isDefined } from 'twenty-shared/utils';
+import { escapeForIlike } from 'twenty-shared/utils';
 
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
 import { type EmailRecipientPerson } from '@/activities/emails/recipients/types/EmailRecipientPerson';
@@ -14,14 +14,14 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export type EmailRecipientResolution = {
   person?: EmailRecipientPerson;
-  workspaceMember?: PartialWorkspaceMember;
+  workspaceMember?: Pick<PartialWorkspaceMember, 'id' | 'name' | 'avatarUrl'>;
 };
 
 export const useEmailRecipientsResolution = ({
   recipients,
 }: {
   recipients: EmailRecipient[];
-}) => {
+}): { resolutionByRecipientKey: Map<string, EmailRecipientResolution> } => {
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
@@ -34,7 +34,7 @@ export const useEmailRecipientsResolution = ({
     ),
   ];
 
-  const { records: matchedPeople } = useFindManyRecords({
+  const { records: matchedPersonRecords } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.Person,
     filter: {
       or: recipientKeys.map((recipientKey) => ({
@@ -49,29 +49,28 @@ export const useEmailRecipientsResolution = ({
   const recipientKeySet = new Set(recipientKeys);
   const resolutionByRecipientKey = new Map<string, EmailRecipientResolution>();
 
-  for (const workspaceMember of currentWorkspaceMembers) {
-    const memberKey = getEmailRecipientKey(workspaceMember.userEmail ?? '');
+  for (const matchedPersonRecord of matchedPersonRecords) {
+    const person = getEmailRecipientPersonFromRecord(matchedPersonRecord);
+    const personKey = getEmailRecipientKey(person.emails.primaryEmail);
 
-    if (
-      isDefined(workspaceMember.userEmail) &&
-      recipientKeySet.has(memberKey)
-    ) {
-      resolutionByRecipientKey.set(memberKey, { workspaceMember });
+    if (recipientKeySet.has(personKey)) {
+      resolutionByRecipientKey.set(personKey, { person });
     }
   }
 
-  for (const personRecord of matchedPeople) {
-    const person = getEmailRecipientPersonFromRecord(personRecord);
-    const personKey = getEmailRecipientKey(person.primaryEmail);
+  for (const workspaceMember of currentWorkspaceMembers) {
+    const workspaceMemberKey = getEmailRecipientKey(workspaceMember.userEmail);
 
-    if (!recipientKeySet.has(personKey)) {
-      continue;
+    if (recipientKeySet.has(workspaceMemberKey)) {
+      resolutionByRecipientKey.set(workspaceMemberKey, {
+        ...resolutionByRecipientKey.get(workspaceMemberKey),
+        workspaceMember: {
+          id: workspaceMember.id,
+          name: workspaceMember.name,
+          avatarUrl: workspaceMember.avatarUrl,
+        },
+      });
     }
-
-    resolutionByRecipientKey.set(personKey, {
-      ...resolutionByRecipientKey.get(personKey),
-      person,
-    });
   }
 
   return { resolutionByRecipientKey };

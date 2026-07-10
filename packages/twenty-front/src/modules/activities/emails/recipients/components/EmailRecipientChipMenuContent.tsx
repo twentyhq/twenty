@@ -1,13 +1,14 @@
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCopy, IconPencil, IconTrash, IconUserPlus } from 'twenty-ui/icon';
+import { IconUserPlus } from 'twenty-ui/icon';
 import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
 
 import { type EmailRecipientResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
+import { getEmailRecipientIdentity } from '@/activities/emails/recipients/utils/getEmailRecipientIdentity';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { MultiItemFieldMenuContent } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuContent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -42,15 +43,10 @@ export const EmailRecipientChipMenuContent = ({
     objectNameSingular: CoreObjectNameSingular.Person,
   });
 
-  const workspaceMember = resolution?.workspaceMember;
-  const person = resolution?.person;
-
-  const workspaceMemberFullName = isDefined(workspaceMember)
-    ? `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`.trim()
-    : '';
-  const personFullName = isDefined(person)
-    ? `${person.firstName} ${person.lastName}`.trim()
-    : '';
+  const { label, resolvedRecord } = getEmailRecipientIdentity({
+    recipient,
+    resolution,
+  });
 
   const handleAddAsPerson = async () => {
     closeDropdown(dropdownId);
@@ -70,63 +66,31 @@ export const EmailRecipientChipMenuContent = ({
   };
 
   const handleCopy = () => {
-    closeDropdown(dropdownId);
     copyToClipboard(recipient.address, t`Email copied to clipboard`);
   };
 
-  const handleEdit = () => {
-    closeDropdown(dropdownId);
-    onEdit();
-  };
-
-  const handleRemove = () => {
-    closeDropdown(dropdownId);
-    onRemove();
-  };
-
-  const showAddAsPerson =
-    !isDefined(person) && !isDefined(workspaceMember) && !isInvalid;
+  const showAddAsPerson = !isDefined(resolvedRecord) && !isInvalid;
 
   return (
     <DropdownContent widthInPixels={280}>
-      {(isDefined(person) || isDefined(workspaceMember) || showAddAsPerson) && (
+      {(isDefined(resolvedRecord) || showAddAsPerson) && (
         <>
           <DropdownMenuItemsContainer>
-            {isDefined(workspaceMember) ? (
+            {isDefined(resolvedRecord) ? (
               <MenuItemAvatar
                 avatar={{
-                  avatarUrl: getAbsoluteImageUrl(workspaceMember.avatarUrl),
-                  placeholder: isNonEmptyString(workspaceMemberFullName)
-                    ? workspaceMemberFullName
-                    : recipient.address,
-                  placeholderColorSeed: workspaceMember.id,
+                  avatarUrl: getAbsoluteImageUrl(resolvedRecord.avatarUrl),
+                  placeholder: label,
+                  placeholderColorSeed: resolvedRecord.id,
                   size: 'md',
                   type: 'rounded',
                 }}
-                text={
-                  isNonEmptyString(workspaceMemberFullName)
-                    ? workspaceMemberFullName
+                text={label}
+                contextualText={
+                  resolvedRecord.kind === 'workspaceMember'
+                    ? t`Team member`
                     : recipient.address
                 }
-                contextualText={t`Team member`}
-              />
-            ) : isDefined(person) ? (
-              <MenuItemAvatar
-                avatar={{
-                  avatarUrl: getAbsoluteImageUrl(person.avatarUrl),
-                  placeholder: isNonEmptyString(personFullName)
-                    ? personFullName
-                    : recipient.address,
-                  placeholderColorSeed: person.id,
-                  size: 'md',
-                  type: 'rounded',
-                }}
-                text={
-                  isNonEmptyString(personFullName)
-                    ? personFullName
-                    : recipient.address
-                }
-                contextualText={recipient.address}
               />
             ) : (
               <MenuItem
@@ -140,17 +104,13 @@ export const EmailRecipientChipMenuContent = ({
         </>
       )}
       <DropdownMenuItemsContainer>
-        <MenuItem
-          LeftIcon={IconCopy}
-          text={t`Copy email`}
-          onClick={handleCopy}
-        />
-        <MenuItem LeftIcon={IconPencil} text={t`Edit`} onClick={handleEdit} />
-        <MenuItem
-          accent="danger"
-          LeftIcon={IconTrash}
-          text={t`Remove`}
-          onClick={handleRemove}
+        <MultiItemFieldMenuContent
+          dropdownId={dropdownId}
+          onEdit={onEdit}
+          onDelete={onRemove}
+          onCopy={handleCopy}
+          showCopyButton
+          deleteLabel={t`Remove`}
         />
       </DropdownMenuItemsContainer>
     </DropdownContent>
