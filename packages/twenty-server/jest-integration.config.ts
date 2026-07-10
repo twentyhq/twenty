@@ -38,6 +38,11 @@ const jestConfig: JestConfigWithTsJest = {
   setupFilesAfterEnv: ['<rootDir>/test/integration/utils/setup-wait-for-all-jobs-between-tests.ts'],
   testTimeout: 20000,
   maxWorkers: 1,
+  // Heap accumulates across suites in the single reused worker (~4-5GB per
+  // --logHeapUsage) and intermittently gets the process OOM-killed in CI
+  // before jest can report. Restart the worker once it idles above this
+  // threshold to keep memory bounded.
+  workerIdleMemoryLimit: '4GB',
   // jsdom 29 and msw ship ESM-only transitive deps (parse5, entities,
   // tough-cookie, @exodus/bytes via html-encoding-sniffer, @csstools/@asamuzakjp
   // css engine, @mswjs/interceptors and friends); let swc transform them
