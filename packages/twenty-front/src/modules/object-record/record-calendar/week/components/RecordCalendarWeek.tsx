@@ -23,7 +23,7 @@ import { t } from '@lingui/core/macro';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useStore } from 'jotai';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import {
   isDefined,
@@ -36,6 +36,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 const TIME_GUTTER_WIDTH = 56;
 const HOURS_IN_DAY = 24;
 const WEEK_GRID_HEIGHT = HOURS_IN_DAY * RECORD_CALENDAR_WEEK_HOUR_HEIGHT;
+const CURRENT_TIME_REFRESH_INTERVAL_IN_MILLISECONDS = 60_000;
 
 const StyledContainer = styled.div`
   background: ${themeCssVariables.background.primary};
@@ -263,11 +264,10 @@ const RecordCalendarWeekDayColumn = ({
     { day, timeZone },
   );
 
-  const eventLayouts = computeRecordCalendarWeekEventLayouts(
+  const eventLayoutInputs =
     calendarFieldType === FieldMetadataType.DATE
       ? []
       : recordIds
-          .slice(0, RECORD_CALENDAR_WEEK_VISIBLE_RECORD_LIMIT)
           .map((recordId) => {
             const record = store.get(
               recordStoreFamilyState.atomFamily(recordId),
@@ -290,7 +290,16 @@ const RecordCalendarWeekDayColumn = ({
               startInPixels,
             };
           })
-          .filter(isDefined),
+          .filter(isDefined)
+          .sort(
+            (eventA, eventB) =>
+              eventA.startInPixels - eventB.startInPixels ||
+              eventA.endInPixels - eventB.endInPixels ||
+              eventA.recordId.localeCompare(eventB.recordId),
+          );
+
+  const eventLayouts = computeRecordCalendarWeekEventLayouts(
+    eventLayoutInputs.slice(0, RECORD_CALENDAR_WEEK_VISIBLE_RECORD_LIMIT),
   );
 
   return (
@@ -326,6 +335,9 @@ export const RecordCalendarWeek = () => {
     recordIndexCalendarFieldMetadataIdState,
   );
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
+  const [currentInstant, setCurrentInstant] = useState(() =>
+    Temporal.Now.instant(),
+  );
 
   const { firstDayOfWeek, lastDayOfWeek, weekDays } =
     useRecordCalendarWeekDaysRange(recordCalendarSelectedDate);
@@ -334,7 +346,7 @@ export const RecordCalendarWeek = () => {
     (field) => field.id === recordIndexCalendarFieldMetadataId,
   );
 
-  const now = Temporal.Now.zonedDateTimeISO(timeZone);
+  const now = currentInstant.toZonedDateTimeISO(timeZone);
   const today = now.toPlainDate();
   const isCurrentWeek =
     Temporal.PlainDate.compare(today, firstDayOfWeek) >= 0 &&
@@ -343,6 +355,14 @@ export const RecordCalendarWeek = () => {
     (now.hour + now.minute / 60) * RECORD_CALENDAR_WEEK_HOUR_HEIGHT;
   const initialScrollHour = isCurrentWeek ? Math.max(now.hour - 2, 0) : 8;
   const firstDayOfWeekString = firstDayOfWeek.toString();
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setCurrentInstant(Temporal.Now.instant());
+    }, CURRENT_TIME_REFRESH_INTERVAL_IN_MILLISECONDS);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     scrollAnchorRef.current?.scrollIntoView({
@@ -359,7 +379,7 @@ export const RecordCalendarWeek = () => {
     <StyledContainer>
       <StyledHeader>
         <StyledHeaderGutter>
-          <TimeZoneAbbreviation instant={Temporal.Now.instant()} />
+          <TimeZoneAbbreviation instant={currentInstant} />
         </StyledHeaderGutter>
         {weekDays.map(({ date, label }) => {
           const isToday = isSamePlainDate(date, today);
@@ -412,7 +432,11 @@ export const RecordCalendarWeek = () => {
           <>
             <StyledCurrentTimeLine topInPixels={currentTimeTopInPixels} />
             <StyledCurrentTimeLabel topInPixels={currentTimeTopInPixels}>
-              {formatInTimeZone(new Date(), timeZone, timeFormat)}
+              {formatInTimeZone(
+                new Date(currentInstant.toString()),
+                timeZone,
+                timeFormat,
+              )}
             </StyledCurrentTimeLabel>
           </>
         )}

@@ -11,6 +11,7 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
+import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 
@@ -42,7 +43,6 @@ import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { atom, useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useLoadRecordIndexStates = () => {
@@ -322,7 +322,7 @@ export const useLoadRecordIndexStates = () => {
             );
             batchSet(
               recordIndexCalendarLayoutState.atom,
-              view.calendarLayout ?? ViewCalendarLayout.MONTH,
+              getSupportedRecordCalendarLayout(view.calendarLayout),
             );
           }
 

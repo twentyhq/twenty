@@ -10,12 +10,14 @@ import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-ca
 import { recordIndexCalendarLayoutState } from '@/object-record/record-index/states/recordIndexCalendarLayoutState';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { useRecordCalendarSelection } from '@/object-record/record-calendar/states/selectors/useRecordCalendarSelection';
+import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
 import { MODAL_BACKDROP_CLICK_OUTSIDE_ID } from '@/ui/layout/modal/constants/ModalBackdropClickOutsideId';
 import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useEffect, useState } from 'react';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
@@ -40,6 +42,21 @@ export const RecordCalendar = () => {
   const recordIndexCalendarLayout = useAtomStateValue(
     recordIndexCalendarLayoutState,
   );
+  const supportedCalendarLayout = getSupportedRecordCalendarLayout(
+    recordIndexCalendarLayout,
+  );
+  const [previousCalendarLayout, setPreviousCalendarLayout] = useState(
+    supportedCalendarLayout,
+  );
+
+  useEffect(() => {
+    if (previousCalendarLayout === supportedCalendarLayout) {
+      return;
+    }
+
+    setPreviousCalendarLayout(supportedCalendarLayout);
+    resetRecordSelection();
+  }, [previousCalendarLayout, resetRecordSelection, supportedCalendarLayout]);
 
   useListenClickOutside({
     excludedClickOutsideIds: [
@@ -63,7 +80,7 @@ export const RecordCalendar = () => {
       <ScrollWrapper
         componentInstanceId={`scroll-wrapper-record-calendar-${recordCalendarId}`}
       >
-        {recordIndexCalendarLayout === ViewCalendarLayout.WEEK ? (
+        {supportedCalendarLayout === ViewCalendarLayout.WEEK ? (
           <RecordCalendarWeek />
         ) : (
           <RecordCalendarMonth />

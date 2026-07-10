@@ -17,10 +17,13 @@ export const useRecordCalendarWeekDaysRange = (
     throw new Error('Current workspace member not found');
   }
 
+  const calendarStartDay =
+    currentWorkspaceMember.calendarStartDay ?? CalendarStartDay.SYSTEM;
+
   const weekStartsOnDayIndex = (
-    currentWorkspaceMember.calendarStartDay === CalendarStartDay.SYSTEM
+    calendarStartDay === CalendarStartDay.SYSTEM
       ? CalendarStartDay[detectCalendarStartDay()]
-      : (currentWorkspaceMember.calendarStartDay ?? 0)
+      : calendarStartDay
   ) as 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
   const selectedDayIndex = selectedDate.dayOfWeek % 7;
