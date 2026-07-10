@@ -1,23 +1,13 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
-import { type Person } from '@/people/types/Person';
-import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { isDefined } from 'twenty-shared/utils';
-
-type ParticipantWithDisplayName = Pick<
-  EmailThreadMessageParticipant,
-  'displayName' | 'handle'
-> & {
-  person?: Pick<Person, 'name'> | null;
-  workspaceMember?: Pick<WorkspaceMember, 'name'> | null;
-};
 
 export const getDisplayNameFromParticipant = ({
   participant,
   shouldUseFullName = false,
 }: {
-  participant: ParticipantWithDisplayName;
+  participant: EmailThreadMessageParticipant;
   shouldUseFullName?: boolean;
 }) => {
   if (isDefined(participant.person)) {
