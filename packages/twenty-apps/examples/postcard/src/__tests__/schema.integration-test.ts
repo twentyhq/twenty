@@ -29,9 +29,8 @@ describe('PostCard object', () => {
         edges: {
           node: {
             nameSingular: true,
-            fields: {
-              __args: { paging: { first: 500 }, filter: {} },
-              edges: { node: { name: true } },
+            fieldsList: {
+              name: true,
             },
           },
         },
@@ -43,10 +42,7 @@ describe('PostCard object', () => {
       .find((n: { nameSingular: string }) => n.nameSingular === 'postCard');
     expect(obj).toBeDefined();
 
-    const names = obj!.fields.edges.map(
-      (e: { node: { name: string } }) => e.node.name,
-    );
-    console.log('names', names);
+    const names = obj!.fieldsList.map((field: { name: string }) => field.name);
     expect(names).toContain('name');
     expect(names).toContain('content');
     expect(names).toContain('status');
