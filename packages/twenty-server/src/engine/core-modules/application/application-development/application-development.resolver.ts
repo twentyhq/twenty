@@ -320,6 +320,23 @@ export class ApplicationDevelopmentResolver {
     workspaceId: string,
     applicationId: string,
   ): Promise<void> {
+    const registration =
+      await this.applicationRegistrationService.findOneByIdGlobal(
+        applicationRegistrationId,
+      );
+
+    // The registration is instance-global: for catalog-synced (npm) apps it is
+    // the marketplace entry and OAuth identity shared by every workspace, so
+    // dev-mode sync must not overwrite its manifest or flip its sourceType.
+    // Only registrations owned by the syncing workspace (and not npm-sourced)
+    // reflect local dev state.
+    if (
+      registration.sourceType === ApplicationRegistrationSourceType.NPM ||
+      registration.ownerWorkspaceId !== workspaceId
+    ) {
+      return;
+    }
+
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
 
     const manifestWithResolvedUrls = resolveManifestAssetUrls(

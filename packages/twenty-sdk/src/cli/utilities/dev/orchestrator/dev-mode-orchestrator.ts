@@ -1,4 +1,5 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
+import { type AppTokenSources } from '@/cli/utilities/auth/ensure-app-access-token-is-valid-or-refresh';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
@@ -227,11 +228,41 @@ export class DevModeOrchestrator {
     if (objectsOrFieldsChanged) {
       await this.generateApiClientStep.execute({
         appPath: this.state.appPath,
-        credentials: this.registerAppStep.registrationCredentials,
+        tokenSources: this.buildAppTokenSources(),
       });
 
       this.skipTypecheck = false;
     }
+  }
+
+  private buildAppTokenSources(): AppTokenSources {
+    const credentials = this.registerAppStep.registrationCredentials;
+    const applicationId =
+      this.state.steps.resolveApplication.output.applicationId;
+
+    return {
+      credentials: credentials?.clientSecret
+        ? {
+            clientId: credentials.clientId,
+            clientSecret: credentials.clientSecret,
+          }
+        : undefined,
+      fetchTokenPair: applicationId
+        ? async () => {
+            const tokenResult =
+              await this.apiService.generateApplicationToken(applicationId);
+
+            if (!tokenResult.success || !tokenResult.data) {
+              return undefined;
+            }
+
+            return {
+              accessToken: tokenResult.data.applicationAccessToken.token,
+              refreshToken: tokenResult.data.applicationRefreshToken.token,
+            };
+          }
+        : undefined,
+    };
   }
 
   private async initializePipeline(manifest: Manifest): Promise<boolean> {

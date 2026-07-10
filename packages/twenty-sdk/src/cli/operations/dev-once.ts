@@ -354,7 +354,23 @@ const innerAppDevOnce = async (
   try {
     const appAccessToken = await ensureAppAccessTokenIsValidOrRefresh(
       configService,
-      { clientId, clientSecret },
+      {
+        credentials: clientSecret ? { clientId, clientSecret } : undefined,
+        fetchTokenPair: async () => {
+          const tokenResult = await apiService.generateApplicationToken(
+            createDevAppResult.data.id,
+          );
+
+          if (!tokenResult.success || !tokenResult.data) {
+            return undefined;
+          }
+
+          return {
+            accessToken: tokenResult.data.applicationAccessToken.token,
+            refreshToken: tokenResult.data.applicationRefreshToken.token,
+          };
+        },
+      },
     );
 
     const clientService = new ClientService();
