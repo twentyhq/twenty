@@ -61,14 +61,3 @@ export const PARTNER_WEBSITE_FIELD_UNIVERSAL_IDENTIFIER =
 
 export const PARTNER_CALENDAR_LINK_FIELD_UNIVERSAL_IDENTIFIER =
   'a0000008-0000-4000-8000-000000000008';
-
-// createdAt is a reserved system field auto-created on the partner object, so it
-// cannot get a random id. This is the inlined result of the SDK's own derivation
-// getFieldUniversalIdentifier({
-//   applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER, // e662fc1f-...
-//   objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,   // 39101b39-...
-//   name: 'createdAt',
-// })
-// matching what `twenty-sdk` scaffolding bakes in for a `defaultFieldName` field.
-export const PARTNER_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER =
-  '746e2944-28d0-545e-9832-a46516e1d9a0';
