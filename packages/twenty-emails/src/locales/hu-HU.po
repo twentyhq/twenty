@@ -129,31 +129,6 @@ msgid "Verify Email"
 msgstr "Email ellenőrzése"
 
 #. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Password updated"
-msgstr "Jelszó frissítve"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Dear {userName},"
-msgstr "Kedves {userName},"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "Ez egy megerősítés arról, hogy fiókja jelszavát ({email}) sikeresen megváltoztatták {formattedDate} napján."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "Amennyiben Ön nem kezdeményezte ezt a változtatást, kérjük azonnal lépjen kapcsolatba a munkaterület tulajdonosával."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Connect to Twenty"
-msgstr "Csatlakozás a Twentyhez"
-
-#. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
 msgstr "Jelszó visszaállítása 🗝"
@@ -177,6 +152,31 @@ msgstr "Beállítás"
 #: src/emails/password-reset-link.email.tsx
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 msgstr "Ez a hivatkozás csak a következő {duration} ideig érvényes. Ha a hivatkozás nem működik, használhatja közvetlenül a belépés ellenőrző hivatkozását:"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Password updated"
+msgstr "Jelszó frissítve"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Dear {userName},"
+msgstr "Kedves {userName},"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "Ez egy megerősítés arról, hogy fiókja jelszavát ({email}) sikeresen megváltoztatták {formattedDate} napján."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "Amennyiben Ön nem kezdeményezte ezt a változtatást, kérjük azonnal lépjen kapcsolatba a munkaterület tulajdonosával."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Connect to Twenty"
+msgstr "Csatlakozás a Twentyhez"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -204,37 +204,6 @@ msgid "Start a new workspace"
 msgstr "Új munkaterület indítása"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "A heads up before your trial ends"
-msgstr "Előzetes figyelmeztetés a próbaidőszak lejárta előtt"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "We don't like surprise charges, so here's a friendly heads up."
-msgstr "Mi sem szeretjük a váratlan levonásokat, ezért küldjük ezt a barátságos előzetes értesítést."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
-msgstr "A(z) <0>{workspaceDisplayName}</0> ingyenes próbaidőszakod {formattedDate}-ig tart. Ha addig nem mondod le, a nyilvántartásban szereplő kártyádról levonjuk az éves csomagod díját."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
-msgstr "A(z) <0>{workspaceDisplayName}</0> ingyenes próbaidőszakod {formattedDate}-ig tart. Ha addig nem mondod le, a nyilvántartásban szereplő kártyádról levonjuk a havi csomagod díját."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
-msgstr "Ha a Twenty bevált számodra, minden rendben — nincs további teendőd. Ha mégsem ez a megfelelő megoldás, egy kattintással lemondhatod addig, és nem számítunk fel díjat."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Manage subscription"
-msgstr "Előfizetés kezelése"
-
-#. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
 msgstr "A próbaidőszakod hamarosan lejár"
@@ -260,16 +229,6 @@ msgid "Add a payment method"
 msgstr "Fizetési mód hozzáadása"
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Mi az a Twenty?"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "Ez egy CRM, egy szoftver, amely segíti a vállalkozásokat az ügyféladataik és kapcsolataik hatékony kezelésében."
-
-#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "A csomagod hamarosan megújul"
@@ -288,6 +247,47 @@ msgstr "A(z) <0>{workspaceDisplayName}</0> éves csomagod {formattedDate}-kor me
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "Ha folytatni szeretnéd, nincs szükség semmilyen lépésre. Ha inkább nem szeretnéd megújítani, addig bármikor lemondhatod."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "Előfizetés kezelése"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "A heads up before your trial ends"
+msgstr "Előzetes figyelmeztetés a próbaidőszak lejárta előtt"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "We don't like surprise charges, so here's a friendly heads up."
+msgstr "Mi sem szeretjük a váratlan levonásokat, ezért küldjük ezt a barátságos előzetes értesítést."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
+msgstr "A(z) <0>{workspaceDisplayName}</0> ingyenes próbaidőszakod {formattedDate}-ig tart. Ha addig nem mondod le, a nyilvántartásban szereplő kártyádról levonjuk az éves csomagod díját."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
+msgstr "A(z) <0>{workspaceDisplayName}</0> ingyenes próbaidőszakod {formattedDate}-ig tart. Ha addig nem mondod le, a nyilvántartásban szereplő kártyádról levonjuk a havi csomagod díját."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
+msgstr "Ha a Twenty bevált számodra, minden rendben — nincs további teendőd. Ha mégsem ez a megfelelő megoldás, egy kattintással lemondhatod addig, és nem számítunk fel díjat."
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Mi az a Twenty?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "Ez egy CRM, egy szoftver, amely segíti a vállalkozásokat az ügyféladataik és kapcsolataik hatékony kezelésében."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

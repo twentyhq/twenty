@@ -129,31 +129,6 @@ msgid "Verify Email"
 msgstr "Verifieer E-pos"
 
 #. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Password updated"
-msgstr "Wagwoord opgedateer"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Dear {userName},"
-msgstr "Liewe {userName},"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "Dit is 'n bevestiging dat die wagwoord vir jou rekening ({email}) suksesvol verander is op {formattedDate}."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "As jy nie hierdie verandering geïnisieer het nie, kontak asseblief jou werkruimte-eienaar dadelik."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Connect to Twenty"
-msgstr "Konnekteer met Twenty"
-
-#. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
 msgstr "Stel jou wagwoord terug 🗝"
@@ -177,6 +152,31 @@ msgstr "Stel"
 #: src/emails/password-reset-link.email.tsx
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 msgstr "Hierdie skakel is slegs geldig vir die volgende {duration}. Indien die skakel nie werk nie, kan jy die aanmeldverifiëringskakel direk gebruik:"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Password updated"
+msgstr "Wagwoord opgedateer"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Dear {userName},"
+msgstr "Liewe {userName},"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "Dit is 'n bevestiging dat die wagwoord vir jou rekening ({email}) suksesvol verander is op {formattedDate}."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "As jy nie hierdie verandering geïnisieer het nie, kontak asseblief jou werkruimte-eienaar dadelik."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Connect to Twenty"
+msgstr "Konnekteer met Twenty"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -204,37 +204,6 @@ msgid "Start a new workspace"
 msgstr "Begin ’n nuwe werksruimte"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "A heads up before your trial ends"
-msgstr "’n Waarskuwing voordat jou proeflopie eindig"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "We don't like surprise charges, so here's a friendly heads up."
-msgstr "Ons hou nie van verrassingskoste nie, so hier is ’n vriendelike waarskuwing."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
-msgstr "Jou gratis proeflopie van <0>{workspaceDisplayName}</0> eindig op {formattedDate}. Tensy jy voor dan kanselleer, sal die kaart op rekord vir jou jaarlikse plan gehef word."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
-msgstr "Jou gratis proeflopie van <0>{workspaceDisplayName}</0> eindig op {formattedDate}. Tensy jy voor dan kanselleer, sal die kaart op rekord vir jou maandelikse plan gehef word."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
-msgstr "As Twenty vir jou werk, is jy reg — daar is niks om te doen nie. As dit nie die regte pas is nie, kan jy voor dan met een kliek kanselleer en jy sal nie gehef word nie."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Manage subscription"
-msgstr "Bestuur intekening"
-
-#. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
 msgstr "Jou proeflopie eindig binnekort"
@@ -260,16 +229,6 @@ msgid "Add a payment method"
 msgstr "Voeg ’n betaalmetode by"
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Wat is Twenty?"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "Dit is 'n CRM, 'n sagteware om besighede te help om hul kliëntedata en verhoudings doeltreffend te bestuur."
-
-#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "Jou plan word binnekort hernu"
@@ -288,6 +247,47 @@ msgstr "Jou jaarlikse plan vir <0>{workspaceDisplayName}</0> word op {formattedD
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "Geen aksie is nodig as jy wil voortgaan nie. As jy liewer nie wil hernu nie, kan jy enige tyd voor dan kanselleer."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "Bestuur intekening"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "A heads up before your trial ends"
+msgstr "’n Waarskuwing voordat jou proeflopie eindig"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "We don't like surprise charges, so here's a friendly heads up."
+msgstr "Ons hou nie van verrassingskoste nie, so hier is ’n vriendelike waarskuwing."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
+msgstr "Jou gratis proeflopie van <0>{workspaceDisplayName}</0> eindig op {formattedDate}. Tensy jy voor dan kanselleer, sal die kaart op rekord vir jou jaarlikse plan gehef word."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
+msgstr "Jou gratis proeflopie van <0>{workspaceDisplayName}</0> eindig op {formattedDate}. Tensy jy voor dan kanselleer, sal die kaart op rekord vir jou maandelikse plan gehef word."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
+msgstr "As Twenty vir jou werk, is jy reg — daar is niks om te doen nie. As dit nie die regte pas is nie, kan jy voor dan met een kliek kanselleer en jy sal nie gehef word nie."
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Wat is Twenty?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "Dit is 'n CRM, 'n sagteware om besighede te help om hul kliëntedata en verhoudings doeltreffend te bestuur."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

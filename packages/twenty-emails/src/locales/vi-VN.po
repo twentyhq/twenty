@@ -129,31 +129,6 @@ msgid "Verify Email"
 msgstr "Xác minh Email"
 
 #. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Password updated"
-msgstr "Mật khẩu đã được cập nhật"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Dear {userName},"
-msgstr "Kính gửi {userName},"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "Đây là xác nhận rằng mật khẩu cho tài khoản của bạn ({email}) đã được thay đổi thành công vào {formattedDate}."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "Nếu bạn không khởi xướng việc thay đổi này, vui lòng liên hệ ngay với chủ sở hữu của không gian làm việc của bạn."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Connect to Twenty"
-msgstr "Kết nối với Twenty"
-
-#. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
 msgstr "Đặt lại mật khẩu của bạn 🗝"
@@ -177,6 +152,31 @@ msgstr "Thiết lập"
 #: src/emails/password-reset-link.email.tsx
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 msgstr "Liên kết này chỉ có hiệu lực trong thời gian {duration} kế tiếp. Nếu liên kết không hoạt động, bạn có thể sử dụng liên kết xác minh đăng nhập trực tiếp:"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Password updated"
+msgstr "Mật khẩu đã được cập nhật"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Dear {userName},"
+msgstr "Kính gửi {userName},"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "Đây là xác nhận rằng mật khẩu cho tài khoản của bạn ({email}) đã được thay đổi thành công vào {formattedDate}."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "Nếu bạn không khởi xướng việc thay đổi này, vui lòng liên hệ ngay với chủ sở hữu của không gian làm việc của bạn."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Connect to Twenty"
+msgstr "Kết nối với Twenty"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -204,37 +204,6 @@ msgid "Start a new workspace"
 msgstr "Bắt đầu không gian làm việc mới"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "A heads up before your trial ends"
-msgstr "Thông báo trước khi bản dùng thử của bạn kết thúc"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "We don't like surprise charges, so here's a friendly heads up."
-msgstr "Chúng tôi không thích những khoản phí bất ngờ, nên đây là một lời nhắc thân thiện."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
-msgstr "Bản dùng thử miễn phí không gian làm việc <0>{workspaceDisplayName}</0> của bạn sẽ kết thúc vào {formattedDate}. Trừ khi bạn hủy trước thời điểm đó, thẻ đang được lưu sẽ bị tính phí cho gói hàng năm của bạn."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
-msgstr "Bản dùng thử miễn phí không gian làm việc <0>{workspaceDisplayName}</0> của bạn sẽ kết thúc vào {formattedDate}. Trừ khi bạn hủy trước thời điểm đó, thẻ đang được lưu sẽ bị tính phí cho gói hàng tháng của bạn."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
-msgstr "Nếu Twenty phù hợp với nhu cầu của bạn, mọi thứ đã sẵn sàng — bạn không cần làm gì thêm. Nếu không phù hợp, bạn có thể hủy chỉ với một lần nhấp trước thời điểm đó và sẽ không bị tính phí."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Manage subscription"
-msgstr "Quản lý gói đăng ký"
-
-#. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
 msgstr "Bản dùng thử của bạn sắp kết thúc"
@@ -260,16 +229,6 @@ msgid "Add a payment method"
 msgstr "Thêm phương thức thanh toán"
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Twenty là gì?"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "Đó là một CRM, một phần mềm giúp doanh nghiệp quản lý dữ liệu và mối quan hệ khách hàng một cách hiệu quả."
-
-#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "Gói của bạn sẽ sớm gia hạn"
@@ -288,6 +247,47 @@ msgstr "Gói hàng năm cho không gian làm việc <0>{workspaceDisplayName}</0
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "Bạn không cần thực hiện hành động nào nếu muốn tiếp tục. Nếu không muốn gia hạn, bạn có thể hủy bất kỳ lúc nào trước thời điểm đó."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "Quản lý gói đăng ký"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "A heads up before your trial ends"
+msgstr "Thông báo trước khi bản dùng thử của bạn kết thúc"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "We don't like surprise charges, so here's a friendly heads up."
+msgstr "Chúng tôi không thích những khoản phí bất ngờ, nên đây là một lời nhắc thân thiện."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
+msgstr "Bản dùng thử miễn phí không gian làm việc <0>{workspaceDisplayName}</0> của bạn sẽ kết thúc vào {formattedDate}. Trừ khi bạn hủy trước thời điểm đó, thẻ đang được lưu sẽ bị tính phí cho gói hàng năm của bạn."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
+msgstr "Bản dùng thử miễn phí không gian làm việc <0>{workspaceDisplayName}</0> của bạn sẽ kết thúc vào {formattedDate}. Trừ khi bạn hủy trước thời điểm đó, thẻ đang được lưu sẽ bị tính phí cho gói hàng tháng của bạn."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
+msgstr "Nếu Twenty phù hợp với nhu cầu của bạn, mọi thứ đã sẵn sàng — bạn không cần làm gì thêm. Nếu không phù hợp, bạn có thể hủy chỉ với một lần nhấp trước thời điểm đó và sẽ không bị tính phí."
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Twenty là gì?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "Đó là một CRM, một phần mềm giúp doanh nghiệp quản lý dữ liệu và mối quan hệ khách hàng một cách hiệu quả."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

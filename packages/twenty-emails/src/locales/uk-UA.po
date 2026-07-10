@@ -129,31 +129,6 @@ msgid "Verify Email"
 msgstr "Підтвердіть Email"
 
 #. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Password updated"
-msgstr "Пароль оновлено"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Dear {userName},"
-msgstr "Шановний {userName},"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "Це підтвердження того, що пароль для вашого облікового запису ({email}) було успішно змінено {formattedDate}."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "Якщо ви не починали цю зміну, будь ласка, негайно зверніться до власника вашого робочого простору."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Connect to Twenty"
-msgstr "Підключитися до Twenty"
-
-#. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
 msgstr "Скинути ваш пароль 🗝"
@@ -177,6 +152,31 @@ msgstr "Встановіть"
 #: src/emails/password-reset-link.email.tsx
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 msgstr "Це посилання дійсне протягом наступних {duration}. Якщо посилання не працює, ви можете напряму використовувати посилання для перевірки логіна:"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Password updated"
+msgstr "Пароль оновлено"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Dear {userName},"
+msgstr "Шановний {userName},"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "Це підтвердження того, що пароль для вашого облікового запису ({email}) було успішно змінено {formattedDate}."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "Якщо ви не починали цю зміну, будь ласка, негайно зверніться до власника вашого робочого простору."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Connect to Twenty"
+msgstr "Підключитися до Twenty"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -204,37 +204,6 @@ msgid "Start a new workspace"
 msgstr "Створити новий робочий простір"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "A heads up before your trial ends"
-msgstr "Невелике попередження перед завершенням пробного періоду"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "We don't like surprise charges, so here's a friendly heads up."
-msgstr "Ми не любимо неочікуваних списань, тож надсилаємо вам дружнє попередження."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
-msgstr "Ваш безкоштовний пробний період для <0>{workspaceDisplayName}</0> закінчується {formattedDate}. Якщо ви не скасуєте підписку до цього часу, прив’язана картка буде списана за річний план."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
-msgstr "Ваш безкоштовний пробний період для <0>{workspaceDisplayName}</0> закінчується {formattedDate}. Якщо ви не скасуєте підписку до цього часу, прив’язана картка буде списана за місячний план."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
-msgstr "Якщо Twenty вам підходить, усе вже налаштовано — нічого робити не потрібно. Якщо це не ваш варіант, ви можете скасувати підписку в один клік до цього часу, і з вас нічого не спишуть."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Manage subscription"
-msgstr "Керувати підпискою"
-
-#. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
 msgstr "Ваш пробний період незабаром закінчиться"
@@ -260,16 +229,6 @@ msgid "Add a payment method"
 msgstr "Додати спосіб оплати"
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Що таке Twenty?"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "Це CRM, програмне забезпечення для ефективного управління даними клієнтів та відносинами з ними в бізнесі."
-
-#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "Ваш план незабаром буде поновлено"
@@ -288,6 +247,47 @@ msgstr "Ваш річний план для <0>{workspaceDisplayName}</0> буд
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "Якщо ви хочете продовжити користування, нічого робити не потрібно. Якщо ж ви не бажаєте поновлювати план, ви можете скасувати його будь-коли до цієї дати."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "Керувати підпискою"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "A heads up before your trial ends"
+msgstr "Невелике попередження перед завершенням пробного періоду"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "We don't like surprise charges, so here's a friendly heads up."
+msgstr "Ми не любимо неочікуваних списань, тож надсилаємо вам дружнє попередження."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
+msgstr "Ваш безкоштовний пробний період для <0>{workspaceDisplayName}</0> закінчується {formattedDate}. Якщо ви не скасуєте підписку до цього часу, прив’язана картка буде списана за річний план."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
+msgstr "Ваш безкоштовний пробний період для <0>{workspaceDisplayName}</0> закінчується {formattedDate}. Якщо ви не скасуєте підписку до цього часу, прив’язана картка буде списана за місячний план."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
+msgstr "Якщо Twenty вам підходить, усе вже налаштовано — нічого робити не потрібно. Якщо це не ваш варіант, ви можете скасувати підписку в один клік до цього часу, і з вас нічого не спишуть."
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Що таке Twenty?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "Це CRM, програмне забезпечення для ефективного управління даними клієнтів та відносинами з ними в бізнесі."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

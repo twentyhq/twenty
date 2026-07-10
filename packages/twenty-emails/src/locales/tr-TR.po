@@ -129,31 +129,6 @@ msgid "Verify Email"
 msgstr "E-postayı Doğrula"
 
 #. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Password updated"
-msgstr "Şifre güncellendi"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Dear {userName},"
-msgstr "Sevgili {userName},"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "Hesabınızın ({email}) şifresinin {formattedDate} tarihinde başarıyla değiştirildiğine dair bir doğrulama bu."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "Bu değişikliği başlatmadıysanız, lütfen hemen çalışma alanı sahibinizle iletişime geçin."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Connect to Twenty"
-msgstr "Twenty'e bağlan"
-
-#. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
 msgstr "Şifreni sıfırla 🗝"
@@ -177,6 +152,31 @@ msgstr "Belirle"
 #: src/emails/password-reset-link.email.tsx
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 msgstr "Bu bağlantı sadece {duration} boyunca geçerlidir. Bağlantı çalışmazsa, doğrudan giriş doğrulama bağlantısını kullanabilirsiniz:"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Password updated"
+msgstr "Şifre güncellendi"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Dear {userName},"
+msgstr "Sevgili {userName},"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "Hesabınızın ({email}) şifresinin {formattedDate} tarihinde başarıyla değiştirildiğine dair bir doğrulama bu."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "Bu değişikliği başlatmadıysanız, lütfen hemen çalışma alanı sahibinizle iletişime geçin."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Connect to Twenty"
+msgstr "Twenty'e bağlan"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -204,37 +204,6 @@ msgid "Start a new workspace"
 msgstr "Yeni bir çalışma alanı başlat"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "A heads up before your trial ends"
-msgstr "Deneme süreniz bitmeden önce küçük bir bilgilendirme"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "We don't like surprise charges, so here's a friendly heads up."
-msgstr "Beklenmedik ücretleri sevmiyoruz, bu yüzden size dostça bir bilgilendirme gönderiyoruz."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
-msgstr "<0>{workspaceDisplayName}</0> için ücretsiz deneme süreniz {formattedDate} tarihinde sona eriyor. O zamandan önce iptal etmezseniz, kayıttaki kartınız yıllık planınız için ücretlendirilecek."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
-msgstr "<0>{workspaceDisplayName}</0> için ücretsiz deneme süreniz {formattedDate} tarihinde sona eriyor. O zamandan önce iptal etmezseniz, kayıttaki kartınız aylık planınız için ücretlendirilecek."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
-msgstr "Twenty sizin için işe yarıyorsa, her şey hazır — yapmanız gereken bir şey yok. Eğer size uygun değilse, o zamana kadar tek tıklamayla iptal edebilir ve hiçbir ücret ödemezsiniz."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Manage subscription"
-msgstr "Aboneliği yönet"
-
-#. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
 msgstr "Deneme süreniz yakında sona eriyor"
@@ -260,16 +229,6 @@ msgid "Add a payment method"
 msgstr "Bir ödeme yöntemi ekle"
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Twenty nedir?"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "Bu bir CRM, işletmelerin müşteri verilerini ve ilişkilerini verimli bir şekilde yönetmelerine yardımcı olan bir yazılım."
-
-#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "Planınız yakında yenileniyor"
@@ -288,6 +247,47 @@ msgstr "<0>{workspaceDisplayName}</0> için yıllık planınız {formattedDate} 
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "Devam etmek istiyorsanız herhangi bir işlem yapmanız gerekmiyor. Yenilemek istemezseniz, o zamana kadar dilediğiniz zaman iptal edebilirsiniz."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "Aboneliği yönet"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "A heads up before your trial ends"
+msgstr "Deneme süreniz bitmeden önce küçük bir bilgilendirme"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "We don't like surprise charges, so here's a friendly heads up."
+msgstr "Beklenmedik ücretleri sevmiyoruz, bu yüzden size dostça bir bilgilendirme gönderiyoruz."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
+msgstr "<0>{workspaceDisplayName}</0> için ücretsiz deneme süreniz {formattedDate} tarihinde sona eriyor. O zamandan önce iptal etmezseniz, kayıttaki kartınız yıllık planınız için ücretlendirilecek."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
+msgstr "<0>{workspaceDisplayName}</0> için ücretsiz deneme süreniz {formattedDate} tarihinde sona eriyor. O zamandan önce iptal etmezseniz, kayıttaki kartınız aylık planınız için ücretlendirilecek."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
+msgstr "Twenty sizin için işe yarıyorsa, her şey hazır — yapmanız gereken bir şey yok. Eğer size uygun değilse, o zamana kadar tek tıklamayla iptal edebilir ve hiçbir ücret ödemezsiniz."
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Twenty nedir?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "Bu bir CRM, işletmelerin müşteri verilerini ve ilişkilerini verimli bir şekilde yönetmelerine yardımcı olan bir yazılım."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

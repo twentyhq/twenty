@@ -129,31 +129,6 @@ msgid "Verify Email"
 msgstr "Vahvista sähköposti"
 
 #. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Password updated"
-msgstr "Salasana päivitetty"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Dear {userName},"
-msgstr "Hyvä {userName},"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "Tämä on vahvistus siitä, että tilisi ({email}) salasana on vaihdettu onnistuneesti {formattedDate}."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "Jos et itse aloittanut tätä muutosta, ota heti yhteyttä työtilasi omistajaan."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Connect to Twenty"
-msgstr "Yhdistä Twenty"
-
-#. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
 msgstr "Nollaa salasanasi 🗝"
@@ -177,6 +152,31 @@ msgstr "Aseta"
 #: src/emails/password-reset-link.email.tsx
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 msgstr "Tämä linkki on voimassa vain seuraavat {duration}. Jos linkki ei toimi, voit käyttää suoraan kirjautumisen varmennuslinkkiä:"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Password updated"
+msgstr "Salasana päivitetty"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Dear {userName},"
+msgstr "Hyvä {userName},"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "Tämä on vahvistus siitä, että tilisi ({email}) salasana on vaihdettu onnistuneesti {formattedDate}."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "Jos et itse aloittanut tätä muutosta, ota heti yhteyttä työtilasi omistajaan."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Connect to Twenty"
+msgstr "Yhdistä Twenty"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -204,37 +204,6 @@ msgid "Start a new workspace"
 msgstr "Aloita uusi työtila"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "A heads up before your trial ends"
-msgstr "Pieni muistutus ennen kuin kokeilusi päättyy"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "We don't like surprise charges, so here's a friendly heads up."
-msgstr "Emme pidä yllättävistä veloituksista, joten tässä ystävällinen muistutus."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
-msgstr "Maksuton kokeilujaksosi <0>{workspaceDisplayName}</0>-työtilassa päättyy {formattedDate}. Ellei tilausta peruta ennen sitä, tallennettua korttia veloitetaan vuositilauksestasi."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
-msgstr "Maksuton kokeilujaksosi <0>{workspaceDisplayName}</0>-työtilassa päättyy {formattedDate}. Ellei tilausta peruta ennen sitä, tallennettua korttia veloitetaan kuukausitilauksestasi."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
-msgstr "Jos Twenty toimii sinulle, kaikki on kunnossa — mitään ei tarvitse tehdä. Jos se ei ole sinulle sopiva, voit peruuttaa tilauksen yhdellä napsautuksella ennen sitä, eikä sinua veloiteta."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Manage subscription"
-msgstr "Hallitse tilausta"
-
-#. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
 msgstr "Kokeilujaksosi päättyy pian"
@@ -260,16 +229,6 @@ msgid "Add a payment method"
 msgstr "Lisää maksutapa"
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Mikä on Twenty?"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "Se on CRM, ohjelmisto, joka auttaa yrityksiä hallitsemaan asiakastietojaan ja -suhteitaan tehokkaasti."
-
-#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "Tilauksesi uusiutuu pian"
@@ -288,6 +247,47 @@ msgstr "Vuositilauksesi työtilalle <0>{workspaceDisplayName}</0> uusiutuu {form
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "Mitään ei tarvitse tehdä, jos haluat jatkaa. Jos et halua uusia tilausta, voit peruuttaa sen milloin tahansa ennen sitä."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "Hallitse tilausta"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "A heads up before your trial ends"
+msgstr "Pieni muistutus ennen kuin kokeilusi päättyy"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "We don't like surprise charges, so here's a friendly heads up."
+msgstr "Emme pidä yllättävistä veloituksista, joten tässä ystävällinen muistutus."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
+msgstr "Maksuton kokeilujaksosi <0>{workspaceDisplayName}</0>-työtilassa päättyy {formattedDate}. Ellei tilausta peruta ennen sitä, tallennettua korttia veloitetaan vuositilauksestasi."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
+msgstr "Maksuton kokeilujaksosi <0>{workspaceDisplayName}</0>-työtilassa päättyy {formattedDate}. Ellei tilausta peruta ennen sitä, tallennettua korttia veloitetaan kuukausitilauksestasi."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
+msgstr "Jos Twenty toimii sinulle, kaikki on kunnossa — mitään ei tarvitse tehdä. Jos se ei ole sinulle sopiva, voit peruuttaa tilauksen yhdellä napsautuksella ennen sitä, eikä sinua veloiteta."
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Mikä on Twenty?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "Se on CRM, ohjelmisto, joka auttaa yrityksiä hallitsemaan asiakastietojaan ja -suhteitaan tehokkaasti."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

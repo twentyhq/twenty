@@ -129,31 +129,6 @@ msgid "Verify Email"
 msgstr "Verifique o e-mail"
 
 #. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Password updated"
-msgstr "Palavra-passe atualizada"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Dear {userName},"
-msgstr "Caro {userName},"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "Esta é uma confirmação de que a palavra-passe da sua conta ({email}) foi alterada com sucesso em {formattedDate}."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "Se não iniciou esta alteração, contacte imediatamente o proprietário do seu workspace."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Connect to Twenty"
-msgstr "Conecte-se ao Twenty"
-
-#. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset your password 🗝"
 msgstr "Redefina a sua palavra-passe 🗝"
@@ -177,6 +152,31 @@ msgstr "Definir"
 #: src/emails/password-reset-link.email.tsx
 msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 msgstr "Este link só é válido para os próximos {duration}. Se o link não funcionar, pode usar diretamente o link de verificação de login:"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Password updated"
+msgstr "Palavra-passe atualizada"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Dear {userName},"
+msgstr "Caro {userName},"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "Esta é uma confirmação de que a palavra-passe da sua conta ({email}) foi alterada com sucesso em {formattedDate}."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "Se não iniciou esta alteração, contacte imediatamente o proprietário do seu workspace."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Connect to Twenty"
+msgstr "Conecte-se ao Twenty"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -204,37 +204,6 @@ msgid "Start a new workspace"
 msgstr "Iniciar um novo espaço de trabalho"
 
 #. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "A heads up before your trial ends"
-msgstr "Um aviso antes de o seu período experimental terminar"
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "We don't like surprise charges, so here's a friendly heads up."
-msgstr "Não gostamos de cobranças inesperadas, por isso aqui vai um aviso amigável."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
-msgstr "O seu período experimental gratuito de <0>{workspaceDisplayName}</0> termina em {formattedDate}. A menos que cancele antes dessa data, o cartão registado será cobrado pelo seu plano anual."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
-msgstr "O seu período experimental gratuito de <0>{workspaceDisplayName}</0> termina em {formattedDate}. A menos que cancele antes dessa data, o cartão registado será cobrado pelo seu plano mensal."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-trial-converting.email.tsx
-msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
-msgstr "Se o Twenty estiver a funcionar para si, está tudo pronto — não precisa de fazer nada. Se não for a solução certa, pode cancelar com um clique antes dessa data e não será cobrado."
-
-#. js-lingui-explicit-id
-#: src/emails/billing-subscription-renewing.email.tsx
-#: src/emails/billing-trial-converting.email.tsx
-msgid "Manage subscription"
-msgstr "Gerir subscrição"
-
-#. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "Your trial is ending soon"
 msgstr "O seu período experimental termina em breve"
@@ -260,16 +229,6 @@ msgid "Add a payment method"
 msgstr "Adicionar um método de pagamento"
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "O que é Twenty?"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "É um CRM, um software para ajudar empresas a gerenciar seus dados e relacionamentos com clientes de forma eficiente."
-
-#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "O seu plano será renovado em breve"
@@ -288,6 +247,47 @@ msgstr "O seu plano anual para <0>{workspaceDisplayName}</0> será renovado em {
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "Nenhuma ação é necessária se quiser continuar. Se preferir não renovar, pode cancelar em qualquer altura antes dessa data."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "Gerir subscrição"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "A heads up before your trial ends"
+msgstr "Um aviso antes de o seu período experimental terminar"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "We don't like surprise charges, so here's a friendly heads up."
+msgstr "Não gostamos de cobranças inesperadas, por isso aqui vai um aviso amigável."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
+msgstr "O seu período experimental gratuito de <0>{workspaceDisplayName}</0> termina em {formattedDate}. A menos que cancele antes dessa data, o cartão registado será cobrado pelo seu plano anual."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
+msgstr "O seu período experimental gratuito de <0>{workspaceDisplayName}</0> termina em {formattedDate}. A menos que cancele antes dessa data, o cartão registado será cobrado pelo seu plano mensal."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
+msgstr "Se o Twenty estiver a funcionar para si, está tudo pronto — não precisa de fazer nada. Se não for a solução certa, pode cancelar com um clique antes dessa data e não será cobrado."
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "O que é Twenty?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "É um CRM, um software para ajudar empresas a gerenciar seus dados e relacionamentos com clientes de forma eficiente."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
