@@ -5,7 +5,9 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
+import { v4 } from 'uuid';
 
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
@@ -59,7 +61,7 @@ export class ApplicationSyncService {
     hasSchemaMetadataChanged: boolean;
   }> {
     const ownerFlatApplication: FlatApplication = dryRun
-      ? await this.findInstalledApplicationOrThrow({ workspaceId, manifest })
+      ? await this.resolveDryRunOwnerFlatApplication({ workspaceId, manifest })
       : await this.syncApplication({
           workspaceId,
           manifest,
@@ -110,28 +112,62 @@ export class ApplicationSyncService {
     return syncResult;
   }
 
-  private async findInstalledApplicationOrThrow({
+  private async resolveDryRunOwnerFlatApplication({
     workspaceId,
     manifest,
   }: {
     workspaceId: string;
     manifest: Manifest;
-  }): Promise<ApplicationEntity> {
-    const application = await this.applicationService.findByUniversalIdentifier(
-      {
+  }): Promise<FlatApplication> {
+    const installedApplication =
+      await this.applicationService.findByUniversalIdentifier({
         universalIdentifier: manifest.application.universalIdentifier,
         workspaceId,
-      },
+      });
+
+    return (
+      installedApplication ??
+      this.buildVirtualDryRunFlatApplication({ manifest, workspaceId })
     );
+  }
 
-    if (!application) {
-      throw new ApplicationException(
-        `Application "${manifest.application.universalIdentifier}" is not installed in workspace "${workspaceId}". Install it first.`,
-        ApplicationExceptionCode.APP_NOT_INSTALLED,
-      );
-    }
+  private buildVirtualDryRunFlatApplication({
+    manifest,
+    workspaceId,
+  }: {
+    manifest: Manifest;
+    workspaceId: string;
+  }): FlatApplication {
+    const now = new Date();
 
-    return application;
+    return {
+      id: v4(),
+      workspaceId,
+      universalIdentifier: manifest.application.universalIdentifier,
+      name: manifest.application.displayName,
+      description: manifest.application.description ?? null,
+      logo: manifest.application.logoUrl ?? null,
+      logoFileId: null,
+      version: null,
+      sourceType: ApplicationRegistrationSourceType.LOCAL,
+      sourcePath: manifest.application.universalIdentifier,
+      packageJsonChecksum: null,
+      packageJsonFileId: null,
+      yarnLockChecksum: null,
+      yarnLockFileId: null,
+      availablePackages: {},
+      logicFunctionLayerId: null,
+      defaultRoleId: null,
+      defaultRole: null,
+      settingsCustomTabFrontComponentId: null,
+      canBeUninstalled: true,
+      isSdkLayerStale: false,
+      applicationRegistrationId: null,
+      primaryPublicDomainId: null,
+      createdAt: now,
+      updatedAt: now,
+      deletedAt: null,
+    };
   }
 
   // Registers the application + only the pre-install logic function in
