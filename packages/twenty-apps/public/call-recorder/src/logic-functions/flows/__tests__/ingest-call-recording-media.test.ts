@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-video-field-universal-identifier';
-import { CALL_RECORDER_MAX_MEDIA_FILE_SIZE_MB_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-max-media-file-size-mb-env-var-name';
 import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-recording-media.util';
 
 const mutationMock = vi.hoisted(() => vi.fn());
@@ -371,113 +370,5 @@ describe('ingestCallRecordingMedia', () => {
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('recording boom'),
     );
-  });
-
-  it('skips an oversized file without reading its body and records the reason', async () => {
-    const cancelMock = vi.fn().mockRejectedValue(new Error('cancel exploded'));
-
-    stubFetch({
-      downloadsByUrl: {
-        [VIDEO_URL]: buildDownloadResponse({
-          contentLengthBytes: 200 * 1024 * 1024,
-          body: { cancel: cancelMock },
-        }),
-        [AUDIO_URL]: buildDownloadResponse({ contentLengthBytes: 8 }),
-      },
-    });
-
-    const updateFields = await ingestCallRecordingMedia({
-      callRecordingId: 'call-recording-1',
-      externalRecordingId: 'recall-recording-1',
-      hasAudio: false,
-      hasVideo: false,
-    });
-
-    expect(updateFields).toEqual({
-      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-      callRecorderFailureReason: 'video_file_too_large',
-    });
-    expect(getUploadBridgeCall('video.mp4')).toBeUndefined();
-    expect(cancelMock).toHaveBeenCalled();
-    expect(console.warn).toHaveBeenCalledWith(
-      expect.stringContaining('artifact-too-large'),
-    );
-    expect(console.warn).toHaveBeenCalledWith(
-      expect.stringContaining('download-body-cancel-failed'),
-    );
-  });
-
-  it('records both markers when video and audio exceed the cap', async () => {
-    stubFetch({
-      downloadsByUrl: {
-        [VIDEO_URL]: buildDownloadResponse({
-          contentLengthBytes: 200 * 1024 * 1024,
-        }),
-        [AUDIO_URL]: buildDownloadResponse({
-          contentLengthBytes: 120 * 1024 * 1024,
-        }),
-      },
-    });
-
-    const updateFields = await ingestCallRecordingMedia({
-      callRecordingId: 'call-recording-1',
-      externalRecordingId: 'recall-recording-1',
-      hasAudio: false,
-      hasVideo: false,
-    });
-
-    expect(updateFields).toEqual({
-      callRecorderFailureReason: 'video_file_too_large,audio_file_too_large',
-    });
-    expect(mutationMock).not.toHaveBeenCalled();
-  });
-
-  it('honors the cap configured through the environment', async () => {
-    vi.stubEnv(CALL_RECORDER_MAX_MEDIA_FILE_SIZE_MB_ENV_VAR_NAME, '1');
-    stubFetch({
-      downloadsByUrl: {
-        [VIDEO_URL]: buildDownloadResponse({
-          contentLengthBytes: 2 * 1024 * 1024,
-        }),
-        [AUDIO_URL]: buildDownloadResponse({ contentLengthBytes: 8 }),
-      },
-    });
-
-    const updateFields = await ingestCallRecordingMedia({
-      callRecordingId: 'call-recording-1',
-      externalRecordingId: 'recall-recording-1',
-      hasAudio: false,
-      hasVideo: false,
-    });
-
-    expect(updateFields).toEqual({
-      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-      callRecorderFailureReason: 'video_file_too_large',
-    });
-  });
-
-  it('falls back to the default cap when the configured value is invalid', async () => {
-    vi.stubEnv(
-      CALL_RECORDER_MAX_MEDIA_FILE_SIZE_MB_ENV_VAR_NAME,
-      'not-a-number',
-    );
-    stubFetch({
-      downloadsByUrl: {
-        [VIDEO_URL]: buildDownloadResponse({
-          contentLengthBytes: 2 * 1024 * 1024,
-        }),
-      },
-    });
-
-    const updateFields = await ingestCallRecordingMedia({
-      callRecordingId: 'call-recording-1',
-      externalRecordingId: 'recall-recording-1',
-      hasAudio: true,
-      hasVideo: false,
-    });
-
-    expect(updateFields).toEqual({
-      video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
-    });
   });
 });

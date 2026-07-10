@@ -97,14 +97,7 @@ export const reconcileCallRecording = async ({
       hasVideo: isNonEmptyArray(callRecording.video),
     });
 
-    updateData = {
-      ...updateData,
-      ...resolveMediaIngestionUpdate({
-        mediaIngestionUpdate,
-        currentStatus: callRecording.status,
-        pendingStatus: updateData.status,
-      }),
-    };
+    updateData = { ...updateData, ...mediaIngestionUpdate };
   }
 
   const completesIngestion = shouldCompleteCallRecordingIngestion({
@@ -193,29 +186,4 @@ const buildMissingArtifactsFailureUpdate = ({
     status: CallRecordingStatus.FAILED,
     callRecorderFailureReason: 'recording_artifacts_unavailable',
   };
-};
-
-// A media size marker must not overwrite the failure reason of a FAILED recording.
-const resolveMediaIngestionUpdate = ({
-  mediaIngestionUpdate,
-  currentStatus,
-  pendingStatus,
-}: {
-  mediaIngestionUpdate: CallRecordingUpdateFields;
-  currentStatus: string | undefined;
-  pendingStatus: string | undefined;
-}): CallRecordingUpdateFields => {
-  const isRecordingFailed =
-    currentStatus === CallRecordingStatus.FAILED ||
-    pendingStatus === CallRecordingStatus.FAILED;
-
-  if (!isRecordingFailed) {
-    return mediaIngestionUpdate;
-  }
-
-  const scrubbedUpdate = { ...mediaIngestionUpdate };
-
-  delete scrubbedUpdate.callRecorderFailureReason;
-
-  return scrubbedUpdate;
 };

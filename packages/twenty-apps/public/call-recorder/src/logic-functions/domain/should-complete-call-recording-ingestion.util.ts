@@ -15,7 +15,6 @@ export const shouldCompleteCallRecordingIngestion = ({
     transcript?: unknown;
     audio?: FilesFieldValue;
     video?: FilesFieldValue;
-    callRecorderFailureReason?: string | null;
   };
   updateData: CallRecordingUpdateFields;
 }): boolean =>
@@ -30,6 +29,4 @@ export const shouldCompleteCallRecordingIngestion = ({
     transcript: updateData.transcript ?? current.transcript,
     audio: updateData.audio ?? current.audio,
     video: updateData.video ?? current.video,
-    callRecorderFailureReason:
-      updateData.callRecorderFailureReason ?? current.callRecorderFailureReason,
   });

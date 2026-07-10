@@ -165,41 +165,4 @@ describe('reconcileCallRecording', () => {
     });
     expect(result).toEqual({ updated: true, requestedTranscript: false });
   });
-
-  it('keeps the failure reason of a failing update over a media size marker', async () => {
-    reconcileCallRecordingTranscriptArtifactMock.mockResolvedValue({
-      updateData: {
-        status: 'FAILED',
-        callRecorderFailureReason: 'transcript_failed:audio_missing',
-        transcript: { status: 'FAILED' },
-      },
-      requestedTranscript: false,
-    });
-    ingestCallRecordingMediaMock.mockResolvedValue({
-      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-      callRecorderFailureReason: 'video_file_too_large',
-    });
-
-    await reconcileCallRecording({
-      client,
-      callRecording: buildCallRecording({
-        status: 'PROCESSING',
-        externalRecordingId: 'recall-recording-1',
-      }),
-      bot: undefined,
-      treatRecordingAsDone: true,
-      requestedAt: REQUESTED_AT,
-    });
-
-    expect(persistCallRecordingProgressMock).toHaveBeenCalledWith(client, {
-      id: 'call-recording-1',
-      current: expect.objectContaining({ id: 'call-recording-1' }),
-      updateData: {
-        status: 'FAILED',
-        callRecorderFailureReason: 'transcript_failed:audio_missing',
-        transcript: { status: 'FAILED' },
-        audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-      },
-    });
-  });
 });

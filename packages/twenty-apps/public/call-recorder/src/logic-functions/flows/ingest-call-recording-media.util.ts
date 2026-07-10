@@ -3,11 +3,6 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
 import { CALL_RECORDING_AUDIO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-audio-field-universal-identifier';
 import { CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-video-field-universal-identifier';
-import { getMaxMediaFileSizeBytes } from 'src/logic-functions/constants/get-max-media-file-size-bytes';
-import {
-  AUDIO_FILE_TOO_LARGE_FAILURE_REASON,
-  VIDEO_FILE_TOO_LARGE_FAILURE_REASON,
-} from 'src/logic-functions/constants/media-file-too-large-failure-reasons';
 import { putMediaDownloadBodyToUploadTarget } from 'src/logic-functions/flows/put-media-download-body-to-upload-target.util';
 import { extractRecallMediaUrls } from 'src/logic-functions/recall-api/extract-recall-media-urls.util';
 import { getRecallRecording } from 'src/logic-functions/recall-api/get-recall-recording.util';
@@ -17,17 +12,17 @@ import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.
 
 type CallRecordingMediaUpdateFields = Pick<
   CallRecordingUpdateFields,
-  'audio' | 'video' | 'callRecorderFailureReason'
+  'audio' | 'video'
 >;
 
 type IngestMediaArtifactResult =
   | { outcome: 'ingested'; files: CallRecordingMediaFile[] }
-  | { outcome: 'too-large' }
   | { outcome: 'failed' };
 
-type OpenMediaDownloadResult =
-  | { outcome: 'opened'; body: ReadableStream<Uint8Array>; sizeBytes: number }
-  | { outcome: 'too-large'; sizeBytes: number };
+type OpenMediaDownloadResult = {
+  body: ReadableStream<Uint8Array>;
+  sizeBytes: number;
+};
 
 type MediaUploadTarget = {
   fileId: string;
@@ -65,10 +60,7 @@ export const ingestCallRecordingMedia = async ({
 
   const mediaUrls = extractRecallMediaUrls(recordingResult.recording);
   const metadataClient = new MetadataApiClient();
-  // TODO: raise this cap via config, monitor streamed uploads in prod, then remove the cap once verified.
-  const maxMediaFileSizeBytes = getMaxMediaFileSizeBytes();
   const updateFields: CallRecordingMediaUpdateFields = {};
-  const tooLargeFailureReasons: string[] = [];
 
   if (!hasVideo && !isUndefined(mediaUrls.videoUrl)) {
     const video = await ingestMediaArtifact({
@@ -78,15 +70,10 @@ export const ingestCallRecordingMedia = async ({
       fileName: 'video.mp4',
       fieldMetadataUniversalIdentifier:
         CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER,
-      maxMediaFileSizeBytes,
     });
 
     if (video.outcome === 'ingested') {
       updateFields.video = video.files;
-    }
-
-    if (video.outcome === 'too-large') {
-      tooLargeFailureReasons.push(VIDEO_FILE_TOO_LARGE_FAILURE_REASON);
     }
   }
 
@@ -98,20 +85,11 @@ export const ingestCallRecordingMedia = async ({
       fileName: 'audio.mp3',
       fieldMetadataUniversalIdentifier:
         CALL_RECORDING_AUDIO_FIELD_UNIVERSAL_IDENTIFIER,
-      maxMediaFileSizeBytes,
     });
 
     if (audio.outcome === 'ingested') {
       updateFields.audio = audio.files;
     }
-
-    if (audio.outcome === 'too-large') {
-      tooLargeFailureReasons.push(AUDIO_FILE_TOO_LARGE_FAILURE_REASON);
-    }
-  }
-
-  if (tooLargeFailureReasons.length > 0) {
-    updateFields.callRecorderFailureReason = tooLargeFailureReasons.join(',');
   }
 
   return updateFields;
@@ -123,30 +101,19 @@ const ingestMediaArtifact = async ({
   url,
   fileName,
   fieldMetadataUniversalIdentifier,
-  maxMediaFileSizeBytes,
 }: {
   callRecordingId: string;
   metadataClient: InstanceType<typeof MetadataApiClient>;
   url: string;
   fileName: string;
   fieldMetadataUniversalIdentifier: string;
-  maxMediaFileSizeBytes: number;
 }): Promise<IngestMediaArtifactResult> => {
   try {
     const download = await openMediaDownload({
       callRecordingId,
       fileName,
       url,
-      maxMediaFileSizeBytes,
     });
-
-    if (download.outcome === 'too-large') {
-      console.warn(
-        `[call-recorder] media-ingestion phase=artifact-too-large callRecordingId=${callRecordingId} fileName=${fileName} sizeBytes=${download.sizeBytes} maxMediaFileSizeBytes=${maxMediaFileSizeBytes}`,
-      );
-
-      return { outcome: 'too-large' };
-    }
 
     const fileId = await uploadMediaStreamToStorage({
       callRecordingId,
@@ -174,12 +141,10 @@ const openMediaDownload = async ({
   callRecordingId,
   fileName,
   url,
-  maxMediaFileSizeBytes,
 }: {
   callRecordingId: string;
   fileName: string;
   url: string;
-  maxMediaFileSizeBytes: number;
 }): Promise<OpenMediaDownloadResult> => {
   const response = await fetch(url, {
     signal: AbortSignal.timeout(MEDIA_DOWNLOAD_TIMEOUT_MS),
@@ -212,22 +177,11 @@ const openMediaDownload = async ({
     throw new Error('download response is missing content-length');
   }
 
-  if (contentLengthBytes > maxMediaFileSizeBytes) {
-    await cancelMediaDownloadBody({
-      callRecordingId,
-      fileName,
-      body: response.body,
-    });
-
-    return { outcome: 'too-large', sizeBytes: contentLengthBytes };
-  }
-
   if (isNull(response.body)) {
     throw new Error('download returned no body');
   }
 
   return {
-    outcome: 'opened',
     body: response.body,
     sizeBytes: contentLengthBytes,
   };
