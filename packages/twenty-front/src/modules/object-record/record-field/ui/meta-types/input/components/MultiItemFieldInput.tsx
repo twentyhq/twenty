@@ -6,8 +6,7 @@ import {
   MultiItemBaseInput,
   type MultiItemBaseInputProps,
 } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
-import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
-import { sanitizeAndValidateInput } from '@/object-record/record-field/ui/meta-types/input/utils/sanitizeAndValidateInput';
+import { useMultiItemFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type PhoneRecord } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -20,14 +19,11 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isNonEmptyString } from '@sniptt/guards';
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import { CustomError } from 'twenty-shared/utils';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { moveArrayItem } from '~/utils/array/moveArrayItem';
-import { toSpliced } from '~/utils/array/toSpliced';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
@@ -55,8 +51,6 @@ type MultiItemFieldInputProps<T> = {
   maxItemCount?: number;
 };
 
-// Todo: the API of this component does not look healthy: we have renderInput, renderItem, formatInput, ...
-// This should be refactored with a hook instead that exposes those events in a context around this component and its children.
 export const MultiItemFieldInput = <T,>({
   items,
   onChange,
@@ -81,34 +75,6 @@ export const MultiItemFieldInput = <T,>({
   );
 
   const currentFocusedItem = useAtomStateValue(currentFocusedItemSelector);
-
-  useListenClickOutside({
-    refs: [containerRef],
-    callback: (event) => {
-      if (
-        currentFocusedItem?.componentInstance.componentType !==
-        FocusComponentType.OPENED_FIELD_INPUT
-      ) {
-        return;
-      }
-
-      if (isInputDisplayed) {
-        const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
-
-        if (!isValid) {
-          return;
-        }
-
-        onChange(updatedItems);
-        onClickOutside(updatedItems, event);
-
-        return;
-      }
-
-      onClickOutside(items, event);
-    },
-    listenerId: instanceId,
-  });
 
   const getItemValueAsString = useCallback(
     (index: number): string => {
@@ -143,26 +109,57 @@ export const MultiItemFieldInput = <T,>({
     [items, fieldMetadataType],
   );
 
-  const shouldAutoEnterBecauseOnlyOneItemIsAllowed = maxItemCount === 1;
-  const shouldAutoEditFirstItemOnOpen =
-    items.length === 0 || maxItemCount === 1;
+  const {
+    isInputDisplayed,
+    inputValue,
+    isAddingNewItem,
+    errorData,
+    isLimitReached,
+    handleInputChange,
+    handleAddButtonClick,
+    handleEditButtonClick,
+    handleEnter,
+    handleSetPrimaryItem,
+    handleDeleteItem,
+    validateInputAndComputeUpdatedItems,
+  } = useMultiItemFieldInput({
+    items,
+    onChange,
+    onEnter,
+    onError,
+    validateInput,
+    formatInput,
+    getItemValueAsString,
+    maxItemCount,
+    onAddClick,
+  });
 
-  const [isInputDisplayed, setIsInputDisplayed] = useState(
-    shouldAutoEditFirstItemOnOpen && !isDefined(onAddClick),
-  );
+  useListenClickOutside({
+    refs: [containerRef],
+    callback: (event) => {
+      if (
+        currentFocusedItem?.componentInstance.componentType !==
+        FocusComponentType.OPENED_FIELD_INPUT
+      ) {
+        return;
+      }
 
-  const [inputValue, setInputValue] = useState(
-    shouldAutoEditFirstItemOnOpen && !isDefined(onAddClick)
-      ? getItemValueAsString(0)
-      : '',
-  );
+      if (isInputDisplayed) {
+        const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
 
-  const [itemToEditIndex, setItemToEditIndex] = useState(0);
-  const [isAddingNewItem, setIsAddingNewItem] = useState(false);
+        if (!isValid) {
+          return;
+        }
 
-  const [errorData, setErrorData] = useState({
-    isValid: true,
-    errorMessage: '',
+        onChange(updatedItems);
+        onClickOutside(updatedItems, event);
+
+        return;
+      }
+
+      onClickOutside(items, event);
+    },
+    listenerId: instanceId,
   });
 
   const [searchFilter, setSearchFilter] = useState('');
@@ -181,115 +178,7 @@ export const MultiItemFieldInput = <T,>({
     });
   }, [items, debouncedSearchFilter, shouldShowSearch, getItemValueAsString]);
 
-  const isLimitReached =
-    typeof maxItemCount === 'number' && items.length >= maxItemCount;
-
-  const handleInputChange = (value: string) => {
-    setInputValue(value);
-
-    if (!validateInput) return;
-
-    setErrorData(
-      errorData.isValid ? errorData : { isValid: true, errorMessage: '' },
-    );
-
-    onError?.(false, items);
-  };
-
-  const handleAddButtonClick = () => {
-    if (isLimitReached) {
-      return;
-    }
-
-    if (isDefined(onAddClick)) {
-      onAddClick();
-      return;
-    }
-
-    setIsAddingNewItem(true);
-    setInputValue('');
-    setIsInputDisplayed(true);
-  };
-
-  const handleEditButtonClick = (index: number) => {
-    setItemToEditIndex(index);
-    setInputValue(getItemValueAsString(index));
-    setIsAddingNewItem(false);
-    setIsInputDisplayed(true);
-  };
-
-  const handleEnter = () => {
-    const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
-    if (!isValid) {
-      return;
-    }
-
-    onChange(updatedItems);
-    if (shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
-      onEnter(updatedItems);
-    }
-    setIsInputDisplayed(false);
-    setIsAddingNewItem(false);
-    setInputValue('');
-  };
-
-  const showInputIfNoItemsRemain = (remainingItems: T[]) => {
-    const shouldShowInput =
-      remainingItems.length === 0 && !isDefined(onAddClick);
-    setIsInputDisplayed(shouldShowInput);
-    setIsAddingNewItem(false);
-    if (shouldShowInput) {
-      setInputValue('');
-    }
-  };
-
-  const validateInputAndComputeUpdatedItems = (): {
-    isValid: boolean;
-    updatedItems: T[];
-  } => {
-    const { sanitizedInput, isValid, errorMessage } = sanitizeAndValidateInput(
-      inputValue,
-      validateInput,
-    );
-
-    if (!isValid) {
-      onError?.(true, items);
-      setErrorData({ isValid: false, errorMessage });
-      return { isValid: false, updatedItems: items };
-    }
-
-    const editingIndex = isAddingNewItem ? null : itemToEditIndex;
-
-    const updatedItems = computeUpdatedMultiItemFieldItems({
-      sanitizedInput,
-      items,
-      editingIndex,
-      singleItemMode: shouldAutoEnterBecauseOnlyOneItemIsAllowed,
-      formatInput,
-    });
-
-    const isItemDeletion =
-      !isNonEmptyString(sanitizedInput) &&
-      isDefined(editingIndex) &&
-      !shouldAutoEnterBecauseOnlyOneItemIsAllowed;
-
-    if (isItemDeletion) {
-      showInputIfNoItemsRemain(updatedItems);
-    }
-
-    return { isValid: true, updatedItems };
-  };
-
-  const handleSetPrimaryItem = (index: number) => {
-    const updatedItems = moveArrayItem(items, { fromIndex: index, toIndex: 0 });
-    onChange(updatedItems);
-  };
-
-  const handleDeleteItem = (index: number) => {
-    const updatedItems = toSpliced(items, index, 1);
-    onChange(updatedItems);
-    showInputIfNoItemsRemain(updatedItems);
-  };
+  const shouldAutoEnterBecauseOnlyOneItemIsAllowed = maxItemCount === 1;
 
   const handleEscape = () => {
     onEscape(items);
