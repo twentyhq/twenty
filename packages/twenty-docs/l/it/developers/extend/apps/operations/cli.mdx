@@ -13,7 +13,7 @@ La CLI `yarn twenty` è la tua interfaccia per tutto ciò che riguarda le app. E
 | `applica`                                       | Applica le modifiche ai metadati dopo aver mostrato il piano            | [Sincronizzazione e ripristino](/l/it/developers/extend/apps/operations/sync-and-recovery)                         |
 | `dev:build`                                     | Compila l'app e genera il client API (`--tarball` per creare un `.tgz`) | [Pubblicazione](/l/it/developers/extend/apps/operations/publishing)                                                |
 | `dev:typecheck`                                 | Esegui il controllo dei tipi TypeScript                                 | [Test](/l/it/developers/extend/apps/operations/testing)                                                            |
-| Crea l'impalcatura per una nuova entità         | Crea l'impalcatura per una nuova entità                                 | [Scaffolding](/l/it/developers/extend/apps/getting-started/scaffolding)                                            |
+| `dev:add`                                       | Genera lo scaffold per una nuova entità                                 | [Scaffolding](/l/it/developers/extend/apps/getting-started/scaffolding)                                            |
 | `dev:generate-client`                           | Rigenera il client API tipizzato                                        | questa pagina                                                                                                 |
 | `dev:function:exec` / `dev:function:logs`       | Esegui le funzioni e trasmetti in streaming i relativi log              | questa pagina                                                                                                 |
 | `dev:translations-extract`                      | Estrai le stringhe traducibili nei cataloghi in `locales/`              | [Traduzioni](/l/it/developers/extend/apps/translations/overview)                                                   |
@@ -22,7 +22,7 @@ La CLI `yarn twenty` è la tua interfaccia per tutto ciò che riguarda le app. E
 | `docker:*`                                      | Gestisci il container del server Twenty locale                          | [Server locale](/l/it/developers/extend/apps/getting-started/local-server)                                         |
 | `remote:*`                                      | Gestisci le connessioni al server                                       | questa pagina                                                                                                 |
 
-Ogni comando accetta `-r, --remote \<name>` per indirizzarsi a un remote specifico invece di quello predefinito.
+Ogni comando accetta `-r, --remote \<name>` per puntare a un remoto specifico anziché a quello predefinito.
 
 ## Esecuzione delle funzioni (`yarn twenty dev:function:exec`)
 

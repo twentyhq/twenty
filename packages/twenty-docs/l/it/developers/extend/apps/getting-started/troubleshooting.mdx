@@ -5,7 +5,7 @@ icon: wrench
 ---
 
 * **Errori di Docker** — Assicurati che Docker Desktop (o il demone) sia in esecuzione prima di `yarn twenty docker:start`. Il messaggio di errore mostrerà il comando di avvio corretto per il tuo sistema operativo.
-* **Versione di Node errata** — Serve la 24.5+ (`engines.node: ^24.5.0`). Verifica con `node -v`.
+* **Versione di Node errata** — È necessaria la versione 24.5+ (`engines.node: ^24.5.0`). Verifica con `node -v`.
 * **Manca Yarn 4** — Esegui `corepack enable`.
 * **Dipendenze danneggiate** — `rm -rf node_modules && yarn install`.
 * **Errori di `twenty-sdk` dopo l'aggiornamento alla v2.8.0** — è stato spostato da `dependencies` a `devDependencies` nella v2.8.0. Vedi [Struttura del progetto → Dipendenze](/l/it/developers/extend/apps/getting-started/project-structure#dependencies).
