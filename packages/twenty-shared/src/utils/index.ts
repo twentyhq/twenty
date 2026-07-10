@@ -49,6 +49,8 @@ export { turnJSDateToPlainDate } from './date/turnJSDateToPlainDate';
 export { turnPlainDateIntoUserTimeZoneInstantString } from './date/turnPlainDateIntoUserTimeZoneInstantString';
 export { turnPlainDateToShiftedDateInSystemTimeZone } from './date/turnPlainDateToShiftedDateInSystemTimeZone';
 export { deepMerge } from './deepMerge';
+export { formatEmailAddressWithDisplayName } from './email/formatEmailAddressWithDisplayName';
+export { parseEmailAddressList } from './email/parseEmailAddressList';
 export { CustomError } from './errors/CustomError';
 export { evalFromContext } from './evalFromContext';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';

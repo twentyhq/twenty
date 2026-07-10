@@ -7,7 +7,25 @@ describe('formatMessageFromHeader', () => {
         fromEmail: 'user@example.com',
         fromName: 'Test User',
       }),
-    ).toBe('=?UTF-8?B?VGVzdCBVc2Vy?= <user@example.com>');
+    ).toBe('Test User <user@example.com>');
+  });
+
+  it('should quote names containing special characters', () => {
+    expect(
+      formatMessageFromHeader({
+        fromEmail: 'user@example.com',
+        fromName: 'User, Test',
+      }),
+    ).toBe('"User, Test" <user@example.com>');
+  });
+
+  it('should mime encode names containing non-ascii characters', () => {
+    expect(
+      formatMessageFromHeader({
+        fromEmail: 'user@example.com',
+        fromName: 'Jürgen Müller',
+      }),
+    ).toBe('=?UTF-8?B?SsO8cmdlbiBNw7xsbGVy?= <user@example.com>');
   });
 
   it('should fall back to the bare email when name is missing', () => {

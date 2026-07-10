@@ -64,6 +64,7 @@ export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export { ContextStorePageType } from './ContextStorePageType';
 export { CoreObjectNameSingular } from './CoreObjectNameSingular';
 export { CrudOperationType } from './CrudOperationType';
+export type { EmailAddressWithDisplayName } from './EmailAddressWithDisplayName';
 export type { EmailAttachment } from './EmailAttachment';
 export type { EmptyObject } from './EmptyObject.type';
 export type {
