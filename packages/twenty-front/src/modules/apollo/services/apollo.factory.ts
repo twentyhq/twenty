@@ -20,6 +20,7 @@ import { retryWithBackoff } from '~/utils/retryWithBackoff';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
+import { getGraphQLFilterMonitoringData } from '@/apollo/utils/getGraphQLFilterMonitoringData';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { loggerLink } from '@/apollo/utils/loggerLink';
 import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
@@ -45,6 +46,11 @@ let renewalPromise: Promise<boolean> | null = null;
 
 const TOKEN_RENEWAL_MAX_RETRIES = 3;
 const TOKEN_RENEWAL_RETRY_DELAY_MS = 1000;
+
+type GraphQLErrorMonitoringLevel = 'warning' | 'error';
+
+const isInvalidArgsFilterError = (graphQLError: GraphQLFormattedError) =>
+  graphQLError.extensions?.subCode === 'INVALID_ARGS_FILTER';
 
 export interface Options {
   uri: string;
@@ -212,9 +218,11 @@ export class ApolloFactory implements ApolloManager {
       const sendToSentry = ({
         graphQLError,
         operation,
+        level = 'error',
       }: {
         graphQLError: GraphQLFormattedError;
         operation: ApolloLink.Operation;
+        level?: GraphQLErrorMonitoringLevel;
       }) => {
         if (isDebugMode === true) {
           logDebug(
@@ -242,6 +250,7 @@ export class ApolloFactory implements ApolloManager {
 
               if (isDefined(operation.operationName)) {
                 scope.setExtra('operation', operation.operationName);
+                scope.setTag('graphql.operation_name', operation.operationName);
                 const genericOperationName = getGenericOperationName(
                   operation.operationName,
                 );
@@ -251,9 +260,33 @@ export class ApolloFactory implements ApolloManager {
                 }
               }
 
-              if (!isEmpty(fingerPrint)) {
+              if (isInvalidArgsFilterError(graphQLError)) {
+                const filterMonitoringData =
+                  getGraphQLFilterMonitoringData(operation.variables);
+
+                scope.setTag(
+                  'graphql.filter_shape',
+                  filterMonitoringData.filterShape,
+                );
+                scope.setTag(
+                  'graphql.filter_key_hash',
+                  filterMonitoringData.filterKeyHash,
+                );
+                scope.setTag(
+                  'graphql.view_id_hash',
+                  filterMonitoringData.viewIdHash,
+                );
+                scope.setFingerprint([
+                  'graphql-filter-validation',
+                  filterMonitoringData.filterShape,
+                  filterMonitoringData.filterKeyHash,
+                  ...fingerPrint,
+                ]);
+              } else if (!isEmpty(fingerPrint)) {
                 scope.setFingerprint(fingerPrint);
               }
+
+              scope.setLevel(level);
 
               captureException(error); // Sentry expects a JS error
             });
@@ -301,14 +334,27 @@ export class ApolloFactory implements ApolloManager {
                 if (graphQLError.extensions?.isExpected === true) {
                   return;
                 }
-                sendToSentry({ graphQLError, operation });
+                sendToSentry({
+                  graphQLError,
+                  operation,
+                  level: isInvalidArgsFilterError(graphQLError)
+                    ? 'warning'
+                    : 'error',
+                });
                 return;
               }
               case 'INTERNAL_SERVER_ERROR': {
                 return; // already caught in BE
               }
               default:
-                sendToSentry({ graphQLError, operation });
+                sendToSentry({
+                  graphQLError,
+                  operation,
+                  level:
+                    graphQLError.extensions?.code === 'GRAPHQL_VALIDATION_FAILED'
+                      ? 'warning'
+                      : 'error',
+                });
             }
           }
         } else if (ServerError.is(error)) {
