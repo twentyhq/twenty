@@ -1,5 +1,5 @@
 export const RECORD_CALENDAR_WEEK_DIMENSIONS = {
-  eventVerticalGap: 4,
+  eventVerticalGap: 8,
   gridHeight: 24 * 48,
   hourHeight: 48,
   hoursInDay: 24,

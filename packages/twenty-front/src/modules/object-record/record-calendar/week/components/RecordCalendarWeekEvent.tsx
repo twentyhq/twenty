@@ -89,7 +89,7 @@ const StyledEventContent = styled.div<{ isAllDay: boolean }>`
   width: 100%;
 `;
 
-const StyledRecordChipContainer = styled.div`
+const StyledRecordChipContainer = styled.div<{ isToday: boolean }>`
   align-items: center;
   display: flex;
   height: 20px;
@@ -97,6 +97,14 @@ const StyledRecordChipContainer = styled.div`
   overflow: hidden;
   padding-right: ${themeCssVariables.spacing[5]};
   width: 100%;
+
+  [data-testid='chip'],
+  [data-testid='chip'] > * {
+    color: ${({ isToday }) =>
+      isToday
+        ? themeCssVariables.font.color.primary
+        : themeCssVariables.font.color.extraLight};
+  }
 `;
 
 const StyledCheckboxContainer = styled.div<{ isAllDay: boolean }>`
@@ -119,9 +127,12 @@ const StyledEventTimeRow = styled.div`
   width: 100%;
 `;
 
-const StyledEventTime = styled.span`
-  color: ${themeCssVariables.font.color.light};
-  font-size: ${themeCssVariables.font.size.xs};
+const StyledEventTime = styled.span<{ isToday: boolean }>`
+  color: ${({ isToday }) =>
+    isToday
+      ? themeCssVariables.font.color.tertiary
+      : themeCssVariables.font.color.extraLight};
+  font-size: ${themeCssVariables.font.size.xxs};
   line-height: 12px;
   white-space: nowrap;
 `;
@@ -133,6 +144,7 @@ type RecordCalendarWeekEventProps = {
   columnIndex?: number;
   endInPixels?: number;
   isAllDay: boolean;
+  isToday: boolean;
   recordId: string;
   startInPixels?: number;
   timeFormat: string;
@@ -146,6 +158,7 @@ export const RecordCalendarWeekEvent = ({
   columnIndex = 0,
   endInPixels = 0,
   isAllDay,
+  isToday,
   recordId,
   startInPixels = 0,
   timeFormat,
@@ -194,7 +207,7 @@ export const RecordCalendarWeekEvent = ({
         onClick={() => openRecordFromIndexView({ recordId })}
       >
         <StyledEventContent isAllDay={isAllDay}>
-          <StyledRecordChipContainer>
+          <StyledRecordChipContainer isToday={isToday}>
             <RecordChip
               objectNameSingular={objectNameSingular}
               record={recordStore}
@@ -223,7 +236,7 @@ export const RecordCalendarWeekEvent = ({
           </StyledCheckboxContainer>
           {!isAllDay && isDefined(eventTime) && (
             <StyledEventTimeRow>
-              <StyledEventTime>{eventTime}</StyledEventTime>
+              <StyledEventTime isToday={isToday}>{eventTime}</StyledEventTime>
             </StyledEventTimeRow>
           )}
         </StyledEventContent>

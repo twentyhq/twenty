@@ -206,6 +206,7 @@ type WeekDayCellProps = {
   calendarFieldName: string;
   calendarFieldType: FieldMetadataType;
   day: Temporal.PlainDate;
+  isToday: boolean;
   timeFormat: string;
   timeZone: string;
 };
@@ -217,6 +218,7 @@ const RecordCalendarWeekAllDayCell = ({
   calendarFieldName,
   calendarFieldType,
   day,
+  isToday,
   timeFormat,
   timeZone,
 }: RecordCalendarWeekAllDayCellProps) => {
@@ -236,6 +238,7 @@ const RecordCalendarWeekAllDayCell = ({
           calendarFieldName={calendarFieldName}
           calendarFieldType={calendarFieldType}
           isAllDay
+          isToday={isToday}
           recordId={recordId}
           timeFormat={timeFormat}
           timeZone={timeZone}
@@ -255,6 +258,7 @@ const RecordCalendarWeekDayColumn = ({
   calendarFieldName,
   calendarFieldType,
   day,
+  isToday,
   timeFormat,
   timeZone,
 }: RecordCalendarWeekDayColumnProps) => {
@@ -321,6 +325,7 @@ const RecordCalendarWeekDayColumn = ({
             columnIndex={columnIndex}
             endInPixels={endInPixels}
             isAllDay={false}
+            isToday={isToday}
             recordId={recordId}
             startInPixels={startInPixels}
             timeFormat={timeFormat}
@@ -434,6 +439,7 @@ export const RecordCalendarWeek = () => {
                 calendarFieldName={calendarFieldMetadataItem.name}
                 calendarFieldType={calendarFieldMetadataItem.type}
                 day={date}
+                isToday={isSamePlainDate(date, today)}
                 timeFormat={timeFormat}
                 timeZone={timeZone}
               />
@@ -471,6 +477,7 @@ export const RecordCalendarWeek = () => {
               calendarFieldName={calendarFieldMetadataItem.name}
               calendarFieldType={calendarFieldMetadataItem.type}
               day={date}
+              isToday={isSamePlainDate(date, today)}
               timeFormat={timeFormat}
               timeZone={timeZone}
             />

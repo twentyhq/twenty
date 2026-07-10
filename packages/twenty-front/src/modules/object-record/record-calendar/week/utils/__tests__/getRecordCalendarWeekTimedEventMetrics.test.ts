@@ -20,6 +20,15 @@ describe('getRecordCalendarWeekTimedEventMetrics', () => {
     });
   });
 
+  it('renders a one-hour event with the vertical inset from the design', () => {
+    const metrics = getRecordCalendarWeekTimedEventMetrics({
+      startDateTime: '2026-07-06T07:00:00Z',
+      timeZone,
+    });
+
+    expect(getRecordCalendarWeekTimedEventHeight(metrics!)).toBe(40);
+  });
+
   it.each([undefined, null, 'not-a-date', '2026-07-06T06:00:00Z'])(
     'falls back to one hour for an unusable end value: %s',
     (endDateTime) => {
