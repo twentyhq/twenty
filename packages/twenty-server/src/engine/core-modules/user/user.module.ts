@@ -1,9 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
@@ -23,26 +20,17 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserResolver } from 'src/engine/core-modules/user/user.resolver';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-
-import { userAutoResolverOpts } from './user.auto-resolver-opts';
 
 import { UserService } from './services/user.service';
 
 @Module({
   imports: [
-    NestjsQueryGraphQLModule.forFeature({
-      imports: [
-        NestjsQueryTypeOrmModule.forFeature([UserEntity]),
-        TypeORMModule,
-        FileModule,
-      ],
-      resolvers: userAutoResolverOpts,
-    }),
-    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
+    TypeOrmModule.forFeature([UserEntity]),
+    TypeORMModule,
+    FileModule,
     WorkspaceModule,
     OnboardingModule,
     TypeOrmModule.forFeature([KeyValuePairEntity, UserWorkspaceEntity]),
