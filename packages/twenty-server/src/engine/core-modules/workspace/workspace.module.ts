@@ -1,9 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
@@ -31,7 +28,6 @@ import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-
 import { WorkspaceEntityCacheProviderService } from 'src/engine/core-modules/workspace/services/workspace-entity-cache-provider.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceGaugeService } from 'src/engine/core-modules/workspace/workspace-gauge.service';
-import { workspaceAutoResolverOpts } from 'src/engine/core-modules/workspace/workspace.auto-resolver-opts';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.resolver';
 import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
@@ -50,49 +46,41 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
 @Module({
   imports: [
     TypeORMModule,
-    TypeOrmModule.forFeature([BillingSubscriptionEntity, WorkspaceEntity]),
+    TypeOrmModule.forFeature([
+      BillingSubscriptionEntity,
+      WorkspaceEntity,
+      UserEntity,
+      UserWorkspaceEntity,
+      PublicDomainEntity,
+    ]),
     MetricsModule,
     StandardObjectsPrefillModule,
-    NestjsQueryGraphQLModule.forFeature({
-      imports: [
-        BillingModule,
-        FileModule,
-        TokenModule,
-        NestjsQueryTypeOrmModule.forFeature([
-          UserEntity,
-          WorkspaceEntity,
-          UserWorkspaceEntity,
-          PublicDomainEntity,
-        ]),
-        ObjectMetadataModule,
-        UserWorkspaceModule,
-        WorkspaceManagerModule,
-        FeatureFlagModule,
-        OnboardingModule,
-        WorkspaceDataSourceModule,
-        TypeORMModule,
-        PermissionsModule,
-        WorkspaceCacheStorageModule,
-        RoleModule,
-        AiAgentModule,
-        DnsManagerModule,
-        WorkspaceDomainsModule,
-        SubdomainManagerModule,
-        CustomDomainManagerModule,
-        ViewModule,
-        WorkspaceManyOrAllFlatEntityMapsCacheModule,
-        ApplicationModule,
-        PreInstalledAppsModule,
-        EnterpriseModule,
-        StandardObjectsPrefillModule,
-        WorkspaceMigrationModule,
-        CoreEntityCacheModule,
-        UpgradeModule,
-        SdkClientModule,
-      ],
-      services: [WorkspaceService],
-      resolvers: workspaceAutoResolverOpts,
-    }),
+    BillingModule,
+    FileModule,
+    TokenModule,
+    ObjectMetadataModule,
+    UserWorkspaceModule,
+    WorkspaceManagerModule,
+    FeatureFlagModule,
+    OnboardingModule,
+    WorkspaceDataSourceModule,
+    PermissionsModule,
+    WorkspaceCacheStorageModule,
+    RoleModule,
+    AiAgentModule,
+    DnsManagerModule,
+    WorkspaceDomainsModule,
+    SubdomainManagerModule,
+    CustomDomainManagerModule,
+    ViewModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    ApplicationModule,
+    PreInstalledAppsModule,
+    EnterpriseModule,
+    WorkspaceMigrationModule,
+    CoreEntityCacheModule,
+    UpgradeModule,
+    SdkClientModule,
   ],
   exports: [WorkspaceService, CheckCustomDomainValidRecordsCronCommand],
   providers: [

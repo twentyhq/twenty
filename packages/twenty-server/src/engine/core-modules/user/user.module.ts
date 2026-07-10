@@ -1,9 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
@@ -28,21 +25,13 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
-import { userAutoResolverOpts } from './user.auto-resolver-opts';
-
 import { UserService } from './services/user.service';
 
 @Module({
   imports: [
-    NestjsQueryGraphQLModule.forFeature({
-      imports: [
-        NestjsQueryTypeOrmModule.forFeature([UserEntity]),
-        TypeORMModule,
-        FileModule,
-      ],
-      resolvers: userAutoResolverOpts,
-    }),
-    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
+    TypeOrmModule.forFeature([UserEntity, ObjectMetadataEntity]),
+    TypeORMModule,
+    FileModule,
     WorkspaceModule,
     OnboardingModule,
     TypeOrmModule.forFeature([KeyValuePairEntity, UserWorkspaceEntity]),
