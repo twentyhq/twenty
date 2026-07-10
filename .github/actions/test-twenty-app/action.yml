@@ -27,38 +27,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Enable Corepack
-      shell: bash
-      run: corepack enable
-
-    - name: Setup Node.js
-      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
-      with:
-        node-version-file: '${{ inputs.app-path }}/.nvmrc'
-        cache: yarn
-        cache-dependency-path: '${{ inputs.app-path }}/yarn.lock'
-
-    - name: Install dependencies
-      shell: bash
-      working-directory: ${{ inputs.app-path }}
-      run: yarn install --immutable
-
-    - name: Configure remote
-      shell: bash
-      env:
-        API_URL: ${{ inputs.api-url }}
-        API_KEY: ${{ inputs.api-key }}
-      run: |
-        mkdir -p ~/.twenty
-        node -e "
-          const fs = require('fs'), path = require('path'), os = require('os');
-          fs.writeFileSync(path.join(os.homedir(), '.twenty', 'config.json'), JSON.stringify({
-            version: 1,
-            remotes: { target: { apiUrl: process.env.API_URL, apiKey: process.env.API_KEY, accessToken: process.env.API_KEY } },
-            defaultRemote: 'target'
-          }, null, 2));
-        "
-
     - name: Validate mode
       shell: bash
       env:
@@ -72,6 +40,25 @@ runs:
             ;;
         esac
 
+    - name: Enable Corepack
+      if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'integration-test-only'
+      shell: bash
+      run: corepack enable
+
+    - name: Setup Node.js
+      if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'integration-test-only'
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      with:
+        node-version-file: '${{ inputs.app-path }}/.nvmrc'
+        cache: yarn
+        cache-dependency-path: '${{ inputs.app-path }}/yarn.lock'
+
+    - name: Install dependencies
+      if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'integration-test-only'
+      shell: bash
+      working-directory: ${{ inputs.app-path }}
+      run: yarn install --immutable
+
     - name: Integration tests
       if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'integration-test-only'
       shell: bash
@@ -83,12 +70,16 @@ runs:
 
     - name: Deploy app
       if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'installation-only'
-      shell: bash
-      working-directory: ${{ inputs.app-path }}
-      run: yarn twenty app:publish --private --remote target
+      uses: ./.github/actions/deploy-twenty-app
+      with:
+        api-url: ${{ inputs.api-url }}
+        api-key: ${{ inputs.api-key }}
+        app-path: ${{ inputs.app-path }}
 
     - name: Install app
       if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'installation-only'
-      shell: bash
-      working-directory: ${{ inputs.app-path }}
-      run: yarn twenty app:install --remote target
+      uses: ./.github/actions/install-twenty-app
+      with:
+        api-url: ${{ inputs.api-url }}
+        api-key: ${{ inputs.api-key }}
+        app-path: ${{ inputs.app-path }}

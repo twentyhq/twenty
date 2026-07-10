@@ -110,6 +110,10 @@ jobs:
                   };
                 })
             );
+          if (changedOnly && eventName === 'workflow_dispatch' && requestedApp && matrix.length === 0) {
+            console.error(`::error::Requested app "${requestedApp}" was not found under ${roots.join(', ')}`);
+            process.exit(1);
+          }
           fs.appendFileSync(process.env.GITHUB_OUTPUT, `matrix=${JSON.stringify(matrix)}\n`);
           fs.appendFileSync(process.env.GITHUB_OUTPUT, `has_apps=${matrix.length > 0}\n`);
           NODE
