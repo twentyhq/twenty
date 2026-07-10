@@ -2719,6 +2719,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "automatedTriggers": {
         "universalIdentifier": "20202020-3319-4234-a34c-117ecad2b8a9",
       },
+      "coreWorkflowId": {
+        "universalIdentifier": "20202020-058a-42ad-8eb8-0662a5552aad",
+      },
       "createdAt": {
         "universalIdentifier": "0be9023c-cf26-56ef-8512-3c2104b849cc",
       },
@@ -3024,6 +3027,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
   },
   "workflowVersion": {
     "fields": {
+      "coreWorkflowVersionId": {
+        "universalIdentifier": "20202020-58b4-46e8-b6d2-f1f3c74cf7f4",
+      },
       "createdAt": {
         "universalIdentifier": "97b8d13e-ea41-5da4-90df-886ff017f584",
       },
