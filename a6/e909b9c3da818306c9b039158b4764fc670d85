@@ -1,0 +1,23 @@
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/emailing-domain.service.ts
+  s_d7efdfca82e0dc::t_b617f4e84d5a21 6
+  s_d7efdfca82e0dc::t_549b1ae3e52557 236-266
+  s_d7efdfca82e0dc::t_f2f32827a9152d 5
+  s_d7efdfca82e0dc::t_d8b6fb73fcda60 23-24
+  s_d7efdfca82e0dc::t_546833cc9764c4 71-76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a6e909b9c3da818306c9b039158b4764fc670d85",
+  "prompts": {},
+  "sessions": {
+    "s_d7efdfca82e0dc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8597b8f-384d-4561-a6dd-8d19f0804e31",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
