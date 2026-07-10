@@ -42,10 +42,12 @@ To find the logicFunctionId, look at the code step's settings.input.logicFunctio
         sourceHandlerCode,
       };
     } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+
       return {
         success: false,
-        error: error.message,
-        message: `Failed to read logic function source: ${error.message}`,
+        error: message,
+        message: `Failed to read logic function source: ${message}`,
       };
     }
   },
