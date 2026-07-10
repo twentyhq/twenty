@@ -68,17 +68,6 @@ msgid "Reactivate workspace"
 msgstr "워크스페이스 다시 활성화"
 
 #. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "Validate domain"
-msgstr "도메인 검증"
-
-#. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
-msgstr "{senderName} (<0>{senderEmail}</0>): <1>@{domain}</1> 이메일 주소를 가진 사용자가 초대 없이 워크스페이스에 참여할 수 있도록 이 도메인을 검증해 주세요."
-
-#. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Enabled"
 msgstr "사용 설정됨"
@@ -92,6 +81,32 @@ msgstr "비활성화"
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Server administrator access changed"
 msgstr "서버 관리자 액세스가 변경되었습니다"
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr "도메인 검증"
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
+msgstr "{senderName} (<0>{senderEmail}</0>): <1>@{domain}</1> 이메일 주소를 가진 사용자가 초대 없이 워크스페이스에 참여할 수 있도록 이 도메인을 검증해 주세요."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Twenty에서 팀에 합류하세요"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>)님이 <1>{workspaceName}</1>이라는 워크스페이스에 가입하도록 초대했습니다."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "초대 수락"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -112,21 +127,6 @@ msgstr ""
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Verify Email"
 msgstr "이메일 인증"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Twenty에서 팀에 합류하세요"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>)님이 <1>{workspaceName}</1>이라는 워크스페이스에 가입하도록 초대했습니다."
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "초대 수락"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -260,16 +260,6 @@ msgid "Manage subscription"
 msgstr "구독 관리"
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "트웬티란 무엇인가요?"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "이는 CRM이며, 기업이 고객 데이터를 효율적으로 관리할 수 있도록 돕는 소프트웨어입니다."
-
-#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "요금제가 곧 갱신됩니다"
@@ -288,6 +278,16 @@ msgstr "<0>{workspaceDisplayName}</0>의 연간 요금제는 {formattedDate}에 
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "계속 이용하시려면 별도의 조치가 필요하지 않습니다. 갱신을 원하지 않으시면, 그 전에 언제든지 취소하실 수 있습니다."
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "트웬티란 무엇인가요?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "이는 CRM이며, 기업이 고객 데이터를 효율적으로 관리할 수 있도록 돕는 소프트웨어입니다."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

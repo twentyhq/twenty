@@ -68,17 +68,6 @@ msgid "Reactivate workspace"
 msgstr "Aktivoi työtila uudelleen"
 
 #. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "Validate domain"
-msgstr "Vahvista verkkotunnus"
-
-#. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
-msgstr "{senderName} (<0>{senderEmail}</0>): Vahvista tämä verkkotunnus, jotta käyttäjät, joilla on <1>@{domain}</1> sähköpostiosoitteet, voivat liittyä työtilaasi ilman kutsua."
-
-#. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Enabled"
 msgstr "Käytössä"
@@ -92,6 +81,32 @@ msgstr "Pois käytöstä"
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Server administrator access changed"
 msgstr "Palvelinylläpitäjän käyttöoikeuksia on muutettu"
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr "Vahvista verkkotunnus"
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
+msgstr "{senderName} (<0>{senderEmail}</0>): Vahvista tämä verkkotunnus, jotta käyttäjät, joilla on <1>@{domain}</1> sähköpostiosoitteet, voivat liittyä työtilaasi ilman kutsua."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Liity tiimiisi Twentyssä"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) on kutsunut sinut liittymään työtilaan nimeltä <1>{workspaceName}</1>."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "Hyväksy kutsu"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -112,21 +127,6 @@ msgstr ""
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Verify Email"
 msgstr "Vahvista sähköposti"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Liity tiimiisi Twentyssä"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) on kutsunut sinut liittymään työtilaan nimeltä <1>{workspaceName}</1>."
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "Hyväksy kutsu"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -260,16 +260,6 @@ msgid "Manage subscription"
 msgstr "Hallitse tilausta"
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Mikä on Twenty?"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "Se on CRM, ohjelmisto, joka auttaa yrityksiä hallitsemaan asiakastietojaan ja -suhteitaan tehokkaasti."
-
-#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "Tilauksesi uusiutuu pian"
@@ -288,6 +278,16 @@ msgstr "Vuositilauksesi työtilalle <0>{workspaceDisplayName}</0> uusiutuu {form
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "Mitään ei tarvitse tehdä, jos haluat jatkaa. Jos et halua uusia tilausta, voit peruuttaa sen milloin tahansa ennen sitä."
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Mikä on Twenty?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "Se on CRM, ohjelmisto, joka auttaa yrityksiä hallitsemaan asiakastietojaan ja -suhteitaan tehokkaasti."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
