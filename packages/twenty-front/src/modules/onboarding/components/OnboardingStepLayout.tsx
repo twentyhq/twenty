@@ -1,5 +1,6 @@
 import { OnboardingLayout } from '@/onboarding/components/OnboardingLayout';
 import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTransitionOutlet';
+import { PrefetchOnboardingPlansEffect } from '@/onboarding/effect-components/PrefetchOnboardingPlansEffect';
 import { useOnboardingFreeCreditsTotal } from '@/onboarding/hooks/useOnboardingFreeCreditsTotal';
 
 export const OnboardingStepLayout = () => {
@@ -7,6 +8,7 @@ export const OnboardingStepLayout = () => {
 
   return (
     <OnboardingLayout freeCredits={freeCredits}>
+      <PrefetchOnboardingPlansEffect />
       <OnboardingTransitionOutlet />
     </OnboardingLayout>
   );

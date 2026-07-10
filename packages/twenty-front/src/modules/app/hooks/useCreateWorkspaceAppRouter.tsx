@@ -1,4 +1,4 @@
-import { lazy, useMemo } from 'react';
+import { lazy, useState } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -128,10 +128,7 @@ const preloadOnboardingPages = () => {
   return null;
 };
 
-const createWorkspaceAppRouter = (
-  isFunctionSettingsEnabled?: boolean,
-  isAdminPageEnabled?: boolean,
-) =>
+const createWorkspaceAppRouter = () =>
   createBrowserRouter(
     createRoutesFromElements(
       <Route
@@ -141,7 +138,10 @@ const createWorkspaceAppRouter = (
         <Route element={<MinimalMetadataGate />}>
           <Route element={<DefaultLayout />}>
             <Route element={<MainAppLayoutWithSidePanel />}>
-              <Route path={indexAppPath.getIndexAppPath()} element={<></>} />
+              <Route
+                path={indexAppPath.getIndexAppPath()}
+                element={<RecordIndexSkeletonLoader />}
+              />
               <Route
                 path={AppPath.RecordIndexPage}
                 element={
@@ -168,12 +168,7 @@ const createWorkspaceAppRouter = (
               />
               <Route
                 path={AppPath.SettingsCatchAll}
-                element={
-                  <SettingsRoutes
-                    isFunctionSettingsEnabled={isFunctionSettingsEnabled}
-                    isAdminPageEnabled={isAdminPageEnabled}
-                  />
-                }
+                element={<SettingsRoutes />}
               />
               <Route
                 path={AppPath.Dpa}
@@ -316,12 +311,8 @@ const createWorkspaceAppRouter = (
     ),
   );
 
-export const useCreateWorkspaceAppRouter = (
-  isFunctionSettingsEnabled?: boolean,
-  isAdminPageEnabled?: boolean,
-) =>
-  useMemo(
-    () =>
-      createWorkspaceAppRouter(isFunctionSettingsEnabled, isAdminPageEnabled),
-    [isFunctionSettingsEnabled, isAdminPageEnabled],
-  );
+export const useCreateWorkspaceAppRouter = () => {
+  const [router] = useState(createWorkspaceAppRouter);
+
+  return router;
+};
