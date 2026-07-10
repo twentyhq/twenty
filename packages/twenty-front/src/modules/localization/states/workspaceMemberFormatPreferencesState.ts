@@ -6,7 +6,6 @@ import { detectDateFormat } from '@/localization/utils/detection/detectDateForma
 import { detectNumberFormat } from '@/localization/utils/detection/detectNumberFormat';
 import { detectTimeFormat } from '@/localization/utils/detection/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detection/detectTimeZone';
-import { normalizeTimeZone } from '@/localization/utils/normalizeTimeZone';
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 import { CalendarStartDay } from 'twenty-shared/constants';
 
@@ -22,7 +21,7 @@ export const workspaceMemberFormatPreferencesState =
   createAtomState<WorkspaceMemberFormatPreferences>({
     key: 'workspaceMemberFormatPreferencesState',
     defaultValue: {
-      timeZone: normalizeTimeZone(detectTimeZone()),
+      timeZone: detectTimeZone(),
       dateFormat: DateFormat[detectDateFormat()],
       timeFormat: TimeFormat[detectTimeFormat()],
       numberFormat: NumberFormat[detectNumberFormat()],
