@@ -571,21 +571,31 @@ export const buildManifest = async (
 
   const application: ApplicationManifest | undefined =
     applicationConfig && resolvedDefaultRoleUniversalIdentifier
-      ? {
-          ...applicationConfig,
-          defaultRoleUniversalIdentifier:
-            resolvedDefaultRoleUniversalIdentifier,
-          aboutDescription: readmeContent,
-          yarnLockChecksum: null,
-          packageJsonChecksum: null,
-          requiredServerVersionRange: getEngineVersionRange(appPath),
-          ...(postInstallLogicFunctions.length >= 1
-            ? { postInstallLogicFunction: postInstallLogicFunctions[0] }
-            : {}),
-          ...(preInstallLogicFunctions.length >= 1
-            ? { preInstallLogicFunction: preInstallLogicFunctions[0] }
-            : {}),
-        }
+      ? (() => {
+          const {
+            logoUrl: _logoUrl,
+            screenshots: _screenshots,
+            ...applicationConfigRest
+          } = applicationConfig;
+
+          return {
+            ...applicationConfigRest,
+            logo: applicationConfig.logo,
+            galleryImages: applicationConfig.galleryImages ?? [],
+            defaultRoleUniversalIdentifier:
+              resolvedDefaultRoleUniversalIdentifier,
+            aboutDescription: readmeContent,
+            yarnLockChecksum: null,
+            packageJsonChecksum: null,
+            requiredServerVersionRange: getEngineVersionRange(appPath),
+            ...(postInstallLogicFunctions.length >= 1
+              ? { postInstallLogicFunction: postInstallLogicFunctions[0] }
+              : {}),
+            ...(preInstallLogicFunctions.length >= 1
+              ? { preInstallLogicFunction: preInstallLogicFunctions[0] }
+              : {}),
+          };
+        })()
       : undefined;
 
   const byId = <T extends { universalIdentifier: string }>(a: T, b: T) =>

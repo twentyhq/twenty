@@ -109,10 +109,14 @@ const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3
 | ------------------ | -------------------------------------------------------------- |
 | `作者`               | 作者或公司名称                                                        |
 | `类别`               | 用于应用市场筛选的应用类别                                                  |
-| `logoUrl`          | 应用徽标的路径（例如 `public/logo.png`）                                  |
-| `screenshots`      | 截图路径数组（例如 `public/screenshot-1.png`）                           |
+| `logo`             | 捆绑在`public/`中的应用徽标的路径(例如`public/logo.png`)                     |
+| `galleryImages`    | 在`public/`中捆绑的相册图像路径数组(例如`public/screenshot-1.png`)            |
 | `aboutDescription` | 用于“关于”选项卡的更长的 Markdown 描述。 如果省略，市场将使用该软件包在 npm 上的 `README.md`。 |
 | `websiteUrl`       | 你的网站链接                                                         |
 | `termsUrl`         | 服务条款链接                                                         |
 | `emailSupport`     | 支持电子邮件地址                                                       |
 | `issueReportUrl`   | 问题跟踪器链接                                                        |
+
+<Note>
+`logoUrl`和`screshots`被废弃的 `logo` 和 `GalleryImages` 的别名。 这些字段不支持外部绝对链接 (`http://` 或 `https://`) 。它们会在构建时被丢弃，并附有警告。 将图像捆绑在你的应用的 "public/" 文件夹中。
+</Note>

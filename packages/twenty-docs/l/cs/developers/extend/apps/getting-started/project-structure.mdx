@@ -33,7 +33,7 @@ my-twenty-app/
   vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
   .nvmrc, .yarnrc.yml, .oxlintrc.json
-  README.md, AGENTS.md, CLAUDE.md
+  README.md, AGENTS.md, CLAUDE.md, CHANGELOG.md, SETUP.md
 ```
 
 ## Klíčové soubory
@@ -47,6 +47,7 @@ my-twenty-app/
 | `src/__tests__/`                                                           | Jednotkový test plus integrační test (s jeho globálním nastavením), který synchronizuje aplikaci proti skutečnému serveru. |
 | `public/`                                                                  | Statické soubory (obrázky, písma) doručované vaší aplikací.                                                                |
 | `AGENTS.md` / `CLAUDE.md`                                                  | Pokyny pro agenty AI pro psaní kódu, kteří pracují na aplikaci.                                                            |
+| `CHANGELOG.md` / `SETUP.md`                                                | Seznam významných změn a pokyny k nastavení pro lokální vývoj.                                                             |
 
 <Note>
 **Uspořádání souborů je na vás.** Výše uvedené složky jsou konvence — SDK detekuje entity pomocí analýzy AST u volání `export default defineEntity(...)` bez ohledu na to, kde se soubor nachází.

@@ -109,10 +109,14 @@ Wenn Sie planen, [Ihre App zu veröffentlichen](/l/de/developers/extend/apps/ope
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
 | `author`           | Name des Autors oder des Unternehmens                                                                                           |
 | `category`         | App-Kategorie für die Filterung im Marktplatz                                                                                   |
-| `logoUrl`          | Pfad zu Ihrem App-Logo (z. B. `public/logo.png`)                                                                                |
-| `screenshots`      | Array von Screenshot-Pfaden (z. B. `public/screenshot-1.png`)                                                                   |
+| `logo`             | Pfad zu deinem App-Logo in `public/` gebündelt (z.B. `public/logo.png`)                                                         |
+| `galleryImages`    | Array der Galerie-Bild-Pfade in `public/` gebündelt (z.B. `public/screenshot-1.png`)                                            |
 | `aboutDescription` | Längere Markdown-Beschreibung für den Tab "Info". Wenn weggelassen, verwendet der Marktplatz die `README.md` des Pakets von npm |
 | `websiteUrl`       | Link zu Ihrer Website                                                                                                           |
 | `termsUrl`         | Link zu den Nutzungsbedingungen                                                                                                 |
 | `emailSupport`     | Support-E-Mail-Adresse                                                                                                          |
 | `issueReportUrl`   | Link zum Issue-Tracker                                                                                                          |
+
+<Note>
+`logoUrl` und `screenshots` sind veraltete Aliase von `logo` und `galleryImages`. Externe absolute URLs (`http://` oder `https://`) werden für diese Felder nicht unterstützt: Sie werden beim Build mit einer Warnung gelöscht. Bundle stattdessen die Bilder im `public/` Ordner deiner App.
+</Note>

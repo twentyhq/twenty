@@ -12070,6 +12070,11 @@ msgstr "No API keys match your search"
 msgid "No applications available"
 msgstr "No applications available"
 
+#. js-lingui-id: zLbFMr
+#: src/pages/onboarding/InstallAppsContent.tsx
+msgid "No apps are available to install right now"
+msgstr "No apps are available to install right now"
+
 #. js-lingui-id: tFxVHz
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "No available fields to select"

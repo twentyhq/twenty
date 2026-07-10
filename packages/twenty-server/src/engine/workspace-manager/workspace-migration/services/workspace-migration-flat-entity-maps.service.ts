@@ -247,14 +247,16 @@ export class WorkspaceMigrationFlatEntityMapsService {
         TWENTY_STANDARD_APPLICATION.universalIdentifier
       ];
 
-    if (!isDefined(twentyStandardApplicationId) || !isDefined(applicationId)) {
+    if (!isDefined(twentyStandardApplicationId)) {
       throw new FlatEntityMapsException(
-        'Application to build and its dependent application not found',
+        'Twenty standard application not found in workspace',
         FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
       );
     }
 
-    applicationIds.add(applicationId);
+    if (isDefined(applicationId)) {
+      applicationIds.add(applicationId);
+    }
 
     const isBuildingTwentyStandardApplication =
       applicationUniversalIdentifier ===
