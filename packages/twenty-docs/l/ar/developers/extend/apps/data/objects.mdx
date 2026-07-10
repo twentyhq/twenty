@@ -90,17 +90,17 @@ export default defineObject({
 
 مجموعة القيم الكاملة لـ`FieldType`، والمصدَّرة من `twenty-sdk/define`:
 
-| الفئة                | الأنواع                                                                                                                   |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| نص                   | `TEXT`، `RICH_TEXT`، `ARRAY` (من السلاسل النصية)، `RAW_JSON`                                                              |
-| رقمية                | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`)، `NUMERIC` (بدقة عشوائية)، `RATING`، `POSITION` |
-| التواريخ             | `DATE`, `DATE_TIME`                                                                                                       |
-| اختيار               | `BOOLEAN`، `SELECT`، `MULTI_SELECT`                                                                                       |
-| مركّبة               | `FULL_NAME`، `ADDRESS`، `EMAILS`، `PHONES`، `LINKS`، `CURRENCY`، `ACTOR`، `FILES`                                         |
-| المعرِّفات والعلاقات | `UUID`، `RELATION`، `MORPH_RELATION` (انظر [العلاقات](/l/ar/developers/extend/apps/data/relations))                            |
-| النظام               | `TS_VECTOR` (متجه بحث نصي كامل، يتم إدارته بواسطة الخادم)                                                                 |
+| الفئة                | الأنواع                                                                                                                    |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| نص                   | `TEXT`، `RICH_TEXT`، `ARRAY` (من السلاسل النصية)، `RAW_JSON`                                                               |
+| عددية                | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`)، `NUMERIC` (بدقة اعتباطية)، `RATING`، `POSITION` |
+| التواريخ             | `DATE`, `DATE_TIME`                                                                                                        |
+| اختيار               | `BOOLEAN`، `SELECT`، `MULTI_SELECT`                                                                                        |
+| مركّبة               | `FULL_NAME`، `ADDRESS`، `EMAILS`، `PHONES`، `LINKS`، `CURRENCY`، `ACTOR`، `FILES`                                          |
+| المعرِّفات والعلاقات | `UUID`، `RELATION`، `MORPH_RELATION` (انظر [العلاقات](/l/ar/developers/extend/apps/data/relations))                             |
+| النظام               | `TS_VECTOR` (متجه بحث نصي كامل، يُدار بواسطة الخادم)                                                                       |
 
-تُخزِّن الأنواع المركّبة عدّة حقول فرعية (مثلًا `FULL_NAME` = الاسم الأول + اسم العائلة؛ `CURRENCY` = `amountMicros` + `currencyCode`). يتطلّب `SELECT` و`MULTI_SELECT` مصفوفة `options` كما في المثال أعلاه.
+تُخزِّن الأنواع المركّبة عدّة حقول فرعية (مثلًا `FULL_NAME` = الاسم الأول + اسم العائلة؛ `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` و`MULTI_SELECT` يتطلّبان مصفوفة `options` كما في المثال أعلاه.
 
 ## القيم الافتراضية
 

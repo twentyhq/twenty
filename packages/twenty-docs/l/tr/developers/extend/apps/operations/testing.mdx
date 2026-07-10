@@ -253,10 +253,10 @@ Ayrıca testleri çalıştırmadan uygulamanızda tip denetimi çalıştırabili
 yarn twenty dev:typecheck
 ```
 
-Bu, uygulamanızın `tsconfig.json` dosyasına karşı `tsc --noEmit` komutunu çalıştırır ve tüm tip hatalarını raporlar. İskelet olarak oluşturulan uygulamalar ayrıca test dosyalarını da kapsayan (`tsconfig.spec.json`) bir `yarn typecheck` betiği ile birlikte gelir.
+Bu, uygulamanızın `tsconfig.json` dosyasına göre `tsc --noEmit` komutunu çalıştırır ve tüm tip hatalarını raporlar. İskelet olarak oluşturulan uygulamalar ayrıca test dosyalarını da kapsayan (`tsconfig.spec.json`) bir `yarn typecheck` betiği ile birlikte gelir.
 
 ## GitHub Actions ile CI
 
 İskelet oluşturucu, `.github/workflows/ci.yml` konumunda kullanıma hazır bir iş akışı üretir. `main` dalına yapılan her itmede ve her çekme isteğinde, çalıştırıcı içinde geçici bir Twenty sunucusu başlatır (`twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test` eylemi aracılığıyla) ve ardından `yarn lint`, `yarn typecheck`, `yarn test:unit` ve `yarn test` komutlarını, `TWENTY_API_URL` / `TWENTY_API_KEY` bu sunucuyu işaret edecek şekilde çalıştırır. Herhangi bir gizli bilgi gerekmez ve iş akışının en üstündeki `TWENTY_VERSION` ortam değişkeni aracılığıyla sunucu sürümünü sabitleyebilirsiniz.
 
-Hem iskelet iş akışlarının (`ci.yml` ve `cd.yml` dağıtım hattı) tam adım adım anlatımı için [Yayınlama → Otomatik CI/CD](/l/tr/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) bölümüne bakın.
+Her iki iskelet iş akışının (`ci.yml` ve `cd.yml` dağıtım hattı) eksiksiz adım adım anlatımı için [Yayınlama → Otomatik CI/CD](/l/tr/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) bölümüne bakın.
