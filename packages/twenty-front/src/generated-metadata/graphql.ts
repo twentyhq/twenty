@@ -279,15 +279,6 @@ export type AppConnection = {
   visibility: Scalars['String']['output'];
 };
 
-export type AppToken = {
-  __typename?: 'AppToken';
-  createdAt: Scalars['DateTime']['output'];
-  expiresAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
-  type: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-};
-
 export type Application = {
   __typename?: 'Application';
   agents: Array<Agent>;
@@ -1052,10 +1043,6 @@ export type CreateApiKeyInput = {
   roleId: Scalars['UUID']['input'];
 };
 
-export type CreateAppTokenInput = {
-  expiresAt: Scalars['DateTime']['input'];
-};
-
 export type CreateApplicationRegistration = {
   __typename?: 'CreateApplicationRegistration';
   applicationRegistration: ApplicationRegistration;
@@ -1223,11 +1210,6 @@ export type CreateObjectInput = {
   primaryKeyFieldMetadataSettings?: InputMaybe<Scalars['JSON']['input']>;
   shortcut?: InputMaybe<Scalars['String']['input']>;
   skipNameField?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type CreateOneAppTokenInput = {
-  /** The record to create */
-  appToken: CreateAppTokenInput;
 };
 
 export type CreateOneFieldMetadataInput = {
@@ -2555,7 +2537,6 @@ export type Mutation = {
   createOIDCIdentityProvider: SetupSso;
   createObjectEvent: Analytics;
   createOneAgent: Agent;
-  createOneAppToken: AppToken;
   createOneField: Field;
   createOneIndex: Index;
   createOneLogicFunction: LogicFunction;
@@ -2920,11 +2901,6 @@ export type MutationCreateObjectEventArgs = {
 
 export type MutationCreateOneAgentArgs = {
   input: CreateAgentInput;
-};
-
-
-export type MutationCreateOneAppTokenArgs = {
-  input: CreateOneAppTokenInput;
 };
 
 

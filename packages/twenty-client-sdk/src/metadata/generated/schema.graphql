@@ -952,14 +952,6 @@ enum WorkspaceActivationStatus {
   SUSPENDED
 }
 
-type AppToken {
-  id: UUID!
-  type: String!
-  expiresAt: DateTime!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
 type User {
   id: UUID!
   firstName: String!
@@ -3511,7 +3503,6 @@ type Mutation {
   createPublicDomain(domain: String!, applicationId: String!): PublicDomain!
   deletePublicDomain(domain: String!): Boolean!
   checkPublicDomainValidRecords(domain: String!): DomainValidRecords
-  createOneAppToken(input: CreateOneAppTokenInput!): AppToken!
   createDevelopmentApplication(universalIdentifier: String!, name: String!): DevelopmentApplication!
   syncApplication(manifest: JSON!, dryRun: Boolean): WorkspaceMigration!
   uploadApplicationFile(file: Upload!, applicationUniversalIdentifier: String!, fileFolder: FileFolder!, filePath: String!): File!
@@ -4679,15 +4670,6 @@ input ConnectionParametersInput {
 input UpdateLabPublicFeatureFlagInput {
   publicFeatureFlag: String!
   value: Boolean!
-}
-
-input CreateOneAppTokenInput {
-  """The record to create"""
-  appToken: CreateAppTokenInput!
-}
-
-input CreateAppTokenInput {
-  expiresAt: DateTime!
 }
 
 type Subscription {
