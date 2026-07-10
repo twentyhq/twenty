@@ -1,8 +1,6 @@
 # My Twenty App
 
-Describe your app in one or two sentences: what it does and why someone would install it. This README is the first thing people see, so lead with the value your app provides, not the tooling behind it.
-
-Built on [Twenty](https://twenty.com) with [`create-twenty-app`](https://www.npmjs.com/package/create-twenty-app).
+Describe your app in one or two sentences.
 
 ## Features
 
@@ -14,13 +12,7 @@ List the top things your app does, for example:
 
 ## Getting started
 
-Setup instructions live in [SETUP.md](SETUP.md). Once set up, start developing with:
-
-```bash
-yarn twenty dev
-```
-
-Run `yarn twenty help` to list all available commands.
+Setup instructions live in [SETUP.md](SETUP.md).
 
 ## Changelog
 
