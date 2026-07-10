@@ -12,7 +12,7 @@ export default defineCommandMenuItem({
   universalIdentifier: SUMMARIZE_COMPANY_COMMAND_UNIVERSAL_IDENTIFIER,
   label: 'Summarize this Company',
   shortLabel: 'Summarize',
-  isPinned: true,
+  isPinned: false,
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,

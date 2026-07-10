@@ -12,7 +12,7 @@ export default defineCommandMenuItem({
   universalIdentifier: SUMMARIZE_PERSON_COMMAND_UNIVERSAL_IDENTIFIER,
   label: 'Summarize this Person',
   shortLabel: 'Summarize',
-  isPinned: true,
+  isPinned: false,
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,

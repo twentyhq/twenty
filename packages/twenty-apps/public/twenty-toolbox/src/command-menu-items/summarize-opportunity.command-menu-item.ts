@@ -12,7 +12,7 @@ export default defineCommandMenuItem({
   universalIdentifier: SUMMARIZE_OPPORTUNITY_COMMAND_UNIVERSAL_IDENTIFIER,
   label: 'Summarize this Opportunity',
   shortLabel: 'Summarize',
-  isPinned: true,
+  isPinned: false,
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
