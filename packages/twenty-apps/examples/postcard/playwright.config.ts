@@ -1,6 +1,14 @@
 import { defineConfig, devices } from '@playwright/test';
 import * as path from 'path';
 
+// WebKit on Linux ignores Playwright's `timezoneId` context emulation for
+// Intl.resolvedOptions(), so it falls back to the runner's OS zone — the legacy
+// `CET` alias, which WebKit's ICU rejects. `formatInTimeZone` then throws and
+// crashes the record page before the front component can render. Pinning TZ
+// here forces a WebKit-supported IANA zone at the OS/ICU level (the layer
+// WebKit actually reads); the browser process Playwright spawns inherits it.
+process.env.TZ = 'Europe/Paris';
+
 // Front-end base URL of the running Twenty instance under test.
 const FRONT_BASE_URL = process.env.FRONT_BASE_URL ?? 'http://localhost:3001';
 
@@ -19,13 +27,9 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     headless: true,
     testIdAttribute: 'data-testid',
-    // Emulates the browser timezone (not the member record). The member's
-    // timeZone defaults to 'system', which resolves via the browser's
-    // Intl.resolvedOptions() to the CI runner's OS zone (CET). WebKit's ICU
-    // rejects the legacy `CET` alias and throws while formatting dates, crashing
-    // the record page before the front component can render. Pinning a
-    // WebKit-supported IANA zone here makes 'system' resolve deterministically
-    // regardless of the runner's OS timezone.
+    // Browser-level timezone emulation. Honored by Chromium; WebKit/Linux
+    // ignores it for Intl.resolvedOptions() (see the TZ pin above, which is the
+    // actual fix there). Kept aligned with TZ for deterministic date rendering.
     timezoneId: 'Europe/Paris',
   },
   expect: {
