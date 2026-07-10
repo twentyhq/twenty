@@ -8,7 +8,7 @@ import { scrubSemverVersions } from 'test/utils/scrub-semver-versions.util';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
-import { TWENTY_CURRENT_VERSION } from 'src/engine/core-modules/upgrade/constants/twenty-current-version.constant';
+import { extractVersionFromCommandName } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 // The full install flow runs cache-lock retries with real delays, so fake
@@ -70,6 +70,7 @@ const uploadTarballApp = async ({
 
 describe('Install application is gated by the workspace completed upgrade version', () => {
   let currentVersionCommandName: string;
+  let currentServerVersion: string;
   const createdApplicationUniversalIdentifiers: string[] = [];
 
   beforeAll(async () => {
@@ -93,6 +94,22 @@ describe('Install application is gated by the workspace completed upgrade versio
     }
 
     currentVersionCommandName = workspaceCursor.name;
+
+    // Pin to the version the instance actually reached, not
+    // TWENTY_CURRENT_VERSION which can be bumped ahead of the latest instance
+    // command and trip the upload-time server-compat check before the
+    // workspace gate under test is reached.
+    const inferredServerVersion = extractVersionFromCommandName(
+      currentVersionCommandName,
+    );
+
+    if (!isDefined(inferredServerVersion)) {
+      throw new Error(
+        `Could not extract a server version from upgrade cursor "${currentVersionCommandName}"`,
+      );
+    }
+
+    currentServerVersion = inferredServerVersion;
   });
 
   afterEach(async () => {
@@ -116,7 +133,7 @@ describe('Install application is gated by the workspace completed upgrade versio
     await uploadTarballApp({
       universalIdentifier,
       roleId,
-      requiredServerVersion: `>=${TWENTY_CURRENT_VERSION}`,
+      requiredServerVersion: `>=${currentServerVersion}`,
     });
 
     createdApplicationUniversalIdentifiers.push(universalIdentifier);

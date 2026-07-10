@@ -1,5 +1,5 @@
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
-import { FrontComponentRendererWithSdkClient } from '@/front-components/components/FrontComponentRendererWithSdkClient';
+import { getSdkClientUrls } from '@/front-components/utils/getSdkClientUrls';
 import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
@@ -8,7 +8,7 @@ import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponent
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
-import { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useContext, useEffect, useMemo } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
@@ -70,22 +70,26 @@ export const FrontComponentRenderer = ({
     }
   }, [error, handleError]);
 
-  useEffect(() => {
-    if (data) {
-      const tokenPair = data.frontComponent?.applicationTokenPair;
+  const applicationTokenPair =
+    data?.frontComponent?.applicationTokenPair ?? null;
 
-      if (isDefined(tokenPair)) {
-        setFrontComponentApplicationTokenPair(tokenPair);
-      }
+  useEffect(() => {
+    if (isDefined(applicationTokenPair)) {
+      setFrontComponentApplicationTokenPair(applicationTokenPair);
     }
-  }, [data, setFrontComponentApplicationTokenPair]);
+  }, [applicationTokenPair, setFrontComponentApplicationTokenPair]);
 
   useOnFrontComponentUpdated({
     frontComponentId,
   });
 
-  const applicationTokenPair =
-    data?.frontComponent?.applicationTokenPair ?? null;
+  const applicationId = data?.frontComponent?.applicationId;
+
+  const sdkClientUrls = useMemo(
+    () =>
+      isDefined(applicationId) ? getSdkClientUrls(applicationId) : undefined,
+    [applicationId],
+  );
 
   if (
     loading ||
@@ -100,32 +104,10 @@ export const FrontComponentRenderer = ({
     checksum: data.frontComponent.builtComponentChecksum,
   });
 
-  const usesSdkClient = data.frontComponent.usesSdkClient;
-
   const accessToken = applicationTokenPair.applicationAccessToken.token;
 
   const applicationVariables =
     data.frontComponent.applicationVariables ?? undefined;
-
-  if (usesSdkClient) {
-    return (
-      <FrontComponentRendererProvider frontComponentId={frontComponentId}>
-        <FrontComponentRendererWithSdkClient
-          colorScheme={colorScheme}
-          componentUrl={componentUrl}
-          applicationAccessToken={accessToken}
-          applicationId={data.frontComponent.applicationId}
-          functionsBaseUrl={functionsBaseUrl}
-          executionContext={executionContext}
-          frontComponentHostCommunicationApi={
-            frontComponentHostCommunicationApi
-          }
-          applicationVariables={applicationVariables}
-          onError={handleError}
-        />
-      </FrontComponentRendererProvider>
-    );
-  }
 
   return (
     <FrontComponentRendererProvider frontComponentId={frontComponentId}>
@@ -135,6 +117,7 @@ export const FrontComponentRenderer = ({
         applicationAccessToken={accessToken}
         apiUrl={REACT_APP_SERVER_BASE_URL}
         functionsBaseUrl={functionsBaseUrl}
+        sdkClientUrls={sdkClientUrls}
         executionContext={executionContext}
         frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
         applicationVariables={applicationVariables}

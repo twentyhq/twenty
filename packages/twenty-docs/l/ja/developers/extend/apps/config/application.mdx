@@ -109,10 +109,14 @@ const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3
 | ------------------ | -------------------------------------------------------------------------------- |
 | `author`           | 作成者または会社名                                                                        |
 | `category`         | マーケットプレイスのフィルタリング用のアプリカテゴリ                                                       |
-| `logoUrl`          | アプリのロゴへのパス（例：`public/logo.png`）                                                  |
-| `screenshots`      | スクリーンショットのパス配列（例：`public/screenshot-1.png`）                                      |
+| `logo`             | `public/`にバンドルされているアプリのロゴのパス（例：`public/logo.png`）                                |
+| `galleryImages`    | `public/`にバンドルされているギャラリー画像パスの配列（例：`public/screenshot-1.png`）                     |
 | `aboutDescription` | 「About」タブ向けの詳細な Markdown 説明。 省略した場合、マーケットプレイスは npm のパッケージにある `README.md` を使用します。 |
 | `websiteUrl`       | 自社ウェブサイトへのリンク                                                                    |
 | `termsUrl`         | 利用規約へのリンク                                                                        |
 | `emailSupport`     | サポート用メールアドレス                                                                     |
 | `issueReportUrl`   | 課題トラッカーへのリンク                                                                     |
+
+<Note>
+`logoUrl`と`screenshots`は、`logo`と`galleryImages`の別名は非推奨です。 外部絶対URL (`http://`または`https://`) はこれらのフィールドでサポートされていません: ビルド時に警告が表示されます。 アプリの `public/` フォルダに画像を束ねます。
+</Note>

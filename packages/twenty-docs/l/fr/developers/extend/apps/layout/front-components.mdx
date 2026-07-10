@@ -4,7 +4,7 @@ description: Créez des composants React qui s’affichent dans l’interface ut
 icon: window-maximize
 ---
 
-Les composants frontaux sont des composants React qui s'affichent directement dans l'interface utilisateur de Twenty. Ils s'exécutent dans un **Web Worker isolé** en utilisant Remote DOM — votre code est isolé mais s'affiche nativement dans la page, pas dans un iframe.
+Les composants frontaux sont des composants React qui s'affichent directement dans l'interface utilisateur de Twenty. Ils s'exécutent dans un **Web Worker isolé** en utilisant Remote DOM — votre code s'exécute dans un iframe à origine opaque et sandboxé, mais son interface utilisateur continue de s'afficher nativement dans la page plutôt que d'être confinée à cet iframe.
 
 ## Où les composants frontaux peuvent être utilisés
 
@@ -196,7 +196,7 @@ export default defineFrontComponent({
 
 ## Appel d’une fonction logique
 
-Les composants front s’exécutent côté navigateur dans un Web Worker isolé (sandboxed), tandis que les [fonctions logiques](/l/fr/developers/extend/apps/logic/logic-functions) s’exécutent côté serveur. Il n’y a aucun appel intra-processus direct entre les deux — à la place, un composant front appelle une fonction logique via HTTP.
+Les composants front s'exécutent côté navigateur dans un Web Worker isolé (sandboxé) à l'intérieur d'un iframe à origine opaque, tandis que les [fonctions logiques](/l/fr/developers/extend/apps/logic/logic-functions) s'exécutent côté serveur. Il n’y a aucun appel intra-processus direct entre les deux — à la place, un composant front appelle une fonction logique via HTTP.
 
 Une fonction logique déclarée avec `httpRouteTriggerSettings` est accessible via HTTP à son chemin de route. Twenty injecte dans le worker l’URL de base à partir de laquelle vos fonctions sont servies sous la forme de `TWENTY_FUNCTIONS_URL`, ainsi que le `TWENTY_APP_ACCESS_TOKEN` qui authentifie l’appel. Il n’existe pas encore de client SDK dédié pour invoquer vos propres fonctions, donc appelez-les avec un simple `fetch` :
 
