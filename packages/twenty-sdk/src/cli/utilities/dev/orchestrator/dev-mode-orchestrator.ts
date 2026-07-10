@@ -1,4 +1,5 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
+import { buildAppTokenPairFetcher } from '@/cli/utilities/auth/build-app-token-pair-fetcher';
 import { type AppTokenSources } from '@/cli/utilities/auth/ensure-app-access-token-is-valid-or-refresh';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
@@ -248,19 +249,7 @@ export class DevModeOrchestrator {
           }
         : undefined,
       fetchTokenPair: applicationId
-        ? async () => {
-            const tokenResult =
-              await this.apiService.generateApplicationToken(applicationId);
-
-            if (!tokenResult.success || !tokenResult.data) {
-              return undefined;
-            }
-
-            return {
-              accessToken: tokenResult.data.applicationAccessToken.token,
-              refreshToken: tokenResult.data.applicationRefreshToken.token,
-            };
-          }
+        ? buildAppTokenPairFetcher(this.apiService, applicationId)
         : undefined,
     };
   }
