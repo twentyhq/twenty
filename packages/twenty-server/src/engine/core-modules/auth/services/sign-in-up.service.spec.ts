@@ -1,3 +1,5 @@
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+
 import {
   AuthException,
   AuthExceptionCode,
@@ -30,7 +32,7 @@ const createSignInUpServiceForTests = () => {
 
   const mockWorkspaceRepository = {
     count: jest.fn(),
-    create: jest.fn(),
+    create: jest.fn((workspace) => workspace),
   };
 
   const mockConfigurationValues: MockConfigurationValues = {
@@ -48,7 +50,8 @@ const createSignInUpServiceForTests = () => {
 
   const queryRunnerMock = {
     manager: {
-      save: jest.fn(),
+      save: jest.fn((_entity, entity) => entity),
+      update: jest.fn(),
     },
     connect: jest.fn(),
     startTransaction: jest.fn(),
@@ -67,9 +70,12 @@ const createSignInUpServiceForTests = () => {
     {
       create: jest.fn(),
       checkUserWorkspaceExists: jest.fn(),
+      addUserToWorkspaceIfUserNotInWorkspace: jest.fn(),
     } as any,
     {
+      setOnboardingConnectAccountPending: jest.fn(),
       setOnboardingCreateProfilePending: jest.fn(),
+      setOnboardingInstallAppsPending: jest.fn(),
       setOnboardingInviteTeamPending: jest.fn(),
       createOnboardingStatusForWorkspaceMember: jest.fn(),
     } as any,
@@ -92,7 +98,9 @@ const createSignInUpServiceForTests = () => {
       invalidateAndRecompute: jest.fn(),
     } as any,
     {
-      createWorkspaceCustomApplication: jest.fn(),
+      createWorkspaceCustomApplication: jest.fn().mockResolvedValue({
+        universalIdentifier: 'custom-application-universal-identifier',
+      }),
     } as any,
     {
       uploadWorkspaceLogoFromUrl: jest.fn(),
@@ -113,6 +121,9 @@ const createSignInUpServiceForTests = () => {
     } as any,
     {
       createQueryRunner: jest.fn(() => queryRunnerMock),
+      transaction: jest.fn(async (runInTransaction) =>
+        runInTransaction({ queryRunner: queryRunnerMock }),
+      ),
     } as any,
   );
 
@@ -307,5 +318,69 @@ describe('SignInUpService workspace-creation policy', () => {
     ).rejects.toMatchObject({
       code: AuthExceptionCode.SIGNUP_DISABLED,
     });
+  });
+});
+
+describe('SignInUpService onboarding install-apps step', () => {
+  const mockNewUserWithPicture = {
+    email: 'invited.user@acme.dev',
+    firstName: 'Invited',
+    lastName: 'User',
+    picture: '',
+    locale: 'en',
+    isEmailVerified: true,
+  };
+
+  it('does not queue the install-apps step for a new user joining an existing workspace', async () => {
+    const { service } = createSignInUpServiceForTests();
+    const onboardingService = (service as any).onboardingService;
+
+    await service.signInUpOnExistingWorkspace({
+      workspace: {
+        id: 'existing-workspace-id',
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      } as any,
+      userData: {
+        type: 'newUserWithPicture',
+        newUserWithPicture: mockNewUserWithPicture,
+      },
+    } as any);
+
+    expect(
+      onboardingService.setOnboardingInstallAppsPending,
+    ).not.toHaveBeenCalled();
+    expect(
+      onboardingService.setOnboardingConnectAccountPending,
+    ).not.toHaveBeenCalled();
+    expect(
+      onboardingService.setOnboardingCreateProfilePending,
+    ).toHaveBeenCalledWith(expect.objectContaining({ value: true }), undefined);
+  });
+
+  it('queues the install-apps step for a user creating a new workspace', async () => {
+    const { service, mockWorkspaceRepository, mockUserRepository } =
+      createSignInUpServiceForTests();
+    const onboardingService = (service as any).onboardingService;
+
+    mockWorkspaceRepository.count.mockResolvedValue(0);
+    mockUserRepository.count.mockResolvedValue(0);
+
+    await service.signUpOnNewWorkspace(
+      {
+        type: 'newUserWithPicture',
+        newUserWithPicture: {
+          ...mockNewUserWithPicture,
+          email: 'creator@gmail.com',
+        },
+      },
+      { displayName: 'Acme Inc' },
+    );
+
+    expect(
+      onboardingService.setOnboardingInstallAppsPending,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({ value: true }),
+      expect.anything(),
+    );
   });
 });
