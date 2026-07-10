@@ -46,8 +46,6 @@ export const fetchComponentSource = async ({
   if (isDefined(cache) && isDefined(expectedChecksum)) {
     const sourceChecksum = await computeSourceChecksum({ source });
 
-    // Only verified content is cached; the source itself is still returned
-    // as-is since it comes straight from the trusted server.
     if (sourceChecksum === expectedChecksum) {
       writeComponentSourceToCache({ cache, url, source });
     }

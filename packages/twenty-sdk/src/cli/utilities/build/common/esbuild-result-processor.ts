@@ -1,8 +1,8 @@
+import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import crypto from 'crypto';
 import type * as esbuild from 'esbuild';
 import { readFile } from 'node:fs/promises';
 import path from 'path';
-import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { FileFolder } from 'twenty-shared/types';
 
 const SDK_CLIENT_IMPORT_PREFIX = 'twenty-client-sdk';
@@ -35,9 +35,6 @@ export const processEsbuildResult = async ({
 
     const content = await readFile(absoluteBuiltFile);
 
-    // Front-component checksums must be sha-256: the renderer verifies cached
-    // bundles against the URL checksum with WebCrypto, which has no md5
-    // support. Other folders keep md5 to avoid churning their checksums.
     const checksumAlgorithm =
       fileFolder === FileFolder.BuiltFrontComponent ? 'sha256' : 'md5';
     const checksum = crypto
