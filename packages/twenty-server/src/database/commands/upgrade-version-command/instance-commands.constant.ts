@@ -107,6 +107,7 @@ import { AddIsSystemSideEffectToSearchFieldMetadataFastInstanceCommand } from '.
 import { CreateWorkflowCoreTableFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783603454479-create-workflow-core-table';
 import { AddGalleryImagesToApplicationRegistrationFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783615890055-add-gallery-images-to-application-registration';
 import { BackfillGalleryImagesOnApplicationRegistrationSlowInstanceCommand } from './2-20/2-20-instance-command-slow-1783615890056-backfill-gallery-images-on-application-registration';
+import { AddWorkflowVersionSyncableColumnsFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783603454480-add-workflow-version-syncable-columns';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -216,4 +217,5 @@ export const INSTANCE_COMMANDS = [
   CreateWorkflowCoreTableFastInstanceCommand,
   AddGalleryImagesToApplicationRegistrationFastInstanceCommand,
   BackfillGalleryImagesOnApplicationRegistrationSlowInstanceCommand,
+  AddWorkflowVersionSyncableColumnsFastInstanceCommand,
 ];
