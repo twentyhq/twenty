@@ -12075,6 +12075,11 @@ msgstr "Nenhuma chave API corresponde à sua pesquisa"
 msgid "No applications available"
 msgstr "Não há aplicações disponíveis"
 
+#. js-lingui-id: zLbFMr
+#: src/pages/onboarding/InstallAppsContent.tsx
+msgid "No apps are available to install right now"
+msgstr ""
+
 #. js-lingui-id: tFxVHz
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "No available fields to select"

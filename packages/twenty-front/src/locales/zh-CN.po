@@ -12052,6 +12052,11 @@ msgstr "没有与您的搜索匹配的 API 密钥"
 msgid "No applications available"
 msgstr "没有可用的应用程序"
 
+#. js-lingui-id: zLbFMr
+#: src/pages/onboarding/InstallAppsContent.tsx
+msgid "No apps are available to install right now"
+msgstr ""
+
 #. js-lingui-id: tFxVHz
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "No available fields to select"
