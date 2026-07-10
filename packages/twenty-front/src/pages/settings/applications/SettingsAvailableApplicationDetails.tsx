@@ -221,7 +221,7 @@ export const SettingsAvailableApplicationDetails = () => {
             displayName={displayName}
             description={description}
             aboutDescription={detail.aboutDescription ?? undefined}
-            screenshots={detail.screenshots}
+            screenshots={detail.galleryImages}
             author={detail.author ?? 'Unknown'}
             category={detail.category ?? undefined}
             contentEntries={contentEntries}

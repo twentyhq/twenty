@@ -4,7 +4,7 @@ description: Twenty'nin UI'si içinde, korumalı alan (sandbox) izolasyonu ile g
 icon: window-maximize
 ---
 
-Ön uç bileşenler, Twenty'nin UI'si içinde doğrudan görüntülenen React bileşenleridir. Remote DOM kullanan izole bir Web Worker içinde çalışırlar — kodunuz izole bir ortamda (sandbox) çalışır ancak bir iframe içinde değil, sayfada yerel olarak işlenir.
+Ön uç bileşenler, Twenty'nin UI'si içinde doğrudan görüntülenen React bileşenleridir. Remote DOM kullanan **izole bir Web Worker** içinde çalışırlar — kodunuz, korumalı (sandbox) ve opak kökenli bir iframe içinde yürütülür; ancak UI, o iframe ile sınırlanmak yerine sayfada yerel olarak işlenir.
 
 ## Ön uç bileşenlerinin kullanılabileceği yerler
 
@@ -196,7 +196,7 @@ export default defineFrontComponent({
 
 ## Bir mantık işlevini çağırma
 
-Ön bileşenler, tarayıcı tarafında izole bir Web Worker içinde çalışırken, [mantık işlevleri](/l/tr/developers/extend/apps/logic/logic-functions) sunucu tarafında çalışır. İkisi arasında doğrudan, işlem içi bir çağrı yoktur — bunun yerine, bir ön bileşen bir mantık işlevine HTTP üzerinden erişir.
+Ön bileşenler, tarayıcı tarafında, opak kaynaklı bir iframe içinde yer alan korumalı (sandbox) bir Web Worker içinde çalışırken, [mantık işlevleri](/l/tr/developers/extend/apps/logic/logic-functions) sunucu tarafında çalışır. İkisi arasında doğrudan, işlem içi bir çağrı yoktur — bunun yerine, bir ön bileşen bir mantık işlevine HTTP üzerinden erişir.
 
 `httpRouteTriggerSettings` ile bildirilen bir mantık işlevi, rota yolunda HTTP üzerinden erişilebilir durumdadır. Twenty, işlevlerinizin sunulduğu temel URL’yi, çağrıyı kimlik doğrulayan `TWENTY_APP_ACCESS_TOKEN` ile birlikte, worker’a `TWENTY_FUNCTIONS_URL` olarak enjekte eder. Kendi işlevlerinizi çağırmak için henüz özel bir SDK istemcisi yoktur, bu yüzden onları basit bir `fetch` ile çağırın:
 

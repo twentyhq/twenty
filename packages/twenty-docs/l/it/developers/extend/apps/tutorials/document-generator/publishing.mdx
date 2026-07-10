@@ -10,7 +10,7 @@ La tua app funziona. L'ultimo passo è descriverlo per il mercato e pubblicarlo.
 
 La [application config](/l/it/developers/extend/apps/config/application) contiene l'identità
 che appare nel marketplace: autore, categoria, logo e supporta i link
-. Metti un logo in `public/` e fai riferimento con `logoUrl`.
+. Metti un logo in `public/` e fai riferimento con `logo`.
 
 ```ts filename="src/application-config.ts"
 import { defineApplication } from 'twenty-sdk/define';
@@ -20,7 +20,7 @@ export default defineApplication({
   displayName: 'Document Generator',
   description:
     'Create reusable document templates and generate personalized documents from your CRM records.',
-  logoUrl: 'public/document-generator.svg',
+  logo: 'public/document-generator.svg',
   author: 'Twenty',
   category: 'Productivity',
   websiteUrl: 'https://docs.twenty.com/l/it/developers/extend/apps',
@@ -42,14 +42,14 @@ Aggiungi anche la parola chiave `twenty-app` a `package.json` così l'app è sco
 
 ## Aggiungi screenshot galleria
 
-Una quotazione di mercato si vende con screenshot. Trascina alcuni PNG nella `public/gallery/` di
-e li referenzia con `screenshots` — sono una galleria
-nella pagina di inserimento.
+Una quotazione di mercato si vende con screenshot. Trascina alcuni PNG in `public/gallery/` di
+e li referenzia con `galleryImages` — rendono come una galleria
+nella pagina di elenco, in ordine array.
 
 ```ts filename="src/application-config.ts"
 export default defineApplication({
   // ...identity from above
-  screenshots: [
+  galleryImages: [
     'public/gallery/01-generated-document.png',
     'public/gallery/02-command-menu.png',
     'public/gallery/03-template-editor.png',
