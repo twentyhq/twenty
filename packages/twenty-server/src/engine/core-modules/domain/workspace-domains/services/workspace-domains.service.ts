@@ -235,7 +235,10 @@ export class WorkspaceDomainsService {
       '',
     )}/s`;
 
-    if (this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
+    if (
+      this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') &&
+      isNonEmptyString(workspace.subdomain)
+    ) {
       sameSiteFunctionsBaseUrl.hostname = `${workspace.subdomain}.${sameSiteFunctionsBaseUrl.hostname}`;
     }
 

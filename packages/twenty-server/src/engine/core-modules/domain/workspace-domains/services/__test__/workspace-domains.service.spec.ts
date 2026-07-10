@@ -249,7 +249,7 @@ describe('WorkspaceDomainsService', () => {
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
           const configValues = {
-            SERVER_URL: 'https://api.example.com/base/',
+            SERVER_URL: 'http://localhost:3000/base/',
             IS_MULTIWORKSPACE_ENABLED: true,
           };
 
@@ -261,7 +261,7 @@ describe('WorkspaceDomainsService', () => {
         workspace: { subdomain: 'acme' },
       });
 
-      expect(result).toBe('https://acme.api.example.com/base/s');
+      expect(result).toBe('http://acme.localhost:3000/base/s');
     });
   });
 
