@@ -62,5 +62,10 @@ export const PARTNER_WEBSITE_FIELD_UNIVERSAL_IDENTIFIER =
 export const PARTNER_CALENDAR_LINK_FIELD_UNIVERSAL_IDENTIFIER =
   'a0000008-0000-4000-8000-000000000008';
 
+// createdAt is a reserved system field auto-created on the partner object. Its
+// universal identifier is deterministically derived by the server from the
+// application universal identifier ('e662fc1f-02c1-41ff-b8ba-c95a447b3965'), the
+// partner object universal identifier ('39101b39-1c16-4148-9e82-45dc271bb90d')
+// and the field name, so it must match that derived value rather than a random id.
 export const PARTNER_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER =
-  '421cbcea-4608-534b-9a3e-0454bdb3123a';
+  '746e2944-28d0-545e-9832-a46516e1d9a0';
