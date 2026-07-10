@@ -7814,6 +7814,7 @@ msgstr "Denna domän är redan registrerad som en anpassad domän."
 
 #. js-lingui-id: s6batt
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This domain is already registered."
 msgstr "Denna domän är redan registrerad."
 
