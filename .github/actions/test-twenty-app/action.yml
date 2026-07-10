@@ -1,0 +1,81 @@
+name: Test Twenty App
+description: >
+  Exercises a single Twenty app against an already-running server. In
+  "installation-and-integration-test" mode it runs the app's integration suite,
+  then deploys and installs the app. In "installation-only" mode it only deploys
+  and installs, which is enough to catch server-side install regressions without
+  paying for each app's full test suite.
+
+inputs:
+  api-url:
+    description: Base URL of the target Twenty instance
+    required: true
+  api-key:
+    description: API key or access token for the target workspace
+    required: true
+  app-path:
+    description: Path to the app directory (relative to repo root)
+    required: true
+  mode:
+    description: >
+      What to run: "installation-and-integration-test" (integration + deploy +
+      install), "integration-test-only" (integration suite only) or
+      "installation-only" (deploy + install only).
+    required: false
+    default: 'installation-and-integration-test'
+
+runs:
+  using: composite
+  steps:
+    - name: Enable Corepack
+      shell: bash
+      run: corepack enable
+
+    - name: Setup Node.js
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      with:
+        node-version-file: '${{ inputs.app-path }}/.nvmrc'
+        cache: yarn
+        cache-dependency-path: '${{ inputs.app-path }}/yarn.lock'
+
+    - name: Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.app-path }}
+      run: yarn install --immutable
+
+    - name: Configure remote
+      shell: bash
+      env:
+        API_URL: ${{ inputs.api-url }}
+        API_KEY: ${{ inputs.api-key }}
+      run: |
+        mkdir -p ~/.twenty
+        node -e "
+          const fs = require('fs'), path = require('path'), os = require('os');
+          fs.writeFileSync(path.join(os.homedir(), '.twenty', 'config.json'), JSON.stringify({
+            version: 1,
+            remotes: { target: { apiUrl: process.env.API_URL, apiKey: process.env.API_KEY, accessToken: process.env.API_KEY } },
+            defaultRemote: 'target'
+          }, null, 2));
+        "
+
+    - name: Integration tests
+      if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'integration-test-only'
+      shell: bash
+      working-directory: ${{ inputs.app-path }}
+      env:
+        TWENTY_API_URL: ${{ inputs.api-url }}
+        TWENTY_API_KEY: ${{ inputs.api-key }}
+      run: yarn test
+
+    - name: Deploy app
+      if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'installation-only'
+      shell: bash
+      working-directory: ${{ inputs.app-path }}
+      run: yarn twenty app:publish --private --remote target
+
+    - name: Install app
+      if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'installation-only'
+      shell: bash
+      working-directory: ${{ inputs.app-path }}
+      run: yarn twenty app:install --remote target
