@@ -9,8 +9,15 @@ Der gleiche Handler kann auch HTTP-Anfragen beantworten. Wir werden zwei Routen 
 * ein **POST** Endpunkt der UI-Aufrufe, um ein Dokument zu generieren, und
 * ein öffentlicher **GET** Endpunkt, der ein Dokument als druckbare Webseite darstellt.
 
-Beide verwenden `httpRouteTriggerSettings`. App-Routen werden unter `/s` auf Ihrem
-20 Server bedient (z.B. `http://localhost:2020/s/documents/generate`).
+Beide verwenden `httpRouteTriggerSettings`. Auf dem lokalen Dev-Server werden App-Routen
+unter dem Präfix `/s` bedient (z.B. `http://localhost:2020/s/documents/generate`).
+
+<Note>
+Bei 20 Cloud werden Routen in der dedizierten Funktion des Arbeitsbereichs, der Domain
+– die URL 20 injiziert als `TWENTY_FUNCTIONS_URL`, ohne `/s` Präfix. Das `/s`
+Präfix ist dort veraltet und bleibt nur für selbstgehostete und lokale Instanzen übrig.
+Siehe [Aufruf einer Logikfunktion](/l/de/developers/extend/apps/layout/front-components#calling-a-logic-function).
+</Note>
 
 ## POST-Route — bei Bedarf generieren
 

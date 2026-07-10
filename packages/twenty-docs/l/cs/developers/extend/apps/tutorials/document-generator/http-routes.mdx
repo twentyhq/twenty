@@ -9,8 +9,15 @@ Stejný handler může také odpovědět na HTTP požadavky. Přidáme dva trasy
 * **POST** koncový bod uživatelského rozhraní volá, aby vytvořilo dokument, a
 * veřejný **GET** koncový bod, který vykresluje dokument jako tiskovou webovou stránku.
 
-Oba použijte `httpRouteTriggerSettings`. Trasy aplikací jsou vedeny pod `/s` na vašem
-serveru (např. `http://localhost:2020/s/documents/generate`).
+Oba použijte `httpRouteTriggerSettings`. Na místním serveru vývojáře jsou trasy
+provozovány pod předponou `/s` (např. `http://localhost:2020/s/documents/generate`).
+
+<Note>
+Na dvaceti Cloudu jsou trasy vedeny na doméně funkcí vyhrazených v pracovním prostoru
+— URL je dvacet vložena jako `TWENTY_FUNCTIONS_URL`, bez předpony `/s`. Prefix `/s`
+je tam zastaralý a zůstává pouze pro samostatně hostované a místní instance.
+Viz [Volání logické funkce](/l/cs/developers/extend/apps/layout/front-components#calling-a-logic-function).
+</Note>
 
 ## POST trasa – generovat na požádání
 

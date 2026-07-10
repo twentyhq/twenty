@@ -350,6 +350,33 @@ exports[`syncApplication should delete old field and create equivalent one when 
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "createdAt": Any<String>,
+          "indexType": "GIN",
+          "indexWhereClause": null,
+          "isCustom": false,
+          "isSystemSideEffect": true,
+          "isUnique": false,
+          "name": "IDX_72b74c26016bcd3cd20b85c4a28",
+          "objectMetadataUniversalIdentifier": Any<String>,
+          "universalFlatIndexFieldMetadatas": [
+            {
+              "createdAt": Any<String>,
+              "fieldMetadataUniversalIdentifier": Any<String>,
+              "indexMetadataUniversalIdentifier": Any<String>,
+              "order": 0,
+              "subFieldName": null,
+              "updatedAt": Any<String>,
+            },
+          ],
+          "universalIdentifier": Any<String>,
+          "updatedAt": Any<String>,
+        },
+        "metadataName": "index",
+        "type": "create",
+      },
+      {
+        "flatEntity": {
+          "applicationUniversalIdentifier": Any<String>,
           "canAccessAllTools": false,
           "canBeAssignedToAgents": true,
           "canBeAssignedToApiKeys": true,
@@ -753,6 +780,33 @@ exports[`syncApplication should return workspace migration actions on initial sy
             "updatedAt": Any<String>,
           },
         ],
+      },
+      {
+        "flatEntity": {
+          "applicationUniversalIdentifier": Any<String>,
+          "createdAt": Any<String>,
+          "indexType": "GIN",
+          "indexWhereClause": null,
+          "isCustom": false,
+          "isSystemSideEffect": true,
+          "isUnique": false,
+          "name": "IDX_72b74c26016bcd3cd20b85c4a28",
+          "objectMetadataUniversalIdentifier": Any<String>,
+          "universalFlatIndexFieldMetadatas": [
+            {
+              "createdAt": Any<String>,
+              "fieldMetadataUniversalIdentifier": Any<String>,
+              "indexMetadataUniversalIdentifier": Any<String>,
+              "order": 0,
+              "subFieldName": null,
+              "updatedAt": Any<String>,
+            },
+          ],
+          "universalIdentifier": Any<String>,
+          "updatedAt": Any<String>,
+        },
+        "metadataName": "index",
+        "type": "create",
       },
       {
         "flatEntity": {

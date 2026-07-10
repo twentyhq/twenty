@@ -10,7 +10,7 @@ Seu aplicativo funciona. O último passo é descrevê-lo para o mercado e public
 
 A [aplicação config](/l/pt/developers/extend/apps/config/application) transporta a identidade
 que aparece no mercado: autor, categoria, logotipo e suporte links
-. Coloque um logotipo em `public/` e referencie-o com `logoUrl`.
+. Coloque um logotipo em `public/` e faça referência a ele com `logo`.
 
 ```ts filename="src/application-config.ts"
 import { defineApplication } from 'twenty-sdk/define';
@@ -20,7 +20,7 @@ export default defineApplication({
   displayName: 'Document Generator',
   description:
     'Create reusable document templates and generate personalized documents from your CRM records.',
-  logoUrl: 'public/document-generator.svg',
+  logo: 'public/document-generator.svg',
   author: 'Twenty',
   category: 'Productivity',
   websiteUrl: 'https://docs.twenty.com/l/pt/developers/extend/apps',
@@ -43,14 +43,14 @@ Também adicione a palavra-chave `vinte app` ao `package.json` para que o aplica
 
 ## Adicionar capturas de tela da galeria
 
-Uma lista de mercado vende a si mesma com screenshots. Colocar alguns PNGs em
-`public/gallery/` e referenciá-los com `screenshots` — eles renderizam como galeria
-na página de listagem.
+Uma lista de mercado vende a si mesma com screenshots. Coloque alguns PNGs em
+`public/gallery/` e faça referência a eles com `galleryImages` — eles são renderizados como uma
+galeria na página de listagem, na ordem do array.
 
 ```ts filename="src/application-config.ts"
 export default defineApplication({
   // ...identity from above
-  screenshots: [
+  galleryImages: [
     'public/gallery/01-generated-document.png',
     'public/gallery/02-command-menu.png',
     'public/gallery/03-template-editor.png',
@@ -77,11 +77,11 @@ Executar os mesmos portões CI do portão:
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty dev --once --dry-run   # preview the metadata diff
+yarn twenty plan   # preview the metadata diff
 ```
 
-A corrida seca imprime exatamente o que mudaria no servidor sem aplicá-lo —
-uma boa verificação de sanidade final. Veja
+O plano mostra exatamente o que mudaria no servidor sem aplicar as alterações —
+um bom último teste de sanidade. Veja
 [Testing](/l/pt/developers/extend/apps/operations/testing) e
 [Sincronização e recuperação](/l/pt/developers/extend/apps/operations/sync-and-recovery).
 

@@ -10,7 +10,7 @@ Aplicația dvs. funcționează. Ultimul pas este să îl descriem pentru piață
 
 [application config](/l/ro/developers/extend/apps/config/application) posedă identitatea
 care apare în bazar: author, categorie, logo, and support
-link-uri. Puneți un logo în `public/` și trimiteți-l cu `logoUrl`.
+link-uri. Pune un logo în `public/` și fă referire la el cu `logo`.
 
 ```ts filename="src/application-config.ts"
 import { defineApplication } from 'twenty-sdk/define';
@@ -20,7 +20,7 @@ export default defineApplication({
   displayName: 'Document Generator',
   description:
     'Create reusable document templates and generate personalized documents from your CRM records.',
-  logoUrl: 'public/document-generator.svg',
+  logo: 'public/document-generator.svg',
   author: 'Twenty',
   category: 'Productivity',
   websiteUrl: 'https://docs.twenty.com/l/ro/developers/extend/apps',
@@ -43,14 +43,14 @@ Adăugați de asemenea cuvântul cheie `douăzeci și douăzeci de aplicații` �
 
 ## Adaugă capturi de ecran galerie
 
-O listă de marketplace se vinde cu capturi de ecran. Plasați câteva PNG-uri în
-`public/gallery/` și trimiteți-le cu `capturi de ecran` - ele se redau ca galerie
-pe pagina de listare.
+O listă de marketplace se vinde cu capturi de ecran. Plasează câteva fișiere PNG în
+`public/gallery/` și fă referire la ele cu `galleryImages` — acestea sunt afișate ca o
+galerie pe pagina listării, în ordinea din array.
 
 ```ts filename="src/application-config.ts"
 export default defineApplication({
   // ...identity from above
-  screenshots: [
+  galleryImages: [
     'public/gallery/01-generated-document.png',
     'public/gallery/02-command-menu.png',
     'public/gallery/03-template-editor.png',
@@ -76,11 +76,11 @@ Rulează aceleași porți CI face:
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty dev --once --dry-run   # preview the metadata diff
+yarn twenty plan   # preview the metadata diff
 ```
 
-Derularea uscată tipărește exact ce s-ar schimba pe server fără a o aplica —
-un bun control sanitar final. Vezi
+Planul afișează exact ce s-ar schimba pe server, fără a aplica modificările —
+o bună verificare finală. Vezi
 [Testing](/l/ro/developers/extend/apps/operations/testing) şi
 [Sincronizare şi Recuperare](/l/ro/developers/extend/apps/operations/sync-and-recovery).
 

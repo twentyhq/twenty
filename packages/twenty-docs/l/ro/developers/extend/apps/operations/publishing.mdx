@@ -180,15 +180,15 @@ Publicarea pe npm face ca aplicația ta să poată fi descoperită în marketpla
 
 ### Metadate pentru marketplace
 
-Configurația `defineApplication()` acceptă câmpuri opționale care controlează modul în care aplicația ta apare în marketplace. Folosește `logoUrl` și `screenshots` pentru a face referire la imaginile din folderul `public/`:
+Configurația `defineApplication()` acceptă câmpuri opționale care controlează modul în care aplicația ta apare în marketplace. Folosește `logo` și `galleryImages` pentru a face referire la imaginile din folderul `public/`:
 
 ```ts src/application-config.ts
 export default defineApplication({
   universalIdentifier: '...',
   displayName: 'My App',
   description: 'A great app',
-  logoUrl: 'public/logo.png',
-  screenshots: [
+  logo: 'public/logo.png',
+  galleryImages: [
     'public/screenshot-1.png',
     'public/screenshot-2.png',
   ],
@@ -197,12 +197,12 @@ export default defineApplication({
 
 Vezi [acordeonul defineApplication](/l/ro/developers/extend/apps/config/application#marketplace-metadata) din pagina Building Apps pentru lista completă de câmpuri ale marketplace-ului (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
 
-#### Dimensiuni recomandate pentru capturi de ecran
+#### Dimensiuni recomandate pentru imaginile din galerie
 
-Marketplace-ul redă `screenshots` într-un container fix cu raport `8:5` (de exemplu, `1600×1000 px`).
+Marketplace-ul redă `galleryImages` într-un container fix cu raport `8:5` (de exemplu, `1600×1000 px`).
 
 <Note>
-Capturile de ecran cu orice raport de aspect sunt afișate integral și nu sunt niciodată decupate, însă orice este semnificativ mai înalt sau mai îngust decât `8:5` va afișa benzi goale pe laterale.
+Imaginile din galerie cu orice raport de aspect sunt afișate integral și nu sunt niciodată decupate, însă orice imagine semnificativ mai înaltă sau mai îngustă decât `8:5` va afișa benzi goale pe laterale.
 </Note>
 
 ### Publicare
@@ -229,7 +229,7 @@ yarn twenty dev:catalog-sync
 # yarn twenty dev:catalog-sync --remote production
 ```
 
-Metadatele afișate în marketplace provin din configurația `defineApplication()` — câmpuri precum `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` și `termsUrl`.
+Metadatele afișate în marketplace provin din configurația `defineApplication()` — vezi secțiunea [Metadate pentru marketplace](#marketplace-metadata) de mai sus.
 
 <Note>
 Dacă aplicația ta nu definește un `aboutDescription` în `defineApplication()`, piața va folosi automat fișierul `README.md` al pachetului tău de pe npm drept conținut pentru pagina Despre. Acest lucru înseamnă că poți menține un singur README atât pentru npm, cât și pentru piața Twenty. Dacă vrei o descriere diferită în piață, setează explicit `aboutDescription`.

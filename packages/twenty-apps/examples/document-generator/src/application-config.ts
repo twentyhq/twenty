@@ -12,8 +12,8 @@ export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: APP_DISPLAY_NAME,
   description: APP_DESCRIPTION,
-  logoUrl: 'public/document-generator.svg',
-  screenshots: [
+  logo: 'public/document-generator.svg',
+  galleryImages: [
     'public/gallery/01-template-editor.png',
     'public/gallery/02-command-menu.png',
     'public/gallery/03-documents.png',

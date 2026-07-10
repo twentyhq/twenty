@@ -1,3 +1,4 @@
+import { getSearchFieldUniversalIdentifier } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { v4 } from 'uuid';
 
@@ -67,7 +68,11 @@ export const createStandardSearchFieldFlatMetadata = <
 
   return {
     id: v4(),
-    universalIdentifier: v4(),
+    universalIdentifier: getSearchFieldUniversalIdentifier({
+      applicationUniversalIdentifier:
+        flatObjectMetadata.applicationUniversalIdentifier,
+      fieldMetadataUniversalIdentifier: flatFieldMetadata.universalIdentifier,
+    }),
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:
       flatObjectMetadata.applicationUniversalIdentifier,
@@ -78,6 +83,7 @@ export const createStandardSearchFieldFlatMetadata = <
     tsVectorFieldMetadataId,
     tsVectorFieldMetadataUniversalIdentifier,
     position,
+    isSystemSideEffect: true,
     workspaceId,
     createdAt: now,
     updatedAt: now,

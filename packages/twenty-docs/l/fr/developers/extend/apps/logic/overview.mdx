@@ -40,13 +40,13 @@ La **couche logique** d’une application Twenty est le code qui *s’exécute* 
 
 Une fonction logique choisit un ou plusieurs déclencheurs — chaque entrée ci-dessous est un champ distinct sur `defineLogicFunction()`:
 
-| Déclencheur                      | Moment d’exécution                                                           | Paramètre                       |
-| -------------------------------- | ---------------------------------------------------------------------------- | ------------------------------- |
-| **Route HTTP**                   | Une requête atteint votre point de terminaison `/s/\<path>` | `httpRouteTriggerSettings`      |
-| **Cron**                         | Une expression CRON correspond                                               | `cronTriggerSettings`           |
-| **Événement de base de données** | Un enregistrement de l’espace de travail est créé, mis à jour ou supprimé    | `databaseEventTriggerSettings`  |
-| **Outil IA**                     | Une fonctionnalité IA de Twenty décide d’appeler votre fonction              | `toolTriggerSettings`           |
-| **Action de flux de travail**    | Une étape de flux de travail invoque votre fonction                          | `workflowActionTriggerSettings` |
+| Déclencheur                      | Moment d’exécution                                                        | Paramètre                       |
+| -------------------------------- | ------------------------------------------------------------------------- | ------------------------------- |
+| **Route HTTP**                   | Une requête atteint l'URL publique de votre fonction                      | `httpRouteTriggerSettings`      |
+| **Cron**                         | Une expression CRON correspond                                            | `cronTriggerSettings`           |
+| **Événement de base de données** | Un enregistrement de l’espace de travail est créé, mis à jour ou supprimé | `databaseEventTriggerSettings`  |
+| **Outil IA**                     | Une fonctionnalité IA de Twenty décide d’appeler votre fonction           | `toolTriggerSettings`           |
+| **Action de flux de travail**    | Une étape de flux de travail invoque votre fonction                       | `workflowActionTriggerSettings` |
 
 Les fonctions s’exécutent dans un environnement isolé dans des processus Node.js sandboxés et accèdent à l’espace de travail via un client API typé, limité au rôle déclaré sur [`defineApplication()`](/l/fr/developers/extend/apps/config/application).
 

@@ -10,7 +10,7 @@ Tu app funciona. El último paso es describirlo para el mercado y publicarlo.
 
 La [configuración de la aplicación](/l/es/developers/extend/apps/config/application) lleva los enlaces
 que se muestran en el mercado: autor, categoría, logotipo y soporte
-. Pon un logotipo en `public/` y referencialo con `logoUrl`.
+. Coloca un logotipo en `public/` y haz referencia a él con `logo`.
 
 ```ts filename="src/application-config.ts"
 import { defineApplication } from 'twenty-sdk/define';
@@ -20,7 +20,7 @@ export default defineApplication({
   displayName: 'Document Generator',
   description:
     'Create reusable document templates and generate personalized documents from your CRM records.',
-  logoUrl: 'public/document-generator.svg',
+  logo: 'public/document-generator.svg',
   author: 'Twenty',
   category: 'Productivity',
   websiteUrl: 'https://docs.twenty.com/l/es/developers/extend/apps',
@@ -43,14 +43,12 @@ También añade la palabra clave `twenty-app` a `package.json` para que la aplic
 
 ## Añadir capturas de pantalla de galería
 
-Un listado de mercado se vende a sí mismo con capturas de pantalla. Soltar unos pocos PNGs en
-`public/gallery/` y referenciarlos con `capturas de pantalla` — se renderizan como una galería
-en la página de listado.
+Un listado de mercado se vende a sí mismo con capturas de pantalla. Coloca algunos PNG en `public/gallery/` y haz referencia a ellos con `galleryImages` — se muestran como una galería en la página de listado, en el orden del array.
 
 ```ts filename="src/application-config.ts"
 export default defineApplication({
   // ...identity from above
-  screenshots: [
+  galleryImages: [
     'public/gallery/01-generated-document.png',
     'public/gallery/02-command-menu.png',
     'public/gallery/03-template-editor.png',
@@ -77,11 +75,11 @@ Ejecuta las mismas puertas que CI hace:
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty dev --once --dry-run   # preview the metadata diff
+yarn twenty plan   # preview the metadata diff
 ```
 
-La ejecución seca imprime exactamente lo que cambiaría en el servidor sin aplicarlo —
-una buena comprobación final de sanidad. Ver
+El plan muestra exactamente qué cambiaría en el servidor sin aplicarlos —
+una buena comprobación final. Ver
 [Testing](/l/es/developers/extend/apps/operations/testing) y
 [Sincronizando y recuperando](/l/es/developers/extend/apps/operations/sync-and-recovery).
 

@@ -8,7 +8,7 @@ description: 마켓플레이스 메타데이터를 추가하고 앱을 게시하
 
 ## 마켓플레이스 메타데이터 추가
 
-[application config](/l/ko/developers/extend/apps/config/application)는 마켓플레이스에 표시되는 식별 정보를 포함합니다. 작성자, 카테고리, 로고, 지원 링크 등이 여기에 포함됩니다. `public/`에 로고를 넣고 `logoUrl`로 참조하세요.
+[application config](/l/ko/developers/extend/apps/config/application)는 마켓플레이스에 표시되는 식별 정보를 포함합니다. 작성자, 카테고리, 로고, 지원 링크 등이 여기에 포함됩니다. `public/`에 로고를 넣고 `logo`로 참조하세요.
 
 ```ts filename="src/application-config.ts"
 import { defineApplication } from 'twenty-sdk/define';
@@ -18,7 +18,7 @@ export default defineApplication({
   displayName: 'Document Generator',
   description:
     'Create reusable document templates and generate personalized documents from your CRM records.',
-  logoUrl: 'public/document-generator.svg',
+  logo: 'public/document-generator.svg',
   author: 'Twenty',
   category: 'Productivity',
   websiteUrl: 'https://docs.twenty.com/l/ko/developers/extend/apps',
@@ -40,12 +40,13 @@ export default defineApplication({
 
 ## 갤러리 스크린샷 추가
 
-마켓플레이스 등록 정보는 스크린샷만으로도 충분히 어필됩니다. 몇 개의 PNG 파일을 `public/gallery/`에 넣고 `screenshots`로 참조하세요. 그러면 목록 페이지에서 갤러리로 렌더링됩니다.
+마켓플레이스 등록 정보는 스크린샷만으로도 충분히 어필됩니다. 몇 개의 PNG 파일을
+`public/gallery/`에 넣고 `galleryImages`로 참조하세요. 그러면 목록 페이지에서 배열 순서대로 갤러리로 렌더링됩니다.
 
 ```ts filename="src/application-config.ts"
 export default defineApplication({
   // ...identity from above
-  screenshots: [
+  galleryImages: [
     'public/gallery/01-generated-document.png',
     'public/gallery/02-command-menu.png',
     'public/gallery/03-template-editor.png',
@@ -69,10 +70,11 @@ CI에서 수행하는 것과 동일한 검증 단계를 실행하세요:
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty dev --once --dry-run   # preview the metadata diff
+yarn twenty plan   # preview the metadata diff
 ```
 
-드라이 런은 서버에서 실제로 적용하지 않고 무엇이 변경될지를 그대로 출력합니다. 마지막으로 확인하기에 좋은 방법입니다. [테스트](/l/ko/developers/extend/apps/operations/testing)와
+플랜은 서버에 실제로 적용하지 않고 무엇이 변경될지를 그대로 출력합니다.
+마지막으로 확인하기에 좋은 방법입니다. [테스트](/l/ko/developers/extend/apps/operations/testing)와
 [동기화 및 복구](/l/ko/developers/extend/apps/operations/sync-and-recovery)를 참조하세요.
 
 ## 게시

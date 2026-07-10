@@ -10,7 +10,7 @@ description: 添加市场元数据并发布您的应用。
 
 [应用程序配置](/l/zh/developers/extend/apps/config/application) 带有显示在市场中的
 身份：作者、类别、标志和支持
-链接。 在 `public/` 中放置一个徽标，然后使用 `logoUrl` 引用。
+链接。 将一个 logo 放入 `public/` 中，并使用 `logo` 来引用它。
 
 ```ts filename="src/application-config.ts"
 import { defineApplication } from 'twenty-sdk/define';
@@ -20,7 +20,7 @@ export default defineApplication({
   displayName: 'Document Generator',
   description:
     'Create reusable document templates and generate personalized documents from your CRM records.',
-  logoUrl: 'public/document-generator.svg',
+  logo: 'public/document-generator.svg',
   author: 'Twenty',
   category: 'Productivity',
   websiteUrl: 'https://docs.twenty.com/l/zh/developers/extend/apps',
@@ -42,14 +42,14 @@ export default defineApplication({
 
 ## 添加相册截图
 
-市场列表用屏幕截图销售自己。 在
-`public/gallery/` 中拖放几个PNGs，然后使用 `screshots` - 它们在列表页面上渲染成一个相册
-。
+市场列表用屏幕截图销售自己。 将几个 PNG 放入
+`public/gallery/` 中，并使用 `galleryImages` 来引用它们——它们会按照数组顺序在列表页面上
+以画廊形式渲染。
 
 ```ts filename="src/application-config.ts"
 export default defineApplication({
   // ...identity from above
-  screenshots: [
+  galleryImages: [
     'public/gallery/01-generated-document.png',
     'public/gallery/02-command-menu.png',
     'public/gallery/03-template-editor.png',
@@ -76,11 +76,11 @@ export default defineApplication({
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty dev --once --dry-run   # preview the metadata diff
+yarn twenty plan   # preview the metadata diff
 ```
 
-干线运行正是在不应用它的情况下打印服务器上会改变的内容——
-是一个很好的最后智能检查。 见
+该计划会精确列出在服务器上将发生的更改，而不会实际应用这些更改——
+这是一次很好的最终健全性检查。 见
 [Testing](/l/zh/developers/extend/apps/operations/testing) 和
 [同步和恢复](/l/zh/developers/extend/apps/operations/sync-and-recovery)。
 

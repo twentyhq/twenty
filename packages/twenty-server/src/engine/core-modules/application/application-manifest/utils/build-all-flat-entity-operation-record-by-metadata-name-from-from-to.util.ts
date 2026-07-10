@@ -11,7 +11,7 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { isSystemUniqueFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/is-system-unique-flat-index-metadata.util';
+import { isSystemSideEffectFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/is-system-side-effect-flat-entity.util';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { compareTwoFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';
 import { shouldInferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration/utils/should-infer-deletion-from-missing-entities.util';
@@ -60,18 +60,12 @@ const buildFlatEntityOperationRecordForMetadata = <T extends AllMetadataName>({
               toByUniversalIdentifier[fromFlatEntity.universalIdentifier],
             ),
         )
-        .filter((fromFlatEntity) => {
-          if (metadataName !== ALL_METADATA_NAME.index) {
-            return true;
-          }
-
-          return !isSystemUniqueFlatIndexMetadata(
-            fromFlatEntity as unknown as {
-              isSystemSideEffect: boolean;
-              isUnique: boolean;
-            },
-          );
-        })
+        .filter(
+          (fromFlatEntity) =>
+            !isSystemSideEffectFlatEntity(
+              fromFlatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
+            ),
+        )
     : [];
 
   const flatEntityToUpdate = Object.values(fromByUniversalIdentifier)

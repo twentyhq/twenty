@@ -180,15 +180,15 @@ yarn twenty app:publish --private
 
 ### بيانات التعريف لسوق التطبيقات
 
-يدعم إعداد `defineApplication()` حقولًا اختيارية تتحكم في كيفية ظهور تطبيقك في السوق. استخدم `logoUrl` و`screenshots` للإشارة إلى الصور من مجلد `public/`:
+يدعم إعداد `defineApplication()` حقولًا اختيارية تتحكم في كيفية ظهور تطبيقك في السوق. استخدم `logo` و`galleryImages` للإشارة إلى الصور من مجلد `public/`:
 
 ```ts src/application-config.ts
 export default defineApplication({
   universalIdentifier: '...',
   displayName: 'My App',
   description: 'A great app',
-  logoUrl: 'public/logo.png',
-  screenshots: [
+  logo: 'public/logo.png',
+  galleryImages: [
     'public/screenshot-1.png',
     'public/screenshot-2.png',
   ],
@@ -197,12 +197,12 @@ export default defineApplication({
 
 اطّلع على [أكورديون defineApplication](/l/ar/developers/extend/apps/config/application#marketplace-metadata) في صفحة بناء التطبيقات للاطلاع على القائمة الكاملة لحقول السوق (`author` و`category` و`aboutDescription` و`websiteUrl` و`termsUrl` وغيرها).
 
-#### أبعاد لقطات الشاشة الموصى بها
+#### أبعاد صور المعرض الموصى بها
 
-يعرض السوق `screenshots` داخل حاوية ثابتة بنسبة `8:5` (على سبيل المثال، `1600×1000 px`).
+يعرض السوق `galleryImages` داخل حاوية ثابتة بنسبة `8:5` (على سبيل المثال، `1600×1000 px`).
 
 <Note>
-تعرض لقطات الشاشة بأي نسبة عرض إلى ارتفاع بالكامل ولن يتم اقتطاعها مطلقًا، ولكن أي شيء أطول أو أضيق بكثير من `8:5` سيظهر مساحات فارغة على الجانبين.
+تُعرض صور المعرض بأي نسبة عرض إلى ارتفاع بالكامل ولن يتم اقتطاعها مطلقًا، ولكن أي شيء أطول أو أضيق بكثير من `8:5` سيظهر مساحات فارغة على الجانبين.
 </Note>
 
 ### النشر
@@ -229,7 +229,7 @@ yarn twenty dev:catalog-sync
 # yarn twenty dev:catalog-sync --remote production
 ```
 
-تأتي بيانات التعريف المعروضة في السوق من إعداد `defineApplication()` — حقول مثل `displayName` و`description` و`author` و`category` و`logoUrl` و`screenshots` و`aboutDescription` و`websiteUrl` و`termsUrl`.
+تأتي البيانات الوصفية المعروضة في سوق التطبيقات من إعدادات `defineApplication()` الخاصة بك — راجع قسم [البيانات الوصفية في سوق التطبيقات](#marketplace-metadata) أعلاه.
 
 <Note>
 إذا لم يحدد تطبيقك `aboutDescription` في `defineApplication()`، فسيستخدم السوق تلقائيًا ملف `README.md` الخاص بحزمتك من npm كمحتوى لصفحة حول. هذا يعني أنه يمكنك الاحتفاظ بملف README واحد لكل من npm وسوق Twenty. إذا كنت تريد وصفًا مختلفًا في السوق، فقم بتعيين `aboutDescription` بشكل صريح.

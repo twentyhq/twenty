@@ -1,9 +1,9 @@
+import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import crypto from 'crypto';
 import type * as esbuild from 'esbuild';
 import { readFile } from 'node:fs/promises';
 import path from 'path';
-import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
-import { type FileFolder } from 'twenty-shared/types';
+import { FileFolder } from 'twenty-shared/types';
 
 const SDK_CLIENT_IMPORT_PREFIX = 'twenty-client-sdk';
 
@@ -34,7 +34,13 @@ export const processEsbuildResult = async ({
     const relativeSourcePath = path.relative(appPath, absoluteSourcePath);
 
     const content = await readFile(absoluteBuiltFile);
-    const checksum = crypto.createHash('md5').update(content).digest('hex');
+
+    const checksumAlgorithm =
+      fileFolder === FileFolder.BuiltFrontComponent ? 'sha256' : 'md5';
+    const checksum = crypto
+      .createHash(checksumAlgorithm)
+      .update(content)
+      .digest('hex');
 
     const lastChecksum = lastChecksums.get(relativeBuiltPath);
 

@@ -10,7 +10,7 @@ description: إضافة بيانات التعريف للسوق ونشر التط
 
 [config](/l/ar/developers/extend/apps/config/application) يحمل الهوية
 التي تظهر في السوق: روابط المؤلف والفئة والشعار والدعم
-. ضع الشعار في `public/` وقم بالرجوع إليه مع `logoUrl`.
+. ضع شعارًا في `public/` وارجع إليه باستخدام `logo`.
 
 ```ts filename="src/application-config.ts"
 import { defineApplication } from 'twenty-sdk/define';
@@ -20,7 +20,7 @@ export default defineApplication({
   displayName: 'Document Generator',
   description:
     'Create reusable document templates and generate personalized documents from your CRM records.',
-  logoUrl: 'public/document-generator.svg',
+  logo: 'public/document-generator.svg',
   author: 'Twenty',
   category: 'Productivity',
   websiteUrl: 'https://docs.twenty.com/l/ar/developers/extend/apps',
@@ -43,14 +43,14 @@ export default defineApplication({
 
 ## إضافة لقطات شاشة معرض الصور
 
-قائمة السوق تبيع نفسها مع لقطات شاشة. إسقاط عدد قليل من PNGs في
-`public/gallery/` والإشارة إليهم بـ \`screenshots' - يتم عرضهم كمعرض
-في صفحة الإدراج في القائمة.
+قائمة السوق تبيع نفسها مع لقطات شاشة. ضع بعض ملفات PNG في
+`public/gallery/` وارجع إليها باستخدام `galleryImages` — حيث يتم عرضها كمعرض
+على صفحة القائمة، بحسب ترتيبها في المصفوفة.
 
 ```ts filename="src/application-config.ts"
 export default defineApplication({
   // ...identity from above
-  screenshots: [
+  galleryImages: [
     'public/gallery/01-generated-document.png',
     'public/gallery/02-command-menu.png',
     'public/gallery/03-template-editor.png',
@@ -77,11 +77,11 @@ export default defineApplication({
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty dev --once --dry-run   # preview the metadata diff
+yarn twenty plan   # preview the metadata diff
 ```
 
-يعرض التشغيل التجريبي بالضبط ما سيتغيّر على الخادم من دون تطبيقه —
-وهو فحص نهائي جيّد للسلامة. انظر
+تعرض الخطة بالضبط ما سيتغيّر على الخادم من دون تطبيقه —
+وهي فحص نهائي جيّد للسلامة. انظر
 [Testing](/l/ar/developers/extend/apps/operations/testing) و
 [المزامنة والاسترداد](/l/ar/developers/extend/apps/operations/sync-and-recovery).
 

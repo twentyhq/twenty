@@ -180,15 +180,15 @@ Publicarla en npm hace que tu aplicación sea visible en el marketplace de Twent
 
 ### Metadatos del Marketplace
 
-La configuración de `defineApplication()` admite campos opcionales que controlan cómo aparece tu aplicación en el marketplace. Usa `logoUrl` y `screenshots` para hacer referencia a imágenes de la carpeta `public/`:
+La configuración de `defineApplication()` admite campos opcionales que controlan cómo aparece tu aplicación en el marketplace. Usa `logo` y `galleryImages` para hacer referencia a imágenes de la carpeta `public/`:
 
 ```ts src/application-config.ts
 export default defineApplication({
   universalIdentifier: '...',
   displayName: 'My App',
   description: 'A great app',
-  logoUrl: 'public/logo.png',
-  screenshots: [
+  logo: 'public/logo.png',
+  galleryImages: [
     'public/screenshot-1.png',
     'public/screenshot-2.png',
   ],
@@ -197,12 +197,12 @@ export default defineApplication({
 
 Consulta el [acordeón de defineApplication](/l/es/developers/extend/apps/config/application#marketplace-metadata) en la página Building Apps para ver la lista completa de campos del marketplace (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
 
-#### Dimensiones recomendadas de las capturas de pantalla
+#### Dimensiones recomendadas de las imágenes de la galería
 
-El marketplace muestra `screenshots` en un contenedor fijo de `8:5` (por ejemplo, `1600×1000 px`).
+El marketplace muestra `galleryImages` en un contenedor fijo de `8:5` (por ejemplo, `1600×1000 px`).
 
 <Note>
-Las capturas de pantalla de cualquier relación de aspecto se muestran completas y nunca se recortan, pero las que sean significativamente más altas o más estrechas que `8:5` mostrarán franjas vacías a los lados.
+Las imágenes de la galería de cualquier relación de aspecto se muestran completas y nunca se recortan, pero las que sean significativamente más altas o más estrechas que `8:5` mostrarán franjas vacías a los lados.
 </Note>
 
 ### Publicar
@@ -229,7 +229,7 @@ yarn twenty dev:catalog-sync
 # yarn twenty dev:catalog-sync --remote production
 ```
 
-Los metadatos que se muestran en el marketplace provienen de tu configuración de `defineApplication()` — campos como `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` y `termsUrl`.
+Los metadatos que se muestran en el marketplace provienen de tu configuración de `defineApplication()`; consulta [Metadatos del marketplace](#marketplace-metadata) arriba.
 
 <Note>
 Si tu aplicación no define un `aboutDescription` en `defineApplication()`, el marketplace usará automáticamente el `README.md` de tu paquete en npm como el contenido de la página Acerca de. Esto significa que puedes mantener un único README tanto para npm como para el marketplace de Twenty. Si quieres una descripción diferente en el marketplace, establece explícitamente `aboutDescription`.

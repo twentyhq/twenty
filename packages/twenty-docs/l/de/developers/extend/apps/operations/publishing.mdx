@@ -180,15 +180,15 @@ Die Veröffentlichung auf npm macht Ihre App im Twenty-Marktplatz auffindbar. Je
 
 ### Marktplatz-Metadaten
 
-Die `defineApplication()`-Konfiguration unterstützt optionale Felder, die steuern, wie Ihre App im Marktplatz erscheint. Verwenden Sie `logoUrl` und `screenshots`, um Bilder aus dem Ordner `public/` zu referenzieren:
+Die `defineApplication()`-Konfiguration unterstützt optionale Felder, die steuern, wie Ihre App im Marktplatz erscheint. Verwende `logo` und `galleryImages` um Bilder aus dem `public/` Ordner zu referenzieren:
 
 ```ts src/application-config.ts
 export default defineApplication({
   universalIdentifier: '...',
   displayName: 'My App',
   description: 'A great app',
-  logoUrl: 'public/logo.png',
-  screenshots: [
+  logo: 'public/logo.png',
+  galleryImages: [
     'public/screenshot-1.png',
     'public/screenshot-2.png',
   ],
@@ -197,12 +197,12 @@ export default defineApplication({
 
 Siehe das [defineApplication-Akkordeon](/l/de/developers/extend/apps/config/application#marketplace-metadata) auf der Seite Building Apps für die vollständige Liste der Marktplatzfelder (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl` usw.).
 
-#### Empfohlene Abmessungen für Screenshots
+#### Empfohlene Galerieabmessungen
 
-Der Marktplatz stellt `screenshots` in einem festen `8:5`-Container dar (zum Beispiel `1600×1000 px`).
+Der Marktplatz zeigt `galleryImages` in einem fixen `8:5` Container an (z.B. `1600×1000 px`).
 
 <Note>
-Screenshots mit beliebigem Seitenverhältnis werden vollständig angezeigt und niemals beschnitten, aber alles, was deutlich höher oder schmaler als `8:5` ist, zeigt an den Seiten leere Balken.
+Galeriebilder mit beliebigem Seitenverhältnis werden vollständig angezeigt und werden nie zugeschnitten, aber irgendetwas wesentlich höher oder enger als `8:5` wird leere Bands auf den Seiten zeigen.
 </Note>
 
 ### Veröffentlichen
@@ -229,7 +229,7 @@ yarn twenty dev:catalog-sync
 # yarn twenty dev:catalog-sync --remote production
 ```
 
-Die im Marktplatz angezeigten Metadaten stammen aus Ihrer `defineApplication()`-Konfiguration — Felder wie `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` und `termsUrl`.
+Die im Marketplace angezeigten Metadaten stammen aus deiner `defineApplication()`-Konfiguration – siehe oben unter [Marketplace-Metadaten](#marketplace-metadata).
 
 <Note>
 Wenn Ihre App keine `aboutDescription` in `defineApplication()` definiert, verwendet der Marktplatz automatisch die `README.md` Ihres Pakets von npm als Inhalt der Über-uns-Seite. Das bedeutet, dass Sie eine einzige README sowohl für npm als auch für den Twenty-Marktplatz pflegen können. Wenn Sie im Marktplatz eine andere Beschreibung möchten, setzen Sie `aboutDescription` explizit.

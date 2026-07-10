@@ -180,15 +180,15 @@ npm에 게시하면 Twenty 마켓플레이스에서 앱을 찾을 수 있게 됩
 
 ### 마켓플레이스 메타데이터
 
-`defineApplication()` 구성은 마켓플레이스에서 앱이 표시되는 방식을 제어하는 선택적 필드를 지원합니다. `public/` 폴더의 이미지를 참조하려면 `logoUrl`과 `screenshots`를 사용하세요:
+`defineApplication()` 구성은 마켓플레이스에서 앱이 표시되는 방식을 제어하는 선택적 필드를 지원합니다. `public/` 폴더의 이미지를 참조하려면 `logo`와 `galleryImages`를 사용하세요:
 
 ```ts src/application-config.ts
 export default defineApplication({
   universalIdentifier: '...',
   displayName: 'My App',
   description: 'A great app',
-  logoUrl: 'public/logo.png',
-  screenshots: [
+  logo: 'public/logo.png',
+  galleryImages: [
     'public/screenshot-1.png',
     'public/screenshot-2.png',
   ],
@@ -197,12 +197,12 @@ export default defineApplication({
 
 마켓플레이스 필드 전체 목록(`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl` 등)은 Building Apps 페이지의 [defineApplication 아코디언](/l/ko/developers/extend/apps/config/application#marketplace-metadata)을 참조하세요.
 
-#### 권장 스크린샷 크기
+#### 권장 갤러리 이미지 크기
 
-마켓플레이스는 `screenshots`를 고정된 `8:5` 컨테이너에 렌더링합니다(예: `1600×1000 px`).
+마켓플레이스는 `galleryImages`를 고정된 `8:5` 컨테이너에 렌더링합니다(예: `1600×1000 px`).
 
 <Note>
-어떤 종횡비의 스크린샷이든 전체가 표시되며 잘리지 않습니다. 그러나 `8:5`보다 훨씬 세로로 길거나 가로로 좁은 경우 양쪽에 빈 띠가 표시됩니다.
+어떤 종횡비의 갤러리 이미지든 전체가 표시되며 잘리지 않습니다. 그러나 `8:5`보다 훨씬 세로로 길거나 가로로 좁은 경우 양쪽에 빈 띠가 표시됩니다.
 </Note>
 
 ### 게시
@@ -229,7 +229,7 @@ yarn twenty dev:catalog-sync
 # yarn twenty dev:catalog-sync --remote production
 ```
 
-마켓플레이스에 표시되는 메타데이터는 `defineApplication()` 구성에서 가져옵니다 — `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl`, `termsUrl` 같은 필드입니다.
+마켓플레이스에 표시되는 메타데이터는 `defineApplication()` 구성에서 가져옵니다. 위의 [Marketplace metadata](#marketplace-metadata)를 참고하세요.
 
 <Note>
 앱에서 `defineApplication()`에 `aboutDescription`을 정의하지 않으면, 마켓플레이스는 소개 페이지 콘텐츠로 npm에 게시된 패키지의 `README.md`를 자동으로 사용합니다. 즉, npm과 Twenty 마켓플레이스 모두에서 하나의 README만 관리하면 됩니다. 마켓플레이스에서 다른 설명을 사용하려면 `aboutDescription`을 명시적으로 설정하세요.

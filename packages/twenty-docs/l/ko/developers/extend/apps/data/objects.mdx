@@ -86,6 +86,22 @@ export default defineObject({
 **기본 필드는 자동으로 추가됩니다.** 사용자 정의 개체를 정의하면 Twenty가 `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy`, `deletedAt`와 같은 표준 필드를 자동으로 생성합니다. 이 필드들은 `fields` 배열에 선언할 필요가 없습니다 — 사용자 정의 필드만 선언하면 됩니다. 동일한 이름으로 필드를 선언하여 기본 필드를 재정의할 수 있지만, 이는 거의 바람직하지 않습니다.
 </Note>
 
+## 필드 유형
+
+`twenty-sdk/define`에서 내보낸 `FieldType` 값의 전체 집합:
+
+| 카테고리     | 유형                                                                                                                  |
+| -------- | ------------------------------------------------------------------------------------------------------------------- |
+| 텍스트      | `TEXT`, `RICH_TEXT`, `ARRAY` (문자열 배열), `RAW_JSON`                                                                   |
+| 숫자형      | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (임의 정밀도), `RATING`, `POSITION` |
+| 날짜       | `DATE`, `DATE_TIME`                                                                                                 |
+| 선택형      | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                 |
+| 복합       | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES`                                   |
+| 식별자 및 관계 | `UUID`, `RELATION`, `MORPH_RELATION` (자세한 내용은 [Relations](/l/ko/developers/extend/apps/data/relations)을 참조)              |
+| 시스템      | `TS_VECTOR` (서버에서 관리되는 전체 텍스트 검색 벡터)                                                                                |
+
+복합 타입은 여러 하위 필드를 저장합니다(예: `FULL_NAME` = 이름 + 성; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` 및 `MULTI_SELECT`는 위 예시와 같이 `options` 배열이 필요합니다.
+
 ## 기본값
 
 리터럴 문자열 기본값은 문자열 **내부에서** 작은따옴표로 감싸야 합니다. 즉, `defaultValue: "'Draft'"`처럼 작성해야 하며, `defaultValue: "Draft"`처럼 작성하면 안 됩니다. 그래서 위의 `status` 필드는 `` `'${PostCardStatus.DRAFT}'` ``를 사용합니다.

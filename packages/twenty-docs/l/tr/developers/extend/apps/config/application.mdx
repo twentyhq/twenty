@@ -109,10 +109,14 @@ Eğer [uygulamanızı yayımlamayı](/l/tr/developers/extend/apps/operations/pub
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `author`           | Yazar veya şirket adı                                                                                                               |
 | `category`         | Pazaryerinde filtreleme için uygulama kategorisi                                                                                    |
-| `logoUrl`          | Uygulamanızın logosuna giden yol (örn. `public/logo.png`)                                                                           |
-| `screenshots`      | Ekran görüntüsü yollarının dizisi (örn. `public/screenshot-1.png`)                                                                  |
+| `logo`             | Uygulamanızın `public/` klasöründe paketlenmiş logo dosyasının yolu (örn. `public/logo.png`)                                        |
+| `galleryImages`    | `public/` içinde paketlenmiş galeri görseli yollarının dizisi (örn. `public/screenshot-1.png`)                                      |
 | `aboutDescription` | "Hakkında" sekmesi için daha uzun bir markdown açıklaması. Belirtilmezse, pazaryeri npm'deki paketin `README.md` dosyasını kullanır |
 | `websiteUrl`       | Web sitenize bağlantı                                                                                                               |
 | `termsUrl`         | Hizmet Koşulları'na bağlantı                                                                                                        |
 | `emailSupport`     | Destek e-posta adresi                                                                                                               |
 | `issueReportUrl`   | Sorun izleyicisine bağlantı                                                                                                         |
+
+<Note>
+`logoUrl` ve `screenshots`, `logo` ve `galleryImages` için kullanımdan kaldırılmış takma adlardır. Bu alanlar için harici mutlak URL'ler (`http://` veya `https://`) desteklenmez: derleme sırasında uyarı ile birlikte kaldırılırlar. Bunun yerine görselleri uygulamanızın `public/` klasöründe paketleyin.
+</Note>

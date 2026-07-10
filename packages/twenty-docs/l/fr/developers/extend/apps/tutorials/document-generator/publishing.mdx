@@ -10,7 +10,7 @@ Votre application fonctionne. La dernière étape consiste à la décrire pour l
 
 La [configuration de l'application](/l/fr/developers/extend/apps/config/application) porte l'identité
 qui apparaît sur le marché : auteur, catégorie, logo et liens de support
-. Mettez un logo dans `public/` et faites-le référence avec `logoUrl`.
+. Placez un logo dans `public/` et référencez-le avec `logo`.
 
 ```ts filename="src/application-config.ts"
 import { defineApplication } from 'twenty-sdk/define';
@@ -20,7 +20,7 @@ export default defineApplication({
   displayName: 'Document Generator',
   description:
     'Create reusable document templates and generate personalized documents from your CRM records.',
-  logoUrl: 'public/document-generator.svg',
+  logo: 'public/document-generator.svg',
   author: 'Twenty',
   category: 'Productivity',
   websiteUrl: 'https://docs.twenty.com/l/fr/developers/extend/apps',
@@ -43,14 +43,14 @@ Ajoute également le mot-clé `21app` à `package.json` pour que l'application s
 
 ## Ajouter des captures d'écran de la galerie
 
-Une annonce boursière se vend avec des captures d'écran. Déposez quelques PNGs dans
-`public/gallery/` et référencez-les avec `screenshots` — ils apparaissent comme une galerie
-sur la page de liste.
+Une annonce boursière se vend avec des captures d'écran. Déposez quelques PNG dans
+`public/gallery/` et référencez-les avec `galleryImages` — ils sont affichés comme une
+galerie sur la page de l’annonce, dans l’ordre du tableau.
 
 ```ts filename="src/application-config.ts"
 export default defineApplication({
   // ...identity from above
-  screenshots: [
+  galleryImages: [
     'public/gallery/01-generated-document.png',
     'public/gallery/02-command-menu.png',
     'public/gallery/03-template-editor.png',
@@ -77,11 +77,11 @@ Exécuter les mêmes portes CI :
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty dev --once --dry-run   # preview the metadata diff
+yarn twenty plan   # preview the metadata diff
 ```
 
-La course à sec imprime exactement ce qui pourrait changer sur le serveur sans l'appliquer —
-une bonne vérification de l'état d'esprit. Voir
+Le plan affiche exactement ce qui changerait sur le serveur sans les appliquer —
+un bon dernier contrôle de cohérence. Voir
 [Testing](/l/fr/developers/extend/apps/operations/testing) et
 [Synchronisation et récupération](/l/fr/developers/extend/apps/operations/sync-and-recovery).
 

@@ -180,15 +180,15 @@ yarn twenty app:publish --private
 
 ### 应用市场元数据
 
-`defineApplication()` 配置支持可选字段，用于控制你的应用在市场中的展示方式。 使用 `logoUrl` 和 `screenshots` 来引用 `public/` 文件夹中的图片：
+`defineApplication()` 配置支持可选字段，用于控制你的应用在市场中的展示方式。 使用 `logo` 和 `galleryImages` 来引用 `public/` 文件夹中的图片：
 
 ```ts src/application-config.ts
 export default defineApplication({
   universalIdentifier: '...',
   displayName: 'My App',
   description: 'A great app',
-  logoUrl: 'public/logo.png',
-  screenshots: [
+  logo: 'public/logo.png',
+  galleryImages: [
     'public/screenshot-1.png',
     'public/screenshot-2.png',
   ],
@@ -197,12 +197,12 @@ export default defineApplication({
 
 完整的市场字段列表（`author`、`category`、`aboutDescription`、`websiteUrl`、`termsUrl` 等）请参见“构建应用”页面中的 [defineApplication 折叠面板](/l/zh/developers/extend/apps/config/application#marketplace-metadata)。
 
-#### 建议的屏幕截图尺寸
+#### 建议的图库图片尺寸
 
-该市场会在固定的 `8:5` 容器中渲染 `screenshots`（例如，`1600×1000 px`）。
+该市场会在固定的 `8:5` 容器中渲染 `galleryImages`（例如，`1600×1000 px`）。
 
 <Note>
-任意纵横比的屏幕截图都会完整显示，且绝不会被裁剪，但相对于 `8:5` 明显更高或更窄的图片，两侧会出现空白边。
+任意纵横比的图库图片都会完整显示，且绝不会被裁剪，但相对于 `8:5` 明显更高或更窄的图片，两侧会出现空白边。
 </Note>
 
 ### 发布
@@ -229,7 +229,7 @@ yarn twenty dev:catalog-sync
 # yarn twenty dev:catalog-sync --remote production
 ```
 
-市场中显示的元数据来自你的 `defineApplication()` 配置——例如 `displayName`、`description`、`author`、`category`、`logoUrl`、`screenshots`、`aboutDescription`、`websiteUrl` 和 `termsUrl` 等字段。
+在应用市场中显示的元数据来自你的 `defineApplication()` 配置——参见上面的 [应用市场元数据](#marketplace-metadata)。
 
 <Note>
 如果您的应用未在 `defineApplication()` 中定义 `aboutDescription`，市场将自动使用 npm 上您的软件包的 `README.md` 作为关于页面内容。 这意味着您可以为 npm 和 Twenty 市场维护同一个 README。 如果您希望在市场中使用不同的描述，请显式设置 `aboutDescription`。
