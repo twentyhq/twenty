@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
-
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -41,7 +40,7 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
 
 @Module({
   imports: [
-    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
+    TypeOrmModule.forFeature([ObjectMetadataEntity]),
     LogicFunctionModule,
     RecordPositionModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,

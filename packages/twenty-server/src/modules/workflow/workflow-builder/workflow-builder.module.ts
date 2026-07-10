@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
-
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkflowSchemaModule } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.module';
@@ -14,7 +13,7 @@ import { WorkflowVersionEdgeModule } from 'src/modules/workflow/workflow-builder
     WorkflowVersionModule,
     WorkflowVersionStepModule,
     WorkflowVersionEdgeModule,
-    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
+    TypeOrmModule.forFeature([ObjectMetadataEntity]),
   ],
   exports: [
     WorkflowSchemaModule,

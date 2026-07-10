@@ -1,8 +1,7 @@
 /* @license Enterprise */
 
 import { Module } from '@nestjs/common';
-
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -17,7 +16,7 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 @Module({
   imports: [
-    NestjsQueryTypeOrmModule.forFeature([
+    TypeOrmModule.forFeature([
       WorkspaceSSOIdentityProviderEntity,
       UserEntity,
       AppTokenEntity,

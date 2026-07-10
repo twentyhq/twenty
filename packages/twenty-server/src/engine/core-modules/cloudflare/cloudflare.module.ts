@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
-
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DnsCloudflareController } from 'src/engine/core-modules/cloudflare/controllers/dns-cloudflare.controller';
 import { DnsCloudflareService } from 'src/engine/core-modules/cloudflare/services/dns-cloudflare.service';
@@ -12,7 +11,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 
 @Module({
   imports: [
-    NestjsQueryTypeOrmModule.forFeature([PublicDomainEntity, WorkspaceEntity]),
+    TypeOrmModule.forFeature([PublicDomainEntity, WorkspaceEntity]),
     WorkspaceDomainsModule,
     CustomDomainManagerModule,
     PublicDomainModule,

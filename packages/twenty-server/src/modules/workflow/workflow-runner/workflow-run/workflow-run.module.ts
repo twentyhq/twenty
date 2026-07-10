@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
-
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
@@ -17,10 +16,7 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
 @Module({
   imports: [
     WorkflowCommonModule,
-    NestjsQueryTypeOrmModule.forFeature([
-      ObjectMetadataEntity,
-      WorkspaceEntity,
-    ]),
+    TypeOrmModule.forFeature([ObjectMetadataEntity, WorkspaceEntity]),
     RecordPositionModule,
     CacheLockModule,
     MetricsModule,

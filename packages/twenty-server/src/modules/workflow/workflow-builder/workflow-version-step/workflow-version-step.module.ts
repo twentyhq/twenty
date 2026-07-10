@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
-
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
@@ -30,7 +29,7 @@ import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workfl
     AiAgentRoleModule,
     AiAgentModule,
     WorkspaceCacheModule,
-    NestjsQueryTypeOrmModule.forFeature([
+    TypeOrmModule.forFeature([
       ObjectMetadataEntity,
       RoleTargetEntity,
       RoleEntity,
