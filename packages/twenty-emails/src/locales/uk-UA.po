@@ -19,11 +19,6 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
-#: src/emails/test.email.tsx
-msgid "Test email"
-msgstr "Тестовий лист"
-
-#. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Your workspace is paused"
 msgstr "Ваш робочий простір призупинено"
@@ -68,6 +63,11 @@ msgid "Reactivate workspace"
 msgstr "Повторно активувати робочий простір"
 
 #. js-lingui-explicit-id
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "Тестовий лист"
+
+#. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
@@ -94,19 +94,24 @@ msgid "Server administrator access changed"
 msgstr "Доступ адміністратора сервера змінено"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Приєднуйтесь до своєї команди на Twenty"
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr ""
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) запросив вас приєднатися до робочого простору під назвою <1>{workspaceName}</1>."
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your email address"
+msgstr "Підтвердіть свою адресу електронної пошти"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "Прийняти запрошення"
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm new email"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Verify Email"
+msgstr "Підтвердіть Email"
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -134,29 +139,19 @@ msgid "Connect to Twenty"
 msgstr "Підключитися до Twenty"
 
 #. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Your workspace has been deleted"
-msgstr "Ваш робочий простір було видалено"
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Приєднуйтесь до своєї команди на Twenty"
 
 #. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
-msgstr "Ваш робочий простір <0>{workspaceDisplayName}</0> щойно було остаточно видалено — його було призупинено {daysSinceInactive} днів тому і не встигли повторно активувати вчасно."
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) запросив вас приєднатися до робочого простору під назвою <1>{workspaceName}</1>."
 
 #. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Its data has been removed and can no longer be recovered."
-msgstr "Його дані було видалено, і їх більше неможливо відновити."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
-msgstr "Якщо ви колись захочете знову спробувати Twenty, ви зможете запустити новий робочий простір за кілька хвилин — ми будемо раді вашому поверненню."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Start a new workspace"
-msgstr "Створити новий робочий простір"
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "Прийняти запрошення"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -184,24 +179,29 @@ msgid "This link is only valid for the next {duration}. If the link does not wor
 msgstr "Це посилання дійсне протягом наступних {duration}. Якщо посилання не працює, ви можете напряму використовувати посилання для перевірки логіна:"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your new email address"
-msgstr ""
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace has been deleted"
+msgstr "Ваш робочий простір було видалено"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your email address"
-msgstr "Підтвердіть свою адресу електронної пошти"
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
+msgstr "Ваш робочий простір <0>{workspaceDisplayName}</0> щойно було остаточно видалено — його було призупинено {daysSinceInactive} днів тому і не встигли повторно активувати вчасно."
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm new email"
-msgstr ""
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Its data has been removed and can no longer be recovered."
+msgstr "Його дані було видалено, і їх більше неможливо відновити."
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Verify Email"
-msgstr "Підтвердіть Email"
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
+msgstr "Якщо ви колись захочете знову спробувати Twenty, ви зможете запустити новий робочий простір за кілька хвилин — ми будемо раді вашому поверненню."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Start a new workspace"
+msgstr "Створити новий робочий простір"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
@@ -260,16 +260,6 @@ msgid "Manage subscription"
 msgstr "Керувати підпискою"
 
 #. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Що таке Twenty?"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "Це CRM, програмне забезпечення для ефективного управління даними клієнтів та відносинами з ними в бізнесі."
-
-#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
 msgstr "Ваш план незабаром буде поновлено"
@@ -288,6 +278,16 @@ msgstr "Ваш річний план для <0>{workspaceDisplayName}</0> буд
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "Якщо ви хочете продовжити користування, нічого робити не потрібно. Якщо ж ви не бажаєте поновлювати план, ви можете скасувати його будь-коли до цієї дати."
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Що таке Twenty?"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "Це CRM, програмне забезпечення для ефективного управління даними клієнтів та відносинами з ними в бізнесі."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
