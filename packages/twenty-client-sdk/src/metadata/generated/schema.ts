@@ -392,7 +392,6 @@ export interface Index {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     indexFieldMetadataList: IndexField[]
-    objectMetadata: IndexObjectMetadataConnection
     __typename: 'Index'
 }
 
@@ -1653,50 +1652,6 @@ export interface IndexField {
     __typename: 'IndexField'
 }
 
-export interface IndexEdge {
-    /** The node containing the Index */
-    node: Index
-    /** Cursor for this node. */
-    cursor: Scalars['ConnectionCursor']
-    __typename: 'IndexEdge'
-}
-
-export interface PageInfo {
-    /** true if paging forward and there are more records. */
-    hasNextPage?: Scalars['Boolean']
-    /** true if paging backwards and there are more records. */
-    hasPreviousPage?: Scalars['Boolean']
-    /** The cursor of the first returned record. */
-    startCursor?: Scalars['ConnectionCursor']
-    /** The cursor of the last returned record. */
-    endCursor?: Scalars['ConnectionCursor']
-    __typename: 'PageInfo'
-}
-
-export interface IndexConnection {
-    /** Paging information */
-    pageInfo: PageInfo
-    /** Array of edges. */
-    edges: IndexEdge[]
-    __typename: 'IndexConnection'
-}
-
-export interface ObjectEdge {
-    /** The node containing the Object */
-    node: Object
-    /** Cursor for this node. */
-    cursor: Scalars['ConnectionCursor']
-    __typename: 'ObjectEdge'
-}
-
-export interface IndexObjectMetadataConnection {
-    /** Paging information */
-    pageInfo: PageInfo
-    /** Array of edges. */
-    edges: ObjectEdge[]
-    __typename: 'IndexObjectMetadataConnection'
-}
-
 export interface ObjectRecordCount {
     objectNamePlural: Scalars['String']
     totalCount: Scalars['Int']
@@ -1713,12 +1668,40 @@ export interface SearchField {
     __typename: 'SearchField'
 }
 
+export interface ObjectEdge {
+    /** The node containing the Object */
+    node: Object
+    /** Cursor for this node. */
+    cursor: Scalars['ConnectionCursor']
+    __typename: 'ObjectEdge'
+}
+
+export interface PageInfo {
+    /** true if paging forward and there are more records. */
+    hasNextPage?: Scalars['Boolean']
+    /** true if paging backwards and there are more records. */
+    hasPreviousPage?: Scalars['Boolean']
+    /** The cursor of the first returned record. */
+    startCursor?: Scalars['ConnectionCursor']
+    /** The cursor of the last returned record. */
+    endCursor?: Scalars['ConnectionCursor']
+    __typename: 'PageInfo'
+}
+
 export interface ObjectConnection {
     /** Paging information */
     pageInfo: PageInfo
     /** Array of edges. */
     edges: ObjectEdge[]
     __typename: 'ObjectConnection'
+}
+
+export interface IndexEdge {
+    /** The node containing the Index */
+    node: Index
+    /** Cursor for this node. */
+    cursor: Scalars['ConnectionCursor']
+    __typename: 'IndexEdge'
 }
 
 export interface ObjectIndexMetadatasConnection {
@@ -2746,8 +2729,6 @@ export interface Query {
     objectRecordCounts: ObjectRecordCount[]
     object: Object
     objects: ObjectConnection
-    index: Index
-    indexMetadatas: IndexConnection
     findOneLogicFunction: LogicFunction
     findManyLogicFunctions: LogicFunction[]
     getAvailablePackages: Scalars['JSON']
@@ -3455,30 +3436,9 @@ export interface IndexGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     indexFieldMetadataList?: IndexFieldGenqlSelection
-    objectMetadata?: (IndexObjectMetadataConnectionGenqlSelection & { __args: {
-    /** Limit or page results. */
-    paging: CursorPaging, 
-    /** Specify to filter the records returned. */
-    filter: ObjectFilter} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }
-
-export interface CursorPaging {
-/** Paginate before opaque cursor */
-before?: (Scalars['ConnectionCursor'] | null),
-/** Paginate after opaque cursor */
-after?: (Scalars['ConnectionCursor'] | null),
-/** Paginate first */
-first?: (Scalars['Int'] | null),
-/** Paginate last */
-last?: (Scalars['Int'] | null)}
-
-export interface ObjectFilter {and?: (ObjectFilter[] | null),or?: (ObjectFilter[] | null),id?: (UUIDFilterComparison | null),isRemote?: (BooleanFieldComparison | null),isActive?: (BooleanFieldComparison | null),isSystem?: (BooleanFieldComparison | null),isUIEditable?: (BooleanFieldComparison | null),isUICreatable?: (BooleanFieldComparison | null),isUIReadOnly?: (BooleanFieldComparison | null),isSearchable?: (BooleanFieldComparison | null)}
-
-export interface UUIDFilterComparison {is?: (Scalars['Boolean'] | null),isNot?: (Scalars['Boolean'] | null),eq?: (Scalars['UUID'] | null),neq?: (Scalars['UUID'] | null),gt?: (Scalars['UUID'] | null),gte?: (Scalars['UUID'] | null),lt?: (Scalars['UUID'] | null),lte?: (Scalars['UUID'] | null),like?: (Scalars['UUID'] | null),notLike?: (Scalars['UUID'] | null),iLike?: (Scalars['UUID'] | null),notILike?: (Scalars['UUID'] | null),in?: (Scalars['UUID'][] | null),notIn?: (Scalars['UUID'][] | null)}
-
-export interface BooleanFieldComparison {is?: (Scalars['Boolean'] | null),isNot?: (Scalars['Boolean'] | null)}
 
 export interface ObjectGenqlSelection{
     id?: boolean | number
@@ -3523,7 +3483,21 @@ export interface ObjectGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface CursorPaging {
+/** Paginate before opaque cursor */
+before?: (Scalars['ConnectionCursor'] | null),
+/** Paginate after opaque cursor */
+after?: (Scalars['ConnectionCursor'] | null),
+/** Paginate first */
+first?: (Scalars['Int'] | null),
+/** Paginate last */
+last?: (Scalars['Int'] | null)}
+
 export interface FieldFilter {and?: (FieldFilter[] | null),or?: (FieldFilter[] | null),id?: (UUIDFilterComparison | null),isActive?: (BooleanFieldComparison | null),isSystem?: (BooleanFieldComparison | null),isUIEditable?: (BooleanFieldComparison | null),isUIReadOnly?: (BooleanFieldComparison | null),objectMetadataId?: (UUIDFilterComparison | null)}
+
+export interface UUIDFilterComparison {is?: (Scalars['Boolean'] | null),isNot?: (Scalars['Boolean'] | null),eq?: (Scalars['UUID'] | null),neq?: (Scalars['UUID'] | null),gt?: (Scalars['UUID'] | null),gte?: (Scalars['UUID'] | null),lt?: (Scalars['UUID'] | null),lte?: (Scalars['UUID'] | null),like?: (Scalars['UUID'] | null),notLike?: (Scalars['UUID'] | null),iLike?: (Scalars['UUID'] | null),notILike?: (Scalars['UUID'] | null),in?: (Scalars['UUID'][] | null),notIn?: (Scalars['UUID'][] | null)}
+
+export interface BooleanFieldComparison {is?: (Scalars['Boolean'] | null),isNot?: (Scalars['Boolean'] | null)}
 
 export interface IndexFilter {and?: (IndexFilter[] | null),or?: (IndexFilter[] | null),id?: (UUIDFilterComparison | null),isCustom?: (BooleanFieldComparison | null)}
 
@@ -4776,9 +4750,27 @@ export interface IndexFieldGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface IndexEdgeGenqlSelection{
-    /** The node containing the Index */
-    node?: IndexGenqlSelection
+export interface ObjectRecordCountGenqlSelection{
+    objectNamePlural?: boolean | number
+    totalCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface SearchFieldGenqlSelection{
+    id?: boolean | number
+    fieldMetadataId?: boolean | number
+    tsVectorFieldMetadataId?: boolean | number
+    position?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ObjectEdgeGenqlSelection{
+    /** The node containing the Object */
+    node?: ObjectGenqlSelection
     /** Cursor for this node. */
     cursor?: boolean | number
     __typename?: boolean | number
@@ -4798,56 +4790,20 @@ export interface PageInfoGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface IndexConnectionGenqlSelection{
-    /** Paging information */
-    pageInfo?: PageInfoGenqlSelection
-    /** Array of edges. */
-    edges?: IndexEdgeGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ObjectEdgeGenqlSelection{
-    /** The node containing the Object */
-    node?: ObjectGenqlSelection
-    /** Cursor for this node. */
-    cursor?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface IndexObjectMetadataConnectionGenqlSelection{
-    /** Paging information */
-    pageInfo?: PageInfoGenqlSelection
-    /** Array of edges. */
-    edges?: ObjectEdgeGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ObjectRecordCountGenqlSelection{
-    objectNamePlural?: boolean | number
-    totalCount?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface SearchFieldGenqlSelection{
-    id?: boolean | number
-    fieldMetadataId?: boolean | number
-    tsVectorFieldMetadataId?: boolean | number
-    position?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface ObjectConnectionGenqlSelection{
     /** Paging information */
     pageInfo?: PageInfoGenqlSelection
     /** Array of edges. */
     edges?: ObjectEdgeGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface IndexEdgeGenqlSelection{
+    /** The node containing the Index */
+    node?: IndexGenqlSelection
+    /** Cursor for this node. */
+    cursor?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5959,14 +5915,6 @@ export interface QueryGenqlSelection{
     paging: CursorPaging, 
     /** Specify to filter the records returned. */
     filter: ObjectFilter} })
-    index?: (IndexGenqlSelection & { __args: {
-    /** The id of the record to find. */
-    id: Scalars['UUID']} })
-    indexMetadatas?: (IndexConnectionGenqlSelection & { __args: {
-    /** Limit or page results. */
-    paging: CursorPaging, 
-    /** Specify to filter the records returned. */
-    filter: IndexFilter} })
     findOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: LogicFunctionIdInput} })
     findManyLogicFunctions?: LogicFunctionGenqlSelection
     getAvailablePackages?: { __args: {input: LogicFunctionIdInput} }
@@ -6052,6 +6000,8 @@ export interface GetApiKeyInput {id: Scalars['UUID']}
 export interface AgentIdInput {
 /** The id of the agent. */
 id: Scalars['UUID']}
+
+export interface ObjectFilter {and?: (ObjectFilter[] | null),or?: (ObjectFilter[] | null),id?: (UUIDFilterComparison | null),isRemote?: (BooleanFieldComparison | null),isActive?: (BooleanFieldComparison | null),isSystem?: (BooleanFieldComparison | null),isUIEditable?: (BooleanFieldComparison | null),isUICreatable?: (BooleanFieldComparison | null),isUIReadOnly?: (BooleanFieldComparison | null),isSearchable?: (BooleanFieldComparison | null)}
 
 export interface LogicFunctionIdInput {
 /** The id of the function. */
@@ -7807,46 +7757,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const IndexEdge_possibleTypes: string[] = ['IndexEdge']
-    export const isIndexEdge = (obj?: { __typename?: any } | null): obj is IndexEdge => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexEdge"')
-      return IndexEdge_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const PageInfo_possibleTypes: string[] = ['PageInfo']
-    export const isPageInfo = (obj?: { __typename?: any } | null): obj is PageInfo => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isPageInfo"')
-      return PageInfo_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const IndexConnection_possibleTypes: string[] = ['IndexConnection']
-    export const isIndexConnection = (obj?: { __typename?: any } | null): obj is IndexConnection => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexConnection"')
-      return IndexConnection_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ObjectEdge_possibleTypes: string[] = ['ObjectEdge']
-    export const isObjectEdge = (obj?: { __typename?: any } | null): obj is ObjectEdge => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectEdge"')
-      return ObjectEdge_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const IndexObjectMetadataConnection_possibleTypes: string[] = ['IndexObjectMetadataConnection']
-    export const isIndexObjectMetadataConnection = (obj?: { __typename?: any } | null): obj is IndexObjectMetadataConnection => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexObjectMetadataConnection"')
-      return IndexObjectMetadataConnection_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const ObjectRecordCount_possibleTypes: string[] = ['ObjectRecordCount']
     export const isObjectRecordCount = (obj?: { __typename?: any } | null): obj is ObjectRecordCount => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordCount"')
@@ -7863,10 +7773,34 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const ObjectEdge_possibleTypes: string[] = ['ObjectEdge']
+    export const isObjectEdge = (obj?: { __typename?: any } | null): obj is ObjectEdge => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectEdge"')
+      return ObjectEdge_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PageInfo_possibleTypes: string[] = ['PageInfo']
+    export const isPageInfo = (obj?: { __typename?: any } | null): obj is PageInfo => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPageInfo"')
+      return PageInfo_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const ObjectConnection_possibleTypes: string[] = ['ObjectConnection']
     export const isObjectConnection = (obj?: { __typename?: any } | null): obj is ObjectConnection => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectConnection"')
       return ObjectConnection_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const IndexEdge_possibleTypes: string[] = ['IndexEdge']
+    export const isIndexEdge = (obj?: { __typename?: any } | null): obj is IndexEdge => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexEdge"')
+      return IndexEdge_possibleTypes.includes(obj.__typename)
     }
     
 
