@@ -9,7 +9,7 @@ import {
 
 import { CREATE_WORKFLOW_VERSION_CORE_TABLE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/create-workflow-version-core-table-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
-import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
@@ -29,7 +29,8 @@ export enum WorkflowVersionStatus {
   unique: true,
   where: `"status" = 'ACTIVE'`,
 })
-export class WorkflowVersionEntity extends WorkspaceRelatedEntity {
+@Index('IDX_WORKFLOW_VERSION_APPLICATION_ID', ['applicationId'])
+export class WorkflowVersionEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
