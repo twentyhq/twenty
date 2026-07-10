@@ -1,0 +1,25 @@
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
+  s_d7efdfca82e0dc::t_7d2bd30b3171d2 7-10,50,67-74
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/input/hooks/useMultiItemFieldInput.ts
+  s_d7efdfca82e0dc::t_7d2bd30b3171d2 1-179
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInput.tsx
+  s_d7efdfca82e0dc::t_7d2bd30b3171d2 9,22,112-135,137-145,147-155,157-158,160-162,181
+packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuContent.tsx
+  s_d7efdfca82e0dc::t_7d2bd30b3171d2 1-84
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f185ef87fa9cd3bcea5e521a56bfb3820e10a5f9",
+  "prompts": {},
+  "sessions": {
+    "s_d7efdfca82e0dc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8597b8f-384d-4561-a6dd-8d19f0804e31",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
