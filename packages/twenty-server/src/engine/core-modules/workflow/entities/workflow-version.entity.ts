@@ -25,10 +25,14 @@ export enum WorkflowVersionStatus {
   upgradeCommandName: CREATE_WORKFLOW_VERSION_CORE_TABLE_UPGRADE_COMMAND_NAME,
 })
 @Index('IDX_WORKFLOW_VERSION_WORKSPACE_ID', ['workspaceId'])
-@Index('IDX_WORKFLOW_VERSION_ONE_ACTIVE_PER_WORKFLOW', ['workflowId'], {
-  unique: true,
-  where: `"status" = 'ACTIVE'`,
-})
+@Index(
+  'IDX_WORKFLOW_VERSION_ONE_ACTIVE_PER_WORKFLOW',
+  ['workspaceId', 'workflowId'],
+  {
+    unique: true,
+    where: `"status" = 'ACTIVE'`,
+  },
+)
 @Index('IDX_WORKFLOW_VERSION_APPLICATION_ID', ['applicationId'])
 export class WorkflowVersionEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')

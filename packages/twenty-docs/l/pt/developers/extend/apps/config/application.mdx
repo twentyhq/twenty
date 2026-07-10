@@ -109,10 +109,14 @@ Se você planeja [publicar seu app](/l/pt/developers/extend/apps/operations/publ
 | ------------------ | ----------------------------------------------------------------------------------------------------------------- |
 | `author`           | Nome do autor ou da empresa                                                                                       |
 | `category`         | Categoria do app para filtragem no marketplace                                                                    |
-| `logoUrl`          | Caminho para o logo do seu app (por exemplo, `public/logo.png`)                                                   |
-| `screenshots`      | Array de caminhos de capturas de tela (por exemplo, `public/screenshot-1.png`)                                    |
+| `logo`             | Caminho para o logotipo do seu aplicativo empacotado em `public/` (p. ex., `public/logo.png`)                     |
+| `galleryImages`    | Array de caminhos de imagem da galeria empacotado em `public/` (por exemplo, `public/screenshot-1.png`)           |
 | `aboutDescription` | Descrição em markdown mais longa para a aba "Sobre". Se omitido, o marketplace usa o `README.md` do pacote no npm |
 | `websiteUrl`       | Link para seu site                                                                                                |
 | `termsUrl`         | Link para os Termos de Serviço                                                                                    |
 | `emailSupport`     | Endereço de e-mail de suporte                                                                                     |
 | `issueReportUrl`   | Link para o rastreador de problemas                                                                               |
+
+<Note>
+`logoUrl` e `screenshots` são aliases depreciadas de `logo` e `galleryImages`. URLs absolutas externas (`http://` ou `https://`) não são suportados para estes campos: eles são descartados com um aviso no momento da compilação. Agrupe as imagens na pasta `public/` do seu aplicativo.
+</Note>

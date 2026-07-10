@@ -11,7 +11,7 @@ export class RegisterAppOrchestratorStep {
   private notify: () => void;
 
   registrationCredentials:
-    | { clientId: string; clientSecret: string }
+    | { clientId: string; clientSecret?: string }
     | undefined;
 
   constructor({

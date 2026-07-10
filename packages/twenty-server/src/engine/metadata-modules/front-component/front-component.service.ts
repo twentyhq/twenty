@@ -6,7 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -333,9 +332,6 @@ export class FrontComponentService {
       ),
       responseContentType: mimeType,
       responseContentDisposition: getContentDisposition(mimeType),
-      responseCacheControl:
-        fileFolderConfigs[FileFolder.BuiltFrontComponent].cacheControl ??
-        undefined,
     });
 
     if (presignedUrl) {

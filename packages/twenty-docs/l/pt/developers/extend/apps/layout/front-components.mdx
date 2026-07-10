@@ -4,7 +4,7 @@ description: Crie componentes React que renderizam dentro da UI do Twenty com is
 icon: window-maximize
 ---
 
-Componentes de front-end são componentes React que renderizam diretamente dentro da UI do Twenty. Eles são executados em um Web Worker isolado usando Remote DOM — seu código é sandboxed, mas renderiza nativamente na página, não em um iframe.
+Componentes de front-end são componentes React que renderizam diretamente dentro da UI do Twenty. Eles são executados em um **Web Worker isolado** usando Remote DOM — seu código é executado dentro de um iframe de origem opaca e em sandbox, mas sua interface ainda é renderizada de forma nativa na página em vez de ficar confinada a esse iframe.
 
 ## Onde os componentes de front-end podem ser usados
 
@@ -196,7 +196,7 @@ export default defineFrontComponent({
 
 ## Chamando uma função lógica
 
-Os componentes de front são executados no navegador em um Web Worker isolado, enquanto as [funções lógicas](/l/pt/developers/extend/apps/logic/logic-functions) são executadas no servidor. Não há chamada direta no mesmo processo entre os dois — em vez disso, um componente de front acessa uma função lógica via HTTP.
+Os componentes de front são executados no navegador em um Web Worker em sandbox dentro de um iframe de origem opaca, enquanto as [funções lógicas](/l/pt/developers/extend/apps/logic/logic-functions) são executadas no servidor. Não há chamada direta no mesmo processo entre os dois — em vez disso, um componente de front acessa uma função lógica via HTTP.
 
 Uma função lógica declarada com `httpRouteTriggerSettings` é acessível por HTTP em seu caminho de rota. Twenty injeta no worker a URL base a partir da qual suas funções são servidas como `TWENTY_FUNCTIONS_URL`, juntamente com o `TWENTY_APP_ACCESS_TOKEN` que autentica a chamada. Ainda não há um cliente SDK dedicado para invocar suas próprias funções, portanto chame-as com um simples `fetch`:
 
