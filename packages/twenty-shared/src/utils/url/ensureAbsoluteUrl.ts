@@ -1,12 +1,9 @@
 export const ensureAbsoluteUrl = (value: string): string => {
   const trimmedValue = value.trim();
 
-  if (
-    trimmedValue.startsWith('http://') ||
-    trimmedValue.startsWith('https://') ||
-    trimmedValue.startsWith('HTTPS://') ||
-    trimmedValue.startsWith('HTTP://')
-  ) {
+  // URL schemes are case-insensitive, so match any casing (e.g. mobile
+  // keyboards auto-capitalize the first letter into "Https://")
+  if (/^https?:\/\//i.test(trimmedValue)) {
     return trimmedValue;
   }
 
