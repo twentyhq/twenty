@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
@@ -34,6 +35,7 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-env-var';
+import { buildSameSiteFunctionBaseUrl } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-same-site-function-base-url';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -375,9 +377,31 @@ export class LogicFunctionExecutorService {
         workspaceId,
       });
 
-    return this.workspaceDomainsService.buildPublicFunctionBaseUrl({
-      workspace,
-      primaryPublicDomain,
+    const publicFunctionBaseUrl =
+      this.workspaceDomainsService.buildPublicFunctionBaseUrl({
+        workspace,
+        primaryPublicDomain,
+      });
+
+    if (isDefined(publicFunctionBaseUrl)) {
+      return publicFunctionBaseUrl;
+    }
+
+    const serverUrl = cleanServerUrl(
+      this.twentyConfigService.get('SERVER_URL'),
+    );
+
+    if (!isNonEmptyString(serverUrl)) {
+      return undefined;
+    }
+
+    // No isolated public domain configured; functions are served same-site on /s (#22045).
+    return buildSameSiteFunctionBaseUrl({
+      serverUrl,
+      subdomain: workspace.subdomain,
+      isMultiWorkspaceEnabled: this.twentyConfigService.get(
+        'IS_MULTIWORKSPACE_ENABLED',
+      ),
     });
   }
 

@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import {
   getFunctionsBaseUrl,
@@ -12,6 +13,9 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 export const useGetLogicFunctionHttpUrl = () => {
   const { publicFunctionDomain } = useAtomStateValue(domainConfigurationState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
 
   const workspaceSubdomain = currentWorkspace?.subdomain;
 
@@ -22,14 +26,16 @@ export const useGetLogicFunctionHttpUrl = () => {
         serverBaseUrl: REACT_APP_SERVER_BASE_URL,
         publicFunctionDomain,
         workspaceSubdomain,
+        isMultiWorkspaceEnabled,
       }),
-    [publicFunctionDomain, workspaceSubdomain],
+    [publicFunctionDomain, workspaceSubdomain, isMultiWorkspaceEnabled],
   );
 
   const functionsBaseUrl = getFunctionsBaseUrl({
     serverBaseUrl: REACT_APP_SERVER_BASE_URL,
     publicFunctionDomain,
     workspaceSubdomain,
+    isMultiWorkspaceEnabled,
   });
 
   return {

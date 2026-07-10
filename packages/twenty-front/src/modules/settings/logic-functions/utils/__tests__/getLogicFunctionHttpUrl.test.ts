@@ -33,6 +33,28 @@ describe('getFunctionsBaseUrl', () => {
       }),
     ).toBe('https://api.twenty.com/s');
   });
+
+  it('prepends the workspace subdomain to the /s fallback in multi-workspace mode', () => {
+    expect(
+      getFunctionsBaseUrl({
+        serverBaseUrl: 'http://localhost:3000',
+        publicFunctionDomain: null,
+        workspaceSubdomain: 'acme',
+        isMultiWorkspaceEnabled: true,
+      }),
+    ).toBe('http://acme.localhost:3000/s');
+  });
+
+  it('does not prepend a subdomain to the /s fallback in single-workspace mode', () => {
+    expect(
+      getFunctionsBaseUrl({
+        serverBaseUrl: 'http://localhost:3000',
+        publicFunctionDomain: null,
+        workspaceSubdomain: 'acme',
+        isMultiWorkspaceEnabled: false,
+      }),
+    ).toBe('http://localhost:3000/s');
+  });
 });
 
 describe('getLogicFunctionHttpUrl', () => {
