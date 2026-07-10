@@ -180,15 +180,15 @@ npm に公開すると、Twenty マーケットプレイスでアプリが見つ
 
 ### マーケットプレイスのメタデータ
 
-`defineApplication()` の設定は、マーケットプレイスでのアプリの表示方法を制御する任意のフィールドをサポートします。 `public/` フォルダー内の画像を参照するには、`logoUrl` と `screenshots` を使用します:
+`defineApplication()` の設定は、マーケットプレイスでのアプリの表示方法を制御する任意のフィールドをサポートします。 `public/` フォルダー内の画像を参照するには、`logo` と `galleryImages` を使用します:
 
 ```ts src/application-config.ts
 export default defineApplication({
   universalIdentifier: '...',
   displayName: 'My App',
   description: 'A great app',
-  logoUrl: 'public/logo.png',
-  screenshots: [
+  logo: 'public/logo.png',
+  galleryImages: [
     'public/screenshot-1.png',
     'public/screenshot-2.png',
   ],
@@ -197,12 +197,12 @@ export default defineApplication({
 
 マーケットプレイスのフィールド（`author`、`category`、`aboutDescription`、`websiteUrl`、`termsUrl` など）の完全な一覧は、Building Apps ページの[defineApplication アコーディオン](/l/ja/developers/extend/apps/config/application#marketplace-metadata)を参照してください。
 
-#### 推奨されるスクリーンショットのサイズ
+#### 推奨されるギャラリー画像のサイズ
 
-マーケットプレイスでは、`screenshots` は固定の `8:5` コンテナ内で表示されます（例：`1600×1000 px`）。
+マーケットプレイスでは、`galleryImages` は固定の `8:5` コンテナ内で表示されます（例：`1600×1000 px`）。
 
 <Note>
-どのようなアスペクト比でもスクリーンショットは全体が表示され、トリミングされることはありません。ただし、`8:5` よりも著しく縦長または横長の場合は、上下または左右に空白の帯が表示されます。
+どのようなアスペクト比でもギャラリー画像は全体が表示され、トリミングされることはありません。ただし、`8:5` よりも著しく縦長の場合は、左右に空白の帯が表示されます。
 </Note>
 
 ### 公開

@@ -109,10 +109,14 @@ Si planeas [publicar tu aplicación](/l/es/developers/extend/apps/operations/pub
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
 | `author`           | Nombre del autor o de la empresa                                                                                                       |
 | `category`         | Categoría de la aplicación para el filtrado en el marketplace                                                                          |
-| `logoUrl`          | Ruta al logotipo de tu aplicación (p. ej., `public/logo.png`)                                                                          |
-| `screenshots`      | Arreglo de rutas de capturas de pantalla (p. ej., `public/screenshot-1.png`)                                                           |
+| `logo`             | Ruta al logotipo de tu aplicación incluido en `public/` (p. ej., `public/logo.png`)                                                    |
+| `galleryImages`    | Arreglo de rutas de imágenes de galería incluidas en `public/` (p. ej., `public/screenshot-1.png`)                                     |
 | `aboutDescription` | Descripción en Markdown más extensa para la pestaña "Acerca de". Si se omite, el marketplace utiliza el `README.md` del paquete en npm |
 | `websiteUrl`       | Enlace a tu sitio web                                                                                                                  |
 | `termsUrl`         | Enlace a los términos del servicio                                                                                                     |
 | `emailSupport`     | Dirección de correo electrónico de soporte                                                                                             |
 | `issueReportUrl`   | Enlace al rastreador de incidencias                                                                                                    |
+
+<Note>
+`logoUrl` y `screenshots` son alias obsoletos de `logo` y `galleryImages`. Las URL absolutas externas (`http://` o `https://`) no son compatibles para estos campos: se descartan con una advertencia en tiempo de compilación. En su lugar, incluye las imágenes en la carpeta `public/` de tu aplicación.
+</Note>

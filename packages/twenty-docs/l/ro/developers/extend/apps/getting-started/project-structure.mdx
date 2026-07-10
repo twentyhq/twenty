@@ -33,7 +33,7 @@ my-twenty-app/
   vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
   .nvmrc, .yarnrc.yml, .oxlintrc.json
-  README.md, AGENTS.md, CLAUDE.md
+  README.md, AGENTS.md, CLAUDE.md, CHANGELOG.md, SETUP.md
 ```
 
 ## Fișiere cheie
@@ -47,6 +47,7 @@ my-twenty-app/
 | `src/__tests__/`                                                           | Un test unitar plus un test de integrare (cu configurarea sa globală) care sincronizează aplicația cu un server real.           |
 | `public/`                                                                  | Resurse statice (imagini, fonturi) servite împreună cu aplicația.                                                               |
 | `AGENTS.md` / `CLAUDE.md`                                                  | Ghid pentru agenții AI de programare care lucrează la aplicație.                                                                |
+| `CHANGELOG.md` / `SETUP.md`                                                | Jurnal de modificări notabile și instrucțiuni de configurare pentru dezvoltare locală.                                          |
 
 <Note>
 **Organizarea fișierelor ține de dvs.** Folderele de mai sus sunt convenții — SDK-ul detectează entitățile prin analiză AST pe apelurile `export default defineEntity(...)`, indiferent unde se află fișierul.
