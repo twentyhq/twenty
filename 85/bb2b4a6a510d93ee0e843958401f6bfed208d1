@@ -1,0 +1,44 @@
+packages/twenty-front/src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
+  s_d7efdfca82e0dc::t_f03829ba9d194f 28-34,37
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/emailing-domain.service.ts
+  s_d7efdfca82e0dc::t_b617f4e84d5a21 7
+  s_d7efdfca82e0dc::t_edd4bc8fc798fc 48,50
+  s_d7efdfca82e0dc::t_01f4ab7190ef05 15-18
+  s_d7efdfca82e0dc::t_746427c495287d 43-44,49
+  s_d7efdfca82e0dc::t_f2f32827a9152d 6
+  s_d7efdfca82e0dc::t_82a3c508c03444 51
+  s_d7efdfca82e0dc::t_07efba0e8097eb 2,31-34,46
+packages/twenty-server/src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+  s_d7efdfca82e0dc::t_487809b7a77e95 1-34
+packages/twenty-server/src/engine/metadata-modules/message-channel/utils/message-channel-graphql-api-exception-handler.util.ts
+  s_d7efdfca82e0dc::t_5bfba7f02d275f 44-46
+  s_d7efdfca82e0dc::t_063534208c92ab 40-43,47-49
+  s_d7efdfca82e0dc::t_c9d5cfcd8701ee 4-8
+packages/twenty-server/src/engine/core-modules/emailing-domain/filters/emailing-domain-graphql-api-exception.filter.ts
+  s_d7efdfca82e0dc::t_3cea767e042651 12
+  s_d7efdfca82e0dc::t_c09ede5e2dde9f 1-11,13-22
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.resolver.ts
+  s_d7efdfca82e0dc::t_daf36c813f1690 29-32
+  s_d7efdfca82e0dc::t_cfa691f95c0038 11
+packages/twenty-front/src/modules/settings/accounts/hooks/useCreateEmailGroupChannel.ts
+  s_d7efdfca82e0dc::t_7f1b7f6df0a62f 13
+  s_d7efdfca82e0dc::t_9d7e59fba86dc1 37-38,51-56
+packages/twenty-oxlint-rules/rules/prefer-workspace-scoped-repository.ts
+  s_d7efdfca82e0dc::t_6d6df16626fcdf 53-55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "85bb2b4a6a510d93ee0e843958401f6bfed208d1",
+  "prompts": {},
+  "sessions": {
+    "s_d7efdfca82e0dc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8597b8f-384d-4561-a6dd-8d19f0804e31",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
