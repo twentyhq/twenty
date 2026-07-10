@@ -54,10 +54,26 @@ describe('requestAppBillingCharge', () => {
     );
   });
 
-  it('reports a definite rejection on other HTTP failures', async () => {
+  it('reports a definite rejection on client HTTP failures', async () => {
     postMock.mockRejectedValue(new FakeRestApiClientError('throttled', 429));
 
     expect(await requestAppBillingCharge(CHARGE_REQUEST)).toBe('rejected');
+  });
+
+  it('reports a definite rejection when client setup fails before sending', async () => {
+    postMock.mockRejectedValue(
+      new FakeRestApiClientError('missing application access token'),
+    );
+
+    expect(await requestAppBillingCharge(CHARGE_REQUEST)).toBe('rejected');
+  });
+
+  it('reports unknown on server errors because the charge may have landed', async () => {
+    postMock.mockRejectedValue(
+      new FakeRestApiClientError('service unavailable', 503),
+    );
+
+    expect(await requestAppBillingCharge(CHARGE_REQUEST)).toBe('unknown');
   });
 
   it('reports unknown when no HTTP status proves the charge was dropped', async () => {

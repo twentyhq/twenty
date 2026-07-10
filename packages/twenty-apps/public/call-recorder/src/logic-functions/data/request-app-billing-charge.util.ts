@@ -3,8 +3,9 @@ import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
 const APP_BILLING_CHARGE_PATH = '/app/billing/charge';
 const APP_BILLING_CHARGE_TIMEOUT_MS = 5_000;
 
-// 'unknown' covers timeouts and unreachable billing: the charge may have
-// landed server-side, so callers must treat it as charged, never retry it.
+// 'unknown' covers timeouts, unreachable billing, and server errors: the
+// charge may have landed server-side, so callers must treat it as charged,
+// never retry it.
 export type AppBillingChargeOutcome =
   | 'charged'
   | 'billing-disabled'
@@ -37,8 +38,10 @@ export const requestAppBillingCharge = async ({
       return 'billing-disabled';
     }
 
-    if (error instanceof RestApiClientError && error.status !== undefined) {
-      return 'rejected';
+    if (error instanceof RestApiClientError) {
+      return error.status === undefined || error.status < 500
+        ? 'rejected'
+        : 'unknown';
     }
 
     return 'unknown';
