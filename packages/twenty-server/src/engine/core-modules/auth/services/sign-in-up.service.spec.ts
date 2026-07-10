@@ -4,7 +4,10 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { type SignInUpNewUserPayload } from 'src/engine/core-modules/auth/types/signInUp.type';
+import {
+  type PartialUserWithPicture,
+  type SignInUpNewUserPayload,
+} from 'src/engine/core-modules/auth/types/signInUp.type';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 import { SignInUpService } from './sign-in-up.service';
@@ -322,7 +325,7 @@ describe('SignInUpService workspace-creation policy', () => {
 });
 
 describe('SignInUpService onboarding install-apps step', () => {
-  const mockNewUserWithPicture = {
+  const mockNewUserWithPicture: PartialUserWithPicture = {
     email: 'invited.user@acme.dev',
     firstName: 'Invited',
     lastName: 'User',
