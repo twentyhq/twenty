@@ -83,8 +83,9 @@ export class UserService {
       return workspace;
     }
 
-    const freshWorkspace =
-      await this.workspaceService.findOneWorkspaceById(workspace.id);
+    const freshWorkspace = await this.workspaceService.findOneWorkspaceById(
+      workspace.id,
+    );
 
     return freshWorkspace ?? workspace;
   }
