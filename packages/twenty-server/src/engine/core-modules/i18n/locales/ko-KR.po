@@ -7808,6 +7808,7 @@ msgstr "이 도메인은 이미 커스텀 도메인으로 등록되어 있습니
 
 #. js-lingui-id: s6batt
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This domain is already registered."
 msgstr "이 도메인은 이미 등록되어 있습니다."
 

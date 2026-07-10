@@ -7851,11 +7851,6 @@ msgstr "Det gick inte att lägga till leverantören"
 msgid "Failed to claim ownership."
 msgstr "Det gick inte att begära ägarskap."
 
-#. js-lingui-id: 5UH0/o
-#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
-msgid "Failed to create email channel. Email channels may not be configured on this server."
-msgstr "Det gick inte att skapa e-postkanal. E-postkanaler kanske inte är konfigurerade på den här servern."
-
 #. js-lingui-id: ITWxKI
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 msgid "Failed to create unsubscribe topic."

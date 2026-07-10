@@ -7851,11 +7851,6 @@ msgstr "Tarjoajan lisääminen epäonnistui"
 msgid "Failed to claim ownership."
 msgstr "Omistajuuden vaatiminen epäonnistui."
 
-#. js-lingui-id: 5UH0/o
-#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
-msgid "Failed to create email channel. Email channels may not be configured on this server."
-msgstr "Sähköpostikanavan luominen epäonnistui. Sähköpostikanavia ei ehkä ole määritetty tälle palvelimelle."
-
 #. js-lingui-id: ITWxKI
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 msgid "Failed to create unsubscribe topic."
