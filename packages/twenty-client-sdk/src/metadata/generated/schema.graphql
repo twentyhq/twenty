@@ -837,6 +837,7 @@ type View {
   shouldHideEmptyGroups: Boolean!
   kanbanColumnWidth: Int
   calendarFieldMetadataId: UUID
+  calendarEndFieldMetadataId: UUID
   workspaceId: UUID!
   anyFieldFilterValue: String
   calendarLayout: ViewCalendarLayout
@@ -3657,6 +3658,7 @@ input CreateViewInput {
   anyFieldFilterValue: String
   calendarLayout: ViewCalendarLayout
   calendarFieldMetadataId: UUID
+  calendarEndFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   visibility: ViewVisibility
 }
@@ -3674,6 +3676,7 @@ input UpdateViewInput {
   anyFieldFilterValue: String
   calendarLayout: ViewCalendarLayout
   calendarFieldMetadataId: UUID
+  calendarEndFieldMetadataId: UUID
   visibility: ViewVisibility
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean

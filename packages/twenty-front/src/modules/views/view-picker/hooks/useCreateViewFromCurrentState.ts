@@ -3,6 +3,7 @@ import { useChangeView } from '@/views/hooks/useChangeView';
 import { useCreateViewFromCurrentView } from '@/views/hooks/useCreateViewFromCurrentView';
 import { ViewType } from '@/views/types/ViewType';
 import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAndResetViewPicker';
+import { viewPickerCalendarEndFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerCalendarEndFieldMetadataIdComponentState';
 import { viewPickerCalendarFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerCalendarFieldMetadataIdComponentState';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
@@ -40,6 +41,11 @@ export const useCreateViewFromCurrentState = () => {
       viewPickerCalendarFieldMetadataIdComponentState,
     );
 
+  const viewPickerCalendarEndFieldMetadataIdCallbackState =
+    useAtomComponentStateCallbackState(
+      viewPickerCalendarEndFieldMetadataIdComponentState,
+    );
+
   const viewPickerIsPersistingCallbackState =
     useAtomComponentStateCallbackState(viewPickerIsPersistingComponentState);
 
@@ -70,6 +76,9 @@ export const useCreateViewFromCurrentState = () => {
     const calendarFieldMetadataId = store.get(
       viewPickerCalendarFieldMetadataIdCallbackState,
     );
+    const calendarEndFieldMetadataId = store.get(
+      viewPickerCalendarEndFieldMetadataIdCallbackState,
+    );
 
     const viewPickerMode = store.get(viewPickerModeCallbackState);
     const visibility = store.get(viewPickerVisibilityCallbackState);
@@ -88,6 +97,8 @@ export const useCreateViewFromCurrentState = () => {
         mainGroupByFieldMetadataId:
           type === ViewType.KANBAN ? mainGroupByFieldMetadataId : null,
         calendarFieldMetadataId,
+        calendarEndFieldMetadataId:
+          calendarEndFieldMetadataId === '' ? null : calendarEndFieldMetadataId,
         visibility,
       },
       shouldCopyFiltersAndSortsAndAggregate,
@@ -107,6 +118,7 @@ export const useCreateViewFromCurrentState = () => {
     viewPickerIsPersistingCallbackState,
     viewPickerMainGroupByFieldMetadataIdCallbackState,
     viewPickerCalendarFieldMetadataIdCallbackState,
+    viewPickerCalendarEndFieldMetadataIdCallbackState,
     viewPickerSelectedIconCallbackState,
     viewPickerTypeCallbackState,
     viewPickerModeCallbackState,

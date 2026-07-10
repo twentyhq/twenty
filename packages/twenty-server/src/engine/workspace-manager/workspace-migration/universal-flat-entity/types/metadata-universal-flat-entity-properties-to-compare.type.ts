@@ -61,6 +61,7 @@ type Assertions = [
       | 'kanbanAggregateOperationFieldMetadataUniversalIdentifier'
       | 'calendarLayout'
       | 'calendarFieldMetadataUniversalIdentifier'
+      | 'calendarEndFieldMetadataUniversalIdentifier'
       | 'mainGroupByFieldMetadataUniversalIdentifier'
       | 'shouldHideEmptyGroups'
       | 'kanbanColumnWidth'

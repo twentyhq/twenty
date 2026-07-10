@@ -4,13 +4,12 @@ import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
-import {
-  RECORD_CALENDAR_WEEK_EVENT_HEIGHT,
-  RECORD_CALENDAR_WEEK_HOUR_HEIGHT,
-  RecordCalendarWeekEvent,
-} from '@/object-record/record-calendar/week/components/RecordCalendarWeekEvent';
+import { RecordCalendarWeekEvent } from '@/object-record/record-calendar/week/components/RecordCalendarWeekEvent';
+import { RECORD_CALENDAR_WEEK_DIMENSIONS } from '@/object-record/record-calendar/week/constants/RecordCalendarWeekDimensions';
 import { useRecordCalendarWeekDaysRange } from '@/object-record/record-calendar/week/hooks/useRecordCalendarWeekDaysRange';
 import { computeRecordCalendarWeekEventLayouts } from '@/object-record/record-calendar/week/utils/computeRecordCalendarWeekEventLayouts';
+import { getRecordCalendarWeekTimedEventMetrics } from '@/object-record/record-calendar/week/utils/getRecordCalendarWeekTimedEventMetrics';
+import { recordIndexCalendarEndFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdState';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/components/TimeZoneAbbreviation';
@@ -34,8 +33,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const TIME_GUTTER_WIDTH = 56;
-const HOURS_IN_DAY = 24;
-const WEEK_GRID_HEIGHT = HOURS_IN_DAY * RECORD_CALENDAR_WEEK_HOUR_HEIGHT;
 const CURRENT_TIME_REFRESH_INTERVAL_IN_MILLISECONDS = 60_000;
 
 const StyledContainer = styled.div`
@@ -123,12 +120,12 @@ const StyledAdditionalEventCount = styled.span`
 const StyledGrid = styled.div`
   display: grid;
   grid-template-columns: ${TIME_GUTTER_WIDTH}px repeat(7, minmax(120px, 1fr));
-  height: ${WEEK_GRID_HEIGHT}px;
+  height: ${RECORD_CALENDAR_WEEK_DIMENSIONS.gridHeight}px;
   position: relative;
 `;
 
 const StyledTimeGutter = styled.div`
-  height: ${WEEK_GRID_HEIGHT}px;
+  height: ${RECORD_CALENDAR_WEEK_DIMENSIONS.gridHeight}px;
   position: relative;
 `;
 
@@ -152,10 +149,11 @@ const StyledDayColumn = styled.div<{ isWeekend: boolean }>`
     ${themeCssVariables.border.color.light} 0,
     ${themeCssVariables.border.color.light} 1px,
     transparent 1px,
-    transparent ${RECORD_CALENDAR_WEEK_HOUR_HEIGHT}px
+    transparent ${RECORD_CALENDAR_WEEK_DIMENSIONS.hourHeight}px
   );
   border-left: 1px solid ${themeCssVariables.border.color.light};
-  height: ${WEEK_GRID_HEIGHT}px;
+  height: ${RECORD_CALENDAR_WEEK_DIMENSIONS.gridHeight}px;
+  overflow: hidden;
   position: relative;
 `;
 
@@ -204,6 +202,7 @@ const StyledScrollAnchor = styled.div<{ topInPixels: number }>`
 `;
 
 type WeekDayCellProps = {
+  calendarEndFieldName?: string;
   calendarFieldName: string;
   calendarFieldType: FieldMetadataType;
   day: Temporal.PlainDate;
@@ -252,6 +251,7 @@ const RecordCalendarWeekAllDayCell = ({
 };
 
 const RecordCalendarWeekDayColumn = ({
+  calendarEndFieldName,
   calendarFieldName,
   calendarFieldType,
   day,
@@ -273,21 +273,22 @@ const RecordCalendarWeekDayColumn = ({
               recordStoreFamilyState.atomFamily(recordId),
             );
             const recordDate = record?.[calendarFieldName];
+            const recordEndDate = isDefined(calendarEndFieldName)
+              ? record?.[calendarEndFieldName]
+              : undefined;
+            const metrics = getRecordCalendarWeekTimedEventMetrics({
+              startDateTime: recordDate,
+              endDateTime: recordEndDate,
+              timeZone,
+            });
 
-            if (typeof recordDate !== 'string') {
+            if (metrics === null) {
               return null;
             }
 
-            const zonedDateTime =
-              Temporal.Instant.from(recordDate).toZonedDateTimeISO(timeZone);
-            const startInPixels =
-              (zonedDateTime.hour + zonedDateTime.minute / 60) *
-              RECORD_CALENDAR_WEEK_HOUR_HEIGHT;
-
             return {
-              endInPixels: startInPixels + RECORD_CALENDAR_WEEK_EVENT_HEIGHT,
+              ...metrics,
               recordId,
-              startInPixels,
             };
           })
           .filter(isDefined)
@@ -304,19 +305,29 @@ const RecordCalendarWeekDayColumn = ({
 
   return (
     <StyledDayColumn isWeekend={isPlainDateInWeekend(day)}>
-      {eventLayouts.map(({ columnCount, columnIndex, recordId }) => (
-        <RecordCalendarWeekEvent
-          key={recordId}
-          calendarFieldName={calendarFieldName}
-          calendarFieldType={calendarFieldType}
-          columnCount={columnCount}
-          columnIndex={columnIndex}
-          isAllDay={false}
-          recordId={recordId}
-          timeFormat={timeFormat}
-          timeZone={timeZone}
-        />
-      ))}
+      {eventLayouts.map(
+        ({
+          columnCount,
+          columnIndex,
+          endInPixels,
+          recordId,
+          startInPixels,
+        }) => (
+          <RecordCalendarWeekEvent
+            key={recordId}
+            calendarFieldName={calendarFieldName}
+            calendarFieldType={calendarFieldType}
+            columnCount={columnCount}
+            columnIndex={columnIndex}
+            endInPixels={endInPixels}
+            isAllDay={false}
+            recordId={recordId}
+            startInPixels={startInPixels}
+            timeFormat={timeFormat}
+            timeZone={timeZone}
+          />
+        ),
+      )}
     </StyledDayColumn>
   );
 };
@@ -334,6 +345,9 @@ export const RecordCalendarWeek = () => {
   const recordIndexCalendarFieldMetadataId = useAtomStateValue(
     recordIndexCalendarFieldMetadataIdState,
   );
+  const recordIndexCalendarEndFieldMetadataId = useAtomStateValue(
+    recordIndexCalendarEndFieldMetadataIdState,
+  );
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
   const [currentInstant, setCurrentInstant] = useState(() =>
     Temporal.Now.instant(),
@@ -345,6 +359,9 @@ export const RecordCalendarWeek = () => {
   const calendarFieldMetadataItem = objectMetadataItem.fields.find(
     (field) => field.id === recordIndexCalendarFieldMetadataId,
   );
+  const calendarEndFieldMetadataItem = objectMetadataItem.fields.find(
+    (field) => field.id === recordIndexCalendarEndFieldMetadataId,
+  );
 
   const now = currentInstant.toZonedDateTimeISO(timeZone);
   const today = now.toPlainDate();
@@ -352,7 +369,7 @@ export const RecordCalendarWeek = () => {
     Temporal.PlainDate.compare(today, firstDayOfWeek) >= 0 &&
     Temporal.PlainDate.compare(today, lastDayOfWeek) <= 0;
   const currentTimeTopInPixels =
-    (now.hour + now.minute / 60) * RECORD_CALENDAR_WEEK_HOUR_HEIGHT;
+    (now.hour + now.minute / 60) * RECORD_CALENDAR_WEEK_DIMENSIONS.hourHeight;
   const initialScrollHour = isCurrentWeek ? Math.max(now.hour - 2, 0) : 8;
   const firstDayOfWeekString = firstDayOfWeek.toString();
 
@@ -364,14 +381,31 @@ export const RecordCalendarWeek = () => {
     return () => window.clearInterval(intervalId);
   }, []);
 
+  const isAllDayView =
+    calendarFieldMetadataItem?.type === FieldMetadataType.DATE;
+  const isTimedView =
+    calendarFieldMetadataItem?.type === FieldMetadataType.DATE_TIME;
+  const compatibleCalendarEndFieldName =
+    isTimedView &&
+    calendarEndFieldMetadataItem?.type === FieldMetadataType.DATE_TIME
+      ? calendarEndFieldMetadataItem.name
+      : undefined;
+
   useEffect(() => {
+    if (!isTimedView) {
+      return;
+    }
+
     scrollAnchorRef.current?.scrollIntoView({
       block: 'center',
       inline: 'nearest',
     });
-  }, [firstDayOfWeekString]);
+  }, [firstDayOfWeekString, isTimedView]);
 
-  if (!isDefined(calendarFieldMetadataItem)) {
+  if (
+    !isDefined(calendarFieldMetadataItem) ||
+    (!isAllDayView && !isTimedView)
+  ) {
     return null;
   }
 
@@ -379,7 +413,7 @@ export const RecordCalendarWeek = () => {
     <StyledContainer>
       <StyledHeader>
         <StyledHeaderGutter>
-          <TimeZoneAbbreviation instant={currentInstant} />
+          {isTimedView && <TimeZoneAbbreviation instant={currentInstant} />}
         </StyledHeaderGutter>
         {weekDays.map(({ date, label }) => {
           const isToday = isSamePlainDate(date, today);
@@ -391,56 +425,70 @@ export const RecordCalendarWeek = () => {
             </StyledDayHeader>
           );
         })}
-        <StyledAllDayLabel>{t`All day`}</StyledAllDayLabel>
-        {weekDays.map(({ date }) => (
-          <RecordCalendarWeekAllDayCell
-            key={`all-day-${date.toString()}`}
-            calendarFieldName={calendarFieldMetadataItem.name}
-            calendarFieldType={calendarFieldMetadataItem.type}
-            day={date}
-            timeFormat={timeFormat}
-            timeZone={timeZone}
-          />
-        ))}
-      </StyledHeader>
-      <StyledGrid>
-        <StyledTimeGutter>
-          {Array.from({ length: HOURS_IN_DAY }, (_, hour) => (
-            <StyledHourLabel
-              key={hour}
-              topInPixels={hour * RECORD_CALENDAR_WEEK_HOUR_HEIGHT}
-            >
-              {format(new Date(2000, 0, 1, hour), timeFormat)}
-            </StyledHourLabel>
-          ))}
-          <StyledScrollAnchor
-            ref={scrollAnchorRef}
-            topInPixels={initialScrollHour * RECORD_CALENDAR_WEEK_HOUR_HEIGHT}
-          />
-        </StyledTimeGutter>
-        {weekDays.map(({ date }) => (
-          <RecordCalendarWeekDayColumn
-            key={date.toString()}
-            calendarFieldName={calendarFieldMetadataItem.name}
-            calendarFieldType={calendarFieldMetadataItem.type}
-            day={date}
-            timeFormat={timeFormat}
-            timeZone={timeZone}
-          />
-        ))}
-        {isCurrentWeek && (
+        {isAllDayView && (
           <>
-            <StyledCurrentTimeLine topInPixels={currentTimeTopInPixels} />
-            <StyledCurrentTimeLabel topInPixels={currentTimeTopInPixels}>
-              {formatInTimeZone(
-                new Date(currentInstant.toString()),
-                timeZone,
-                timeFormat,
-              )}
-            </StyledCurrentTimeLabel>
+            <StyledAllDayLabel>{t`All day`}</StyledAllDayLabel>
+            {weekDays.map(({ date }) => (
+              <RecordCalendarWeekAllDayCell
+                key={`all-day-${date.toString()}`}
+                calendarFieldName={calendarFieldMetadataItem.name}
+                calendarFieldType={calendarFieldMetadataItem.type}
+                day={date}
+                timeFormat={timeFormat}
+                timeZone={timeZone}
+              />
+            ))}
           </>
         )}
-      </StyledGrid>
+      </StyledHeader>
+      {isTimedView && (
+        <StyledGrid>
+          <StyledTimeGutter>
+            {Array.from(
+              { length: RECORD_CALENDAR_WEEK_DIMENSIONS.hoursInDay },
+              (_, hour) => (
+                <StyledHourLabel
+                  key={hour}
+                  topInPixels={
+                    hour * RECORD_CALENDAR_WEEK_DIMENSIONS.hourHeight
+                  }
+                >
+                  {format(new Date(2000, 0, 1, hour), timeFormat)}
+                </StyledHourLabel>
+              ),
+            )}
+            <StyledScrollAnchor
+              ref={scrollAnchorRef}
+              topInPixels={
+                initialScrollHour * RECORD_CALENDAR_WEEK_DIMENSIONS.hourHeight
+              }
+            />
+          </StyledTimeGutter>
+          {weekDays.map(({ date }) => (
+            <RecordCalendarWeekDayColumn
+              key={date.toString()}
+              calendarEndFieldName={compatibleCalendarEndFieldName}
+              calendarFieldName={calendarFieldMetadataItem.name}
+              calendarFieldType={calendarFieldMetadataItem.type}
+              day={date}
+              timeFormat={timeFormat}
+              timeZone={timeZone}
+            />
+          ))}
+          {isCurrentWeek && (
+            <>
+              <StyledCurrentTimeLine topInPixels={currentTimeTopInPixels} />
+              <StyledCurrentTimeLabel topInPixels={currentTimeTopInPixels}>
+                {formatInTimeZone(
+                  new Date(currentInstant.toString()),
+                  timeZone,
+                  timeFormat,
+                )}
+              </StyledCurrentTimeLabel>
+            </>
+          )}
+        </StyledGrid>
+      )}
     </StyledContainer>
   );
 };

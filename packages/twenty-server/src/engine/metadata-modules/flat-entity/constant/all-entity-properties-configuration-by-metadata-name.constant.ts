@@ -380,6 +380,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'calendarFieldMetadataUniversalIdentifier',
       isOverridable: true,
     },
+    calendarEndFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'calendarEndFieldMetadataUniversalIdentifier',
+      isOverridable: true,
+    },
     visibility: {
       toCompare: true,
       toStringify: false,

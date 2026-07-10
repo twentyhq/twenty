@@ -156,7 +156,8 @@ export const RecordCalendarMonthBodyDay = ({
               .slice(0, RECORD_CALENDAR_MONTH_VISIBLE_RECORD_LIMIT)
               .map((recordId, index) => (
                 <RecordCalendarCardDraggableContainer
-                  key={recordId}
+                  key={`${recordId}-${dayKey}`}
+                  calendarDay={dayKey}
                   recordId={recordId}
                   index={index}
                 />

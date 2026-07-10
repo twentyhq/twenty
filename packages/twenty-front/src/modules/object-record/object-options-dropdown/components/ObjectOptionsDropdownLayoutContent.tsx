@@ -82,6 +82,12 @@ export const ObjectOptionsDropdownLayoutContent = () => {
       )
     : undefined;
 
+  const calendarEndFieldMetadata = currentView?.calendarEndFieldMetadataId
+    ? objectMetadataItem.fields.find(
+        (field) => field.id === currentView.calendarEndFieldMetadataId,
+      )
+    : undefined;
+
   const { setAndPersistViewType } = useSetViewTypeFromLayoutOptionsMenu();
   const { availableFieldsForGrouping, navigateToSelectSettings } =
     useGetAvailableFieldsToGroupRecordsBy();
@@ -127,7 +133,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     ViewOpenRecordIn.SIDE_PANEL,
     ...(currentView?.type === ViewType.KANBAN ? ['Group'] : []),
     ...(currentView?.type === ViewType.CALENDAR
-      ? ['CalendarView', 'CalendarDateField']
+      ? ['CalendarView', 'CalendarDateField', 'CalendarEndDateField']
       : []),
     ...(currentView?.type !== ViewType.TABLE ? ['Compact view'] : []),
   ];
@@ -230,8 +236,22 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     focused={selectedItemId === 'CalendarDateField'}
                     onClick={() => onContentChange('calendarFields')}
                     LeftIcon={IconCalendar}
-                    text={t`Date field`}
+                    text={t`Start date field`}
                     contextualText={calendarFieldMetadata?.label}
+                    contextualTextPosition="right"
+                    hasSubMenu
+                  />
+                </SelectableListItem>
+                <SelectableListItem
+                  itemId="CalendarEndDateField"
+                  onEnter={() => onContentChange('calendarEndFields')}
+                >
+                  <MenuItem
+                    focused={selectedItemId === 'CalendarEndDateField'}
+                    onClick={() => onContentChange('calendarEndFields')}
+                    LeftIcon={IconCalendar}
+                    text={t`End date field`}
+                    contextualText={calendarEndFieldMetadata?.label ?? t`None`}
                     contextualTextPosition="right"
                     hasSubMenu
                   />

@@ -12,6 +12,7 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
+import { recordIndexCalendarEndFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdState';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 
@@ -319,6 +320,10 @@ export const useLoadRecordIndexStates = () => {
             batchSet(
               recordIndexCalendarFieldMetadataIdState.atom,
               view.calendarFieldMetadataId ?? null,
+            );
+            batchSet(
+              recordIndexCalendarEndFieldMetadataIdState.atom,
+              view.calendarEndFieldMetadataId ?? null,
             );
             batchSet(
               recordIndexCalendarLayoutState.atom,

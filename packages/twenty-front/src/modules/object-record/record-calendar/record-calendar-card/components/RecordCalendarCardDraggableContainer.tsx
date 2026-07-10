@@ -8,6 +8,8 @@ import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RecordCalendarCard } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCard';
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
+import { getRecordCalendarCardDraggableId } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardDraggableId';
+import { recordIndexCalendarEndFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdState';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -20,9 +22,11 @@ const StyledDraggableContainer = styled.div`
 `;
 
 export const RecordCalendarCardDraggableContainer = ({
+  calendarDay,
   recordId,
   index,
 }: {
+  calendarDay: string;
   recordId: string;
   index: number;
 }) => {
@@ -40,9 +44,15 @@ export const RecordCalendarCardDraggableContainer = ({
   const recordIndexCalendarFieldMetadataId = useAtomStateValue(
     recordIndexCalendarFieldMetadataIdState,
   );
+  const recordIndexCalendarEndFieldMetadataId = useAtomStateValue(
+    recordIndexCalendarEndFieldMetadataIdState,
+  );
 
   const calendarFieldMetadataItem = objectMetadataItem.fields.find(
     (field) => field.id === recordIndexCalendarFieldMetadataId,
+  );
+  const calendarEndFieldMetadataItem = objectMetadataItem.fields.find(
+    (field) => field.id === recordIndexCalendarEndFieldMetadataId,
   );
 
   const calendarFieldMetadataItemIsUIReadOnly =
@@ -61,22 +71,39 @@ export const RecordCalendarCardDraggableContainer = ({
     calendarFieldMetadataItemIsUIReadOnly ||
     calendarFieldMetadataItemIsRestrictedForUpdate;
 
+  const calendarEndFieldMetadataItemIsReadOnly = isDefined(
+    calendarEndFieldMetadataItem,
+  )
+    ? calendarEndFieldMetadataItem.isUIEditable === false ||
+      isFieldMetadataReadOnlyByPermissions({
+        objectPermissions,
+        fieldMetadataId: calendarEndFieldMetadataItem.id,
+      })
+    : false;
+
   const dragIsDisabled =
-    recordIsReadOnly || calendarFieldMetadataItemIsReadOnly;
+    recordIsReadOnly ||
+    calendarFieldMetadataItemIsReadOnly ||
+    calendarEndFieldMetadataItemIsReadOnly;
+
+  const draggableId = getRecordCalendarCardDraggableId({
+    calendarDay,
+    recordId,
+  });
 
   return (
     <RecordCalendarCardComponentInstanceContext.Provider
       value={{ instanceId: recordId }}
     >
       <Draggable
-        key={recordId}
-        draggableId={recordId}
+        key={draggableId}
+        draggableId={draggableId}
         index={index}
         isDragDisabled={dragIsDisabled}
       >
         {(draggableProvided) => (
           <StyledDraggableContainer
-            id={`record-calendar-card-${recordId}`}
+            id={`record-calendar-card-${recordId}-${calendarDay}`}
             ref={draggableProvided?.innerRef}
             // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.dragHandleProps}

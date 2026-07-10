@@ -91,6 +91,11 @@ export class UpdateViewInput {
   calendarFieldMetadataId?: string;
 
   @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  calendarEndFieldMetadataId?: string | null;
+
+  @IsOptional()
   @IsEnum(ViewVisibility)
   @Field(() => ViewVisibility, { nullable: true })
   visibility?: ViewVisibility;

@@ -2,6 +2,7 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
+import { recordIndexCalendarEndFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdState';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
@@ -11,6 +12,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { type Temporal } from 'temporal-polyfill';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -46,15 +48,29 @@ export const RecordCalendarAddNew = ({
   const recordIndexCalendarFieldMetadataId = useAtomStateValue(
     recordIndexCalendarFieldMetadataIdState,
   );
+  const recordIndexCalendarEndFieldMetadataId = useAtomStateValue(
+    recordIndexCalendarEndFieldMetadataIdState,
+  );
 
   const calendarFieldMetadataItem = objectMetadataItem.fields.find(
     (field) => field.id === recordIndexCalendarFieldMetadataId,
+  );
+  const calendarEndFieldMetadataItem = objectMetadataItem.fields.find(
+    (field) => field.id === recordIndexCalendarEndFieldMetadataId,
   );
 
   const isCalendarFieldReadOnly = calendarFieldMetadataItem
     ? isFieldMetadataReadOnlyByPermissions({
         objectPermissions,
         fieldMetadataId: calendarFieldMetadataItem.id,
+      })
+    : false;
+
+  const isCalendarEndFieldReadOnly = calendarEndFieldMetadataItem
+    ? calendarEndFieldMetadataItem.isUIEditable === false ||
+      isFieldMetadataReadOnlyByPermissions({
+        objectPermissions,
+        fieldMetadataId: calendarEndFieldMetadataItem.id,
       })
     : false;
 
@@ -74,11 +90,29 @@ export const RecordCalendarAddNew = ({
     <StyledButtonContainer>
       <Button
         onClick={async () => {
+          const startDateTime = cardDate.toZonedDateTime(userTimezone);
+          const startValue =
+            calendarFieldMetadataItem.type === FieldMetadataType.DATE
+              ? cardDate.toString()
+              : startDateTime.toInstant().toString();
+
           await createNewIndexRecord({
-            [calendarFieldMetadataItem.name]: cardDate
-              .toZonedDateTime(userTimezone)
-              .toInstant()
-              .toString(),
+            [calendarFieldMetadataItem.name]: startValue,
+            ...(calendarFieldMetadataItem.type === FieldMetadataType.DATE &&
+              isCalendarEndFieldReadOnly === false &&
+              calendarEndFieldMetadataItem?.type === FieldMetadataType.DATE && {
+                [calendarEndFieldMetadataItem.name]: cardDate.toString(),
+              }),
+            ...(calendarFieldMetadataItem.type ===
+              FieldMetadataType.DATE_TIME &&
+              isCalendarEndFieldReadOnly === false &&
+              calendarEndFieldMetadataItem?.type ===
+                FieldMetadataType.DATE_TIME && {
+                [calendarEndFieldMetadataItem.name]: startDateTime
+                  .add({ hours: 1 })
+                  .toInstant()
+                  .toString(),
+              }),
           });
         }}
         variant="tertiary"

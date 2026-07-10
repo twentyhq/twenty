@@ -1637,6 +1637,9 @@ export default {
             "calendarFieldMetadataId": [
                 3
             ],
+            "calendarEndFieldMetadataId": [
+                3
+            ],
             "workspaceId": [
                 3
             ],
@@ -9623,6 +9626,9 @@ export default {
             "calendarFieldMetadataId": [
                 3
             ],
+            "calendarEndFieldMetadataId": [
+                3
+            ],
             "mainGroupByFieldMetadataId": [
                 3
             ],
@@ -9668,6 +9674,9 @@ export default {
                 70
             ],
             "calendarFieldMetadataId": [
+                3
+            ],
+            "calendarEndFieldMetadataId": [
                 3
             ],
             "visibility": [

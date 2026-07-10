@@ -1,5 +1,6 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
+import { RECORD_CALENDAR_WEEK_DIMENSIONS } from '@/object-record/record-calendar/week/constants/RecordCalendarWeekDimensions';
 import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardClickOutsideId';
 import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
@@ -10,15 +11,11 @@ import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/us
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
 import { formatInTimeZone } from 'date-fns-tz';
-import { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/data-display';
 import { Checkbox, CheckboxVariant } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-
-export const RECORD_CALENDAR_WEEK_HOUR_HEIGHT = 48;
-export const RECORD_CALENDAR_WEEK_EVENT_HEIGHT = 44;
 
 const RECORD_CALENDAR_WEEK_EVENT_HORIZONTAL_INSET = 4;
 const RECORD_CALENDAR_WEEK_EVENT_COLUMN_GAP = 2;
@@ -49,12 +46,13 @@ const getTimedEventWidth = (columnCount: number) => {
 const StyledEventPositioner = styled.div<{
   columnCount: number;
   columnIndex: number;
+  heightInPixels: number;
   isAllDay: boolean;
   topInPixels: number;
 }>`
   box-sizing: border-box;
-  height: ${({ isAllDay }) =>
-    isAllDay ? '22px' : `${RECORD_CALENDAR_WEEK_EVENT_HEIGHT}px`};
+  height: ${({ heightInPixels, isAllDay }) =>
+    isAllDay ? '22px' : `${heightInPixels}px`};
   left: ${({ columnCount, columnIndex, isAllDay }) =>
     isAllDay ? 'auto' : getTimedEventLeft(columnIndex, columnCount)};
   min-width: 0;
@@ -62,7 +60,9 @@ const StyledEventPositioner = styled.div<{
   position: ${({ isAllDay }) => (isAllDay ? 'relative' : 'absolute')};
   right: auto;
   top: ${({ isAllDay, topInPixels }) =>
-    isAllDay ? 'auto' : `${topInPixels + 2}px`};
+    isAllDay
+      ? 'auto'
+      : `${topInPixels + RECORD_CALENDAR_WEEK_DIMENSIONS.eventVerticalGap / 2}px`};
   width: ${({ columnCount, isAllDay }) =>
     isAllDay ? '100%' : getTimedEventWidth(columnCount)};
   z-index: 1;
@@ -130,8 +130,10 @@ type RecordCalendarWeekEventProps = {
   calendarFieldType: FieldMetadataType;
   columnCount?: number;
   columnIndex?: number;
+  endInPixels?: number;
   isAllDay: boolean;
   recordId: string;
+  startInPixels?: number;
   timeFormat: string;
   timeZone: string;
 };
@@ -141,8 +143,10 @@ export const RecordCalendarWeekEvent = ({
   calendarFieldType,
   columnCount = 1,
   columnIndex = 0,
+  endInPixels = 0,
   isAllDay,
   recordId,
+  startInPixels = 0,
   timeFormat,
   timeZone,
 }: RecordCalendarWeekEventProps) => {
@@ -167,23 +171,23 @@ export const RecordCalendarWeekEvent = ({
     return null;
   }
 
-  const zonedDateTime = isDateOnly
-    ? null
-    : Temporal.Instant.from(recordDate).toZonedDateTimeISO(timeZone);
-  const topInPixels = isDefined(zonedDateTime)
-    ? (zonedDateTime.hour + zonedDateTime.minute / 60) *
-      RECORD_CALENDAR_WEEK_HOUR_HEIGHT
-    : 0;
-  const eventTime = isDefined(zonedDateTime)
+  const eventTime = !isDateOnly
     ? formatInTimeZone(new Date(recordDate), timeZone, timeFormat)
     : null;
+  const heightInPixels = Math.max(
+    0,
+    endInPixels -
+      startInPixels -
+      RECORD_CALENDAR_WEEK_DIMENSIONS.eventVerticalGap,
+  );
 
   return (
     <StyledEventPositioner
       columnCount={columnCount}
       columnIndex={columnIndex}
+      heightInPixels={heightInPixels}
       isAllDay={isAllDay}
-      topInPixels={topInPixels}
+      topInPixels={startInPixels}
     >
       <RecordCard
         data-click-outside-id={RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID}

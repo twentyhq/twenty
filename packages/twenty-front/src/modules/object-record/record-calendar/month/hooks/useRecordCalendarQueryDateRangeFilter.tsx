@@ -1,6 +1,7 @@
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
+import { getRecordCalendarDateRangeOverlapFilter } from '@/object-record/record-calendar/month/utils/getRecordCalendarDateRangeOverlapFilter';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
@@ -80,6 +81,27 @@ export const useRecordCalendarQueryDateRangeFilter = (
 
   const dateRangeFilterFieldMetadataId = currentView.calendarFieldMetadataId;
 
+  const calendarFieldMetadataItem = objectMetadataItem.fields.find(
+    (fieldMetadataItem) =>
+      fieldMetadataItem.id === currentView.calendarFieldMetadataId,
+  );
+
+  const calendarEndFieldMetadataItem = objectMetadataItem.fields.find(
+    (fieldMetadataItem) =>
+      fieldMetadataItem.id === currentView.calendarEndFieldMetadataId,
+  );
+
+  const dateRangeOverlapFilter = isDefined(calendarFieldMetadataItem)
+    ? getRecordCalendarDateRangeOverlapFilter({
+        calendarField: calendarFieldMetadataItem,
+        calendarEndField: calendarEndFieldMetadataItem,
+        firstDayOfRange: firstDayOfFirstWeek.toString(),
+        nextDayAfterLastDayOfRange: lastDayOfLastWeek
+          .add({ days: 1 })
+          .toString(),
+      })
+    : undefined;
+
   const dateRangeFilterAfter: RecordFilter = {
     id: DATE_RANGE_FILTER_AFTER_ID,
     fieldMetadataId: dateRangeFilterFieldMetadataId,
@@ -100,11 +122,9 @@ export const useRecordCalendarQueryDateRangeFilter = (
     displayValue: `${lastDayOfLastWeek.toString()}`,
   };
 
-  const calendarRecordFilters = [
-    ...currentRecordFilters,
-    dateRangeFilterAfter,
-    dateRangeFilterBefore,
-  ];
+  const calendarRecordFilters = isDefined(dateRangeOverlapFilter)
+    ? currentRecordFilters
+    : [...currentRecordFilters, dateRangeFilterAfter, dateRangeFilterBefore];
 
   const dateRangeFilter = computeRecordGqlOperationFilter({
     filterValueDependencies,
@@ -119,7 +139,11 @@ export const useRecordCalendarQueryDateRangeFilter = (
       filterValue: anyFieldFilterValue,
     });
 
-  const combinedFilter = combineFilters([dateRangeFilter, anyFieldFilter]);
+  const combinedFilter = combineFilters([
+    dateRangeFilter,
+    dateRangeOverlapFilter ?? {},
+    anyFieldFilter,
+  ]);
 
   return {
     dateRangeFilter: combinedFilter,

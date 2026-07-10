@@ -3,6 +3,8 @@ import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasO
 
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { recordCalendarRecordIdsComponentState } from '@/object-record/record-calendar/states/recordCalendarRecordIdsComponentState';
+import { isRecordCalendarDayInDateRange } from '@/object-record/record-calendar/utils/isRecordCalendarDayInDateRange';
+import { recordIndexCalendarEndFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdState';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { createAtomComponentFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilySelector';
@@ -24,6 +26,9 @@ export const calendarDayRecordIdsComponentFamilySelector =
       ({ get }) => {
         const calendarFieldMetadataId = get(
           recordIndexCalendarFieldMetadataIdState,
+        );
+        const calendarEndFieldMetadataId = get(
+          recordIndexCalendarEndFieldMetadataIdState,
         );
 
         const objectMetadataItems = get(objectMetadataItemsSelector);
@@ -48,6 +53,11 @@ export const calendarDayRecordIdsComponentFamilySelector =
           return [];
         }
 
+        const endFieldMetadataItem = objectMetadataItem.fields.find(
+          (fieldMetadataItem) =>
+            fieldMetadataItem.id === calendarEndFieldMetadataId,
+        );
+
         const allRecordIds = get(recordCalendarRecordIdsComponentState, {
           instanceId,
         });
@@ -61,12 +71,35 @@ export const calendarDayRecordIdsComponentFamilySelector =
             return false;
           }
 
-          const recordDateAsPlainDateInTimeZone =
-            fieldMetadataItem.type === FieldMetadataType.DATE
-              ? Temporal.PlainDate.from(recordDate)
-              : Temporal.Instant.from(recordDate)
-                  .toZonedDateTimeISO(timeZone)
-                  .toPlainDate();
+          if (fieldMetadataItem.type === FieldMetadataType.DATE) {
+            const recordStartDate = Temporal.PlainDate.from(recordDate);
+            const recordEndDateValue = isDefined(endFieldMetadataItem)
+              ? record?.[endFieldMetadataItem.name]
+              : undefined;
+
+            if (
+              endFieldMetadataItem?.type === FieldMetadataType.DATE &&
+              isNonEmptyString(recordEndDateValue)
+            ) {
+              try {
+                return isRecordCalendarDayInDateRange({
+                  day,
+                  startDate: recordStartDate,
+                  endDate: Temporal.PlainDate.from(recordEndDateValue),
+                });
+              } catch {
+                return isSamePlainDate(day, recordStartDate);
+              }
+            }
+
+            return isSamePlainDate(day, recordStartDate);
+          }
+
+          const recordDateAsPlainDateInTimeZone = Temporal.Instant.from(
+            recordDate,
+          )
+            .toZonedDateTimeISO(timeZone)
+            .toPlainDate();
 
           return isSamePlainDate(day, recordDateAsPlainDateInTimeZone);
         });
