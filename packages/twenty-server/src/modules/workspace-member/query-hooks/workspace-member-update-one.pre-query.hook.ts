@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   IANA_TIME_ZONES,
   LEGACY_TIME_ZONE_TO_IANA,
+  type IanaTimeZone,
 } from 'twenty-shared/constants';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
@@ -18,6 +19,9 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 
 const VALID_TIME_ZONES = new Set<string>(IANA_TIME_ZONES);
 
+const isIanaTimeZone = (value: string): value is IanaTimeZone =>
+  VALID_TIME_ZONES.has(value);
+
 @WorkspaceQueryHook(`workspaceMember.updateOne`)
 export class WorkspaceMemberUpdateOnePreQueryHook implements WorkspacePreQueryHookInstance {
   async execute(
@@ -25,19 +29,21 @@ export class WorkspaceMemberUpdateOnePreQueryHook implements WorkspacePreQueryHo
     _objectName: string,
     payload: UpdateOneResolverArgs<Partial<WorkspaceMemberWorkspaceEntity>>,
   ): Promise<UpdateOneResolverArgs<Partial<WorkspaceMemberWorkspaceEntity>>> {
-    const timeZone = payload.data?.timeZone;
+    // The entity types timeZone as IanaTimeZone | 'system', but the GraphQL
+    // input is an unvalidated string at runtime — this hook is what upholds
+    // the type.
+    const timeZone: string | undefined = payload.data?.timeZone;
 
     if (!isNonEmptyString(timeZone) || timeZone === 'system') {
       return payload;
     }
 
-    // The column is plain text, so this is the only guard against persisting a
-    // zone that crashes date rendering on engines rejecting it (WebKit throws
-    // on legacy aliases such as CET). Aliases are canonicalized rather than
-    // rejected so older clients keep working.
+    // Legacy aliases (e.g. CET) crash date rendering on engines rejecting
+    // them (WebKit), so they are canonicalized rather than rejected to keep
+    // older clients working.
     const canonicalTimeZone = LEGACY_TIME_ZONE_TO_IANA[timeZone] ?? timeZone;
 
-    if (!VALID_TIME_ZONES.has(canonicalTimeZone)) {
+    if (!isIanaTimeZone(canonicalTimeZone)) {
       throw new CommonQueryRunnerException(
         `Invalid time zone: ${timeZone}`,
         CommonQueryRunnerExceptionCode.BAD_REQUEST,

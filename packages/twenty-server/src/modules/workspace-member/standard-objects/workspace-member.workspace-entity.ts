@@ -61,6 +61,10 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   jobTitle: string | null;
   calendarStartDay: number;
   userId: string;
+  // Not typed as `IanaTimeZone | 'system'`: the 594-literal union makes
+  // TypeORM's QueryDeepPartialEntity/DeepPartial computations exceed
+  // TypeScript's union size limit (TS2590). The updateOne pre-query hook is
+  // the enforcement point instead.
   timeZone: string;
   dateFormat: string;
   timeFormat: string;

@@ -595,4 +595,6 @@ export const IANA_TIME_ZONES = [
   'W-SU',
   'WET',
   'Zulu',
-];
+] as const;
+
+export type IanaTimeZone = (typeof IANA_TIME_ZONES)[number];

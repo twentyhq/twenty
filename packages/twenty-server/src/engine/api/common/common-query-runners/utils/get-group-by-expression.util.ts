@@ -18,7 +18,7 @@ import { type GroupByField } from 'src/engine/api/common/common-query-runners/ty
 import { isGroupByDateField } from 'src/engine/api/common/common-query-runners/utils/is-group-by-date-field.util';
 import { isGroupByRelationField } from 'src/engine/api/common/common-query-runners/utils/is-group-by-relation-field.util';
 
-const VALID_IANA_TIMEZONES = new Set(IANA_TIME_ZONES);
+const VALID_IANA_TIMEZONES = new Set<string>(IANA_TIME_ZONES);
 
 export const getGroupByExpression = ({
   groupByField,
