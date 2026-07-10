@@ -1,7 +1,9 @@
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
+import { recordIndexCalendarLayoutState } from '@/object-record/record-index/states/recordIndexCalendarLayoutState';
 import { DatePickerWithoutCalendar } from '@/ui/input/components/internal/date/components/DatePickerWithoutCalendar';
 import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/components/TimeZoneAbbreviation';
+import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -9,6 +11,8 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { format } from 'date-fns';
@@ -21,6 +25,7 @@ import {
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -55,6 +60,11 @@ export const RecordCalendarTopBar = () => {
   const [recordCalendarSelectedDate, setRecordCalendarSelectedDate] =
     useAtomComponentState(recordCalendarSelectedDateComponentState);
 
+  const [recordIndexCalendarLayout, setRecordIndexCalendarLayout] =
+    useAtomState(recordIndexCalendarLayoutState);
+
+  const { updateCurrentView } = useUpdateCurrentView();
+
   const datePickerDropdownId = `record-calendar-date-picker-${recordCalendarId}`;
   const { closeDropdown } = useCloseDropdown();
 
@@ -65,16 +75,25 @@ export const RecordCalendarTopBar = () => {
     closeDropdown(datePickerDropdownId);
   };
 
-  const handlePreviousMonth = () => {
+  const handlePreviousPeriod = () => {
     setRecordCalendarSelectedDate(
-      recordCalendarSelectedDate.subtract({ months: 1 }),
+      recordIndexCalendarLayout === ViewCalendarLayout.WEEK
+        ? recordCalendarSelectedDate.subtract({ weeks: 1 })
+        : recordCalendarSelectedDate.subtract({ months: 1 }),
     );
   };
 
-  const handleNextMonth = () => {
+  const handleNextPeriod = () => {
     setRecordCalendarSelectedDate(
-      recordCalendarSelectedDate?.add({ months: 1 }),
+      recordIndexCalendarLayout === ViewCalendarLayout.WEEK
+        ? recordCalendarSelectedDate.add({ weeks: 1 })
+        : recordCalendarSelectedDate.add({ months: 1 }),
     );
+  };
+
+  const handleCalendarLayoutChange = (calendarLayout: ViewCalendarLayout) => {
+    setRecordIndexCalendarLayout(calendarLayout);
+    void updateCurrentView({ calendarLayout });
   };
 
   const handleTodayClick = () => {
@@ -91,6 +110,17 @@ export const RecordCalendarTopBar = () => {
   return (
     <StyledContainer>
       <StyledLeftSection>
+        <Select
+          dropdownId={`record-calendar-layout-${recordCalendarId}`}
+          value={recordIndexCalendarLayout}
+          options={[
+            { label: t`Week`, value: ViewCalendarLayout.WEEK },
+            { label: t`Month`, value: ViewCalendarLayout.MONTH },
+          ]}
+          selectSizeVariant="small"
+          dropdownWidth={120}
+          onChange={handleCalendarLayoutChange}
+        />
         <Dropdown
           dropdownId={datePickerDropdownId}
           clickableComponent={
@@ -116,7 +146,9 @@ export const RecordCalendarTopBar = () => {
           }
           dropdownOffset={dropdownContentOffset}
         />
-        <TimeZoneAbbreviation instant={Temporal.Now.instant()} />
+        {recordIndexCalendarLayout !== ViewCalendarLayout.WEEK && (
+          <TimeZoneAbbreviation instant={Temporal.Now.instant()} />
+        )}
       </StyledLeftSection>
 
       <StyledNavigationSection>
@@ -125,7 +157,7 @@ export const RecordCalendarTopBar = () => {
             size="small"
             variant="tertiary"
             Icon={IconChevronLeft}
-            onClick={handlePreviousMonth}
+            onClick={handlePreviousPeriod}
           />
         </StyledNavigationButtonContainer>
         <Button
@@ -139,7 +171,7 @@ export const RecordCalendarTopBar = () => {
             size="small"
             variant="tertiary"
             Icon={IconChevronRight}
-            onClick={handleNextMonth}
+            onClick={handleNextPeriod}
           />
         </StyledNavigationButtonContainer>
       </StyledNavigationSection>

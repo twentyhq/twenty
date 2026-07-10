@@ -82,10 +82,8 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
               LeftIcon={IconCalendarWeek}
               text={t`Week`}
               selected={recordIndexCalendarLayout === ViewCalendarLayout.WEEK}
+              onClick={() => handleCalendarViewChange(ViewCalendarLayout.WEEK)}
               focused={selectedItemId === ViewCalendarLayout.WEEK}
-              contextualText={<Pill label={t`Soon`} />}
-              contextualTextPosition="right"
-              disabled
             />
           </SelectableListItem>
           <SelectableListItem
