@@ -122,9 +122,10 @@ describe('reconcileCallRecording', () => {
         externalRecordingId: 'recall-recording-1',
       }),
       bot: {
-        status_changes: [
-          { code: 'in_call_recording', created_at: '2026-06-09T13:02:00.000Z' },
+        statusChanges: [
+          { code: 'in_call_recording', createdAt: '2026-06-09T13:02:00.000Z' },
         ],
+        recordings: [],
       },
       treatRecordingAsDone: false,
       requestedAt: REQUESTED_AT,
@@ -145,8 +146,8 @@ describe('reconcileCallRecording', () => {
       client,
       callRecording: buildCallRecording(),
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [],
       },

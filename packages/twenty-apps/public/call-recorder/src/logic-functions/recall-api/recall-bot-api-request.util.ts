@@ -30,7 +30,7 @@ type RecallBotApiRequestResult<TData> =
       errorMessage: string;
     };
 
-// Bot creates tolerate retries because duplicates stay unclaimed and get reaped.
+// Bot creates tolerate retries because duplicates stay unclaimed and get canceled.
 // Callers that cannot retry idempotently can lower maxAttempts.
 export const recallBotApiRequest = async <TData>(
   requestArgs: RecallBotApiRequestArgs,

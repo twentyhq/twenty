@@ -2,14 +2,14 @@ import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
-import { adoptScheduledCallRecorder } from 'src/logic-functions/flows/adopt-scheduled-call-recorder.util';
+import { attachExistingCallRecorder } from 'src/logic-functions/flows/attach-existing-call-recorder.util';
 import { ensureCallRecorder } from 'src/logic-functions/flows/ensure-call-recorder.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findOpenScheduledCallRecordings } from 'src/logic-functions/data/find-open-scheduled-call-recordings.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 
 export type HealCallRecordingsMissingBotResult = {
-  adoptedCallRecordingIds: string[];
+  attachedCallRecordingIds: string[];
   scheduledCallRecordingIds: string[];
 };
 
@@ -26,7 +26,7 @@ export const healCallRecordingsMissingBot = async ({
   ).filter((callRecording) => isUndefined(callRecording.externalBotId));
 
   if (botlessCallRecordings.length === 0) {
-    return { adoptedCallRecordingIds: [], scheduledCallRecordingIds: [] };
+    return { attachedCallRecordingIds: [], scheduledCallRecordingIds: [] };
   }
 
   const calendarEventsById = new Map(
@@ -41,7 +41,7 @@ export const healCallRecordingsMissingBot = async ({
       )
     ).map((calendarEvent) => [calendarEvent.id, calendarEvent]),
   );
-  const adoptedCallRecordingIds: string[] = [];
+  const attachedCallRecordingIds: string[] = [];
   const scheduledCallRecordingIds: string[] = [];
 
   for (const callRecording of botlessCallRecordings) {
@@ -53,18 +53,18 @@ export const healCallRecordingsMissingBot = async ({
       continue;
     }
 
-    const adoptionResult = await adoptScheduledCallRecorder(client, {
+    const attachResult = await attachExistingCallRecorder(client, {
       callRecording,
       calendarEvent,
     });
 
-    if (adoptionResult === 'adopted') {
-      adoptedCallRecordingIds.push(callRecording.id);
+    if (attachResult === 'attached') {
+      attachedCallRecordingIds.push(callRecording.id);
       continue;
     }
 
     // A failed lookup can hide an existing bot; creating one now could duplicate it, so defer to the next run.
-    if (adoptionResult === 'lookup-failed') {
+    if (attachResult === 'lookup-failed') {
       continue;
     }
 
@@ -78,7 +78,7 @@ export const healCallRecordingsMissingBot = async ({
     }
   }
 
-  return { adoptedCallRecordingIds, scheduledCallRecordingIds };
+  return { attachedCallRecordingIds, scheduledCallRecordingIds };
 };
 
 const hasMeetingEnded = ({

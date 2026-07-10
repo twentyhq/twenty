@@ -13,14 +13,14 @@ import {
   type RecallScheduledBot,
 } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
 
-export type ReapOrphanedCallRecordersResult = {
+export type CancelOrphanedCallRecordersResult = {
   scannedBotCount: number;
   canceledExternalBotIds: string[];
   truncatedBotList: boolean;
 };
 
 // Bots no open CallRecording request claims would still join; cancel them on Recall.
-export const reapOrphanedCallRecorders = async ({
+export const cancelOrphanedCallRecorders = async ({
   client,
   joinAtAfter,
   joinAtBefore,
@@ -28,15 +28,12 @@ export const reapOrphanedCallRecorders = async ({
   client: CoreApiClient;
   joinAtAfter: string;
   joinAtBefore: string;
-}): Promise<ReapOrphanedCallRecordersResult> => {
-  const listResult = await listScheduledRecallBots({
-    joinAtAfter,
-    joinAtBefore,
-  });
+}): Promise<CancelOrphanedCallRecordersResult> => {
+  const currentWorkspaceId = getCurrentWorkspaceId();
 
-  if (!listResult.ok) {
+  if (isUndefined(currentWorkspaceId)) {
     console.warn(
-      `[call-recorder] failed to list Recall bots for orphan reaping: ${listResult.errorMessage}`,
+      '[call-recorder] cannot cancel orphaned Recall bots: workspace id unavailable',
     );
 
     return {
@@ -46,17 +43,22 @@ export const reapOrphanedCallRecorders = async ({
     };
   }
 
-  const currentWorkspaceId = getCurrentWorkspaceId();
+  // Server-side workspace filter: the shared Recall account holds every workspace's bots.
+  const listResult = await listScheduledRecallBots({
+    joinAtAfter,
+    joinAtBefore,
+    metadata: { twentyWorkspaceId: currentWorkspaceId },
+  });
 
-  if (isUndefined(currentWorkspaceId)) {
+  if (!listResult.ok) {
     console.warn(
-      '[call-recorder] cannot reap orphaned Recall bots: workspace id unavailable',
+      `[call-recorder] failed to list Recall bots for orphan cancellation: ${listResult.errorMessage}`,
     );
 
     return {
-      scannedBotCount: listResult.bots.length,
+      scannedBotCount: 0,
       canceledExternalBotIds: [],
-      truncatedBotList: listResult.truncated,
+      truncatedBotList: false,
     };
   }
 

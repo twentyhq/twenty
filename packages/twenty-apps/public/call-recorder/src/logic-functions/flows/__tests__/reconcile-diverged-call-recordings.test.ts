@@ -1,7 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { convergeDivergedCallRecordings } from 'src/logic-functions/flows/converge-diverged-call-recordings.util';
+import { reconcileDivergedCallRecordings } from 'src/logic-functions/flows/reconcile-diverged-call-recordings.util';
 
 const getRecallBotMock = vi.hoisted(() => vi.fn());
 const listScheduledRecallBotsMock = vi.hoisted(() => vi.fn());
@@ -112,7 +112,7 @@ const buildStuckRecordingNode = (
   ...overrides,
 });
 
-describe('convergeDivergedCallRecordings', () => {
+describe('reconcileDivergedCallRecordings', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     getRecallBotMock.mockReset();
@@ -140,30 +140,30 @@ describe('convergeDivergedCallRecordings', () => {
     ingestCallRecordingMediaMock.mockReset();
     ingestCallRecordingMediaMock.mockResolvedValue({});
     chargeCompletedCallRecordingMock.mockReset();
-    chargeCompletedCallRecordingMock.mockResolvedValue(undefined);
+    chargeCompletedCallRecordingMock.mockResolvedValue('charged');
   });
 
   it('heals a stuck RECORDING record from the Recall bot state', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'in_call_recording', created_at: '2026-06-09T13:02:30.000Z' },
-          { code: 'call_ended', created_at: '2026-06-09T14:00:30.000Z' },
-          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'in_call_recording', createdAt: '2026-06-09T13:02:30.000Z' },
+          { code: 'call_ended', createdAt: '2026-06-09T14:00:30.000Z' },
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-09T13:02:00.000Z',
-            completed_at: '2026-06-09T14:00:00.000Z',
+            startedAt: '2026-06-09T13:02:00.000Z',
+            completedAt: '2026-06-09T14:00:00.000Z',
           },
         ],
       },
     });
     const client = buildClient([buildStuckRecordingNode()]);
 
-    const result = await convergeDivergedCallRecordings({
+    const result = await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -214,32 +214,26 @@ describe('convergeDivergedCallRecordings', () => {
           metadata: {
             twentyWorkspaceId: '123e4567-e89b-12d3-a456-426614174000',
           },
-          raw: {
-            id: 'recall-bot-1',
-            metadata: {
-              twentyWorkspaceId: '123e4567-e89b-12d3-a456-426614174000',
+          statusChanges: [
+            {
+              code: 'in_call_recording',
+              createdAt: '2026-06-09T13:02:30.000Z',
             },
-            status_changes: [
-              {
-                code: 'in_call_recording',
-                created_at: '2026-06-09T13:02:30.000Z',
-              },
-              { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
-            ],
-            recordings: [
-              {
-                id: 'recall-recording-1',
-                started_at: '2026-06-09T13:02:00.000Z',
-                completed_at: '2026-06-09T14:00:00.000Z',
-              },
-            ],
-          },
+            { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
+          ],
+          recordings: [
+            {
+              id: 'recall-recording-1',
+              startedAt: '2026-06-09T13:02:00.000Z',
+              completedAt: '2026-06-09T14:00:00.000Z',
+            },
+          ],
         },
       ],
     });
     const client = buildClient([buildStuckRecordingNode()]);
 
-    const result = await convergeDivergedCallRecordings({
+    const result = await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -263,7 +257,7 @@ describe('convergeDivergedCallRecordings', () => {
     });
     const client = buildClient([buildStuckRecordingNode()]);
 
-    const result = await convergeDivergedCallRecordings({
+    const result = await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -278,15 +272,15 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [],
       },
     });
     const client = buildClient([buildStuckRecordingNode()]);
 
-    const result = await convergeDivergedCallRecordings({
+    const result = await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -309,16 +303,16 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-09T14:04:00.000Z' },
-          { code: 'fatal', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:04:00.000Z' },
+          { code: 'fatal', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [],
       },
     });
     const client = buildClient([buildStuckRecordingNode()]);
 
-    await convergeDivergedCallRecordings({
+    await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -338,14 +332,14 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-09T13:02:00.000Z',
-            completed_at: '2026-06-09T14:00:00.000Z',
+            startedAt: '2026-06-09T13:02:00.000Z',
+            completedAt: '2026-06-09T14:00:00.000Z',
           },
         ],
       },
@@ -364,7 +358,7 @@ describe('convergeDivergedCallRecordings', () => {
       }),
     ]);
 
-    const result = await convergeDivergedCallRecordings({
+    const result = await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -403,14 +397,14 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-09T13:02:00.000Z',
-            completed_at: '2026-06-09T14:00:00.000Z',
+            startedAt: '2026-06-09T13:02:00.000Z',
+            completedAt: '2026-06-09T14:00:00.000Z',
           },
         ],
       },
@@ -429,7 +423,7 @@ describe('convergeDivergedCallRecordings', () => {
       }),
     ]);
 
-    const result = await convergeDivergedCallRecordings({
+    const result = await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -459,14 +453,14 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-09T13:02:00.000Z',
-            completed_at: '2026-06-09T14:00:00.000Z',
+            startedAt: '2026-06-09T13:02:00.000Z',
+            completedAt: '2026-06-09T14:00:00.000Z',
           },
         ],
       },
@@ -483,7 +477,7 @@ describe('convergeDivergedCallRecordings', () => {
       }),
     ]);
 
-    const result = await convergeDivergedCallRecordings({
+    const result = await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -512,14 +506,14 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'fatal', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'fatal', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-09T13:02:00.000Z',
-            completed_at: '2026-06-09T14:00:00.000Z',
+            startedAt: '2026-06-09T13:02:00.000Z',
+            completedAt: '2026-06-09T14:00:00.000Z',
           },
         ],
       },
@@ -538,7 +532,7 @@ describe('convergeDivergedCallRecordings', () => {
       }),
     ]);
 
-    await convergeDivergedCallRecordings({
+    await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -566,7 +560,7 @@ describe('convergeDivergedCallRecordings', () => {
       }),
     ]);
 
-    const result = await convergeDivergedCallRecordings({
+    const result = await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -582,14 +576,14 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-10T11:30:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-10T11:30:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-10T11:05:00.000Z',
-            completed_at: '2026-06-10T11:25:00.000Z',
+            startedAt: '2026-06-10T11:05:00.000Z',
+            completedAt: '2026-06-10T11:25:00.000Z',
           },
         ],
       },
@@ -603,7 +597,7 @@ describe('convergeDivergedCallRecordings', () => {
       }),
     ]);
 
-    const result = await convergeDivergedCallRecordings({
+    const result = await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -623,7 +617,7 @@ describe('convergeDivergedCallRecordings', () => {
     });
     const client = buildClient([buildStuckRecordingNode()]);
 
-    const result = await convergeDivergedCallRecordings({
+    const result = await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -655,7 +649,7 @@ describe('convergeDivergedCallRecordings', () => {
       }),
     ]);
 
-    const result = await convergeDivergedCallRecordings({
+    const result = await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -671,7 +665,7 @@ describe('convergeDivergedCallRecordings', () => {
       }),
     ]);
 
-    const result = await convergeDivergedCallRecordings({
+    const result = await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -686,9 +680,10 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'in_call_recording', created_at: '2026-06-09T13:02:00.000Z' },
+        statusChanges: [
+          { code: 'in_call_recording', createdAt: '2026-06-09T13:02:00.000Z' },
         ],
+        recordings: [],
       },
     });
     const client = buildClient([
@@ -699,7 +694,7 @@ describe('convergeDivergedCallRecordings', () => {
       }),
     ]);
 
-    const result = await convergeDivergedCallRecordings({
+    const result = await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -718,7 +713,7 @@ describe('convergeDivergedCallRecordings', () => {
       }),
     ]);
 
-    const result = await convergeDivergedCallRecordings({
+    const result = await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -742,7 +737,7 @@ describe('convergeDivergedCallRecordings', () => {
       }),
     );
 
-    await convergeDivergedCallRecordings({
+    await reconcileDivergedCallRecordings({
       client: buildClient(candidateNodes) as unknown as CoreApiClient,
       now: new Date(0),
     });
@@ -755,7 +750,7 @@ describe('convergeDivergedCallRecordings', () => {
 
     getRecallBotMock.mockClear();
 
-    await convergeDivergedCallRecordings({
+    await reconcileDivergedCallRecordings({
       client: buildClient(candidateNodes) as unknown as CoreApiClient,
       now: new Date(15 * 60 * 1000),
     });
@@ -771,11 +766,11 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'in_call_recording', created_at: '2026-06-09T13:02:00.000Z' },
+        statusChanges: [
+          { code: 'in_call_recording', createdAt: '2026-06-09T13:02:00.000Z' },
         ],
         recordings: [
-          { id: 'recall-recording-1', started_at: '2026-06-09T13:02:00.000Z' },
+          { id: 'recall-recording-1', startedAt: '2026-06-09T13:02:00.000Z' },
         ],
       },
     });
@@ -783,7 +778,7 @@ describe('convergeDivergedCallRecordings', () => {
       buildStuckRecordingNode({ status: 'PROCESSING' }),
     ]);
 
-    await convergeDivergedCallRecordings({
+    await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -803,14 +798,14 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-09T13:02:00.000Z',
-            completed_at: '2026-06-09T14:00:00.000Z',
+            startedAt: '2026-06-09T13:02:00.000Z',
+            completedAt: '2026-06-09T14:00:00.000Z',
           },
         ],
       },
@@ -823,7 +818,7 @@ describe('convergeDivergedCallRecordings', () => {
       }),
     ]);
 
-    const result = await convergeDivergedCallRecordings({
+    const result = await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -854,14 +849,14 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-09T13:02:00.000Z',
-            completed_at: '2026-06-09T14:00:00.000Z',
+            startedAt: '2026-06-09T13:02:00.000Z',
+            completedAt: '2026-06-09T14:00:00.000Z',
           },
         ],
       },
@@ -878,7 +873,7 @@ describe('convergeDivergedCallRecordings', () => {
     });
     const client = buildClient([buildStuckRecordingNode()]);
 
-    const result = await convergeDivergedCallRecordings({
+    const result = await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -910,14 +905,14 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-09T13:02:00.000Z',
-            completed_at: '2026-06-09T14:00:00.000Z',
+            startedAt: '2026-06-09T13:02:00.000Z',
+            completedAt: '2026-06-09T14:00:00.000Z',
           },
         ],
       },
@@ -952,7 +947,7 @@ describe('convergeDivergedCallRecordings', () => {
       }),
     ]);
 
-    const result = await convergeDivergedCallRecordings({
+    const result = await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -983,14 +978,14 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-09T13:02:00.000Z',
-            completed_at: '2026-06-09T14:00:00.000Z',
+            startedAt: '2026-06-09T13:02:00.000Z',
+            completedAt: '2026-06-09T14:00:00.000Z',
           },
         ],
       },
@@ -1014,7 +1009,7 @@ describe('convergeDivergedCallRecordings', () => {
       }),
     ]);
 
-    const result = await convergeDivergedCallRecordings({
+    const result = await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -1042,16 +1037,17 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'in_call_recording', created_at: '2026-06-09T13:02:00.000Z' },
+        statusChanges: [
+          { code: 'in_call_recording', createdAt: '2026-06-09T13:02:00.000Z' },
         ],
+        recordings: [],
       },
     });
     const client = buildClient([
       buildStuckRecordingNode({ startedAt: '2026-06-09T13:02:00.000Z' }),
     ]);
 
-    const result = await convergeDivergedCallRecordings({
+    const result = await reconcileDivergedCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });

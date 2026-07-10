@@ -1,7 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { reapOrphanedCallRecorders } from 'src/logic-functions/flows/reap-orphaned-call-recorders.util';
+import { cancelOrphanedCallRecorders } from 'src/logic-functions/flows/cancel-orphaned-call-recorders.util';
 
 const listScheduledRecallBotsMock = vi.hoisted(() => vi.fn());
 const cancelRecallBotMock = vi.hoisted(() => vi.fn());
@@ -89,7 +89,7 @@ const buildCurrentWorkspaceBot = ({
     twentyWorkspaceId: CURRENT_WORKSPACE_ID,
   });
 
-describe('reapOrphanedCallRecorders', () => {
+describe('cancelOrphanedCallRecorders', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     getCurrentWorkspaceIdMock.mockReset();
@@ -113,7 +113,7 @@ describe('reapOrphanedCallRecorders', () => {
       ],
     });
 
-    const result = await reapOrphanedCallRecorders({
+    const result = await cancelOrphanedCallRecorders({
       client: buildClient([
         {
           id: 'call-recording-1',
@@ -133,6 +133,26 @@ describe('reapOrphanedCallRecorders', () => {
     expect(cancelRecallBotMock).not.toHaveBeenCalled();
   });
 
+  it('lists only bots claimed by the current workspace', async () => {
+    listScheduledRecallBotsMock.mockResolvedValue({
+      ok: true,
+      truncated: false,
+      bots: [],
+    });
+
+    await cancelOrphanedCallRecorders({
+      client: buildClient([]),
+      joinAtAfter: JOIN_AT_AFTER,
+      joinAtBefore: JOIN_AT_BEFORE,
+    });
+
+    expect(listScheduledRecallBotsMock).toHaveBeenCalledWith({
+      joinAtAfter: JOIN_AT_AFTER,
+      joinAtBefore: JOIN_AT_BEFORE,
+      metadata: { twentyWorkspaceId: CURRENT_WORKSPACE_ID },
+    });
+  });
+
   it('cancels bots whose call recording request was canceled locally', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
@@ -145,7 +165,7 @@ describe('reapOrphanedCallRecorders', () => {
       ],
     });
 
-    const result = await reapOrphanedCallRecorders({
+    const result = await cancelOrphanedCallRecorders({
       client: buildClient([
         {
           id: 'call-recording-1',
@@ -183,7 +203,7 @@ describe('reapOrphanedCallRecorders', () => {
       ],
     });
 
-    const result = await reapOrphanedCallRecorders({
+    const result = await cancelOrphanedCallRecorders({
       client: buildClient([
         {
           id: 'call-recording-1',
@@ -218,7 +238,7 @@ describe('reapOrphanedCallRecorders', () => {
       ],
     });
 
-    const result = await reapOrphanedCallRecorders({
+    const result = await cancelOrphanedCallRecorders({
       client: buildClient([]),
       joinAtAfter: JOIN_AT_AFTER,
       joinAtBefore: JOIN_AT_BEFORE,
@@ -243,7 +263,7 @@ describe('reapOrphanedCallRecorders', () => {
       ],
     });
 
-    const result = await reapOrphanedCallRecorders({
+    const result = await cancelOrphanedCallRecorders({
       client: buildClient([
         {
           id: 'call-recording-1',
@@ -270,7 +290,7 @@ describe('reapOrphanedCallRecorders', () => {
       bots: [buildBot({ id: 'unrelated-bot' })],
     });
 
-    const result = await reapOrphanedCallRecorders({
+    const result = await cancelOrphanedCallRecorders({
       client: buildClient([]),
       joinAtAfter: JOIN_AT_AFTER,
       joinAtBefore: JOIN_AT_BEFORE,
@@ -296,7 +316,7 @@ describe('reapOrphanedCallRecorders', () => {
       ],
     });
 
-    const result = await reapOrphanedCallRecorders({
+    const result = await cancelOrphanedCallRecorders({
       client: buildClient([]),
       joinAtAfter: JOIN_AT_AFTER,
       joinAtBefore: JOIN_AT_BEFORE,
@@ -323,7 +343,7 @@ describe('reapOrphanedCallRecorders', () => {
       ],
     });
 
-    const result = await reapOrphanedCallRecorders({
+    const result = await cancelOrphanedCallRecorders({
       client: buildClient([]),
       joinAtAfter: JOIN_AT_AFTER,
       joinAtBefore: JOIN_AT_BEFORE,
@@ -349,7 +369,7 @@ describe('reapOrphanedCallRecorders', () => {
       ],
     });
 
-    const result = await reapOrphanedCallRecorders({
+    const result = await cancelOrphanedCallRecorders({
       client: buildClient([]),
       joinAtAfter: JOIN_AT_AFTER,
       joinAtBefore: JOIN_AT_BEFORE,
@@ -382,7 +402,7 @@ describe('reapOrphanedCallRecorders', () => {
       errorMessage: 'Recall API responded with HTTP 409',
     });
 
-    const result = await reapOrphanedCallRecorders({
+    const result = await cancelOrphanedCallRecorders({
       client: buildClient([]),
       joinAtAfter: JOIN_AT_AFTER,
       joinAtBefore: JOIN_AT_BEFORE,
@@ -410,7 +430,7 @@ describe('reapOrphanedCallRecorders', () => {
       ],
     });
 
-    const result = await reapOrphanedCallRecorders({
+    const result = await cancelOrphanedCallRecorders({
       client: buildClient([
         {
           id: 'call-recording-1',
@@ -429,14 +449,14 @@ describe('reapOrphanedCallRecorders', () => {
     });
   });
 
-  it('reports nothing reaped when listing Recall bots fails', async () => {
+  it('reports nothing canceled when listing Recall bots fails', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: false,
       status: 500,
       errorMessage: 'Recall API responded with HTTP 500',
     });
 
-    const result = await reapOrphanedCallRecorders({
+    const result = await cancelOrphanedCallRecorders({
       client: buildClient([]),
       joinAtAfter: JOIN_AT_AFTER,
       joinAtBefore: JOIN_AT_BEFORE,
@@ -450,30 +470,21 @@ describe('reapOrphanedCallRecorders', () => {
     expect(cancelRecallBotMock).not.toHaveBeenCalled();
   });
 
-  it('skips reaping when the current workspace cannot be resolved', async () => {
+  it('skips cancellation without listing bots when the current workspace cannot be resolved', async () => {
     getCurrentWorkspaceIdMock.mockReturnValue(undefined);
-    listScheduledRecallBotsMock.mockResolvedValue({
-      ok: true,
-      truncated: false,
-      bots: [
-        buildCurrentWorkspaceBot({
-          id: 'same-workspace-bot',
-          twentyCallRecordingId: 'call-recording-gone',
-        }),
-      ],
-    });
 
-    const result = await reapOrphanedCallRecorders({
+    const result = await cancelOrphanedCallRecorders({
       client: buildClient([]),
       joinAtAfter: JOIN_AT_AFTER,
       joinAtBefore: JOIN_AT_BEFORE,
     });
 
     expect(result).toEqual({
-      scannedBotCount: 1,
+      scannedBotCount: 0,
       canceledExternalBotIds: [],
       truncatedBotList: false,
     });
+    expect(listScheduledRecallBotsMock).not.toHaveBeenCalled();
     expect(cancelRecallBotMock).not.toHaveBeenCalled();
   });
 });

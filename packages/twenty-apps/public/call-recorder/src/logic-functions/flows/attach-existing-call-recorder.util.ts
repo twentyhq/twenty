@@ -7,19 +7,19 @@ import { findScheduledRecallBotIdForCallRecording } from 'src/logic-functions/re
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
-const ADOPTION_JOIN_AT_LOOKBACK_HOURS = 24;
-const ADOPTION_JOIN_AT_LOOKAHEAD_HOURS = 1;
+const ATTACH_JOIN_AT_LOOKBACK_HOURS = 24;
+const ATTACH_JOIN_AT_LOOKAHEAD_HOURS = 1;
 
-export type AdoptScheduledCallRecorderResult =
-  | 'adopted'
+export type AttachExistingCallRecorderResult =
+  | 'attached'
   | 'no-existing-bot'
   | 'lookup-failed';
 
-// A run that POSTed a bot but died before the id write-back leaves the bot claimable by metadata; adopting it instead of re-POSTing prevents duplicate bots.
-export const adoptScheduledCallRecorder = async (
+// A run that POSTed a bot but died before the id write-back leaves the bot claimable by metadata; attaching it instead of re-POSTing prevents duplicate bots.
+export const attachExistingCallRecorder = async (
   client: CoreApiClient,
   { callRecording, calendarEvent }: MeetingRecording,
-): Promise<AdoptScheduledCallRecorderResult> => {
+): Promise<AttachExistingCallRecorderResult> => {
   const workspaceId = getCurrentWorkspaceId();
   const meetingStartsAt = calendarEvent.startsAt;
 
@@ -37,7 +37,7 @@ export const adoptScheduledCallRecorder = async (
     computeRecallBotJoinAt(meetingStartsAt),
   ).getTime();
   const lookbackFloorTime =
-    meetingStartTime - ADOPTION_JOIN_AT_LOOKBACK_HOURS * 60 * 60 * 1000;
+    meetingStartTime - ATTACH_JOIN_AT_LOOKBACK_HOURS * 60 * 60 * 1000;
 
   const findResult = await findScheduledRecallBotIdForCallRecording({
     callRecordingId: callRecording.id,
@@ -46,7 +46,7 @@ export const adoptScheduledCallRecorder = async (
       Math.min(scheduledJoinAtTime, lookbackFloorTime),
     ).toISOString(),
     joinAtBefore: new Date(
-      meetingStartTime + ADOPTION_JOIN_AT_LOOKAHEAD_HOURS * 60 * 60 * 1000,
+      meetingStartTime + ATTACH_JOIN_AT_LOOKAHEAD_HOURS * 60 * 60 * 1000,
     ).toISOString(),
   });
 
@@ -63,5 +63,5 @@ export const adoptScheduledCallRecorder = async (
     data: { externalBotId: findResult.externalBotId },
   });
 
-  return 'adopted';
+  return 'attached';
 };

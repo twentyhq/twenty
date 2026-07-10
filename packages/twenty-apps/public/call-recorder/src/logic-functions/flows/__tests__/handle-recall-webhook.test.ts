@@ -179,7 +179,7 @@ describe('handleRecallWebhook', () => {
     ingestCallRecordingMediaMock.mockReset();
     ingestCallRecordingMediaMock.mockResolvedValue({});
     chargeCompletedCallRecordingMock.mockReset();
-    chargeCompletedCallRecordingMock.mockResolvedValue(undefined);
+    chargeCompletedCallRecordingMock.mockResolvedValue('charged');
     requestArtifactContinuationMock.mockReset();
     requestArtifactContinuationMock.mockResolvedValue(true);
   });

@@ -3,12 +3,12 @@ import { isString, isUndefined } from '@sniptt/guards';
 import { type RecallBotOperationFailure } from 'src/logic-functions/types/recall-bot-operation-result.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
+import { parseRecallBotSnapshot } from 'src/logic-functions/recall-api/parse-recall-bot-snapshot.util';
+import { type RecallBotSnapshot } from 'src/logic-functions/recall-api/recall-bot-snapshot.type';
 import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
 
-export type RecallScheduledBot = {
+export type RecallScheduledBot = RecallBotSnapshot & {
   id: string;
-  metadata: Record<string, unknown>;
-  raw: Record<string, unknown>;
 };
 
 type RecallBotListResponse = {
@@ -89,17 +89,17 @@ const extractRecallBots = (
   return response.results.flatMap((candidate: unknown) => {
     const bot = asRecord(candidate);
 
-    if (isUndefined(bot) || !isString(bot.id)) {
+    if (isUndefined(bot)) {
       return [];
     }
 
-    return [
-      {
-        id: bot.id,
-        metadata: asRecord(bot.metadata) ?? {},
-        raw: bot,
-      },
-    ];
+    const snapshot = parseRecallBotSnapshot(bot);
+
+    if (isUndefined(snapshot.id)) {
+      return [];
+    }
+
+    return [{ ...snapshot, id: snapshot.id }];
   });
 };
 

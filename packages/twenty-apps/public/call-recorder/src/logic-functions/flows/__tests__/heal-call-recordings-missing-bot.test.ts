@@ -164,7 +164,7 @@ describe('healCallRecordingsMissingBot', () => {
     });
 
     expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
-    expect(result.adoptedCallRecordingIds).toEqual([]);
+    expect(result.attachedCallRecordingIds).toEqual([]);
     expect(scheduleRecallBotMock).toHaveBeenCalledTimes(1);
     expect(scheduleRecallBotMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -176,7 +176,7 @@ describe('healCallRecordingsMissingBot', () => {
     expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
   });
 
-  it('adopts an existing bot claiming the recording instead of scheduling a duplicate', async () => {
+  it('attaches an existing bot claiming the recording instead of scheduling a duplicate', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: true,
       bots: [
@@ -186,7 +186,8 @@ describe('healCallRecordingsMissingBot', () => {
             twentyWorkspaceId: WORKSPACE_ID,
             twentyCallRecordingId: 'call-recording-1',
           },
-          raw: {},
+          statusChanges: [],
+          recordings: [],
         },
       ],
     });
@@ -200,7 +201,7 @@ describe('healCallRecordingsMissingBot', () => {
       now: NOW,
     });
 
-    expect(result.adoptedCallRecordingIds).toEqual(['call-recording-1']);
+    expect(result.attachedCallRecordingIds).toEqual(['call-recording-1']);
     expect(result.scheduledCallRecordingIds).toEqual([]);
     expect(listScheduledRecallBotsMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -214,7 +215,7 @@ describe('healCallRecordingsMissingBot', () => {
     expect(client.callRecordings[0].externalBotId).toBe('recall-bot-existing');
   });
 
-  it('widens the adoption lookup window when the join-early offset exceeds the 24h floor', async () => {
+  it('widens the existing-bot lookup window when the join-early offset exceeds the 24h floor', async () => {
     process.env.CALL_RECORDER_JOIN_EARLY_MINUTES = '2880';
 
     try {
@@ -240,7 +241,7 @@ describe('healCallRecordingsMissingBot', () => {
     }
   });
 
-  it('defers scheduling when the adoption lookup fails so no duplicate bot is created', async () => {
+  it('defers scheduling when the existing-bot lookup fails so no duplicate bot is created', async () => {
     listScheduledRecallBotsMock.mockResolvedValue({
       ok: false,
       status: 500,
@@ -256,7 +257,7 @@ describe('healCallRecordingsMissingBot', () => {
       now: NOW,
     });
 
-    expect(result.adoptedCallRecordingIds).toEqual([]);
+    expect(result.attachedCallRecordingIds).toEqual([]);
     expect(result.scheduledCallRecordingIds).toEqual([]);
     expect(scheduleRecallBotMock).not.toHaveBeenCalled();
     expect(client.callRecordings[0].externalBotId).toBeNull();

@@ -138,7 +138,7 @@ describe('processRecallWebhookArtifacts', () => {
     ingestCallRecordingMediaMock.mockReset();
     ingestCallRecordingMediaMock.mockResolvedValue({});
     chargeCompletedCallRecordingMock.mockReset();
-    chargeCompletedCallRecordingMock.mockResolvedValue(undefined);
+    chargeCompletedCallRecordingMock.mockResolvedValue('charged');
   });
 
   it('requests transcript and media artifacts after a recording completion webhook', async () => {
@@ -184,7 +184,14 @@ describe('processRecallWebhookArtifacts', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        recordings: [{ id: 'recall-recording-9' }],
+        statusChanges: [],
+        recordings: [
+          {
+            id: 'recall-recording-9',
+            startedAt: undefined,
+            completedAt: undefined,
+          },
+        ],
       },
     });
     const client = buildClient([
@@ -219,6 +226,7 @@ describe('processRecallWebhookArtifacts', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
+        statusChanges: [],
         recordings: [],
       },
     });

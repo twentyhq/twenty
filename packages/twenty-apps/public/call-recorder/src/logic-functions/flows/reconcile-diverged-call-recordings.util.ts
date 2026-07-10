@@ -16,13 +16,14 @@ import {
   listScheduledRecallBots,
   type RecallScheduledBot,
 } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
+import { type RecallBotSnapshot } from 'src/logic-functions/recall-api/recall-bot-snapshot.type';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import {
   reconcileCallRecording,
   type ReconcilableCallRecording,
 } from 'src/logic-functions/flows/reconcile-call-recording.util';
-import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/flows/converge-diverged-call-recordings-result.type';
+import { type ReconcileDivergedCallRecordingsResult } from 'src/logic-functions/flows/reconcile-diverged-call-recordings-result.type';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
 const CONVERGENCE_LOOKBACK_DAYS = 7;
@@ -64,22 +65,22 @@ type ConvergenceCandidateTriage = {
   skippedNotStartedCallRecordingIds: string[];
 };
 
-type ConvergeActionableCandidateOutcome =
+type ReconcileActionableCandidateOutcome =
   | { outcome: 'reconciled'; updated: boolean; requestedTranscript: boolean }
   | { outcome: 'marked-failed-after-bot-loss' }
   | { outcome: 'unconvergeable-after-bot-loss' }
   | { outcome: 'bot-state-unavailable' };
 
-export const convergeDivergedCallRecordings = async ({
+export const reconcileDivergedCallRecordings = async ({
   client,
   now,
 }: {
   client: CoreApiClient;
   now: Date;
-}): Promise<ConvergeDivergedCallRecordingsResult> => {
+}): Promise<ReconcileDivergedCallRecordingsResult> => {
   const candidates = await fetchDivergedCallRecordingCandidates(client);
   const triage = triageConvergenceCandidates({ candidates, now });
-  const result: ConvergeDivergedCallRecordingsResult = {
+  const result: ReconcileDivergedCallRecordingsResult = {
     candidateCount: candidates.length,
     updatedCallRecordingIds: [],
     markedFailedCallRecordingIds: [],
@@ -120,7 +121,7 @@ export const convergeDivergedCallRecordings = async ({
       remainingPerIdFallbackCount -= 1;
     }
 
-    const candidateOutcome = await convergeActionableCandidate({
+    const candidateOutcome = await reconcileActionableCandidate({
       client,
       candidate,
       listedBot,
@@ -199,7 +200,7 @@ const triageConvergenceCandidates = ({
   return triage;
 };
 
-const convergeActionableCandidate = async ({
+const reconcileActionableCandidate = async ({
   client,
   candidate,
   listedBot,
@@ -207,9 +208,9 @@ const convergeActionableCandidate = async ({
 }: {
   client: CoreApiClient;
   candidate: ActionableCallRecordingCandidate;
-  listedBot: Record<string, unknown> | undefined;
+  listedBot: RecallBotSnapshot | undefined;
   now: Date;
-}): Promise<ConvergeActionableCandidateOutcome> => {
+}): Promise<ReconcileActionableCandidateOutcome> => {
   const botResult = isUndefined(listedBot)
     ? await getRecallBot({ externalBotId: candidate.externalBotId })
     : ({ ok: true, bot: listedBot } as const);
@@ -243,7 +244,7 @@ const markCallRecordingFailedAfterBotLoss = async ({
 }: {
   client: CoreApiClient;
   candidate: ActionableCallRecordingCandidate;
-}): Promise<ConvergeActionableCandidateOutcome> => {
+}): Promise<ReconcileActionableCandidateOutcome> => {
   console.warn(
     `[call-recorder] Recall bot ${candidate.externalBotId} for call recording ${candidate.id} no longer exists; it will not converge automatically`,
   );
@@ -292,7 +293,7 @@ const rotateActionableCandidatesForFallback = ({
 
 const listConvergenceBotsById = async (
   now: Date,
-): Promise<Map<string, Record<string, unknown>> | undefined> => {
+): Promise<Map<string, RecallBotSnapshot> | undefined> => {
   const currentWorkspaceId = getCurrentWorkspaceId();
 
   if (isUndefined(currentWorkspaceId)) {
@@ -322,7 +323,7 @@ const listConvergenceBotsById = async (
       .filter((bot) =>
         isCurrentWorkspaceManagedBot({ bot, currentWorkspaceId }),
       )
-      .map((bot) => [bot.id, bot.raw]),
+      .map((bot) => [bot.id, bot]),
   );
 };
 

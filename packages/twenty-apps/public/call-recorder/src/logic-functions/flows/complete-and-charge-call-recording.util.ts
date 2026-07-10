@@ -1,6 +1,8 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { completeCallRecordingIngestion } from 'src/logic-functions/data/complete-call-recording-ingestion.util';
+import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { chargeCompletedCallRecording } from 'src/logic-functions/flows/charge-completed-call-recording.util';
 
 export const completeAndChargeCallRecording = async (
@@ -17,13 +19,26 @@ export const completeAndChargeCallRecording = async (
 ): Promise<boolean> => {
   const claimed = await completeCallRecordingIngestion(client, { id });
 
-  if (claimed) {
-    await chargeCompletedCallRecording({
-      callRecordingId: id,
-      startedAt,
-      endedAt,
-    });
+  if (!claimed) {
+    return false;
   }
 
-  return claimed;
+  const chargeOutcome = await chargeCompletedCallRecording({
+    callRecordingId: id,
+    startedAt,
+    endedAt,
+  });
+
+  // A definite rejection reopens the claim so the divergence sweep re-completes
+  // and re-charges; ambiguous outcomes stay COMPLETED to never double-charge.
+  if (chargeOutcome === 'rejected') {
+    await updateCallRecording(client, {
+      id,
+      data: { status: CallRecordingStatus.PROCESSING },
+    });
+
+    return false;
+  }
+
+  return true;
 };

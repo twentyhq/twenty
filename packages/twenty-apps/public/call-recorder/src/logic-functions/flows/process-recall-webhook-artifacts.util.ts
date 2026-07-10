@@ -2,6 +2,7 @@ import { isNull, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
+import { type RecallBotSnapshot } from 'src/logic-functions/recall-api/recall-bot-snapshot.type';
 import {
   reconcileCallRecording,
   type ReconcilableCallRecording,
@@ -87,7 +88,7 @@ export const processRecallWebhookArtifacts = async ({
 
 const fetchRecallBotWhenRecordingIdMissing = async (
   callRecording: CallRecordingForArtifactProcessing,
-): Promise<Record<string, unknown> | undefined> => {
+): Promise<RecallBotSnapshot | undefined> => {
   if (!isUndefined(callRecording.externalRecordingId)) {
     return undefined;
   }

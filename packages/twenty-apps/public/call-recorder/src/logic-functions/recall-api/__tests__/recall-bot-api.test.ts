@@ -223,12 +223,10 @@ describe('recall bot api', () => {
         {
           id: 'bot-1',
           metadata: { twentyCallRecordingId: 'recording-1' },
-          raw: {
-            id: 'bot-1',
-            metadata: { twentyCallRecordingId: 'recording-1' },
-          },
+          statusChanges: [],
+          recordings: [],
         },
-        { id: 'bot-2', metadata: {}, raw: { id: 'bot-2' } },
+        { id: 'bot-2', metadata: {}, statusChanges: [], recordings: [] },
       ],
       truncated: false,
     });
@@ -266,7 +264,8 @@ describe('recall bot api', () => {
       bots: Array.from({ length: 10 }, (_, index) => ({
         id: `bot-${index + 1}`,
         metadata: {},
-        raw: { id: `bot-${index + 1}` },
+        statusChanges: [],
+        recordings: [],
       })),
       truncated: true,
     });
@@ -290,7 +289,7 @@ describe('recall bot api', () => {
 
     expect(result).toEqual({
       ok: true,
-      bots: [{ id: 'bot-1', metadata: {}, raw: { id: 'bot-1' } }],
+      bots: [{ id: 'bot-1', metadata: {}, statusChanges: [], recordings: [] }],
       truncated: false,
     });
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -332,7 +331,7 @@ describe('recall bot api', () => {
     );
   });
 
-  it('fetches a single bot and returns the raw response', async () => {
+  it('fetches a single bot and returns its parsed snapshot', async () => {
     const botResponse = {
       id: 'recall-bot-id',
       status_changes: [{ code: 'done' }],
@@ -347,7 +346,21 @@ describe('recall bot api', () => {
 
     const result = await getRecallBot({ externalBotId: 'recall-bot-id' });
 
-    expect(result).toEqual({ ok: true, bot: botResponse });
+    expect(result).toEqual({
+      ok: true,
+      bot: {
+        id: 'recall-bot-id',
+        metadata: {},
+        statusChanges: [{ code: 'done', createdAt: undefined }],
+        recordings: [
+          {
+            id: 'recall-recording-id',
+            startedAt: undefined,
+            completedAt: undefined,
+          },
+        ],
+      },
+    });
     expect(fetchMock).toHaveBeenCalledWith(
       'https://ap-northeast-1.recall.ai/api/v1/bot/recall-bot-id/',
       expect.objectContaining({ method: 'GET' }),
@@ -658,7 +671,12 @@ describe('recall bot api', () => {
 
       expect(await resultPromise).toEqual({
         ok: true,
-        bot: { id: 'recall-bot-id' },
+        bot: {
+          id: 'recall-bot-id',
+          metadata: {},
+          statusChanges: [],
+          recordings: [],
+        },
       });
       expect(fetchMock).toHaveBeenCalledTimes(2);
     });
@@ -681,7 +699,12 @@ describe('recall bot api', () => {
 
       expect(await resultPromise).toEqual({
         ok: true,
-        bot: { id: 'recall-bot-id' },
+        bot: {
+          id: 'recall-bot-id',
+          metadata: {},
+          statusChanges: [],
+          recordings: [],
+        },
       });
       expect(fetchMock).toHaveBeenCalledTimes(2);
     });

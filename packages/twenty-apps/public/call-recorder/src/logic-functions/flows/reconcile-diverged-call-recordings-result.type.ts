@@ -1,4 +1,4 @@
-export type ConvergeDivergedCallRecordingsResult = {
+export type ReconcileDivergedCallRecordingsResult = {
   candidateCount: number;
   updatedCallRecordingIds: string[];
   markedFailedCallRecordingIds: string[];

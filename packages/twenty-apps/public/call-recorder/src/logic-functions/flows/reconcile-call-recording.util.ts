@@ -11,6 +11,7 @@ import {
   extractRecallBotConvergence,
   type RecallBotConvergence,
 } from 'src/logic-functions/recall-api/extract-recall-bot-convergence.util';
+import { type RecallBotSnapshot } from 'src/logic-functions/recall-api/recall-bot-snapshot.type';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 
@@ -43,7 +44,7 @@ export const reconcileCallRecording = async ({
 }: {
   client: CoreApiClient;
   callRecording: ReconcilableCallRecording;
-  bot: Record<string, unknown> | undefined;
+  bot: RecallBotSnapshot | undefined;
   // The webhook continuation fires only on recording-done signals, so doneness
   // need not be re-derived from a bot snapshot it may not have.
   treatRecordingAsDone: boolean;

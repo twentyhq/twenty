@@ -7,16 +7,16 @@ import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or
 import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
-export type FinishFailedRecallCancellationsResult = {
+export type RetryFailedRecallCancellationsResult = {
   canceledExternalBotCallRecordingIds: string[];
 };
 
-// Finishes the Recall half of cancelCallRecordingRequest when its bot cancel failed; the recording keeps its bot id until the bot is confirmed gone.
-export const finishFailedRecallCancellations = async ({
+// Retries the Recall half of cancelCallRecordingRequest when its bot cancel failed; the recording keeps its bot id until the bot is confirmed gone.
+export const retryFailedRecallCancellations = async ({
   client,
 }: {
   client: CoreApiClient;
-}): Promise<FinishFailedRecallCancellationsResult> => {
+}): Promise<RetryFailedRecallCancellationsResult> => {
   const canceledCallRecordingsWithBot = await findCallRecordingsByFilter(
     client,
     {

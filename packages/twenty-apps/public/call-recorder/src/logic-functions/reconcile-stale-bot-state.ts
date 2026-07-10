@@ -4,9 +4,9 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/stale-bot-state-logic-function-universal-identifier';
 import { STALE_BOT_STATE_CRON_PATTERN } from 'src/logic-functions/constants/stale-bot-state-cron-pattern';
 import {
-  finishFailedRecallCancellations,
-  type FinishFailedRecallCancellationsResult,
-} from 'src/logic-functions/flows/finish-failed-recall-cancellations.util';
+  retryFailedRecallCancellations,
+  type RetryFailedRecallCancellationsResult,
+} from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
 import {
   healCallRecordingsMissingBot,
   type HealCallRecordingsMissingBotResult,
@@ -25,7 +25,7 @@ const reconcileStaleBotStateHandler = async (): Promise<object> => {
     now,
   );
   const failedCancellationResult =
-    await finishFailedRecallCancellationsSafely(client);
+    await retryFailedRecallCancellationsSafely(client);
 
   return {
     botlessHealResult,
@@ -44,13 +44,13 @@ const healCallRecordingsMissingBotSafely = async (
   }
 };
 
-const finishFailedRecallCancellationsSafely = async (
+const retryFailedRecallCancellationsSafely = async (
   client: CoreApiClient,
-): Promise<FinishFailedRecallCancellationsResult | StepFailure> => {
+): Promise<RetryFailedRecallCancellationsResult | StepFailure> => {
   try {
-    return await finishFailedRecallCancellations({ client });
+    return await retryFailedRecallCancellations({ client });
   } catch (error) {
-    return buildStepFailure('failed cancellation finishing', error);
+    return buildStepFailure('failed cancellation retry', error);
   }
 };
 
@@ -58,7 +58,7 @@ export default defineLogicFunction({
   universalIdentifier: STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'reconcile-stale-bot-state',
   description:
-    'Finishes failed cancellations and adopts or schedules bots for recordings still missing one, reading only local records unless a recording actually diverged.',
+    'Retries failed cancellations and attaches or schedules bots for recordings still missing one, reading only local records unless a recording actually diverged.',
   timeoutSeconds: 250,
   handler: reconcileStaleBotStateHandler,
   cronTriggerSettings: {

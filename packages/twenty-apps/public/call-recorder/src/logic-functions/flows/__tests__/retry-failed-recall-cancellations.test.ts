@@ -1,7 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { finishFailedRecallCancellations } from 'src/logic-functions/flows/finish-failed-recall-cancellations.util';
+import { retryFailedRecallCancellations } from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
 
 const cancelOrEjectRecallBotMock = vi.hoisted(() => vi.fn());
 
@@ -48,7 +48,7 @@ class FakeCoreApiClient {
   }
 }
 
-describe('finishFailedRecallCancellations', () => {
+describe('retryFailedRecallCancellations', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     cancelOrEjectRecallBotMock.mockReset();
@@ -58,7 +58,7 @@ describe('finishFailedRecallCancellations', () => {
   it('queries only canceled non-terminal recordings that still hold a bot id', async () => {
     const client = new FakeCoreApiClient([]);
 
-    await finishFailedRecallCancellations({
+    await retryFailedRecallCancellations({
       client: client as unknown as CoreApiClient,
     });
 
@@ -84,7 +84,7 @@ describe('finishFailedRecallCancellations', () => {
       },
     ]);
 
-    const result = await finishFailedRecallCancellations({
+    const result = await retryFailedRecallCancellations({
       client: client as unknown as CoreApiClient,
     });
 
@@ -108,7 +108,7 @@ describe('finishFailedRecallCancellations', () => {
       },
     ]);
 
-    const result = await finishFailedRecallCancellations({
+    const result = await retryFailedRecallCancellations({
       client: client as unknown as CoreApiClient,
     });
 
