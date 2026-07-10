@@ -8,11 +8,15 @@ import {
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { v4 as uuidv4 } from 'uuid';
 
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { getWorkflowPrefillIds } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflows.util';
+
 const client = request(`http://localhost:${APP_PORT}`);
 
-// Quick Lead workflow IDs from prefill-workflows.ts
-const QUICK_LEAD_WORKFLOW_ID = '8b213cac-a68b-4ffe-817a-3ec994e9932d';
-const QUICK_LEAD_WORKFLOW_VERSION_ID = 'ac67974f-c524-4288-9d88-af8515400b68';
+const {
+  quickLeadWorkflowId: QUICK_LEAD_WORKFLOW_ID,
+  quickLeadWorkflowVersionId: QUICK_LEAD_WORKFLOW_VERSION_ID,
+} = getWorkflowPrefillIds(SEED_APPLE_WORKSPACE_ID);
 const FORM_STEP_ID = '6e089bc9-aabd-435f-865f-f31c01c8f4a7';
 
 describe('Quick Lead Workflow (e2e)', () => {
