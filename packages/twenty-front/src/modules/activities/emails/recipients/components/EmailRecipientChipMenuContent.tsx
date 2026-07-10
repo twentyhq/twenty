@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconUserPlus } from 'twenty-ui/icon';
@@ -7,7 +6,7 @@ import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
 
 import { type EmailRecipientResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
-import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
+import { getEmailRecipientIdentity } from '@/activities/emails/recipients/utils/getEmailRecipientIdentity';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { MultiItemFieldMenuContent } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuContent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -44,21 +43,7 @@ export const EmailRecipientChipMenuContent = ({
     objectNameSingular: CoreObjectNameSingular.Person,
   });
 
-  const workspaceMember = resolution?.workspaceMember;
-  const person = resolution?.person;
-
-  const workspaceMemberFullName = isDefined(workspaceMember)
-    ? getDisplayNameFromParticipant({
-        participant: { workspaceMember, displayName: '', handle: '' },
-        shouldUseFullName: true,
-      }).trim()
-    : '';
-  const personFullName = isDefined(person)
-    ? getDisplayNameFromParticipant({
-        participant: { person, displayName: '', handle: '' },
-        shouldUseFullName: true,
-      }).trim()
-    : '';
+  const identity = getEmailRecipientIdentity({ recipient, resolution });
 
   const handleAddAsPerson = async () => {
     closeDropdown(dropdownId);
@@ -81,49 +66,30 @@ export const EmailRecipientChipMenuContent = ({
     copyToClipboard(recipient.address, t`Email copied to clipboard`);
   };
 
-  const showAddAsPerson =
-    !isDefined(person) && !isDefined(workspaceMember) && !isInvalid;
+  const showAddAsPerson = identity.kind === 'unknown' && !isInvalid;
 
   return (
     <DropdownContent widthInPixels={280}>
-      {(isDefined(person) || isDefined(workspaceMember) || showAddAsPerson) && (
+      {(identity.kind !== 'unknown' || showAddAsPerson) && (
         <>
           <DropdownMenuItemsContainer>
-            {isDefined(workspaceMember) ? (
+            {identity.kind !== 'unknown' ? (
               <MenuItemAvatar
                 avatar={{
-                  avatarUrl: getAbsoluteImageUrl(workspaceMember.avatarUrl),
-                  placeholder: isNonEmptyString(workspaceMemberFullName)
-                    ? workspaceMemberFullName
-                    : recipient.address,
-                  placeholderColorSeed: workspaceMember.id,
+                  avatarUrl: getAbsoluteImageUrl(
+                    identity.resolvedRecord.avatarUrl,
+                  ),
+                  placeholder: identity.label,
+                  placeholderColorSeed: identity.resolvedRecord.id,
                   size: 'md',
                   type: 'rounded',
                 }}
-                text={
-                  isNonEmptyString(workspaceMemberFullName)
-                    ? workspaceMemberFullName
+                text={identity.label}
+                contextualText={
+                  identity.kind === 'workspaceMember'
+                    ? t`Team member`
                     : recipient.address
                 }
-                contextualText={t`Team member`}
-              />
-            ) : isDefined(person) ? (
-              <MenuItemAvatar
-                avatar={{
-                  avatarUrl: getAbsoluteImageUrl(person.avatarUrl),
-                  placeholder: isNonEmptyString(personFullName)
-                    ? personFullName
-                    : recipient.address,
-                  placeholderColorSeed: person.id,
-                  size: 'md',
-                  type: 'rounded',
-                }}
-                text={
-                  isNonEmptyString(personFullName)
-                    ? personFullName
-                    : recipient.address
-                }
-                contextualText={recipient.address}
               />
             ) : (
               <MenuItem

@@ -1,15 +1,11 @@
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
-import {
-  formatEmailAddressWithDisplayName,
-  isDefined,
-} from 'twenty-shared/utils';
+import { formatEmailAddressWithDisplayName } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 
 import { EmailRecipientChipMenuContent } from '@/activities/emails/recipients/components/EmailRecipientChipMenuContent';
 import { type EmailRecipientResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
-import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
+import { getEmailRecipientIdentity } from '@/activities/emails/recipients/utils/getEmailRecipientIdentity';
 import { BaseChip } from '@/object-record/record-field/ui/form-types/components/BaseChip';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -39,33 +35,14 @@ export const EmailRecipientsFieldChip = ({
 }: EmailRecipientsFieldChipProps) => {
   const { t } = useLingui();
 
-  const workspaceMember = resolution?.workspaceMember;
-  const person = resolution?.person;
-
-  const resolvedFullName = getDisplayNameFromParticipant({
-    participant: {
-      person,
-      workspaceMember,
-      displayName: '',
-      handle: '',
-    },
-    shouldUseFullName: true,
-  }).trim();
-
-  // A resolved record can have an empty name; fall back to the parsed
-  // display name before the raw address
-  const resolvedLabel =
-    [resolvedFullName, recipient.displayName ?? ''].find(isNonEmptyString) ??
-    recipient.address;
+  const identity = getEmailRecipientIdentity({ recipient, resolution });
 
   const avatar =
-    isDefined(person) || isDefined(workspaceMember) ? (
+    identity.kind !== 'unknown' ? (
       <Avatar
-        avatarUrl={getAbsoluteImageUrl(
-          person?.avatarUrl ?? workspaceMember?.avatarUrl,
-        )}
-        placeholder={resolvedLabel}
-        placeholderColorSeed={person?.id ?? workspaceMember?.id}
+        avatarUrl={getAbsoluteImageUrl(identity.resolvedRecord.avatarUrl)}
+        placeholder={identity.label}
+        placeholderColorSeed={identity.resolvedRecord.id}
         size="sm"
         type="rounded"
       />
@@ -78,7 +55,7 @@ export const EmailRecipientsFieldChip = ({
       clickableComponent={
         <BaseChip
           chipId={chipId}
-          label={resolvedLabel}
+          label={identity.label}
           title={
             isInvalid
               ? t`Invalid email address`

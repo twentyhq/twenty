@@ -14,7 +14,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export type EmailRecipientResolution = {
   person?: EmailRecipientPerson;
-  workspaceMember?: PartialWorkspaceMember;
+  workspaceMember?: Pick<PartialWorkspaceMember, 'id' | 'name' | 'avatarUrl'>;
 };
 
 export const useEmailRecipientsResolution = ({

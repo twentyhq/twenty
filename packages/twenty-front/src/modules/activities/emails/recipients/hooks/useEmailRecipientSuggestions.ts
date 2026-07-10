@@ -9,7 +9,6 @@ import { type EmailRecipientPerson } from '@/activities/emails/recipients/types/
 import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { getEmailRecipientPersonFromRecord } from '@/activities/emails/recipients/utils/getEmailRecipientPersonFromRecord';
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
-import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
@@ -35,10 +34,7 @@ type UseEmailRecipientSuggestionsArgs = {
 const getPersonSuggestion = (
   person: EmailRecipientPerson,
 ): EmailRecipientSuggestion => {
-  const fullName = getDisplayNameFromParticipant({
-    participant: { person, displayName: '', handle: '' },
-    shouldUseFullName: true,
-  }).trim();
+  const fullName = `${person.name.firstName} ${person.name.lastName}`.trim();
 
   return {
     suggestionId: `person-${person.id}`,
@@ -56,10 +52,8 @@ const getPersonSuggestion = (
 const getWorkspaceMemberSuggestion = (
   workspaceMember: PartialWorkspaceMember,
 ): EmailRecipientSuggestion => {
-  const fullName = getDisplayNameFromParticipant({
-    participant: { workspaceMember, displayName: '', handle: '' },
-    shouldUseFullName: true,
-  }).trim();
+  const fullName =
+    `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`.trim();
 
   return {
     suggestionId: `workspace-member-${workspaceMember.id}`,
