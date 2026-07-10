@@ -1,0 +1,1 @@
+export const SYNC_STALE_CALL_RECORDINGS_CRON_PATTERN = '*/15 * * * *';

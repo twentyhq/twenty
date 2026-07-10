@@ -2,7 +2,7 @@ import { isNull, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
-import { requestRecallWebhookArtifactContinuation } from 'src/logic-functions/data/request-recall-webhook-artifact-continuation.util';
+import { requestCallRecordingArtifactsImport } from 'src/logic-functions/data/request-call-recording-artifacts-import.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isRecallRecordingDoneSignal } from 'src/logic-functions/domain/is-recall-recording-done-signal.util';
 import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/domain/map-recall-status-code-to-call-recording-status.util';
@@ -60,7 +60,7 @@ export const handleRecallWebhook = async ({
   const { event } = webhookEvent;
 
   if (event === 'transcript.done' || event === 'transcript.failed') {
-    return queueRecallArtifactContinuation({ client, webhookEvent });
+    return queueCallRecordingArtifactsImport({ client, webhookEvent });
   }
 
   return handleRecallStatusEvent({ client, webhookEvent });
@@ -136,7 +136,7 @@ const handleRecallStatusEvent = async ({
       statusCode,
     })
   ) {
-    await requestArtifactContinuationOrThrow({
+    await requestCallRecordingArtifactsImportOrThrow({
       callRecordingId: callRecording.id,
     });
   }
@@ -149,7 +149,7 @@ const handleRecallStatusEvent = async ({
   };
 };
 
-const queueRecallArtifactContinuation = async ({
+const queueCallRecordingArtifactsImport = async ({
   client,
   webhookEvent,
 }: {
@@ -173,7 +173,7 @@ const queueRecallArtifactContinuation = async ({
     };
   }
 
-  await requestArtifactContinuationOrThrow({
+  await requestCallRecordingArtifactsImportOrThrow({
     callRecordingId: callRecording.id,
   });
 
@@ -185,19 +185,19 @@ const queueRecallArtifactContinuation = async ({
 };
 
 // A throw bubbles to a non-2xx so Svix redelivers; the preceding status update re-applies idempotently.
-const requestArtifactContinuationOrThrow = async ({
+const requestCallRecordingArtifactsImportOrThrow = async ({
   callRecordingId,
 }: {
   callRecordingId: string;
 }): Promise<void> => {
-  const continuationRequested = await requestRecallWebhookArtifactContinuation({
+  const importRequested = await requestCallRecordingArtifactsImport({
     callRecordingId,
     requestedAt: new Date().toISOString(),
   });
 
-  if (!continuationRequested) {
+  if (!importRequested) {
     throw new Error(
-      `failed to request Recall artifact continuation for call recording ${callRecordingId}`,
+      `failed to request artifact import for call recording ${callRecordingId}`,
     );
   }
 };

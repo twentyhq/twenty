@@ -1,0 +1,1 @@
+export const CLEANUP_ORPHANED_RECALL_BOTS_CRON_PATTERN = '30 4 * * *';

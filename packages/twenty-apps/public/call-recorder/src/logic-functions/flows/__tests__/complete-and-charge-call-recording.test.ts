@@ -1,15 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const completeCallRecordingIngestionMock = vi.hoisted(() => vi.fn());
+const completeCallRecordingImportMock = vi.hoisted(() => vi.fn());
 const chargeCompletedCallRecordingMock = vi.hoisted(() => vi.fn());
 const updateCallRecordingMock = vi.hoisted(() => vi.fn());
 
-vi.mock(
-  'src/logic-functions/data/complete-call-recording-ingestion.util',
-  () => ({
-    completeCallRecordingIngestion: completeCallRecordingIngestionMock,
-  }),
-);
+vi.mock('src/logic-functions/data/complete-call-recording-import.util', () => ({
+  completeCallRecordingImport: completeCallRecordingImportMock,
+}));
 
 vi.mock(
   'src/logic-functions/flows/charge-completed-call-recording.util',
@@ -31,7 +28,7 @@ describe('completeAndChargeCallRecording', () => {
   });
 
   it('charges exactly once when this path wins the completion claim', async () => {
-    completeCallRecordingIngestionMock.mockResolvedValue(true);
+    completeCallRecordingImportMock.mockResolvedValue(true);
 
     const claimed = await completeAndChargeCallRecording({} as never, {
       id: 'call-recording-1',
@@ -40,7 +37,7 @@ describe('completeAndChargeCallRecording', () => {
     });
 
     expect(claimed).toBe(true);
-    expect(completeCallRecordingIngestionMock).toHaveBeenCalledWith(
+    expect(completeCallRecordingImportMock).toHaveBeenCalledWith(
       {},
       { id: 'call-recording-1' },
     );
@@ -54,7 +51,7 @@ describe('completeAndChargeCallRecording', () => {
   });
 
   it('does not charge when another path already completed the recording', async () => {
-    completeCallRecordingIngestionMock.mockResolvedValue(false);
+    completeCallRecordingImportMock.mockResolvedValue(false);
 
     const claimed = await completeAndChargeCallRecording({} as never, {
       id: 'call-recording-1',
@@ -67,7 +64,7 @@ describe('completeAndChargeCallRecording', () => {
   });
 
   it('reopens the completion claim when the charge is definitely rejected', async () => {
-    completeCallRecordingIngestionMock.mockResolvedValue(true);
+    completeCallRecordingImportMock.mockResolvedValue(true);
     chargeCompletedCallRecordingMock.mockResolvedValue('rejected');
 
     const claimed = await completeAndChargeCallRecording({} as never, {
@@ -87,7 +84,7 @@ describe('completeAndChargeCallRecording', () => {
   });
 
   it('keeps the recording completed when the charge outcome is ambiguous', async () => {
-    completeCallRecordingIngestionMock.mockResolvedValue(true);
+    completeCallRecordingImportMock.mockResolvedValue(true);
     chargeCompletedCallRecordingMock.mockResolvedValue('unknown');
 
     const claimed = await completeAndChargeCallRecording({} as never, {
@@ -101,7 +98,7 @@ describe('completeAndChargeCallRecording', () => {
   });
 
   it('keeps the recording completed when billing is disabled on the instance', async () => {
-    completeCallRecordingIngestionMock.mockResolvedValue(true);
+    completeCallRecordingImportMock.mockResolvedValue(true);
     chargeCompletedCallRecordingMock.mockResolvedValue('billing-disabled');
 
     const claimed = await completeAndChargeCallRecording({} as never, {

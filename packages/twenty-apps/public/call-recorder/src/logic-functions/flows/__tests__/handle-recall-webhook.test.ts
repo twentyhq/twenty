@@ -25,7 +25,7 @@ const getRecallBotMock = vi.hoisted(() => vi.fn());
 const listRecallTranscriptsMock = vi.hoisted(() => vi.fn());
 const createAsyncRecallTranscriptMock = vi.hoisted(() => vi.fn());
 const retrieveRecallTranscriptMock = vi.hoisted(() => vi.fn());
-const ingestCallRecordingMediaMock = vi.hoisted(() => vi.fn());
+const importCallRecordingMediaMock = vi.hoisted(() => vi.fn());
 const chargeCompletedCallRecordingMock = vi.hoisted(() => vi.fn());
 const requestArtifactContinuationMock = vi.hoisted(() => vi.fn());
 
@@ -51,14 +51,14 @@ vi.mock(
   }),
 );
 
-vi.mock('src/logic-functions/flows/ingest-call-recording-media.util', () => ({
-  ingestCallRecordingMedia: ingestCallRecordingMediaMock,
+vi.mock('src/logic-functions/flows/import-call-recording-media.util', () => ({
+  importCallRecordingMedia: importCallRecordingMediaMock,
 }));
 
 vi.mock(
-  'src/logic-functions/data/request-recall-webhook-artifact-continuation.util',
+  'src/logic-functions/data/request-call-recording-artifacts-import.util',
   () => ({
-    requestRecallWebhookArtifactContinuation: requestArtifactContinuationMock,
+    requestCallRecordingArtifactsImport: requestArtifactContinuationMock,
   }),
 );
 
@@ -176,8 +176,8 @@ describe('handleRecallWebhook', () => {
       status: null,
       errorMessage: 'transcript retrieval disabled in test',
     });
-    ingestCallRecordingMediaMock.mockReset();
-    ingestCallRecordingMediaMock.mockResolvedValue({});
+    importCallRecordingMediaMock.mockReset();
+    importCallRecordingMediaMock.mockResolvedValue({});
     chargeCompletedCallRecordingMock.mockReset();
     chargeCompletedCallRecordingMock.mockResolvedValue('charged');
     requestArtifactContinuationMock.mockReset();
@@ -756,7 +756,7 @@ describe('handleRecallWebhook', () => {
     expect(client.mutations).toEqual([]);
   });
 
-  it('queues artifact continuation when the recording first completes', async () => {
+  it('queues artifact import when the recording first completes', async () => {
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
@@ -772,7 +772,7 @@ describe('handleRecallWebhook', () => {
     });
 
     expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
-    expect(ingestCallRecordingMediaMock).not.toHaveBeenCalled();
+    expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
     expect(requestArtifactContinuationMock).toHaveBeenCalledWith({
       callRecordingId: 'call-recording-1',
       requestedAt: expect.any(String),
@@ -789,7 +789,7 @@ describe('handleRecallWebhook', () => {
     ]);
   });
 
-  it('throws when the artifact continuation dispatch fails so Svix redelivers', async () => {
+  it('throws when the artifact import request fails so Svix redelivers', async () => {
     requestArtifactContinuationMock.mockResolvedValue(false);
     const client = new FakeCoreApiClient([
       {
@@ -806,7 +806,7 @@ describe('handleRecallWebhook', () => {
         body: buildRecordingDoneWebhookBody(),
       }),
     ).rejects.toThrow(
-      'failed to request Recall artifact continuation for call recording call-recording-1',
+      'failed to request artifact import for call recording call-recording-1',
     );
   });
 
@@ -892,7 +892,7 @@ describe('handleRecallWebhook', () => {
     ]);
   });
 
-  it('queues media ingestion on recording.done instead of completing inline', async () => {
+  it('queues media import on recording.done instead of completing inline', async () => {
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
@@ -910,7 +910,7 @@ describe('handleRecallWebhook', () => {
       body: buildRecordingDoneWebhookBody(),
     });
 
-    expect(ingestCallRecordingMediaMock).not.toHaveBeenCalled();
+    expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
     expect(client.mutations).toEqual([
       {
         id: 'call-recording-1',
@@ -957,7 +957,7 @@ describe('handleRecallWebhook', () => {
         },
       },
     ]);
-    expect(ingestCallRecordingMediaMock).not.toHaveBeenCalled();
+    expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
     expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
     expect(requestArtifactContinuationMock).toHaveBeenCalledTimes(1);
     expect(result).toEqual({

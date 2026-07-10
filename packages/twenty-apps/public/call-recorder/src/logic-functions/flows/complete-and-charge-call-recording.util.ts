@@ -1,7 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
-import { completeCallRecordingIngestion } from 'src/logic-functions/data/complete-call-recording-ingestion.util';
+import { completeCallRecordingImport } from 'src/logic-functions/data/complete-call-recording-import.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { chargeCompletedCallRecording } from 'src/logic-functions/flows/charge-completed-call-recording.util';
 
@@ -17,7 +17,7 @@ export const completeAndChargeCallRecording = async (
     endedAt: string | undefined;
   },
 ): Promise<boolean> => {
-  const claimed = await completeCallRecordingIngestion(client, { id });
+  const claimed = await completeCallRecordingImport(client, { id });
 
   if (!claimed) {
     return false;
