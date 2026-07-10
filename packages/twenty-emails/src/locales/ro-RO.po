@@ -84,7 +84,6 @@ msgstr "Reactivează spațiul de lucru"
 
 #. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
 msgstr "Validează domeniul"
 

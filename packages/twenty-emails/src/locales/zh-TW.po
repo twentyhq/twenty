@@ -84,7 +84,6 @@ msgstr "重新啟用工作區"
 
 #. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
 msgstr "驗證域"
 
