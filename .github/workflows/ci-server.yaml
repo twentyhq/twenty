@@ -471,20 +471,21 @@ jobs:
         run: npx nx clickhouse:migrate twenty-server
       - name: Run ClickHouse seeds
         run: npx nx clickhouse:seed twenty-server
-      - name: Server / Run Integration Tests
-        uses: ./.github/actions/nx-affected
-        with:
-          tag: scope:backend
-          tasks: 'test:integration'
-          configuration: 'with-db-reset'
-          args: --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
+      - name: Server / Run Integration Tests (debug, direct run without nx affected)
+        run: |
+          set +e
+          NODE_ENV=test NODE_OPTIONS="--max-old-space-size=12288 --import tsx/esm" npx nx database:reset twenty-server > reset-logs.log 2>&1
+          echo "database:reset exit code: $?"
+          cd packages/twenty-server
+          NODE_ENV=test NODE_OPTIONS="--max-old-space-size=8192" npx jest --config ./jest-integration.config.ts --logHeapUsage --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
+          code=$?
+          echo "jest exit code: $code"
+          exit $code
       - name: Debug / Kernel OOM evidence
         if: failure()
         run: |
           echo "=== dmesg oom ==="
           sudo dmesg | grep -iE 'out of memory|oom|killed process' -A 3 -B 3 || true
-          echo "=== dmesg tail ==="
-          sudo dmesg | tail -60 || true
           echo "=== memory ==="
           free -m || true
 
