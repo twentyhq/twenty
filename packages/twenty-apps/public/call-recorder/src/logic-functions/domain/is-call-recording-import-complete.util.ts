@@ -4,7 +4,7 @@ import { type FilesFieldValue } from 'src/logic-functions/types/files-field-valu
 import { parseMediaFileTooLargeMarkers } from 'src/logic-functions/domain/parse-media-file-too-large-markers.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 
-export const isCallRecordingIngestionComplete = ({
+export const isCallRecordingImportComplete = ({
   transcript,
   audio,
   video,

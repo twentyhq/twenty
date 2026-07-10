@@ -1,7 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { healCallRecordingsMissingBot } from 'src/logic-functions/flows/heal-call-recordings-missing-bot.util';
+import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
 
 const scheduleRecallBotMock = vi.hoisted(() => vi.fn());
 const getCurrentWorkspaceIdMock = vi.hoisted(() => vi.fn());
@@ -108,7 +108,7 @@ const buildConnection = <Node>(nodes: Node[]) => ({
   edges: nodes.map((node) => ({ node })),
 });
 
-const buildBotlessCallRecording = (
+const buildPendingCallRecording = (
   overrides: Partial<CallRecordingNode> = {},
 ): CallRecordingNode => ({
   id: 'call-recording-1',
@@ -130,7 +130,7 @@ const buildCalendarEvent = (
   ...overrides,
 });
 
-describe('healCallRecordingsMissingBot', () => {
+describe('scheduleRecallBotsForPendingCallRecordings', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     getCurrentWorkspaceIdMock.mockReset();
@@ -142,13 +142,13 @@ describe('healCallRecordingsMissingBot', () => {
     });
   });
 
-  it('schedules a bot and writes the id for an upcoming botless recording', async () => {
+  it('schedules a bot and writes the id for an upcoming pending recording', async () => {
     const client = new FakeCoreApiClient({
-      callRecordings: [buildBotlessCallRecording()],
+      callRecordings: [buildPendingCallRecording()],
       calendarEvents: [buildCalendarEvent()],
     });
 
-    const result = await healCallRecordingsMissingBot({
+    const result = await scheduleRecallBotsForPendingCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -172,11 +172,11 @@ describe('healCallRecordingsMissingBot', () => {
       errorMessage: 'Recall API responded with HTTP 500',
     });
     const client = new FakeCoreApiClient({
-      callRecordings: [buildBotlessCallRecording()],
+      callRecordings: [buildPendingCallRecording()],
       calendarEvents: [buildCalendarEvent()],
     });
 
-    const result = await healCallRecordingsMissingBot({
+    const result = await scheduleRecallBotsForPendingCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -188,7 +188,7 @@ describe('healCallRecordingsMissingBot', () => {
 
   it('skips a recording whose meeting has already ended', async () => {
     const client = new FakeCoreApiClient({
-      callRecordings: [buildBotlessCallRecording()],
+      callRecordings: [buildPendingCallRecording()],
       calendarEvents: [
         buildCalendarEvent({
           startsAt: PAST_STARTS_AT,
@@ -197,7 +197,7 @@ describe('healCallRecordingsMissingBot', () => {
       ],
     });
 
-    const result = await healCallRecordingsMissingBot({
+    const result = await scheduleRecallBotsForPendingCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
@@ -209,12 +209,12 @@ describe('healCallRecordingsMissingBot', () => {
   it('does nothing when every scheduled recording already has a bot', async () => {
     const client = new FakeCoreApiClient({
       callRecordings: [
-        buildBotlessCallRecording({ externalBotId: 'recall-bot-existing' }),
+        buildPendingCallRecording({ externalBotId: 'recall-bot-existing' }),
       ],
       calendarEvents: [buildCalendarEvent()],
     });
 
-    const result = await healCallRecordingsMissingBot({
+    const result = await scheduleRecallBotsForPendingCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
