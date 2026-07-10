@@ -1,5 +1,5 @@
 import { RecordCalendarCardDraggableContainer } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardDraggableContainer';
-import { RECORD_CALENDAR_VISIBLE_RECORD_LIMIT } from '@/object-record/record-calendar/constants/RecordCalendarVisibleRecordLimit';
+import { RECORD_CALENDAR_MONTH_VISIBLE_RECORD_LIMIT } from '@/object-record/record-calendar/constants/RecordCalendarMonthVisibleRecordLimit';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
@@ -153,7 +153,7 @@ export const RecordCalendarMonthBodyDay = ({
             isDraggedOver={droppableSnapshot.isDraggingOver}
           >
             {recordIds
-              .slice(0, RECORD_CALENDAR_VISIBLE_RECORD_LIMIT)
+              .slice(0, RECORD_CALENDAR_MONTH_VISIBLE_RECORD_LIMIT)
               .map((recordId, index) => (
                 <RecordCalendarCardDraggableContainer
                   key={recordId}

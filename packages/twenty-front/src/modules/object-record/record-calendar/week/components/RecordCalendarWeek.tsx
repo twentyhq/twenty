@@ -1,5 +1,5 @@
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
-import { RECORD_CALENDAR_VISIBLE_RECORD_LIMIT } from '@/object-record/record-calendar/constants/RecordCalendarVisibleRecordLimit';
+import { RECORD_CALENDAR_WEEK_VISIBLE_RECORD_LIMIT } from '@/object-record/record-calendar/constants/RecordCalendarWeekVisibleRecordLimit';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
@@ -267,7 +267,7 @@ const RecordCalendarWeekDayColumn = ({
     calendarFieldType === FieldMetadataType.DATE
       ? []
       : recordIds
-          .slice(0, RECORD_CALENDAR_VISIBLE_RECORD_LIMIT)
+          .slice(0, RECORD_CALENDAR_WEEK_VISIBLE_RECORD_LIMIT)
           .map((recordId) => {
             const record = store.get(
               recordStoreFamilyState.atomFamily(recordId),
