@@ -3,7 +3,7 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
 import { CALL_RECORDING_AUDIO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-audio-field-universal-identifier';
 import { CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-video-field-universal-identifier';
-import { getMaxMediaFileSizeBytes } from 'src/logic-functions/constants/get-max-media-file-size-bytes';
+import { CALL_RECORDER_MAX_MEDIA_FILE_SIZE_BYTES } from 'src/logic-functions/constants/call-recorder-max-media-file-size-bytes';
 import {
   AUDIO_FILE_TOO_LARGE_FAILURE_REASON,
   VIDEO_FILE_TOO_LARGE_FAILURE_REASON,
@@ -65,8 +65,6 @@ export const importCallRecordingMedia = async ({
 
   const mediaUrls = extractRecallMediaUrls(recordingResult.recording);
   const metadataClient = new MetadataApiClient();
-  // TODO: raise this cap via config, monitor streamed uploads in prod, then remove the cap once verified.
-  const maxMediaFileSizeBytes = getMaxMediaFileSizeBytes();
   const updateFields: CallRecordingMediaUpdateFields = {};
   const tooLargeFailureReasons: string[] = [];
 
@@ -78,7 +76,7 @@ export const importCallRecordingMedia = async ({
       fileName: 'video.mp4',
       fieldMetadataUniversalIdentifier:
         CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER,
-      maxMediaFileSizeBytes,
+      maxMediaFileSizeBytes: CALL_RECORDER_MAX_MEDIA_FILE_SIZE_BYTES,
     });
 
     if (video.outcome === 'imported') {
@@ -98,7 +96,7 @@ export const importCallRecordingMedia = async ({
       fileName: 'audio.mp3',
       fieldMetadataUniversalIdentifier:
         CALL_RECORDING_AUDIO_FIELD_UNIVERSAL_IDENTIFIER,
-      maxMediaFileSizeBytes,
+      maxMediaFileSizeBytes: CALL_RECORDER_MAX_MEDIA_FILE_SIZE_BYTES,
     });
 
     if (audio.outcome === 'imported') {
@@ -226,7 +224,11 @@ const openMediaDownload = async ({
     throw new Error('download returned no body');
   }
 
-  return { outcome: 'opened', body: response.body, sizeBytes: contentLengthBytes };
+  return {
+    outcome: 'opened',
+    body: response.body,
+    sizeBytes: contentLengthBytes,
+  };
 };
 
 const uploadMediaStreamToStorage = async ({
@@ -320,7 +322,9 @@ const createFileUploadTarget = async ({
   const uploadTarget = mutationResult.createFileUpload;
 
   if (isUndefined(uploadTarget)) {
-    throw new Error('createFileUpload mutation did not return an upload target');
+    throw new Error(
+      'createFileUpload mutation did not return an upload target',
+    );
   }
 
   return uploadTarget;

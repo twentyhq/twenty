@@ -3,11 +3,12 @@ import { isString, isUndefined } from '@sniptt/guards';
 import { type RecallBotOperationFailure } from 'src/logic-functions/types/recall-bot-operation-result.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
+import { parseRecallBotSnapshot } from 'src/logic-functions/recall-api/parse-recall-bot-snapshot.util';
+import { type RecallBotSnapshot } from 'src/logic-functions/recall-api/recall-bot-snapshot.type';
 import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
 
-export type RecallScheduledBot = {
+export type RecallScheduledBot = RecallBotSnapshot & {
   id: string;
-  metadata: Record<string, unknown>;
 };
 
 type RecallBotListResponse = {
@@ -16,7 +17,7 @@ type RecallBotListResponse = {
 };
 
 type ListScheduledRecallBotsResult =
-  | { ok: true; bots: RecallScheduledBot[] }
+  | { ok: true; bots: RecallScheduledBot[]; truncated: boolean }
   | RecallBotOperationFailure;
 
 const RECALL_BOT_LIST_MAX_PAGES = 10;
@@ -24,9 +25,11 @@ const RECALL_BOT_LIST_MAX_PAGES = 10;
 export const listScheduledRecallBots = async ({
   joinAtAfter,
   joinAtBefore,
+  metadata,
 }: {
   joinAtAfter: string;
   joinAtBefore: string;
+  metadata?: Record<string, string>;
 }): Promise<ListScheduledRecallBotsResult> => {
   const configResult = getRecallApiConfig();
 
@@ -35,9 +38,16 @@ export const listScheduledRecallBots = async ({
   }
 
   const bots: RecallScheduledBot[] = [];
-  let path: string | undefined = `/bot/?join_at_after=${encodeURIComponent(
-    joinAtAfter,
-  )}&join_at_before=${encodeURIComponent(joinAtBefore)}`;
+  const searchParams = new URLSearchParams({
+    join_at_after: joinAtAfter,
+    join_at_before: joinAtBefore,
+  });
+
+  Object.entries(metadata ?? {}).forEach(([key, value]) => {
+    searchParams.set(`metadata__${key}`, value);
+  });
+
+  let path: string | undefined = `/bot/?${searchParams.toString()}`;
 
   for (
     let pageIndex = 0;
@@ -58,15 +68,15 @@ export const listScheduledRecallBots = async ({
     path = extractNextPath(result.data, configResult.config.baseUrl);
   }
 
-  if (!isUndefined(path)) {
-    return {
-      ok: false,
-      status: null,
-      errorMessage: `Recall bot list exceeded ${RECALL_BOT_LIST_MAX_PAGES} pages`,
-    };
+  const truncated = !isUndefined(path);
+
+  if (truncated && process.env.NODE_ENV !== 'test') {
+    console.warn(
+      `[call-recorder] Recall bot list exceeded ${RECALL_BOT_LIST_MAX_PAGES} pages; continuing with ${bots.length} fetched bots`,
+    );
   }
 
-  return { ok: true, bots };
+  return { ok: true, bots, truncated };
 };
 
 const extractRecallBots = (
@@ -79,16 +89,17 @@ const extractRecallBots = (
   return response.results.flatMap((candidate: unknown) => {
     const bot = asRecord(candidate);
 
-    if (isUndefined(bot) || !isString(bot.id)) {
+    if (isUndefined(bot)) {
       return [];
     }
 
-    return [
-      {
-        id: bot.id,
-        metadata: asRecord(bot.metadata) ?? {},
-      },
-    ];
+    const snapshot = parseRecallBotSnapshot(bot);
+
+    if (isUndefined(snapshot.id)) {
+      return [];
+    }
+
+    return [{ ...snapshot, id: snapshot.id }];
   });
 };
 

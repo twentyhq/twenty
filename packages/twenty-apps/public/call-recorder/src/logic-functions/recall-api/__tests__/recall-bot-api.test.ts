@@ -220,9 +220,15 @@ describe('recall bot api', () => {
     expect(result).toEqual({
       ok: true,
       bots: [
-        { id: 'bot-1', metadata: { twentyCallRecordingId: 'recording-1' } },
-        { id: 'bot-2', metadata: {} },
+        {
+          id: 'bot-1',
+          metadata: { twentyCallRecordingId: 'recording-1' },
+          statusChanges: [],
+          recordings: [],
+        },
+        { id: 'bot-2', metadata: {}, statusChanges: [], recordings: [] },
       ],
+      truncated: false,
     });
     expect(fetchMock).toHaveBeenNthCalledWith(
       1,
@@ -236,7 +242,7 @@ describe('recall bot api', () => {
     );
   });
 
-  it('fails the scheduled bot list when the pagination cap would truncate results', async () => {
+  it('flags the result as truncated when the pagination cap leaves more pages', async () => {
     for (let pageIndex = 1; pageIndex <= 10; pageIndex++) {
       fetchMock.mockResolvedValueOnce({
         ok: true,
@@ -254,9 +260,14 @@ describe('recall bot api', () => {
     });
 
     expect(result).toEqual({
-      ok: false,
-      status: null,
-      errorMessage: 'Recall bot list exceeded 10 pages',
+      ok: true,
+      bots: Array.from({ length: 10 }, (_, index) => ({
+        id: `bot-${index + 1}`,
+        metadata: {},
+        statusChanges: [],
+        recordings: [],
+      })),
+      truncated: true,
     });
     expect(fetchMock).toHaveBeenCalledTimes(10);
   });
@@ -278,7 +289,8 @@ describe('recall bot api', () => {
 
     expect(result).toEqual({
       ok: true,
-      bots: [{ id: 'bot-1', metadata: {} }],
+      bots: [{ id: 'bot-1', metadata: {}, statusChanges: [], recordings: [] }],
+      truncated: false,
     });
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
@@ -319,7 +331,7 @@ describe('recall bot api', () => {
     );
   });
 
-  it('fetches a single bot and returns the raw response', async () => {
+  it('fetches a single bot and returns its parsed snapshot', async () => {
     const botResponse = {
       id: 'recall-bot-id',
       status_changes: [{ code: 'done' }],
@@ -334,7 +346,21 @@ describe('recall bot api', () => {
 
     const result = await getRecallBot({ externalBotId: 'recall-bot-id' });
 
-    expect(result).toEqual({ ok: true, bot: botResponse });
+    expect(result).toEqual({
+      ok: true,
+      bot: {
+        id: 'recall-bot-id',
+        metadata: {},
+        statusChanges: [{ code: 'done', createdAt: undefined }],
+        recordings: [
+          {
+            id: 'recall-recording-id',
+            startedAt: undefined,
+            completedAt: undefined,
+          },
+        ],
+      },
+    });
     expect(fetchMock).toHaveBeenCalledWith(
       'https://ap-northeast-1.recall.ai/api/v1/bot/recall-bot-id/',
       expect.objectContaining({ method: 'GET' }),
@@ -645,7 +671,12 @@ describe('recall bot api', () => {
 
       expect(await resultPromise).toEqual({
         ok: true,
-        bot: { id: 'recall-bot-id' },
+        bot: {
+          id: 'recall-bot-id',
+          metadata: {},
+          statusChanges: [],
+          recordings: [],
+        },
       });
       expect(fetchMock).toHaveBeenCalledTimes(2);
     });
@@ -668,7 +699,12 @@ describe('recall bot api', () => {
 
       expect(await resultPromise).toEqual({
         ok: true,
-        bot: { id: 'recall-bot-id' },
+        bot: {
+          id: 'recall-bot-id',
+          metadata: {},
+          statusChanges: [],
+          recordings: [],
+        },
       });
       expect(fetchMock).toHaveBeenCalledTimes(2);
     });
@@ -691,6 +727,46 @@ describe('recall bot api', () => {
           'Recall API responded with HTTP 500: {"detail":"server error"}',
       });
       expect(fetchMock).toHaveBeenCalledTimes(3);
+    });
+
+    it('defers instead of retrying in-process when Retry-After exceeds the invocation budget', async () => {
+      fetchMock.mockResolvedValue({
+        ok: false,
+        status: 429,
+        headers: {
+          get: (headerName: string) =>
+            headerName.toLowerCase() === 'retry-after' ? '120' : null,
+        },
+        json: async () => ({ detail: 'rate limited' }),
+      });
+
+      const result = await getRecallBot({ externalBotId: 'recall-bot-id' });
+
+      expect(result).toEqual({
+        ok: false,
+        status: 429,
+        errorMessage:
+          'Recall API responded with HTTP 429: {"detail":"rate limited"}',
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('defers 507 adhoc pool exhaustion instead of sleeping in-process', async () => {
+      fetchMock.mockResolvedValue({
+        ok: false,
+        status: 507,
+        json: async () => ({ detail: 'adhoc pool exhausted' }),
+      });
+
+      const result = await getRecallBot({ externalBotId: 'recall-bot-id' });
+
+      expect(result).toEqual({
+        ok: false,
+        status: 507,
+        errorMessage:
+          'Recall API responded with HTTP 507: {"detail":"adhoc pool exhausted"}',
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 
     it('does not retry client errors', async () => {

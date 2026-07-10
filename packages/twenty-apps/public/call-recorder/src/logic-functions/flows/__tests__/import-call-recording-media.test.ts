@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-video-field-universal-identifier';
-import { CALL_RECORDER_MAX_MEDIA_FILE_SIZE_MB_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-max-media-file-size-mb-env-var-name';
 import { importCallRecordingMedia } from 'src/logic-functions/flows/import-call-recording-media.util';
 
 const mutationMock = vi.hoisted(() => vi.fn());
@@ -84,21 +83,19 @@ const stubFetch = ({
   downloadsByUrl: Record<string, unknown>;
 }) => {
   fetchMock.mockReset();
-  fetchMock.mockImplementation(
-    (url: string, init?: { method?: string }) => {
-      if (init?.method === 'PUT') {
-        throw new Error('Upload requests should go through the upload bridge');
-      }
+  fetchMock.mockImplementation((url: string, init?: { method?: string }) => {
+    if (init?.method === 'PUT') {
+      throw new Error('Upload requests should go through the upload bridge');
+    }
 
-      const downloadResponse = downloadsByUrl[url];
+    const downloadResponse = downloadsByUrl[url];
 
-      if (downloadResponse === undefined) {
-        throw new Error(`Unhandled fetch url in test: ${url}`);
-      }
+    if (downloadResponse === undefined) {
+      throw new Error(`Unhandled fetch url in test: ${url}`);
+    }
 
-      return Promise.resolve(downloadResponse);
-    },
-  );
+    return Promise.resolve(downloadResponse);
+  });
 
   vi.stubGlobal('fetch', fetchMock);
 };
@@ -175,7 +172,6 @@ describe('importCallRecordingMedia', () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
-    vi.unstubAllEnvs();
   });
 
   it('streams and uploads every missing artifact', async () => {
@@ -381,7 +377,7 @@ describe('importCallRecordingMedia', () => {
     stubFetch({
       downloadsByUrl: {
         [VIDEO_URL]: buildDownloadResponse({
-          contentLengthBytes: 200 * 1024 * 1024,
+          contentLengthBytes: 500 * 1024 * 1024 + 1,
           body: { cancel: cancelMock },
         }),
         [AUDIO_URL]: buildDownloadResponse({ contentLengthBytes: 8 }),
@@ -413,10 +409,10 @@ describe('importCallRecordingMedia', () => {
     stubFetch({
       downloadsByUrl: {
         [VIDEO_URL]: buildDownloadResponse({
-          contentLengthBytes: 200 * 1024 * 1024,
+          contentLengthBytes: 500 * 1024 * 1024 + 1,
         }),
         [AUDIO_URL]: buildDownloadResponse({
-          contentLengthBytes: 120 * 1024 * 1024,
+          contentLengthBytes: 500 * 1024 * 1024 + 1,
         }),
       },
     });
@@ -434,39 +430,11 @@ describe('importCallRecordingMedia', () => {
     expect(mutationMock).not.toHaveBeenCalled();
   });
 
-  it('honors the cap configured through the environment', async () => {
-    vi.stubEnv(CALL_RECORDER_MAX_MEDIA_FILE_SIZE_MB_ENV_VAR_NAME, '1');
+  it('accepts a file at the 500 MB cap', async () => {
     stubFetch({
       downloadsByUrl: {
         [VIDEO_URL]: buildDownloadResponse({
-          contentLengthBytes: 2 * 1024 * 1024,
-        }),
-        [AUDIO_URL]: buildDownloadResponse({ contentLengthBytes: 8 }),
-      },
-    });
-
-    const updateFields = await importCallRecordingMedia({
-      callRecordingId: 'call-recording-1',
-      externalRecordingId: 'recall-recording-1',
-      hasAudio: false,
-      hasVideo: false,
-    });
-
-    expect(updateFields).toEqual({
-      audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-      callRecorderFailureReason: 'video_file_too_large',
-    });
-  });
-
-  it('falls back to the default cap when the configured value is invalid', async () => {
-    vi.stubEnv(
-      CALL_RECORDER_MAX_MEDIA_FILE_SIZE_MB_ENV_VAR_NAME,
-      'not-a-number',
-    );
-    stubFetch({
-      downloadsByUrl: {
-        [VIDEO_URL]: buildDownloadResponse({
-          contentLengthBytes: 2 * 1024 * 1024,
+          contentLengthBytes: 500 * 1024 * 1024,
         }),
       },
     });
