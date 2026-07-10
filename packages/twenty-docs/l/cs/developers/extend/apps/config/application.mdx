@@ -109,10 +109,14 @@ Pokud plánujete [zveřejnit svou aplikaci](/l/cs/developers/extend/apps/operati
 | ------------------ | ------------------------------------------------------------------------------------------------------------- |
 | `author`           | Jméno autora nebo název společnosti                                                                           |
 | `category`         | Kategorie aplikace pro filtrování v tržišti                                                                   |
-| `logoUrl`          | Cesta k logu vaší aplikace (např. `public/logo.png`)                                                          |
-| `screenshots`      | Pole cest ke snímkům obrazovky (např. `public/screenshot-1.png`)                                              |
+| `logo`             | Cesta k logu vaší aplikace v balíčku v `public/` (např. `public/logo.png`)                                    |
+| `galleryImages`    | Pole cest ke snímkům galerie v balíčku v `public/` (např. `public/screenshot-1.png`)                          |
 | `aboutDescription` | Delší popis v Markdownu pro kartu "O aplikaci". Pokud je vynecháno, tržiště použije `README.md` balíčku z npm |
 | `websiteUrl`       | Odkaz na váš web                                                                                              |
 | `termsUrl`         | Odkaz na podmínky služby                                                                                      |
 | `emailSupport`     | E-mailová adresa podpory                                                                                      |
 | `issueReportUrl`   | Odkaz na nástroj pro sledování problémů                                                                       |
+
+<Note>
+`logoUrl` a `screenshots` jsou zastaralé aliasy `logo` a `galleryImages`. Externí absolutní adresy URL (`http://` nebo `https://`) nejsou pro tato pole podporovány: při sestavení jsou vynechány s varováním. Místo toho přiložte obrázky do složky `public/` vaší aplikace.
+</Note>
