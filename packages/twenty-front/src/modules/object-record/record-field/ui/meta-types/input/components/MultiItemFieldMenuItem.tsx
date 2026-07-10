@@ -1,19 +1,13 @@
-import { t } from '@lingui/core/macro';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import React, { useState } from 'react';
-import {
-  IconBookmark,
-  IconBookmarkPlus,
-  IconCopy,
-  IconPencil,
-  IconTrash,
-} from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { isDefined } from 'twenty-shared/utils';
+import { IconBookmark } from 'twenty-ui/icon';
+
+import { MultiItemFieldMenuContent } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuContent';
 
 type MultiItemFieldMenuItemProps<T> = {
   dropdownId: string;
@@ -43,7 +37,6 @@ export const MultiItemFieldMenuItem = <T,>({
   onCopy,
 }: MultiItemFieldMenuItemProps<T>) => {
   const [isHovered, setIsHovered] = useState(false);
-  const { closeDropdown } = useCloseDropdown();
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
@@ -54,25 +47,9 @@ export const MultiItemFieldMenuItem = <T,>({
     setIsHovered(false);
   };
 
-  const handleDeleteClick = () => {
-    closeDropdown(dropdownId);
+  const handleDelete = () => {
     setIsHovered(false);
     onDelete?.();
-  };
-
-  const handleSetAsPrimaryClick = () => {
-    closeDropdown(dropdownId);
-    onSetAsPrimary?.();
-  };
-
-  const handleEditClick = () => {
-    closeDropdown(dropdownId);
-    onEdit?.();
-  };
-
-  const handleCopyClick = () => {
-    closeDropdown(dropdownId);
-    onCopy?.(value);
   };
 
   return (
@@ -87,31 +64,15 @@ export const MultiItemFieldMenuItem = <T,>({
       dropdownContent={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            {showSetAsPrimaryButton && (
-              <MenuItem
-                LeftIcon={IconBookmarkPlus}
-                text={t`Set as Primary`}
-                onClick={handleSetAsPrimaryClick}
-              />
-            )}
-            <MenuItem
-              LeftIcon={IconPencil}
-              text={t`Edit`}
-              onClick={handleEditClick}
+            <MultiItemFieldMenuContent
+              dropdownId={dropdownId}
+              onEdit={onEdit}
+              onSetAsPrimary={onSetAsPrimary}
+              onDelete={handleDelete}
+              onCopy={isDefined(onCopy) ? () => onCopy(value) : undefined}
+              showSetAsPrimaryButton={showSetAsPrimaryButton}
+              showCopyButton={showCopyButton}
             />
-            <MenuItem
-              accent="danger"
-              LeftIcon={IconTrash}
-              text={t`Delete`}
-              onClick={handleDeleteClick}
-            />
-            {showCopyButton && (
-              <MenuItem
-                LeftIcon={IconCopy}
-                text={t`Copy`}
-                onClick={handleCopyClick}
-              />
-            )}
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

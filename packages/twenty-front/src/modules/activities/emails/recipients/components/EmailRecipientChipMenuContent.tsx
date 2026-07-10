@@ -2,12 +2,14 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCopy, IconPencil, IconTrash, IconUserPlus } from 'twenty-ui/icon';
+import { IconUserPlus } from 'twenty-ui/icon';
 import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
 
 import { type EmailRecipientResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
+import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { MultiItemFieldMenuContent } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuContent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -46,10 +48,16 @@ export const EmailRecipientChipMenuContent = ({
   const person = resolution?.person;
 
   const workspaceMemberFullName = isDefined(workspaceMember)
-    ? `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`.trim()
+    ? getDisplayNameFromParticipant({
+        participant: { workspaceMember, displayName: '', handle: '' },
+        shouldUseFullName: true,
+      }).trim()
     : '';
   const personFullName = isDefined(person)
-    ? `${person.firstName} ${person.lastName}`.trim()
+    ? getDisplayNameFromParticipant({
+        participant: { person, displayName: '', handle: '' },
+        shouldUseFullName: true,
+      }).trim()
     : '';
 
   const handleAddAsPerson = async () => {
@@ -70,18 +78,7 @@ export const EmailRecipientChipMenuContent = ({
   };
 
   const handleCopy = () => {
-    closeDropdown(dropdownId);
     copyToClipboard(recipient.address, t`Email copied to clipboard`);
-  };
-
-  const handleEdit = () => {
-    closeDropdown(dropdownId);
-    onEdit();
-  };
-
-  const handleRemove = () => {
-    closeDropdown(dropdownId);
-    onRemove();
   };
 
   const showAddAsPerson =
@@ -140,17 +137,12 @@ export const EmailRecipientChipMenuContent = ({
         </>
       )}
       <DropdownMenuItemsContainer>
-        <MenuItem
-          LeftIcon={IconCopy}
-          text={t`Copy email`}
-          onClick={handleCopy}
-        />
-        <MenuItem LeftIcon={IconPencil} text={t`Edit`} onClick={handleEdit} />
-        <MenuItem
-          accent="danger"
-          LeftIcon={IconTrash}
-          text={t`Remove`}
-          onClick={handleRemove}
+        <MultiItemFieldMenuContent
+          dropdownId={dropdownId}
+          onEdit={onEdit}
+          onDelete={onRemove}
+          onCopy={handleCopy}
+          showCopyButton
         />
       </DropdownMenuItemsContainer>
     </DropdownContent>

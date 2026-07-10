@@ -3,19 +3,19 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { EMAIL_RECIPIENT_MEMBER_SUGGESTIONS_LIMIT } from '@/activities/emails/recipients/constants/EmailRecipientMemberSuggestionsLimit';
-import { EMAIL_RECIPIENT_PEOPLE_SUGGESTIONS_LIMIT } from '@/activities/emails/recipients/constants/EmailRecipientPeopleSuggestionsLimit';
+import { EMAIL_RECIPIENT_SUGGESTIONS_LIMIT } from '@/activities/emails/recipients/constants/EmailRecipientSuggestionsLimit';
 import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
 import { type EmailRecipientPerson } from '@/activities/emails/recipients/types/EmailRecipientPerson';
 import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { getEmailRecipientPersonFromRecord } from '@/activities/emails/recipients/utils/getEmailRecipientPersonFromRecord';
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
+import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
+import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export type EmailRecipientSuggestion = {
   suggestionId: string;
@@ -32,43 +32,47 @@ type UseEmailRecipientSuggestionsArgs = {
   contextRecord?: EmailComposerContextRecord | null;
 };
 
-const getSuggestion = ({
-  suggestionId,
-  fullName,
-  address,
-  secondaryText,
-  avatarUrl,
-  avatarColorSeed,
-}: {
-  suggestionId: string;
-  fullName: string;
-  address: string;
-  secondaryText: string;
-  avatarUrl: string | null;
-  avatarColorSeed: string;
-}): EmailRecipientSuggestion => ({
-  suggestionId,
-  recipient: {
-    address,
-    displayName: isNonEmptyString(fullName) ? fullName : undefined,
-  },
-  label: isNonEmptyString(fullName) ? fullName : address,
-  secondaryText,
-  avatarUrl,
-  avatarColorSeed,
-});
-
 const getPersonSuggestion = (
   person: EmailRecipientPerson,
-): EmailRecipientSuggestion =>
-  getSuggestion({
+): EmailRecipientSuggestion => {
+  const fullName = getDisplayNameFromParticipant({
+    participant: { person, displayName: '', handle: '' },
+    shouldUseFullName: true,
+  }).trim();
+
+  return {
     suggestionId: `person-${person.id}`,
-    fullName: `${person.firstName} ${person.lastName}`.trim(),
-    address: person.primaryEmail,
-    secondaryText: person.primaryEmail,
-    avatarUrl: person.avatarUrl,
+    recipient: {
+      address: person.emails.primaryEmail,
+      displayName: isNonEmptyString(fullName) ? fullName : undefined,
+    },
+    label: isNonEmptyString(fullName) ? fullName : person.emails.primaryEmail,
+    secondaryText: person.emails.primaryEmail,
+    avatarUrl: person.avatarUrl ?? null,
     avatarColorSeed: person.id,
-  });
+  };
+};
+
+const getWorkspaceMemberSuggestion = (
+  workspaceMember: PartialWorkspaceMember,
+): EmailRecipientSuggestion => {
+  const fullName = getDisplayNameFromParticipant({
+    participant: { workspaceMember, displayName: '', handle: '' },
+    shouldUseFullName: true,
+  }).trim();
+
+  return {
+    suggestionId: `workspace-member-${workspaceMember.id}`,
+    recipient: {
+      address: workspaceMember.userEmail,
+      displayName: isNonEmptyString(fullName) ? fullName : undefined,
+    },
+    label: isNonEmptyString(fullName) ? fullName : workspaceMember.userEmail,
+    secondaryText: `${workspaceMember.userEmail} · ${t`Team member`}`,
+    avatarUrl: workspaceMember.avatarUrl ?? null,
+    avatarColorSeed: workspaceMember.id,
+  };
+};
 
 export const useEmailRecipientSuggestions = ({
   searchInput,
@@ -111,37 +115,39 @@ export const useEmailRecipientSuggestions = ({
     objectNameSingular: CoreObjectNameSingular.Person,
     filter: { companyId: { eq: contextCompanyId ?? '' } },
     recordGqlFields: { id: true, name: true, avatarUrl: true, emails: true },
-    limit: EMAIL_RECIPIENT_PEOPLE_SUGGESTIONS_LIMIT,
+    limit: EMAIL_RECIPIENT_SUGGESTIONS_LIMIT,
     skip: !isDefined(contextCompanyId),
   });
 
   const { searchRecords } = useObjectRecordSearchRecords({
-    objectNameSingulars: [CoreObjectNameSingular.Person],
+    objectNameSingulars: [
+      CoreObjectNameSingular.Person,
+      CoreObjectNameSingular.WorkspaceMember,
+    ],
     searchInput: hasSearchInput ? trimmedSearchInput : undefined,
-    limit: EMAIL_RECIPIENT_PEOPLE_SUGGESTIONS_LIMIT,
+    limit: EMAIL_RECIPIENT_SUGGESTIONS_LIMIT,
   });
 
-  const searchedPersonIds = searchRecords.map(
-    (searchRecord) => searchRecord.recordId,
-  );
+  const searchedPersonIds = searchRecords
+    .filter(
+      (searchRecord) =>
+        searchRecord.objectNameSingular === CoreObjectNameSingular.Person,
+    )
+    .map((searchRecord) => searchRecord.recordId);
 
   const { records: searchedPeopleRecords } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.Person,
     filter: { id: { in: searchedPersonIds } },
     recordGqlFields: { id: true, name: true, avatarUrl: true, emails: true },
-    limit: EMAIL_RECIPIENT_PEOPLE_SUGGESTIONS_LIMIT,
+    limit: EMAIL_RECIPIENT_SUGGESTIONS_LIMIT,
     skip: !hasSearchInput || searchedPersonIds.length === 0,
   });
 
   const excludedKeySet = new Set(excludedRecipientKeys);
 
-  const isSuggestablePerson = (person: EmailRecipientPerson) =>
-    isNonEmptyString(person.primaryEmail) &&
-    !excludedKeySet.has(getEmailRecipientKey(person.primaryEmail));
-
-  const contextPeople = contextPeopleRecords.map(
-    getEmailRecipientPersonFromRecord,
-  );
+  const isSuggestableAddress = (address: string) =>
+    isNonEmptyString(address) &&
+    !excludedKeySet.has(getEmailRecipientKey(address));
 
   const searchedPeopleById = new Map(
     searchedPeopleRecords.map((personRecord) => [
@@ -149,61 +155,58 @@ export const useEmailRecipientSuggestions = ({
       getEmailRecipientPersonFromRecord(personRecord),
     ]),
   );
-  const orderedSearchedPeople = searchedPersonIds
-    .map((personId) => searchedPeopleById.get(personId))
+  const workspaceMembersById = new Map(
+    currentWorkspaceMembers.map((workspaceMember) => [
+      workspaceMember.id,
+      workspaceMember,
+    ]),
+  );
+
+  // Search hits stay in server rank order; each is enriched from the person
+  // hydration query or the cached workspace members
+  const rankedSearchSuggestions = searchRecords
+    .map((searchRecord) => {
+      if (searchRecord.objectNameSingular === CoreObjectNameSingular.Person) {
+        const person = searchedPeopleById.get(searchRecord.recordId);
+
+        return isDefined(person) &&
+          isSuggestableAddress(person.emails.primaryEmail)
+          ? getPersonSuggestion(person)
+          : undefined;
+      }
+
+      const workspaceMember = workspaceMembersById.get(searchRecord.recordId);
+
+      return isDefined(workspaceMember) &&
+        isSuggestableAddress(workspaceMember.userEmail)
+        ? getWorkspaceMemberSuggestion(workspaceMember)
+        : undefined;
+    })
     .filter(isDefined);
 
-  const contextPersonIds = new Set(contextPeople.map((person) => person.id));
+  const contextPeople = contextPeopleRecords.map(
+    getEmailRecipientPersonFromRecord,
+  );
+  const contextPersonSuggestionIds = new Set(
+    contextPeople.map((person) => `person-${person.id}`),
+  );
 
-  const orderedPeople = hasSearchInput
+  const orderedSuggestions = hasSearchInput
     ? [
-        ...orderedSearchedPeople.filter((person) =>
-          contextPersonIds.has(person.id),
+        ...rankedSearchSuggestions.filter((suggestion) =>
+          contextPersonSuggestionIds.has(suggestion.suggestionId),
         ),
-        ...orderedSearchedPeople.filter(
-          (person) => !contextPersonIds.has(person.id),
+        ...rankedSearchSuggestions.filter(
+          (suggestion) =>
+            !contextPersonSuggestionIds.has(suggestion.suggestionId),
         ),
       ]
-    : contextPeople;
-
-  const peopleSuggestions = orderedPeople
-    .filter(isSuggestablePerson)
-    .map(getPersonSuggestion);
-
-  const memberSuggestions: EmailRecipientSuggestion[] = hasSearchInput
-    ? filterBySearchQuery({
-        items: currentWorkspaceMembers.filter(
-          (workspaceMember) =>
-            isNonEmptyString(workspaceMember.userEmail) &&
-            !excludedKeySet.has(
-              getEmailRecipientKey(workspaceMember.userEmail),
-            ),
-        ),
-        searchQuery: trimmedSearchInput,
-        getSearchableValues: (workspaceMember) => [
-          `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`.trim(),
-          workspaceMember.userEmail,
-        ],
-      })
-        .slice(0, EMAIL_RECIPIENT_MEMBER_SUGGESTIONS_LIMIT)
-        .map((workspaceMember) =>
-          getSuggestion({
-            suggestionId: `workspace-member-${workspaceMember.id}`,
-            fullName:
-              `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`.trim(),
-            address: workspaceMember.userEmail,
-            secondaryText: `${workspaceMember.userEmail} · ${t`Team member`}`,
-            avatarUrl: workspaceMember.avatarUrl ?? null,
-            avatarColorSeed: workspaceMember.id,
-          }),
-        )
-    : [];
+    : contextPeople
+        .filter((person) => isSuggestableAddress(person.emails.primaryEmail))
+        .map(getPersonSuggestion);
 
   const seenRecipientKeys = new Set<string>();
-  const dedupedRecordSuggestions = [
-    ...peopleSuggestions,
-    ...memberSuggestions,
-  ].filter((suggestion) => {
+  const dedupedRecordSuggestions = orderedSuggestions.filter((suggestion) => {
     const recipientKey = getEmailRecipientKey(suggestion.recipient.address);
 
     if (seenRecipientKeys.has(recipientKey)) {

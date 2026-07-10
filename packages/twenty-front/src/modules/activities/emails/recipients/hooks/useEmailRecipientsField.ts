@@ -1,9 +1,12 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
+import {
+  formatEmailAddressWithDisplayName,
+  parseEmailAddressList,
+} from 'twenty-shared/utils';
 
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
-import { formatEmailRecipient } from '@/activities/emails/recipients/utils/formatEmailRecipient';
 import { mergeEmailRecipients } from '@/activities/emails/recipients/utils/mergeEmailRecipients';
-import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
 import { toSpliced } from '~/utils/array/toSpliced';
 
 type UseEmailRecipientsFieldArgs = {
@@ -71,7 +74,17 @@ export const useEmailRecipientsField = ({
   };
 
   const commitInput = () => {
-    commitRecipients(parseEmailRecipients(inputValue));
+    const parsedRecipients = parseEmailAddressList(inputValue);
+    const trimmedInput = inputValue.trim();
+
+    // Parsing drops address-less tokens; keep them as invalid chips so typed
+    // text never silently vanishes on commit
+    if (parsedRecipients.length === 0 && isNonEmptyString(trimmedInput)) {
+      commitRecipients([{ address: trimmedInput }]);
+      return;
+    }
+
+    commitRecipients(parsedRecipients);
   };
 
   const addRecipient = (recipient: EmailRecipient) => {
@@ -80,7 +93,7 @@ export const useEmailRecipientsField = ({
 
   const beginEditingChip = (chipIndex: number) => {
     setEditingIndex(chipIndex);
-    setInputValue(formatEmailRecipient(recipients[chipIndex]));
+    setInputValue(formatEmailAddressWithDisplayName(recipients[chipIndex]));
     setSelectedChipIndex(null);
   };
 

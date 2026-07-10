@@ -5,7 +5,7 @@ import { type EmailAttachment } from 'twenty-shared/types';
 import { useSendEmail } from '@/activities/emails/hooks/useSendEmail';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
-import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
+import { parseEmailAddressList } from 'twenty-shared/utils';
 import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/serializeEmailRecipients';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 
@@ -41,13 +41,13 @@ export const useEmailComposerState = ({
     initialConnectedAccountId,
   );
   const [to, setTo] = useState<EmailRecipient[]>(() =>
-    parseEmailRecipients(initialTo),
+    parseEmailAddressList(initialTo),
   );
   const [cc, setCc] = useState<EmailRecipient[]>(() =>
-    parseEmailRecipients(initialCc),
+    parseEmailAddressList(initialCc),
   );
   const [bcc, setBcc] = useState<EmailRecipient[]>(() =>
-    parseEmailRecipients(initialBcc),
+    parseEmailAddressList(initialBcc),
   );
   const [subject, setSubject] = useState(initialSubject);
   const [body, setBody] = useState(initialBody);

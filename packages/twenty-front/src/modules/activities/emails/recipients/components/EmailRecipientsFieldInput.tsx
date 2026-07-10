@@ -12,7 +12,7 @@ import {
   useState,
 } from 'react';
 import { flushSync } from 'react-dom';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, parseEmailAddressList } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -28,7 +28,6 @@ import { type EmailComposerContextRecord } from '@/activities/emails/recipients/
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
 import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
-import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/ui/form-types/constants/FormFieldPlaceholderStyles';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -63,6 +62,10 @@ const StyledRowContainer = styled.div`
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
   width: 100%;
+`;
+
+const StyledChipContainer = styled.div`
+  max-width: 240px;
 `;
 
 const StyledInput = styled.input`
@@ -276,7 +279,7 @@ export const EmailRecipientsFieldInput = ({
     }
 
     const pastedText = event.clipboardData.getData('text/plain');
-    const parsedRecipients = parseEmailRecipients(pastedText);
+    const parsedRecipients = parseEmailAddressList(pastedText);
 
     const shouldCommitAsChips =
       parsedRecipients.length > 1 ||
@@ -506,7 +509,7 @@ export const EmailRecipientsFieldInput = ({
         : null;
 
     return (
-      <div
+      <StyledChipContainer
         key={flashNonce === null ? chipKey : `${chipKey}-flash-${flashNonce}`}
         onMouseDown={(event) => event.preventDefault()}
       >
@@ -521,7 +524,7 @@ export const EmailRecipientsFieldInput = ({
           onEdit={() => handleChipEdit(chipIndex)}
           onRemove={() => handleChipRemove(chipIndex)}
         />
-      </div>
+      </StyledChipContainer>
     );
   });
 

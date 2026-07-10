@@ -65,10 +65,8 @@ const StyledChip = styled.div<{
   }
 `;
 
-const StyledLabel = styled.span<{ maxWidth?: number }>`
+const StyledLabel = styled.span`
   line-height: 140%;
-  max-width: ${({ maxWidth }) =>
-    maxWidth === undefined ? 'none' : `${maxWidth}px`};
   overflow: hidden;
   text-overflow: ellipsis;
 `;
@@ -108,7 +106,6 @@ type BaseChipProps = {
   selected?: boolean;
   isFlashing?: boolean;
   onDoubleClick?: () => void;
-  maxLabelWidth?: number;
   leftIcon?: ReactNode;
 };
 
@@ -122,7 +119,6 @@ export const BaseChip = ({
   selected = false,
   isFlashing = false,
   onDoubleClick,
-  maxLabelWidth,
   leftIcon,
 }: BaseChipProps) => {
   const { theme } = useContext(ThemeContext);
@@ -138,9 +134,7 @@ export const BaseChip = ({
       onDoubleClick={onDoubleClick}
     >
       {leftIcon}
-      <StyledLabel title={title ?? label} maxWidth={maxLabelWidth}>
-        {label}
-      </StyledLabel>
+      <StyledLabel title={title ?? label}>{label}</StyledLabel>
 
       {isDeletable && (
         <StyledDelete

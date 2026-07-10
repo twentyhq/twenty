@@ -2,12 +2,14 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo } from 'react';
 
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
-import { formatEmailRecipient } from '@/activities/emails/recipients/utils/formatEmailRecipient';
+import {
+  formatEmailAddressWithDisplayName,
+  isDefined,
+} from 'twenty-shared/utils';
 import {
   type ReplyContext,
   type ReplyContextReady,
 } from '@/activities/emails/types/ReplyContext';
-import { isDefined } from 'twenty-shared/utils';
 
 export type { ReplyContext, ReplyContextReady };
 
@@ -54,7 +56,7 @@ export const useReplyContext = (
 
     const senderHandle = lastSentMessage.sender?.handle ?? '';
     const replyTo = isNonEmptyString(senderHandle)
-      ? formatEmailRecipient({
+      ? formatEmailAddressWithDisplayName({
           address: senderHandle,
           displayName: lastSentMessage.sender?.displayName,
         })

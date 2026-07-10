@@ -1,17 +1,18 @@
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  formatEmailAddressWithDisplayName,
+  isDefined,
+} from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 
 import { EmailRecipientChipMenuContent } from '@/activities/emails/recipients/components/EmailRecipientChipMenuContent';
 import { type EmailRecipientResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
-import { formatEmailRecipient } from '@/activities/emails/recipients/utils/formatEmailRecipient';
+import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
 import { BaseChip } from '@/object-record/record-field/ui/form-types/components/BaseChip';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-
-const CHIP_MAX_LABEL_WIDTH = 240;
 
 type EmailRecipientsFieldChipProps = {
   chipId: string;
@@ -41,26 +42,28 @@ export const EmailRecipientsFieldChip = ({
   const workspaceMember = resolution?.workspaceMember;
   const person = resolution?.person;
 
-  const workspaceMemberFullName = isDefined(workspaceMember)
-    ? `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`.trim()
-    : '';
-  const personFullName = isDefined(person)
-    ? `${person.firstName} ${person.lastName}`.trim()
-    : '';
+  const displayName = getDisplayNameFromParticipant({
+    participant: {
+      person,
+      workspaceMember,
+      displayName: recipient.displayName ?? '',
+      handle: recipient.address,
+    },
+    shouldUseFullName: true,
+  }).trim();
 
-  const resolvedLabel =
-    [workspaceMemberFullName, personFullName, recipient.displayName ?? ''].find(
-      isNonEmptyString,
-    ) ?? recipient.address;
+  const resolvedLabel = isNonEmptyString(displayName)
+    ? displayName
+    : recipient.address;
 
   const avatar =
-    isDefined(workspaceMember) || isDefined(person) ? (
+    isDefined(person) || isDefined(workspaceMember) ? (
       <Avatar
         avatarUrl={getAbsoluteImageUrl(
-          workspaceMember?.avatarUrl ?? person?.avatarUrl,
+          person?.avatarUrl ?? workspaceMember?.avatarUrl,
         )}
         placeholder={resolvedLabel}
-        placeholderColorSeed={workspaceMember?.id ?? person?.id}
+        placeholderColorSeed={person?.id ?? workspaceMember?.id}
         size="sm"
         type="rounded"
       />
@@ -77,14 +80,13 @@ export const EmailRecipientsFieldChip = ({
           title={
             isInvalid
               ? t`Invalid email address`
-              : formatEmailRecipient(recipient)
+              : formatEmailAddressWithDisplayName(recipient)
           }
           leftIcon={avatar}
           danger={isInvalid}
           selected={selected}
           isFlashing={isFlashing}
           onDoubleClick={onEdit}
-          maxLabelWidth={CHIP_MAX_LABEL_WIDTH}
           onRemove={(event) => {
             event.stopPropagation();
             onRemove();

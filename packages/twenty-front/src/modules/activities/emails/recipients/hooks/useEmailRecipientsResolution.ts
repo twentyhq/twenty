@@ -62,7 +62,7 @@ export const useEmailRecipientsResolution = ({
 
   for (const personRecord of matchedPeople) {
     const person = getEmailRecipientPersonFromRecord(personRecord);
-    const personKey = getEmailRecipientKey(person.primaryEmail);
+    const personKey = getEmailRecipientKey(person.emails.primaryEmail);
 
     if (!recipientKeySet.has(personKey)) {
       continue;
