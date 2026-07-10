@@ -8,6 +8,7 @@ import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/rec
 import { getRecordIdFromRecordCalendarCardDraggableId } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardDraggableId';
 
 import { extractRecordPositions } from '@/object-record/record-drag/utils/extractRecordPositions';
+import { getShiftedRecordCalendarDateTime } from '@/object-record/record-drag/utils/getShiftedRecordCalendarDateTime';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { computeNewPositionOfDraggedRecord } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
@@ -179,62 +180,36 @@ export const useProcessCalendarCardDrop = () => {
           },
         });
       } else if (calendarFieldMetadata.type === FieldMetadataType.DATE_TIME) {
-        const newDate = isDefined(currentFieldValue)
-          ? Temporal.Instant.from(currentFieldValue)
-              .toZonedDateTimeISO(userTimezone)
-              .with({
-                day: destinationPlainDate.day,
-                month: destinationPlainDate.month,
-                year: destinationPlainDate.year,
-              })
-          : Temporal.PlainDate.from(destinationPlainDate).toZonedDateTime(
-              userTimezone,
-            );
-        const newStartInstant = newDate.toInstant();
+        let shiftedDateTime = null;
 
-        let shiftedEndDateTime: string | undefined;
-
-        if (
-          calendarEndFieldMetadata?.type === FieldMetadataType.DATE_TIME &&
-          isDefined(currentFieldValue)
-        ) {
-          const currentEndFieldValue = record[calendarEndFieldMetadata.name] as
-            | string
-            | undefined;
-
-          if (isDefined(currentEndFieldValue)) {
-            try {
-              const currentStartInstant =
-                Temporal.Instant.from(currentFieldValue);
-              const currentEndInstant =
-                Temporal.Instant.from(currentEndFieldValue);
-
-              if (
-                Temporal.Instant.compare(
-                  currentEndInstant,
-                  currentStartInstant,
-                ) > 0
-              ) {
-                shiftedEndDateTime = Temporal.Instant.fromEpochNanoseconds(
-                  newStartInstant.epochNanoseconds +
-                    (currentEndInstant.epochNanoseconds -
-                      currentStartInstant.epochNanoseconds),
-                ).toString();
-              }
-            } catch {
-              shiftedEndDateTime = undefined;
-            }
-          }
+        if (isDefined(currentFieldValue)) {
+          shiftedDateTime = getShiftedRecordCalendarDateTime({
+            sourceDay: sourcePlainDate,
+            destinationDay: destinationPlainDate,
+            startDateTime: currentFieldValue,
+            endDateTime:
+              calendarEndFieldMetadata?.type === FieldMetadataType.DATE_TIME
+                ? record[calendarEndFieldMetadata.name]
+                : undefined,
+            timeZone: userTimezone,
+          });
         }
+
+        const shiftedStartDateTime =
+          shiftedDateTime?.startDateTime ??
+          destinationPlainDate
+            .toZonedDateTime({ timeZone: userTimezone })
+            .toInstant()
+            .toString();
 
         await updateOneRecord({
           objectNameSingular: objectMetadataItem.nameSingular,
           idToUpdate: recordId,
           updateOneRecordInput: {
-            [calendarFieldMetadata.name]: newStartInstant.toString(),
+            [calendarFieldMetadata.name]: shiftedStartDateTime,
             ...(isDefined(calendarEndFieldMetadata) &&
-              isDefined(shiftedEndDateTime) && {
-                [calendarEndFieldMetadata.name]: shiftedEndDateTime,
+              isDefined(shiftedDateTime?.endDateTime) && {
+                [calendarEndFieldMetadata.name]: shiftedDateTime.endDateTime,
               }),
             position: newPosition,
           },

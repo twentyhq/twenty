@@ -2,17 +2,10 @@ import { styled } from '@linaria/react';
 import { Draggable } from '@hello-pangea/dnd';
 
 import { getCssCompatibleDraggableProps } from '@/ui/layout/draggable-list/utils/getCssCompatibleDraggableProps';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
-import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
-import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RecordCalendarCard } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCard';
+import { useIsRecordCalendarCardDragDisabled } from '@/object-record/record-calendar/record-calendar-card/hooks/useIsRecordCalendarCardDragDisabled';
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
 import { getRecordCalendarCardDraggableId } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardDraggableId';
-import { recordIndexCalendarEndFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdState';
-import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isDefined } from 'twenty-shared/utils';
 
 const StyledDraggableContainer = styled.div`
   position: relative;
@@ -30,61 +23,7 @@ export const RecordCalendarCardDraggableContainer = ({
   recordId: string;
   index: number;
 }) => {
-  const { objectMetadataItem } = useRecordCalendarContextOrThrow();
-
-  const recordIsReadOnly = useIsRecordReadOnly({
-    recordId,
-    objectMetadataId: objectMetadataItem.id,
-  });
-
-  const objectPermissions = useObjectPermissionsForObject(
-    objectMetadataItem.id,
-  );
-
-  const recordIndexCalendarFieldMetadataId = useAtomStateValue(
-    recordIndexCalendarFieldMetadataIdState,
-  );
-  const recordIndexCalendarEndFieldMetadataId = useAtomStateValue(
-    recordIndexCalendarEndFieldMetadataIdState,
-  );
-
-  const calendarFieldMetadataItem = objectMetadataItem.fields.find(
-    (field) => field.id === recordIndexCalendarFieldMetadataId,
-  );
-  const calendarEndFieldMetadataItem = objectMetadataItem.fields.find(
-    (field) => field.id === recordIndexCalendarEndFieldMetadataId,
-  );
-
-  const calendarFieldMetadataItemIsUIReadOnly =
-    calendarFieldMetadataItem?.isUIEditable === false;
-
-  const calendarFieldMetadataItemIsRestrictedForUpdate = isDefined(
-    calendarFieldMetadataItem,
-  )
-    ? isFieldMetadataReadOnlyByPermissions({
-        objectPermissions,
-        fieldMetadataId: calendarFieldMetadataItem.id,
-      })
-    : false;
-
-  const calendarFieldMetadataItemIsReadOnly =
-    calendarFieldMetadataItemIsUIReadOnly ||
-    calendarFieldMetadataItemIsRestrictedForUpdate;
-
-  const calendarEndFieldMetadataItemIsReadOnly = isDefined(
-    calendarEndFieldMetadataItem,
-  )
-    ? calendarEndFieldMetadataItem.isUIEditable === false ||
-      isFieldMetadataReadOnlyByPermissions({
-        objectPermissions,
-        fieldMetadataId: calendarEndFieldMetadataItem.id,
-      })
-    : false;
-
-  const dragIsDisabled =
-    recordIsReadOnly ||
-    calendarFieldMetadataItemIsReadOnly ||
-    calendarEndFieldMetadataItemIsReadOnly;
+  const dragIsDisabled = useIsRecordCalendarCardDragDisabled(recordId);
 
   const draggableId = getRecordCalendarCardDraggableId({
     calendarDay,

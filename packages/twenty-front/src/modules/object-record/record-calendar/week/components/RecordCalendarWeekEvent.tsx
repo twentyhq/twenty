@@ -1,6 +1,9 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
+import { useIsRecordCalendarCardDragDisabled } from '@/object-record/record-calendar/record-calendar-card/hooks/useIsRecordCalendarCardDragDisabled';
+import { getRecordCalendarCardDraggableId } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardDraggableId';
 import { RECORD_CALENDAR_WEEK_DIMENSIONS } from '@/object-record/record-calendar/week/constants/RecordCalendarWeekDimensions';
+import { type RecordCalendarWeekDndData } from '@/object-record/record-calendar/week/types/RecordCalendarWeekDndData';
 import { formatRecordCalendarWeekEventTimeRange } from '@/object-record/record-calendar/week/utils/formatRecordCalendarWeekEventTimeRange';
 import { getRecordCalendarWeekTimedEventHeight } from '@/object-record/record-calendar/week/utils/getRecordCalendarWeekTimedEventMetrics';
 import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardClickOutsideId';
@@ -11,11 +14,13 @@ import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/u
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useDraggable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/data-display';
 import { Checkbox, CheckboxVariant } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type Temporal } from 'temporal-polyfill';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const RECORD_CALENDAR_WEEK_EVENT_HORIZONTAL_INSET = 4;
@@ -141,6 +146,7 @@ const StyledEventTime = styled.span<{ isToday: boolean }>`
 `;
 
 type RecordCalendarWeekEventProps = {
+  calendarDay: Temporal.PlainDate;
   calendarEndFieldName?: string;
   calendarFieldName: string;
   calendarFieldType: FieldMetadataType;
@@ -156,6 +162,7 @@ type RecordCalendarWeekEventProps = {
 };
 
 export const RecordCalendarWeekEvent = ({
+  calendarDay,
   calendarEndFieldName,
   calendarFieldName,
   calendarFieldType,
@@ -171,6 +178,21 @@ export const RecordCalendarWeekEvent = ({
 }: RecordCalendarWeekEventProps) => {
   const { objectNameSingular } = useRecordCalendarContextOrThrow();
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
+  const dragIsDisabled = useIsRecordCalendarCardDragDisabled(recordId);
+  const draggableId = getRecordCalendarCardDraggableId({
+    calendarDay: calendarDay.toString(),
+    recordId,
+  });
+  const { isDragSource, ref: draggableRef } =
+    useDraggable<RecordCalendarWeekDndData>({
+      id: draggableId,
+      data: {
+        kind: 'record-calendar-week-event',
+        recordId,
+      },
+      disabled: isAllDay || dragIsDisabled,
+      feedback: 'clone',
+    });
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
   const recordDate = recordStore?.[calendarFieldName];
   const recordEndDate = isDefined(calendarEndFieldName)
@@ -208,16 +230,22 @@ export const RecordCalendarWeekEvent = ({
 
   return (
     <StyledEventPositioner
+      ref={draggableRef}
       columnCount={columnCount}
       columnIndex={columnIndex}
       heightInPixels={heightInPixels}
       isAllDay={isAllDay}
       topInPixels={startInPixels}
+      data-selectable-id={recordId}
     >
       <RecordCard
         data-click-outside-id={RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID}
         data-selected={isRecordCalendarCardSelected}
-        onClick={() => openRecordFromIndexView({ recordId })}
+        onClick={() => {
+          if (!isDragSource) {
+            openRecordFromIndexView({ recordId });
+          }
+        }}
       >
         <StyledEventContent isAllDay={isAllDay}>
           <StyledEventHeader>
