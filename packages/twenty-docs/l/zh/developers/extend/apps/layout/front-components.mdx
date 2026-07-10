@@ -4,7 +4,7 @@ description: 构建可在 Twenty 的 UI 中渲染并具备沙盒隔离的 React 
 icon: window-maximize
 ---
 
-前端组件是直接在 Twenty 的 UI 内渲染的 React 组件。 它们在使用 Remote DOM 的**隔离 Web Worker**中运行——你的代码在沙盒中执行，但会原生渲染到页面中，而非在 iframe 里。
+前端组件是直接在 Twenty 的 UI 内渲染的 React 组件。 它们在使用 Remote DOM 的**隔离 Web Worker**中运行——你的代码在沙盒化的、不透明来源的 iframe 中执行，但其 UI 仍然原生渲染在页面中，而不是被限制在该 iframe 内。
 
 ## 前端组件可用位置
 
@@ -196,7 +196,7 @@ export default defineFrontComponent({
 
 ## 调用逻辑函数
 
-前端组件在沙盒 Web Worker 中于浏览器端运行，而[逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)在服务器端运行。 二者之间没有直接的进程内调用——前端组件通过 HTTP 访问逻辑函数。
+前端组件在浏览器端的 Web Worker 中运行，该 Web Worker 被沙盒化在不透明来源的 iframe 中，而[逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)在服务器端运行。 二者之间没有直接的进程内调用——前端组件通过 HTTP 访问逻辑函数。
 
 使用 `httpRouteTriggerSettings` 声明的逻辑函数，可以通过其路由路径在 HTTP 上进行访问。 Twenty 会将提供你函数服务的基础 URL 作为 `TWENTY_FUNCTIONS_URL` 注入到 worker 中，同时注入用于对调用进行身份验证的 `TWENTY_APP_ACCESS_TOKEN`。 目前还没有用于调用你自定义函数的专用 SDK 客户端，因此请使用普通的 `fetch` 来调用它们：
 

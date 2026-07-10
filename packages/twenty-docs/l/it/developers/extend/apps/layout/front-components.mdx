@@ -4,7 +4,7 @@ description: Crea componenti React che vengono renderizzati all'interno della UI
 icon: window-maximize
 ---
 
-I componenti front-end sono componenti React che vengono renderizzati direttamente all'interno della UI di Twenty. Vengono eseguiti in un **Web Worker** isolato utilizzando Remote DOM — il tuo codice è in sandbox ma viene renderizzato in modo nativo nella pagina, non in un iframe.
+I componenti front-end sono componenti React che vengono renderizzati direttamente all'interno della UI di Twenty. Vengono eseguiti in un **Web Worker isolato** utilizzando Remote DOM — il tuo codice viene eseguito all'interno di un iframe con origine opaca e in sandbox, ma la sua interfaccia utente continua a essere renderizzata in modo nativo nella pagina invece di essere confinata in quell'iframe.
 
 ## Dove possono essere utilizzati i componenti front-end
 
@@ -196,7 +196,7 @@ export default defineFrontComponent({
 
 ## Chiamare una funzione logica
 
-I componenti front vengono eseguiti lato browser in un Web Worker in sandbox, mentre le [funzioni logiche](/l/it/developers/extend/apps/logic/logic-functions) vengono eseguite lato server. Non esiste una chiamata diretta in-process tra i due; invece, un front component chiama una funzione logica tramite HTTP.
+I componenti front vengono eseguiti lato browser in un Web Worker in sandbox all'interno di un iframe con origine opaca, mentre le [funzioni logiche](/l/it/developers/extend/apps/logic/logic-functions) vengono eseguite lato server. Non esiste una chiamata diretta in-process tra i due; invece, un front component chiama una funzione logica tramite HTTP.
 
 Una funzione logica dichiarata con `httpRouteTriggerSettings` è raggiungibile tramite HTTP al relativo percorso della route. Twenty inietta nel worker l'URL di base da cui vengono servite le tue funzioni come `TWENTY_FUNCTIONS_URL`, insieme al `TWENTY_APP_ACCESS_TOKEN` che autentica la chiamata. Non esiste ancora un client SDK dedicato per invocare le proprie funzioni, quindi chiamale con un semplice `fetch`:
 

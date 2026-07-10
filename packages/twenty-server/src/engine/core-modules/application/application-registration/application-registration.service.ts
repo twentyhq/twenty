@@ -68,6 +68,7 @@ const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegist
     'emailSupport',
     'issueReportUrl',
     'screenshots',
+    'galleryImages',
     'createdAt',
     'updatedAt',
   ];

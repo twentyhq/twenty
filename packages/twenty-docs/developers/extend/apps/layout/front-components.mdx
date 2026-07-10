@@ -4,7 +4,7 @@ description: Build React components that render inside Twenty's UI with sandboxe
 icon: "window-maximize"
 ---
 
-Front components are React components that render directly inside Twenty's UI. They run in an **isolated Web Worker** using Remote DOM — your code is sandboxed but renders natively in the page, not in an iframe.
+Front components are React components that render directly inside Twenty's UI. They run in an **isolated Web Worker** using Remote DOM — your code executes inside a sandboxed, opaque-origin iframe, yet its UI still renders natively in the page rather than being confined to that iframe.
 
 ## Where front components can be used
 
@@ -196,7 +196,7 @@ export default defineFrontComponent({
 
 ## Calling a logic function
 
-Front components run browser-side in a sandboxed Web Worker, while [logic functions](/developers/extend/apps/logic/logic-functions) run server-side. There is no direct in-process call between the two — instead, a front component reaches a logic function over HTTP.
+Front components run browser-side in a Web Worker sandboxed inside an opaque-origin iframe, while [logic functions](/developers/extend/apps/logic/logic-functions) run server-side. There is no direct in-process call between the two — instead, a front component reaches a logic function over HTTP.
 
 A logic function declared with `httpRouteTriggerSettings` is reachable over HTTP at its route path. Twenty injects the base URL your functions are served from into the worker as `TWENTY_FUNCTIONS_URL`, together with the `TWENTY_APP_ACCESS_TOKEN` that authenticates the call. There is no dedicated SDK client for invoking your own functions yet, so call them with a plain `fetch`:
 

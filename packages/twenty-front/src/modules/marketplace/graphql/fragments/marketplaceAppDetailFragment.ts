@@ -19,7 +19,7 @@ export const MARKETPLACE_APP_DETAIL_FRAGMENT = gql`
     termsUrl
     emailSupport
     issueReportUrl
-    screenshots
+    galleryImages
     defaultRoleUniversalIdentifier
     roles {
       universalIdentifier
