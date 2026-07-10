@@ -1,6 +1,7 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { RECORD_CALENDAR_WEEK_DIMENSIONS } from '@/object-record/record-calendar/week/constants/RecordCalendarWeekDimensions';
+import { getRecordCalendarWeekTimedEventHeight } from '@/object-record/record-calendar/week/utils/getRecordCalendarWeekTimedEventMetrics';
 import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardClickOutsideId';
 import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
@@ -174,12 +175,10 @@ export const RecordCalendarWeekEvent = ({
   const eventTime = !isDateOnly
     ? formatInTimeZone(new Date(recordDate), timeZone, timeFormat)
     : null;
-  const heightInPixels = Math.max(
-    0,
-    endInPixels -
-      startInPixels -
-      RECORD_CALENDAR_WEEK_DIMENSIONS.eventVerticalGap,
-  );
+  const heightInPixels = getRecordCalendarWeekTimedEventHeight({
+    endInPixels,
+    startInPixels,
+  });
 
   return (
     <StyledEventPositioner

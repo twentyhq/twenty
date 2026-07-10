@@ -1,5 +1,8 @@
 import { RECORD_CALENDAR_WEEK_DIMENSIONS } from '@/object-record/record-calendar/week/constants/RecordCalendarWeekDimensions';
-import { getRecordCalendarWeekTimedEventMetrics } from '@/object-record/record-calendar/week/utils/getRecordCalendarWeekTimedEventMetrics';
+import {
+  getRecordCalendarWeekTimedEventHeight,
+  getRecordCalendarWeekTimedEventMetrics,
+} from '@/object-record/record-calendar/week/utils/getRecordCalendarWeekTimedEventMetrics';
 
 const timeZone = 'Europe/Paris';
 
@@ -34,16 +37,19 @@ describe('getRecordCalendarWeekTimedEventMetrics', () => {
   );
 
   it('keeps short events large enough to interact with', () => {
-    expect(
-      getRecordCalendarWeekTimedEventMetrics({
-        startDateTime: '2026-07-06T07:00:00Z',
-        endDateTime: '2026-07-06T07:05:00Z',
-        timeZone,
-      }),
-    ).toEqual({
+    const metrics = getRecordCalendarWeekTimedEventMetrics({
+      startDateTime: '2026-07-06T07:00:00Z',
+      endDateTime: '2026-07-06T07:05:00Z',
+      timeZone,
+    });
+
+    expect(metrics).toEqual({
       startInPixels: 9 * RECORD_CALENDAR_WEEK_DIMENSIONS.hourHeight,
       endInPixels: 9.5 * RECORD_CALENDAR_WEEK_DIMENSIONS.hourHeight,
     });
+    expect(getRecordCalendarWeekTimedEventHeight(metrics!)).toBe(
+      RECORD_CALENDAR_WEEK_DIMENSIONS.minimumEventSlotHeight,
+    );
   });
 
   it('clips an event ending on a later day to the grid boundary', () => {

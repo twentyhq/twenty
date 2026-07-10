@@ -12,6 +12,17 @@ export type RecordCalendarWeekTimedEventMetrics = {
   startInPixels: number;
 };
 
+export const getRecordCalendarWeekTimedEventHeight = ({
+  endInPixels,
+  startInPixels,
+}: RecordCalendarWeekTimedEventMetrics) =>
+  Math.max(
+    RECORD_CALENDAR_WEEK_DIMENSIONS.minimumEventSlotHeight,
+    endInPixels -
+      startInPixels -
+      RECORD_CALENDAR_WEEK_DIMENSIONS.eventVerticalGap,
+  );
+
 const getZonedDateTimeFromValue = (value: unknown, timeZone: string) => {
   if (typeof value !== 'string') {
     return null;
