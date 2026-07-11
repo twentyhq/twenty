@@ -358,6 +358,39 @@ LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 ```
 
+### Logic Functions - HTTP Routes
+
+Functions with an `httpRoute` trigger are served by the API server at `<SERVER_URL>/s/<path>`. Nothing needs to be configured: Twenty injects this base URL into function executions and front components as `TWENTY_FUNCTIONS_URL`.
+
+Because this route shares the origin of your Twenty instance, response headers are restricted to an allow-list (`content-type`, `content-language`, `content-disposition`, `cache-control`, `retry-after`).
+
+### Logic Functions - Isolated Functions Domain (Advanced)
+
+Twenty Cloud serves HTTP-triggered functions from a dedicated cookieless domain (`<workspace>.withtwenty.com`) so functions can return arbitrary headers (`Set-Cookie`, `Permissions-Policy`, custom headers). You can opt into the same topology:
+
+1. Pick a dedicated domain that is **not** a subdomain of your Twenty domain (e.g. `myapp-functions.com` for a Twenty at `crm.myapp.com`). A subdomain of your front domain is treated as same-site and keeps the restricted headers.
+2. Point wildcard DNS (`*.myapp-functions.com`) at your reverse proxy and provision a wildcard TLS certificate.
+3. In your reverse proxy, for hosts under that domain, prefix the path with `/s` and forward to the Twenty server, preserving the `Host` header:
+
+```nginx
+server {
+  server_name ~^.+\.myapp-functions\.com$;
+  location / {
+    rewrite ^/(.*)$ /s/$1 break;
+    proxy_set_header Host $host;
+    proxy_pass http://twenty-server:3000;
+  }
+}
+```
+
+4. Set `PUBLIC_DOMAIN_URL=https://myapp-functions.com` and restart the server.
+
+Functions are then served at `https://<workspace-subdomain>.myapp-functions.com/<path>` with all response headers passed through, and `TWENTY_FUNCTIONS_URL` resolves to that origin automatically.
+
+<Warning>
+On the isolated domain, **all request headers, including cookies, are forwarded to function code**, and all response headers are returned as-is. Only use a dedicated domain that never serves your Twenty app or shares cookies with it. If mutually untrusting workspaces share the domain, register it on the [Public Suffix List](https://publicsuffix.org/) before relying on cookies.
+</Warning>
+
 ### Code Interpreter - Available Drivers
 
 | Driver | Environment Variable | Use Case | Security Level |
