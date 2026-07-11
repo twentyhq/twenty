@@ -20,7 +20,11 @@ import {
   IconSettings,
 } from 'twenty-ui/icon';
 import { useQuery } from '@apollo/client/react';
-import { FindOneApplicationDocument } from '~/generated-metadata/graphql';
+import {
+  FindOneApplicationDocument,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsLogicFunctionCodeEditorTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab';
@@ -39,11 +43,17 @@ export const SettingsLogicFunctionDetail = () => {
 
   const resolvedApplicationId = applicationId ?? workspaceCustomApplicationId;
 
+  // findOneApplication is guarded by the APPLICATIONS permission, which users
+  // reaching the workspace-custom route through AI settings may not hold.
+  const hasApplicationsPermission = useHasPermissionFlag(
+    PermissionFlagType.APPLICATIONS,
+  );
+
   const { data, loading: applicationLoading } = useQuery(
     FindOneApplicationDocument,
     {
       variables: { id: resolvedApplicationId ?? '' },
-      skip: !isDefined(resolvedApplicationId),
+      skip: !isDefined(resolvedApplicationId) || !hasApplicationsPermission,
     },
   );
 
