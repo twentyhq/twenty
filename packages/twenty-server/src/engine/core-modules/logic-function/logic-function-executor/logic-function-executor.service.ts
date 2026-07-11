@@ -8,7 +8,7 @@ import {
   DEFAULT_FUNCTIONS_URL_NAME,
 } from 'twenty-shared/application';
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { Not, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -30,7 +30,6 @@ import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/serv
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-env-var';
@@ -52,8 +51,6 @@ import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/ty
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
@@ -91,10 +88,7 @@ export class LogicFunctionExecutorService {
     private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly applicationService: ApplicationService,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(ApplicationRegistrationVariableEntity)
     private readonly applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
   ) {}
@@ -330,10 +324,11 @@ export class LogicFunctionExecutorService {
       });
 
     const baseUrl = cleanServerUrl(this.twentyConfigService.get('SERVER_URL'));
-    const functionsBaseUrl = await this.buildFunctionsBaseUrl({
-      workspaceId,
-      flatApplication,
-    });
+    const functionsBaseUrl =
+      await this.applicationService.buildFunctionsBaseUrl({
+        applicationId: flatApplication.id,
+        workspaceId,
+      });
 
     const serverVariables = await this.buildServerVariableEnvMap(
       flatApplication.applicationRegistrationId,
@@ -352,32 +347,6 @@ export class LogicFunctionExecutorService {
       ...serverVariables,
       ...workspaceVariables,
     };
-  }
-
-  private async buildFunctionsBaseUrl({
-    workspaceId,
-    flatApplication,
-  }: {
-    workspaceId: string;
-    flatApplication: FlatApplication;
-  }): Promise<string> {
-    const workspace = await this.workspaceRepository.findOne({
-      where: { id: workspaceId },
-      select: { subdomain: true },
-    });
-
-    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
-
-    const primaryPublicDomain =
-      await this.applicationService.findPrimaryPublicDomainName({
-        applicationId: flatApplication.id,
-        workspaceId,
-      });
-
-    return this.workspaceDomainsService.buildFunctionsBaseUrl({
-      workspace,
-      primaryPublicDomain,
-    });
   }
 
   private async buildServerVariableEnvMap(

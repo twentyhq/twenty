@@ -7,12 +7,10 @@ import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/e
 import { EventLogLiveModule } from 'src/engine/core-modules/event-logs/live/event-log-live.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -27,12 +25,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
     BillingModule,
     FeatureFlagModule,
-    WorkspaceDomainsModule,
     ApplicationModule,
-    TypeOrmModule.forFeature([
-      ApplicationRegistrationVariableEntity,
-      WorkspaceEntity,
-    ]),
+    TypeOrmModule.forFeature([ApplicationRegistrationVariableEntity]),
   ],
   providers: [LogicFunctionExecutorService],
   exports: [LogicFunctionExecutorService],
