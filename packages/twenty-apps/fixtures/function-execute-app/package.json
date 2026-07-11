@@ -7,7 +7,7 @@
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2"
   },
-  "packageManager": "yarn@4.9.2",
+  "packageManager": "yarn@4.17.1",
   "scripts": {
     "dev": "twenty dev",
     "exec": "twenty dev:fn-exec",

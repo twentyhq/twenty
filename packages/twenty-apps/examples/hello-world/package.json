@@ -7,7 +7,7 @@
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2"
   },
-  "packageManager": "yarn@4.13.0",
+  "packageManager": "yarn@4.17.1",
   "scripts": {
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",
@@ -15,7 +15,6 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
-  "dependencies": {},
   "devDependencies": {
     "@types/node": "^24.7.2",
     "@types/react": "^18.2.0",

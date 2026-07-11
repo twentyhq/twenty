@@ -12,7 +12,7 @@
   "keywords": [
     "twenty-app"
   ],
-  "packageManager": "yarn@4.13.0",
+  "packageManager": "yarn@4.17.1",
   "scripts": {
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",
