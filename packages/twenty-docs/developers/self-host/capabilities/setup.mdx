@@ -364,6 +364,10 @@ Functions with an `httpRoute` trigger are served by the API server at `<SERVER_U
 
 Because this route shares the origin of your Twenty instance, response headers are restricted to an allow-list (`content-type`, `content-language`, `content-disposition`, `cache-control`, `retry-after`).
 
+<Note>
+With `IS_MULTIWORKSPACE_ENABLED=true`, the route is served at `<workspace-subdomain>.<server-host>/s/<path>` because the workspace is resolved from the request host. This requires the API server to be reachable on workspace subdomains of its own hostname (the default when the server and front share a hostname); with a separate API hostname, configure an isolated functions domain instead (below).
+</Note>
+
 ### Logic Functions - Isolated Functions Domain (Advanced)
 
 Twenty Cloud serves HTTP-triggered functions from a dedicated cookieless domain (`<workspace>.withtwenty.com`) so functions can return arbitrary headers (`Set-Cookie`, `Permissions-Policy`, custom headers). You can opt into the same topology:
