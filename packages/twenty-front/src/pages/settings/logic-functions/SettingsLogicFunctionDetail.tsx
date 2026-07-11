@@ -37,8 +37,6 @@ export const SettingsLogicFunctionDetail = () => {
   const workspaceCustomApplicationId =
     currentWorkspace?.workspaceCustomApplication?.id;
 
-  // Functions without an applicationId param belong to the workspace custom
-  // application; its functionsBaseUrl is still needed for the HTTP trigger URL.
   const resolvedApplicationId = applicationId ?? workspaceCustomApplicationId;
 
   const { data, loading: applicationLoading } = useQuery(

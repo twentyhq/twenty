@@ -17,8 +17,7 @@ export class ApplicationResolver {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {}
 
-  // Same URL the executor injects as TWENTY_FUNCTIONS_URL, so the front reads
-  // it instead of re-deriving it.
+  // Must stay identical to the TWENTY_FUNCTIONS_URL the executor injects.
   @ResolveField(() => String)
   async functionsBaseUrl(
     @Parent() application: ApplicationDTO,

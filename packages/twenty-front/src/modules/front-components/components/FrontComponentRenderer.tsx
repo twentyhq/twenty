@@ -70,8 +70,6 @@ export const FrontComponentRenderer = ({
   const applicationTokenPair =
     data?.frontComponent?.applicationTokenPair ?? null;
 
-  // Server-computed so the sandbox gets the same TWENTY_FUNCTIONS_URL the
-  // executor injects into this app's logic functions.
   const functionsBaseUrl = data?.frontComponent?.functionsBaseUrl;
 
   useEffect(() => {

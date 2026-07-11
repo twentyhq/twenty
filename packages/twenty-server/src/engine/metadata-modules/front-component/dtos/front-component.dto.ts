@@ -76,8 +76,6 @@ export class FrontComponentDTO {
   @Field(() => ApplicationTokenPairDTO, { nullable: true })
   applicationTokenPair?: ApplicationTokenPairDTO;
 
-  // Same URL the executor injects as TWENTY_FUNCTIONS_URL; only set on the
-  // single frontComponent query used by the renderer.
   @Field({ nullable: true })
   functionsBaseUrl?: string;
 
