@@ -1,6 +1,5 @@
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
 import { getSdkClientUrls } from '@/front-components/utils/getSdkClientUrls';
-import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
 import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
@@ -29,8 +28,6 @@ export const FrontComponentRenderer = ({
 }: FrontComponentRendererProps) => {
   const { colorScheme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
-
-  const { functionsBaseUrl } = useGetLogicFunctionHttpUrl();
 
   const setFrontComponentApplicationTokenPair = useSetAtomComponentState(
     frontComponentApplicationTokenPairComponentState,
@@ -73,6 +70,10 @@ export const FrontComponentRenderer = ({
   const applicationTokenPair =
     data?.frontComponent?.applicationTokenPair ?? null;
 
+  // Server-computed so the sandbox gets the same TWENTY_FUNCTIONS_URL the
+  // executor injects into this app's logic functions.
+  const functionsBaseUrl = data?.frontComponent?.functionsBaseUrl;
+
   useEffect(() => {
     if (isDefined(applicationTokenPair)) {
       setFrontComponentApplicationTokenPair(applicationTokenPair);
@@ -94,7 +95,8 @@ export const FrontComponentRenderer = ({
   if (
     loading ||
     !isDefined(data?.frontComponent) ||
-    !isDefined(applicationTokenPair)
+    !isDefined(applicationTokenPair) ||
+    !isDefined(functionsBaseUrl)
   ) {
     return null;
   }

@@ -34,6 +34,7 @@ const buildApplication = (variableValue: string): Application => ({
   logo: null,
   version: '1.0.0',
   universalIdentifier: 'test-app',
+  functionsBaseUrl: 'http://localhost:3000/s',
   applicationRegistrationId: null,
   applicationRegistration: null,
   canBeUninstalled: true,

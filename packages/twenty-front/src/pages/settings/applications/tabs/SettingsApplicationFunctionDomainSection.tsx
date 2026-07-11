@@ -2,7 +2,6 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
 import { SettingsPublicDomainsListCard } from '@/settings/domains/components/SettingsPublicDomainsListCard';
-import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { IconCopy } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
@@ -18,12 +17,13 @@ const StyledContent = styled.div`
 
 export const SettingsApplicationFunctionDomainSection = ({
   applicationId,
+  functionsBaseUrl,
 }: {
   applicationId: string;
+  functionsBaseUrl: string;
 }) => {
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
-  const { functionsBaseUrl } = useGetLogicFunctionHttpUrl();
 
   return (
     <Section>

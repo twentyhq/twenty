@@ -91,9 +91,8 @@ const GenerateDocumentForm = () => {
   }, []);
 
   const generate = async () => {
-    // Prefer the injected functions URL; fall back to the legacy /s prefix (self-hosted/local)
-    const functionsBaseUrl =
-      process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL}/s`;
+    // Injected by Twenty: custom domain, Cloud workspace domain, or <server-url>/s
+    const functionsBaseUrl = process.env.TWENTY_FUNCTIONS_URL;
     const token = process.env.TWENTY_APP_ACCESS_TOKEN ?? process.env.TWENTY_API_KEY;
     const res = await fetch(`${functionsBaseUrl}/documents/generate`, {
       method: 'POST',
@@ -188,8 +187,7 @@ const DocumentViewer = () => {
   const recordId = useFrontComponentExecutionContext((c) => c.recordId ?? null);
   // ...load { content, file } for recordId, then derive the links:
   const pdfUrl = document.file?.[0]?.url;
-  const functionsBaseUrl =
-    process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL ?? ''}/s`;
+  const functionsBaseUrl = process.env.TWENTY_FUNCTIONS_URL;
   const webUrl = `${functionsBaseUrl}/documents/view?id=${recordId}`;
 
   // Render the template body, plus quick links to the web page and the PDF.

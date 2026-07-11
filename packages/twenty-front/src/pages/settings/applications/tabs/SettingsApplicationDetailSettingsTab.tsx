@@ -15,6 +15,7 @@ export const SettingsApplicationDetailSettingsTab = ({
     | 'universalIdentifier'
     | 'canBeUninstalled'
     | 'logicFunctions'
+    | 'functionsBaseUrl'
   >;
 }) => {
   const { updateOneApplicationVariable } = useUpdateOneApplicationVariable();
@@ -31,6 +32,7 @@ export const SettingsApplicationDetailSettingsTab = ({
       {hasHttpTriggeredFunctions && application?.id && (
         <SettingsApplicationFunctionDomainSection
           applicationId={application.id}
+          functionsBaseUrl={application.functionsBaseUrl}
         />
       )}
       {application?.id && (

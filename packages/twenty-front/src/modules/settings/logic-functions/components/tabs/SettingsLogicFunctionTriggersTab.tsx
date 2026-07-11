@@ -30,6 +30,7 @@ export const SettingsLogicFunctionTriggersTab = ({
   onChange,
   readonly = false,
   applicationName,
+  functionsBaseUrl,
 }: {
   formValues: LogicFunctionFormValues;
   onChange: <TKey extends keyof LogicFunctionFormValues>(
@@ -37,6 +38,7 @@ export const SettingsLogicFunctionTriggersTab = ({
   ) => (value: LogicFunctionFormValues[TKey]) => void;
   readonly?: boolean;
   applicationName?: string;
+  functionsBaseUrl?: string;
 }) => {
   const { t } = useLingui();
 
@@ -70,6 +72,7 @@ export const SettingsLogicFunctionTriggersTab = ({
         value={formValues.httpRouteTriggerSettings}
         onChange={onChange('httpRouteTriggerSettings')}
         readonly={readonly}
+        functionsBaseUrl={functionsBaseUrl}
       />
       <SettingsLogicFunctionCronTriggerSection
         value={formValues.cronTriggerSettings}

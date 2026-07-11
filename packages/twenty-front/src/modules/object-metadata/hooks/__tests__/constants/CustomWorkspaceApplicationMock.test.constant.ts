@@ -9,6 +9,7 @@ export const CUSTOM_WORKSPACE_APPLICATION_MOCK = {
   availablePackages: {},
   canBeUninstalled: false,
   description: 'workpace custom application',
+  functionsBaseUrl: 'http://localhost:3000/s',
   name: 'custom',
   objects: [],
   logicFunctions: [],

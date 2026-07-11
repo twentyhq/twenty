@@ -21,7 +21,7 @@ import {
 } from 'twenty-ui/icon';
 import { Toggle } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
+import { getLogicFunctionHttpUrl } from '@/settings/logic-functions/utils/getLogicFunctionHttpUrl';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const HTTP_METHOD_OPTIONS: Array<{
@@ -63,17 +63,18 @@ type SettingsLogicFunctionHttpTriggerSectionProps = {
   value: HttpRouteTriggerSettings | null;
   onChange: (value: HttpRouteTriggerSettings | null) => void;
   readonly: boolean;
+  functionsBaseUrl?: string;
 };
 
 export const SettingsLogicFunctionHttpTriggerSection = ({
   value,
   onChange,
   readonly,
+  functionsBaseUrl,
 }: SettingsLogicFunctionHttpTriggerSectionProps) => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
   const { copyToClipboard } = useCopyToClipboard();
-  const { getLogicFunctionHttpUrl } = useGetLogicFunctionHttpUrl();
 
   const updateField = <TKey extends keyof HttpRouteTriggerSettings>(
     key: TKey,
@@ -85,7 +86,10 @@ export const SettingsLogicFunctionHttpTriggerSection = ({
     onChange({ ...value, [key]: fieldValue });
   };
 
-  const fullUrl = isDefined(value) ? getLogicFunctionHttpUrl(value.path) : '';
+  const fullUrl =
+    isDefined(value) && isDefined(functionsBaseUrl)
+      ? getLogicFunctionHttpUrl({ functionsBaseUrl, path: value.path })
+      : '';
 
   return (
     <SettingsLogicFunctionTriggerSection

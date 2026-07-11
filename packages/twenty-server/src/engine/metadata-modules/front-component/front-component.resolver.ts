@@ -6,7 +6,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -39,6 +41,8 @@ export class FrontComponentResolver {
     @Inject(ApplicationTokenService)
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationService: ApplicationService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {}
 
   @Query(() => [FrontComponentDTO])
@@ -92,10 +96,24 @@ export class FrontComponentResolver {
       flatApplicationVariables,
     );
 
+    const primaryPublicDomain =
+      await this.applicationService.findPrimaryPublicDomainName({
+        applicationId: dto.applicationId,
+        workspaceId: workspace.id,
+      });
+
+    const functionsBaseUrl = this.workspaceDomainsService.buildFunctionsBaseUrl(
+      {
+        workspace,
+        primaryPublicDomain,
+      },
+    );
+
     return {
       ...dto,
       applicationTokenPair: tokenPair,
       applicationVariables,
+      functionsBaseUrl,
     };
   }
 

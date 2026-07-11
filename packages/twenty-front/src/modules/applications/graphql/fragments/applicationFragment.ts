@@ -14,6 +14,7 @@ export const APPLICATION_FRAGMENT = gql`
     logo
     version
     universalIdentifier
+    functionsBaseUrl
     applicationRegistrationId
     applicationRegistration {
       id
