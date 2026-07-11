@@ -2,11 +2,35 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
+import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+
+type SentryEventExceptionValue = {
+  type?: string;
+};
+
+type SentryEvent = {
+  exception?: {
+    values?: SentryEventExceptionValue[];
+  };
+  fingerprint?: string[];
+  level?: string;
+  tags?: Record<string, string>;
+};
+
+const getExceptionValues = (event: SentryEvent) => {
+  return event.exception?.values ?? [];
+};
+
+const isObjectMetadataItemNotFoundEvent = (event: SentryEvent) => {
+  return getExceptionValues(event).some(
+    (exception) => exception.type === ObjectMetadataItemNotFoundError.name,
+  );
+};
 
 export const SentryInitEffect = () => {
   const sentryConfig = useAtomStateValue(sentryConfigState);
@@ -54,6 +78,19 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
+            beforeSend: (event) => {
+              if (isObjectMetadataItemNotFoundEvent(event)) {
+                event.fingerprint = ['object-metadata', 'item-not-found'];
+                event.level = 'warning';
+                event.tags = {
+                  ...event.tags,
+                  feature: 'object-metadata',
+                  cause: 'item-not-found',
+                };
+              }
+
+              return event;
+            },
           });
 
           setIsSentryInitialized(true);

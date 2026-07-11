@@ -10,6 +10,7 @@ export class ObjectMetadataItemNotFoundError extends Error {
     } elements`;
 
     super(message);
+    this.name = ObjectMetadataItemNotFoundError.name;
 
     Object.setPrototypeOf(this, ObjectMetadataItemNotFoundError.prototype);
   }
