@@ -722,6 +722,9 @@ export default {
             "applicationTokenPair": [
                 33
             ],
+            "functionsBaseUrl": [
+                1
+            ],
             "applicationVariables": [
                 7
             ],
@@ -1303,6 +1306,9 @@ export default {
             ],
             "applicationRegistration": [
                 30
+            ],
+            "functionsBaseUrl": [
+                1
             ],
             "__typename": [
                 1

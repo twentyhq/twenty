@@ -328,6 +328,7 @@ type FrontComponent {
   isHeadless: Boolean!
   usesSdkClient: Boolean!
   applicationTokenPair: ApplicationTokenPair
+  functionsBaseUrl: String
   applicationVariables: JSON
 }
 
@@ -669,6 +670,7 @@ type Application {
   objects: [Object!]!
   applicationVariables: [ApplicationVariable!]!
   applicationRegistration: ApplicationRegistrationSummary
+  functionsBaseUrl: String!
 }
 
 type ViewField {
