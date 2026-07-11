@@ -263,6 +263,26 @@ describe('WorkspaceDomainsService', () => {
 
       expect(result).toBe('http://acme.localhost:3000/base/s');
     });
+
+    it('should drop any query or fragment from SERVER_URL in the same-site route', () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) => {
+          const configValues = {
+            SERVER_URL: 'https://api.example.com/base?utm=1#fragment',
+            IS_MULTIWORKSPACE_ENABLED: false,
+          };
+
+          // @ts-expect-error legacy noImplicitAny
+          return configValues[key];
+        });
+
+      const result = workspaceDomainsService.buildFunctionsBaseUrl({
+        workspace: { subdomain: 'acme' },
+      });
+
+      expect(result).toBe('https://api.example.com/base/s');
+    });
   });
 
   describe('getWorkspaceByOriginOrDefaultWorkspace', () => {

@@ -55,6 +55,26 @@ describe('getFunctionsBaseUrl', () => {
       }),
     ).toBe('http://localhost:3000/s');
   });
+
+  it('should drop any query or fragment from the server base URL', () => {
+    expect(
+      getFunctionsBaseUrl({
+        serverBaseUrl: 'https://api.twenty.com/base?utm=1#fragment',
+        publicFunctionDomain: null,
+        workspaceSubdomain: undefined,
+      }),
+    ).toBe('https://api.twenty.com/base/s');
+  });
+
+  it('should resolve a relative server base URL against the page origin', () => {
+    expect(
+      getFunctionsBaseUrl({
+        serverBaseUrl: '/api',
+        publicFunctionDomain: null,
+        workspaceSubdomain: undefined,
+      }),
+    ).toBe(`${window.location.origin}/api/s`);
+  });
 });
 
 describe('getLogicFunctionHttpUrl', () => {

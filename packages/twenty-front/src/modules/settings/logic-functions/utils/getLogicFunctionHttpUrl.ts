@@ -18,7 +18,12 @@ export const getFunctionsBaseUrl = ({
     return `https://${workspaceSubdomain}.${publicFunctionDomain}`;
   }
 
-  const sameSiteFunctionsBaseUrl = new URL(serverBaseUrl);
+  // The base argument resolves a relative REACT_APP_SERVER_BASE_URL override
+  // against the page origin instead of throwing during render.
+  const sameSiteFunctionsBaseUrl = new URL(
+    serverBaseUrl,
+    window.location.origin,
+  );
 
   if (
     isMultiWorkspaceEnabled === true &&
@@ -29,7 +34,9 @@ export const getFunctionsBaseUrl = ({
 
   sameSiteFunctionsBaseUrl.pathname = `${sameSiteFunctionsBaseUrl.pathname.replace(/\/+$/, '')}/s`;
 
-  return sameSiteFunctionsBaseUrl.toString();
+  // origin + pathname drops any query or fragment from the server base URL,
+  // which would otherwise corrupt trigger paths appended to this base URL.
+  return `${sameSiteFunctionsBaseUrl.origin}${sameSiteFunctionsBaseUrl.pathname}`;
 };
 
 export const getLogicFunctionHttpUrl = ({

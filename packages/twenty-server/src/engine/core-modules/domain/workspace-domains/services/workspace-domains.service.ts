@@ -242,7 +242,9 @@ export class WorkspaceDomainsService {
       sameSiteFunctionsBaseUrl.hostname = `${workspace.subdomain}.${sameSiteFunctionsBaseUrl.hostname}`;
     }
 
-    return sameSiteFunctionsBaseUrl.toString();
+    // origin + pathname drops any query or fragment from SERVER_URL, which
+    // would otherwise corrupt route paths appended to this base URL.
+    return `${sameSiteFunctionsBaseUrl.origin}${sameSiteFunctionsBaseUrl.pathname}`;
   }
 
   buildPublicFunctionUrl({
