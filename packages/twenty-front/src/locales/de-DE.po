@@ -7851,11 +7851,6 @@ msgstr "Fehler beim Hinzufügen des Anbieters"
 msgid "Failed to claim ownership."
 msgstr "Inhaberschaft konnte nicht beansprucht werden."
 
-#. js-lingui-id: 5UH0/o
-#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
-msgid "Failed to create email channel. Email channels may not be configured on this server."
-msgstr "E-Mail-Kanal konnte nicht erstellt werden. Möglicherweise sind E-Mail-Kanäle auf diesem Server nicht konfiguriert."
-
 #. js-lingui-id: ITWxKI
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 msgid "Failed to create unsubscribe topic."

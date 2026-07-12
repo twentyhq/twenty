@@ -4,7 +4,7 @@ description: Crea componentes de React que se renderizan dentro de la UI de Twen
 icon: window-maximize
 ---
 
-Los componentes de frontend son componentes de React que se renderizan directamente dentro de la UI de Twenty. Se ejecutan en un **Web Worker aislado** usando Remote DOM: tu código está aislado (sandboxed) pero se renderiza de forma nativa en la página, no en un iframe.
+Los componentes de frontend son componentes de React que se renderizan directamente dentro de la UI de Twenty. Se ejecutan en un **Web Worker aislado** usando Remote DOM: tu código se ejecuta dentro de un iframe de origen opaco y aislado (sandboxed), pero su interfaz de usuario sigue renderizándose de forma nativa en la página en lugar de quedar confinada a ese iframe.
 
 ## Dónde se pueden usar los componentes de front
 
@@ -196,7 +196,7 @@ export default defineFrontComponent({
 
 ## Llamar a una función de lógica
 
-Los componentes de front se ejecutan en el navegador dentro de un Web Worker aislado (sandboxed), mientras que las [funciones de lógica](/l/es/developers/extend/apps/logic/logic-functions) se ejecutan en el servidor. No hay una llamada directa en el mismo proceso entre ambos; en su lugar, un componente de front accede a una función de lógica a través de HTTP.
+Los componentes de front se ejecutan en el navegador dentro de un Web Worker aislado (sandboxed) dentro de un iframe de origen opaco, mientras que las [funciones de lógica](/l/es/developers/extend/apps/logic/logic-functions) se ejecutan en el servidor. No hay una llamada directa en el mismo proceso entre ambos; en su lugar, un componente de front accede a una función de lógica a través de HTTP.
 
 Una función de lógica declarada con `httpRouteTriggerSettings` es accesible por HTTP en su ruta. Twenty inyecta en el worker la URL base desde la que se sirven tus funciones como `TWENTY_FUNCTIONS_URL`, junto con el `TWENTY_APP_ACCESS_TOKEN` que autentica la llamada. Todavía no hay un cliente SDK dedicado para invocar tus propias funciones, así que llámalas con un simple `fetch`:
 

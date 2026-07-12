@@ -4,7 +4,7 @@ description: Erstellen Sie React-Komponenten, die innerhalb der Twenty-UI gerend
 icon: window-maximize
 ---
 
-Front-Komponenten sind React-Komponenten, die direkt innerhalb der Twenty-UI gerendert werden. Sie laufen in einem **isolierten Web Worker** unter Verwendung von Remote DOM — Ihr Code wird in einer Sandbox ausgeführt, rendert jedoch nativ auf der Seite, nicht in einem iframe.
+Front-Komponenten sind React-Komponenten, die direkt innerhalb der Twenty-UI gerendert werden. Sie laufen in einem **isolierten Web Worker** unter Verwendung von Remote DOM — Ihr Code wird in einem sandboxed iframe mit opaker Origin ausgeführt, wobei die UI dennoch nativ auf der Seite gerendert wird und nicht auf dieses iframe beschränkt ist.
 
 ## Wo Front-Komponenten verwendet werden können
 
@@ -196,7 +196,7 @@ export default defineFrontComponent({
 
 ## Aufrufen einer Logikfunktion
 
-Front-Komponenten laufen browserseitig in einem isolierten Web Worker, während [Logikfunktionen](/l/de/developers/extend/apps/logic/logic-functions) serverseitig ausgeführt werden. Es gibt keinen direkten In-Process-Aufruf zwischen beiden – stattdessen ruft eine Front-Komponente eine Logikfunktion über HTTP auf.
+Front-Komponenten laufen browserseitig in einem Web-Worker, der in einem sandboxed iframe mit opaker Origin ausgeführt wird, während [Logikfunktionen](/l/de/developers/extend/apps/logic/logic-functions) serverseitig laufen. Es gibt keinen direkten In-Process-Aufruf zwischen beiden – stattdessen ruft eine Front-Komponente eine Logikfunktion über HTTP auf.
 
 Eine mit `httpRouteTriggerSettings` deklarierte Logikfunktion ist über HTTP unter ihrem Routenpfad erreichbar. Twenty injiziert die Basis-URL, unter der deine Funktionen bereitgestellt werden, als `TWENTY_FUNCTIONS_URL` in den Worker, zusammen mit dem `TWENTY_APP_ACCESS_TOKEN`, das den Aufruf authentifiziert. Es gibt noch keinen eigenen SDK-Client zum Aufrufen deiner eigenen Funktionen, daher rufe sie mit einem einfachen `fetch` auf:
 
