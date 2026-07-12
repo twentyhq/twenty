@@ -146,8 +146,9 @@ export class ApolloFactory implements ApolloManager {
         attempts: {
           max: 2,
           retryIf: (error) => {
-            // oxlint-disable-next-line no-console
-            console.log('retryIf error from retryLink', error);
+            if (isDebugMode === true) {
+              logDebug('retryIf error from retryLink', error);
+            }
             if (this.isAuthenticationError(error)) {
               return false;
             }
@@ -192,7 +193,7 @@ export class ApolloFactory implements ApolloManager {
             .then(() => true)
             .catch(() => {
               // oxlint-disable-next-line no-console
-              console.log(
+              console.error(
                 'Failed to renew token after retries, triggering unauthenticated error',
               );
               onUnauthenticatedError?.();
@@ -251,6 +252,10 @@ export class ApolloFactory implements ApolloManager {
                 }
               }
 
+              if (isDefined(graphQLError.path)) {
+                scope.setExtra('path', graphQLError.path);
+              }
+
               if (!isEmpty(fingerPrint)) {
                 scope.setFingerprint(fingerPrint);
               }
@@ -272,8 +277,9 @@ export class ApolloFactory implements ApolloManager {
           onErrorCb?.(error.errors);
           for (const graphQLError of error.errors) {
             if (graphQLError.message === 'Unauthorized') {
-              // oxlint-disable-next-line no-console
-              console.log('Unauthorized, triggering token renewal');
+              if (isDebugMode === true) {
+                logDebug('Unauthorized, triggering token renewal');
+              }
               return handleTokenRenewal(operation, forward);
             }
 
@@ -286,8 +292,9 @@ export class ApolloFactory implements ApolloManager {
                 return;
               }
               case 'UNAUTHENTICATED': {
-                // oxlint-disable-next-line no-console
-                console.log('UNAUTHENTICATED, triggering token renewal');
+                if (isDebugMode === true) {
+                  logDebug('UNAUTHENTICATED, triggering token renewal');
+                }
                 return handleTokenRenewal(operation, forward);
               }
               case 'NOT_FOUND':
@@ -316,10 +323,11 @@ export class ApolloFactory implements ApolloManager {
             this.isRestOperation(operation) &&
             this.isAuthenticationError(error)
           ) {
-            // oxlint-disable-next-line no-console
-            console.log(
-              'Authentication error, triggering token renewal from errorLink',
-            );
+            if (isDebugMode === true) {
+              logDebug(
+                'Authentication error, triggering token renewal from errorLink',
+              );
+            }
             return handleTokenRenewal(operation, forward);
           }
 
