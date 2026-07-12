@@ -12,6 +12,8 @@ import { Repository } from 'typeorm';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
@@ -32,6 +34,29 @@ import { type StreamAgentChatJobData } from './stream-agent-chat-job.types';
 
 export { STREAM_AGENT_CHAT_JOB_NAME, type StreamAgentChatJobData };
 
+const getErrorCode = (error: unknown): string => {
+  if (typeof error !== 'object' || error === null) {
+    return 'unknown';
+  }
+
+  const errorWithCode = error as { code?: unknown; driverError?: unknown };
+
+  if (typeof errorWithCode.code === 'string') {
+    return errorWithCode.code;
+  }
+
+  if (
+    typeof errorWithCode.driverError === 'object' &&
+    errorWithCode.driverError !== null &&
+    'code' in errorWithCode.driverError &&
+    typeof errorWithCode.driverError.code === 'string'
+  ) {
+    return errorWithCode.driverError.code;
+  }
+
+  return error instanceof Error ? error.name : 'unknown';
+};
+
 @Processor({ queueName: MessageQueue.aiStreamQueue, scope: Scope.REQUEST })
 export class StreamAgentChatJob {
   private readonly logger = new Logger(StreamAgentChatJob.name);
@@ -46,6 +71,7 @@ export class StreamAgentChatJob {
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly cancelSubscriberService: AgentChatCancelSubscriberService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -81,7 +107,17 @@ export class StreamAgentChatJob {
     } catch (error) {
       this.logger.error(
         `Stream ${data.streamId} failed: ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
       );
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.AiChatTurnFailed,
+        amount: 1,
+        attributes: {
+          error_code: getErrorCode(error),
+          failure_phase: 'execution',
+          component: 'stream-agent-chat',
+        },
+      });
       await this.eventPublisherService
         .publish({
           threadId: data.threadId,

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type EntityMetadata, EntitySchema, Repository } from 'typeorm';
+import { DataSource, type EntityMetadata, EntitySchema } from 'typeorm';
 import { EntitySchemaTransformer } from 'typeorm/entity-schema/EntitySchemaTransformer';
 import { EntityMetadataBuilder } from 'typeorm/metadata-builder/EntityMetadataBuilder';
 
@@ -21,10 +21,8 @@ export class WorkspaceORMEntityMetadatasCacheService extends WorkspaceCacheProvi
   EntityMetadata[]
 > {
   constructor(
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     private readonly entitySchemaFactory: EntitySchemaFactory,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {
@@ -33,11 +31,11 @@ export class WorkspaceORMEntityMetadatasCacheService extends WorkspaceCacheProvi
 
   async computeForCache(workspaceId: string): Promise<EntityMetadata[]> {
     const [objectMetadatas, fieldMetadatas] = await Promise.all([
-      this.objectMetadataRepository.find({
+      this.coreDataSource.getRepository(ObjectMetadataEntity).find({
         where: { workspaceId },
         withDeleted: true,
       }),
-      this.fieldMetadataRepository.find({
+      this.coreDataSource.getRepository(FieldMetadataEntity).find({
         where: { workspaceId },
         withDeleted: true,
       }),

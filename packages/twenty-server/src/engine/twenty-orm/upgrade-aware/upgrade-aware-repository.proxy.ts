@@ -175,7 +175,7 @@ const isRelationAvailable = (
   const available = state.isEntityAvailable(relatedTarget);
 
   if (!available) {
-    logger.log(
+    logger.debug(
       `[upgrade-proxy] strip relation ${metadata.targetName}.${relationPropertyName} -> ${relatedTarget.name}`,
     );
   }
@@ -252,7 +252,7 @@ const handleRepositoryMethodCall = <Entity extends object>({
       );
     }
 
-    logger.log(
+    logger.debug(
       `[upgrade-proxy] short-circuit ${entityClass.name}.${methodName}`,
     );
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -30,12 +30,10 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
   FlatEntityMaps<FlatFieldMetadata>
 > {
   constructor(
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     @InjectRepository(IndexMetadataEntity)
     private readonly indexMetadataRepository: Repository<IndexMetadataEntity>,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(ViewFieldEntity)
@@ -65,7 +63,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
       viewSorts,
       views,
     ] = await Promise.all([
-      this.fieldMetadataRepository.find({
+      this.coreDataSource.getRepository(FieldMetadataEntity).find({
         where: { workspaceId },
         withDeleted: true,
       }),
@@ -74,7 +72,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
         relations: ['indexFieldMetadatas'],
         withDeleted: true,
       }),
-      this.objectMetadataRepository.find({
+      this.coreDataSource.getRepository(ObjectMetadataEntity).find({
         where: { workspaceId },
         select: ['id', 'universalIdentifier'],
         withDeleted: true,
