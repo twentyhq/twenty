@@ -7,15 +7,16 @@ import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContaine
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { styled } from '@linaria/react';
 import {
   autoUpdate,
   flip,
   offset,
   shift,
+  size,
   useFloating,
   type MiddlewareState,
 } from '@floating-ui/react';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -83,6 +84,11 @@ export const RecordInlineCellEditMode = ({
               crossAxis: -5,
             },
       ),
+      size({
+        apply({ rects, elements }) {
+          elements.floating.style.width = `${rects.reference.width}px`;
+        },
+      }),
       shift({ padding: 8 }),
       setFieldInputLayoutDirectionMiddleware,
     ],

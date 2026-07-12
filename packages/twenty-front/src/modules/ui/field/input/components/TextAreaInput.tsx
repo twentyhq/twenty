@@ -5,8 +5,8 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { isDefined } from 'twenty-shared/utils';
-import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 export type TextAreaInputProps = {
   instanceId: string;
@@ -26,6 +26,9 @@ export type TextAreaInputProps = {
 };
 
 const StyledTextAreaContainer = styled.div`
+  flex: 1;
+  width: 100%;
+
   > textarea {
     align-items: center;
     background-color: transparent;
@@ -50,7 +53,7 @@ const StyledTextAreaContainer = styled.div`
     padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
     resize: none;
 
-    width: calc(100% - ${themeCssVariables.spacing[7]});
+    width: 100%;
   }
 `;
 
