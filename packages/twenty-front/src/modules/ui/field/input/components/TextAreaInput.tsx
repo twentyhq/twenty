@@ -53,7 +53,7 @@ const StyledTextAreaContainer = styled.div`
     padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
     resize: none;
 
-    width: 100%;
+    width: calc(100% - ${themeCssVariables.spacing[7]});
   }
 `;
 
