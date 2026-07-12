@@ -23,9 +23,7 @@ import { useQuery } from '@apollo/client/react';
 import {
   FindOneApplicationForSettingsLogicFunctionDetailDocument,
   FindWorkspaceCustomApplicationFunctionsBaseUrlDocument,
-  PermissionFlagType,
 } from '~/generated-metadata/graphql';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsLogicFunctionCodeEditorTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab';
@@ -42,40 +40,29 @@ export const SettingsLogicFunctionDetail = () => {
   const workspaceCustomApplicationId =
     currentWorkspace?.workspaceCustomApplication?.id;
 
-  const resolvedApplicationId = applicationId ?? workspaceCustomApplicationId;
-
-  // findOneApplication is guarded by the APPLICATIONS permission, which users
-  // reaching the workspace-custom route through AI settings may not hold.
-  const hasApplicationsPermission = useHasPermissionFlag(
-    PermissionFlagType.APPLICATIONS,
-  );
-
-  const shouldFetchApplication =
-    isDefined(resolvedApplicationId) && hasApplicationsPermission;
+  // The application route sits behind the APPLICATIONS-guarded route wrapper,
+  // matching the findOneApplication guard; the workspace-custom route (AI
+  // settings) reads through the member-level workspaceCustomApplication field.
+  const isApplicationRoute = isDefined(applicationId);
 
   const { data: applicationData, loading: applicationLoading } = useQuery(
     FindOneApplicationForSettingsLogicFunctionDetailDocument,
     {
-      variables: { id: resolvedApplicationId ?? '' },
-      skip: !shouldFetchApplication,
+      variables: { id: applicationId ?? '' },
+      skip: !isApplicationRoute,
     },
   );
-
-  const shouldFetchWorkspaceCustomApplication =
-    !isDefined(applicationId) && !shouldFetchApplication;
 
   const {
     data: workspaceCustomApplicationData,
     loading: workspaceCustomApplicationLoading,
   } = useQuery(FindWorkspaceCustomApplicationFunctionsBaseUrlDocument, {
-    skip: !shouldFetchWorkspaceCustomApplication,
+    skip: isApplicationRoute,
   });
 
-  const applicationName = isDefined(applicationId)
-    ? applicationData?.findOneApplication?.name
-    : undefined;
+  const applicationName = applicationData?.findOneApplication?.name;
 
-  const functionsBaseUrl = shouldFetchApplication
+  const functionsBaseUrl = isApplicationRoute
     ? applicationData?.findOneApplication?.functionsBaseUrl
     : workspaceCustomApplicationData?.currentUser.currentWorkspace
         ?.workspaceCustomApplication?.functionsBaseUrl;

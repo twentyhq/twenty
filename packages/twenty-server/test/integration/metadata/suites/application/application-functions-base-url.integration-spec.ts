@@ -33,15 +33,14 @@ const findFunctionsBaseUrl = async (applicationId: string): Promise<string> => {
   return response.body.data.findOneApplication.functionsBaseUrl;
 };
 
-describe('Public domain canonical lifecycle', () => {
+describe('Application functions base URL resolution', () => {
   let publicDomainService: PublicDomainService;
   let applicationRepository: Repository<ApplicationEntity>;
   let publicDomainRepository: Repository<PublicDomainEntity>;
   let workspaceRepository: Repository<WorkspaceEntity>;
   let workspace: WorkspaceEntity;
   let applicationId: string;
-  let originalPrimaryPublicDomainId: string | null;
-  let createdDomains: string[];
+  let createdDomains: string[] = [];
 
   beforeAll(async () => {
     applicationRepository = getCoreRepository(ApplicationEntity);
@@ -67,24 +66,13 @@ describe('Public domain canonical lifecycle', () => {
     applicationId = workspace.workspaceCustomApplicationId;
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     jest.clearAllMocks();
 
-    const application = await applicationRepository.findOneByOrFail({
-      id: applicationId,
-      workspaceId: workspace.id,
-    });
-
-    originalPrimaryPublicDomainId = application.primaryPublicDomainId;
     createdDomains = [];
   });
 
   afterEach(async () => {
-    await applicationRepository.update(
-      { id: applicationId, workspaceId: workspace.id },
-      { primaryPublicDomainId: originalPrimaryPublicDomainId },
-    );
-
     if (createdDomains.length > 0) {
       await publicDomainRepository.delete({
         workspaceId: workspace.id,
@@ -93,8 +81,8 @@ describe('Public domain canonical lifecycle', () => {
     }
   });
 
-  it('should make an app-bound domain canonical when it is created', async () => {
-    const domain = buildTestDomain('canonical');
+  it('should serve functions from an app-bound domain once one is created', async () => {
+    const domain = buildTestDomain('single');
 
     createdDomains.push(domain);
 
@@ -104,21 +92,15 @@ describe('Public domain canonical lifecycle', () => {
       applicationId,
     });
 
-    const application = await applicationRepository.findOneByOrFail({
-      id: applicationId,
-      workspaceId: workspace.id,
-    });
-
     expect(publicDomain.id).toBeDefined();
-    expect(application.primaryPublicDomainId).toBe(publicDomain.id);
     await expect(findFunctionsBaseUrl(applicationId)).resolves.toBe(
       `https://${domain}`,
     );
   });
 
-  it('should resolve the newest app-bound domain when a legacy application has no primary', async () => {
-    const olderDomain = buildTestDomain('legacy-older');
-    const newerDomain = buildTestDomain('legacy-newer');
+  it('should resolve the newest app-bound domain when several exist', async () => {
+    const olderDomain = buildTestDomain('older');
+    const newerDomain = buildTestDomain('newer');
 
     createdDomains.push(olderDomain, newerDomain);
 
@@ -141,62 +123,43 @@ describe('Public domain canonical lifecycle', () => {
       { workspaceId: workspace.id, domain: newerDomain },
       { createdAt: new Date('2026-01-02T00:00:00.000Z') },
     );
-    await applicationRepository.update(
-      { id: applicationId, workspaceId: workspace.id },
-      { primaryPublicDomainId: null },
-    );
 
     await expect(findFunctionsBaseUrl(applicationId)).resolves.toBe(
       `https://${newerDomain}`,
     );
   });
 
-  it('should promote the newest remaining app-bound domain when the primary is deleted', async () => {
-    const fallbackDomain = buildTestDomain('delete-fallback');
-    const primaryDomain = buildTestDomain('delete-primary');
+  it('should fall back to the remaining app-bound domain when one is deleted', async () => {
+    const remainingDomain = buildTestDomain('remaining');
+    const deletedDomain = buildTestDomain('deleted');
 
-    createdDomains.push(fallbackDomain, primaryDomain);
+    createdDomains.push(remainingDomain, deletedDomain);
 
-    const fallbackPublicDomain = await publicDomainService.createPublicDomain({
-      domain: fallbackDomain,
+    await publicDomainService.createPublicDomain({
+      domain: remainingDomain,
       workspace,
       applicationId,
     });
-    const primaryPublicDomain = await publicDomainService.createPublicDomain({
-      domain: primaryDomain,
+    await publicDomainService.createPublicDomain({
+      domain: deletedDomain,
       workspace,
       applicationId,
-    });
-
-    await expect(
-      applicationRepository.findOneByOrFail({
-        id: applicationId,
-        workspaceId: workspace.id,
-      }),
-    ).resolves.toMatchObject({
-      primaryPublicDomainId: primaryPublicDomain.id,
     });
 
     await publicDomainService.deletePublicDomain({
-      domain: primaryDomain,
+      domain: deletedDomain,
       workspace,
     });
 
-    const application = await applicationRepository.findOneByOrFail({
-      id: applicationId,
-      workspaceId: workspace.id,
-    });
-
     await expect(
-      publicDomainRepository.findOneByOrFail({
-        id: fallbackPublicDomain.id,
+      publicDomainRepository.findOneBy({
         workspaceId: workspace.id,
+        domain: deletedDomain,
       }),
-    ).resolves.toMatchObject({ domain: fallbackDomain });
+    ).resolves.toBeNull();
 
-    expect(application.primaryPublicDomainId).toBe(fallbackPublicDomain.id);
     await expect(findFunctionsBaseUrl(applicationId)).resolves.toBe(
-      `https://${fallbackDomain}`,
+      `https://${remainingDomain}`,
     );
   });
 });

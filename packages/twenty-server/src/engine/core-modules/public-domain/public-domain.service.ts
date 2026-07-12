@@ -42,61 +42,12 @@ export class PublicDomainService {
   }): Promise<void> {
     const formattedDomain = domain.trim().toLowerCase();
 
-    const publicDomain = await this.publicDomainRepository.findOne(
-      workspace.id,
-      {
-        where: { domain: formattedDomain },
-      },
-    );
-
     await this.dnsManagerService.deleteHostnameSilently(formattedDomain, {
       isPublicDomain: true,
     });
 
-    if (!isDefined(publicDomain)) {
-      return;
-    }
-
-    await this.applicationRepository.manager.transaction(async (manager) => {
-      const transactionalPublicDomainRepository =
-        this.publicDomainRepository.withManager(manager);
-
-      await transactionalPublicDomainRepository.delete(workspace.id, {
-        id: publicDomain.id,
-      });
-
-      const transactionalApplicationRepository = manager.getRepository(
-        this.applicationRepository.target,
-      );
-      const application = await transactionalApplicationRepository.findOne({
-        where: {
-          id: publicDomain.applicationId,
-          workspaceId: workspace.id,
-        },
-        select: { id: true, primaryPublicDomainId: true },
-      });
-
-      if (
-        !isDefined(application) ||
-        (isDefined(application.primaryPublicDomainId) &&
-          application.primaryPublicDomainId !== publicDomain.id)
-      ) {
-        return;
-      }
-
-      const fallbackPublicDomain =
-        await transactionalPublicDomainRepository.findOne(workspace.id, {
-          where: { applicationId: publicDomain.applicationId },
-          order: { createdAt: 'DESC', domain: 'ASC' },
-        });
-
-      await transactionalApplicationRepository.update(
-        {
-          id: publicDomain.applicationId,
-          workspaceId: workspace.id,
-        },
-        { primaryPublicDomainId: fallbackPublicDomain?.id ?? null },
-      );
+    await this.publicDomainRepository.delete(workspace.id, {
+      domain: formattedDomain,
     });
   }
 
@@ -155,25 +106,10 @@ export class PublicDomainService {
     });
 
     try {
-      return await this.applicationRepository.manager.transaction(
-        async (manager) => {
-          const publicDomain = await this.publicDomainRepository
-            .withManager(manager)
-            .save(workspace.id, {
-              domain: formattedDomain,
-              applicationId,
-            });
-
-          await manager
-            .getRepository(this.applicationRepository.target)
-            .update(
-              { id: applicationId, workspaceId: workspace.id },
-              { primaryPublicDomainId: publicDomain.id },
-            );
-
-          return publicDomain;
-        },
-      );
+      return await this.publicDomainRepository.save(workspace.id, {
+        domain: formattedDomain,
+        applicationId,
+      });
     } catch (error) {
       await this.dnsManagerService.deleteHostnameSilently(formattedDomain, {
         isPublicDomain: true,
