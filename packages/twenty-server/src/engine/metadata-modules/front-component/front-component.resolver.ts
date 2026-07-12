@@ -1,5 +1,5 @@
 import { Inject, UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -42,6 +42,17 @@ export class FrontComponentResolver {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
   ) {}
+
+  @ResolveField(() => String)
+  async functionsBaseUrl(
+    @Parent() frontComponent: FrontComponentDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<string> {
+    return this.applicationService.buildFunctionsBaseUrl({
+      applicationId: frontComponent.applicationId,
+      workspaceId: workspace.id,
+    });
+  }
 
   @Query(() => [FrontComponentDTO])
   @UseGuards(NoPermissionGuard)
@@ -94,17 +105,10 @@ export class FrontComponentResolver {
       flatApplicationVariables,
     );
 
-    const functionsBaseUrl =
-      await this.applicationService.buildFunctionsBaseUrl({
-        applicationId: dto.applicationId,
-        workspaceId: workspace.id,
-      });
-
     return {
       ...dto,
       applicationTokenPair: tokenPair,
       applicationVariables,
-      functionsBaseUrl,
     };
   }
 

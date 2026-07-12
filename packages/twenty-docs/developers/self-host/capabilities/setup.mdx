@@ -365,7 +365,7 @@ Functions with an `httpRoute` trigger are served by the API server at `<SERVER_U
 Because this route shares the origin of your Twenty instance, response headers are restricted to an allow-list (`content-type`, `content-language`, `content-disposition`, `cache-control`, `retry-after`).
 
 <Note>
-With `IS_MULTIWORKSPACE_ENABLED=true`, the route is served at `<workspace-subdomain>.<server-host>/s/<path>` because the workspace is resolved from the request host. This requires the API server to be reachable on workspace subdomains of its own hostname (the default when the server and front share a hostname); with a separate API hostname, configure an isolated functions domain instead (below).
+With `IS_MULTIWORKSPACE_ENABLED=true`, the workspace subdomain is added to the host while any path prefix in `SERVER_URL` is preserved. For example, `SERVER_URL=https://api.example.com/base` serves the route at `https://<workspace-subdomain>.api.example.com/base/s/<path>`. This requires the API server to be reachable on workspace subdomains of its own hostname (the default when the server and front share a hostname); with a separate API hostname, configure an isolated functions domain instead (below).
 </Note>
 
 ### Logic Functions - Isolated Functions Domain (Advanced)

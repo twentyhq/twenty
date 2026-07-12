@@ -89,7 +89,7 @@ export const SettingsLogicFunctionHttpTriggerSection = ({
   const fullUrl =
     isDefined(value) && isDefined(functionsBaseUrl)
       ? getLogicFunctionHttpUrl({ functionsBaseUrl, path: value.path })
-      : '';
+      : undefined;
 
   return (
     <SettingsLogicFunctionTriggerSection
@@ -123,18 +123,20 @@ export const SettingsLogicFunctionHttpTriggerSection = ({
             readOnly={readonly}
             fullWidth
           />
-          <SettingsTextInput
-            instanceId="logic-function-http-trigger-url"
-            label={t`Live URL`}
-            value={fullUrl}
-            onChange={() => {}}
-            readOnly
-            fullWidth
-            RightIcon={IconCopy}
-            onRightIconClick={() =>
-              copyToClipboard(fullUrl, t`URL copied to clipboard`)
-            }
-          />
+          {isDefined(fullUrl) && (
+            <SettingsTextInput
+              instanceId="logic-function-http-trigger-url"
+              label={t`Live URL`}
+              value={fullUrl}
+              onChange={() => {}}
+              readOnly
+              fullWidth
+              RightIcon={IconCopy}
+              onRightIconClick={() =>
+                copyToClipboard(fullUrl, t`URL copied to clipboard`)
+              }
+            />
+          )}
           <StyledAuthRow>
             <Toggle
               value={value.isAuthRequired}

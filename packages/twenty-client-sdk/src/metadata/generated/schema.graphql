@@ -328,8 +328,8 @@ type FrontComponent {
   isHeadless: Boolean!
   usesSdkClient: Boolean!
   applicationTokenPair: ApplicationTokenPair
-  functionsBaseUrl: String
   applicationVariables: JSON
+  functionsBaseUrl: String!
 }
 
 type CommandMenuItem {

@@ -36,7 +36,7 @@ import {
   ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,
   FindMarketplaceAppManifestDocument,
-  FindOneApplicationDocument,
+  FindOneApplicationForSettingsApplicationDetailsDocument,
   PermissionFlagType,
   UninstallApplicationDocument,
 } from '~/generated-metadata/graphql';
@@ -62,10 +62,13 @@ export const SettingsApplicationDetails = () => {
     APPLICATION_DETAIL_ID,
   );
 
-  const { data } = useQuery(FindOneApplicationDocument, {
-    variables: { id: applicationId },
-    skip: !applicationId,
-  });
+  const { data } = useQuery(
+    FindOneApplicationForSettingsApplicationDetailsDocument,
+    {
+      variables: { id: applicationId },
+      skip: !applicationId,
+    },
+  );
 
   const application = data?.findOneApplication;
 

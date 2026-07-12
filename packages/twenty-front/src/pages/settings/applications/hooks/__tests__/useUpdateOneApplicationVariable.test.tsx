@@ -5,7 +5,7 @@ import { type ReactNode } from 'react';
 
 import {
   type Application,
-  FindOneApplicationDocument,
+  FindOneApplicationForSettingsApplicationDetailsDocument,
   UpdateOneApplicationVariableDocument,
 } from '~/generated-metadata/graphql';
 import { useUpdateOneApplicationVariable } from '~/pages/settings/applications/hooks/useUpdateOneApplicationVariable';
@@ -64,7 +64,7 @@ describe('useUpdateOneApplicationVariable', () => {
     const cache = new InMemoryCache();
 
     cache.writeQuery({
-      query: FindOneApplicationDocument,
+      query: FindOneApplicationForSettingsApplicationDetailsDocument,
       variables: { id: APP_ID },
       data: { findOneApplication: buildApplication(OLD_VALUE) },
     });
@@ -79,7 +79,7 @@ describe('useUpdateOneApplicationVariable', () => {
       },
       {
         request: {
-          query: FindOneApplicationDocument,
+          query: FindOneApplicationForSettingsApplicationDetailsDocument,
           variables: { id: APP_ID },
         },
         result: { data: { findOneApplication: buildApplication(NEW_VALUE) } },

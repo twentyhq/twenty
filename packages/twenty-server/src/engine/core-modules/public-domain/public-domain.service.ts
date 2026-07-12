@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
@@ -43,12 +42,61 @@ export class PublicDomainService {
   }): Promise<void> {
     const formattedDomain = domain.trim().toLowerCase();
 
+    const publicDomain = await this.publicDomainRepository.findOne(
+      workspace.id,
+      {
+        where: { domain: formattedDomain },
+      },
+    );
+
     await this.dnsManagerService.deleteHostnameSilently(formattedDomain, {
       isPublicDomain: true,
     });
 
-    await this.publicDomainRepository.delete(workspace.id, {
-      domain: formattedDomain,
+    if (!isDefined(publicDomain)) {
+      return;
+    }
+
+    await this.applicationRepository.manager.transaction(async (manager) => {
+      const transactionalPublicDomainRepository =
+        this.publicDomainRepository.withManager(manager);
+
+      await transactionalPublicDomainRepository.delete(workspace.id, {
+        id: publicDomain.id,
+      });
+
+      const transactionalApplicationRepository = manager.getRepository(
+        this.applicationRepository.target,
+      );
+      const application = await transactionalApplicationRepository.findOne({
+        where: {
+          id: publicDomain.applicationId,
+          workspaceId: workspace.id,
+        },
+        select: { id: true, primaryPublicDomainId: true },
+      });
+
+      if (
+        !isDefined(application) ||
+        (isDefined(application.primaryPublicDomainId) &&
+          application.primaryPublicDomainId !== publicDomain.id)
+      ) {
+        return;
+      }
+
+      const fallbackPublicDomain =
+        await transactionalPublicDomainRepository.findOne(workspace.id, {
+          where: { applicationId: publicDomain.applicationId },
+          order: { createdAt: 'DESC', domain: 'ASC' },
+        });
+
+      await transactionalApplicationRepository.update(
+        {
+          id: publicDomain.applicationId,
+          workspaceId: workspace.id,
+        },
+        { primaryPublicDomainId: fallbackPublicDomain?.id ?? null },
+      );
     });
   }
 
@@ -102,20 +150,29 @@ export class PublicDomainService {
       );
     }
 
-    const publicDomain = {
-      domain: formattedDomain,
-      workspaceId: workspace.id,
-      applicationId,
-    } as PublicDomainEntity;
-
     await this.dnsManagerService.registerHostname(formattedDomain, {
       isPublicDomain: true,
     });
 
     try {
-      await this.publicDomainRepository.insert(
-        workspace.id,
-        publicDomain as QueryDeepPartialEntity<PublicDomainEntity>,
+      return await this.applicationRepository.manager.transaction(
+        async (manager) => {
+          const publicDomain = await this.publicDomainRepository
+            .withManager(manager)
+            .save(workspace.id, {
+              domain: formattedDomain,
+              applicationId,
+            });
+
+          await manager
+            .getRepository(this.applicationRepository.target)
+            .update(
+              { id: applicationId, workspaceId: workspace.id },
+              { primaryPublicDomainId: publicDomain.id },
+            );
+
+          return publicDomain;
+        },
       );
     } catch (error) {
       await this.dnsManagerService.deleteHostnameSilently(formattedDomain, {
@@ -124,8 +181,6 @@ export class PublicDomainService {
 
       throw error;
     }
-
-    return publicDomain;
   }
 
   async checkPublicDomainValidRecords(

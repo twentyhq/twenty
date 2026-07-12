@@ -70,8 +70,6 @@ export const FrontComponentRenderer = ({
   const applicationTokenPair =
     data?.frontComponent?.applicationTokenPair ?? null;
 
-  const functionsBaseUrl = data?.frontComponent?.functionsBaseUrl;
-
   useEffect(() => {
     if (isDefined(applicationTokenPair)) {
       setFrontComponentApplicationTokenPair(applicationTokenPair);
@@ -93,8 +91,7 @@ export const FrontComponentRenderer = ({
   if (
     loading ||
     !isDefined(data?.frontComponent) ||
-    !isDefined(applicationTokenPair) ||
-    !isDefined(functionsBaseUrl)
+    !isDefined(applicationTokenPair)
   ) {
     return null;
   }
@@ -116,7 +113,7 @@ export const FrontComponentRenderer = ({
         componentUrl={componentUrl}
         applicationAccessToken={accessToken}
         apiUrl={REACT_APP_SERVER_BASE_URL}
-        functionsBaseUrl={functionsBaseUrl}
+        functionsBaseUrl={data.frontComponent.functionsBaseUrl}
         sdkClientUrls={sdkClientUrls}
         executionContext={executionContext}
         frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}

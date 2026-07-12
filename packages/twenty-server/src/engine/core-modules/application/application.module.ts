@@ -9,6 +9,7 @@ import { WorkspaceFlatApplicationMapCacheService } from 'src/engine/core-modules
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -32,6 +33,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       CommandMenuItemEntity,
       ObjectMetadataEntity,
       ApplicationVariableEntity,
+      PublicDomainEntity,
     ]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceCacheModule,
@@ -46,6 +48,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatApplicationMapCacheService,
     provideWorkspaceScopedRepository(AgentEntity),
     provideWorkspaceScopedRepository(CommandMenuItemEntity),
+    provideWorkspaceScopedRepository(PublicDomainEntity),
   ],
 })
 export class ApplicationModule {}

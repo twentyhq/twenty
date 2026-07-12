@@ -208,80 +208,13 @@ describe('WorkspaceDomainsService', () => {
     it('should return the isolated workspace domain when PUBLIC_DOMAIN_URL is configured', () => {
       jest
         .spyOn(twentyConfigService, 'get')
-        .mockImplementation((key: string) => {
-          const configValues = {
-            PUBLIC_DOMAIN_URL: 'https://withtwenty.com',
-          };
-
-          // @ts-expect-error legacy noImplicitAny
-          return configValues[key];
-        });
+        .mockReturnValue('https://withtwenty.com');
 
       const result = workspaceDomainsService.buildFunctionsBaseUrl({
         workspace: { subdomain: 'acme' },
       });
 
       expect(result).toBe('https://acme.withtwenty.com');
-    });
-
-    it('should return the same-site route when PUBLIC_DOMAIN_URL is not configured', () => {
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockImplementation((key: string) => {
-          const configValues = {
-            SERVER_URL: 'https://api.example.com',
-            IS_MULTIWORKSPACE_ENABLED: false,
-          };
-
-          // @ts-expect-error legacy noImplicitAny
-          return configValues[key];
-        });
-
-      const result = workspaceDomainsService.buildFunctionsBaseUrl({
-        workspace: { subdomain: 'acme' },
-      });
-
-      expect(result).toBe('https://api.example.com/s');
-    });
-
-    it('should include the workspace subdomain in the same-site route when multi-workspace is enabled', () => {
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockImplementation((key: string) => {
-          const configValues = {
-            SERVER_URL: 'http://localhost:3000/base/',
-            IS_MULTIWORKSPACE_ENABLED: true,
-          };
-
-          // @ts-expect-error legacy noImplicitAny
-          return configValues[key];
-        });
-
-      const result = workspaceDomainsService.buildFunctionsBaseUrl({
-        workspace: { subdomain: 'acme' },
-      });
-
-      expect(result).toBe('http://acme.localhost:3000/base/s');
-    });
-
-    it('should drop any query or fragment from SERVER_URL in the same-site route', () => {
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockImplementation((key: string) => {
-          const configValues = {
-            SERVER_URL: 'https://api.example.com/base?utm=1#fragment',
-            IS_MULTIWORKSPACE_ENABLED: false,
-          };
-
-          // @ts-expect-error legacy noImplicitAny
-          return configValues[key];
-        });
-
-      const result = workspaceDomainsService.buildFunctionsBaseUrl({
-        workspace: { subdomain: 'acme' },
-      });
-
-      expect(result).toBe('https://api.example.com/base/s');
     });
   });
 

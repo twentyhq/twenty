@@ -29,7 +29,7 @@ describe('Front component creation should succeed', () => {
   });
 
   it('should create a basic front component with minimal input', async () => {
-    const { data } = await createFrontComponent({
+    const { data, errors } = await createFrontComponent({
       expectToFail: false,
       input: {
         name: 'testFrontComponent',
@@ -38,14 +38,24 @@ describe('Front component creation should succeed', () => {
         builtComponentPath: 'src/front-components/index.mjs',
         builtComponentChecksum: 'abc123',
       },
+      gqlFields: `
+        id
+        name
+        functionsBaseUrl
+      `,
     });
 
     createdFrontComponentId = data?.createFrontComponent?.id;
 
+    expect(errors).toBeUndefined();
     expect(data.createFrontComponent).toMatchObject({
       id: expect.any(String),
       name: 'testFrontComponent',
     });
+    expect(data.createFrontComponent).toHaveProperty(
+      'functionsBaseUrl',
+      expect.any(String),
+    );
   });
 
   it('should sanitize input by trimming whitespace', async () => {

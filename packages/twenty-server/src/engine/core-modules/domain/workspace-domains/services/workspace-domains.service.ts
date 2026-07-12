@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { buildUrlWithPathnameAndSearchParams } from 'src/engine/core-modules/domain/domain-server-config/utils/build-url-with-pathname-and-search-params.util';
 import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
+import { buildSameSiteFunctionsBaseUrl } from 'src/engine/core-modules/domain/workspace-domains/utils/build-same-site-functions-base-url.util';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -226,23 +227,13 @@ export class WorkspaceDomainsService {
       return publicFunctionBaseUrl;
     }
 
-    const sameSiteFunctionsBaseUrl = new URL(
-      this.twentyConfigService.get('SERVER_URL'),
-    );
-
-    sameSiteFunctionsBaseUrl.pathname = `${sameSiteFunctionsBaseUrl.pathname.replace(
-      /\/+$/,
-      '',
-    )}/s`;
-
-    if (
-      this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') &&
-      isNonEmptyString(workspace.subdomain)
-    ) {
-      sameSiteFunctionsBaseUrl.hostname = `${workspace.subdomain}.${sameSiteFunctionsBaseUrl.hostname}`;
-    }
-
-    return `${sameSiteFunctionsBaseUrl.origin}${sameSiteFunctionsBaseUrl.pathname}`;
+    return buildSameSiteFunctionsBaseUrl({
+      serverUrl: this.twentyConfigService.get('SERVER_URL'),
+      isMultiWorkspaceEnabled: this.twentyConfigService.get(
+        'IS_MULTIWORKSPACE_ENABLED',
+      ),
+      workspaceSubdomain: workspace.subdomain,
+    });
   }
 
   buildPublicFunctionUrl({

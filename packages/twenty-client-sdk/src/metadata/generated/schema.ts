@@ -280,8 +280,8 @@ export interface FrontComponent {
     isHeadless: Scalars['Boolean']
     usesSdkClient: Scalars['Boolean']
     applicationTokenPair?: ApplicationTokenPair
-    functionsBaseUrl?: Scalars['String']
     applicationVariables?: Scalars['JSON']
+    functionsBaseUrl: Scalars['String']
     __typename: 'FrontComponent'
 }
 
@@ -3318,8 +3318,8 @@ export interface FrontComponentGenqlSelection{
     isHeadless?: boolean | number
     usesSdkClient?: boolean | number
     applicationTokenPair?: ApplicationTokenPairGenqlSelection
-    functionsBaseUrl?: boolean | number
     applicationVariables?: boolean | number
+    functionsBaseUrl?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

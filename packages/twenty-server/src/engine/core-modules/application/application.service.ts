@@ -20,6 +20,7 @@ import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/appli
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -62,6 +63,8 @@ export class ApplicationService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(ApplicationVariableEntity)
     private readonly applicationVariableRepository: Repository<ApplicationVariableEntity>,
+    @InjectWorkspaceScopedRepository(PublicDomainEntity)
+    private readonly publicDomainRepository: WorkspaceScopedRepository<PublicDomainEntity>,
   ) {}
 
   async findApplicationRoleId(
@@ -271,8 +274,6 @@ export class ApplicationService {
     });
   }
 
-  // Single code path for the callable functions base URL: the executor injects
-  // it as TWENTY_FUNCTIONS_URL and the resolvers expose it to Settings.
   async buildFunctionsBaseUrl({
     applicationId,
     workspaceId,
@@ -287,18 +288,18 @@ export class ApplicationService {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    const primaryPublicDomain = await this.findPrimaryPublicDomainName({
+    const canonicalPublicDomain = await this.findCanonicalPublicDomainName({
       applicationId,
       workspaceId,
     });
 
     return this.workspaceDomainsService.buildFunctionsBaseUrl({
       workspace,
-      primaryPublicDomain,
+      primaryPublicDomain: canonicalPublicDomain,
     });
   }
 
-  private async findPrimaryPublicDomainName({
+  private async findCanonicalPublicDomainName({
     applicationId,
     workspaceId,
   }: {
@@ -310,7 +311,23 @@ export class ApplicationService {
       relations: ['primaryPublicDomain'],
     });
 
-    return application?.primaryPublicDomain?.domain ?? null;
+    if (!isDefined(application)) {
+      return null;
+    }
+
+    if (isDefined(application.primaryPublicDomain)) {
+      return application.primaryPublicDomain.domain;
+    }
+
+    const fallbackPublicDomain = await this.publicDomainRepository.findOne(
+      workspaceId,
+      {
+        where: { applicationId },
+        order: { createdAt: 'DESC', domain: 'ASC' },
+      },
+    );
+
+    return fallbackPublicDomain?.domain ?? null;
   }
 
   async findByUniversalIdentifier({

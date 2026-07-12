@@ -21,7 +21,8 @@ import {
 } from 'twenty-ui/icon';
 import { useQuery } from '@apollo/client/react';
 import {
-  FindOneApplicationDocument,
+  FindOneApplicationForSettingsLogicFunctionDetailDocument,
+  FindWorkspaceCustomApplicationFunctionsBaseUrlDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -49,22 +50,38 @@ export const SettingsLogicFunctionDetail = () => {
     PermissionFlagType.APPLICATIONS,
   );
 
-  const { data, loading: applicationLoading } = useQuery(
-    FindOneApplicationDocument,
+  const shouldFetchApplication =
+    isDefined(resolvedApplicationId) && hasApplicationsPermission;
+
+  const { data: applicationData, loading: applicationLoading } = useQuery(
+    FindOneApplicationForSettingsLogicFunctionDetailDocument,
     {
       variables: { id: resolvedApplicationId ?? '' },
-      skip: !isDefined(resolvedApplicationId) || !hasApplicationsPermission,
+      skip: !shouldFetchApplication,
     },
   );
 
+  const shouldFetchWorkspaceCustomApplication =
+    !isDefined(applicationId) && !shouldFetchApplication;
+
+  const {
+    data: workspaceCustomApplicationData,
+    loading: workspaceCustomApplicationLoading,
+  } = useQuery(FindWorkspaceCustomApplicationFunctionsBaseUrlDocument, {
+    skip: !shouldFetchWorkspaceCustomApplication,
+  });
+
   const applicationName = isDefined(applicationId)
-    ? data?.findOneApplication?.name
+    ? applicationData?.findOneApplication?.name
     : undefined;
 
-  const functionsBaseUrl = data?.findOneApplication?.functionsBaseUrl;
+  const functionsBaseUrl = shouldFetchApplication
+    ? applicationData?.findOneApplication?.functionsBaseUrl
+    : workspaceCustomApplicationData?.currentUser.currentWorkspace
+        ?.workspaceCustomApplication?.functionsBaseUrl;
 
   const applicationVariableKeys =
-    data?.findOneApplication?.applicationVariables?.map(
+    applicationData?.findOneApplication?.applicationVariables?.map(
       (variable) => variable.key,
     ) ?? [];
 
@@ -154,7 +171,8 @@ export const SettingsLogicFunctionDetail = () => {
 
   return (
     !loading &&
-    !applicationLoading && (
+    !applicationLoading &&
+    !workspaceCustomApplicationLoading && (
       <SettingsPageLayout
         title={
           <SettingsLogicFunctionLabelContainer
