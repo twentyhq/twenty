@@ -178,7 +178,7 @@ export class UpgradeStatusService {
   }
 
   async refreshInstanceAndAllWorkspacesStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatus> {
-    this.logger.log('Recomputing upgrade status for all workspaces');
+    this.logger.debug('Recomputing upgrade status for all workspaces');
 
     const [instanceUpgradeStatus, workspaceStatuses] = await Promise.all([
       this.getInstanceStatus(),

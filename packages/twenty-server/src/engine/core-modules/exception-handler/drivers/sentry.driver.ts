@@ -1,18 +1,94 @@
 import * as Sentry from '@sentry/node';
+import { QueryFailedError } from 'typeorm';
 import {
   getGenericOperationName,
   getHumanReadableNameFromCode,
   isDefined,
 } from 'twenty-shared/utils';
 
-import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
-
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
+import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
 import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
 import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { CustomException } from 'src/utils/custom-exception';
 
+const filteredGraphQLErrorCodes = new Set<string>([
+  'GRAPHQL_VALIDATION_FAILED',
+  'UNAUTHENTICATED',
+  'FORBIDDEN',
+  'NOT_FOUND',
+  'METHOD_NOT_ALLOWED',
+  'TIMEOUT',
+  'CONFLICT',
+  'BAD_USER_INPUT',
+  'METADATA_VALIDATION_FAILED',
+  'SCHEMA_VERSION_MISMATCH',
+  'APP_VERSION_MISMATCH',
+]);
+
+const getQueryFailedErrorMetadata = (
+  exception: unknown,
+): {
+  code: string | undefined;
+  table: string | undefined;
+  column: string | undefined;
+  query: string | undefined;
+} | undefined => {
+  if (!(exception instanceof QueryFailedError)) {
+    return undefined;
+  }
+
+  const driverError = exception.driverError as Error & {
+    code?: string;
+    table?: string;
+    column?: string;
+  };
+
+  return {
+    code: driverError.code,
+    table: driverError.table,
+    column: driverError.column,
+    query: exception.query,
+  };
+};
+
 export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInterface {
+  private shouldSkipCapture(exception: unknown): boolean {
+    const queryFailedErrorMetadata =
+      getQueryFailedErrorMetadata(exception);
+
+    if (
+      queryFailedErrorMetadata?.code ===
+      POSTGRESQL_ERROR_CODES.INVALID_TEXT_REPRESENTATION
+    ) {
+      return true;
+    }
+
+    if (typeof exception !== 'object' || exception === null) {
+      return false;
+    }
+
+    const exceptionWithMetadata = exception as {
+      extensions?: {
+        code?: string;
+        exception?: { code?: string };
+      };
+    };
+
+    if (
+      exceptionWithMetadata.extensions?.code &&
+      filteredGraphQLErrorCodes.has(exceptionWithMetadata.extensions.code)
+    ) {
+      return true;
+    }
+
+    return (
+      exceptionWithMetadata.extensions?.exception?.code ===
+      POSTGRESQL_ERROR_CODES.INVALID_TEXT_REPRESENTATION
+    );
+  }
+
   captureExceptions(
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     exceptions: ReadonlyArray<any>,
@@ -48,6 +124,40 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
       }
 
       for (const exception of exceptions) {
+        if (this.shouldSkipCapture(exception)) {
+          scope.addBreadcrumb({
+            category: 'sentry.filter',
+            level: 'debug',
+            message: 'Filtered expected exception',
+          });
+
+          continue;
+        }
+
+        const queryFailedErrorMetadata =
+          getQueryFailedErrorMetadata(exception);
+
+        if (queryFailedErrorMetadata?.code) {
+          scope.setTag('postgresSqlErrorCode', queryFailedErrorMetadata.code);
+        }
+
+        if (
+          queryFailedErrorMetadata?.code ===
+          POSTGRESQL_ERROR_CODES.UNDEFINED_COLUMN
+        ) {
+          scope.setTag('databaseSchemaMismatch', 'missing-column');
+          scope.setFingerprint([
+            'database-schema-mismatch',
+            queryFailedErrorMetadata.code,
+          ]);
+          scope.setContext('databaseSchemaMismatch', {
+            code: queryFailedErrorMetadata.code,
+            table: queryFailedErrorMetadata.table,
+            column: queryFailedErrorMetadata.column,
+            query: queryFailedErrorMetadata.query,
+          });
+        }
+
         const errorPath = (exception.path ?? [])
           .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
           .join(' > ');

@@ -17,6 +17,9 @@ import { UpgradeAwareEntityMetadataAdapter } from 'src/engine/twenty-orm/upgrade
 const RENAME_STEP = '2.6.0_Rename_1700000000000';
 const INTRODUCE_STEP = '2.7.0_AddColumn_1800000000000';
 const REMOVE_STEP = '2.7.0_DropColumn_1800000000001';
+const RENAMED_REMOVE_STEP = '2.7.0_DropColumn_1800000000002';
+const RENAMED_REMOVE_STEP_PERSISTED_NAME =
+  '2.7.0_DropColumn_1800000000000';
 
 @WasRenamedInUpgrade([
   { previousName: 'oldEntity', upgradeCommandName: RENAME_STEP },
@@ -31,6 +34,11 @@ class EntityWithHideableColumns {
   removedColumn!: string;
 
   visibleColumn!: string;
+}
+
+class EntityWithRenamedRemovalStep {
+  @WasRemovedInUpgrade({ upgradeCommandName: RENAMED_REMOVE_STEP })
+  removedColumn!: string;
 }
 
 const buildColumn = (propertyName: string): ColumnMetadata =>
@@ -153,5 +161,55 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
     expect(visibleColumn.isUpdate).toBe(true);
 
     expect(metadata.columns).toEqual([visibleColumn]);
+  });
+
+  it('preserves the cursor when a completed command timestamp is renamed', async () => {
+    const removedColumn = buildColumn('removedColumn');
+    const metadata = {
+      target: EntityWithRenamedRemovalStep,
+      tableName: 'entityWithRenamedRemovalStep',
+      tablePath: 'core.entityWithRenamedRemovalStep',
+      givenTableName: 'entityWithRenamedRemovalStep',
+      schema: 'core',
+      columns: [removedColumn],
+    } as unknown as EntityMetadata;
+
+    const dataSource = {
+      entityMetadatas: [metadata],
+    } as unknown as DataSource;
+
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        UpgradeAwareEntityMetadataAdapter,
+        {
+          provide: UpgradeMigrationService,
+          useValue: {
+            getLastAttemptedInstanceCommand: jest.fn().mockResolvedValue({
+              name: RENAMED_REMOVE_STEP_PERSISTED_NAME,
+              status: 'completed',
+            }),
+          },
+        },
+        {
+          provide: UpgradeSequenceReaderService,
+          useValue: {
+            getUpgradeSequence: jest
+              .fn()
+              .mockReturnValue([{ name: RENAMED_REMOVE_STEP }]),
+          },
+        },
+        { provide: getDataSourceToken(), useValue: dataSource },
+      ],
+    }).compile();
+
+    const adapter = moduleRef.get(UpgradeAwareEntityMetadataAdapter);
+
+    await adapter.onModuleInit();
+    await adapter.refresh();
+
+    expect(metadata.columns).toEqual([]);
+    expect(removedColumn.isSelect).toBe(false);
+    expect(removedColumn.isInsert).toBe(false);
+    expect(removedColumn.isUpdate).toBe(false);
   });
 });

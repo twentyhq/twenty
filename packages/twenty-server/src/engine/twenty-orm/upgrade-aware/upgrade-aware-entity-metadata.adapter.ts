@@ -90,7 +90,7 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
     if (!isDefined(lastAttempted)) {
       nextCursor = 0;
     } else {
-      const index = this.stepNameToIndex.get(lastAttempted.name);
+      const index = this.resolveStepIndex(lastAttempted.name);
 
       if (!isDefined(index)) {
         nextCursor = 0;
@@ -109,6 +109,34 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
 
   isEntityAvailable(entityClass: Function): boolean {
     return this.availabilityByEntityClass.get(entityClass) ?? true;
+  }
+
+  private resolveStepIndex(stepName: string): number | undefined {
+    const exactIndex = this.stepNameToIndex.get(stepName);
+
+    if (isDefined(exactIndex)) {
+      return exactIndex;
+    }
+
+    const separatorIndex = stepName.lastIndexOf('_');
+
+    if (separatorIndex === -1) {
+      return undefined;
+    }
+
+    const commandIdentity = stepName.slice(0, separatorIndex);
+    const matchingIndexes = [...this.stepNameToIndex.entries()]
+      .filter(([registeredName]) => {
+        const registeredSeparatorIndex = registeredName.lastIndexOf('_');
+
+        return (
+          registeredSeparatorIndex !== -1 &&
+          registeredName.slice(0, registeredSeparatorIndex) === commandIdentity
+        );
+      })
+      .map(([, index]) => index);
+
+    return matchingIndexes.length === 1 ? matchingIndexes[0] : undefined;
   }
 
   getHiddenColumnPropertyNames(entityClass: Function): ReadonlySet<string> {
