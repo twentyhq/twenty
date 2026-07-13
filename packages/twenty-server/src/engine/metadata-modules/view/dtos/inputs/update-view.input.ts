@@ -88,7 +88,7 @@ export class UpdateViewInput {
   @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
-  calendarFieldMetadataId?: string;
+  calendarFieldMetadataId?: string | null;
 
   @IsOptional()
   @IsUUID()

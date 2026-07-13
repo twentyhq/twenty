@@ -483,9 +483,20 @@ export class ViewToolsFactory {
         throw new Error('You can only update your own unlisted views');
       }
 
+      const calendarEndFieldMetadataId = isDefined(
+        parameters.calendarEndFieldName,
+      )
+        ? await this.resolveCalendarFieldMetadataId(
+            workspaceId,
+            existingView.objectMetadataId,
+            parameters.calendarEndFieldName,
+          )
+        : undefined;
+
       return {
         existingViewId: existingView.id,
         objectMetadataId: existingView.objectMetadataId,
+        calendarEndFieldMetadataId,
       };
     }
 

@@ -60,7 +60,7 @@ export class FlatViewValidatorService {
       errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`Calendar field metadata not found`,
-        userFriendlyMessage: msg`Calendar field metadata not found`,
+        userFriendlyMessage: msg`Calendar field not found`,
       });
 
       return errors;
@@ -115,7 +115,7 @@ export class FlatViewValidatorService {
       errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`Calendar end field metadata not found`,
-        userFriendlyMessage: msg`Calendar end field metadata not found`,
+        userFriendlyMessage: msg`Calendar end field not found`,
       });
 
       return errors;

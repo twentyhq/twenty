@@ -140,6 +140,7 @@ export class CompleteViewUpsertService {
           existingViewId,
           name,
           icon,
+          calendarEndFieldMetadataId,
           userWorkspaceId,
           applicationUniversalIdentifier,
           flatViewMaps,
@@ -328,6 +329,7 @@ export class CompleteViewUpsertService {
     existingViewId,
     name,
     icon,
+    calendarEndFieldMetadataId,
     userWorkspaceId,
     applicationUniversalIdentifier,
     flatViewMaps,
@@ -337,19 +339,29 @@ export class CompleteViewUpsertService {
     existingViewId: string;
     name?: string;
     icon?: string;
+    calendarEndFieldMetadataId?: string;
     userWorkspaceId?: string;
     applicationUniversalIdentifier: string;
     flatViewMaps: AllFlatEntityMaps['flatViewMaps'];
     flatViewGroupMaps: AllFlatEntityMaps['flatViewGroupMaps'];
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
   }): ViewUpsertRootOperations {
-    if (!isDefined(name) && !isDefined(icon)) {
+    if (
+      !isDefined(name) &&
+      !isDefined(icon) &&
+      !isDefined(calendarEndFieldMetadataId)
+    ) {
       return { viewId: existingViewId };
     }
 
     const { flatViewToUpdate, flatViewGroupsToDelete, flatViewGroupsToCreate } =
       fromUpdateViewInputToFlatViewToUpdateOrThrow({
-        updateViewInput: { id: existingViewId, name, icon },
+        updateViewInput: {
+          id: existingViewId,
+          name,
+          icon,
+          calendarEndFieldMetadataId,
+        },
         flatViewMaps,
         flatViewGroupMaps,
         flatFieldMetadataMaps,
