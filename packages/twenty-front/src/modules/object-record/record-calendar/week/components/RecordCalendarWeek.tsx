@@ -1,4 +1,5 @@
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
+import { RecordCalendarAddNew } from '@/object-record/record-calendar/components/RecordCalendarAddNew';
 import { RECORD_CALENDAR_WEEK_VISIBLE_RECORD_LIMIT } from '@/object-record/record-calendar/constants/RecordCalendarWeekVisibleRecordLimit';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
@@ -10,6 +11,7 @@ import { RECORD_CALENDAR_WEEK_DIMENSIONS } from '@/object-record/record-calendar
 import { useRecordCalendarWeekDaysRange } from '@/object-record/record-calendar/week/hooks/useRecordCalendarWeekDaysRange';
 import { computeRecordCalendarWeekEventLayouts } from '@/object-record/record-calendar/week/utils/computeRecordCalendarWeekEventLayouts';
 import { getRecordCalendarWeekTimedEventMetrics } from '@/object-record/record-calendar/week/utils/getRecordCalendarWeekTimedEventMetrics';
+import { getRecordCalendarWeekSlotIndex } from '@/object-record/record-calendar/week/utils/getRecordCalendarWeekSlotIndex';
 import { recordIndexCalendarEndFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdState';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -23,7 +25,14 @@ import { t } from '@lingui/core/macro';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useStore } from 'jotai';
-import { useEffect, useRef, useState } from 'react';
+import {
+  type FocusEvent,
+  type KeyboardEvent,
+  type MouseEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Temporal } from 'temporal-polyfill';
 import {
   isDefined,
@@ -34,6 +43,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const CURRENT_TIME_REFRESH_INTERVAL_IN_MILLISECONDS = 60_000;
+const DEFAULT_KEYBOARD_SLOT_INDEX = 18;
 
 const StyledContainer = styled.div`
   background: ${themeCssVariables.background.primary};
@@ -161,6 +171,22 @@ const StyledDayColumn = styled.div<{ isWeekend: boolean }>`
   position: relative;
 `;
 
+const StyledSlotAddNewPositioner = styled.div<{ topInPixels: number }>`
+  align-items: center;
+  display: flex;
+  height: ${RECORD_CALENDAR_WEEK_DIMENSIONS.slotHeight}px;
+  left: ${themeCssVariables.spacing['0.5']};
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: ${({ topInPixels }) => `${topInPixels}px`};
+  z-index: 0;
+
+  > div {
+    pointer-events: auto;
+  }
+`;
+
 const StyledCurrentTimeLine = styled.div<{ topInPixels: number }>`
   background: ${themeCssVariables.color.red8};
   height: 1px;
@@ -268,6 +294,7 @@ const RecordCalendarWeekDayColumn = ({
   timeZone,
 }: RecordCalendarWeekDayColumnProps) => {
   const store = useStore();
+  const [hoveredSlotIndex, setHoveredSlotIndex] = useState<number | null>(null);
   const recordIds = useAtomComponentFamilySelectorValue(
     calendarDayRecordIdsComponentFamilySelector,
     { day, timeZone },
@@ -313,8 +340,99 @@ const RecordCalendarWeekDayColumn = ({
     eventLayoutInputs.slice(0, RECORD_CALENDAR_WEEK_VISIBLE_RECORD_LIMIT),
   );
 
+  const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
+    if (
+      event.target instanceof Element &&
+      event.target.closest('[data-selectable-id]') !== null
+    ) {
+      setHoveredSlotIndex(null);
+      return;
+    }
+
+    const columnRect = event.currentTarget.getBoundingClientRect();
+
+    setHoveredSlotIndex(
+      getRecordCalendarWeekSlotIndex({
+        columnHeight: columnRect.height,
+        columnTop: columnRect.top,
+        pointerY: event.clientY,
+      }),
+    );
+  };
+
+  const handleFocus = (event: FocusEvent<HTMLDivElement>) => {
+    if (event.target === event.currentTarget) {
+      setHoveredSlotIndex(
+        (currentSlotIndex) => currentSlotIndex ?? DEFAULT_KEYBOARD_SLOT_INDEX,
+      );
+    }
+  };
+
+  const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      setHoveredSlotIndex(null);
+    }
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.target !== event.currentTarget) {
+      return;
+    }
+
+    const slotCount =
+      (RECORD_CALENDAR_WEEK_DIMENSIONS.hoursInDay * 60) /
+      RECORD_CALENDAR_WEEK_DIMENSIONS.snapIntervalInMinutes;
+
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+
+      const slotDelta = event.key === 'ArrowDown' ? 1 : -1;
+
+      setHoveredSlotIndex((currentSlotIndex) =>
+        Math.min(
+          slotCount - 1,
+          Math.max(
+            0,
+            (currentSlotIndex ?? DEFAULT_KEYBOARD_SLOT_INDEX) + slotDelta,
+          ),
+        ),
+      );
+    }
+  };
+
   return (
-    <StyledDayColumn isWeekend={isPlainDateInWeekend(day)}>
+    <StyledDayColumn
+      aria-label={day.toLocaleString(undefined, { dateStyle: 'full' })}
+      isWeekend={isPlainDateInWeekend(day)}
+      onBlur={handleBlur}
+      onFocus={handleFocus}
+      onKeyDown={handleKeyDown}
+      onMouseLeave={(event) => {
+        if (!event.currentTarget.contains(document.activeElement)) {
+          setHoveredSlotIndex(null);
+        }
+      }}
+      onMouseMove={handleMouseMove}
+      tabIndex={0}
+    >
+      {isDefined(hoveredSlotIndex) && (
+        <StyledSlotAddNewPositioner
+          data-testid="record-calendar-week-slot-add"
+          topInPixels={
+            hoveredSlotIndex * RECORD_CALENDAR_WEEK_DIMENSIONS.slotHeight
+          }
+        >
+          <RecordCalendarAddNew
+            cardDate={day}
+            cardTime={Temporal.PlainTime.from('00:00').add({
+              minutes:
+                hoveredSlotIndex *
+                RECORD_CALENDAR_WEEK_DIMENSIONS.snapIntervalInMinutes,
+            })}
+            compact
+          />
+        </StyledSlotAddNewPositioner>
+      )}
       {eventLayouts.map(
         ({
           columnCount,

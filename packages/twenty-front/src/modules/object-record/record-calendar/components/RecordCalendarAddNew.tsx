@@ -10,6 +10,7 @@ import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUs
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { type Temporal } from 'temporal-polyfill';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -17,18 +18,22 @@ import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledButtonContainer = styled.div`
+const StyledButtonContainer = styled.div<{ compact: boolean }>`
   height: auto;
   min-width: unset;
-  padding: ${themeCssVariables.spacing['0.5']};
+  padding: ${({ compact }) => (compact ? 0 : themeCssVariables.spacing['0.5'])};
 `;
 
 type RecordCalendarAddNewProps = {
   cardDate: Temporal.PlainDate;
+  cardTime?: Temporal.PlainTime;
+  compact?: boolean;
 };
 
 export const RecordCalendarAddNew = ({
   cardDate,
+  cardTime,
+  compact = false,
 }: RecordCalendarAddNewProps) => {
   const { theme } = useContext(ThemeContext);
   const { userTimezone } = useUserTimezone();
@@ -60,7 +65,8 @@ export const RecordCalendarAddNew = ({
   );
 
   const isCalendarFieldReadOnly = calendarFieldMetadataItem
-    ? isFieldMetadataReadOnlyByPermissions({
+    ? calendarFieldMetadataItem.isUIEditable === false ||
+      isFieldMetadataReadOnlyByPermissions({
         objectPermissions,
         fieldMetadataId: calendarFieldMetadataItem.id,
       })
@@ -86,11 +92,23 @@ export const RecordCalendarAddNew = ({
     return null;
   }
 
+  const createRecordAriaLabel = cardTime
+    ? t`Create record on ${cardDate.toLocaleString(undefined, {
+        dateStyle: 'full',
+      })} at ${cardTime.toLocaleString(undefined, { timeStyle: 'short' })}`
+    : t`Create record`;
+
   return (
-    <StyledButtonContainer>
+    <StyledButtonContainer compact={compact}>
       <Button
-        onClick={async () => {
-          const startDateTime = cardDate.toZonedDateTime(userTimezone);
+        ariaLabel={createRecordAriaLabel}
+        onClick={async (event) => {
+          event.stopPropagation();
+
+          const startDateTime = cardDate.toZonedDateTime({
+            timeZone: userTimezone,
+            plainTime: cardTime,
+          });
           const startValue =
             calendarFieldMetadataItem.type === FieldMetadataType.DATE
               ? cardDate.toString()
@@ -115,6 +133,8 @@ export const RecordCalendarAddNew = ({
               }),
           });
         }}
+        size={compact ? 'small' : 'medium'}
+        type="button"
         variant="tertiary"
         Icon={() => <IconPlus size={theme.icon.size.sm} />}
       />
