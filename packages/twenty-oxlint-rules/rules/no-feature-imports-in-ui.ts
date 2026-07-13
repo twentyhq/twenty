@@ -18,8 +18,12 @@ const EXEMPT_FILE_MARKERS = [
 
 // Keep in sync with packages/twenty-front/scripts/ui-boundary-baseline.mjs.
 const isBannedImport = (importSource: string): boolean => {
-  if (importSource.startsWith('@/') && !importSource.startsWith('@/ui/')) {
-    return true;
+  if (importSource.startsWith('@/')) {
+    if (importSource.includes('/../') || importSource.endsWith('/..')) {
+      return true;
+    }
+
+    return importSource !== '@/ui' && !importSource.startsWith('@/ui/');
   }
 
   if (
@@ -36,15 +40,30 @@ const isBannedImport = (importSource: string): boolean => {
   return false;
 };
 
+const getStaticImportSource = (sourceNode: any): string | null => {
+  if (sourceNode?.type === 'Literal' && typeof sourceNode.value === 'string') {
+    return sourceNode.value;
+  }
+
+  if (
+    sourceNode?.type === 'TemplateLiteral' &&
+    sourceNode.expressions?.length === 0 &&
+    sourceNode.quasis?.length === 1
+  ) {
+    return sourceNode.quasis[0]?.value?.cooked ?? null;
+  }
+
+  return null;
+};
+
 const toBaselineKey = (filename: string): string | null => {
-  const normalized = filename.replace(/\\/g, '/');
-  const index = normalized.indexOf(UI_PATH_SEGMENT);
+  const index = filename.indexOf(UI_PATH_SEGMENT);
 
   if (index === -1) {
     return null;
   }
 
-  return normalized.slice(index + 1);
+  return filename.slice(index + 1);
 };
 
 type Baseline = Record<string, string[]>;
@@ -83,9 +102,9 @@ const checkImport = (
   baselineKey: string | null,
 ) => {
   const sourceNode = node.source;
-  const importSource = sourceNode?.value;
+  const importSource = getStaticImportSource(sourceNode);
 
-  if (!importSource || typeof importSource !== 'string') {
+  if (importSource === null) {
     return;
   }
 
@@ -128,7 +147,7 @@ export const rule = defineRule({
     },
   },
   create: (context) => {
-    const filename: string = context.filename ?? '';
+    const filename: string = (context.filename ?? '').replace(/\\/g, '/');
 
     if (!filename.includes(UI_PATH_SEGMENT)) {
       return {};
@@ -150,9 +169,7 @@ export const rule = defineRule({
         checkImport(node, context, baseline, baselineKey);
       },
       ImportExpression: (node: any) => {
-        if (node.source?.type === 'Literal') {
-          checkImport(node, context, baseline, baselineKey);
-        }
+        checkImport(node, context, baseline, baselineKey);
       },
       ExportNamedDeclaration: (node: any) => {
         if (node.source) {

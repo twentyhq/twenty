@@ -36,6 +36,10 @@ ruleTester.run(RULE_NAME, rule, {
       filename: UI_FILE,
     },
     {
+      code: "import { Button } from '@/ui';",
+      filename: UI_FILE,
+    },
+    {
       code: "import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';",
       filename:
         '/project/packages/twenty-front/src/modules/object-record/record-table/components/RecordTable.tsx',
@@ -73,6 +77,16 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: "const load = () => import('@/views/components/ViewBar');",
+      filename: UI_FILE,
+      errors: [{ messageId: 'featureImportInUi' }],
+    },
+    {
+      code: 'const load = () => import(`@/views/components/ViewBar`);',
+      filename: UI_FILE,
+      errors: [{ messageId: 'featureImportInUi' }],
+    },
+    {
+      code: "import { formatRecord } from '@/ui/../object-record/utils/formatRecord';",
       filename: UI_FILE,
       errors: [{ messageId: 'featureImportInUi' }],
     },
