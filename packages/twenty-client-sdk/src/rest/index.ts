@@ -168,7 +168,7 @@ export class RestApiClient {
       return undefined;
     }
 
-    return functionsBaseUrl.replace(/\/+$/, '');
+    return functionsBaseUrl.trim().replace(/\/+$/, '');
   }
 
   private resolveTarget(path: string): { baseUrl: string; path: string } {
