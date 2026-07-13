@@ -171,9 +171,7 @@ export class RestApiClient {
       return this.resolveBaseUrl();
     }
 
-    // Non-rest paths are app HTTP routes. TWENTY_FUNCTIONS_URL is a complete
-    // base URL (isolated domains serve routes at the root, self-host bakes /s
-    // in); fall back to the legacy same-site /s route when it is not injected.
+    // App routes use TWENTY_FUNCTIONS_URL, falling back to the API's /s route.
     return this.resolveFunctionsBaseUrl() ?? `${this.resolveBaseUrl()}/s`;
   }
 
