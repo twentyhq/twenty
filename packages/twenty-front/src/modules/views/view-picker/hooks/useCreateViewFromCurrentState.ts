@@ -13,12 +13,17 @@ import { viewPickerModeComponentState } from '@/views/view-picker/states/viewPic
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { viewPickerVisibilityComponentState } from '@/views/view-picker/states/viewPickerVisibilityComponentState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useCreateViewFromCurrentState = () => {
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
+  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
+  );
 
   const viewPickerInputNameCallbackState = useAtomComponentStateCallbackState(
     viewPickerInputNameComponentState,
@@ -98,7 +103,9 @@ export const useCreateViewFromCurrentState = () => {
           type === ViewType.KANBAN ? mainGroupByFieldMetadataId : null,
         calendarFieldMetadataId,
         calendarEndFieldMetadataId:
-          calendarEndFieldMetadataId === '' ? null : calendarEndFieldMetadataId,
+          isCalendarWeekViewEnabled && calendarEndFieldMetadataId !== ''
+            ? calendarEndFieldMetadataId
+            : null,
         visibility,
       },
       shouldCopyFiltersAndSortsAndAggregate,
@@ -123,6 +130,7 @@ export const useCreateViewFromCurrentState = () => {
     viewPickerTypeCallbackState,
     viewPickerModeCallbackState,
     viewPickerVisibilityCallbackState,
+    isCalendarWeekViewEnabled,
   ]);
 
   return { createViewFromCurrentState };

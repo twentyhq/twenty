@@ -1,6 +1,7 @@
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useSetViewTypeFromLayoutOptionsMenu } from '@/object-record/object-options-dropdown/hooks/useSetViewTypeFromLayoutOptionsMenu';
+import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
 import { recordIndexCalendarLayoutState } from '@/object-record/record-index/states/recordIndexCalendarLayoutState';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
@@ -24,6 +25,7 @@ import {
 } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
@@ -41,6 +43,7 @@ import {
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { MenuItem, MenuItemSelect, MenuItemToggle } from 'twenty-ui/navigation';
 import {
+  FeatureFlagKey,
   ViewCalendarLayout,
   ViewOpenRecordIn,
 } from '~/generated-metadata/graphql';
@@ -72,6 +75,13 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   const recordIndexCalendarLayout = useAtomStateValue(
     recordIndexCalendarLayoutState,
   );
+  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
+  );
+  const supportedCalendarLayout = getSupportedRecordCalendarLayout({
+    calendarLayout: recordIndexCalendarLayout,
+    isCalendarWeekViewEnabled,
+  });
   const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
@@ -133,7 +143,11 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     ViewOpenRecordIn.SIDE_PANEL,
     ...(currentView?.type === ViewType.KANBAN ? ['Group'] : []),
     ...(currentView?.type === ViewType.CALENDAR
-      ? ['CalendarView', 'CalendarDateField', 'CalendarEndDateField']
+      ? [
+          'CalendarView',
+          'CalendarDateField',
+          ...(isCalendarWeekViewEnabled ? ['CalendarEndDateField'] : []),
+        ]
       : []),
     ...(currentView?.type !== ViewType.TABLE ? ['Compact view'] : []),
   ];
@@ -242,20 +256,24 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     hasSubMenu
                   />
                 </SelectableListItem>
-                <SelectableListItem
-                  itemId="CalendarEndDateField"
-                  onEnter={() => onContentChange('calendarEndFields')}
-                >
-                  <MenuItem
-                    focused={selectedItemId === 'CalendarEndDateField'}
-                    onClick={() => onContentChange('calendarEndFields')}
-                    LeftIcon={IconCalendar}
-                    text={t`End date field`}
-                    contextualText={calendarEndFieldMetadata?.label ?? t`None`}
-                    contextualTextPosition="right"
-                    hasSubMenu
-                  />
-                </SelectableListItem>
+                {isCalendarWeekViewEnabled && (
+                  <SelectableListItem
+                    itemId="CalendarEndDateField"
+                    onEnter={() => onContentChange('calendarEndFields')}
+                  >
+                    <MenuItem
+                      focused={selectedItemId === 'CalendarEndDateField'}
+                      onClick={() => onContentChange('calendarEndFields')}
+                      LeftIcon={IconCalendar}
+                      text={t`End date field`}
+                      contextualText={
+                        calendarEndFieldMetadata?.label ?? t`None`
+                      }
+                      contextualTextPosition="right"
+                      hasSubMenu
+                    />
+                  </SelectableListItem>
+                )}
                 <SelectableListItem
                   itemId="CalendarView"
                   onEnter={() => onContentChange('calendarView')}
@@ -266,9 +284,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     LeftIcon={IconCalendarWeek}
                     text={t`Calendar view`}
                     contextualText={
-                      recordIndexCalendarLayout === ViewCalendarLayout.MONTH
+                      supportedCalendarLayout === ViewCalendarLayout.MONTH
                         ? t`Month`
-                        : recordIndexCalendarLayout === ViewCalendarLayout.WEEK
+                        : supportedCalendarLayout === ViewCalendarLayout.WEEK
                           ? t`Week`
                           : t`Day`
                     }

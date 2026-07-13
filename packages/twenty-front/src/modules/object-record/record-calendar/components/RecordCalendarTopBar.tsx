@@ -17,6 +17,7 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { format } from 'date-fns';
@@ -29,7 +30,10 @@ import {
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ViewCalendarLayout } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  ViewCalendarLayout,
+} from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 const StyledContainer = styled.div`
@@ -67,9 +71,13 @@ export const RecordCalendarTopBar = () => {
 
   const [recordIndexCalendarLayout, setRecordIndexCalendarLayout] =
     useAtomState(recordIndexCalendarLayoutState);
-  const supportedCalendarLayout = getSupportedRecordCalendarLayout(
-    recordIndexCalendarLayout,
+  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
   );
+  const supportedCalendarLayout = getSupportedRecordCalendarLayout({
+    calendarLayout: recordIndexCalendarLayout,
+    isCalendarWeekViewEnabled,
+  });
 
   const dateLocale = useAtomStateValue(dateLocaleState);
   const { firstDayOfWeek, lastDayOfWeek } = useRecordCalendarWeekDaysRange(
@@ -105,6 +113,13 @@ export const RecordCalendarTopBar = () => {
   };
 
   const handleCalendarLayoutChange = (calendarLayout: ViewCalendarLayout) => {
+    if (
+      calendarLayout === ViewCalendarLayout.WEEK &&
+      !isCalendarWeekViewEnabled
+    ) {
+      return;
+    }
+
     setRecordIndexCalendarLayout(calendarLayout);
     void updateCurrentView({ calendarLayout });
   };
@@ -133,17 +148,19 @@ export const RecordCalendarTopBar = () => {
   return (
     <StyledContainer>
       <StyledLeftSection>
-        <Select
-          dropdownId={`record-calendar-layout-${recordCalendarId}`}
-          value={supportedCalendarLayout}
-          options={[
-            { label: t`Week`, value: ViewCalendarLayout.WEEK },
-            { label: t`Month`, value: ViewCalendarLayout.MONTH },
-          ]}
-          selectSizeVariant="small"
-          dropdownWidth={120}
-          onChange={handleCalendarLayoutChange}
-        />
+        {isCalendarWeekViewEnabled && (
+          <Select
+            dropdownId={`record-calendar-layout-${recordCalendarId}`}
+            value={supportedCalendarLayout}
+            options={[
+              { label: t`Week`, value: ViewCalendarLayout.WEEK },
+              { label: t`Month`, value: ViewCalendarLayout.MONTH },
+            ]}
+            selectSizeVariant="small"
+            dropdownWidth={120}
+            onChange={handleCalendarLayoutChange}
+          />
+        )}
         <Dropdown
           dropdownId={datePickerDropdownId}
           clickableComponent={

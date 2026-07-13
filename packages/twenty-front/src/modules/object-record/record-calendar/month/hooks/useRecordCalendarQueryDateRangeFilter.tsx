@@ -2,6 +2,7 @@ import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/fl
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
 import { getRecordCalendarDateRangeOverlapFilter } from '@/object-record/record-calendar/month/utils/getRecordCalendarDateRangeOverlapFilter';
+import { recordIndexCalendarEndFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
@@ -53,6 +54,9 @@ export const useRecordCalendarQueryDateRangeFilter = (
   const flattenedFieldMetadataItems = useAtomStateValue(
     flattenedFieldMetadataItemsSelector,
   );
+  const recordIndexCalendarEndFieldMetadataId = useAtomStateValue(
+    recordIndexCalendarEndFieldMetadataIdState,
+  );
 
   const anyFieldFilterValue = useAtomComponentStateValue(
     anyFieldFilterValueComponentState,
@@ -89,7 +93,7 @@ export const useRecordCalendarQueryDateRangeFilter = (
 
   const calendarEndFieldMetadataItem = objectMetadataItem.fields.find(
     (fieldMetadataItem) =>
-      fieldMetadataItem.id === currentView.calendarEndFieldMetadataId,
+      fieldMetadataItem.id === recordIndexCalendarEndFieldMetadataId,
   );
 
   const dateRangeOverlapFilter = isDefined(calendarFieldMetadataItem)

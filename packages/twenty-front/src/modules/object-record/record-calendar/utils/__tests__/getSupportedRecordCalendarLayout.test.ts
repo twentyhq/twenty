@@ -8,9 +8,33 @@ describe('getSupportedRecordCalendarLayout', () => {
     [ViewCalendarLayout.DAY, ViewCalendarLayout.MONTH],
     [null, ViewCalendarLayout.MONTH],
     [undefined, ViewCalendarLayout.MONTH],
-  ])('normalizes %s to %s', (calendarLayout, expectedLayout) => {
-    expect(getSupportedRecordCalendarLayout(calendarLayout)).toBe(
-      expectedLayout,
-    );
-  });
+  ])(
+    'normalizes %s to %s when the week view is enabled',
+    (calendarLayout, expectedLayout) => {
+      expect(
+        getSupportedRecordCalendarLayout({
+          calendarLayout,
+          isCalendarWeekViewEnabled: true,
+        }),
+      ).toBe(expectedLayout);
+    },
+  );
+
+  it.each([
+    ViewCalendarLayout.WEEK,
+    ViewCalendarLayout.MONTH,
+    ViewCalendarLayout.DAY,
+    null,
+    undefined,
+  ])(
+    'normalizes %s to month when the week view is disabled',
+    (calendarLayout) => {
+      expect(
+        getSupportedRecordCalendarLayout({
+          calendarLayout,
+          isCalendarWeekViewEnabled: false,
+        }),
+      ).toBe(ViewCalendarLayout.MONTH);
+    },
+  );
 });

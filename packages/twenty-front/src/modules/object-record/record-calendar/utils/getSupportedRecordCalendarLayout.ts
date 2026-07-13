@@ -1,8 +1,14 @@
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
-export const getSupportedRecordCalendarLayout = (
-  calendarLayout: ViewCalendarLayout | null | undefined,
-) =>
-  calendarLayout === ViewCalendarLayout.WEEK
+type GetSupportedRecordCalendarLayoutArgs = {
+  calendarLayout: ViewCalendarLayout | null | undefined;
+  isCalendarWeekViewEnabled: boolean;
+};
+
+export const getSupportedRecordCalendarLayout = ({
+  calendarLayout,
+  isCalendarWeekViewEnabled,
+}: GetSupportedRecordCalendarLayoutArgs) =>
+  isCalendarWeekViewEnabled && calendarLayout === ViewCalendarLayout.WEEK
     ? ViewCalendarLayout.WEEK
     : ViewCalendarLayout.MONTH;

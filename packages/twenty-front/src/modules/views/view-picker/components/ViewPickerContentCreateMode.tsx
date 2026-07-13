@@ -39,10 +39,12 @@ import { viewPickerMainGroupByFieldMetadataIdComponentState } from '@/views/view
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { getAvailableCalendarEndFieldMetadataItems } from '@/views/view-picker/utils/getAvailableCalendarEndFieldMetadataItems';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { IconX } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledFieldAvailableContainer = styled.div`
   color: ${themeCssVariables.font.color.light};
@@ -56,6 +58,9 @@ export const ViewPickerContentCreateMode = () => {
   const { t } = useLingui();
   const { viewPickerMode, setViewPickerMode } = useViewPickerMode();
   const [hasManuallySelectedIcon, setHasManuallySelectedIcon] = useState(false);
+  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
+  );
 
   const viewObjectMetadataId = useAtomComponentStateValue(
     viewObjectMetadataIdComponentState,
@@ -276,25 +281,27 @@ export const ViewPickerContentCreateMode = () => {
                 dropdownId={VIEW_PICKER_CALENDAR_FIELD_DROPDOWN_ID}
               />
             </ViewPickerSelectContainer>
-            <ViewPickerSelectContainer>
-              <Select
-                label={t`End date field`}
-                fullWidth
-                value={viewPickerCalendarEndFieldMetadataId}
-                onChange={(value) => {
-                  setViewPickerIsDirty(true);
-                  setViewPickerCalendarEndFieldMetadataId(value);
-                }}
-                options={[
-                  { value: '', label: t`None` },
-                  ...availableCalendarEndFieldMetadataItems.map((field) => ({
-                    value: field.id,
-                    label: field.label,
-                  })),
-                ]}
-                dropdownId={VIEW_PICKER_CALENDAR_END_FIELD_DROPDOWN_ID}
-              />
-            </ViewPickerSelectContainer>
+            {isCalendarWeekViewEnabled && (
+              <ViewPickerSelectContainer>
+                <Select
+                  label={t`End date field`}
+                  fullWidth
+                  value={viewPickerCalendarEndFieldMetadataId}
+                  onChange={(value) => {
+                    setViewPickerIsDirty(true);
+                    setViewPickerCalendarEndFieldMetadataId(value);
+                  }}
+                  options={[
+                    { value: '', label: t`None` },
+                    ...availableCalendarEndFieldMetadataItems.map((field) => ({
+                      value: field.id,
+                      label: field.label,
+                    })),
+                  ]}
+                  dropdownId={VIEW_PICKER_CALENDAR_END_FIELD_DROPDOWN_ID}
+                />
+              </ViewPickerSelectContainer>
+            )}
             {availableFieldsForCalendar.length === 0 && (
               <StyledFieldAvailableContainer>
                 <Trans>

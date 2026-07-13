@@ -12,6 +12,7 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
+import { getEffectiveRecordCalendarEndFieldMetadataId } from '@/object-record/record-calendar/utils/getEffectiveRecordCalendarEndFieldMetadataId';
 import { recordIndexCalendarEndFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdState';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -41,13 +42,18 @@ import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordFie
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { atom, useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useLoadRecordIndexStates = () => {
   const store = useStore();
+  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
+  );
 
   const contextStoreTargetedRecordsRuleAtom =
     useAtomComponentStateCallbackState(
@@ -323,11 +329,17 @@ export const useLoadRecordIndexStates = () => {
             );
             batchSet(
               recordIndexCalendarEndFieldMetadataIdState.atom,
-              view.calendarEndFieldMetadataId ?? null,
+              getEffectiveRecordCalendarEndFieldMetadataId({
+                calendarEndFieldMetadataId: view.calendarEndFieldMetadataId,
+                isCalendarWeekViewEnabled,
+              }),
             );
             batchSet(
               recordIndexCalendarLayoutState.atom,
-              getSupportedRecordCalendarLayout(view.calendarLayout),
+              getSupportedRecordCalendarLayout({
+                calendarLayout: view.calendarLayout,
+                isCalendarWeekViewEnabled,
+              }),
             );
           }
 
@@ -384,6 +396,7 @@ export const useLoadRecordIndexStates = () => {
       getFieldMetadataItemByIdOrThrow,
       setRecordGroupsFromViewGroups,
       syncRecordIndexViewFields,
+      isCalendarWeekViewEnabled,
     ],
   );
 

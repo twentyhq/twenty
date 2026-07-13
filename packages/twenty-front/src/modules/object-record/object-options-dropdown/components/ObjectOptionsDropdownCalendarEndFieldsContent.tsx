@@ -12,16 +12,21 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { getAvailableCalendarEndFieldMetadataItems } from '@/views/view-picker/utils/getAvailableCalendarEndFieldMetadataItems';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownCalendarEndFieldsContent = () => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const [searchInput, setSearchInput] = useState('');
+  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
+  );
 
   const { resetContent, closeDropdown } = useObjectOptionsDropdown();
 
@@ -47,12 +52,20 @@ export const ObjectOptionsDropdownCalendarEndFieldsContent = () => {
   const handleCalendarEndFieldChange = async (
     fieldMetadataItem: FieldMetadataItem | null,
   ) => {
+    if (!isCalendarWeekViewEnabled) {
+      return;
+    }
+
     const calendarEndFieldMetadataId = fieldMetadataItem?.id ?? null;
 
     setRecordIndexCalendarEndFieldMetadataId(calendarEndFieldMetadataId);
     await updateCurrentView({ calendarEndFieldMetadataId });
     closeDropdown();
   };
+
+  if (!isCalendarWeekViewEnabled) {
+    return null;
+  }
 
   return (
     <DropdownContent>
