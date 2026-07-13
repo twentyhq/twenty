@@ -34,7 +34,7 @@ export default defineView({
 
 * `objectUniversalIdentifier`, bu görünümün hangi nesneye uygulanacağını belirtir. Bu, tanımladığınız özel bir nesne veya standart bir Twenty nesnesi olabilir.
 * `key: ViewKey.INDEX` görünümü nesnenin ana liste görünümü olarak işaretler (bir `OBJECT` gezinme öğesinin açtığı görünüm).
-* `fields`, hangi sütunların görüneceğini ve hangi sırayla görüneceğini kontrol eder. Her alan bir `fieldMetadataUniversalIdentifier` öğesine referans verir.
+* `fields`, hangi sütunların görüneceğini ve hangi sırayla görüneceğini kontrol eder. Her alan bir `fieldMetadataUniversalIdentifier` öğesine referans verir. Otomatik oluşturulan `createdAt` gibi bir sistem alanına başvurmak için, bkz. [Sistem Alanlarını Hedefleme](/l/tr/developers/extend/apps/data/system-fields).
 * Daha gelişmiş yapılandırmalar için `filters`, `filterGroups`, `sorts`, `groups` ve `fieldGroups` da tanımlayabilirsiniz.
 * `position`, aynı nesne için birden fazla görünüm olduğunda sıralamayı kontrol eder.
 

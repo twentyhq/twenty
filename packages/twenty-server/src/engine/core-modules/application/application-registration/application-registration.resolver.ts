@@ -23,6 +23,7 @@ import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/
 import { CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
+import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
@@ -67,6 +68,7 @@ export class ApplicationRegistrationResolver {
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationTarballService: ApplicationTarballService,
+    private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
     private readonly fileUrlService: FileUrlService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -355,5 +357,23 @@ export class ApplicationRegistrationResolver {
     return context.loaders.isConfiguredLoader.load({
       applicationRegistrationId: registration.id,
     });
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  logoUrl(
+    @Parent() registration: ApplicationRegistrationEntity,
+  ): string | null {
+    return this.applicationRegistrationAssetUrlService.buildLogoUrl(
+      registration,
+    );
+  }
+
+  @ResolveField(() => [String])
+  galleryImagesUrls(
+    @Parent() registration: ApplicationRegistrationEntity,
+  ): string[] {
+    return this.applicationRegistrationAssetUrlService.buildGalleryImageUrls(
+      registration,
+    );
   }
 }
