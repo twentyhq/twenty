@@ -31,4 +31,19 @@ describe('getRecordCalendarWeekEventDropDateTime', () => {
       endDateTime: '2026-10-26T10:00:00Z',
     });
   });
+
+  it('shifts an end that is equal to the start', () => {
+    expect(
+      getRecordCalendarWeekEventDropDateTime({
+        destinationDay: Temporal.PlainDate.from('2026-07-10'),
+        destinationMinutes: 10 * 60,
+        startDateTime: '2026-07-07T07:00:00Z',
+        endDateTime: '2026-07-07T07:00:00Z',
+        timeZone: 'Europe/Paris',
+      }),
+    ).toEqual({
+      startDateTime: '2026-07-10T08:00:00Z',
+      endDateTime: '2026-07-10T08:00:00Z',
+    });
+  });
 });

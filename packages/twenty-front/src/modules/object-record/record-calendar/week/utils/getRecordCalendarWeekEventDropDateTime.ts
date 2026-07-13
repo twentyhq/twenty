@@ -36,7 +36,7 @@ export const getRecordCalendarWeekEventDropDateTime = ({
         const currentEndInstant = Temporal.Instant.from(endDateTime);
 
         if (
-          Temporal.Instant.compare(currentEndInstant, currentStartInstant) > 0
+          Temporal.Instant.compare(currentEndInstant, currentStartInstant) >= 0
         ) {
           shiftedEndDateTime = Temporal.Instant.fromEpochNanoseconds(
             shiftedStartInstant.epochNanoseconds +

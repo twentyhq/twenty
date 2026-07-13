@@ -93,6 +93,21 @@ describe('getShiftedRecordCalendarDateTime', () => {
     });
   });
 
+  it('shifts an end that is equal to the start', () => {
+    expect(
+      getShiftedRecordCalendarDateTime({
+        sourceDay: Temporal.PlainDate.from('2026-07-08'),
+        destinationDay: Temporal.PlainDate.from('2026-07-09'),
+        startDateTime: '2026-07-08T15:59:00Z',
+        endDateTime: '2026-07-08T15:59:00Z',
+        timeZone,
+      }),
+    ).toEqual({
+      startDateTime: '2026-07-09T15:59:00Z',
+      endDateTime: '2026-07-09T15:59:00Z',
+    });
+  });
+
   it('returns null for an unusable start', () => {
     expect(
       getShiftedRecordCalendarDateTime({

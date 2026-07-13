@@ -13,12 +13,8 @@ export const useRecordCalendarWeekDaysRange = (
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const dateLocale = useAtomStateValue(dateLocaleState);
 
-  if (!currentWorkspaceMember) {
-    throw new Error('Current workspace member not found');
-  }
-
   const calendarStartDay =
-    currentWorkspaceMember.calendarStartDay ?? CalendarStartDay.SYSTEM;
+    currentWorkspaceMember?.calendarStartDay ?? CalendarStartDay.SYSTEM;
 
   const weekStartsOnDayIndex = (
     calendarStartDay === CalendarStartDay.SYSTEM

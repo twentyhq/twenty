@@ -41,7 +41,7 @@ describe('getRecordCalendarDateRangeOverlapFilter', () => {
     });
   });
 
-  it('does not replace the existing range filter when no end field is configured', () => {
+  it('returns undefined when no end field is configured', () => {
     expect(
       getRecordCalendarDateRangeOverlapFilter({
         calendarField: {
@@ -94,7 +94,7 @@ describe('getRecordCalendarDateRangeOverlapFilter', () => {
     });
   });
 
-  it('does not replace the existing range filter for incompatible fields', () => {
+  it('returns undefined for incompatible calendar field types', () => {
     expect(
       getRecordCalendarDateRangeOverlapFilter({
         calendarField: {

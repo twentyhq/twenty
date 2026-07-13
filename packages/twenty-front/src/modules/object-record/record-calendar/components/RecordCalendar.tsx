@@ -17,7 +17,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
@@ -45,18 +45,10 @@ export const RecordCalendar = () => {
   const supportedCalendarLayout = getSupportedRecordCalendarLayout(
     recordIndexCalendarLayout,
   );
-  const [previousCalendarLayout, setPreviousCalendarLayout] = useState(
-    supportedCalendarLayout,
-  );
 
   useEffect(() => {
-    if (previousCalendarLayout === supportedCalendarLayout) {
-      return;
-    }
-
-    setPreviousCalendarLayout(supportedCalendarLayout);
     resetRecordSelection();
-  }, [previousCalendarLayout, resetRecordSelection, supportedCalendarLayout]);
+  }, [resetRecordSelection, supportedCalendarLayout]);
 
   useListenClickOutside({
     excludedClickOutsideIds: [
