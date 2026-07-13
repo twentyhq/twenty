@@ -34,7 +34,7 @@ export default defineView({
 
 - `objectUniversalIdentifier` specifies which object this view applies to. It can be a custom object you defined or a standard Twenty object.
 - `key: ViewKey.INDEX` marks the view as the object's main list view (the one an `OBJECT` navigation item opens).
-- `fields` controls which columns appear and in what order. Each field references a `fieldMetadataUniversalIdentifier`.
+- `fields` controls which columns appear and in what order. Each field references a `fieldMetadataUniversalIdentifier`. To reference an auto-created system field such as `createdAt`, see [Targeting System Fields](/developers/extend/apps/data/system-fields).
 - You can also declare `filters`, `filterGroups`, `sorts`, `groups`, and `fieldGroups` for advanced configurations.
 - `position` controls ordering when multiple views exist for the same object.
 
