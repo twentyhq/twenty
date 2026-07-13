@@ -18,7 +18,6 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
-import { CommonArgsProcessorQueryRunnerContext } from 'src/engine/api/common/types/common-args-processor-query-runner-context.type';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
@@ -174,7 +173,8 @@ export abstract class CommonBaseQueryRunnerService<
 
   protected abstract computeArgs(
     args: CommonInput<Args>,
-    queryRunnerContext: CommonArgsProcessorQueryRunnerContext,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+    objectsPermissions: ObjectsPermissions,
   ): Promise<CommonInput<Args>>;
 
   protected abstract processQueryResult(
@@ -207,10 +207,11 @@ export abstract class CommonBaseQueryRunnerService<
     const objectsPermissions =
       await this.resolveObjectsPermissions(authContext);
 
-    const computedArgs = await this.computeArgs(args, {
-      ...queryRunnerContext,
+    const computedArgs = await this.computeArgs(
+      args,
+      queryRunnerContext,
       objectsPermissions,
-    });
+    );
 
     const hookedArgs =
       (await this.workspaceQueryHookService.executePreQueryHooks(

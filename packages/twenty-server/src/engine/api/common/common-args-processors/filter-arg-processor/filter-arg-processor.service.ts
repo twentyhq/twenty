@@ -27,11 +27,7 @@ import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metada
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { validateFieldReadPermissionOrThrow } from 'src/engine/metadata-modules/permissions/utils/validate-field-read-permission-or-throw.util';
 
 function throwUseJoinColumnInstead(key: string): never {
   const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
@@ -128,13 +124,23 @@ export class FilterArgProcessorService {
         continue;
       }
 
-      this.validateFieldReadPermissionOrThrow({
-        key,
-        flatObjectMetadata,
-        fieldIdByName,
-        fieldIdByJoinColumnName,
-        objectsPermissions,
-      });
+      const fieldMetadataId =
+        fieldIdByName[key] ?? fieldIdByJoinColumnName[key];
+
+      if (isDefined(fieldMetadataId)) {
+        const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: fieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        });
+
+        validateFieldReadPermissionOrThrow({
+          restrictedFields:
+            objectsPermissions[flatObjectMetadata.id]?.restrictedFields ?? {},
+          fieldMetadataId,
+          fieldName: fieldMetadata?.name ?? key,
+          entityName: flatObjectMetadata.nameSingular,
+        });
+      }
 
       const fieldMetadataForRelation = this.resolveRelationFieldMetadataByName({
         key,
@@ -283,34 +289,6 @@ export class FilterArgProcessorService {
       objectsPermissions,
       depth + 1,
     );
-  }
-
-  private validateFieldReadPermissionOrThrow({
-    key,
-    flatObjectMetadata,
-    fieldIdByName,
-    fieldIdByJoinColumnName,
-    objectsPermissions,
-  }: {
-    key: string;
-    flatObjectMetadata: FlatObjectMetadata;
-    fieldIdByName: Record<string, string>;
-    fieldIdByJoinColumnName: Record<string, string>;
-    objectsPermissions: ObjectsPermissions;
-  }): void {
-    const fieldMetadataId = fieldIdByName[key] ?? fieldIdByJoinColumnName[key];
-
-    if (
-      isDefined(fieldMetadataId) &&
-      objectsPermissions[flatObjectMetadata.id]?.restrictedFields[
-        fieldMetadataId
-      ]?.canRead === false
-    ) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
-    }
   }
 
   private validateAndTransformFieldFilter(

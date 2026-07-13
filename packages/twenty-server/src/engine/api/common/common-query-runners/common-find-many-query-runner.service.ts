@@ -5,7 +5,11 @@ import {
   QUERY_MAX_RECORDS,
   QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
-import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
+import {
+  ObjectRecord,
+  type ObjectsPermissions,
+  OrderByDirection,
+} from 'twenty-shared/types';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import {
@@ -20,7 +24,6 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
-import { CommonArgsProcessorQueryRunnerContext } from 'src/engine/api/common/types/common-args-processor-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonFindManyOutput } from 'src/engine/api/common/types/common-find-many-output.type';
 import {
@@ -232,13 +235,13 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
   async computeArgs(
     args: CommonInput<FindManyQueryArgs>,
-    queryRunnerContext: CommonArgsProcessorQueryRunnerContext,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+    objectsPermissions: ObjectsPermissions,
   ): Promise<CommonInput<FindManyQueryArgs>> {
     const {
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      objectsPermissions,
     } = queryRunnerContext;
 
     return {
