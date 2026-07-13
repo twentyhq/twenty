@@ -6,6 +6,7 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { RecordTableWidgetRendererContent } from '@/page-layout/widgets/record-table/components/RecordTableWidgetRendererContent';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
+import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -34,6 +35,8 @@ export const FieldWidgetRelationTable = ({
   const widget = useCurrentWidget();
 
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+
+  const { isInSidePanel } = useLayoutRenderingContext();
 
   const viewId = isFieldWidget(widget)
     ? widget.configuration.viewId
@@ -68,6 +71,7 @@ export const FieldWidgetRelationTable = ({
           widgetId={widget.id}
           isReadOnly={isPageLayoutInEditMode}
           isEmptyStateHidden
+          instanceIdSuffix={`${recordId}${isInSidePanel ? '-side-panel' : ''}`}
         />
       </StyledContainer>
     </RecordFilterValueDependenciesContext.Provider>
