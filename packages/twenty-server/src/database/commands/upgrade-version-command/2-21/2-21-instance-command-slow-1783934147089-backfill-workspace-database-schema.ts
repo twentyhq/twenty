@@ -7,10 +7,6 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 @RegisteredInstanceCommand('2.21.0', 1783934147089, { type: 'slow' })
 export class BackfillWorkspaceDatabaseSchemaSlowInstanceCommand implements SlowInstanceCommand {
   async runDataMigration(dataSource: DataSource): Promise<void> {
-    // Workspaces still in the creation phase are legitimately allowed to have an
-    // empty databaseSchema (their Postgres schema is not provisioned yet), so we
-    // exclude them here to mirror the workspace_requires_database_schema
-    // constraint predicate and avoid touching rows that are meant to be null.
     const workspacesWithoutSchema: { id: string }[] = await dataSource.query(
       `SELECT id FROM "core"."workspace"
        WHERE ("databaseSchema" IS NULL OR "databaseSchema" = '')
@@ -53,20 +49,12 @@ export class BackfillWorkspaceDatabaseSchemaSlowInstanceCommand implements SlowI
     );
   }
 
-  // Added NOT VALID on purpose: runDataMigration repairs every workspace whose
-  // Postgres schema actually exists, but some legacy active/suspended workspaces
-  // (carried over from very old versions) can have a null databaseSchema with no
-  // provisioned schema to point at. Those rows are unrepairable here, so we
-  // enforce the invariant on all future inserts/updates without failing the
-  // upgrade on pre-existing corruption. Newly created workspaces write
-  // databaseSchema before leaving the creation phase, so the constraint never
-  // fights the PENDING_CREATION -> ACTIVE transition.
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE "core"."workspace" DROP CONSTRAINT IF EXISTS "workspace_requires_database_schema"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."workspace" ADD CONSTRAINT "workspace_requires_database_schema" CHECK ("activationStatus" IN ('PENDING_CREATION', 'ONGOING_CREATION') OR "databaseSchema" IS NOT NULL) NOT VALID`,
+      `ALTER TABLE "core"."workspace" ADD CONSTRAINT "workspace_requires_database_schema" CHECK ("activationStatus" IN ('PENDING_CREATION', 'ONGOING_CREATION') OR ("databaseSchema" IS NOT NULL AND "databaseSchema" <> '')) NOT VALID`,
     );
   }
 

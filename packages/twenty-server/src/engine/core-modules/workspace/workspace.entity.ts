@@ -67,7 +67,7 @@ registerEnumType(WorkspaceDiscoverability, {
 )
 @Check(
   'workspace_requires_database_schema',
-  `"activationStatus" IN ('PENDING_CREATION', 'ONGOING_CREATION') OR "databaseSchema" IS NOT NULL`,
+  `"activationStatus" IN ('PENDING_CREATION', 'ONGOING_CREATION') OR ("databaseSchema" IS NOT NULL AND "databaseSchema" <> '')`,
 )
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
