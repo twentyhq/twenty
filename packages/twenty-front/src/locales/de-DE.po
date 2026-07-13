@@ -10743,6 +10743,11 @@ msgstr "{formattedNames} werden geladen"
 msgid "Loading applications..."
 msgstr "Anwendungen werden geladen..."
 
+#. js-lingui-id: 58V8TX
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Loading apps..."
+msgstr ""
+
 #. js-lingui-id: Nx262D
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "Loading csv ... "
@@ -12075,6 +12080,11 @@ msgstr "Keine Anwendungen verfügbar"
 msgid "No apps are available to install right now"
 msgstr ""
 
+#. js-lingui-id: pfRh+M
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "No apps found"
+msgstr ""
+
 #. js-lingui-id: tFxVHz
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "No available fields to select"
@@ -12677,6 +12687,11 @@ msgstr "Kein fehlgeschlagener Arbeitsbereich"
 #: src/modules/settings/lab/hooks/useLabPublicFeatureFlags.ts
 msgid "No workspace selected"
 msgstr "Kein Arbeitsbereich ausgewählt"
+
+#. js-lingui-id: /XvL19
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
+msgid "No workspaces found"
+msgstr ""
 
 #. js-lingui-id: TiRphK
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -16311,6 +16326,7 @@ msgid "Show hidden objects"
 msgstr "Verborgene Objekte anzeigen"
 
 #. js-lingui-id: fMPkxb
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show more"
 msgstr "Mehr anzeigen"
