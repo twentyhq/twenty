@@ -43,11 +43,6 @@ import {
   executeToolInputSchema,
 } from 'src/engine/core-modules/tool-provider/tools/execute-tool.tool';
 import {
-  createGetToolCatalogTool,
-  GET_TOOL_CATALOG_TOOL_NAME,
-  getToolCatalogInputSchema,
-} from 'src/engine/core-modules/tool-provider/tools/get-tool-catalog.tool';
-import {
   createLoadSkillTool,
   LOAD_SKILL_TOOL_NAME,
   loadSkillInputSchema,
@@ -223,15 +218,6 @@ export class McpProtocolService {
 
     return {
       ...annotatePreloadedMcpTools(preloadedTools),
-      [GET_TOOL_CATALOG_TOOL_NAME]: {
-        ...createGetToolCatalogTool(this.toolRegistry, workspace.id, roleId, {
-          userId: options?.userId,
-          userWorkspaceId: options?.userWorkspaceId,
-          excludeTools: MCP_EXCLUDED_TOOL_NAMES,
-        }),
-        inputSchema: zodSchema(getToolCatalogInputSchema),
-        annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
-      } as McpAnnotatedTool,
       [EXECUTE_TOOL_TOOL_NAME]: {
         ...createExecuteToolTool(this.toolRegistry, toolContext, {
           excludeTools: MCP_EXCLUDED_TOOL_NAMES,

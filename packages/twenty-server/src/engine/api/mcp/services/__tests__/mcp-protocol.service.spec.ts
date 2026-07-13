@@ -299,17 +299,15 @@ describe('McpProtocolService', () => {
 
       expect(mcpToolExecutorService.handleToolCall).toHaveBeenCalledWith(
         '123',
-        expect.objectContaining(
-          Object.fromEntries(
-            EXPECTED_MCP_TOOL_NAMES.map((name) => [
-              name,
-              expect.objectContaining({
-                description: expect.any(String),
-                annotations: EXPECTED_MCP_TOOL_ANNOTATIONS[name],
-                execute: expect.any(Function),
-              }),
-            ]),
-          ),
+        Object.fromEntries(
+          EXPECTED_MCP_TOOL_NAMES.map((name) => [
+            name,
+            expect.objectContaining({
+              description: expect.any(String),
+              annotations: EXPECTED_MCP_TOOL_ANNOTATIONS[name],
+              execute: expect.any(Function),
+            }),
+          ]),
         ),
         mockRequest.params,
         undefined,
@@ -339,16 +337,14 @@ describe('McpProtocolService', () => {
 
       expect(mcpToolExecutorService.handleToolsListing).toHaveBeenCalledWith(
         '123',
-        expect.objectContaining(
-          Object.fromEntries(
-            EXPECTED_MCP_TOOL_NAMES.map((name) => [
-              name,
-              expect.objectContaining({
-                description: expect.any(String),
-                annotations: EXPECTED_MCP_TOOL_ANNOTATIONS[name],
-              }),
-            ]),
-          ),
+        Object.fromEntries(
+          EXPECTED_MCP_TOOL_NAMES.map((name) => [
+            name,
+            expect.objectContaining({
+              description: expect.any(String),
+              annotations: EXPECTED_MCP_TOOL_ANNOTATIONS[name],
+            }),
+          ]),
         ),
       );
     });
