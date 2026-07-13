@@ -124,6 +124,74 @@ describe('RestApiClient', () => {
     });
   });
 
+  describe('callAppRoute', () => {
+    beforeEach(() => {
+      (globalThis as Record<string, unknown>).process = {
+        env: {
+          TWENTY_API_URL: 'https://api.twenty.test',
+          TWENTY_FUNCTIONS_URL: 'https://functions.twenty.test/s/',
+          TWENTY_APP_ACCESS_TOKEN: 'app-access-token',
+        },
+      };
+    });
+
+    it('should post to the functions url and join a leading-slash path without doubling slashes', async () => {
+      const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
+
+      const client = new RestApiClient({ fetch: fetchMock });
+
+      await client.callAppRoute('/my-app/my-route', { remainingIds: ['a'] });
+
+      const [url, requestInit] = fetchMock.mock.calls[0];
+      expect(url).toBe('https://functions.twenty.test/s/my-app/my-route');
+      expect(requestInit.method).toBe('POST');
+    });
+
+    it('should return undefined for an empty response body', async () => {
+      const fetchMock = vi.fn().mockResolvedValue(buildResponse(''));
+
+      const client = new RestApiClient({ fetch: fetchMock });
+
+      const result = await client.callAppRoute('/my-app/my-route');
+
+      expect(result).toBeUndefined();
+    });
+
+    it('should surface non-2xx responses as a RestApiClientError', async () => {
+      const fetchMock = vi.fn().mockResolvedValue(
+        buildResponse('not found', {
+          status: 404,
+          statusText: 'Not Found',
+        }),
+      );
+
+      const client = new RestApiClient({ fetch: fetchMock });
+
+      await expect(
+        client.callAppRoute('/my-app/missing'),
+      ).rejects.toMatchObject({
+        status: 404,
+      });
+    });
+
+    it('should throw a RestApiClientError when the functions url is missing', async () => {
+      (globalThis as Record<string, unknown>).process = {
+        env: {
+          TWENTY_API_URL: 'https://api.twenty.test',
+          TWENTY_APP_ACCESS_TOKEN: 'app-access-token',
+        },
+      };
+      const fetchMock = vi.fn();
+
+      const client = new RestApiClient({ fetch: fetchMock });
+
+      await expect(client.callAppRoute('/my-app/my-route')).rejects.toThrow(
+        /Missing functions url/,
+      );
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+  });
+
   it('should refresh the access token once on a 401 and retry the request', async () => {
     const fetchMock = vi
       .fn()

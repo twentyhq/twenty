@@ -2,6 +2,7 @@ import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
   DEFAULT_APP_ACCESS_TOKEN_NAME,
+  DEFAULT_FUNCTIONS_URL_NAME,
 } from 'twenty-shared/application';
 
 const isDefined = <T>(value: T): value is NonNullable<T> =>
@@ -139,6 +140,20 @@ export class RestApiClient {
     return this.execute<TResponse>('DELETE', path, undefined, options);
   }
 
+  callAppRoute<TResponse = unknown>(
+    path: string,
+    body?: unknown,
+    options?: RestApiRequestOptions & { method?: string },
+  ) {
+    return this.execute<TResponse>(
+      options?.method ?? 'POST',
+      path,
+      body,
+      options,
+      'functions',
+    );
+  }
+
   private resolveBaseUrl(): string {
     const baseUrl =
       this.baseUrl ?? getProcessEnvironment()[DEFAULT_API_URL_NAME];
@@ -150,6 +165,19 @@ export class RestApiClient {
     }
 
     return baseUrl.replace(/\/+$/, '');
+  }
+
+  private resolveFunctionsBaseUrl(): string {
+    const functionsBaseUrl =
+      getProcessEnvironment()[DEFAULT_FUNCTIONS_URL_NAME];
+
+    if (!isDefined(functionsBaseUrl) || functionsBaseUrl.trim().length === 0) {
+      throw new RestApiClientError(
+        `Missing functions url. Set the \`${DEFAULT_FUNCTIONS_URL_NAME}\` environment variable.`,
+      );
+    }
+
+    return functionsBaseUrl.replace(/\/+$/, '');
   }
 
   private resolveToken(): string {
@@ -303,9 +331,12 @@ export class RestApiClient {
     path: string,
     body: unknown,
     requestOptions?: RestApiRequestOptions,
+    target: 'api' | 'functions' = 'api',
   ): Promise<TResponse> {
     const url = buildRequestUrl(
-      this.resolveBaseUrl(),
+      target === 'functions'
+        ? this.resolveFunctionsBaseUrl()
+        : this.resolveBaseUrl(),
       path,
       requestOptions?.query,
     );
