@@ -8,6 +8,9 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 type AppChipProps = {
   size?: AvatarSize;
   applicationId?: string | null;
+  // Resolved display url (e.g. the registration's logoUrl); takes precedence
+  // over the logo computed from the installed application.
+  logoUrl?: string | null;
   fallbackApplicationData?: {
     logo?: string | null;
     name?: string | null;
@@ -31,6 +34,7 @@ const StyledContainer = styled.div`
 export const AppChip = ({
   applicationId,
   size = 'sm',
+  logoUrl,
   fallbackApplicationData,
   className,
   chipOnly = false,
@@ -45,7 +49,7 @@ export const AppChip = ({
       <Avatar
         type="app"
         size={size}
-        avatarUrl={getAbsoluteImageUrl(applicationChipData.logo)}
+        avatarUrl={getAbsoluteImageUrl(logoUrl ?? applicationChipData.logo)}
         placeholder={applicationChipData.name}
         placeholderColorSeed={applicationChipData.seed}
         color={applicationChipData.colors?.color}
