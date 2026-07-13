@@ -152,7 +152,11 @@ export class BillingResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: AuthContextUser,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-    @Args() { recurringInterval, plan, couponCode }: BillingCheckoutSessionInput,
+    @Args() {
+      recurringInterval,
+      plan,
+      couponCode,
+    }: BillingCheckoutSessionInput,
     @Args('idempotencyKey', { type: () => String }) idempotencyKey: string,
     @AuthApiKey() apiKey?: ApiKeyEntity,
   ): Promise<BillingPaymentIntentDTO> {
