@@ -7,8 +7,14 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 @RegisteredInstanceCommand('2.21.0', 1783934147089, { type: 'slow' })
 export class BackfillWorkspaceDatabaseSchemaSlowInstanceCommand implements SlowInstanceCommand {
   async runDataMigration(dataSource: DataSource): Promise<void> {
+    // Workspaces still in the creation phase are legitimately allowed to have an
+    // empty databaseSchema (their Postgres schema is not provisioned yet), so we
+    // exclude them here to mirror the workspace_requires_database_schema
+    // constraint predicate and avoid touching rows that are meant to be null.
     const workspacesWithoutSchema: { id: string }[] = await dataSource.query(
-      `SELECT id FROM "core"."workspace" WHERE "databaseSchema" IS NULL OR "databaseSchema" = ''`,
+      `SELECT id FROM "core"."workspace"
+       WHERE ("databaseSchema" IS NULL OR "databaseSchema" = '')
+         AND "activationStatus" NOT IN ('PENDING_CREATION', 'ONGOING_CREATION')`,
     );
 
     if (workspacesWithoutSchema.length === 0) {
