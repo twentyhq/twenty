@@ -41,6 +41,10 @@ import {
   RULE_NAME as noDirectAtomFamilyInSelectorName,
 } from './rules/no-direct-atom-family-in-selector';
 import {
+  rule as noFeatureImportsInUi,
+  RULE_NAME as noFeatureImportsInUiName,
+} from './rules/no-feature-imports-in-ui';
+import {
   rule as noHardcodedColors,
   RULE_NAME as noHardcodedColorsName,
 } from './rules/no-hardcoded-colors';
@@ -95,6 +99,7 @@ export default definePlugin({
     [noDataMutationInFastInstanceCommandName]:
       noDataMutationInFastInstanceCommand,
     [noDirectAtomFamilyInSelectorName]: noDirectAtomFamilyInSelector,
+    [noFeatureImportsInUiName]: noFeatureImportsInUi,
     [noHardcodedColorsName]: noHardcodedColors,
     [noJotaiStoreInSelectorName]: noJotaiStoreInSelector,
     [noNavigatePreferLinkName]: noNavigatePreferLink,

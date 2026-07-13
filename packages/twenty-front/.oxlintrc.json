@@ -137,6 +137,10 @@
           }
         ]
       }
+    ],
+    "twenty/no-feature-imports-in-ui": [
+      "error",
+      { "baselinePath": ".ui-boundary-baseline.json" }
     ]
   },
   "overrides": [

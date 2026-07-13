@@ -59,11 +59,13 @@
         "{projectRoot}/tsconfig*.json",
         "{workspaceRoot}/tsconfig.base.json",
         "{projectRoot}/.oxlintrc.json",
+        "{projectRoot}/.ui-boundary-baseline.json",
+        "{projectRoot}/scripts/ui-boundary-baseline.mjs",
         "{workspaceRoot}/packages/twenty-oxlint-rules/dist/oxlint-plugin.mjs"
       ],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "npx oxlint --type-aware -c .oxlintrc.json src/ && (npx oxfmt --check src/ || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint twenty-front --configuration=fix' && false))"
+        "command": "node scripts/ui-boundary-baseline.mjs --check && npx oxlint --type-aware -c .oxlintrc.json src/ && (npx oxfmt --check src/ || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint twenty-front --configuration=fix' && false))"
       },
       "configurations": {
         "fix": {

@@ -1,0 +1,7 @@
+{
+  "entries": {
+    "src/modules/ui/navigation/navigation-drawer/components/NavigationDrawer.tsx": [
+      "@/object-record/record-table/states/tableWidthResizeIsActivedState"
+    ]
+  }
+}
