@@ -45,11 +45,8 @@ For OAuth-based access (external apps acting on behalf of users), see [OAuth](/d
 
 ## Batch operations
 
-Both REST and GraphQL support batching up to 60 records per request — create, update, or delete. GraphQL also supports batch upsert (create-or-update in one call) using plural names like `CreateCompanies`.
+Both REST and GraphQL support creating up to 200 records per request. GraphQL also supports batch upsert (create-or-update in one call) using plural names like `CreateCompanies`.
 
-## Rate limits
+## Request limits
 
-| Limit | Value |
-|-------|-------|
-| Requests | 100 per minute |
-| Batch size | 60 records per call |
+Twenty does not impose a general per-minute request limit on the Core or Metadata APIs. Bulk create and upsert requests accept up to 200 records. REST list requests return 60 records by default and allow up to 200; nested relation lists return up to 60 records per parent.

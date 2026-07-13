@@ -119,23 +119,17 @@ The playground reflects your custom objects and fields, so documentation is alwa
 ## Batch Operations
 
 Both REST and GraphQL support batch operations:
-- **Batch size**: Up to 60 records per request
-- **Operations**: Create, update, delete multiple records
+- **Batch size**: Up to 200 records per request
+- **Operations**: Create multiple records
 
 **GraphQL-only features:**
 - **Batch Upsert**: Create or update in one call
 - Use plural object names (e.g., `CreateCompanies` instead of `CreateCompany`)
 
-## Rate Limits
+## Request Limits
 
-API requests are throttled to ensure platform stability:
-
-| Limit | Value |
-|-------|-------|
-| **Requests** | 100 calls per minute |
-| **Batch size** | 60 records per call |
+Twenty does not impose a general per-minute request limit on the Core or Metadata APIs. Bulk create and upsert requests accept up to 200 records. REST list requests return 60 records by default and allow up to 200; nested relation lists return up to 60 records per parent.
 
 <Tip>
-Use batch operations to maximize throughput — process up to 60 records in a single API call instead of making individual requests.
+Use batch operations to maximize throughput — process up to 200 records in a single API call instead of making individual requests.
 </Tip>
-
