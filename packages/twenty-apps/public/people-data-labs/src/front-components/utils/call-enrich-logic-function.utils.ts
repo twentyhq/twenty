@@ -6,7 +6,7 @@ export const execute = async ({path, recordIds}:{ path: string; recordIds: strin
     const client = new RestApiClient();
 
 
-    await client.post(`/s${path}`, { recordIds });
+    await client.post(path, { recordIds });
 
     await enqueueSnackbar({
       message: `Enriched ${recordIds.length > 1 ? 'records.' : 'record.'}`,

@@ -54,6 +54,8 @@ const getProcessEnvironment = (): ProcessEnvironment => {
   return processObject?.env ?? {};
 };
 
+const isRestApiPath = (path: string): boolean => /^\/?rest\//.test(path);
+
 const buildRequestUrl = (
   baseUrl: string,
   path: string,
@@ -140,20 +142,6 @@ export class RestApiClient {
     return this.execute<TResponse>('DELETE', path, undefined, options);
   }
 
-  callAppRoute<TResponse = unknown>(
-    path: string,
-    body?: unknown,
-    options?: RestApiRequestOptions & { method?: string },
-  ) {
-    return this.execute<TResponse>(
-      options?.method ?? 'POST',
-      path,
-      body,
-      options,
-      'functions',
-    );
-  }
-
   private resolveBaseUrl(): string {
     const baseUrl =
       this.baseUrl ?? getProcessEnvironment()[DEFAULT_API_URL_NAME];
@@ -167,17 +155,26 @@ export class RestApiClient {
     return baseUrl.replace(/\/+$/, '');
   }
 
-  private resolveFunctionsBaseUrl(): string {
+  private resolveFunctionsBaseUrl(): string | undefined {
     const functionsBaseUrl =
       getProcessEnvironment()[DEFAULT_FUNCTIONS_URL_NAME];
 
     if (!isDefined(functionsBaseUrl) || functionsBaseUrl.trim().length === 0) {
-      throw new RestApiClientError(
-        `Missing functions url. Set the \`${DEFAULT_FUNCTIONS_URL_NAME}\` environment variable.`,
-      );
+      return undefined;
     }
 
     return functionsBaseUrl.replace(/\/+$/, '');
+  }
+
+  private resolveTargetBaseUrl(path: string): string {
+    if (isDefined(this.baseUrl) || isRestApiPath(path)) {
+      return this.resolveBaseUrl();
+    }
+
+    // Non-rest paths are app HTTP routes. TWENTY_FUNCTIONS_URL is a complete
+    // base URL (isolated domains serve routes at the root, self-host bakes /s
+    // in); fall back to the legacy same-site /s route when it is not injected.
+    return this.resolveFunctionsBaseUrl() ?? `${this.resolveBaseUrl()}/s`;
   }
 
   private resolveToken(): string {
@@ -331,12 +328,9 @@ export class RestApiClient {
     path: string,
     body: unknown,
     requestOptions?: RestApiRequestOptions,
-    target: 'api' | 'functions' = 'api',
   ): Promise<TResponse> {
     const url = buildRequestUrl(
-      target === 'functions'
-        ? this.resolveFunctionsBaseUrl()
-        : this.resolveBaseUrl(),
+      this.resolveTargetBaseUrl(path),
       path,
       requestOptions?.query,
     );
