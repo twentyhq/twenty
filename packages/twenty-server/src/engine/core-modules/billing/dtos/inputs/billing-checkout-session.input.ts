@@ -34,4 +34,9 @@ export class BillingCheckoutSessionInput {
   @IsString()
   @IsOptional()
   successUrlPath?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  couponCode?: string;
 }

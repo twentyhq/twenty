@@ -15,11 +15,13 @@ import {
 type UseSubmitSubscriptionPaymentParams = {
   plan: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
+  couponCode?: string;
 };
 
 export const useSubmitSubscriptionPayment = ({
   plan,
   recurringInterval,
+  couponCode,
 }: UseSubmitSubscriptionPaymentParams) => {
   const stripe = useStripe();
   const elements = useElements();
@@ -53,7 +55,7 @@ export const useSubmitSubscriptionPayment = ({
 
       const idempotencyKey = crypto.randomUUID();
       const { data } = await createSubscriptionPaymentIntent({
-        variables: { recurringInterval, plan, idempotencyKey },
+        variables: { recurringInterval, plan, idempotencyKey, couponCode },
       });
 
       const paymentIntent = data?.createSubscriptionPaymentIntent;

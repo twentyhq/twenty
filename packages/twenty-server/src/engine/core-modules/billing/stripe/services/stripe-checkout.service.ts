@@ -2,6 +2,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import type Stripe from 'stripe';
@@ -41,6 +42,7 @@ export class StripeCheckoutService {
     plan = BillingPlanKey.PRO,
     requirePaymentMethod = true,
     withTrialPeriod,
+    couponCode,
   }: {
     user: AuthContextUser;
     workspace: Pick<WorkspaceEntity, 'id' | 'displayName'>;
@@ -51,6 +53,7 @@ export class StripeCheckoutService {
     plan?: BillingPlanKey;
     requirePaymentMethod?: boolean;
     withTrialPeriod: boolean;
+    couponCode?: string;
   }): Promise<Stripe.Checkout.Session> {
     stripeCustomerId = await this.getOrCreateStripeCustomerId({
       user,
@@ -58,9 +61,12 @@ export class StripeCheckoutService {
       stripeCustomerId,
     });
 
+    const discounts = await this.getStripeDiscountsFromCouponCode(couponCode);
+
     return await this.stripe.checkout.sessions.create({
       line_items: stripeSubscriptionLineItems,
       mode: 'subscription',
+      ...(isDefined(discounts) ? { discounts } : {}),
       subscription_data: {
         metadata: {
           workspaceId: workspace.id,
@@ -91,6 +97,7 @@ export class StripeCheckoutService {
     plan = BillingPlanKey.PRO,
     requirePaymentMethod = false,
     withTrialPeriod,
+    couponCode,
   }: {
     user: AuthContextUser;
     workspace: Pick<WorkspaceEntity, 'id' | 'displayName'>;
@@ -99,6 +106,7 @@ export class StripeCheckoutService {
     plan?: BillingPlanKey;
     requirePaymentMethod?: boolean;
     withTrialPeriod: boolean;
+    couponCode?: string;
   }): Promise<Stripe.Subscription> {
     stripeCustomerId = await this.getOrCreateStripeCustomerId({
       user,
@@ -112,9 +120,12 @@ export class StripeCheckoutService {
         quantity: lineItem.quantity,
       }));
 
+    const discounts = await this.getStripeDiscountsFromCouponCode(couponCode);
+
     const subscriptionParams: Stripe.SubscriptionCreateParams = {
       customer: stripeCustomerId,
       items: subscriptionItems,
+      ...(isDefined(discounts) ? { discounts } : {}),
       metadata: {
         workspaceId: workspace.id,
         plan,
@@ -137,6 +148,7 @@ export class StripeCheckoutService {
     plan = BillingPlanKey.PRO,
     withTrialPeriod,
     idempotencyKey,
+    couponCode,
   }: {
     user: AuthContextUser;
     workspace: Pick<WorkspaceEntity, 'id' | 'displayName'>;
@@ -145,6 +157,7 @@ export class StripeCheckoutService {
     plan?: BillingPlanKey;
     withTrialPeriod: boolean;
     idempotencyKey: string;
+    couponCode?: string;
   }): Promise<Stripe.Subscription> {
     const customerId = await this.getOrCreateStripeCustomerId({
       user,
@@ -158,10 +171,13 @@ export class StripeCheckoutService {
         quantity: lineItem.quantity,
       }));
 
+    const discounts = await this.getStripeDiscountsFromCouponCode(couponCode);
+
     return await this.stripe.subscriptions.create(
       {
         customer: customerId,
         items: subscriptionItems,
+        ...(isDefined(discounts) ? { discounts } : {}),
         metadata: {
           workspaceId: workspace.id,
           plan,
@@ -186,6 +202,43 @@ export class StripeCheckoutService {
     return this.stripe.subscriptions.retrieve(stripeSubscriptionId, {
       expand: ['pending_setup_intent', 'latest_invoice.confirmation_secret'],
     });
+  }
+
+  // Coupon codes shared in URLs are customer-facing Stripe promotion codes;
+  // raw coupon ids are also accepted as a fallback. An invalid code must not
+  // block the checkout, so it is ignored with a warning.
+  private async getStripeDiscountsFromCouponCode(
+    couponCode?: string,
+  ): Promise<Array<{ coupon?: string; promotion_code?: string }> | undefined> {
+    if (!isNonEmptyString(couponCode)) {
+      return undefined;
+    }
+
+    try {
+      const promotionCodes = await this.stripe.promotionCodes.list({
+        code: couponCode,
+        active: true,
+        limit: 1,
+      });
+
+      const promotionCode = promotionCodes.data[0];
+
+      if (isDefined(promotionCode)) {
+        return [{ promotion_code: promotionCode.id }];
+      }
+
+      const coupon = await this.stripe.coupons.retrieve(couponCode);
+
+      if (coupon.valid) {
+        return [{ coupon: coupon.id }];
+      }
+    } catch {
+      // a missing coupon throws resource_missing, handled by the warning below
+    }
+
+    this.logger.warn(`Ignoring invalid coupon code "${couponCode}"`);
+
+    return undefined;
   }
 
   private async getOrCreateStripeCustomerId({

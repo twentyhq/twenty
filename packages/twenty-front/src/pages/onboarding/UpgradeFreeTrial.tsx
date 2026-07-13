@@ -76,17 +76,20 @@ type UpgradeFreeTrialProps = {
 type UpgradeFreeTrialSubmitButtonProps = {
   plan: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
+  couponCode?: string;
 };
 
 const UpgradeFreeTrialSubmitButton = ({
   plan,
   recurringInterval,
+  couponCode,
 }: UpgradeFreeTrialSubmitButtonProps) => {
   const { t } = useLingui();
 
   const { submit, isSubmitting, isStripeReady } = useSubmitSubscriptionPayment({
     plan,
     recurringInterval,
+    couponCode,
   });
 
   return (
@@ -140,6 +143,7 @@ const UpgradeFreeTrialContent = ({
       plan: billingCheckoutSession.plan,
       requirePaymentMethod: billingCheckoutSession.requirePaymentMethod,
       successUrlPath: AppPath.PlanRequiredSuccess,
+      couponCode: billingCheckoutSession.couponCode,
     });
 
   const selectTrialPeriod = (withCreditCard: boolean) => () => {
@@ -148,6 +152,7 @@ const UpgradeFreeTrialContent = ({
       billingCheckoutSession.requirePaymentMethod !== withCreditCard
     ) {
       setBillingCheckoutSession({
+        ...billingCheckoutSession,
         plan: currentPlanKey,
         interval: baseProductPrice.recurringInterval,
         requirePaymentMethod: withCreditCard,
@@ -206,6 +211,7 @@ const UpgradeFreeTrialContent = ({
               <UpgradeFreeTrialSubmitButton
                 plan={billingCheckoutSession.plan}
                 recurringInterval={billingCheckoutSession.interval}
+                couponCode={billingCheckoutSession.couponCode}
               />
             ) : (
               <MainButton title={t`Continue`} fullWidth disabled />

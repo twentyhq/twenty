@@ -14,11 +14,13 @@ export const useHandleCheckoutSession = ({
   plan,
   requirePaymentMethod,
   successUrlPath,
+  couponCode,
 }: {
   recurringInterval: SubscriptionInterval;
   plan: BillingPlanKey;
   requirePaymentMethod: boolean;
   successUrlPath: string;
+  couponCode?: string;
 }) => {
   const { redirect } = useRedirect();
 
@@ -37,6 +39,7 @@ export const useHandleCheckoutSession = ({
           successUrlPath,
           plan,
           requirePaymentMethod,
+          couponCode,
         },
       });
       if (!data?.checkoutSession.url) {

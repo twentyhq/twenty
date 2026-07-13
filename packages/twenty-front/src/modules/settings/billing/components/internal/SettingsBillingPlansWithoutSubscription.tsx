@@ -1,5 +1,7 @@
+import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { SettingsBillingPlanComparisonTable } from '@/settings/billing/components/internal/SettingsBillingPlanComparisonTable';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type SettingsBillingPlanAction } from '@/settings/billing/types/settingsBillingPlanAction.type';
 import {
   type SettingsBillingPlanInterval,
@@ -25,6 +27,7 @@ export const SettingsBillingPlansWithoutSubscription = ({
   planPrices,
 }: SettingsBillingPlansWithoutSubscriptionProps) => {
   const { t } = useLingui();
+  const billingCheckoutSession = useAtomStateValue(billingCheckoutSessionState);
   const {
     handleCheckoutSession: handleProCheckoutSession,
     isSubmitting: isProCheckoutSessionSubmitting,
@@ -33,6 +36,7 @@ export const SettingsBillingPlansWithoutSubscription = ({
     plan: BillingPlanKey.PRO,
     requirePaymentMethod: true,
     successUrlPath: getSettingsPath(SettingsPath.Billing),
+    couponCode: billingCheckoutSession.couponCode,
   });
   const {
     handleCheckoutSession: handleEnterpriseCheckoutSession,
@@ -42,6 +46,7 @@ export const SettingsBillingPlansWithoutSubscription = ({
     plan: BillingPlanKey.ENTERPRISE,
     requirePaymentMethod: true,
     successUrlPath: getSettingsPath(SettingsPath.Billing),
+    couponCode: billingCheckoutSession.couponCode,
   });
 
   const createChoosePlanAction = ({

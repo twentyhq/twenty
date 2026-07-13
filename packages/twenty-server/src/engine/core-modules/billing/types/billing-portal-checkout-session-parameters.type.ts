@@ -12,4 +12,5 @@ export type BillingPortalCheckoutSessionParameters = {
   successUrlPath?: string;
   plan: BillingPlanKey;
   requirePaymentMethod?: boolean;
+  couponCode?: string;
 };

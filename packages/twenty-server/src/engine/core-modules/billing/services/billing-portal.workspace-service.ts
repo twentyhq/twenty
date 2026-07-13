@@ -56,6 +56,7 @@ export class BillingPortalWorkspaceService {
     successUrlPath,
     plan,
     requirePaymentMethod,
+    couponCode,
   }: BillingPortalCheckoutSessionParameters): Promise<string> {
     const { successUrl, cancelUrl, customer, stripeSubscriptionLineItems } =
       await this.prepareSubscriptionParameters({
@@ -75,6 +76,7 @@ export class BillingPortalWorkspaceService {
         plan,
         requirePaymentMethod,
         withTrialPeriod: this.isCustomerEligibleForTrialPeriod(customer),
+        couponCode,
       });
 
     assertIsDefinedOrThrow(
@@ -95,6 +97,7 @@ export class BillingPortalWorkspaceService {
     successUrlPath,
     plan,
     requirePaymentMethod,
+    couponCode,
   }: BillingPortalCheckoutSessionParameters): Promise<string> {
     const { successUrl, customer, stripeSubscriptionLineItems } =
       await this.prepareSubscriptionParameters({
@@ -124,6 +127,7 @@ export class BillingPortalWorkspaceService {
         plan,
         requirePaymentMethod,
         withTrialPeriod: this.isCustomerEligibleForTrialPeriod(customer),
+        couponCode,
       });
 
     await this.billingSubscriptionService.syncSubscriptionToDatabase(
@@ -140,6 +144,7 @@ export class BillingPortalWorkspaceService {
     billingPricesPerPlan,
     plan,
     idempotencyKey,
+    couponCode,
   }: BillingPortalCheckoutSessionParameters & {
     idempotencyKey: string;
   }): Promise<{
@@ -169,6 +174,7 @@ export class BillingPortalWorkspaceService {
           plan,
           withTrialPeriod: this.isCustomerEligibleForTrialPeriod(customer),
           idempotencyKey,
+          couponCode,
         },
       );
 

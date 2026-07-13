@@ -1,18 +1,22 @@
+import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/settings/billing/constants/BillingCheckoutSessionDefaultValue';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const InformationBannerNoBillingSubscription = () => {
+  const billingCheckoutSession = useAtomStateValue(billingCheckoutSessionState);
   const { handleCheckoutSession, isSubmitting } = useHandleCheckoutSession({
     recurringInterval: BILLING_CHECKOUT_SESSION_DEFAULT_VALUE.interval,
     plan: BILLING_CHECKOUT_SESSION_DEFAULT_VALUE.plan,
     requirePaymentMethod: true,
     successUrlPath: getSettingsPath(SettingsPath.Billing),
+    couponCode: billingCheckoutSession.couponCode,
   });
 
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToSubscribe } =

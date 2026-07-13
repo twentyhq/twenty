@@ -5,44 +5,62 @@ import { returnToPathState } from '@/auth/states/returnToPathState';
 import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/settings/billing/constants/BillingCheckoutSessionDefaultValue';
+import { isNonEmptyString } from '@sniptt/guards';
 import deepEqual from 'deep-equal';
 import { useStore } from 'jotai';
 
 export const useInitializeQueryParamState = () => {
   const store = useStore();
   const initializeQueryParamState = useCallback(() => {
+    const parseBillingCheckoutSession = (value: string) => {
+      const billingCheckoutSession = store.get(
+        billingCheckoutSessionState.atom,
+      );
+
+      try {
+        const parsedValue = JSON.parse(decodeURIComponent(value));
+
+        if (
+          typeof parsedValue === 'object' &&
+          parsedValue !== null &&
+          'plan' in parsedValue &&
+          'interval' in parsedValue &&
+          'requirePaymentMethod' in parsedValue &&
+          !deepEqual(billingCheckoutSession, parsedValue)
+        ) {
+          store.set(
+            billingCheckoutSessionState.atom,
+            parsedValue as BillingCheckoutSession,
+          );
+        }
+      } catch (error) {
+        // oxlint-disable-next-line no-console
+        console.error('Failed to parse billingCheckoutSession from URL', error);
+        store.set(
+          billingCheckoutSessionState.atom,
+          BILLING_CHECKOUT_SESSION_DEFAULT_VALUE,
+        );
+      }
+    };
+
     const handlers: Record<string, (value: string) => void> = {
-      billingCheckoutSession: (value: string) => {
+      billingCheckoutSession: parseBillingCheckoutSession,
+      // the server round-trips this param through social SSO redirects
+      billingCheckoutSessionState: parseBillingCheckoutSession,
+      couponCode: (value: string) => {
+        if (!isNonEmptyString(value)) {
+          return;
+        }
+
         const billingCheckoutSession = store.get(
           billingCheckoutSessionState.atom,
         );
 
-        try {
-          const parsedValue = JSON.parse(decodeURIComponent(value));
-
-          if (
-            typeof parsedValue === 'object' &&
-            parsedValue !== null &&
-            'plan' in parsedValue &&
-            'interval' in parsedValue &&
-            'requirePaymentMethod' in parsedValue &&
-            !deepEqual(billingCheckoutSession, parsedValue)
-          ) {
-            store.set(
-              billingCheckoutSessionState.atom,
-              parsedValue as BillingCheckoutSession,
-            );
-          }
-        } catch (error) {
-          // oxlint-disable-next-line no-console
-          console.error(
-            'Failed to parse billingCheckoutSession from URL',
-            error,
-          );
-          store.set(
-            billingCheckoutSessionState.atom,
-            BILLING_CHECKOUT_SESSION_DEFAULT_VALUE,
-          );
+        if (billingCheckoutSession.couponCode !== value) {
+          store.set(billingCheckoutSessionState.atom, {
+            ...billingCheckoutSession,
+            couponCode: value,
+          });
         }
       },
       returnToPath: (value: string) => {
