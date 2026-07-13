@@ -10,7 +10,6 @@ import { Section } from 'twenty-ui/layout';
 import { useCreateEmailGroupChannel } from '@/settings/accounts/hooks/useCreateEmailGroupChannel';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -18,7 +17,6 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 export const SettingsAccountsNewEmailGroupChannel = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const { enqueueErrorSnackBar } = useSnackBar();
   const { createEmailGroupChannel, loading } = useCreateEmailGroupChannel();
 
   const [handle, setHandle] = useState('');
@@ -27,22 +25,16 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
   const canSave = isHandleValidEmail && !loading;
 
   const handleSave = useCallback(async () => {
-    try {
-      const result = await createEmailGroupChannel(handle);
-      const messageChannelId =
-        result.data?.createEmailGroupChannel.messageChannel.id;
+    const result = await createEmailGroupChannel(handle);
+    const messageChannelId =
+      result.data?.createEmailGroupChannel.messageChannel.id;
 
-      if (messageChannelId) {
-        navigate(SettingsPath.EmailGroupChannelDetail, {
-          messageChannelId,
-        });
-      }
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to create email channel. Email channels may not be configured on this server.`,
+    if (messageChannelId) {
+      navigate(SettingsPath.EmailGroupChannelDetail, {
+        messageChannelId,
       });
     }
-  }, [createEmailGroupChannel, handle, navigate, enqueueErrorSnackBar, t]);
+  }, [createEmailGroupChannel, handle, navigate]);
 
   return (
     <SettingsPageLayout

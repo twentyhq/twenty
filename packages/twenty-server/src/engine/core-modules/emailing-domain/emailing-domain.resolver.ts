@@ -8,6 +8,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { CreateEmailingDomainInput } from 'src/engine/core-modules/emailing-domain/dtos/create-emailing-domain.input';
 import { EmailingDomainDTO } from 'src/engine/core-modules/emailing-domain/dtos/emailing-domain.dto';
 import { EmailGroupAccessGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/email-group-access-graphql-api-exception.filter';
+import { EmailingDomainGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/emailing-domain-graphql-api-exception.filter';
 import { EmailGroupAccessService } from 'src/engine/core-modules/emailing-domain/services/email-group-access.service';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -25,7 +26,10 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
   FeatureFlagGuard,
   SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
 )
-@UseFilters(EmailGroupAccessGraphqlApiExceptionFilter)
+@UseFilters(
+  EmailGroupAccessGraphqlApiExceptionFilter,
+  EmailingDomainGraphqlApiExceptionFilter,
+)
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver(() => EmailingDomainDTO)
 export class EmailingDomainResolver {

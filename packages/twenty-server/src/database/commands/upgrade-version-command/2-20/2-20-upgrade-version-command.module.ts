@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { BackfillActorSourceEnumValuesCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783499671542-backfill-actor-source-enum-values.command';
-import { BackfillCompanyPersonImageIdentifierFieldMetadataIdCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783483513120-backfill-company-person-image-identifier-field-metadata-id.command';
 import { AddMessageCampaignStatFieldsCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783525261000-add-message-campaign-stat-fields.command';
 import { CreateMessageListViewCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783525261001-create-message-list-view.command';
 import { BackfillWorkflowVersionToCoreCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783526282685-backfill-workflow-version-to-core.command';
@@ -44,8 +43,6 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     CreateMessageListViewCommand,
     BackfillActorSourceEnumValuesCommand,
     BackfillWorkflowVersionToCoreCommand,
-    BackfillCompanyPersonImageIdentifierFieldMetadataIdCommand,
-    MigratePersonAvatarUrlToAvatarFileCommand,
     ReconcileSearchVectorGinIndexUniversalIdentifierCommand,
     ReconcileSearchFieldMetadataCommand,
     RebuildInstalledAppSearchVectorsCommand,

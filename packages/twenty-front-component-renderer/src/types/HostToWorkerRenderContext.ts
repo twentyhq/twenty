@@ -1,7 +1,4 @@
-export type SdkClientUrls = {
-  core: string;
-  metadata: string;
-};
+import { type SdkClientUrls } from '@/types/SdkClientUrls';
 
 export type HostToWorkerRenderContext = {
   componentUrl: string;
@@ -9,5 +6,6 @@ export type HostToWorkerRenderContext = {
   apiUrl?: string;
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
+  hostFetchOrigins?: string[];
   applicationVariables?: Record<string, string>;
 };

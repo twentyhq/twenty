@@ -6,7 +6,7 @@ import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/com
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { QUICK_LEAD_WORKFLOW_VERSION_ID } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflows.util';
+import { getWorkflowPrefillIds } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflows.util';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const QUICK_LEAD_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER =
@@ -46,6 +46,8 @@ export const prefillWorkflowCommandMenuItems = async ({
 
   const now = new Date().toISOString();
 
+  const { quickLeadWorkflowVersionId } = getWorkflowPrefillIds(workspaceId);
+
   const quickLeadFlatCommandMenuItem: FlatCommandMenuItem = {
     id: v4(),
     universalIdentifier: QUICK_LEAD_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
@@ -53,7 +55,7 @@ export const prefillWorkflowCommandMenuItems = async ({
     applicationUniversalIdentifier:
       workspaceCustomFlatApplication.universalIdentifier,
     workspaceId,
-    workflowVersionId: QUICK_LEAD_WORKFLOW_VERSION_ID,
+    workflowVersionId: quickLeadWorkflowVersionId,
     frontComponentId: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,

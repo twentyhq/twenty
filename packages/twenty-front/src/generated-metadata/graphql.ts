@@ -279,15 +279,6 @@ export type AppConnection = {
   visibility: Scalars['String']['output'];
 };
 
-export type AppToken = {
-  __typename?: 'AppToken';
-  createdAt: Scalars['DateTime']['output'];
-  expiresAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
-  type: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-};
-
 export type Application = {
   __typename?: 'Application';
   agents: Array<Agent>;
@@ -1052,10 +1043,6 @@ export type CreateApiKeyInput = {
   roleId: Scalars['UUID']['input'];
 };
 
-export type CreateAppTokenInput = {
-  expiresAt: Scalars['DateTime']['input'];
-};
-
 export type CreateApplicationRegistration = {
   __typename?: 'CreateApplicationRegistration';
   applicationRegistration: ApplicationRegistration;
@@ -1223,11 +1210,6 @@ export type CreateObjectInput = {
   primaryKeyFieldMetadataSettings?: InputMaybe<Scalars['JSON']['input']>;
   shortcut?: InputMaybe<Scalars['String']['input']>;
   skipNameField?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type CreateOneAppTokenInput = {
-  /** The record to create */
-  appToken: CreateAppTokenInput;
 };
 
 export type CreateOneFieldMetadataInput = {
@@ -2079,22 +2061,7 @@ export type Index = {
   isCustom?: Maybe<Scalars['Boolean']['output']>;
   isUnique: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
-  objectMetadata: IndexObjectMetadataConnection;
   updatedAt: Scalars['DateTime']['output'];
-};
-
-
-export type IndexObjectMetadataArgs = {
-  filter?: ObjectFilter;
-  paging?: CursorPaging;
-};
-
-export type IndexConnection = {
-  __typename?: 'IndexConnection';
-  /** Array of edges. */
-  edges: Array<IndexEdge>;
-  /** Paging information */
-  pageInfo: PageInfo;
 };
 
 export type IndexEdge = {
@@ -2120,14 +2087,6 @@ export type IndexFilter = {
   id?: InputMaybe<UuidFilterComparison>;
   isCustom?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<IndexFilter>>;
-};
-
-export type IndexObjectMetadataConnection = {
-  __typename?: 'IndexObjectMetadataConnection';
-  /** Array of edges. */
-  edges: Array<ObjectEdge>;
-  /** Paging information */
-  pageInfo: PageInfo;
 };
 
 /** Type of the index */
@@ -2557,7 +2516,6 @@ export type Mutation = {
   createOIDCIdentityProvider: SetupSso;
   createObjectEvent: Analytics;
   createOneAgent: Agent;
-  createOneAppToken: AppToken;
   createOneField: Field;
   createOneIndex: Index;
   createOneLogicFunction: LogicFunction;
@@ -2922,11 +2880,6 @@ export type MutationCreateObjectEventArgs = {
 
 export type MutationCreateOneAgentArgs = {
   input: CreateAgentInput;
-};
-
-
-export type MutationCreateOneAppTokenArgs = {
-  input: CreateOneAppTokenInput;
 };
 
 
@@ -4444,8 +4397,6 @@ export type Query = {
   getViewSorts: Array<ViewSort>;
   getViews: Array<View>;
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDto;
-  index: Index;
-  indexMetadatas: IndexConnection;
   lineChartData: LineChartData;
   listPlans: Array<BillingPlan>;
   minimalMetadata: MinimalMetadata;
@@ -4784,17 +4735,6 @@ export type QueryGetViewSortsArgs = {
 export type QueryGetViewsArgs = {
   objectMetadataId?: InputMaybe<Scalars['String']['input']>;
   viewTypes?: InputMaybe<Array<ViewType>>;
-};
-
-
-export type QueryIndexArgs = {
-  id: Scalars['UUID']['input'];
-};
-
-
-export type QueryIndexMetadatasArgs = {
-  filter?: IndexFilter;
-  paging?: CursorPaging;
 };
 
 
