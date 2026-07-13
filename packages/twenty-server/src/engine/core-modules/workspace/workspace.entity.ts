@@ -1,6 +1,5 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { type Application } from 'cloudflare/resources/zero-trust/access/applications/applications';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
@@ -19,6 +18,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_WORKSPACE_DISCOVERABILITY_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-workspace-discoverability-to-workspace-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -31,6 +31,7 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -70,7 +71,7 @@ registerEnumType(WorkspaceDiscoverability, {
 @ObjectType('Workspace')
 export class WorkspaceEntity {
   // Fields
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -119,6 +120,10 @@ export class WorkspaceEntity {
   isPublicInviteLinkEnabled: boolean;
 
   @Field(() => WorkspaceDiscoverability)
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_WORKSPACE_DISCOVERABILITY_TO_WORKSPACE_UPGRADE_COMMAND_NAME,
+  })
   @Column({
     type: 'enum',
     enumName: 'workspace_discoverability_enum',

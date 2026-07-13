@@ -109,10 +109,14 @@ Si vous prévoyez de [publier votre application](/l/fr/developers/extend/apps/op
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
 | `author`           | Nom de l'auteur ou de l'entreprise                                                                                                 |
 | `category`         | Catégorie de l'application pour le filtrage dans la marketplace                                                                    |
-| `logoUrl`          | Chemin vers le logo de votre application (p. ex., `public/logo.png`)                                                               |
-| `screenshots`      | Tableau de chemins de captures d'écran (p. ex., `public/screenshot-1.png`)                                                         |
+| `logo`             | Chemin vers le logo de votre application empaqueté dans `public/` (p. ex., `public/logo.png`)                                      |
+| `galleryImages`    | Tableau de chemins d’images de galerie empaquetées dans `public/` (p. ex., `public/screenshot-1.png`)                              |
 | `aboutDescription` | Description markdown plus longue pour l'onglet "À propos". S'il est omis, la marketplace utilise le `README.md` du package sur npm |
 | `websiteUrl`       | Lien vers votre site web                                                                                                           |
 | `termsUrl`         | Lien vers les conditions d'utilisation                                                                                             |
 | `emailSupport`     | Adresse e-mail du support                                                                                                          |
 | `issueReportUrl`   | Lien vers le système de suivi des problèmes                                                                                        |
+
+<Note>
+`logoUrl` et `screenshots` sont des alias obsolètes de `logo` et `galleryImages`. Les URL absolues externes (`http://` ou `https://`) ne sont pas prises en charge pour ces champs : elles sont ignorées avec un avertissement au moment de la compilation. Placez plutôt les images dans le dossier `public/` de votre application.
+</Note>

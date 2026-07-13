@@ -5,7 +5,6 @@ import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
-import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ConnectionProviderOAuthController } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth.controller';
@@ -151,7 +150,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     GoogleAPIScopesService,
     GoogleApisServiceAvailabilityService,
     MicrosoftAPIsService,
-    AppTokenService,
     AccessTokenService,
     RefreshTokenService,
     LoginTokenService,

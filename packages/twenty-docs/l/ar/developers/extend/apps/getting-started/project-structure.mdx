@@ -33,7 +33,7 @@ my-twenty-app/
   vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
   .nvmrc, .yarnrc.yml, .oxlintrc.json
-  README.md, AGENTS.md, CLAUDE.md
+  README.md, AGENTS.md, CLAUDE.md, CHANGELOG.md, SETUP.md
 ```
 
 ## الملفات الرئيسية
@@ -47,6 +47,7 @@ my-twenty-app/
 | `src/__tests__/`                                                           | اختبار وحدة بالإضافة إلى اختبار تكامل (مع إعداده العام) يقوم بمزامنة التطبيق مع خادم حقيقي.                  |
 | `public/`                                                                  | أصول ثابتة (صور، خطوط) تُقدَّم مع تطبيقك.                                                                    |
 | `AGENTS.md` / `CLAUDE.md`                                                  | إرشادات لوكلاء برمجة الذكاء الاصطناعي الذين يعملون على التطبيق.                                              |
+| `CHANGELOG.md` / `SETUP.md`                                                | سجل بأبرز التغييرات وتعليمات الإعداد للتطوير المحلي.                                                         |
 
 <Note>
 **تنظيم الملفات متروك لك.** المجلدات المذكورة أعلاه هي أعراف متَّبعة — يكتشف SDK الكيانات عبر تحليل AST على استدعاءات `export default defineEntity(...)` بغض النظر عن مكان وجود الملف.

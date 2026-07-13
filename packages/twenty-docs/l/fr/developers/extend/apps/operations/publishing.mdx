@@ -180,15 +180,15 @@ Publier sur npm rend votre application découvrable dans la marketplace Twenty. 
 
 ### Métadonnées de la marketplace
 
-La configuration `defineApplication()` prend en charge des champs optionnels qui contrôlent la façon dont votre application apparaît sur la place de marché. Utilisez `logoUrl` et `screenshots` pour référencer des images depuis le dossier `public/` :
+La configuration `defineApplication()` prend en charge des champs optionnels qui contrôlent la façon dont votre application apparaît sur la place de marché. Utilisez `logo` et `galleryImages` pour référencer des images depuis le dossier `public/` :
 
 ```ts src/application-config.ts
 export default defineApplication({
   universalIdentifier: '...',
   displayName: 'My App',
   description: 'A great app',
-  logoUrl: 'public/logo.png',
-  screenshots: [
+  logo: 'public/logo.png',
+  galleryImages: [
     'public/screenshot-1.png',
     'public/screenshot-2.png',
   ],
@@ -197,12 +197,12 @@ export default defineApplication({
 
 Voir l'[accordéon defineApplication](/l/fr/developers/extend/apps/config/application#marketplace-metadata) dans la page Building Apps pour la liste complète des champs de la place de marché (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
 
-#### Dimensions recommandées pour les captures d'écran
+#### Dimensions recommandées pour les images de la galerie
 
-La place de marché affiche `screenshots` dans un conteneur fixe `8:5` (par exemple, `1600×1000 px`).
+La place de marché affiche `galleryImages` dans un conteneur fixe `8:5` (par exemple, `1600×1000 px`).
 
 <Note>
-Les captures d'écran, quel que soit leur ratio d'aspect, sont affichées en entier et ne sont jamais recadrées, mais tout ce qui est nettement plus haut ou plus étroit que `8:5` affichera des bandes vides sur les côtés.
+Les images de la galerie, quel que soit leur ratio d'aspect, sont affichées en entier et ne sont jamais recadrées, mais tout ce qui est nettement plus haut ou plus étroit que `8:5` affichera des bandes vides sur les côtés.
 </Note>
 
 ### Publier
