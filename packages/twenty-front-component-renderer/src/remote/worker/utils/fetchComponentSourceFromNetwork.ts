@@ -2,6 +2,26 @@ import { z } from 'zod';
 
 const componentSourceHandoffSchema = z.object({ url: z.url() });
 
+// Changes the HTTP cache key so component responses cached before the
+// front-component cache fix are bypassed instead of served corrupted.
+const CACHE_BUST_QUERY_PARAMETER_NAME = 'cacheBust';
+const CACHE_BUST_QUERY_PARAMETER_VALUE = 'v2';
+
+const appendCacheBustQueryParameter = (url: string): string => {
+  try {
+    const parsedUrl = new URL(url);
+
+    parsedUrl.searchParams.set(
+      CACHE_BUST_QUERY_PARAMETER_NAME,
+      CACHE_BUST_QUERY_PARAMETER_VALUE,
+    );
+
+    return parsedUrl.toString();
+  } catch {
+    return url;
+  }
+};
+
 export const fetchComponentSourceFromNetwork = async ({
   url,
   headers,
@@ -9,7 +29,9 @@ export const fetchComponentSourceFromNetwork = async ({
   url: string;
   headers?: Record<string, string>;
 }): Promise<string> => {
-  const response = await fetch(url, { headers });
+  const response = await fetch(appendCacheBustQueryParameter(url), {
+    headers,
+  });
 
   if (!response.ok) {
     throw new Error(
