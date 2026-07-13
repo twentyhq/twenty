@@ -12,6 +12,11 @@ import { useRecordCalendarWeekDaysRange } from '@/object-record/record-calendar/
 import { computeRecordCalendarWeekEventLayouts } from '@/object-record/record-calendar/week/utils/computeRecordCalendarWeekEventLayouts';
 import { getRecordCalendarWeekTimedEventMetrics } from '@/object-record/record-calendar/week/utils/getRecordCalendarWeekTimedEventMetrics';
 import { getRecordCalendarWeekSlotIndex } from '@/object-record/record-calendar/week/utils/getRecordCalendarWeekSlotIndex';
+import {
+  type RecordCalendarWeekActiveSlot,
+  type RecordCalendarWeekSlotInteractionMode,
+  updateRecordCalendarWeekActiveSlot,
+} from '@/object-record/record-calendar/week/utils/updateRecordCalendarWeekActiveSlot';
 import { recordIndexCalendarEndFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdState';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -29,6 +34,8 @@ import {
   type FocusEvent,
   type KeyboardEvent,
   type MouseEvent,
+  memo,
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -242,7 +249,15 @@ type WeekDayCellProps = {
 };
 
 type RecordCalendarWeekAllDayCellProps = WeekDayCellProps;
-type RecordCalendarWeekDayColumnProps = WeekDayCellProps;
+type RecordCalendarWeekDayColumnProps = Omit<WeekDayCellProps, 'day'> & {
+  activeSlotIndex: number | null;
+  dayString: string;
+  onActiveSlotIndexChange: (
+    day: string,
+    slotIndex: number | null,
+    interactionMode: RecordCalendarWeekSlotInteractionMode,
+  ) => void;
+};
 
 const RecordCalendarWeekAllDayCell = ({
   calendarFieldName,
@@ -284,184 +299,193 @@ const RecordCalendarWeekAllDayCell = ({
   );
 };
 
-const RecordCalendarWeekDayColumn = ({
-  calendarEndFieldName,
-  calendarFieldName,
-  calendarFieldType,
-  day,
-  isToday,
-  timeFormat,
-  timeZone,
-}: RecordCalendarWeekDayColumnProps) => {
-  const store = useStore();
-  const [hoveredSlotIndex, setHoveredSlotIndex] = useState<number | null>(null);
-  const recordIds = useAtomComponentFamilySelectorValue(
-    calendarDayRecordIdsComponentFamilySelector,
-    { day, timeZone },
-  );
-
-  const eventLayoutInputs =
-    calendarFieldType === FieldMetadataType.DATE
-      ? []
-      : recordIds
-          .map((recordId) => {
-            const record = store.get(
-              recordStoreFamilyState.atomFamily(recordId),
-            );
-            const recordDate = record?.[calendarFieldName];
-            const recordEndDate = isDefined(calendarEndFieldName)
-              ? record?.[calendarEndFieldName]
-              : undefined;
-            const metrics = getRecordCalendarWeekTimedEventMetrics({
-              day,
-              startDateTime: recordDate,
-              endDateTime: recordEndDate,
-              timeZone,
-            });
-
-            if (metrics === null) {
-              return null;
-            }
-
-            return {
-              ...metrics,
-              recordId,
-            };
-          })
-          .filter(isDefined)
-          .sort(
-            (eventA, eventB) =>
-              eventA.startInPixels - eventB.startInPixels ||
-              eventA.endInPixels - eventB.endInPixels ||
-              eventA.recordId.localeCompare(eventB.recordId),
-          );
-
-  const eventLayouts = computeRecordCalendarWeekEventLayouts(
-    eventLayoutInputs.slice(0, RECORD_CALENDAR_WEEK_VISIBLE_RECORD_LIMIT),
-  );
-
-  const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
-    if (
-      event.target instanceof Element &&
-      event.target.closest('[data-selectable-id]') !== null
-    ) {
-      setHoveredSlotIndex(null);
-      return;
-    }
-
-    const columnRect = event.currentTarget.getBoundingClientRect();
-
-    setHoveredSlotIndex(
-      getRecordCalendarWeekSlotIndex({
-        columnHeight: columnRect.height,
-        columnTop: columnRect.top,
-        pointerY: event.clientY,
-      }),
+const RecordCalendarWeekDayColumn = memo(
+  ({
+    activeSlotIndex,
+    calendarEndFieldName,
+    calendarFieldName,
+    calendarFieldType,
+    dayString,
+    isToday,
+    onActiveSlotIndexChange,
+    timeFormat,
+    timeZone,
+  }: RecordCalendarWeekDayColumnProps) => {
+    const day = Temporal.PlainDate.from(dayString);
+    const store = useStore();
+    const recordIds = useAtomComponentFamilySelectorValue(
+      calendarDayRecordIdsComponentFamilySelector,
+      { day, timeZone },
     );
-  };
 
-  const handleFocus = (event: FocusEvent<HTMLDivElement>) => {
-    if (event.target === event.currentTarget) {
-      setHoveredSlotIndex(
-        (currentSlotIndex) => currentSlotIndex ?? DEFAULT_KEYBOARD_SLOT_INDEX,
+    const eventLayoutInputs =
+      calendarFieldType === FieldMetadataType.DATE
+        ? []
+        : recordIds
+            .map((recordId) => {
+              const record = store.get(
+                recordStoreFamilyState.atomFamily(recordId),
+              );
+              const recordDate = record?.[calendarFieldName];
+              const recordEndDate = isDefined(calendarEndFieldName)
+                ? record?.[calendarEndFieldName]
+                : undefined;
+              const metrics = getRecordCalendarWeekTimedEventMetrics({
+                day,
+                startDateTime: recordDate,
+                endDateTime: recordEndDate,
+                timeZone,
+              });
+
+              if (metrics === null) {
+                return null;
+              }
+
+              return {
+                ...metrics,
+                recordId,
+              };
+            })
+            .filter(isDefined)
+            .sort(
+              (eventA, eventB) =>
+                eventA.startInPixels - eventB.startInPixels ||
+                eventA.endInPixels - eventB.endInPixels ||
+                eventA.recordId.localeCompare(eventB.recordId),
+            );
+
+    const eventLayouts = computeRecordCalendarWeekEventLayouts(
+      eventLayoutInputs.slice(0, RECORD_CALENDAR_WEEK_VISIBLE_RECORD_LIMIT),
+    );
+
+    const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
+      if (
+        event.target instanceof Element &&
+        event.target.closest('[data-selectable-id]') !== null
+      ) {
+        onActiveSlotIndexChange(dayString, null, 'pointer');
+        return;
+      }
+
+      const columnRect = event.currentTarget.getBoundingClientRect();
+
+      onActiveSlotIndexChange(
+        dayString,
+        getRecordCalendarWeekSlotIndex({
+          columnHeight: columnRect.height,
+          columnTop: columnRect.top,
+          pointerY: event.clientY,
+        }),
+        'pointer',
       );
-    }
-  };
+    };
 
-  const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
-    if (!event.currentTarget.contains(event.relatedTarget)) {
-      setHoveredSlotIndex(null);
-    }
-  };
+    const handleFocus = (event: FocusEvent<HTMLDivElement>) => {
+      if (
+        event.target === event.currentTarget &&
+        event.currentTarget.matches(':focus-visible')
+      ) {
+        onActiveSlotIndexChange(
+          dayString,
+          activeSlotIndex ?? DEFAULT_KEYBOARD_SLOT_INDEX,
+          'keyboard',
+        );
+      }
+    };
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.target !== event.currentTarget) {
-      return;
-    }
+    const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
+      if (!event.currentTarget.contains(event.relatedTarget)) {
+        onActiveSlotIndexChange(dayString, null, 'keyboard');
+      }
+    };
 
-    const slotCount =
-      (RECORD_CALENDAR_WEEK_DIMENSIONS.hoursInDay * 60) /
-      RECORD_CALENDAR_WEEK_DIMENSIONS.snapIntervalInMinutes;
+    const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+      if (event.target !== event.currentTarget) {
+        return;
+      }
 
-    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-      event.preventDefault();
+      const slotCount =
+        (RECORD_CALENDAR_WEEK_DIMENSIONS.hoursInDay * 60) /
+        RECORD_CALENDAR_WEEK_DIMENSIONS.snapIntervalInMinutes;
 
-      const slotDelta = event.key === 'ArrowDown' ? 1 : -1;
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault();
 
-      setHoveredSlotIndex((currentSlotIndex) =>
-        Math.min(
-          slotCount - 1,
-          Math.max(
-            0,
-            (currentSlotIndex ?? DEFAULT_KEYBOARD_SLOT_INDEX) + slotDelta,
+        const slotDelta = event.key === 'ArrowDown' ? 1 : -1;
+
+        onActiveSlotIndexChange(
+          dayString,
+          Math.min(
+            slotCount - 1,
+            Math.max(
+              0,
+              (activeSlotIndex ?? DEFAULT_KEYBOARD_SLOT_INDEX) + slotDelta,
+            ),
           ),
-        ),
-      );
-    }
-  };
+          'keyboard',
+        );
+      }
+    };
 
-  return (
-    <StyledDayColumn
-      aria-label={day.toLocaleString(undefined, { dateStyle: 'full' })}
-      isWeekend={isPlainDateInWeekend(day)}
-      onBlur={handleBlur}
-      onFocus={handleFocus}
-      onKeyDown={handleKeyDown}
-      onMouseLeave={(event) => {
-        if (!event.currentTarget.contains(document.activeElement)) {
-          setHoveredSlotIndex(null);
-        }
-      }}
-      onMouseMove={handleMouseMove}
-      tabIndex={0}
-    >
-      {isDefined(hoveredSlotIndex) && (
-        <StyledSlotAddNewPositioner
-          data-testid="record-calendar-week-slot-add"
-          topInPixels={
-            hoveredSlotIndex * RECORD_CALENDAR_WEEK_DIMENSIONS.slotHeight
-          }
-        >
-          <RecordCalendarAddNew
-            cardDate={day}
-            cardTime={Temporal.PlainTime.from('00:00').add({
-              minutes:
-                hoveredSlotIndex *
-                RECORD_CALENDAR_WEEK_DIMENSIONS.snapIntervalInMinutes,
-            })}
-            compact
-          />
-        </StyledSlotAddNewPositioner>
-      )}
-      {eventLayouts.map(
-        ({
-          columnCount,
-          columnIndex,
-          endInPixels,
-          recordId,
-          startInPixels,
-        }) => (
-          <RecordCalendarWeekEvent
-            key={recordId}
-            calendarDay={day}
-            calendarEndFieldName={calendarEndFieldName}
-            calendarFieldName={calendarFieldName}
-            calendarFieldType={calendarFieldType}
-            columnCount={columnCount}
-            columnIndex={columnIndex}
-            endInPixels={endInPixels}
-            isAllDay={false}
-            isToday={isToday}
-            recordId={recordId}
-            startInPixels={startInPixels}
-            timeFormat={timeFormat}
-            timeZone={timeZone}
-          />
-        ),
-      )}
-    </StyledDayColumn>
-  );
-};
+    return (
+      <StyledDayColumn
+        aria-label={day.toLocaleString(undefined, { dateStyle: 'full' })}
+        isWeekend={isPlainDateInWeekend(day)}
+        onBlur={handleBlur}
+        onFocus={handleFocus}
+        onKeyDown={handleKeyDown}
+        onMouseLeave={() => onActiveSlotIndexChange(dayString, null, 'pointer')}
+        onMouseMove={handleMouseMove}
+        tabIndex={0}
+      >
+        {isDefined(activeSlotIndex) && (
+          <StyledSlotAddNewPositioner
+            data-testid="record-calendar-week-slot-add"
+            topInPixels={
+              activeSlotIndex * RECORD_CALENDAR_WEEK_DIMENSIONS.slotHeight
+            }
+          >
+            <RecordCalendarAddNew
+              cardDate={day}
+              cardTime={Temporal.PlainTime.from('00:00').add({
+                minutes:
+                  activeSlotIndex *
+                  RECORD_CALENDAR_WEEK_DIMENSIONS.snapIntervalInMinutes,
+              })}
+              compact
+            />
+          </StyledSlotAddNewPositioner>
+        )}
+        {eventLayouts.map(
+          ({
+            columnCount,
+            columnIndex,
+            endInPixels,
+            recordId,
+            startInPixels,
+          }) => (
+            <RecordCalendarWeekEvent
+              key={recordId}
+              calendarDay={day}
+              calendarEndFieldName={calendarEndFieldName}
+              calendarFieldName={calendarFieldName}
+              calendarFieldType={calendarFieldType}
+              columnCount={columnCount}
+              columnIndex={columnIndex}
+              endInPixels={endInPixels}
+              isAllDay={false}
+              isToday={isToday}
+              recordId={recordId}
+              startInPixels={startInPixels}
+              timeFormat={timeFormat}
+              timeZone={timeZone}
+            />
+          ),
+        )}
+      </StyledDayColumn>
+    );
+  },
+);
 
 export const RecordCalendarWeek = () => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
@@ -484,6 +508,59 @@ export const RecordCalendarWeek = () => {
   const [currentInstant, setCurrentInstant] = useState(() =>
     Temporal.Now.instant(),
   );
+  const [activeSlot, setActiveSlot] =
+    useState<RecordCalendarWeekActiveSlot | null>(null);
+
+  const handleActiveSlotIndexChange = useCallback(
+    (
+      day: string,
+      slotIndex: number | null,
+      interactionMode: RecordCalendarWeekSlotInteractionMode,
+    ) => {
+      setActiveSlot((currentActiveSlot) =>
+        updateRecordCalendarWeekActiveSlot({
+          currentActiveSlot,
+          day,
+          interactionMode,
+          slotIndex,
+        }),
+      );
+    },
+    [],
+  );
+
+  const clearActivePointerSlot = useCallback(() => {
+    setActiveSlot((currentActiveSlot) =>
+      currentActiveSlot?.interactionMode === 'pointer'
+        ? null
+        : currentActiveSlot,
+    );
+  }, []);
+
+  useEffect(() => {
+    const handleDocumentMouseMove = (event: globalThis.MouseEvent) => {
+      const eventTarget = event.target;
+
+      if (
+        !(eventTarget instanceof Node) ||
+        gridRef.current?.contains(eventTarget) !== true
+      ) {
+        clearActivePointerSlot();
+      }
+    };
+
+    const clearActiveSlot = () => setActiveSlot(null);
+
+    document.addEventListener('mousemove', handleDocumentMouseMove);
+    document.addEventListener('mouseleave', clearActivePointerSlot);
+    window.addEventListener('blur', clearActiveSlot);
+
+    return () => {
+      document.removeEventListener('mousemove', handleDocumentMouseMove);
+      document.removeEventListener('mouseleave', clearActivePointerSlot);
+      window.removeEventListener('blur', clearActiveSlot);
+    };
+  }, [clearActivePointerSlot]);
 
   const { firstDayOfWeek, lastDayOfWeek, weekDays } =
     useRecordCalendarWeekDaysRange(recordCalendarSelectedDate);
@@ -579,7 +656,7 @@ export const RecordCalendarWeek = () => {
           )}
         </StyledHeader>
         {isTimedView && (
-          <StyledGrid ref={gridRef}>
+          <StyledGrid ref={gridRef} onMouseLeave={clearActivePointerSlot}>
             <StyledTimeGutter>
               {Array.from(
                 { length: RECORD_CALENDAR_WEEK_DIMENSIONS.hoursInDay },
@@ -601,18 +678,26 @@ export const RecordCalendarWeek = () => {
                 }
               />
             </StyledTimeGutter>
-            {weekDays.map(({ date }) => (
-              <RecordCalendarWeekDayColumn
-                key={date.toString()}
-                calendarEndFieldName={compatibleCalendarEndFieldName}
-                calendarFieldName={calendarFieldMetadataItem.name}
-                calendarFieldType={calendarFieldMetadataItem.type}
-                day={date}
-                isToday={isSamePlainDate(date, today)}
-                timeFormat={timeFormat}
-                timeZone={timeZone}
-              />
-            ))}
+            {weekDays.map(({ date }) => {
+              const dateString = date.toString();
+
+              return (
+                <RecordCalendarWeekDayColumn
+                  key={dateString}
+                  activeSlotIndex={
+                    activeSlot?.day === dateString ? activeSlot.slotIndex : null
+                  }
+                  calendarEndFieldName={compatibleCalendarEndFieldName}
+                  calendarFieldName={calendarFieldMetadataItem.name}
+                  calendarFieldType={calendarFieldMetadataItem.type}
+                  dayString={dateString}
+                  isToday={isSamePlainDate(date, today)}
+                  onActiveSlotIndexChange={handleActiveSlotIndexChange}
+                  timeFormat={timeFormat}
+                  timeZone={timeZone}
+                />
+              );
+            })}
             {isCurrentWeek && (
               <>
                 <StyledCurrentTimeLine topInPixels={currentTimeTopInPixels} />
