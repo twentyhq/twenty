@@ -191,35 +191,6 @@ describe('RestApiClient', () => {
       expect(url).toBe('https://api.twenty.test/s/my-app/my-route');
     });
 
-    it('should strip a legacy /s prefix before joining an isolated-domain functions url', async () => {
-      (globalThis as Record<string, unknown>).process = {
-        env: {
-          TWENTY_API_URL: 'https://api.twenty.test',
-          TWENTY_FUNCTIONS_URL: 'https://acme.functions.twenty.test',
-          TWENTY_APP_ACCESS_TOKEN: 'app-access-token',
-        },
-      };
-      const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
-
-      const client = new RestApiClient({ fetch: fetchMock });
-
-      await client.post('/s/my-app/my-route');
-
-      const [url] = fetchMock.mock.calls[0];
-      expect(url).toBe('https://acme.functions.twenty.test/my-app/my-route');
-    });
-
-    it('should strip a legacy /s prefix on the fallback api url /s route', async () => {
-      const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
-
-      const client = new RestApiClient({ fetch: fetchMock });
-
-      await client.post('/s/my-app/my-route');
-
-      const [url] = fetchMock.mock.calls[0];
-      expect(url).toBe('https://api.twenty.test/s/my-app/my-route');
-    });
-
     it('should keep rest paths on the api url when a functions url is injected', async () => {
       (globalThis as Record<string, unknown>).process = {
         env: {
