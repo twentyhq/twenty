@@ -8,6 +8,7 @@ type GetRecordCalendarDateTimeRangeArgs = {
 
 export type RecordCalendarDateTimeRange = {
   end: Temporal.ZonedDateTime;
+  isEndDateTimeFallback: boolean;
   start: Temporal.ZonedDateTime;
 };
 
@@ -35,11 +36,10 @@ export const getRecordCalendarDateTimeRange = ({
   }
 
   const configuredEnd = getZonedDateTimeFromValue(endDateTime, timeZone);
-  const end =
-    configuredEnd !== null &&
-    Temporal.Instant.compare(configuredEnd.toInstant(), start.toInstant()) > 0
-      ? configuredEnd
-      : start.add({ hours: 1 });
+  const isEndDateTimeFallback =
+    configuredEnd === null ||
+    Temporal.Instant.compare(configuredEnd.toInstant(), start.toInstant()) <= 0;
+  const end = isEndDateTimeFallback ? start.add({ hours: 1 }) : configuredEnd;
 
-  return { end, start };
+  return { end, isEndDateTimeFallback, start };
 };

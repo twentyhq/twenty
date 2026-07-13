@@ -29,6 +29,11 @@ export const formatRecordCalendarWeekEventTimeRange = ({
     timeZone,
     timeFormat,
   );
+
+  if (range.isEndDateTimeFallback) {
+    return startTime;
+  }
+
   const endTime = formatInTimeZone(
     range.end.epochMilliseconds,
     timeZone,
