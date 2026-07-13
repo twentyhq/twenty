@@ -7,7 +7,7 @@ exports[`Publish application is gated by the instance server version rejects pub
     "subCode": "SERVER_VERSION_INCOMPATIBLE",
     "userFriendlyMessage": "This app requires a newer version of the Twenty server. Please upgrade your server or use a compatible app version.",
   },
-  "message": "App requires Twenty server >=999.0.0 but this server is 2.20.0.",
+  "message": "App requires Twenty server >=999.0.0 but this server is 2.21.0.",
   "name": "UserInputError",
 }
 `;
