@@ -261,6 +261,18 @@
         "supportsReasoning": true
       },
       {
+        "name": "gpt-realtime-2.1",
+        "label": "GPT-Realtime-2.1",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 4,
+        "outputCostPerMillionTokens": 24,
+        "cachedInputCostPerMillionTokens": 0.4,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 32000,
+        "modalities": ["audio", "image"],
+        "supportsReasoning": true
+      },
+      {
         "name": "gpt-5.6-terra",
         "label": "GPT-5.6 Terra",
         "modelFamily": "GPT",
