@@ -6,7 +6,7 @@ import { type Readable } from 'stream';
 
 import { type ServerFileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 
 import { SERVER_FILE_STORAGE_PREFIX } from 'src/engine/core-modules/file-storage/constants/server-file-storage-prefix.constant';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
@@ -123,51 +123,53 @@ export class ServerFileStorageService {
     fileFolder,
     applicationRegistrationId,
     resourcePath,
-  }: ServerResourceIdentifier): Promise<Readable> {
+  }: ServerResourceIdentifier): Promise<{
+    stream: Readable;
+    mimeType: string;
+  }> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
-    const { onStorageFilePath, filePath } =
+    const { onStorageFilePath } =
       this.validateAndBuildServerFileStoragePathOrThrow({
         fileFolder,
         applicationRegistrationId,
         resourcePath,
       });
 
-    const serverFile = await this.serverFileRepository.findOneBy({
-      path: filePath,
-      workspaceId: IsNull(),
+    const serverFile = await this.findServerFile({
+      fileFolder,
+      applicationRegistrationId,
+      resourcePath,
     });
 
     if (!isDefined(serverFile)) {
       throw new FileStorageException(
-        `Server file ${filePath} not found`,
+        `Server file ${fileFolder}/${applicationRegistrationId}/${resourcePath} not found`,
         FileStorageExceptionCode.FILE_NOT_FOUND,
       );
     }
 
-    return driver.readFile({ filePath: onStorageFilePath });
-  }
-
-  async readServerFileById(
-    id: string,
-    fileFolder: ServerFileFolder,
-  ): Promise<{ stream: Readable; mimeType: string }> {
-    const serverFile = await this.findServerFileByIdOrThrow(id);
-
-    if (!serverFile.path.startsWith(`${fileFolder}/`)) {
-      throw new FileStorageException(
-        `Server file ${id} not found`,
-        FileStorageExceptionCode.FILE_NOT_FOUND,
-      );
-    }
-
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    const stream = await driver.readFile({
-      filePath: this.buildServerOnStorageFilePath(serverFile),
-    });
+    const stream = await driver.readFile({ filePath: onStorageFilePath });
 
     return { stream, mimeType: serverFile.mimeType };
+  }
+
+  async findServerFile({
+    fileFolder,
+    applicationRegistrationId,
+    resourcePath,
+  }: ServerResourceIdentifier): Promise<FileEntity | null> {
+    const { filePath } = this.validateAndBuildServerFileStoragePathOrThrow({
+      fileFolder,
+      applicationRegistrationId,
+      resourcePath,
+    });
+
+    return this.serverFileRepository.findOneBy({
+      applicationRegistrationId,
+      path: filePath,
+      workspaceId: IsNull(),
+    });
   }
 
   checkServerFileExists({
@@ -207,26 +209,22 @@ export class ServerFileStorageService {
     });
   }
 
-  async deleteByServerFileId(id: string): Promise<void> {
-    const serverFile = await this.findServerFileByIdOrThrow(id);
-
-    await this.deleteServerFileBytesBestEffort(
-      this.buildServerOnStorageFilePath(serverFile),
-    );
-
-    await this.serverFileRepository.delete({
-      id,
-      workspaceId: IsNull(),
-    });
-  }
-
-  async deleteByApplicationRegistrationId(
-    applicationRegistrationId: string,
-  ): Promise<void> {
-    const serverFiles = await this.serverFileRepository.findBy({
-      applicationRegistrationId,
-      workspaceId: IsNull(),
-    });
+  // Server files of a soft-deleted registration are kept for the grace period
+  // so a restored registration gets its assets back; this reclaims the storage
+  // of registrations deleted long enough ago.
+  async deleteFilesOfRegistrationsDeletedBefore(
+    deletedBefore: Date,
+  ): Promise<number> {
+    const serverFiles = await this.serverFileRepository
+      .createQueryBuilder('file')
+      .withDeleted()
+      .innerJoin('file.applicationRegistration', 'applicationRegistration')
+      .where('file."deletedAt" IS NULL')
+      .andWhere('file."workspaceId" IS NULL')
+      .andWhere('"applicationRegistration"."deletedAt" < :deletedBefore', {
+        deletedBefore,
+      })
+      .getMany();
 
     for (const serverFile of serverFiles) {
       await this.deleteServerFileBytesBestEffort(
@@ -234,26 +232,13 @@ export class ServerFileStorageService {
       );
     }
 
-    await this.serverFileRepository.delete({
-      applicationRegistrationId,
-      workspaceId: IsNull(),
-    });
-  }
-
-  private async findServerFileByIdOrThrow(id: string): Promise<FileEntity> {
-    const serverFile = await this.serverFileRepository.findOneBy({
-      id,
-      workspaceId: IsNull(),
-    });
-
-    if (!isDefined(serverFile)) {
-      throw new FileStorageException(
-        `Server file ${id} not found`,
-        FileStorageExceptionCode.FILE_NOT_FOUND,
-      );
+    if (serverFiles.length > 0) {
+      await this.serverFileRepository.delete({
+        id: In(serverFiles.map((serverFile) => serverFile.id)),
+      });
     }
 
-    return serverFile;
+    return serverFiles.length;
   }
 
   private buildServerOnStorageFilePath(serverFile: FileEntity): string {

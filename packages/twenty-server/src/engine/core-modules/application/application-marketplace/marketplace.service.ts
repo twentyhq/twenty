@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { buildRegistryCdnUrl } from 'src/engine/core-modules/application/application-marketplace/utils/build-registry-cdn-url.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-const MAX_REGISTRY_ASSET_SIZE_BYTES = 100 * 1024 * 1024; // 100Mb
+const MAX_REGISTRY_ASSET_SIZE_BYTES = 20 * 1024 * 1024; // 20Mb
 
 export type RegistryPackageInfo = {
   name: string;

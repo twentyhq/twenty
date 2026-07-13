@@ -8,6 +8,7 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { STALE_REGISTRATION_CLEANUP_BATCH_SIZE } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/constants/stale-registration-cleanup-batch-size.constant';
 import { STALE_REGISTRATION_GRACE_PERIOD_DAYS } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/constants/stale-registration-grace-period-days.constant';
+import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 
 @Injectable()
 export class StaleRegistrationCleanupService {
@@ -18,6 +19,7 @@ export class StaleRegistrationCleanupService {
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
+    private readonly serverFileStorageService: ServerFileStorageService,
   ) {}
 
   async cleanupStaleRegistrations(): Promise<number> {
@@ -83,6 +85,24 @@ export class StaleRegistrationCleanupService {
     }
 
     return totalDeleted;
+  }
+
+  // Registrations are soft deleted so they can be restored with their stored
+  // assets intact; once the grace period has passed, the assets of deleted
+  // registrations are permanently removed from server file storage.
+  async cleanupDeletedRegistrationFiles(): Promise<number> {
+    const deletedFileCount =
+      await this.serverFileStorageService.deleteFilesOfRegistrationsDeletedBefore(
+        this.calculateCutoffDate(),
+      );
+
+    if (deletedFileCount > 0) {
+      this.logger.log(
+        `Deleted ${deletedFileCount} server file(s) of deleted registrations`,
+      );
+    }
+
+    return deletedFileCount;
   }
 
   private async findStaleRegistrationBatch(

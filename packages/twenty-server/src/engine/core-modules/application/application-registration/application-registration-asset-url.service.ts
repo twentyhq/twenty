@@ -1,24 +1,22 @@
 import { Injectable } from '@nestjs/common';
 
-import { ServerFileFolder } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isAbsoluteUrl, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { buildRegistryCdnUrl } from 'src/engine/core-modules/application/application-marketplace/utils/build-registry-cdn-url.util';
-import { SERVER_FILE_STORAGE_PREFIX } from 'src/engine/core-modules/file-storage/constants/server-file-storage-prefix.constant';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { toGalleryImagePaths } from 'src/engine/core-modules/application/application-registration/utils/to-gallery-image-paths.util';
-import { isAbsoluteUrl } from 'src/engine/core-modules/application/application-registration/utils/is-absolute-url.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type AssetSourceFields = Pick<
   ApplicationRegistrationEntity,
-  'sourceType' | 'sourcePackage' | 'latestAvailableVersion'
+  'id' | 'sourceType' | 'sourcePackage' | 'latestAvailableVersion'
 >;
 
 // Builds display URLs for application registration assets at query time.
-// Assets stored as instance-global server files (TARBALL, LOCAL) are served by
-// fileId; NPM assets are served straight from the registry CDN; absolute URLs
+// Assets stored as instance-global server files (TARBALL, LOCAL, rehosted NPM)
+// are served path-addressed under /files/application-registrations; NPM assets
+// not yet rehosted are served straight from the registry CDN; absolute URLs
 // pass through untouched.
 @Injectable()
 export class ApplicationRegistrationAssetUrlService {
@@ -77,14 +75,15 @@ export class ApplicationRegistrationAssetUrlService {
     path: string | null;
     registration: AssetSourceFields;
   }): string | null {
+    if (!isDefined(path) || path.length === 0) {
+      return null;
+    }
+
+    // A fileId marks the path as stored in server file storage.
     if (isDefined(fileId)) {
       const serverUrl = this.twentyConfigService.get('SERVER_URL');
 
-      return `${serverUrl}/file/${SERVER_FILE_STORAGE_PREFIX}/${ServerFileFolder.ApplicationRegistration}/${fileId}`;
-    }
-
-    if (!isDefined(path) || path.length === 0) {
-      return null;
+      return `${serverUrl}/files/application-registrations/${registration.id}/${path}`;
     }
 
     if (isAbsoluteUrl(path)) {

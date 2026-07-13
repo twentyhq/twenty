@@ -670,6 +670,7 @@ type Application {
   objects: [Object!]!
   applicationVariables: [ApplicationVariable!]!
   applicationRegistration: ApplicationRegistrationSummary
+  logoUrl: String
 }
 
 type ViewField {

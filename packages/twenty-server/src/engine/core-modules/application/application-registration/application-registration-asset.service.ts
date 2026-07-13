@@ -35,89 +35,27 @@ export class ApplicationRegistrationAssetService {
     applicationRegistrationId,
     manifestApplication,
     readAsset,
+    skipAlreadyStoredPaths = false,
   }: {
     applicationRegistrationId: string;
     manifestApplication: ApplicationManifest | undefined;
     readAsset: ReadRegistrationAsset;
+    // Set when asset contents are known to be unchanged (same package
+    // version): assets that already have a stored file for the same path are
+    // not re-downloaded, only missing ones are.
+    skipAlreadyStoredPaths?: boolean;
   }): Promise<void> {
-    const existing = await this.applicationRegistrationRepository.findOneOrFail(
-      {
-        select: ['id', 'logo', 'logoFileId', 'galleryImages'],
-        where: { id: applicationRegistrationId },
-      },
-    );
-
-    const logoFileId = await this.storeLogoFile({
-      applicationRegistrationId,
-      manifestApplication,
-      readAsset,
-    });
-
-    const galleryImages = await this.storeGalleryImageFiles({
-      applicationRegistrationId,
-      manifestApplication,
-      readAsset,
-    });
-
-    // A transient read/download failure must not clobber a working asset:
-    // keep the previously stored fileId when the path did not change.
-    const logoPath = manifestApplication?.logo ?? manifestApplication?.logoUrl;
-    const existingFileIdByPath = new Map(
-      (existing.galleryImages ?? []).map(({ path, fileId }) => [path, fileId]),
-    );
-
-    await this.applicationRegistrationRepository.update(
-      applicationRegistrationId,
-      {
-        logoFileId:
-          logoFileId ??
-          (isDefined(logoPath) &&
-          isStorableAssetPath(logoPath) &&
-          existing.logo === logoPath
-            ? existing.logoFileId
-            : null),
-        galleryImages: galleryImages.map((galleryImage) => ({
-          ...galleryImage,
-          fileId:
-            galleryImage.fileId ??
-            existingFileIdByPath.get(galleryImage.path) ??
-            null,
-        })),
-      } as QueryDeepPartialEntity<ApplicationRegistrationEntity>,
-    );
-  }
-
-  private async storeLogoFile({
-    applicationRegistrationId,
-    manifestApplication,
-    readAsset,
-  }: {
-    applicationRegistrationId: string;
-    manifestApplication: ApplicationManifest | undefined;
-    readAsset: ReadRegistrationAsset;
-  }): Promise<string | null> {
     const logoPath = manifestApplication?.logo ?? manifestApplication?.logoUrl;
 
-    if (!isDefined(logoPath)) {
-      return null;
-    }
+    const logoFileId = isDefined(logoPath)
+      ? await this.storeAssetFile({
+          applicationRegistrationId,
+          path: logoPath,
+          readAsset,
+          skipAlreadyStoredPaths,
+        })
+      : null;
 
-    return this.storeAssetFile({
-      applicationRegistrationId,
-      path: logoPath,
-      readAsset,
-    });
-  }
-
-  private async storeGalleryImageFiles({
-    applicationRegistrationId,
-    manifestApplication,
-    readAsset,
-  }: {
-    applicationRegistrationId: string;
-    manifestApplication: ApplicationManifest | undefined;
-    readAsset: ReadRegistrationAsset;
-  }): Promise<ApplicationRegistrationGalleryImage[]> {
     const galleryImages: ApplicationRegistrationGalleryImage[] = [];
 
     for (const path of toGalleryImagePaths(manifestApplication)) {
@@ -125,6 +63,7 @@ export class ApplicationRegistrationAssetService {
         applicationRegistrationId,
         path,
         readAsset,
+        skipAlreadyStoredPaths,
       });
 
       // Entries without a fileId (absolute URLs, missing files) are kept so
@@ -132,27 +71,49 @@ export class ApplicationRegistrationAssetService {
       galleryImages.push({ path, fileId });
     }
 
-    return galleryImages;
+    await this.applicationRegistrationRepository.update(
+      applicationRegistrationId,
+      {
+        logoFileId,
+        galleryImages,
+      } as QueryDeepPartialEntity<ApplicationRegistrationEntity>,
+    );
   }
 
   private async storeAssetFile({
     applicationRegistrationId,
     path,
     readAsset,
+    skipAlreadyStoredPaths,
   }: {
     applicationRegistrationId: string;
     path: string;
     readAsset: ReadRegistrationAsset;
+    skipAlreadyStoredPaths: boolean;
   }): Promise<string | null> {
     if (!isStorableAssetPath(path)) {
       return null;
+    }
+
+    if (skipAlreadyStoredPaths) {
+      const alreadyStoredFileId = await this.findStoredAssetFileId({
+        applicationRegistrationId,
+        path,
+      });
+
+      if (isDefined(alreadyStoredFileId)) {
+        return alreadyStoredFileId;
+      }
     }
 
     try {
       const contents = await readAsset(path);
 
       if (!isDefined(contents)) {
-        return null;
+        return this.keepPreviouslyStoredAssetFileId({
+          applicationRegistrationId,
+          path,
+        });
       }
 
       const { sourceFile, mimeType } = await prepareFileForStorageOrThrow({
@@ -176,6 +137,53 @@ export class ApplicationRegistrationAssetService {
         `Failed to store asset "${path}" for registration ${applicationRegistrationId}: ${error.message}`,
       );
 
+      return this.keepPreviouslyStoredAssetFileId({
+        applicationRegistrationId,
+        path,
+      });
+    }
+  }
+
+  // A transient read/download failure must not clobber a working asset: the
+  // file previously stored for the same path is kept. When the path changed,
+  // no file exists for it and the asset correctly resolves to null.
+  private async keepPreviouslyStoredAssetFileId({
+    applicationRegistrationId,
+    path,
+  }: {
+    applicationRegistrationId: string;
+    path: string;
+  }): Promise<string | null> {
+    const previouslyStoredFileId = await this.findStoredAssetFileId({
+      applicationRegistrationId,
+      path,
+    });
+
+    if (isDefined(previouslyStoredFileId)) {
+      this.logger.warn(
+        `Keeping previously stored file for asset "${path}" of registration ${applicationRegistrationId}`,
+      );
+    }
+
+    return previouslyStoredFileId;
+  }
+
+  private async findStoredAssetFileId({
+    applicationRegistrationId,
+    path,
+  }: {
+    applicationRegistrationId: string;
+    path: string;
+  }): Promise<string | null> {
+    try {
+      const storedFile = await this.serverFileStorageService.findServerFile({
+        fileFolder: ServerFileFolder.ApplicationRegistration,
+        applicationRegistrationId,
+        resourcePath: path,
+      });
+
+      return storedFile?.id ?? null;
+    } catch {
       return null;
     }
   }

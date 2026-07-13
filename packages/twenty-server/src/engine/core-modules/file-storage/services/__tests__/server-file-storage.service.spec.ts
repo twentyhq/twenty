@@ -4,7 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Readable } from 'stream';
 
 import { ServerFileFolder } from 'twenty-shared/types';
-import { IsNull } from 'typeorm';
+import { In, IsNull } from 'typeorm';
 
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
@@ -27,6 +27,7 @@ describe('ServerFileStorageService', () => {
     findOneByOrFail: jest.fn(),
     findBy: jest.fn(),
     delete: jest.fn(),
+    createQueryBuilder: jest.fn(),
   };
 
   const mockDriver = {
@@ -193,6 +194,7 @@ describe('ServerFileStorageService', () => {
       mockServerFileRepository.findOneBy.mockResolvedValue({
         id: 'server-file-id',
         path: 'application-registration/registration-id/manifests/manifest.json',
+        mimeType: 'application/json',
       } as FileEntity);
       mockDriver.readFile.mockResolvedValue(stream);
 
@@ -203,6 +205,7 @@ describe('ServerFileStorageService', () => {
       });
 
       expect(mockServerFileRepository.findOneBy).toHaveBeenCalledWith({
+        applicationRegistrationId: 'registration-id',
         path: 'application-registration/registration-id/manifests/manifest.json',
         workspaceId: IsNull(),
       });
@@ -210,7 +213,7 @@ describe('ServerFileStorageService', () => {
         filePath:
           'server/application-registration/registration-id/manifests/manifest.json',
       });
-      expect(result).toBe(stream);
+      expect(result).toEqual({ stream, mimeType: 'application/json' });
     });
 
     it('should propagate the missing-file exception from the driver', async () => {
@@ -257,48 +260,39 @@ describe('ServerFileStorageService', () => {
     });
   });
 
-  describe('readServerFileById', () => {
-    it('should read the bytes of the row storage path', async () => {
-      const stream = Readable.from(['{}']);
-
-      mockServerFileRepository.findOneBy.mockResolvedValue({
+  describe('findServerFile', () => {
+    it('should return the row matching the registration and path', async () => {
+      const serverFile = {
         id: 'server-file-id',
         path: 'application-registration/registration-id/manifest.json',
-        mimeType: 'application/json',
-      } as FileEntity);
-      mockDriver.readFile.mockResolvedValue(stream);
+      } as FileEntity;
 
-      const result = await service.readServerFileById(
-        'server-file-id',
-        ServerFileFolder.ApplicationRegistration,
-      );
+      mockServerFileRepository.findOneBy.mockResolvedValue(serverFile);
+
+      const result = await service.findServerFile({
+        fileFolder: ServerFileFolder.ApplicationRegistration,
+        applicationRegistrationId: 'registration-id',
+        resourcePath: 'manifest.json',
+      });
 
       expect(mockServerFileRepository.findOneBy).toHaveBeenCalledWith({
-        id: 'server-file-id',
+        applicationRegistrationId: 'registration-id',
+        path: 'application-registration/registration-id/manifest.json',
         workspaceId: IsNull(),
       });
-      expect(mockDriver.readFile).toHaveBeenCalledWith({
-        filePath:
-          'server/application-registration/registration-id/manifest.json',
-      });
-      expect(result).toEqual({ stream, mimeType: 'application/json' });
+      expect(result).toBe(serverFile);
     });
 
-    it('should throw a missing-file exception when the row does not exist', async () => {
+    it('should return null when no row matches', async () => {
       mockServerFileRepository.findOneBy.mockResolvedValue(null);
 
-      await expect(
-        service.readServerFileById(
-          'unknown-id',
-          ServerFileFolder.ApplicationRegistration,
-        ),
-      ).rejects.toThrow(
-        expect.objectContaining({
-          code: FileStorageExceptionCode.FILE_NOT_FOUND,
-        }),
-      );
+      const result = await service.findServerFile({
+        fileFolder: ServerFileFolder.ApplicationRegistration,
+        applicationRegistrationId: 'registration-id',
+        resourcePath: 'missing.json',
+      });
 
-      expect(mockDriver.readFile).not.toHaveBeenCalled();
+      expect(result).toBeNull();
     });
   });
 
@@ -368,41 +362,23 @@ describe('ServerFileStorageService', () => {
     });
   });
 
-  describe('deleteByServerFileId', () => {
-    it('should delete the bytes and the row of the given id', async () => {
-      mockServerFileRepository.findOneBy.mockResolvedValue({
-        id: 'server-file-id',
-        path: 'application-registration/registration-id/manifest.json',
-      } as FileEntity);
+  describe('deleteFilesOfRegistrationsDeletedBefore', () => {
+    const createMockQueryBuilder = (serverFiles: FileEntity[]) => {
+      const queryBuilder = {
+        withDeleted: jest.fn().mockReturnThis(),
+        innerJoin: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(serverFiles),
+      };
 
-      await service.deleteByServerFileId('server-file-id');
+      mockServerFileRepository.createQueryBuilder.mockReturnValue(queryBuilder);
 
-      expect(mockDriver.delete).toHaveBeenCalledWith({
-        folderPath: 'server/application-registration/registration-id',
-        filename: 'manifest.json',
-      });
-      expect(mockServerFileRepository.delete).toHaveBeenCalledWith({
-        id: 'server-file-id',
-        workspaceId: IsNull(),
-      });
-    });
+      return queryBuilder;
+    };
 
-    it('should throw a missing-file exception when the row does not exist', async () => {
-      mockServerFileRepository.findOneBy.mockResolvedValue(null);
-
-      await expect(service.deleteByServerFileId('unknown-id')).rejects.toThrow(
-        expect.objectContaining({
-          code: FileStorageExceptionCode.FILE_NOT_FOUND,
-        }),
-      );
-
-      expect(mockServerFileRepository.delete).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('deleteByApplicationRegistrationId', () => {
-    it('should delete the bytes of every file then the rows', async () => {
-      mockServerFileRepository.findBy.mockResolvedValue([
+    it('should delete the bytes of every file of deleted registrations then the rows', async () => {
+      createMockQueryBuilder([
         {
           id: 'file-1',
           path: 'application-registration/registration-id/manifest.json',
@@ -413,12 +389,11 @@ describe('ServerFileStorageService', () => {
         },
       ] as FileEntity[]);
 
-      await service.deleteByApplicationRegistrationId('registration-id');
+      const deletedCount =
+        await service.deleteFilesOfRegistrationsDeletedBefore(
+          new Date('2026-06-01T00:00:00Z'),
+        );
 
-      expect(mockServerFileRepository.findBy).toHaveBeenCalledWith({
-        applicationRegistrationId: 'registration-id',
-        workspaceId: IsNull(),
-      });
       expect(mockDriver.delete).toHaveBeenCalledWith({
         folderPath: 'server/application-registration/registration-id',
         filename: 'manifest.json',
@@ -428,13 +403,13 @@ describe('ServerFileStorageService', () => {
         filename: 'settings.json',
       });
       expect(mockServerFileRepository.delete).toHaveBeenCalledWith({
-        applicationRegistrationId: 'registration-id',
-        workspaceId: IsNull(),
+        id: In(['file-1', 'file-2']),
       });
+      expect(deletedCount).toBe(2);
     });
 
     it('should still delete the rows when a bytes deletion fails', async () => {
-      mockServerFileRepository.findBy.mockResolvedValue([
+      createMockQueryBuilder([
         {
           id: 'file-1',
           path: 'application-registration/registration-id/manifest.json',
@@ -442,12 +417,25 @@ describe('ServerFileStorageService', () => {
       ] as FileEntity[]);
       mockDriver.delete.mockRejectedValueOnce(new Error('Delete failed'));
 
-      await service.deleteByApplicationRegistrationId('registration-id');
+      await service.deleteFilesOfRegistrationsDeletedBefore(
+        new Date('2026-06-01T00:00:00Z'),
+      );
 
       expect(mockServerFileRepository.delete).toHaveBeenCalledWith({
-        applicationRegistrationId: 'registration-id',
-        workspaceId: IsNull(),
+        id: In(['file-1']),
       });
+    });
+
+    it('should not delete any row when no file matches', async () => {
+      createMockQueryBuilder([]);
+
+      const deletedCount =
+        await service.deleteFilesOfRegistrationsDeletedBefore(
+          new Date('2026-06-01T00:00:00Z'),
+        );
+
+      expect(mockServerFileRepository.delete).not.toHaveBeenCalled();
+      expect(deletedCount).toBe(0);
     });
   });
 });
