@@ -4,7 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Readable } from 'stream';
 
 import { ServerFileFolder } from 'twenty-shared/types';
-import { IsNull } from 'typeorm';
+import { IsNull, Like } from 'typeorm';
 
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
@@ -23,6 +23,7 @@ describe('ServerFileStorageService', () => {
 
   const mockServerFileRepository = {
     upsert: jest.fn(),
+    find: jest.fn(),
     findOneBy: jest.fn(),
     findOneByOrFail: jest.fn(),
     findBy: jest.fn(),
@@ -447,6 +448,47 @@ describe('ServerFileStorageService', () => {
       expect(mockServerFileRepository.delete).toHaveBeenCalledWith({
         applicationRegistrationId: 'registration-id',
         workspaceId: IsNull(),
+      });
+    });
+  });
+
+  describe('listStoredResourcePaths', () => {
+    it('should return paths relative to the folder and registration scope', async () => {
+      mockServerFileRepository.find.mockResolvedValue([
+        {
+          path: 'application-package/registration-id/1.2.3/dependencies/package.json',
+        },
+        {
+          path: 'application-package/registration-id/1.2.3/public-asset/nested/logo.png',
+        },
+      ] as FileEntity[]);
+
+      const resourcePaths = await service.listStoredResourcePaths({
+        fileFolder: ServerFileFolder.ApplicationPackage,
+        applicationRegistrationId: 'registration-id',
+      });
+
+      expect(resourcePaths).toEqual([
+        '1.2.3/dependencies/package.json',
+        '1.2.3/public-asset/nested/logo.png',
+      ]);
+    });
+
+    it('should scope the query to the registration and server rows', async () => {
+      mockServerFileRepository.find.mockResolvedValue([]);
+
+      await service.listStoredResourcePaths({
+        fileFolder: ServerFileFolder.ApplicationPackage,
+        applicationRegistrationId: 'registration-id',
+      });
+
+      expect(mockServerFileRepository.find).toHaveBeenCalledWith({
+        select: { path: true },
+        where: {
+          applicationRegistrationId: 'registration-id',
+          workspaceId: IsNull(),
+          path: Like('application-package/registration-id/%'),
+        },
       });
     });
   });

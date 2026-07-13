@@ -21,7 +21,9 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
+import { ApplicationPackageFileService } from 'src/engine/core-modules/application/application-package/application-package-file.service';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
+import { buildApplicationPackageFileList } from 'src/engine/core-modules/application/application-package/utils/build-application-package-file-list.util';
 import { VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -47,6 +49,7 @@ export class ApplicationInstallService {
     private readonly applicationService: ApplicationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
+    private readonly applicationPackageFileService: ApplicationPackageFileService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly fileStorageService: FileStorageService,
@@ -206,6 +209,23 @@ export class ApplicationInstallService {
           }
         }
       }
+
+      // Shared copy first: one instance-global copy per (registration,
+      // version), reused by every workspace installing this version. The
+      // per-workspace copies below remain until all readers use the shared
+      // store.
+      await this.applicationPackageFileService.ensurePackageFilesStored({
+        applicationRegistrationId: appRegistration.id,
+        version: newVersion,
+        manifest: resolvedPackage.manifest,
+        readPackageFile: (relativePath) =>
+          fs.readFile(
+            this.resolveWithinDirOrThrow(
+              resolvedPackage.extractedDir,
+              relativePath,
+            ),
+          ),
+      });
 
       await this.writeFilesToStorage(
         resolvedPackage.extractedDir,
@@ -600,35 +620,13 @@ export class ApplicationInstallService {
   private buildFileList(
     manifest: Manifest,
   ): Array<{ relativePath: string; fileFolder: FileFolder }> {
-    const files: Array<{ relativePath: string; fileFolder: FileFolder }> = [];
-
-    files.push(
-      { relativePath: 'package.json', fileFolder: FileFolder.Dependencies },
+    return [
+      // manifest.json has no reader (the manifest lives on the registration
+      // row) and is not part of the shared package store; it is still written
+      // per workspace until the per-workspace copies are removed.
       { relativePath: 'manifest.json', fileFolder: FileFolder.Source },
-    );
-
-    for (const logicFunction of manifest.logicFunctions ?? []) {
-      files.push({
-        relativePath: logicFunction.builtHandlerPath,
-        fileFolder: FileFolder.BuiltLogicFunction,
-      });
-    }
-
-    for (const frontComponent of manifest.frontComponents ?? []) {
-      files.push({
-        relativePath: frontComponent.builtComponentPath,
-        fileFolder: FileFolder.BuiltFrontComponent,
-      });
-    }
-
-    for (const publicAsset of manifest.publicAssets ?? []) {
-      files.push({
-        relativePath: publicAsset.filePath,
-        fileFolder: FileFolder.PublicAsset,
-      });
-    }
-
-    return files;
+      ...buildApplicationPackageFileList(manifest),
+    ];
   }
 
   private async ensureApplicationExists(params: {

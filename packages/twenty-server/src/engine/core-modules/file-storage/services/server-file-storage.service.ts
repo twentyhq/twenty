@@ -6,7 +6,7 @@ import { type Readable } from 'stream';
 
 import { type ServerFileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { IsNull, Like, Repository } from 'typeorm';
 
 import { SERVER_FILE_STORAGE_PREFIX } from 'src/engine/core-modules/file-storage/constants/server-file-storage-prefix.constant';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
@@ -168,6 +168,28 @@ export class ServerFileStorageService {
     });
 
     return { stream, mimeType: serverFile.mimeType };
+  }
+
+  // Returns the resource paths (relative to the folder + registration scope)
+  // of all stored server files for a registration in the given folder.
+  async listStoredResourcePaths({
+    fileFolder,
+    applicationRegistrationId,
+  }: Omit<ServerResourceIdentifier, 'resourcePath'>): Promise<string[]> {
+    const pathPrefix = `${join(fileFolder, applicationRegistrationId)}/`;
+
+    const serverFiles = await this.serverFileRepository.find({
+      select: { path: true },
+      where: {
+        applicationRegistrationId,
+        workspaceId: IsNull(),
+        path: Like(`${pathPrefix}%`),
+      },
+    });
+
+    return serverFiles.map((serverFile) =>
+      serverFile.path.slice(pathPrefix.length),
+    );
   }
 
   checkServerFileExists({
