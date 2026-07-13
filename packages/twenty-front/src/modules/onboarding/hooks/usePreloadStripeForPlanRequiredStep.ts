@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { useEffect } from 'react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
@@ -17,7 +18,9 @@ export const usePreloadStripeForPlanRequiredStep = () => {
 
   const publishableKey = billing?.stripePublishableKey;
 
-  if (isPlanRequired && isNonEmptyString(publishableKey)) {
-    void getStripePromise(publishableKey);
-  }
+  useEffect(() => {
+    if (isPlanRequired && isNonEmptyString(publishableKey)) {
+      void getStripePromise(publishableKey);
+    }
+  }, [isPlanRequired, publishableKey]);
 };
