@@ -19,6 +19,7 @@ import {
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { type ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
+import { type PaginatedApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { type PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
@@ -37,6 +38,8 @@ import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/app
 import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
 
 const BCRYPT_SALT_ROUNDS = 10;
+
+const MAX_APPLICATION_REGISTRATIONS_PAGE_SIZE = 100;
 
 const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegistrationEntity)[] =
   [
@@ -119,11 +122,57 @@ export class ApplicationRegistrationService {
     });
   }
 
-  async findAll(): Promise<ApplicationRegistrationEntity[]> {
-    return this.applicationRegistrationRepository.find({
-      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
-      order: { createdAt: 'DESC' },
-    });
+  async findAll({
+    limit,
+    offset,
+    searchTerm,
+    isPreInstalledOnly,
+  }: {
+    limit: number;
+    offset: number;
+    searchTerm?: string;
+    isPreInstalledOnly?: boolean;
+  }): Promise<PaginatedApplicationRegistrationsDTO> {
+    const safeLimit = Math.min(
+      Math.max(limit, 1),
+      MAX_APPLICATION_REGISTRATIONS_PAGE_SIZE,
+    );
+    const safeOffset = Math.max(offset, 0);
+
+    const trimmedSearch = searchTerm?.trim();
+
+    const queryBuilder = this.applicationRegistrationRepository
+      .createQueryBuilder('registration')
+      .select(
+        APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT.map(
+          (column) => `registration.${column}`,
+        ),
+      )
+      .orderBy('registration.createdAt', 'DESC')
+      .addOrderBy('registration.id', 'ASC')
+      .skip(safeOffset)
+      .take(safeLimit);
+
+    if (isPreInstalledOnly === true) {
+      queryBuilder.andWhere('registration."isPreInstalled" = true');
+    }
+
+    if (isDefined(trimmedSearch) && trimmedSearch.length > 0) {
+      queryBuilder.andWhere(
+        `(registration.name ILIKE :searchTerm
+          OR registration."sourcePackage" ILIKE :searchTerm
+          OR registration."universalIdentifier"::text ILIKE :searchTerm)`,
+        { searchTerm: `%${trimmedSearch}%` },
+      );
+    }
+
+    const [registrations, totalCount] = await queryBuilder.getManyAndCount();
+
+    return {
+      registrations,
+      totalCount,
+      hasMore: safeOffset + registrations.length < totalCount,
+    };
   }
 
   async findOneById(
@@ -582,29 +631,26 @@ export class ApplicationRegistrationService {
   // across all workspaces, so ownership is not enforced.
   async getInstalledWorkspacesGlobal(
     applicationRegistrationId: string,
-    page: number,
-    pageSize: number,
+    limit: number,
+    offset: number,
     searchTerm?: string,
   ): Promise<ApplicationRegistrationInstalledWorkspacesDTO> {
     await this.findOneByIdGlobal(applicationRegistrationId);
 
     return this.computeInstalledWorkspaces(
       applicationRegistrationId,
-      page,
-      pageSize,
+      limit,
+      offset,
       searchTerm,
     );
   }
 
   private async computeInstalledWorkspaces(
     applicationRegistrationId: string,
-    page: number,
-    pageSize: number,
+    limit: number,
+    offset: number,
     searchTerm?: string,
   ): Promise<ApplicationRegistrationInstalledWorkspacesDTO> {
-    const safePage = page < 1 ? 1 : page;
-    const offset = (safePage - 1) * pageSize;
-
     const trimmedSearch = searchTerm?.trim();
 
     const where: FindOptionsWhere<ApplicationEntity> = {
@@ -628,7 +674,7 @@ export class ApplicationRegistrationService {
         relations: { workspace: true },
         order: { workspace: { displayName: 'ASC' }, id: 'ASC' },
         skip: offset,
-        take: pageSize,
+        take: limit,
       });
 
     const workspaces = applications.map((application) => ({
