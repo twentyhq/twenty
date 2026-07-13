@@ -34,7 +34,10 @@ const buildManifest = (overrides: Partial<Manifest> = {}): Manifest =>
 describe('ApplicationPackageFileService', () => {
   let service: ApplicationPackageFileService;
   let serverFileStorageService: jest.Mocked<
-    Pick<ServerFileStorageService, 'listStoredResourcePaths' | 'writeServerFile'>
+    Pick<
+      ServerFileStorageService,
+      'listStoredResourcePaths' | 'writeServerFile'
+    >
   >;
   let readPackageFile: jest.Mock;
 
