@@ -7,7 +7,7 @@ export type MarketplaceApp = {
   category: string;
   logoUrl?: string;
   sourcePackage?: string;
-  isFeatured: boolean;
+  isVetted: boolean;
 };
 
 export type MarketplaceAppDetail = MarketplaceApp & {
