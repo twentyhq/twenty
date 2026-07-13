@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import chalk from 'chalk';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThanOrEqual, Repository } from 'typeorm';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
