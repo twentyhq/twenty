@@ -1,6 +1,6 @@
 import { loadStripe } from '@stripe/stripe-js/pure';
 
-import { getStripePromise } from '@/settings/billing/hooks/useStripePromise';
+import { getStripePromise } from '@/settings/billing/utils/getStripePromise';
 
 jest.mock('@stripe/stripe-js/pure', () => ({
   loadStripe: jest.fn(),

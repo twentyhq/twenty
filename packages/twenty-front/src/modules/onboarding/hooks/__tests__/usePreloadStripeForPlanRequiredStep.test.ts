@@ -33,7 +33,7 @@ const renderHooks = ({
   isBillingEnabled = true,
   withSubscription = false,
   stripePublishableKey,
-}: RenderHooksOptions) => {
+}: RenderHooksOptions = {}) => {
   const { result } = renderHook(
     () => {
       const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
@@ -94,7 +94,7 @@ describe('usePreloadStripeForPlanRequiredStep', () => {
   });
 
   it('should not preload Stripe when the publishable key is missing', () => {
-    renderHooks({});
+    renderHooks();
 
     expect(loadStripeMock).not.toHaveBeenCalled();
   });

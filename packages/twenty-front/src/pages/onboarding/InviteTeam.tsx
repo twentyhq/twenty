@@ -11,7 +11,6 @@ import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/Onboardin
 import { ONBOARDING_MOTION_SLIDE_OFFSET } from '@/onboarding/constants/OnboardingMotionSlideOffset';
 import { useInviteTeam } from '@/onboarding/hooks/useInviteTeam';
 import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
-import { usePreloadStripeForPlanRequiredStep } from '@/onboarding/hooks/usePreloadStripeForPlanRequiredStep';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -57,8 +56,6 @@ export const InviteTeam = () => {
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const creditsRewardPerUser = onboardingConfig?.inviteTeamCreditsRewardPerUser;
   const transition = useOnboardingMotionTransition();
-
-  usePreloadStripeForPlanRequiredStep();
 
   return (
     <StyledOnboardingStepPage>
