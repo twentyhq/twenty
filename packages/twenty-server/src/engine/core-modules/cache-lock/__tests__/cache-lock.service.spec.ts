@@ -1,6 +1,9 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import {
+  CacheLockAcquisitionError,
+  CacheLockService,
+} from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 
@@ -67,7 +70,7 @@ describe('CacheLockService', () => {
 
     await expect(
       service.withLock(fn, 'key', { ms, maxRetries }),
-    ).rejects.toThrow('Failed to acquire lock for key: key');
+    ).rejects.toBeInstanceOf(CacheLockAcquisitionError);
 
     expect(cacheStorageService.acquireLock).toHaveBeenCalledTimes(maxRetries);
     expect(fn).not.toHaveBeenCalled();
