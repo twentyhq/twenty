@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-video-field-universal-identifier';
 import { CALL_RECORDER_MAX_MEDIA_FILE_SIZE_MB_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-max-media-file-size-mb-env-var-name';
-import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-recording-media.util';
+import { importCallRecordingMedia } from 'src/logic-functions/flows/import-call-recording-media.util';
 
 const mutationMock = vi.hoisted(() => vi.fn());
 const getRecallRecordingMock = vi.hoisted(() => vi.fn());
@@ -147,7 +147,7 @@ const getUploadBridgeCall = (fileName: string) =>
     ([uploadInput]) => uploadInput.fileName === fileName,
   );
 
-describe('ingestCallRecordingMedia', () => {
+describe('importCallRecordingMedia', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -179,7 +179,7 @@ describe('ingestCallRecordingMedia', () => {
   });
 
   it('streams and uploads every missing artifact', async () => {
-    const updateFields = await ingestCallRecordingMedia({
+    const updateFields = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
@@ -211,7 +211,7 @@ describe('ingestCallRecordingMedia', () => {
   });
 
   it('declares the presigned upload with the download size, folder and field identifier', async () => {
-    await ingestCallRecordingMedia({
+    await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: true,
@@ -241,7 +241,7 @@ describe('ingestCallRecordingMedia', () => {
   });
 
   it('skips artifacts already on the record', async () => {
-    const updateFields = await ingestCallRecordingMedia({
+    const updateFields = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
@@ -255,7 +255,7 @@ describe('ingestCallRecordingMedia', () => {
   });
 
   it('does not fetch the recording when both artifacts are present', async () => {
-    const updateFields = await ingestCallRecordingMedia({
+    const updateFields = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: true,
@@ -289,7 +289,7 @@ describe('ingestCallRecordingMedia', () => {
       },
     });
 
-    const updateFields = await ingestCallRecordingMedia({
+    const updateFields = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
@@ -318,7 +318,7 @@ describe('ingestCallRecordingMedia', () => {
       },
     });
 
-    const updateFields = await ingestCallRecordingMedia({
+    const updateFields = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
@@ -343,7 +343,7 @@ describe('ingestCallRecordingMedia', () => {
       recording: { id: 'recall-recording-1' },
     });
 
-    const updateFields = await ingestCallRecordingMedia({
+    const updateFields = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
@@ -361,7 +361,7 @@ describe('ingestCallRecordingMedia', () => {
       errorMessage: 'recording boom',
     });
 
-    const updateFields = await ingestCallRecordingMedia({
+    const updateFields = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
@@ -388,7 +388,7 @@ describe('ingestCallRecordingMedia', () => {
       },
     });
 
-    const updateFields = await ingestCallRecordingMedia({
+    const updateFields = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
@@ -421,7 +421,7 @@ describe('ingestCallRecordingMedia', () => {
       },
     });
 
-    const updateFields = await ingestCallRecordingMedia({
+    const updateFields = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
@@ -445,7 +445,7 @@ describe('ingestCallRecordingMedia', () => {
       },
     });
 
-    const updateFields = await ingestCallRecordingMedia({
+    const updateFields = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
@@ -471,7 +471,7 @@ describe('ingestCallRecordingMedia', () => {
       },
     });
 
-    const updateFields = await ingestCallRecordingMedia({
+    const updateFields = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: true,

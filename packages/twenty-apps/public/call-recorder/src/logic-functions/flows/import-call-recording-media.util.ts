@@ -20,8 +20,8 @@ type CallRecordingMediaUpdateFields = Pick<
   'audio' | 'video' | 'callRecorderFailureReason'
 >;
 
-type IngestMediaArtifactResult =
-  | { outcome: 'ingested'; files: CallRecordingMediaFile[] }
+type ImportMediaArtifactResult =
+  | { outcome: 'imported'; files: CallRecordingMediaFile[] }
   | { outcome: 'too-large' }
   | { outcome: 'failed' };
 
@@ -38,7 +38,7 @@ type MediaUploadTarget = {
 const MEDIA_DOWNLOAD_TIMEOUT_MS = 120_000;
 const MEDIA_FILE_FOLDER = 'FilesField';
 
-export const ingestCallRecordingMedia = async ({
+export const importCallRecordingMedia = async ({
   callRecordingId,
   externalRecordingId,
   hasAudio,
@@ -57,7 +57,7 @@ export const ingestCallRecordingMedia = async ({
 
   if (!recordingResult.ok) {
     console.warn(
-      `[call-recorder] failed to fetch Recall recording ${externalRecordingId} while ingesting media for call recording ${callRecordingId}: ${recordingResult.errorMessage}`,
+      `[call-recorder] failed to fetch Recall recording ${externalRecordingId} while importing media for call recording ${callRecordingId}: ${recordingResult.errorMessage}`,
     );
 
     return {};
@@ -71,7 +71,7 @@ export const ingestCallRecordingMedia = async ({
   const tooLargeFailureReasons: string[] = [];
 
   if (!hasVideo && !isUndefined(mediaUrls.videoUrl)) {
-    const video = await ingestMediaArtifact({
+    const video = await importMediaArtifact({
       callRecordingId,
       metadataClient,
       url: mediaUrls.videoUrl,
@@ -81,7 +81,7 @@ export const ingestCallRecordingMedia = async ({
       maxMediaFileSizeBytes,
     });
 
-    if (video.outcome === 'ingested') {
+    if (video.outcome === 'imported') {
       updateFields.video = video.files;
     }
 
@@ -91,7 +91,7 @@ export const ingestCallRecordingMedia = async ({
   }
 
   if (!hasAudio && !isUndefined(mediaUrls.audioUrl)) {
-    const audio = await ingestMediaArtifact({
+    const audio = await importMediaArtifact({
       callRecordingId,
       metadataClient,
       url: mediaUrls.audioUrl,
@@ -101,7 +101,7 @@ export const ingestCallRecordingMedia = async ({
       maxMediaFileSizeBytes,
     });
 
-    if (audio.outcome === 'ingested') {
+    if (audio.outcome === 'imported') {
       updateFields.audio = audio.files;
     }
 
@@ -117,7 +117,7 @@ export const ingestCallRecordingMedia = async ({
   return updateFields;
 };
 
-const ingestMediaArtifact = async ({
+const importMediaArtifact = async ({
   callRecordingId,
   metadataClient,
   url,
@@ -131,7 +131,7 @@ const ingestMediaArtifact = async ({
   fileName: string;
   fieldMetadataUniversalIdentifier: string;
   maxMediaFileSizeBytes: number;
-}): Promise<IngestMediaArtifactResult> => {
+}): Promise<ImportMediaArtifactResult> => {
   try {
     const download = await openMediaDownload({
       callRecordingId,
@@ -142,7 +142,7 @@ const ingestMediaArtifact = async ({
 
     if (download.outcome === 'too-large') {
       console.warn(
-        `[call-recorder] media-ingestion phase=artifact-too-large callRecordingId=${callRecordingId} fileName=${fileName} sizeBytes=${download.sizeBytes} maxMediaFileSizeBytes=${maxMediaFileSizeBytes}`,
+        `[call-recorder] media-import phase=artifact-too-large callRecordingId=${callRecordingId} fileName=${fileName} sizeBytes=${download.sizeBytes} maxMediaFileSizeBytes=${maxMediaFileSizeBytes}`,
       );
 
       return { outcome: 'too-large' };
@@ -158,12 +158,12 @@ const ingestMediaArtifact = async ({
     });
 
     return {
-      outcome: 'ingested',
+      outcome: 'imported',
       files: [{ fileId, label: fileName }],
     };
   } catch (error) {
     console.warn(
-      `[call-recorder] failed to ingest ${fileName} for call recording ${callRecordingId}: ${error instanceof Error ? error.message : String(error)}`,
+      `[call-recorder] failed to import ${fileName} for call recording ${callRecordingId}: ${error instanceof Error ? error.message : String(error)}`,
     );
 
     return { outcome: 'failed' };
@@ -189,7 +189,7 @@ const openMediaDownload = async ({
   );
 
   console.log(
-    `[call-recorder] media-ingestion phase=artifact-download-response callRecordingId=${callRecordingId} fileName=${fileName} responseStatus=${response.status} contentLengthBytes=${contentLengthBytes ?? 'unknown'} ${formatMemoryUsageForLog()}`,
+    `[call-recorder] media-import phase=artifact-download-response callRecordingId=${callRecordingId} fileName=${fileName} responseStatus=${response.status} contentLengthBytes=${contentLengthBytes ?? 'unknown'} ${formatMemoryUsageForLog()}`,
   );
 
   if (!response.ok) {
@@ -260,7 +260,7 @@ const uploadMediaStreamToStorage = async ({
   });
 
   console.log(
-    `[call-recorder] media-ingestion phase=artifact-upload-start callRecordingId=${callRecordingId} fileName=${fileName} declaredBytes=${sizeBytes} ${formatMemoryUsageForLog()}`,
+    `[call-recorder] media-import phase=artifact-upload-start callRecordingId=${callRecordingId} fileName=${fileName} declaredBytes=${sizeBytes} ${formatMemoryUsageForLog()}`,
   );
 
   await putMediaDownloadBodyToUploadTarget({
@@ -288,7 +288,7 @@ const cancelMediaDownloadBody = async ({
 
   await body.cancel().catch((error) => {
     console.warn(
-      `[call-recorder] media-ingestion phase=download-body-cancel-failed callRecordingId=${callRecordingId} fileName=${fileName}: ${error instanceof Error ? error.message : String(error)}`,
+      `[call-recorder] media-import phase=download-body-cancel-failed callRecordingId=${callRecordingId} fileName=${fileName}: ${error instanceof Error ? error.message : String(error)}`,
     );
   });
 };

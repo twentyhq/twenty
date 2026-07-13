@@ -2,28 +2,28 @@ import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
-import { ensureCallRecorder } from 'src/logic-functions/flows/ensure-call-recorder.util';
+import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findOpenScheduledCallRecordings } from 'src/logic-functions/data/find-open-scheduled-call-recordings.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 
-export type HealCallRecordingsMissingBotResult = {
+export type ScheduleRecallBotsForPendingCallRecordingsResult = {
   scheduledCallRecordingIds: string[];
 };
 
 // Closes the create-winner crash gap: a run that inserted the row but died before POSTing leaves a botless recording, and the cron is the single writer that re-POSTs it.
-export const healCallRecordingsMissingBot = async ({
+export const scheduleRecallBotsForPendingCallRecordings = async ({
   client,
   now,
 }: {
   client: CoreApiClient;
   now: Date;
-}): Promise<HealCallRecordingsMissingBotResult> => {
-  const botlessCallRecordings = (
+}): Promise<ScheduleRecallBotsForPendingCallRecordingsResult> => {
+  const pendingCallRecordings = (
     await findOpenScheduledCallRecordings(client)
   ).filter((callRecording) => isUndefined(callRecording.externalBotId));
 
-  if (botlessCallRecordings.length === 0) {
+  if (pendingCallRecordings.length === 0) {
     return { scheduledCallRecordingIds: [] };
   }
 
@@ -32,7 +32,7 @@ export const healCallRecordingsMissingBot = async ({
       await fetchCalendarEventsByIds(
         client,
         getUniqueSortedIds(
-          botlessCallRecordings.map(
+          pendingCallRecordings.map(
             (callRecording) => callRecording.calendarEventId,
           ),
         ),
@@ -41,7 +41,7 @@ export const healCallRecordingsMissingBot = async ({
   );
   const scheduledCallRecordingIds: string[] = [];
 
-  for (const callRecording of botlessCallRecordings) {
+  for (const callRecording of pendingCallRecordings) {
     const calendarEvent = isUndefined(callRecording.calendarEventId)
       ? undefined
       : calendarEventsById.get(callRecording.calendarEventId);
@@ -50,7 +50,7 @@ export const healCallRecordingsMissingBot = async ({
       continue;
     }
 
-    const didScheduleCallRecorder = await ensureCallRecorder(client, {
+    const didScheduleCallRecorder = await scheduleRecallBotForCallRecording(client, {
       callRecording,
       calendarEvent,
     });

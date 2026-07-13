@@ -7,22 +7,22 @@ import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/consta
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import {
-  extractRecallBotConvergence,
-  type RecallBotConvergence,
-} from 'src/logic-functions/recall-api/extract-recall-bot-convergence.util';
+  extractRecallBotSyncState,
+  type RecallBotSyncState,
+} from 'src/logic-functions/recall-api/extract-recall-bot-sync-state.util';
 import {
   fetchAllNodes,
   type ConnectionPage,
 } from 'src/logic-functions/data/fetch-all-nodes.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
-import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-recording-media.util';
+import { importCallRecordingMedia } from 'src/logic-functions/flows/import-call-recording-media.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-call-recording-progress.util';
-import { reconcileCallRecordingTranscriptArtifact } from 'src/logic-functions/flows/reconcile-call-recording-transcript-artifact.util';
+import { importCallRecordingTranscript } from 'src/logic-functions/flows/import-call-recording-transcript.util';
 import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/flows/converge-diverged-call-recordings-result.type';
-import { shouldCompleteCallRecordingIngestion } from 'src/logic-functions/domain/should-complete-call-recording-ingestion.util';
+import { shouldCompleteCallRecordingImport } from 'src/logic-functions/domain/should-complete-call-recording-import.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
@@ -251,7 +251,7 @@ const convergeCallRecording = async ({
     return;
   }
 
-  const convergence = extractRecallBotConvergence(botResult.bot);
+  const convergence = extractRecallBotSyncState(botResult.bot);
   const updateData = buildConvergenceFieldUpdates({ candidate, convergence });
 
   const externalRecordingId =
@@ -259,7 +259,7 @@ const convergeCallRecording = async ({
 
   if (convergence.isRecallRecordingDone && !isUndefined(externalRecordingId)) {
     const transcriptArtifactResult =
-      await reconcileCallRecordingTranscriptArtifact({
+      await importCallRecordingTranscript({
         callRecordingId: candidate.id,
         currentStatus: candidate.status,
         externalRecordingId,
@@ -273,7 +273,7 @@ const convergeCallRecording = async ({
       result.requestedTranscriptCallRecordingIds.push(candidate.id);
     }
 
-    const mediaIngestionUpdate = await ingestCallRecordingMedia({
+    const mediaIngestionUpdate = await importCallRecordingMedia({
       callRecordingId: candidate.id,
       externalRecordingId,
       hasAudio: isNonEmptyArray(candidate.audio),
@@ -299,12 +299,12 @@ const convergeCallRecording = async ({
     Object.assign(updateData, terminalArtifactGateFailureUpdate);
   }
 
-  const completesIngestion = shouldCompleteCallRecordingIngestion({
+  const completesImport = shouldCompleteCallRecordingImport({
     current: candidate,
     updateData,
   });
 
-  if (Object.keys(updateData).length === 0 && !completesIngestion) {
+  if (Object.keys(updateData).length === 0 && !completesImport) {
     return;
   }
 
@@ -323,7 +323,7 @@ const buildConvergenceFieldUpdates = ({
   convergence,
 }: {
   candidate: DivergedCallRecordingCandidate;
-  convergence: RecallBotConvergence;
+  convergence: RecallBotSyncState;
 }): CallRecordingUpdateFields => {
   const updateData: CallRecordingUpdateFields = {};
 
@@ -373,7 +373,7 @@ const buildTerminalArtifactGateFailureUpdate = ({
   updateData,
 }: {
   candidate: DivergedCallRecordingCandidate;
-  convergence: RecallBotConvergence;
+  convergence: RecallBotSyncState;
   externalRecordingId: string | undefined;
   updateData: CallRecordingUpdateFields;
 }): TerminalArtifactGateFailureUpdate | undefined => {

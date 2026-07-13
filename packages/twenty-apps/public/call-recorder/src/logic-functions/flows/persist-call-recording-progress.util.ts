@@ -2,7 +2,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import { completeAndChargeCallRecording } from 'src/logic-functions/flows/complete-and-charge-call-recording.util';
-import { shouldCompleteCallRecordingIngestion } from 'src/logic-functions/domain/should-complete-call-recording-ingestion.util';
+import { shouldCompleteCallRecordingImport } from 'src/logic-functions/domain/should-complete-call-recording-import.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
@@ -27,16 +27,16 @@ export const persistCallRecordingProgress = async (
     current: PersistCallRecordingProgressCurrent;
     updateData: CallRecordingUpdateFields;
   },
-): Promise<{ completesIngestion: boolean }> => {
-  const completesIngestion = shouldCompleteCallRecordingIngestion({
+): Promise<{ completesImport: boolean }> => {
+  const completesImport = shouldCompleteCallRecordingImport({
     current,
     updateData,
   });
 
-  if (!completesIngestion) {
+  if (!completesImport) {
     await updateCallRecording(client, { id, data: updateData });
 
-    return { completesIngestion: false };
+    return { completesImport: false };
   }
 
   // Strip status so COMPLETED is written only by the atomic claim — its single winner bills once.
@@ -54,5 +54,5 @@ export const persistCallRecordingProgress = async (
     endedAt: updateData.endedAt ?? current.endedAt,
   });
 
-  return { completesIngestion: true };
+  return { completesImport: true };
 };

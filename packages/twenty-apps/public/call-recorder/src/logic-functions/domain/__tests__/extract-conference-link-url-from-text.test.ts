@@ -64,7 +64,10 @@ describe('extractConferenceLinkUrlFromText', () => {
   });
 
   it.each([
-    ['a non-conferencing URL', 'Agenda: https://docs.google.com/document/d/abc'],
+    [
+      'a non-conferencing URL',
+      'Agenda: https://docs.google.com/document/d/abc',
+    ],
     ['a Zoom marketing page URL', 'Learn more at https://zoom.us/pricing'],
     ['plain text without links', 'Conference Room A'],
     ['an empty string', ''],
