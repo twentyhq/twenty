@@ -4,13 +4,13 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useCallback } from 'react';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import {
   type IconComponent,
   IconMoon,
   IconSun,
   IconSunMoon,
 } from 'twenty-ui/icon';
+import { type ColorScheme } from 'twenty-ui/input';
 
 export const useColorScheme = () => {
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(

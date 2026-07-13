@@ -327,14 +327,7 @@
     ],
     "src/modules/ui/theme/hooks/useColorScheme.ts": [
       "@/auth/states/currentWorkspaceMemberState",
-      "@/settings/profile/hooks/useUpdateWorkspaceMemberSettings",
-      "@/workspace-member/types/WorkspaceMember"
-    ],
-    "src/modules/ui/theme/hooks/useSystemColorScheme.ts": [
-      "@/workspace-member/types/WorkspaceMember"
-    ],
-    "src/modules/ui/theme/states/persistedColorSchemeState.ts": [
-      "@/workspace-member/types/WorkspaceMember"
+      "@/settings/profile/hooks/useUpdateWorkspaceMemberSettings"
     ],
     "src/modules/ui/utilities/page-favicon/components/PageFavicon.tsx": [
       "@/auth/states/workspacePublicDataState"
