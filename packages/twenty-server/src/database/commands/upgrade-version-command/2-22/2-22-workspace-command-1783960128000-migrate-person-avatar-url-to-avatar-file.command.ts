@@ -14,7 +14,6 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { fetchImageWithTypeFromUrl } from 'src/utils/image';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -32,7 +31,6 @@ const MIN_UUID = '00000000-0000-0000-0000-000000000000';
 export class MigratePersonAvatarUrlToAvatarFileCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
-    private readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly filesFieldService: FilesFieldService,
     private readonly secureHttpClientService: SecureHttpClientService,
@@ -43,8 +41,17 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ActiveOrSuspended
   override async runOnWorkspace({
     workspaceId,
     options,
+    dataSource,
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
+
+    if (!isDefined(dataSource)) {
+      this.logger.log(
+        `No workspace data source for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -81,12 +88,10 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ActiveOrSuspended
       return;
     }
 
-    const personRepository =
-      await this.twentyORMGlobalManager.getRepository<PersonWorkspaceEntity>(
-        workspaceId,
-        'person',
-        { shouldBypassPermissionChecks: true },
-      );
+    const personRepository = dataSource.getRepository<PersonWorkspaceEntity>(
+      'person',
+      { shouldBypassPermissionChecks: true },
+    );
 
     let candidateCount = 0;
     let migratedCount = 0;
