@@ -933,7 +933,6 @@ export type ClientConfig = {
   isWorkspaceSchemaDDLLocked: Scalars['Boolean']['output'];
   maintenance?: Maybe<ClientConfigMaintenanceMode>;
   publicFeatureFlags: Array<PublicFeatureFlag>;
-  publicFunctionDomain?: Maybe<Scalars['String']['output']>;
   sentry: Sentry;
   signInPrefilled: Scalars['Boolean']['output'];
   support: Support;

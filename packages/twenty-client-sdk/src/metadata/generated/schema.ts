@@ -1569,7 +1569,6 @@ export interface ClientConfig {
     isEmailVerificationRequired: Scalars['Boolean']
     defaultSubdomain?: Scalars['String']
     frontDomain: Scalars['String']
-    publicFunctionDomain?: Scalars['String']
     analyticsEnabled: Scalars['Boolean']
     support: Support
     isAttachmentPreviewEnabled: Scalars['Boolean']
@@ -4657,7 +4656,6 @@ export interface ClientConfigGenqlSelection{
     isEmailVerificationRequired?: boolean | number
     defaultSubdomain?: boolean | number
     frontDomain?: boolean | number
-    publicFunctionDomain?: boolean | number
     analyticsEnabled?: boolean | number
     support?: SupportGenqlSelection
     isAttachmentPreviewEnabled?: boolean | number

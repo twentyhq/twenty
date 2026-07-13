@@ -153,7 +153,6 @@ describe('ClientConfigService', () => {
         isEmailVerificationRequired: true,
         defaultSubdomain: 'app',
         frontDomain: 'app.twenty.com',
-        publicFunctionDomain: null,
         support: {
           supportDriver: 'FRONT',
           supportFrontChatId: 'chat-123',

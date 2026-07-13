@@ -1912,7 +1912,6 @@ type ClientConfig {
   isEmailVerificationRequired: Boolean!
   defaultSubdomain: String
   frontDomain: String!
-  publicFunctionDomain: String
   analyticsEnabled: Boolean!
   support: Support!
   isAttachmentPreviewEnabled: Boolean!

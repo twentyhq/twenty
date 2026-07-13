@@ -3696,9 +3696,6 @@ export default {
             "frontDomain": [
                 1
             ],
-            "publicFunctionDomain": [
-                1
-            ],
             "analyticsEnabled": [
                 6
             ],
