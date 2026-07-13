@@ -45,6 +45,7 @@ import {
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { WorkspaceUrlsDTO } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
 import { getAuthBypassProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-bypass-providers-by-workspace.util';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
@@ -210,6 +211,17 @@ export class WorkspaceResolver {
     return isDefined(defaultRoleEntity)
       ? fromRoleEntityToRoleDto(defaultRoleEntity)
       : null;
+  }
+
+  // Defaults to PUBLIC while the workspaceDiscoverability column is still
+  // hidden by @WasIntroducedInUpgrade during a cross-version upgrade.
+  @ResolveField(() => WorkspaceDiscoverability)
+  workspaceDiscoverability(
+    @Parent() workspace: WorkspaceEntity,
+  ): WorkspaceDiscoverability {
+    return (
+      workspace.workspaceDiscoverability ?? WorkspaceDiscoverability.PUBLIC
+    );
   }
 
   @ResolveField(() => String, { nullable: true })
