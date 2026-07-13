@@ -108,7 +108,7 @@ import { CreateWorkflowCoreTableFastInstanceCommand } from './2-20/2-20-instance
 import { AddGalleryImagesToApplicationRegistrationFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783615890055-add-gallery-images-to-application-registration';
 import { BackfillGalleryImagesOnApplicationRegistrationSlowInstanceCommand } from './2-20/2-20-instance-command-slow-1783615890056-backfill-gallery-images-on-application-registration';
 import { AddWorkflowVersionSyncableColumnsFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783603454480-add-workflow-version-syncable-columns';
-import { AddCalendarEndFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-instance-command-fast-1783695496996-add-calendar-end-field-metadata-id-to-view';
+import { AddCalendarEndFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-21/2-21-instance-command-fast-1783934276119-add-calendar-end-field-metadata-id-to-view';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,

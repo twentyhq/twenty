@@ -1,8 +1,10 @@
 import { useProcessRecordCalendarWeekEventDrop } from '@/object-record/record-calendar/week/hooks/useProcessRecordCalendarWeekEventDrop';
 import { type RecordCalendarWeekDndData } from '@/object-record/record-calendar/week/types/RecordCalendarWeekDndData';
 import { resolveRecordCalendarWeekEventDrop } from '@/object-record/record-calendar/week/utils/resolveRecordCalendarWeekEventDrop';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
 import { DragDropProvider } from '@dnd-kit/react';
+import { t } from '@lingui/core/macro';
 import {
   type ComponentProps,
   type ReactNode,
@@ -11,6 +13,7 @@ import {
 } from 'react';
 import type { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
+import { logError } from '~/utils/logError';
 
 type DragStartPayload = Parameters<
   NonNullable<
@@ -41,6 +44,7 @@ export const RecordCalendarWeekDragDropContext = ({
   const [grabOffsetY, setGrabOffsetY] = useState(0);
   const { processRecordCalendarWeekEventDrop } =
     useProcessRecordCalendarWeekEventDrop();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const handleDragStart = ({ operation }: DragStartPayload) => {
     const sourceElement = operation.source?.element;
@@ -93,6 +97,9 @@ export const RecordCalendarWeekDragDropContext = ({
       destinationDay,
       destinationMinutes: resolvedDrop.destinationMinutes,
       recordId: sourceData.recordId,
+    }).catch((error) => {
+      logError(error);
+      enqueueErrorSnackBar({ message: t`Failed to move record` });
     });
   };
 

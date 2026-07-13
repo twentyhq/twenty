@@ -1,3 +1,4 @@
+import { getShiftedRecordCalendarEndDateTime } from '@/object-record/record-drag/utils/getShiftedRecordCalendarEndDateTime';
 import { Temporal } from 'temporal-polyfill';
 
 type GetRecordCalendarWeekEventDropDateTimeArgs = {
@@ -29,25 +30,11 @@ export const getRecordCalendarWeekEventDropDateTime = ({
         }),
       })
       .toInstant();
-    let shiftedEndDateTime: string | undefined;
-
-    if (typeof endDateTime === 'string') {
-      try {
-        const currentEndInstant = Temporal.Instant.from(endDateTime);
-
-        if (
-          Temporal.Instant.compare(currentEndInstant, currentStartInstant) >= 0
-        ) {
-          shiftedEndDateTime = Temporal.Instant.fromEpochNanoseconds(
-            shiftedStartInstant.epochNanoseconds +
-              (currentEndInstant.epochNanoseconds -
-                currentStartInstant.epochNanoseconds),
-          ).toString();
-        }
-      } catch {
-        shiftedEndDateTime = undefined;
-      }
-    }
+    const shiftedEndDateTime = getShiftedRecordCalendarEndDateTime({
+      endDateTime,
+      originalStartInstant: currentStartInstant,
+      shiftedStartInstant,
+    });
 
     return {
       startDateTime: shiftedStartInstant.toString(),
