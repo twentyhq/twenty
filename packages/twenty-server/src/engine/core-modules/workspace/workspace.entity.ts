@@ -65,6 +65,10 @@ registerEnumType(WorkspaceDiscoverability, {
   'onboarded_workspace_requires_default_role',
   `"activationStatus" IN ('PENDING_CREATION', 'ONGOING_CREATION') OR "defaultRoleId" IS NOT NULL`,
 )
+@Check(
+  'workspace_requires_database_schema',
+  `"activationStatus" IN ('PENDING_CREATION', 'ONGOING_CREATION') OR "databaseSchema" IS NOT NULL`,
+)
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
 export class WorkspaceEntity {
