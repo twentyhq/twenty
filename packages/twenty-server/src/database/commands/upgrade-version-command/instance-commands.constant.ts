@@ -45,7 +45,7 @@ import { AddMetadataOverridesColumnFastInstanceCommand } from 'src/database/comm
 import { AddLastStreamErrorToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1782996657000-add-last-stream-error-to-agent-chat-thread';
 import { AddLogoFileIdToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1783062755137-add-logo-file-id-to-application';
 import { BackfillMetadataOverridesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-slow-1782986476000-backfill-metadata-overrides';
-import { AddCategoryAndPositionToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-instance-command-fast-1783669319208-add-category-and-position-to-application-variables';
+import { AddCategoryAndPositionToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-21/2-21-instance-command-fast-1783946877150-add-category-and-position-to-application-variables';
 import { AddTypeAndOptionsToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1783065514000-add-type-and-options-to-application-variables';
 import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777455269302-add-cache-tokens-to-agent-chat-thread';
 import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777539664664-add-logo-to-application';
