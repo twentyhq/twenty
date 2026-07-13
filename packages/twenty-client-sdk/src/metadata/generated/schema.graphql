@@ -55,10 +55,11 @@ type ApplicationRegistration {
   isListed: Boolean!
   isVetted: Boolean!
   isPreInstalled: Boolean!
-  logoUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
   isConfigured: Boolean!
+  logoUrl: String
+  galleryImagesUrls: [String!]!
 }
 
 enum ApplicationRegistrationSourceType {

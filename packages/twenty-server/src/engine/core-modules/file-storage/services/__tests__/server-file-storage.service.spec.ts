@@ -264,10 +264,14 @@ describe('ServerFileStorageService', () => {
       mockServerFileRepository.findOneBy.mockResolvedValue({
         id: 'server-file-id',
         path: 'application-registration/registration-id/manifest.json',
+        mimeType: 'application/json',
       } as FileEntity);
       mockDriver.readFile.mockResolvedValue(stream);
 
-      const result = await service.readServerFileById('server-file-id');
+      const result = await service.readServerFileById(
+        'server-file-id',
+        ServerFileFolder.ApplicationRegistration,
+      );
 
       expect(mockServerFileRepository.findOneBy).toHaveBeenCalledWith({
         id: 'server-file-id',
@@ -277,13 +281,18 @@ describe('ServerFileStorageService', () => {
         filePath:
           'server/application-registration/registration-id/manifest.json',
       });
-      expect(result).toBe(stream);
+      expect(result).toEqual({ stream, mimeType: 'application/json' });
     });
 
     it('should throw a missing-file exception when the row does not exist', async () => {
       mockServerFileRepository.findOneBy.mockResolvedValue(null);
 
-      await expect(service.readServerFileById('unknown-id')).rejects.toThrow(
+      await expect(
+        service.readServerFileById(
+          'unknown-id',
+          ServerFileFolder.ApplicationRegistration,
+        ),
+      ).rejects.toThrow(
         expect.objectContaining({
           code: FileStorageExceptionCode.FILE_NOT_FOUND,
         }),
