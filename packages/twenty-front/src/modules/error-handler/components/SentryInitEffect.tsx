@@ -8,6 +8,40 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
+type SentryEvent = {
+  fingerprint?: string[];
+  level?: string;
+  tags?: Record<string, string>;
+};
+
+const isOptimisticRelationFilterFallbackEvent = (event: SentryEvent) => {
+  const reason = event.tags?.reason;
+
+  return (
+    event.tags?.['error-handler'] === 'optimistic-filter-matcher' &&
+    reason !== undefined
+  );
+};
+
+const normalizeOptimisticRelationFilterFallbackEvent = (event: SentryEvent) => {
+  if (!isOptimisticRelationFilterFallbackEvent(event)) {
+    return;
+  }
+
+  const reason = event.tags?.reason ?? 'unknown';
+
+  event.level = 'warning';
+  event.fingerprint = event.fingerprint?.length
+    ? event.fingerprint
+    : ['optimistic-filter-matcher-relation-traversal-fallback', reason];
+  event.tags = {
+    ...event.tags,
+    feature: 'optimistic-record-filter',
+    filterPath: event.tags?.filterKey ?? 'unknown',
+    filterFallbackReason: reason,
+  };
+};
+
 export const SentryInitEffect = () => {
   const sentryConfig = useAtomStateValue(sentryConfigState);
 
@@ -54,6 +88,11 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
+            beforeSend: (event) => {
+              normalizeOptimisticRelationFilterFallbackEvent(event);
+
+              return event;
+            },
           });
 
           setIsSentryInitialized(true);
