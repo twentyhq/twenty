@@ -746,6 +746,46 @@ describe('UserWorkspaceService', () => {
         availableWorkspacesForSignUp: [{ workspace: workspace1 }],
       });
     });
+
+    it('should treat workspaces as PUBLIC when workspaceDiscoverability is hidden during a cross-version upgrade', async () => {
+      const email = 'nonexistent@example.com';
+      // workspaceDiscoverability is undefined while the column is skipped by
+      // @WasIntroducedInUpgrade before the 2.19 command creates it.
+      const workspace1 = {
+        id: 'workspace-id-1',
+        displayName: 'Workspace 1',
+        logo: 'logo1.png',
+        workspaceSSOIdentityProviders: [],
+        workspaceDiscoverability: undefined,
+      } as unknown as WorkspaceEntity;
+
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
+
+      jest
+        .spyOn(
+          approvedAccessDomainService,
+          'findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain',
+        )
+        .mockResolvedValueOnce([
+          {
+            id: 'domain-id-1',
+            workspaceId: workspace1.id,
+            workspace: workspace1,
+            isValidated: true,
+          } as unknown as ApprovedAccessDomainEntity,
+        ]);
+
+      jest
+        .spyOn(workspaceInvitationService, 'findInvitationsByEmail')
+        .mockResolvedValue([]);
+
+      const result = await service.findAvailableWorkspacesByEmail(email);
+
+      expect(result).toEqual({
+        availableWorkspacesForSignIn: [],
+        availableWorkspacesForSignUp: [{ workspace: workspace1 }],
+      });
+    });
   });
 
   describe('findFirstWorkspaceByUserId', () => {

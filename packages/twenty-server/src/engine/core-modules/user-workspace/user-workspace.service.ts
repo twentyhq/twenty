@@ -374,6 +374,8 @@ export class UserWorkspaceService {
     );
 
     // Email-domain discovery is the only "listing" source: PUBLIC only.
+    // Defaults to PUBLIC while the workspaceDiscoverability column is still
+    // hidden by @WasIntroducedInUpgrade during a cross-version upgrade.
     const workspacesFromApprovedAccessDomain = (
       await this.approvedAccessDomainService.findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain(
         getDomainFromEmailOrThrow(email),
@@ -382,7 +384,8 @@ export class UserWorkspaceService {
       .filter(
         ({ workspace }) =>
           !alreadyMemberWorkspacesIds.includes(workspace.id) &&
-          workspace.workspaceDiscoverability ===
+          (workspace.workspaceDiscoverability ??
+            WorkspaceDiscoverability.PUBLIC) ===
             WorkspaceDiscoverability.PUBLIC,
       )
       .map(({ workspace }) => ({ workspace }));
