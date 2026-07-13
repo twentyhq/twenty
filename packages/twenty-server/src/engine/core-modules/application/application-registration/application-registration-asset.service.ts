@@ -10,6 +10,7 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { type ApplicationRegistrationGalleryImage } from 'src/engine/core-modules/application/application-registration/types/application-registration-gallery-image.type';
 import { isStorableAssetPath } from 'src/engine/core-modules/application/application-registration/utils/is-storable-asset-path.util';
 import { toGalleryImagePaths } from 'src/engine/core-modules/application/application-registration/utils/to-gallery-image-paths.util';
+import { FileStorageException } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import { prepareFileForStorageOrThrow } from 'src/engine/core-modules/file-storage/utils/prepare-file-for-storage-or-throw.util';
 import type { ApplicationManifest } from 'twenty-shared/application';
@@ -183,8 +184,14 @@ export class ApplicationRegistrationAssetService {
       });
 
       return storedFile?.id ?? null;
-    } catch {
-      return null;
+    } catch (error) {
+      // Only an invalid path means "nothing stored for this path"; transient
+      // lookup failures must propagate so a working fileId is never cleared.
+      if (error instanceof FileStorageException) {
+        return null;
+      }
+
+      throw error;
     }
   }
 }

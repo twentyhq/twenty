@@ -24,6 +24,8 @@ export type ServerResourceIdentifier = {
   resourcePath: string;
 };
 
+const DELETED_REGISTRATION_FILE_CLEANUP_BATCH_SIZE = 500;
+
 @Injectable()
 export class ServerFileStorageService {
   private readonly logger = new Logger(ServerFileStorageService.name);
@@ -211,34 +213,48 @@ export class ServerFileStorageService {
 
   // Server files of a soft-deleted registration are kept for the grace period
   // so a restored registration gets its assets back; this reclaims the storage
-  // of registrations deleted long enough ago.
+  // of registrations deleted long enough ago. Processed in bounded batches so
+  // a large backlog cannot exhaust memory or block the cron for too long.
   async deleteFilesOfRegistrationsDeletedBefore(
     deletedBefore: Date,
   ): Promise<number> {
-    const serverFiles = await this.serverFileRepository
-      .createQueryBuilder('file')
-      .withDeleted()
-      .innerJoin('file.applicationRegistration', 'applicationRegistration')
-      .where('file."deletedAt" IS NULL')
-      .andWhere('file."workspaceId" IS NULL')
-      .andWhere('"applicationRegistration"."deletedAt" < :deletedBefore', {
-        deletedBefore,
-      })
-      .getMany();
+    let totalDeleted = 0;
 
-    for (const serverFile of serverFiles) {
-      await this.deleteServerFileBytesBestEffort(
-        this.buildServerOnStorageFilePath(serverFile),
-      );
-    }
+    while (true) {
+      const serverFiles = await this.serverFileRepository
+        .createQueryBuilder('file')
+        .withDeleted()
+        .innerJoin('file.applicationRegistration', 'applicationRegistration')
+        .where('file."deletedAt" IS NULL')
+        .andWhere('file."workspaceId" IS NULL')
+        .andWhere('"applicationRegistration"."deletedAt" < :deletedBefore', {
+          deletedBefore,
+        })
+        .take(DELETED_REGISTRATION_FILE_CLEANUP_BATCH_SIZE)
+        .getMany();
 
-    if (serverFiles.length > 0) {
+      if (serverFiles.length === 0) {
+        break;
+      }
+
+      for (const serverFile of serverFiles) {
+        await this.deleteServerFileBytesBestEffort(
+          this.buildServerOnStorageFilePath(serverFile),
+        );
+      }
+
       await this.serverFileRepository.delete({
         id: In(serverFiles.map((serverFile) => serverFile.id)),
       });
+
+      totalDeleted += serverFiles.length;
+
+      if (serverFiles.length < DELETED_REGISTRATION_FILE_CLEANUP_BATCH_SIZE) {
+        break;
+      }
     }
 
-    return serverFiles.length;
+    return totalDeleted;
   }
 
   private buildServerOnStorageFilePath(serverFile: FileEntity): string {

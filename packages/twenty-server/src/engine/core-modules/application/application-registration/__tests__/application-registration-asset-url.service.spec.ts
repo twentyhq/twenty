@@ -55,6 +55,18 @@ describe('ApplicationRegistrationAssetUrlService', () => {
       );
     });
 
+    it('should url-encode stored asset path segments', () => {
+      const logoUrl = service.buildLogoUrl({
+        ...baseRegistration,
+        logo: 'public/logo #1.png',
+        logoFileId: 'file-id',
+      });
+
+      expect(logoUrl).toBe(
+        'https://api.twenty.com/files/application-registrations/registration-id/public/logo%20%231.png',
+      );
+    });
+
     it('should pass through absolute logo urls', () => {
       const logoUrl = service.buildLogoUrl({
         ...baseRegistration,

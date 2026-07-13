@@ -83,7 +83,14 @@ export class ApplicationRegistrationAssetUrlService {
     if (isDefined(fileId)) {
       const serverUrl = this.twentyConfigService.get('SERVER_URL');
 
-      return `${serverUrl}/files/application-registrations/${registration.id}/${path}`;
+      // Encode segments so URL-reserved characters (#, ?, spaces) in file
+      // names survive; directory separators are kept as route path segments.
+      const encodedPath = path
+        .split('/')
+        .map((segment) => encodeURIComponent(segment))
+        .join('/');
+
+      return `${serverUrl}/files/application-registrations/${registration.id}/${encodedPath}`;
     }
 
     if (isAbsoluteUrl(path)) {
