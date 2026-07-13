@@ -90,6 +90,15 @@ export class WorkspaceIteratorService {
               ? await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource()
               : undefined;
 
+            if (!isDefined(dataSource)) {
+              this.logger.warn(
+                `Could not retrieve a workspace data source for workspace ${workspaceId} ` +
+                  `(index ${index + 1}/${workspaceIdsToProcess.length}): ` +
+                  `workspaceRowFound=${isDefined(workspace)}, ` +
+                  `databaseSchema=${JSON.stringify(workspace?.databaseSchema ?? null)}`,
+              );
+            }
+
             await callback({
               workspaceId,
               dataSource,
