@@ -198,7 +198,7 @@ export default defineFrontComponent({
 
 Front components run browser-side in a Web Worker sandboxed inside an opaque-origin iframe, while [logic functions](/developers/extend/apps/logic/logic-functions) run server-side. There is no direct in-process call between the two — instead, a front component reaches a logic function over HTTP.
 
-A logic function declared with `httpRouteTriggerSettings` is reachable over HTTP at its route path. Twenty injects the base URL your functions are served from into the worker as `TWENTY_FUNCTIONS_URL`, together with the `TWENTY_APP_ACCESS_TOKEN` that authenticates the call. There is no dedicated SDK client for invoking your own functions yet, so call them with a plain `fetch`:
+A logic function declared with `httpRouteTriggerSettings` is reachable over HTTP at its route path. `RestApiClient` routes non-`/rest/` paths to the injected `TWENTY_FUNCTIONS_URL` and authenticates them with `TWENTY_APP_ACCESS_TOKEN`.
 
 > **On Twenty Cloud, HTTP-triggered logic functions are served on a dedicated per-workspace domain** at `https://<your-workspace-subdomain>.withtwenty.com<path>` — this is exactly what `TWENTY_FUNCTIONS_URL` resolves to. For external callers, copy the exact URL from the function's **HTTP trigger** settings or the application's **Settings** tab.
 
@@ -209,18 +209,15 @@ A logic function declared with `httpRouteTriggerSettings` is reachable over HTTP
 A headless front component can run the call on mount via the `Command` component, then unmount automatically:
 
 ```tsx src/front-components/sync-prs.tsx
+import { RestApiClient } from 'twenty-client-sdk/rest';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/front-component';
 
 const SyncPrs = () => {
   const execute = async () => {
-    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
+    await new RestApiClient().post('/github/fetch-prs', {
+      owner: 'twentyhq',
+      repo: 'twenty',
     });
   };
 
@@ -236,7 +233,7 @@ export default defineFrontComponent({
 });
 ```
 
-The path appended to `TWENTY_FUNCTIONS_URL` is the logic function's `httpRouteTriggerSettings.path`. Keep `isAuthRequired: true`; the `TWENTY_APP_ACCESS_TOKEN` Twenty mints for your component authenticates the request:
+The path passed to `RestApiClient` is the logic function's `httpRouteTriggerSettings.path`. Keep `isAuthRequired: true`; the `TWENTY_APP_ACCESS_TOKEN` Twenty mints for your component authenticates the request:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -266,7 +263,7 @@ export default defineLogicFunction({
 
 ### Calling the Twenty REST API
 
-To read or write Twenty records from a front component, use `RestApiClient` from `twenty-client-sdk/rest`. It belongs to the same client family as `CoreApiClient` and `MetadataApiClient`, but targets the Twenty REST API (`/rest/...`) instead of the GraphQL API, reading its base URL from `TWENTY_API_URL`.
+To call app HTTP routes or read and write Twenty records from a front component, use `RestApiClient` from `twenty-client-sdk/rest`. It sends `/rest/...` paths to `TWENTY_API_URL` and other paths to `TWENTY_FUNCTIONS_URL`.
 
 | Method | Description |
 |--------|-------------|

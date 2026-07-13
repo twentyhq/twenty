@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { RestApiClient } from 'twenty-client-sdk/rest';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   closeSidePanel,
@@ -59,41 +60,6 @@ const readValue = (event: SyntheticEvent<HTMLElement>): string | undefined => {
   };
 
   return object.detail?.value ?? object.target?.value;
-};
-
-const callAppRoute = async <TResponse,>(
-  path: string,
-  method: 'GET' | 'POST',
-  body?: Record<string, unknown>,
-): Promise<TResponse> => {
-  const apiBaseUrl = process.env.TWENTY_API_URL;
-  const token =
-    process.env.TWENTY_APP_ACCESS_TOKEN ?? process.env.TWENTY_API_KEY;
-
-  if (!apiBaseUrl || !token) {
-    throw new Error('App is missing API URL or access token configuration.');
-  }
-
-  const response = await fetch(`${apiBaseUrl}/s${path}`, {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    ...(body ? { body: JSON.stringify(body) } : {}),
-  });
-
-  if (!response.ok) {
-    const errorBody = (await response.json().catch(() => null)) as {
-      message?: string;
-    } | null;
-
-    throw new Error(
-      errorBody?.message ?? `Request failed with status ${response.status}.`,
-    );
-  }
-
-  return response.json() as Promise<TResponse>;
 };
 
 const styles: Record<string, CSSProperties> = {
@@ -236,9 +202,8 @@ const GenerateDocumentForm = () => {
     setSubmitting(true);
 
     try {
-      const result = await callAppRoute<GenerateResponse>(
+      const result = await new RestApiClient().post<GenerateResponse>(
         '/documents/generate',
-        'POST',
         { templateId, recordId },
       );
 
