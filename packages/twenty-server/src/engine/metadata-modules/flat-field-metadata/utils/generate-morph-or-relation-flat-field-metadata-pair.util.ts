@@ -8,7 +8,6 @@ import {
 import { v4 } from 'uuid';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -59,7 +58,7 @@ type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
       Pick<CreateFieldInput, 'relationCreationPayload' | 'type' | 'name'>
     > & { type: MorphOrRelationFieldMetadataType };
   morphId?: string | null;
-  flatApplication: FlatApplication;
+  applicationUniversalIdentifier: string;
   targetFieldName?: string;
   junctionTargetFlatFieldMetadata?: FlatFieldMetadata;
   sourceFieldUniversalIdentifier?: string;
@@ -76,7 +75,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   sourceFlatObjectMetadata,
   targetFlatObjectMetadata,
   targetFlatFieldMetadataType,
-  flatApplication,
+  applicationUniversalIdentifier,
   sourceFlatObjectMetadataJoinColumnName,
   morphId = null,
   targetFieldName,
@@ -119,7 +118,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
             createFieldInput.universalIdentifier ??
             sourceFieldUniversalIdentifier,
         },
-        flatApplication,
+        applicationUniversalIdentifier,
         objectMetadataUniversalIdentifier:
           sourceFlatObjectMetadata.universalIdentifier,
       }),
@@ -175,7 +174,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
         ...targetCreateFieldInput,
         universalIdentifier: targetFieldUniversalIdentifier,
       },
-      flatApplication,
+      applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier:
         targetFlatObjectMetadata.universalIdentifier,
     }),

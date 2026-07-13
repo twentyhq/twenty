@@ -66,6 +66,16 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
     );
   }
 
+  // Engine-owned side effects (e.g. default relation fields to standard objects)
+  // are provisioned and torn down by the metadata side-effect engine, never
+  // deleted directly through the API.
+  if (flatFieldMetadataToDelete.isSystemSideEffect === true) {
+    throw new FieldMetadataException(
+      `Cannot delete system-managed field "${flatFieldMetadataToDelete.name}"`,
+      FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+    );
+  }
+
   const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: flatFieldMetadataToDelete.objectMetadataId,
     flatEntityMaps: existingFlatObjectMetadataMaps,

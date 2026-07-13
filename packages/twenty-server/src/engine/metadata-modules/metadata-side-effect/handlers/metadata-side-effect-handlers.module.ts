@@ -7,6 +7,7 @@ import { FieldUniqueBackingIndexOnUpdateSideEffectHandlerService } from 'src/eng
 import { ObjectSearchVectorOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-search-vector-on-create-side-effect-handler.service';
 import { ObjectSearchVectorOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-search-vector-on-update-side-effect-handler.service';
 import { ObjectSystemFieldsOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-fields-on-create-side-effect-handler.service';
+import { ObjectSystemRelationsOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service';
 import { ObjectSystemSideEffectsOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-side-effects-on-delete-side-effect-handler.service';
 
 @Module({
@@ -16,6 +17,7 @@ import { ObjectSystemSideEffectsOnDeleteSideEffectHandlerService } from 'src/eng
     FieldUniqueBackingIndexOnDeleteSideEffectHandlerService,
     FieldSearchFieldMetadataOnDeleteSideEffectHandlerService,
     ObjectSystemFieldsOnCreateSideEffectHandlerService,
+    ObjectSystemRelationsOnCreateSideEffectHandlerService,
     ObjectSearchVectorOnCreateSideEffectHandlerService,
     ObjectSearchVectorOnUpdateSideEffectHandlerService,
     ObjectSystemSideEffectsOnDeleteSideEffectHandlerService,

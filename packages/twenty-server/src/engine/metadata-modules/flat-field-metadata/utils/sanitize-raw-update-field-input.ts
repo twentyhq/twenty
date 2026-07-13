@@ -28,6 +28,16 @@ export const sanitizeRawUpdateFieldInput = ({
   rawUpdateFieldInput,
   isSystemBuild,
 }: SanitizeRawUpdateFieldInputArgs) => {
+  // Engine-owned side effects (e.g. default relation fields to standard objects)
+  // are managed by the metadata side-effect engine; renames flow through the
+  // owning object update, never through a direct field update by the user.
+  if (existingFlatFieldMetadata.isSystemSideEffect === true && !isSystemBuild) {
+    throw new FieldMetadataException(
+      `Cannot edit system-managed field "${existingFlatFieldMetadata.name}"`,
+      FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+    );
+  }
+
   const isStandardField = belongsToTwentyStandardApp(existingFlatFieldMetadata);
   const updatedEditableFieldProperties = extractAndSanitizeObjectStringFields(
     rawUpdateFieldInput,

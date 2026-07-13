@@ -141,7 +141,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             targetFlatFieldMetadataType: isObjectMigratedToMorphRelations
               ? FieldMetadataType.MORPH_RELATION
               : FieldMetadataType.RELATION,
-            flatApplication,
+            applicationUniversalIdentifier: flatApplication.universalIdentifier,
             sourceFlatObjectMetadataJoinColumnName: joinColumnName,
             morphId,
             targetFieldName: fieldName,
