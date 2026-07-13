@@ -5,7 +5,12 @@ import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 @RegisteredInstanceCommand('2.21.0', 1783934147089, { type: 'slow' })
-export class BackfillWorkspaceDatabaseSchemaSlowInstanceCommand implements SlowInstanceCommand {
+export class BackfillWorkspaceDatabaseSchemaSlowInstanceCommand
+  implements SlowInstanceCommand
+{
+  // Schema names are deterministic from the workspace id, so we backfill them
+  // unconditionally — even if the schema doesn't exist yet in Postgres — which
+  // lets up() add the check constraint fully validated.
   async runDataMigration(dataSource: DataSource): Promise<void> {
     const workspacesWithoutSchema: { id: string }[] = await dataSource.query(
       `SELECT id FROM "core"."workspace"
@@ -17,24 +22,6 @@ export class BackfillWorkspaceDatabaseSchemaSlowInstanceCommand implements SlowI
       return;
     }
 
-    const existingSchemas: { schema_name: string }[] = await dataSource.query(
-      `SELECT schema_name FROM information_schema.schemata WHERE schema_name LIKE 'workspace\\_%'`,
-    );
-    const existingSchemaNames = new Set(
-      existingSchemas.map((row) => row.schema_name),
-    );
-
-    const updates = workspacesWithoutSchema
-      .map((workspace) => ({
-        id: workspace.id,
-        schemaName: getWorkspaceSchemaName(workspace.id),
-      }))
-      .filter((update) => existingSchemaNames.has(update.schemaName));
-
-    if (updates.length === 0) {
-      return;
-    }
-
     await dataSource.query(
       `UPDATE "core"."workspace" AS w
        SET "databaseSchema" = data.schema_name
@@ -43,8 +30,10 @@ export class BackfillWorkspaceDatabaseSchemaSlowInstanceCommand implements SlowI
        ) AS data
        WHERE w.id = data.id`,
       [
-        updates.map((update) => update.id),
-        updates.map((update) => update.schemaName),
+        workspacesWithoutSchema.map((workspace) => workspace.id),
+        workspacesWithoutSchema.map((workspace) =>
+          getWorkspaceSchemaName(workspace.id),
+        ),
       ],
     );
   }
@@ -54,7 +43,7 @@ export class BackfillWorkspaceDatabaseSchemaSlowInstanceCommand implements SlowI
       `ALTER TABLE "core"."workspace" DROP CONSTRAINT IF EXISTS "workspace_requires_database_schema"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."workspace" ADD CONSTRAINT "workspace_requires_database_schema" CHECK ("activationStatus" IN ('PENDING_CREATION', 'ONGOING_CREATION') OR ("databaseSchema" IS NOT NULL AND "databaseSchema" <> '')) NOT VALID`,
+      `ALTER TABLE "core"."workspace" ADD CONSTRAINT "workspace_requires_database_schema" CHECK ("activationStatus" IN ('PENDING_CREATION', 'ONGOING_CREATION') OR ("databaseSchema" IS NOT NULL AND "databaseSchema" <> ''))`,
     );
   }
 
