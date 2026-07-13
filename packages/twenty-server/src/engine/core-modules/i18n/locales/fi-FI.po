@@ -7808,6 +7808,7 @@ msgstr "Tämä verkkotunnus on jo rekisteröity mukautetuksi verkkotunnukseksi."
 
 #. js-lingui-id: s6batt
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This domain is already registered."
 msgstr "Tämä verkkotunnus on jo rekisteröity."
 
