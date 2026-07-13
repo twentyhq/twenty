@@ -23,9 +23,9 @@ import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/
 const PERSON_BATCH_SIZE = 100;
 const MIN_UUID = '00000000-0000-0000-0000-000000000000';
 
-@RegisteredWorkspaceCommand('2.21.0', 1783933872000)
+@RegisteredWorkspaceCommand('2.22.0', 1783960128000)
 @Command({
-  name: 'upgrade:2-21:migrate-person-avatar-url-to-avatar-file',
+  name: 'upgrade:2-22:migrate-person-avatar-url-to-avatar-file',
   description:
     'Migrate legacy person.avatarUrl (external image URL) into the avatarFile FILES field for existing workspaces.',
 })
