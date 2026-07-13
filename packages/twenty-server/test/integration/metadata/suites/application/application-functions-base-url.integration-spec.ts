@@ -4,11 +4,8 @@ import gql from 'graphql-tag';
 import { In, type Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
-import { PublicDomainService } from 'src/engine/core-modules/public-domain/public-domain.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
@@ -34,7 +31,6 @@ const findFunctionsBaseUrl = async (applicationId: string): Promise<string> => {
 };
 
 describe('Application functions base URL resolution', () => {
-  let publicDomainService: PublicDomainService;
   let applicationRepository: Repository<ApplicationEntity>;
   let publicDomainRepository: Repository<PublicDomainEntity>;
   let workspaceRepository: Repository<WorkspaceEntity>;
@@ -42,37 +38,58 @@ describe('Application functions base URL resolution', () => {
   let applicationId: string;
   let createdDomains: string[] = [];
 
+  const seedPublicDomain = async ({
+    domain,
+    createdAt,
+    isValidated = true,
+  }: {
+    domain: string;
+    createdAt: Date;
+    isValidated?: boolean;
+  }): Promise<PublicDomainEntity> => {
+    createdDomains.push(domain);
+
+    const publicDomain = await publicDomainRepository.save({
+      domain,
+      applicationId,
+      workspaceId: workspace.id,
+      isValidated,
+    });
+
+    await publicDomainRepository.update({ id: publicDomain.id }, { createdAt });
+
+    return publicDomain;
+  };
+
   beforeAll(async () => {
     applicationRepository = getCoreRepository(ApplicationEntity);
     publicDomainRepository = getCoreRepository(PublicDomainEntity);
     workspaceRepository = getCoreRepository(WorkspaceEntity);
 
-    const dnsManagerService = {
-      registerHostname: jest.fn().mockResolvedValue(undefined),
-      deleteHostnameSilently: jest.fn().mockResolvedValue(undefined),
-    } as unknown as DnsManagerService;
-
-    publicDomainService = new PublicDomainService(
-      dnsManagerService,
-      new WorkspaceScopedRepository(publicDomainRepository),
-      publicDomainRepository,
-      workspaceRepository,
-      applicationRepository,
-    );
-
     workspace = await workspaceRepository.findOneByOrFail({
       id: SEED_APPLE_WORKSPACE_ID,
     });
-    applicationId = workspace.workspaceCustomApplicationId;
+
+    const application = await applicationRepository.save({
+      universalIdentifier: randomUUID(),
+      name: 'Functions base URL integration test application',
+      sourcePath: 'test/functions-base-url',
+      workspaceId: workspace.id,
+    });
+
+    applicationId = application.id;
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
-
     createdDomains = [];
   });
 
   afterEach(async () => {
+    await applicationRepository.update(
+      { id: applicationId },
+      { primaryPublicDomainId: null },
+    );
+
     if (createdDomains.length > 0) {
       await publicDomainRepository.delete({
         workspaceId: workspace.id,
@@ -81,85 +98,128 @@ describe('Application functions base URL resolution', () => {
     }
   });
 
-  it('should serve functions from an app-bound domain once one is created', async () => {
+  afterAll(async () => {
+    await applicationRepository.delete({ id: applicationId });
+  });
+
+  it('should fall back to the same-site /s URL when no app-bound domain exists', async () => {
+    await expect(findFunctionsBaseUrl(applicationId)).resolves.toBe(
+      `http://${workspace.subdomain}.localhost:3000/s`,
+    );
+  });
+
+  it('should serve functions from an app-bound domain once one is validated', async () => {
     const domain = buildTestDomain('single');
 
-    createdDomains.push(domain);
-
-    const publicDomain = await publicDomainService.createPublicDomain({
+    await seedPublicDomain({
       domain,
-      workspace,
-      applicationId,
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
     });
 
-    expect(publicDomain.id).toBeDefined();
     await expect(findFunctionsBaseUrl(applicationId)).resolves.toBe(
       `https://${domain}`,
     );
   });
 
-  it('should resolve the newest app-bound domain when several exist', async () => {
+  it('should resolve the newest validated app-bound domain when several exist', async () => {
     const olderDomain = buildTestDomain('older');
-    const newerDomain = buildTestDomain('newer');
+    const newerAlphaDomain = buildTestDomain('newer-alpha');
+    const newerZetaDomain = buildTestDomain('newer-zeta');
 
-    createdDomains.push(olderDomain, newerDomain);
-
-    await publicDomainService.createPublicDomain({
+    await seedPublicDomain({
       domain: olderDomain,
-      workspace,
-      applicationId,
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
     });
-    await publicDomainService.createPublicDomain({
-      domain: newerDomain,
-      workspace,
-      applicationId,
+    await seedPublicDomain({
+      domain: newerZetaDomain,
+      createdAt: new Date('2026-01-02T00:00:00.000Z'),
     });
-
-    await publicDomainRepository.update(
-      { workspaceId: workspace.id, domain: olderDomain },
-      { createdAt: new Date('2026-01-01T00:00:00.000Z') },
-    );
-    await publicDomainRepository.update(
-      { workspaceId: workspace.id, domain: newerDomain },
-      { createdAt: new Date('2026-01-02T00:00:00.000Z') },
-    );
+    await seedPublicDomain({
+      domain: newerAlphaDomain,
+      createdAt: new Date('2026-01-02T00:00:00.000Z'),
+    });
 
     await expect(findFunctionsBaseUrl(applicationId)).resolves.toBe(
-      `https://${newerDomain}`,
+      `https://${newerAlphaDomain}`,
     );
   });
 
-  it('should fall back to the remaining app-bound domain when one is deleted', async () => {
-    const remainingDomain = buildTestDomain('remaining');
-    const deletedDomain = buildTestDomain('deleted');
+  it('should ignore a newer domain that is not validated yet', async () => {
+    const validatedDomain = buildTestDomain('validated');
+    const pendingDomain = buildTestDomain('pending');
 
-    createdDomains.push(remainingDomain, deletedDomain);
-
-    await publicDomainService.createPublicDomain({
-      domain: remainingDomain,
-      workspace,
-      applicationId,
+    await seedPublicDomain({
+      domain: validatedDomain,
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
     });
-    await publicDomainService.createPublicDomain({
-      domain: deletedDomain,
-      workspace,
-      applicationId,
+    await seedPublicDomain({
+      domain: pendingDomain,
+      createdAt: new Date('2026-01-02T00:00:00.000Z'),
+      isValidated: false,
     });
-
-    await publicDomainService.deletePublicDomain({
-      domain: deletedDomain,
-      workspace,
-    });
-
-    await expect(
-      publicDomainRepository.findOneBy({
-        workspaceId: workspace.id,
-        domain: deletedDomain,
-      }),
-    ).resolves.toBeNull();
 
     await expect(findFunctionsBaseUrl(applicationId)).resolves.toBe(
-      `https://${remainingDomain}`,
+      `https://${validatedDomain}`,
+    );
+  });
+
+  it('should resolve the primary public domain over a newer domain when one is set', async () => {
+    const primaryDomain = buildTestDomain('primary');
+    const newerDomain = buildTestDomain('newer');
+
+    const primaryPublicDomain = await seedPublicDomain({
+      domain: primaryDomain,
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      isValidated: false,
+    });
+
+    await seedPublicDomain({
+      domain: newerDomain,
+      createdAt: new Date('2026-01-02T00:00:00.000Z'),
+    });
+
+    await applicationRepository.update(
+      { id: applicationId },
+      { primaryPublicDomainId: primaryPublicDomain.id },
+    );
+
+    await expect(findFunctionsBaseUrl(applicationId)).resolves.toBe(
+      `https://${primaryDomain}`,
+    );
+  });
+
+  it('should fall back to the newest remaining domain when the primary is deleted', async () => {
+    const primaryDomain = buildTestDomain('primary');
+    const olderRemainingDomain = buildTestDomain('remaining-older');
+    const newerRemainingDomain = buildTestDomain('remaining-newer');
+
+    const primaryPublicDomain = await seedPublicDomain({
+      domain: primaryDomain,
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
+    });
+
+    await seedPublicDomain({
+      domain: olderRemainingDomain,
+      createdAt: new Date('2026-01-02T00:00:00.000Z'),
+    });
+    await seedPublicDomain({
+      domain: newerRemainingDomain,
+      createdAt: new Date('2026-01-03T00:00:00.000Z'),
+    });
+
+    await applicationRepository.update(
+      { id: applicationId },
+      { primaryPublicDomainId: primaryPublicDomain.id },
+    );
+
+    await publicDomainRepository.delete({ id: primaryPublicDomain.id });
+
+    await expect(
+      applicationRepository.findOneByOrFail({ id: applicationId }),
+    ).resolves.toMatchObject({ primaryPublicDomainId: null });
+
+    await expect(findFunctionsBaseUrl(applicationId)).resolves.toBe(
+      `https://${newerRemainingDomain}`,
     );
   });
 });

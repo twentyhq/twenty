@@ -7,11 +7,12 @@ import { useLingui } from '@lingui/react/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
-import { useMutation, useQuery } from '@apollo/client/react';
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import {
   type PublicDomain,
   DeletePublicDomainDocument,
   FindManyPublicDomainsDocument,
+  FindOneApplicationForSettingsApplicationDetailsDocument,
 } from '~/generated-metadata/graphql';
 
 export const SettingPublicDomainRowDropdownMenu = ({
@@ -26,9 +27,7 @@ export const SettingPublicDomainRowDropdownMenu = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const { refetch: refetchPublicDomains } = useQuery(
-    FindManyPublicDomainsDocument,
-  );
+  const apolloClient = useApolloClient();
 
   const [deletePublicDomain] = useMutation(DeletePublicDomainDocument);
 
@@ -62,7 +61,12 @@ export const SettingPublicDomainRowDropdownMenu = ({
               onClick={async () => {
                 await handleDeletePublicDomain();
                 closeDropdown(dropdownId);
-                await refetchPublicDomains();
+                await apolloClient.refetchQueries({
+                  include: [
+                    FindManyPublicDomainsDocument,
+                    FindOneApplicationForSettingsApplicationDetailsDocument,
+                  ],
+                });
               }}
             />
           </DropdownMenuItemsContainer>

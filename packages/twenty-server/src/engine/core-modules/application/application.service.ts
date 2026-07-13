@@ -322,7 +322,7 @@ export class ApplicationService {
     const fallbackPublicDomain = await this.publicDomainRepository.findOne(
       workspaceId,
       {
-        where: { applicationId },
+        where: { applicationId, isValidated: true },
         order: { createdAt: 'DESC', domain: 'ASC' },
       },
     );

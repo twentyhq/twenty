@@ -40,9 +40,6 @@ export const SettingsLogicFunctionDetail = () => {
   const workspaceCustomApplicationId =
     currentWorkspace?.workspaceCustomApplication?.id;
 
-  // The application route sits behind the APPLICATIONS-guarded route wrapper,
-  // matching the findOneApplication guard; the workspace-custom route (AI
-  // settings) reads through the member-level workspaceCustomApplication field.
   const isApplicationRoute = isDefined(applicationId);
 
   const { data: applicationData, loading: applicationLoading } = useQuery(

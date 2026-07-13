@@ -185,39 +185,6 @@ describe('WorkspaceDomainsService', () => {
     });
   });
 
-  describe('buildPublicFunctionBaseUrl', () => {
-    it('should keep the isolated public URL undefined when PUBLIC_DOMAIN_URL is not configured', () => {
-      expect(
-        workspaceDomainsService.buildPublicFunctionBaseUrl({
-          workspace: { subdomain: 'acme' },
-        }),
-      ).toBeUndefined();
-    });
-  });
-
-  describe('buildFunctionsBaseUrl', () => {
-    it('should return the primary public domain when the application has one', () => {
-      const result = workspaceDomainsService.buildFunctionsBaseUrl({
-        workspace: { subdomain: 'acme' },
-        primaryPublicDomain: 'functions.acme.com',
-      });
-
-      expect(result).toBe('https://functions.acme.com');
-    });
-
-    it('should return the isolated workspace domain when PUBLIC_DOMAIN_URL is configured', () => {
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockReturnValue('https://withtwenty.com');
-
-      const result = workspaceDomainsService.buildFunctionsBaseUrl({
-        workspace: { subdomain: 'acme' },
-      });
-
-      expect(result).toBe('https://acme.withtwenty.com');
-    });
-  });
-
   describe('getWorkspaceByOriginOrDefaultWorkspace', () => {
     it('should return default workspace if IS_MULTIWORKSPACE_ENABLED=false', async () => {
       jest
