@@ -53,12 +53,20 @@ export class BackfillWorkspaceDatabaseSchemaSlowInstanceCommand implements SlowI
     );
   }
 
+  // Added NOT VALID on purpose: runDataMigration repairs every workspace whose
+  // Postgres schema actually exists, but some legacy active/suspended workspaces
+  // (carried over from very old versions) can have a null databaseSchema with no
+  // provisioned schema to point at. Those rows are unrepairable here, so we
+  // enforce the invariant on all future inserts/updates without failing the
+  // upgrade on pre-existing corruption. Newly created workspaces write
+  // databaseSchema before leaving the creation phase, so the constraint never
+  // fights the PENDING_CREATION -> ACTIVE transition.
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE "core"."workspace" DROP CONSTRAINT IF EXISTS "workspace_requires_database_schema"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."workspace" ADD CONSTRAINT "workspace_requires_database_schema" CHECK ("activationStatus" IN ('PENDING_CREATION', 'ONGOING_CREATION') OR "databaseSchema" IS NOT NULL)`,
+      `ALTER TABLE "core"."workspace" ADD CONSTRAINT "workspace_requires_database_schema" CHECK ("activationStatus" IN ('PENDING_CREATION', 'ONGOING_CREATION') OR "databaseSchema" IS NOT NULL) NOT VALID`,
     );
   }
 
