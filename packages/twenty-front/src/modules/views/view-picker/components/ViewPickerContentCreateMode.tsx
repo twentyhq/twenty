@@ -237,7 +237,7 @@ export const ViewPickerContentCreateMode = () => {
           <>
             <ViewPickerSelectContainer>
               <Select
-                label={t`Start date field`}
+                label={t`Date field`}
                 fullWidth
                 value={viewPickerCalendarFieldMetadataId}
                 onChange={(value) => {

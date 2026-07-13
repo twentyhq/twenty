@@ -87,7 +87,7 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
           />
         }
       >
-        {t`Start date field`}
+        {t`Date field`}
       </DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus

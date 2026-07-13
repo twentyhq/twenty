@@ -190,7 +190,7 @@ export const ObjectOptionsDropdownCustomView = ({
                     focused={selectedItemId === 'CalendarDateField'}
                     onClick={() => onContentChange('calendarFields')}
                     LeftIcon={IconCalendar}
-                    text={t`Start date field`}
+                    text={t`Date field`}
                     contextualText={
                       isDefaultView
                         ? t`Not available on Default View`

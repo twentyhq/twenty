@@ -236,7 +236,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     focused={selectedItemId === 'CalendarDateField'}
                     onClick={() => onContentChange('calendarFields')}
                     LeftIcon={IconCalendar}
-                    text={t`Start date field`}
+                    text={t`Date field`}
                     contextualText={calendarFieldMetadata?.label}
                     contextualTextPosition="right"
                     hasSubMenu
