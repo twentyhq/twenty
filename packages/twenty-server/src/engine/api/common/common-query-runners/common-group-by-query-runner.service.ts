@@ -30,6 +30,7 @@ import { getGroupByDefinitions } from 'src/engine/api/common/common-query-runner
 import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
 import { isGroupByRelationField } from 'src/engine/api/common/common-query-runners/utils/is-group-by-relation-field.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { CommonArgsProcessorQueryRunnerContext } from 'src/engine/api/common/types/common-args-processor-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import {
@@ -410,12 +411,13 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
   async computeArgs(
     args: CommonInput<GroupByQueryArgs>,
-    queryRunnerContext: CommonBaseQueryRunnerContext,
+    queryRunnerContext: CommonArgsProcessorQueryRunnerContext,
   ): Promise<CommonInput<GroupByQueryArgs>> {
     const {
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      objectsPermissions,
     } = queryRunnerContext;
 
     return {
@@ -434,6 +436,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+        objectsPermissions,
       }),
     };
   }

@@ -14,6 +14,7 @@ import {
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { CommonArgsProcessorQueryRunnerContext } from 'src/engine/api/common/types/common-args-processor-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
   CommonExtendedInput,
@@ -95,12 +96,13 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
   async computeArgs(
     args: CommonInput<DeleteManyQueryArgs>,
-    queryRunnerContext: CommonBaseQueryRunnerContext,
+    queryRunnerContext: CommonArgsProcessorQueryRunnerContext,
   ): Promise<CommonInput<DeleteManyQueryArgs>> {
     const {
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      objectsPermissions,
     } = queryRunnerContext;
 
     return {
@@ -110,6 +112,7 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+        objectsPermissions,
       }),
     };
   }

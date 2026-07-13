@@ -14,6 +14,7 @@ import {
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { CommonArgsProcessorQueryRunnerContext } from 'src/engine/api/common/types/common-args-processor-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
   CommonExtendedInput,
@@ -96,12 +97,13 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
 
   async computeArgs(
     args: CommonInput<DestroyManyQueryArgs>,
-    queryRunnerContext: CommonBaseQueryRunnerContext,
+    queryRunnerContext: CommonArgsProcessorQueryRunnerContext,
   ): Promise<CommonInput<DestroyManyQueryArgs>> {
     const {
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      objectsPermissions,
     } = queryRunnerContext;
 
     return {
@@ -111,6 +113,7 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+        objectsPermissions,
       }),
     };
   }

@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { type PermissionFlagType } from 'twenty-shared/constants';
+import { type ObjectsPermissions } from 'twenty-shared/types';
 
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 
@@ -17,6 +18,7 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
+import { CommonArgsProcessorQueryRunnerContext } from 'src/engine/api/common/types/common-args-processor-query-runner-context.type';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
@@ -35,6 +37,7 @@ import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/
 import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -53,6 +56,7 @@ import {
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -170,7 +174,7 @@ export abstract class CommonBaseQueryRunnerService<
 
   protected abstract computeArgs(
     args: CommonInput<Args>,
-    queryRunnerContext: CommonBaseQueryRunnerContext,
+    queryRunnerContext: CommonArgsProcessorQueryRunnerContext,
   ): Promise<CommonInput<Args>>;
 
   protected abstract processQueryResult(
@@ -200,7 +204,13 @@ export abstract class CommonBaseQueryRunnerService<
   ): Promise<CommonInput<Args>> {
     const { authContext, flatObjectMetadata } = queryRunnerContext;
 
-    const computedArgs = await this.computeArgs(args, queryRunnerContext);
+    const objectsPermissions =
+      await this.resolveObjectsPermissions(authContext);
+
+    const computedArgs = await this.computeArgs(args, {
+      ...queryRunnerContext,
+      objectsPermissions,
+    });
 
     const hookedArgs =
       (await this.workspaceQueryHookService.executePreQueryHooks(
@@ -211,6 +221,56 @@ export abstract class CommonBaseQueryRunnerService<
       )) as CommonInput<Args>;
 
     return hookedArgs;
+  }
+
+  private async resolveObjectsPermissions(
+    authContext: WorkspaceAuthContext,
+  ): Promise<ObjectsPermissions> {
+    if (isSystemAuthContext(authContext)) {
+      return {};
+    }
+
+    const { rolesPermissions, userWorkspaceRoleMap, apiKeyRoleMap } =
+      await this.workspaceCacheService.getOrRecompute(
+        authContext.workspace.id,
+        ['rolesPermissions', 'userWorkspaceRoleMap', 'apiKeyRoleMap'],
+      );
+
+    const rolePermissionConfig = resolveRolePermissionConfig({
+      authContext,
+      userWorkspaceRoleMap,
+      apiKeyRoleMap,
+    });
+
+    if (!rolePermissionConfig) {
+      throw new CommonQueryRunnerException(
+        'Invalid auth context',
+        CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
+    }
+
+    if ('shouldBypassPermissionChecks' in rolePermissionConfig) {
+      return {};
+    }
+
+    if ('intersectionOf' in rolePermissionConfig) {
+      return computePermissionIntersection(
+        rolePermissionConfig.intersectionOf.map(
+          (roleId) => rolesPermissions[roleId] ?? {},
+        ),
+      );
+    }
+
+    if (rolePermissionConfig.unionOf.length === 1) {
+      return rolesPermissions[rolePermissionConfig.unionOf[0]] ?? {};
+    }
+
+    throw new CommonQueryRunnerException(
+      'Union permission logic for multiple roles is not supported',
+      CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+    );
   }
 
   private async executeQueryAndEnrichResults(

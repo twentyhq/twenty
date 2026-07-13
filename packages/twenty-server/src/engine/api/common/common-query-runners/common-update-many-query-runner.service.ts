@@ -13,6 +13,7 @@ import {
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { CommonArgsProcessorQueryRunnerContext } from 'src/engine/api/common/types/common-args-processor-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
   CommonExtendedInput,
@@ -96,13 +97,14 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
   async computeArgs(
     args: CommonInput<UpdateManyQueryArgs>,
-    queryRunnerContext: CommonBaseQueryRunnerContext,
+    queryRunnerContext: CommonArgsProcessorQueryRunnerContext,
   ): Promise<CommonInput<UpdateManyQueryArgs>> {
     const {
       authContext,
       flatObjectMetadata,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
+      objectsPermissions,
     } = queryRunnerContext;
 
     return {
@@ -112,6 +114,7 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+        objectsPermissions,
       }),
       data: (
         await this.dataArgProcessor.process({
