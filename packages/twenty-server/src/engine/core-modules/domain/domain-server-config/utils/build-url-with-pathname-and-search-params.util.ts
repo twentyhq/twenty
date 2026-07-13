@@ -4,12 +4,14 @@ type BuildUrlWithPathnameAndSearchParamsProps = {
   baseUrl: URL;
   pathname?: string;
   searchParams?: Record<string, string | number | boolean>;
+  hash?: string;
 };
 
 export const buildUrlWithPathnameAndSearchParams = ({
   baseUrl,
   pathname,
   searchParams,
+  hash,
 }: BuildUrlWithPathnameAndSearchParamsProps) => {
   const url = baseUrl;
 
@@ -19,6 +21,10 @@ export const buildUrlWithPathnameAndSearchParams = ({
 
   if (searchParams) {
     appendSearchParamsToUrl(url, searchParams);
+  }
+
+  if (hash) {
+    url.hash = hash;
   }
 
   return url;

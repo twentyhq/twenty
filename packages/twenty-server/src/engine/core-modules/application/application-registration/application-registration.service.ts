@@ -11,7 +11,9 @@ import { v4 } from 'uuid';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { shouldRefreshApplicationRegistrationOnInstall } from 'src/engine/core-modules/application/application-install/utils/should-refresh-application-registration-on-install.util';
+import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 import {
@@ -19,6 +21,7 @@ import {
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { type ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
+import { type PaginatedApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { type PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
@@ -38,6 +41,8 @@ import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/applica
 
 const BCRYPT_SALT_ROUNDS = 10;
 
+const MAX_APPLICATION_REGISTRATIONS_PAGE_SIZE = 100;
+
 const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegistrationEntity)[] =
   [
     'id',
@@ -56,6 +61,7 @@ const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegist
     'isVetted',
     'isPreInstalled',
     'logo',
+    'logoFileId',
     'description',
     'author',
     'category',
@@ -94,6 +100,8 @@ export class ApplicationRegistrationService {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
+    private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
+    private readonly serverFileStorageService: ServerFileStorageService,
     private readonly cacheLockService: CacheLockService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
@@ -119,11 +127,57 @@ export class ApplicationRegistrationService {
     });
   }
 
-  async findAll(): Promise<ApplicationRegistrationEntity[]> {
-    return this.applicationRegistrationRepository.find({
-      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
-      order: { createdAt: 'DESC' },
-    });
+  async findAll({
+    limit,
+    offset,
+    searchTerm,
+    isPreInstalledOnly,
+  }: {
+    limit: number;
+    offset: number;
+    searchTerm?: string;
+    isPreInstalledOnly?: boolean;
+  }): Promise<PaginatedApplicationRegistrationsDTO> {
+    const safeLimit = Math.min(
+      Math.max(limit, 1),
+      MAX_APPLICATION_REGISTRATIONS_PAGE_SIZE,
+    );
+    const safeOffset = Math.max(offset, 0);
+
+    const trimmedSearch = searchTerm?.trim();
+
+    const queryBuilder = this.applicationRegistrationRepository
+      .createQueryBuilder('registration')
+      .select(
+        APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT.map(
+          (column) => `registration.${column}`,
+        ),
+      )
+      .orderBy('registration.createdAt', 'DESC')
+      .addOrderBy('registration.id', 'ASC')
+      .skip(safeOffset)
+      .take(safeLimit);
+
+    if (isPreInstalledOnly === true) {
+      queryBuilder.andWhere('registration."isPreInstalled" = true');
+    }
+
+    if (isDefined(trimmedSearch) && trimmedSearch.length > 0) {
+      queryBuilder.andWhere(
+        `(registration.name ILIKE :searchTerm
+          OR registration."sourcePackage" ILIKE :searchTerm
+          OR registration."universalIdentifier"::text ILIKE :searchTerm)`,
+        { searchTerm: `%${trimmedSearch}%` },
+      );
+    }
+
+    const [registrations, totalCount] = await queryBuilder.getManyAndCount();
+
+    return {
+      registrations,
+      totalCount,
+      hasMore: safeOffset + registrations.length < totalCount,
+    };
   }
 
   async findOneById(
@@ -176,7 +230,17 @@ export class ApplicationRegistrationService {
   ): Promise<PublicApplicationRegistrationDTO | null> {
     const registration = await this.applicationRegistrationRepository.findOne({
       where: { oAuthClientId: clientId },
-      select: ['id', 'name', 'logo', 'websiteUrl', 'oAuthScopes'],
+      select: [
+        'id',
+        'name',
+        'logo',
+        'logoFileId',
+        'sourceType',
+        'sourcePackage',
+        'latestAvailableVersion',
+        'websiteUrl',
+        'oAuthScopes',
+      ],
     });
 
     if (!registration) {
@@ -186,7 +250,8 @@ export class ApplicationRegistrationService {
     return {
       id: registration.id,
       name: registration.name,
-      logoUrl: registration.logo,
+      logoUrl:
+        this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
       websiteUrl: registration.websiteUrl,
       oAuthScopes: registration.oAuthScopes,
     };
@@ -340,11 +405,28 @@ export class ApplicationRegistrationService {
         return;
       }
 
+      const displayFields = fromManifestApplicationToDisplayFields(
+        manifest.application,
+      );
+
+      // Gallery image files are stored by the source-specific flows (tarball
+      // upload, dev sync); keep their fileIds for paths that did not change.
+      const existingFileIdByPath = new Map(
+        (existing.galleryImages ?? []).map(({ path, fileId }) => [
+          path,
+          fileId,
+        ]),
+      );
+
       await this.applicationRegistrationRepository.save({
         ...existing,
         name: manifest.application.displayName,
         manifest,
-        ...fromManifestApplicationToDisplayFields(manifest.application),
+        ...displayFields,
+        galleryImages: displayFields.galleryImages.map((galleryImage) => ({
+          ...galleryImage,
+          fileId: existingFileIdByPath.get(galleryImage.path) ?? null,
+        })),
         ...(sourceType !== undefined && { sourceType }),
         ...(latestAvailableVersion !== undefined && {
           latestAvailableVersion,
@@ -358,6 +440,17 @@ export class ApplicationRegistrationService {
   async delete(id: string, ownerWorkspaceId: string): Promise<boolean> {
     await this.findOneById(id, ownerWorkspaceId);
     await this.applicationRegistrationRepository.softDelete(id);
+
+    // Stored assets (logo, gallery images) are gone for good; deleting the
+    // file rows also nulls logoFileId through its ON DELETE SET NULL fk.
+    try {
+      await this.serverFileStorageService.deleteByApplicationRegistrationId(id);
+    } catch (error) {
+      this.logger.error(
+        `Failed to delete server files for registration ${id}`,
+        error,
+      );
+    }
 
     await this.invalidateMarketplaceAppsCache();
 
@@ -415,6 +508,17 @@ export class ApplicationRegistrationService {
     const isVetted = vettedIdentifiers.has(params.universalIdentifier);
 
     if (isDefined(existing)) {
+      const displayFields = fromManifestApplicationToDisplayFields(
+        params.manifest?.application,
+      );
+
+      const existingFileIdByPath = new Map(
+        (existing.galleryImages ?? []).map(({ path, fileId }) => [
+          path,
+          fileId,
+        ]),
+      );
+
       await this.applicationRegistrationRepository.save({
         ...existing,
         name: params.name,
@@ -423,7 +527,11 @@ export class ApplicationRegistrationService {
         latestAvailableVersion: params.latestAvailableVersion,
         isVetted,
         manifest: params.manifest,
-        ...fromManifestApplicationToDisplayFields(params.manifest?.application),
+        ...displayFields,
+        galleryImages: displayFields.galleryImages.map((galleryImage) => ({
+          ...galleryImage,
+          fileId: existingFileIdByPath.get(galleryImage.path) ?? null,
+        })),
       });
     } else {
       const registration = this.applicationRegistrationRepository.create({
@@ -503,9 +611,12 @@ export class ApplicationRegistrationService {
         'id',
         'universalIdentifier',
         'name',
+        'sourceType',
         'sourcePackage',
+        'latestAvailableVersion',
         'isVetted',
         'logo',
+        'logoFileId',
         'description',
         'author',
         'category',
@@ -525,7 +636,8 @@ export class ApplicationRegistrationService {
       description: registration.description,
       author: registration.author,
       category: registration.category,
-      logoUrl: registration.logo,
+      logoUrl:
+        this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
     }));
   }
 
@@ -582,29 +694,26 @@ export class ApplicationRegistrationService {
   // across all workspaces, so ownership is not enforced.
   async getInstalledWorkspacesGlobal(
     applicationRegistrationId: string,
-    page: number,
-    pageSize: number,
+    limit: number,
+    offset: number,
     searchTerm?: string,
   ): Promise<ApplicationRegistrationInstalledWorkspacesDTO> {
     await this.findOneByIdGlobal(applicationRegistrationId);
 
     return this.computeInstalledWorkspaces(
       applicationRegistrationId,
-      page,
-      pageSize,
+      limit,
+      offset,
       searchTerm,
     );
   }
 
   private async computeInstalledWorkspaces(
     applicationRegistrationId: string,
-    page: number,
-    pageSize: number,
+    limit: number,
+    offset: number,
     searchTerm?: string,
   ): Promise<ApplicationRegistrationInstalledWorkspacesDTO> {
-    const safePage = page < 1 ? 1 : page;
-    const offset = (safePage - 1) * pageSize;
-
     const trimmedSearch = searchTerm?.trim();
 
     const where: FindOptionsWhere<ApplicationEntity> = {
@@ -628,7 +737,7 @@ export class ApplicationRegistrationService {
         relations: { workspace: true },
         order: { workspace: { displayName: 'ASC' }, id: 'ASC' },
         skip: offset,
-        take: pageSize,
+        take: limit,
       });
 
     const workspaces = applications.map((application) => ({

@@ -413,6 +413,7 @@
                       "developers/extend/apps/data/overview",
                       "developers/extend/apps/data/objects",
                       "developers/extend/apps/data/extending-objects",
+                      "developers/extend/apps/data/system-fields",
                       "developers/extend/apps/data/relations"
                     ]
                   },

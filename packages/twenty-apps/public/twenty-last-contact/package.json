@@ -1,12 +1,12 @@
 {
   "name": "@twentyhq/last-contact",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2",
-    "twenty": ">=2.19.0"
+    "twenty": ">=2.20.0"
   },
   "keywords": [
     "twenty-app"
@@ -28,8 +28,8 @@
     "oxlint": "^0.16.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "twenty-client-sdk": "2.19.0-alpha.1",
-    "twenty-sdk": "2.19.0-alpha.1",
+    "twenty-client-sdk": "2.20.0",
+    "twenty-sdk": "2.20.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^4.0.0"

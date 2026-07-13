@@ -6,7 +6,7 @@ import { tmpdir } from 'os';
 import { isAbsolute, join, relative, resolve } from 'path';
 
 import semver from 'semver';
-import { FileFolder, ServerFileFolder } from 'twenty-shared/types';
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -18,20 +18,16 @@ import { extractTarballSecurely } from 'src/engine/core-modules/application/appl
 import { readJsonFile } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
+import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { type ApplicationRegistrationGalleryImage } from 'src/engine/core-modules/application/application-registration/types/application-registration-gallery-image.type';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
-import { isImageFilePath } from 'src/engine/core-modules/application/application-registration/utils/is-image-file-path.util';
-import { toGalleryImagePaths } from 'src/engine/core-modules/application/application-registration/utils/to-gallery-image-paths.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
-import { prepareFileForStorageOrThrow } from 'src/engine/core-modules/file-storage/utils/prepare-file-for-storage-or-throw.util';
 import type { ApplicationManifest } from 'twenty-shared/application';
 
 @Injectable()
@@ -42,7 +38,7 @@ export class ApplicationTarballService {
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly fileStorageService: FileStorageService,
-    private readonly serverFileStorageService: ServerFileStorageService,
+    private readonly applicationRegistrationAssetService: ApplicationRegistrationAssetService,
     private readonly applicationService: ApplicationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
@@ -208,10 +204,10 @@ export class ApplicationTarballService {
         ownerWorkspaceId: params.ownerWorkspaceId,
       } as QueryDeepPartialEntity<ApplicationRegistrationEntity>);
 
-      await this.storeGalleryImageFiles({
+      await this.applicationRegistrationAssetService.storeRegistrationAssets({
         applicationRegistrationId: appRegistration.id,
         manifestApplication: manifest.application,
-        contentDir,
+        readAsset: (path) => this.readAssetFromContentDir(contentDir, path),
       });
 
       if (manifest.application?.serverVariables) {
@@ -233,51 +229,10 @@ export class ApplicationTarballService {
     }
   }
 
-  private async storeGalleryImageFiles({
-    applicationRegistrationId,
-    manifestApplication,
-    contentDir,
-  }: {
-    applicationRegistrationId: string;
-    manifestApplication: ApplicationManifest | undefined;
-    contentDir: string;
-  }): Promise<void> {
-    const galleryImages: ApplicationRegistrationGalleryImage[] = [];
-
-    for (const path of toGalleryImagePaths(manifestApplication)) {
-      const fileId = await this.storeGalleryImageFile({
-        applicationRegistrationId,
-        contentDir,
-        path,
-      });
-
-      if (isDefined(fileId)) {
-        galleryImages.push({ path, fileId });
-      }
-    }
-
-    await this.appRegistrationRepository.update(applicationRegistrationId, {
-      galleryImages,
-    } as QueryDeepPartialEntity<ApplicationRegistrationEntity>);
-  }
-
-  private async storeGalleryImageFile({
-    applicationRegistrationId,
-    contentDir,
-    path,
-  }: {
-    applicationRegistrationId: string;
-    contentDir: string;
-    path: string;
-  }): Promise<string | null> {
-    if (
-      path.startsWith('http://') ||
-      path.startsWith('https://') ||
-      !isImageFilePath(path)
-    ) {
-      return null;
-    }
-
+  private async readAssetFromContentDir(
+    contentDir: string,
+    path: string,
+  ): Promise<Buffer | null> {
     const absolutePath = resolve(contentDir, path);
     const relativeToContentDir = relative(contentDir, absolutePath);
 
@@ -287,37 +242,12 @@ export class ApplicationTarballService {
       isAbsolute(relativeToContentDir)
     ) {
       this.logger.warn(
-        `Gallery image "${path}" escapes the package directory; skipping`,
+        `Asset "${path}" escapes the package directory; skipping`,
       );
 
       return null;
     }
 
-    try {
-      const contents = await fs.readFile(absolutePath);
-
-      const { sourceFile, mimeType } = await prepareFileForStorageOrThrow({
-        sourceFile: contents,
-        resourcePath: path,
-      });
-
-      const savedFile = await this.serverFileStorageService.writeServerFile({
-        fileFolder: ServerFileFolder.ApplicationRegistration,
-        applicationRegistrationId,
-        resourcePath: path,
-        contents: Buffer.isBuffer(sourceFile)
-          ? sourceFile
-          : Buffer.from(sourceFile),
-        mimeType,
-      });
-
-      return savedFile.id;
-    } catch (error) {
-      this.logger.warn(
-        `Failed to store gallery image "${path}" for registration ${applicationRegistrationId}: ${error.message}`,
-      );
-
-      return null;
-    }
+    return fs.readFile(absolutePath);
   }
 }
