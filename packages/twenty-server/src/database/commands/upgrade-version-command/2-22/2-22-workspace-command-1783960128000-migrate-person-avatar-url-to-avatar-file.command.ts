@@ -88,24 +88,18 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ActiveOrSuspended
         { shouldBypassPermissionChecks: true },
       );
 
-    let cursor = MIN_UUID;
     let candidateCount = 0;
     let migratedCount = 0;
     let skippedCount = 0;
     let failedCount = 0;
 
-    for (;;) {
-      const persons = await personRepository.find({
-        select: ['id', 'avatarUrl', 'avatarFile'],
-        where: { id: MoreThan(cursor), avatarUrl: Not(IsNull()) },
-        order: { id: 'ASC' },
-        take: PERSON_BATCH_SIZE,
-      });
+    let cursor = MIN_UUID;
+    let persons = await this.findPersonsWithAvatarUrlBatch({
+      personRepository,
+      cursor,
+    });
 
-      if (persons.length === 0) {
-        break;
-      }
-
+    while (persons.length > 0) {
       cursor = persons[persons.length - 1].id;
 
       for (const person of persons) {
@@ -140,6 +134,11 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ActiveOrSuspended
           failedCount++;
         }
       }
+
+      persons = await this.findPersonsWithAvatarUrlBatch({
+        personRepository,
+        cursor,
+      });
     }
 
     if (isDryRun) {
@@ -157,6 +156,21 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ActiveOrSuspended
         `person avatarUrl -> avatarFile for workspace ${workspaceId}: ${migratedCount} migrated, ${skippedCount} skipped (unreachable/non-image), ${failedCount} failed`,
       );
     }
+  }
+
+  private async findPersonsWithAvatarUrlBatch({
+    personRepository,
+    cursor,
+  }: {
+    personRepository: WorkspaceRepository<PersonWorkspaceEntity>;
+    cursor: string;
+  }): Promise<PersonWorkspaceEntity[]> {
+    return personRepository.find({
+      select: ['id', 'avatarUrl', 'avatarFile'],
+      where: { id: MoreThan(cursor), avatarUrl: Not(IsNull()) },
+      order: { id: 'ASC' },
+      take: PERSON_BATCH_SIZE,
+    });
   }
 
   private async migratePersonAvatar({
