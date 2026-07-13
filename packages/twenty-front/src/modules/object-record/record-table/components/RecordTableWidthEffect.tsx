@@ -1,5 +1,5 @@
 import { recordTableWidthComponentState } from '@/object-record/record-table/states/recordTableWidthComponentState';
-import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
+import { panelResizeIsSettledState } from '@/ui/layout/resizable-panel/states/panelResizeIsSettledState';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -12,16 +12,14 @@ export const RecordTableWidthEffect = () => {
     recordTableWidthComponentState,
   );
 
-  const tableWidthResizeIsActive = useAtomStateValue(
-    tableWidthResizeIsActiveState,
-  );
+  const panelResizeIsSettled = useAtomStateValue(panelResizeIsSettledState);
 
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
   useEffect(() => {
     const tableWidth = scrollWrapperHTMLElement?.clientWidth ?? 0;
 
-    if (tableWidthResizeIsActive) {
+    if (panelResizeIsSettled) {
       if (tableWidth > 0) {
         setRecordTableWidth(tableWidth);
       }
@@ -43,7 +41,7 @@ export const RecordTableWidthEffect = () => {
         tableResizeObserver.disconnect();
       };
     }
-  }, [setRecordTableWidth, scrollWrapperHTMLElement, tableWidthResizeIsActive]);
+  }, [setRecordTableWidth, scrollWrapperHTMLElement, panelResizeIsSettled]);
 
   return null;
 };

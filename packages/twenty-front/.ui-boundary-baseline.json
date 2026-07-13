@@ -290,8 +290,7 @@
     ],
     "src/modules/ui/navigation/navigation-drawer/components/NavigationDrawer.tsx": [
       "@/navigation/hooks/useIsSettingsDrawer",
-      "@/navigation/hooks/useNavigationDrawerExpanded",
-      "@/object-record/record-table/states/tableWidthResizeIsActivedState"
+      "@/navigation/hooks/useNavigationDrawerExpanded"
     ],
     "src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper.tsx": [
       "@/navigation/hooks/useIsSettingsPage"

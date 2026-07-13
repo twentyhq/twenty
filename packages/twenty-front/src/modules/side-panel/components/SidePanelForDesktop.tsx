@@ -1,4 +1,4 @@
-import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
+import { panelResizeIsSettledState } from '@/ui/layout/resizable-panel/states/panelResizeIsSettledState';
 import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
 import { SidePanelWidthEffect } from '@/side-panel/components/SidePanelWidthEffect';
 import { SIDE_PANEL_CLICK_OUTSIDE_ID } from '@/side-panel/constants/SidePanelClickOutsideId';
@@ -72,9 +72,7 @@ export const SidePanelForDesktop = () => {
   const [shouldRenderContent, setShouldRenderContent] =
     useState(isSidePanelOpened);
 
-  const setTableWidthResizeIsActive = useSetAtomState(
-    tableWidthResizeIsActiveState,
-  );
+  const setPanelResizeIsSettled = useSetAtomState(panelResizeIsSettledState);
 
   const shouldShowContent = isSidePanelOpened || shouldRenderContent;
 
@@ -102,21 +100,21 @@ export const SidePanelForDesktop = () => {
     (width: number) => {
       setSidePanelWidth(width);
       setIsResizing(false);
-      setTableWidthResizeIsActive(true);
+      setPanelResizeIsSettled(true);
     },
-    [setSidePanelWidth, setTableWidthResizeIsActive],
+    [setSidePanelWidth, setPanelResizeIsSettled],
   );
 
   const handleResizeStart = useCallback(() => {
     setIsResizing(true);
-    setTableWidthResizeIsActive(false);
-  }, [setTableWidthResizeIsActive]);
+    setPanelResizeIsSettled(false);
+  }, [setPanelResizeIsSettled]);
 
   const handleCollapse = useCallback(() => {
     closeSidePanelMenu();
     setIsResizing(false);
-    setTableWidthResizeIsActive(true);
-  }, [closeSidePanelMenu, setTableWidthResizeIsActive]);
+    setPanelResizeIsSettled(true);
+  }, [closeSidePanelMenu, setPanelResizeIsSettled]);
 
   return (
     <>
