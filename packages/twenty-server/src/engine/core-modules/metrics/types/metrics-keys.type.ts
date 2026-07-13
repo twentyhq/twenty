@@ -53,4 +53,6 @@ export enum MetricsKeys {
   AiChatTurnCompleted = 'ai-chat/turn-completed',
   AiChatTurnFailed = 'ai-chat/turn-failed',
   WorkspaceMetadataCacheLocalEviction = 'workspace-metadata-cache/local-eviction',
+  ConnectedAccountSyncWebhookReceivedMessaging = 'connected-account-sync-webhook/received/messaging',
+  ConnectedAccountSyncWebhookReceivedCalendar = 'connected-account-sync-webhook/received/calendar',
 }
