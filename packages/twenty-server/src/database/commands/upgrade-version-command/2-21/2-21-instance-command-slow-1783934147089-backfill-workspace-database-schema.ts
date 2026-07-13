@@ -4,7 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
-@RegisteredInstanceCommand('2.21.0', 1784200000000, { type: 'slow' })
+@RegisteredInstanceCommand('2.21.0', 1783934147089, { type: 'slow' })
 export class BackfillWorkspaceDatabaseSchemaSlowInstanceCommand implements SlowInstanceCommand {
   async runDataMigration(dataSource: DataSource): Promise<void> {
     const workspacesWithoutSchema: { id: string }[] = await dataSource.query(
