@@ -214,9 +214,6 @@ export default {
             "isPreInstalled": [
                 6
             ],
-            "logoUrl": [
-                1
-            ],
             "createdAt": [
                 4
             ],
@@ -225,6 +222,12 @@ export default {
             ],
             "isConfigured": [
                 6
+            ],
+            "logoUrl": [
+                1
+            ],
+            "galleryImagesUrls": [
+                1
             ],
             "__typename": [
                 1

@@ -1,7 +1,7 @@
 import { type QueryRunner } from 'typeorm';
 
-import { AddCalendarEndFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-21/2-21-instance-command-fast-1783934276119-add-calendar-end-field-metadata-id-to-view';
-import { ADD_CALENDAR_END_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-21/add-calendar-end-field-metadata-id-to-view-upgrade-command-name.constant';
+import { AddCalendarEndFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-22/2-22-instance-command-fast-1783956795000-add-calendar-end-field-metadata-id-to-view';
+import { ADD_CALENDAR_END_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-22/add-calendar-end-field-metadata-id-to-view-upgrade-command-name.constant';
 import { getRegisteredInstanceCommandMetadata } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 
 describe('AddCalendarEndFieldMetadataIdToViewFastInstanceCommand', () => {
@@ -14,9 +14,9 @@ describe('AddCalendarEndFieldMetadataIdToViewFastInstanceCommand', () => {
     );
 
     expect(metadata).toEqual({
-      timestamp: 1783934276119,
+      timestamp: 1783956795000,
       type: 'fast',
-      version: '2.21.0',
+      version: '2.22.0',
     });
     expect(
       `${metadata?.version}_${AddCalendarEndFieldMetadataIdToViewFastInstanceCommand.name}_${metadata?.timestamp}`,

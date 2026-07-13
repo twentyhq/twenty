@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.21.0', 1783934276119)
+@RegisteredInstanceCommand('2.22.0', 1783956795000)
 export class AddCalendarEndFieldMetadataIdToViewFastInstanceCommand
   implements FastInstanceCommand
 {

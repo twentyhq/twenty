@@ -93,7 +93,7 @@ export const useLoadRecordIndexStates = () => {
     (
       view: Pick<View, 'id' | 'viewFields'>,
       objectMetadataItem: EnrichedObjectMetadataItem,
-      options?: { skipGlobalIndexStates?: boolean },
+      options?: { skipGlobalIndexStates?: boolean; recordIndexId?: string },
     ) => {
       const skipGlobalIndexStates = options?.skipGlobalIndexStates ?? false;
 
@@ -150,10 +150,12 @@ export const useLoadRecordIndexStates = () => {
         .map(mapViewFieldToRecordField)
         .filter(isDefined);
 
-      const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
-        objectMetadataItem.namePlural,
-        view.id,
-      );
+      const recordIndexId =
+        options?.recordIndexId ??
+        getRecordIndexIdFromObjectNamePluralAndViewId(
+          objectMetadataItem.namePlural,
+          view.id,
+        );
 
       const currentRecordFieldsAtom =
         currentRecordFieldsComponentState.atomFamily({
@@ -228,7 +230,7 @@ export const useLoadRecordIndexStates = () => {
     (
       view: View,
       objectMetadataItem: EnrichedObjectMetadataItem,
-      options?: { skipGlobalIndexStates?: boolean },
+      options?: { skipGlobalIndexStates?: boolean; recordIndexId?: string },
     ) => {
       const skipGlobalIndexStates = options?.skipGlobalIndexStates ?? false;
 
@@ -271,10 +273,12 @@ export const useLoadRecordIndexStates = () => {
           );
       }
 
-      const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
-        objectMetadataItem.namePlural,
-        view.id,
-      );
+      const recordIndexId =
+        options?.recordIndexId ??
+        getRecordIndexIdFromObjectNamePluralAndViewId(
+          objectMetadataItem.namePlural,
+          view.id,
+        );
 
       const currentRecordFiltersAtom =
         currentRecordFiltersComponentState.atomFamily({
@@ -302,6 +306,7 @@ export const useLoadRecordIndexStates = () => {
 
       syncRecordIndexViewFields(view, objectMetadataItem, {
         skipGlobalIndexStates,
+        recordIndexId: options?.recordIndexId,
       });
 
       store.set(
@@ -383,6 +388,7 @@ export const useLoadRecordIndexStates = () => {
         mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId ?? '',
         viewGroups: view.viewGroups,
         objectMetadataItem,
+        recordIndexId: options?.recordIndexId,
       });
     },
     [
