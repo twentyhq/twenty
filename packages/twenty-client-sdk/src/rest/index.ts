@@ -56,6 +56,11 @@ const getProcessEnvironment = (): ProcessEnvironment => {
 
 const isRestApiPath = (path: string): boolean => /^\/?rest\//.test(path);
 
+// Mirrors the server's route matching, which strips a leading /s/: app route
+// paths work with or without the legacy /s prefix.
+const stripLegacyAppRoutePrefix = (path: string): string =>
+  path.replace(/^(\/?)s\//, '$1');
+
 const buildRequestUrl = (
   baseUrl: string,
   path: string,
@@ -166,15 +171,18 @@ export class RestApiClient {
     return functionsBaseUrl.replace(/\/+$/, '');
   }
 
-  private resolveTargetBaseUrl(path: string): string {
+  private resolveTarget(path: string): { baseUrl: string; path: string } {
     if (isDefined(this.baseUrl) || isRestApiPath(path)) {
-      return this.resolveBaseUrl();
+      return { baseUrl: this.resolveBaseUrl(), path };
     }
 
     // Non-rest paths are app HTTP routes. TWENTY_FUNCTIONS_URL is a complete
     // base URL (isolated domains serve routes at the root, self-host bakes /s
     // in); fall back to the legacy same-site /s route when it is not injected.
-    return this.resolveFunctionsBaseUrl() ?? `${this.resolveBaseUrl()}/s`;
+    return {
+      baseUrl: this.resolveFunctionsBaseUrl() ?? `${this.resolveBaseUrl()}/s`,
+      path: stripLegacyAppRoutePrefix(path),
+    };
   }
 
   private resolveToken(): string {
@@ -329,9 +337,10 @@ export class RestApiClient {
     body: unknown,
     requestOptions?: RestApiRequestOptions,
   ): Promise<TResponse> {
+    const target = this.resolveTarget(path);
     const url = buildRequestUrl(
-      this.resolveTargetBaseUrl(path),
-      path,
+      target.baseUrl,
+      target.path,
       requestOptions?.query,
     );
     const token = this.resolveToken();
