@@ -1,9 +1,8 @@
-import { findManyFieldsMetadataQueryFactory } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata-query-factory.util';
+import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -136,7 +135,7 @@ const findFieldMetadata = async ({
 }: {
   fieldMetadataId: string;
 }) => {
-  const operation = findManyFieldsMetadataQueryFactory({
+  const { fields } = await findManyFieldsMetadata({
     gqlFields: `
       id
       name
@@ -149,8 +148,6 @@ const findFieldMetadata = async ({
       paging: { first: 1 },
     },
   });
-  const fields = await makeMetadataAPIRequest(operation);
-  const field = fields.body.data.fields.edges?.[0]?.node;
 
-  return field;
+  return fields?.[0]?.node;
 };

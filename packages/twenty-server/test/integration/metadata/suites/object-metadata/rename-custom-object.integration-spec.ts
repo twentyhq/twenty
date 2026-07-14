@@ -1,4 +1,4 @@
-import { findManyFieldsMetadataQueryFactory } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata-query-factory.util';
+import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findManyObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-query-factory.util';
@@ -35,22 +35,6 @@ describe('Custom object renaming', () => {
     id
     nameSingular
   `,
-    input: {
-      filter: {},
-      paging: { first: 1000 },
-    },
-  });
-
-  const fieldsGraphqlOperation = findManyFieldsMetadataQueryFactory({
-    gqlFields: `
-        id
-        name
-        label
-        type
-        object {
-          id
-        }
-      `,
     input: {
       filter: {},
       paging: { first: 1000 },
@@ -104,9 +88,21 @@ describe('Custom object renaming', () => {
 
     listingObjectId = data.createOneObject.id;
 
-    const fields = await makeMetadataAPIRequest(fieldsGraphqlOperation);
+    const { fields } = await findManyFieldsMetadata({
+      expectToFail: false,
+      input: { filter: {}, paging: { first: 1000 } },
+      gqlFields: `
+        id
+        name
+        label
+        type
+        object {
+          id
+        }
+      `,
+    });
 
-    const relationFieldsMetadataForListing = fields.body.data.fields.edges
+    const relationFieldsMetadataForListing = fields
       .filter(
         // @ts-expect-error legacy noImplicitAny
         (field) =>

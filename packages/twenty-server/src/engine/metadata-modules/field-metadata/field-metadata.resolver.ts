@@ -23,6 +23,7 @@ import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-m
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
+import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
@@ -224,6 +225,23 @@ export class FieldMetadataResolver {
     try {
       return await context.loaders.morphRelationLoader.load({
         fieldMetadataId,
+        objectMetadataId,
+        workspaceId: workspace.id,
+      });
+    } catch (error) {
+      return fieldMetadataGraphqlApiExceptionHandler(error);
+    }
+  }
+
+  @ResolveField(() => ObjectMetadataDTO, { nullable: true })
+  async object(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Parent()
+    { objectMetadataId }: Pick<FieldMetadataDTO, 'objectMetadataId'>,
+    @Context() context: { loaders: IDataloaders },
+  ): Promise<ObjectMetadataDTO | null> {
+    try {
+      return await context.loaders.objectMetadataLoader.load({
         objectMetadataId,
         workspaceId: workspace.id,
       });

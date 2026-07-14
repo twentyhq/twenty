@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { type FindOneOptions, type Repository } from 'typeorm';
 
@@ -33,7 +32,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 import { UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
 @Injectable()
-export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
+export class FieldMetadataService {
   constructor(
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
@@ -41,8 +40,27 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-  ) {
-    super(fieldMetadataRepository);
+  ) {}
+
+  async findManyFieldMetadata({
+    workspaceId,
+    id,
+    objectMetadataId,
+    limit = 100,
+  }: {
+    workspaceId: string;
+    id?: string;
+    objectMetadataId?: string;
+    limit?: number;
+  }): Promise<FieldMetadataEntity[]> {
+    return this.fieldMetadataRepository.find({
+      where: {
+        workspaceId,
+        ...(isDefined(id) ? { id } : {}),
+        ...(isDefined(objectMetadataId) ? { objectMetadataId } : {}),
+      },
+      take: limit,
+    });
   }
 
   async createOneField({

@@ -10,7 +10,6 @@ import {
   FilterableField,
   IDField,
   QueryOptions,
-  Relation,
 } from '@ptc-org/nestjs-query-graphql';
 import { Transform } from 'class-transformer';
 import {
@@ -34,7 +33,6 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
 import { type FieldMetadataOverrides } from 'src/engine/metadata-modules/field-metadata/types/field-metadata-overrides.type';
 import { type FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { transformEnumValue } from 'src/engine/utils/transform-enum-value';
 
 registerEnumType(FieldMetadataType, {
@@ -53,9 +51,6 @@ registerEnumType(FieldMetadataType, {
   defaultResultSize: 10,
   disableSort: true,
   maxResultsSize: 1000,
-})
-@Relation('object', () => ObjectMetadataDTO, {
-  nullable: true,
 })
 // TODO refactor nullable fields to be typed as nullable and not optional
 export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
