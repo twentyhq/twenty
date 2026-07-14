@@ -1,5 +1,6 @@
 import { type Edge, type Node } from '@xyflow/react';
-import { useEffect } from 'react';
+import { addBreadcrumb } from '@sentry/react';
+import { useEffect, useRef } from 'react';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,8 +18,21 @@ export const SettingsDataModelOverviewEffect = ({
 }: SettingsDataModelOverviewEffectProps) => {
   const { activeNonSystemObjectMetadataItems: items } =
     useFilteredObjectMetadataItems();
+  const layoutVersionRef = useRef(0);
 
   useEffect(() => {
+    const layoutVersion = ++layoutVersionRef.current;
+
+    addBreadcrumb({
+      category: 'settings.data-model-overview',
+      message: 'Overview graph layout started',
+      level: 'info',
+      data: {
+        layoutVersion,
+        objectCount: items.length,
+      },
+    });
+
     const loadDagreAndLayout = async () => {
       const dagre = await import('@dagrejs/dagre');
 
@@ -94,6 +108,16 @@ export const SettingsDataModelOverviewEffect = ({
           x: nodeWithPosition.x - (node.width ?? 0) / 2,
           y: nodeWithPosition.y - (node.height ?? 0) / 2,
         };
+      });
+
+      addBreadcrumb({
+        category: 'settings.data-model-overview',
+        message: 'Overview graph layout completed',
+        level: 'info',
+        data: {
+          layoutVersion,
+          objectCount: nodes.length,
+        },
       });
 
       setNodes(nodes);

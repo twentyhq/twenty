@@ -3,6 +3,7 @@ import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMet
 import { type MetadataEntityKey } from '@/metadata-store/states/metadataStoreState';
 import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntityTypeMap';
 import { mapAllMetadataNameToEntityKey } from '@/metadata-store/utils/mapAllMetadataNameToEntityKey';
+import { addBreadcrumb } from '@sentry/react';
 import { isDefined } from 'twenty-shared/utils';
 
 type AnyMetadataEntity = MetadataEntityTypeMap[MetadataEntityKey];
@@ -20,6 +21,19 @@ export const MetadataStoreSSEEffect = () => {
       }
 
       const collectionHash = eventDetail.updatedCollectionHash;
+
+      if (entityKey === 'objectMetadataItems') {
+        addBreadcrumb({
+          category: 'metadata-store',
+          message: 'Object metadata collection changed',
+          level: 'info',
+          data: {
+            metadataName: eventDetail.metadataName,
+            operationType: eventDetail.operation.type,
+            collectionHash,
+          },
+        });
+      }
 
       switch (eventDetail.operation.type) {
         case 'create': {

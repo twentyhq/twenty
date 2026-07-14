@@ -1,3 +1,4 @@
+import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { AppErrorBoundaryEffect } from '@/error-handler/components/internal/AppErrorBoundaryEffect';
 import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
 import { type ErrorInfo, type ReactNode } from 'react';
@@ -27,8 +28,15 @@ export const AppErrorBoundary = ({
       captureException(error, (scope) => {
         scope.setExtras({ info });
 
-        const fingerprint = hasErrorCode(error) ? error.code : error.message;
-        scope.setFingerprint([fingerprint]);
+        if (error instanceof ObjectMetadataItemNotFoundError) {
+          scope.setFingerprint(['object-metadata-item-not-found']);
+          scope.setTag('feature', 'object-metadata');
+          scope.setTag('cause', 'metadata-store-desynchronization');
+          scope.setExtras({ objectMetadataNotFound: error.context });
+        } else {
+          const fingerprint = hasErrorCode(error) ? error.code : error.message;
+          scope.setFingerprint([fingerprint]);
+        }
         error.name = error.message;
         return scope;
       });

@@ -29,13 +29,20 @@ describe('useObjectMetadataItem', () => {
   });
 
   it('should throw an error when invalid object name singular is provided', async () => {
-    expect(() =>
-      renderHook(
-        () => useObjectMetadataItem({ objectNameSingular: 'invalid-object' }),
-        {
-          wrapper: Wrapper,
-        },
-      ),
-    ).toThrow(ObjectMetadataItemNotFoundError);
+    const { result } = renderHook(
+      () => useObjectMetadataItem({ objectNameSingular: 'invalid-object' }),
+      {
+        wrapper: Wrapper,
+      },
+    );
+
+    expect(result.error).toBeInstanceOf(ObjectMetadataItemNotFoundError);
+    expect(result.error).toMatchObject({
+      context: {
+        currentCollectionSize: expect.any(Number),
+        draftCollectionSize: 0,
+        status: 'up-to-date',
+      },
+    });
   });
 });
