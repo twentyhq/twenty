@@ -52,19 +52,6 @@ export class FileStorageService {
     workspaceId: string;
     queryRunner?: QueryRunner;
   }): Promise<string> {
-    if (isDefined(queryRunner)) {
-      const application = await queryRunner.manager
-        .getRepository(ApplicationEntity)
-        .findOneOrFail({
-          where: {
-            universalIdentifier: applicationUniversalIdentifier,
-            workspaceId,
-          },
-        });
-
-      return application.id;
-    }
-
     const { flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatApplicationMaps',
@@ -81,7 +68,11 @@ export class FileStorageService {
       return activeApplicationId;
     }
 
-    const application = await this.applicationRepository.findOneOrFail({
+    const applicationRepository = isDefined(queryRunner)
+      ? queryRunner.manager.getRepository(ApplicationEntity)
+      : this.applicationRepository;
+
+    const application = await applicationRepository.findOneOrFail({
       where: {
         universalIdentifier: applicationUniversalIdentifier,
         workspaceId,

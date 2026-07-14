@@ -488,7 +488,46 @@ describe('FileStorageService', () => {
           expect(mockDriver.writeFile).not.toHaveBeenCalled();
         });
 
-        it('should read from the database and skip the cache when a queryRunner is provided', async () => {
+        it('should resolve from the cache without reading the queryRunner when the application is already committed', async () => {
+          const mockQueryRunnerApplicationRepository = {
+            findOneOrFail: jest.fn(),
+          };
+          const queryRunner = {
+            manager: {
+              getRepository: jest
+                .fn()
+                .mockReturnValue(mockQueryRunnerApplicationRepository),
+            },
+          };
+
+          mockFileRepository.withManager.mockReturnValue(mockFileRepository);
+
+          await service.writeFile({
+            ...validResourceIdentifier,
+            sourceFile: Buffer.from('valid content'),
+            settings: { isTemporaryFile: false, toDelete: false },
+            queryRunner: queryRunner as any,
+          });
+
+          expect(mockWorkspaceCacheService.getOrRecompute).toHaveBeenCalledWith(
+            'workspace-123',
+            ['flatApplicationMaps'],
+          );
+          expect(
+            mockQueryRunnerApplicationRepository.findOneOrFail,
+          ).not.toHaveBeenCalled();
+          expect(mockFileRepository.upsertAndReturnOne).toHaveBeenCalledWith(
+            'workspace-123',
+            expect.objectContaining({ applicationId: 'app-id' }),
+            ['path', 'workspaceId', 'applicationId'],
+          );
+        });
+
+        it('should read through the queryRunner on a cache miss to see the uncommitted application', async () => {
+          mockWorkspaceCacheService.getOrRecompute.mockResolvedValueOnce({
+            flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
+          });
+
           const mockQueryRunnerApplicationRepository = {
             findOneOrFail: jest
               .fn()
@@ -520,7 +559,7 @@ describe('FileStorageService', () => {
             },
           });
           expect(
-            mockWorkspaceCacheService.getOrRecompute,
+            mockApplicationRepository.findOneOrFail,
           ).not.toHaveBeenCalled();
           expect(mockFileRepository.upsertAndReturnOne).toHaveBeenCalledWith(
             'workspace-123',
