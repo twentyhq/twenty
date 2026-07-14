@@ -42,9 +42,9 @@ type ReverseSystemRelationFieldUpdate = {
   >;
 };
 
-@RegisteredWorkspaceCommand('2.21.0', 1783925900000)
+@RegisteredWorkspaceCommand('2.22.0', 1783925900000)
 @Command({
-  name: 'upgrade:2-21:reconcile-system-relation-field-universal-identifier',
+  name: 'upgrade:2-22:reconcile-system-relation-field-universal-identifier',
   description:
     'Reconcile the reverse morph fields of default relations (timelineActivity/attachment/noteTarget/taskTarget) with the engine convention: name-free deterministic universal identifier, isSystemSideEffect: true, and name-derived label/icon, so an object rename becomes a lossless update and standard fields match custom ones.',
 })
