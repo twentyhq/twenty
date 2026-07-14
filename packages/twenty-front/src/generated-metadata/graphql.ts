@@ -1784,14 +1784,6 @@ export type FieldConfiguration = {
   viewId?: Maybe<Scalars['String']['output']>;
 };
 
-export type FieldConnection = {
-  __typename?: 'FieldConnection';
-  /** Array of edges. */
-  edges: Array<FieldEdge>;
-  /** Paging information */
-  pageInfo: PageInfo;
-};
-
 /** Display mode for field configuration widgets */
 export enum FieldDisplayMode {
   CARD = 'CARD',
@@ -4338,8 +4330,6 @@ export type Query = {
   enterprisePortalSession?: Maybe<Scalars['String']['output']>;
   enterpriseSubscriptionStatus?: Maybe<EnterpriseSubscriptionStatusDto>;
   eventLogs: EventLogQueryResult;
-  field: Field;
-  fields: FieldConnection;
   findApplicationRegistrationByClientId?: Maybe<PublicApplicationRegistration>;
   findApplicationRegistrationByUniversalIdentifier?: Maybe<ApplicationRegistration>;
   findApplicationRegistrationStats: ApplicationRegistrationStats;
@@ -4513,17 +4503,6 @@ export type QueryEnterprisePortalSessionArgs = {
 
 export type QueryEventLogsArgs = {
   input: EventLogQueryInput;
-};
-
-
-export type QueryFieldArgs = {
-  id: Scalars['UUID']['input'];
-};
-
-
-export type QueryFieldsArgs = {
-  filter?: FieldFilter;
-  paging?: CursorPaging;
 };
 
 
