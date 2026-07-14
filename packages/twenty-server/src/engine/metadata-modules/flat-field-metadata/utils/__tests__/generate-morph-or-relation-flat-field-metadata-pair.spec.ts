@@ -359,7 +359,8 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
         targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
         targetFlatFieldMetadataType: FieldMetadataType.RELATION,
         sourceFlatObjectMetadataJoinColumnName: 'petId',
-        applicationUniversalIdentifier: MOCK_FLAT_APPLICATION.universalIdentifier,
+        applicationUniversalIdentifier:
+          MOCK_FLAT_APPLICATION.universalIdentifier,
         createFieldInput: {
           name: 'pets',
           label: 'Pets',

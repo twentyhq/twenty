@@ -1,4 +1,6 @@
+import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { findManyFieldsMetadataQueryFactory } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata-query-factory.util';
+import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findManyObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-query-factory.util';
@@ -25,6 +27,7 @@ describe('Custom object renaming', () => {
         objectMetadataId: '',
         foreignKeyFieldMetadataId: '',
         relationFieldMetadataId: '',
+        relationFieldMetadataUniversalIdentifier: '',
       },
     }),
     {},
@@ -47,6 +50,8 @@ describe('Custom object renaming', () => {
         name
         label
         type
+        universalIdentifier
+        isSystemSideEffect
         object {
           id
         }
@@ -132,10 +137,16 @@ describe('Custom object renaming', () => {
       const relationFieldMetadataId = relationFieldMetadata?.id;
 
       expect(relationFieldMetadataId).not.toBeUndefined();
+      // Engine-provisioned default relation fields are owned by the side-effect
+      // engine and must be flagged accordingly.
+      expect(relationFieldMetadata?.isSystemSideEffect).toBe(true);
 
       // @ts-expect-error legacy noImplicitAny
       standardObjectRelationsMap[relation].relationFieldMetadataId =
         relationFieldMetadataId;
+      // @ts-expect-error legacy noImplicitAny
+      standardObjectRelationsMap[relation].relationFieldMetadataUniversalIdentifier =
+        relationFieldMetadata?.universalIdentifier;
     });
   });
 
@@ -171,9 +182,69 @@ describe('Custom object renaming', () => {
     expect(data.updateOneObject.namePlural).toBe(HOUSE_NAME_PLURAL);
     expect(data.updateOneObject.labelSingular).toBe(HOUSE_LABEL_SINGULAR);
     expect(data.updateOneObject.labelPlural).toBe(HOUSE_LABEL_PLURAL);
+
+    // The reverse morph fields on the standard objects must be renamed in place
+    // (name follows the new object name) while keeping their universal
+    // identifier stable, so the rename stays lossless.
+    const expectedReverseFieldName = `target${capitalize(HOUSE_NAME_SINGULAR)}`;
+    const fields = await makeMetadataAPIRequest(fieldsGraphqlOperation);
+
+    STANDARD_OBJECT_RELATIONS.forEach((relation) => {
+      // @ts-expect-error legacy noImplicitAny
+      const relationEntry = standardObjectRelationsMap[relation];
+      const relationFieldMetadataId = relationEntry.relationFieldMetadataId;
+      const relationFieldMetadataUniversalIdentifier =
+        relationEntry.relationFieldMetadataUniversalIdentifier;
+
+      const renamedReverseField = fields.body.data.fields.edges
+        // @ts-expect-error legacy noImplicitAny
+        .map((field) => field.node)
+        // @ts-expect-error legacy noImplicitAny
+        .find((field) => field.id === relationFieldMetadataId);
+
+      expect(renamedReverseField).toBeDefined();
+      expect(renamedReverseField.name).toBe(expectedReverseFieldName);
+      expect(renamedReverseField.universalIdentifier).toBe(
+        relationFieldMetadataUniversalIdentifier,
+      );
+      expect(renamedReverseField.isSystemSideEffect).toBe(true);
+    });
   });
 
-  it('3. should delete custom object', async () => {
+  it('3. should reject direct deletion of a system side-effect relation field', async () => {
+    // @ts-expect-error legacy noImplicitAny
+    const timelineActivityRelation = standardObjectRelationsMap['timelineActivity'];
+    const relationFieldMetadataId =
+      timelineActivityRelation.relationFieldMetadataId;
+
+    const { errors } = await deleteOneFieldMetadata({
+      expectToFail: true,
+      input: { idToDelete: relationFieldMetadataId },
+    });
+
+    expect(errors).toBeDefined();
+    expect(errors.length).toBeGreaterThan(0);
+  });
+
+  it('4. should reject direct edition of a system side-effect relation field', async () => {
+    // @ts-expect-error legacy noImplicitAny
+    const timelineActivityRelation = standardObjectRelationsMap['timelineActivity'];
+    const relationFieldMetadataId =
+      timelineActivityRelation.relationFieldMetadataId;
+
+    const { errors } = await updateOneFieldMetadata({
+      expectToFail: true,
+      input: {
+        idToUpdate: relationFieldMetadataId,
+        updatePayload: { label: 'Should not be editable' },
+      },
+    });
+
+    expect(errors).toBeDefined();
+    expect(errors.length).toBeGreaterThan(0);
+  });
+
+  it('5. should delete custom object', async () => {
     await updateOneObjectMetadata({
       expectToFail: false,
       input: {

@@ -3,7 +3,10 @@ import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 
-import { getFieldUniversalIdentifier } from 'twenty-shared/application';
+import {
+  getFieldUniversalIdentifier,
+  getSystemRelationFieldUniversalIdentifier,
+} from 'twenty-shared/application';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
 const SYSTEM_FIELD_NAMES = [
@@ -31,6 +34,7 @@ type FetchedField = {
   id: string;
   name: string;
   universalIdentifier: string;
+  isSystemSideEffect: boolean;
   relation: {
     targetFieldMetadata: {
       id: string;
@@ -97,6 +101,7 @@ describe('Custom object creation deterministic field universal identifiers', () 
         id
         name
         universalIdentifier
+        isSystemSideEffect
         relation {
           targetFieldMetadata { id name universalIdentifier }
           targetObjectMetadata { id nameSingular universalIdentifier }
@@ -147,6 +152,7 @@ describe('Custom object creation deterministic field universal identifiers', () 
           name: forwardFieldName,
         }),
       );
+      expect(forwardField?.isSystemSideEffect).toBe(true);
 
       const standardRelationObject =
         forwardField?.relation?.targetObjectMetadata;
@@ -164,7 +170,7 @@ describe('Custom object creation deterministic field universal identifiers', () 
             filter: { objectMetadataId: { eq: standardRelationObject.id } },
             paging: { first: 1000 },
           },
-          gqlFields: 'id name universalIdentifier',
+          gqlFields: 'id name universalIdentifier isSystemSideEffect',
         },
       );
 
@@ -174,13 +180,17 @@ describe('Custom object creation deterministic field universal identifiers', () 
         .find((field: FetchedField) => field.name === storedReverseFieldName);
 
       expect(reverseField).toBeDefined();
+      // Reverse system relation fields use a name-free deterministic identifier
+      // (host + source object) so an object rename stays a lossless update.
       expect(reverseField?.universalIdentifier).toBe(
-        getFieldUniversalIdentifier({
+        getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier,
-          objectUniversalIdentifier: standardRelationObject.universalIdentifier,
-          name: storedReverseFieldName,
+          hostObjectUniversalIdentifier:
+            standardRelationObject.universalIdentifier,
+          sourceObjectUniversalIdentifier: objectUniversalIdentifier,
         }),
       );
+      expect(reverseField?.isSystemSideEffect).toBe(true);
     },
   );
 });

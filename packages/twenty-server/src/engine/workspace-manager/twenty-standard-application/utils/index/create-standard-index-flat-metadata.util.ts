@@ -16,6 +16,7 @@ import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/tw
 import { type AllStandardObjectIndexName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-index-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
+import { computeStandardFieldUniversalIdentifier } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/get-standard-system-relation-field-universal-identifier.util';
 import { type UniversalFlatIndexFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
 export type CreateStandardIndexOptions<O extends AllStandardObjectName> = {
@@ -79,9 +80,14 @@ export const createStandardIndexFlatMetadata = <
     flatEntityMaps: flatObjectMetadataMaps,
   });
 
-  const relatedFieldUniversalIdentifiers = relatedFieldNames.map(
-    (fieldName) =>
-      objectFields[fieldName as keyof typeof objectFields].universalIdentifier,
+  const relatedFieldUniversalIdentifiers = relatedFieldNames.map((fieldName) =>
+    computeStandardFieldUniversalIdentifier({
+      objectName,
+      fieldName: fieldName.toString(),
+      fallbackUniversalIdentifier:
+        objectFields[fieldName as keyof typeof objectFields]
+          .universalIdentifier,
+    }),
   );
   const flatFieldMetadatas =
     findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow({

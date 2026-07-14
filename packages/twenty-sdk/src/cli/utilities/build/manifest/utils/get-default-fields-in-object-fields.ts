@@ -1,7 +1,5 @@
-import { getDefaultRelationObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-relation-object-fields';
 import type { ObjectConfig } from '@/sdk/define/objects/object-config';
 import {
-  type FieldManifest,
   getFieldUniversalIdentifier,
   type ObjectFieldManifest,
 } from 'twenty-shared/application';
@@ -28,19 +26,17 @@ const getDefaultNameObjectField = ({
   }),
 });
 
+// Default relations to the standard relation objects (timelineActivity,
+// attachment, noteTarget, taskTarget) are provisioned by the server-side
+// metadata side-effect engine on object create, so the SDK manifest only
+// defaults the name field.
 export const getDefaultFieldsInObjectFields = ({
   objectConfig,
   applicationUniversalIdentifier,
 }: {
   objectConfig: ObjectConfig;
   applicationUniversalIdentifier: string;
-}): { objectFields: ObjectFieldManifest[]; fields: FieldManifest[] } => {
-  const { objectFields: defaultRelationObjectFields, fields: reverseFields } =
-    getDefaultRelationObjectFields({
-      objectConfig,
-      applicationUniversalIdentifier,
-    });
-
+}): { objectFields: ObjectFieldManifest[] } => {
   const objectConfigFieldNames = (objectConfig.fields ?? []).map(
     (field) => field.name,
   );
@@ -56,11 +52,5 @@ export const getDefaultFieldsInObjectFields = ({
     objectFieldsWithDefaults.push(defaultNameObjectField);
   }
 
-  for (const defaultRelationField of defaultRelationObjectFields) {
-    if (!objectConfigFieldNames.includes(defaultRelationField.name)) {
-      objectFieldsWithDefaults.push(defaultRelationField);
-    }
-  }
-
-  return { objectFields: objectFieldsWithDefaults, fields: reverseFields };
+  return { objectFields: objectFieldsWithDefaults };
 };

@@ -483,28 +483,17 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const resolvedOwnerFlatApplication =
       ownerFlatApplication ?? workspaceCustomFlatApplication;
 
-    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
-        },
-      );
-
-    const {
-      flatObjectMetadataToCreate,
-      flatFieldMetadataToCreateOnObject,
-      relationTargetFlatFieldMetadataToCreate,
-      flatIndexMetadataToCreate,
-    } = fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
-      createObjectInput,
-      flatApplication: resolvedOwnerFlatApplication,
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-    });
+    const { flatObjectMetadataToCreate, flatFieldMetadataToCreateOnObject } =
+      fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
+        createObjectInput,
+        flatApplication: resolvedOwnerFlatApplication,
+      });
 
     // Default view fields reference the caller-provided fields (reused as-is from
     // the transpiler output) plus the engine-owned reserved system fields, whose
     // deterministic identifiers we re-derive here (searchVector is never shown).
+    // Default relation fields (RELATION/MORPH_RELATION) are provisioned by the
+    // side-effect engine and are excluded from view fields anyway.
     // TODO: remove once default view fields move to the metadata side effect engine.
     const defaultFlatFieldMetadatasForViewFields: UniversalFlatFieldMetadata[] =
       [
@@ -597,15 +586,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               flatEntityToUpdate: [],
             },
             fieldMetadata: {
-              flatEntityToCreate: [
-                ...flatFieldMetadataToCreateOnObject,
-                ...relationTargetFlatFieldMetadataToCreate,
-              ],
+              flatEntityToCreate: [...flatFieldMetadataToCreateOnObject],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
             index: {
-              flatEntityToCreate: flatIndexMetadataToCreate,
+              flatEntityToCreate: [],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
