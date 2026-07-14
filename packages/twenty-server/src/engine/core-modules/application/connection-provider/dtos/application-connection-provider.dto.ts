@@ -1,7 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { IDField } from '@ptc-org/nestjs-query-graphql';
-
 import { type ConnectionProviderType } from 'twenty-shared/application';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -20,7 +18,7 @@ export class ApplicationConnectionProviderOAuthConfigDTO {
 
 @ObjectType('ApplicationConnectionProvider')
 export class ApplicationConnectionProviderDTO {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @Field()

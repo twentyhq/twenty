@@ -1,6 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Check,
   Column,
@@ -53,7 +51,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
   `"sourceType" <> 'npm' OR "sourcePackage" IS NOT NULL`,
 )
 export class ApplicationRegistrationEntity {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
