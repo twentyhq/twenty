@@ -1,5 +1,4 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
 import {
@@ -7,7 +6,6 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
@@ -30,10 +28,6 @@ describe('FileStorageService', () => {
     withManager: jest.fn(),
   };
 
-  const mockApplicationRepository = {
-    findOneOrFail: jest.fn(),
-  };
-
   const mockWorkspaceCacheService = {
     getOrRecompute: jest.fn(),
   };
@@ -49,10 +43,6 @@ describe('FileStorageService', () => {
         {
           provide: getWorkspaceScopedRepositoryToken(FileEntity),
           useValue: mockFileRepository,
-        },
-        {
-          provide: getRepositoryToken(ApplicationEntity),
-          useValue: mockApplicationRepository,
         },
         {
           provide: WorkspaceCacheService,
@@ -184,10 +174,6 @@ describe('FileStorageService', () => {
           },
           idByUniversalIdentifier: { 'app-456': 'app-id' },
         },
-      });
-      mockApplicationRepository.findOneOrFail.mockResolvedValue({
-        id: 'app-id',
-        universalIdentifier: 'app-456',
       });
       mockFileRepository.upsertAndReturnOne.mockResolvedValue({
         id: 'file-id',
@@ -431,9 +417,6 @@ describe('FileStorageService', () => {
             'workspace-123',
             ['flatApplicationMaps'],
           );
-          expect(
-            mockApplicationRepository.findOneOrFail,
-          ).not.toHaveBeenCalled();
           expect(mockFileRepository.upsertAndReturnOne).toHaveBeenCalledWith(
             'workspace-123',
             expect.objectContaining({ applicationId: 'app-id' }),
@@ -441,41 +424,10 @@ describe('FileStorageService', () => {
           );
         });
 
-        it('should fall back to a database read when the application is missing from the cache', async () => {
+        it('should throw FILE_NOT_FOUND when the application is missing from the cache and no queryRunner is provided', async () => {
           mockWorkspaceCacheService.getOrRecompute.mockResolvedValueOnce({
             flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
           });
-          mockApplicationRepository.findOneOrFail.mockResolvedValueOnce({
-            id: 'db-app-id',
-            universalIdentifier: 'app-456',
-          });
-
-          await service.writeFile({
-            ...validResourceIdentifier,
-            sourceFile: Buffer.from('valid content'),
-            settings: { isTemporaryFile: false, toDelete: false },
-          });
-
-          expect(mockApplicationRepository.findOneOrFail).toHaveBeenCalledWith({
-            where: {
-              universalIdentifier: 'app-456',
-              workspaceId: 'workspace-123',
-            },
-          });
-          expect(mockFileRepository.upsertAndReturnOne).toHaveBeenCalledWith(
-            'workspace-123',
-            expect.objectContaining({ applicationId: 'db-app-id' }),
-            ['path', 'workspaceId', 'applicationId'],
-          );
-        });
-
-        it('should throw when the application is in neither the cache nor the database', async () => {
-          mockWorkspaceCacheService.getOrRecompute.mockResolvedValueOnce({
-            flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
-          });
-          mockApplicationRepository.findOneOrFail.mockRejectedValueOnce(
-            new Error('EntityNotFound'),
-          );
 
           await expect(
             service.writeFile({
@@ -483,7 +435,9 @@ describe('FileStorageService', () => {
               sourceFile: Buffer.from('valid content'),
               settings: { isTemporaryFile: false, toDelete: false },
             }),
-          ).rejects.toThrow('EntityNotFound');
+          ).rejects.toMatchObject({
+            code: FileStorageExceptionCode.FILE_NOT_FOUND,
+          });
 
           expect(mockDriver.writeFile).not.toHaveBeenCalled();
         });
@@ -558,9 +512,6 @@ describe('FileStorageService', () => {
               workspaceId: 'workspace-123',
             },
           });
-          expect(
-            mockApplicationRepository.findOneOrFail,
-          ).not.toHaveBeenCalled();
           expect(mockFileRepository.upsertAndReturnOne).toHaveBeenCalledWith(
             'workspace-123',
             expect.objectContaining({ applicationId: 'uncommitted-app-id' }),
@@ -568,7 +519,7 @@ describe('FileStorageService', () => {
           );
         });
 
-        it('should not resolve a soft-deleted application from the cache and fall back to the database', async () => {
+        it('should not resolve a soft-deleted application from the cache', async () => {
           mockWorkspaceCacheService.getOrRecompute.mockResolvedValueOnce({
             flatApplicationMaps: {
               byId: {
@@ -581,9 +532,6 @@ describe('FileStorageService', () => {
               idByUniversalIdentifier: { 'app-456': 'app-id' },
             },
           });
-          mockApplicationRepository.findOneOrFail.mockRejectedValueOnce(
-            new Error('EntityNotFound'),
-          );
 
           await expect(
             service.writeFile({
@@ -591,14 +539,10 @@ describe('FileStorageService', () => {
               sourceFile: Buffer.from('valid content'),
               settings: { isTemporaryFile: false, toDelete: false },
             }),
-          ).rejects.toThrow('EntityNotFound');
-
-          expect(mockApplicationRepository.findOneOrFail).toHaveBeenCalledWith({
-            where: {
-              universalIdentifier: 'app-456',
-              workspaceId: 'workspace-123',
-            },
+          ).rejects.toMatchObject({
+            code: FileStorageExceptionCode.FILE_NOT_FOUND,
           });
+
           expect(mockDriver.writeFile).not.toHaveBeenCalled();
         });
 

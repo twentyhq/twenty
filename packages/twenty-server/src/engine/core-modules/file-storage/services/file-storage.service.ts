@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { basename, dirname, join } from 'path';
 import { type Readable } from 'stream';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Like, Repository, type QueryRunner } from 'typeorm';
+import { Like, type QueryRunner } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
@@ -38,8 +37,6 @@ export class FileStorageService {
     private readonly fileStorageDriverFactory: FileStorageDriverFactory,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -68,18 +65,23 @@ export class FileStorageService {
       return activeApplicationId;
     }
 
-    const applicationRepository = isDefined(queryRunner)
-      ? queryRunner.manager.getRepository(ApplicationEntity)
-      : this.applicationRepository;
+    if (isDefined(queryRunner)) {
+      const application = await queryRunner.manager
+        .getRepository(ApplicationEntity)
+        .findOneOrFail({
+          where: {
+            universalIdentifier: applicationUniversalIdentifier,
+            workspaceId,
+          },
+        });
 
-    const application = await applicationRepository.findOneOrFail({
-      where: {
-        universalIdentifier: applicationUniversalIdentifier,
-        workspaceId,
-      },
-    });
+      return application.id;
+    }
 
-    return application.id;
+    throw new FileStorageException(
+      `Application with universalIdentifier "${applicationUniversalIdentifier}" not found`,
+      FileStorageExceptionCode.FILE_NOT_FOUND,
+    );
   }
 
   private async resolveApplicationUniversalIdentifierOrThrow({
@@ -94,15 +96,14 @@ export class FileStorageService {
         'flatApplicationMaps',
       ]);
 
-    const cachedApplication = flatApplicationMaps.byId[applicationId];
+    const application = flatApplicationMaps.byId[applicationId];
 
-    if (isDefined(cachedApplication)) {
-      return cachedApplication.universalIdentifier;
+    if (!isDefined(application)) {
+      throw new FileStorageException(
+        `Application with id "${applicationId}" not found`,
+        FileStorageExceptionCode.FILE_NOT_FOUND,
+      );
     }
-
-    const application = await this.applicationRepository.findOneOrFail({
-      where: { id: applicationId, workspaceId },
-    });
 
     return application.universalIdentifier;
   }
