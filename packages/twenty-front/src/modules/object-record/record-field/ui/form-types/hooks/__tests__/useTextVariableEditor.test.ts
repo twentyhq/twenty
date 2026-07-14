@@ -82,6 +82,34 @@ describe('useTextVariableEditor', () => {
       teardown?.();
       expect(use({ readonly: false }).isEditable).toBe(true);
     });
+
+    it('should update editability when readonly changes', () => {
+      const { result, rerender, unmount } = renderHook(
+        ({ readonly }: { readonly: boolean }) =>
+          useTextVariableEditor({
+            placeholder: 'Enter text',
+            multiline: false,
+            readonly,
+            defaultValue: undefined,
+            onUpdate: jest.fn(),
+          }),
+        { initialProps: { readonly: false } },
+      );
+
+      if (!result.current) {
+        throw new Error('Editor not created');
+      }
+
+      expect(result.current.isEditable).toBe(true);
+
+      rerender({ readonly: true });
+      expect(result.current.isEditable).toBe(false);
+
+      rerender({ readonly: false });
+      expect(result.current.isEditable).toBe(true);
+
+      unmount();
+    });
   });
 
   describe('Enter key', () => {
