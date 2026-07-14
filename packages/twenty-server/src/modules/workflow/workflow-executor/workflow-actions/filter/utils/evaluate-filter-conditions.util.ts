@@ -67,6 +67,7 @@ function evaluateFilter(
     case 'ARRAY':
     case 'array':
     case 'RAW_JSON':
+    case 'RICH_TEXT':
       return evaluateTextAndArrayFilter(
         filterWithConvertedOperand,
         filter.type,

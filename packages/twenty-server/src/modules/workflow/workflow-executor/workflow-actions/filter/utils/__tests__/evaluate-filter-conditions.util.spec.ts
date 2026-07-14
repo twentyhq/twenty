@@ -900,6 +900,90 @@ describe('evaluateFilterConditions', () => {
       });
     });
 
+    describe('Rich text filter operands', () => {
+      it('should handle Contains operand on RICH_TEXT markdown', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.CONTAINS,
+          '# Hello World',
+          'World',
+          'RICH_TEXT',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.CONTAINS,
+          '# Hello',
+          'World',
+          'RICH_TEXT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+      });
+
+      it('should treat null-equivalent markdown as empty for IsEmpty', () => {
+        const emptyFilter = createFilter(
+          ViewFilterOperand.IS_EMPTY,
+          null,
+          undefined,
+          'RICH_TEXT',
+        );
+        const nonEmptyFilter = createFilter(
+          ViewFilterOperand.IS_EMPTY,
+          '# Notes',
+          undefined,
+          'RICH_TEXT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [emptyFilter] })).toBe(
+          true,
+        );
+        expect(evaluateFilterConditions({ filters: [nonEmptyFilter] })).toBe(
+          false,
+        );
+      });
+
+      it('should treat non-empty markdown as IsNotEmpty', () => {
+        const nonEmptyFilter = createFilter(
+          ViewFilterOperand.IS_NOT_EMPTY,
+          '# Notes',
+          undefined,
+          'RICH_TEXT',
+        );
+        const emptyFilter = createFilter(
+          ViewFilterOperand.IS_NOT_EMPTY,
+          null,
+          undefined,
+          'RICH_TEXT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [nonEmptyFilter] })).toBe(
+          true,
+        );
+        expect(evaluateFilterConditions({ filters: [emptyFilter] })).toBe(
+          false,
+        );
+      });
+
+      it('should use proper text equality for Is/IsNot instead of loose equality', () => {
+        const matching = createFilter(
+          ViewFilterOperand.IS,
+          '# Notes',
+          '# Notes',
+          'RICH_TEXT',
+        );
+        const notMatching = createFilter(
+          ViewFilterOperand.IS_NOT,
+          '# Notes',
+          '# Notes',
+          'RICH_TEXT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [matching] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [notMatching] })).toBe(
+          false,
+        );
+      });
+    });
+
     describe('empty operands', () => {
       it('should handle IsEmpty operand correctly', () => {
         const filter1 = createFilter(
