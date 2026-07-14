@@ -406,7 +406,7 @@ describe('FileStorageService', () => {
       });
 
       describe('applicationId resolution', () => {
-        it('should resolve applicationId from the workspace cache without querying the database', async () => {
+        it('should resolve applicationId from the workspace cache by universalIdentifier', async () => {
           await service.writeFile({
             ...validResourceIdentifier,
             sourceFile: Buffer.from('valid content'),
@@ -424,7 +424,7 @@ describe('FileStorageService', () => {
           );
         });
 
-        it('should throw FILE_NOT_FOUND when the application is missing from the cache and no queryRunner is provided', async () => {
+        it('should throw FILE_NOT_FOUND when the application is not in the cache', async () => {
           mockWorkspaceCacheService.getOrRecompute.mockResolvedValueOnce({
             flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
           });
@@ -442,138 +442,46 @@ describe('FileStorageService', () => {
           expect(mockDriver.writeFile).not.toHaveBeenCalled();
         });
 
-        it('should resolve from the cache without reading the queryRunner when the application is already committed', async () => {
-          const mockQueryRunnerApplicationRepository = {
-            findOneOrFail: jest.fn(),
-          };
-          const queryRunner = {
-            manager: {
-              getRepository: jest
-                .fn()
-                .mockReturnValue(mockQueryRunnerApplicationRepository),
-            },
-          };
-
-          mockFileRepository.withManager.mockReturnValue(mockFileRepository);
-
+        it('should use the passed applicationId without consulting the cache', async () => {
           await service.writeFile({
             ...validResourceIdentifier,
+            applicationId: 'passed-app-id',
             sourceFile: Buffer.from('valid content'),
             settings: { isTemporaryFile: false, toDelete: false },
-            queryRunner: queryRunner as any,
           });
 
-          expect(mockWorkspaceCacheService.getOrRecompute).toHaveBeenCalledWith(
-            'workspace-123',
-            ['flatApplicationMaps'],
-          );
           expect(
-            mockQueryRunnerApplicationRepository.findOneOrFail,
+            mockWorkspaceCacheService.getOrRecompute,
           ).not.toHaveBeenCalled();
           expect(mockFileRepository.upsertAndReturnOne).toHaveBeenCalledWith(
             'workspace-123',
-            expect.objectContaining({ applicationId: 'app-id' }),
+            expect.objectContaining({ applicationId: 'passed-app-id' }),
             ['path', 'workspaceId', 'applicationId'],
           );
         });
 
-        it('should read through the queryRunner on a cache miss to see the uncommitted application', async () => {
-          mockWorkspaceCacheService.getOrRecompute.mockResolvedValueOnce({
-            flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
-          });
-
-          const mockQueryRunnerApplicationRepository = {
-            findOneOrFail: jest
-              .fn()
-              .mockResolvedValue({ id: 'uncommitted-app-id' }),
-          };
-          const queryRunner = {
-            manager: {
-              getRepository: jest
-                .fn()
-                .mockReturnValue(mockQueryRunnerApplicationRepository),
-            },
-          };
+        it('should use the queryRunner only for the file write, not for resolving the application', async () => {
+          const queryRunner = { manager: {} };
 
           mockFileRepository.withManager.mockReturnValue(mockFileRepository);
 
           await service.writeFile({
             ...validResourceIdentifier,
+            applicationId: 'passed-app-id',
             sourceFile: Buffer.from('valid content'),
             settings: { isTemporaryFile: false, toDelete: false },
             queryRunner: queryRunner as any,
           });
 
-          expect(
-            mockQueryRunnerApplicationRepository.findOneOrFail,
-          ).toHaveBeenCalledWith({
-            where: {
-              universalIdentifier: 'app-456',
-              workspaceId: 'workspace-123',
-            },
-          });
-          expect(mockFileRepository.upsertAndReturnOne).toHaveBeenCalledWith(
-            'workspace-123',
-            expect.objectContaining({ applicationId: 'uncommitted-app-id' }),
-            ['path', 'workspaceId', 'applicationId'],
+          expect(mockFileRepository.withManager).toHaveBeenCalledWith(
+            queryRunner.manager,
           );
-        });
-
-        it('should not resolve a soft-deleted application from the cache', async () => {
-          mockWorkspaceCacheService.getOrRecompute.mockResolvedValueOnce({
-            flatApplicationMaps: {
-              byId: {
-                'app-id': {
-                  id: 'app-id',
-                  universalIdentifier: 'app-456',
-                  deletedAt: new Date(),
-                },
-              },
-              idByUniversalIdentifier: { 'app-456': 'app-id' },
-            },
-          });
-
-          await expect(
-            service.writeFile({
-              ...validResourceIdentifier,
-              sourceFile: Buffer.from('valid content'),
-              settings: { isTemporaryFile: false, toDelete: false },
-            }),
-          ).rejects.toMatchObject({
-            code: FileStorageExceptionCode.FILE_NOT_FOUND,
-          });
-
-          expect(mockDriver.writeFile).not.toHaveBeenCalled();
-        });
-
-        it('should resolve the active application when a soft-deleted one reuses the universalIdentifier', async () => {
-          mockWorkspaceCacheService.getOrRecompute.mockResolvedValueOnce({
-            flatApplicationMaps: {
-              byId: {
-                'deleted-app-id': {
-                  id: 'deleted-app-id',
-                  universalIdentifier: 'app-456',
-                  deletedAt: new Date(),
-                },
-                'app-id': {
-                  id: 'app-id',
-                  universalIdentifier: 'app-456',
-                  deletedAt: null,
-                },
-              },
-              idByUniversalIdentifier: { 'app-456': 'deleted-app-id' },
-            },
-          });
-
-          await service.writeFile({
-            ...validResourceIdentifier,
-            sourceFile: Buffer.from('valid content'),
-            settings: { isTemporaryFile: false, toDelete: false },
-          });
-
+          expect(
+            mockWorkspaceCacheService.getOrRecompute,
+          ).not.toHaveBeenCalled();
           expect(mockFileRepository.upsertAndReturnOne).toHaveBeenCalledWith(
             'workspace-123',
-            expect.objectContaining({ applicationId: 'app-id' }),
+            expect.objectContaining({ applicationId: 'passed-app-id' }),
             ['path', 'workspaceId', 'applicationId'],
           );
         });

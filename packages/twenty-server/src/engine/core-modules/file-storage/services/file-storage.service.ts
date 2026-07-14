@@ -7,7 +7,6 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Like, type QueryRunner } from 'typeorm';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import {
   FileStorageException,
@@ -43,45 +42,28 @@ export class FileStorageService {
   private async resolveApplicationIdOrThrow({
     applicationUniversalIdentifier,
     workspaceId,
-    queryRunner,
   }: {
     applicationUniversalIdentifier: string;
     workspaceId: string;
-    queryRunner?: QueryRunner;
   }): Promise<string> {
     const { flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatApplicationMaps',
       ]);
 
-    const activeApplicationId = Object.values(flatApplicationMaps.byId).find(
-      (application) =>
-        isDefined(application) &&
-        application.universalIdentifier === applicationUniversalIdentifier &&
-        !isDefined(application.deletedAt),
-    )?.id;
+    const applicationId =
+      flatApplicationMaps.idByUniversalIdentifier[
+        applicationUniversalIdentifier
+      ];
 
-    if (isDefined(activeApplicationId)) {
-      return activeApplicationId;
+    if (!isDefined(applicationId)) {
+      throw new FileStorageException(
+        `Application with universalIdentifier "${applicationUniversalIdentifier}" not found`,
+        FileStorageExceptionCode.FILE_NOT_FOUND,
+      );
     }
 
-    if (isDefined(queryRunner)) {
-      const application = await queryRunner.manager
-        .getRepository(ApplicationEntity)
-        .findOneOrFail({
-          where: {
-            universalIdentifier: applicationUniversalIdentifier,
-            workspaceId,
-          },
-        });
-
-      return application.id;
-    }
-
-    throw new FileStorageException(
-      `Application with universalIdentifier "${applicationUniversalIdentifier}" not found`,
-      FileStorageExceptionCode.FILE_NOT_FOUND,
-    );
+    return applicationId;
   }
 
   private async resolveApplicationUniversalIdentifierOrThrow({
@@ -192,6 +174,7 @@ export class FileStorageService {
     sourceFile,
     fileFolder,
     applicationUniversalIdentifier,
+    applicationId,
     workspaceId,
     resourcePath,
     fileId,
@@ -199,6 +182,7 @@ export class FileStorageService {
     queryRunner,
   }: ResourceIdentifier & {
     sourceFile: string | Buffer | Uint8Array;
+    applicationId?: string;
     fileId?: string;
     settings: FileSettings;
     queryRunner?: QueryRunner;
@@ -209,11 +193,12 @@ export class FileStorageService {
       ? this.fileRepository.withManager(queryRunner.manager)
       : this.fileRepository;
 
-    const applicationId = await this.resolveApplicationIdOrThrow({
-      applicationUniversalIdentifier,
-      workspaceId,
-      queryRunner,
-    });
+    const resolvedApplicationId =
+      applicationId ??
+      (await this.resolveApplicationIdOrThrow({
+        applicationUniversalIdentifier,
+        workspaceId,
+      }));
 
     const { onStorageFilePath, filePath } =
       this.validateAndBuildFileStoragePathOrThrow({
@@ -239,7 +224,7 @@ export class FileStorageService {
       workspaceId,
       {
         path: filePath,
-        applicationId,
+        applicationId: resolvedApplicationId,
         id: fileId,
         mimeType,
         size:
