@@ -9,7 +9,7 @@ import {
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
-import { Not, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
@@ -101,6 +101,8 @@ export class BillingPortalWorkspaceService {
         successUrlPath,
       });
 
+    await this.assertNoActiveWorkspaceSubscription(workspace.id);
+
     if (
       isNonEmptyArray(customer?.billingSubscriptions) &&
       customer.billingSubscriptions.some(
@@ -131,6 +133,29 @@ export class BillingPortalWorkspaceService {
     );
 
     return successUrl;
+  }
+
+  private async assertNoActiveWorkspaceSubscription(
+    workspaceId: string,
+  ): Promise<void> {
+    const activeWorkspaceSubscription =
+      await this.billingSubscriptionRepository.findOne({
+        where: {
+          workspaceId,
+          status: In([
+            SubscriptionStatus.Trialing,
+            SubscriptionStatus.Active,
+            SubscriptionStatus.PastDue,
+          ]),
+        },
+      });
+
+    if (isDefined(activeWorkspaceSubscription)) {
+      throw new BillingException(
+        `Workspace ${workspaceId} already has an active billing subscription`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
+      );
+    }
   }
 
   private async prepareSubscriptionParameters({
