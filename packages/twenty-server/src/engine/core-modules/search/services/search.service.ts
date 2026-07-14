@@ -603,12 +603,16 @@ export class SearchService {
       : undefined;
 
     if (isDefined(imageIdentifierCompositeType)) {
-      return imageIdentifierCompositeType.properties.map((compositeProperty) =>
-        computeCompositeColumnName(
-          imageIdentifierField.name,
-          compositeProperty,
-        ),
-      );
+      return imageIdentifierCompositeType.properties
+        .filter(
+          (compositeProperty) => compositeProperty.name === 'primaryLinkUrl',
+        )
+        .map((compositeProperty) =>
+          computeCompositeColumnName(
+            imageIdentifierField.name,
+            compositeProperty,
+          ),
+        );
     }
 
     return [imageIdentifierField.name];
