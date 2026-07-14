@@ -698,15 +698,7 @@ export class SearchService {
           : '';
       }
       default: {
-        const rawImageValue = record[imageIdentifierField.name];
-
-        return isNonEmptyString(rawImageValue)
-          ? this.getImageUrlWithToken(
-              rawImageValue,
-              FileFolder.FilesField,
-              workspaceId,
-            )
-          : '';
+        return '';
       }
     }
   }
