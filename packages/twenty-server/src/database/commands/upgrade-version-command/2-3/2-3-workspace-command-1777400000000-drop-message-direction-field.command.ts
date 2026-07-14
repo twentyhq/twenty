@@ -72,7 +72,7 @@ export class DropMessageDirectionFieldCommand extends ActiveOrSuspendedWorkspace
       );
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {

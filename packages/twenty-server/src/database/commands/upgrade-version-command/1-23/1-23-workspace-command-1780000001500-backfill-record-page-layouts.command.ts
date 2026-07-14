@@ -182,7 +182,7 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
     );
 
     const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             viewField: {
@@ -400,7 +400,7 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
     );
 
     const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             pageLayout: {
@@ -544,7 +544,7 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
     }
 
     const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             pageLayout: {

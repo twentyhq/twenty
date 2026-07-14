@@ -19,7 +19,10 @@ import {
   IdByUniversalIdentifierByMetadataName,
 } from 'src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util';
 import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-build-orchestrator.service';
-import { WorkspaceMigrationFlatEntityMapsService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-flat-entity-maps.service';
+import {
+  FlatEntityMapsBundle,
+  WorkspaceMigrationFlatEntityMapsService,
+} from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-flat-entity-maps.service';
 import {
   WorkspaceMigrationOrchestratorBuildArgs,
   WorkspaceMigrationOrchestratorFailedResult,
@@ -42,6 +45,14 @@ type ValidateBuildAndRunWorkspaceMigrationFromRecordArgs = {
   applicationUniversalIdentifier: string;
   dryRun?: boolean;
 };
+
+type ComputeAndRunWorkspaceMigrationFromResolvedOperationsArgs = {
+  workspaceId: string;
+  allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
+  isSystemBuild: boolean;
+  applicationUniversalIdentifier: string;
+  dryRun?: boolean;
+} & FlatEntityMapsBundle;
 
 @Injectable()
 export class WorkspaceMigrationValidateBuildAndRunService {
@@ -226,6 +237,103 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       return sideEffectExpansionResult;
     }
 
+    return await this.computeAndRunWorkspaceMigrationFromResolvedOperations({
+      allFlatEntityOperationRecordByMetadataName:
+        sideEffectExpansionResult.allFlatEntityOperationRecordByMetadataName,
+      workspaceId,
+      isSystemBuild,
+      applicationUniversalIdentifier,
+      dryRun,
+      flatApplicationMaps,
+      allRelatedFlatEntityMaps,
+      allMetadataNameCacheToCompute,
+    });
+  }
+
+  // Legacy path for upgrade commands authored before the metadata side-effect
+  // engine landed in v2.19. These commands declare their operation matrix
+  // literally and must not flow through expandWithSideEffects, which would
+  // inject engine-owned companions and collide on reserved identifiers.
+  // See packages/twenty-server/docs/UPGRADE_COMMANDS.md.
+  public async validateBuildAndRunLegacyWorkspaceMigration({
+    allFlatEntityOperationByMetadataName,
+    workspaceId,
+    isSystemBuild = false,
+    applicationUniversalIdentifier,
+    dryRun,
+  }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
+    | WorkspaceMigrationOrchestratorFailedResult
+    | (WorkspaceMigrationOrchestratorSuccessfulResult & {
+        hasSchemaMetadataChanged: boolean;
+      })
+  > {
+    return await this.validateBuildAndRunLegacyWorkspaceMigrationFromRecord({
+      allFlatEntityOperationRecordByMetadataName:
+        transpileFlatEntityOperationArrayToRecord(
+          allFlatEntityOperationByMetadataName,
+        ),
+      workspaceId,
+      isSystemBuild,
+      applicationUniversalIdentifier,
+      dryRun,
+    });
+  }
+
+  public async validateBuildAndRunLegacyWorkspaceMigrationFromRecord({
+    allFlatEntityOperationRecordByMetadataName,
+    workspaceId,
+    isSystemBuild = false,
+    applicationUniversalIdentifier,
+    dryRun,
+  }: ValidateBuildAndRunWorkspaceMigrationFromRecordArgs): Promise<
+    | WorkspaceMigrationOrchestratorFailedResult
+    | (WorkspaceMigrationOrchestratorSuccessfulResult & {
+        hasSchemaMetadataChanged: boolean;
+      })
+  > {
+    const callerMetadataNames = Object.keys(
+      allFlatEntityOperationRecordByMetadataName,
+    ) as AllMetadataName[];
+
+    const {
+      flatApplicationMaps,
+      allRelatedFlatEntityMaps,
+      allMetadataNameCacheToCompute,
+    } =
+      await this.workspaceMigrationFlatEntityMapsService.getOrRecomputeAllRelatedFlatEntityMaps(
+        {
+          workspaceId,
+          callerMetadataNames,
+        },
+      );
+
+    return await this.computeAndRunWorkspaceMigrationFromResolvedOperations({
+      allFlatEntityOperationRecordByMetadataName,
+      workspaceId,
+      isSystemBuild,
+      applicationUniversalIdentifier,
+      dryRun,
+      flatApplicationMaps,
+      allRelatedFlatEntityMaps,
+      allMetadataNameCacheToCompute,
+    });
+  }
+
+  private async computeAndRunWorkspaceMigrationFromResolvedOperations({
+    allFlatEntityOperationRecordByMetadataName,
+    workspaceId,
+    isSystemBuild,
+    applicationUniversalIdentifier,
+    dryRun,
+    flatApplicationMaps,
+    allRelatedFlatEntityMaps,
+    allMetadataNameCacheToCompute,
+  }: ComputeAndRunWorkspaceMigrationFromResolvedOperationsArgs): Promise<
+    | WorkspaceMigrationOrchestratorFailedResult
+    | (WorkspaceMigrationOrchestratorSuccessfulResult & {
+        hasSchemaMetadataChanged: boolean;
+      })
+  > {
     const {
       fromToAllFlatEntityMaps,
       inferDeletionFromMissingEntities,
@@ -235,8 +343,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     } =
       this.workspaceMigrationFlatEntityMapsService.computeFromToAllFlatEntityMapsAndBuildOptions(
         {
-          allFlatEntityOperationRecordByMetadataName:
-            sideEffectExpansionResult.allFlatEntityOperationRecordByMetadataName,
+          allFlatEntityOperationRecordByMetadataName,
           applicationUniversalIdentifier,
           flatApplicationMaps,
           allRelatedFlatEntityMaps,

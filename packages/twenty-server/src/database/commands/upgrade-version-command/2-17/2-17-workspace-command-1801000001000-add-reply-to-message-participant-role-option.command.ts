@@ -64,7 +64,7 @@ export class AddReplyToMessageParticipantRoleOptionCommand extends ActiveOrSuspe
       );
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           isSystemBuild: true,
           workspaceId,

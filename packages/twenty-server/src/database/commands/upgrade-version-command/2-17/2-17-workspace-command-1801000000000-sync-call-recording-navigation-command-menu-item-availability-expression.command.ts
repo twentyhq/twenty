@@ -71,7 +71,7 @@ export class SyncCallRecordingNavigationCommandMenuItemAvailabilityExpressionCom
       );
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           isSystemBuild: true,
           workspaceId,

@@ -116,7 +116,7 @@ export class AddWorkspaceMemberJobTitleFieldCommand extends ActiveOrSuspendedWor
     };
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {

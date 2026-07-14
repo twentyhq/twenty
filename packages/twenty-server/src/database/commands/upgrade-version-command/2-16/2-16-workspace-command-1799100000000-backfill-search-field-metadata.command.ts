@@ -114,7 +114,7 @@ export class BackfillSearchFieldMetadataCommand extends ActiveOrSuspendedWorkspa
       }
 
       const validateAndBuildResult =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
             isSystemBuild: true,
             allFlatEntityOperationByMetadataName: {

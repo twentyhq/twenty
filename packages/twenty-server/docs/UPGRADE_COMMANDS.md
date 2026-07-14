@@ -106,6 +106,22 @@ export class BackfillStandardSkillsCommand
 
 The base class `ActiveOrSuspendedWorkspaceCommandRunner` handles workspace iteration and provides `--dry-run`, `--verbose`, and workspace filter options automatically.
 
+### Applying a migration matrix: side-effect vs legacy path
+
+Commands that build a metadata migration go through `WorkspaceMigrationValidateBuildAndRunService`. Two entry points exist:
+
+- `validateBuildAndRunWorkspaceMigration` (default): runs the operation matrix through the metadata side-effect engine (`expandWithSideEffects`) before building. The engine injects and cascades engine-owned companions (system fields and relations, the `searchVector` field and its GIN index, `searchFieldMetadata` rows, unique backing indexes). This is what the live API and application manifests rely on, so new commands should use it.
+- `validateBuildAndRunLegacyWorkspaceMigration`: skips side-effect expansion and applies the matrix literally, exactly as it was authored.
+
+The side-effect engine landed in v2.19. Commands authored before then declared their companions explicitly and were never designed to flow through the engine. Running them through it retroactively changes their behavior: it can hard-fail on reserved-identifier collisions (`RESERVED_SYSTEM_UNIVERSAL_IDENTIFIER`) and silently create rows the command never intended (for example, the deterministic `searchFieldMetadata` rows that the standalone `upgrade:2-16:backfill-search-field-metadata` backfill then re-inserts, hitting `IDX_SEARCH_FIELD_METADATA_OBJECT_FIELD_UNIQUE`).
+
+Rule of thumb:
+
+- Target version **< 2.19** → use the **legacy** method.
+- Target version **>= 2.19** → use the default side-effect method.
+
+The one exception is `upgrade:2-10:sync-call-recording-standard-objects`, which stays on the side-effect path even though it predates the engine: it derives its create-set from the live standard definition, which no longer declares the now engine-owned `searchVector` GIN index and system relations, so it genuinely depends on the engine to produce them.
+
 ## Execution Order
 
 Within a given version of Twenty, the upgrade pipeline runs commands in this order, sorted by timestamp within each group:
