@@ -250,11 +250,13 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     });
   }
 
-  // Legacy path for upgrade commands authored before the metadata side-effect
-  // engine landed in v2.19. These commands declare their operation matrix
-  // literally and must not flow through expandWithSideEffects, which would
-  // inject engine-owned companions and collide on reserved identifiers.
-  // See packages/twenty-server/docs/UPGRADE_COMMANDS.md.
+  /**
+   * @deprecated Legacy path for upgrade commands authored before the metadata
+   * side-effect engine landed in v2.19. These commands declare their operation
+   * matrix literally and must not flow through expandWithSideEffects, which
+   * would inject engine-owned companions and collide on reserved identifiers.
+   * See packages/twenty-server/docs/UPGRADE_COMMANDS.md.
+   */
   public async validateBuildAndRunLegacyWorkspaceMigration({
     allFlatEntityOperationByMetadataName,
     workspaceId,
@@ -267,30 +269,11 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         hasSchemaMetadataChanged: boolean;
       })
   > {
-    return await this.validateBuildAndRunLegacyWorkspaceMigrationFromRecord({
-      allFlatEntityOperationRecordByMetadataName:
-        transpileFlatEntityOperationArrayToRecord(
-          allFlatEntityOperationByMetadataName,
-        ),
-      workspaceId,
-      isSystemBuild,
-      applicationUniversalIdentifier,
-      dryRun,
-    });
-  }
+    const allFlatEntityOperationRecordByMetadataName =
+      transpileFlatEntityOperationArrayToRecord(
+        allFlatEntityOperationByMetadataName,
+      );
 
-  public async validateBuildAndRunLegacyWorkspaceMigrationFromRecord({
-    allFlatEntityOperationRecordByMetadataName,
-    workspaceId,
-    isSystemBuild = false,
-    applicationUniversalIdentifier,
-    dryRun,
-  }: ValidateBuildAndRunWorkspaceMigrationFromRecordArgs): Promise<
-    | WorkspaceMigrationOrchestratorFailedResult
-    | (WorkspaceMigrationOrchestratorSuccessfulResult & {
-        hasSchemaMetadataChanged: boolean;
-      })
-  > {
     const callerMetadataNames = Object.keys(
       allFlatEntityOperationRecordByMetadataName,
     ) as AllMetadataName[];
