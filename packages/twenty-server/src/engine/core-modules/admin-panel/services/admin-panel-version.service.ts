@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import semver from 'semver';
 import * as z from 'zod';
@@ -9,6 +9,8 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 @Injectable()
 export class AdminPanelVersionService {
+  private readonly logger = new Logger(AdminPanelVersionService.name);
+
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly secureHttpClientService: SecureHttpClientService,
@@ -43,7 +45,8 @@ export class AdminPanelVersionService {
       const latestVersion = versions[0];
 
       return { currentVersion, latestVersion };
-    } catch {
+    } catch (error: any) {
+      this.logger.warn(`Failed to fetch latest version from DockerHub: ${error?.message || error}`);
       return { currentVersion, latestVersion: null };
     }
   }
