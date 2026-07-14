@@ -34,7 +34,9 @@ export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
   };
 
 export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
+  objectNameCategory,
   objectNameSingular,
+  layoutVersion,
   filter,
   orderBy,
   skip,
@@ -47,6 +49,8 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   withSoftDeleted = false,
 }: UseFindManyRecordsParams<T>) => {
   const { objectMetadataItem } = useObjectMetadataItem({
+    layoutVersion,
+    objectNameCategory,
     objectNameSingular,
   });
   const apolloCoreClient = useApolloCoreClient();

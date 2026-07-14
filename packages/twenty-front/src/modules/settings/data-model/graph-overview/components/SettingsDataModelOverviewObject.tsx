@@ -19,7 +19,9 @@ import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsDataModelOverviewObjectNode = Node<
-  EnrichedObjectMetadataItem,
+  EnrichedObjectMetadataItem & {
+    layoutVersion?: number;
+  },
   'object'
 >;
 type SettingsDataModelOverviewObjectProps =
@@ -111,6 +113,8 @@ export const SettingsDataModelOverviewObject = ({
   const [otherFieldsExpanded, setOtherFieldsExpanded] = useState(false);
 
   const { totalCount } = useFindManyRecords({
+    layoutVersion: objectMetadataItem.layoutVersion,
+    objectNameCategory: objectMetadataItem.isCustom ? 'custom' : 'standard',
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 

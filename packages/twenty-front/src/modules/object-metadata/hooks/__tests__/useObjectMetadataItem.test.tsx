@@ -38,4 +38,31 @@ describe('useObjectMetadataItem', () => {
       ),
     ).toThrow(ObjectMetadataItemNotFoundError);
   });
+
+  it('should expose metadata diagnostics on missing object errors', () => {
+    const error = new ObjectMetadataItemNotFoundError(
+      'invalid-object',
+      [],
+      {
+        layoutVersion: 7,
+        metadataCollectionHash: 'metadata-hash',
+        metadataLoadedVersion: 3,
+        metadataStoreStatus: 'draft-pending',
+        objectCount: 32,
+        objectNameCategory: 'custom',
+      },
+    );
+
+    expect(error).toMatchObject({
+      context: {
+        layoutVersion: 7,
+        metadataCollectionHash: 'metadata-hash',
+        metadataLoadedVersion: 3,
+        metadataStoreStatus: 'draft-pending',
+        objectCount: 32,
+        objectNameCategory: 'custom',
+      },
+      objectName: 'invalid-object',
+    });
+  });
 });

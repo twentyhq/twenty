@@ -1,5 +1,5 @@
 import { type Edge, type Node } from '@xyflow/react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,8 +17,12 @@ export const SettingsDataModelOverviewEffect = ({
 }: SettingsDataModelOverviewEffectProps) => {
   const { activeNonSystemObjectMetadataItems: items } =
     useFilteredObjectMetadataItems();
+  const latestLayoutVersionRef = useRef(0);
 
   useEffect(() => {
+    latestLayoutVersionRef.current += 1;
+    const layoutVersion = latestLayoutVersionRef.current;
+
     const loadDagreAndLayout = async () => {
       const dagre = await import('@dagrejs/dagre');
 
@@ -35,7 +39,10 @@ export const SettingsDataModelOverviewEffect = ({
           width: 220,
           height: 100,
           position: { x: i * 300, y: 0 },
-          data: object,
+          data: {
+            ...object,
+            layoutVersion,
+          },
           type: 'object',
         });
         g.setNode(object.namePlural, { width: 220, height: 100 });
