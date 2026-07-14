@@ -46,6 +46,31 @@ const FIND_INSTALLED_WORKSPACES = gql`
   }
 `;
 
+const FIND_ALL_REGISTRATIONS = gql`
+  query FindAllApplicationRegistrations(
+    $limit: Int
+    $offset: Int
+    $searchTerm: String
+    $isPreInstalledOnly: Boolean
+  ) {
+    findAllApplicationRegistrations(
+      limit: $limit
+      offset: $offset
+      searchTerm: $searchTerm
+      isPreInstalledOnly: $isPreInstalledOnly
+    ) {
+      totalCount
+      hasMore
+      registrations {
+        id
+        name
+      }
+    }
+  }
+`;
+
+const REGISTRATION_NAME = 'admin-panel-stats-integration-test-registration';
+
 type SeededApplication = {
   id: string;
   workspaceId: string;
@@ -101,7 +126,7 @@ describe('Admin panel application registration stats and installed workspaces (i
       [
         applicationRegistrationId,
         randomUUID(),
-        'admin-panel-stats-integration-test-registration',
+        REGISTRATION_NAME,
         randomUUID(),
         [],
         [],
@@ -187,7 +212,7 @@ describe('Admin panel application registration stats and installed workspaces (i
     it('returns installed workspaces ordered by display name with totalCount and hasMore', async () => {
       const response = await makeAdminPanelAPIRequest({
         query: FIND_INSTALLED_WORKSPACES,
-        variables: { input: { id: applicationRegistrationId, page: 1 } },
+        variables: { input: { id: applicationRegistrationId, offset: 0 } },
       });
 
       expect(response.body.errors).toBeUndefined();
@@ -219,7 +244,7 @@ describe('Admin panel application registration stats and installed workspaces (i
         variables: {
           input: {
             id: applicationRegistrationId,
-            page: 1,
+            offset: 0,
             searchTerm: APPLE_WORKSPACE_DISPLAY_NAME,
           },
         },
@@ -244,7 +269,7 @@ describe('Admin panel application registration stats and installed workspaces (i
         variables: {
           input: {
             id: applicationRegistrationId,
-            page: 1,
+            offset: 0,
             searchTerm: '1.0.0',
           },
         },
@@ -266,13 +291,60 @@ describe('Admin panel application registration stats and installed workspaces (i
     it('rejects a caller without the SECURITY permission flag', async () => {
       const response = await makeAdminPanelAPIRequestWithGuestRole({
         query: FIND_INSTALLED_WORKSPACES,
-        variables: { input: { id: applicationRegistrationId, page: 1 } },
+        variables: { input: { id: applicationRegistrationId, offset: 0 } },
       });
 
       expect(response.body.errors).toBeDefined();
       expect(
         response.body.data?.findAdminApplicationRegistrationInstalledWorkspaces,
       ).toBeFalsy();
+    });
+  });
+
+  describe('findAllApplicationRegistrations', () => {
+    it('filters registrations by name via searchTerm', async () => {
+      const response = await makeAdminPanelAPIRequest({
+        query: FIND_ALL_REGISTRATIONS,
+        variables: { limit: 25, offset: 0, searchTerm: REGISTRATION_NAME },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+
+      const result = response.body.data?.findAllApplicationRegistrations;
+
+      expect(result.totalCount).toBe(1);
+      expect(result.hasMore).toBe(false);
+      expect(result.registrations).toHaveLength(1);
+      expect(result.registrations[0].id).toBe(applicationRegistrationId);
+      expect(result.registrations[0].name).toBe(REGISTRATION_NAME);
+    });
+
+    it('returns no registrations when searchTerm matches nothing', async () => {
+      const response = await makeAdminPanelAPIRequest({
+        query: FIND_ALL_REGISTRATIONS,
+        variables: {
+          limit: 25,
+          offset: 0,
+          searchTerm: 'no-registration-matches-this-search-term',
+        },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+
+      const result = response.body.data?.findAllApplicationRegistrations;
+
+      expect(result.totalCount).toBe(0);
+      expect(result.registrations).toHaveLength(0);
+    });
+
+    it('rejects a caller without the SECURITY permission flag', async () => {
+      const response = await makeAdminPanelAPIRequestWithGuestRole({
+        query: FIND_ALL_REGISTRATIONS,
+        variables: { limit: 25, offset: 0 },
+      });
+
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.data?.findAllApplicationRegistrations).toBeFalsy();
     });
   });
 });

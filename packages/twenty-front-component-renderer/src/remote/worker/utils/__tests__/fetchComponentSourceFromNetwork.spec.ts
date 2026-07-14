@@ -2,6 +2,7 @@ import { fetchComponentSourceFromNetwork } from '@/remote/worker/utils/fetchComp
 
 const COMPONENT_URL =
   'https://api.twenty.com/rest/front-components/component-id/checksum-abc.js';
+const CACHE_BUSTED_COMPONENT_URL = `${COMPONENT_URL}?cacheBust=v2`;
 const PRESIGNED_URL = 'https://s3.example.com/component.js?signed=abc';
 
 type FakeResponseInit = {
@@ -52,7 +53,7 @@ describe('fetchComponentSourceFromNetwork', () => {
     });
 
     expect(source).toBe('export default () => {};');
-    expect(fetchMock).toHaveBeenCalledWith(COMPONENT_URL, {
+    expect(fetchMock).toHaveBeenCalledWith(CACHE_BUSTED_COMPONENT_URL, {
       headers: { Authorization: 'Bearer token' },
     });
   });
@@ -78,10 +79,27 @@ describe('fetchComponentSourceFromNetwork', () => {
     });
 
     expect(source).toBe('presigned bundle source');
-    expect(fetchMock).toHaveBeenNthCalledWith(1, COMPONENT_URL, {
+    expect(fetchMock).toHaveBeenNthCalledWith(1, CACHE_BUSTED_COMPONENT_URL, {
       headers: { Authorization: 'Bearer token' },
     });
     expect(fetchMock).toHaveBeenNthCalledWith(2, PRESIGNED_URL);
+  });
+
+  it('preserves existing query parameters when appending the cache bust parameter', async () => {
+    const fetchMock = jest.fn(async () =>
+      createFakeResponse({ body: 'export default () => {};' }),
+    );
+
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    await fetchComponentSourceFromNetwork({
+      url: `${COMPONENT_URL}?token=abc`,
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      `${COMPONENT_URL}?token=abc&cacheBust=v2`,
+      { headers: undefined },
+    );
   });
 
   it('throws when the initial response is not ok', async () => {

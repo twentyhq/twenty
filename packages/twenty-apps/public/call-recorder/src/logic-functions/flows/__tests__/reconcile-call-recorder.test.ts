@@ -929,7 +929,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     expect(rescheduleRecallBotMock).toHaveBeenCalledWith(
       expect.objectContaining({ externalBotId: 'recall-bot-stale' }),
     );
-    // The event path no longer re-creates the bot; the stale id is cleared and the cron heals the botless row.
+    // The event path no longer re-creates the bot; the stale id is cleared and the cron schedules a bot for the pending row.
     expect(scheduleRecallBotMock).not.toHaveBeenCalled();
     expect(client.callRecordings).toEqual([
       expect.objectContaining({

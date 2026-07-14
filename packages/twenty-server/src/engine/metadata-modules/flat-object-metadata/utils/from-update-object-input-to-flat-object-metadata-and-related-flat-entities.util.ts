@@ -101,6 +101,13 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
           ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         );
       }
+
+      if (!imageIdentifierFlatFieldMetadata.isActive) {
+        throw new ObjectMetadataException(
+          'Field cannot be used as image identifier because it is deactivated',
+          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        );
+      }
     }
 
     const isStandardObject = belongsToTwentyStandardApp(

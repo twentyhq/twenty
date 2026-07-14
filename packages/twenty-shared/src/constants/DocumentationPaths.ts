@@ -32,6 +32,8 @@ export const DOCUMENTATION_PATHS = {
   DEVELOPERS_EXTEND_APPS_DATA_OVERVIEW: '/developers/extend/apps/data/overview',
   DEVELOPERS_EXTEND_APPS_DATA_RELATIONS:
     '/developers/extend/apps/data/relations',
+  DEVELOPERS_EXTEND_APPS_DATA_SYSTEM_FIELDS:
+    '/developers/extend/apps/data/system-fields',
   DEVELOPERS_EXTEND_APPS_GETTING_STARTED_CONCEPTS:
     '/developers/extend/apps/getting-started/concepts',
   DEVELOPERS_EXTEND_APPS_GETTING_STARTED_LOCAL_SERVER:

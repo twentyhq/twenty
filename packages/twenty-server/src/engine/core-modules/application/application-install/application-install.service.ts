@@ -18,7 +18,6 @@ import { isImageFilePath } from 'src/engine/core-modules/application/application
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { ManifestAssetUrlResolverService } from 'src/engine/core-modules/application/application-registration/manifest-asset-url-resolver.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
@@ -57,7 +56,6 @@ export class ApplicationInstallService {
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly manifestAssetUrlResolverService: ManifestAssetUrlResolverService,
   ) {}
 
   async installApplication(params: {
@@ -306,12 +304,7 @@ export class ApplicationInstallService {
 
     await this.applicationRegistrationService.updateFromManifest({
       applicationRegistrationId: appRegistration.id,
-      manifest: this.manifestAssetUrlResolverService.resolveFromRegistration({
-        sourceType: appRegistration.sourceType,
-        sourcePackage: appRegistration.sourcePackage,
-        manifest,
-        version: installedVersion,
-      }),
+      manifest,
       latestAvailableVersion: installedVersion,
       preventVersionDowngrade: true,
     });

@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const completeCallRecordingIngestionMock = vi.hoisted(() => vi.fn());
+const completeCallRecordingImportMock = vi.hoisted(() => vi.fn());
 const chargeCompletedCallRecordingMock = vi.hoisted(() => vi.fn());
 
 vi.mock(
-  'src/logic-functions/data/complete-call-recording-ingestion.util',
+  'src/logic-functions/data/complete-call-recording-import.util',
   () => ({
-    completeCallRecordingIngestion: completeCallRecordingIngestionMock,
+    completeCallRecordingImport: completeCallRecordingImportMock,
   }),
 );
 
@@ -25,7 +25,7 @@ describe('completeAndChargeCallRecording', () => {
   });
 
   it('charges exactly once when this path wins the completion claim', async () => {
-    completeCallRecordingIngestionMock.mockResolvedValue(true);
+    completeCallRecordingImportMock.mockResolvedValue(true);
 
     const claimed = await completeAndChargeCallRecording({} as never, {
       id: 'call-recording-1',
@@ -34,7 +34,7 @@ describe('completeAndChargeCallRecording', () => {
     });
 
     expect(claimed).toBe(true);
-    expect(completeCallRecordingIngestionMock).toHaveBeenCalledWith(
+    expect(completeCallRecordingImportMock).toHaveBeenCalledWith(
       {},
       { id: 'call-recording-1' },
     );
@@ -47,7 +47,7 @@ describe('completeAndChargeCallRecording', () => {
   });
 
   it('does not charge when another path already completed the recording', async () => {
-    completeCallRecordingIngestionMock.mockResolvedValue(false);
+    completeCallRecordingImportMock.mockResolvedValue(false);
 
     const claimed = await completeAndChargeCallRecording({} as never, {
       id: 'call-recording-1',

@@ -2,7 +2,7 @@ import {
   ViewFilterOperand,
   ViewType,
   defineView,
-  generateDefaultFieldUniversalIdentifier,
+  getFieldUniversalIdentifier,
 } from 'twenty-sdk/define';
 
 import {
@@ -23,10 +23,10 @@ export const PARTNER_APPLICATIONS_VIEW_UNIVERSAL_IDENTIFIER =
 // createdAt is a reserved system field auto-created on the partner object; the
 // server derives its universal identifier deterministically, so resolve it the
 // same way rather than hardcoding a value that would drift.
-const PARTNER_CREATED_AT_FIELD_ID = generateDefaultFieldUniversalIdentifier({
+const PARTNER_CREATED_AT_FIELD_ID = getFieldUniversalIdentifier({
   applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
-  fieldName: 'createdAt',
+  name: 'createdAt',
 });
 
 // Naming: partner onboarding applicants — distinct from the Application object's "Applications" view.

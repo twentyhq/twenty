@@ -6,10 +6,10 @@ import { type FilesFieldValue } from 'src/logic-functions/types/files-field-valu
 import { buildFailedTranscriptMarker } from 'src/logic-functions/domain/build-failed-transcript-marker.util';
 import { buildTranscriptFailureReason } from 'src/logic-functions/domain/build-transcript-failure-reason.util';
 import { downloadTranscript } from 'src/logic-functions/flows/download-transcript.util';
-import { extractRecallBotConvergence } from 'src/logic-functions/recall-api/extract-recall-bot-convergence.util';
+import { extractRecallBotSyncState } from 'src/logic-functions/recall-api/extract-recall-bot-sync-state.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
-import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-recording-media.util';
+import { importCallRecordingMedia } from 'src/logic-functions/flows/import-call-recording-media.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isRecallRecordingDoneSignal } from 'src/logic-functions/domain/is-recall-recording-done-signal.util';
 import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/domain/map-recall-status-code-to-call-recording-status.util';
@@ -20,7 +20,7 @@ import {
 } from 'src/logic-functions/recall-api/parse-recall-webhook-event.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { persistCallRecordingProgress } from 'src/logic-functions/flows/persist-call-recording-progress.util';
-import { reconcileCallRecordingTranscriptArtifact } from 'src/logic-functions/flows/reconcile-call-recording-transcript-artifact.util';
+import { importCallRecordingTranscript } from 'src/logic-functions/flows/import-call-recording-transcript.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
@@ -197,16 +197,16 @@ const handleRecallStatusEvent = async ({
       callRecordingStatus,
     });
 
-    const mediaIngestionUpdate = await buildMediaIngestionUpdate({
+    const mediaImportUpdate = await buildMediaImportUpdate({
       callRecording,
       externalRecordingId: externalRecordingIdResolution.externalRecordingId,
     });
 
     if (updateData.status === CallRecordingStatus.FAILED) {
-      delete mediaIngestionUpdate.callRecorderFailureReason;
+      delete mediaImportUpdate.callRecorderFailureReason;
     }
 
-    Object.assign(updateData, mediaIngestionUpdate);
+    Object.assign(updateData, mediaImportUpdate);
 
     const terminalArtifactGateFailureUpdate =
       buildTerminalArtifactGateFailureUpdate({
@@ -222,7 +222,7 @@ const handleRecallStatusEvent = async ({
     }
   }
 
-  const { completesIngestion } = await persistCallRecordingProgress(client, {
+  const { completesImport } = await persistCallRecordingProgress(client, {
     id: callRecording.id,
     current: callRecording,
     updateData,
@@ -234,7 +234,7 @@ const handleRecallStatusEvent = async ({
       webhookEvent,
       callRecording,
       updateData,
-      callRecordingStatus: completesIngestion
+      callRecordingStatus: completesImport
         ? CallRecordingStatus.COMPLETED
         : (updateData.status ?? callRecordingStatus),
     });
@@ -244,7 +244,7 @@ const handleRecallStatusEvent = async ({
     status: 'updated',
     event,
     callRecordingId: callRecording.id,
-    callRecordingStatus: completesIngestion
+    callRecordingStatus: completesImport
       ? CallRecordingStatus.COMPLETED
       : (updateData.status ?? callRecordingStatus),
   };
@@ -539,7 +539,7 @@ const hasReachableTranscript = (transcript: unknown): boolean => {
 const isTranscriptUnset = (callRecording: MatchedCallRecording): boolean =>
   isUndefined(callRecording.transcript);
 
-const buildMediaIngestionUpdate = async ({
+const buildMediaImportUpdate = async ({
   callRecording,
   externalRecordingId,
 }: {
@@ -560,13 +560,13 @@ const buildMediaIngestionUpdate = async ({
 
   if (isUndefined(externalRecordingId)) {
     console.warn(
-      `[call-recorder] cannot ingest media for call recording ${callRecording.id}: no Recall recording id available`,
+      `[call-recorder] cannot import media for call recording ${callRecording.id}: no Recall recording id available`,
     );
 
     return {};
   }
 
-  return ingestCallRecordingMedia({
+  return importCallRecordingMedia({
     callRecordingId: callRecording.id,
     externalRecordingId,
     hasAudio,
@@ -590,7 +590,7 @@ const buildTranscriptArtifactUpdate = async ({
   }
 
   const transcriptArtifactResult =
-    await reconcileCallRecordingTranscriptArtifact({
+    await importCallRecordingTranscript({
       callRecordingId: callRecording.id,
       currentStatus: callRecording.status,
       externalRecordingId,
@@ -641,7 +641,7 @@ const fetchExternalRecordingIdFromRecallBot = async (
   }
 
   return {
-    externalRecordingId: extractRecallBotConvergence(botResult.bot)
+    externalRecordingId: extractRecallBotSyncState(botResult.bot)
       .externalRecordingId,
     providerLookupFailed: false,
   };

@@ -119,17 +119,13 @@ describe('SearchService', () => {
 
       expect(imageIdentifierColumns).toEqual(['avatarFile']);
     });
-    it('should expand the composite LINKS image identifier into its columns for a company object metadata item', () => {
+    it('should select only the primaryLinkUrl column of the composite LINKS image identifier for a company object metadata item', () => {
       const imageIdentifierColumns = service.getImageIdentifierColumns(
         mockFlatObjectMetadatas[1],
         mockFlatFieldMetadataMaps,
       );
 
-      expect(imageIdentifierColumns).toEqual([
-        'domainNamePrimaryLinkLabel',
-        'domainNamePrimaryLinkUrl',
-        'domainNameSecondaryLinks',
-      ]);
+      expect(imageIdentifierColumns).toEqual(['domainNamePrimaryLinkUrl']);
     });
 
     it('should return the non-composite image identifier column for a regular object metadata item', () => {

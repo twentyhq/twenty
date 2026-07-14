@@ -11,7 +11,7 @@ import {
 } from 'twenty-shared/types';
 import {
   escapeForIlike,
-  getLogoUrlFromDomainName,
+  getLinkFaviconUrl,
   isDefined,
 } from 'twenty-shared/utils';
 import { Brackets, type ObjectLiteral } from 'typeorm';
@@ -603,12 +603,16 @@ export class SearchService {
       : undefined;
 
     if (isDefined(imageIdentifierCompositeType)) {
-      return imageIdentifierCompositeType.properties.map((compositeProperty) =>
-        computeCompositeColumnName(
-          imageIdentifierField.name,
-          compositeProperty,
-        ),
-      );
+      return imageIdentifierCompositeType.properties
+        .filter(
+          (compositeProperty) => compositeProperty.name === 'primaryLinkUrl',
+        )
+        .map((compositeProperty) =>
+          computeCompositeColumnName(
+            imageIdentifierField.name,
+            compositeProperty,
+          ),
+        );
     }
 
     return [imageIdentifierField.name];
@@ -694,19 +698,11 @@ export class SearchService {
           ];
 
         return isNonEmptyString(primaryLinkUrl)
-          ? getLogoUrlFromDomainName(primaryLinkUrl) || ''
+          ? getLinkFaviconUrl(primaryLinkUrl) || ''
           : '';
       }
       default: {
-        const rawImageValue = record[imageIdentifierField.name];
-
-        return isNonEmptyString(rawImageValue)
-          ? this.getImageUrlWithToken(
-              rawImageValue,
-              FileFolder.FilesField,
-              workspaceId,
-            )
-          : '';
+        return '';
       }
     }
   }

@@ -1,6 +1,6 @@
 import { type MouseEvent } from 'react';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
 import { Avatar } from 'twenty-ui/data-display';
 import { MenuItemSuggestion } from 'twenty-ui/navigation';
@@ -25,7 +25,11 @@ export const MentionMenuListItem = ({
   isSelected,
   onClick,
 }: MentionMenuListItemProps) => {
-  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const objectMetadataItem = objectMetadataItems.find(
+    (item) => item.nameSingular === objectNameSingular,
+  );
 
   const handleClick = (event?: MouseEvent) => {
     event?.preventDefault();
