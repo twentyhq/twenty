@@ -1,47 +1,49 @@
 ---
 title: Data Model
-description: Understand how Twenty structures your data with objects, fields, and relations.
+description: "Objects, fields, and relations: how you teach Twenty what your business is made of."
 icon: "database"
 ---
 
-import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+Monday, eight in the morning. Leo calls from the Harbor Foods plant: twelve thousand boxes arrived today, and every one of them wears the *old* logo. Harbor Foods changed their logo in spring. Your spreadsheet keeps their artwork, the design that goes on their boxes, in three tabs. You updated one. The presses printed from another. Now a product launch is waiting, the reprint comes out of your pocket, and Sarah from purchasing is calling at nine.
 
-Everything in Twenty is built around **objects** and **fields** — the building blocks of your data model.
+Nobody typed anything wrong. The spreadsheet simply lets the same fact live in many places, and facts kept in many places drift apart. A CRM is built to prevent exactly this, and the prevention starts with the **data model**: how you describe your business to Twenty. The description uses three ideas. Objects. Fields. Relations.
 
-## Objects
+## Objects: the kinds of things you track
 
-Objects are the tables that hold your data. Twenty comes with standard objects out of the box:
+An **object** is one kind of thing you track, like one tab in the old spreadsheet. Making packaging for brands, you track the companies that buy from you, the people who run their purchasing and their plants, and the deals you are chasing. Twenty comes with these out of the box:
 
-- **Companies** — Organizations you do business with
-- **People** — Individual contacts
-- **Opportunities** — Deals in your pipeline
-- **Tasks** — Action items for your team
-- **Notes** — Free-form text linked to records
+- **Companies** and **People**, which need no introduction
+- **Opportunities**, which is Twenty's word for a deal. Same idea, longer word.
+- **Tasks** and **Notes**, the promises and details around everything else
 
-You can also create **custom objects** for anything your business needs — projects, support tickets, products, contracts, or anything else.
+One entry inside an object is called a **record**. Harbor Foods is a record in Companies. Sarah runs purchasing there, so she is a record in People. Leo runs the ordering at their plant, so he is a record in People too. And "win the packaging for Meridian Beverages' new juice line" is a deal you are still chasing, so it is a record in Opportunities.
 
-## Fields
+Twenty already knows about companies, people, and deals. It does not know about print runs. No CRM does, because print runs are *your* business's own thing: one batch of boxes going through the presses, with a design, a quantity, and a plant to ship to. So you *teach* it. Create a **custom object** called Print Runs, and Twenty treats it like a built-in object. It gets its own tab in the sidebar, its own pages, and everything else the standard objects have. For another business the custom object might be properties, events, or job applications. Whatever the built-in objects don't cover, a custom object can.
 
-Fields are the properties on each object. Twenty supports a wide range of field types:
+## Fields: what you write down about each record
 
-| Category | Types |
-|----------|-------|
-| **Basic** | Text, Number, Boolean, Date, Currency, Rating, Select |
-| **Composite** | Address (street, city, state, zip), Full Name, Links, Phones, Emails |
-| **Special** | Relation, File Attachment, JSON, Actor (who created/modified) |
+A **field** is one thing you write down about a record. Think of one column in the old spreadsheet: Leo's phone number, the number of boxes in the weekly order, Harbor Foods' current artwork. That last one is the fact that burned you on Monday. In Twenty, the artwork lives in exactly one place: on Harbor Foods' record.
 
-Every object also gets automatic system fields: `id`, `createdAt`, `updatedAt`, `createdBy`, and `position`.
+Every field has a **type**. The type is a small promise about what belongs inside: text, a number, a date, money, a checkbox, a choice from a list, a star rating, a file, an address. There are more than twenty types, and the promise is what makes them useful:
 
-## Relations
+- The order value is a **Currency** field, so Twenty can add up what all your open deals are worth.
+- The deal stage is a **Select** field, where you pick one value from a fixed list. That is why Twenty can draw the pipeline columns you met on the last page.
+- The ship date is a **Date** field, so your print runs can appear on a calendar.
 
-Objects connect to each other through relations. A Company has many People, an Opportunity belongs to a Company, and so on. You can create custom relations between any objects, including many-to-many relationships.
+Twenty also writes a few fields for you on every record, like who created it and when it last changed. You never fill those in, and they quietly answer *who touched this?* forever.
 
-## What makes this powerful
+## Relations: how records connect
 
-Unlike traditional CRMs where you're limited to pre-defined fields on pre-defined objects, Twenty lets you model your data exactly the way your business works. Custom objects get the same first-class treatment as built-in ones — including API endpoints, views, permissions, and workflow triggers.
+So far, every record stands alone. But a business does not run on separate facts. It runs on connections: Sarah runs purchasing at Harbor Foods. Leo runs their plant. Thursday's print run ships to Harbor Foods. Take the connections away and all you have is a pile of contact cards.
 
-<Card title="Deep dive into the Data Model" icon="arrow-right" href="/user-guide/data-model/overview">
-  Full reference on objects, fields, relations, and how to configure them.
-</Card>
+A **relation** is how a record holds one of these connections. It is a field. But instead of writing text into it, you choose another record. On Sarah's record, the Company field holds the actual Harbor Foods record, not the words `Harbor Foods`. Leo's record holds the same company. So does every print run you send them.
 
-<VimeoEmbed videoId="1185511827" title="Data model" />
+And this is what fixes Monday. A print run never carries its own copy of the artwork. It is connected to Harbor Foods, and Harbor Foods' record holds the current design. When the logo changes, you update one field on one record. Every future print run already knows. Nothing stale is left waiting in a forgotten tab.
+
+The connections work in both directions. Open Harbor Foods and you see Sarah, Leo, this week's print run, and every print run before it. Open Leo and you see his company.
+
+## Three ideas, one story
+
+That is the whole data model. Objects are the kinds of things you track. Fields are the facts about each one. Relations connect them, so every fact lives in exactly one place. Monday happened because the old spreadsheet scattered one logo across three tabs. In Twenty, the artwork has one home on Harbor Foods' record, and every print run simply looks there.
+
+You will meet these three ideas on every page of Twenty, starting with the next one, where you'll find your way around the screen your records live on. And the next time Leo calls at eight in the morning, it can be about ordering more boxes.
