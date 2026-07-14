@@ -115,6 +115,8 @@ export const DOCUMENTATION_PATHS = {
   GETTING_STARTED_CORE_CONCEPTS_GLOSSARY:
     '/getting-started/core-concepts/glossary',
   GETTING_STARTED_CORE_CONCEPTS_LAYOUT: '/getting-started/core-concepts/layout',
+  GETTING_STARTED_CORE_CONCEPTS_WHAT_IS_A_CRM:
+    '/getting-started/core-concepts/what-is-a-crm',
   GETTING_STARTED_CORE_CONCEPTS_WORKFLOWS:
     '/getting-started/core-concepts/workflows',
   GETTING_STARTED_INTRODUCTION: '/getting-started/introduction',
