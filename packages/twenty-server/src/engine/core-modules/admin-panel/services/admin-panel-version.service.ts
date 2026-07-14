@@ -36,7 +36,7 @@ export class AdminPanelVersionService {
         .filter((name) => name !== 'latest' && semver.valid(name));
 
       if (versions.length === 0) {
-        return { currentVersion, latestVersion: 'latest' };
+        return { currentVersion, latestVersion: null };
       }
 
       versions.sort((a, b) => semver.compare(b, a));
@@ -44,7 +44,7 @@ export class AdminPanelVersionService {
 
       return { currentVersion, latestVersion };
     } catch {
-      return { currentVersion, latestVersion: 'latest' };
+      return { currentVersion, latestVersion: null };
     }
   }
 }
