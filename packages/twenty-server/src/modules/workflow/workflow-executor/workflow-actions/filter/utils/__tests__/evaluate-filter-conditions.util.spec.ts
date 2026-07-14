@@ -933,9 +933,7 @@ describe('evaluateFilterConditions', () => {
           'RICH_TEXT',
         );
 
-        expect(evaluateFilterConditions({ filters: [emptyFilter] })).toBe(
-          true,
-        );
+        expect(evaluateFilterConditions({ filters: [emptyFilter] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [nonEmptyFilter] })).toBe(
           false,
         );
@@ -980,6 +978,54 @@ describe('evaluateFilterConditions', () => {
         expect(evaluateFilterConditions({ filters: [matching] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [notMatching] })).toBe(
           false,
+        );
+      });
+
+      it('should activate markdown null-equivalent logic when compositeFieldSubFieldName is set', () => {
+        const richTextWithMarkdownField: ResolvedFilter = {
+          id: 'filter1',
+          type: 'RICH_TEXT',
+          rightOperand: null,
+          operand: ViewFilterOperand.IS_EMPTY,
+          stepFilterGroupId: 'group1',
+          leftOperand: { markdown: '', blocknote: '' }, // empty rich text structure
+          compositeFieldSubFieldName: 'markdown',
+        };
+
+        expect(
+          evaluateFilterConditions({ filters: [richTextWithMarkdownField] }),
+        ).toBe(true);
+      });
+
+      it('should handle composite rich text structure with markdown subfield', () => {
+        const richTextFilter: ResolvedFilter = {
+          id: 'filter1',
+          type: 'RICH_TEXT',
+          rightOperand: 'test',
+          operand: ViewFilterOperand.CONTAINS,
+          stepFilterGroupId: 'group1',
+          leftOperand: { markdown: 'This is a test', blocknote: '...' },
+          compositeFieldSubFieldName: 'markdown',
+        };
+
+        expect(evaluateFilterConditions({ filters: [richTextFilter] })).toBe(
+          true,
+        );
+      });
+
+      it('should correctly evaluate IS_NOT_EMPTY with markdown subfield', () => {
+        const richTextFilter: ResolvedFilter = {
+          id: 'filter1',
+          type: 'RICH_TEXT',
+          rightOperand: null,
+          operand: ViewFilterOperand.IS_NOT_EMPTY,
+          stepFilterGroupId: 'group1',
+          leftOperand: { markdown: '# Heading', blocknote: '...' },
+          compositeFieldSubFieldName: 'markdown',
+        };
+
+        expect(evaluateFilterConditions({ filters: [richTextFilter] })).toBe(
+          true,
         );
       });
     });
