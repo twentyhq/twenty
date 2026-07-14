@@ -45,8 +45,10 @@ export class AdminPanelVersionService {
       const latestVersion = versions[0];
 
       return { currentVersion, latestVersion };
-    } catch (error: any) {
-      this.logger.warn(`Failed to fetch latest version from DockerHub: ${error?.message || error}`);
+    } catch (error) {
+      this.logger.warn(
+        `Failed to fetch latest version from DockerHub: ${error instanceof Error ? error.message : String(error)}`,
+      );
       return { currentVersion, latestVersion: null };
     }
   }
