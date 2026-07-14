@@ -12,7 +12,7 @@ import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recal
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
 // The sole place a Recall bot is created. Only the deterministic-create winner and the stale-state cron call it, so one writer per meeting POSTs exactly one bot.
-export const ensureCallRecorder = async (
+export const scheduleRecallBotForCallRecording = async (
   client: CoreApiClient,
   { callRecording, calendarEvent }: MeetingRecording,
 ): Promise<boolean> => {

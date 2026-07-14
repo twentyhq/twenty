@@ -6,7 +6,7 @@ import { getString } from 'src/logic-functions/utils/get-string.util';
 import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/domain/map-recall-status-code-to-call-recording-status.util';
 import { normalizeRecallTimestamp } from 'src/logic-functions/recall-api/normalize-recall-timestamp.util';
 
-export type RecallBotConvergence = {
+export type RecallBotSyncState = {
   status: CallRecordingStatus | undefined;
   failureReason: string | undefined;
   startedAt: string | undefined;
@@ -21,9 +21,9 @@ type RecallBotStatusChange = {
 };
 
 // Derives the state a full webhook history would have produced from GET /bot.
-export const extractRecallBotConvergence = (
+export const extractRecallBotSyncState = (
   bot: Record<string, unknown>,
-): RecallBotConvergence => {
+): RecallBotSyncState => {
   const statusChanges = extractStatusChanges(bot);
   const latestStatusChange = getLatestStatusChange(statusChanges);
   const status = mapRecallStatusCodeToCallRecordingStatus(

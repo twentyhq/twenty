@@ -14,13 +14,13 @@ import {
   type RecallScheduledBot,
 } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
 
-export type ReapOrphanedCallRecordersResult = {
+export type CleanupOrphanedRecallBotsResult = {
   scannedBotCount: number;
   canceledExternalBotIds: string[];
 };
 
 // Bots no open CallRecording request claims would still join; cancel them on Recall.
-export const reapOrphanedCallRecorders = async ({
+export const cleanupOrphanedRecallBots = async ({
   client,
   joinAtAfter,
   joinAtBefore,
@@ -28,7 +28,7 @@ export const reapOrphanedCallRecorders = async ({
   client: CoreApiClient;
   joinAtAfter: string;
   joinAtBefore: string;
-}): Promise<ReapOrphanedCallRecordersResult> => {
+}): Promise<CleanupOrphanedRecallBotsResult> => {
   const listResult = await listScheduledRecallBots({
     joinAtAfter,
     joinAtBefore,
@@ -36,7 +36,7 @@ export const reapOrphanedCallRecorders = async ({
 
   if (!listResult.ok) {
     console.warn(
-      `[call-recorder] failed to list Recall bots for orphan reaping: ${listResult.errorMessage}`,
+      `[call-recorder] failed to list Recall bots for orphan cancellation: ${listResult.errorMessage}`,
     );
 
     return { scannedBotCount: 0, canceledExternalBotIds: [] };
@@ -46,7 +46,7 @@ export const reapOrphanedCallRecorders = async ({
 
   if (isUndefined(currentWorkspaceId)) {
     console.warn(
-      '[call-recorder] cannot reap orphaned Recall bots: workspace id unavailable',
+      '[call-recorder] cannot cancel orphaned Recall bots: workspace id unavailable',
     );
 
     return {

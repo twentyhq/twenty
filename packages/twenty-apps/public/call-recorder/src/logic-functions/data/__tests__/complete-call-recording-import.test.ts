@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { completeCallRecordingIngestion } from 'src/logic-functions/data/complete-call-recording-ingestion.util';
+import { completeCallRecordingImport } from 'src/logic-functions/data/complete-call-recording-import.util';
 
-describe('completeCallRecordingIngestion', () => {
+describe('completeCallRecordingImport', () => {
   it('guards the flip with non-terminal statuses and returns true when the row is claimed', async () => {
     let capturedArgs: { filter: unknown; data: unknown } | undefined;
     const mutation = vi.fn(async (mutationArg: any) => {
@@ -11,7 +11,7 @@ describe('completeCallRecordingIngestion', () => {
       return { updateCallRecordings: [{ id: 'call-recording-1' }] };
     });
 
-    const claimed = await completeCallRecordingIngestion(
+    const claimed = await completeCallRecordingImport(
       { mutation } as never,
       {
         id: 'call-recording-1',
@@ -30,7 +30,7 @@ describe('completeCallRecordingIngestion', () => {
   it('returns false when the row was already COMPLETED, so the loser cannot charge', async () => {
     const mutation = vi.fn(async () => ({ updateCallRecordings: [] }));
 
-    const claimed = await completeCallRecordingIngestion(
+    const claimed = await completeCallRecordingImport(
       { mutation } as never,
       {
         id: 'call-recording-1',
@@ -43,7 +43,7 @@ describe('completeCallRecordingIngestion', () => {
   it('returns false when the API omits the result list', async () => {
     const mutation = vi.fn(async () => ({}));
 
-    const claimed = await completeCallRecordingIngestion(
+    const claimed = await completeCallRecordingImport(
       { mutation } as never,
       {
         id: 'call-recording-1',

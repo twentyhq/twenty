@@ -6,17 +6,17 @@ import { STALE_BOT_STATE_CRON_PATTERN } from 'src/logic-functions/constants/stal
 import { convergeDivergedCallRecordings } from 'src/logic-functions/flows/converge-diverged-call-recordings.util';
 import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/flows/converge-diverged-call-recordings-result.type';
 import {
-  healCallRecordingsMissingBot,
-  type HealCallRecordingsMissingBotResult,
-} from 'src/logic-functions/flows/heal-call-recordings-missing-bot.util';
+  scheduleRecallBotsForPendingCallRecordings,
+  type ScheduleRecallBotsForPendingCallRecordingsResult,
+} from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
 import {
-  reapOrphanedCallRecorders,
-  type ReapOrphanedCallRecordersResult,
-} from 'src/logic-functions/flows/reap-orphaned-call-recorders.util';
+  cleanupOrphanedRecallBots,
+  type CleanupOrphanedRecallBotsResult,
+} from 'src/logic-functions/flows/cleanup-orphaned-recall-bots.util';
 
 // Every unwanted bot passes through this join_at window before it can attend.
-const REAPER_JOIN_AT_LOOKBACK_HOURS = 4;
-const REAPER_JOIN_AT_LOOKAHEAD_HOURS = 24;
+const CLEANUP_JOIN_AT_LOOKBACK_HOURS = 4;
+const CLEANUP_JOIN_AT_LOOKAHEAD_HOURS = 24;
 
 type StepFailure = { error: string };
 
@@ -24,51 +24,51 @@ const reconcileStaleBotStateHandler = async (): Promise<object> => {
   const now = new Date();
   const client = new CoreApiClient();
 
-  const botlessHealResult = await healCallRecordingsMissingBotSafely(
+  const pendingScheduleResult = await scheduleRecallBotsForPendingCallRecordingsSafely(
     client,
     now,
   );
-  const orphanedBotReapingResult =
-    await reapOrphanedCallRecordersInJoinAtWindow(client, now);
+  const orphanedBotCleanupResult =
+    await cleanupOrphanedRecallBotsInJoinAtWindow(client, now);
   const statusConvergenceResult = await convergeDivergedCallRecordingsSafely(
     client,
     now,
   );
 
   return {
-    botlessHealResult,
-    orphanedBotReapingResult,
+    pendingScheduleResult,
+    orphanedBotCleanupResult,
     statusConvergenceResult,
   };
 };
 
-const healCallRecordingsMissingBotSafely = async (
+const scheduleRecallBotsForPendingCallRecordingsSafely = async (
   client: CoreApiClient,
   now: Date,
-): Promise<HealCallRecordingsMissingBotResult | StepFailure> => {
+): Promise<ScheduleRecallBotsForPendingCallRecordingsResult | StepFailure> => {
   try {
-    return await healCallRecordingsMissingBot({ client, now });
+    return await scheduleRecallBotsForPendingCallRecordings({ client, now });
   } catch (error) {
-    return buildStepFailure('botless call recording healing', error);
+    return buildStepFailure('pending Recall bot scheduling', error);
   }
 };
 
-const reapOrphanedCallRecordersInJoinAtWindow = async (
+const cleanupOrphanedRecallBotsInJoinAtWindow = async (
   client: CoreApiClient,
   now: Date,
-): Promise<ReapOrphanedCallRecordersResult | StepFailure> => {
+): Promise<CleanupOrphanedRecallBotsResult | StepFailure> => {
   try {
-    return await reapOrphanedCallRecorders({
+    return await cleanupOrphanedRecallBots({
       client,
       joinAtAfter: new Date(
-        now.getTime() - REAPER_JOIN_AT_LOOKBACK_HOURS * 60 * 60 * 1000,
+        now.getTime() - CLEANUP_JOIN_AT_LOOKBACK_HOURS * 60 * 60 * 1000,
       ).toISOString(),
       joinAtBefore: new Date(
-        now.getTime() + REAPER_JOIN_AT_LOOKAHEAD_HOURS * 60 * 60 * 1000,
+        now.getTime() + CLEANUP_JOIN_AT_LOOKAHEAD_HOURS * 60 * 60 * 1000,
       ).toISOString(),
     });
   } catch (error) {
-    return buildStepFailure('orphaned bot reaping', error);
+    return buildStepFailure('orphaned bot cancellation', error);
   }
 };
 
@@ -97,7 +97,7 @@ export default defineLogicFunction({
   universalIdentifier: STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'reconcile-stale-bot-state',
   description:
-    'Converges call recordings with Recall on a schedule: pulls stale bot statuses and overdue transcripts, finishes failed cancellations, schedules bots for recordings still missing one, and reaps unclaimed bots. Reads calendar events only to heal already-decided recordings, never to discover meetings.',
+    'Converges call recordings with Recall on a schedule: pulls stale bot statuses and overdue transcripts, finishes failed cancellations, schedules bots for recordings still missing one, and cancels unclaimed bots. Reads calendar events only to repair already-decided recordings, never to discover meetings.',
   timeoutSeconds: 250,
   handler: reconcileStaleBotStateHandler,
   cronTriggerSettings: {

@@ -1,10 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { getLinkFaviconUrl } from '@/navigation-menu-item/display/link/utils/getLinkFaviconUrl';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getLinkFaviconUrl, isDefined } from 'twenty-shared/utils';
 
 export const getImageIdentifierFieldValue = (
   record: ObjectRecord,

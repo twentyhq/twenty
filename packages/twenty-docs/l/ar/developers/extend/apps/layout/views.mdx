@@ -34,7 +34,7 @@ export default defineView({
 
 * `objectUniversalIdentifier` يحدّد الكائن الذي ينطبق عليه هذا العرض. يمكن أن يكون كائنًا مخصصًا قمتَ بتعريفه أو كائن Twenty قياسيًا.
 * `key: ViewKey.INDEX` يحدد العرض بوصفه عرض القائمة الرئيسي للكائن (ذلك الذي يفتحه عنصر التنقل `OBJECT`).
-* يتحكّم `fields` في الأعمدة التي تظهر وترتيبها. يشير كل حقل إلى `fieldMetadataUniversalIdentifier`.
+* يتحكّم `fields` في الأعمدة التي تظهر وترتيبها. يشير كل حقل إلى `fieldMetadataUniversalIdentifier`. للإشارة إلى حقل نظام يتم إنشاؤه تلقائيًا مثل `createdAt`، راجع قسم [استهداف حقول النظام](/l/ar/developers/extend/apps/data/system-fields).
 * يمكنك أيضًا تعريف `filters` و`filterGroups` و`sorts` و`groups` و`fieldGroups` لتكوينات أكثر تقدمًا.
 * يتحكّم `position` في الترتيب عند وجود عدة عروض لنفس الكائن.
 

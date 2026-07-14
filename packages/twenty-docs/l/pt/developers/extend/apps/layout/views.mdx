@@ -34,7 +34,7 @@ export default defineView({
 
 * `objectUniversalIdentifier` especifica a qual objeto esta visualização se aplica. Pode ser um objeto personalizado que você definiu ou um objeto padrão do Twenty.
 * `key: ViewKey.INDEX` marca a visualização como a visualização principal de lista do objeto (aquela que um item de navegação `OBJECT` abre).
-* `fields` controla quais colunas aparecem e em que ordem. Cada campo referencia um `fieldMetadataUniversalIdentifier`.
+* `fields` controla quais colunas aparecem e em que ordem. Cada campo referencia um `fieldMetadataUniversalIdentifier`. Para fazer referência a um campo de sistema criado automaticamente, como `createdAt`, consulte [Direcionamento de campos do sistema](/l/pt/developers/extend/apps/data/system-fields).
 * Você também pode declarar `filters`, `filterGroups`, `sorts`, `groups` e `fieldGroups` para configurações avançadas.
 * `position` controla a ordenação quando existem várias visualizações para o mesmo objeto.
 

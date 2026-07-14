@@ -10,12 +10,12 @@ import { createAsyncRecallTranscript } from 'src/logic-functions/recall-api/crea
 import { listRecallTranscripts } from 'src/logic-functions/recall-api/list-recall-transcripts.util';
 import { type RecallTranscriptSummary } from 'src/logic-functions/recall-api/recall-transcript-summary.type';
 import { downloadTranscript } from 'src/logic-functions/flows/download-transcript.util';
-import { type ReconcileCallRecordingTranscriptArtifactResult } from 'src/logic-functions/flows/reconcile-call-recording-transcript-artifact-result.type';
+import { type ImportCallRecordingTranscriptResult } from 'src/logic-functions/flows/import-call-recording-transcript-result.type';
 
 type CallRecordingTranscriptArtifactUpdateFields =
-  ReconcileCallRecordingTranscriptArtifactResult['updateData'];
+  ImportCallRecordingTranscriptResult['updateData'];
 
-export const reconcileCallRecordingTranscriptArtifact = async ({
+export const importCallRecordingTranscript = async ({
   callRecordingId,
   currentStatus,
   externalRecordingId,
@@ -27,7 +27,7 @@ export const reconcileCallRecordingTranscriptArtifact = async ({
   externalRecordingId: string;
   requestedAt: string;
   transcript: unknown;
-}): Promise<ReconcileCallRecordingTranscriptArtifactResult> => {
+}): Promise<ImportCallRecordingTranscriptResult> => {
   const existingTranscriptMarker = parseTranscriptMarker(transcript);
 
   if (
@@ -149,7 +149,7 @@ export const reconcileCallRecordingTranscriptArtifact = async ({
 };
 
 const buildEmptyTranscriptArtifactResult =
-  (): ReconcileCallRecordingTranscriptArtifactResult => ({
+  (): ImportCallRecordingTranscriptResult => ({
     updateData: {},
     requestedTranscript: false,
   });
