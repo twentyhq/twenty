@@ -1,13 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { GraphQLJSON } from 'graphql-type-json';
 import { type ApplicationVariableOption } from 'twenty-shared/application';
 
 @ObjectType()
 export class ApplicationRegistrationVariableDTO {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @IsString()

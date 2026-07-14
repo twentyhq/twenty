@@ -5,8 +5,6 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
-
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   AggregateOperations,
   ViewCalendarLayout,
@@ -33,7 +31,7 @@ registerEnumType(ViewVisibility, { name: 'ViewVisibility' });
 
 @ObjectType('View')
 export class ViewDTO {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @Field({ nullable: false })
