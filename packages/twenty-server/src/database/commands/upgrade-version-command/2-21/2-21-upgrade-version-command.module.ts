@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { BackfillSystemFieldIsSystemSideEffectCommand } from 'src/database/commands/upgrade-version-command/2-21/2-21-workspace-command-1783925862946-backfill-system-field-is-system-side-effect.command';
+import { ReconcileSystemRelationFieldUniversalIdentifierCommand } from 'src/database/commands/upgrade-version-command/2-21/2-21-workspace-command-1783925900000-reconcile-system-relation-field-universal-identifier.command';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -15,6 +16,9 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     WorkspaceIteratorModule,
     WorkspaceMigrationRunnerModule,
   ],
-  providers: [BackfillSystemFieldIsSystemSideEffectCommand],
+  providers: [
+    BackfillSystemFieldIsSystemSideEffectCommand,
+    ReconcileSystemRelationFieldUniversalIdentifierCommand,
+  ],
 })
 export class V2_21_UpgradeVersionCommandModule {}
