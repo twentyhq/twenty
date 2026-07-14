@@ -1,4 +1,5 @@
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { type ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
@@ -17,6 +18,7 @@ import {
   formatUpgradeAwareDecoratorReferenceProblems,
   validateUpgradeAwareEntityDecorators,
 } from 'src/engine/core-modules/upgrade/utils/validate-upgrade-aware-entity-decorators.util';
+import { UPGRADE_METADATA_REFRESH_CRON_INTERVAL } from 'src/engine/twenty-orm/upgrade-aware/constants/upgrade-metadata-refresh-cron-interval.constant';
 import { UpgradeAwareRepositoryState } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository-state';
 
 type EntityMetadataSnapshot = {
@@ -73,8 +75,21 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
     try {
       await this.refresh();
     } catch (error) {
-      this.logger.log(
+      this.logger.warn(
         `[upgrade-metadata] initial refresh skipped (core.upgradeMigration not readable yet): ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
+  }
+
+  @Cron(UPGRADE_METADATA_REFRESH_CRON_INTERVAL)
+  async refreshOnSchedule(): Promise<void> {
+    try {
+      await this.refresh();
+    } catch (error) {
+      this.logger.warn(
+        `[upgrade-metadata] scheduled refresh failed: ${
           error instanceof Error ? error.message : String(error)
         }`,
       );

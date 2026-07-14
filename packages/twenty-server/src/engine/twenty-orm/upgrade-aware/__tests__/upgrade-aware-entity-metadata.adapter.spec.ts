@@ -154,4 +154,102 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
 
     expect(metadata.columns).toEqual([visibleColumn]);
   });
+
+  it('refreshOnSchedule reconciles hidden columns once the migration is later reported completed, without recreating the adapter', async () => {
+    const removedColumn = buildColumn('removedColumn');
+    const visibleColumn = buildColumn('visibleColumn');
+
+    const metadata = {
+      target: EntityWithHideableColumns,
+      tableName: 'entityWithHideableColumns',
+      tablePath: 'core.entityWithHideableColumns',
+      givenTableName: 'entityWithHideableColumns',
+      schema: 'core',
+      columns: [removedColumn, visibleColumn],
+    } as unknown as EntityMetadata;
+
+    const dataSource = {
+      entityMetadatas: [metadata],
+    } as unknown as DataSource;
+
+    const getLastAttemptedInstanceCommand = jest
+      .fn()
+      .mockResolvedValueOnce(null);
+
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        UpgradeAwareEntityMetadataAdapter,
+        {
+          provide: UpgradeMigrationService,
+          useValue: { getLastAttemptedInstanceCommand },
+        },
+        {
+          provide: UpgradeSequenceReaderService,
+          useValue: {
+            getUpgradeSequence: jest
+              .fn()
+              .mockReturnValue([
+                { name: REMOVE_STEP },
+                { name: INTRODUCE_STEP },
+              ]),
+          },
+        },
+        { provide: getDataSourceToken(), useValue: dataSource },
+      ],
+    }).compile();
+
+    const adapter = moduleRef.get(UpgradeAwareEntityMetadataAdapter);
+
+    // Simulates a pod that booted before the drop-column migration completed
+    // elsewhere: the column is still reported as selectable.
+    await adapter.onModuleInit();
+
+    expect(removedColumn.isSelect).toBe(true);
+
+    // The migration completes on another process; this pod is never restarted.
+    getLastAttemptedInstanceCommand.mockResolvedValue({
+      name: REMOVE_STEP,
+      status: 'completed',
+    });
+
+    await adapter.refreshOnSchedule();
+
+    expect(removedColumn.isSelect).toBe(false);
+    expect(visibleColumn.isSelect).toBe(true);
+  });
+
+  it('refreshOnSchedule swallows refresh failures instead of throwing', async () => {
+    const dataSource = {
+      entityMetadatas: [],
+    } as unknown as DataSource;
+
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        UpgradeAwareEntityMetadataAdapter,
+        {
+          provide: UpgradeMigrationService,
+          useValue: {
+            getLastAttemptedInstanceCommand: jest
+              .fn()
+              .mockRejectedValue(
+                new Error('core.upgradeMigration unreachable'),
+              ),
+          },
+        },
+        {
+          provide: UpgradeSequenceReaderService,
+          useValue: {
+            getUpgradeSequence: jest.fn().mockReturnValue([]),
+          },
+        },
+        { provide: getDataSourceToken(), useValue: dataSource },
+      ],
+    }).compile();
+
+    const adapter = moduleRef.get(UpgradeAwareEntityMetadataAdapter);
+
+    await adapter.onModuleInit();
+
+    await expect(adapter.refreshOnSchedule()).resolves.toBeUndefined();
+  });
 });
