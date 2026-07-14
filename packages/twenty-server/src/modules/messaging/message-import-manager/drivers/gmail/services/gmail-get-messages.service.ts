@@ -155,7 +155,10 @@ export class GmailGetMessagesService {
         matchingThreadIds.has(message.messageThreadExternalId),
     );
 
-    return [...includedMessages, ...threadSiblings];
+    return filterGmailMessagesByFolderPolicy(
+      [...includedMessages, ...threadSiblings],
+      messageChannel,
+    );
   }
 
   private async fetchMessages(
