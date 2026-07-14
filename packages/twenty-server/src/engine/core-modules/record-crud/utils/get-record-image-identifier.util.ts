@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { getLogoUrlFromDomainName, isDefined } from 'twenty-shared/utils';
+import { getLinkFaviconUrl, isDefined } from 'twenty-shared/utils';
 
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -87,7 +87,7 @@ export const getRecordImageIdentifier = async ({
           : undefined;
 
       return isNonEmptyString(primaryLinkUrl)
-        ? getLogoUrlFromDomainName(primaryLinkUrl) || null
+        ? getLinkFaviconUrl(primaryLinkUrl) || null
         : null;
     }
     default: {

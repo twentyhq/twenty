@@ -11,7 +11,7 @@ import {
 } from 'twenty-shared/types';
 import {
   escapeForIlike,
-  getLogoUrlFromDomainName,
+  getLinkFaviconUrl,
   isDefined,
 } from 'twenty-shared/utils';
 import { Brackets, type ObjectLiteral } from 'typeorm';
@@ -694,7 +694,7 @@ export class SearchService {
           ];
 
         return isNonEmptyString(primaryLinkUrl)
-          ? getLogoUrlFromDomainName(primaryLinkUrl) || ''
+          ? getLinkFaviconUrl(primaryLinkUrl) || ''
           : '';
       }
       default: {
