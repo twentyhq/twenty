@@ -1,0 +1,52 @@
+# Slack app manifest for the Twenty Slack integration.
+#
+# Use it to create the Slack app in one step: go to https://api.slack.com/apps,
+# click "Create New App" > "From an app manifest", pick your Slack workspace,
+# and paste this file after replacing:
+# - <YOUR_TWENTY_SERVER_URL>: the public base URL of your Twenty server (the
+#   same origin as SERVER_URL, e.g. https://crm.example.com).
+# - <YOUR_TWENTY_PUBLIC_DOMAIN>: the public functions domain of your Twenty
+#   workspace (Twenty resolves the target workspace from the Host header). On
+#   deployments without a dedicated public functions domain, use the legacy
+#   form <YOUR_TWENTY_SERVER_URL>/s/slack/events instead.
+# Slack only verifies the Events API request URL once the Twenty app is
+# installed and SLACK_SIGNING_SECRET is set, so finish the Twenty setup (see
+# README) before saving the manifest, or add the request URL afterwards.
+#
+# Keep this file in sync with src/connection-providers/slack-connection.ts
+# (bot scopes) and src/logic-functions/slack-events-route.ts (request URL).
+
+display_information:
+  name: Twenty
+  description: Talk to your Twenty CRM from Slack and send updates back to your channels.
+  background_color: "#151515"
+features:
+  bot_user:
+    display_name: twenty
+    always_online: true
+oauth_config:
+  redirect_urls:
+    - <YOUR_TWENTY_SERVER_URL>/auth/apps/callback
+  scopes:
+    bot:
+      - app_mentions:read
+      - channels:history
+      - channels:read
+      - chat:write
+      - chat:write.public
+      - groups:history
+      - groups:read
+      - im:history
+      - im:read
+      - im:write
+      - reactions:write
+      - users:read
+settings:
+  event_subscriptions:
+    request_url: https://<YOUR_TWENTY_PUBLIC_DOMAIN>/slack/events
+    bot_events:
+      - app_mention
+      - message.im
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false

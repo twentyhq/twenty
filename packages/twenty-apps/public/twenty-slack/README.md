@@ -1,14 +1,19 @@
 # Slack for Twenty
 
-Slack tools for **Twenty workflows** and **agents** — the same logic functions
-are available as workflow steps and as tools where your deployment exposes
-them.
+Slack tools for **Twenty workflows** and **agents**, plus a conversational
+**assistant**: mention the bot (or DM it) in Slack and an AI agent answers
+using your Twenty workspace data.
 
 ## What you can do
 
 Once the app is installed and Slack is **connected** (see **Twenty setup**
 below):
 
+- **Assistant** — `@twenty how many open opportunities do we have?` or
+  `@twenty create a company called ACME` in a channel the bot is in, or the
+  same in a DM. The bot replies in the thread after running the **Slack
+  Assistant** agent against your workspace. Requires the extra setup in
+  **Assistant setup** below.
 - **Workflow steps** — post, update, or delete bot messages; send ephemerals;
   add reactions; list channels. Pick a **workspace shared** or **just for me**
   connection; steps run with that token.
@@ -65,11 +70,21 @@ Both routes require an authenticated Twenty user and use the same shared Slack c
    **Bot Token Scopes** on the Slack app (Slack validates the set). Current
    list:
 
+   - `app_mentions:read` — receive `@twenty` mentions (assistant)
+   - `channels:history` / `groups:history` / `im:history` — read thread
+     context so assistant follow-ups work
    - `channels:read` — `conversations.list` / channel picker (public)
    - `chat:write` — post, update, delete, ephemeral
    - `chat:write.public` — post to public channels without the bot joining
    - `groups:read` — list private channels the bot is in
+   - `im:read` / `im:write` — receive and answer DMs (assistant)
    - `reactions:write` — add reactions
+   - `users:read` — resolve the requester's display name (assistant)
+
+   Tip: instead of configuring scopes by hand, create the Slack app from
+   [`slack-app-manifest.yaml`](./slack-app-manifest.yaml) (**Create New App**
+   → **From an app manifest**) — it carries the scopes, bot user, event
+   subscriptions, and redirect URL in one file.
 
    If you **add or remove** scopes for this app or in the Slack app, existing
    installs must **re-authorize** (disconnect and **Add connection** again, or
@@ -108,3 +123,58 @@ Both routes require an authenticated Twenty user and use the same shared Slack c
 Once connected, workflow steps use the connection access token: a
 **workspace** connection is preferred when present; otherwise the first
 connection returned for the Slack provider is used.
+
+## Assistant setup
+
+The assistant listens to `@mentions` and DMs through Slack's Events API and
+answers with the **Slack Assistant** agent shipped by this app. On top of the
+base setup above:
+
+1. **Signing secret** — copy the **Signing Secret** from your Slack app's
+   **Basic Information** page into the `SLACK_SIGNING_SECRET` server variable
+   (**Settings → Applications → Twenty Slack → Application registration**).
+   Incoming events are HMAC-verified against it; without it the events route
+   rejects everything.
+2. **Assign a role to the agent** — in Twenty, assign the shipped
+   **Slack Assistant agent role** (or a narrower role of your own) to the
+   **Slack Assistant** agent. This is a deliberate manual step: installing the
+   app grants the assistant **no** CRM access until an admin decides what it
+   may read and write. Without a role the assistant answers that it cannot
+   access data.
+3. **Events API** — on the Slack app, enable **Event Subscriptions**, set the
+   **Request URL** to `https://<your-twenty-public-domain>/slack/events`
+   (Twenty resolves the workspace from the `Host` header; on deployments
+   without a public functions domain use the legacy
+   `<YOUR_TWENTY_SERVER_URL>/s/slack/events`), and subscribe to the bot
+   events `app_mention` and `message.im`. Slack verifies the URL with a
+   challenge that the route answers automatically once step 1 is done. For
+   local development, expose your dev server with a tunnel (e.g.
+   `ngrok http 3000`).
+4. **Model provider** — the agent runs on your instance's configured AI
+   models (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, ...). Cloud instances have
+   this out of the box.
+
+Then invite the bot to a channel and mention it, or DM it. The bot posts a
+placeholder reply immediately and edits it with the answer when the agent
+finishes.
+
+### How it works
+
+`/slack/events` (public route, signature-verified, answers Slack within its
+3-second deadline) creates a **Slack Assistant Request** record; the record
+creation triggers the `slack-assistant-worker` logic function, which posts the
+placeholder, gathers thread context (`conversations.replies`), runs the agent
+via `runAgent`, and edits the placeholder with the result. The records double
+as an audit log of every assistant interaction (request, response, status,
+error), and duplicate Slack deliveries are dropped by `event_id`.
+
+### Security notes
+
+- **The agent role is the permission boundary.** Anyone who can message the
+  bot in Slack acts with the permissions of the role assigned to the agent —
+  Slack users are not mapped to individual Twenty members yet. Scope the role
+  accordingly.
+- The assistant is instructed never to delete records, and the shipped role
+  does not allow deletion.
+- Thread context is passed to the agent as untrusted content; still, prefer
+  inviting the bot only to channels where that is acceptable.

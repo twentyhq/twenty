@@ -31,5 +31,11 @@ export default defineApplication({
       isSecret: true,
       isRequired: true,
     },
+    SLACK_SIGNING_SECRET: {
+      description:
+        'Signing secret from your Slack app (Basic Information page). Used to verify that Events API requests hitting the /slack/events route really come from Slack. Required for the assistant; leave empty if you only use outbound workflow tools.',
+      isSecret: true,
+      isRequired: false,
+    },
   },
 });

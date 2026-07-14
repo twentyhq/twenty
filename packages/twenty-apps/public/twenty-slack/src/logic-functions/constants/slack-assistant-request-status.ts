@@ -1,0 +1,9 @@
+export const SLACK_ASSISTANT_REQUEST_STATUS = {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  DONE: 'DONE',
+  FAILED: 'FAILED',
+} as const;
+
+export type SlackAssistantRequestStatus =
+  (typeof SLACK_ASSISTANT_REQUEST_STATUS)[keyof typeof SLACK_ASSISTANT_REQUEST_STATUS];
