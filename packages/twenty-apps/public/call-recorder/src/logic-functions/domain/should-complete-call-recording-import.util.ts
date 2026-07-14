@@ -1,10 +1,10 @@
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import { computeCallRecordingCharge } from 'src/logic-functions/domain/compute-call-recording-charge.util';
-import { isCallRecordingIngestionComplete } from 'src/logic-functions/domain/is-call-recording-ingestion-complete.util';
+import { isCallRecordingImportComplete } from 'src/logic-functions/domain/is-call-recording-import-complete.util';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
-export const shouldCompleteCallRecordingIngestion = ({
+export const shouldCompleteCallRecordingImport = ({
   current,
   updateData,
 }: {
@@ -26,7 +26,7 @@ export const shouldCompleteCallRecordingIngestion = ({
     startedAt: updateData.startedAt ?? current.startedAt,
     endedAt: updateData.endedAt ?? current.endedAt,
   }) !== undefined &&
-  isCallRecordingIngestionComplete({
+  isCallRecordingImportComplete({
     transcript: updateData.transcript ?? current.transcript,
     audio: updateData.audio ?? current.audio,
     video: updateData.video ?? current.video,

@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
-import { isCallRecordingIngestionComplete } from 'src/logic-functions/domain/is-call-recording-ingestion-complete.util';
+import { isCallRecordingImportComplete } from 'src/logic-functions/domain/is-call-recording-import-complete.util';
 
 const AUDIO_VALUE = [{ fileId: 'file-audio-1', label: 'audio.mp3' }];
 const VIDEO_VALUE = [{ fileId: 'file-video-1', label: 'video.mp4' }];
 const TRANSCRIPT_CONTENT = [{ participant: { id: 1 }, words: [] }];
 
-describe('isCallRecordingIngestionComplete', () => {
+describe('isCallRecordingImportComplete', () => {
   it('is complete when transcript content and both media files are present', () => {
     expect(
-      isCallRecordingIngestionComplete({
+      isCallRecordingImportComplete({
         transcript: TRANSCRIPT_CONTENT,
         audio: AUDIO_VALUE,
         video: VIDEO_VALUE,
@@ -20,7 +20,7 @@ describe('isCallRecordingIngestionComplete', () => {
 
   it('is incomplete while the transcript holds a marker', () => {
     expect(
-      isCallRecordingIngestionComplete({
+      isCallRecordingImportComplete({
         transcript: {
           recallTranscriptId: 'recall-transcript-1',
           status: 'PENDING',
@@ -34,7 +34,7 @@ describe('isCallRecordingIngestionComplete', () => {
 
   it('is incomplete when the transcript is unset', () => {
     expect(
-      isCallRecordingIngestionComplete({
+      isCallRecordingImportComplete({
         transcript: null,
         audio: AUDIO_VALUE,
         video: VIDEO_VALUE,
@@ -45,7 +45,7 @@ describe('isCallRecordingIngestionComplete', () => {
 
   it('is incomplete while any media field is empty', () => {
     expect(
-      isCallRecordingIngestionComplete({
+      isCallRecordingImportComplete({
         transcript: TRANSCRIPT_CONTENT,
         audio: undefined,
         video: VIDEO_VALUE,
@@ -53,7 +53,7 @@ describe('isCallRecordingIngestionComplete', () => {
       }),
     ).toBe(false);
     expect(
-      isCallRecordingIngestionComplete({
+      isCallRecordingImportComplete({
         transcript: TRANSCRIPT_CONTENT,
         audio: AUDIO_VALUE,
         video: [],
@@ -64,7 +64,7 @@ describe('isCallRecordingIngestionComplete', () => {
 
   it('treats a media file skipped for size as resolved', () => {
     expect(
-      isCallRecordingIngestionComplete({
+      isCallRecordingImportComplete({
         transcript: TRANSCRIPT_CONTENT,
         audio: AUDIO_VALUE,
         video: undefined,
@@ -72,7 +72,7 @@ describe('isCallRecordingIngestionComplete', () => {
       }),
     ).toBe(true);
     expect(
-      isCallRecordingIngestionComplete({
+      isCallRecordingImportComplete({
         transcript: TRANSCRIPT_CONTENT,
         audio: undefined,
         video: VIDEO_VALUE,
@@ -80,7 +80,7 @@ describe('isCallRecordingIngestionComplete', () => {
       }),
     ).toBe(true);
     expect(
-      isCallRecordingIngestionComplete({
+      isCallRecordingImportComplete({
         transcript: TRANSCRIPT_CONTENT,
         audio: undefined,
         video: undefined,
@@ -91,7 +91,7 @@ describe('isCallRecordingIngestionComplete', () => {
 
   it('does not let a size marker excuse the other missing artifact', () => {
     expect(
-      isCallRecordingIngestionComplete({
+      isCallRecordingImportComplete({
         transcript: TRANSCRIPT_CONTENT,
         audio: undefined,
         video: VIDEO_VALUE,
@@ -102,7 +102,7 @@ describe('isCallRecordingIngestionComplete', () => {
 
   it('ignores unrelated failure reasons', () => {
     expect(
-      isCallRecordingIngestionComplete({
+      isCallRecordingImportComplete({
         transcript: TRANSCRIPT_CONTENT,
         audio: AUDIO_VALUE,
         video: undefined,

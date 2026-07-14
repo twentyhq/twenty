@@ -5,7 +5,7 @@ type CallRecordingTranscriptArtifactUpdateFields = Pick<
   'callRecorderFailureReason' | 'status' | 'transcript'
 >;
 
-export type ReconcileCallRecordingTranscriptArtifactResult = {
+export type ImportCallRecordingTranscriptResult = {
   updateData: CallRecordingTranscriptArtifactUpdateFields;
   requestedTranscript: boolean;
 };

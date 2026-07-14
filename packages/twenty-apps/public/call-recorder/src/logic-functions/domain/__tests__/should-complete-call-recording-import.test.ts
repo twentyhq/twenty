@@ -1,16 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
-import { shouldCompleteCallRecordingIngestion } from 'src/logic-functions/domain/should-complete-call-recording-ingestion.util';
+import { shouldCompleteCallRecordingImport } from 'src/logic-functions/domain/should-complete-call-recording-import.util';
 
 const filledTranscript = [{ participant: { id: 1 }, words: [] }];
 const filledAudio = [{ fileId: 'file-audio-1', label: 'audio.mp3' }];
 const filledVideo = [{ fileId: 'file-video-1', label: 'video.mp4' }];
 
-describe('shouldCompleteCallRecordingIngestion', () => {
+describe('shouldCompleteCallRecordingImport', () => {
   it('requires complete artifacts and billable timestamps before completion', () => {
     expect(
-      shouldCompleteCallRecordingIngestion({
+      shouldCompleteCallRecordingImport({
         current: {
           status: CallRecordingStatus.PROCESSING,
           startedAt: '2026-06-10T09:00:00.000Z',
@@ -24,7 +24,7 @@ describe('shouldCompleteCallRecordingIngestion', () => {
     ).toBe(true);
 
     expect(
-      shouldCompleteCallRecordingIngestion({
+      shouldCompleteCallRecordingImport({
         current: {
           status: CallRecordingStatus.PROCESSING,
           endedAt: '2026-06-10T10:00:00.000Z',
@@ -37,7 +37,7 @@ describe('shouldCompleteCallRecordingIngestion', () => {
     ).toBe(false);
 
     expect(
-      shouldCompleteCallRecordingIngestion({
+      shouldCompleteCallRecordingImport({
         current: {
           status: CallRecordingStatus.PROCESSING,
           transcript: filledTranscript,
@@ -52,7 +52,7 @@ describe('shouldCompleteCallRecordingIngestion', () => {
     ).toBe(true);
 
     expect(
-      shouldCompleteCallRecordingIngestion({
+      shouldCompleteCallRecordingImport({
         current: {
           status: CallRecordingStatus.PROCESSING,
           startedAt: '2026-06-10T10:00:00.000Z',
@@ -68,7 +68,7 @@ describe('shouldCompleteCallRecordingIngestion', () => {
 
   it('completes when a missing media file is marked too large', () => {
     expect(
-      shouldCompleteCallRecordingIngestion({
+      shouldCompleteCallRecordingImport({
         current: {
           status: CallRecordingStatus.PROCESSING,
           startedAt: '2026-06-10T09:00:00.000Z',
@@ -83,7 +83,7 @@ describe('shouldCompleteCallRecordingIngestion', () => {
     ).toBe(true);
 
     expect(
-      shouldCompleteCallRecordingIngestion({
+      shouldCompleteCallRecordingImport({
         current: {
           status: CallRecordingStatus.PROCESSING,
           startedAt: '2026-06-10T09:00:00.000Z',
@@ -99,7 +99,7 @@ describe('shouldCompleteCallRecordingIngestion', () => {
 
   it('does not complete a persisted failed recording', () => {
     expect(
-      shouldCompleteCallRecordingIngestion({
+      shouldCompleteCallRecordingImport({
         current: {
           status: CallRecordingStatus.FAILED,
           startedAt: '2026-06-10T09:00:00.000Z',
@@ -115,7 +115,7 @@ describe('shouldCompleteCallRecordingIngestion', () => {
 
   it('does not complete when the incoming update marks the recording as failed', () => {
     expect(
-      shouldCompleteCallRecordingIngestion({
+      shouldCompleteCallRecordingImport({
         current: {
           status: CallRecordingStatus.PROCESSING,
           startedAt: '2026-06-10T09:00:00.000Z',

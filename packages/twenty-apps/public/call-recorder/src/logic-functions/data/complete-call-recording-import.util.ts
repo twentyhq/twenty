@@ -3,7 +3,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
 
-export const completeCallRecordingIngestion = async (
+export const completeCallRecordingImport = async (
   client: CoreApiClient,
   { id }: { id: string },
 ): Promise<boolean> => {
