@@ -49,6 +49,7 @@
               {
                 "group": "Core Concepts",
                 "pages": [
+                  "getting-started/core-concepts/what-is-a-crm",
                   "getting-started/core-concepts/data-model",
                   "getting-started/core-concepts/layout",
                   "getting-started/core-concepts/workflows",
