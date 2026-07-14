@@ -4,6 +4,12 @@ import {
 } from '@/analytics/hooks/useEventTracker';
 import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
+import { reportMissingRecordIndexObjectMetadata } from '@/error-handler/utils/reportMissingRecordIndexObjectMetadata';
+import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
 import { useReturnToPath } from '@/auth/hooks/useReturnToPath';
@@ -31,10 +37,11 @@ import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { useStore } from 'jotai';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   matchPath,
   useLocation,
@@ -108,6 +115,29 @@ export const PageChangeEffect = () => {
   const isAppEffectRedirectEnabled = useAtomStateValue(
     isAppEffectRedirectEnabledState,
   );
+  const isMinimalMetadataReady = useAtomStateValue(
+    isMinimalMetadataReadyState,
+  );
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const objectMetadataItem = objectMetadataItems.find(
+    (metadataItem) => metadataItem.namePlural === objectNamePlural,
+  );
+  const metadataStore = useAtomFamilyStateValue(
+    metadataStoreState,
+    'objectMetadataItems',
+  );
+  const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
+  const views = useAtomStateValue(viewsSelector);
+  const hasMatchingView =
+    isDefined(contextStoreCurrentViewId) &&
+    views.some((view) => view.id === contextStoreCurrentViewId);
+  const hasMatchingNavigationMenuItem = navigationMenuItems.some(
+    (navigationMenuItem) =>
+      navigationMenuItem.link === location.pathname ||
+      (isDefined(contextStoreCurrentViewId) &&
+        navigationMenuItem.viewId === contextStoreCurrentViewId),
+  );
+  const lastReportedMissingRecordIndexRoute = useRef<string | null>(null);
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -192,6 +222,45 @@ export const PageChangeEffect = () => {
     saveReturnToPath,
     getReturnToPath,
     clearReturnToPath,
+  ]);
+
+  useEffect(() => {
+    const isMissingRecordIndexObjectMetadata =
+      isMinimalMetadataReady &&
+      isMatchingLocation(location, AppPath.RecordIndexPage) &&
+      !isDefined(objectMetadataItem) &&
+      pageChangeEffectNavigateLocation === AppPath.NotFound;
+
+    if (
+      !isMissingRecordIndexObjectMetadata ||
+      lastReportedMissingRecordIndexRoute.current === location.key
+    ) {
+      return;
+    }
+
+    lastReportedMissingRecordIndexRoute.current = location.key;
+
+    void reportMissingRecordIndexObjectMetadata({
+      objectNamePlural,
+      pathname: location.pathname,
+      metadataStatus: metadataStore.status,
+      metadataCollectionHash: metadataStore.currentCollectionHash,
+      metadataReady: isMinimalMetadataReady,
+      objectMetadataCount: objectMetadataItems.length,
+      hasMatchingView,
+      hasMatchingNavigationMenuItem,
+    });
+  }, [
+    hasMatchingNavigationMenuItem,
+    hasMatchingView,
+    isMinimalMetadataReady,
+    location,
+    metadataStore.currentCollectionHash,
+    metadataStore.status,
+    objectMetadataItem,
+    objectMetadataItems.length,
+    objectNamePlural,
+    pageChangeEffectNavigateLocation,
   ]);
 
   useEffect(() => {
