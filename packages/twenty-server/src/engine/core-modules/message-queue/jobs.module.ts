@@ -54,6 +54,8 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
 import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 import { WorkflowModule } from 'src/modules/workflow/workflow.module';
+import { ExecutiveSearchModule } from 'src/modules/executive-search/executive-search.module';
+import { ExecutiveSyncProcessOutboxJob } from 'src/modules/executive-search/sync/jobs/executive-sync-process-outbox.job';
 
 @Module({
   imports: [
@@ -97,6 +99,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     ApplicationRegistrationModule,
     OnboardingModule,
     BillingReminderModule,
+    ExecutiveSearchModule,
   ],
   providers: [
     BillingReminderCronJob,
@@ -113,6 +116,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     GenerateSdkClientJob,
     BackfillApplicationInstallationJob,
     InstallOnboardingAppsJob,
+    ExecutiveSyncProcessOutboxJob,
   ],
 })
 export class JobsModule {

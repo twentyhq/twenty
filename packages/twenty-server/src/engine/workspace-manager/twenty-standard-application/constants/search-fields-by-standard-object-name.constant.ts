@@ -17,6 +17,12 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
     { name: 'domainName', type: FieldMetadataType.LINKS },
   ],
   dashboard: [{ name: 'title', type: FieldMetadataType.TEXT }],
+  externalEntityLink: [],
+  externalSyncCheckpoint: [],
+  externalSyncDLQ: [],
+  externalSyncInbox: [],
+  externalSyncOutbox: [],
+  externalSyncReconciliation: [],
   message: [{ name: 'subject', type: FieldMetadataType.TEXT }],
   messageCampaign: [{ name: 'subject', type: FieldMetadataType.TEXT }],
   messageChannelMessageAssociation: [

@@ -2591,6 +2591,259 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
+  externalEntityLink: {
+    universalIdentifier: 'a8ea9890-3fb3-5ef9-8436-43f278ddda99',
+    fields: {
+      ...buildStandardObjectSystemFields(
+        'a8ea9890-3fb3-5ef9-8436-43f278ddda99',
+      ),
+      workspaceId: {
+        universalIdentifier: '84f2e0d0-14ff-57b4-9375-1a2f1f1db260',
+      },
+      twentyEntityName: {
+        universalIdentifier: '04916c5d-1587-51f3-807f-ca15d9bcc2f6',
+      },
+      twentyRecordId: {
+        universalIdentifier: '87467b36-2058-5c0c-97fb-a658a5a8dd5d',
+      },
+      externalSystemName: {
+        universalIdentifier: 'eedb74e0-e13c-51d5-a62a-d67bced684b2',
+      },
+      externalEntityName: {
+        universalIdentifier: '86c398f3-eb11-5e94-a492-69d7ddc18a35',
+      },
+      externalRecordId: {
+        universalIdentifier: 'd5ccd676-5ad3-5c04-a4e8-3ba467707114',
+      },
+      authority: {
+        universalIdentifier: 'e0cb928f-cad9-529f-a686-65b9f2e21626',
+      },
+      lastSyncedAt: {
+        universalIdentifier: '6be4d82c-c9ef-5d91-a3c2-ec1ff6300fc4',
+      },
+    },
+    indexes: {
+      workspaceExternalEntityUniqueIndex: {
+        universalIdentifier: 'a9994297-33f5-530e-8358-24ab1bbceebf',
+      },
+      workspaceTwentyEntityUniqueIndex: {
+        universalIdentifier: '20b9d59d-a36c-5329-b261-fee3054d13a3',
+      },
+    },
+  },
+  externalSyncOutbox: {
+    universalIdentifier: '4b9c0a9e-a701-5ed2-81cf-3b3b93fb52b4',
+    fields: {
+      ...buildStandardObjectSystemFields(
+        '4b9c0a9e-a701-5ed2-81cf-3b3b93fb52b4',
+      ),
+      workspaceId: {
+        universalIdentifier: '88507694-7ded-50a5-9760-206a6ae1e251',
+      },
+      eventId: {
+        universalIdentifier: '8a41378d-81c9-58c6-90ff-45df9742e42c',
+      },
+      domainIdempotencyKey: {
+        universalIdentifier: '363a7fa3-a1e6-5fdc-a3e5-3693c92f23ef',
+      },
+      eventType: {
+        universalIdentifier: '3df6b980-c8da-502a-9f77-48f1af9e6ea3',
+      },
+      entityName: {
+        universalIdentifier: '4da335bf-a278-595a-8d49-b4483cf718a3',
+      },
+      entityId: {
+        universalIdentifier: 'acf2e4cf-6b60-5643-a91e-7d9cf536533f',
+      },
+      payload: {
+        universalIdentifier: '967b3dd2-f63d-518b-970d-26cfeb74fb05',
+      },
+      status: {
+        universalIdentifier: 'b8ced3ac-2125-5052-997c-68b432f59026',
+      },
+      retryCount: {
+        universalIdentifier: '97e988e1-1018-5f16-8fdd-57bead11af54',
+      },
+      maxRetries: {
+        universalIdentifier: '6d14a977-51f4-54fd-bd54-c58a7781e69b',
+      },
+      lastError: {
+        universalIdentifier: '55a13084-6166-5861-b5d7-c4e2d57dc81c',
+      },
+      nextRetryAt: {
+        universalIdentifier: '7cb5b492-03fb-59aa-93c5-0aba9adcaa49',
+      },
+    },
+    indexes: {
+      eventIdUniqueIndex: {
+        universalIdentifier: 'd6353a88-f364-5848-ad3c-7a8380cfcc47',
+      },
+      statusNextRetryIndex: {
+        universalIdentifier: 'c91cd01a-3600-5ee1-8c51-8b8e10f27bac',
+      },
+    },
+  },
+  externalSyncInbox: {
+    universalIdentifier: 'f24a4ec0-7f54-5cf4-bef4-72f7503f008d',
+    fields: {
+      ...buildStandardObjectSystemFields(
+        'f24a4ec0-7f54-5cf4-bef4-72f7503f008d',
+      ),
+      workspaceId: {
+        universalIdentifier: '57eb6bb8-192e-526f-a7f0-67b85bd84593',
+      },
+      externalEventId: {
+        universalIdentifier: 'a746aa13-f23d-51ed-ad44-832f470e4d01',
+      },
+      externalSystemName: {
+        universalIdentifier: '69cc7ae3-e32a-5e1e-b3f1-16d93d1cacc0',
+      },
+      eventType: {
+        universalIdentifier: 'a0bbb151-83bf-50c8-a26d-6df4686f55f1',
+      },
+      entityName: {
+        universalIdentifier: '8377e954-3553-526a-b238-fc99f519e3f2',
+      },
+      entityId: {
+        universalIdentifier: 'ecffae49-90fb-5f21-b218-268b3dca3792',
+      },
+      payload: {
+        universalIdentifier: '67550dd3-43e2-5328-9213-2ff5053404f8',
+      },
+      status: {
+        universalIdentifier: '2fb7ddbc-6fa7-51f7-ad76-cd71bf2adc83',
+      },
+      processedAt: {
+        universalIdentifier: 'e70387cf-87f8-567f-b703-1d19c15ab01d',
+      },
+      error: {
+        universalIdentifier: '3ccb225d-d7cc-5900-9012-200cfbf5adaf',
+      },
+    },
+    indexes: {
+      externalEventIdUniqueIndex: {
+        universalIdentifier: '929c3e31-be0e-58f1-b8c3-0378dae98026',
+      },
+    },
+  },
+  externalSyncDLQ: {
+    universalIdentifier: '5de649b2-e6d0-5d69-a495-e1868f9be148',
+    fields: {
+      ...buildStandardObjectSystemFields(
+        '5de649b2-e6d0-5d69-a495-e1868f9be148',
+      ),
+      workspaceId: {
+        universalIdentifier: 'c2041ea2-0c93-5f95-970e-669639c2942e',
+      },
+      sourceType: {
+        universalIdentifier: 'a8038a8c-aa77-5268-b904-a99411668ff4',
+      },
+      sourceRecordId: {
+        universalIdentifier: 'f979b391-563b-5b8f-bf2b-fbf28a4e1bcd',
+      },
+      eventId: {
+        universalIdentifier: '2ed44e7d-c1f9-5ebf-be22-4c99764da1b6',
+      },
+      eventType: {
+        universalIdentifier: '70363e45-14a9-52f6-8475-4aead2178a0f',
+      },
+      payload: {
+        universalIdentifier: '478fed7f-b44f-53d6-ab5e-020fdfb45ab7',
+      },
+      error: {
+        universalIdentifier: '56e485c0-ca09-5a15-9e38-6aebed9b73f0',
+      },
+      errorClass: {
+        universalIdentifier: '4b536ad0-079a-50f0-8105-99dd378078dd',
+      },
+      failedAt: {
+        universalIdentifier: 'f1e71e93-ff59-5883-8774-b561d51723b4',
+      },
+    },
+    indexes: {},
+  },
+  externalSyncCheckpoint: {
+    universalIdentifier: '7ceba588-602a-579a-afb8-d93daaec7951',
+    fields: {
+      ...buildStandardObjectSystemFields(
+        '7ceba588-602a-579a-afb8-d93daaec7951',
+      ),
+      workspaceId: {
+        universalIdentifier: 'ef9e261c-3d10-51af-9570-dc952716213f',
+      },
+      externalSystemName: {
+        universalIdentifier: '2460a0ca-e246-532b-ab5d-5db3c72bb249',
+      },
+      entityName: {
+        universalIdentifier: '843d63a9-c33a-57c5-8099-84f754777b01',
+      },
+      lastExternalEventId: {
+        universalIdentifier: 'f8b9b8ba-e566-52f8-b29c-a41297413e72',
+      },
+      lastExternalEventTimestamp: {
+        universalIdentifier: 'bb367e7a-9d3c-5c9f-95b4-0ee90f2eb1f9',
+      },
+      lastSyncStartedAt: {
+        universalIdentifier: '77240574-82eb-5a9c-9685-737f277a2596',
+      },
+      lastSyncCompletedAt: {
+        universalIdentifier: '5a0c4789-2c25-5577-ae1a-9a7c4f87e9fb',
+      },
+      status: {
+        universalIdentifier: '01d0dff1-3134-55f5-9ad9-e4f6e80db032',
+      },
+    },
+    indexes: {
+      workspaceSystemEntityUniqueIndex: {
+        universalIdentifier: '4072b4fc-1240-5051-883c-421531562aab',
+      },
+    },
+  },
+  externalSyncReconciliation: {
+    universalIdentifier: 'ab5eb338-796f-5ca3-b5ac-dd46cbfbd649',
+    fields: {
+      ...buildStandardObjectSystemFields(
+        'ab5eb338-796f-5ca3-b5ac-dd46cbfbd649',
+      ),
+      workspaceId: {
+        universalIdentifier: '02955e9b-b765-5d0d-a622-756470e90a6e',
+      },
+      externalSystemName: {
+        universalIdentifier: 'a7515f32-6bcb-532b-ad89-0d4e461ebc4a',
+      },
+      entityName: {
+        universalIdentifier: '563bcff6-68cc-5805-b6ae-9f9cdebf75fd',
+      },
+      startedAt: {
+        universalIdentifier: '1381d520-f2f5-52e3-86af-9a3dd81bf86d',
+      },
+      completedAt: {
+        universalIdentifier: 'f2d2f365-2a9f-55d5-b38d-2c926ee2939e',
+      },
+      status: {
+        universalIdentifier: 'fcac52ec-d0d4-5a06-b295-eb8cf830ec7d',
+      },
+      totalCompared: {
+        universalIdentifier: '94473693-905f-5a36-880c-fb81dd25bb9d',
+      },
+      matched: {
+        universalIdentifier: 'af9b78f7-90b7-5fbe-9bba-d1bcf35424f2',
+      },
+      onlyInTwenty: {
+        universalIdentifier: '173a940c-6202-5623-aa96-b98061cf8acd',
+      },
+      onlyInExternal: {
+        universalIdentifier: '0bdf2f1b-1f07-5e24-86ad-2c3149c51d3a',
+      },
+      differenceCount: {
+        universalIdentifier: '82201e4e-363a-55dc-a73e-c83056fc1c78',
+      },
+      findings: {
+        universalIdentifier: '3cce1a4a-b44c-5f8e-b201-947bd031f812',
+      },
+    },
+    indexes: {},
+  },
 } as const satisfies Record<
   string,
   {
