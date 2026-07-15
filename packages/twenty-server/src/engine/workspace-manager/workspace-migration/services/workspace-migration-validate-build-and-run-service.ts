@@ -46,6 +46,13 @@ type ValidateBuildAndRunWorkspaceMigrationFromRecordArgs = {
   dryRun?: boolean;
 };
 
+type ValidateBuildAndRunWorkspaceMigrationFromRecordInternalArgs =
+  ValidateBuildAndRunWorkspaceMigrationFromRecordArgs & {
+    // Skips the metadata side-effect engine (expandWithSideEffects) and applies the
+    // matrix literally. Only the deprecated legacy path sets this to true.
+    skipSideEffectExpandEngine: boolean;
+  };
+
 type ComputeAndRunWorkspaceMigrationFromResolvedOperationsArgs = {
   workspaceId: string;
   allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
@@ -196,57 +203,17 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     });
   }
 
-  public async validateBuildAndRunWorkspaceMigrationFromRecord({
-    allFlatEntityOperationRecordByMetadataName,
-    workspaceId,
-    isSystemBuild = false,
-    applicationUniversalIdentifier,
-    dryRun,
-  }: ValidateBuildAndRunWorkspaceMigrationFromRecordArgs): Promise<
+  public async validateBuildAndRunWorkspaceMigrationFromRecord(
+    args: ValidateBuildAndRunWorkspaceMigrationFromRecordArgs,
+  ): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
     | (WorkspaceMigrationOrchestratorSuccessfulResult & {
         hasSchemaMetadataChanged: boolean;
       })
   > {
-    const callerMetadataNames = Object.keys(
-      allFlatEntityOperationRecordByMetadataName,
-    ) as AllMetadataName[];
-
-    const {
-      flatApplicationMaps,
-      allRelatedFlatEntityMaps,
-      allMetadataNameCacheToCompute,
-    } =
-      await this.workspaceMigrationFlatEntityMapsService.getOrRecomputeAllRelatedFlatEntityMaps(
-        {
-          workspaceId,
-          callerMetadataNames,
-        },
-      );
-
-    const sideEffectExpansionResult =
-      this.metadataSideEffectEngineService.expandWithSideEffects({
-        allFlatEntityOperationRecordByMetadataName,
-        sideEffectRelatedFlatEntityMaps: allRelatedFlatEntityMaps,
-        context: {
-          buildOptions: { isSystemBuild, applicationUniversalIdentifier },
-        },
-      });
-
-    if (sideEffectExpansionResult.status === 'fail') {
-      return sideEffectExpansionResult;
-    }
-
-    return await this.computeAndRunWorkspaceMigrationFromResolvedOperations({
-      allFlatEntityOperationRecordByMetadataName:
-        sideEffectExpansionResult.allFlatEntityOperationRecordByMetadataName,
-      workspaceId,
-      isSystemBuild,
-      applicationUniversalIdentifier,
-      dryRun,
-      flatApplicationMaps,
-      allRelatedFlatEntityMaps,
-      allMetadataNameCacheToCompute,
+    return await this.validateBuildAndRunWorkspaceMigrationFromRecordInternal({
+      ...args,
+      skipSideEffectExpandEngine: false,
     });
   }
 
@@ -269,11 +236,32 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         hasSchemaMetadataChanged: boolean;
       })
   > {
-    const allFlatEntityOperationRecordByMetadataName =
-      transpileFlatEntityOperationArrayToRecord(
-        allFlatEntityOperationByMetadataName,
-      );
+    return await this.validateBuildAndRunWorkspaceMigrationFromRecordInternal({
+      allFlatEntityOperationRecordByMetadataName:
+        transpileFlatEntityOperationArrayToRecord(
+          allFlatEntityOperationByMetadataName,
+        ),
+      workspaceId,
+      isSystemBuild,
+      applicationUniversalIdentifier,
+      dryRun,
+      skipSideEffectExpandEngine: true,
+    });
+  }
 
+  private async validateBuildAndRunWorkspaceMigrationFromRecordInternal({
+    allFlatEntityOperationRecordByMetadataName,
+    workspaceId,
+    isSystemBuild = false,
+    applicationUniversalIdentifier,
+    dryRun,
+    skipSideEffectExpandEngine,
+  }: ValidateBuildAndRunWorkspaceMigrationFromRecordInternalArgs): Promise<
+    | WorkspaceMigrationOrchestratorFailedResult
+    | (WorkspaceMigrationOrchestratorSuccessfulResult & {
+        hasSchemaMetadataChanged: boolean;
+      })
+  > {
     const callerMetadataNames = Object.keys(
       allFlatEntityOperationRecordByMetadataName,
     ) as AllMetadataName[];
@@ -290,8 +278,30 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         },
       );
 
+    let resolvedFlatEntityOperationRecordByMetadataName =
+      allFlatEntityOperationRecordByMetadataName;
+
+    if (!skipSideEffectExpandEngine) {
+      const sideEffectExpansionResult =
+        this.metadataSideEffectEngineService.expandWithSideEffects({
+          allFlatEntityOperationRecordByMetadataName,
+          sideEffectRelatedFlatEntityMaps: allRelatedFlatEntityMaps,
+          context: {
+            buildOptions: { isSystemBuild, applicationUniversalIdentifier },
+          },
+        });
+
+      if (sideEffectExpansionResult.status === 'fail') {
+        return sideEffectExpansionResult;
+      }
+
+      resolvedFlatEntityOperationRecordByMetadataName =
+        sideEffectExpansionResult.allFlatEntityOperationRecordByMetadataName;
+    }
+
     return await this.computeAndRunWorkspaceMigrationFromResolvedOperations({
-      allFlatEntityOperationRecordByMetadataName,
+      allFlatEntityOperationRecordByMetadataName:
+        resolvedFlatEntityOperationRecordByMetadataName,
       workspaceId,
       isSystemBuild,
       applicationUniversalIdentifier,

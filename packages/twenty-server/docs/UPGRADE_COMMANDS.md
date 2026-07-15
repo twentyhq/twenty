@@ -120,7 +120,7 @@ Rule of thumb:
 - Target version **< 2.19** → use the **legacy** method.
 - Target version **>= 2.19** → use the default side-effect method.
 
-The one exception is `upgrade:2-10:sync-call-recording-standard-objects`, which stays on the side-effect path even though it predates the engine: it derives its create-set from the live standard definition, which no longer declares the now engine-owned `searchVector` GIN index and system relations, so it genuinely depends on the engine to produce them.
+All pre-2.19 commands follow this rule, including `upgrade:2-10:sync-call-recording-standard-objects`: it builds its create-set from the static twenty-standard definition (which already declares the `searchVector` field, `searchFieldMetadata` rows, and system relations) and runs it through the legacy path so nothing is injected on top. The one companion the static definition still omits is `callRecording`'s `searchVector` GIN index; that gap is declared statically and backfilled for existing workspaces in a follow-up (see twentyhq/core-team-issues#2672).
 
 ## Execution Order
 
