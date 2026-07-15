@@ -18,8 +18,7 @@ export const parseRecallRetryAfterMs = (
     return capRecallRetryAfterMs(Number(trimmedRetryAfterHeader) * 1000);
   }
 
-  // Numeric forms outside delay-seconds (1.5, 1e2, 0x10) are malformed, and
-  // Date.parse would misread some of them as dates, so use the default policy.
+  // Malformed numeric forms (1.5, 1e2, 0x10) would be misread as dates by Date.parse.
   if (!Number.isNaN(Number(trimmedRetryAfterHeader))) {
     return undefined;
   }

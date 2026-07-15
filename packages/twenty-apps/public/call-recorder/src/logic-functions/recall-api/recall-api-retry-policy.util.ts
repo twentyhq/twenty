@@ -31,8 +31,7 @@ export const resolveRecallApiRetryDelayMs = ({
     return RECALL_API_ADHOC_POOL_RETRY_DELAY_MS;
   }
 
-  // Equal jitter around the linear backoff so retries that share a failure
-  // instant do not fire in lockstep and re-collide on the next attempt.
+  // Equal jitter so retries sharing a failure instant do not re-collide.
   const baseDelayMs = RECALL_API_RETRY_DELAY_MS * attemptNumber;
 
   return Math.round((baseDelayMs * (1 + random())) / 2);

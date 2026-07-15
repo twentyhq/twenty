@@ -9,8 +9,7 @@ export type RecallBotRecording = {
   completedAt: string | undefined;
 };
 
-// Typed view of a Recall bot payload, parsed once at the recall-api boundary
-// so flows never handle raw provider records.
+// Parsed once at the recall-api boundary so flows never handle raw provider records.
 export type RecallBotSnapshot = {
   id: string | undefined;
   metadata: Record<string, unknown>;

@@ -52,8 +52,7 @@ export const recallBotApiRequest = async <TData>(
       attemptNumber,
     });
 
-    // Blocking longer than one invocation can safely spare would sleep straight
-    // into a timeout kill, so defer to the reconcilers, which re-drive the row.
+    // Sleeping past the invocation budget would hit the timeout kill; defer to the reconcilers.
     if (
       totalRetryWaitMs + retryDelayMs >=
       RECALL_API_MAX_IN_PROCESS_RETRY_WAIT_MS
