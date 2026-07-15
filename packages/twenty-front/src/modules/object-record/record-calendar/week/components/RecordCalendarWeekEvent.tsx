@@ -1,14 +1,14 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
+import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
+import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardClickOutsideId';
 import { useIsRecordCalendarCardDragDisabled } from '@/object-record/record-calendar/record-calendar-card/hooks/useIsRecordCalendarCardDragDisabled';
+import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
 import { getRecordCalendarCardDraggableId } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardDraggableId';
 import { RECORD_CALENDAR_WEEK_DIMENSIONS } from '@/object-record/record-calendar/week/constants/RecordCalendarWeekDimensions';
 import { type RecordCalendarWeekDndData } from '@/object-record/record-calendar/week/types/RecordCalendarWeekDndData';
 import { formatRecordCalendarWeekEventTimeRange } from '@/object-record/record-calendar/week/utils/formatRecordCalendarWeekEventTimeRange';
 import { getRecordCalendarWeekTimedEventHeight } from '@/object-record/record-calendar/week/utils/getRecordCalendarWeekTimedEventMetrics';
-import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardClickOutsideId';
-import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
-import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -16,11 +16,11 @@ import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/us
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useDraggable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
+import { type Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/data-display';
 import { Checkbox, CheckboxVariant } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { type Temporal } from 'temporal-polyfill';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const RECORD_CALENDAR_WEEK_EVENT_HORIZONTAL_INSET = 4;
@@ -102,20 +102,18 @@ const StyledEventHeader = styled.div`
   width: 100%;
 `;
 
-const StyledRecordChipContainer = styled.div<{ isToday: boolean }>`
+const StyledRecordChipContainer = styled.div`
   align-items: center;
   display: flex;
   flex: 1;
+  font-size: ${themeCssVariables.font.size.sm};
   height: 20px;
   min-width: 0;
   overflow: hidden;
 
   [data-testid='chip'],
   [data-testid='chip'] > * {
-    color: ${({ isToday }) =>
-      isToday
-        ? themeCssVariables.font.color.primary
-        : themeCssVariables.font.color.extraLight};
+    color: ${themeCssVariables.font.color.primary};
   }
 `;
 
@@ -135,12 +133,9 @@ const StyledEventTimeRow = styled.div`
   width: 100%;
 `;
 
-const StyledEventTime = styled.span<{ isToday: boolean }>`
-  color: ${({ isToday }) =>
-    isToday
-      ? themeCssVariables.font.color.tertiary
-      : themeCssVariables.font.color.extraLight};
-  font-size: ${themeCssVariables.font.size.xxs};
+const StyledEventTime = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.xs};
   line-height: 12px;
   white-space: nowrap;
 `;
@@ -154,7 +149,6 @@ type RecordCalendarWeekEventProps = {
   columnIndex?: number;
   endInPixels?: number;
   isAllDay: boolean;
-  isToday: boolean;
   recordId: string;
   startInPixels?: number;
   timeFormat: string;
@@ -170,7 +164,6 @@ export const RecordCalendarWeekEvent = ({
   columnIndex = 0,
   endInPixels = 0,
   isAllDay,
-  isToday,
   recordId,
   startInPixels = 0,
   timeFormat,
@@ -249,7 +242,7 @@ export const RecordCalendarWeekEvent = ({
       >
         <StyledEventContent isAllDay={isAllDay}>
           <StyledEventHeader>
-            <StyledRecordChipContainer isToday={isToday}>
+            <StyledRecordChipContainer>
               <RecordChip
                 objectNameSingular={objectNameSingular}
                 record={recordStore}
@@ -276,7 +269,7 @@ export const RecordCalendarWeekEvent = ({
           </StyledEventHeader>
           {!isAllDay && isDefined(eventTime) && (
             <StyledEventTimeRow>
-              <StyledEventTime isToday={isToday}>{eventTime}</StyledEventTime>
+              <StyledEventTime>{eventTime}</StyledEventTime>
             </StyledEventTimeRow>
           )}
         </StyledEventContent>
