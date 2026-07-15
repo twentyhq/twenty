@@ -1,1 +1,1 @@
-export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER = 'executive-search-default-role';
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER = 'c8d7e6f5-4a3b-4c1d-9e0f-8a7b6c5d4e3f';

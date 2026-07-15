@@ -10,12 +10,14 @@ import {
 
 describe('executive-search app constants', () => {
   it('has stable application universal identifier', () => {
-    expect(APPLICATION_UNIVERSAL_IDENTIFIER).toBe('executive-search');
+    expect(APPLICATION_UNIVERSAL_IDENTIFIER).toBe(
+      'b9e6b3d1-4f5a-4c8e-9f2d-1a3b5c7d9e0f',
+    );
   });
 
   it('has stable default role universal identifier', () => {
     expect(DEFAULT_ROLE_UNIVERSAL_IDENTIFIER).toBe(
-      'executive-search-default-role',
+      'c8d7e6f5-4a3b-4c1d-9e0f-8a7b6c5d4e3f',
     );
   });
 
@@ -35,7 +37,9 @@ describe('application-config validation', () => {
     const result = mod.default;
     expect(result.success, result.errors.join('; ')).toBe(true);
     expect(result.errors).toEqual([]);
-    expect(result.config.universalIdentifier).toBe('executive-search');
+    expect(result.config.universalIdentifier).toBe(
+      'b9e6b3d1-4f5a-4c8e-9f2d-1a3b5c7d9e0f',
+    );
   });
 
   it('default role validates without errors', async () => {
@@ -44,7 +48,7 @@ describe('application-config validation', () => {
     expect(result.success, result.errors.join('; ')).toBe(true);
     expect(result.errors).toEqual([]);
     expect(result.config.universalIdentifier).toBe(
-      'executive-search-default-role',
+      'c8d7e6f5-4a3b-4c1d-9e0f-8a7b6c5d4e3f',
     );
     expect(result.config.canReadAllObjectRecords).toBe(false);
     expect(result.config.objectPermissions).toEqual([]);
@@ -103,13 +107,13 @@ describe('role universal identifiers', () => {
     const roleIds = await import('src/constants/role-universal-identifiers');
     const roleUids = Object.values(roleIds);
 
-    const existingSlugs = [
+    const existingAppAndRoleUids = [
       APPLICATION_UNIVERSAL_IDENTIFIER,
       DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
     ];
 
     for (const uid of roleUids) {
-      expect(existingSlugs).not.toContain(uid);
+      expect(existingAppAndRoleUids).not.toContain(uid);
     }
   });
 });
@@ -159,13 +163,13 @@ describe('permission flag universal identifiers', () => {
     );
     const flagUids = Object.values(flagIds);
 
-    const existingSlugs = [
+    const existingAppAndRoleUids = [
       APPLICATION_UNIVERSAL_IDENTIFIER,
       DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
     ];
 
     for (const uid of flagUids) {
-      expect(existingSlugs).not.toContain(uid);
+      expect(existingAppAndRoleUids).not.toContain(uid);
     }
   });
 });
