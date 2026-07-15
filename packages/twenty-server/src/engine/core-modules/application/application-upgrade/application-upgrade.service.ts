@@ -99,15 +99,17 @@ export class ApplicationUpgradeService {
       where: { id: params.appRegistrationId },
     });
 
+    // TARBALL upgrades re-install the stored tarball, whose contents define
+    // the target version; the install flow gates against same-version and
+    // downgrade installs. LOCAL apps are updated by dev sync and OAUTH_ONLY
+    // registrations have no code artifacts, so neither can be upgraded.
     if (
       appRegistration.sourceType === ApplicationRegistrationSourceType.LOCAL ||
-      appRegistration.sourceType ===
-        ApplicationRegistrationSourceType.TARBALL ||
       appRegistration.sourceType ===
         ApplicationRegistrationSourceType.OAUTH_ONLY
     ) {
       throw new ApplicationException(
-        'Cannot upgrade an app installed from a tarball, local source, or OAuth-only registration',
+        'Cannot upgrade an app installed from a local source or OAuth-only registration',
         ApplicationExceptionCode.UPGRADE_FAILED,
       );
     }
