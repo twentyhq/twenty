@@ -512,6 +512,65 @@ describe('FileStorageService', () => {
             ['path', 'workspaceId', 'applicationId'],
           );
         });
+
+        it('should fall back to a queryRunner DB read when the application is not yet in the cache', async () => {
+          mockWorkspaceCacheService.getOrRecompute.mockResolvedValueOnce({
+            flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
+          });
+
+          const findOne = jest.fn().mockResolvedValue({ id: 'uncommitted-id' });
+          const queryRunner = {
+            manager: { getRepository: jest.fn().mockReturnValue({ findOne }) },
+          };
+
+          mockFileRepository.withManager.mockReturnValue(mockFileRepository);
+
+          await service.writeFile({
+            ...validResourceIdentifier,
+            sourceFile: Buffer.from('valid content'),
+            settings: { isTemporaryFile: false, toDelete: false },
+            queryRunner: queryRunner as any,
+          });
+
+          expect(mockWorkspaceCacheService.getOrRecompute).toHaveBeenCalled();
+          expect(findOne).toHaveBeenCalledWith({
+            where: {
+              universalIdentifier: 'app-456',
+              workspaceId: 'workspace-123',
+            },
+          });
+          expect(mockFileRepository.upsertAndReturnOne).toHaveBeenCalledWith(
+            'workspace-123',
+            expect.objectContaining({ applicationId: 'uncommitted-id' }),
+            ['path', 'workspaceId', 'applicationId'],
+          );
+        });
+
+        it('should throw FILE_NOT_FOUND when the application is missing from both the cache and the queryRunner DB read', async () => {
+          mockWorkspaceCacheService.getOrRecompute.mockResolvedValueOnce({
+            flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
+          });
+
+          const findOne = jest.fn().mockResolvedValue(null);
+          const queryRunner = {
+            manager: { getRepository: jest.fn().mockReturnValue({ findOne }) },
+          };
+
+          mockFileRepository.withManager.mockReturnValue(mockFileRepository);
+
+          await expect(
+            service.writeFile({
+              ...validResourceIdentifier,
+              sourceFile: Buffer.from('valid content'),
+              settings: { isTemporaryFile: false, toDelete: false },
+              queryRunner: queryRunner as any,
+            }),
+          ).rejects.toMatchObject({
+            code: FileStorageExceptionCode.FILE_NOT_FOUND,
+          });
+
+          expect(mockDriver.writeFile).not.toHaveBeenCalled();
+        });
       });
 
       describe('magic-byte backstop', () => {
