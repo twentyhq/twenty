@@ -30,8 +30,6 @@ export class StaleRegistrationCleanupCronJob {
       const deletedCount =
         await this.staleRegistrationCleanupService.cleanupStaleRegistrations();
 
-      await this.staleRegistrationCleanupService.cleanupDeletedRegistrationFiles();
-
       this.logger.log(
         `Stale OAuth registration cleanup completed: ${deletedCount} registration(s) deleted`,
       );

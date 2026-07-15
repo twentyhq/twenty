@@ -13,6 +13,7 @@ import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/applicatio
 import { shouldRefreshApplicationRegistrationOnInstall } from 'src/engine/core-modules/application/application-install/utils/should-refresh-application-registration-on-install.util';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 import {
@@ -100,6 +101,7 @@ export class ApplicationRegistrationService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
+    private readonly serverFileStorageService: ServerFileStorageService,
     private readonly cacheLockService: CacheLockService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
@@ -435,12 +437,21 @@ export class ApplicationRegistrationService {
     }, `application-registration-update:${applicationRegistrationId}`);
   }
 
-  // Stored assets are intentionally kept on soft delete so a restored
-  // registration gets them back; their storage is reclaimed by the stale
-  // registration cleanup cron once the grace period has passed.
   async delete(id: string, ownerWorkspaceId: string): Promise<boolean> {
     await this.findOneById(id, ownerWorkspaceId);
-    await this.applicationRegistrationRepository.softDelete(id);
+
+    // Stored assets (logo, gallery images) go with the registration; deleting
+    // them first also removes the bytes, which the row FK cascade cannot do.
+    try {
+      await this.serverFileStorageService.deleteByApplicationRegistrationId(id);
+    } catch (error) {
+      this.logger.error(
+        `Failed to delete server files for registration ${id}`,
+        error,
+      );
+    }
+
+    await this.applicationRegistrationRepository.delete(id);
 
     await this.invalidateMarketplaceAppsCache();
 
