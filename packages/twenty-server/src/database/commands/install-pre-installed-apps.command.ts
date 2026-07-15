@@ -10,7 +10,7 @@ import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre
 @Command({
   name: 'install-pre-installed-apps',
   description:
-    'Install every application registration flagged `isPreInstalled` on every active and suspended workspace. Idempotent.',
+    'Install every application registration flagged `isPreInstalled` on every provisioned workspace. Idempotent.',
 })
 export class InstallPreInstalledAppsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
