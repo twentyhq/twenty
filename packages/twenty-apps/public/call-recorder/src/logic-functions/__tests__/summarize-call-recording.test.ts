@@ -1,19 +1,28 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { summarizeCallRecordingHandler } from 'src/logic-functions/summarize-call-recording';
 
-const generateCallRecordingSummaryMock = vi.hoisted(() => vi.fn());
+const queryMock = vi.hoisted(() => vi.fn());
+const mutationMock = vi.hoisted(() => vi.fn());
+const runAgentMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-client-sdk/core', () => ({
-  CoreApiClient: class {},
+  CoreApiClient: class {
+    query = queryMock;
+    mutation = mutationMock;
+  },
 }));
 
-vi.mock(
-  'src/logic-functions/flows/generate-call-recording-summary.util',
-  () => ({
-    generateCallRecordingSummary: generateCallRecordingSummaryMock,
-  }),
-);
+vi.mock('twenty-sdk/logic-function', () => ({
+  runAgent: runAgentMock,
+}));
+
+const TRANSCRIPT = [
+  {
+    participant: { name: 'Alex' },
+    words: [{ text: 'Hello' }, { text: 'team' }],
+  },
+];
 
 const FAKE_OBJECT_METADATA = {
   id: 'object-metadata-id',
@@ -74,9 +83,33 @@ const buildEvent = ({
 describe('summarize-call-recording logic function', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    generateCallRecordingSummaryMock.mockResolvedValue({
-      outcome: 'generated',
+    vi.stubEnv('CALL_RECORDER_SUMMARY_ENABLED', 'true');
+    vi.stubEnv('CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT', '');
+    queryMock.mockResolvedValue({
+      callRecordings: {
+        edges: [
+          {
+            node: {
+              id: 'call-recording-1',
+              title: 'Weekly sync',
+              transcript: TRANSCRIPT,
+              summary: { markdown: null },
+              createdBy: { source: 'APPLICATION', name: 'Call Recorder' },
+            },
+          },
+        ],
+      },
     });
+    mutationMock.mockResolvedValue({});
+    runAgentMock.mockResolvedValue({
+      success: true,
+      error: null,
+      result: { response: '## Overview\nGood call.' },
+    });
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it('generates a summary when the transcript field changed', async () => {
@@ -87,16 +120,20 @@ describe('summarize-call-recording logic function', () => {
       }),
     );
 
-    expect(generateCallRecordingSummaryMock).toHaveBeenCalledWith(
-      expect.anything(),
-      {
-        callRecordingId: 'call-recording-1',
-        requireCreatedByCallRecorder: true,
-      },
-    );
     expect(result).toEqual({
       callRecordingId: 'call-recording-1',
       outcome: 'generated',
+    });
+    expect(mutationMock).toHaveBeenCalledWith({
+      updateCallRecording: {
+        __args: {
+          id: 'call-recording-1',
+          data: {
+            summary: { blocknote: null, markdown: '## Overview\nGood call.' },
+          },
+        },
+        id: true,
+      },
     });
   });
 
@@ -108,7 +145,9 @@ describe('summarize-call-recording logic function', () => {
       }),
     );
 
-    expect(generateCallRecordingSummaryMock).not.toHaveBeenCalled();
+    expect(queryMock).not.toHaveBeenCalled();
+    expect(runAgentMock).not.toHaveBeenCalled();
+    expect(mutationMock).not.toHaveBeenCalled();
     expect(result).toEqual({ skipped: true, reason: 'transcript unchanged' });
   });
 
@@ -120,7 +159,9 @@ describe('summarize-call-recording logic function', () => {
       }),
     );
 
-    expect(generateCallRecordingSummaryMock).not.toHaveBeenCalled();
+    expect(queryMock).not.toHaveBeenCalled();
+    expect(runAgentMock).not.toHaveBeenCalled();
+    expect(mutationMock).not.toHaveBeenCalled();
     expect(result).toEqual({
       skipped: true,
       reason: 'not a call recording update',
