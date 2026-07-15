@@ -10,6 +10,10 @@ import { buildCalendarEventParticipantStandardFlatIndexMetadatas } from 'src/eng
 import { buildCallRecordingStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-call-recording-standard-flat-index-metadata.util';
 import { buildCompanyStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-company-standard-flat-index-metadata.util';
 import { buildDashboardStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-dashboard-standard-flat-index-metadata.util';
+import { buildExternalEntityLinkStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-external-entity-link-standard-flat-index-metadata.util';
+import { buildExternalSyncCheckpointStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-external-sync-checkpoint-standard-flat-index-metadata.util';
+import { buildExternalSyncInboxStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-external-sync-inbox-standard-flat-index-metadata.util';
+import { buildExternalSyncOutboxStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-external-sync-outbox-standard-flat-index-metadata.util';
 import { buildMessageCampaignStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-campaign-standard-flat-index-metadata.util';
 import { buildMessageListStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-list-standard-flat-index-metadata.util';
 import { buildMessageListMemberStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-list-member-standard-flat-index-metadata.util';
@@ -45,6 +49,11 @@ const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   callRecording: buildCallRecordingStandardFlatIndexMetadatas,
   company: buildCompanyStandardFlatIndexMetadatas,
   dashboard: buildDashboardStandardFlatIndexMetadatas,
+  externalEntityLink: buildExternalEntityLinkStandardFlatIndexMetadatas,
+  externalSyncCheckpoint:
+    buildExternalSyncCheckpointStandardFlatIndexMetadatas,
+  externalSyncInbox: buildExternalSyncInboxStandardFlatIndexMetadatas,
+  externalSyncOutbox: buildExternalSyncOutboxStandardFlatIndexMetadatas,
   messageCampaign: buildMessageCampaignStandardFlatIndexMetadatas,
   messageList: buildMessageListStandardFlatIndexMetadatas,
   messageListMember: buildMessageListMemberStandardFlatIndexMetadatas,
