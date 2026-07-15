@@ -23,13 +23,21 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
 
 const REVERSE_SYSTEM_RELATION_FIELD_NAME_PREFIX = 'target';
 
-// Universal identifiers of the four standard relation objects that host the
-// reverse morph fields of every default relation.
-const DEFAULT_RELATION_OBJECT_UNIVERSAL_IDENTIFIERS = new Set<string>(
-  DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.map(
-    (standardObjectNameSingular) =>
-      STANDARD_OBJECTS[standardObjectNameSingular].universalIdentifier,
-  ),
+// Every provisioning path of the default relations (legacy SDK manifest, legacy
+// API transpiler, twenty-standard) stamps the reverse morph field with the
+// engine-defined targetMorphId of its host standard object, while user-created
+// morph relations carry freshly generated morphIds. Matching on this morphId
+// (in addition to the name prefix) makes the reconciliation an exact
+// fingerprint and cannot hijack a user-authored `target*` morph field hosted
+// on one of the four standard relation objects.
+const TARGET_MORPH_ID_BY_DEFAULT_RELATION_OBJECT_UNIVERSAL_IDENTIFIER: Record<
+  string,
+  string
+> = Object.fromEntries(
+  DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.map((standardObjectNameSingular) => [
+    STANDARD_OBJECTS[standardObjectNameSingular].universalIdentifier,
+    STANDARD_OBJECTS[standardObjectNameSingular].morphIds.targetMorphId.morphId,
+  ]),
 );
 
 type ReverseSystemRelationFieldUpdate = {
@@ -92,11 +100,18 @@ export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends Prov
         flatEntityId: flatFieldMetadata.objectMetadataId,
       });
 
+      if (!isDefined(hostFlatObjectMetadata)) {
+        continue;
+      }
+
+      const expectedTargetMorphId =
+        TARGET_MORPH_ID_BY_DEFAULT_RELATION_OBJECT_UNIVERSAL_IDENTIFIER[
+          hostFlatObjectMetadata.universalIdentifier
+        ];
+
       if (
-        !isDefined(hostFlatObjectMetadata) ||
-        !DEFAULT_RELATION_OBJECT_UNIVERSAL_IDENTIFIERS.has(
-          hostFlatObjectMetadata.universalIdentifier,
-        )
+        !isDefined(expectedTargetMorphId) ||
+        flatFieldMetadata.morphId !== expectedTargetMorphId
       ) {
         continue;
       }
