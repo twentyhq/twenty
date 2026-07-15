@@ -49,7 +49,7 @@ export default defineView({
 | `isCompact`                                                                                                 | `boolean`                                                                          | 행을 압축 형태로 표시합니다.                                                                                |
 | `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | 레코드를 필드별로 그룹화합니다(예: 칸반 열).                                                                      |
 | `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | 칸반 열의 집계 및 크기 설정입니다.                                                                            |
-| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`                                                | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | 캘린더 뷰: 레이아웃 및 레코드의 위치를 결정하는 날짜 필드입니다.                                                           |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | 캘린더 뷰: 레이아웃, 레코드의 위치를 결정하는 날짜 필드, 그리고 선택적인 종료 날짜 필드입니다.                                         |
 
 위의 모든 enum은 `twenty-sdk/define`에서 내보내집니다.
 

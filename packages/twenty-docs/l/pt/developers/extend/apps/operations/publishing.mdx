@@ -205,6 +205,10 @@ O marketplace renderiza `galleryImages` em um contêiner fixo de `8:5` (por exem
 Imagens da galeria de qualquer proporção são exibidas por completo e nunca são cortadas, mas qualquer coisa significativamente mais alta ou mais estreita que `8:5` exibirá faixas vazias nas laterais.
 </Note>
 
+#### Limite de tamanho de imagem
+
+O arquivo `logo` e cada arquivo em `galleryImages` não devem exceder **10 MB**. Arquivos maiores são ignorados quando o marketplace volta a hospedar os seus recursos publicados, portanto eles não serão exibidos.
+
 ### Publicar
 
 ```bash filename="Terminal"
