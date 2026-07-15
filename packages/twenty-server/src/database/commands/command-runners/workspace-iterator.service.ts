@@ -8,8 +8,9 @@ import {
   WorkspaceActivationStatus,
 } from 'twenty-shared/workspace';
 import { isDefined } from 'twenty-shared/utils';
-import { In, MoreThanOrEqual, Repository } from 'typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 
+import { activationStatusIn } from 'src/engine/core-modules/workspace/utils/activation-status-in.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -154,7 +155,7 @@ export class WorkspaceIteratorService {
     const workspaces = await this.workspaceRepository.find({
       select: ['id'],
       where: {
-        activationStatus: In(activationStatuses),
+        activationStatus: activationStatusIn(activationStatuses),
         ...(options.startFromWorkspaceId
           ? { id: MoreThanOrEqual(options.startFromWorkspaceId) }
           : {}),

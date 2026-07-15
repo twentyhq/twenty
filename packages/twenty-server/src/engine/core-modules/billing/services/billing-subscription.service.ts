@@ -407,13 +407,16 @@ export class BillingSubscriptionService {
         currentBillingSubscription.status,
       )
     ) {
-      const activationResult = await this.workspaceRepository.update(
-        {
-          id: workspaceId,
-          activationStatus: WorkspaceActivationStatus.CREATED,
-        },
-        { activationStatus: WorkspaceActivationStatus.ACTIVE },
-      );
+      // ::text comparison keeps the query valid on databases where the CREATED enum migration has not run yet
+      const activationResult = await this.workspaceRepository
+        .createQueryBuilder()
+        .update()
+        .set({ activationStatus: WorkspaceActivationStatus.ACTIVE })
+        .where('id = :workspaceId AND "activationStatus"::text = :fromStatus', {
+          workspaceId,
+          fromStatus: WorkspaceActivationStatus.CREATED,
+        })
+        .execute();
 
       if ((activationResult.affected ?? 0) > 0) {
         await this.coreEntityCacheService.invalidate(
