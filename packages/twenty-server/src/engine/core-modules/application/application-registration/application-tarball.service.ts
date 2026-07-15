@@ -5,7 +5,6 @@ import { promises as fs } from 'fs';
 import { tmpdir } from 'os';
 import { isAbsolute, join, relative, resolve } from 'path';
 
-import semver from 'semver';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -13,7 +12,10 @@ import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 import { v4 } from 'uuid';
 
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
-import { VERSION_REASON_TO_APPLICATION_REGISTRATION_EXCEPTION_CODE } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
+import {
+  VERSION_PROGRESSION_REASON_TO_DEPLOY_EXCEPTION_CODE,
+  VERSION_REASON_TO_APPLICATION_REGISTRATION_EXCEPTION_CODE,
+} from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
 import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
 import { readJsonFile } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
@@ -133,23 +135,22 @@ export class ApplicationTarballService {
           isDefined(appRegistration.latestAvailableVersion) &&
           isDefined(packageJson?.version)
         ) {
-          const incomingVersion = packageJson.version;
-          const currentVersion = appRegistration.latestAvailableVersion;
-
-          if (!isDefined(semver.valid(incomingVersion))) {
-            throw new ApplicationRegistrationException(
-              `Invalid version "${incomingVersion}" in package.json. Must be a valid semver version.`,
-              ApplicationRegistrationExceptionCode.INVALID_INPUT,
+          const progression =
+            this.applicationVersionValidationService.validateVersionProgression(
+              {
+                incomingVersion: packageJson.version,
+                currentVersion: appRegistration.latestAvailableVersion,
+                universalIdentifier,
+                action: 'deploy',
+              },
             );
-          }
 
-          if (
-            isDefined(semver.valid(currentVersion)) &&
-            semver.lte(incomingVersion, currentVersion)
-          ) {
+          if (!progression.allowed) {
             throw new ApplicationRegistrationException(
-              `Cannot deploy ${universalIdentifier}@${incomingVersion}: version must be higher than the currently deployed version ${currentVersion}. Please bump the version in package.json.`,
-              ApplicationRegistrationExceptionCode.VERSION_ALREADY_EXISTS,
+              progression.message,
+              VERSION_PROGRESSION_REASON_TO_DEPLOY_EXCEPTION_CODE[
+                progression.reason
+              ],
             );
           }
         }
