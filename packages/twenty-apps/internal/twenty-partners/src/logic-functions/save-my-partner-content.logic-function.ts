@@ -18,6 +18,7 @@ export const saveContentSchema = z.object({
       headline: z.string().optional(),
       bodyMarkdown: z.string().optional(),
       caseStudyLink: z.string().optional(),
+      coverImageUrl: z.string().optional(),
       published: z.boolean().optional(),
     }),
   ),
@@ -55,6 +56,7 @@ export function buildContentCreateData(
     headline: item.headline,
     body: { markdown: item.bodyMarkdown ?? '' },
     caseStudyLink: item.caseStudyLink ? { primaryLinkUrl: item.caseStudyLink } : undefined,
+    coverImageUrl: item.coverImageUrl,
     status: item.published ? 'APPROVED' : 'WIP',
   };
 }
@@ -68,6 +70,7 @@ export function buildContentUpdateData(
     headline: item.headline,
     body: { markdown: item.bodyMarkdown ?? '' },
     caseStudyLink: item.caseStudyLink ? { primaryLinkUrl: item.caseStudyLink } : undefined,
+    coverImageUrl: item.coverImageUrl,
     status: item.published ? 'APPROVED' : 'WIP',
   };
 }
@@ -102,6 +105,7 @@ const queryContentRows = async (
           headline: true,
           body: { markdown: true },
           coverImage: { url: true },
+          coverImageUrl: true,
           caseStudyLink: { primaryLinkUrl: true },
           status: true,
           contentType: true,
@@ -117,7 +121,7 @@ const queryContentRows = async (
       clientName: edge.node.clientName ?? null,
       headline: edge.node.headline ?? null,
       bodyMarkdown: edge.node.body?.markdown ?? null,
-      coverImageUrl: firstFileUrl(edge.node.coverImage) ?? null,
+      coverImageUrl: edge.node.coverImageUrl ?? firstFileUrl(edge.node.coverImage) ?? null,
       caseStudyLink: edge.node.caseStudyLink?.primaryLinkUrl ?? null,
       status: edge.node.status ?? null,
     }));
@@ -157,7 +161,7 @@ export const handler = async (event: RoutePayload<unknown>): Promise<SaveContent
           clientName: item.clientName ?? null,
           headline: item.headline ?? null,
           bodyMarkdown: item.bodyMarkdown ?? null,
-          coverImageUrl: null,
+          coverImageUrl: item.coverImageUrl ?? null,
           caseStudyLink: item.caseStudyLink ?? null,
           status: item.published ? 'APPROVED' : 'WIP',
         });

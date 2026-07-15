@@ -62,6 +62,13 @@ describe('buildContentCreateData', () => {
     expect(data.clientName).toBe('Acme Corp');
     expect(data.headline).toBe('A great migration');
   });
+
+  it('passes coverImageUrl through when provided, and omits it when absent', () => {
+    expect(buildContentCreateData({ name: 'x', coverImageUrl: 'https://img.example.com/c.png' }).coverImageUrl).toBe(
+      'https://img.example.com/c.png',
+    );
+    expect(buildContentCreateData({ name: 'x' }).coverImageUrl).toBeUndefined();
+  });
 });
 
 describe('buildContentUpdateData', () => {
@@ -90,6 +97,12 @@ describe('buildContentUpdateData', () => {
     expect(data.name).toBe('Acme rollout (edited)');
     expect(data.clientName).toBe('Acme Corp');
     expect(data.headline).toBe('A better migration');
+  });
+
+  it('passes coverImageUrl through on update', () => {
+    expect(buildContentUpdateData({ name: 'x', coverImageUrl: 'https://img.example.com/c.png' }).coverImageUrl).toBe(
+      'https://img.example.com/c.png',
+    );
   });
 });
 
