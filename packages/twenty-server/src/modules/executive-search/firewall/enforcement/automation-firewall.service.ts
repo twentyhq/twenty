@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { FIREWALL_PROHIBITED_SELECTORS } from 'src/modules/executive-search/firewall/constants/firewall-prohibited-selectors.constant';
 import { FirewallRegistryService } from 'src/modules/executive-search/firewall/firewall-registry.service';
 import {
   FirewallContext,
@@ -40,19 +39,12 @@ export class AutomationFirewallService {
           FirewallContext.PIPELINE_AUTOMATION,
         )
       ) {
-        const normalized = selector.replace(
-          /[A-Z]/g,
-          (match) => '_' + match.toLowerCase(),
-        );
-        const entry = FIREWALL_PROHIBITED_SELECTORS.find(
-          (e) =>
-            e.prohibitedSelector === normalized &&
-            e.context === FirewallContext.PIPELINE_AUTOMATION,
-        );
-
         violations.push({
           selector,
-          rule: entry?.rule ?? 'Unknown rule',
+          rule: this.firewallRegistryService.getRule(
+            selector,
+            FirewallContext.PIPELINE_AUTOMATION,
+          ),
         });
       }
     }

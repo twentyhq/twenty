@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { FIREWALL_PROHIBITED_SELECTORS } from 'src/modules/executive-search/firewall/constants/firewall-prohibited-selectors.constant';
 import { FirewallRegistryService } from 'src/modules/executive-search/firewall/firewall-registry.service';
 import {
   FieldLeakageViolation,
@@ -31,23 +30,15 @@ export class ReportLeakageScannerService {
 
     // Scan top-level keys
     for (const [key, value] of Object.entries(payload)) {
-      const normalizedKey = key.replace(
-        /[A-Z]/g,
-        (match) => '_' + match.toLowerCase(),
-      );
+      const normalizedKey =
+        this.firewallRegistryService.normalizeSelector(key);
 
       if (allProhibited.has(normalizedKey)) {
-        const entry = FIREWALL_PROHIBITED_SELECTORS.find(
-          (e) => e.prohibitedSelector === normalizedKey,
-        );
-
         violations.push({
           selector: key,
           fieldPath: key,
-          context: entry?.context ?? FirewallContext.CLIENT_REPORT,
-          rule:
-            entry?.rule ??
-            'Field is prohibited across all report contexts',
+          context: FirewallContext.CLIENT_REPORT,
+          rule: this.firewallRegistryService.getAnyRule(key),
         });
       }
 
@@ -60,23 +51,15 @@ export class ReportLeakageScannerService {
         for (const nestedKey of Object.keys(
           value as Record<string, unknown>,
         )) {
-          const normalizedNestedKey = nestedKey.replace(
-            /[A-Z]/g,
-            (match) => '_' + match.toLowerCase(),
-          );
+          const normalizedNestedKey =
+            this.firewallRegistryService.normalizeSelector(nestedKey);
 
           if (allProhibited.has(normalizedNestedKey)) {
-            const entry = FIREWALL_PROHIBITED_SELECTORS.find(
-              (e) => e.prohibitedSelector === normalizedNestedKey,
-            );
-
             violations.push({
               selector: nestedKey,
               fieldPath: `${key}.${nestedKey}`,
-              context: entry?.context ?? FirewallContext.CLIENT_REPORT,
-              rule:
-                entry?.rule ??
-                'Field is prohibited across all report contexts',
+              context: FirewallContext.CLIENT_REPORT,
+              rule: this.firewallRegistryService.getAnyRule(nestedKey),
             });
           }
         }

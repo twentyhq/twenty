@@ -1,17 +1,10 @@
+import type { FirewallFieldPermissionEntry } from 'src/modules/executive-search/firewall/firewall-registry.types';
+
 /**
- * Seed data for Phase 4 wire-up: maps each prohibited selector to its
- * corresponding object/field universal identifiers for field-level permission
- * enforcement.
- *
- * Applied to search-delivery roles when Phase 4 creates executive profile
- * field metadata.
+ * Maps each firewall-prohibited selector to its object/field universal
+ * identifiers for field-level permission enforcement.
  */
-export const FIREWALL_PROHIBITED_FIELD_PERMISSIONS: {
-  objectUniversalIdentifier: string;
-  fieldUniversalIdentifier: string;
-  selector: string;
-  canReadFieldValue: false;
-}[] = [
+export const FIREWALL_PROHIBITED_FIELD_PERMISSIONS: FirewallFieldPermissionEntry[] = [
   {
     objectUniversalIdentifier: 'executiveProfile',
     fieldUniversalIdentifier: 'subscriptionTier',

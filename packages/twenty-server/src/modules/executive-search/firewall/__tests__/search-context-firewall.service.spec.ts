@@ -1,4 +1,4 @@
-import { SearchContextFirewallService } from 'src/modules/executive-search/firewall/guards/search-context-firewall.service';
+import { SearchContextFirewallService } from 'src/modules/executive-search/firewall/enforcement/search-context-firewall.service';
 import { FirewallRegistryService } from 'src/modules/executive-search/firewall/firewall-registry.service';
 import { FirewallViolationException } from 'src/modules/executive-search/firewall/firewall-registry.types';
 
@@ -52,6 +52,8 @@ describe('SearchContextFirewallService', () => {
     });
 
     it('throw error message contains the violating selector name', () => {
+      expect.assertions(4);
+
       try {
         service.assertSearchFieldsSafe(['subscriptionTier']);
       } catch (e) {

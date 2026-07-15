@@ -1,4 +1,4 @@
-import { AiContextFirewallService } from 'src/modules/executive-search/firewall/guards/ai-context-firewall.service';
+import { AiContextFirewallService } from 'src/modules/executive-search/firewall/enforcement/ai-context-firewall.service';
 import { FirewallRegistryService } from 'src/modules/executive-search/firewall/firewall-registry.service';
 import { FirewallViolationException } from 'src/modules/executive-search/firewall/firewall-registry.types';
 

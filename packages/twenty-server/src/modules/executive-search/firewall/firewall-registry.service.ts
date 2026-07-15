@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { camelToSnakeCase } from 'twenty-shared/utils';
+
 import { FIREWALL_DENYLIST } from 'src/modules/executive-search/firewall/constants/firewall-denylist.constant';
 import { FIREWALL_PROHIBITED_SELECTORS } from 'src/modules/executive-search/firewall/constants/firewall-prohibited-selectors.constant';
 import {
@@ -32,12 +34,18 @@ export class FirewallRegistryService {
   }
 
   /**
-   * Normalize a selector from camelCase to snake_case.
+   * Normalize a selector to snake_case for registry lookup.
    * The CSV registries store selectors in snake_case (e.g. subscription_tier),
-   * but the enforcement services receive field names in camelCase (e.g. subscriptionTier).
+   * but enforcement services receive field names in camelCase (e.g. subscriptionTier)
+   * or PascalCase (e.g. SubscriptionTier).
+   *
+   * Uses twenty-shared's camelToSnakeCase and strips any leading underscore
+   * produced by PascalCase conversion.
    */
-  private normalizeSelector(selector: string): string {
-    return selector.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase());
+  normalizeSelector(selector: string): string {
+    const snake = camelToSnakeCase(selector).replace(/^_/, '');
+
+    return snake;
   }
 
   isProhibited(selector: string, context: FirewallContext): boolean {
@@ -58,6 +66,31 @@ export class FirewallRegistryService {
     }
 
     return all;
+  }
+
+  /**
+   * Returns the rule text for a selector in a specific context.
+   * Falls back to the first matching rule across any context.
+   */
+  getRule(selector: string, context: FirewallContext): string {
+    const normalized = this.normalizeSelector(selector);
+    const entry = FIREWALL_PROHIBITED_SELECTORS.find(
+      (e) => e.prohibitedSelector === normalized && e.context === context,
+    );
+
+    return entry?.rule ?? this.getAnyRule(selector);
+  }
+
+  /**
+   * Returns the first matching rule for a selector across all contexts.
+   */
+  getAnyRule(selector: string): string {
+    const normalized = this.normalizeSelector(selector);
+    const entry = FIREWALL_PROHIBITED_SELECTORS.find(
+      (e) => e.prohibitedSelector === normalized,
+    );
+
+    return entry?.rule ?? 'Prohibited field across all contexts';
   }
 
   isDenylisted(fieldOrPattern: string): boolean {

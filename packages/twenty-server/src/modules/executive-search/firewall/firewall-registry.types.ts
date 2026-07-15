@@ -36,6 +36,13 @@ export interface FieldLeakageViolation {
   rule: string;
 }
 
+export interface FirewallFieldPermissionEntry {
+  objectUniversalIdentifier: string;
+  fieldUniversalIdentifier: string;
+  selector: string;
+  canReadFieldValue: false;
+}
+
 export class FirewallViolationException extends Error {
   constructor(
     message: string,

@@ -1,4 +1,4 @@
-import { ReportLeakageScannerService } from 'src/modules/executive-search/firewall/guards/report-leakage-scanner.service';
+import { ReportLeakageScannerService } from 'src/modules/executive-search/firewall/enforcement/report-leakage-scanner.service';
 import { FirewallRegistryService } from 'src/modules/executive-search/firewall/firewall-registry.service';
 import { FirewallViolationException } from 'src/modules/executive-search/firewall/firewall-registry.types';
 
@@ -88,6 +88,8 @@ describe('ReportLeakageScannerService', () => {
     });
 
     it('exception contains violation details', () => {
+      expect.assertions(3);
+
       try {
         service.assertPayloadSafe({ subscriptionTier: 'premium' });
       } catch (e) {

@@ -1,16 +1,16 @@
-import { FirewallRegistryService } from '../firewall-registry.service';
-import { SearchContextFirewallService } from '../guards/search-context-firewall.service';
-import { AiContextFirewallService } from '../guards/ai-context-firewall.service';
-import { ReportLeakageScannerService } from '../guards/report-leakage-scanner.service';
-import { AutomationFirewallService } from '../guards/automation-firewall.service';
+import { FIREWALL_DENYLIST } from 'src/modules/executive-search/firewall/constants/firewall-denylist.constant';
+import { FIREWALL_PROHIBITED_FIELD_PERMISSIONS } from 'src/modules/executive-search/firewall/constants/firewall-prohibited-field-permissions.constant';
+import { FIREWALL_PROHIBITED_SELECTORS } from 'src/modules/executive-search/firewall/constants/firewall-prohibited-selectors.constant';
+import { AiContextFirewallService } from 'src/modules/executive-search/firewall/enforcement/ai-context-firewall.service';
+import { AutomationFirewallService } from 'src/modules/executive-search/firewall/enforcement/automation-firewall.service';
+import { ReportLeakageScannerService } from 'src/modules/executive-search/firewall/enforcement/report-leakage-scanner.service';
+import { SearchContextFirewallService } from 'src/modules/executive-search/firewall/enforcement/search-context-firewall.service';
+import { FirewallRegistryService } from 'src/modules/executive-search/firewall/firewall-registry.service';
 import {
-  FirewallContext,
   FieldLeakageViolation,
+  FirewallContext,
   FirewallViolationException,
-} from '../firewall-registry.types';
-import { FIREWALL_PROHIBITED_SELECTORS } from '../constants/firewall-prohibited-selectors.constant';
-import { FIREWALL_DENYLIST } from '../constants/firewall-denylist.constant';
-import { FIREWALL_PROHIBITED_FIELD_PERMISSIONS } from '../constants/firewall-prohibited-field-permissions.constant';
+} from 'src/modules/executive-search/firewall/firewall-registry.types';
 
 describe('Firewall Contract Suite', () => {
   let registryService: FirewallRegistryService;

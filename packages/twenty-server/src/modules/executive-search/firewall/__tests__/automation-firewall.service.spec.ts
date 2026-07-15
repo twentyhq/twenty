@@ -1,4 +1,4 @@
-import { AutomationFirewallService } from 'src/modules/executive-search/firewall/guards/automation-firewall.service';
+import { AutomationFirewallService } from 'src/modules/executive-search/firewall/enforcement/automation-firewall.service';
 import { FirewallRegistryService } from 'src/modules/executive-search/firewall/firewall-registry.service';
 import { FirewallViolationException } from 'src/modules/executive-search/firewall/firewall-registry.types';
 
@@ -49,6 +49,8 @@ describe('AutomationFirewallService', () => {
     });
 
     it('exception contains violation details', () => {
+      expect.assertions(4);
+
       try {
         service.assertAutomationRulesSafe(['subscriptionTier']);
       } catch (e) {

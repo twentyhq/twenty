@@ -31,10 +31,8 @@ export class AiContextFirewallService {
     ]);
 
     return allowlistedFields.filter((field) => {
-      const normalized = field.replace(
-        /[A-Z]/g,
-        (match) => '_' + match.toLowerCase(),
-      );
+      const normalized = this.firewallRegistryService.normalizeSelector(field);
+
       return allProhibited.has(normalized);
     });
   }
@@ -82,10 +80,8 @@ export class AiContextFirewallService {
     ]);
 
     return fields.filter((field) => {
-      const normalized = field.replace(
-        /[A-Z]/g,
-        (match) => '_' + match.toLowerCase(),
-      );
+      const normalized = this.firewallRegistryService.normalizeSelector(field);
+
       return !allProhibited.has(normalized);
     });
   }
