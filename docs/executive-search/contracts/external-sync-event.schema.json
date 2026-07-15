@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://twenty.com/docs/executive-search/contracts/external-sync-event.schema.json",
+  "title": "ExternalSyncEvent",
+  "description": "Versioned envelope for all cross-system (Directus <-> Twenty) synchronization events. Distinct from Twenty analytics event envelopes and generic workspace webhooks.",
+  "type": "object",
+  "required": [
+    "eventId",
+    "eventType",
+    "eventVersion",
+    "sourceSystem",
+    "sourceCollection",
+    "sourceRecordId",
+    "sourceUpdatedAt",
+    "workspaceKey",
+    "correlationId",
+    "idempotencyKey",
+    "occurredAt"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "eventId": { "type": "string", "minLength": 1 },
+    "eventType": { "type": "string", "minLength": 1 },
+    "eventVersion": { "type": "integer", "minimum": 1 },
+    "sourceSystem": { "enum": ["DIRECTUS", "TWENTY"] },
+    "sourceCollection": { "type": "string", "minLength": 1 },
+    "sourceRecordId": { "type": "string", "minLength": 1 },
+    "sourceUpdatedAt": { "type": "string" },
+    "sourceHash": { "type": ["string", "null"] },
+    "workspaceKey": { "type": "string", "minLength": 1 },
+    "correlationId": { "type": "string", "minLength": 1 },
+    "causationId": { "type": ["string", "null"] },
+    "idempotencyKey": { "type": "string", "minLength": 1 },
+    "occurredAt": { "type": "string" },
+    "actor": {
+      "type": ["object", "null"],
+      "properties": {
+        "type": {
+          "enum": ["USER", "APPLICATION", "SYSTEM", "CANDIDATE", "CLIENT"]
+        },
+        "id": { "type": ["string", "null"] }
+      }
+    },
+    "changedFields": {
+      "type": ["array", "null"],
+      "items": { "type": "string" }
+    },
+    "payload": { "type": ["object", "null"] }
+  }
+}

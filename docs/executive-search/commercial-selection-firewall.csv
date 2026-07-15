@@ -1,0 +1,31 @@
+prohibited_selector,context,status,rule
+subscription_tier,search_filter,PROHIBITED,executives.subscription_tier must not appear in any recruiter search scoring or filter
+subscription_tier,ai_context,PROHIBITED,subscription data must not enter AI candidate assessment context
+subscription_tier,client_report,PROHIBITED,subscription data must not appear in client-facing reports
+subscription_tier,slate_presentation,PROHIBITED,subscription data must not appear in candidate presentations or slates
+subscription_tier,pipeline_automation,PROHIBITED,subscription data must not drive stage transitions or workflow automation
+plan_level,search_filter,PROHIBITED,executives.plan_level excluded from search
+plan_level,ai_context,PROHIBITED,plan level excluded from AI
+is_premium,search_filter,PROHIBITED,executives.is_premium excluded from search
+is_premium,client_report,PROHIBITED,premium status excluded from client reports
+stripe_customer_id,search_filter,PROHIBITED,payment data excluded from all search delivery
+stripe_customer_id,ai_context,PROHIBITED,payment data excluded from AI
+purchase_payment_history,search_filter,PROHIBITED,payment history excluded from search
+marketing_opt_in,search_filter,PROHIBITED,marketing engagement excluded from search
+learning_activity,search_filter,PROHIBITED,learning activity excluded unless explicit job-related credential
+course_completion,search_filter,PROHIBITED,course completion excluded unless candidate-authorized and job-related
+quiz_activity,search_filter,PROHIBITED,quiz activity excluded from search
+content_consumption,search_filter,PROHIBITED,content consumption excluded from search
+profile_views,search_filter,PROHIBITED,profile view counts excluded from search
+marketing_engagement,search_filter,PROHIBITED,marketing engagement excluded from search
+candidate_service_usage_frequency,search_filter,PROHIBITED,candidate-service usage excluded from search
+executive_psychographic,selection_context,PROHIBITED,psychographic data not allowed in automated selection by default
+photo_analysis_scores,selection_context,PROHIBITED,photo analysis/scores excluded from selection
+birthdate,search_filter,PROHIBITED,birthdate excluded from search/rank
+birthdate,ai_context,PROHIBITED,birthdate excluded from AI context
+gender,search_filter,PROHIBITED,gender excluded from search/rank
+gender,ai_context,PROHIBITED,gender excluded from AI context
+voluntary_demographics,search_filter,PROHIBITED,individual voluntary demographics excluded from search
+voluntary_demographics,ai_context,PROHIBITED,individual voluntary demographics excluded from AI
+accommodation_medical_info,selection_context,PROHIBITED,medical/accommodation data excluded from evaluators
+unreviewed_culture_fit_score,selection_context,PROHIBITED,unreviewed AI culture-fit/success-probability excluded from progression

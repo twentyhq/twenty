@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://twenty.com/docs/executive-search/schemas/directus-schema-inventory.schema.json",
+  "title": "DirectusSchemaInventory",
+  "type": "object",
+  "required": [
+    "evidenceVersion",
+    "generatedAt",
+    "sourceManifest",
+    "rawDirectusSchemaAvailable",
+    "directusSchemaFingerprint",
+    "declaredTotals",
+    "dispositionCounts",
+    "authorityCounts",
+    "collections"
+  ],
+  "properties": {
+    "evidenceVersion": { "type": "integer", "minimum": 1 },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "sourceManifest": {
+      "type": "object",
+      "required": ["sources"],
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["logicalName", "originalFile", "sha256"],
+            "properties": {
+              "logicalName": { "type": "string" },
+              "originalFile": { "type": "string" },
+              "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+            }
+          }
+        }
+      }
+    },
+    "rawDirectusSchemaAvailable": { "type": "boolean" },
+    "directusSchemaFingerprint": { "type": "string" },
+    "declaredTotals": {
+      "type": "object",
+      "required": ["collections", "fields", "relations"],
+      "properties": {
+        "collections": { "type": "integer" },
+        "fields": { "type": "integer" },
+        "relations": { "type": "integer" }
+      }
+    },
+    "actualCounts": {
+      "type": "object",
+      "properties": {
+        "collections": { "type": "integer" },
+        "fields": { "type": "string" },
+        "relations": { "type": "string" }
+      }
+    },
+    "dispositionCounts": {
+      "type": "object",
+      "properties": {
+        "MAPPED": { "type": "integer" },
+        "REFERENCE_ONLY": { "type": "integer" },
+        "PORTAL_ONLY": { "type": "integer" },
+        "LEGACY": { "type": "integer" },
+        "OUT_OF_SCOPE": { "type": "integer" }
+      }
+    },
+    "authorityCounts": {
+      "type": "object",
+      "properties": {
+        "DIRECTUS_AUTHORITATIVE": { "type": "integer" },
+        "TWENTY_AUTHORITATIVE": { "type": "integer" },
+        "APPEND_ONLY_BOTH_WITH_SHARED_IDEMPOTENCY": { "type": "integer" },
+        "DERIVED_IN_TWENTY_FROM_DIRECTUS": { "type": "integer" },
+        "DERIVED_IN_DIRECTUS_FROM_TWENTY": { "type": "integer" },
+        "REFERENCE_ONLY_NO_REPLICATION": { "type": "integer" },
+        "NOT_ALLOWED_TO_SYNC": { "type": "integer" }
+      }
+    },
+    "collections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "collection",
+          "domain",
+          "proposedTwentyTarget",
+          "rawAuthority",
+          "canonicalAuthority",
+          "normalizationStatus",
+          "normalizationLoss",
+          "sync",
+          "disposition",
+          "criticalNotes",
+          "source",
+          "sourceLine",
+          "fieldType",
+          "isNullable",
+          "isUnique",
+          "relationTarget",
+          "deleteBehavior",
+          "aiEligibility",
+          "dataClassification",
+          "retention"
+        ],
+        "properties": {
+          "collection": { "type": "string" },
+          "domain": { "type": "string" },
+          "proposedTwentyTarget": { "type": "string" },
+          "rawAuthority": { "type": "string" },
+          "canonicalAuthority": {
+            "enum": [
+              "DIRECTUS_AUTHORITATIVE",
+              "TWENTY_AUTHORITATIVE",
+              "APPEND_ONLY_BOTH_WITH_SHARED_IDEMPOTENCY",
+              "DERIVED_IN_TWENTY_FROM_DIRECTUS",
+              "DERIVED_IN_DIRECTUS_FROM_TWENTY",
+              "REFERENCE_ONLY_NO_REPLICATION",
+              "NOT_ALLOWED_TO_SYNC"
+            ]
+          },
+          "normalizationStatus": { "type": "string" },
+          "normalizationLoss": { "type": "string" },
+          "sync": { "type": "string" },
+          "disposition": {
+            "enum": [
+              "MAPPED",
+              "REFERENCE_ONLY",
+              "PORTAL_ONLY",
+              "LEGACY",
+              "OUT_OF_SCOPE"
+            ]
+          },
+          "criticalNotes": { "type": "string" },
+          "source": { "type": "string" },
+          "sourceLine": { "type": "integer", "minimum": 1 },
+          "fieldType": { "type": "string" },
+          "isNullable": { "type": ["string", "boolean"] },
+          "isUnique": { "type": ["string", "boolean"] },
+          "relationTarget": { "type": "string" },
+          "deleteBehavior": { "type": "string" },
+          "aiEligibility": { "type": "string" },
+          "dataClassification": { "type": "string" },
+          "retention": { "type": "string" }
+        }
+      }
+    }
+  }
+}

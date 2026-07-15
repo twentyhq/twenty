@@ -1,0 +1,18 @@
+{
+  "evidenceVersion": 1,
+  "capturedAt": "2026-07-15",
+  "sources": [
+    {
+      "logicalName": "directus-compatibility-matrix",
+      "originalFile": "1.md",
+      "sha256": "1232129fbac0241a08ccfe94f00299aa98a0aa0f624650769021f5f06d09b1c9"
+    },
+    {
+      "logicalName": "executive-search-master-prompt",
+      "originalFile": "2.md",
+      "sha256": "6f2d582cc0abb625a482cffb98d6da11fded889bae74147725970f814356204a"
+    }
+  ],
+  "rawDirectusSchemaAvailable": false,
+  "directusSchemaFingerprint": "UNKNOWN_PENDING_SCHEMA_SNAPSHOT"
+}

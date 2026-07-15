@@ -1,0 +1,70 @@
+{
+  "evidenceVersion": 1,
+  "generatedAt": "2026-07-15T17:00:00.000Z",
+  "sourceManifest": {
+    "evidenceVersion": 1,
+    "capturedAt": "2026-07-15",
+    "sources": [
+      {
+        "logicalName": "directus-compatibility-matrix",
+        "originalFile": "1.md",
+        "sha256": "1232129fbac0241a08ccfe94f00299aa98a0aa0f624650769021f5f06d09b1c9"
+      },
+      {
+        "logicalName": "executive-search-master-prompt",
+        "originalFile": "2.md",
+        "sha256": "6f2d582cc0abb625a482cffb98d6da11fded889bae74147725970f814356204a"
+      }
+    ],
+    "rawDirectusSchemaAvailable": false,
+    "directusSchemaFingerprint": "UNKNOWN_PENDING_SCHEMA_SNAPSHOT"
+  },
+  "rawDirectusSchemaAvailable": false,
+  "directusSchemaFingerprint": "UNKNOWN_PENDING_SCHEMA_SNAPSHOT",
+  "declaredTotals": { "collections": 140, "fields": 2432, "relations": 421 },
+  "actualCounts": {
+    "collections": 1,
+    "fields": "UNKNOWN_PENDING_SCHEMA_SNAPSHOT",
+    "relations": "UNKNOWN_PENDING_SCHEMA_SNAPSHOT"
+  },
+  "dispositionCounts": {
+    "MAPPED": 1,
+    "REFERENCE_ONLY": 0,
+    "PORTAL_ONLY": 0,
+    "LEGACY": 0,
+    "OUT_OF_SCOPE": 0
+  },
+  "authorityCounts": {
+    "DIRECTUS_AUTHORITATIVE": 1,
+    "TWENTY_AUTHORITATIVE": 0,
+    "APPEND_ONLY_BOTH_WITH_SHARED_IDEMPOTENCY": 0,
+    "DERIVED_IN_TWENTY_FROM_DIRECTUS": 0,
+    "DERIVED_IN_DIRECTUS_FROM_TWENTY": 0,
+    "REFERENCE_ONLY_NO_REPLICATION": 0,
+    "NOT_ALLOWED_TO_SYNC": 0
+  },
+  "collections": [
+    {
+      "collection": "executives",
+      "domain": "Executive identity",
+      "proposedTwentyTarget": "Twenty person + executiveProfile",
+      "rawAuthority": "Split",
+      "canonicalAuthority": "NOT_ALLOWED_TO_SYNC",
+      "normalizationStatus": "REVIEWED_FIELD_SPLIT_REQUIRED",
+      "normalizationLoss": "COLLECTION_AUTHORITY_WITHHELD",
+      "sync": "Inbound projection; outbound only verified ATS ID",
+      "disposition": "MAPPED",
+      "criticalNotes": "Split by field ownership",
+      "source": "uploaded-artifact-1.md",
+      "sourceLine": 102,
+      "fieldType": "UNKNOWN_PENDING_SCHEMA_SNAPSHOT",
+      "isNullable": "UNKNOWN_PENDING_SCHEMA_SNAPSHOT",
+      "isUnique": "UNKNOWN_PENDING_SCHEMA_SNAPSHOT",
+      "relationTarget": "UNKNOWN_PENDING_SCHEMA_SNAPSHOT",
+      "deleteBehavior": "UNKNOWN_PENDING_SCHEMA_SNAPSHOT",
+      "aiEligibility": "UNKNOWN_PENDING_SCHEMA_SNAPSHOT",
+      "dataClassification": "UNKNOWN_PENDING_SCHEMA_SNAPSHOT",
+      "retention": "UNKNOWN_PENDING_SCHEMA_SNAPSHOT"
+    }
+  ]
+}
