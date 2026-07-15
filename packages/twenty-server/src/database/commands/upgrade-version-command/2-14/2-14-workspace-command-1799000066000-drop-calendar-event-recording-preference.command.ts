@@ -72,7 +72,7 @@ export class DropCalendarEventRecordingPreferenceCommand extends ActiveOrSuspend
       );
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           isSystemBuild: true,
           allFlatEntityOperationByMetadataName: {

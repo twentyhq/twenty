@@ -148,7 +148,7 @@ export class AddLayoutCustomizationGuardToEditCommandsCommand extends ActiveOrSu
     }
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {

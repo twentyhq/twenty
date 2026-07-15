@@ -163,7 +163,7 @@ export class RenameConflictingCustomFieldsCommand extends ActiveOrSuspendedWorks
       );
 
       const validateAndBuildResult =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
             allFlatEntityOperationByMetadataName: {
               fieldMetadata: {

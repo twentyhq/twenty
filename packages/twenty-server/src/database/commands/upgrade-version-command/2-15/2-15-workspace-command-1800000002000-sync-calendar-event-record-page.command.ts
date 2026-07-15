@@ -217,7 +217,7 @@ export class SyncCalendarEventRecordPageCommand extends ActiveOrSuspendedWorkspa
     }
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           isSystemBuild: true,
           applicationUniversalIdentifier:

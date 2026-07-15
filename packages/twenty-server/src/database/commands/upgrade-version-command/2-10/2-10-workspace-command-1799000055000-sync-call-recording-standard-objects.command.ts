@@ -488,7 +488,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
       allFlatEntityOperationByMetadataName,
     } of collisionRenameMigrations) {
       const renameResult =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
             isSystemBuild: true,
             applicationUniversalIdentifier,
@@ -509,7 +509,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
     }
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           isSystemBuild: true,
           applicationUniversalIdentifier:

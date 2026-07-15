@@ -86,7 +86,7 @@ export class DropChannelStandardObjectsCommand extends ActiveOrSuspendedWorkspac
       );
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           isSystemBuild: true,
           allFlatEntityOperationByMetadataName: {

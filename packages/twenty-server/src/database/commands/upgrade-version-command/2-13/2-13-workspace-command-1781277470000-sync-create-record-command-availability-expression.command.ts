@@ -101,7 +101,7 @@ export class SyncCreateRecordCommandAvailabilityExpressionCommand extends Active
     }
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {

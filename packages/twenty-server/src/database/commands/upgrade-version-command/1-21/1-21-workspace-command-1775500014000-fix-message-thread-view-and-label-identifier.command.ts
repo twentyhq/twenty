@@ -147,7 +147,7 @@ export class FixMessageThreadViewAndLabelIdentifierCommand extends ActiveOrSuspe
     }
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             objectMetadata: {

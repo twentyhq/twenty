@@ -290,7 +290,7 @@ export class RefactorNavigationCommandsCommand extends ActiveOrSuspendedWorkspac
     }
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {

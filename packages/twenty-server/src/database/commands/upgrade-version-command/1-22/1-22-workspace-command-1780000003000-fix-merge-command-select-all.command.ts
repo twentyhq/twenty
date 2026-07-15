@@ -107,7 +107,7 @@ export class FixMergeCommandSelectAllCommand extends ActiveOrSuspendedWorkspaceC
     }
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {

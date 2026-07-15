@@ -103,7 +103,7 @@ export class BackfillFieldsWidgetNewFieldDefaultVisibilityCommand extends Active
       updatedWidgets,
     ] of widgetsToBackfillByApplicationUniversalIdentifier) {
       const result =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
             allFlatEntityOperationByMetadataName: {
               pageLayoutWidget: {

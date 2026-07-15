@@ -92,7 +92,7 @@ export class SetCalendarEventDescriptionDisplayedMaxRowsCommand extends ActiveOr
     };
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {

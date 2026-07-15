@@ -141,7 +141,7 @@ export class SyncCallRecordingRequestStatusCommand extends ActiveOrSuspendedWork
     }
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           isSystemBuild: true,
           applicationUniversalIdentifier:

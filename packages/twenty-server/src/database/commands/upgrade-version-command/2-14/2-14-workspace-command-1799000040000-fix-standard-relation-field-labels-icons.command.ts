@@ -120,7 +120,7 @@ export class FixStandardRelationFieldLabelsIconsCommand extends ActiveOrSuspende
     }
 
     const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {

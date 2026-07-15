@@ -121,7 +121,7 @@ export class SyncCallRecordingStatusCommand extends ActiveOrSuspendedWorkspaceCo
     };
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           isSystemBuild: true,
           applicationUniversalIdentifier:

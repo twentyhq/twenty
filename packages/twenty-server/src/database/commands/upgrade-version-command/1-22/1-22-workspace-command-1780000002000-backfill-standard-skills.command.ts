@@ -87,7 +87,7 @@ export class BackfillStandardSkillsCommand extends ActiveOrSuspendedWorkspaceCom
     }
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             skill: {

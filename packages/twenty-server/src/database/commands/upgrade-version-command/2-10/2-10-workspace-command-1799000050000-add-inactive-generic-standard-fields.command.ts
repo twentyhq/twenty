@@ -150,7 +150,7 @@ export class AddInactiveGenericStandardFieldsCommand extends ActiveOrSuspendedWo
     }
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {
