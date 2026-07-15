@@ -95,6 +95,30 @@ export class ApplicationInstallService {
       return true;
     }
 
+    const lockKey = `app-install:${params.workspaceId}:${appRegistration.universalIdentifier}`;
+
+    return this.cacheLockService.withLock(
+      () =>
+        this.doInstallApplication(appRegistration, {
+          version: params.version,
+          workspaceId: params.workspaceId,
+        }),
+      lockKey,
+      { ttl: 60_000, ms: 500, maxRetries: 120 },
+    );
+  }
+
+  private async doInstallApplication(
+    preLockAppRegistration: ApplicationRegistrationEntity,
+    params: { version?: string; workspaceId: string },
+  ): Promise<boolean> {
+    // Re-read inside the lock: the pre-lock row can be stale, and the
+    // authorization below must see listing or ownership changes that landed
+    // while waiting for the lock.
+    const appRegistration = await this.appRegistrationRepository.findOneOrFail({
+      where: { id: preLockAppRegistration.id },
+    });
+
     // A tarball registration carries another workspace's private code: unless
     // it was published (listed or pre-installed), only the owner workspace
     // can install or upgrade it.
@@ -111,23 +135,6 @@ export class ApplicationInstallService {
       );
     }
 
-    const lockKey = `app-install:${params.workspaceId}:${appRegistration.universalIdentifier}`;
-
-    return this.cacheLockService.withLock(
-      () =>
-        this.doInstallApplication(appRegistration, {
-          version: params.version,
-          workspaceId: params.workspaceId,
-        }),
-      lockKey,
-      { ttl: 60_000, ms: 500, maxRetries: 120 },
-    );
-  }
-
-  private async doInstallApplication(
-    appRegistration: ApplicationRegistrationEntity,
-    params: { version?: string; workspaceId: string },
-  ): Promise<boolean> {
     const resolvedPackage =
       await this.applicationPackageFetcherService.resolvePackage(
         appRegistration,
