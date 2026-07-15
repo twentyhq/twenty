@@ -1781,6 +1781,16 @@ msgstr "Innehållet innehåller en URL med ett farligt protokoll."
 msgid "Contradicting field permissions have been detected on a relation field."
 msgstr "Motstridiga fältbehörigheter har upptäckts på ett relationsfält."
 
+#. js-lingui-id: 1M+KVf
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
+msgid "Core workflow id"
+msgstr ""
+
+#. js-lingui-id: 63q4o1
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
+msgid "Core workflow version id"
+msgstr ""
+
 #. js-lingui-id: xuYXJX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -6335,6 +6345,16 @@ msgstr "Sammanfattning av inspelning"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 msgid "Recurring Event ID"
 msgstr "Återkommande händelse-ID"
+
+#. js-lingui-id: V3DAOp
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
+msgid "Reference to the core workflow row"
+msgstr ""
+
+#. js-lingui-id: ODfTA/
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
+msgid "Reference to the core workflowVersion row"
+msgstr ""
 
 #. js-lingui-id: 1GvzpH
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
