@@ -48,7 +48,6 @@ export class WorkflowTriggerResolver {
   ) {}
 
   @Mutation(() => Boolean)
-  @UseGuards(UserAuthGuard)
   async activateWorkflowVersion(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowVersionId', { type: () => UUIDScalarType })
@@ -61,7 +60,6 @@ export class WorkflowTriggerResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(UserAuthGuard)
   async deactivateWorkflowVersion(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowVersionId', { type: () => UUIDScalarType })
@@ -137,7 +135,6 @@ export class WorkflowTriggerResolver {
   }
 
   @Mutation(() => WorkflowRunDTO)
-  @UseGuards(UserAuthGuard)
   async retryWorkflowRun(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowRunId', { type: () => UUIDScalarType })
