@@ -402,8 +402,6 @@ export class BillingSubscriptionService {
       `Subscription synced to database: ${subscription.id} for workspace: ${workspaceId}`,
     );
 
-    // Getting a subscription completes onboarding for a CREATED workspace;
-    // scoping the update on the status makes it a no-op for any other status
     if (
       WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES.includes(
         currentBillingSubscription.status,

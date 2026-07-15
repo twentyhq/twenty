@@ -152,9 +152,7 @@ describe('UserService', () => {
   });
 
   describe('loadWorkspaceMember', () => {
-    it('returns null when workspace is not active/suspended', async () => {
-      // isWorkspaceProvisionedSpy.mockReturnValue(false);
-
+    it('returns null when workspace is not provisioned', async () => {
       const res = await service.loadWorkspaceMember(
         { id: 'u1' } as Pick<AuthContextUser, 'id'>,
         { id: 'w1' } as WorkspaceEntity,
@@ -218,7 +216,7 @@ describe('UserService', () => {
   });
 
   describe('loadWorkspaceMembers', () => {
-    it('returns [] when workspace is not active/suspended', async () => {
+    it('returns [] when workspace is not provisioned', async () => {
       const res = await service.loadWorkspaceMembers({
         id: 'w1',
         activationStatus: WorkspaceActivationStatus.INACTIVE,
@@ -252,7 +250,7 @@ describe('UserService', () => {
   });
 
   describe('loadDeletedWorkspaceMembersOnly', () => {
-    it('returns [] when workspace is not active/suspended', async () => {
+    it('returns [] when workspace is not provisioned', async () => {
       const res = await service.loadDeletedWorkspaceMembersOnly({
         id: 'w1',
         activationStatus: WorkspaceActivationStatus.INACTIVE,

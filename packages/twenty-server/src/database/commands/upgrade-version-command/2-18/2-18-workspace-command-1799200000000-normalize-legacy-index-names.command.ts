@@ -2,7 +2,7 @@ import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { areIndexDefinitionsEquivalent } from 'src/database/commands/upgrade-version-command/2-18/utils/are-index-definitions-equivalent.util';
@@ -33,7 +33,7 @@ import {
   description:
     'Rename indexes whose stored name predates the v2 deterministic naming convention to their recomputed name, and drop redundant duplicates.',
 })
-export class NormalizeLegacyIndexNamesCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class NormalizeLegacyIndexNamesCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,

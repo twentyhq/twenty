@@ -13,7 +13,7 @@ export class WorkspaceVersionService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
-  async hasActiveOrSuspendedWorkspaces(): Promise<boolean> {
+  async hasProvisionedWorkspaces(): Promise<boolean> {
     return this.workspaceRepository.exists({
       where: {
         activationStatus: In(PROVISIONED_WORKSPACE_ACTIVATION_STATUSES),
@@ -21,7 +21,7 @@ export class WorkspaceVersionService {
     });
   }
 
-  async getActiveOrSuspendedWorkspaceIds({
+  async getProvisionedWorkspaceIds({
     startFromWorkspaceId,
     workspaceCountLimit,
     queryRunner,

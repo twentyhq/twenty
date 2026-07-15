@@ -3,7 +3,7 @@
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
@@ -14,7 +14,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
   name: 'billing:sync-customer-data',
   description: 'Sync customer data from Stripe for all active workspaces',
 })
-export class BillingSyncCustomerDataCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class BillingSyncCustomerDataCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly stripeSubscriptionService: StripeSubscriptionService,

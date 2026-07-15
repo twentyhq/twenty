@@ -3,7 +3,7 @@
 import { Command, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -13,7 +13,7 @@ import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/s
   name: 'billing:update-subscription-price',
   description: 'Update subscription price',
 })
-export class BillingUpdateSubscriptionPriceCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class BillingUpdateSubscriptionPriceCommand extends ProvisionedWorkspaceCommandRunner {
   private stripePriceIdToUpdate: string;
   private newStripePriceId: string;
   private clearUsage = false;

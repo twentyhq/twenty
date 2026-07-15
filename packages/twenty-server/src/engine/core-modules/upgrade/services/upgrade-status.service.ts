@@ -102,8 +102,7 @@ export class UpgradeStatusService {
   async getWorkspaceStatuses(
     filterWorkspaceIds?: string[],
   ): Promise<WorkspaceUpgradeStatus[]> {
-    const workspaces =
-      await this.loadActiveOrSuspendedWorkspaces(filterWorkspaceIds);
+    const workspaces = await this.loadProvisionedWorkspaces(filterWorkspaceIds);
 
     if (filterWorkspaceIds) {
       const foundIds = new Set(workspaces.map((workspace) => workspace.id));
@@ -111,7 +110,7 @@ export class UpgradeStatusService {
       for (const requestedId of filterWorkspaceIds) {
         if (!foundIds.has(requestedId)) {
           this.logger.warn(
-            `Workspace ${requestedId} not found or not active/suspended`,
+            `Workspace ${requestedId} not found or not provisioned`,
           );
         }
       }
@@ -304,7 +303,7 @@ export class UpgradeStatusService {
     };
   }
 
-  private async loadActiveOrSuspendedWorkspaces(
+  private async loadProvisionedWorkspaces(
     workspaceIds?: string[],
   ): Promise<Pick<WorkspaceEntity, 'id' | 'displayName'>[]> {
     return this.workspaceRepository.find({

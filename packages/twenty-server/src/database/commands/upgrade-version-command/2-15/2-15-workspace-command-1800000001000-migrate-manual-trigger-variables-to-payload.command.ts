@@ -2,7 +2,7 @@ import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { rewriteTriggerVariablesToPayload } from 'src/database/commands/upgrade-version-command/2-15/utils/rewrite-trigger-variables-to-payload.util';
@@ -20,7 +20,7 @@ import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types
   description:
     'Rewrite saved {{trigger.<field>}} references to {{trigger.payload.<field>}} for manual record triggers',
 })
-export class MigrateManualTriggerVariablesToPayloadCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class MigrateManualTriggerVariablesToPayloadCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,

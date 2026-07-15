@@ -8,8 +8,7 @@ export class AddCreatedWorkspaceActivationStatusSlowInstanceCommand
   implements SlowInstanceCommand
 {
   async runDataMigration(_dataSource: DataSource): Promise<void> {
-    // Nothing to backfill: CREATED only starts being written once every
-    // instance has the enum value.
+    // Nothing to backfill: CREATED is only written once every instance has the enum value
   }
 
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -35,9 +34,7 @@ export class AddCreatedWorkspaceActivationStatusSlowInstanceCommand
       castExpression,
     }: { enumValues: string; castExpression: string },
   ): Promise<void> {
-    // CHECK constraints on core.workspace embed casts to the enum type
-    // (e.g. onboarded_workspace_requires_default_role), which would break the
-    // type swap: capture them, drop them, swap the type, then restore them.
+    // CHECK constraints embed casts to the enum type and would break the swap: drop then restore them
     const checkConstraints: { conname: string; definition: string }[] =
       await queryRunner.query(
         `SELECT conname, pg_get_constraintdef(oid) AS definition

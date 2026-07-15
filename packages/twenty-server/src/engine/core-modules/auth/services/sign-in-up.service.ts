@@ -273,8 +273,6 @@ export class SignInUpService {
     workspace: WorkspaceEntity,
     user: ExistingUserOrPartialUserWithPicture,
   ) {
-    // CREATED workspaces welcome invited members: the invite-team onboarding
-    // step happens before the billing plan step
     if (
       workspace.activationStatus === WorkspaceActivationStatus.ACTIVE ||
       workspace.activationStatus === WorkspaceActivationStatus.CREATED

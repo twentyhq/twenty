@@ -1,6 +1,6 @@
 import { Command } from 'nest-commander';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
@@ -12,7 +12,7 @@ import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre
   description:
     'Install every application registration flagged `isPreInstalled` on every active and suspended workspace. Idempotent.',
 })
-export class InstallPreInstalledAppsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class InstallPreInstalledAppsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly preInstalledAppsService: PreInstalledAppsService,
