@@ -144,6 +144,26 @@ export const CaseStudyCard = ({
         <Field label="Case study link">
           <UrlInput value={row.caseStudyLink} onChange={(v) => onChange({ caseStudyLink: v })} placeholder="https://…" />
         </Field>
+        <Field label="Cover image URL">
+          <UrlInput
+            value={row.coverImageUrl}
+            onChange={(v) => onChange({ coverImageUrl: v })}
+            placeholder="https://…"
+          />
+        </Field>
+        {row.coverImageUrl.trim() !== '' ? (
+          <img
+            src={row.coverImageUrl}
+            alt="Cover preview"
+            style={{
+              maxWidth: '100%',
+              maxHeight: 160,
+              objectFit: 'cover',
+              borderRadius: 6,
+              border: `1px solid ${COLORS.border}`,
+            }}
+          />
+        ) : null}
 
         <div style={actionsStyle}>
           <button
