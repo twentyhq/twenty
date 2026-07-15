@@ -16,155 +16,42 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const getUniversalIdentifiers = <
-  T extends Record<string, { universalIdentifier: string }>,
->(
-  entitiesByName: T,
-): string[] =>
-  Object.values(entitiesByName).map((entity) => entity.universalIdentifier);
+const EXECUTIVE_OBJECT_NAMES = [
+  'executiveProfile',
+  'executiveCareerExperience',
+  'executiveEducation',
+  'executiveBoardService',
+  'executiveCapability',
+  'executiveLanguage',
+  'executiveArtifact',
+  'executiveAward',
+  'executiveExternalProfile',
+  'executiveSearchPreference',
+] as const satisfies (keyof typeof STANDARD_OBJECTS)[];
 
-const EXECUTIVE_PROFILE_UID = STANDARD_OBJECTS.executiveProfile.universalIdentifier;
-const EXECUTIVE_CAREER_EXPERIENCE_UID =
-  STANDARD_OBJECTS.executiveCareerExperience.universalIdentifier;
-const EXECUTIVE_EDUCATION_UID =
-  STANDARD_OBJECTS.executiveEducation.universalIdentifier;
-const EXECUTIVE_BOARD_SERVICE_UID =
-  STANDARD_OBJECTS.executiveBoardService.universalIdentifier;
-const EXECUTIVE_CAPABILITY_UID =
-  STANDARD_OBJECTS.executiveCapability.universalIdentifier;
-const EXECUTIVE_LANGUAGE_UID =
-  STANDARD_OBJECTS.executiveLanguage.universalIdentifier;
-const EXECUTIVE_ARTIFACT_UID =
-  STANDARD_OBJECTS.executiveArtifact.universalIdentifier;
-const EXECUTIVE_AWARD_UID =
-  STANDARD_OBJECTS.executiveAward.universalIdentifier;
-const EXECUTIVE_EXTERNAL_PROFILE_UID =
-  STANDARD_OBJECTS.executiveExternalProfile.universalIdentifier;
-const EXECUTIVE_SEARCH_PREFERENCE_UID =
-  STANDARD_OBJECTS.executiveSearchPreference.universalIdentifier;
+const EXECUTIVE_OBJECTS = EXECUTIVE_OBJECT_NAMES.map(
+  (name) => STANDARD_OBJECTS[name],
+);
 
-const EXECUTIVE_OBJECT_UNIVERSAL_IDENTIFIERS = [
-  EXECUTIVE_PROFILE_UID,
-  EXECUTIVE_CAREER_EXPERIENCE_UID,
-  EXECUTIVE_EDUCATION_UID,
-  EXECUTIVE_BOARD_SERVICE_UID,
-  EXECUTIVE_CAPABILITY_UID,
-  EXECUTIVE_LANGUAGE_UID,
-  EXECUTIVE_ARTIFACT_UID,
-  EXECUTIVE_AWARD_UID,
-  EXECUTIVE_EXTERNAL_PROFILE_UID,
-  EXECUTIVE_SEARCH_PREFERENCE_UID,
-];
+const EXECUTIVE_OBJECT_UNIVERSAL_IDENTIFIERS = EXECUTIVE_OBJECTS.map(
+  (obj) => obj.universalIdentifier,
+);
 
-const EXECUTIVE_FIELD_UNIVERSAL_IDENTIFIERS = [
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.executiveProfile.fields),
-  ...getUniversalIdentifiers(
-    STANDARD_OBJECTS.executiveCareerExperience.fields,
-  ),
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.executiveEducation.fields),
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.executiveBoardService.fields),
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.executiveCapability.fields),
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.executiveLanguage.fields),
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.executiveArtifact.fields),
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.executiveAward.fields),
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.executiveExternalProfile.fields),
-  ...getUniversalIdentifiers(
-    STANDARD_OBJECTS.executiveSearchPreference.fields,
-  ),
-];
+const EXECUTIVE_FIELD_UNIVERSAL_IDENTIFIERS = EXECUTIVE_OBJECTS.flatMap((obj) =>
+  Object.values(obj.fields).map((f) => f.universalIdentifier),
+);
 
-const EXECUTIVE_INDEX_UNIVERSAL_IDENTIFIERS = [
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.executiveProfile.indexes),
-  ...getUniversalIdentifiers(
-    STANDARD_OBJECTS.executiveCareerExperience.indexes,
-  ),
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.executiveEducation.indexes),
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.executiveBoardService.indexes),
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.executiveCapability.indexes),
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.executiveLanguage.indexes),
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.executiveArtifact.indexes),
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.executiveAward.indexes),
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.executiveExternalProfile.indexes),
-  ...getUniversalIdentifiers(
-    STANDARD_OBJECTS.executiveSearchPreference.indexes,
-  ),
-];
+const EXECUTIVE_INDEX_UNIVERSAL_IDENTIFIERS = EXECUTIVE_OBJECTS.flatMap((obj) =>
+  Object.values(obj.indexes).map((i) => i.universalIdentifier),
+);
 
-const buildViewUniversalIdentifiers = (
-  views:
-    | typeof STANDARD_OBJECTS.executiveProfile.views
-    | typeof STANDARD_OBJECTS.executiveCareerExperience.views
-    | typeof STANDARD_OBJECTS.executiveEducation.views
-    | typeof STANDARD_OBJECTS.executiveBoardService.views
-    | typeof STANDARD_OBJECTS.executiveCapability.views
-    | typeof STANDARD_OBJECTS.executiveLanguage.views
-    | typeof STANDARD_OBJECTS.executiveArtifact.views
-    | typeof STANDARD_OBJECTS.executiveAward.views
-    | typeof STANDARD_OBJECTS.executiveExternalProfile.views
-    | typeof STANDARD_OBJECTS.executiveSearchPreference.views,
-): { viewUids: string[]; viewFieldUids: string[] } => {
-  const viewUids: string[] = [];
-  const viewFieldUids: string[] = [];
-
-  for (const viewDef of Object.values(views)) {
-    viewUids.push(viewDef.universalIdentifier);
-    viewFieldUids.push(...getUniversalIdentifiers(viewDef.viewFields));
-  }
-
-  return { viewUids, viewFieldUids };
-};
-
-// Combine all executive object view/viewField UIDs
-const EXECUTIVE_ALL_VIEW_UNIVERSAL_IDENTIFIERS = [
-  ...buildViewUniversalIdentifiers(STANDARD_OBJECTS.executiveProfile.views)
-    .viewUids,
-  ...buildViewUniversalIdentifiers(
-    STANDARD_OBJECTS.executiveCareerExperience.views,
-  ).viewUids,
-  ...buildViewUniversalIdentifiers(STANDARD_OBJECTS.executiveEducation.views)
-    .viewUids,
-  ...buildViewUniversalIdentifiers(STANDARD_OBJECTS.executiveBoardService.views)
-    .viewUids,
-  ...buildViewUniversalIdentifiers(STANDARD_OBJECTS.executiveCapability.views)
-    .viewUids,
-  ...buildViewUniversalIdentifiers(STANDARD_OBJECTS.executiveLanguage.views)
-    .viewUids,
-  ...buildViewUniversalIdentifiers(STANDARD_OBJECTS.executiveArtifact.views)
-    .viewUids,
-  ...buildViewUniversalIdentifiers(STANDARD_OBJECTS.executiveAward.views)
-    .viewUids,
-  ...buildViewUniversalIdentifiers(
-    STANDARD_OBJECTS.executiveExternalProfile.views,
-  ).viewUids,
-  ...buildViewUniversalIdentifiers(
-    STANDARD_OBJECTS.executiveSearchPreference.views,
-  ).viewUids,
-];
-const EXECUTIVE_ALL_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
-  ...buildViewUniversalIdentifiers(STANDARD_OBJECTS.executiveProfile.views)
-    .viewFieldUids,
-  ...buildViewUniversalIdentifiers(
-    STANDARD_OBJECTS.executiveCareerExperience.views,
-  ).viewFieldUids,
-  ...buildViewUniversalIdentifiers(STANDARD_OBJECTS.executiveEducation.views)
-    .viewFieldUids,
-  ...buildViewUniversalIdentifiers(STANDARD_OBJECTS.executiveBoardService.views)
-    .viewFieldUids,
-  ...buildViewUniversalIdentifiers(STANDARD_OBJECTS.executiveCapability.views)
-    .viewFieldUids,
-  ...buildViewUniversalIdentifiers(STANDARD_OBJECTS.executiveLanguage.views)
-    .viewFieldUids,
-  ...buildViewUniversalIdentifiers(STANDARD_OBJECTS.executiveArtifact.views)
-    .viewFieldUids,
-  ...buildViewUniversalIdentifiers(STANDARD_OBJECTS.executiveAward.views)
-    .viewFieldUids,
-  ...buildViewUniversalIdentifiers(
-    STANDARD_OBJECTS.executiveExternalProfile.views,
-  ).viewFieldUids,
-  ...buildViewUniversalIdentifiers(
-    STANDARD_OBJECTS.executiveSearchPreference.views,
-  ).viewFieldUids,
-];
+const EXECUTIVE_ALL_VIEW_UNIVERSAL_IDENTIFIERS = EXECUTIVE_OBJECTS.flatMap(
+  (obj) =>
+    Object.values(obj.views).flatMap((v) => [
+      v.universalIdentifier,
+      ...Object.values(v.viewFields).map((vf) => vf.universalIdentifier),
+    ]),
+);
 
 @RegisteredWorkspaceCommand('2.21.0', 1784144256272)
 @Command({
@@ -279,8 +166,7 @@ export class AddExecutiveProfileStandardObjectsCommand extends ActiveOrSuspended
             standardFlatEntityMaps:
               standardAllFlatEntityMaps.flatViewFieldMaps,
             existingFlatEntityMaps: flatViewFieldMaps,
-            universalIdentifiers:
-              EXECUTIVE_ALL_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
+            universalIdentifiers: EXECUTIVE_ALL_VIEW_UNIVERSAL_IDENTIFIERS,
           }),
         flatEntityToDelete: [],
         flatEntityToUpdate: [],
