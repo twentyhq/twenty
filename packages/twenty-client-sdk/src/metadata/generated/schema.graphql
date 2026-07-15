@@ -5,24 +5,6 @@ interface BillingProductDTO {
   metadata: BillingProductMetadata!
 }
 
-type ApiKey {
-  id: UUID!
-  name: String!
-  expiresAt: DateTime!
-  revokedAt: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  role: Role!
-}
-
-"""A UUID scalar type"""
-scalar UUID
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 type ApplicationRegistrationVariable {
   id: UUID!
   key: String!
@@ -36,46 +18,27 @@ type ApplicationRegistrationVariable {
   updatedAt: DateTime!
 }
 
+"""A UUID scalar type"""
+scalar UUID
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
 scalar JSON
 
-type ApplicationRegistration {
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type ApiKey {
   id: UUID!
-  universalIdentifier: String!
   name: String!
-  oAuthClientId: String!
-  oAuthRedirectUris: [String!]!
-  oAuthScopes: [String!]!
-  ownerWorkspaceId: UUID
-  sourceType: ApplicationRegistrationSourceType!
-  sourcePackage: String
-  latestAvailableVersion: String
-  isListed: Boolean!
-  isVetted: Boolean!
-  isPreInstalled: Boolean!
-  listingRequestStatus: ApplicationRegistrationListingRequestStatus!
-  listingRequestedAt: DateTime
+  expiresAt: DateTime!
+  revokedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
-  isConfigured: Boolean!
-  logoUrl: String
-  galleryImagesUrls: [String!]!
-}
-
-enum ApplicationRegistrationSourceType {
-  NPM
-  TARBALL
-  LOCAL
-  OAUTH_ONLY
-}
-
-enum ApplicationRegistrationListingRequestStatus {
-  NONE
-  REQUESTED
-  APPROVED
-  REJECTED
+  role: Role!
 }
 
 type TwoFactorAuthenticationMethodSummary {
@@ -301,6 +264,13 @@ type ApplicationRegistrationSummary {
   latestAvailableVersion: String
   sourceType: ApplicationRegistrationSourceType!
   logoUrl: String
+}
+
+enum ApplicationRegistrationSourceType {
+  NPM
+  TARBALL
+  LOCAL
+  OAUTH_ONLY
 }
 
 type ApplicationVariable {
@@ -943,6 +913,38 @@ enum WorkspaceActivationStatus {
   ACTIVE
   INACTIVE
   SUSPENDED
+}
+
+type ApplicationRegistration {
+  id: UUID!
+  universalIdentifier: String!
+  name: String!
+  oAuthClientId: String!
+  oAuthRedirectUris: [String!]!
+  oAuthScopes: [String!]!
+  ownerWorkspaceId: UUID
+  sourceType: ApplicationRegistrationSourceType!
+  sourcePackage: String
+  latestAvailableVersion: String
+  isListed: Boolean!
+  isVetted: Boolean!
+  isPreInstalled: Boolean!
+  listingRequestStatus: ApplicationRegistrationListingRequestStatus!
+  listingRequestedAt: DateTime
+  listingRequestContactEmail: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  isConfigured: Boolean!
+  logoUrl: String
+  galleryImagesUrls: [String!]!
+}
+
+enum ApplicationRegistrationListingRequestStatus {
+  NONE
+  REQUESTED
+  APPROVED
+  CHANGE_REQUESTED
+  REJECTED
 }
 
 type User {
@@ -3140,6 +3142,7 @@ type Query {
   findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariableDTO!]!
   applicationRegistrationTarballUrl(id: String!): String
   findClaimableApplicationRegistration(sourcePackage: String, universalIdentifier: String): ClaimableApplicationRegistration
+  findPendingApplicationRegistrationClaim(applicationRegistrationId: String!): ApplicationRegistrationClaimChallenge
   getRoles: [Role!]!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   unsubscribeTopics: [UnsubscribeTopic!]!
@@ -3415,7 +3418,7 @@ type Mutation {
   startApplicationRegistrationClaim(applicationRegistrationId: String!): ApplicationRegistrationClaimChallenge!
   verifyApplicationRegistrationClaim(applicationRegistrationId: String!): ApplicationRegistration!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
-  requestApplicationRegistrationListing(applicationRegistrationId: String!): ApplicationRegistration!
+  requestApplicationRegistrationListing(applicationRegistrationId: String!, contactEmail: String!): ApplicationRegistration!
   updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!
   createOneRole(createRoleInput: CreateRoleInput!): Role!
   updateOneRole(updateRoleInput: UpdateRoleInput!): Role!

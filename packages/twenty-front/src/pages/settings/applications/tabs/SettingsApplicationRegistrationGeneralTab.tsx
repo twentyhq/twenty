@@ -1,11 +1,16 @@
-import { type ApplicationRegistration } from '~/generated-metadata/graphql';
+import {
+  ApplicationRegistrationListingRequestStatus,
+  type ApplicationRegistration,
+} from '~/generated-metadata/graphql';
 
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
 import { InlineBanner } from 'twenty-ui/feedback';
 import { SettingsApplicationRegistrationGeneralInfo } from '~/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo';
 
+import { SettingsAdminApplicationRegistrationClaims } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims';
 import { SettingsAdminApplicationRegistrationDangerZone } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone';
+import { SettingsAdminApplicationRegistrationListingReview } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationListingReview';
 import { SettingsApplicationRegistrationGeneralStats } from '~/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats';
 import { SettingsAdminApplicationRegistrationGeneralToggles } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles';
 
@@ -32,9 +37,21 @@ export const SettingsApplicationRegistrationGeneralTab = ({
         />
       )}
       <SettingsApplicationRegistrationGeneralInfo registration={registration} />
+      {fromAdmin &&
+        registration.listingRequestStatus ===
+          ApplicationRegistrationListingRequestStatus.REQUESTED && (
+          <SettingsAdminApplicationRegistrationListingReview
+            registration={registration}
+          />
+        )}
       {fromAdmin && (
         <SettingsAdminApplicationRegistrationGeneralToggles
           registration={registration}
+        />
+      )}
+      {fromAdmin && (
+        <SettingsAdminApplicationRegistrationClaims
+          applicationRegistrationId={registration.id}
         />
       )}
       {fromAdmin && (

@@ -4,8 +4,12 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import axios from 'axios';
 import { type Repository } from 'typeorm';
 
-import { ApplicationRegistrationClaimEntity } from 'src/engine/core-modules/application/application-registration/application-registration-claim.entity';
+import {
+  AppTokenEntity,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
+import { ApplicationRegistrationLifecycleEmailService } from 'src/engine/core-modules/application/application-registration/application-registration-lifecycle-email.service';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
   ApplicationRegistrationException,
@@ -14,6 +18,7 @@ import {
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 jest.mock('axios');
 
@@ -35,9 +40,7 @@ const buildRegistration = (
 
 describe('ApplicationRegistrationClaimService', () => {
   let service: ApplicationRegistrationClaimService;
-  let claimRepository: jest.Mocked<
-    Repository<ApplicationRegistrationClaimEntity>
-  >;
+  let appTokenRepository: jest.Mocked<Repository<AppTokenEntity>>;
   let applicationRegistrationService: jest.Mocked<ApplicationRegistrationService>;
 
   beforeEach(async () => {
@@ -45,13 +48,24 @@ describe('ApplicationRegistrationClaimService', () => {
       providers: [
         ApplicationRegistrationClaimService,
         {
-          provide: getRepositoryToken(ApplicationRegistrationClaimEntity),
+          provide: getRepositoryToken(AppTokenEntity),
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+            upsert: jest.fn(),
+            delete: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(WorkspaceEntity),
           useValue: {
             findOne: jest.fn(),
-            create: jest.fn((entity) => entity),
-            save: jest.fn(),
-            update: jest.fn(),
-            delete: jest.fn(),
+          },
+        },
+        {
+          provide: ApplicationRegistrationLifecycleEmailService,
+          useValue: {
+            sendApplicationClaimedEmails: jest.fn(),
           },
         },
         {
@@ -71,10 +85,9 @@ describe('ApplicationRegistrationClaimService', () => {
     }).compile();
 
     service = module.get(ApplicationRegistrationClaimService);
-    claimRepository = module.get(
-      getRepositoryToken(ApplicationRegistrationClaimEntity),
-    );
+    appTokenRepository = module.get(getRepositoryToken(AppTokenEntity));
     applicationRegistrationService = module.get(ApplicationRegistrationService);
+    mockedAxios.isAxiosError.mockReturnValue(false);
   });
 
   afterEach(() => jest.clearAllMocks());
@@ -121,11 +134,10 @@ describe('ApplicationRegistrationClaimService', () => {
       );
     });
 
-    it('creates a new claim and returns the challenge', async () => {
+    it('upserts a claim token and returns the challenge', async () => {
       applicationRegistrationService.findOneByIdGlobal.mockResolvedValue(
         buildRegistration(),
       );
-      claimRepository.findOne.mockResolvedValue(null);
 
       const challenge = await service.startClaim({
         applicationRegistrationId: REGISTRATION_ID,
@@ -133,55 +145,111 @@ describe('ApplicationRegistrationClaimService', () => {
         userId: 'user-1',
       });
 
-      expect(claimRepository.save).toHaveBeenCalled();
-      expect(claimRepository.update).not.toHaveBeenCalled();
+      expect(appTokenRepository.upsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          applicationRegistrationId: REGISTRATION_ID,
+          workspaceId: WORKSPACE_ID,
+          userId: 'user-1',
+          type: AppTokenType.ApplicationRegistrationClaimToken,
+          value: challenge.token,
+        }),
+        expect.objectContaining({
+          conflictPaths: ['applicationRegistrationId', 'workspaceId'],
+        }),
+      );
       expect(challenge.sourcePackage).toBe('my-twenty-app');
       expect(challenge.token).toHaveLength(32);
       expect(challenge.expiresAt.getTime()).toBeGreaterThan(Date.now());
     });
+  });
 
-    it('regenerates the token on an existing claim', async () => {
+  describe('findPendingClaim', () => {
+    it('returns null when no claim token exists', async () => {
+      appTokenRepository.findOne.mockResolvedValue(null);
+
+      const pending = await service.findPendingClaim({
+        applicationRegistrationId: REGISTRATION_ID,
+        workspaceId: WORKSPACE_ID,
+      });
+
+      expect(pending).toBeNull();
+    });
+
+    it('returns null for an expired claim token', async () => {
+      appTokenRepository.findOne.mockResolvedValue({
+        value: 'valid-token',
+        expiresAt: new Date(Date.now() - 1_000),
+      } as AppTokenEntity);
+
+      const pending = await service.findPendingClaim({
+        applicationRegistrationId: REGISTRATION_ID,
+        workspaceId: WORKSPACE_ID,
+      });
+
+      expect(pending).toBeNull();
+    });
+
+    it('returns the challenge for a pending claim', async () => {
+      const expiresAt = new Date(Date.now() + 60_000);
+
+      appTokenRepository.findOne.mockResolvedValue({
+        value: 'valid-token',
+        expiresAt,
+      } as AppTokenEntity);
       applicationRegistrationService.findOneByIdGlobal.mockResolvedValue(
         buildRegistration(),
       );
-      claimRepository.findOne.mockResolvedValue({
-        id: 'claim-1',
-        token: 'old-token',
-      } as ApplicationRegistrationClaimEntity);
 
-      const challenge = await service.startClaim({
+      const pending = await service.findPendingClaim({
         applicationRegistrationId: REGISTRATION_ID,
         workspaceId: WORKSPACE_ID,
-        userId: 'user-1',
       });
 
-      expect(claimRepository.update).toHaveBeenCalledWith(
-        'claim-1',
-        expect.objectContaining({ token: challenge.token }),
+      expect(pending).toEqual({
+        applicationRegistrationId: REGISTRATION_ID,
+        sourcePackage: 'my-twenty-app',
+        token: 'valid-token',
+        expiresAt,
+      });
+    });
+
+    it('returns null once the registration is owned', async () => {
+      appTokenRepository.findOne.mockResolvedValue({
+        value: 'valid-token',
+        expiresAt: new Date(Date.now() + 60_000),
+      } as AppTokenEntity);
+      applicationRegistrationService.findOneByIdGlobal.mockResolvedValue(
+        buildRegistration({ ownerWorkspaceId: 'other-workspace' }),
       );
-      expect(claimRepository.save).not.toHaveBeenCalled();
-      expect(challenge.token).not.toBe('old-token');
+
+      const pending = await service.findPendingClaim({
+        applicationRegistrationId: REGISTRATION_ID,
+        workspaceId: WORKSPACE_ID,
+      });
+
+      expect(pending).toBeNull();
     });
   });
 
   describe('verifyClaim', () => {
-    const buildClaim = (
-      overrides: Partial<ApplicationRegistrationClaimEntity> = {},
-    ): ApplicationRegistrationClaimEntity =>
+    const buildClaimToken = (
+      overrides: Partial<AppTokenEntity> = {},
+    ): AppTokenEntity =>
       ({
-        id: 'claim-1',
+        id: 'token-1',
         applicationRegistrationId: REGISTRATION_ID,
         workspaceId: WORKSPACE_ID,
-        token: 'valid-token',
+        type: AppTokenType.ApplicationRegistrationClaimToken,
+        value: 'valid-token',
         expiresAt: new Date(Date.now() + 60_000),
         ...overrides,
-      }) as ApplicationRegistrationClaimEntity;
+      }) as AppTokenEntity;
 
     it('throws when no claim is in progress', async () => {
       applicationRegistrationService.findOneByIdGlobal.mockResolvedValue(
         buildRegistration(),
       );
-      claimRepository.findOne.mockResolvedValue(null);
+      appTokenRepository.findOne.mockResolvedValue(null);
 
       await expectException(
         service.verifyClaim({
@@ -192,12 +260,30 @@ describe('ApplicationRegistrationClaimService', () => {
       );
     });
 
+    it('clears stale challenges when ownership is already settled', async () => {
+      applicationRegistrationService.findOneByIdGlobal.mockResolvedValue(
+        buildRegistration({ ownerWorkspaceId: 'other-workspace' }),
+      );
+
+      await expectException(
+        service.verifyClaim({
+          applicationRegistrationId: REGISTRATION_ID,
+          workspaceId: WORKSPACE_ID,
+        }),
+        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_ALREADY_OWNED,
+      );
+      expect(appTokenRepository.delete).toHaveBeenCalledWith({
+        applicationRegistrationId: REGISTRATION_ID,
+        type: AppTokenType.ApplicationRegistrationClaimToken,
+      });
+    });
+
     it('deletes and rejects an expired claim', async () => {
       applicationRegistrationService.findOneByIdGlobal.mockResolvedValue(
         buildRegistration(),
       );
-      claimRepository.findOne.mockResolvedValue(
-        buildClaim({ expiresAt: new Date(Date.now() - 1_000) }),
+      appTokenRepository.findOne.mockResolvedValue(
+        buildClaimToken({ expiresAt: new Date(Date.now() - 1_000) }),
       );
 
       await expectException(
@@ -207,14 +293,14 @@ describe('ApplicationRegistrationClaimService', () => {
         }),
         ApplicationRegistrationExceptionCode.CLAIM_EXPIRED,
       );
-      expect(claimRepository.delete).toHaveBeenCalledWith('claim-1');
+      expect(appTokenRepository.delete).toHaveBeenCalledWith('token-1');
     });
 
     it('rejects when no claim code is published', async () => {
       applicationRegistrationService.findOneByIdGlobal.mockResolvedValue(
         buildRegistration(),
       );
-      claimRepository.findOne.mockResolvedValue(buildClaim());
+      appTokenRepository.findOne.mockResolvedValue(buildClaimToken());
       mockedAxios.get.mockResolvedValue({ data: { name: 'my-twenty-app' } });
 
       await expectException(
@@ -226,11 +312,27 @@ describe('ApplicationRegistrationClaimService', () => {
       );
     });
 
+    it('reports a registry outage without blaming the claim code', async () => {
+      applicationRegistrationService.findOneByIdGlobal.mockResolvedValue(
+        buildRegistration(),
+      );
+      appTokenRepository.findOne.mockResolvedValue(buildClaimToken());
+      mockedAxios.get.mockRejectedValue(new Error('ETIMEDOUT'));
+
+      await expectException(
+        service.verifyClaim({
+          applicationRegistrationId: REGISTRATION_ID,
+          workspaceId: WORKSPACE_ID,
+        }),
+        ApplicationRegistrationExceptionCode.CLAIM_CODE_CHECK_UNAVAILABLE,
+      );
+    });
+
     it('rejects when the published claim code does not match', async () => {
       applicationRegistrationService.findOneByIdGlobal.mockResolvedValue(
         buildRegistration(),
       );
-      claimRepository.findOne.mockResolvedValue(buildClaim());
+      appTokenRepository.findOne.mockResolvedValue(buildClaimToken());
       mockedAxios.get.mockResolvedValue({
         data: { twenty: { claimCode: 'wrong-token' } },
       });
@@ -250,7 +352,7 @@ describe('ApplicationRegistrationClaimService', () => {
       applicationRegistrationService.findOneByIdGlobal.mockResolvedValue(
         buildRegistration(),
       );
-      claimRepository.findOne.mockResolvedValue(buildClaim());
+      appTokenRepository.findOne.mockResolvedValue(buildClaimToken());
       mockedAxios.get.mockResolvedValue({
         data: { twenty: { claimCode: 'valid-token' } },
       });
@@ -267,10 +369,39 @@ describe('ApplicationRegistrationClaimService', () => {
         applicationRegistrationId: REGISTRATION_ID,
         claimingWorkspaceId: WORKSPACE_ID,
       });
-      expect(claimRepository.delete).toHaveBeenCalledWith({
+      expect(appTokenRepository.delete).toHaveBeenCalledWith({
         applicationRegistrationId: REGISTRATION_ID,
+        type: AppTokenType.ApplicationRegistrationClaimToken,
       });
       expect(result).toBe(claimed);
+    });
+
+    it('clears pending claims when a concurrent claimer already won', async () => {
+      applicationRegistrationService.findOneByIdGlobal.mockResolvedValue(
+        buildRegistration(),
+      );
+      appTokenRepository.findOne.mockResolvedValue(buildClaimToken());
+      mockedAxios.get.mockResolvedValue({
+        data: { twenty: { claimCode: 'valid-token' } },
+      });
+      applicationRegistrationService.claimOwnership.mockRejectedValue(
+        new ApplicationRegistrationException(
+          'Application registration is already owned by a workspace',
+          ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_ALREADY_OWNED,
+        ),
+      );
+
+      await expectException(
+        service.verifyClaim({
+          applicationRegistrationId: REGISTRATION_ID,
+          workspaceId: WORKSPACE_ID,
+        }),
+        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_ALREADY_OWNED,
+      );
+      expect(appTokenRepository.delete).toHaveBeenCalledWith({
+        applicationRegistrationId: REGISTRATION_ID,
+        type: AppTokenType.ApplicationRegistrationClaimToken,
+      });
     });
   });
 });

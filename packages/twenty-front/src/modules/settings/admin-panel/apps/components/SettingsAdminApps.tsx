@@ -39,7 +39,6 @@ import {
   ApplicationRegistrationSourceType,
   FindAllApplicationRegistrationsDocument,
   FindApplicationRegistrationListingRequestsDocument,
-  ReviewApplicationRegistrationListingDocument,
   SyncMarketplaceCatalogDocument,
 } from '~/generated-admin/graphql';
 
@@ -95,37 +94,8 @@ export const SettingsAdminApps = () => {
     { client: apolloAdminClient },
   );
 
-  const [reviewListing, { loading: isReviewing }] = useMutation(
-    ReviewApplicationRegistrationListingDocument,
-    {
-      client: apolloAdminClient,
-      refetchQueries: [
-        FindApplicationRegistrationListingRequestsDocument,
-        FindAllApplicationRegistrationsDocument,
-      ],
-    },
-  );
-
   const listingRequests =
     listingRequestsData?.findApplicationRegistrationListingRequests ?? [];
-
-  const handleReviewListing = async (
-    applicationRegistrationId: string,
-    approved: boolean,
-  ) => {
-    try {
-      await reviewListing({
-        variables: { applicationRegistrationId, approved },
-      });
-      enqueueSuccessSnackBar({
-        message: approved ? t`Listing approved.` : t`Listing rejected.`,
-      });
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to review the listing request.`,
-      });
-    }
-  };
 
   const handleSyncCatalog = async () => {
     try {
@@ -225,7 +195,12 @@ export const SettingsAdminApps = () => {
                 {listingRequests.map((request) => (
                   <TableRow
                     key={request.id}
+                    to={getSettingsPath(
+                      SettingsPath.AdminPanelApplicationRegistrationDetail,
+                      { applicationRegistrationId: request.id },
+                    )}
                     gridAutoColumns={LISTING_REQUESTS_GRID}
+                    isClickable
                   >
                     <StyledNameTableCell minWidth="0" overflow="hidden">
                       <ApplicationDisplay
@@ -240,20 +215,14 @@ export const SettingsAdminApps = () => {
                     </TableCell>
                     <StyledListingActionsCell>
                       <Button
-                        title={t`Reject`}
-                        size="small"
-                        variant="secondary"
-                        accent="danger"
-                        disabled={isReviewing}
-                        onClick={() => handleReviewListing(request.id, false)}
-                      />
-                      <Button
-                        title={t`Approve`}
+                        title={t`Review`}
                         size="small"
                         variant="secondary"
                         accent="blue"
-                        disabled={isReviewing}
-                        onClick={() => handleReviewListing(request.id, true)}
+                        to={getSettingsPath(
+                          SettingsPath.AdminPanelApplicationRegistrationDetail,
+                          { applicationRegistrationId: request.id },
+                        )}
                       />
                     </StyledListingActionsCell>
                   </TableRow>

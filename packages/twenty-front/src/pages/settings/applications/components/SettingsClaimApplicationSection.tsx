@@ -8,6 +8,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconCopy,
+  IconEye,
   IconRefresh,
   IconSearch,
   IconUserPlus,
@@ -19,6 +20,7 @@ import { H2Title } from 'twenty-ui/typography';
 import {
   FindClaimableApplicationRegistrationDocument,
   FindManyApplicationRegistrationsDocument,
+  FindPendingApplicationRegistrationClaimDocument,
   PermissionFlagType,
   StartApplicationRegistrationClaimDocument,
   SyncMarketplaceCatalogDocument,
@@ -84,6 +86,7 @@ export const SettingsClaimApplicationSection = () => {
   const [lookupValue, setLookupValue] = useState('');
   const [notFound, setNotFound] = useState(false);
   const [challengeCode, setChallengeCode] = useState<string | null>(null);
+  const [pendingClaimCode, setPendingClaimCode] = useState<string | null>(null);
 
   const canSyncCatalog = useHasPermissionFlag(
     PermissionFlagType.MARKETPLACE_APPS,
@@ -91,6 +94,11 @@ export const SettingsClaimApplicationSection = () => {
 
   const [runLookup, { data: lookupData, loading: isLookingUp }] = useLazyQuery(
     FindClaimableApplicationRegistrationDocument,
+    { fetchPolicy: 'network-only' },
+  );
+
+  const [runPendingClaimLookup] = useLazyQuery(
+    FindPendingApplicationRegistrationClaimDocument,
     { fetchPolicy: 'network-only' },
   );
 
@@ -118,15 +126,39 @@ export const SettingsClaimApplicationSection = () => {
 
     setNotFound(false);
     setChallengeCode(null);
+    setPendingClaimCode(null);
 
     const variables = UUID_REGEX.test(trimmed)
       ? { universalIdentifier: trimmed }
       : { sourcePackage: trimmed };
 
-    const result = await runLookup({ variables });
+    try {
+      const result = await runLookup({ variables });
 
-    if (!isDefined(result.data?.findClaimableApplicationRegistration)) {
-      setNotFound(true);
+      const foundRegistration =
+        result.data?.findClaimableApplicationRegistration;
+
+      if (!isDefined(foundRegistration)) {
+        setNotFound(true);
+
+        return;
+      }
+
+      if (!foundRegistration.isOwned) {
+        const pendingClaimResult = await runPendingClaimLookup({
+          variables: { applicationRegistrationId: foundRegistration.id },
+        });
+
+        setPendingClaimCode(
+          pendingClaimResult.data?.findPendingApplicationRegistrationClaim
+            ?.token ?? null,
+        );
+      }
+    } catch (error) {
+      enqueueErrorSnackBar({
+        message:
+          error instanceof Error ? error.message : t`Could not run the lookup`,
+      });
     }
   };
 
@@ -248,14 +280,38 @@ export const SettingsClaimApplicationSection = () => {
           {isDefined(registration.description) && (
             <StyledHint>{registration.description}</StyledHint>
           )}
+          {isDefined(pendingClaimCode) && !isDefined(challengeCode) && (
+            <StyledHint>
+              {t`A claim is already pending for this workspace. Reveal its code to finish the challenge, or verify if you already published it.`}
+            </StyledHint>
+          )}
           {!isDefined(challengeCode) ? (
-            <Button
-              title={t`Start claim`}
-              Icon={IconUserPlus}
-              accent="blue"
-              onClick={handleStartClaim}
-              disabled={isStarting}
-            />
+            <StyledRow>
+              {isDefined(pendingClaimCode) ? (
+                <>
+                  <Button
+                    title={t`Reveal claim code`}
+                    Icon={IconEye}
+                    variant="secondary"
+                    onClick={() => setChallengeCode(pendingClaimCode)}
+                  />
+                  <Button
+                    title={t`Verify`}
+                    accent="blue"
+                    onClick={handleVerifyClaim}
+                    disabled={isVerifying}
+                  />
+                </>
+              ) : (
+                <Button
+                  title={t`Start claim`}
+                  Icon={IconUserPlus}
+                  accent="blue"
+                  onClick={handleStartClaim}
+                  disabled={isStarting}
+                />
+              )}
+            </StyledRow>
           ) : (
             <>
               <StyledHint>

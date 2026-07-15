@@ -5,19 +5,25 @@ import crypto from 'crypto';
 
 import axios from 'axios';
 import { isDefined } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
+import { MoreThan, type Repository } from 'typeorm';
 import { z } from 'zod';
 
-import { ApplicationRegistrationClaimEntity } from 'src/engine/core-modules/application/application-registration/application-registration-claim.entity';
+import {
+  AppTokenEntity,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
+import { ApplicationRegistrationLifecycleEmailService } from 'src/engine/core-modules/application/application-registration/application-registration-lifecycle-email.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { type AdminApplicationRegistrationClaimDTO } from 'src/engine/core-modules/application/application-registration/dtos/admin-application-registration-claim.dto';
 import { type ApplicationRegistrationClaimChallengeDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-claim-challenge.dto';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const CLAIM_TOKEN_TTL_MS = 72 * 60 * 60 * 1000;
 
@@ -31,6 +37,13 @@ const registryPackageClaimSchema = z.object({
     .optional(),
 });
 
+type PublishedClaimCodeLookup =
+  | { status: 'fetched'; claimCode: string | null }
+  | { status: 'unavailable' };
+
+// Claim challenges are stored as APPLICATION_REGISTRATION_CLAIM_TOKEN app
+// tokens: one pending row per (registration, workspace), enforced by a
+// partial unique index and removed once ownership is settled.
 @Injectable()
 export class ApplicationRegistrationClaimService {
   private readonly logger = new Logger(
@@ -38,9 +51,12 @@ export class ApplicationRegistrationClaimService {
   );
 
   constructor(
-    @InjectRepository(ApplicationRegistrationClaimEntity)
-    private readonly claimRepository: Repository<ApplicationRegistrationClaimEntity>,
+    @InjectRepository(AppTokenEntity)
+    private readonly appTokenRepository: Repository<AppTokenEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationLifecycleEmailService: ApplicationRegistrationLifecycleEmailService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -59,36 +75,65 @@ export class ApplicationRegistrationClaimService {
     const token = crypto.randomBytes(16).toString('hex');
     const expiresAt = new Date(Date.now() + CLAIM_TOKEN_TTL_MS);
 
-    const existing = await this.claimRepository.findOne({
-      where: {
+    await this.appTokenRepository.upsert(
+      {
         applicationRegistrationId: registration.id,
         workspaceId: params.workspaceId,
-      },
-    });
-
-    if (isDefined(existing)) {
-      await this.claimRepository.update(existing.id, {
-        token,
+        userId: params.userId,
+        type: AppTokenType.ApplicationRegistrationClaimToken,
+        value: token,
         expiresAt,
-        createdByUserId: params.userId,
-      });
-    } else {
-      await this.claimRepository.save(
-        this.claimRepository.create({
-          applicationRegistrationId: registration.id,
-          workspaceId: params.workspaceId,
-          createdByUserId: params.userId,
-          token,
-          expiresAt,
-        }),
-      );
-    }
+      },
+      {
+        conflictPaths: ['applicationRegistrationId', 'workspaceId'],
+        indexPredicate: `"type" = '${AppTokenType.ApplicationRegistrationClaimToken}'`,
+      },
+    );
 
     return {
       applicationRegistrationId: registration.id,
       sourcePackage,
       token,
       expiresAt,
+    };
+  }
+
+  async findPendingClaim(params: {
+    applicationRegistrationId: string;
+    workspaceId: string;
+  }): Promise<ApplicationRegistrationClaimChallengeDTO | null> {
+    const claimToken = await this.appTokenRepository.findOne({
+      where: {
+        applicationRegistrationId: params.applicationRegistrationId,
+        workspaceId: params.workspaceId,
+        type: AppTokenType.ApplicationRegistrationClaimToken,
+      },
+    });
+
+    if (
+      !isDefined(claimToken) ||
+      claimToken.expiresAt.getTime() < Date.now()
+    ) {
+      return null;
+    }
+
+    const registration =
+      await this.applicationRegistrationService.findOneByIdGlobal(
+        params.applicationRegistrationId,
+      );
+
+    if (
+      isDefined(registration.ownerWorkspaceId) ||
+      !isDefined(registration.sourcePackage)
+    ) {
+      return null;
+    }
+
+    return {
+      applicationRegistrationId: registration.id,
+      sourcePackage: registration.sourcePackage,
+      token: claimToken.value,
+      expiresAt: claimToken.expiresAt,
     };
   }
 
@@ -101,24 +146,31 @@ export class ApplicationRegistrationClaimService {
         params.applicationRegistrationId,
       );
 
+    // Ownership already settled by someone else: drop stale challenges so
+    // losers of the race don't leave orphaned rows behind.
+    if (isDefined(registration.ownerWorkspaceId)) {
+      await this.deleteClaimTokens(registration.id);
+    }
+
     const sourcePackage = this.assertClaimable(registration);
 
-    const claim = await this.claimRepository.findOne({
+    const claimToken = await this.appTokenRepository.findOne({
       where: {
         applicationRegistrationId: registration.id,
         workspaceId: params.workspaceId,
+        type: AppTokenType.ApplicationRegistrationClaimToken,
       },
     });
 
-    if (!isDefined(claim)) {
+    if (!isDefined(claimToken)) {
       throw new ApplicationRegistrationException(
         'No claim in progress for this workspace',
         ApplicationRegistrationExceptionCode.CLAIM_NOT_STARTED,
       );
     }
 
-    if (claim.expiresAt.getTime() < Date.now()) {
-      await this.claimRepository.delete(claim.id);
+    if (claimToken.expiresAt.getTime() < Date.now()) {
+      await this.appTokenRepository.delete(claimToken.id);
 
       throw new ApplicationRegistrationException(
         'Claim has expired',
@@ -126,35 +178,128 @@ export class ApplicationRegistrationClaimService {
       );
     }
 
-    const publishedClaimCode =
-      await this.fetchPublishedClaimCode(sourcePackage);
+    const lookup = await this.fetchPublishedClaimCode(sourcePackage);
 
-    if (!isDefined(publishedClaimCode)) {
+    if (lookup.status === 'unavailable') {
+      throw new ApplicationRegistrationException(
+        `Could not reach the package registry to verify the claim for ${sourcePackage}. Try again later.`,
+        ApplicationRegistrationExceptionCode.CLAIM_CODE_CHECK_UNAVAILABLE,
+      );
+    }
+
+    if (!isDefined(lookup.claimCode)) {
       throw new ApplicationRegistrationException(
         `No claim code found in published package ${sourcePackage}`,
         ApplicationRegistrationExceptionCode.CLAIM_CODE_NOT_FOUND,
       );
     }
 
-    if (publishedClaimCode !== claim.token) {
+    if (lookup.claimCode !== claimToken.value) {
       throw new ApplicationRegistrationException(
         `Claim code mismatch for package ${sourcePackage}`,
         ApplicationRegistrationExceptionCode.CLAIM_CODE_MISMATCH,
       );
     }
 
-    const claimed = await this.applicationRegistrationService.claimOwnership({
-      applicationRegistrationId: registration.id,
-      claimingWorkspaceId: params.workspaceId,
-    });
+    let claimed: ApplicationRegistrationEntity;
+
+    try {
+      claimed = await this.applicationRegistrationService.claimOwnership({
+        applicationRegistrationId: registration.id,
+        claimingWorkspaceId: params.workspaceId,
+      });
+    } catch (error) {
+      // A concurrent claimer won the race: ownership is settled either way,
+      // so pending challenges are no longer actionable.
+      if (
+        error instanceof ApplicationRegistrationException &&
+        error.code ===
+          ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_ALREADY_OWNED
+      ) {
+        await this.deleteClaimTokens(registration.id);
+      }
+
+      throw error;
+    }
 
     // Ownership is settled; drop any pending challenges (including losers of a
     // concurrent race from other workspaces).
-    await this.claimRepository.delete({
-      applicationRegistrationId: registration.id,
+    await this.deleteClaimTokens(registration.id);
+
+    const claimingWorkspace = await this.workspaceRepository.findOne({
+      where: { id: params.workspaceId },
     });
 
+    await this.applicationRegistrationLifecycleEmailService.sendApplicationClaimedEmails(
+      {
+        registration: claimed,
+        workspaceDisplayName:
+          claimingWorkspace?.displayName ?? params.workspaceId,
+        claimingUserId: claimToken.userId,
+      },
+    );
+
     return claimed;
+  }
+
+  // Admin view: the settled owner workspace (if any) followed by workspaces
+  // with a pending, unexpired claim challenge.
+  async findClaimsForRegistration(
+    applicationRegistrationId: string,
+  ): Promise<AdminApplicationRegistrationClaimDTO[]> {
+    const registration =
+      await this.applicationRegistrationService.findOneByIdGlobal(
+        applicationRegistrationId,
+      );
+
+    const claims: AdminApplicationRegistrationClaimDTO[] = [];
+
+    if (isDefined(registration.ownerWorkspaceId)) {
+      const ownerWorkspace = await this.workspaceRepository.findOne({
+        where: { id: registration.ownerWorkspaceId },
+      });
+
+      claims.push({
+        workspaceId: registration.ownerWorkspaceId,
+        workspaceDisplayName: ownerWorkspace?.displayName ?? null,
+        isOwner: true,
+        expiresAt: null,
+      });
+    }
+
+    const claimTokens = await this.appTokenRepository.find({
+      where: {
+        applicationRegistrationId,
+        type: AppTokenType.ApplicationRegistrationClaimToken,
+        expiresAt: MoreThan(new Date()),
+      },
+      relations: ['workspace'],
+      order: { createdAt: 'ASC' },
+    });
+
+    for (const claimToken of claimTokens) {
+      if (!isDefined(claimToken.workspaceId)) {
+        continue;
+      }
+
+      claims.push({
+        workspaceId: claimToken.workspaceId,
+        workspaceDisplayName: claimToken.workspace?.displayName ?? null,
+        isOwner: false,
+        expiresAt: claimToken.expiresAt,
+      });
+    }
+
+    return claims;
+  }
+
+  private async deleteClaimTokens(
+    applicationRegistrationId: string,
+  ): Promise<void> {
+    await this.appTokenRepository.delete({
+      applicationRegistrationId,
+      type: AppTokenType.ApplicationRegistrationClaimToken,
+    });
   }
 
   // Returns the npm package name, or throws if the registration cannot be
@@ -182,7 +327,7 @@ export class ApplicationRegistrationClaimService {
 
   private async fetchPublishedClaimCode(
     packageName: string,
-  ): Promise<string | null> {
+  ): Promise<PublishedClaimCodeLookup> {
     const registryUrl = this.twentyConfigService.get('APP_REGISTRY_URL');
     // Scoped packages need their slash percent-encoded for the registry path.
     const encodedName = packageName.startsWith('@')
@@ -198,16 +343,29 @@ export class ApplicationRegistrationClaimService {
       const parsed = registryPackageClaimSchema.safeParse(data);
 
       if (!parsed.success) {
-        return null;
+        return { status: 'fetched', claimCode: null };
       }
 
-      return parsed.data.twenty?.claimCode ?? null;
+      return {
+        status: 'fetched',
+        claimCode: parsed.data.twenty?.claimCode ?? null,
+      };
     } catch (error) {
+      if (
+        axios.isAxiosError(error) &&
+        isDefined(error.response) &&
+        error.response.status === 404
+      ) {
+        // The package (or its latest dist-tag) does not exist: treat as a
+        // missing claim code rather than a registry outage.
+        return { status: 'fetched', claimCode: null };
+      }
+
       this.logger.warn(
         `Failed to fetch claim code for package ${packageName}: ${error instanceof Error ? error.message : String(error)}`,
       );
 
-      return null;
+      return { status: 'unavailable' };
     }
   }
 }

@@ -21,6 +21,7 @@ export enum ApplicationRegistrationExceptionCode {
   CLAIM_NOT_STARTED = 'CLAIM_NOT_STARTED',
   CLAIM_EXPIRED = 'CLAIM_EXPIRED',
   CLAIM_CODE_NOT_FOUND = 'CLAIM_CODE_NOT_FOUND',
+  CLAIM_CODE_CHECK_UNAVAILABLE = 'CLAIM_CODE_CHECK_UNAVAILABLE',
   CLAIM_CODE_MISMATCH = 'CLAIM_CODE_MISMATCH',
   INCOMPLETE_LISTING_METADATA = 'INCOMPLETE_LISTING_METADATA',
 }
@@ -61,6 +62,8 @@ const getExceptionUserFriendlyMessage = (
       return msg`This claim has expired. Start a new claim to get a fresh code.`;
     case ApplicationRegistrationExceptionCode.CLAIM_CODE_NOT_FOUND:
       return msg`No claim code was found in the published package. Add it to package.json and publish a new version.`;
+    case ApplicationRegistrationExceptionCode.CLAIM_CODE_CHECK_UNAVAILABLE:
+      return msg`The package registry could not be reached to verify the claim. Try again later.`;
     case ApplicationRegistrationExceptionCode.CLAIM_CODE_MISMATCH:
       return msg`The claim code in the published package does not match. Publish a new version with the exact code shown.`;
     case ApplicationRegistrationExceptionCode.INCOMPLETE_LISTING_METADATA:

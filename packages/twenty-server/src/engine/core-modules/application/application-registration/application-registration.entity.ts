@@ -244,6 +244,16 @@ export class ApplicationRegistrationEntity {
   })
   listingRequestedAt: Date | null;
 
+  // Where the admin's listing decision (approval / rejection / change
+  // request) is emailed.
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.22.0_ReplaceApplicationRegistrationClaimWithAppTokenFastInstanceCommand_1784153821819',
+  })
+  listingRequestContactEmail: string | null;
+
   @OneToMany(
     () => ApplicationRegistrationVariableEntity,
     (variable) => variable.applicationRegistration,

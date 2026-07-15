@@ -32,6 +32,7 @@ import {
   type UpdateApplicationRegistrationPayload,
 } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationListingRequestStatus } from 'src/engine/core-modules/application/application-registration/enums/application-registration-listing-request-status.enum';
+import { ApplicationRegistrationListingReviewDecision } from 'src/engine/core-modules/application/application-registration/enums/application-registration-listing-review-decision.enum';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -851,7 +852,7 @@ export class ApplicationRegistrationService {
     if (isDefined(registration.ownerWorkspaceId)) {
       throw new ApplicationRegistrationException(
         'Application registration is already owned by a workspace',
-        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_ALREADY_OWNED,
       );
     }
 
@@ -865,7 +866,7 @@ export class ApplicationRegistrationService {
     if (updateResult.affected === 0) {
       throw new ApplicationRegistrationException(
         'Application registration is already owned by a workspace',
-        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_ALREADY_OWNED,
       );
     }
 
@@ -880,6 +881,7 @@ export class ApplicationRegistrationService {
   async requestListing(params: {
     applicationRegistrationId: string;
     ownerWorkspaceId: string;
+    contactEmail: string;
   }): Promise<ApplicationRegistrationEntity> {
     const registration = await this.applicationRegistrationRepository.findOne({
       where: {
@@ -928,6 +930,7 @@ export class ApplicationRegistrationService {
       listingRequestStatus:
         ApplicationRegistrationListingRequestStatus.REQUESTED,
       listingRequestedAt: new Date(),
+      listingRequestContactEmail: params.contactEmail,
     });
 
     return this.findOneById(registration.id, params.ownerWorkspaceId);
@@ -944,31 +947,53 @@ export class ApplicationRegistrationService {
     });
   }
 
-  // Server admin decision on a pending listing request.
+  // Server admin decision on a pending listing request. Approval also flips
+  // "Allow installation" (isListed) on.
   async reviewListing(params: {
     applicationRegistrationId: string;
-    approved: boolean;
+    decision: ApplicationRegistrationListingReviewDecision;
   }): Promise<ApplicationRegistrationEntity> {
     const registration = await this.findOneByIdGlobal(
       params.applicationRegistrationId,
     );
 
-    if (
-      registration.listingRequestStatus !==
-      ApplicationRegistrationListingRequestStatus.REQUESTED
-    ) {
+    const decisionToStatus: Record<
+      ApplicationRegistrationListingReviewDecision,
+      ApplicationRegistrationListingRequestStatus
+    > = {
+      [ApplicationRegistrationListingReviewDecision.APPROVED]:
+        ApplicationRegistrationListingRequestStatus.APPROVED,
+      [ApplicationRegistrationListingReviewDecision.CHANGE_REQUESTED]:
+        ApplicationRegistrationListingRequestStatus.CHANGE_REQUESTED,
+      [ApplicationRegistrationListingReviewDecision.REJECTED]:
+        ApplicationRegistrationListingRequestStatus.REJECTED,
+    };
+
+    const isApproval =
+      params.decision === ApplicationRegistrationListingReviewDecision.APPROVED;
+
+    // Conditional on the pending status so concurrent reviews can't overwrite
+    // a decision another admin already made.
+    const updateResult = await this.applicationRegistrationRepository.update(
+      {
+        id: registration.id,
+        listingRequestStatus:
+          ApplicationRegistrationListingRequestStatus.REQUESTED,
+      },
+      {
+        listingRequestStatus: decisionToStatus[params.decision],
+        ...(isApproval ? { isListed: true } : {}),
+      },
+    );
+
+    if (updateResult.affected === 0) {
       throw new ApplicationRegistrationException(
         'No pending listing request to review',
         ApplicationRegistrationExceptionCode.INVALID_INPUT,
       );
     }
 
-    await this.applicationRegistrationRepository.update(registration.id, {
-      listingRequestStatus: params.approved
-        ? ApplicationRegistrationListingRequestStatus.APPROVED
-        : ApplicationRegistrationListingRequestStatus.REJECTED,
-      ...(params.approved ? { isListed: true } : {}),
-    });
+    await this.invalidateMarketplaceAppsCache();
 
     return this.findOneByIdGlobal(registration.id);
   }

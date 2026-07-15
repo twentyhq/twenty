@@ -5,11 +5,13 @@ import { APPLICATION_REGISTRATION_FRAGMENT } from '@/settings/application-regist
 export const REVIEW_APPLICATION_REGISTRATION_LISTING = gql`
   mutation ReviewApplicationRegistrationListing(
     $applicationRegistrationId: String!
-    $approved: Boolean!
+    $decision: ApplicationRegistrationListingReviewDecision!
+    $reason: String
   ) {
     reviewApplicationRegistrationListing(
       applicationRegistrationId: $applicationRegistrationId
-      approved: $approved
+      decision: $decision
+      reason: $reason
     ) {
       ...ApplicationRegistrationFragment
     }

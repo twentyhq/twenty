@@ -5,6 +5,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -12,6 +13,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -24,9 +27,20 @@ export enum AppTokenType {
   OnboardingInvitationToken = 'ONBOARDING_INVITATION_TOKEN',
   EmailVerificationToken = 'EMAIL_VERIFICATION_TOKEN',
   EnterpriseValidityToken = 'ENTERPRISE_VALIDITY_TOKEN',
+  ApplicationRegistrationClaimToken = 'APPLICATION_REGISTRATION_CLAIM_TOKEN',
 }
 
 @Entity({ name: 'appToken', schema: 'core' })
+// One pending claim challenge per (registration, workspace); other token
+// types keep applicationRegistrationId null and are unaffected.
+@Index(
+  'IDX_APP_TOKEN_APPLICATION_REGISTRATION_WORKSPACE_CLAIM_UNIQUE',
+  ['applicationRegistrationId', 'workspaceId'],
+  {
+    unique: true,
+    where: `"type" = 'APPLICATION_REGISTRATION_CLAIM_TOKEN'`,
+  },
+)
 export class AppTokenEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -48,6 +62,20 @@ export class AppTokenEntity {
 
   @Column({ nullable: true, type: 'uuid' })
   workspaceId: string | null;
+
+  @ManyToOne(() => ApplicationRegistrationEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'applicationRegistrationId' })
+  applicationRegistration: Relation<ApplicationRegistrationEntity> | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.22.0_ReplaceApplicationRegistrationClaimWithAppTokenFastInstanceCommand_1784153821819',
+  })
+  applicationRegistrationId: string | null;
 
   @Column({ nullable: false, type: 'text', default: AppTokenType.RefreshToken })
   type: AppTokenType;

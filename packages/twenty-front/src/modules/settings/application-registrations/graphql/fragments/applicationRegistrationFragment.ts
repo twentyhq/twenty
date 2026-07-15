@@ -20,6 +20,7 @@ export const APPLICATION_REGISTRATION_FRAGMENT = gql`
     ownerWorkspaceId
     listingRequestStatus
     listingRequestedAt
+    listingRequestContactEmail
     createdAt
     updatedAt
   }
