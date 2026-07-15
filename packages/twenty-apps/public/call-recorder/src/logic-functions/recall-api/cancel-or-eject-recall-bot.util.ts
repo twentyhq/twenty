@@ -12,6 +12,8 @@ export const cancelOrEjectRecallBot = async (
     return true;
   }
 
+  let failureMessage = cancelResult.errorMessage;
+
   // Deleting only works for not-yet-joined bots; eject the ones already in a call.
   if (!isNull(cancelResult.status)) {
     const ejectResult = await ejectRecallBot({ externalBotId });
@@ -19,10 +21,12 @@ export const cancelOrEjectRecallBot = async (
     if (ejectResult.ok) {
       return true;
     }
+
+    failureMessage = ejectResult.errorMessage;
   }
 
   console.warn(
-    `[call-recorder] failed to cancel Recall bot ${externalBotId}: ${cancelResult.errorMessage}`,
+    `[call-recorder] failed to cancel or eject Recall bot ${externalBotId}: ${failureMessage}`,
   );
 
   return false;

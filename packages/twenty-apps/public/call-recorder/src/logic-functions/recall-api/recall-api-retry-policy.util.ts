@@ -35,5 +35,5 @@ export const resolveRecallApiRetryDelayMs = ({
   // instant do not fire in lockstep and re-collide on the next attempt.
   const baseDelayMs = RECALL_API_RETRY_DELAY_MS * attemptNumber;
 
-  return Math.round(baseDelayMs / 2 + random() * (baseDelayMs / 2));
+  return Math.round((baseDelayMs * (1 + random())) / 2);
 };

@@ -14,10 +14,14 @@ export const parseRecallRetryAfterMs = (
     return undefined;
   }
 
-  const retryAfterSeconds = Number(trimmedRetryAfterHeader);
+  if (/^\d+$/.test(trimmedRetryAfterHeader)) {
+    return capRecallRetryAfterMs(Number(trimmedRetryAfterHeader) * 1000);
+  }
 
-  if (Number.isFinite(retryAfterSeconds) && retryAfterSeconds >= 0) {
-    return capRecallRetryAfterMs(Math.ceil(retryAfterSeconds * 1000));
+  // Numeric forms outside delay-seconds (1.5, 1e2, 0x10) are malformed, and
+  // Date.parse would misread some of them as dates, so use the default policy.
+  if (!Number.isNaN(Number(trimmedRetryAfterHeader))) {
+    return undefined;
   }
 
   const retryAfterDateMs = Date.parse(trimmedRetryAfterHeader);

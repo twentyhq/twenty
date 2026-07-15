@@ -36,6 +36,7 @@ export const recallBotApiRequest = async <TData>(
   requestArgs: RecallBotApiRequestArgs,
 ): Promise<RecallBotApiRequestResult<TData>> => {
   const maxAttempts = requestArgs.maxAttempts ?? RECALL_API_MAX_ATTEMPTS;
+  let totalRetryWaitMs = 0;
 
   for (let attemptNumber = 1; ; attemptNumber++) {
     const { result, isRetryable, retryAfterMs } =
@@ -53,10 +54,14 @@ export const recallBotApiRequest = async <TData>(
 
     // Blocking longer than one invocation can safely spare would sleep straight
     // into a timeout kill, so defer to the reconcilers, which re-drive the row.
-    if (retryDelayMs >= RECALL_API_MAX_IN_PROCESS_RETRY_WAIT_MS) {
+    if (
+      totalRetryWaitMs + retryDelayMs >=
+      RECALL_API_MAX_IN_PROCESS_RETRY_WAIT_MS
+    ) {
       return result;
     }
 
+    totalRetryWaitMs += retryDelayMs;
     await sleep(retryDelayMs);
   }
 };

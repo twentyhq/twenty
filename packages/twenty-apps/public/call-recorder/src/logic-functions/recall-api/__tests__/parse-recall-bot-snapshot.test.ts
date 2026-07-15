@@ -44,6 +44,25 @@ describe('parseRecallBotSnapshot', () => {
     });
   });
 
+  it('skips malformed recording entries and keeps recordings without timestamps', () => {
+    expect(
+      parseRecallBotSnapshot({
+        recordings: [null, 'not-a-recording', { id: 'recall-recording-1' }],
+      }),
+    ).toEqual({
+      id: undefined,
+      metadata: {},
+      statusChanges: [],
+      recordings: [
+        {
+          id: 'recall-recording-1',
+          startedAt: undefined,
+          completedAt: undefined,
+        },
+      ],
+    });
+  });
+
   it('skips malformed status change entries and non-array recordings', () => {
     expect(
       parseRecallBotSnapshot({
