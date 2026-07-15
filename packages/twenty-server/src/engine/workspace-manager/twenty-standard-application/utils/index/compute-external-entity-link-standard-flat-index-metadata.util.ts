@@ -39,7 +39,11 @@ export const buildExternalEntityLinkStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'workspaceTwentyEntityUniqueIndex',
-      relatedFieldNames: ['workspaceId', 'twentyEntityName', 'twentyRecordId'],
+      relatedFieldNames: [
+        'workspaceId',
+        'twentyEntityName',
+        'twentyRecordId',
+      ],
       isUnique: true,
     },
     standardObjectMetadataRelatedEntityIds,

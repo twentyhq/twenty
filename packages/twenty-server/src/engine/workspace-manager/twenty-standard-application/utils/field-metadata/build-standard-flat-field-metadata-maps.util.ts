@@ -57,7 +57,8 @@ const STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   company: buildCompanyStandardFlatFieldMetadatas,
   dashboard: buildDashboardStandardFlatFieldMetadatas,
   externalEntityLink: buildExternalEntityLinkStandardFlatFieldMetadatas,
-  externalSyncCheckpoint: buildExternalSyncCheckpointStandardFlatFieldMetadatas,
+  externalSyncCheckpoint:
+    buildExternalSyncCheckpointStandardFlatFieldMetadatas,
   externalSyncDLQ: buildExternalSyncDLQStandardFlatFieldMetadatas,
   externalSyncInbox: buildExternalSyncInboxStandardFlatFieldMetadatas,
   externalSyncOutbox: buildExternalSyncOutboxStandardFlatFieldMetadatas,

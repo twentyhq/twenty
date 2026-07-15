@@ -48,30 +48,27 @@ export class ExecutiveSearchDLQService {
   async enqueue(input: DLQEntryInput): Promise<ExternalSyncDLQWorkspaceEntity> {
     const authContext = buildSystemAuthContext(input.workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const repository = await this.globalWorkspaceOrmManager.getRepository(
-          input.workspaceId,
-          ExternalSyncDLQWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const repository = await this.globalWorkspaceOrmManager.getRepository(
+        input.workspaceId,
+        ExternalSyncDLQWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
 
-        const entity = repository.create({
-          workspaceId: input.workspaceId,
-          sourceType: input.sourceType,
-          sourceRecordId: input.sourceRecordId,
-          eventId: input.eventId,
-          eventType: input.eventType,
-          payload: input.payload,
-          error: input.error,
-          errorClass: input.errorClass,
-          failedAt: new Date().toISOString(),
-        });
+      const entity = repository.create({
+        workspaceId: input.workspaceId,
+        sourceType: input.sourceType,
+        sourceRecordId: input.sourceRecordId,
+        eventId: input.eventId,
+        eventType: input.eventType,
+        payload: input.payload,
+        error: input.error,
+        errorClass: input.errorClass,
+        failedAt: new Date().toISOString(),
+      });
 
-        return repository.save(entity);
-      },
-      authContext,
-    );
+      return repository.save(entity);
+    }, authContext);
   }
 
   /**
@@ -84,22 +81,19 @@ export class ExecutiveSearchDLQService {
   ): Promise<ExternalSyncDLQWorkspaceEntity[]> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const repository = await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          ExternalSyncDLQWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const repository = await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        ExternalSyncDLQWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
 
-        return repository.find({
-          order: { failedAt: 'DESC' },
-          take: limit,
-          skip: offset,
-        });
-      },
-      authContext,
-    );
+      return repository.find({
+        order: { failedAt: 'DESC' },
+        take: limit,
+        skip: offset,
+      });
+    }, authContext);
   }
 
   /**
@@ -111,29 +105,26 @@ export class ExecutiveSearchDLQService {
   ): Promise<Record<string, number>> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const repository = await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          ExternalSyncDLQWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const repository = await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        ExternalSyncDLQWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
 
-        const result = await repository
-          .createQueryBuilder('dlq')
-          .select('dlq.errorClass', 'errorClass')
-          .addSelect('COUNT(*)', 'count')
-          .groupBy('dlq.errorClass')
-          .getRawMany<{ errorClass: string; count: string }>();
+      const result = await repository
+        .createQueryBuilder('dlq')
+        .select('dlq.errorClass', 'errorClass')
+        .addSelect('COUNT(*)', 'count')
+        .groupBy('dlq.errorClass')
+        .getRawMany<{ errorClass: string; count: string }>();
 
-        const counts: Record<string, number> = {};
-        for (const row of result) {
-          counts[row.errorClass] = parseInt(row.count, 10);
-        }
+      const counts: Record<string, number> = {};
+      for (const row of result) {
+        counts[row.errorClass] = parseInt(row.count, 10);
+      }
 
-        return counts;
-      },
-      authContext,
-    );
+      return counts;
+    }, authContext);
   }
 }

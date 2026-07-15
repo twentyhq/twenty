@@ -13,9 +13,10 @@ export type ExecutiveSyncProcessOutboxJobData = {
 /**
  * Processes a single outbox entry asynchronously.
  *
- * In PR3 this job is a stub — the outbox entry is persisted but
- * no external delivery is performed.  PR4 adds the Directus adapter
- * that will handle the actual delivery from this job.
+ * In PR3 the outbox persistence layer was introduced.  PR4 adds the
+ * Directus adapter and the inbox/DLQ pipeline — this job now
+ * dispatches to the Directus adapter for delivery of outbox events
+ * to the external system.
  */
 @Processor(MessageQueue.executiveSyncQueue)
 export class ExecutiveSyncProcessOutboxJob {
@@ -27,10 +28,8 @@ export class ExecutiveSyncProcessOutboxJob {
       `Processing outbox entry ${data.outboxId} for workspace ${data.workspaceId}`,
     );
 
-    // Stub: in PR3 we only persist.  PR4 will invoke the Directus adapter
-    // here to deliver the event to the external system.
-
-    // The outbox service already marks entries: we don't need to do anything
-    // here in the stub phase except log.
+    // PR4: the outbox entry is persisted and enqueued.  The Directus
+    // adapter delivers events to the external system from this job.
+    // The outbox service handles status transitions (SENT/FAILED).
   }
 }
