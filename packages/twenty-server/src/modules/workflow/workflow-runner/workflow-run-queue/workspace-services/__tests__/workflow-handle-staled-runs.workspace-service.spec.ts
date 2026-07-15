@@ -36,7 +36,6 @@ const QUERY_MAX_RECORDS = 200;
 const buildStaledRuns = (count: number, startIndex = 0) =>
   Array.from({ length: count }, (_, index) => ({
     id: `run-${startIndex + index}`,
-    createdAt: String(startIndex + index).padStart(6, '0'),
   }));
 
 describe('WorkflowHandleStaledRunsWorkspaceService', () => {

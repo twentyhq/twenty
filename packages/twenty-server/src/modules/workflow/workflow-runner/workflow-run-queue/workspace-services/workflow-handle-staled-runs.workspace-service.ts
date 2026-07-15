@@ -9,10 +9,7 @@ import {
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { getStaledRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-staled-runs-find-options.util';
-import {
-  getStuckStoppingRunsFindOptions,
-  type StuckStoppingRunsCursor,
-} from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-stuck-stopping-runs-find-options.util';
+import { getStuckStoppingRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-stuck-stopping-runs-find-options.util';
 import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -82,61 +79,51 @@ export class WorkflowHandleStaledRunsWorkspaceService {
   async handleStuckStoppingRunsForWorkspace(workspaceId: string) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    let cursor: StuckStoppingRunsCursor | undefined;
+    // Collect all the ids first, then finalize them. We don't finalize while
+    // paging so that a run whose finalization fails can't block the next page.
+    const stuckStoppingRunIds =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const workflowRunRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              WorkflowRunWorkspaceEntity,
+              { shouldBypassPermissionChecks: true },
+            );
 
-    for (;;) {
-      const stuckStoppingRuns =
-        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-          async () => {
-            const workflowRunRepository =
-              await this.globalWorkspaceOrmManager.getRepository(
-                workspaceId,
-                WorkflowRunWorkspaceEntity,
-                { shouldBypassPermissionChecks: true },
-              );
+          const runIds: string[] = [];
+          let page: WorkflowRunWorkspaceEntity[];
 
-            return workflowRunRepository.find({
-              where: getStuckStoppingRunsFindOptions(cursor),
-              select: {
-                id: true,
-                createdAt: true,
-              },
-              order: {
-                createdAt: 'ASC',
-                id: 'ASC',
-              },
+          do {
+            page = await workflowRunRepository.find({
+              where: getStuckStoppingRunsFindOptions(),
+              select: { id: true },
+              order: { createdAt: 'ASC' },
               take: QUERY_MAX_RECORDS,
+              skip: runIds.length,
             });
-          },
-          authContext,
+
+            runIds.push(...page.map((workflowRun) => workflowRun.id));
+          } while (page.length === QUERY_MAX_RECORDS);
+
+          return runIds;
+        },
+        authContext,
+      );
+
+    for (const workflowRunId of stuckStoppingRunIds) {
+      try {
+        await this.workflowRunWorkspaceService.endWorkflowRun({
+          workflowRunId,
+          workspaceId,
+          status: WorkflowRunStatus.STOPPED,
+        });
+      } catch (error) {
+        this.logger.error(
+          `Failed to finalize stuck stopping workflow run ${workflowRunId} for workspace ${workspaceId}`,
+          error,
         );
-
-      if (stuckStoppingRuns.length === 0) {
-        break;
       }
-
-      for (const { id: workflowRunId } of stuckStoppingRuns) {
-        try {
-          await this.workflowRunWorkspaceService.endWorkflowRun({
-            workflowRunId,
-            workspaceId,
-            status: WorkflowRunStatus.STOPPED,
-          });
-        } catch (error) {
-          this.logger.error(
-            `Failed to finalize stuck stopping workflow run ${workflowRunId} for workspace ${workspaceId}`,
-            error,
-          );
-        }
-      }
-
-      if (stuckStoppingRuns.length < QUERY_MAX_RECORDS) {
-        break;
-      }
-
-      const lastRun = stuckStoppingRuns[stuckStoppingRuns.length - 1];
-
-      cursor = { createdAt: lastRun.createdAt, id: lastRun.id };
     }
   }
 }

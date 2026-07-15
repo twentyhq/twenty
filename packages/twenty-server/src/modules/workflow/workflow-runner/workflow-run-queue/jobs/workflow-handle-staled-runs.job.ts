@@ -1,4 +1,4 @@
-import { Scope } from '@nestjs/common';
+import { Logger, Scope } from '@nestjs/common';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -11,6 +11,8 @@ export type WorkflowHandleStaledRunsJobData = {
 
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class WorkflowHandleStaledRunsJob {
+  private readonly logger = new Logger(WorkflowHandleStaledRunsJob.name);
+
   constructor(
     private readonly workflowHandleStaledRunsWorkspaceService: WorkflowHandleStaledRunsWorkspaceService,
   ) {}
@@ -19,21 +21,26 @@ export class WorkflowHandleStaledRunsJob {
   async handle({
     workspaceId,
   }: WorkflowHandleStaledRunsJobData): Promise<void> {
-    const results = await Promise.allSettled([
-      this.workflowHandleStaledRunsWorkspaceService.handleStaledRunsForWorkspace(
+    try {
+      await this.workflowHandleStaledRunsWorkspaceService.handleStaledRunsForWorkspace(
         workspaceId,
-      ),
-      this.workflowHandleStaledRunsWorkspaceService.handleStuckStoppingRunsForWorkspace(
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to handle staled runs for workspace ${workspaceId}`,
+        error,
+      );
+    }
+
+    try {
+      await this.workflowHandleStaledRunsWorkspaceService.handleStuckStoppingRunsForWorkspace(
         workspaceId,
-      ),
-    ]);
-
-    const rejection = results.find(
-      (result): result is PromiseRejectedResult => result.status === 'rejected',
-    );
-
-    if (rejection) {
-      throw rejection.reason;
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to handle stuck stopping runs for workspace ${workspaceId}`,
+        error,
+      );
     }
   }
 }
