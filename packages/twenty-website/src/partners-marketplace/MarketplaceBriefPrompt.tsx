@@ -3,8 +3,7 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 
-import { EngagementBand } from '@/sections/pricing-engagement-band/EngagementBand';
-import { Button } from '@/ui';
+import { Button, EngagementBand } from '@/ui';
 
 export function MarketplaceBriefPrompt() {
   const { i18n } = useLingui();

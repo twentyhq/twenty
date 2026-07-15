@@ -1,9 +1,7 @@
 import { msg } from '@lingui/core/macro';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { Button } from '@/ui';
-
-import { EngagementBand } from './EngagementBand';
+import { Button, EngagementBand } from '@/ui';
 
 export function PricingEngagementBand() {
   const i18n = getServerI18n();

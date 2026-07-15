@@ -11,7 +11,10 @@ import {
   radius,
   spacing,
 } from '@/tokens';
-import { Body, Heading, SectionShell } from '@/ui';
+
+import { Body } from './Body';
+import { Heading } from './Heading';
+import { SectionShell } from './SectionShell';
 
 const Band = styled.div`
   ${buildSchemeDeclarations('light')}
