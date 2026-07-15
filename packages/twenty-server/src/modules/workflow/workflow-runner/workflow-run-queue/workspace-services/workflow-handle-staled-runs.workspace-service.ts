@@ -89,12 +89,14 @@ export class WorkflowHandleStaledRunsWorkspaceService {
               { shouldBypassPermissionChecks: true },
             );
 
+          const findOptions = getStuckStoppingRunsFindOptions();
+
           const runIds: string[] = [];
           let page: WorkflowRunWorkspaceEntity[];
 
           do {
             page = await workflowRunRepository.find({
-              where: getStuckStoppingRunsFindOptions(),
+              where: findOptions,
               select: { id: true },
               order: { createdAt: 'ASC', id: 'ASC' },
               take: QUERY_MAX_RECORDS,
