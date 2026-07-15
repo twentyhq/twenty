@@ -120,7 +120,7 @@ Importez-les depuis `twenty-sdk/front-component` :
 * **`Command`** — Exécute un callback asynchrone via la prop `execute`.
 * **`CommandLink`** — Navigue vers un chemin d'application. Props : `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — Ouvre une fenêtre modale de confirmation. Si l'utilisateur confirme, exécute le callback `execute`. Props : `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Ouvre une page du panneau latéral. Les propriétés dépendent de `page` — par exemple, `ViewRecord` accepte `recordId` + `objectNameSingular`, les autres pages acceptent `pageTitle` + `pageIcon`.
+* **`CommandOpenSidePanelPage`** — Ouvre une page du panneau latéral. Les propriétés dépendent de `page` — par exemple, `ViewRecord` accepte `recordId` + `objectNameSingular` (plus un identifiant `tab` facultatif pour ouvrir l’enregistrement dans un onglet spécifique), les autres pages acceptent `pageTitle` + `pageIcon`.
 
 Voici un exemple complet d'un composant frontal headless utilisant `Command` pour exécuter une action depuis le menu de commande :
 
@@ -190,6 +190,44 @@ export default defineFrontComponent({
   name: 'delete-draft',
   description: 'Deletes a draft with confirmation',
   component: DeleteDraft,
+  isHeadless: true,
+});
+```
+
+Et un exemple utilisant `CommandOpenSidePanelPage` pour ouvrir l’enregistrement actuel dans le panneau latéral sur un onglet spécifique. `tab` est un identifiant d’onglet de mise en page (les mises en page par défaut utilisent des identifiants comme `company-tab-emails` ou `company-tab-timeline` ; les mises en page personnalisées utilisent l’identifiant propre de l’onglet). Si l’identifiant n’existe pas dans la mise en page de l’enregistrement, l’onglet par défaut s’ouvre à la place :
+
+```tsx src/front-components/open-company-emails.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  CommandOpenSidePanelPage,
+  SidePanelPages,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const OpenCompanyEmails = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+
+  if (!recordId) {
+    return null;
+  }
+
+  return (
+    <CommandOpenSidePanelPage
+      page={SidePanelPages.ViewRecord}
+      recordId={recordId}
+      objectNameSingular="company"
+      tab="company-tab-emails"
+      resetNavigationStack={false}
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+  name: 'open-company-emails',
+  description: 'Opens the current company on its Emails tab',
+  component: OpenCompanyEmails,
   isHeadless: true,
 });
 ```
