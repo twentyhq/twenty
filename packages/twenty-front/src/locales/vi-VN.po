@@ -2908,11 +2908,6 @@ msgstr "Mô hình có sẵn"
 msgid "Available tools"
 msgstr "Công cụ có sẵn"
 
-#. js-lingui-id: YzokLS
-#: src/modules/object-record/record-show/hooks/usePersonAvatarUpload.ts
-msgid "Avatar file field not found for person object"
-msgstr "Không tìm thấy trường tệp ảnh đại diện cho đối tượng Person"
-
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
