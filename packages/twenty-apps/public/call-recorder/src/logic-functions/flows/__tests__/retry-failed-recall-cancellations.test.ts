@@ -18,6 +18,7 @@ type CallRecordingNode = {
   id: string;
   recordingRequestStatus?: string | null;
   status?: string | null;
+  createdAt?: string | null;
   calendarEventId?: string | null;
   externalBotId?: string | null;
 };
@@ -373,6 +374,73 @@ describe('retryFailedRecallCancellations', () => {
       }),
     ]);
     expect(result.canceledExternalBotCallRecordingIds).toEqual([]);
+  });
+
+  it('stops looking up a botless cancellation without a calendar event once it ages past the recovery window', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        recordingRequestStatus: 'CANCELED',
+        status: 'SCHEDULED',
+        createdAt: '2026-01-01T11:00:00.000Z',
+        calendarEventId: null,
+        externalBotId: null,
+      },
+    ]);
+
+    const result = await retryFailedRecallCancellations({
+      client: client as unknown as CoreApiClient,
+      now: new Date('2026-01-02T12:00:00.000Z'),
+    });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(client.mutations).toEqual([]);
+    expect(result.canceledExternalBotCallRecordingIds).toEqual([]);
+  });
+
+  it('still recovers a recently created botless cancellation without a calendar event', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        recordingRequestStatus: 'CANCELED',
+        status: 'SCHEDULED',
+        createdAt: '2026-01-01T11:00:00.000Z',
+        calendarEventId: null,
+        externalBotId: null,
+      },
+    ]);
+    fetchMock.mockImplementation(
+      async (requestUrl: string, requestInit?: { method?: string }) => {
+        if (requestInit?.method === 'DELETE') {
+          return buildJsonResponse(204);
+        }
+
+        if (requestUrl.startsWith(`${BASE_URL}/bot/?`)) {
+          return {
+            ...buildJsonResponse(200),
+            json: async () => ({
+              next: null,
+              results: [{ id: 'recall-bot-recovered' }],
+            }),
+          };
+        }
+
+        throw new Error(`Unhandled fetch: ${requestUrl}`);
+      },
+    );
+
+    const result = await retryFailedRecallCancellations({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      `${BASE_URL}/bot/recall-bot-recovered/`,
+      expect.objectContaining({ method: 'DELETE' }),
+    );
+    expect(result.canceledExternalBotCallRecordingIds).toEqual([
+      'call-recording-1',
+    ]);
   });
 
   it('does not repeatedly look up botless cancellations after their meeting ended', async () => {

@@ -6,6 +6,7 @@ export type CallRecordingRecord = {
   title?: string;
   status?: string;
   recordingRequestStatus?: CallRecordingRequestStatus;
+  createdAt?: string;
   startedAt?: string;
   endedAt?: string;
   calendarEventId?: string;

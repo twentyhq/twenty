@@ -15,6 +15,7 @@ type CallRecordingNode = {
   title?: string | null;
   status?: string | null;
   recordingRequestStatus?: unknown;
+  createdAt?: string | null;
   startedAt?: string | null;
   endedAt?: string | null;
   calendarEventId?: string | null;
@@ -46,6 +47,7 @@ export const findCallRecordingsByFilter = async (
               title: true,
               status: true,
               recordingRequestStatus: true,
+              createdAt: true,
               startedAt: true,
               endedAt: true,
               calendarEventId: true,
@@ -70,6 +72,7 @@ export const findCallRecordingsByFilter = async (
     recordingRequestStatus: normalizeCallRecordingRequestStatus(
       callRecording.recordingRequestStatus,
     ),
+    createdAt: callRecording.createdAt ?? undefined,
     startedAt: callRecording.startedAt ?? undefined,
     endedAt: callRecording.endedAt ?? undefined,
     calendarEventId: callRecording.calendarEventId ?? undefined,

@@ -19,6 +19,7 @@ export type RetryFailedRecallCancellationsResult = {
 };
 
 const CANCELED_BOT_RECOVERY_AFTER_START_HOURS = 24;
+const CANCELED_BOT_RECOVERY_MAX_AGE_HOURS = 24;
 
 // Retries the Recall half of cancelCallRecordingRequest when its bot cancel failed; the recording keeps its bot id until the bot is confirmed gone.
 export const retryFailedRecallCancellations = async ({
@@ -122,6 +123,16 @@ const recoverRecallBotIdForCanceledCallRecording = async ({
     return undefined;
   }
 
+  // Recovery only closes the crash window right after cancellation; once a row ages out the daily cleanup sweep owns it, so stop the per-run Recall lookup instead of listing forever (notably for rows whose calendar event was deleted and can no longer bound the retry).
+  if (
+    hasCanceledRecoveryWindowElapsed({
+      createdAt: callRecording.createdAt,
+      now,
+    })
+  ) {
+    return undefined;
+  }
+
   const currentWorkspaceId = getCurrentWorkspaceId();
 
   if (isUndefined(currentWorkspaceId)) {
@@ -152,6 +163,26 @@ const recoverRecallBotIdForCanceledCallRecording = async ({
   );
 
   return didClaimRecoveredBot ? externalBotId : undefined;
+};
+
+const hasCanceledRecoveryWindowElapsed = ({
+  createdAt,
+  now,
+}: {
+  createdAt: string | undefined;
+  now: Date;
+}): boolean => {
+  if (isUndefined(createdAt)) {
+    return false;
+  }
+
+  const createdTime = new Date(createdAt).getTime();
+
+  return (
+    !Number.isNaN(createdTime) &&
+    createdTime + CANCELED_BOT_RECOVERY_MAX_AGE_HOURS * 60 * 60 * 1000 <=
+      now.getTime()
+  );
 };
 
 const hasMeetingEnded = ({
