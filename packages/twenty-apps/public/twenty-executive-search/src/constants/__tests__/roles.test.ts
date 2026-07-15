@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import {
   CAN_ACCESS_RESTRICTED_DEMOGRAPHICS_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
@@ -12,7 +12,9 @@ import {
   RESEARCHER_ROLE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/role-universal-identifiers';
 
-interface RoleDefinition {
+import type { ValidationResult } from 'src/__tests__/test-helpers';
+
+type RoleDefinition = {
   universalIdentifier: string;
   label: string;
   description: string;
@@ -27,13 +29,7 @@ interface RoleDefinition {
   objectPermissions: unknown[];
   fieldPermissions: unknown[];
   permissionFlagUniversalIdentifiers: string[];
-}
-
-interface ValidationResult {
-  success: boolean;
-  errors: string[];
-  config: RoleDefinition;
-}
+};
 
 const FIREWALL_FLAG_UIDS = [
   CAN_BYPASS_COMMERCIAL_FIREWALL_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
@@ -41,20 +37,13 @@ const FIREWALL_FLAG_UIDS = [
   CAN_ACCESS_RESTRICTED_DEMOGRAPHICS_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
 ];
 
-const UI_FOR_ROLE = {
-  researcher: RESEARCHER_ROLE_UNIVERSAL_IDENTIFIER,
-  partner: PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
-  finance: FINANCE_ROLE_UNIVERSAL_IDENTIFIER,
-  compliance: COMPLIANCE_ROLE_UNIVERSAL_IDENTIFIER,
-} as const;
-
 async function validateRoleImport(
   importPath: string,
   expectedUniversalIdentifier: string,
   expectedFlagUids: string[],
 ) {
   const mod = await import(importPath);
-  const result = mod.default as ValidationResult;
+  const result = mod.default as ValidationResult<RoleDefinition>;
   expect(result.success, result.errors.join('; ')).toBe(true);
   expect(result.errors).toEqual([]);
   expect(result.config.universalIdentifier).toBe(expectedUniversalIdentifier);
@@ -69,18 +58,9 @@ describe('researcher role', () => {
   it('validates without errors and has expected config', async () => {
     await validateRoleImport(
       'src/roles/researcher.role',
-      UI_FOR_ROLE.researcher,
+      RESEARCHER_ROLE_UNIVERSAL_IDENTIFIER,
       [],
     );
-  });
-
-  it('does not contain any firewall permission flag UIDs', async () => {
-    const mod = await import('src/roles/researcher.role');
-    const result = mod.default as ValidationResult;
-    const roleUids = result.config.permissionFlagUniversalIdentifiers;
-    for (const flagUid of FIREWALL_FLAG_UIDS) {
-      expect(roleUids).not.toContain(flagUid);
-    }
   });
 });
 
@@ -88,18 +68,9 @@ describe('partner role', () => {
   it('validates without errors and has expected config', async () => {
     await validateRoleImport(
       'src/roles/partner.role',
-      UI_FOR_ROLE.partner,
+      PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
       [],
     );
-  });
-
-  it('does not contain any firewall permission flag UIDs', async () => {
-    const mod = await import('src/roles/partner.role');
-    const result = mod.default as ValidationResult;
-    const roleUids = result.config.permissionFlagUniversalIdentifiers;
-    for (const flagUid of FIREWALL_FLAG_UIDS) {
-      expect(roleUids).not.toContain(flagUid);
-    }
   });
 });
 
@@ -107,7 +78,7 @@ describe('finance role', () => {
   it('validates without errors and has expected config', async () => {
     await validateRoleImport(
       'src/roles/finance.role',
-      UI_FOR_ROLE.finance,
+      FINANCE_ROLE_UNIVERSAL_IDENTIFIER,
       [CAN_VIEW_COMMERCIAL_DATA_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER],
     );
   });
@@ -117,7 +88,7 @@ describe('compliance role', () => {
   it('validates without errors and has expected config', async () => {
     await validateRoleImport(
       'src/roles/compliance.role',
-      UI_FOR_ROLE.compliance,
+      COMPLIANCE_ROLE_UNIVERSAL_IDENTIFIER,
       [
         CAN_ACCESS_RESTRICTED_DEMOGRAPHICS_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
         CAN_BYPASS_COMMERCIAL_FIREWALL_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
@@ -126,16 +97,33 @@ describe('compliance role', () => {
   });
 });
 
+describe.each([
+  ['researcher', 'src/roles/researcher.role'],
+  ['partner', 'src/roles/partner.role'],
+])('%s role does not contain firewall permission flag UIDs', (_, importPath) => {
+  it('has no firewall flags', async () => {
+    const mod = await import(importPath);
+    const result = mod.default as ValidationResult<RoleDefinition>;
+    const roleUids = result.config.permissionFlagUniversalIdentifiers;
+    for (const flagUid of FIREWALL_FLAG_UIDS) {
+      expect(roleUids).not.toContain(flagUid);
+    }
+  });
+});
+
 describe('default role', () => {
-  it('has empty permissionFlagUniversalIdentifiers', async () => {
+  let result: ValidationResult<RoleDefinition>;
+
+  beforeAll(async () => {
     const mod = await import('src/default-role');
-    const result = mod.default as ValidationResult;
+    result = mod.default as ValidationResult<RoleDefinition>;
+  });
+
+  it('has empty permissionFlagUniversalIdentifiers', () => {
     expect(result.config.permissionFlagUniversalIdentifiers).toEqual([]);
   });
 
-  it('does not contain any firewall permission flag UIDs', async () => {
-    const mod = await import('src/default-role');
-    const result = mod.default as ValidationResult;
+  it('does not contain any firewall permission flag UIDs', () => {
     const roleUids = result.config.permissionFlagUniversalIdentifiers;
     for (const flagUid of FIREWALL_FLAG_UIDS) {
       expect(roleUids).not.toContain(flagUid);

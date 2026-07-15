@@ -242,7 +242,7 @@ export const FIREWALL_PROHIBITED_SELECTORS: readonly FirewallProhibitedSelector[
     'voluntary_demographics',
     'accommodation_medical_info',
     'unreviewed_culture_fit_score',
-  ] as const;
+  ];
 
 export const FIREWALL_ENFORCEMENT_CONTEXTS: readonly FirewallEnforcementContext[] =
   [
@@ -252,7 +252,7 @@ export const FIREWALL_ENFORCEMENT_CONTEXTS: readonly FirewallEnforcementContext[
     'slate_presentation',
     'pipeline_automation',
     'selection_context',
-  ] as const;
+  ];
 
 export function isSelectorProhibitedInContext(
   selector: FirewallProhibitedSelector,

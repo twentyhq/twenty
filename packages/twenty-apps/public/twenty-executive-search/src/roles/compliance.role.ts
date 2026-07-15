@@ -27,7 +27,4 @@ export default defineRole({
     CAN_ACCESS_RESTRICTED_DEMOGRAPHICS_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
     CAN_BYPASS_COMMERCIAL_FIREWALL_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
   ],
-  // Compliance is the only role with access to restricted demographics and
-  // firewall bypass capabilities. The bypass flag is scoped to audit and
-  // exception review, not search delivery.
 });

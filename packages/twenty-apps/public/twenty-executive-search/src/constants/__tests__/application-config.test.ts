@@ -51,8 +51,7 @@ describe('application-config validation', () => {
   });
 });
 
-const UUID_V4_REGEX =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+import { UUID_V4_REGEX } from 'src/__tests__/test-helpers';
 
 describe('role universal identifiers', () => {
   it('all role UIDs are valid UUID v4', async () => {
@@ -102,7 +101,7 @@ describe('role universal identifiers', () => {
 
   it('role UIDs do not collide with existing slugs', async () => {
     const roleIds = await import('src/constants/role-universal-identifiers');
-    const roleUids = Object.values(roleIds) as string[];
+    const roleUids = Object.values(roleIds);
 
     const existingSlugs = [
       APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -158,7 +157,7 @@ describe('permission flag universal identifiers', () => {
     const flagIds = await import(
       'src/constants/permission-flag-universal-identifiers'
     );
-    const flagUids = Object.values(flagIds) as string[];
+    const flagUids = Object.values(flagIds);
 
     const existingSlugs = [
       APPLICATION_UNIVERSAL_IDENTIFIER,

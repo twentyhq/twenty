@@ -14,6 +14,25 @@ import {
   type FirewallProhibitedStatus,
 } from 'src/firewall/firewall-registry';
 
+function parseVendoredCsv(): FirewallProhibitedEntry[] {
+  const csvPath = resolve(__dirname, '../commercial-selection-firewall.csv');
+  const csvContent = readFileSync(csvPath, 'utf-8');
+  const lines = csvContent.trim().split('\n');
+
+  // Skip header line
+  const dataLines = lines.slice(1);
+
+  return dataLines.map((line) => {
+    const parts = line.split(',');
+    return {
+      selector: parts[0] as FirewallProhibitedSelector,
+      context: parts[1] as FirewallEnforcementContext,
+      status: parts[2] as FirewallProhibitedStatus,
+      rule: parts.slice(3).join(','),
+    };
+  });
+}
+
 describe('FIREWALL_PROHIBITED_ENTRIES', () => {
   it('has exactly 30 entries', () => {
     expect(FIREWALL_PROHIBITED_ENTRIES.length).toBe(30);
@@ -34,30 +53,10 @@ describe('FIREWALL_PROHIBITED_ENTRIES', () => {
     }
   });
 
-  it('matches CSV data exactly', () => {
-    // CSV is 7 levels up from this test file
-    // src/firewall/__tests__/ -> src/firewall/ -> src/ -> twenty-executive-search/ -> public/ -> twenty-apps/ -> packages/ -> repo root
-    const csvPath = resolve(
-      __dirname,
-      '../../../../../../../docs/executive-search/commercial-selection-firewall.csv',
-    );
-    const csvContent = readFileSync(csvPath, 'utf-8');
-    const lines = csvContent.trim().split('\n');
+  it('matches vendored CSV data exactly', () => {
+    const csvEntries = parseVendoredCsv();
 
-    // Skip header line
-    const dataLines = lines.slice(1);
-
-    expect(dataLines.length).toBe(30);
-
-    const csvEntries: FirewallProhibitedEntry[] = dataLines.map((line) => {
-      const parts = line.split(',');
-      return {
-        selector: parts[0] as FirewallProhibitedSelector,
-        context: parts[1] as FirewallEnforcementContext,
-        status: parts[2] as FirewallProhibitedStatus,
-        rule: parts.slice(3).join(','), // handle rules with commas
-      };
-    });
+    expect(csvEntries.length).toBe(30);
 
     for (let i = 0; i < FIREWALL_PROHIBITED_ENTRIES.length; i++) {
       expect(FIREWALL_PROHIBITED_ENTRIES[i].selector).toBe(
@@ -108,7 +107,9 @@ describe('FIREWALL_ENFORCEMENT_CONTEXTS', () => {
 
 describe('isSelectorProhibitedInContext', () => {
   it('returns true for subscription_tier in search_filter context', () => {
-    expect(isSelectorProhibitedInContext('subscription_tier', 'search_filter')).toBe(true);
+    expect(
+      isSelectorProhibitedInContext('subscription_tier', 'search_filter'),
+    ).toBe(true);
   });
 
   it('returns false for subscription_tier in selection_context', () => {
@@ -127,33 +128,16 @@ describe('isSelectorProhibitedInContext', () => {
 });
 
 describe('getProhibitedSelectorsForContext', () => {
-  it('returns 16 selectors for search_filter', () => {
-    const selectors = getProhibitedSelectorsForContext('search_filter');
-    expect(selectors.length).toBe(16);
-  });
-
-  it('returns 4 selectors for selection_context', () => {
-    const selectors = getProhibitedSelectorsForContext('selection_context');
-    expect(selectors.length).toBe(4);
-  });
-
-  it('returns 6 selectors for ai_context', () => {
-    const selectors = getProhibitedSelectorsForContext('ai_context');
-    expect(selectors.length).toBe(6);
-  });
-
-  it('returns 2 selectors for client_report', () => {
-    const selectors = getProhibitedSelectorsForContext('client_report');
-    expect(selectors.length).toBe(2);
-  });
-
-  it('returns 1 selector for slate_presentation', () => {
-    const selectors = getProhibitedSelectorsForContext('slate_presentation');
-    expect(selectors.length).toBe(1);
-  });
-
-  it('returns 1 selector for pipeline_automation', () => {
-    const selectors = getProhibitedSelectorsForContext('pipeline_automation');
-    expect(selectors.length).toBe(1);
+  it.each([
+    ['search_filter', 16],
+    ['selection_context', 4],
+    ['ai_context', 6],
+    ['client_report', 2],
+    ['slate_presentation', 1],
+    ['pipeline_automation', 1],
+  ] as const)('returns %i selectors for %s', (context, expectedCount) => {
+    expect(getProhibitedSelectorsForContext(context).length).toBe(
+      expectedCount,
+    );
   });
 });

@@ -20,11 +20,7 @@ export default defineRole({
   objectPermissions: [],
   fieldPermissions: [],
   permissionFlagUniversalIdentifiers: [],
-  // Once executiveProfile fields exist, fieldPermissions should deny read/update on all 20
-  // prohibited selectors: subscription_tier, plan_level, is_premium, stripe_customer_id,
-  // purchase_payment_history, marketing_opt_in, learning_activity, course_completion,
-  // quiz_activity, content_consumption, profile_views, marketing_engagement,
-  // candidate_service_usage_frequency, executive_psychographic, photo_analysis_scores,
-  // birthdate, gender, voluntary_demographics, accommodation_medical_info,
-  // unreviewed_culture_fit_score.
+  // Field-level denies for all prohibited selectors are configured via the
+  // commercial-selection firewall registry (see src/firewall/firewall-registry.ts).
+  // Once executiveProfile fields exist, fieldPermissions will enforce these.
 });

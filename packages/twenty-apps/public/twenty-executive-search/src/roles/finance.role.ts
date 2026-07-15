@@ -23,8 +23,6 @@ export default defineRole({
   permissionFlagUniversalIdentifiers: [
     CAN_VIEW_COMMERCIAL_DATA_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
   ],
-  // Once executiveProfile fields exist, fieldPermissions should deny read/update on
-  // birthdate, gender, voluntary_demographics, accommodation_medical_info,
-  // executive_psychographic, photo_analysis_scores, and unreviewed_culture_fit_score.
-  // Commercial fields are readable via CAN_VIEW_COMMERCIAL_DATA but not writable.
+  // Field-level denies enforced via firewall registry; commercial fields readable per
+  // CAN_VIEW_COMMERCIAL_DATA flag.
 });

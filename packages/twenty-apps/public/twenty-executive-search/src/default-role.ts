@@ -24,8 +24,5 @@ export default defineApplicationRole({
 
   objectPermissions: [],
   fieldPermissions: [],
-  // Explicitly denies all 3 commercial-firewall permission flags:
-  // CAN_BYPASS_COMMERCIAL_FIREWALL, CAN_VIEW_COMMERCIAL_DATA,
-  // CAN_ACCESS_RESTRICTED_DEMOGRAPHICS.
   permissionFlagUniversalIdentifiers: [],
 });
