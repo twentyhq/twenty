@@ -30,12 +30,6 @@ export type ResourceIdentifier = {
   resourcePath: string;
 };
 
-type WriteFileParams = ResourceIdentifier & {
-  sourceFile: string | Buffer | Uint8Array;
-  fileId?: string;
-  settings: FileSettings;
-};
-
 @Injectable()
 export class FileStorageService {
   constructor(
@@ -189,8 +183,11 @@ export class FileStorageService {
     fileId,
     settings,
     queryRunner,
-  }: WriteFileParams & {
+  }: ResourceIdentifier & {
+    sourceFile: string | Buffer | Uint8Array;
     applicationId?: string;
+    fileId?: string;
+    settings: FileSettings;
     queryRunner?: QueryRunner;
   }): Promise<FileEntity> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
