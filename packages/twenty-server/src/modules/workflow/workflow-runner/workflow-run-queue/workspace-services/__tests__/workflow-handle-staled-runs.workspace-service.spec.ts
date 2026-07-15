@@ -176,7 +176,6 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
     });
 
     it('should drain a multi-batch backlog based on the initial count', async () => {
-      // 450 stuck stopping runs => 3 batches (200, 200, 50)
       mockRepository.count.mockResolvedValueOnce(450);
       mockRepository.find
         .mockResolvedValueOnce(buildStaledRuns(QUERY_MAX_RECORDS))

@@ -76,10 +76,6 @@ export class WorkflowHandleStaledRunsWorkspaceService {
     }, authContext);
   }
 
-  // Safety net for runs left in STOPPING: stopping only records intent, the
-  // STOPPING -> STOPPED transition is done by the in-flight worker execution.
-  // When no worker is executing the run (crash, or a step awaiting an event
-  // that never comes) it would stay STOPPING forever, so we finalize it here.
   async handleStuckStoppingRunsForWorkspace(workspaceId: string) {
     const authContext = buildSystemAuthContext(workspaceId);
 
