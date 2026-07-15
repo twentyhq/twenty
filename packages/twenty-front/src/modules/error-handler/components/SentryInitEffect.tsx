@@ -8,6 +8,20 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
+type SentryEvent = {
+  exception?: {
+    values?: Array<{
+      type?: string;
+    }>;
+  };
+};
+
+const isAbortErrorEvent = (event: SentryEvent) => {
+  return event.exception?.values?.some(
+    (exception) => exception.type === 'AbortError',
+  );
+};
+
 export const SentryInitEffect = () => {
   const sentryConfig = useAtomStateValue(sentryConfigState);
 
@@ -54,6 +68,13 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
+            beforeSend: (event) => {
+              if (isAbortErrorEvent(event)) {
+                return null;
+              }
+
+              return event;
+            },
           });
 
           setIsSentryInitialized(true);

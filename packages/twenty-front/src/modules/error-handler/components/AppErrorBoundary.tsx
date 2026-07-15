@@ -2,7 +2,7 @@ import { AppErrorBoundaryEffect } from '@/error-handler/components/internal/AppE
 import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
 import { type ErrorInfo, type ReactNode } from 'react';
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
-import { type CustomError, isDefined } from 'twenty-shared/utils';
+import { type CustomError } from 'twenty-shared/utils';
 
 type AppErrorBoundaryProps = {
   children: ReactNode;
@@ -13,8 +13,10 @@ type AppErrorBoundaryProps = {
 const hasErrorCode = (
   error: Error | CustomError,
 ): error is CustomError & { code: string } => {
-  return 'code' in error && isDefined(error.code);
+  return 'code' in error && typeof error.code === 'string';
 };
+
+const nonCriticalErrorCodes = new Set(['INVALID_DATE_TIME_FILTER_VALUE']);
 
 export const AppErrorBoundary = ({
   children,
@@ -29,6 +31,12 @@ export const AppErrorBoundary = ({
 
         const fingerprint = hasErrorCode(error) ? error.code : error.message;
         scope.setFingerprint([fingerprint]);
+
+        if (hasErrorCode(error) && nonCriticalErrorCodes.has(error.code)) {
+          scope.setLevel('warning');
+          scope.setTag('error-expectedness', 'expected-invalid-filter-value');
+        }
+
         error.name = error.message;
         return scope;
       });
