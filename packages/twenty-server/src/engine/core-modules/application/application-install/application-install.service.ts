@@ -10,25 +10,26 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import {
-  ApplicationException,
-  ApplicationExceptionCode,
-} from 'src/engine/core-modules/application/application.exception';
-import { isImageFilePath } from 'src/engine/core-modules/application/application-registration/utils/is-image-file-path.util';
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import {
   ApplicationPackageFetcherService,
   type ResolvedPackage,
 } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
-import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { isImageFilePath } from 'src/engine/core-modules/application/application-registration/utils/is-image-file-path.util';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import {
   LogicFunctionTriggerJob,
   type LogicFunctionTriggerJobData,
@@ -40,7 +41,6 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 
 @Injectable()
 export class ApplicationInstallService {
@@ -135,20 +135,12 @@ export class ApplicationInstallService {
           workspaceId: params.workspaceId,
         });
 
-      return await this.recordInstallMetrics(
-        {
-          appRegistration,
-          resolvedPackage,
-          isVersionUpgrade: isDefined(existingApplication),
-        },
-        () =>
-          this.runInstall({
-            appRegistration,
-            params,
-            resolvedPackage,
-            existingApplication,
-          }),
-      );
+      return await this.runInstallWithMetrics({
+        appRegistration,
+        params,
+        resolvedPackage,
+        existingApplication,
+      });
     } finally {
       await this.applicationPackageFetcherService.cleanupExtractedDir(
         resolvedPackage.cleanupDir,
@@ -156,20 +148,18 @@ export class ApplicationInstallService {
     }
   }
 
-  // Wraps an install/upgrade attempt so its success/failure counter is emitted
-  // from one place, keeping the install logic itself metrics-free. The
-  // install-vs-upgrade key and app attributes come from the pre-resolved
-  // context, so a failure at any point (compatibility, version checks,
-  // creation, hooks) is still counted with the right label.
-  private async recordInstallMetrics(
-    context: {
-      appRegistration: ApplicationRegistrationEntity;
-      resolvedPackage: ResolvedPackage;
-      isVersionUpgrade: boolean;
-    },
-    install: () => Promise<boolean>,
-  ): Promise<boolean> {
-    const { appRegistration, resolvedPackage, isVersionUpgrade } = context;
+  private async runInstallWithMetrics({
+    appRegistration,
+    params,
+    resolvedPackage,
+    existingApplication,
+  }: {
+    appRegistration: ApplicationRegistrationEntity;
+    params: { version?: string; workspaceId: string };
+    resolvedPackage: ResolvedPackage;
+    existingApplication: ApplicationEntity | null;
+  }): Promise<boolean> {
+    const isVersionUpgrade = isDefined(existingApplication);
 
     const attributes = {
       universal_identifier: appRegistration.universalIdentifier,
@@ -179,7 +169,12 @@ export class ApplicationInstallService {
     };
 
     try {
-      const result = await install();
+      const result = await this.runInstall({
+        appRegistration,
+        params,
+        resolvedPackage,
+        existingApplication,
+      });
 
       this.metricsService.incrementCounterBy({
         key: isVersionUpgrade

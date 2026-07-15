@@ -227,12 +227,7 @@ export class ApplicationTarballService {
         `Tarball uploaded for app ${universalIdentifier} (registration ${appRegistration.id})`,
       );
 
-      // A tarball deploy is an explicit publish: first upload creates the
-      // registration, a re-deploy is a monotonic version bump (enforced above).
-      // Skip re-uploads that don't move the version (e.g. no readable
-      // package.json version) so we don't over-count version publishes.
       const incomingVersion = packageJson?.version ?? null;
-
       if (
         isNewRegistration ||
         previousLatestAvailableVersion !== incomingVersion

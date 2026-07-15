@@ -15,10 +15,6 @@ export class ApplicationGaugeService implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    // Snapshot of the current installed base per application (top 100 by
-    // install count). This is the "most installed apps" leaderboard; combine it
-    // in Grafana with the app-install/app-uninstall event counters to show
-    // recent activity (installs/failures over the last 24h) alongside the total.
     this.metricsService.createMultiObservableGauge({
       metricName: 'twenty_app_installed_workspaces_total',
       options: {

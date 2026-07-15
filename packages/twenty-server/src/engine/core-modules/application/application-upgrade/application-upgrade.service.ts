@@ -69,9 +69,6 @@ export class ApplicationUpgradeService {
         return null;
       }
 
-      // Atomic conditional update so this fires exactly once per real version
-      // bump even when the catalog-sync path converges latestAvailableVersion
-      // concurrently: only the write that actually changes the row emits.
       const updateResult = await this.appRegistrationRepository
         .createQueryBuilder()
         .update(ApplicationRegistrationEntity)

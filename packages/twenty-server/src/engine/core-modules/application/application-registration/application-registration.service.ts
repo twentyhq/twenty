@@ -9,21 +9,22 @@ import { isDefined } from 'twenty-shared/utils';
 import { ILike, IsNull, type FindOptionsWhere, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { shouldRefreshApplicationRegistrationOnInstall } from 'src/engine/core-modules/application/application-install/utils/should-refresh-application-registration-on-install.util';
+import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
+import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
+import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
-import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { type ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
-import { type PaginatedApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
+import { type PaginatedApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
 import { type PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
 import {
   type UpdateApplicationRegistrationInput,
@@ -33,13 +34,12 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
-import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
+import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
 const BCRYPT_SALT_ROUNDS = 10;
 
@@ -120,12 +120,6 @@ export class ApplicationRegistrationService {
     }
   }
 
-  // Emits a metric when an application registration is published to the catalog
-  // for the first time (created) or a new version becomes available. Callers
-  // must only invoke this when the version actually changed, so the counter
-  // stays at exactly-once per real publish even though several code paths
-  // (catalog sync, version-check cron, tarball deploy) converge on the same
-  // latestAvailableVersion.
   emitRegistrationPublishMetric({
     isNewRegistration,
     universalIdentifier,
@@ -153,11 +147,6 @@ export class ApplicationRegistrationService {
     });
   }
 
-  // Atomically moves latestAvailableVersion to `newVersion` and reports whether
-  // this call is the one that changed it. Because catalog sync and the
-  // version-check cron can both observe the same stale version concurrently, a
-  // read-then-write guard would let both emit; the conditional UPDATE makes the
-  // publish metric fire exactly once per real version bump.
   async setLatestAvailableVersionIfChanged(
     applicationRegistrationId: string,
     newVersion: string | null,
@@ -577,9 +566,6 @@ export class ApplicationRegistrationService {
         ]),
       );
 
-      // Claim the version bump atomically first so only one of the concurrent
-      // sync paths emits the publish metric; the save below then refreshes the
-      // remaining catalog fields.
       const isNewVersion = await this.setLatestAvailableVersionIfChanged(
         existing.id,
         params.latestAvailableVersion ?? null,
