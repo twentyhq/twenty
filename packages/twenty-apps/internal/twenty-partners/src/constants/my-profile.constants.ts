@@ -6,8 +6,6 @@ export const MY_PROFILE_PAGE_LAYOUT_ID = 'efc8a005-57db-44f3-a888-ce3a6aec526b';
 export const MY_PROFILE_PAGE_TAB_ID = 'ff8185d0-cd72-477b-a1a5-77d9cfff6fef';
 export const MY_PROFILE_PAGE_WIDGET_ID = 'abf2a5af-d772-44a6-895b-fd08d741978d';
 export const MY_PROFILE_NAV_ITEM_ID = '6c39ddd9-d0c2-4951-8be5-d064c752d18a';
-export const PROFILE_PICTURE_FILE_FIELD_ID = '076b81f2-2398-4ece-a352-d7a6f6a89cae';
-export const COVER_IMAGE_FIELD_ID = '6b1225d3-f666-4c7b-8309-ab95cd5f44ea';
 
 export type SelectOption = { value: string; label: string };
 
