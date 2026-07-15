@@ -925,6 +925,7 @@ export type WorkerQueueMetrics = {
 
 export enum WorkspaceActivationStatus {
   ACTIVE = 'ACTIVE',
+  CREATED = 'CREATED',
   INACTIVE = 'INACTIVE',
   ONGOING_CREATION = 'ONGOING_CREATION',
   PENDING_CREATION = 'PENDING_CREATION',

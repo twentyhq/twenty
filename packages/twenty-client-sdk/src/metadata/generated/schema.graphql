@@ -930,6 +930,7 @@ enum WorkspaceDiscoverability {
 enum WorkspaceActivationStatus {
   ONGOING_CREATION
   PENDING_CREATION
+  CREATED
   ACTIVE
   INACTIVE
   SUSPENDED

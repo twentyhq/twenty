@@ -111,6 +111,7 @@ import { AddWorkflowVersionSyncableColumnsFastInstanceCommand } from './2-20/2-2
 import { BackfillWorkspaceDatabaseSchemaSlowInstanceCommand } from './2-21/2-21-instance-command-slow-1783934147089-backfill-workspace-database-schema';
 import { AddLogoFileIdToApplicationRegistrationFastInstanceCommand } from './2-21/2-21-instance-command-fast-1783945979243-add-logo-file-id-to-application-registration';
 import { AddCalendarEndFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-22/2-22-instance-command-fast-1783956795000-add-calendar-end-field-metadata-id-to-view';
+import { AddCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2-22/2-22-instance-command-slow-1784106205000-add-created-workspace-activation-status';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -224,4 +225,5 @@ export const INSTANCE_COMMANDS = [
   BackfillWorkspaceDatabaseSchemaSlowInstanceCommand,
   AddLogoFileIdToApplicationRegistrationFastInstanceCommand,
   AddCalendarEndFieldMetadataIdToViewFastInstanceCommand,
+  AddCreatedWorkspaceActivationStatusSlowInstanceCommand,
 ];
