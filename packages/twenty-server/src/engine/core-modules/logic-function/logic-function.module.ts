@@ -1,13 +1,16 @@
 import { type DynamicModule, Global, Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
+import { LogicFunctionLayerWarmupService } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-layer-warmup.service';
 import { LogicFunctionResourceModule } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.module';
 import { LogicFunctionTriggerModule } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.module';
 import { LogicFunctionExecutorModule } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Global()
@@ -24,9 +27,11 @@ export class LogicFunctionModule {
         LogicFunctionExecutorModule,
         SdkClientModule,
         WorkspaceCacheModule,
+        TypeOrmModule.forFeature([LogicFunctionEntity]),
       ],
       providers: [
         LogicFunctionDriverFactory,
+        LogicFunctionLayerWarmupService,
         {
           provide: LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN,
           useExisting: LogicFunctionDriverFactory,

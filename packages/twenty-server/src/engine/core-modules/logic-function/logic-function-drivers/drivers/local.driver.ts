@@ -13,6 +13,7 @@ import {
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LocalChildProcessRunnerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/services/local-child-process-runner.service';
 import { LocalLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/services/local-layer-manager.service';
 import { LocalPrebuiltBundleService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/services/local-prebuilt-bundle.service';
@@ -44,6 +45,7 @@ export class LocalDriver implements LogicFunctionDriver {
       options.logicFunctionResourceService,
       options.sdkClientArchiveService,
       options.workspaceCacheService,
+      options.exceptionHandlerService,
     );
     this.childProcessRunner = new LocalChildProcessRunnerService();
     this.prebuiltBundle = new LocalPrebuiltBundleService(
@@ -104,6 +106,26 @@ export class LocalDriver implements LogicFunctionDriver {
     return this.prebuiltBundle.getInstalledBundleChecksum(flatLogicFunction);
   }
 
+  // Builds the deps + SDK layers if missing. Called before every execution and
+  // by the boot-time warmup so the first execution on a fresh container does
+  // not pay (or stampede) the cold build.
+  async warmUpLayers({
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }): Promise<void> {
+    await this.layerManager.ensureDepsLayer({
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
+    await this.layerManager.ensureSdkLayer({
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
+  }
+
   async execute({
     flatLogicFunction,
     flatApplication,
@@ -125,11 +147,7 @@ export class LocalDriver implements LogicFunctionDriver {
       );
     }
 
-    await this.layerManager.ensureDepsLayer({
-      flatApplication,
-      applicationUniversalIdentifier,
-    });
-    await this.layerManager.ensureSdkLayer({
+    await this.warmUpLayers({
       flatApplication,
       applicationUniversalIdentifier,
     });

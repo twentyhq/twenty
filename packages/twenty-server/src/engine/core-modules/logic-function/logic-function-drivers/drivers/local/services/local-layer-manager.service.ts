@@ -1,9 +1,12 @@
+import { Logger } from '@nestjs/common';
+
 import { promises as fs } from 'fs';
 import { join } from 'path';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/application-package/utils/copy-yarn-engine-and-build-dependencies';
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import {
   LAYER_BUILD_LOCK_MAX_RETRIES,
   LAYER_BUILD_LOCK_RETRY_MS,
@@ -23,12 +26,27 @@ type LayerAppContext = {
 };
 
 export class LocalLayerManagerService {
+  private readonly logger = new Logger(LocalLayerManagerService.name);
+
   constructor(
     private readonly cacheLockService: CacheLockService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
     private readonly sdkClientArchiveService: SdkClientArchiveService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly exceptionHandlerService?: ExceptionHandlerService,
   ) {}
+
+  // Lock exhaustion and failed builds used to surface only as generic
+  // execution errors (or not at all) — capture them so layer trouble is
+  // visible in the exception handler (Sentry).
+  private captureLayerError(error: Error, flatApplication: FlatApplication) {
+    this.logger.error(
+      `Layer build failed for application ${flatApplication.id} in workspace ${flatApplication.workspaceId}: ${error.message}`,
+    );
+    this.exceptionHandlerService?.captureExceptions([error], {
+      workspace: { id: flatApplication.workspaceId },
+    });
+  }
 
   async ensureDepsLayer({
     flatApplication,
@@ -46,29 +64,40 @@ export class LocalLayerManagerService {
 
     const lockKey = `local-driver-deps-layer:${flatApplication.yarnLockChecksum ?? 'default'}`;
 
-    await this.cacheLockService.withLock(
-      async () => {
-        if (await pathExists(depsReadySentinelPath)) {
-          return;
-        }
+    try {
+      await this.cacheLockService.withLock(
+        async () => {
+          if (await pathExists(depsReadySentinelPath)) {
+            return;
+          }
 
-        await fs.rm(depsLayerPath, { recursive: true, force: true });
+          const buildStartedAt = Date.now();
 
-        await this.logicFunctionResourceService.copyDependenciesInMemory({
-          applicationUniversalIdentifier,
-          workspaceId: flatApplication.workspaceId,
-          inMemoryFolderPath: depsLayerPath,
-        });
-        await copyYarnEngineAndBuildDependencies(depsLayerPath);
-        await fs.writeFile(depsReadySentinelPath, '');
-      },
-      lockKey,
-      {
-        ttl: LAYER_BUILD_LOCK_TTL_MS,
-        ms: LAYER_BUILD_LOCK_RETRY_MS,
-        maxRetries: LAYER_BUILD_LOCK_MAX_RETRIES,
-      },
-    );
+          await fs.rm(depsLayerPath, { recursive: true, force: true });
+
+          await this.logicFunctionResourceService.copyDependenciesInMemory({
+            applicationUniversalIdentifier,
+            workspaceId: flatApplication.workspaceId,
+            inMemoryFolderPath: depsLayerPath,
+          });
+          await copyYarnEngineAndBuildDependencies(depsLayerPath);
+          await fs.writeFile(depsReadySentinelPath, '');
+
+          this.logger.log(
+            `Built deps layer for application ${flatApplication.id} in ${Date.now() - buildStartedAt}ms`,
+          );
+        },
+        lockKey,
+        {
+          ttl: LAYER_BUILD_LOCK_TTL_MS,
+          ms: LAYER_BUILD_LOCK_RETRY_MS,
+          maxRetries: LAYER_BUILD_LOCK_MAX_RETRIES,
+        },
+      );
+    } catch (error) {
+      this.captureLayerError(error, flatApplication);
+      throw error;
+    }
   }
 
   async ensureSdkLayer({
@@ -91,45 +120,56 @@ export class LocalLayerManagerService {
 
     const lockKey = `local-driver-sdk-layer:${flatApplication.workspaceId}:${applicationUniversalIdentifier}`;
 
-    await this.cacheLockService.withLock(
-      async () => {
-        const { flatApplicationMaps } =
-          await this.workspaceCacheService.getOrRecompute(
-            flatApplication.workspaceId,
-            ['flatApplicationMaps'],
+    try {
+      await this.cacheLockService.withLock(
+        async () => {
+          const { flatApplicationMaps } =
+            await this.workspaceCacheService.getOrRecompute(
+              flatApplication.workspaceId,
+              ['flatApplicationMaps'],
+            );
+          const freshFlatApplication =
+            flatApplicationMaps.byId[flatApplication.id];
+          const isStale = freshFlatApplication?.isSdkLayerStale ?? true;
+
+          if ((await pathExists(sdkReadySentinelPath)) && !isStale) {
+            return;
+          }
+
+          const buildStartedAt = Date.now();
+
+          await fs.rm(sdkLayerPath, { recursive: true, force: true });
+
+          const sdkPackagePath = join(sdkNodeModulesPath, 'twenty-client-sdk');
+
+          await this.sdkClientArchiveService.downloadAndExtractToPackage({
+            workspaceId: flatApplication.workspaceId,
+            applicationId: flatApplication.id,
+            applicationUniversalIdentifier,
+            targetPackagePath: sdkPackagePath,
+          });
+
+          await this.sdkClientArchiveService.markSdkLayerFresh({
+            applicationId: flatApplication.id,
+            workspaceId: flatApplication.workspaceId,
+          });
+
+          await fs.writeFile(sdkReadySentinelPath, '');
+
+          this.logger.log(
+            `Built SDK layer for application ${flatApplication.id} in ${Date.now() - buildStartedAt}ms`,
           );
-        const freshFlatApplication =
-          flatApplicationMaps.byId[flatApplication.id];
-        const isStale = freshFlatApplication?.isSdkLayerStale ?? true;
-
-        if ((await pathExists(sdkReadySentinelPath)) && !isStale) {
-          return;
-        }
-
-        await fs.rm(sdkLayerPath, { recursive: true, force: true });
-
-        const sdkPackagePath = join(sdkNodeModulesPath, 'twenty-client-sdk');
-
-        await this.sdkClientArchiveService.downloadAndExtractToPackage({
-          workspaceId: flatApplication.workspaceId,
-          applicationId: flatApplication.id,
-          applicationUniversalIdentifier,
-          targetPackagePath: sdkPackagePath,
-        });
-
-        await this.sdkClientArchiveService.markSdkLayerFresh({
-          applicationId: flatApplication.id,
-          workspaceId: flatApplication.workspaceId,
-        });
-
-        await fs.writeFile(sdkReadySentinelPath, '');
-      },
-      lockKey,
-      {
-        ttl: LAYER_BUILD_LOCK_TTL_MS,
-        ms: LAYER_BUILD_LOCK_RETRY_MS,
-        maxRetries: LAYER_BUILD_LOCK_MAX_RETRIES,
-      },
-    );
+        },
+        lockKey,
+        {
+          ttl: LAYER_BUILD_LOCK_TTL_MS,
+          ms: LAYER_BUILD_LOCK_RETRY_MS,
+          maxRetries: LAYER_BUILD_LOCK_MAX_RETRIES,
+        },
+      );
+    } catch (error) {
+      this.captureLayerError(error, flatApplication);
+      throw error;
+    }
   }
 }
