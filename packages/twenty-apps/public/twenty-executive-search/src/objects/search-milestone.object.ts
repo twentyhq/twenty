@@ -7,6 +7,7 @@ import {
 
 import {
   MILESTONES_ON_SEARCH_ASSIGNMENT_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_ASSIGNMENT_OBJECT_UNIVERSAL_IDENTIFIER,
   SEARCH_MILESTONE_COMPLETED_DATE_FIELD_UNIVERSAL_IDENTIFIER,
   SEARCH_MILESTONE_MILESTONE_TYPE_FIELD_UNIVERSAL_IDENTIFIER,
   SEARCH_MILESTONE_MILESTONE_TYPE_OPTION_FOLLOW_UP_UNIVERSAL_IDENTIFIER,
@@ -211,7 +212,7 @@ export default defineObject({
       description: 'The search assignment this milestone belongs to.',
       icon: 'IconBriefcase',
       relationTargetObjectMetadataUniversalIdentifier:
-        '0be2ae87-fded-4d53-a0c7-05de084fa852',
+        SEARCH_ASSIGNMENT_OBJECT_UNIVERSAL_IDENTIFIER,
       relationTargetFieldMetadataUniversalIdentifier:
         MILESTONES_ON_SEARCH_ASSIGNMENT_FIELD_UNIVERSAL_IDENTIFIER,
       universalSettings: {

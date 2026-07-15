@@ -16,8 +16,8 @@ export default defineApplicationRole({
   label: `${APP_DISPLAY_NAME} default role`,
   description:
     'Least-privilege base role for the executive-search application. ' +
-    'Grants no object access by default — future phases add explicit ' +
-    'object and field permissions as domain records are created.',
+    'Grants read and update access to searchEngagementTerms, searchAssignment, ' +
+    'assignmentTeamMember, and searchMilestone objects.',
 
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,

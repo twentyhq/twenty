@@ -11,6 +11,7 @@ import {
   ASSIGNMENT_TEAM_MEMBER_IS_ACTIVE_FIELD_UNIVERSAL_IDENTIFIER,
   ASSIGNMENT_TEAM_MEMBER_JOINED_DATE_FIELD_UNIVERSAL_IDENTIFIER,
   ASSIGNMENT_TEAM_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER,
+  SEARCH_ASSIGNMENT_OBJECT_UNIVERSAL_IDENTIFIER,
   ASSIGNMENT_TEAM_MEMBER_ROLE_CONSULTANT,
   ASSIGNMENT_TEAM_MEMBER_ROLE_COORDINATOR,
   ASSIGNMENT_TEAM_MEMBER_ROLE_ENGAGEMENT_MANAGER,
@@ -101,7 +102,7 @@ export default defineObject({
       name: 'allocatedPercentage',
       label: 'Allocation %',
       description: 'Percentage of time allocated to this assignment.',
-      icon: 'IconPercent',
+      icon: 'IconPercentage',
       isNullable: true,
     },
     {
@@ -132,7 +133,7 @@ export default defineObject({
       description: 'The search assignment this member is part of.',
       icon: 'IconBriefcase',
       relationTargetObjectMetadataUniversalIdentifier:
-        '0be2ae87-fded-4d53-a0c7-05de084fa852',
+        SEARCH_ASSIGNMENT_OBJECT_UNIVERSAL_IDENTIFIER,
       relationTargetFieldMetadataUniversalIdentifier:
         TEAM_MEMBERS_ON_SEARCH_ASSIGNMENT_FIELD_UNIVERSAL_IDENTIFIER,
       universalSettings: {
