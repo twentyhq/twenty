@@ -1,6 +1,8 @@
-import { getFieldUniversalIdentifier } from 'twenty-shared/application';
+import {
+  getFieldUniversalIdentifier,
+  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+} from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 const EXECUTIVE_OBJECT_NAMES = [
   'executiveProfile',
