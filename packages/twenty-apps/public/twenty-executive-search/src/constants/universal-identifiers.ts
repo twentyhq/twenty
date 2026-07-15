@@ -1,4 +1,4 @@
-// Central registry of universal identifiers for PR10 (search assignment family).
+// Central registry of universal identifiers for Phase 4 domain objects.
 // Every entity in a Twenty app carries a stable UUID (its `universalIdentifier`).
 // Keeping them in one file makes cross-references (relations, views, layouts)
 // easy to follow and guarantees they stay stable across syncs and versions.

@@ -42,6 +42,8 @@ import {
   POSITION_SPECIFICATION_STATUS_OPTION_REVISED_UNIVERSAL_IDENTIFIER,
   POSITION_SPECIFICATION_STATUS_REVISED,
   POSITION_SPECIFICATION_VERSION_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_ASSIGNMENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  SPECIFICATIONS_ON_SEARCH_ASSIGNMENT_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
 export default defineObject({
@@ -264,9 +266,9 @@ export default defineObject({
       description: 'The search assignment this specification belongs to.',
       icon: 'IconBriefcase',
       relationTargetObjectMetadataUniversalIdentifier:
-        '0be2ae87-fded-4d53-a0c7-05de084fa852',
+        SEARCH_ASSIGNMENT_OBJECT_UNIVERSAL_IDENTIFIER,
       relationTargetFieldMetadataUniversalIdentifier:
-        '78b9c0d1-e2f3-a4b5-c6d7-e8f90a1b2c3d',
+        SPECIFICATIONS_ON_SEARCH_ASSIGNMENT_FIELD_UNIVERSAL_IDENTIFIER,
       universalSettings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: OnDeleteAction.CASCADE,

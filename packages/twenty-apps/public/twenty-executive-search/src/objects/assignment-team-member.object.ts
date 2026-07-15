@@ -26,6 +26,7 @@ import {
   ASSIGNMENT_TEAM_MEMBER_ROLE_RESEARCHER,
   ASSIGNMENT_TEAM_MEMBER_SEARCH_ASSIGNMENT_FIELD_UNIVERSAL_IDENTIFIER,
   ASSIGNMENT_TEAM_MEMBER_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_ASSIGNMENT_OBJECT_UNIVERSAL_IDENTIFIER,
   TEAM_MEMBERS_ON_SEARCH_ASSIGNMENT_FIELD_UNIVERSAL_IDENTIFIER,
   TEAM_MEMBERS_ON_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
@@ -132,7 +133,7 @@ export default defineObject({
       description: 'The search assignment this member is part of.',
       icon: 'IconBriefcase',
       relationTargetObjectMetadataUniversalIdentifier:
-        '0be2ae87-fded-4d53-a0c7-05de084fa852',
+        SEARCH_ASSIGNMENT_OBJECT_UNIVERSAL_IDENTIFIER,
       relationTargetFieldMetadataUniversalIdentifier:
         TEAM_MEMBERS_ON_SEARCH_ASSIGNMENT_FIELD_UNIVERSAL_IDENTIFIER,
       universalSettings: {
