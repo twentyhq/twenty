@@ -179,18 +179,6 @@ export class FileStorageService {
     };
   }
 
-  async writeFile(
-    params: WriteFileParams & {
-      applicationId: string;
-      queryRunner?: QueryRunner;
-    },
-  ): Promise<FileEntity>;
-  async writeFile(
-    params: WriteFileParams & {
-      applicationId?: undefined;
-      queryRunner?: undefined;
-    },
-  ): Promise<FileEntity>;
   async writeFile({
     sourceFile,
     fileFolder,
