@@ -48,7 +48,7 @@ export const computeRecordCalendarWeekEventLayouts = (
   const sortedEvents = [...events].sort(
     (eventA, eventB) =>
       eventA.startInPixels - eventB.startInPixels ||
-      eventA.endInPixels - eventB.endInPixels ||
+      eventB.endInPixels - eventA.endInPixels ||
       eventA.recordId.localeCompare(eventB.recordId),
   );
 

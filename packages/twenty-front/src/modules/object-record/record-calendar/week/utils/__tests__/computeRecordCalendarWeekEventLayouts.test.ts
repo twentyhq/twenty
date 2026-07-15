@@ -89,6 +89,44 @@ describe('computeRecordCalendarWeekEventLayouts', () => {
     ]);
   });
 
+  it('keeps a long event in the first column while shorter events reuse the overlay column', () => {
+    const layouts = computeRecordCalendarWeekEventLayouts([
+      { recordId: 'long', startInPixels: 0, endInPixels: 180 },
+      { recordId: 'first-short', startInPixels: 30, endInPixels: 60 },
+      { recordId: 'second-short', startInPixels: 60, endInPixels: 90 },
+    ]);
+
+    expect(
+      layouts.map(({ recordId, columnIndex, columnCount }) => ({
+        recordId,
+        columnIndex,
+        columnCount,
+      })),
+    ).toEqual([
+      { recordId: 'long', columnIndex: 0, columnCount: 2 },
+      { recordId: 'first-short', columnIndex: 1, columnCount: 2 },
+      { recordId: 'second-short', columnIndex: 1, columnCount: 2 },
+    ]);
+  });
+
+  it('places the longer event behind shorter events with the same start', () => {
+    const layouts = computeRecordCalendarWeekEventLayouts([
+      { recordId: 'short', startInPixels: 0, endInPixels: 60 },
+      { recordId: 'long', startInPixels: 0, endInPixels: 180 },
+    ]);
+
+    expect(
+      layouts.map(({ recordId, columnIndex, columnCount }) => ({
+        recordId,
+        columnIndex,
+        columnCount,
+      })),
+    ).toEqual([
+      { recordId: 'long', columnIndex: 0, columnCount: 2 },
+      { recordId: 'short', columnIndex: 1, columnCount: 2 },
+    ]);
+  });
+
   it('sorts events before assigning columns', () => {
     const layouts = computeRecordCalendarWeekEventLayouts([
       { recordId: 'second', startInPixels: 10, endInPixels: 54 },

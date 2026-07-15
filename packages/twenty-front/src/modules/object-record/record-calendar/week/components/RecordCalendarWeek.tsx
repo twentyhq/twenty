@@ -342,13 +342,7 @@ const RecordCalendarWeekDayColumn = memo(
                 recordId,
               };
             })
-            .filter(isDefined)
-            .sort(
-              (eventA, eventB) =>
-                eventA.startInPixels - eventB.startInPixels ||
-                eventA.endInPixels - eventB.endInPixels ||
-                eventA.recordId.localeCompare(eventB.recordId),
-            );
+            .filter(isDefined);
 
     const eventLayouts =
       computeRecordCalendarWeekEventLayouts(eventLayoutInputs);

@@ -1,6 +1,5 @@
 const RECORD_CALENDAR_WEEK_EVENT_HORIZONTAL_INSET = 4;
 const RECORD_CALENDAR_WEEK_EVENT_COLUMN_GAP = 2;
-const RECORD_CALENDAR_WEEK_EVENT_OVERLAP_COLUMN_SPAN = 1.7;
 const RECORD_CALENDAR_WEEK_EVENT_POSITION_ROUNDING_FACTOR = 10_000;
 
 type GetRecordCalendarWeekEventHorizontalPositionArgs = {
@@ -31,10 +30,7 @@ export const getRecordCalendarWeekEventHorizontalPosition = ({
   columnCount,
   columnIndex,
 }: GetRecordCalendarWeekEventHorizontalPositionArgs): RecordCalendarWeekEventHorizontalPosition => {
-  const columnSpan = Math.min(
-    RECORD_CALENDAR_WEEK_EVENT_OVERLAP_COLUMN_SPAN,
-    columnCount - columnIndex,
-  );
+  const columnSpan = columnCount - columnIndex;
   const leftPercentage = roundPositionValue((columnIndex * 100) / columnCount);
   const leftPixelOffset = roundPositionValue(
     RECORD_CALENDAR_WEEK_EVENT_HORIZONTAL_INSET -
