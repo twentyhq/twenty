@@ -4,7 +4,6 @@ import { type Manifest } from 'twenty-shared/application';
 
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
-import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -46,10 +45,6 @@ describe('ApplicationManifestApplyService', () => {
     updateFromManifest: jest.fn(),
   };
 
-  const mockApplicationRegistrationVariableService = {
-    syncVariableSchemas: jest.fn(),
-  };
-
   beforeEach(async () => {
     jest.clearAllMocks();
 
@@ -75,10 +70,6 @@ describe('ApplicationManifestApplyService', () => {
         {
           provide: ApplicationRegistrationService,
           useValue: mockApplicationRegistrationService,
-        },
-        {
-          provide: ApplicationRegistrationVariableService,
-          useValue: mockApplicationRegistrationVariableService,
         },
       ],
     }).compile();
@@ -137,10 +128,8 @@ describe('ApplicationManifestApplyService', () => {
   });
 
   describe('refreshRegistrationFromManifest', () => {
-    it('should update the registration and sync variable schemas', async () => {
-      const manifest = buildManifest({
-        serverVariables: { API_KEY: { isSecret: true } },
-      });
+    it('should update the registration', async () => {
+      const manifest = buildManifest();
 
       const result = await service.refreshRegistrationFromManifest({
         applicationRegistrationId: REGISTRATION_ID,
@@ -159,43 +148,21 @@ describe('ApplicationManifestApplyService', () => {
         latestAvailableVersion: '1.2.0',
         preventVersionDowngrade: true,
       });
-      expect(
-        mockApplicationRegistrationVariableService.syncVariableSchemas,
-      ).toHaveBeenCalledWith(
-        REGISTRATION_ID,
-        manifest.application.serverVariables,
-      );
     });
 
-    it('should not sync variable schemas when the manifest declares none', async () => {
-      await service.refreshRegistrationFromManifest({
-        applicationRegistrationId: REGISTRATION_ID,
-        manifest: buildManifest(),
-      });
-
-      expect(
-        mockApplicationRegistrationVariableService.syncVariableSchemas,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('should not sync variable schemas when the registration update was skipped as a downgrade', async () => {
+    it('should report a registration update skipped as a downgrade', async () => {
       mockApplicationRegistrationService.updateFromManifest.mockResolvedValue(
         false,
       );
 
       const result = await service.refreshRegistrationFromManifest({
         applicationRegistrationId: REGISTRATION_ID,
-        manifest: buildManifest({
-          serverVariables: { API_KEY: { isSecret: true } },
-        }),
+        manifest: buildManifest(),
         latestAvailableVersion: '0.9.0',
         preventVersionDowngrade: true,
       });
 
       expect(result).toBe(false);
-      expect(
-        mockApplicationRegistrationVariableService.syncVariableSchemas,
-      ).not.toHaveBeenCalled();
     });
 
     it('should skip npm-sourced registrations when scoped to a workspace', async () => {

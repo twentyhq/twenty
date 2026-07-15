@@ -383,8 +383,6 @@ export class ApplicationRegistrationService {
     sourceType?: ApplicationRegistrationSourceType;
     latestAvailableVersion?: string;
     preventVersionDowngrade?: boolean;
-    // Resolves to false when the update was skipped because the manifest
-    // belongs to a version older than the latest available one.
   }): Promise<boolean> {
     return this.cacheLockService.withLock(async () => {
       const existing =
@@ -436,6 +434,16 @@ export class ApplicationRegistrationService {
       });
 
       await this.invalidateMarketplaceAppsCache();
+
+      // Synced within the registration lock so a concurrent update from
+      // another version cannot interleave and leave the registration row and
+      // its variable schemas on different manifests.
+      if (isDefined(manifest.application.serverVariables)) {
+        await this.applicationRegistrationVariableService.syncVariableSchemas(
+          applicationRegistrationId,
+          manifest.application.serverVariables,
+        );
+      }
 
       return true;
     }, `application-registration-update:${applicationRegistrationId}`);
