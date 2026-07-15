@@ -1,0 +1,30 @@
+import { describe, expect, it } from 'vitest';
+
+import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/application-universal-identifier';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/constants/default-role-universal-identifier';
+import { APP_DISPLAY_NAME } from 'src/constants/app-display-name';
+import {
+  DIRECTUS_API_KEY_ENV_VAR_NAME,
+  DIRECTUS_URL_ENV_VAR_NAME,
+} from 'src/constants/server-variable-names';
+
+describe('executive-search app constants', () => {
+  it('has stable application universal identifier', () => {
+    expect(APPLICATION_UNIVERSAL_IDENTIFIER).toBe('executive-search');
+  });
+
+  it('has stable default role universal identifier', () => {
+    expect(DEFAULT_ROLE_UNIVERSAL_IDENTIFIER).toBe(
+      'executive-search-default-role',
+    );
+  });
+
+  it('has display name', () => {
+    expect(APP_DISPLAY_NAME).toBe('Executive Search');
+  });
+
+  it('server variable names are defined', () => {
+    expect(DIRECTUS_URL_ENV_VAR_NAME).toBe('DIRECTUS_URL');
+    expect(DIRECTUS_API_KEY_ENV_VAR_NAME).toBe('DIRECTUS_API_KEY');
+  });
+});

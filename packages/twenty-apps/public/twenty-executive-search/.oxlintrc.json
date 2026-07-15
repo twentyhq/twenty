@@ -1,0 +1,13 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["oxc"],
+  "categories": {
+    "correctness": "error",
+    "perf": "error",
+    "pedantic": "error",
+    "style": "error"
+  },
+  "rules": {
+    "no-unused-vars": "error"
+  }
+}
