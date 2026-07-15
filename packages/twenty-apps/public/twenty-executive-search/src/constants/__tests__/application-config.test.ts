@@ -50,3 +50,123 @@ describe('application-config validation', () => {
     expect(result.config.objectPermissions).toEqual([]);
   });
 });
+
+const UUID_V4_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+describe('role universal identifiers', () => {
+  it('all role UIDs are valid UUID v4', async () => {
+    const {
+      RESEARCHER_ROLE_UNIVERSAL_IDENTIFIER,
+      PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
+      FINANCE_ROLE_UNIVERSAL_IDENTIFIER,
+      COMPLIANCE_ROLE_UNIVERSAL_IDENTIFIER,
+    } = await import('src/constants/role-universal-identifiers');
+
+    expect(RESEARCHER_ROLE_UNIVERSAL_IDENTIFIER).toMatch(UUID_V4_REGEX);
+    expect(PARTNER_ROLE_UNIVERSAL_IDENTIFIER).toMatch(UUID_V4_REGEX);
+    expect(FINANCE_ROLE_UNIVERSAL_IDENTIFIER).toMatch(UUID_V4_REGEX);
+    expect(COMPLIANCE_ROLE_UNIVERSAL_IDENTIFIER).toMatch(UUID_V4_REGEX);
+  });
+
+  it('all role UIDs are unique', async () => {
+    const {
+      RESEARCHER_ROLE_UNIVERSAL_IDENTIFIER,
+      PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
+      FINANCE_ROLE_UNIVERSAL_IDENTIFIER,
+      COMPLIANCE_ROLE_UNIVERSAL_IDENTIFIER,
+    } = await import('src/constants/role-universal-identifiers');
+
+    const uids = [
+      RESEARCHER_ROLE_UNIVERSAL_IDENTIFIER,
+      PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
+      FINANCE_ROLE_UNIVERSAL_IDENTIFIER,
+      COMPLIANCE_ROLE_UNIVERSAL_IDENTIFIER,
+    ];
+    const uniqueUids = new Set(uids);
+    expect(uniqueUids.size).toBe(uids.length);
+  });
+
+  it('role UIDs do not collide with permission flag UIDs', async () => {
+    const roleIds = await import('src/constants/role-universal-identifiers');
+    const flagIds = await import(
+      'src/constants/permission-flag-universal-identifiers'
+    );
+
+    const roleUids = Object.values(roleIds);
+    const flagUids = Object.values(flagIds);
+    const allUids = [...roleUids, ...flagUids];
+    const uniqueUids = new Set(allUids);
+    expect(uniqueUids.size).toBe(allUids.length);
+  });
+
+  it('role UIDs do not collide with existing slugs', async () => {
+    const roleIds = await import('src/constants/role-universal-identifiers');
+    const roleUids = Object.values(roleIds) as string[];
+
+    const existingSlugs = [
+      APPLICATION_UNIVERSAL_IDENTIFIER,
+      DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+    ];
+
+    for (const uid of roleUids) {
+      expect(existingSlugs).not.toContain(uid);
+    }
+  });
+});
+
+describe('permission flag universal identifiers', () => {
+  it('all permission flag UIDs are valid UUID v4', async () => {
+    const {
+      CAN_BYPASS_COMMERCIAL_FIREWALL_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
+      CAN_VIEW_COMMERCIAL_DATA_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
+      CAN_ACCESS_RESTRICTED_DEMOGRAPHICS_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
+    } = await import(
+      'src/constants/permission-flag-universal-identifiers'
+    );
+
+    expect(
+      CAN_BYPASS_COMMERCIAL_FIREWALL_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
+    ).toMatch(UUID_V4_REGEX);
+    expect(
+      CAN_VIEW_COMMERCIAL_DATA_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
+    ).toMatch(UUID_V4_REGEX);
+    expect(
+      CAN_ACCESS_RESTRICTED_DEMOGRAPHICS_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
+    ).toMatch(UUID_V4_REGEX);
+  });
+
+  it('all permission flag UIDs are unique', async () => {
+    const {
+      CAN_BYPASS_COMMERCIAL_FIREWALL_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
+      CAN_VIEW_COMMERCIAL_DATA_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
+      CAN_ACCESS_RESTRICTED_DEMOGRAPHICS_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
+    } = await import(
+      'src/constants/permission-flag-universal-identifiers'
+    );
+
+    const uids = [
+      CAN_BYPASS_COMMERCIAL_FIREWALL_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
+      CAN_VIEW_COMMERCIAL_DATA_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
+      CAN_ACCESS_RESTRICTED_DEMOGRAPHICS_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER,
+    ];
+    const uniqueUids = new Set(uids);
+    expect(uniqueUids.size).toBe(uids.length);
+  });
+
+  it('permission flag UIDs do not collide with existing slugs', async () => {
+    const flagIds = await import(
+      'src/constants/permission-flag-universal-identifiers'
+    );
+    const flagUids = Object.values(flagIds) as string[];
+
+    const existingSlugs = [
+      APPLICATION_UNIVERSAL_IDENTIFIER,
+      DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+    ];
+
+    for (const uid of flagUids) {
+      expect(existingSlugs).not.toContain(uid);
+    }
+  });
+});

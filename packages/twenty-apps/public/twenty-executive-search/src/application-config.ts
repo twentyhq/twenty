@@ -1,4 +1,4 @@
-import { defineApplication, FieldType } from 'twenty-sdk/define';
+import { FieldType, defineApplication } from 'twenty-sdk/define';
 
 import { APP_DESCRIPTION } from 'src/constants/app-description';
 import { APP_DISPLAY_NAME } from 'src/constants/app-display-name';

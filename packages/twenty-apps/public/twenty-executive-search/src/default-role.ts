@@ -10,7 +10,8 @@ export default defineApplicationRole({
   description:
     'Least-privilege base role for the executive-search application. ' +
     'Grants no object access by default — future phases add explicit ' +
-    'object and field permissions as domain records are created.',
+    'object and field permissions as domain records are created. ' +
+    'Explicitly denies all commercial-firewall permission flags (CAN_BYPASS_COMMERCIAL_FIREWALL, CAN_VIEW_COMMERCIAL_DATA, CAN_ACCESS_RESTRICTED_DEMOGRAPHICS).',
 
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
@@ -23,5 +24,8 @@ export default defineApplicationRole({
 
   objectPermissions: [],
   fieldPermissions: [],
+  // Explicitly denies all 3 commercial-firewall permission flags:
+  // CAN_BYPASS_COMMERCIAL_FIREWALL, CAN_VIEW_COMMERCIAL_DATA,
+  // CAN_ACCESS_RESTRICTED_DEMOGRAPHICS.
   permissionFlagUniversalIdentifiers: [],
 });
