@@ -10,12 +10,12 @@ import {
 
 describe('executive-search app constants', () => {
   it('has stable application universal identifier', () => {
-    expect(APPLICATION_UNIVERSAL_IDENTIFIER).toBe('executive-search');
+    expect(APPLICATION_UNIVERSAL_IDENTIFIER).toBe('b64e7e15-e7bf-468e-8bfb-83a4d92ea966');
   });
 
   it('has stable default role universal identifier', () => {
     expect(DEFAULT_ROLE_UNIVERSAL_IDENTIFIER).toBe(
-      'executive-search-default-role',
+      'd908b08c-fd00-40be-9824-0e47ddf066fe',
     );
   });
 
@@ -35,7 +35,7 @@ describe('application-config validation', () => {
     const result = mod.default;
     expect(result.success, result.errors.join('; ')).toBe(true);
     expect(result.errors).toEqual([]);
-    expect(result.config.universalIdentifier).toBe('executive-search');
+    expect(result.config.universalIdentifier).toBe('b64e7e15-e7bf-468e-8bfb-83a4d92ea966');
   });
 
   it('default role validates without errors', async () => {
@@ -44,7 +44,7 @@ describe('application-config validation', () => {
     expect(result.success, result.errors.join('; ')).toBe(true);
     expect(result.errors).toEqual([]);
     expect(result.config.universalIdentifier).toBe(
-      'executive-search-default-role',
+      'd908b08c-fd00-40be-9824-0e47ddf066fe',
     );
     expect(result.config.canReadAllObjectRecords).toBe(false);
     const permissions = result.config.objectPermissions;
