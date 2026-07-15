@@ -67,7 +67,9 @@ export class WorkflowVersionCoreDualWriteListener {
   ): Promise<void> {
     await this.deleteFromCore(
       batchEvent.workspaceId,
-      batchEvent.events.map((event) => event.properties.before.id),
+      batchEvent.events
+        .map((event) => event.properties.before.coreWorkflowVersionId)
+        .filter(isDefined),
     );
   }
 
@@ -79,7 +81,9 @@ export class WorkflowVersionCoreDualWriteListener {
   ): Promise<void> {
     await this.deleteFromCore(
       batchEvent.workspaceId,
-      batchEvent.events.map((event) => event.properties.before.id),
+      batchEvent.events
+        .map((event) => event.properties.before.coreWorkflowVersionId)
+        .filter(isDefined),
     );
   }
 
@@ -105,7 +109,7 @@ export class WorkflowVersionCoreDualWriteListener {
 
   private async deleteFromCore(
     workspaceId: string | undefined,
-    workflowVersionIds: string[],
+    coreWorkflowVersionIds: string[],
   ): Promise<void> {
     if (!isDefined(workspaceId)) {
       return;
@@ -114,7 +118,7 @@ export class WorkflowVersionCoreDualWriteListener {
     try {
       await this.workflowVersionCoreSyncService.deleteFromCore(
         workspaceId,
-        workflowVersionIds,
+        coreWorkflowVersionIds,
       );
     } catch (error) {
       this.exceptionHandlerService.captureExceptions([error], {

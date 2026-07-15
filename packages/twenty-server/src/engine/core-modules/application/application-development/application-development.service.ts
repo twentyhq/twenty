@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -41,6 +41,8 @@ const ALLOWED_APPLICATION_FILE_FOLDERS: FileFolder[] = [
 
 @Injectable()
 export class ApplicationDevelopmentService {
+  private readonly logger = new Logger(ApplicationDevelopmentService.name);
+
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly applicationSyncService: ApplicationSyncService,
@@ -361,7 +363,13 @@ export class ApplicationDevelopmentService {
       });
 
       return await streamToBuffer(stream);
-    } catch {
+    } catch (error) {
+      // A missing or unreadable asset must not fail the whole dev sync; the
+      // registration keeps its previously stored file for that path, if any.
+      this.logger.warn(
+        `Could not read public asset "${path}" for application ${applicationUniversalIdentifier}: ${error.message}`,
+      );
+
       return null;
     }
   }

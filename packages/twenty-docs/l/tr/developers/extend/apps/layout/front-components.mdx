@@ -120,7 +120,7 @@ Bunları `twenty-sdk/front-component` içinden içe aktarın:
 * **`Command`** — `execute` prop'u aracılığıyla async bir geri çağrıyı çalıştırır.
 * **`CommandLink`** — Bir uygulama yoluna gider. Props: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — Bir onay modalı açar. Kullanıcı onaylarsa `execute` geri çağrısını yürütür. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Bir yan panel sayfasını açar. Props, `page`'e bağlıdır — örneğin `ViewRecord`, `recordId` + `objectNameSingular` alır, diğer sayfalar `pageTitle` + `pageIcon` alır.
+* **`CommandOpenSidePanelPage`** — Bir yan panel sayfasını açar. Props, `page`'e bağlıdır — örneğin `ViewRecord`, `recordId` + `objectNameSingular` alır (ayrıca kaydı belirli bir sekmede açmak için isteğe bağlı bir `tab` kimliği alır), diğer sayfalar `pageTitle` + `pageIcon` alır.
 
 `Command` kullanarak komut menüsünden bir eylem çalıştıran headless bir ön uç bileşenin tam örneği:
 
@@ -190,6 +190,44 @@ export default defineFrontComponent({
   name: 'delete-draft',
   description: 'Deletes a draft with confirmation',
   component: DeleteDraft,
+  isHeadless: true,
+});
+```
+
+Ve geçerli kaydı belirli bir sekmede yan panelde açmak için `CommandOpenSidePanelPage` kullanan bir örnek. `tab`, bir sayfa düzeni sekme kimliğidir (varsayılan düzenler `company-tab-emails` veya `company-tab-timeline` gibi kimlikler kullanır; özel düzenler sekmenin kendi kimliğini kullanır). Kimlik kaydın düzeninde mevcut değilse, bunun yerine varsayılan sekme açılır:
+
+```tsx src/front-components/open-company-emails.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  CommandOpenSidePanelPage,
+  SidePanelPages,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const OpenCompanyEmails = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+
+  if (!recordId) {
+    return null;
+  }
+
+  return (
+    <CommandOpenSidePanelPage
+      page={SidePanelPages.ViewRecord}
+      recordId={recordId}
+      objectNameSingular="company"
+      tab="company-tab-emails"
+      resetNavigationStack={false}
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+  name: 'open-company-emails',
+  description: 'Opens the current company on its Emails tab',
+  component: OpenCompanyEmails,
   isHeadless: true,
 });
 ```

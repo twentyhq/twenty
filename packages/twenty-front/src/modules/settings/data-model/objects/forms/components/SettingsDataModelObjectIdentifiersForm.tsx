@@ -2,6 +2,7 @@ import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
@@ -10,10 +11,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { zodResolver } from '@hookform/resolvers/zod';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
+  isImageIdentifierFieldMetadataType,
   isLabelIdentifierFieldMetadataTypes,
   isSearchableFieldType,
 } from 'twenty-shared/utils';
@@ -67,9 +68,18 @@ export const SettingsDataModelObjectIdentifiersForm = ({
   const handleSave = async (
     formValues: SettingsDataModelObjectIdentifiersFormValues,
   ) => {
+    const {
+      labelIdentifierFieldMetadataId: _labelIdentifierFieldMetadataId,
+      ...payloadWithoutLabelIdentifier
+    } = formValues;
+
+    const updatePayload = isCustomObject
+      ? formValues
+      : payloadWithoutLabelIdentifier;
+
     const result = await updateOneObjectMetadataItem({
       idToUpdate: objectMetadataItem.id,
-      updatePayload: formValues,
+      updatePayload,
     });
 
     if (result.status === 'successful') {
@@ -78,29 +88,42 @@ export const SettingsDataModelObjectIdentifiersForm = ({
   };
 
   const { getIcon } = useIcons();
-  const labelIdentifierFieldOptions = useMemo(
-    () =>
-      getActiveFieldMetadataItems(objectMetadataItem)
-        .filter(
-          ({ id, type }) =>
-            (isLabelIdentifierFieldMetadataTypes(type) &&
-              isSearchableFieldType(type)) ||
-            objectMetadataItem.labelIdentifierFieldMetadataId === id,
-        )
-        .map<SelectOption<string | null>>((fieldMetadataItem) => ({
-          Icon: getIcon(fieldMetadataItem.icon),
-          label: fieldMetadataItem.label,
-          value: fieldMetadataItem.id,
-        })),
-    [getIcon, objectMetadataItem],
-  );
-  const imageIdentifierFieldOptions: SelectOption<string | null>[] = [];
+
+  const mapFieldToSelectOption = (
+    fieldMetadataItem: FieldMetadataItem,
+  ): SelectOption<string | null> => ({
+    Icon: getIcon(fieldMetadataItem.icon),
+    label: fieldMetadataItem.label,
+    value: fieldMetadataItem.id,
+  });
+
+  const labelIdentifierFieldOptions = getActiveFieldMetadataItems(
+    objectMetadataItem,
+  )
+    .filter(
+      ({ id, type }) =>
+        (isLabelIdentifierFieldMetadataTypes(type) &&
+          isSearchableFieldType(type)) ||
+        objectMetadataItem.labelIdentifierFieldMetadataId === id,
+    )
+    .map(mapFieldToSelectOption);
 
   const emptyOption: SelectOption<string | null> = {
     Icon: IconCircleOff,
     label: t`None`,
     value: null,
   };
+
+  const imageIdentifierFieldOptions = [
+    emptyOption,
+    ...getActiveFieldMetadataItems(objectMetadataItem)
+      .filter(
+        ({ id, type }) =>
+          isImageIdentifierFieldMetadataType(type) ||
+          objectMetadataItem.imageIdentifierFieldMetadataId === id,
+      )
+      .map(mapFieldToSelectOption),
+  ];
 
   const navigate = useNavigate();
 
@@ -112,14 +135,16 @@ export const SettingsDataModelObjectIdentifiersForm = ({
           fieldName: LABEL_IDENTIFIER_FIELD_METADATA_ID,
           options: labelIdentifierFieldOptions,
           defaultValue: objectMetadataItem.labelIdentifierFieldMetadataId,
+          disabled: !isCustomObject || readonly,
         },
         {
           label: t`Record image`,
           fieldName: IMAGE_IDENTIFIER_FIELD_METADATA_ID,
           options: imageIdentifierFieldOptions,
-          defaultValue: null,
+          defaultValue: objectMetadataItem.imageIdentifierFieldMetadataId,
+          disabled: readonly,
         },
-      ].map(({ fieldName, label, options, defaultValue }) => (
+      ].map(({ fieldName, label, options, defaultValue, disabled }) => (
         <Controller
           key={fieldName}
           name={fieldName}
@@ -134,7 +159,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
               options={options}
               value={value}
               withSearchInput={label === t`Record label`}
-              disabled={!isCustomObject || readonly}
+              disabled={disabled}
               callToActionButton={
                 label === t`Record label`
                   ? {
@@ -146,8 +171,8 @@ export const SettingsDataModelObjectIdentifiersForm = ({
                     }
                   : undefined
               }
-              onChange={(value) => {
-                onChange(value);
+              onChange={(newValue) => {
+                onChange(newValue);
                 formConfig.handleSubmit(handleSave)();
               }}
             />

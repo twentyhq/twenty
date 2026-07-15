@@ -439,10 +439,9 @@ export class ApplicationRegistrationService {
 
   async delete(id: string, ownerWorkspaceId: string): Promise<boolean> {
     await this.findOneById(id, ownerWorkspaceId);
-    await this.applicationRegistrationRepository.softDelete(id);
 
-    // Stored assets (logo, gallery images) are gone for good; deleting the
-    // file rows also nulls logoFileId through its ON DELETE SET NULL fk.
+    // Stored assets (logo, gallery images) go with the registration; deleting
+    // them first also removes the bytes, which the row FK cascade cannot do.
     try {
       await this.serverFileStorageService.deleteByApplicationRegistrationId(id);
     } catch (error) {
@@ -451,6 +450,8 @@ export class ApplicationRegistrationService {
         error,
       );
     }
+
+    await this.applicationRegistrationRepository.delete(id);
 
     await this.invalidateMarketplaceAppsCache();
 

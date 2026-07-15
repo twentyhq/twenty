@@ -273,7 +273,12 @@ export class SignInUpService {
     workspace: WorkspaceEntity,
     user: ExistingUserOrPartialUserWithPicture,
   ) {
-    if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) return;
+    if (
+      workspace.activationStatus === WorkspaceActivationStatus.ACTIVE ||
+      workspace.activationStatus === WorkspaceActivationStatus.CREATED
+    ) {
+      return;
+    }
 
     if (user.userData.type !== 'existingUser') {
       throw new AuthException(
