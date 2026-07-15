@@ -1,4 +1,4 @@
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { PROVISIONED_WORKSPACE_ACTIVATION_STATUSES } from 'twenty-shared/workspace';
 
 import {
   WorkspaceCommandRunner,
@@ -15,9 +15,6 @@ export abstract class ActiveOrSuspendedWorkspaceCommandRunner<
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
   ) {
-    super(workspaceIteratorService, [
-      WorkspaceActivationStatus.ACTIVE,
-      WorkspaceActivationStatus.SUSPENDED,
-    ]);
+    super(workspaceIteratorService, PROVISIONED_WORKSPACE_ACTIVATION_STATUSES);
   }
 }

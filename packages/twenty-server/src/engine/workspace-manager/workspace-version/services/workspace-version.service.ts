@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { PROVISIONED_WORKSPACE_ACTIVATION_STATUSES } from 'twenty-shared/workspace';
 import { In, MoreThanOrEqual, QueryRunner, Repository } from 'typeorm';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -16,10 +16,7 @@ export class WorkspaceVersionService {
   async hasActiveOrSuspendedWorkspaces(): Promise<boolean> {
     return this.workspaceRepository.exists({
       where: {
-        activationStatus: In([
-          WorkspaceActivationStatus.ACTIVE,
-          WorkspaceActivationStatus.SUSPENDED,
-        ]),
+        activationStatus: In(PROVISIONED_WORKSPACE_ACTIVATION_STATUSES),
       },
     });
   }
@@ -40,10 +37,7 @@ export class WorkspaceVersionService {
     const workspaces = await repository.find({
       select: ['id'],
       where: {
-        activationStatus: In([
-          WorkspaceActivationStatus.ACTIVE,
-          WorkspaceActivationStatus.SUSPENDED,
-        ]),
+        activationStatus: In(PROVISIONED_WORKSPACE_ACTIVATION_STATUSES),
         ...(startFromWorkspaceId
           ? { id: MoreThanOrEqual(startFromWorkspaceId) }
           : {}),

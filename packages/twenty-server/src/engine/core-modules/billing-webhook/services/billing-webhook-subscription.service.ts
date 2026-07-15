@@ -21,6 +21,7 @@ import {
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES } from 'src/engine/core-modules/billing/constants/workspace-activating-subscription-statuses.constant';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
@@ -161,7 +162,8 @@ export class BillingWebhookSubscriptionService {
       }
     } else if (
       this.shouldReactivateWorkspace(data) &&
-      workspace.activationStatus === WorkspaceActivationStatus.SUSPENDED
+      (workspace.activationStatus === WorkspaceActivationStatus.SUSPENDED ||
+        workspace.activationStatus === WorkspaceActivationStatus.CREATED)
     ) {
       await this.workspaceService.reactivateWorkspace(workspaceId);
 
@@ -223,12 +225,7 @@ export class BillingWebhookSubscriptionService {
   ): boolean {
     const status = data.object.status as SubscriptionStatus;
 
-    const activeStatuses = [
-      SubscriptionStatus.Active,
-      SubscriptionStatus.Trialing,
-    ];
-
-    return activeStatuses.includes(status);
+    return WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES.includes(status);
   }
 
   async updateBillingSubscriptionItems(

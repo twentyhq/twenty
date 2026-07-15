@@ -273,7 +273,14 @@ export class SignInUpService {
     workspace: WorkspaceEntity,
     user: ExistingUserOrPartialUserWithPicture,
   ) {
-    if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) return;
+    // CREATED workspaces welcome invited members: the invite-team onboarding
+    // step happens before the billing plan step
+    if (
+      workspace.activationStatus === WorkspaceActivationStatus.ACTIVE ||
+      workspace.activationStatus === WorkspaceActivationStatus.CREATED
+    ) {
+      return;
+    }
 
     if (user.userData.type !== 'existingUser') {
       throw new AuthException(

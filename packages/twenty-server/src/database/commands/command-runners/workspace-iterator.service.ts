@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { isNonEmptyString } from '@sniptt/guards';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import {
+  PROVISIONED_WORKSPACE_ACTIVATION_STATUSES,
+  WorkspaceActivationStatus,
+} from 'twenty-shared/workspace';
 import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThanOrEqual, Repository } from 'typeorm';
 
@@ -39,10 +42,7 @@ export type WorkspaceIteratorReport = {
   }[];
 };
 
-const DEFAULT_ACTIVATION_STATUSES = [
-  WorkspaceActivationStatus.ACTIVE,
-  WorkspaceActivationStatus.SUSPENDED,
-];
+const DEFAULT_ACTIVATION_STATUSES = PROVISIONED_WORKSPACE_ACTIVATION_STATUSES;
 
 @Injectable()
 export class WorkspaceIteratorService {

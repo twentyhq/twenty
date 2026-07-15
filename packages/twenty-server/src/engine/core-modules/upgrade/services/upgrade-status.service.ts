@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { UpgradeHealthEnum } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { PROVISIONED_WORKSPACE_ACTIVATION_STATUSES } from 'twenty-shared/workspace';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -313,10 +313,7 @@ export class UpgradeStatusService {
         ...(workspaceIds && workspaceIds.length > 0
           ? { id: In(workspaceIds) }
           : {}),
-        activationStatus: In([
-          WorkspaceActivationStatus.ACTIVE,
-          WorkspaceActivationStatus.SUSPENDED,
-        ]),
+        activationStatus: In(PROVISIONED_WORKSPACE_ACTIVATION_STATUSES),
       },
       order: { id: 'ASC' },
     });
