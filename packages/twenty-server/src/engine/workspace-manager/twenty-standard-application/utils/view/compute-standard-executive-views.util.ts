@@ -7,13 +7,14 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/create-standard-view-flat-metadata.util';
 
 const buildStandardExecutiveViews = <P extends string>(
+  viewName: string,
   args: Omit<CreateStandardViewArgs<P>, 'context'>,
 ): Record<string, FlatView> => ({
-  [args.viewName]: createStandardViewFlatMetadata({
+  [viewName]: createStandardViewFlatMetadata({
     ...args,
     objectName: args.objectName,
     context: {
-      viewName: args.viewName,
+      viewName,
       name: 'All {objectLabelPlural}',
       type: ViewType.TABLE,
       key: ViewKey.INDEX,
@@ -25,40 +26,40 @@ const buildStandardExecutiveViews = <P extends string>(
 
 export const computeStandardExecutiveArtifactViews = (
   args: Omit<CreateStandardViewArgs<'executiveArtifact'>, 'context'>,
-) => buildStandardExecutiveViews({ ...args, viewName: 'allExecutiveArtifacts' });
+) => buildStandardExecutiveViews('allExecutiveArtifacts', args);
 
 export const computeStandardExecutiveAwardViews = (
   args: Omit<CreateStandardViewArgs<'executiveAward'>, 'context'>,
-) => buildStandardExecutiveViews({ ...args, viewName: 'allExecutiveAwards' });
+) => buildStandardExecutiveViews('allExecutiveAwards', args);
 
 export const computeStandardExecutiveBoardServiceViews = (
   args: Omit<CreateStandardViewArgs<'executiveBoardService'>, 'context'>,
-) => buildStandardExecutiveViews({ ...args, viewName: 'allExecutiveBoardServices' });
+) => buildStandardExecutiveViews('allExecutiveBoardServices', args);
 
 export const computeStandardExecutiveCapabilityViews = (
   args: Omit<CreateStandardViewArgs<'executiveCapability'>, 'context'>,
-) => buildStandardExecutiveViews({ ...args, viewName: 'allExecutiveCapabilities' });
+) => buildStandardExecutiveViews('allExecutiveCapabilities', args);
 
 export const computeStandardExecutiveCareerExperienceViews = (
   args: Omit<CreateStandardViewArgs<'executiveCareerExperience'>, 'context'>,
-) => buildStandardExecutiveViews({ ...args, viewName: 'allExecutiveCareerExperiences' });
+) => buildStandardExecutiveViews('allExecutiveCareerExperiences', args);
 
 export const computeStandardExecutiveEducationViews = (
   args: Omit<CreateStandardViewArgs<'executiveEducation'>, 'context'>,
-) => buildStandardExecutiveViews({ ...args, viewName: 'allExecutiveEducations' });
+) => buildStandardExecutiveViews('allExecutiveEducations', args);
 
 export const computeStandardExecutiveExternalProfileViews = (
   args: Omit<CreateStandardViewArgs<'executiveExternalProfile'>, 'context'>,
-) => buildStandardExecutiveViews({ ...args, viewName: 'allExecutiveExternalProfiles' });
+) => buildStandardExecutiveViews('allExecutiveExternalProfiles', args);
 
 export const computeStandardExecutiveLanguageViews = (
   args: Omit<CreateStandardViewArgs<'executiveLanguage'>, 'context'>,
-) => buildStandardExecutiveViews({ ...args, viewName: 'allExecutiveLanguages' });
+) => buildStandardExecutiveViews('allExecutiveLanguages', args);
 
 export const computeStandardExecutiveProfileViews = (
   args: Omit<CreateStandardViewArgs<'executiveProfile'>, 'context'>,
-) => buildStandardExecutiveViews({ ...args, viewName: 'allExecutiveProfiles' });
+) => buildStandardExecutiveViews('allExecutiveProfiles', args);
 
 export const computeStandardExecutiveSearchPreferenceViews = (
   args: Omit<CreateStandardViewArgs<'executiveSearchPreference'>, 'context'>,
-) => buildStandardExecutiveViews({ ...args, viewName: 'allExecutiveSearchPreferences' });
+) => buildStandardExecutiveViews('allExecutiveSearchPreferences', args);
