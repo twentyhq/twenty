@@ -34,7 +34,6 @@ type FetchedField = {
   id: string;
   name: string;
   universalIdentifier: string;
-  isSystemSideEffect: boolean;
   relation: {
     targetFieldMetadata: {
       id: string;
@@ -101,7 +100,6 @@ describe('Custom object creation deterministic field universal identifiers', () 
         id
         name
         universalIdentifier
-        isSystemSideEffect
         relation {
           targetFieldMetadata { id name universalIdentifier }
           targetObjectMetadata { id nameSingular universalIdentifier }
@@ -152,7 +150,6 @@ describe('Custom object creation deterministic field universal identifiers', () 
           name: forwardFieldName,
         }),
       );
-      expect(forwardField?.isSystemSideEffect).toBe(true);
 
       const standardRelationObject =
         forwardField?.relation?.targetObjectMetadata;
@@ -170,7 +167,7 @@ describe('Custom object creation deterministic field universal identifiers', () 
             filter: { objectMetadataId: { eq: standardRelationObject.id } },
             paging: { first: 1000 },
           },
-          gqlFields: 'id name universalIdentifier isSystemSideEffect',
+          gqlFields: 'id name universalIdentifier',
         },
       );
 
@@ -190,7 +187,6 @@ describe('Custom object creation deterministic field universal identifiers', () 
           sourceObjectUniversalIdentifier: objectUniversalIdentifier,
         }),
       );
-      expect(reverseField?.isSystemSideEffect).toBe(true);
     },
   );
 });

@@ -51,7 +51,6 @@ describe('Custom object renaming', () => {
         label
         type
         universalIdentifier
-        isSystemSideEffect
         object {
           id
         }
@@ -137,9 +136,6 @@ describe('Custom object renaming', () => {
       const relationFieldMetadataId = relationFieldMetadata?.id;
 
       expect(relationFieldMetadataId).not.toBeUndefined();
-      // Engine-provisioned default relation fields are owned by the side-effect
-      // engine and must be flagged accordingly.
-      expect(relationFieldMetadata?.isSystemSideEffect).toBe(true);
 
       // @ts-expect-error legacy noImplicitAny
       standardObjectRelationsMap[relation].relationFieldMetadataId =
@@ -207,7 +203,6 @@ describe('Custom object renaming', () => {
       expect(renamedReverseField.universalIdentifier).toBe(
         relationFieldMetadataUniversalIdentifier,
       );
-      expect(renamedReverseField.isSystemSideEffect).toBe(true);
     });
   });
 

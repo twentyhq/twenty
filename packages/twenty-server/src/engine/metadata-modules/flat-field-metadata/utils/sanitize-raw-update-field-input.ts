@@ -14,6 +14,7 @@ import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-mod
 import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { computeMetadataOverridesBlob } from 'src/engine/metadata-modules/utils/compute-metadata-overrides-blob.util';
@@ -28,10 +29,15 @@ export const sanitizeRawUpdateFieldInput = ({
   rawUpdateFieldInput,
   isSystemBuild,
 }: SanitizeRawUpdateFieldInputArgs) => {
-  // Engine-owned side effects (e.g. default relation fields to standard objects)
-  // are managed by the metadata side-effect engine; renames flow through the
-  // owning object update, never through a direct field update by the user.
-  if (existingFlatFieldMetadata.isSystemSideEffect === true && !isSystemBuild) {
+  // Engine-owned default relation fields to standard objects are provisioned and
+  // maintained by the metadata side-effect engine; renames flow through the
+  // owning object update, never through a direct field update by the user. Other
+  // system-side-effect fields (e.g. deletedAt, searchVector) remain user-toggleable.
+  if (
+    existingFlatFieldMetadata.isSystemSideEffect === true &&
+    isMorphOrRelationFlatFieldMetadata(existingFlatFieldMetadata) &&
+    !isSystemBuild
+  ) {
     throw new FieldMetadataException(
       `Cannot edit system-managed field "${existingFlatFieldMetadata.name}"`,
       FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
