@@ -2908,11 +2908,6 @@ msgstr "Elérhető modellek"
 msgid "Available tools"
 msgstr "Elérhető eszközök"
 
-#. js-lingui-id: YzokLS
-#: src/modules/object-record/record-show/hooks/usePersonAvatarUpload.ts
-msgid "Avatar file field not found for person object"
-msgstr "A személy objektumnál nem található az avatar fájlmező"
-
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts

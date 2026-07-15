@@ -2908,11 +2908,6 @@ msgstr "Modelos disponíveis"
 msgid "Available tools"
 msgstr "Ferramentas disponíveis"
 
-#. js-lingui-id: YzokLS
-#: src/modules/object-record/record-show/hooks/usePersonAvatarUpload.ts
-msgid "Avatar file field not found for person object"
-msgstr "Campo de arquivo do avatar não encontrado para o objeto Pessoa"
-
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts

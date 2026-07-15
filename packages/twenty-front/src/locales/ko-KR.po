@@ -2908,11 +2908,6 @@ msgstr "사용 가능한 모델"
 msgid "Available tools"
 msgstr "사용 가능한 도구"
 
-#. js-lingui-id: YzokLS
-#: src/modules/object-record/record-show/hooks/usePersonAvatarUpload.ts
-msgid "Avatar file field not found for person object"
-msgstr "사람 개체에서 아바타 파일 필드를 찾을 수 없습니다"
-
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
