@@ -68,7 +68,10 @@ export class DirectusMockServer {
     this.fixtures = fixtures;
   }
 
-  private handleRequest(req: http.IncomingMessage, res: http.ServerResponse): void {
+  private handleRequest(
+    req: http.IncomingMessage,
+    res: http.ServerResponse,
+  ): void {
     const url = req.url || '/';
     const method = req.method || 'GET';
 
@@ -77,7 +80,12 @@ export class DirectusMockServer {
       res.writeHead(429, { 'Content-Type': 'application/json' });
       res.end(
         JSON.stringify({
-          errors: [{ message: 'Too Many Requests', extensions: { code: 'RATE_LIMITED' } }],
+          errors: [
+            {
+              message: 'Too Many Requests',
+              extensions: { code: 'RATE_LIMITED' },
+            },
+          ],
         }),
       );
       return;
@@ -86,24 +94,35 @@ export class DirectusMockServer {
     // Simulate server error
     if (this.fixtures.serverError) {
       res.writeHead(500, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ errors: [{ message: 'Internal Server Error' }] }));
+      res.end(
+        JSON.stringify({ errors: [{ message: 'Internal Server Error' }] }),
+      );
       return;
     }
 
     // Auth login
     if (url === '/auth/login' && method === 'POST') {
-      this.collectBody(req).then(() => {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(
-          JSON.stringify({
-            data: {
-              accessToken: 'mock-token-' + Date.now(),
-              expires: 900000,
-              refreshToken: 'mock-refresh',
-            },
-          }),
-        );
-      });
+      this.collectBody(req)
+        .then(() => {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(
+            JSON.stringify({
+              data: {
+                accessToken: 'mock-token-' + Date.now(),
+                expires: 900000,
+                refreshToken: 'mock-refresh',
+              },
+            }),
+          );
+        })
+        .catch(() => {
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(
+            JSON.stringify({
+              errors: [{ message: 'Internal Server Error' }],
+            }),
+          );
+        });
       return;
     }
 

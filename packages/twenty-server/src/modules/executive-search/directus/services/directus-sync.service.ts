@@ -108,6 +108,7 @@ export class DirectusSyncService {
       });
 
       if (checkpoint) {
+        // TwentyORM workspace-scoped repository update expects plain values
         await repository.update(checkpoint.id, {
           lastExternalEventId: fingerprintJson,
           lastExternalEventTimestamp: fingerprint.capturedAt,
