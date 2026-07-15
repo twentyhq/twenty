@@ -512,7 +512,6 @@ describe('FileStorageService', () => {
             ['path', 'workspaceId', 'applicationId'],
           );
         });
-
       });
 
       describe('magic-byte backstop', () => {
