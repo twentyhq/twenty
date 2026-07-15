@@ -27,8 +27,8 @@ export const listScheduledRecallBots = async ({
   joinAtBefore,
   metadata,
 }: {
-  joinAtAfter: string;
-  joinAtBefore: string;
+  joinAtAfter?: string;
+  joinAtBefore?: string;
   metadata?: Record<string, string>;
 }): Promise<ListScheduledRecallBotsResult> => {
   const configResult = getRecallApiConfig();
@@ -38,10 +38,15 @@ export const listScheduledRecallBots = async ({
   }
 
   const bots: RecallScheduledBot[] = [];
-  const searchParameters = new URLSearchParams({
-    join_at_after: joinAtAfter,
-    join_at_before: joinAtBefore,
-  });
+  const searchParameters = new URLSearchParams();
+
+  if (!isUndefined(joinAtAfter)) {
+    searchParameters.set('join_at_after', joinAtAfter);
+  }
+
+  if (!isUndefined(joinAtBefore)) {
+    searchParameters.set('join_at_before', joinAtBefore);
+  }
 
   Object.entries(metadata ?? {}).forEach(([key, value]) => {
     searchParameters.set(`metadata__${key}`, value);

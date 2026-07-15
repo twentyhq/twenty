@@ -12,8 +12,8 @@ export const findScheduledRecallBotIdForCallRecording = async ({
 }: {
   callRecordingId: string;
   workspaceId: string;
-  joinAtAfter: string;
-  joinAtBefore: string;
+  joinAtAfter?: string;
+  joinAtBefore?: string;
 }): Promise<FindScheduledRecallBotIdResult> => {
   const listResult = await listScheduledRecallBots({
     joinAtAfter,

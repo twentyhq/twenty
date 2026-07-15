@@ -30,6 +30,7 @@ type CalendarEventNode = {
 
 class FakeCoreApiClient {
   callRecordings: CallRecordingNode[];
+  callRecordingQueryResponses: CallRecordingNode[][] = [];
   calendarEvents: CalendarEventNode[];
   filters: Array<Record<string, unknown>> = [];
   mutations: Array<{ id: string; data: Record<string, unknown> }> = [];
@@ -47,7 +48,9 @@ class FakeCoreApiClient {
       this.filters.push(query.callRecordings.__args.filter);
 
       return {
-        callRecordings: buildConnection(this.callRecordings),
+        callRecordings: buildConnection(
+          this.callRecordingQueryResponses.shift() ?? this.callRecordings,
+        ),
       };
     }
 
@@ -70,6 +73,13 @@ class FakeCoreApiClient {
     const { id, data } = mutation.updateCallRecording.__args;
 
     this.mutations.push({ id, data });
+    const callRecording = this.callRecordings.find(
+      (candidateCallRecording) => candidateCallRecording.id === id,
+    );
+
+    if (callRecording !== undefined) {
+      Object.assign(callRecording, data);
+    }
 
     return { updateCallRecording: { id } };
   }
@@ -178,6 +188,32 @@ describe('retryFailedRecallCancellations', () => {
     expect(result.canceledExternalBotCallRecordingIds).toEqual([]);
   });
 
+  it('does not cancel a bot after its request was reactivated', async () => {
+    const canceledCallRecording = {
+      id: 'call-recording-1',
+      recordingRequestStatus: 'CANCELED',
+      status: 'SCHEDULED',
+      externalBotId: 'recall-bot-1',
+    };
+    const client = new FakeCoreApiClient([canceledCallRecording]);
+    client.callRecordingQueryResponses = [
+      [canceledCallRecording],
+      [
+        {
+          ...canceledCallRecording,
+          recordingRequestStatus: 'REQUESTED',
+        },
+      ],
+    ];
+
+    await retryFailedRecallCancellations({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it('recovers and cancels a provider bot when its id write-back was lost before local cancellation', async () => {
     const client = new FakeCoreApiClient(
       [
@@ -256,6 +292,37 @@ describe('retryFailedRecallCancellations', () => {
     expect(result.canceledExternalBotCallRecordingIds).toEqual([
       'call-recording-1',
     ]);
+  });
+
+  it('recovers a bot by metadata after its calendar event was deleted', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        recordingRequestStatus: 'CANCELED',
+        status: 'SCHEDULED',
+        calendarEventId: 'deleted-calendar-event',
+        externalBotId: null,
+      },
+    ]);
+    fetchMock
+      .mockResolvedValueOnce({
+        ...buildJsonResponse(200),
+        json: async () => ({
+          next: null,
+          results: [{ id: 'recall-bot-recovered' }],
+        }),
+      })
+      .mockResolvedValueOnce(buildJsonResponse(204));
+
+    await retryFailedRecallCancellations({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      `${BASE_URL}/bot/recall-bot-recovered/`,
+      expect.objectContaining({ method: 'DELETE' }),
+    );
   });
 
   it('does not repeatedly look up botless cancellations after their meeting ended', async () => {
