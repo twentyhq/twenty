@@ -137,7 +137,7 @@ const StyledRecordChipContainer = styled.div`
 `;
 
 const StyledCompactEventStartTime = styled.span`
-  color: ${themeCssVariables.font.color.primary};
+  color: ${themeCssVariables.font.color.tertiary};
   flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.xxs};
   font-weight: ${themeCssVariables.font.weight.medium};
@@ -252,8 +252,7 @@ export const RecordCalendarWeekEvent = ({
   const isCompactTimedEvent =
     !isAllDay &&
     heightInPixels < RECORD_CALENDAR_WEEK_EVENT_EXPANDED_MIN_HEIGHT;
-  const expandedEventTime =
-    columnCount > 1 ? eventTimes?.startTime : eventTimes?.timeRange;
+  const expandedEventTime = eventTimes?.timeRange;
 
   return (
     <StyledEventPositioner
