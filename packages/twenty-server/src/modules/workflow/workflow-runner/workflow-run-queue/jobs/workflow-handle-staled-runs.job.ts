@@ -1,4 +1,4 @@
-import { Logger, Scope } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -11,8 +11,6 @@ export type WorkflowHandleStaledRunsJobData = {
 
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class WorkflowHandleStaledRunsJob {
-  private readonly logger = new Logger(WorkflowHandleStaledRunsJob.name);
-
   constructor(
     private readonly workflowHandleStaledRunsWorkspaceService: WorkflowHandleStaledRunsWorkspaceService,
   ) {}
@@ -21,26 +19,12 @@ export class WorkflowHandleStaledRunsJob {
   async handle({
     workspaceId,
   }: WorkflowHandleStaledRunsJobData): Promise<void> {
-    try {
-      await this.workflowHandleStaledRunsWorkspaceService.handleStaledRunsForWorkspace(
-        workspaceId,
-      );
-    } catch (error) {
-      this.logger.error(
-        `Failed to handle staled runs for workspace ${workspaceId}`,
-        error,
-      );
-    }
+    await this.workflowHandleStaledRunsWorkspaceService.handleStaledRunsForWorkspace(
+      workspaceId,
+    );
 
-    try {
-      await this.workflowHandleStaledRunsWorkspaceService.handleStuckStoppingRunsForWorkspace(
-        workspaceId,
-      );
-    } catch (error) {
-      this.logger.error(
-        `Failed to handle stuck stopping runs for workspace ${workspaceId}`,
-        error,
-      );
-    }
+    await this.workflowHandleStaledRunsWorkspaceService.handleStuckStoppingRunsForWorkspace(
+      workspaceId,
+    );
   }
 }

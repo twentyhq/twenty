@@ -79,8 +79,6 @@ export class WorkflowHandleStaledRunsWorkspaceService {
   async handleStuckStoppingRunsForWorkspace(workspaceId: string) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    // Collect all the ids first, then finalize them. We don't finalize while
-    // paging so that a run whose finalization fails can't block the next page.
     const stuckStoppingRunIds =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
