@@ -41,4 +41,17 @@ export const buildExternalSyncOutboxStandardFlatIndexMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  domainIdempotencyKeyUniqueIndex: createStandardIndexFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      indexName: 'domainIdempotencyKeyUniqueIndex',
+      relatedFieldNames: ['domainIdempotencyKey'],
+      isUnique: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 });
