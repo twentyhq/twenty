@@ -69,7 +69,11 @@ type RenameRelatedMorphFieldOnObjectNamesUpdateArgs = FromTo<
   Pick<
     AllFlatEntityMaps,
     'flatFieldMetadataMaps' | 'flatObjectMetadataMaps' | 'flatIndexMaps'
-  >;
+  > & {
+    shouldRenameMorphFlatFieldMetadata?: (
+      morphFlatFieldMetadata: UniversalFlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
+    ) => boolean;
+  };
 
 type RenameRelatedMorphFieldOnObjectNamesUpdateReturnType = {
   morphFlatFieldMetadatasToUpdate: UniversalFlatFieldMetadata<FieldMetadataType.MORPH_RELATION>[];
@@ -81,6 +85,7 @@ export const renameRelatedMorphFieldOnObjectNamesUpdate = ({
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
   flatIndexMaps,
+  shouldRenameMorphFlatFieldMetadata,
 }: RenameRelatedMorphFieldOnObjectNamesUpdateArgs): RenameRelatedMorphFieldOnObjectNamesUpdateReturnType => {
   const objectFlatFieldMetadatas =
     findManyFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -92,7 +97,10 @@ export const renameRelatedMorphFieldOnObjectNamesUpdate = ({
     getFlatObjectMetadataTargetMorphRelationFlatFieldMetadatasOrThrow({
       flatFieldMetadataMaps,
       objectFlatFieldMetadatas,
-    });
+    }).filter(
+      (morphFlatFieldMetadata) =>
+        shouldRenameMorphFlatFieldMetadata?.(morphFlatFieldMetadata) ?? true,
+    );
 
   const initialAccumulator: RenameRelatedMorphFieldOnObjectNamesUpdateReturnType =
     {

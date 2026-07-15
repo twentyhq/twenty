@@ -44,6 +44,11 @@ export const handleFlatObjectMetadataUpdateSideEffect = ({
   fromFlatObjectMetadata,
   toFlatObjectMetadata,
 }: HandleFlatObjectMetadataUpdateSideEffectArgs): FlatObjectMetadataUpdateSideEffects => {
+  // isSystemSideEffect morph fields (reverse fields of the default relations to
+  // standard objects) are engine-owned: the objectSystemRelationsOnUpdate
+  // side-effect handler renames them so the behaviour is uniform across the API
+  // and manifest-sync paths. The transpiler only renames the remaining
+  // user-authored morph relations.
   const { morphRelatedFlatIndexesToUpdate, morphFlatFieldMetadatasToUpdate } =
     fromFlatObjectMetadata.nameSingular !== toFlatObjectMetadata.nameSingular ||
     fromFlatObjectMetadata.namePlural !== toFlatObjectMetadata.namePlural
@@ -53,6 +58,8 @@ export const handleFlatObjectMetadataUpdateSideEffect = ({
           toFlatObjectMetadata,
           flatObjectMetadataMaps,
           flatIndexMaps,
+          shouldRenameMorphFlatFieldMetadata: (morphFlatFieldMetadata) =>
+            morphFlatFieldMetadata.isSystemSideEffect !== true,
         })
       : {
           morphRelatedFlatIndexesToUpdate: [],
