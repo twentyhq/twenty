@@ -30,6 +30,12 @@ export type ResourceIdentifier = {
   resourcePath: string;
 };
 
+type WriteFileParams = ResourceIdentifier & {
+  sourceFile: string | Buffer | Uint8Array;
+  fileId?: string;
+  settings: FileSettings;
+};
+
 @Injectable()
 export class FileStorageService {
   constructor(
@@ -173,6 +179,18 @@ export class FileStorageService {
     };
   }
 
+  async writeFile(
+    params: WriteFileParams & {
+      applicationId: string;
+      queryRunner?: QueryRunner;
+    },
+  ): Promise<FileEntity>;
+  async writeFile(
+    params: WriteFileParams & {
+      applicationId?: undefined;
+      queryRunner?: undefined;
+    },
+  ): Promise<FileEntity>;
   async writeFile({
     sourceFile,
     fileFolder,
@@ -183,18 +201,11 @@ export class FileStorageService {
     fileId,
     settings,
     queryRunner,
-  }: ResourceIdentifier & {
-    sourceFile: string | Buffer | Uint8Array;
+  }: WriteFileParams & {
     applicationId?: string;
-    fileId?: string;
-    settings: FileSettings;
     queryRunner?: QueryRunner;
   }): Promise<FileEntity> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    const fileRepository = queryRunner
-      ? this.fileRepository.withManager(queryRunner.manager)
-      : this.fileRepository;
 
     const resolvedApplicationId =
       applicationId ??
@@ -202,6 +213,10 @@ export class FileStorageService {
         applicationUniversalIdentifier,
         workspaceId,
       }));
+
+    const fileRepository = isDefined(queryRunner)
+      ? this.fileRepository.withManager(queryRunner.manager)
+      : this.fileRepository;
 
     const { onStorageFilePath, filePath } =
       this.validateAndBuildFileStoragePathOrThrow({

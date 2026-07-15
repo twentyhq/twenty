@@ -487,7 +487,7 @@ describe('FileStorageService', () => {
           );
         });
 
-        it('should use the queryRunner only for the file write, not for resolving the application', async () => {
+        it('should use the passed applicationId and write through the queryRunner without consulting the cache', async () => {
           const queryRunner = { manager: {} };
 
           mockFileRepository.withManager.mockReturnValue(mockFileRepository);
@@ -512,6 +512,7 @@ describe('FileStorageService', () => {
             ['path', 'workspaceId', 'applicationId'],
           );
         });
+
       });
 
       describe('magic-byte backstop', () => {
