@@ -96,7 +96,7 @@ export class WorkflowHandleStaledRunsWorkspaceService {
             page = await workflowRunRepository.find({
               where: getStuckStoppingRunsFindOptions(),
               select: { id: true },
-              order: { createdAt: 'ASC' },
+              order: { createdAt: 'ASC', id: 'ASC' },
               take: QUERY_MAX_RECORDS,
               skip: runIds.length,
             });
