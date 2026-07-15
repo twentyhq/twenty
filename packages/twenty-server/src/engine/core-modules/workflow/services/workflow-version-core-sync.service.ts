@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4, v5 as uuidv5 } from 'uuid';
 
 import {
   WorkflowVersionEntity,
@@ -16,6 +16,12 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+
+// Deriving the core id deterministically from workspaceId + record id makes the
+// upsert idempotent across retries: a failed write-back re-derives the same id
+// instead of orphaning a row or hitting the one-active-per-workflow index.
+const CORE_WORKFLOW_VERSION_ID_NAMESPACE =
+  'f4988927-0a5c-453a-a262-0bd136d7fdaf';
 
 @Injectable()
 export class WorkflowVersionCoreSyncService {
@@ -42,7 +48,11 @@ export class WorkflowVersionCoreSyncService {
 
     const coreRows = workflowVersions.map((workflowVersion) => {
       const coreWorkflowVersionId =
-        workflowVersion.coreWorkflowVersionId ?? uuidv4();
+        workflowVersion.coreWorkflowVersionId ??
+        uuidv5(
+          `${workspaceId}:${workflowVersion.id}`,
+          CORE_WORKFLOW_VERSION_ID_NAMESPACE,
+        );
 
       if (!isDefined(workflowVersion.coreWorkflowVersionId)) {
         coreVersionIdByWorkspaceRecordId.set(
