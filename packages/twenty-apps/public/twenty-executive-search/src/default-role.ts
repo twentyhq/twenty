@@ -5,7 +5,9 @@ import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/constants/default-role-un
 
 import {
   ASSIGNMENT_TEAM_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER,
+  POSITION_SPECIFICATION_OBJECT_UNIVERSAL_IDENTIFIER,
   SEARCH_ASSIGNMENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  SEARCH_CRITERION_OBJECT_UNIVERSAL_IDENTIFIER,
   SEARCH_ENGAGEMENT_TERMS_OBJECT_UNIVERSAL_IDENTIFIER,
   SEARCH_MILESTONE_OBJECT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
@@ -56,6 +58,22 @@ export default defineApplicationRole({
     {
       objectUniversalIdentifier:
         SEARCH_MILESTONE_OBJECT_UNIVERSAL_IDENTIFIER,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+    {
+      objectUniversalIdentifier:
+        POSITION_SPECIFICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+    {
+      objectUniversalIdentifier:
+        SEARCH_CRITERION_OBJECT_UNIVERSAL_IDENTIFIER,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,

@@ -50,7 +50,7 @@ describe('application-config validation', () => {
     const permissions = result.config.objectPermissions;
     expect(permissions).toBeDefined();
     if (permissions) {
-      expect(permissions).toHaveLength(4);
+      expect(permissions).toHaveLength(6);
       for (const perm of permissions) {
         expect(perm.canReadObjectRecords).toBe(true);
         expect(perm.canUpdateObjectRecords).toBe(true);

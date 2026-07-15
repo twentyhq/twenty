@@ -1,0 +1,72 @@
+import { defineView, ViewKey } from 'twenty-sdk/define';
+
+import {
+  SEARCH_CRITERIA_VIEW_CATEGORY_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_CRITERIA_VIEW_CRITERION_TYPE_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_CRITERIA_VIEW_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_CRITERIA_VIEW_POSITION_SPECIFICATION_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_CRITERIA_VIEW_UNIVERSAL_IDENTIFIER,
+  SEARCH_CRITERIA_VIEW_WEIGHT_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_CRITERION_CATEGORY_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_CRITERION_CRITERION_TYPE_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_CRITERION_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_CRITERION_OBJECT_UNIVERSAL_IDENTIFIER,
+  SEARCH_CRITERION_POSITION_SPECIFICATION_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_CRITERION_WEIGHT_FIELD_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+
+export default defineView({
+  universalIdentifier: SEARCH_CRITERIA_VIEW_UNIVERSAL_IDENTIFIER,
+  name: 'All Search Criteria',
+  objectUniversalIdentifier: SEARCH_CRITERION_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconListCheck',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier:
+        SEARCH_CRITERIA_VIEW_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        SEARCH_CRITERION_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 240,
+    },
+    {
+      universalIdentifier:
+        SEARCH_CRITERIA_VIEW_POSITION_SPECIFICATION_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        SEARCH_CRITERION_POSITION_SPECIFICATION_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 1,
+      isVisible: true,
+      size: 200,
+    },
+    {
+      universalIdentifier:
+        SEARCH_CRITERIA_VIEW_CATEGORY_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        SEARCH_CRITERION_CATEGORY_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 2,
+      isVisible: true,
+      size: 150,
+    },
+    {
+      universalIdentifier:
+        SEARCH_CRITERIA_VIEW_CRITERION_TYPE_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        SEARCH_CRITERION_CRITERION_TYPE_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 3,
+      isVisible: true,
+      size: 160,
+    },
+    {
+      universalIdentifier:
+        SEARCH_CRITERIA_VIEW_WEIGHT_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        SEARCH_CRITERION_WEIGHT_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 4,
+      isVisible: true,
+      size: 140,
+    },
+  ],
+});
