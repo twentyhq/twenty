@@ -2,25 +2,18 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { lastLoadedRecordTableWidgetViewIdComponentState } from '@/object-record/record-table-widget/states/lastLoadedRecordTableWidgetViewIdComponentState';
 import { computeRecordTableWidgetViewLoadContentSignature } from '@/object-record/record-table-widget/utils/computeRecordTableWidgetViewLoadContentSignature';
-import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
-import { recordTableWidgetViewDraftByWidgetIdComponentFamilySelector } from '@/page-layout/states/selectors/recordTableWidgetViewDraftByWidgetIdComponentFamilySelector';
-import { constructViewFromRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/constructViewFromRecordTableWidgetViewSnapshot';
-import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { RecordTableWidgetViewContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetViewContext';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableWidgetViewLoadEffectProps = {
   viewId: string;
-  widgetId: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
 };
 
 export const RecordTableWidgetViewLoadEffect = ({
   viewId,
-  widgetId,
   objectMetadataItem,
 }: RecordTableWidgetViewLoadEffectProps) => {
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
@@ -30,24 +23,9 @@ export const RecordTableWidgetViewLoadEffect = ({
     setLastLoadedRecordTableWidgetViewId,
   ] = useAtomComponentState(lastLoadedRecordTableWidgetViewIdComponentState);
 
-  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
-
-  const draftSnapshot = useAtomComponentFamilySelectorValue(
-    recordTableWidgetViewDraftByWidgetIdComponentFamilySelector,
-    { widgetId },
-  );
-
-  const viewFromDraft =
-    isPageLayoutInEditMode && isDefined(draftSnapshot)
-      ? constructViewFromRecordTableWidgetViewSnapshot(draftSnapshot)
-      : undefined;
-
-  const viewFromSelector = useAtomFamilySelectorValue(
-    viewFromViewIdFamilySelector,
-    { viewId },
-  );
-
-  const currentView = viewFromDraft ?? viewFromSelector;
+  const { currentView } = useContext(RecordTableWidgetViewContext) ?? {
+    currentView: undefined,
+  };
 
   const viewHasFields =
     isDefined(currentView) && currentView.viewFields.length > 0;
