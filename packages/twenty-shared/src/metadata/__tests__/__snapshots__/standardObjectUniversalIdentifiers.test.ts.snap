@@ -955,6 +955,752 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
   },
+  "executiveArtifact": {
+    "fields": {
+      "createdAt": {
+        "universalIdentifier": "d4da653b-fb42-576c-9b94-c61bce4ae27d",
+      },
+      "createdBy": {
+        "universalIdentifier": "24c791e5-af8e-53d4-8ea2-fa7463c1f344",
+      },
+      "deletedAt": {
+        "universalIdentifier": "d95017f8-cb86-5004-8a77-5e943969eb07",
+      },
+      "description": {
+        "universalIdentifier": "f2114eb5-64c3-47e2-a9c2-5b205a765eea",
+      },
+      "executiveProfile": {
+        "universalIdentifier": "12302a27-5ddb-48c1-8297-759a3c6a48cf",
+      },
+      "externalUrl": {
+        "universalIdentifier": "850c74b8-c272-4229-86ba-cf0ac022a814",
+      },
+      "file": {
+        "universalIdentifier": "20bbf584-5eaa-457f-b4fc-790fec2fa868",
+      },
+      "id": {
+        "universalIdentifier": "46829377-fcb3-5079-8c82-96acf3d00630",
+      },
+      "position": {
+        "universalIdentifier": "3bb3dae0-398d-5a33-9ea5-8f5ed07ce22f",
+      },
+      "searchVector": {
+        "universalIdentifier": "fb77fa40-9926-5125-a658-57d253b87b2b",
+      },
+      "sourceHash": {
+        "universalIdentifier": "bf5eb252-9b0f-4499-a1bc-ccc50dce677e",
+      },
+      "sourceUpdatedAt": {
+        "universalIdentifier": "406d435f-6850-4bb3-8f25-7720ef9d6a59",
+      },
+      "title": {
+        "universalIdentifier": "e9992628-3d9b-46f5-bc55-17425800d010",
+      },
+      "type": {
+        "universalIdentifier": "3bf98426-7497-4b15-8bf2-dec2556e943a",
+      },
+      "updatedAt": {
+        "universalIdentifier": "47fe33f1-e3ef-507c-a73c-b43f5cff0bac",
+      },
+      "updatedBy": {
+        "universalIdentifier": "7217fd41-6196-544e-b76d-2d2a84dff4fa",
+      },
+      "version": {
+        "universalIdentifier": "e1dbd025-3cc5-4532-b2e6-8c3546827529",
+      },
+      "visibility": {
+        "universalIdentifier": "7da8bbd3-d1fb-4f76-9c0d-76d7264e6a60",
+      },
+    },
+    "indexes": {
+      "executiveProfileIdIndex": {
+        "universalIdentifier": "7754853d-c8ef-4e02-be72-450e07affa17",
+      },
+    },
+    "universalIdentifier": "46f80f0a-d4b6-4bb8-92bc-4e5e30dbf999",
+    "views": {
+      "allExecutiveArtifacts": {
+        "universalIdentifier": "e088a077-6a12-4e0c-aea6-bb40d3980af3",
+        "viewFields": {
+          "executiveProfile": {
+            "universalIdentifier": "7ca64b59-b4b1-4a4b-9fe6-66b02a4934a7",
+          },
+          "title": {
+            "universalIdentifier": "c014c442-2be2-4656-b154-eba1cafd93ec",
+          },
+          "type": {
+            "universalIdentifier": "4fc466fb-e033-4ae7-a6a2-50bd7b261cb9",
+          },
+        },
+      },
+    },
+  },
+  "executiveAward": {
+    "fields": {
+      "createdAt": {
+        "universalIdentifier": "b423cb94-cf43-5fcd-9d5e-3c2de836359d",
+      },
+      "createdBy": {
+        "universalIdentifier": "c5e6e268-630a-59ce-ac4f-e617850a1035",
+      },
+      "dateReceived": {
+        "universalIdentifier": "e67e3952-ad99-42d8-b3d8-2a28277dfc68",
+      },
+      "deletedAt": {
+        "universalIdentifier": "1011e952-8157-56e0-b217-f642f251a18c",
+      },
+      "description": {
+        "universalIdentifier": "963aa29e-5029-410c-b9b9-6857c17fdd7e",
+      },
+      "executiveProfile": {
+        "universalIdentifier": "d8a8942b-d261-465f-b0aa-3f129e3bc95d",
+      },
+      "id": {
+        "universalIdentifier": "a25d9abd-f1e4-581a-b72e-1f0bc2bd0e7c",
+      },
+      "issuer": {
+        "universalIdentifier": "93c8ff01-a4f1-4066-85cf-8f49ef456abc",
+      },
+      "position": {
+        "universalIdentifier": "3ab11dd6-035a-5612-97bd-b501cf3ecfab",
+      },
+      "searchVector": {
+        "universalIdentifier": "1155e1be-7c9e-5847-9321-0d218c96320a",
+      },
+      "title": {
+        "universalIdentifier": "9a712c89-3396-4072-bc17-83850d7a14e6",
+      },
+      "updatedAt": {
+        "universalIdentifier": "f36ea696-7cba-58d3-bec2-b23478b846a8",
+      },
+      "updatedBy": {
+        "universalIdentifier": "2b8cac0c-2866-5fd5-bc95-97031d0c5ef3",
+      },
+    },
+    "indexes": {
+      "executiveProfileIdIndex": {
+        "universalIdentifier": "615a8ed5-7387-4ae0-9d1c-a4968becb985",
+      },
+    },
+    "universalIdentifier": "cc229997-5392-47cb-b8c6-093092b10821",
+    "views": {
+      "allExecutiveAwards": {
+        "universalIdentifier": "80c5ba90-37a3-4d58-aa14-c7582742bd51",
+        "viewFields": {
+          "executiveProfile": {
+            "universalIdentifier": "f6dfa461-03fb-4ffc-9c87-3b5e8fe6f984",
+          },
+          "issuer": {
+            "universalIdentifier": "75b7f430-ffde-4699-a2e7-37729d6e9ee5",
+          },
+          "title": {
+            "universalIdentifier": "28b41955-e573-486b-8d85-441015012395",
+          },
+        },
+      },
+    },
+  },
+  "executiveBoardService": {
+    "fields": {
+      "boardType": {
+        "universalIdentifier": "166c1941-3794-43b4-9a1a-c45dc255eb72",
+      },
+      "committees": {
+        "universalIdentifier": "7cbd9927-e8f2-444d-9456-6a72834c45a1",
+      },
+      "companyName": {
+        "universalIdentifier": "29a5dda7-0715-46e3-bfac-a48eb94d827c",
+      },
+      "createdAt": {
+        "universalIdentifier": "419b5084-573f-5253-87b8-c668289839cb",
+      },
+      "createdBy": {
+        "universalIdentifier": "7784b420-d6d8-58c3-8bab-b56c4ebeb930",
+      },
+      "deletedAt": {
+        "universalIdentifier": "e448469b-a0e9-51d4-a344-88c8cd6ad585",
+      },
+      "endDate": {
+        "universalIdentifier": "971dc7ff-fcb8-48d2-88b9-06d2b53fe006",
+      },
+      "executiveProfile": {
+        "universalIdentifier": "5b9adcdc-f3f8-408f-87d1-e3a956f42753",
+      },
+      "id": {
+        "universalIdentifier": "9d02ecac-6be0-55c1-980b-e90017abb296",
+      },
+      "isCurrent": {
+        "universalIdentifier": "e2c0271c-4d40-4c6d-ab88-c0556b227c0a",
+      },
+      "isIndependent": {
+        "universalIdentifier": "5ef4af17-6173-48f1-9f3d-6013e8e4b922",
+      },
+      "position": {
+        "universalIdentifier": "af32d3fd-d095-51e7-8dfd-d94a63f6691b",
+      },
+      "role": {
+        "universalIdentifier": "bc3710d9-2ec9-49e5-b733-05074e950c59",
+      },
+      "searchVector": {
+        "universalIdentifier": "eae39d9f-b325-5a73-91cf-ecbaa49e3306",
+      },
+      "startDate": {
+        "universalIdentifier": "ae77d8e0-687d-460b-a550-4985ed909d03",
+      },
+      "ticker": {
+        "universalIdentifier": "68714b8e-8761-482d-9098-33b337a7db5c",
+      },
+      "updatedAt": {
+        "universalIdentifier": "b79ae154-e8c1-58b1-81ba-02b882f0f26d",
+      },
+      "updatedBy": {
+        "universalIdentifier": "804a8496-6a96-5cd7-a304-40b73cfffe7d",
+      },
+    },
+    "indexes": {
+      "executiveProfileIdIndex": {
+        "universalIdentifier": "ab023ed9-c408-4d1e-bf4a-9eb287755171",
+      },
+    },
+    "universalIdentifier": "30b0287e-6681-42c1-94f9-01ed0e06055b",
+    "views": {
+      "allExecutiveBoardServices": {
+        "universalIdentifier": "ec96a0b0-64bc-4689-adfe-b7ea488b938f",
+        "viewFields": {
+          "companyName": {
+            "universalIdentifier": "598d41ec-c6d5-40a1-a582-5b5f49d2c9d2",
+          },
+          "executiveProfile": {
+            "universalIdentifier": "7c991eea-6038-4718-8286-b9a1ce1f5bb9",
+          },
+          "role": {
+            "universalIdentifier": "983b0f7a-8ccc-45ea-a0f8-ac9869d7a5bb",
+          },
+        },
+      },
+    },
+  },
+  "executiveCapability": {
+    "fields": {
+      "category": {
+        "universalIdentifier": "fafe342c-45d7-4562-8978-6cbf40147a41",
+      },
+      "createdAt": {
+        "universalIdentifier": "d8007d6d-d0d5-54a8-85e1-321ca37156f8",
+      },
+      "createdBy": {
+        "universalIdentifier": "42d7eec2-0232-5893-a9e4-c54e17f8c3e0",
+      },
+      "deletedAt": {
+        "universalIdentifier": "ced340ee-7704-5526-a0e1-d56b09702bc3",
+      },
+      "executiveProfile": {
+        "universalIdentifier": "fbadff04-0f83-47d0-a9e7-9e8d334482e3",
+      },
+      "id": {
+        "universalIdentifier": "7700d09f-7d1e-5d48-85fa-b06ef52d92d1",
+      },
+      "name": {
+        "universalIdentifier": "f6d5419b-d9e9-4913-aac4-2d763a6c8eba",
+      },
+      "position": {
+        "universalIdentifier": "fed1c066-af42-51f5-8848-38c7b2e344eb",
+      },
+      "proficiencyLevel": {
+        "universalIdentifier": "039a7e32-b6c9-4a41-870a-6149ef814d90",
+      },
+      "searchVector": {
+        "universalIdentifier": "f05ce0fd-2d16-5013-bb1f-d9f6e770154d",
+      },
+      "source": {
+        "universalIdentifier": "be81885f-786d-44f9-a404-1342f8b915b0",
+      },
+      "updatedAt": {
+        "universalIdentifier": "6579cdf8-fc5f-59b4-8dac-8b15c1995924",
+      },
+      "updatedBy": {
+        "universalIdentifier": "630864d8-3d93-5795-8b92-4fd048f1a983",
+      },
+    },
+    "indexes": {
+      "executiveProfileIdIndex": {
+        "universalIdentifier": "946586fa-0d98-4870-9815-03a7e34182cf",
+      },
+    },
+    "universalIdentifier": "6dd2cb7c-9c30-47ed-bfb6-c8ccb33baaea",
+    "views": {
+      "allExecutiveCapabilities": {
+        "universalIdentifier": "f7b0e940-2471-43bc-9739-74ebb9f5d76b",
+        "viewFields": {
+          "category": {
+            "universalIdentifier": "9241cdd6-642d-4612-9c16-27aaa20606ff",
+          },
+          "executiveProfile": {
+            "universalIdentifier": "3789380b-47b9-4b07-89c8-5c45e7d4aacb",
+          },
+          "name": {
+            "universalIdentifier": "936cd406-0bde-4bc3-97be-f437a787ef52",
+          },
+        },
+      },
+    },
+  },
+  "executiveCareerExperience": {
+    "fields": {
+      "company": {
+        "universalIdentifier": "e24afe6c-4bfe-4cf4-9b1c-37cdc56b4a19",
+      },
+      "createdAt": {
+        "universalIdentifier": "dd2daf34-4f20-5617-8471-e278889b0447",
+      },
+      "createdBy": {
+        "universalIdentifier": "8c1165c5-c53b-57c7-a686-e6ea60ef4dc8",
+      },
+      "deletedAt": {
+        "universalIdentifier": "386c5b2f-f837-58a6-ad1f-6fd72e5c8083",
+      },
+      "description": {
+        "universalIdentifier": "ec5a8a01-fa23-4776-bff4-0d435f375a4c",
+      },
+      "employmentType": {
+        "universalIdentifier": "7bf85b9d-1aa0-4ad7-8bdd-aa8d8dc2a5ed",
+      },
+      "endDate": {
+        "universalIdentifier": "069d770c-107e-44a3-8872-9685a1ff5551",
+      },
+      "executiveProfile": {
+        "universalIdentifier": "9efacd73-d743-48a9-84da-e97276f20cb9",
+      },
+      "id": {
+        "universalIdentifier": "65254d36-e30f-5af8-8446-a8d00539d07b",
+      },
+      "industry": {
+        "universalIdentifier": "2dce0754-1284-4a03-96a6-e3afe847406b",
+      },
+      "isCurrent": {
+        "universalIdentifier": "d8c6bc27-51ef-48ea-b42a-4eaf00ffe33c",
+      },
+      "position": {
+        "universalIdentifier": "96eec590-a106-5f44-881e-939e6bdfe7a2",
+      },
+      "searchVector": {
+        "universalIdentifier": "45bc14e5-707e-5ea8-b16f-23a9b2d523a9",
+      },
+      "startDate": {
+        "universalIdentifier": "08e6a087-f6b5-4d4d-b90e-7ea1aacee6bd",
+      },
+      "title": {
+        "universalIdentifier": "306064f8-dfd4-4219-8f11-8892b799e071",
+      },
+      "updatedAt": {
+        "universalIdentifier": "30a8b80f-dfcc-5756-bbf6-0cb10c3f4425",
+      },
+      "updatedBy": {
+        "universalIdentifier": "90804269-8302-5681-9b73-ac7eba93e2ab",
+      },
+    },
+    "indexes": {
+      "executiveProfileIdIndex": {
+        "universalIdentifier": "ef6c772c-a320-4fa3-9ee0-1cbbd0a83a74",
+      },
+    },
+    "universalIdentifier": "190293c9-19bb-4bce-a532-90f82606cee0",
+    "views": {
+      "allExecutiveCareerExperiences": {
+        "universalIdentifier": "04f0c494-770a-41e2-8eec-2fa6f7d16758",
+        "viewFields": {
+          "company": {
+            "universalIdentifier": "f06502a3-970c-4be1-8dca-d18bf92cd6c9",
+          },
+          "executiveProfile": {
+            "universalIdentifier": "a4e32275-7e73-4d62-997e-fa9abc6a37e1",
+          },
+          "title": {
+            "universalIdentifier": "1eb36b0d-8436-4762-9a22-aee0d43ecbda",
+          },
+        },
+      },
+    },
+  },
+  "executiveEducation": {
+    "fields": {
+      "createdAt": {
+        "universalIdentifier": "09f22dfd-e43e-532b-8ddf-44cabcaa413d",
+      },
+      "createdBy": {
+        "universalIdentifier": "84f06e6f-490c-50eb-938c-fe1cab83e67a",
+      },
+      "degree": {
+        "universalIdentifier": "b2dfb62b-f70f-4495-9c77-e29358a2ba1f",
+      },
+      "deletedAt": {
+        "universalIdentifier": "179d4d31-7992-5952-a29e-92c667e7bdc4",
+      },
+      "endDate": {
+        "universalIdentifier": "5044787f-2fbb-4728-8d9f-2bcc4d1a2533",
+      },
+      "executiveProfile": {
+        "universalIdentifier": "46116daf-edea-4322-9345-cdee35f510ff",
+      },
+      "fieldOfStudy": {
+        "universalIdentifier": "e767fd53-15d3-4cf4-ab4e-41e97310ac59",
+      },
+      "id": {
+        "universalIdentifier": "6977d9fa-b752-5fea-a983-1f333629dd69",
+      },
+      "institution": {
+        "universalIdentifier": "f645863d-a183-4673-afca-3ba6144c8d54",
+      },
+      "isVerified": {
+        "universalIdentifier": "fd68a310-30c3-438f-93ec-2f67e4bd4ebf",
+      },
+      "position": {
+        "universalIdentifier": "0ac97356-f2c8-5186-9999-f7972a204611",
+      },
+      "searchVector": {
+        "universalIdentifier": "3981553a-d159-5453-ba7a-8fdc10765f2d",
+      },
+      "startDate": {
+        "universalIdentifier": "b6b86738-823f-453b-9ece-82eb8a5b883d",
+      },
+      "updatedAt": {
+        "universalIdentifier": "3f0e1578-909c-59b4-bbae-42932e2bb685",
+      },
+      "updatedBy": {
+        "universalIdentifier": "518919b5-f6d3-5e50-9fce-0a438d504137",
+      },
+    },
+    "indexes": {
+      "executiveProfileIdIndex": {
+        "universalIdentifier": "28619741-dc44-4f9a-a904-4218a42ce88b",
+      },
+    },
+    "universalIdentifier": "bf6030cd-7ce5-4c11-bf81-974ff65fd4b1",
+    "views": {
+      "allExecutiveEducations": {
+        "universalIdentifier": "8c87d34f-505a-49ce-b41b-384e867abbad",
+        "viewFields": {
+          "degree": {
+            "universalIdentifier": "358327d9-0dd2-4ad9-858d-679b1b04f494",
+          },
+          "executiveProfile": {
+            "universalIdentifier": "a692477d-11c9-4249-baab-8b6ae51427c5",
+          },
+          "institution": {
+            "universalIdentifier": "146ccaee-632f-4246-95f2-d15577308fe5",
+          },
+        },
+      },
+    },
+  },
+  "executiveExternalProfile": {
+    "fields": {
+      "createdAt": {
+        "universalIdentifier": "7f82aa96-0782-5780-9f53-970fe4364e4b",
+      },
+      "createdBy": {
+        "universalIdentifier": "5b6542f4-7496-5fd7-b444-a0fe60f68fde",
+      },
+      "deletedAt": {
+        "universalIdentifier": "53f02d9e-75df-5a58-a685-f839f27bedf4",
+      },
+      "executiveProfile": {
+        "universalIdentifier": "9b446a47-9a52-48f8-9e68-c4899dac930c",
+      },
+      "handle": {
+        "universalIdentifier": "dc93255f-97f2-4395-af64-d90c367073d3",
+      },
+      "id": {
+        "universalIdentifier": "58444f62-d4d5-5b21-848f-c87a7a9b0e36",
+      },
+      "platform": {
+        "universalIdentifier": "2ac4803a-a5a1-48b1-8936-aebf062f4f27",
+      },
+      "position": {
+        "universalIdentifier": "da98b636-dded-5975-981d-d1c3e2016517",
+      },
+      "searchVector": {
+        "universalIdentifier": "c533ed2d-d240-5894-9bdc-a9aa99747bbc",
+      },
+      "updatedAt": {
+        "universalIdentifier": "849a27bb-dd3e-5290-b5f4-5d22dfc3967b",
+      },
+      "updatedBy": {
+        "universalIdentifier": "4dfd89dc-458d-5b6c-a8e8-2dc60101d65d",
+      },
+      "url": {
+        "universalIdentifier": "13b79da2-5d36-4473-9184-0ee385cdb76c",
+      },
+    },
+    "indexes": {
+      "executiveProfileIdIndex": {
+        "universalIdentifier": "1c3956a3-506e-4dd7-b3b1-c94167b0a287",
+      },
+    },
+    "universalIdentifier": "969bf0cb-9eef-4eee-a708-5e6f43443b2a",
+    "views": {
+      "allExecutiveExternalProfiles": {
+        "universalIdentifier": "a8e5a9ae-2a24-4a1c-bcfc-b49aae3d05fc",
+        "viewFields": {
+          "executiveProfile": {
+            "universalIdentifier": "e13147f5-ccfe-470b-bc25-641457edd8e4",
+          },
+          "handle": {
+            "universalIdentifier": "555f4f22-5635-4f0e-9865-ce97ab269554",
+          },
+          "platform": {
+            "universalIdentifier": "caeda2c3-cdd8-4159-90ce-beac20134810",
+          },
+        },
+      },
+    },
+  },
+  "executiveLanguage": {
+    "fields": {
+      "createdAt": {
+        "universalIdentifier": "be9e05f4-7d67-52c1-a5dc-02ed2bf06a6e",
+      },
+      "createdBy": {
+        "universalIdentifier": "f6b0c7df-8ab1-5f60-a352-b802054bcd2a",
+      },
+      "deletedAt": {
+        "universalIdentifier": "9c27671a-ede3-56b3-a1e7-2387316468fe",
+      },
+      "executiveProfile": {
+        "universalIdentifier": "b174ae1d-19fc-40f3-968b-616851622994",
+      },
+      "id": {
+        "universalIdentifier": "612340fd-70e8-597f-9952-35150f1adabc",
+      },
+      "language": {
+        "universalIdentifier": "033dfeb3-39af-4d28-9fd4-0dd738a351e8",
+      },
+      "position": {
+        "universalIdentifier": "2b77345b-d78b-59d3-9be7-6eb7b079d2f3",
+      },
+      "proficiency": {
+        "universalIdentifier": "cf837ab1-3830-4272-b81b-8786a2c44d10",
+      },
+      "searchVector": {
+        "universalIdentifier": "186dffa2-47a2-5f84-b95c-aeadd1842627",
+      },
+      "updatedAt": {
+        "universalIdentifier": "3dbc69e3-efbd-52f0-8e3a-3e19351b84a6",
+      },
+      "updatedBy": {
+        "universalIdentifier": "b1590b7f-5a21-5c7d-8abc-979e7ef187c5",
+      },
+    },
+    "indexes": {
+      "executiveProfileIdIndex": {
+        "universalIdentifier": "45c6f684-2970-4bd5-8d47-7c552769d3f9",
+      },
+    },
+    "universalIdentifier": "2c749e10-ae76-4d9e-bed1-46630b4bf65e",
+    "views": {
+      "allExecutiveLanguages": {
+        "universalIdentifier": "604f6e84-cb7d-4832-9c1a-d4541ccc4a1a",
+        "viewFields": {
+          "executiveProfile": {
+            "universalIdentifier": "712eae75-b19a-4cfc-a90e-96c5c3065c44",
+          },
+          "language": {
+            "universalIdentifier": "e9b50eeb-df54-4594-bcbd-396d836dee9d",
+          },
+          "proficiency": {
+            "universalIdentifier": "2b6280c5-178d-48be-ad74-1706eb2e47d0",
+          },
+        },
+      },
+    },
+  },
+  "executiveProfile": {
+    "fields": {
+      "artifacts": {
+        "universalIdentifier": "b23b6349-5b86-485a-b906-8da0dbda0eb4",
+      },
+      "awards": {
+        "universalIdentifier": "1f97517b-33e1-43cb-9b1c-8405558eae2d",
+      },
+      "boardServices": {
+        "universalIdentifier": "22cd6643-8201-4191-8c96-bc24a82f3ea0",
+      },
+      "capabilities": {
+        "universalIdentifier": "92bccc31-8902-4509-8e6f-6bbb8dc1c8d6",
+      },
+      "careerExperiences": {
+        "universalIdentifier": "76ee9fcc-6b69-4d01-9d44-4840a8216635",
+      },
+      "createdAt": {
+        "universalIdentifier": "8db89d9b-f897-5ddb-8cf3-052b84838da3",
+      },
+      "createdBy": {
+        "universalIdentifier": "ef3704d7-3388-5e3f-b860-17164e1c06ec",
+      },
+      "currentTitle": {
+        "universalIdentifier": "c371985d-49d9-4930-a1bc-4ff168c26331",
+      },
+      "deletedAt": {
+        "universalIdentifier": "56f472e1-bb89-567b-8a1b-174bce1922c7",
+      },
+      "educations": {
+        "universalIdentifier": "2c17c5ac-2322-4b29-8233-0dd83dca9d15",
+      },
+      "externalProfiles": {
+        "universalIdentifier": "f933faa8-cfd7-43f9-ba41-85eb5e4d15fe",
+      },
+      "headline": {
+        "universalIdentifier": "d331e33f-c38c-4cba-9317-e768d940134e",
+      },
+      "id": {
+        "universalIdentifier": "14079f37-b39f-54cc-84e3-2b8b74c9a19e",
+      },
+      "isBoardReady": {
+        "universalIdentifier": "673edebe-1dea-48d4-a642-f06fd3234a5b",
+      },
+      "languages": {
+        "universalIdentifier": "299da58e-831b-4dd1-bef3-22fa71df8c27",
+      },
+      "lastVerifiedAt": {
+        "universalIdentifier": "eaeb12f5-f428-4984-b3d4-4a5aeae0b5e2",
+      },
+      "location": {
+        "universalIdentifier": "07122700-58cc-457b-b636-a2dd9954e07e",
+      },
+      "person": {
+        "universalIdentifier": "21b3c5c3-c6c5-4000-a4c1-0d1d270cab31",
+      },
+      "position": {
+        "universalIdentifier": "b13ae281-45ec-5e60-8928-936213806abf",
+      },
+      "profileStatus": {
+        "universalIdentifier": "c560a1fd-cfa6-4f1c-b5a0-25717e8c9a59",
+      },
+      "searchPreferences": {
+        "universalIdentifier": "e35d2471-a079-4318-b94e-b8485ff2896b",
+      },
+      "searchVector": {
+        "universalIdentifier": "42d20582-548c-5d7e-a011-9ffb7f05f1b6",
+      },
+      "summary": {
+        "universalIdentifier": "615a0765-19bb-42ef-aaed-d5158ce08745",
+      },
+      "updatedAt": {
+        "universalIdentifier": "330c3958-421b-5119-ae3b-72d9d6715d25",
+      },
+      "updatedBy": {
+        "universalIdentifier": "bc54eed3-414d-5281-9fbc-f11c43e8f435",
+      },
+      "yearsOfExperience": {
+        "universalIdentifier": "ca0c0c0a-2d2f-4242-83aa-4d1c907490da",
+      },
+    },
+    "indexes": {
+      "personIdUniqueIndex": {
+        "universalIdentifier": "3c5cdcfb-e7da-4f5f-9541-aabea51d8e23",
+      },
+    },
+    "universalIdentifier": "d5d279c4-be50-4a44-896e-e64d63f2a7f6",
+    "views": {
+      "allExecutiveProfiles": {
+        "universalIdentifier": "e09017b3-24e7-4357-b9fd-75c6a667e629",
+        "viewFields": {
+          "currentTitle": {
+            "universalIdentifier": "e03cdb9b-3dd9-4eb1-b1fe-b5a37e50ea91",
+          },
+          "headline": {
+            "universalIdentifier": "3c180e89-d829-4ca8-b2cc-b528288005e5",
+          },
+          "person": {
+            "universalIdentifier": "adfc5552-d5d1-4467-b776-e291a9d08e8c",
+          },
+          "profileStatus": {
+            "universalIdentifier": "832602cc-eb2b-4903-8122-e2b3ad347022",
+          },
+        },
+      },
+    },
+  },
+  "executiveSearchPreference": {
+    "fields": {
+      "availability": {
+        "universalIdentifier": "721a884a-d861-4b81-a39a-17fe712c2403",
+      },
+      "boardTypes": {
+        "universalIdentifier": "0e47cae3-c244-41ae-9793-723f481c71d4",
+      },
+      "companySizes": {
+        "universalIdentifier": "930ee4ac-ae06-4fb3-9a04-364270947f09",
+      },
+      "compensationExpectation": {
+        "universalIdentifier": "c25434ea-8cfd-42a4-aaef-661424d70581",
+      },
+      "createdAt": {
+        "universalIdentifier": "174c467c-fdb0-5aa5-96b7-5958471d8c27",
+      },
+      "createdBy": {
+        "universalIdentifier": "f7dad8c6-6cdd-5771-af9b-9a9952238f59",
+      },
+      "deletedAt": {
+        "universalIdentifier": "0fdd142b-6415-5453-b2ca-0f2c4834743a",
+      },
+      "executiveProfile": {
+        "universalIdentifier": "2cb5d61c-7983-43c3-8411-d1732801d1ee",
+      },
+      "id": {
+        "universalIdentifier": "8bfce487-deb4-5aa2-a2d6-ac93d54f03bf",
+      },
+      "industries": {
+        "universalIdentifier": "1ae711f9-7957-4d72-b341-377ed7d7ec29",
+      },
+      "notes": {
+        "universalIdentifier": "5dced733-b5b7-4891-8333-503d76cad1fd",
+      },
+      "openToRelocation": {
+        "universalIdentifier": "ba5d3eb1-b647-4547-baf8-439ae8796145",
+      },
+      "position": {
+        "universalIdentifier": "461c3c60-5898-5e99-9c37-40cac63490ba",
+      },
+      "preferredLocations": {
+        "universalIdentifier": "63041087-727c-4a82-9b52-6a10f55927a1",
+      },
+      "searchVector": {
+        "universalIdentifier": "a1fc6572-1eaa-5079-b89c-50d156ca4e8e",
+      },
+      "travelWillingness": {
+        "universalIdentifier": "b4779933-f50a-43bd-b49c-981866e6348b",
+      },
+      "updatedAt": {
+        "universalIdentifier": "f1047617-8ab9-534b-bd00-ccf39ac97060",
+      },
+      "updatedBy": {
+        "universalIdentifier": "eea7ba7f-8c6b-59ed-a1c0-3588adb17fb4",
+      },
+    },
+    "indexes": {
+      "executiveProfileIdIndex": {
+        "universalIdentifier": "b60c7142-1850-4856-b7ee-e06ea438c4b8",
+      },
+    },
+    "universalIdentifier": "304cabb0-42d9-4d78-a302-5106d73ed6bc",
+    "views": {
+      "allExecutiveSearchPreferences": {
+        "universalIdentifier": "36df2734-71a8-4720-aee8-1a3e7b787fa5",
+        "viewFields": {
+          "boardTypes": {
+            "universalIdentifier": "19851861-c7d9-48a5-ba7d-9bf06a6de0d1",
+          },
+          "companySizes": {
+            "universalIdentifier": "606522b7-58ae-4a95-b775-edd60046d73e",
+          },
+          "executiveProfile": {
+            "universalIdentifier": "93639b7a-f4b1-44b0-b662-67c21281ba36",
+          },
+        },
+      },
+    },
+  },
   "message": {
     "fields": {
       "createdAt": {
