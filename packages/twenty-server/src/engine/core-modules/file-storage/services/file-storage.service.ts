@@ -55,15 +55,18 @@ export class FileStorageService {
       flatApplicationMaps.idByUniversalIdentifier[
         applicationUniversalIdentifier
       ];
+    const application = isDefined(applicationId)
+      ? flatApplicationMaps.byId[applicationId]
+      : undefined;
 
-    if (!isDefined(applicationId)) {
+    if (!isDefined(application) || isDefined(application.deletedAt)) {
       throw new FileStorageException(
         `Application with universalIdentifier "${applicationUniversalIdentifier}" not found`,
         FileStorageExceptionCode.FILE_NOT_FOUND,
       );
     }
 
-    return applicationId;
+    return application.id;
   }
 
   private async resolveApplicationUniversalIdentifierOrThrow({
@@ -80,7 +83,7 @@ export class FileStorageService {
 
     const application = flatApplicationMaps.byId[applicationId];
 
-    if (!isDefined(application)) {
+    if (!isDefined(application) || isDefined(application.deletedAt)) {
       throw new FileStorageException(
         `Application with id "${applicationId}" not found`,
         FileStorageExceptionCode.FILE_NOT_FOUND,

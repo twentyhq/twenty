@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
@@ -41,12 +40,9 @@ export class WorkspaceFlatApplicationMapCacheService extends WorkspaceCacheProvi
         fromApplicationEntityToFlatApplication(applicationEntity);
 
       flatApplicationMaps.byId[flatApplication.id] = flatApplication;
-
-      if (!isDefined(flatApplication.deletedAt)) {
-        flatApplicationMaps.idByUniversalIdentifier[
-          flatApplication.universalIdentifier
-        ] = flatApplication.id;
-      }
+      flatApplicationMaps.idByUniversalIdentifier[
+        flatApplication.universalIdentifier
+      ] = flatApplication.id;
     }
 
     return flatApplicationMaps;

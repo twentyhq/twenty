@@ -442,6 +442,33 @@ describe('FileStorageService', () => {
           expect(mockDriver.writeFile).not.toHaveBeenCalled();
         });
 
+        it('should throw FILE_NOT_FOUND when the cached application is soft-deleted', async () => {
+          mockWorkspaceCacheService.getOrRecompute.mockResolvedValueOnce({
+            flatApplicationMaps: {
+              byId: {
+                'app-id': {
+                  id: 'app-id',
+                  universalIdentifier: 'app-456',
+                  deletedAt: new Date(),
+                },
+              },
+              idByUniversalIdentifier: { 'app-456': 'app-id' },
+            },
+          });
+
+          await expect(
+            service.writeFile({
+              ...validResourceIdentifier,
+              sourceFile: Buffer.from('valid content'),
+              settings: { isTemporaryFile: false, toDelete: false },
+            }),
+          ).rejects.toMatchObject({
+            code: FileStorageExceptionCode.FILE_NOT_FOUND,
+          });
+
+          expect(mockDriver.writeFile).not.toHaveBeenCalled();
+        });
+
         it('should use the passed applicationId without consulting the cache', async () => {
           await service.writeFile({
             ...validResourceIdentifier,
