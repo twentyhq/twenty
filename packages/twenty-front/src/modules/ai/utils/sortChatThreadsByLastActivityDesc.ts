@@ -11,4 +11,4 @@ export const sortChatThreadsByLastActivityDesc = <
 >(
   threads: T[],
 ): T[] =>
-  threads.toSorted((a, b) => getLastActivityMs(b) - getLastActivityMs(a));
+  [...threads].sort((a, b) => getLastActivityMs(b) - getLastActivityMs(a));
