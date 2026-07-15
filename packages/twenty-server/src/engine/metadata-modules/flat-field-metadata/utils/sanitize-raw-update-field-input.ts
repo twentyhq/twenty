@@ -10,11 +10,13 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-overridable-properties-by-metadata-name.constant';
-import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
+import {
+  FLAT_FIELD_METADATA_EDITABLE_PROPERTIES,
+  FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES,
+} from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { computeMetadataOverridesBlob } from 'src/engine/metadata-modules/utils/compute-metadata-overrides-blob.util';
@@ -29,21 +31,6 @@ export const sanitizeRawUpdateFieldInput = ({
   rawUpdateFieldInput,
   isSystemBuild,
 }: SanitizeRawUpdateFieldInputArgs) => {
-  // Engine-owned default relation fields to standard objects are provisioned and
-  // maintained by the metadata side-effect engine; renames flow through the
-  // owning object update, never through a direct field update by the user. Other
-  // system-side-effect fields (e.g. deletedAt, searchVector) remain user-toggleable.
-  if (
-    existingFlatFieldMetadata.isSystemSideEffect === true &&
-    isMorphOrRelationFlatFieldMetadata(existingFlatFieldMetadata) &&
-    !isSystemBuild
-  ) {
-    throw new FieldMetadataException(
-      `Cannot edit system-managed field "${existingFlatFieldMetadata.name}"`,
-      FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
-    );
-  }
-
   const isStandardField = belongsToTwentyStandardApp(existingFlatFieldMetadata);
   const updatedEditableFieldProperties = extractAndSanitizeObjectStringFields(
     rawUpdateFieldInput,
@@ -54,6 +41,29 @@ export const sanitizeRawUpdateFieldInput = ({
       ]),
     ],
   );
+
+  // System-side-effect fields are engine-owned (default relations to standard
+  // objects maintained by the metadata side-effect engine, partial system fields
+  // such as deletedAt / searchVector). Every structural property is derived by
+  // the engine and renames flow through the owning object update. Users may only
+  // edit the explicitly allowed properties (e.g. toggle activation).
+  if (existingFlatFieldMetadata.isSystemSideEffect === true && !isSystemBuild) {
+    const forbiddenUpdatedProperties = Object.keys(
+      updatedEditableFieldProperties,
+    ).filter(
+      (property) =>
+        !FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES.includes(
+          property as (typeof FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES)[number],
+        ),
+    );
+
+    if (forbiddenUpdatedProperties.length > 0) {
+      throw new FieldMetadataException(
+        `Cannot edit system-managed field "${existingFlatFieldMetadata.name}" properties: ${forbiddenUpdatedProperties.join(', ')}`,
+        FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+      );
+    }
+  }
 
   updatedEditableFieldProperties.options = !isDefined(
     updatedEditableFieldProperties.options,
