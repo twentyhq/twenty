@@ -1,18 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
-
-const scheduleRecallBotMock = vi.hoisted(() => vi.fn());
-const getCurrentWorkspaceIdMock = vi.hoisted(() => vi.fn());
-
-vi.mock('src/logic-functions/data/get-current-workspace-id.util', () => ({
-  getCurrentWorkspaceId: getCurrentWorkspaceIdMock,
-}));
-
-vi.mock('src/logic-functions/recall-api/schedule-recall-bot.util', () => ({
-  scheduleRecallBot: scheduleRecallBotMock,
-}));
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
 const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
@@ -20,6 +9,16 @@ const UPCOMING_STARTS_AT = '2026-01-01T13:00:00.000Z';
 const UPCOMING_ENDS_AT = '2026-01-01T14:00:00.000Z';
 const PAST_STARTS_AT = '2026-01-01T10:00:00.000Z';
 const PAST_ENDS_AT = '2026-01-01T11:00:00.000Z';
+const RECALL_CREATE_BOT_URL = 'https://us-west-2.recall.ai/api/v1/bot/';
+
+const buildAccessToken = (payload: Record<string, unknown>): string =>
+  [
+    Buffer.from(JSON.stringify({ alg: 'none' })).toString('base64url'),
+    Buffer.from(JSON.stringify(payload)).toString('base64url'),
+    'signature',
+  ].join('.');
+
+const fetchMock = vi.fn();
 
 type CallRecordingNode = {
   id: string;
@@ -133,13 +132,26 @@ const buildCalendarEvent = (
 describe('scheduleRecallBotsForPendingCallRecordings', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
-    getCurrentWorkspaceIdMock.mockReset();
-    getCurrentWorkspaceIdMock.mockReturnValue(WORKSPACE_ID);
-    scheduleRecallBotMock.mockReset();
-    scheduleRecallBotMock.mockResolvedValue({
-      ok: true,
-      externalBotId: 'recall-bot-1',
-    });
+    vi.stubGlobal('fetch', fetchMock);
+    vi.stubEnv('RECALL_API_KEY', 'recall-api-key');
+    vi.stubEnv('RECALL_REGION', 'us-west-2');
+    vi.stubEnv('CALL_RECORDER_USE_WORKSPACE_LOGO', 'false');
+    vi.stubEnv(
+      'TWENTY_APP_ACCESS_TOKEN',
+      buildAccessToken({ workspaceId: WORKSPACE_ID }),
+    );
+    fetchMock.mockReset();
+    fetchMock.mockImplementation(
+      async () =>
+        new Response(JSON.stringify({ id: 'recall-bot-1' }), { status: 201 }),
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+    vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
   it('schedules a bot and writes the id for an upcoming pending recording', async () => {
@@ -154,35 +166,50 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     });
 
     expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
-    expect(scheduleRecallBotMock).toHaveBeenCalledTimes(1);
-    expect(scheduleRecallBotMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        metadata: expect.objectContaining({
-          twentyWorkspaceId: WORKSPACE_ID,
-        }),
-      }),
-    );
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [requestUrl, requestInit] = fetchMock.mock.calls[0];
+    expect(requestUrl).toBe(RECALL_CREATE_BOT_URL);
+    expect(requestInit.method).toBe('POST');
+    expect(requestInit.headers).toMatchObject({
+      Authorization: 'Token recall-api-key',
+    });
+    expect(JSON.parse(requestInit.body)).toMatchObject({
+      meeting_url: 'https://meet.example.com/customer-sync',
+      join_at: '2026-01-01T12:59:00.000Z',
+      metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
+        twentyCallRecordingId: 'call-recording-1',
+      },
+    });
     expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
   });
 
   it('does not report a recording as scheduled when Recall scheduling fails', async () => {
-    scheduleRecallBotMock.mockResolvedValue({
-      ok: false,
-      status: 500,
-      errorMessage: 'Recall API responded with HTTP 500',
-    });
+    fetchMock.mockImplementation(
+      async () =>
+        new Response(JSON.stringify({ error: 'boom' }), { status: 500 }),
+    );
     const client = new FakeCoreApiClient({
       callRecordings: [buildPendingCallRecording()],
       calendarEvents: [buildCalendarEvent()],
     });
 
-    const result = await scheduleRecallBotsForPendingCallRecordings({
+    vi.useFakeTimers();
+    const resultPromise = scheduleRecallBotsForPendingCallRecordings({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
+    await vi.runAllTimersAsync();
+    const result = await resultPromise;
 
     expect(result.scheduledCallRecordingIds).toEqual([]);
-    expect(scheduleRecallBotMock).toHaveBeenCalledTimes(1);
+    // One scheduling attempt, retried to exhaustion on the wire.
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+    expect(
+      fetchMock.mock.calls.every(
+        ([requestUrl]) => requestUrl === RECALL_CREATE_BOT_URL,
+      ),
+    ).toBe(true);
     expect(client.callRecordings[0].externalBotId).toBeNull();
   });
 
@@ -203,7 +230,7 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     });
 
     expect(result.scheduledCallRecordingIds).toEqual([]);
-    expect(scheduleRecallBotMock).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('does nothing when every scheduled recording already has a bot', async () => {
@@ -220,6 +247,6 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     });
 
     expect(result.scheduledCallRecordingIds).toEqual([]);
-    expect(scheduleRecallBotMock).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

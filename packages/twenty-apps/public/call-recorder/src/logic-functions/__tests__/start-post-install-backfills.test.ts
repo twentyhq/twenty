@@ -1,35 +1,32 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH } from 'src/constants/generate-call-recording-summaries-route-path';
+import { RECONCILE_UPCOMING_CALENDAR_EVENTS_ROUTE_PATH } from 'src/constants/reconcile-upcoming-calendar-events-route-path';
 import postInstallLogicFunction, {
   startPostInstallBackfillsHandler,
 } from 'src/logic-functions/start-post-install-backfills';
 
-const requestCallRecordingSummariesBackfillMock = vi.hoisted(() => vi.fn());
-const requestUpcomingCalendarEventsReconciliationMock = vi.hoisted(() =>
-  vi.fn(),
-);
+const FUNCTIONS_BASE_URL = 'https://acme.functions.example.com';
 
-vi.mock(
-  'src/logic-functions/data/request-call-recording-summaries-backfill.util',
-  () => ({
-    requestCallRecordingSummariesBackfill:
-      requestCallRecordingSummariesBackfillMock,
-  }),
-);
+const fetchMock = vi.fn();
 
-vi.mock(
-  'src/logic-functions/data/request-upcoming-calendar-events-reconciliation.util',
-  () => ({
-    requestUpcomingCalendarEventsReconciliation:
-      requestUpcomingCalendarEventsReconciliationMock,
-  }),
-);
+const fetchedRoutePaths = (): string[] =>
+  fetchMock.mock.calls.map(([requestUrl]) =>
+    String(requestUrl).replace(FUNCTIONS_BASE_URL, ''),
+  );
 
 describe('start-post-install-backfills', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    requestCallRecordingSummariesBackfillMock.mockResolvedValue(true);
-    requestUpcomingCalendarEventsReconciliationMock.mockResolvedValue(true);
+    vi.stubGlobal('fetch', fetchMock);
+    vi.stubEnv('TWENTY_FUNCTIONS_URL', FUNCTIONS_BASE_URL);
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'app-access-token');
+    fetchMock.mockResolvedValue(new Response('{}', { status: 200 }));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
   });
 
   it('is configured to run on app version upgrades', () => {
@@ -51,10 +48,9 @@ describe('start-post-install-backfills', () => {
       calendarEventSweepOutcome: 'sweep-requested',
       summaryBackfillOutcome: 'skipped-initial-install',
     });
-    expect(
-      requestUpcomingCalendarEventsReconciliationMock,
-    ).toHaveBeenCalledTimes(1);
-    expect(requestCallRecordingSummariesBackfillMock).not.toHaveBeenCalled();
+    expect(fetchedRoutePaths()).toEqual([
+      RECONCILE_UPCOMING_CALENDAR_EVENTS_ROUTE_PATH,
+    ]);
   });
 
   it('backfills summaries and skips the sweep on an upgrade', async () => {
@@ -67,25 +63,26 @@ describe('start-post-install-backfills', () => {
       calendarEventSweepOutcome: 'skipped-upgrade',
       summaryBackfillOutcome: 'backfill-requested',
     });
-    expect(requestCallRecordingSummariesBackfillMock).toHaveBeenCalledTimes(1);
-    expect(
-      requestUpcomingCalendarEventsReconciliationMock,
-    ).not.toHaveBeenCalled();
+    expect(fetchedRoutePaths()).toEqual([
+      GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH,
+    ]);
   });
 
   it('throws when the fresh-install sweep kickoff fails', async () => {
-    requestUpcomingCalendarEventsReconciliationMock.mockResolvedValue(false);
+    fetchMock.mockRejectedValue(new Error('Network failed'));
 
     await expect(
       startPostInstallBackfillsHandler({ newVersion: '1.0.7' }),
     ).rejects.toThrow(
       'Failed to start post-install backfills: upcoming calendar event sweep',
     );
-    expect(requestCallRecordingSummariesBackfillMock).not.toHaveBeenCalled();
+    expect(fetchedRoutePaths()).not.toContain(
+      GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH,
+    );
   });
 
   it('throws when the upgrade summary backfill kickoff fails', async () => {
-    requestCallRecordingSummariesBackfillMock.mockResolvedValue(false);
+    fetchMock.mockRejectedValue(new Error('Network failed'));
 
     await expect(
       startPostInstallBackfillsHandler({
@@ -95,8 +92,8 @@ describe('start-post-install-backfills', () => {
     ).rejects.toThrow(
       'Failed to start post-install backfills: call recording summary backfill',
     );
-    expect(
-      requestUpcomingCalendarEventsReconciliationMock,
-    ).not.toHaveBeenCalled();
+    expect(fetchedRoutePaths()).not.toContain(
+      RECONCILE_UPCOMING_CALENDAR_EVENTS_ROUTE_PATH,
+    );
   });
 });
