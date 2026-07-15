@@ -7,8 +7,8 @@ export const transformPageLayout = (
 ): PageLayout => {
   return {
     ...pageLayout,
-    tabs: (pageLayout.tabs ?? [])
-      .toSorted((a, b) => a.position - b.position)
+    tabs: [...(pageLayout.tabs ?? [])]
+      .sort((a, b) => a.position - b.position)
       .map((tab): PageLayoutTab => {
         return {
           ...tab,

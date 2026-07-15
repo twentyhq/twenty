@@ -26,6 +26,39 @@ describe('transformPageLayout', () => {
     expect(result.tabs).toEqual([]);
   });
 
+  it('should sort tabs when Array.prototype.toSorted is unavailable', () => {
+    const toSortedDescriptor = Object.getOwnPropertyDescriptor(
+      Array.prototype,
+      'toSorted',
+    );
+
+    Reflect.deleteProperty(Array.prototype, 'toSorted');
+
+    try {
+      const layout = makePageLayout({
+        tabs: [
+          { id: 'tab-2', position: 2 },
+          { id: 'tab-1', position: 1 },
+        ] as unknown as PageLayout['tabs'],
+      });
+
+      const result = transformPageLayout(layout);
+
+      expect(result.tabs[0].id).toBe('tab-1');
+      expect(result.tabs[1].id).toBe('tab-2');
+    } finally {
+      if (toSortedDescriptor === undefined) {
+        Reflect.deleteProperty(Array.prototype, 'toSorted');
+      } else {
+        Object.defineProperty(
+          Array.prototype,
+          'toSorted',
+          toSortedDescriptor,
+        );
+      }
+    }
+  });
+
   it('should sort tabs by position', () => {
     const layout = makePageLayout({
       tabs: [
