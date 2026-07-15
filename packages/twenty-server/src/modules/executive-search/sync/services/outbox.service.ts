@@ -188,4 +188,33 @@ export class ExecutiveSearchOutboxService {
       });
     }, authContext);
   }
+
+  /**
+   * Find stale PROCESSING outbox entries that have been stuck for more than
+   * 5 minutes (worker crash between claim and mark).
+   */
+  async findStaleProcessing(
+    workspaceId: string,
+    limit = 100,
+  ): Promise<ExternalSyncOutboxWorkspaceEntity[]> {
+    const authContext = buildSystemAuthContext(workspaceId);
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const repository = await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        ExternalSyncOutboxWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
+
+      return repository.find({
+        where: {
+          status: OUTBOX_STATUS.PROCESSING,
+          updatedAt: LessThan(fiveMinutesAgo),
+        },
+        order: { updatedAt: 'ASC' },
+        take: limit,
+      });
+    }, authContext);
+  }
 }

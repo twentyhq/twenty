@@ -13,6 +13,7 @@ import { ExecutiveSearchInboxService } from 'src/modules/executive-search/sync/s
 import { ExecutiveSearchDLQService } from 'src/modules/executive-search/sync/services/dlq.service';
 import { ExecutiveSearchReplayService } from 'src/modules/executive-search/sync/services/replay.service';
 import { ExecutiveSearchReconciliationService } from 'src/modules/executive-search/sync/services/reconciliation.service';
+import { ExecutiveSearchOutboxRedriveCronCommand } from 'src/modules/executive-search/sync/jobs/executive-sync-outbox-redrive.cron.command';
 import { OutboundEventMapperService } from 'src/modules/executive-search/outbound/services/outbound-event-mapper.service';
 import { ExternalEntityLinkWorkspaceEntity } from 'src/modules/executive-search/standard-objects/external-entity-link.workspace-entity';
 import { ExternalSyncOutboxWorkspaceEntity } from 'src/modules/executive-search/standard-objects/external-sync-outbox.workspace-entity';
@@ -42,6 +43,7 @@ import { ExternalSyncReconciliationWorkspaceEntity } from 'src/modules/executive
     ExecutiveSearchDLQService,
     ExecutiveSearchReplayService,
     ExecutiveSearchReconciliationService,
+    ExecutiveSearchOutboxRedriveCronCommand,
     OutboundHmacSignerService,
     DirectusConnectionConfigService,
     OutboundEventMapperService,
@@ -53,6 +55,7 @@ import { ExternalSyncReconciliationWorkspaceEntity } from 'src/modules/executive
     ExecutiveSearchDLQService,
     ExecutiveSearchReplayService,
     ExecutiveSearchReconciliationService,
+    ExecutiveSearchOutboxRedriveCronCommand,
     OutboundHmacSignerService,
     DirectusConnectionConfigService,
     OutboundEventMapperService,
