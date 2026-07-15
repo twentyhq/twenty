@@ -41,8 +41,6 @@ import {
   SEARCH_CRITERION_WEIGHT_OPTION_IMPORTANT_UNIVERSAL_IDENTIFIER,
   SEARCH_CRITERION_WEIGHT_OPTION_PREFERRED_UNIVERSAL_IDENTIFIER,
   SEARCH_CRITERION_WEIGHT_PREFERRED,
-  CRITERIA_ON_POSITION_SPECIFICATION_FIELD_UNIVERSAL_IDENTIFIER,
-  POSITION_SPECIFICATION_OBJECT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
 export default defineObject({
@@ -212,9 +210,9 @@ export default defineObject({
       description: 'The position specification this criterion belongs to.',
       icon: 'IconFileText',
       relationTargetObjectMetadataUniversalIdentifier:
-        POSITION_SPECIFICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+        'd4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f90',
       relationTargetFieldMetadataUniversalIdentifier:
-        CRITERIA_ON_POSITION_SPECIFICATION_FIELD_UNIVERSAL_IDENTIFIER,
+        '89c0d1e2-f3a4-b5c6-d7e8-f90a1b2c3d4e',
       universalSettings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: OnDeleteAction.CASCADE,

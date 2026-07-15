@@ -12,13 +12,6 @@ import {
   SEARCH_MILESTONE_OBJECT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
-const DEFAULT_OBJECT_PERMISSIONS = {
-  canReadObjectRecords: true,
-  canUpdateObjectRecords: true,
-  canSoftDeleteObjectRecords: false,
-  canDestroyObjectRecords: false,
-} as const;
-
 export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 
@@ -41,32 +34,50 @@ export default defineApplicationRole({
     {
       objectUniversalIdentifier:
         SEARCH_ENGAGEMENT_TERMS_OBJECT_UNIVERSAL_IDENTIFIER,
-      ...DEFAULT_OBJECT_PERMISSIONS,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
     },
     {
       objectUniversalIdentifier:
         SEARCH_ASSIGNMENT_OBJECT_UNIVERSAL_IDENTIFIER,
-      ...DEFAULT_OBJECT_PERMISSIONS,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
     },
     {
       objectUniversalIdentifier:
         ASSIGNMENT_TEAM_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER,
-      ...DEFAULT_OBJECT_PERMISSIONS,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
     },
     {
       objectUniversalIdentifier:
         SEARCH_MILESTONE_OBJECT_UNIVERSAL_IDENTIFIER,
-      ...DEFAULT_OBJECT_PERMISSIONS,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
     },
     {
       objectUniversalIdentifier:
         POSITION_SPECIFICATION_OBJECT_UNIVERSAL_IDENTIFIER,
-      ...DEFAULT_OBJECT_PERMISSIONS,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
     },
     {
       objectUniversalIdentifier:
         SEARCH_CRITERION_OBJECT_UNIVERSAL_IDENTIFIER,
-      ...DEFAULT_OBJECT_PERMISSIONS,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
     },
   ],
   fieldPermissions: [],

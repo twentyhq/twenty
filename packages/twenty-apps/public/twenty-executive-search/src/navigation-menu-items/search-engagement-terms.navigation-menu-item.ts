@@ -1,6 +1,6 @@
 import {
-  defineNavigationMenuItem,
   NavigationMenuItemType,
+  defineNavigationMenuItem,
 } from 'twenty-sdk/define';
 
 import {
