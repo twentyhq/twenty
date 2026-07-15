@@ -134,7 +134,8 @@ export class WorkflowRunEnqueueWorkspaceService {
             }
 
             totalEnqueuedCount += batchRuns.length - failedRunIds.length;
-            remainingWorkflowRunToEnqueueCount -= batchRuns.length - failedRunIds.length;
+            remainingWorkflowRunToEnqueueCount -=
+              batchRuns.length - failedRunIds.length;
           }
 
           if (totalEnqueuedCount === 0) {
