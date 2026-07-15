@@ -71,6 +71,9 @@ export const STANDARD_OBJECTS = {
       workflowIdIndex: {
         universalIdentifier: 'fadeab4b-79ee-4173-af79-72c51fbad888',
       },
+      searchVectorGinIndex: {
+        universalIdentifier: '68d93786-4909-4883-bdee-721f4dc087d2',
+      },
     },
     views: {
       allAttachments: {
@@ -127,6 +130,9 @@ export const STANDARD_OBJECTS = {
     indexes: {
       workspaceMemberIdIndex: {
         universalIdentifier: '4daf320e-74d0-4f24-a45a-af3a09d741cb',
+      },
+      searchVectorGinIndex: {
+        universalIdentifier: '273d6a6f-d3cf-410a-a162-56cca11d21e6',
       },
     },
     views: {
@@ -193,6 +199,9 @@ export const STANDARD_OBJECTS = {
       },
       calendarEventIdIndex: {
         universalIdentifier: '47a3c8d2-9f14-4b6e-8c5d-1a2b3f4e5c69',
+      },
+      searchVectorGinIndex: {
+        universalIdentifier: 'b9f1b0bc-43e9-41f4-b7d7-5ba9be56fd74',
       },
     },
     views: {
@@ -280,6 +289,9 @@ export const STANDARD_OBJECTS = {
       },
       workspaceMemberIdIndex: {
         universalIdentifier: '898aa202-428f-4a7a-a3b3-8f0a17a6658e',
+      },
+      searchVectorGinIndex: {
+        universalIdentifier: '3864f144-0848-4478-aaf7-3e85daad1b11',
       },
     },
     views: {
@@ -402,7 +414,11 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '48d6d151-18e2-4111-b405-d85fb9d860d8',
       },
     },
-    indexes: {},
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: 'a9774ff0-f3f5-482e-98a4-af49804b1628',
+      },
+    },
     views: {
       allCalendarEvents: {
         universalIdentifier: '20202020-c001-4c01-8c01-ca1ebe0ca001',
@@ -533,6 +549,9 @@ export const STANDARD_OBJECTS = {
     indexes: {
       calendarEventIdIndex: {
         universalIdentifier: '8be3cc47-9352-4a1b-ad19-bb186bc0865d',
+      },
+      searchVectorGinIndex: {
+        universalIdentifier: '2e59eb58-003c-41f1-9299-0b53d6c20d4f',
       },
     },
     views: {
@@ -966,6 +985,9 @@ export const STANDARD_OBJECTS = {
       messageChannelIdMessageIdUniqueIndex: {
         universalIdentifier: '1b86ece8-7ce3-4df3-8771-fd4b5d45b2f2',
       },
+      searchVectorGinIndex: {
+        universalIdentifier: '438011c0-1273-43d1-985a-9a4cc4764fe8',
+      },
     },
     views: {
       allMessageChannelMessageAssociations: {
@@ -1128,6 +1150,9 @@ export const STANDARD_OBJECTS = {
       messageCampaignIdIndex: {
         universalIdentifier: 'e9bcdd77-cc8b-4532-833c-124dfdc8e5ff',
       },
+      searchVectorGinIndex: {
+        universalIdentifier: '1067429e-5d82-48eb-8008-b54efa3f6888',
+      },
     },
     views: {
       allMessageParticipants: {
@@ -1208,7 +1233,11 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: 'a8ddbf8c-1137-45d1-b89e-5ffbd83f67c8',
       },
     },
-    indexes: {},
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: 'efebaaf5-03f6-439d-86df-36aa66be68ca',
+      },
+    },
     views: {
       allMessageThreads: {
         universalIdentifier: '20202020-d002-4d02-8d02-ae55a9ba2002',
@@ -1268,6 +1297,9 @@ export const STANDARD_OBJECTS = {
       },
       messageCampaignIdIndex: {
         universalIdentifier: '79e777ca-7008-46c5-b3a6-3108b7c7dfb6',
+      },
+      searchVectorGinIndex: {
+        universalIdentifier: 'ef468949-5df6-43d0-9933-bda0009883fe',
       },
     },
     views: {
@@ -2100,6 +2132,9 @@ export const STANDARD_OBJECTS = {
       },
       dashboardIdIndex: {
         universalIdentifier: 'e8821da9-728d-470a-bf5b-5a981fff7880',
+      },
+      searchVectorGinIndex: {
+        universalIdentifier: '0c97ba73-a022-4584-b500-8437adf269fd',
       },
     },
     views: {

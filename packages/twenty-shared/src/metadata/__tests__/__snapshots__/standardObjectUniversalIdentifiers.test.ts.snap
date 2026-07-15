@@ -78,6 +78,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "personIdIndex": {
         "universalIdentifier": "55637a5a-1edc-4351-8d76-d40020bf8944",
       },
+      "searchVectorGinIndex": {
+        "universalIdentifier": "68d93786-4909-4883-bdee-721f4dc087d2",
+      },
       "taskIdIndex": {
         "universalIdentifier": "b8d4f9a3-0c25-4e7b-9f6a-2d3e4c5b6f70",
       },
@@ -166,6 +169,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
     "indexes": {
+      "searchVectorGinIndex": {
+        "universalIdentifier": "273d6a6f-d3cf-410a-a162-56cca11d21e6",
+      },
       "workspaceMemberIdIndex": {
         "universalIdentifier": "4daf320e-74d0-4f24-a45a-af3a09d741cb",
       },
@@ -255,6 +261,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "calendarEventIdIndex": {
         "universalIdentifier": "47a3c8d2-9f14-4b6e-8c5d-1a2b3f4e5c69",
+      },
+      "searchVectorGinIndex": {
+        "universalIdentifier": "b9f1b0bc-43e9-41f4-b7d7-5ba9be56fd74",
       },
     },
     "universalIdentifier": "20202020-491b-4aaa-9825-afd1bae6ae00",
@@ -378,7 +387,11 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
         "universalIdentifier": "ace17dae-1488-50eb-849e-02f409627627",
       },
     },
-    "indexes": {},
+    "indexes": {
+      "searchVectorGinIndex": {
+        "universalIdentifier": "a9774ff0-f3f5-482e-98a4-af49804b1628",
+      },
+    },
     "universalIdentifier": "20202020-8f1d-4eef-9f85-0d1965e27221",
     "views": {
       "allCalendarEvents": {
@@ -515,6 +528,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "personIdIndex": {
         "universalIdentifier": "30e9b75a-881f-4a85-aaf1-f2d2464be1cf",
+      },
+      "searchVectorGinIndex": {
+        "universalIdentifier": "3864f144-0848-4478-aaf7-3e85daad1b11",
       },
       "workspaceMemberIdIndex": {
         "universalIdentifier": "898aa202-428f-4a7a-a3b3-8f0a17a6658e",
@@ -662,6 +678,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
     "indexes": {
       "calendarEventIdIndex": {
         "universalIdentifier": "8be3cc47-9352-4a1b-ad19-bb186bc0865d",
+      },
+      "searchVectorGinIndex": {
+        "universalIdentifier": "2e59eb58-003c-41f1-9299-0b53d6c20d4f",
       },
     },
     "universalIdentifier": "ce19efb9-710f-45b2-b141-473abbeea60b",
@@ -1019,6 +1038,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "messageThreadIdIndex": {
         "universalIdentifier": "7a05b45e-7aa6-4a7e-9bbc-299cbed53c96",
       },
+      "searchVectorGinIndex": {
+        "universalIdentifier": "ef468949-5df6-43d0-9933-bda0009883fe",
+      },
     },
     "universalIdentifier": "20202020-3f6b-4425-80ab-e468899ab4b2",
     "views": {
@@ -1229,6 +1251,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "messageIdIndex": {
         "universalIdentifier": "9bb24d40-60dd-4beb-8c64-a74e8c67f9ee",
+      },
+      "searchVectorGinIndex": {
+        "universalIdentifier": "438011c0-1273-43d1-985a-9a4cc4764fe8",
       },
     },
     "universalIdentifier": "20202020-ad1e-4127-bccb-d83ae04d2ccb",
@@ -1539,6 +1564,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "personIdIndex": {
         "universalIdentifier": "df805c2e-3bfe-4d51-8309-75e5eb4052fe",
       },
+      "searchVectorGinIndex": {
+        "universalIdentifier": "1067429e-5d82-48eb-8008-b54efa3f6888",
+      },
       "workspaceMemberIdIndex": {
         "universalIdentifier": "ce1e3a9e-afe9-439d-abb7-6cc98a6fa405",
       },
@@ -1643,7 +1671,11 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
         "universalIdentifier": "0c9b48d9-795f-50f7-aa44-8f286660199c",
       },
     },
-    "indexes": {},
+    "indexes": {
+      "searchVectorGinIndex": {
+        "universalIdentifier": "efebaaf5-03f6-439d-86df-36aa66be68ca",
+      },
+    },
     "universalIdentifier": "20202020-849a-4c3e-84f5-a25a7d802271",
     "views": {
       "allMessageThreads": {
@@ -2638,6 +2670,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "personIdIndex": {
         "universalIdentifier": "3e89a914-7bec-47bd-9cf9-743c6b83d001",
+      },
+      "searchVectorGinIndex": {
+        "universalIdentifier": "0c97ba73-a022-4584-b500-8437adf269fd",
       },
       "taskIdIndex": {
         "universalIdentifier": "609cf622-86ef-48d1-812b-e1cab610a46c",

@@ -6,29 +6,17 @@ import {
   createStandardIndexFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
 
-export const buildCallRecordingStandardFlatIndexMetadatas = ({
+export const buildCalendarEventStandardFlatIndexMetadatas = ({
   now,
   objectName,
   workspaceId,
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardIndexArgs<'callRecording'>, 'context'>): Record<
-  AllStandardObjectIndexName<'callRecording'>,
+}: Omit<CreateStandardIndexArgs<'calendarEvent'>, 'context'>): Record<
+  AllStandardObjectIndexName<'calendarEvent'>,
   FlatIndexMetadata
 > => ({
-  calendarEventIdIndex: createStandardIndexFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      indexName: 'calendarEventIdIndex',
-      relatedFieldNames: ['calendarEvent'],
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   searchVectorGinIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
