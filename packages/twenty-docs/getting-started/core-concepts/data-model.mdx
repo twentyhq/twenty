@@ -4,7 +4,7 @@ description: "Objects, fields, and relations: how you describe your business to 
 icon: "database"
 ---
 
-Suppose you make packaging for food brands. One of your customers rebrands, and their logo changes. That change has to reach everything it touches, from open orders to the next production run. In a spreadsheet, the logo version tends to be written wherever someone once needed it, across several tabs. Updating one tab leaves the others wrong, and nothing flags the difference. Eventually a print run ships with the old design. That one costs real money.
+Suppose you make packaging for food brands. One of your customers rebrands, and their logo changes. That change has to reach everything it touches, from open orders to the next production run. In a spreadsheet, the logo version gets written wherever someone once needed it, across several tabs. Updating one tab leaves the others wrong, and nothing flags the difference. Eventually a print run ships with the old design. That one costs real money.
 
 The underlying problem is structural. A spreadsheet lets the same fact live in many places, and copies drift apart. Twenty is organized so that each fact lives in one place. The way you set that up is the **data model**, and it consists of three ideas: objects, fields, and relations.
 
@@ -19,18 +19,18 @@ An **object** is one kind of thing you track, comparable to one tab in a spreads
 
 An individual entry inside an object is a **record**: one specific company, one specific deal. Harbor Foods, a customer, is a record in Companies. Their purchasing manager is a record in People.
 
-Most businesses also track something no CRM ships with. The packaging maker cares about print runs: one batch of boxes going through the presses, with a design, a quantity, a ship date, and a destination plant. For that you create a **custom object**. Custom objects behave exactly like built-in ones. They get their own section in the sidebar, their own pages and views, and their own API endpoints. In another business the custom object might be properties, events, or job applications.
+Most businesses also track something no CRM ships with. The packaging maker cares about print runs: one batch of boxes going through the presses, with a design, a quantity, a ship date, and a destination plant. For that you create a **custom object**. Custom objects behave exactly like built-in ones. They get their own section in the sidebar, their own pages and views, and their own API endpoints. In another business the custom object is property listings or job applications.
 
 ## Fields
 
 A **field** is one piece of information on a record, comparable to a spreadsheet column: a phone number, an order quantity, a plant address, the current artwork version.
 
-Every field has a **type**, which defines what the field can hold: text, a number, a date, an amount of money, a selection from a list. The type is what lets Twenty do something useful with the value:
+Every field has a **type**, which defines what the field holds: text, a number, a date, an amount of money, a selection from a list. The type determines what Twenty does with the value:
 
-- **Currency** fields can be summed, so the total value of open deals can appear on a dashboard.
-- **Select** fields hold one value from a fixed list. Deal stages are Select fields, and pipeline columns are built from them.
-- **Date** fields let records appear on a calendar.
-- **Files** fields hold documents, so the artwork PDF can live on the record it describes.
+- **Currency** fields hold amounts Twenty does arithmetic on. A dashboard totals the value of open deals from them.
+- **Select** fields hold one value from a fixed list. Deal stages are Select fields, and pipeline columns come straight from them.
+- **Date** fields place records on a calendar.
+- **Files** fields hold documents, so the artwork PDF lives on the record it describes.
 
 There are more than twenty types in total. Twenty also maintains a few fields automatically on every record, including who created it and when it last changed.
 
