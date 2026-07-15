@@ -6578,7 +6578,7 @@ export default {
                     "sourcePackage": [
                         1
                     ],
-                    "id": [
+                    "universalIdentifier": [
                         1
                     ]
                 }

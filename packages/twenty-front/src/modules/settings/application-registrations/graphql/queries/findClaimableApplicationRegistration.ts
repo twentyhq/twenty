@@ -3,11 +3,11 @@ import { gql } from '@apollo/client';
 export const FIND_CLAIMABLE_APPLICATION_REGISTRATION = gql`
   query FindClaimableApplicationRegistration(
     $sourcePackage: String
-    $id: String
+    $universalIdentifier: String
   ) {
     findClaimableApplicationRegistration(
       sourcePackage: $sourcePackage
-      id: $id
+      universalIdentifier: $universalIdentifier
     ) {
       id
       name

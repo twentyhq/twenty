@@ -120,7 +120,7 @@ export const SettingsClaimApplicationSection = () => {
     setChallengeCode(null);
 
     const variables = UUID_REGEX.test(trimmed)
-      ? { id: trimmed }
+      ? { universalIdentifier: trimmed }
       : { sourcePackage: trimmed };
 
     const result = await runLookup({ variables });
@@ -197,7 +197,7 @@ export const SettingsClaimApplicationSection = () => {
     <Section>
       <H2Title
         title={t`Claim an application`}
-        description={t`Take ownership of an app you published to npm. Enter its exact package name (or registration id) to find it.`}
+        description={t`Take ownership of an app you published to npm. Enter its exact package name (or universal identifier) to find it.`}
       />
       <StyledRow>
         <StyledInputContainer>
@@ -207,7 +207,7 @@ export const SettingsClaimApplicationSection = () => {
             onChange={setLookupValue}
             placeholder={t`e.g. my-twenty-app`}
             fullWidth
-            label={t`Package name or registration id`}
+            label={t`Package name or universal identifier`}
           />
         </StyledInputContainer>
         <Button

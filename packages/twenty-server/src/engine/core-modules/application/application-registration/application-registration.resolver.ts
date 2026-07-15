@@ -326,11 +326,15 @@ export class ApplicationRegistrationResolver {
   )
   @Query(() => ClaimableApplicationRegistrationDTO, { nullable: true })
   async findClaimableApplicationRegistration(
-    @Args() { sourcePackage, id }: FindClaimableApplicationRegistrationInput,
+    @Args()
+    {
+      sourcePackage,
+      universalIdentifier,
+    }: FindClaimableApplicationRegistrationInput,
   ): Promise<ClaimableApplicationRegistrationDTO | null> {
     return this.applicationRegistrationService.findClaimable({
       sourcePackage,
-      id,
+      universalIdentifier,
     });
   }
 

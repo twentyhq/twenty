@@ -795,17 +795,18 @@ export class ApplicationRegistrationService {
   }
 
   // Developer-facing lookup used to claim an app: resolves an npm-sourced
-  // registration by exact package name or id without leaking the full catalog.
+  // registration by exact package name or universal identifier without
+  // leaking the full catalog.
   async findClaimable(params: {
     sourcePackage?: string;
-    id?: string;
+    universalIdentifier?: string;
   }): Promise<ClaimableApplicationRegistrationDTO | null> {
     const hasPackage = isNonEmptyString(params.sourcePackage);
-    const hasId = isNonEmptyString(params.id);
+    const hasUniversalIdentifier = isNonEmptyString(params.universalIdentifier);
 
-    if (hasPackage === hasId) {
+    if (hasPackage === hasUniversalIdentifier) {
       throw new ApplicationRegistrationException(
-        'Provide exactly one of sourcePackage or id',
+        'Provide exactly one of sourcePackage or universalIdentifier',
         ApplicationRegistrationExceptionCode.INVALID_INPUT,
       );
     }
@@ -814,7 +815,7 @@ export class ApplicationRegistrationService {
       sourceType: ApplicationRegistrationSourceType.NPM,
       ...(hasPackage
         ? { sourcePackage: params.sourcePackage }
-        : { id: params.id }),
+        : { universalIdentifier: params.universalIdentifier }),
     };
 
     const registration = await this.applicationRegistrationRepository.findOne({
