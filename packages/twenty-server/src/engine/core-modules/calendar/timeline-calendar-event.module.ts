@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { TimelineCalendarEventResolver } from 'src/engine/core-modules/calendar/timeline-calendar-event.resolver';
 import { TimelineCalendarEventService } from 'src/engine/core-modules/calendar/timeline-calendar-event.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -11,6 +12,7 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
 
 @Module({
   imports: [
+    FileUrlModule,
     UserModule,
     RelatedPersonIdsModule,
     TypeOrmModule.forFeature([
