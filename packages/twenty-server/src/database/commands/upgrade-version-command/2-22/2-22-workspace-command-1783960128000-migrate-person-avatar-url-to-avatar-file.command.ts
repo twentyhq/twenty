@@ -4,7 +4,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IsNull, MoreThan, Not } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { type FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
@@ -28,7 +28,7 @@ const MIN_UUID = '00000000-0000-0000-0000-000000000000';
   description:
     'Migrate legacy person.avatarUrl (external image URL) into the avatarFile FILES field for existing workspaces.',
 })
-export class MigratePersonAvatarUrlToAvatarFileCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class MigratePersonAvatarUrlToAvatarFileCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,

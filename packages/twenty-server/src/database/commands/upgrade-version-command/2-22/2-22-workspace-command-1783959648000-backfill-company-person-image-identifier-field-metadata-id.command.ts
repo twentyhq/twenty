@@ -2,7 +2,7 @@ import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -39,7 +39,7 @@ const IMAGE_IDENTIFIER_BACKFILL_TARGETS = [
   description:
     'Backfill imageIdentifierFieldMetadataId on company (domainName) and person (avatarFile) for existing workspaces.',
 })
-export class BackfillCompanyPersonImageIdentifierFieldMetadataIdCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class BackfillCompanyPersonImageIdentifierFieldMetadataIdCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
