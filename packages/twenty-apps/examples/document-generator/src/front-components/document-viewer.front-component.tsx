@@ -93,7 +93,9 @@ const DocumentViewer = () => {
     return <div style={styles.empty}>{loading ? 'Loading…' : 'Open a document to preview it here.'}</div>;
   }
 
-  const webUrl = `${process.env.TWENTY_FUNCTIONS_URL}/documents/view?id=${recordId}`;
+  const functionsBaseUrl =
+    process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL ?? ''}/s`;
+  const webUrl = `${functionsBaseUrl}/documents/view?id=${recordId}`;
 
   return (
     <div style={styles.scroll}>

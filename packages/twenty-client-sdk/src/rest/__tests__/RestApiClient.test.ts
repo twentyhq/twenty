@@ -125,7 +125,7 @@ describe('RestApiClient', () => {
   });
 
   describe('app route paths', () => {
-    it('should send non-rest paths to an isolated-domain functions url at the root', async () => {
+    it('should strip the /s prefix and send app route paths to an isolated-domain functions url at the root', async () => {
       (globalThis as Record<string, unknown>).process = {
         env: {
           TWENTY_API_URL: 'https://api.twenty.test',
@@ -137,7 +137,7 @@ describe('RestApiClient', () => {
 
       const client = new RestApiClient({ fetch: fetchMock });
 
-      await client.post('/my-app/my-route', { remainingIds: ['a'] });
+      await client.post('/s/my-app/my-route', { remainingIds: ['a'] });
 
       const [url, requestInit] = fetchMock.mock.calls[0];
       expect(url).toBe('https://acme.functions.twenty.test/my-app/my-route');
@@ -156,7 +156,7 @@ describe('RestApiClient', () => {
 
       const client = new RestApiClient({ fetch: fetchMock });
 
-      await client.post('/my-app/my-route');
+      await client.post('/s/my-app/my-route');
 
       const [url] = fetchMock.mock.calls[0];
       expect(url).toBe('https://api.twenty.test/s/my-app/my-route');
@@ -167,7 +167,7 @@ describe('RestApiClient', () => {
 
       const client = new RestApiClient({ fetch: fetchMock });
 
-      await client.post('/my-app/my-route');
+      await client.post('/s/my-app/my-route');
 
       const [url] = fetchMock.mock.calls[0];
       expect(url).toBe('https://api.twenty.test/s/my-app/my-route');
@@ -185,7 +185,7 @@ describe('RestApiClient', () => {
 
       const client = new RestApiClient({ fetch: fetchMock });
 
-      await client.post('/my-app/my-route');
+      await client.post('/s/my-app/my-route');
 
       const [url] = fetchMock.mock.calls[0];
       expect(url).toBe('https://api.twenty.test/s/my-app/my-route');
@@ -209,7 +209,25 @@ describe('RestApiClient', () => {
       expect(url).toBe('https://api.twenty.test/rest/companies');
     });
 
-    it('should prefer an explicit baseUrl over the functions url', async () => {
+    it('should keep unprefixed paths on the api url when a functions url is injected', async () => {
+      (globalThis as Record<string, unknown>).process = {
+        env: {
+          TWENTY_API_URL: 'https://api.twenty.test',
+          TWENTY_FUNCTIONS_URL: 'https://acme.functions.twenty.test',
+          TWENTY_APP_ACCESS_TOKEN: 'app-access-token',
+        },
+      };
+      const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
+
+      const client = new RestApiClient({ fetch: fetchMock });
+
+      await client.post('/my-app/my-route');
+
+      const [url] = fetchMock.mock.calls[0];
+      expect(url).toBe('https://api.twenty.test/my-app/my-route');
+    });
+
+    it('should prefer an explicit baseUrl over the functions url and keep the path untouched', async () => {
       (globalThis as Record<string, unknown>).process = {
         env: {
           TWENTY_API_URL: 'https://api.twenty.test',
@@ -224,10 +242,10 @@ describe('RestApiClient', () => {
         fetch: fetchMock,
       });
 
-      await client.post('/my-app/my-route');
+      await client.post('/s/my-app/my-route');
 
       const [url] = fetchMock.mock.calls[0];
-      expect(url).toBe('https://explicit.twenty.test/my-app/my-route');
+      expect(url).toBe('https://explicit.twenty.test/s/my-app/my-route');
     });
   });
 

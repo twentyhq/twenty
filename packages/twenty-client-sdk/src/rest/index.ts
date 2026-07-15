@@ -54,7 +54,12 @@ const getProcessEnvironment = (): ProcessEnvironment => {
   return processObject?.env ?? {};
 };
 
-const isRestApiPath = (path: string): boolean => /^\/?rest\//.test(path);
+const isAppRoutePath = (path: string): boolean => /^\/?s\//.test(path);
+
+// The server serves app routes under /s/; isolated functions domains serve
+// them at the root, so the marker prefix is stripped before joining.
+const stripAppRoutePrefix = (path: string): string =>
+  path.replace(/^(\/?)s\//, '$1');
 
 const buildRequestUrl = (
   baseUrl: string,
@@ -166,13 +171,18 @@ export class RestApiClient {
     return functionsBaseUrl.trim().replace(/\/+$/, '');
   }
 
-  private resolveTargetBaseUrl(path: string): string {
-    if (isDefined(this.baseUrl) || isRestApiPath(path)) {
-      return this.resolveBaseUrl();
+  private resolveTarget(path: string): { baseUrl: string; path: string } {
+    if (isDefined(this.baseUrl) || !isAppRoutePath(path)) {
+      return { baseUrl: this.resolveBaseUrl(), path };
     }
 
-    // App routes use TWENTY_FUNCTIONS_URL, falling back to the API's /s route.
-    return this.resolveFunctionsBaseUrl() ?? `${this.resolveBaseUrl()}/s`;
+    // /s/ marks an app HTTP route. TWENTY_FUNCTIONS_URL is a complete base
+    // URL (isolated domains serve routes at the root, self-host bakes /s in);
+    // fall back to the same-site /s route when it is not injected.
+    return {
+      baseUrl: this.resolveFunctionsBaseUrl() ?? `${this.resolveBaseUrl()}/s`,
+      path: stripAppRoutePrefix(path),
+    };
   }
 
   private resolveToken(): string {
@@ -327,9 +337,10 @@ export class RestApiClient {
     body: unknown,
     requestOptions?: RestApiRequestOptions,
   ): Promise<TResponse> {
+    const target = this.resolveTarget(path);
     const url = buildRequestUrl(
-      this.resolveTargetBaseUrl(path),
-      path,
+      target.baseUrl,
+      target.path,
       requestOptions?.query,
     );
     const token = this.resolveToken();
