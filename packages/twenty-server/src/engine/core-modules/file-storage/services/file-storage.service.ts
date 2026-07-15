@@ -7,6 +7,8 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Like, type QueryRunner } from 'typeorm';
 
+import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
+import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import {
   FileStorageException,
@@ -51,15 +53,12 @@ export class FileStorageService {
         'flatApplicationMaps',
       ]);
 
-    const applicationId =
-      flatApplicationMaps.idByUniversalIdentifier[
-        applicationUniversalIdentifier
-      ];
-    const application = isDefined(applicationId)
-      ? flatApplicationMaps.byId[applicationId]
-      : undefined;
+    const application = findActiveFlatApplicationByUniversalIdentifier(
+      flatApplicationMaps,
+      applicationUniversalIdentifier,
+    );
 
-    if (!isDefined(application) || isDefined(application.deletedAt)) {
+    if (!isDefined(application)) {
       throw new FileStorageException(
         `Application with universalIdentifier "${applicationUniversalIdentifier}" not found`,
         FileStorageExceptionCode.FILE_NOT_FOUND,
@@ -81,9 +80,12 @@ export class FileStorageService {
         'flatApplicationMaps',
       ]);
 
-    const application = flatApplicationMaps.byId[applicationId];
+    const application = findActiveFlatApplicationById(
+      flatApplicationMaps,
+      applicationId,
+    );
 
-    if (!isDefined(application) || isDefined(application.deletedAt)) {
+    if (!isDefined(application)) {
       throw new FileStorageException(
         `Application with id "${applicationId}" not found`,
         FileStorageExceptionCode.FILE_NOT_FOUND,
