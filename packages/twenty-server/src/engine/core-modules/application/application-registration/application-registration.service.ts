@@ -383,8 +383,10 @@ export class ApplicationRegistrationService {
     sourceType?: ApplicationRegistrationSourceType;
     latestAvailableVersion?: string;
     preventVersionDowngrade?: boolean;
-  }): Promise<void> {
-    await this.cacheLockService.withLock(async () => {
+    // Resolves to false when the update was skipped because the manifest
+    // belongs to a version older than the latest available one.
+  }): Promise<boolean> {
+    return this.cacheLockService.withLock(async () => {
       const existing =
         await this.applicationRegistrationRepository.findOneOrFail({
           where: { id: applicationRegistrationId },
@@ -402,7 +404,7 @@ export class ApplicationRegistrationService {
           `Skipping registration update for ${existing.universalIdentifier}: version ${latestAvailableVersion} is older than latest available version ${existing.latestAvailableVersion}`,
         );
 
-        return;
+        return false;
       }
 
       const displayFields = fromManifestApplicationToDisplayFields(
@@ -434,6 +436,8 @@ export class ApplicationRegistrationService {
       });
 
       await this.invalidateMarketplaceAppsCache();
+
+      return true;
     }, `application-registration-update:${applicationRegistrationId}`);
   }
 
