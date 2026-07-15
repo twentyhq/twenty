@@ -9,7 +9,6 @@ export const classifyAppBillingChargeFailure = (
     return 'billing-disabled';
   }
 
-  // No status means the request never reached billing.
   if (error instanceof RestApiClientError) {
     return error.status === undefined || error.status < 500
       ? 'rejected'

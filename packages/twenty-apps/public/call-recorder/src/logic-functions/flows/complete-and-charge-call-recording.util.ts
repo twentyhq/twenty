@@ -29,9 +29,7 @@ export const completeAndChargeCallRecording = async (
     endedAt,
   });
 
-  // A definite rejection reopens the claim so the scheduled reconciliation
-  // re-completes and re-charges; ambiguous outcomes stay COMPLETED to never
-  // double-charge.
+  // Ambiguous outcomes stay completed because retrying could double-charge.
   if (chargeOutcome === 'rejected') {
     await updateCallRecording(client, {
       id,
