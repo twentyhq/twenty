@@ -50,6 +50,7 @@ const StyledContainer = styled.div<{ minWidthInPixels: number }>`
   background: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.sm};
+  border-top: 0;
   min-width: ${({ minWidthInPixels }) => `${minWidthInPixels}px`};
   overflow: clip;
 `;
@@ -57,6 +58,7 @@ const StyledContainer = styled.div<{ minWidthInPixels: number }>`
 const StyledHeader = styled.div<{ dayCount: number }>`
   background: ${themeCssVariables.background.primary};
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  border-top: 1px solid ${themeCssVariables.border.color.light};
   display: grid;
   grid-template-columns:
     ${RECORD_CALENDAR_WEEK_DIMENSIONS.timeGutterWidth}px
