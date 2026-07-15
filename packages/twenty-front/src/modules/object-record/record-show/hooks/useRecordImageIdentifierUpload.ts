@@ -1,6 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
 import { useApolloClient, useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -32,6 +33,16 @@ export const useRecordImageIdentifierUpload = ({
     imageIdentifierFieldMetadataItem?.type === FieldMetadataType.FILES
       ? imageIdentifierFieldMetadataItem
       : undefined;
+
+  const isImageIdentifierFieldReadOnly = useIsRecordFieldReadOnly({
+    recordId,
+    objectMetadataId: objectMetadataItem.id,
+    fieldMetadataId: filesImageIdentifierFieldMetadataItem?.id ?? '',
+  });
+
+  const canUploadImageIdentifier =
+    isDefined(filesImageIdentifierFieldMetadataItem) &&
+    !isImageIdentifierFieldReadOnly;
 
   const onUploadPicture = async (file: File) => {
     if (!isDefined(filesImageIdentifierFieldMetadataItem)) {
@@ -66,8 +77,6 @@ export const useRecordImageIdentifierUpload = ({
   };
 
   return {
-    onUploadPicture: isDefined(filesImageIdentifierFieldMetadataItem)
-      ? onUploadPicture
-      : undefined,
+    onUploadPicture: canUploadImageIdentifier ? onUploadPicture : undefined,
   };
 };
