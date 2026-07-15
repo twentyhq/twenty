@@ -6,10 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/application.input';
 import { type DevelopmentApplicationDTO } from 'src/engine/core-modules/application/application-development/dtos/development-application.dto';
 import { type WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
+import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
-import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -22,7 +22,6 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { type FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
-import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -46,12 +45,11 @@ export class ApplicationDevelopmentService {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly applicationSyncService: ApplicationSyncService,
+    private readonly applicationManifestApplyService: ApplicationManifestApplyService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
-    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationRegistrationAssetService: ApplicationRegistrationAssetService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly fileStorageService: FileStorageService,
-    private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly throttlerService: ThrottlerService,
     private readonly cacheLockService: CacheLockService,
   ) {}
@@ -233,23 +231,13 @@ export class ApplicationDevelopmentService {
       );
     }
 
-    const isFirstSync = !isDefined(application.version);
-
-    const { workspaceMigration, hasSchemaMetadataChanged } =
-      await this.applicationSyncService.synchronizeFromManifest({
+    const { workspaceMigration } =
+      await this.applicationManifestApplyService.applyManifestToWorkspace({
         workspaceId,
         manifest,
         applicationRegistrationId,
+        application,
       });
-
-    if (isFirstSync || hasSchemaMetadataChanged) {
-      await this.sdkClientGenerationService.generateSdkClientForApplication({
-        workspaceId,
-        applicationId: application.id,
-        applicationUniversalIdentifier:
-          manifest.application.universalIdentifier,
-      });
-    }
 
     await this.syncRegistrationMetadata(
       applicationRegistrationId,
@@ -299,28 +287,19 @@ export class ApplicationDevelopmentService {
     manifest: ApplicationInput['manifest'],
     workspaceId: string,
   ): Promise<void> {
-    const registration =
-      await this.applicationRegistrationService.findOneByIdGlobal(
-        applicationRegistrationId,
+    const hasRefreshedRegistration =
+      await this.applicationManifestApplyService.refreshRegistrationFromManifest(
+        {
+          applicationRegistrationId,
+          manifest,
+          sourceType: ApplicationRegistrationSourceType.LOCAL,
+          onlyIfOwnedByWorkspaceId: workspaceId,
+        },
       );
 
-    // The registration is instance-global: for catalog-synced (npm) apps it is
-    // the marketplace entry and OAuth identity shared by every workspace, so
-    // dev-mode sync must not overwrite its manifest or flip its sourceType.
-    // Only registrations owned by the syncing workspace (and not npm-sourced)
-    // reflect local dev state.
-    if (
-      registration.sourceType === ApplicationRegistrationSourceType.NPM ||
-      registration.ownerWorkspaceId !== workspaceId
-    ) {
+    if (!hasRefreshedRegistration) {
       return;
     }
-
-    await this.applicationRegistrationService.updateFromManifest({
-      applicationRegistrationId,
-      manifest,
-      sourceType: ApplicationRegistrationSourceType.LOCAL,
-    });
 
     // Public assets are uploaded to workspace storage before the sync, so the
     // logo and gallery images can be copied into the registration's
@@ -336,13 +315,6 @@ export class ApplicationDevelopmentService {
           path,
         }),
     });
-
-    if (manifest.application.serverVariables) {
-      await this.applicationRegistrationVariableService.syncVariableSchemas(
-        applicationRegistrationId,
-        manifest.application.serverVariables,
-      );
-    }
   }
 
   private async readPublicAssetFromWorkspaceStorage({

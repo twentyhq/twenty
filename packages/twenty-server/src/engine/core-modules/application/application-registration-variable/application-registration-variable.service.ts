@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type ServerVariables } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Not, type Repository } from 'typeorm';
+import { In, Not, type EntityManager, type Repository } from 'typeorm';
 
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -118,10 +118,15 @@ export class ApplicationRegistrationVariableService {
   async syncVariableSchemas(
     applicationRegistrationId: string,
     serverVariables: ServerVariables,
+    entityManager?: EntityManager,
   ): Promise<void> {
+    const variableRepository = isDefined(entityManager)
+      ? entityManager.getRepository(ApplicationRegistrationVariableEntity)
+      : this.variableRepository;
+
     const declaredKeys = Object.keys(serverVariables);
 
-    const existingVariables = await this.variableRepository.find({
+    const existingVariables = await variableRepository.find({
       where: { applicationRegistrationId },
     });
 
@@ -133,7 +138,7 @@ export class ApplicationRegistrationVariableService {
       const existing = existingByKey.get(key);
 
       if (existing) {
-        await this.variableRepository.update(existing.id, {
+        await variableRepository.update(existing.id, {
           description: schema.description ?? '',
           isSecret: schema.isSecret ?? true,
           isRequired: schema.isRequired ?? false,
@@ -141,8 +146,8 @@ export class ApplicationRegistrationVariableService {
           options: schema.options ?? null,
         });
       } else {
-        await this.variableRepository.save(
-          this.variableRepository.create({
+        await variableRepository.save(
+          variableRepository.create({
             applicationRegistrationId,
             key,
             encryptedValue: '',
@@ -157,12 +162,12 @@ export class ApplicationRegistrationVariableService {
     }
 
     if (declaredKeys.length > 0) {
-      await this.variableRepository.delete({
+      await variableRepository.delete({
         applicationRegistrationId,
         key: Not(In(declaredKeys)),
       });
     } else {
-      await this.variableRepository.delete({ applicationRegistrationId });
+      await variableRepository.delete({ applicationRegistrationId });
     }
   }
 
