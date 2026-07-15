@@ -32,8 +32,8 @@ const StyledListingRequestForm = styled.div`
 `;
 
 const StyledEmailInputContainer = styled.div`
-  max-width: 280px;
   flex: 1;
+  max-width: 280px;
 `;
 
 const StyledStatusRow = styled.div`
@@ -104,24 +104,26 @@ export const SettingsApplicationRegistrationDistributionTab = ({
     }
 
     return (
-    <StyledListingRequestForm>
-      <StyledEmailInputContainer>
-        <SettingsTextInput
-          instanceId="listing-request-contact-email"
-          value={contactEmail}
-          onChange={setContactEmail}
-          fullWidth
-          label={t`Contact email`}
-          placeholder={t`you@example.com`}
+      <StyledListingRequestForm>
+        <StyledEmailInputContainer>
+          <SettingsTextInput
+            instanceId="listing-request-contact-email"
+            value={contactEmail}
+            onChange={setContactEmail}
+            fullWidth
+            label={t`Contact email`}
+            placeholder={t`you@example.com`}
+          />
+        </StyledEmailInputContainer>
+        <Button
+          title={buttonTitle}
+          variant="secondary"
+          onClick={handleRequestListing}
+          disabled={
+            isRequestingListing || !isNonEmptyString(contactEmail.trim())
+          }
         />
-      </StyledEmailInputContainer>
-      <Button
-        title={buttonTitle}
-        variant="secondary"
-        onClick={handleRequestListing}
-        disabled={isRequestingListing || !isNonEmptyString(contactEmail.trim())}
-      />
-    </StyledListingRequestForm>
+      </StyledListingRequestForm>
     );
   };
 

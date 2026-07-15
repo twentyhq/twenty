@@ -1,6 +1,12 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
-import { IsEnum, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import {
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+} from 'class-validator';
 
 import { ApplicationRegistrationListingReviewDecision } from 'src/engine/core-modules/application/application-registration/enums/application-registration-listing-review-decision.enum';
 

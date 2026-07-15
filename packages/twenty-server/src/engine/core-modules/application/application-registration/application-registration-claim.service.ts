@@ -110,10 +110,7 @@ export class ApplicationRegistrationClaimService {
       },
     });
 
-    if (
-      !isDefined(claimToken) ||
-      claimToken.expiresAt.getTime() < Date.now()
-    ) {
+    if (!isDefined(claimToken) || claimToken.expiresAt.getTime() < Date.now()) {
       return null;
     }
 

@@ -534,12 +534,11 @@ export class AdminPanelResolver {
       reason,
     }: ReviewApplicationRegistrationListingInput,
   ): Promise<ApplicationRegistrationEntity> {
-    const registration = await this.applicationRegistrationService.reviewListing(
-      {
+    const registration =
+      await this.applicationRegistrationService.reviewListing({
         applicationRegistrationId,
         decision,
-      },
-    );
+      });
 
     await this.applicationRegistrationLifecycleEmailService.sendListingReviewedEmail(
       { registration, decision, reason: reason ?? null },

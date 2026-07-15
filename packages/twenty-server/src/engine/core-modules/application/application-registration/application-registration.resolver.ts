@@ -442,13 +442,12 @@ export class ApplicationRegistrationResolver {
     }: RequestApplicationRegistrationListingInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationEntity> {
-    const registration = await this.applicationRegistrationService.requestListing(
-      {
+    const registration =
+      await this.applicationRegistrationService.requestListing({
         applicationRegistrationId,
         ownerWorkspaceId: workspaceId,
         contactEmail,
-      },
-    );
+      });
 
     await this.applicationRegistrationLifecycleEmailService.sendListingRequestSubmittedEmail(
       { registration },
