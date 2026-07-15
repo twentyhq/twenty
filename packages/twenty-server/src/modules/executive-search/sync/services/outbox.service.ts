@@ -9,7 +9,6 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { ExternalSyncOutboxWorkspaceEntity } from 'src/modules/executive-search/standard-objects/external-sync-outbox.workspace-entity';
-import { ExecutiveSyncProcessOutboxJob } from 'src/modules/executive-search/sync/jobs/executive-sync-process-outbox.job';
 
 export type OutboxEventInput = {
   workspaceId: string;
@@ -90,7 +89,7 @@ export class ExecutiveSearchOutboxService {
 
       // Enqueue for async processing
       await this.messageQueueService.add(
-        ExecutiveSyncProcessOutboxJob.name,
+        'ExecutiveSyncProcessOutboxJob',
         {
           workspaceId: input.workspaceId,
           outboxId: saved.id,

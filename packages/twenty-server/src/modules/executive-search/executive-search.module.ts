@@ -7,6 +7,7 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
 import { DirectusModule } from 'src/modules/executive-search/directus/directus.module';
 import { DirectusConnectionConfigService } from 'src/modules/executive-search/outbound/services/directus-connection-config.service';
 import { OutboundHmacSignerService } from 'src/modules/executive-search/outbound/services/outbound-hmac-signer.service';
+import { OutboundProjectionService } from 'src/modules/executive-search/outbound/services/outbound-projection.service';
 import { ExecutiveSearchOutboxService } from 'src/modules/executive-search/sync/services/outbox.service';
 import { ExecutiveSearchInboxService } from 'src/modules/executive-search/sync/services/inbox.service';
 import { ExecutiveSearchDLQService } from 'src/modules/executive-search/sync/services/dlq.service';
@@ -44,6 +45,7 @@ import { ExternalSyncReconciliationWorkspaceEntity } from 'src/modules/executive
     OutboundHmacSignerService,
     DirectusConnectionConfigService,
     OutboundEventMapperService,
+    OutboundProjectionService,
   ],
   exports: [
     ExecutiveSearchOutboxService,
@@ -54,6 +56,7 @@ import { ExternalSyncReconciliationWorkspaceEntity } from 'src/modules/executive
     OutboundHmacSignerService,
     DirectusConnectionConfigService,
     OutboundEventMapperService,
+    OutboundProjectionService,
   ],
 })
 export class ExecutiveSearchModule {}
