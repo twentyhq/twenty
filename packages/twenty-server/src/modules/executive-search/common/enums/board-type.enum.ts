@@ -1,0 +1,7 @@
+export enum BoardType {
+  PUBLIC = 'PUBLIC',
+  PRIVATE = 'PRIVATE',
+  NON_PROFIT = 'NON_PROFIT',
+  ADVISORY = 'ADVISORY',
+  STARTUP = 'STARTUP',
+}

@@ -1,0 +1,6 @@
+export enum Availability {
+  IMMEDIATE = 'IMMEDIATE',
+  THREE_MONTHS = 'THREE_MONTHS',
+  SIX_MONTHS = 'SIX_MONTHS',
+  ONE_YEAR = 'ONE_YEAR',
+}
