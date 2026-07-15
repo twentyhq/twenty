@@ -1,12 +1,13 @@
-import {
-  CLIENT_BRIEF_STEP_IDS,
-  type ClientBriefStepId,
-} from './data/client-brief-step-ids';
 import { emailFieldSchema } from '@/partner-application/email-field-schema';
+
 import {
   type ClientBriefState,
   type ScalarFieldName,
 } from './client-brief-state';
+import {
+  CLIENT_BRIEF_STEP_IDS,
+  type ClientBriefStepId,
+} from './data/client-brief-step-ids';
 
 const STEP_REQUIRED_FIELDS: Record<
   ClientBriefStepId,

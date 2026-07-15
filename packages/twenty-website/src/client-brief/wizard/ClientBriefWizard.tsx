@@ -2,7 +2,7 @@
 
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import { type FormEvent, useCallback, useEffect } from 'react';
+import { type FormEvent, useCallback } from 'react';
 
 import {
   color,
@@ -135,13 +135,12 @@ function StepRenderer({ controller }: { controller: ClientBriefController }) {
   }
 }
 
-export function ClientBriefWizard({ resetSignal }: { resetSignal: number }) {
+export function ClientBriefWizard() {
   const { i18n } = useLingui();
   const controller = useClientBriefState();
   const {
     goBack,
     goNext,
-    reset,
     setFieldErrors,
     setSubmitError,
     setSubmitted,
@@ -149,10 +148,6 @@ export function ClientBriefWizard({ resetSignal }: { resetSignal: number }) {
     skipContext,
     state,
   } = controller;
-
-  useEffect(() => {
-    reset();
-  }, [resetSignal, reset]);
 
   const stepId = getCurrentStepId(state);
   const stepIndex = state.stepIndex;
