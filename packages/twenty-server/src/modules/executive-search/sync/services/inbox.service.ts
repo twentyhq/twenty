@@ -28,8 +28,10 @@ export const INBOX_STATUS = {
  * Inbound event inbox with echo-loop prevention.
  *
  * Every external event is deduplicated by (externalSystemName, externalEventId).
- * Duplicates are marked DUPLICATE and never processed.  ECHO status is reserved
- * for events that originated from Twenty itself (loop prevention).
+ * If an existing event is still PENDING when a duplicate arrives, it is marked
+ * DUPLICATE to prevent processing. Already-processed/failed events are returned
+ * as-is (no status change). ECHO status is reserved for events that originated
+ * from Twenty itself (loop prevention).
  */
 @Injectable()
 export class ExecutiveSearchInboxService {

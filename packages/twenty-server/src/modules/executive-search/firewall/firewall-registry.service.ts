@@ -53,7 +53,9 @@ export class FirewallRegistryService {
   }
 
   getProhibitedSelectors(context: FirewallContext): Set<string> {
-    return this.contextIndex.get(context) ?? new Set<string>();
+    const selectors = this.contextIndex.get(context);
+
+    return selectors ? new Set(selectors) : new Set<string>();
   }
 
   getAllProhibitedSelectors(): Set<string> {

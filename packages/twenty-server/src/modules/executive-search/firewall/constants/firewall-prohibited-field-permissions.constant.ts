@@ -1,8 +1,14 @@
 import type { FirewallFieldPermissionEntry } from 'src/modules/executive-search/firewall/firewall-registry.types';
 
 /**
- * Maps each firewall-prohibited selector to its object/field universal
- * identifiers for field-level permission enforcement.
+ * Maps each firewall-prohibited selector to object/field name placeholders
+ * for field-level permission enforcement.
+ *
+ * WARNING: These are human-readable object/field NAMES (e.g. executiveProfile,
+ * subscriptionTier), NOT UUID universal identifiers. They must be replaced
+ * with real objectUniversalIdentifier / fieldUniversalIdentifier UUIDs once
+ * Phase 4 creates the executive profile field metadata. Using names directly
+ * against FieldPermissionManifest will silently fail to match.
  */
 export const FIREWALL_PROHIBITED_FIELD_PERMISSIONS: FirewallFieldPermissionEntry[] = [
   {
