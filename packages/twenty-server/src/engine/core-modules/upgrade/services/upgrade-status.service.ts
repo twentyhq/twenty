@@ -12,7 +12,7 @@ import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/servi
 import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { extractVersionFromCommandName } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name.util';
 
-import { activationStatusIn } from 'src/engine/core-modules/workspace/utils/activation-status-in.util';
+import { activationStatusIn } from 'src/database/commands/command-runners/utils/activation-status-in.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { In, Repository } from 'typeorm';
 
