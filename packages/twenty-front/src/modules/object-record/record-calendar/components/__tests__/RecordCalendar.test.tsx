@@ -13,6 +13,12 @@ jest.mock(
   }),
 );
 jest.mock(
+  '@/object-record/record-calendar/day/components/RecordCalendarDay',
+  () => ({
+    RecordCalendarDay: () => <div data-testid="calendar-day" />,
+  }),
+);
+jest.mock(
   '@/object-record/record-calendar/month/components/RecordCalendarMonth',
   () => ({
     RecordCalendarMonth: () => <div data-testid="calendar-month" />,
@@ -64,16 +70,32 @@ describe('RecordCalendar', () => {
     useAtomStateValueMock.mockReturnValue(ViewCalendarLayout.WEEK);
   });
 
-  it('renders month when a persisted week layout is disabled', () => {
-    useIsFeatureEnabledMock.mockReturnValue(false);
+  it.each([ViewCalendarLayout.DAY, ViewCalendarLayout.WEEK])(
+    'renders month when a persisted %s layout is disabled',
+    (calendarLayout) => {
+      useAtomStateValueMock.mockReturnValue(calendarLayout);
+      useIsFeatureEnabledMock.mockReturnValue(false);
+
+      render(<RecordCalendar />);
+
+      expect(screen.getByTestId('calendar-month')).toBeInTheDocument();
+      expect(screen.queryByTestId('calendar-day')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('calendar-week')).not.toBeInTheDocument();
+      expect(useIsFeatureEnabledMock).toHaveBeenCalledWith(
+        FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
+      );
+    },
+  );
+
+  it('renders day when the day layout is enabled', () => {
+    useAtomStateValueMock.mockReturnValue(ViewCalendarLayout.DAY);
+    useIsFeatureEnabledMock.mockReturnValue(true);
 
     render(<RecordCalendar />);
 
-    expect(screen.getByTestId('calendar-month')).toBeInTheDocument();
+    expect(screen.getByTestId('calendar-day')).toBeInTheDocument();
     expect(screen.queryByTestId('calendar-week')).not.toBeInTheDocument();
-    expect(useIsFeatureEnabledMock).toHaveBeenCalledWith(
-      FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-    );
+    expect(screen.queryByTestId('calendar-month')).not.toBeInTheDocument();
   });
 
   it('renders week when the week layout is enabled', () => {
@@ -82,6 +104,7 @@ describe('RecordCalendar', () => {
     render(<RecordCalendar />);
 
     expect(screen.getByTestId('calendar-week')).toBeInTheDocument();
+    expect(screen.queryByTestId('calendar-day')).not.toBeInTheDocument();
     expect(screen.queryByTestId('calendar-month')).not.toBeInTheDocument();
   });
 });

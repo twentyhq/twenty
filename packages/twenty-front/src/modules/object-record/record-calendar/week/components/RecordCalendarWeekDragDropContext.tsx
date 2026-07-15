@@ -32,14 +32,14 @@ type DragEndPayload = Parameters<
 
 type RecordCalendarWeekDragDropContextProps = {
   children: ReactNode;
+  days: Temporal.PlainDate[];
   gridRef: RefObject<HTMLDivElement | null>;
-  weekDays: Temporal.PlainDate[];
 };
 
 export const RecordCalendarWeekDragDropContext = ({
   children,
+  days,
   gridRef,
-  weekDays,
 }: RecordCalendarWeekDragDropContextProps) => {
   const [grabOffsetY, setGrabOffsetY] = useState(0);
   const { processRecordCalendarWeekEventDrop } =
@@ -76,7 +76,7 @@ export const RecordCalendarWeekDragDropContext = ({
 
     const gridRect = gridRef.current.getBoundingClientRect();
     const resolvedDrop = resolveRecordCalendarWeekEventDrop({
-      dayCount: weekDays.length,
+      dayCount: days.length,
       grabOffsetY,
       gridRect,
       pointerX: operation.position.current.x,
@@ -87,7 +87,7 @@ export const RecordCalendarWeekDragDropContext = ({
       return;
     }
 
-    const destinationDay = weekDays[resolvedDrop.dayIndex];
+    const destinationDay = days[resolvedDrop.dayIndex];
 
     if (!isDefined(destinationDay)) {
       return;

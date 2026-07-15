@@ -5,7 +5,7 @@ describe('getSupportedRecordCalendarLayout', () => {
   it.each([
     [ViewCalendarLayout.WEEK, ViewCalendarLayout.WEEK],
     [ViewCalendarLayout.MONTH, ViewCalendarLayout.MONTH],
-    [ViewCalendarLayout.DAY, ViewCalendarLayout.MONTH],
+    [ViewCalendarLayout.DAY, ViewCalendarLayout.DAY],
     [null, ViewCalendarLayout.MONTH],
     [undefined, ViewCalendarLayout.MONTH],
   ])(
