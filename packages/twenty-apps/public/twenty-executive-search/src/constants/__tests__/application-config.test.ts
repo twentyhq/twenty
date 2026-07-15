@@ -47,6 +47,12 @@ describe('application-config validation', () => {
       'executive-search-default-role',
     );
     expect(result.config.canReadAllObjectRecords).toBe(false);
-    expect(result.config.objectPermissions).toEqual([]);
+    const permissions = result.config.objectPermissions;
+    expect(permissions).toBeDefined();
+    if (permissions) {
+      expect(permissions).toHaveLength(1);
+      expect(permissions[0].canReadObjectRecords).toBe(true);
+      expect(permissions[0].canUpdateObjectRecords).toBe(true);
+    }
   });
 });
