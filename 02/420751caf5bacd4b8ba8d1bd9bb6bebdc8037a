@@ -1,0 +1,35 @@
+packages/twenty-server/src/modules/contact-creation-manager/services/create-company.service.ts
+  s_37904604351395::t_6e659ebb83efdf 64-68,70-72,74-99,101-115,117-164,166-170,172-173,175-178,182-191
+  s_37904604351395::t_515c6b1f94c3fc 33-38
+  s_37904604351395::t_506bcb91f1c1e5 14
+packages/twenty-server/src/modules/contact-creation-manager/services/create-company-and-contact.service.ts
+  s_37904604351395::t_bdd266c37988f8 20
+  s_37904604351395::t_6f1bf094329642 129-130,135-183
+packages/twenty-server/src/modules/contact-creation-manager/services/__tests__/create-company.service.spec.ts
+  s_37904604351395::t_0d21c94ca3cab5 177-181
+  s_37904604351395::t_076210c289ca3a 254-258
+  s_37904604351395::t_99644082469512 227-228
+  s_37904604351395::t_243799ebef300c 205-209
+  s_37904604351395::t_cb2cecd92c6822 286-290
+packages/twenty-server/src/modules/contact-creation-manager/services/create-person.service.ts
+  s_37904604351395::t_0e8502280c78b4 101,125,137,142
+  s_37904604351395::t_f70a4c00c6d0f8 61,88
+  s_37904604351395::t_06f12af70e73f8 21,38-41,48
+  s_37904604351395::t_475276c9e07cf5 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "02420751caf5bacd4b8ba8d1bd9bb6bebdc8037a",
+  "prompts": {},
+  "sessions": {
+    "s_37904604351395": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "41994e1f-1493-45f4-856b-7e2945e40aef",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
