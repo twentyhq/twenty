@@ -33,6 +33,7 @@ class FakeCoreApiClient {
   callRecordingQueryResponses: CallRecordingNode[][] = [];
   calendarEvents: CalendarEventNode[];
   filters: Array<Record<string, unknown>> = [];
+  conditionalMutationFilters: Array<Record<string, unknown>> = [];
   mutations: Array<{ id: string; data: Record<string, unknown> }> = [];
 
   constructor(
@@ -70,6 +71,32 @@ class FakeCoreApiClient {
   }
 
   async mutation(mutation: any): Promise<any> {
+    if (mutation.updateCallRecordings !== undefined) {
+      const { filter, data } = mutation.updateCallRecordings.__args;
+
+      this.conditionalMutationFilters.push(filter);
+
+      const matchingCallRecordings = this.callRecordings.filter(
+        (callRecording) =>
+          callRecording.id === filter.id.eq &&
+          callRecording.recordingRequestStatus ===
+            filter.recordingRequestStatus.eq &&
+          filter.status.in.includes(callRecording.status) &&
+          (filter.externalBotId.is === 'NULL'
+            ? callRecording.externalBotId === null
+            : callRecording.externalBotId === filter.externalBotId.eq),
+      );
+
+      matchingCallRecordings.forEach((callRecording) => {
+        this.mutations.push({ id: callRecording.id, data });
+        Object.assign(callRecording, data);
+      });
+
+      return {
+        updateCallRecordings: matchingCallRecordings.map(({ id }) => ({ id })),
+      };
+    }
+
     const { id, data } = mutation.updateCallRecording.__args;
 
     this.mutations.push({ id, data });
@@ -214,7 +241,7 @@ describe('retryFailedRecallCancellations', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('recovers and cancels a provider bot when its id write-back was lost before local cancellation', async () => {
+  it('recovers and cancels a provider bot when endsAt is missing after the meeting starts', async () => {
     const client = new FakeCoreApiClient(
       [
         {
@@ -228,8 +255,8 @@ describe('retryFailedRecallCancellations', () => {
       [
         {
           id: 'calendar-event-1',
-          startsAt: '2026-01-01T13:00:00.000Z',
-          endsAt: '2026-01-01T14:00:00.000Z',
+          startsAt: '2026-01-01T11:00:00.000Z',
+          endsAt: null,
         },
       ],
     );
@@ -294,7 +321,7 @@ describe('retryFailedRecallCancellations', () => {
     ]);
   });
 
-  it('recovers a bot by metadata after its calendar event was deleted', async () => {
+  it('persists a metadata-recovered bot id when cancellation fails after its calendar event was deleted', async () => {
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
@@ -312,17 +339,40 @@ describe('retryFailedRecallCancellations', () => {
           results: [{ id: 'recall-bot-recovered' }],
         }),
       })
-      .mockResolvedValueOnce(buildJsonResponse(204));
+      .mockResolvedValueOnce(buildJsonResponse(400))
+      .mockResolvedValueOnce(buildJsonResponse(400));
 
-    await retryFailedRecallCancellations({
+    const result = await retryFailedRecallCancellations({
       client: client as unknown as CoreApiClient,
       now: NOW,
     });
 
+    const listRequestUrl = fetchMock.mock.calls[0][0];
+    const listRequestParameters = new URL(listRequestUrl).searchParams;
+
+    expect(listRequestParameters.has('join_at_after')).toBe(false);
+    expect(listRequestParameters.has('join_at_before')).toBe(false);
     expect(fetchMock).toHaveBeenCalledWith(
-      `${BASE_URL}/bot/recall-bot-recovered/`,
-      expect.objectContaining({ method: 'DELETE' }),
+      `${BASE_URL}/bot/recall-bot-recovered/leave_call/`,
+      expect.objectContaining({ method: 'POST' }),
     );
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: { externalBotId: 'recall-bot-recovered' },
+      },
+    ]);
+    expect(client.callRecordings[0].externalBotId).toBe(
+      'recall-bot-recovered',
+    );
+    expect(client.conditionalMutationFilters).toEqual([
+      expect.objectContaining({
+        recordingRequestStatus: { eq: 'CANCELED' },
+        status: { in: ['SCHEDULED', 'JOINING', 'RECORDING', 'PROCESSING'] },
+        externalBotId: { is: 'NULL' },
+      }),
+    ]);
+    expect(result.canceledExternalBotCallRecordingIds).toEqual([]);
   });
 
   it('does not repeatedly look up botless cancellations after their meeting ended', async () => {

@@ -7,10 +7,9 @@ import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calenda
 import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
-import { attachExistingRecallBotToCallRecording } from 'src/logic-functions/flows/attach-existing-recall-bot-to-call-recording.util';
+import { replaceCanceledCallRecordingExternalBotId } from 'src/logic-functions/data/replace-canceled-call-recording-external-bot-id.util';
 import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
 import { findScheduledRecallBotIdForCallRecording } from 'src/logic-functions/recall-api/find-scheduled-recall-bot-id-for-call-recording.util';
-import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
@@ -18,6 +17,8 @@ import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-
 export type RetryFailedRecallCancellationsResult = {
   canceledExternalBotCallRecordingIds: string[];
 };
+
+const CANCELED_BOT_RECOVERY_AFTER_START_HOURS = 24;
 
 // Retries the Recall half of cancelCallRecordingRequest when its bot cancel failed; the recording keeps its bot id until the bot is confirmed gone.
 export const retryFailedRecallCancellations = async ({
@@ -82,9 +83,10 @@ export const retryFailedRecallCancellations = async ({
     }
 
     if (latestCallRecording.externalBotId === externalBotId) {
-      await updateCallRecording(client, {
+      await replaceCanceledCallRecordingExternalBotId(client, {
         id: callRecording.id,
-        data: { externalBotId: null },
+        expectedExternalBotId: externalBotId,
+        nextExternalBotId: null,
       });
     }
 
@@ -109,26 +111,15 @@ const recoverRecallBotIdForCanceledCallRecording = async ({
     return callRecording.externalBotId;
   }
 
-  if (!isUndefined(calendarEvent)) {
-    if (
-      hasMeetingEnded({
-        startsAt: calendarEvent.startsAt,
-        endsAt: calendarEvent.endsAt,
-        now,
-      })
-    ) {
-      return undefined;
-    }
-
-    const existingRecallBotAttachmentResult =
-      await attachExistingRecallBotToCallRecording(client, {
-        callRecording,
-        calendarEvent,
-      });
-
-    return existingRecallBotAttachmentResult.status === 'attached'
-      ? existingRecallBotAttachmentResult.externalBotId
-      : undefined;
+  if (
+    !isUndefined(calendarEvent) &&
+    hasMeetingEnded({
+      startsAt: calendarEvent.startsAt,
+      endsAt: calendarEvent.endsAt,
+      now,
+    })
+  ) {
+    return undefined;
   }
 
   const currentWorkspaceId = getCurrentWorkspaceId();
@@ -150,7 +141,17 @@ const recoverRecallBotIdForCanceledCallRecording = async ({
     return undefined;
   }
 
-  return scheduledRecallBotLookupResult.externalBotId;
+  const externalBotId = scheduledRecallBotLookupResult.externalBotId;
+  const didClaimRecoveredBot = await replaceCanceledCallRecordingExternalBotId(
+    client,
+    {
+      id: callRecording.id,
+      expectedExternalBotId: null,
+      nextExternalBotId: externalBotId,
+    },
+  );
+
+  return didClaimRecoveredBot ? externalBotId : undefined;
 };
 
 const hasMeetingEnded = ({
@@ -162,13 +163,24 @@ const hasMeetingEnded = ({
   endsAt: string | undefined;
   now: Date;
 }): boolean => {
-  const meetingEndReference = endsAt ?? startsAt;
+  if (!isUndefined(endsAt)) {
+    const meetingEndTime = new Date(endsAt).getTime();
 
-  if (isUndefined(meetingEndReference)) {
+    if (!Number.isNaN(meetingEndTime)) {
+      return meetingEndTime <= now.getTime();
+    }
+  }
+
+  if (isUndefined(startsAt)) {
     return false;
   }
 
-  const meetingEndTime = new Date(meetingEndReference).getTime();
+  const meetingStartTime = new Date(startsAt).getTime();
 
-  return !Number.isNaN(meetingEndTime) && meetingEndTime <= now.getTime();
+  return (
+    !Number.isNaN(meetingStartTime) &&
+    meetingStartTime +
+      CANCELED_BOT_RECOVERY_AFTER_START_HOURS * 60 * 60 * 1000 <=
+      now.getTime()
+  );
 };

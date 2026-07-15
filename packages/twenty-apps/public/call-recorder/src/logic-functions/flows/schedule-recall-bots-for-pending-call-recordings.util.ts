@@ -55,7 +55,6 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
 
     const attachResult = await attachExistingRecallBotToCallRecording(client, {
       callRecording,
-      calendarEvent,
     });
 
     if (attachResult.status === 'attached') {

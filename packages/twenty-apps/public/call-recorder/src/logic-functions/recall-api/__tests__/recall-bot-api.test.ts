@@ -221,6 +221,7 @@ describe('recall bot api', () => {
     const result = await listScheduledRecallBots({
       joinAtAfter: '2026-01-01T08:00:00.000Z',
       joinAtBefore: '2026-01-02T12:00:00.000Z',
+      statuses: ['ready', 'joining_call'],
     });
 
     expect(result).toEqual({
@@ -238,7 +239,7 @@ describe('recall bot api', () => {
     });
     expect(fetchMock).toHaveBeenNthCalledWith(
       1,
-      'https://ap-northeast-1.recall.ai/api/v1/bot/?join_at_after=2026-01-01T08%3A00%3A00.000Z&join_at_before=2026-01-02T12%3A00%3A00.000Z',
+      'https://ap-northeast-1.recall.ai/api/v1/bot/?join_at_after=2026-01-01T08%3A00%3A00.000Z&join_at_before=2026-01-02T12%3A00%3A00.000Z&status=ready&status=joining_call',
       expect.objectContaining({ method: 'GET' }),
     );
     expect(fetchMock).toHaveBeenNthCalledWith(

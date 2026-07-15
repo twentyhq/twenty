@@ -1,5 +1,15 @@
 import { listScheduledRecallBots } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
 
+const ACTIVE_RECALL_BOT_STATUSES = [
+  'ready',
+  'joining_call',
+  'in_waiting_room',
+  'in_call_not_recording',
+  'recording_permission_allowed',
+  'recording_permission_denied',
+  'in_call_recording',
+];
+
 export type FindScheduledRecallBotIdResult =
   | { ok: true; externalBotId: string | undefined }
   | { ok: false };
@@ -7,21 +17,16 @@ export type FindScheduledRecallBotIdResult =
 export const findScheduledRecallBotIdForCallRecording = async ({
   callRecordingId,
   workspaceId,
-  joinAtAfter,
-  joinAtBefore,
 }: {
   callRecordingId: string;
   workspaceId: string;
-  joinAtAfter?: string;
-  joinAtBefore?: string;
 }): Promise<FindScheduledRecallBotIdResult> => {
   const listResult = await listScheduledRecallBots({
-    joinAtAfter,
-    joinAtBefore,
     metadata: {
       twentyWorkspaceId: workspaceId,
       twentyCallRecordingId: callRecordingId,
     },
+    statuses: ACTIVE_RECALL_BOT_STATUSES,
   });
 
   if (!listResult.ok) {

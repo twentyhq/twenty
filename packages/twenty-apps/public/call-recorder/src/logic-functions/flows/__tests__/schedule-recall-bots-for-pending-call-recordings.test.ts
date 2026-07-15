@@ -263,27 +263,18 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(lookupParameters.get('metadata__twentyCallRecordingId')).toBe(
       'call-recording-1',
     );
+    expect(lookupParameters.has('join_at_after')).toBe(false);
+    expect(lookupParameters.has('join_at_before')).toBe(false);
+    expect(lookupParameters.getAll('status')).toEqual([
+      'ready',
+      'joining_call',
+      'in_waiting_room',
+      'in_call_not_recording',
+      'recording_permission_allowed',
+      'recording_permission_denied',
+      'in_call_recording',
+    ]);
     expect(client.callRecordings[0].externalBotId).toBe('recall-bot-existing');
-  });
-
-  it('widens the existing-bot lookup window when the join-early offset exceeds the 24h floor', async () => {
-    vi.stubEnv('CALL_RECORDER_JOIN_EARLY_MINUTES', '2880');
-    const client = new FakeCoreApiClient({
-      callRecordings: [buildPendingCallRecording()],
-      calendarEvents: [buildCalendarEvent()],
-    });
-
-    await scheduleRecallBotsForPendingCallRecordings({
-      client: client as unknown as CoreApiClient,
-      now: NOW,
-    });
-
-    const lookupParameters = new URL(listBotRequestUrls()[0]).searchParams;
-    expect(lookupParameters.get('join_at_after')).toBe(
-      new Date(
-        new Date(UPCOMING_STARTS_AT).getTime() - 2880 * 60 * 1000,
-      ).toISOString(),
-    );
   });
 
   it('defers scheduling when the existing-bot lookup fails so no duplicate bot is created', async () => {
