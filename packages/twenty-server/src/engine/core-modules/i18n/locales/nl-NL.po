@@ -1071,6 +1071,28 @@ msgstr "Kalenderkanaal is onjuist geconfigureerd."
 msgid "Calendar channel not found."
 msgstr "Kalenderkanaal niet gevonden."
 
+#. js-lingui-id: 9uvvYS
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Calendar end field metadata not found"
+msgstr ""
+
+#. js-lingui-id: 6BRvIC
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Calendar end field must be a date or date time field"
+msgstr ""
+
+#. js-lingui-id: PEXN0U
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Calendar end field must belong to the view object"
+msgstr ""
+
+#. js-lingui-id: k6cK5J
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Calendar end field not found"
+msgstr ""
+
 #. js-lingui-id: bRk+FR
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Calendar event"
@@ -1127,15 +1149,61 @@ msgstr "Kalenderevenementrecordpositie"
 msgid "Calendar events"
 msgstr "Kalenderevenementen"
 
+#. js-lingui-id: Sn4xhy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Calendar field metadata not found"
+msgstr ""
+
+#. js-lingui-id: J3xD/M
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Calendar field must be a date or date time field"
+msgstr ""
+
+#. js-lingui-id: hUOMKq
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Calendar field must belong to the view object"
+msgstr ""
+
+#. js-lingui-id: 26b8pD
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Calendar field not found"
+msgstr ""
+
 #. js-lingui-id: GtrALl
 #: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
 msgid "Calendar provider is not supported."
 msgstr "Kalenderprovider wordt niet ondersteund."
 
+#. js-lingui-id: /63r02
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Calendar start and end fields must be different"
+msgstr ""
+
+#. js-lingui-id: DRukEV
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Calendar start and end fields must have the same type"
+msgstr ""
+
 #. js-lingui-id: CnNFfU
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Calendar sync error."
 msgstr "Kalendersynchronisatiefout."
+
+#. js-lingui-id: zfvgb0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Calendar view must have a calendar field"
+msgstr ""
+
+#. js-lingui-id: JhktJw
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+msgid "Calendar view must have a calendar layout"
+msgstr ""
 
 #. js-lingui-id: 9e+AU2
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1712,6 +1780,16 @@ msgstr "De inhoud bevat een URL met een onveilig protocol."
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "Contradicting field permissions have been detected on a relation field."
 msgstr "Tegenstrijdige veldrechten zijn gedetecteerd op een relatieveld."
+
+#. js-lingui-id: 1M+KVf
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
+msgid "Core workflow id"
+msgstr ""
+
+#. js-lingui-id: 63q4o1
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
+msgid "Core workflow version id"
+msgstr ""
 
 #. js-lingui-id: xuYXJX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -6266,6 +6344,16 @@ msgstr "Samenvatting van opname"
 msgid "Recurring Event ID"
 msgstr "ID van terugkerende gebeurtenis"
 
+#. js-lingui-id: V3DAOp
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
+msgid "Reference to the core workflow row"
+msgstr ""
+
+#. js-lingui-id: ODfTA/
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
+msgid "Reference to the core workflowVersion row"
+msgstr ""
+
 #. js-lingui-id: 1GvzpH
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Refresh token not found."
@@ -7808,6 +7896,7 @@ msgstr "Dit domein is al geregistreerd als aangepast domein."
 
 #. js-lingui-id: s6batt
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This domain is already registered."
 msgstr "Dit domein is al geregistreerd."
 

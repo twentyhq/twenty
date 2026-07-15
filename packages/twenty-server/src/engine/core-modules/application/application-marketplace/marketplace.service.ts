@@ -7,6 +7,8 @@ import { z } from 'zod';
 import { buildRegistryCdnUrl } from 'src/engine/core-modules/application/application-marketplace/utils/build-registry-cdn-url.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
+const MAX_REGISTRY_ASSET_SIZE_BYTES = 10 * 1024 * 1024; // 10Mb
+
 export type RegistryPackageInfo = {
   name: string;
   version: string;
@@ -67,6 +69,37 @@ export class MarketplaceService {
     } catch {
       this.logger.debug(
         `Could not fetch manifest from CDN for ${packageName}@${version}`,
+      );
+
+      return null;
+    }
+  }
+
+  async fetchAssetFromRegistryCdn(
+    packageName: string,
+    version: string,
+    filePath: string,
+  ): Promise<Buffer | null> {
+    const cdnBaseUrl = this.twentyConfigService.get('APP_REGISTRY_CDN_URL');
+    const url = buildRegistryCdnUrl({
+      cdnBaseUrl,
+      packageName,
+      version,
+      filePath,
+    });
+
+    try {
+      const { data } = await axios.get<ArrayBuffer>(url, {
+        headers: { 'User-Agent': 'Twenty-Marketplace' },
+        timeout: 10_000,
+        responseType: 'arraybuffer',
+        maxContentLength: MAX_REGISTRY_ASSET_SIZE_BYTES,
+      });
+
+      return Buffer.from(data);
+    } catch {
+      this.logger.debug(
+        `Could not fetch asset "${filePath}" from CDN for ${packageName}@${version}`,
       );
 
       return null;

@@ -57,10 +57,11 @@ type ApplicationRegistration {
   isPreInstalled: Boolean!
   listingRequestStatus: ApplicationRegistrationListingRequestStatus!
   listingRequestedAt: DateTime
-  logoUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
   isConfigured: Boolean!
+  logoUrl: String
+  galleryImagesUrls: [String!]!
 }
 
 enum ApplicationRegistrationSourceType {
@@ -678,6 +679,7 @@ type Application {
   objects: [Object!]!
   applicationVariables: [ApplicationVariable!]!
   applicationRegistration: ApplicationRegistrationSummary
+  logoUrl: String
 }
 
 type ViewField {
@@ -826,6 +828,7 @@ type View {
   shouldHideEmptyGroups: Boolean!
   kanbanColumnWidth: Int
   calendarFieldMetadataId: UUID
+  calendarEndFieldMetadataId: UUID
   workspaceId: UUID!
   anyFieldFilterValue: String
   calendarLayout: ViewCalendarLayout
@@ -3645,6 +3648,7 @@ input CreateViewInput {
   anyFieldFilterValue: String
   calendarLayout: ViewCalendarLayout
   calendarFieldMetadataId: UUID
+  calendarEndFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   visibility: ViewVisibility
 }
@@ -3662,6 +3666,7 @@ input UpdateViewInput {
   anyFieldFilterValue: String
   calendarLayout: ViewCalendarLayout
   calendarFieldMetadataId: UUID
+  calendarEndFieldMetadataId: UUID
   visibility: ViewVisibility
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean

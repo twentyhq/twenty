@@ -1,8 +1,13 @@
 import { isUndefined } from '@sniptt/guards';
 
+import { RECALL_API_MAX_IN_PROCESS_RETRY_WAIT_MS } from 'src/logic-functions/constants/recall-api-max-in-process-retry-wait-ms';
 import { RECALL_API_MAX_ATTEMPTS } from 'src/logic-functions/constants/recall-api-max-attempts';
-import { RECALL_API_RETRY_DELAY_MS } from 'src/logic-functions/constants/recall-api-retry-delay-ms';
 import { type RecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
+import { parseRecallRetryAfterMs } from 'src/logic-functions/recall-api/parse-recall-retry-after.util';
+import {
+  isRetryableRecallApiStatus,
+  resolveRecallApiRetryDelayMs,
+} from 'src/logic-functions/recall-api/recall-api-retry-policy.util';
 
 type RecallBotApiRequestArgs = {
   config: RecallApiConfig;
@@ -25,22 +30,38 @@ type RecallBotApiRequestResult<TData> =
       errorMessage: string;
     };
 
-// Bot creates tolerate retries because duplicates stay unclaimed and get reaped.
+// Bot creates tolerate retries because duplicates stay unclaimed and get canceled.
 // Callers that cannot retry idempotently can lower maxAttempts.
 export const recallBotApiRequest = async <TData>(
   requestArgs: RecallBotApiRequestArgs,
 ): Promise<RecallBotApiRequestResult<TData>> => {
   const maxAttempts = requestArgs.maxAttempts ?? RECALL_API_MAX_ATTEMPTS;
+  let totalRetryWaitMs = 0;
 
   for (let attemptNumber = 1; ; attemptNumber++) {
-    const { result, isRetryable } =
+    const { result, isRetryable, retryAfterMs } =
       await performRecallBotApiRequestAttempt<TData>(requestArgs);
 
     if (!isRetryable || attemptNumber >= maxAttempts) {
       return result;
     }
 
-    await sleep(RECALL_API_RETRY_DELAY_MS * attemptNumber);
+    const retryDelayMs = resolveRecallApiRetryDelayMs({
+      retryAfterMs,
+      status: result.status,
+      attemptNumber,
+    });
+
+    // Sleeping past the invocation budget would hit the timeout kill; defer to the reconcilers.
+    if (
+      totalRetryWaitMs + retryDelayMs >=
+      RECALL_API_MAX_IN_PROCESS_RETRY_WAIT_MS
+    ) {
+      return result;
+    }
+
+    totalRetryWaitMs += retryDelayMs;
+    await sleep(retryDelayMs);
   }
 };
 
@@ -53,6 +74,7 @@ const performRecallBotApiRequestAttempt = async <TData>({
 }: RecallBotApiRequestArgs): Promise<{
   result: RecallBotApiRequestResult<TData>;
   isRetryable: boolean;
+  retryAfterMs?: number;
 }> => {
   let response: Response;
 
@@ -103,6 +125,10 @@ const performRecallBotApiRequestAttempt = async <TData>({
   if (!response.ok) {
     return {
       isRetryable: isRetryableRecallApiStatus(response.status),
+      retryAfterMs: parseRecallRetryAfterMs(
+        response.headers?.get('retry-after') ?? null,
+        Date.now(),
+      ),
       result: {
         ok: false,
         status: response.status,
@@ -133,9 +159,6 @@ const performRecallBotApiRequestAttempt = async <TData>({
     };
   }
 };
-
-const isRetryableRecallApiStatus = (status: number): boolean =>
-  status === 429 || status >= 500;
 
 const sleep = (delayMs: number): Promise<void> =>
   new Promise((resolve) => {

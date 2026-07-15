@@ -4,7 +4,7 @@ import { Command } from 'nest-commander';
 import { IsNull, Repository } from 'typeorm';
 
 import { isArray, isDefined } from 'class-validator';
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import {
@@ -34,7 +34,7 @@ const PREFERENCE_KEY_MAP = {
   description:
     'Migrate AI_MODEL_PREFERENCES config var to the four individual AI_MODELS_DEFAULT_* vars, per workspace',
 })
-export class MigrateAiModelPreferencesCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class MigrateAiModelPreferencesCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     @InjectRepository(KeyValuePairEntity)

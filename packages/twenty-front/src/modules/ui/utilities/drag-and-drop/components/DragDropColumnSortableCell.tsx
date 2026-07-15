@@ -21,6 +21,7 @@ const SORTABLE_TRANSITION = {
 
 const StyledSortableRoot = styled.div<{ $fill?: boolean }>`
   display: ${({ $fill }) => ($fill ? 'flex' : 'block')};
+  flex-shrink: ${({ $fill }) => ($fill ? 0 : 'initial')};
   height: ${({ $fill }) => ($fill ? '100%' : 'auto')};
   min-height: 0;
   min-width: ${({ $fill }) => ($fill ? '0' : 'auto')};

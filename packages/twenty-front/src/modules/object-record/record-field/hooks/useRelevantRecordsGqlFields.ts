@@ -17,12 +17,12 @@ import { filterDuplicatesById, isDefined } from 'twenty-shared/utils';
 
 type UseRecordsUsefulGqlFields = {
   objectMetadataItem: EnrichedObjectMetadataItem;
-  additionalFieldMetadataId?: string | null;
+  additionalFieldMetadataIds?: Array<string | null | undefined>;
 };
 
 export const useRelevantRecordsGqlFields = ({
   objectMetadataItem,
-  additionalFieldMetadataId,
+  additionalFieldMetadataIds = [],
 }: UseRecordsUsefulGqlFields) => {
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
@@ -52,16 +52,18 @@ export const useRelevantRecordsGqlFields = ({
     )
     .filter(isDefined);
 
-  const additionalFieldMetadataItem = isDefined(additionalFieldMetadataId)
-    ? fieldMetadataItemByFieldMetadataItemId[additionalFieldMetadataId]
-    : undefined;
+  const additionalFieldMetadataItems = additionalFieldMetadataIds
+    .filter(isDefined)
+    .map(
+      (fieldMetadataId) =>
+        fieldMetadataItemByFieldMetadataItemId[fieldMetadataId],
+    )
+    .filter(isDefined);
 
   const fieldMetadataItemsToUse = [
     ...visibleRecordFieldMetadataItems,
     ...(recordFilterFields ?? []),
-    ...(isDefined(additionalFieldMetadataItem)
-      ? [additionalFieldMetadataItem]
-      : []),
+    ...additionalFieldMetadataItems,
   ].filter(filterDuplicatesById);
 
   const allDepthOneGqlFields = generateDepthRecordGqlFieldsFromFields({

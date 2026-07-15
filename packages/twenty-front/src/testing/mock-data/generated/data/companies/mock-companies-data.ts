@@ -11,6 +11,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
     "__typename": "Company",
     "accountOwner": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-1553-45c6-a028-5a9064cce07f",
       "name": {
         "__typename": "FullName",
@@ -102,7 +103,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-22.png",
+            "avatarFile": null,
             "id": "20202020-b030-4743-9edd-d1a1776d653d",
             "name": {
               "__typename": "FullName",
@@ -115,7 +116,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-33.png",
+            "avatarFile": null,
             "id": "20202020-bcc1-434e-995a-f80dfa92b596",
             "name": {
               "__typename": "FullName",
@@ -215,6 +216,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
     "__typename": "Company",
     "accountOwner": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-1553-45c6-a028-5a9064cce07f",
       "name": {
         "__typename": "FullName",
@@ -306,7 +308,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "",
+            "avatarFile": null,
             "id": "20202020-bf28-4a93-bba3-b02aa55543a3",
             "name": {
               "__typename": "FullName",
@@ -319,7 +321,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-49.png",
+            "avatarFile": null,
             "id": "20202020-b0ae-46da-9697-ed949ee75b67",
             "name": {
               "__typename": "FullName",
@@ -411,6 +413,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
     "__typename": "Company",
     "accountOwner": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-77d5-4cb6-b60a-f4a835a85d61",
       "name": {
         "__typename": "FullName",
@@ -502,7 +505,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-86.png",
+            "avatarFile": null,
             "id": "20202020-b165-49bf-b2c1-60fd1ee3d368",
             "name": {
               "__typename": "FullName",
@@ -515,7 +518,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-76.png",
+            "avatarFile": null,
             "id": "20202020-b664-4460-83e8-5c5f1c64c836",
             "name": {
               "__typename": "FullName",
@@ -599,6 +602,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
     "__typename": "Company",
     "accountOwner": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-1553-45c6-a028-5a9064cce07f",
       "name": {
         "__typename": "FullName",
@@ -707,7 +711,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-84.png",
+            "avatarFile": null,
             "id": "20202020-bfea-4a51-81be-d46de6a93db7",
             "name": {
               "__typename": "FullName",
@@ -720,7 +724,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-33.png",
+            "avatarFile": null,
             "id": "20202020-bfa7-4546-a865-18a9cd06de4c",
             "name": {
               "__typename": "FullName",
@@ -812,6 +816,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
     "__typename": "Company",
     "accountOwner": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-0687-4c41-b707-ed1bfca972a7",
       "name": {
         "__typename": "FullName",
@@ -912,7 +917,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-71.png",
+            "avatarFile": null,
             "id": "20202020-b397-497b-90bc-f62c1c34b2a3",
             "name": {
               "__typename": "FullName",
@@ -925,7 +930,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-58.png",
+            "avatarFile": null,
             "id": "20202020-beb3-40b1-8f18-de25a7fd1146",
             "name": {
               "__typename": "FullName",
@@ -1033,6 +1038,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
     "__typename": "Company",
     "accountOwner": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-77d5-4cb6-b60a-f4a835a85d61",
       "name": {
         "__typename": "FullName",
@@ -1124,7 +1130,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-1.png",
+            "avatarFile": null,
             "id": "20202020-b171-46bc-a285-ec8ee3e3b702",
             "name": {
               "__typename": "FullName",
@@ -1137,7 +1143,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-7.png",
+            "avatarFile": null,
             "id": "20202020-b307-4b8e-9281-b3ddb0ef420c",
             "name": {
               "__typename": "FullName",
@@ -1229,6 +1235,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
     "__typename": "Company",
     "accountOwner": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-1553-45c6-a028-5a9064cce07f",
       "name": {
         "__typename": "FullName",
@@ -1320,7 +1327,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "",
+            "avatarFile": null,
             "id": "20202020-b29f-45a3-9e75-6a1d49f1299f",
             "name": {
               "__typename": "FullName",
@@ -1333,7 +1340,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-1.png",
+            "avatarFile": null,
             "id": "20202020-bcbc-4e67-8f84-df60aad8cd7f",
             "name": {
               "__typename": "FullName",
@@ -1441,6 +1448,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
     "__typename": "Company",
     "accountOwner": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-1553-45c6-a028-5a9064cce07f",
       "name": {
         "__typename": "FullName",
@@ -1532,7 +1540,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-19.png",
+            "avatarFile": null,
             "id": "20202020-bab2-4892-8834-6ca25212fd35",
             "name": {
               "__typename": "FullName",
@@ -1545,7 +1553,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "",
+            "avatarFile": null,
             "id": "20202020-b48a-4ca5-9596-abdee52b69a6",
             "name": {
               "__typename": "FullName",
@@ -1653,6 +1661,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
     "__typename": "Company",
     "accountOwner": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-1553-45c6-a028-5a9064cce07f",
       "name": {
         "__typename": "FullName",
@@ -1744,7 +1753,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-87.png",
+            "avatarFile": null,
             "id": "20202020-b597-4d76-b0d5-cd2b7d7e0255",
             "name": {
               "__typename": "FullName",
@@ -1757,7 +1766,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "",
+            "avatarFile": null,
             "id": "20202020-bbaf-436a-b635-79e7c349f388",
             "name": {
               "__typename": "FullName",
@@ -1889,6 +1898,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
     "__typename": "Company",
     "accountOwner": {
       "__typename": "WorkspaceMember",
+      "avatarUrl": "",
       "id": "20202020-77d5-4cb6-b60a-f4a835a85d61",
       "name": {
         "__typename": "FullName",
@@ -1997,7 +2007,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "",
+            "avatarFile": null,
             "id": "20202020-ba0b-48a9-85ba-e223975696ea",
             "name": {
               "__typename": "FullName",
@@ -2010,7 +2020,7 @@ export const mockedCompanyRecords: ObjectRecord[] =
           "__typename": "PersonEdge",
           "node": {
             "__typename": "Person",
-            "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-65.png",
+            "avatarFile": null,
             "id": "20202020-b3e6-4514-88e8-7394fa3017cc",
             "name": {
               "__typename": "FullName",

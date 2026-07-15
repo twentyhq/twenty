@@ -16,14 +16,13 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { isImageFilePath } from 'src/engine/core-modules/application/application-registration/utils/is-image-file-path.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { ManifestAssetUrlResolverService } from 'src/engine/core-modules/application/application-registration/manifest-asset-url-resolver.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
+import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -34,7 +33,6 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 
@@ -46,18 +44,16 @@ export class ApplicationInstallService {
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly applicationService: ApplicationService,
-    private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly applicationSyncService: ApplicationSyncService,
+    private readonly applicationManifestApplyService: ApplicationManifestApplyService,
     private readonly fileStorageService: FileStorageService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly cacheLockService: CacheLockService,
-    private readonly sdkClientGenerationService: SdkClientGenerationService,
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly manifestAssetUrlResolverService: ManifestAssetUrlResolverService,
   ) {}
 
   async installApplication(params: {
@@ -240,20 +236,12 @@ export class ApplicationInstallService {
         universalIdentifier,
       });
 
-      const { hasSchemaMetadataChanged } =
-        await this.applicationSyncService.synchronizeFromManifest({
-          workspaceId: params.workspaceId,
-          manifest: resolvedPackage.manifest,
-          applicationRegistrationId: appRegistration.id,
-        });
-
-      if (!isVersionUpgrade || hasSchemaMetadataChanged) {
-        await this.sdkClientGenerationService.generateSdkClientForApplication({
-          workspaceId: params.workspaceId,
-          applicationId: application.id,
-          applicationUniversalIdentifier: universalIdentifier,
-        });
-      }
+      await this.applicationManifestApplyService.applyManifestToWorkspace({
+        workspaceId: params.workspaceId,
+        manifest: resolvedPackage.manifest,
+        applicationRegistrationId: appRegistration.id,
+        application,
+      });
 
       await this.runPostInstallHook({
         manifest: resolvedPackage.manifest,
@@ -264,11 +252,14 @@ export class ApplicationInstallService {
         universalIdentifier,
       });
 
-      await this.refreshRegistrationFromInstall({
-        appRegistration,
-        manifest: resolvedPackage.manifest,
-        installedVersion: newVersion,
-      });
+      await this.applicationManifestApplyService.refreshRegistrationFromManifest(
+        {
+          applicationRegistrationId: appRegistration.id,
+          manifest: resolvedPackage.manifest,
+          latestAvailableVersion: newVersion,
+          preventVersionDowngrade: true,
+        },
+      );
 
       this.logger.log(
         `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
@@ -295,26 +286,6 @@ export class ApplicationInstallService {
         );
       }
     }
-  }
-
-  private async refreshRegistrationFromInstall(params: {
-    appRegistration: ApplicationRegistrationEntity;
-    manifest: Manifest;
-    installedVersion: string;
-  }): Promise<void> {
-    const { appRegistration, manifest, installedVersion } = params;
-
-    await this.applicationRegistrationService.updateFromManifest({
-      applicationRegistrationId: appRegistration.id,
-      manifest: this.manifestAssetUrlResolverService.resolveFromRegistration({
-        sourceType: appRegistration.sourceType,
-        sourcePackage: appRegistration.sourcePackage,
-        manifest,
-        version: installedVersion,
-      }),
-      latestAvailableVersion: installedVersion,
-      preventVersionDowngrade: true,
-    });
   }
 
   private async runPreInstallHook(params: {

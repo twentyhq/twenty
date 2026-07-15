@@ -7,6 +7,8 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a crea
       "universal-identifier-1": {
         "applicationId": "application-id-1",
         "applicationUniversalIdentifier": "application-universal-identifier-1",
+        "calendarEndViewIds": [],
+        "calendarEndViewUniversalIdentifiers": [],
         "calendarViewIds": [],
         "calendarViewUniversalIdentifiers": [],
         "createdAt": "2024-01-01T00:00:00.000Z",
@@ -74,6 +76,8 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a dele
       "universal-identifier-1": {
         "applicationId": "application-id-1",
         "applicationUniversalIdentifier": "application-universal-identifier-1",
+        "calendarEndViewIds": [],
+        "calendarEndViewUniversalIdentifiers": [],
         "calendarViewIds": [],
         "calendarViewUniversalIdentifiers": [],
         "createdAt": "2024-01-01T00:00:00.000Z",
@@ -155,6 +159,8 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
       "universal-identifier-3": {
         "applicationId": "application-id-1",
         "applicationUniversalIdentifier": "application-universal-identifier-1",
+        "calendarEndViewIds": [],
+        "calendarEndViewUniversalIdentifiers": [],
         "calendarViewIds": [],
         "calendarViewUniversalIdentifiers": [],
         "createdAt": "2024-01-01T00:00:00.000Z",
@@ -208,6 +214,8 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
       "universal-identifier-2": {
         "applicationId": "application-id-1",
         "applicationUniversalIdentifier": "application-universal-identifier-1",
+        "calendarEndViewIds": [],
+        "calendarEndViewUniversalIdentifiers": [],
         "calendarViewIds": [],
         "calendarViewUniversalIdentifiers": [],
         "createdAt": "2024-01-01T00:00:00.000Z",

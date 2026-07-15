@@ -10,6 +10,7 @@ type RecordTableWidgetRendererContentProps = {
   isReadOnly?: boolean;
   isEmptyStateHidden?: boolean;
   recordLimit?: number;
+  instanceIdSuffix?: string;
 };
 
 export const RecordTableWidgetRendererContent = ({
@@ -19,6 +20,7 @@ export const RecordTableWidgetRendererContent = ({
   isReadOnly = true,
   isEmptyStateHidden = false,
   recordLimit,
+  instanceIdSuffix,
 }: RecordTableWidgetRendererContentProps) => {
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId,
@@ -35,6 +37,7 @@ export const RecordTableWidgetRendererContent = ({
         viewId={viewId}
         widgetId={widgetId}
         recordLimit={recordLimit}
+        instanceIdSuffix={instanceIdSuffix}
       >
         <RecordTableWidget
           isReadOnly={isReadOnly}

@@ -11,7 +11,7 @@ export const mapRecallStatusCodeToCallRecordingStatus = (
     case 'recording_permission_allowed':
     case 'in_call_recording':
       return CallRecordingStatus.RECORDING;
-    // 'done' stays PROCESSING: COMPLETED is set only after all artifacts are ingested.
+    // 'done' stays PROCESSING: COMPLETED is set only after all artifacts are imported.
     case 'call_ended':
     case 'analysis_done':
     case 'done':

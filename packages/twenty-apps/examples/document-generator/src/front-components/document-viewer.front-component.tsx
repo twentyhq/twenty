@@ -1,5 +1,6 @@
 import { type CSSProperties, useEffect, useState } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { RestApiClient } from 'twenty-client-sdk/rest';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { useFrontComponentExecutionContext } from 'twenty-sdk/front-component';
 
@@ -93,7 +94,9 @@ const DocumentViewer = () => {
     return <div style={styles.empty}>{loading ? 'Loading…' : 'Open a document to preview it here.'}</div>;
   }
 
-  const webUrl = `${process.env.TWENTY_API_URL ?? ''}/s/documents/view?id=${recordId}`;
+  const webUrl = new RestApiClient().resolveUrl('/s/documents/view', {
+    query: { id: recordId },
+  });
 
   return (
     <div style={styles.scroll}>

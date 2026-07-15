@@ -204,7 +204,9 @@ export const InstallAppsContent = ({
               <MainButton
                 title={t`Install`}
                 onClick={onInstall}
-                disabled={isCompleting}
+                disabled={
+                  isCompleting || !isNonEmptyArray(selectedUniversalIdentifiers)
+                }
                 fullWidth
               />
             </StyledInstallButton>

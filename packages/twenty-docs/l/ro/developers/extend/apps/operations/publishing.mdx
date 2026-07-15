@@ -205,6 +205,10 @@ Marketplace-ul redă `galleryImages` într-un container fix cu raport `8:5` (de 
 Imaginile din galerie cu orice raport de aspect sunt afișate integral și nu sunt niciodată decupate, însă orice imagine semnificativ mai înaltă sau mai îngustă decât `8:5` va afișa benzi goale pe laterale.
 </Note>
 
+#### Limită de dimensiune pentru imagini
+
+Fișierul `logo` și fiecare fișier din `galleryImages` nu trebuie să depășească **10 MB**. Fișierele mai mari sunt omise atunci când marketplace-ul re-găzduiește resursele tale publicate, astfel că nu vor fi afișate.
+
 ### Publicare
 
 ```bash filename="Terminal"

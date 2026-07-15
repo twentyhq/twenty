@@ -6,6 +6,7 @@ export const APPLICATION_REGISTRATION_FRAGMENT = gql`
     universalIdentifier
     name
     logoUrl
+    galleryImagesUrls
     oAuthClientId
     oAuthRedirectUris
     oAuthScopes

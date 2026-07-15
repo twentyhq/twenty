@@ -366,7 +366,10 @@ export class WorkspaceService {
       });
 
       if (
-        existingWorkspace?.activationStatus === WorkspaceActivationStatus.ACTIVE
+        existingWorkspace?.activationStatus ===
+          WorkspaceActivationStatus.ACTIVE ||
+        existingWorkspace?.activationStatus ===
+          WorkspaceActivationStatus.CREATED
       ) {
         return existingWorkspace;
       }

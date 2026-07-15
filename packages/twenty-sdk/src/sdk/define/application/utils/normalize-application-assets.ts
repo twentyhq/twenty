@@ -1,7 +1,6 @@
-import { type ApplicationConfig } from '@/sdk/define/application/application-config';
+import { isAbsoluteUrl } from 'twenty-shared/utils';
 
-const isAbsoluteUrl = (value: string): boolean =>
-  value.startsWith('http://') || value.startsWith('https://');
+import { type ApplicationConfig } from '@/sdk/define/application/application-config';
 
 export const normalizeApplicationAssets = (
   application: ApplicationConfig,

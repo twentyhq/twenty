@@ -344,6 +344,7 @@ describe('ApprovedAccessDomainService', () => {
           wtdId: approvedAccessDomain.id,
           validationToken: 'signed.jwt.token',
         },
+        hash: 'invite',
       });
 
       expect(emailService.send).toHaveBeenCalledWith({
