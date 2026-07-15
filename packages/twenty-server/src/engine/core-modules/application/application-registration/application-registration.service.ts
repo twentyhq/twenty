@@ -30,6 +30,7 @@ import {
   type UpdateApplicationRegistrationPayload,
 } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { buildRegistrationManifestUpdateFields } from 'src/engine/core-modules/application/application-registration/utils/build-registration-manifest-update-fields.util';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
@@ -385,12 +386,24 @@ export class ApplicationRegistrationService {
     sourceType,
     latestAvailableVersion,
     preventVersionDowngrade = false,
+    additionalFields,
   }: {
     applicationRegistrationId: string;
     manifest: Manifest;
     sourceType?: ApplicationRegistrationSourceType;
     latestAvailableVersion?: string;
     preventVersionDowngrade?: boolean;
+    additionalFields?: Partial<
+      Pick<
+        ApplicationRegistrationEntity,
+        | 'name'
+        | 'sourcePackage'
+        | 'tarballFileId'
+        | 'isListed'
+        | 'isVetted'
+        | 'ownerWorkspaceId'
+      >
+    >;
   }): Promise<boolean> {
     return this.cacheLockService.withLock(
       async () => {
@@ -414,19 +427,6 @@ export class ApplicationRegistrationService {
           return false;
         }
 
-        const displayFields = fromManifestApplicationToDisplayFields(
-          manifest.application,
-        );
-
-        // Gallery image files are stored by the source-specific flows (tarball
-        // upload, dev sync); keep their fileIds for paths that did not change.
-        const existingFileIdByPath = new Map(
-          (existing.galleryImages ?? []).map(({ path, fileId }) => [
-            path,
-            fileId,
-          ]),
-        );
-
         // One transaction so the registration row and its variable schemas
         // always come from the same manifest, even when the sync fails midway.
         await this.applicationRegistrationRepository.manager.transaction(
@@ -435,22 +435,20 @@ export class ApplicationRegistrationService {
               .getRepository(ApplicationRegistrationEntity)
               .save({
                 ...existing,
-                name: manifest.application.displayName,
+                name: manifest.application?.displayName ?? existing.name,
                 manifest,
-                ...displayFields,
-                galleryImages: displayFields.galleryImages.map(
-                  (galleryImage) => ({
-                    ...galleryImage,
-                    fileId: existingFileIdByPath.get(galleryImage.path) ?? null,
-                  }),
-                ),
+                ...buildRegistrationManifestUpdateFields({
+                  manifestApplication: manifest.application,
+                  existingGalleryImages: existing.galleryImages,
+                }),
                 ...(sourceType !== undefined && { sourceType }),
                 ...(latestAvailableVersion !== undefined && {
                   latestAvailableVersion,
                 }),
+                ...additionalFields,
               });
 
-            if (isDefined(manifest.application.serverVariables)) {
+            if (isDefined(manifest.application?.serverVariables)) {
               await this.applicationRegistrationVariableService.syncVariableSchemas(
                 applicationRegistrationId,
                 manifest.application.serverVariables,
@@ -540,18 +538,23 @@ export class ApplicationRegistrationService {
 
     const isVetted = vettedIdentifiers.has(params.universalIdentifier);
 
+    if (isDefined(existing) && isDefined(params.manifest)) {
+      await this.updateFromManifest({
+        applicationRegistrationId: existing.id,
+        manifest: params.manifest,
+        sourceType: params.sourceType,
+        latestAvailableVersion: params.latestAvailableVersion ?? undefined,
+        additionalFields: {
+          name: params.name,
+          sourcePackage: params.sourcePackage,
+          isVetted,
+        },
+      });
+
+      return;
+    }
+
     if (isDefined(existing)) {
-      const displayFields = fromManifestApplicationToDisplayFields(
-        params.manifest?.application,
-      );
-
-      const existingFileIdByPath = new Map(
-        (existing.galleryImages ?? []).map(({ path, fileId }) => [
-          path,
-          fileId,
-        ]),
-      );
-
       await this.applicationRegistrationRepository.save({
         ...existing,
         name: params.name,
@@ -560,43 +563,35 @@ export class ApplicationRegistrationService {
         latestAvailableVersion: params.latestAvailableVersion,
         isVetted,
         manifest: params.manifest,
-        ...displayFields,
-        galleryImages: displayFields.galleryImages.map((galleryImage) => ({
-          ...galleryImage,
-          fileId: existingFileIdByPath.get(galleryImage.path) ?? null,
-        })),
-      });
-    } else {
-      const registration = this.applicationRegistrationRepository.create({
-        universalIdentifier: params.universalIdentifier,
-        name: params.name,
-        sourceType: params.sourceType,
-        sourcePackage: params.sourcePackage,
-        latestAvailableVersion: params.latestAvailableVersion,
-        isListed: true,
-        isVetted,
-        manifest: params.manifest,
         ...fromManifestApplicationToDisplayFields(params.manifest?.application),
-        oAuthClientId: v4(),
-        oAuthRedirectUris: [],
-        oAuthScopes: [],
-        ownerWorkspaceId: null,
       });
 
-      await this.applicationRegistrationRepository.save(registration);
+      await this.invalidateMarketplaceAppsCache();
+
+      return;
     }
+
+    const registration = this.applicationRegistrationRepository.create({
+      universalIdentifier: params.universalIdentifier,
+      name: params.name,
+      sourceType: params.sourceType,
+      sourcePackage: params.sourcePackage,
+      latestAvailableVersion: params.latestAvailableVersion,
+      isListed: true,
+      isVetted,
+      manifest: params.manifest,
+      ...fromManifestApplicationToDisplayFields(params.manifest?.application),
+      oAuthClientId: v4(),
+      oAuthRedirectUris: [],
+      oAuthScopes: [],
+      ownerWorkspaceId: null,
+    });
+
+    await this.applicationRegistrationRepository.save(registration);
 
     await this.invalidateMarketplaceAppsCache();
 
     if (!isDefined(params.manifest?.application?.serverVariables)) {
-      return;
-    }
-
-    const registration = await this.findOneByUniversalIdentifier(
-      params.universalIdentifier,
-    );
-
-    if (!isDefined(registration)) {
       return;
     }
 

@@ -8,7 +8,6 @@ import { isAbsolute, join, relative, resolve } from 'path';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
@@ -19,8 +18,8 @@ import {
 import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
 import { readJsonFile } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
-import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
   ApplicationRegistrationException,
@@ -30,7 +29,7 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import type { ApplicationManifest } from 'twenty-shared/application';
+import type { ApplicationManifest, Manifest } from 'twenty-shared/application';
 
 @Injectable()
 export class ApplicationTarballService {
@@ -41,8 +40,8 @@ export class ApplicationTarballService {
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly fileStorageService: FileStorageService,
     private readonly applicationRegistrationAssetService: ApplicationRegistrationAssetService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationService: ApplicationService,
-    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
   ) {}
 
@@ -193,30 +192,27 @@ export class ApplicationTarballService {
         },
       });
 
-      await this.appRegistrationRepository.update(appRegistration.id, {
+      // Routed through the single registration writer so the tarball flow
+      // serializes with installs and dev sync on the per-registration lock
+      // and gets the same variable schema handling.
+      await this.applicationRegistrationService.updateFromManifest({
+        applicationRegistrationId: appRegistration.id,
+        manifest: manifest as Manifest,
         sourceType: ApplicationRegistrationSourceType.TARBALL,
-        tarballFileId: savedFile.id,
-        name: manifest.application?.displayName ?? 'Unknown App',
-        manifest,
-        ...fromManifestApplicationToDisplayFields(manifest.application),
-        latestAvailableVersion: packageJson?.version ?? null,
-        isListed: false,
-        isVetted: false,
-        ownerWorkspaceId: params.ownerWorkspaceId,
-      } as QueryDeepPartialEntity<ApplicationRegistrationEntity>);
+        latestAvailableVersion: packageJson?.version ?? undefined,
+        additionalFields: {
+          tarballFileId: savedFile.id,
+          isListed: false,
+          isVetted: false,
+          ownerWorkspaceId: params.ownerWorkspaceId,
+        },
+      });
 
       await this.applicationRegistrationAssetService.storeRegistrationAssets({
         applicationRegistrationId: appRegistration.id,
         manifestApplication: manifest.application,
         readAsset: (path) => this.readAssetFromContentDir(contentDir, path),
       });
-
-      if (manifest.application?.serverVariables) {
-        await this.applicationRegistrationVariableService.syncVariableSchemas(
-          appRegistration.id,
-          manifest.application.serverVariables,
-        );
-      }
 
       this.logger.log(
         `Tarball uploaded for app ${universalIdentifier} (registration ${appRegistration.id})`,
