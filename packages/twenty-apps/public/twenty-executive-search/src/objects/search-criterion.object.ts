@@ -6,6 +6,8 @@ import {
 } from 'twenty-sdk/define';
 
 import {
+  CRITERIA_ON_POSITION_SPECIFICATION_FIELD_UNIVERSAL_IDENTIFIER,
+  POSITION_SPECIFICATION_OBJECT_UNIVERSAL_IDENTIFIER,
   SEARCH_CRITERION_CATEGORY_DISQUALIFIER,
   SEARCH_CRITERION_CATEGORY_FIELD_UNIVERSAL_IDENTIFIER,
   SEARCH_CRITERION_CATEGORY_MUST_HAVE,
@@ -210,9 +212,9 @@ export default defineObject({
       description: 'The position specification this criterion belongs to.',
       icon: 'IconFileText',
       relationTargetObjectMetadataUniversalIdentifier:
-        'd4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f90',
+        POSITION_SPECIFICATION_OBJECT_UNIVERSAL_IDENTIFIER,
       relationTargetFieldMetadataUniversalIdentifier:
-        '89c0d1e2-f3a4-b5c6-d7e8-f90a1b2c3d4e',
+        CRITERIA_ON_POSITION_SPECIFICATION_FIELD_UNIVERSAL_IDENTIFIER,
       universalSettings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: OnDeleteAction.CASCADE,
