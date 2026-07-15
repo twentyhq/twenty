@@ -407,7 +407,6 @@ export class BillingSubscriptionService {
         currentBillingSubscription.status,
       )
     ) {
-      // ::text comparison keeps the query valid on databases where the CREATED enum migration has not run yet
       const activationResult = await this.workspaceRepository
         .createQueryBuilder()
         .update()
