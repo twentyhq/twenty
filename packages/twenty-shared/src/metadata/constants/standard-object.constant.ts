@@ -2591,6 +2591,542 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
+  executiveProfile: {
+    universalIdentifier: 'd5d279c4-be50-4a44-896e-e64d63f2a7f6',
+    fields: {
+      ...buildStandardObjectSystemFields(
+        'd5d279c4-be50-4a44-896e-e64d63f2a7f6',
+      ),
+      person: {
+        universalIdentifier: '21b3c5c3-c6c5-4000-a4c1-0d1d270cab31',
+      },
+      headline: {
+        universalIdentifier: 'd331e33f-c38c-4cba-9317-e768d940134e',
+      },
+      summary: {
+        universalIdentifier: '615a0765-19bb-42ef-aaed-d5158ce08745',
+      },
+      profileStatus: {
+        universalIdentifier: 'c560a1fd-cfa6-4f1c-b5a0-25717e8c9a59',
+      },
+      yearsOfExperience: {
+        universalIdentifier: 'ca0c0c0a-2d2f-4242-83aa-4d1c907490da',
+      },
+      currentTitle: {
+        universalIdentifier: 'c371985d-49d9-4930-a1bc-4ff168c26331',
+      },
+      location: {
+        universalIdentifier: '07122700-58cc-457b-b636-a2dd9954e07e',
+      },
+      isBoardReady: {
+        universalIdentifier: '673edebe-1dea-48d4-a642-f06fd3234a5b',
+      },
+      lastVerifiedAt: {
+        universalIdentifier: 'eaeb12f5-f428-4984-b3d4-4a5aeae0b5e2',
+      },
+      careerExperiences: {
+        universalIdentifier: '76ee9fcc-6b69-4d01-9d44-4840a8216635',
+      },
+      educations: {
+        universalIdentifier: '2c17c5ac-2322-4b29-8233-0dd83dca9d15',
+      },
+      boardServices: {
+        universalIdentifier: '22cd6643-8201-4191-8c96-bc24a82f3ea0',
+      },
+      capabilities: {
+        universalIdentifier: '92bccc31-8902-4509-8e6f-6bbb8dc1c8d6',
+      },
+      languages: {
+        universalIdentifier: '299da58e-831b-4dd1-bef3-22fa71df8c27',
+      },
+      artifacts: {
+        universalIdentifier: 'b23b6349-5b86-485a-b906-8da0dbda0eb4',
+      },
+      awards: {
+        universalIdentifier: '1f97517b-33e1-43cb-9b1c-8405558eae2d',
+      },
+      externalProfiles: {
+        universalIdentifier: 'f933faa8-cfd7-43f9-ba41-85eb5e4d15fe',
+      },
+      searchPreferences: {
+        universalIdentifier: 'e35d2471-a079-4318-b94e-b8485ff2896b',
+      },
+    },
+    indexes: {
+      personIdUniqueIndex: {
+        universalIdentifier: '3c5cdcfb-e7da-4f5f-9541-aabea51d8e23',
+      },
+    },
+    views: {
+      allExecutiveProfiles: {
+        universalIdentifier: 'e09017b3-24e7-4357-b9fd-75c6a667e629',
+        viewFields: {
+          person: {
+            universalIdentifier: 'adfc5552-d5d1-4467-b776-e291a9d08e8c',
+          },
+          headline: {
+            universalIdentifier: '3c180e89-d829-4ca8-b2cc-b528288005e5',
+          },
+          currentTitle: {
+            universalIdentifier: 'e03cdb9b-3dd9-4eb1-b1fe-b5a37e50ea91',
+          },
+          profileStatus: {
+            universalIdentifier: '832602cc-eb2b-4903-8122-e2b3ad347022',
+          },
+        },
+      },
+    },
+  },
+  executiveCareerExperience: {
+    universalIdentifier: '190293c9-19bb-4bce-a532-90f82606cee0',
+    fields: {
+      ...buildStandardObjectSystemFields(
+        '190293c9-19bb-4bce-a532-90f82606cee0',
+      ),
+      executiveProfile: {
+        universalIdentifier: '9efacd73-d743-48a9-84da-e97276f20cb9',
+      },
+      company: {
+        universalIdentifier: 'e24afe6c-4bfe-4cf4-9b1c-37cdc56b4a19',
+      },
+      title: {
+        universalIdentifier: '306064f8-dfd4-4219-8f11-8892b799e071',
+      },
+      startDate: {
+        universalIdentifier: '08e6a087-f6b5-4d4d-b90e-7ea1aacee6bd',
+      },
+      endDate: {
+        universalIdentifier: '069d770c-107e-44a3-8872-9685a1ff5551',
+      },
+      isCurrent: {
+        universalIdentifier: 'd8c6bc27-51ef-48ea-b42a-4eaf00ffe33c',
+      },
+      employmentType: {
+        universalIdentifier: '7bf85b9d-1aa0-4ad7-8bdd-aa8d8dc2a5ed',
+      },
+      industry: {
+        universalIdentifier: '2dce0754-1284-4a03-96a6-e3afe847406b',
+      },
+      description: {
+        universalIdentifier: 'ec5a8a01-fa23-4776-bff4-0d435f375a4c',
+      },
+    },
+    indexes: {
+      executiveProfileIdIndex: {
+        universalIdentifier: 'ef6c772c-a320-4fa3-9ee0-1cbbd0a83a74',
+      },
+    },
+    views: {
+      allExecutiveCareerExperiences: {
+        universalIdentifier: '04f0c494-770a-41e2-8eec-2fa6f7d16758',
+        viewFields: {
+          executiveProfile: {
+            universalIdentifier: 'a4e32275-7e73-4d62-997e-fa9abc6a37e1',
+          },
+          company: {
+            universalIdentifier: 'f06502a3-970c-4be1-8dca-d18bf92cd6c9',
+          },
+          title: {
+            universalIdentifier: '1eb36b0d-8436-4762-9a22-aee0d43ecbda',
+          },
+        },
+      },
+    },
+  },
+  executiveEducation: {
+    universalIdentifier: 'bf6030cd-7ce5-4c11-bf81-974ff65fd4b1',
+    fields: {
+      ...buildStandardObjectSystemFields(
+        'bf6030cd-7ce5-4c11-bf81-974ff65fd4b1',
+      ),
+      executiveProfile: {
+        universalIdentifier: '46116daf-edea-4322-9345-cdee35f510ff',
+      },
+      institution: {
+        universalIdentifier: 'f645863d-a183-4673-afca-3ba6144c8d54',
+      },
+      degree: {
+        universalIdentifier: 'b2dfb62b-f70f-4495-9c77-e29358a2ba1f',
+      },
+      fieldOfStudy: {
+        universalIdentifier: 'e767fd53-15d3-4cf4-ab4e-41e97310ac59',
+      },
+      startDate: {
+        universalIdentifier: 'b6b86738-823f-453b-9ece-82eb8a5b883d',
+      },
+      endDate: {
+        universalIdentifier: '5044787f-2fbb-4728-8d9f-2bcc4d1a2533',
+      },
+      isVerified: {
+        universalIdentifier: 'fd68a310-30c3-438f-93ec-2f67e4bd4ebf',
+      },
+    },
+    indexes: {
+      executiveProfileIdIndex: {
+        universalIdentifier: '28619741-dc44-4f9a-a904-4218a42ce88b',
+      },
+    },
+    views: {
+      allExecutiveEducations: {
+        universalIdentifier: '8c87d34f-505a-49ce-b41b-384e867abbad',
+        viewFields: {
+          executiveProfile: {
+            universalIdentifier: 'a692477d-11c9-4249-baab-8b6ae51427c5',
+          },
+          institution: {
+            universalIdentifier: '146ccaee-632f-4246-95f2-d15577308fe5',
+          },
+          degree: {
+            universalIdentifier: '358327d9-0dd2-4ad9-858d-679b1b04f494',
+          },
+        },
+      },
+    },
+  },
+  executiveBoardService: {
+    universalIdentifier: '30b0287e-6681-42c1-94f9-01ed0e06055b',
+    fields: {
+      ...buildStandardObjectSystemFields(
+        '30b0287e-6681-42c1-94f9-01ed0e06055b',
+      ),
+      executiveProfile: {
+        universalIdentifier: '5b9adcdc-f3f8-408f-87d1-e3a956f42753',
+      },
+      companyName: {
+        universalIdentifier: '29a5dda7-0715-46e3-bfac-a48eb94d827c',
+      },
+      ticker: {
+        universalIdentifier: '68714b8e-8761-482d-9098-33b337a7db5c',
+      },
+      role: {
+        universalIdentifier: 'bc3710d9-2ec9-49e5-b733-05074e950c59',
+      },
+      boardType: {
+        universalIdentifier: '166c1941-3794-43b4-9a1a-c45dc255eb72',
+      },
+      startDate: {
+        universalIdentifier: 'ae77d8e0-687d-460b-a550-4985ed909d03',
+      },
+      endDate: {
+        universalIdentifier: '971dc7ff-fcb8-48d2-88b9-06d2b53fe006',
+      },
+      isCurrent: {
+        universalIdentifier: 'e2c0271c-4d40-4c6d-ab88-c0556b227c0a',
+      },
+      isIndependent: {
+        universalIdentifier: '5ef4af17-6173-48f1-9f3d-6013e8e4b922',
+      },
+      committees: {
+        universalIdentifier: '7cbd9927-e8f2-444d-9456-6a72834c45a1',
+      },
+    },
+    indexes: {
+      executiveProfileIdIndex: {
+        universalIdentifier: 'ab023ed9-c408-4d1e-bf4a-9eb287755171',
+      },
+    },
+    views: {
+      allExecutiveBoardServices: {
+        universalIdentifier: 'ec96a0b0-64bc-4689-adfe-b7ea488b938f',
+        viewFields: {
+          executiveProfile: {
+            universalIdentifier: '7c991eea-6038-4718-8286-b9a1ce1f5bb9',
+          },
+          companyName: {
+            universalIdentifier: '598d41ec-c6d5-40a1-a582-5b5f49d2c9d2',
+          },
+          role: {
+            universalIdentifier: '983b0f7a-8ccc-45ea-a0f8-ac9869d7a5bb',
+          },
+        },
+      },
+    },
+  },
+  executiveCapability: {
+    universalIdentifier: '6dd2cb7c-9c30-47ed-bfb6-c8ccb33baaea',
+    fields: {
+      ...buildStandardObjectSystemFields(
+        '6dd2cb7c-9c30-47ed-bfb6-c8ccb33baaea',
+      ),
+      executiveProfile: {
+        universalIdentifier: 'fbadff04-0f83-47d0-a9e7-9e8d334482e3',
+      },
+      name: {
+        universalIdentifier: 'f6d5419b-d9e9-4913-aac4-2d763a6c8eba',
+      },
+      category: {
+        universalIdentifier: 'fafe342c-45d7-4562-8978-6cbf40147a41',
+      },
+      proficiencyLevel: {
+        universalIdentifier: '039a7e32-b6c9-4a41-870a-6149ef814d90',
+      },
+      source: {
+        universalIdentifier: 'be81885f-786d-44f9-a404-1342f8b915b0',
+      },
+    },
+    indexes: {
+      executiveProfileIdIndex: {
+        universalIdentifier: '946586fa-0d98-4870-9815-03a7e34182cf',
+      },
+    },
+    views: {
+      allExecutiveCapabilities: {
+        universalIdentifier: 'f7b0e940-2471-43bc-9739-74ebb9f5d76b',
+        viewFields: {
+          executiveProfile: {
+            universalIdentifier: '3789380b-47b9-4b07-89c8-5c45e7d4aacb',
+          },
+          name: {
+            universalIdentifier: '936cd406-0bde-4bc3-97be-f437a787ef52',
+          },
+          category: {
+            universalIdentifier: '9241cdd6-642d-4612-9c16-27aaa20606ff',
+          },
+        },
+      },
+    },
+  },
+  executiveLanguage: {
+    universalIdentifier: '2c749e10-ae76-4d9e-bed1-46630b4bf65e',
+    fields: {
+      ...buildStandardObjectSystemFields(
+        '2c749e10-ae76-4d9e-bed1-46630b4bf65e',
+      ),
+      executiveProfile: {
+        universalIdentifier: 'b174ae1d-19fc-40f3-968b-616851622994',
+      },
+      language: {
+        universalIdentifier: '033dfeb3-39af-4d28-9fd4-0dd738a351e8',
+      },
+      proficiency: {
+        universalIdentifier: 'cf837ab1-3830-4272-b81b-8786a2c44d10',
+      },
+    },
+    indexes: {
+      executiveProfileIdIndex: {
+        universalIdentifier: '45c6f684-2970-4bd5-8d47-7c552769d3f9',
+      },
+    },
+    views: {
+      allExecutiveLanguages: {
+        universalIdentifier: '604f6e84-cb7d-4832-9c1a-d4541ccc4a1a',
+        viewFields: {
+          executiveProfile: {
+            universalIdentifier: '712eae75-b19a-4cfc-a90e-96c5c3065c44',
+          },
+          language: {
+            universalIdentifier: 'e9b50eeb-df54-4594-bcbd-396d836dee9d',
+          },
+          proficiency: {
+            universalIdentifier: '2b6280c5-178d-48be-ad74-1706eb2e47d0',
+          },
+        },
+      },
+    },
+  },
+  executiveArtifact: {
+    universalIdentifier: '46f80f0a-d4b6-4bb8-92bc-4e5e30dbf999',
+    fields: {
+      ...buildStandardObjectSystemFields(
+        '46f80f0a-d4b6-4bb8-92bc-4e5e30dbf999',
+      ),
+      executiveProfile: {
+        universalIdentifier: '12302a27-5ddb-48c1-8297-759a3c6a48cf',
+      },
+      type: {
+        universalIdentifier: '3bf98426-7497-4b15-8bf2-dec2556e943a',
+      },
+      title: {
+        universalIdentifier: 'e9992628-3d9b-46f5-bc55-17425800d010',
+      },
+      description: {
+        universalIdentifier: 'f2114eb5-64c3-47e2-a9c2-5b205a765eea',
+      },
+      file: {
+        universalIdentifier: '20bbf584-5eaa-457f-b4fc-790fec2fa868',
+      },
+      externalUrl: {
+        universalIdentifier: '850c74b8-c272-4229-86ba-cf0ac022a814',
+      },
+      sourceHash: {
+        universalIdentifier: 'bf5eb252-9b0f-4499-a1bc-ccc50dce677e',
+      },
+      version: {
+        universalIdentifier: 'e1dbd025-3cc5-4532-b2e6-8c3546827529',
+      },
+      visibility: {
+        universalIdentifier: '7da8bbd3-d1fb-4f76-9c0d-76d7264e6a60',
+      },
+      sourceUpdatedAt: {
+        universalIdentifier: '406d435f-6850-4bb3-8f25-7720ef9d6a59',
+      },
+    },
+    indexes: {
+      executiveProfileIdIndex: {
+        universalIdentifier: '7754853d-c8ef-4e02-be72-450e07affa17',
+      },
+    },
+    views: {
+      allExecutiveArtifacts: {
+        universalIdentifier: 'e088a077-6a12-4e0c-aea6-bb40d3980af3',
+        viewFields: {
+          executiveProfile: {
+            universalIdentifier: '7ca64b59-b4b1-4a4b-9fe6-66b02a4934a7',
+          },
+          type: {
+            universalIdentifier: '4fc466fb-e033-4ae7-a6a2-50bd7b261cb9',
+          },
+          title: {
+            universalIdentifier: 'c014c442-2be2-4656-b154-eba1cafd93ec',
+          },
+        },
+      },
+    },
+  },
+  executiveAward: {
+    universalIdentifier: 'cc229997-5392-47cb-b8c6-093092b10821',
+    fields: {
+      ...buildStandardObjectSystemFields(
+        'cc229997-5392-47cb-b8c6-093092b10821',
+      ),
+      executiveProfile: {
+        universalIdentifier: 'd8a8942b-d261-465f-b0aa-3f129e3bc95d',
+      },
+      title: {
+        universalIdentifier: '9a712c89-3396-4072-bc17-83850d7a14e6',
+      },
+      issuer: {
+        universalIdentifier: '93c8ff01-a4f1-4066-85cf-8f49ef456abc',
+      },
+      dateReceived: {
+        universalIdentifier: 'e67e3952-ad99-42d8-b3d8-2a28277dfc68',
+      },
+      description: {
+        universalIdentifier: '963aa29e-5029-410c-b9b9-6857c17fdd7e',
+      },
+    },
+    indexes: {
+      executiveProfileIdIndex: {
+        universalIdentifier: '615a8ed5-7387-4ae0-9d1c-a4968becb985',
+      },
+    },
+    views: {
+      allExecutiveAwards: {
+        universalIdentifier: '80c5ba90-37a3-4d58-aa14-c7582742bd51',
+        viewFields: {
+          executiveProfile: {
+            universalIdentifier: 'f6dfa461-03fb-4ffc-9c87-3b5e8fe6f984',
+          },
+          title: {
+            universalIdentifier: '28b41955-e573-486b-8d85-441015012395',
+          },
+          issuer: {
+            universalIdentifier: '75b7f430-ffde-4699-a2e7-37729d6e9ee5',
+          },
+        },
+      },
+    },
+  },
+  executiveExternalProfile: {
+    universalIdentifier: '969bf0cb-9eef-4eee-a708-5e6f43443b2a',
+    fields: {
+      ...buildStandardObjectSystemFields(
+        '969bf0cb-9eef-4eee-a708-5e6f43443b2a',
+      ),
+      executiveProfile: {
+        universalIdentifier: '9b446a47-9a52-48f8-9e68-c4899dac930c',
+      },
+      platform: {
+        universalIdentifier: '2ac4803a-a5a1-48b1-8936-aebf062f4f27',
+      },
+      url: {
+        universalIdentifier: '13b79da2-5d36-4473-9184-0ee385cdb76c',
+      },
+      handle: {
+        universalIdentifier: 'dc93255f-97f2-4395-af64-d90c367073d3',
+      },
+    },
+    indexes: {
+      executiveProfileIdIndex: {
+        universalIdentifier: '1c3956a3-506e-4dd7-b3b1-c94167b0a287',
+      },
+    },
+    views: {
+      allExecutiveExternalProfiles: {
+        universalIdentifier: 'a8e5a9ae-2a24-4a1c-bcfc-b49aae3d05fc',
+        viewFields: {
+          executiveProfile: {
+            universalIdentifier: 'e13147f5-ccfe-470b-bc25-641457edd8e4',
+          },
+          platform: {
+            universalIdentifier: 'caeda2c3-cdd8-4159-90ce-beac20134810',
+          },
+          handle: {
+            universalIdentifier: '555f4f22-5635-4f0e-9865-ce97ab269554',
+          },
+        },
+      },
+    },
+  },
+  executiveSearchPreference: {
+    universalIdentifier: '304cabb0-42d9-4d78-a302-5106d73ed6bc',
+    fields: {
+      ...buildStandardObjectSystemFields(
+        '304cabb0-42d9-4d78-a302-5106d73ed6bc',
+      ),
+      executiveProfile: {
+        universalIdentifier: '2cb5d61c-7983-43c3-8411-d1732801d1ee',
+      },
+      boardTypes: {
+        universalIdentifier: '0e47cae3-c244-41ae-9793-723f481c71d4',
+      },
+      industries: {
+        universalIdentifier: '1ae711f9-7957-4d72-b341-377ed7d7ec29',
+      },
+      companySizes: {
+        universalIdentifier: '930ee4ac-ae06-4fb3-9a04-364270947f09',
+      },
+      preferredLocations: {
+        universalIdentifier: '63041087-727c-4a82-9b52-6a10f55927a1',
+      },
+      openToRelocation: {
+        universalIdentifier: 'ba5d3eb1-b647-4547-baf8-439ae8796145',
+      },
+      travelWillingness: {
+        universalIdentifier: 'b4779933-f50a-43bd-b49c-981866e6348b',
+      },
+      availability: {
+        universalIdentifier: '721a884a-d861-4b81-a39a-17fe712c2403',
+      },
+      compensationExpectation: {
+        universalIdentifier: 'c25434ea-8cfd-42a4-aaef-661424d70581',
+      },
+      notes: {
+        universalIdentifier: '5dced733-b5b7-4891-8333-503d76cad1fd',
+      },
+    },
+    indexes: {
+      executiveProfileIdIndex: {
+        universalIdentifier: 'b60c7142-1850-4856-b7ee-e06ea438c4b8',
+      },
+    },
+    views: {
+      allExecutiveSearchPreferences: {
+        universalIdentifier: '36df2734-71a8-4720-aee8-1a3e7b787fa5',
+        viewFields: {
+          executiveProfile: {
+            universalIdentifier: '93639b7a-f4b1-44b0-b662-67c21281ba36',
+          },
+          boardTypes: {
+            universalIdentifier: '19851861-c7d9-48a5-ba7d-9bf06a6de0d1',
+          },
+          companySizes: {
+            universalIdentifier: '606522b7-58ae-4a95-b775-edd60046d73e',
+          },
+        },
+      },
+    },
+  },
 } as const satisfies Record<
   string,
   {
