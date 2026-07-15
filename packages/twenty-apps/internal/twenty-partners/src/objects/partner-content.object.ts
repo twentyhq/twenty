@@ -22,6 +22,8 @@ export const PARTNER_CONTENT_BODY_FIELD_ID =
   'fca9e56b-a9a6-40dc-a5e0-7a2611d3febb';
 export const PARTNER_CONTENT_COVER_IMAGE_FIELD_ID =
   '6b1225d3-f666-4c7b-8309-ab95cd5f44ea';
+export const PARTNER_CONTENT_COVER_IMAGE_URL_FIELD_ID =
+  '1d87e6cb-0cbe-4010-96a3-25e891774c5e';
 export const PARTNER_CONTENT_CASE_STUDY_LINK_FIELD_ID =
   '35e32a90-4df3-4741-b331-77ebdc8fdb80';
 export const PARTNER_CONTENT_POSITION_FIELD_ID =
@@ -132,6 +134,14 @@ export default defineObject({
       icon: 'IconPhoto',
       isNullable: true,
       universalSettings: { maxNumberOfValues: 1 },
+    },
+    {
+      universalIdentifier: PARTNER_CONTENT_COVER_IMAGE_URL_FIELD_ID,
+      type: FieldType.TEXT,
+      name: 'coverImageUrl',
+      label: 'Cover Image URL',
+      icon: 'IconPhoto',
+      isNullable: true,
     },
     {
       universalIdentifier: PARTNER_CONTENT_CASE_STUDY_LINK_FIELD_ID,
