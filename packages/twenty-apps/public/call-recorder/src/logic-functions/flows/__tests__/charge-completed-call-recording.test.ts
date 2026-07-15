@@ -1,18 +1,24 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { chargeCompletedCallRecording } from 'src/logic-functions/flows/charge-completed-call-recording.util';
 
-const requestAppBillingChargeMock = vi.hoisted(() => vi.fn());
-
-vi.mock('src/logic-functions/data/request-app-billing-charge.util', () => ({
-  requestAppBillingCharge: requestAppBillingChargeMock,
-}));
+const fetchMock = vi.fn();
+const TWENTY_API_URL = 'https://twenty.example.com';
 
 describe('chargeCompletedCallRecording', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
-    requestAppBillingChargeMock.mockReset();
-    requestAppBillingChargeMock.mockResolvedValue('charged');
+    vi.stubGlobal('fetch', fetchMock);
+    vi.stubEnv('TWENTY_API_URL', TWENTY_API_URL);
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'app-access-token');
+    fetchMock.mockReset();
+    fetchMock.mockResolvedValue(new Response(null, { status: 204 }));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+    vi.restoreAllMocks();
   });
 
   it('charges prorated micro-credits with the recording duration in minutes', async () => {
@@ -23,12 +29,26 @@ describe('chargeCompletedCallRecording', () => {
     });
 
     expect(chargeOutcome).toBe('charged');
-    expect(requestAppBillingChargeMock).toHaveBeenCalledWith({
-      creditsUsedMicro: 500_000,
-      quantity: 30,
-      operationType: 'CALL_RECORDING',
-      resourceContext: 'recall',
-    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    const [requestUrl, requestInit] = fetchMock.mock.calls[0];
+
+    expect(requestUrl).toBe(`${TWENTY_API_URL}/app/billing/charge`);
+    expect(requestInit).toEqual(
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({
+          creditsUsedMicro: 500_000,
+          quantity: 30,
+          operationType: 'CALL_RECORDING',
+          resourceContext: 'recall',
+        }),
+        signal: expect.any(AbortSignal),
+      }),
+    );
+    expect(new Headers(requestInit.headers).get('Authorization')).toBe(
+      'Bearer app-access-token',
+    );
   });
 
   it('skips and warns loudly when timestamps are unusable', async () => {
@@ -39,14 +59,16 @@ describe('chargeCompletedCallRecording', () => {
     });
 
     expect(chargeOutcome).toBe('unbillable');
-    expect(requestAppBillingChargeMock).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('will not be billed'),
     );
   });
 
   it('surfaces a rejected charge so the caller can reopen completion', async () => {
-    requestAppBillingChargeMock.mockResolvedValue('rejected');
+    fetchMock.mockResolvedValue(
+      new Response('Too Many Requests', { status: 429 }),
+    );
 
     const chargeOutcome = await chargeCompletedCallRecording({
       callRecordingId: 'call-recording-1',
@@ -61,7 +83,7 @@ describe('chargeCompletedCallRecording', () => {
   });
 
   it('warns without failing when the charge outcome is unknown', async () => {
-    requestAppBillingChargeMock.mockResolvedValue('unknown');
+    fetchMock.mockRejectedValue(new Error('socket hang up'));
 
     const chargeOutcome = await chargeCompletedCallRecording({
       callRecordingId: 'call-recording-1',
