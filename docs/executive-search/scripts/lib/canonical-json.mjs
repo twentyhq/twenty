@@ -18,7 +18,8 @@ function canonicalize(value) {
   if (value === null) return 'null';
   if (typeof value === 'boolean') return value ? 'true' : 'false';
   if (typeof value === 'number') {
-    if (!Number.isFinite(value)) throw new Error('canonical-json: non-finite number');
+    if (!Number.isFinite(value))
+      throw new Error('canonical-json: non-finite number');
     return String(value);
   }
   if (typeof value === 'string') return jsonStringify(value);

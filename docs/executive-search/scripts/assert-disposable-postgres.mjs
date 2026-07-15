@@ -29,7 +29,9 @@ function main() {
 
   // 3. Must be postgres protocol
   if (!url.startsWith('postgres://') && !url.startsWith('postgresql://')) {
-    errors.push(`URL protocol must be postgres: or postgresql: (got ${redactUrl(url).split('://')[0]}://)`);
+    errors.push(
+      `URL protocol must be postgres: or postgresql: (got ${redactUrl(url).split('://')[0]}://)`,
+    );
   }
 
   // 4. Host must be localhost/loopback
@@ -45,7 +47,9 @@ function main() {
     if (!dbName) {
       errors.push('Database name is empty in URL');
     } else if (!/(^|[_-])(test|ci|local|default)([_-]|$)/.test(dbName)) {
-      errors.push(`Database name "${dbName}" does not match test/ci/local/default pattern`);
+      errors.push(
+        `Database name "${dbName}" does not match test/ci/local/default pattern`,
+      );
     }
     parsed = { host, dbName, url: u };
   } catch {
@@ -60,12 +64,19 @@ function main() {
 
   // 6. Verify psql is available and current_database() matches URL
   try {
-    const currentDb = execSync(`psql "${url}" -Atqc "select current_database()"`, {
-      timeout: 5000,
-      stdio: ['pipe', 'pipe', 'pipe'],
-    }).toString().trim();
+    const currentDb = execSync(
+      `psql "${url}" -Atqc "select current_database()"`,
+      {
+        timeout: 5000,
+        stdio: ['pipe', 'pipe', 'pipe'],
+      },
+    )
+      .toString()
+      .trim();
     if (currentDb !== parsed.dbName) {
-      console.error(`BLOCKED: current_database()="${currentDb}" does not match URL database="${parsed.dbName}"`);
+      console.error(
+        `BLOCKED: current_database()="${currentDb}" does not match URL database="${parsed.dbName}"`,
+      );
       console.error('failureClass: SAFETY_PREREQUISITE');
       process.exit(1);
     }
