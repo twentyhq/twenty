@@ -160,6 +160,60 @@ describe('mapMyProfilePayload', () => {
     ]);
   });
 
+  it('prefers the pasted coverImageUrl over the uploaded coverImage file', () => {
+    const mapped = mapMyProfilePayload(
+      makeNode({
+        partnerContents: {
+          edges: [
+            {
+              node: {
+                id: 'content-1',
+                name: 'Acme case study',
+                clientName: 'Acme Corp',
+                headline: 'CRM migration',
+                body: { markdown: 'Moved 12 teams to Twenty.' },
+                coverImageUrl: 'https://paste.example.com/cover.png',
+                coverImage: [{ url: 'https://file.example.com/cover.png' }],
+                caseStudyLink: { primaryLinkUrl: 'https://example.com/case-study' },
+                status: 'APPROVED',
+                contentType: ['CASE_STUDY'],
+              },
+            },
+          ],
+        },
+      } as Partial<PartnerNode>),
+    );
+
+    expect(mapped.caseStudies[0].coverImageUrl).toBe('https://paste.example.com/cover.png');
+  });
+
+  it('falls back to the coverImage file url when coverImageUrl is empty', () => {
+    const mapped = mapMyProfilePayload(
+      makeNode({
+        partnerContents: {
+          edges: [
+            {
+              node: {
+                id: 'content-1',
+                name: 'Acme case study',
+                clientName: 'Acme Corp',
+                headline: 'CRM migration',
+                body: { markdown: 'Moved 12 teams to Twenty.' },
+                coverImageUrl: null,
+                coverImage: [{ url: 'https://file.example.com/cover.png' }],
+                caseStudyLink: { primaryLinkUrl: 'https://example.com/case-study' },
+                status: 'APPROVED',
+                contentType: ['CASE_STUDY'],
+              },
+            },
+          ],
+        },
+      } as Partial<PartnerNode>),
+    );
+
+    expect(mapped.caseStudies[0].coverImageUrl).toBe('https://file.example.com/cover.png');
+  });
+
   it('handles nulls and empty edges', () => {
     const mapped = mapMyProfilePayload(
       makeNode({
