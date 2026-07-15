@@ -464,6 +464,34 @@ describe('FilterArgProcessorService', () => {
       ).toThrow(PermissionsException);
     });
 
+    it('should reject a relation traversal onto an unreadable target object', () => {
+      const {
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        sourceObjectMetadata,
+      } = createRelationFixture();
+
+      expect(() =>
+        filterArgProcessorService.process({
+          filter: { target: { name: { like: 'secret%' } } },
+          flatObjectMetadata: sourceObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          objectsPermissions: {
+            'target-obj-id': {
+              canReadObjectRecords: false,
+              canUpdateObjectRecords: false,
+              canSoftDeleteObjectRecords: false,
+              canDestroyObjectRecords: false,
+              restrictedFields: {},
+              rowLevelPermissionPredicates: [],
+              rowLevelPermissionPredicateGroups: [],
+            },
+          },
+        }),
+      ).toThrow(PermissionsException);
+    });
+
     it('should accept a relation traversal onto a composite sub-field without tripping the depth cap', () => {
       // Composite sub-field navigation is not a relation hop, so it must
       // not count against MAX_RELATION_FILTER_DEPTH = 1.

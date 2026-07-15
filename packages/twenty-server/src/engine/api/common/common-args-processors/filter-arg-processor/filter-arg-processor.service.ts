@@ -27,6 +27,11 @@ import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metada
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { validateFieldReadPermissionOrThrow } from 'src/engine/metadata-modules/permissions/utils/validate-field-read-permission-or-throw.util';
 
 function throwUseJoinColumnInstead(key: string): never {
@@ -90,6 +95,15 @@ export class FilterArgProcessorService {
     objectsPermissions: ObjectsPermissions,
     depth: number,
   ): ObjectRecordFilter {
+    if (
+      objectsPermissions[flatObjectMetadata.id]?.canReadObjectRecords === false
+    ) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
     const transformedFilter: ObjectRecordFilter = {};
 
     for (const [key, value] of Object.entries(filterObject)) {
