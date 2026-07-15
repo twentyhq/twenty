@@ -19,12 +19,21 @@ export class WorkflowHandleStaledRunsJob {
   async handle({
     workspaceId,
   }: WorkflowHandleStaledRunsJobData): Promise<void> {
-    await this.workflowHandleStaledRunsWorkspaceService.handleStaledRunsForWorkspace(
-      workspaceId,
+    const results = await Promise.allSettled([
+      this.workflowHandleStaledRunsWorkspaceService.handleStaledRunsForWorkspace(
+        workspaceId,
+      ),
+      this.workflowHandleStaledRunsWorkspaceService.handleStuckStoppingRunsForWorkspace(
+        workspaceId,
+      ),
+    ]);
+
+    const rejection = results.find(
+      (result): result is PromiseRejectedResult => result.status === 'rejected',
     );
 
-    await this.workflowHandleStaledRunsWorkspaceService.handleStuckStoppingRunsForWorkspace(
-      workspaceId,
-    );
+    if (rejection) {
+      throw rejection.reason;
+    }
   }
 }

@@ -49,13 +49,20 @@ export class WorkflowHandleStaledRunsCommand extends CommandRunner {
         await this.workflowHandleStaledRunsWorkspaceService.handleStaledRunsForWorkspace(
           workspaceId,
         );
+      } catch (error) {
+        this.logger.error(
+          `Failed to handle staled runs for workspace ${workspaceId}`,
+          error instanceof Error ? error.stack : String(error),
+        );
+      }
 
+      try {
         await this.workflowHandleStaledRunsWorkspaceService.handleStuckStoppingRunsForWorkspace(
           workspaceId,
         );
       } catch (error) {
         this.logger.error(
-          `Failed to handle staled runs for workspace ${workspaceId}`,
+          `Failed to handle stuck stopping runs for workspace ${workspaceId}`,
           error instanceof Error ? error.stack : String(error),
         );
       }

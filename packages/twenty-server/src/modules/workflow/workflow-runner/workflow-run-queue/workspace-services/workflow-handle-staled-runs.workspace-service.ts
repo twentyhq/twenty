@@ -9,7 +9,10 @@ import {
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { getStaledRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-staled-runs-find-options.util';
-import { getStuckStoppingRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-stuck-stopping-runs-find-options.util';
+import {
+  getStuckStoppingRunsFindOptions,
+  type StuckStoppingRunsCursor,
+} from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-stuck-stopping-runs-find-options.util';
 import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -79,31 +82,10 @@ export class WorkflowHandleStaledRunsWorkspaceService {
   async handleStuckStoppingRunsForWorkspace(workspaceId: string) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    const stuckStoppingRunsCount =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workflowRunRepository =
-            await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
-              WorkflowRunWorkspaceEntity,
-              { shouldBypassPermissionChecks: true },
-            );
+    let cursor: StuckStoppingRunsCursor | undefined;
 
-          return workflowRunRepository.count({
-            where: getStuckStoppingRunsFindOptions(),
-          });
-        },
-        authContext,
-      );
-
-    if (stuckStoppingRunsCount <= 0) {
-      return;
-    }
-
-    const batchCount = Math.ceil(stuckStoppingRunsCount / QUERY_MAX_RECORDS);
-
-    for (let batchIndex = 0; batchIndex < batchCount; batchIndex++) {
-      const stuckStoppingRunIds =
+    for (;;) {
+      const stuckStoppingRuns =
         await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
           async () => {
             const workflowRunRepository =
@@ -113,27 +95,27 @@ export class WorkflowHandleStaledRunsWorkspaceService {
                 { shouldBypassPermissionChecks: true },
               );
 
-            const stuckStoppingRuns = await workflowRunRepository.find({
-              where: getStuckStoppingRunsFindOptions(),
+            return workflowRunRepository.find({
+              where: getStuckStoppingRunsFindOptions(cursor),
               select: {
                 id: true,
+                createdAt: true,
               },
               order: {
                 createdAt: 'ASC',
+                id: 'ASC',
               },
               take: QUERY_MAX_RECORDS,
             });
-
-            return stuckStoppingRuns.map((workflowRun) => workflowRun.id);
           },
           authContext,
         );
 
-      if (stuckStoppingRunIds.length === 0) {
+      if (stuckStoppingRuns.length === 0) {
         break;
       }
 
-      for (const workflowRunId of stuckStoppingRunIds) {
+      for (const { id: workflowRunId } of stuckStoppingRuns) {
         try {
           await this.workflowRunWorkspaceService.endWorkflowRun({
             workflowRunId,
@@ -147,6 +129,14 @@ export class WorkflowHandleStaledRunsWorkspaceService {
           );
         }
       }
+
+      if (stuckStoppingRuns.length < QUERY_MAX_RECORDS) {
+        break;
+      }
+
+      const lastRun = stuckStoppingRuns[stuckStoppingRuns.length - 1];
+
+      cursor = { createdAt: lastRun.createdAt, id: lastRun.id };
     }
   }
 }
