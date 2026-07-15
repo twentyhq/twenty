@@ -1,13 +1,40 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["oxc"],
+  "extends": ["../../.oxlintrc.base.json"],
+  "plugins": ["typescript", "import"],
   "categories": {
-    "correctness": "error",
-    "perf": "error",
-    "pedantic": "error",
-    "style": "error"
+    "correctness": "off"
   },
+  "ignorePatterns": ["node_modules", "dist"],
   "rules": {
-    "no-unused-vars": "error"
+    "no-console": "off",
+    "no-control-regex": "off",
+    "no-debugger": "error",
+    "no-duplicate-imports": "error",
+    "no-undef": "off",
+    "no-unused-vars": "off",
+    "no-redeclare": "off",
+    "import/no-duplicates": "error",
+    "typescript/no-redeclare": "error",
+    "typescript/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports",
+        "fixStyle": "inline-type-imports"
+      }
+    ],
+    "typescript/explicit-function-return-type": "off",
+    "typescript/explicit-module-boundary-types": "off",
+    "typescript/no-empty-function": "off",
+    "typescript/no-explicit-any": "off",
+    "typescript/no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ]
   }
 }
