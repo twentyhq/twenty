@@ -1,6 +1,6 @@
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
@@ -13,6 +13,7 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getUnknownRecordInputFields } from '@/object-record/utils/getUnknownRecordInputFields';
 import { captureMessage } from '@sentry/react';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
@@ -21,8 +22,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
+  const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
-  const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { refetchAggregateQueriesForObjectMetadataItem } =
     useRefetchAggregateQueriesForObjectMetadataItem();
@@ -31,11 +32,20 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
   const triggerOptimisticEffectFromSseUpdateEvents = useCallback(
     ({
       objectRecordEvents,
-      objectMetadataItem,
+      objectMetadataItem: objectMetadataItemFromCaller,
     }: {
       objectRecordEvents: ObjectRecordEvent[];
       objectMetadataItem: EnrichedObjectMetadataItem;
     }) => {
+      const objectMetadataItems = store.get(
+        objectMetadataItemsWithFieldsSelector.atom,
+      );
+
+      const objectMetadataItem =
+        objectMetadataItems.find(
+          (item) => item.id === objectMetadataItemFromCaller.id,
+        ) ?? objectMetadataItemFromCaller;
+
       const updateEvents = objectRecordEvents.filter((objectRecordEvent) => {
         return objectRecordEvent.action === DatabaseEventAction.UPDATED;
       });
@@ -164,8 +174,8 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
       return isNonEmptyArray(updateEvents);
     },
     [
+      store,
       apolloCoreClient.cache,
-      objectMetadataItems,
       objectPermissionsByObjectMetadataId,
       refetchAggregateQueriesForObjectMetadataItem,
       upsertRecordsInStore,
