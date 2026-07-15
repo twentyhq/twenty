@@ -9,6 +9,7 @@ import http from 'http';
  * - Collections list
  * - Fields per collection
  * - Items per collection
+ * - Items write (POST/PATCH/DELETE)
  *
  * Configurable via fixtures so tests can simulate valid, invalid,
  * stale, rate-limited, and unknown-version responses.
@@ -17,6 +18,7 @@ export class DirectusMockServer {
   private server: http.Server | null = null;
   private port: number = 0;
   private fixtures: DirectusMockFixtures;
+  private receivedWrites: DirectusReceivedWrite[] = [];
 
   constructor(fixtures: DirectusMockFixtures = {}) {
     this.fixtures = fixtures;
@@ -26,6 +28,7 @@ export class DirectusMockServer {
    * Start the mock server on a random available port.
    */
   async start(): Promise<number> {
+    this.receivedWrites = [];
     return new Promise((resolve, reject) => {
       this.server = http.createServer((req, res) => {
         this.handleRequest(req, res);
@@ -66,6 +69,20 @@ export class DirectusMockServer {
    */
   setFixtures(fixtures: DirectusMockFixtures): void {
     this.fixtures = fixtures;
+  }
+
+  /**
+   * Return the list of write operations received by this mock server.
+   */
+  getReceivedWrites(): DirectusReceivedWrite[] {
+    return this.receivedWrites;
+  }
+
+  /**
+   * Clear the list of received write operations.
+   */
+  clearWrites(): void {
+    this.receivedWrites = [];
   }
 
   private handleRequest(
@@ -170,7 +187,7 @@ export class DirectusMockServer {
       return;
     }
 
-    // Items — /items/:collection
+    // Items read — /items/:collection (GET)
     const itemsMatch = url.match(/^\/items\/([^?]+)/);
     if (itemsMatch && method === 'GET') {
       const collection = decodeURIComponent(itemsMatch[1]);
@@ -180,9 +197,112 @@ export class DirectusMockServer {
       return;
     }
 
+    // Items write — POST /items/:collection (no trailing id)
+    const postItemsMatch = url.split('?')[0].match(/^\/items\/([^/]+)$/);
+    if (postItemsMatch && method === 'POST') {
+      this.collectBody(req)
+        .then((body) => {
+          this.receivedWrites.push({
+            method,
+            url,
+            body,
+            headers: req.headers,
+          });
+
+          if (this.fixtures.simulateErrors) {
+            const err = this.fixtures.simulateErrors;
+            res.writeHead(err.status, { 'Content-Type': 'application/json' });
+            res.end(err.body || '');
+            return;
+          }
+
+          const parsed = JSON.parse(body);
+          const id =
+            parsed.id || 'mock-generated-' + this.generateId();
+          const responseData = { id, ...parsed };
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ data: responseData }));
+        })
+        .catch(() => {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(
+            JSON.stringify({ errors: [{ message: 'Bad Request' }] }),
+          );
+        });
+      return;
+    }
+
+    // Items write — PATCH or DELETE /items/:collection/:id
+    const idItemsMatch = url.split('?')[0].match(
+      /^\/items\/([^/]+)\/([^/]+)$/,
+    );
+    if (idItemsMatch && (method === 'PATCH' || method === 'DELETE')) {
+      const collection = decodeURIComponent(idItemsMatch[1]);
+      const itemId = decodeURIComponent(idItemsMatch[2]);
+
+      if (method === 'DELETE') {
+        this.receivedWrites.push({
+          method,
+          url,
+          body: '',
+          headers: req.headers,
+        });
+
+        if (this.fixtures.simulateErrors) {
+          const err = this.fixtures.simulateErrors;
+          res.writeHead(err.status, { 'Content-Type': 'application/json' });
+          res.end(err.body || '');
+          return;
+        }
+
+        res.writeHead(204);
+        res.end();
+        return;
+      }
+
+      // PATCH
+      this.collectBody(req)
+        .then((body) => {
+          this.receivedWrites.push({
+            method,
+            url,
+            body,
+            headers: req.headers,
+          });
+
+          if (this.fixtures.simulateErrors) {
+            const err = this.fixtures.simulateErrors;
+            res.writeHead(err.status, {
+              'Content-Type': 'application/json',
+            });
+            res.end(err.body || '');
+            return;
+          }
+
+          const parsed = JSON.parse(body);
+          const responseData = { id: itemId, ...parsed };
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ data: responseData }));
+        })
+        .catch(() => {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(
+            JSON.stringify({ errors: [{ message: 'Bad Request' }] }),
+          );
+        });
+      return;
+    }
+
     // 404 fallback
     res.writeHead(404, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ errors: [{ message: 'Not Found' }] }));
+  }
+
+  private generateId(): string {
+    return (
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15)
+    );
   }
 
   private collectBody(req: http.IncomingMessage): Promise<string> {
@@ -220,4 +340,12 @@ export interface DirectusMockFixtures {
   items?: Record<string, Record<string, unknown>[]>;
   rateLimited?: boolean;
   serverError?: boolean;
+  simulateErrors?: { status: number; body?: string };
+}
+
+export interface DirectusReceivedWrite {
+  method: string;
+  url: string;
+  body: string;
+  headers: http.IncomingHttpHeaders;
 }
