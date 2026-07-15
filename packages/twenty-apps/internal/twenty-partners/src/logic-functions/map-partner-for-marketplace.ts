@@ -47,6 +47,7 @@ type PartnerContentEdge = {
     headline: string | null;
     body: { markdown: string | null } | null;
     coverImage?: ReadonlyArray<FileItemRead> | null;
+    coverImageUrl?: string | null;
     caseStudyLink: PrimaryLink | null;
     position: number | null;
   };
@@ -221,7 +222,7 @@ const mapPortfolio = (
       client: node.clientName ?? '',
       title: node.headline ?? '',
       body: node.body?.markdown ?? '',
-      imageUrl: firstFileUrl(node.coverImage),
+      imageUrl: node.coverImageUrl ?? firstFileUrl(node.coverImage),
       link: node.caseStudyLink?.primaryLinkUrl ?? null,
     }));
 

@@ -65,6 +65,7 @@ const queryPartnerBySlug = (client: CoreApiClient, slug: string) =>
                 headline: true,
                 body: { markdown: true },
                 coverImage: { url: true },
+                coverImageUrl: true,
                 caseStudyLink: { primaryLinkUrl: true },
                 position: true,
               },

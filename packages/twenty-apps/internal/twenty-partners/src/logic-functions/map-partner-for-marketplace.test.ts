@@ -48,6 +48,7 @@ const makeNode = () => ({
         headline: string | null;
         body: { markdown: string | null } | null;
         coverImage?: ReadonlyArray<{ url?: string | null } | null> | null;
+        coverImageUrl?: string | null;
         caseStudyLink: { primaryLinkUrl: string | null } | null;
         position: number | null;
       };
@@ -172,6 +173,52 @@ describe('mapPartnerForMarketplace', () => {
         link: 'https://example.com/case-study',
       },
     ]);
+  });
+
+  it('prefers the pasted coverImageUrl over the uploaded coverImage file in portfolio', () => {
+    const node = makeNode();
+    node.partnerContents.edges = [
+      {
+        node: {
+          contentType: ['CASE_STUDY'],
+          status: 'APPROVED',
+          clientName: 'Acme Corp',
+          headline: 'CRM migration',
+          body: { markdown: 'Moved 12 teams to Twenty.' },
+          coverImageUrl: 'https://paste.example.com/cover.png',
+          coverImage: [{ url: 'https://file.example.com/cover.png' }],
+          caseStudyLink: { primaryLinkUrl: 'https://example.com/case-study' },
+          position: 1,
+        },
+      },
+    ];
+
+    expect(mapPartnerForMarketplace(node, 'profile').portfolio[0].imageUrl).toBe(
+      'https://paste.example.com/cover.png',
+    );
+  });
+
+  it('falls back to the coverImage file url when coverImageUrl is absent', () => {
+    const node = makeNode();
+    node.partnerContents.edges = [
+      {
+        node: {
+          contentType: ['CASE_STUDY'],
+          status: 'APPROVED',
+          clientName: 'Acme Corp',
+          headline: 'CRM migration',
+          body: { markdown: 'Moved 12 teams to Twenty.' },
+          coverImageUrl: null,
+          coverImage: [{ url: 'https://file.example.com/cover.png' }],
+          caseStudyLink: { primaryLinkUrl: 'https://example.com/case-study' },
+          position: 1,
+        },
+      },
+    ];
+
+    expect(mapPartnerForMarketplace(node, 'profile').portfolio[0].imageUrl).toBe(
+      'https://file.example.com/cover.png',
+    );
   });
 
   it('sorts services by sortOrder ascending with nulls last', () => {
