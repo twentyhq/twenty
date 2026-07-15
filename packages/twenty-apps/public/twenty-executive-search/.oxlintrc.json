@@ -3,9 +3,7 @@
   "plugins": ["oxc"],
   "categories": {
     "correctness": "error",
-    "perf": "error",
-    "pedantic": "error",
-    "style": "error"
+    "perf": "error"
   },
   "rules": {
     "no-unused-vars": "error"

@@ -6,12 +6,12 @@ import {
   FIREWALL_ENFORCEMENT_CONTEXTS,
   FIREWALL_PROHIBITED_ENTRIES,
   FIREWALL_PROHIBITED_SELECTORS,
-  getProhibitedSelectorsForContext,
-  isSelectorProhibitedInContext,
   type FirewallEnforcementContext,
   type FirewallProhibitedEntry,
   type FirewallProhibitedSelector,
   type FirewallProhibitedStatus,
+  getProhibitedSelectorsForContext,
+  isSelectorProhibitedInContext,
 } from 'src/firewall/firewall-registry';
 
 function parseVendoredCsv(): FirewallProhibitedEntry[] {
