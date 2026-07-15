@@ -1,0 +1,8 @@
+{
+  "evidenceVersion": 1,
+  "generatedAt": "2026-07-15T17:00:00.000Z",
+  "rawDirectusSchemaAvailable": false,
+  "directusSchemaFingerprint": "UNKNOWN_PENDING_SCHEMA_SNAPSHOT",
+  "declaredTotals": { "collections": 139, "fields": 2432, "relations": 421 },
+  "collections": []
+}

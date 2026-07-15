@@ -1,0 +1,24 @@
+object_family_key,conceptual_objects,owner,lifecycle_on_disable,lifecycle_on_uninstall,identifier_namespace,migration_owner,rationale,source_section
+firm_crm_company,"company (existing), clientAccountProfile, clientStakeholderRole",CORE_STANDARD,PRESERVE,PRESERVE,CORE,CORE_UPGRADE_COMMAND,Client CRM is durable business data,"11.1, 11.7, 11.8"
+firm_crm_bd,"CRM opportunity (existing, extended), searchEngagementTerms",CORE_STANDARD,PRESERVE,PRESERVE,CORE,CORE_UPGRADE_COMMAND,BD pipeline and engagement terms are durable,"11.9, 11.10"
+relationship_intelligence,relationshipEdge,CORE_STANDARD,PRESERVE,PRESERVE,CORE,CORE_UPGRADE_COMMAND,Firm relationship IP is durable,11.6
+executive_profile,"executiveProfile, executiveCareerExperience, executiveEducation, executiveBoardService, executiveCapability, executiveLanguage, executiveArtifact, executiveAward, executiveExternalProfile, executiveSearchPreference",CORE_STANDARD,PRESERVE,PRESERVE,CORE,CORE_UPGRADE_COMMAND,Executive identity is durable business data,11.2-11.5
+search_assignment,"searchAssignment, assignmentTeamMember, searchMilestone",CORE_STANDARD,PRESERVE,PRESERVE,CORE,CORE_UPGRADE_COMMAND,Assignment is central delivery object,"11.11, 11.12, 11.15"
+position_specification,"positionSpecification, searchCriterion",CORE_STANDARD,PRESERVE,PRESERVE,CORE,CORE_UPGRADE_COMMAND,Client-approved specifications are durable,"11.13, 11.14"
+research,"researchStrategy, marketMap, targetCompany, researchCandidate",CORE_STANDARD,PRESERVE,PRESERVE,CORE,CORE_UPGRADE_COMMAND,Research is durable firm IP,11.16-11.19
+off_limits_conflicts,"offLimitsRestriction, conflictCheck, confidentialityRecord",CORE_STANDARD,PRESERVE,PRESERVE,CORE,CORE_UPGRADE_COMMAND,Compliance enforcement records are durable,11.20-11.22
+candidacy,"searchCandidacy, candidacyStageEvent",CORE_STANDARD,PRESERVE,PRESERVE,CORE,CORE_UPGRADE_COMMAND,Candidacy and immutable stage events are durable,"11.23, 11.24"
+assessment,"executiveAssessment, criterionEvaluation",CORE_STANDARD,PRESERVE,PRESERVE,CORE,CORE_UPGRADE_COMMAND,Professional assessments are durable,"11.25, 11.26"
+slate_presentation,"searchSlate, slateMembership, candidatePresentation",CORE_STANDARD,PRESERVE,PRESERVE,CORE,CORE_UPGRADE_COMMAND,Client-facing deliverables are versioned and durable,11.27-11.29
+client_feedback,"clientFeedback, searchStatusReport",CORE_STANDARD,PRESERVE,PRESERVE,CORE,CORE_UPGRADE_COMMAND,Client feedback and reports are durable,"11.30, 11.31"
+interviews,searchInterview,CORE_STANDARD,PRESERVE,PRESERVE,CORE,CORE_UPGRADE_COMMAND,Interview records are durable,11.32
+references_diligence,"referenceCheck, diligenceCheck",CORE_STANDARD,PRESERVE,PRESERVE,CORE,CORE_UPGRADE_COMMAND,Verification records are durable and restricted,"11.33, 11.34"
+compensation,"compensationExpectation, offerNegotiation",CORE_STANDARD,PRESERVE,PRESERVE,CORE,CORE_UPGRADE_COMMAND,Restricted compensation records are durable,"11.35, 11.36"
+placement_guarantee,"placement, guaranteeCase",CORE_STANDARD,PRESERVE,PRESERVE,CORE,CORE_UPGRADE_COMMAND,Placement and guarantee records are durable,"11.37, 11.38"
+board_intelligence,"boardCompositionProfile, boardMatrixCriterion, candidateBoardMatrixEvaluation, directorIndependenceReview, boardCommitmentReview",CORE_STANDARD,PRESERVE,PRESERVE,CORE,CORE_UPGRADE_COMMAND,Board composition intelligence is durable,11.39
+external_identity,externalEntityLink,CORE_STANDARD,PRESERVE,PRESERVE,CORE,CORE_UPGRADE_COMMAND,Identity links are durable integration infrastructure,8.2
+sync_ledger,"inbound/outbound event ledgers, sync checkpoint, conflict record, dead-letter record, reconciliation run/finding",CORE_STANDARD,PRESERVE,PRESERVE,CORE,CORE_UPGRADE_COMMAND,Sync durability infrastructure is core,8.4
+app_config,"application variables, sync settings, AI capability policies",APP_TECHNICAL,DISABLE_RUNTIME,REMOVE_APP_METADATA,APP,APP_INSTALL_HOOK,App configuration follows app lifecycle,Phase 1
+app_adapters,"Directus client adapter, enrichment adapter interface",APP_TECHNICAL,DISABLE_RUNTIME,REMOVE_APP_METADATA,APP,APP_INSTALL_HOOK,Adapters are app-owned technical artifacts,Phase 2
+app_ui,"front components, command menu items, navigation entries, presentation widgets",APP_TECHNICAL,DISABLE_RUNTIME,REMOVE_APP_METADATA,APP,APP_INSTALL_HOOK,UI artifacts follow app lifecycle,Phase 1
+app_agents,"executive-search agents, skills",APP_TECHNICAL,DISABLE_RUNTIME,REMOVE_APP_METADATA,APP,APP_INSTALL_HOOK,AI agent definitions are app-owned metadata,Phase 13-14

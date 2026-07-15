@@ -1,0 +1,18 @@
+{
+  "eventId": "evt-001",
+  "eventType": "executive.updated",
+  "eventVersion": 1,
+  "sourceSystem": "DIRECTUS",
+  "sourceCollection": "executives",
+  "sourceRecordId": "dir-exec-42",
+  "sourceUpdatedAt": "2026-07-15T16:00:00Z",
+  "sourceHash": "abc123",
+  "workspaceKey": "ws-exec-search",
+  "correlationId": "corr-001",
+  "causationId": null,
+  "idempotencyKey": "idem-exec-42-v3",
+  "occurredAt": "2026-07-15T16:00:01Z",
+  "actor": { "type": "CANDIDATE", "id": "dir-exec-42" },
+  "changedFields": ["current_title"],
+  "payload": null
+}

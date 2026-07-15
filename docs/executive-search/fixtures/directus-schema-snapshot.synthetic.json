@@ -1,0 +1,31 @@
+{
+  "version": "synthetic-1",
+  "snapshotDate": "2026-07-15",
+  "description": "Synthetic Directus schema snapshot fixture for testing drift detection. Not a real schema — used only to verify that the governance generator detects additions/removals/breaking changes while preserving curated ownership decisions.",
+  "collections": [
+    {
+      "collection": "executives",
+      "fields": [
+        {
+          "field": "id",
+          "type": "uuid",
+          "schema": { "is_nullable": false, "is_unique": true }
+        },
+        {
+          "field": "ats_uuid",
+          "type": "uuid",
+          "schema": { "is_nullable": true, "is_unique": false }
+        }
+      ],
+      "meta": { "icon": "person" }
+    }
+  ],
+  "relations": [
+    {
+      "collection": "executive_experience",
+      "field": "executive",
+      "related_collection": "executives",
+      "meta": { "sort_field": null }
+    }
+  ]
+}

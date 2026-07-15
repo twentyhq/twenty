@@ -1,0 +1,27 @@
+field_or_pattern,data_classification,rule,reason
+executives.subscription_tier,Commercial/subscription data,NO_SYNC,"Never enters search, AI context, client reports, or pipeline automation"
+executives.plan_level,Commercial/subscription data,NO_SYNC,"Never enters search, AI context, client reports, or pipeline automation"
+executives.is_premium,Commercial/subscription data,NO_SYNC,"Never enters search, AI context, client reports, or pipeline automation"
+executives.birthdate,Restricted personal data,NO_SYNC_SELECTION,"No indexing, search, rank, AI/client output; compliance reference only"
+executives.gender,Restricted personal data,NO_SYNC_SELECTION,"No indexing, search, rank, AI/client output; compliance reference only"
+candidate_demographics_voluntary.*,Restricted voluntary demographics,NO_SYNC_INDIVIDUAL,Aggregate-only by approved policy; never individual recruiter/search/AI context
+candidate_demographics_justification.*,Restricted compliance data,REFERENCE_ONLY,Compliance officer access only
+accommodation_requests.medical_documents,Restricted medical data,NO_SYNC,Medical docs remain in Directus/restricted store; evaluators must not see
+executive_settings.stripe_customer_id,Commercial/payment data,NO_SYNC,Never replicated into search delivery
+executive_settings.password/security_fields,Authentication/security secret,NO_SYNC,"Never copy password, token, TFA secret, or auth payload"
+executive_psychographic.*,Restricted legacy assessment,NO_SYNC_ORDINARY_CONTEXT,Not allowed in automated selection by default
+magic_auth_challenges.otp_ciphertext_hash,Authentication/security secret,NO_SYNC,Never copy OTP/token ciphertext/hash/attempts into ATS records
+magic_auth_events.*,Authentication/security secret,NO_SYNC,Aggregate health telemetry only
+directus_users.password_hash,Authentication/security secret,NO_SYNC,"Never replicate password hash, token, TFA secret, auth data"
+executive_settings.product_engagement_metrics,Commercial engagement data,NO_SYNC,Candidate-service telemetry excluded from search delivery
+ai_application_analysis.culture_fit_score,Risky legacy AI output,QUARANTINE,Excluded from automatic progression and default client reports
+ai_application_analysis.success_probability,Risky legacy AI output,QUARANTINE,Excluded from automatic progression and default client reports
+ai_application_analysis.matching_score,Risky legacy AI output,QUARANTINE,Excluded from automatic progression and default client reports
+ai_application_analysis.competitive_analysis,Risky legacy AI output,QUARANTINE,Excluded from automatic progression and default client reports
+executive_opportunity_single_page_analysis.raw_score,Legacy AI output,QUARANTINE,Do not promote raw score into internal selection
+profile_analyses.photo_analysis_scores,Restricted AI signal,NO_SYNC,Exclude photo analysis and scores from selection
+linkedin_*.profile_engagement_content_activity,Candidate-services reference,NO_SYNC,"Exclude engagement, content activity, coaching usage from selection"
+learning_path_*.course_completion_quiz_activity,Candidate-services reference,NO_SYNC,Exclude learning activity unless explicit job-related credential
+pitch_practice_*.rehearsal_data,Candidate-services reference,NO_SYNC,Private rehearsal data stays in Directus
+social_login_events.*,Authentication telemetry,NO_SYNC,Do not use login behavior in selection
+meilisearch_settings.*,Infrastructure secret,NO_SYNC,Contains search infrastructure/API-key configuration
