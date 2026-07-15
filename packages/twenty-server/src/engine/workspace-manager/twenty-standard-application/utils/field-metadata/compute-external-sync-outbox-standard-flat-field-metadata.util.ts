@@ -215,7 +215,6 @@ export const buildExternalSyncOutboxStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`Unique event identifier`),
       icon: 'IconKey',
       isNullable: false,
-      isUnique: true,
       isUIEditable: false,
       defaultValue: 'uuid',
     },
