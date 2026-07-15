@@ -273,6 +273,7 @@ To call app HTTP routes or read and write Twenty records from a front component,
 | `patch(path, body?, options?)` | Sends a `PATCH` request |
 | `delete(path, options?)` | Sends a `DELETE` request |
 | `request(method, path, options?)` | Generic request with any HTTP method |
+| `resolveUrl(path, options?)` | Resolves a path to its full URL without sending a request (for links) |
 
 `options` accepts `headers`, `query` (a record of query-string params; nullish values are skipped), and an `AbortSignal` via `signal`. A non-`FormData` object `body` is JSON-serialized automatically. On a `401`, the client refreshes the access token once through the host and retries the request.
 

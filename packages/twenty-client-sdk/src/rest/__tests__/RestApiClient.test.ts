@@ -247,6 +247,39 @@ describe('RestApiClient', () => {
       const [url] = fetchMock.mock.calls[0];
       expect(url).toBe('https://explicit.twenty.test/s/my-app/my-route');
     });
+
+    it('should resolve an app route url without sending a request', () => {
+      (globalThis as Record<string, unknown>).process = {
+        env: {
+          TWENTY_API_URL: 'https://api.twenty.test',
+          TWENTY_FUNCTIONS_URL: 'https://acme.functions.twenty.test',
+          TWENTY_APP_ACCESS_TOKEN: 'app-access-token',
+        },
+      };
+      const fetchMock = vi.fn();
+
+      const client = new RestApiClient({ fetch: fetchMock });
+
+      const url = client.resolveUrl('/s/documents/view', {
+        query: { id: 'record-1' },
+      });
+
+      expect(url).toBe(
+        'https://acme.functions.twenty.test/documents/view?id=record-1',
+      );
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('should resolve a rest url on the api base without sending a request', () => {
+      const fetchMock = vi.fn();
+
+      const client = new RestApiClient({ fetch: fetchMock });
+
+      const url = client.resolveUrl('/rest/companies');
+
+      expect(url).toBe('https://api.twenty.test/rest/companies');
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
   });
 
   it('should refresh the access token once on a 401 and retry the request', async () => {

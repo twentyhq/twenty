@@ -119,6 +119,15 @@ export class RestApiClient {
     return this.execute<TResponse>('GET', path, undefined, options);
   }
 
+  resolveUrl(
+    path: string,
+    requestOptions?: Pick<RestApiRequestOptions, 'query'>,
+  ): string {
+    const target = this.resolveTarget(path);
+
+    return buildRequestUrl(target.baseUrl, target.path, requestOptions?.query);
+  }
+
   post<TResponse = unknown>(
     path: string,
     body?: unknown,
