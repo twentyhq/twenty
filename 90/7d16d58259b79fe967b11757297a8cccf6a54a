@@ -1,0 +1,38 @@
+packages/twenty-server/src/modules/contact-creation-manager/constants/contact-creation-job-retry-limit.constant.ts
+  s_37904604351395::t_eab2ac8bd866cf 1
+packages/twenty-server/src/modules/contact-creation-manager/services/create-company.service.ts
+  s_37904604351395::t_0cefa376241582 64-74,137-141
+packages/twenty-server/src/modules/contact-creation-manager/services/__tests__/create-company-and-contact.service.spec.ts
+  s_37904604351395::t_cc0f9dbc1d6ffa 70-148
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service.ts
+  s_37904604351395::t_b42ebb22cbe806 192
+  s_37904604351395::t_da830c9983a76e 18
+packages/twenty-server/src/modules/contact-creation-manager/services/create-company-and-contact.service.ts
+  s_37904604351395::t_ad771a4bbf0d28 251
+  s_37904604351395::t_145585d3fb56d2 229-230,241-243,246-248,250
+  s_37904604351395::t_117efd1529c900 249
+packages/twenty-server/src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service.spec.ts
+  s_37904604351395::t_65f799f853b19a 307
+  s_37904604351395::t_8c3cf2c3f27d64 345
+  s_37904604351395::t_26977df6be55b7 382
+  s_37904604351395::t_65bed691ed097a 276
+packages/twenty-server/src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service.ts
+  s_37904604351395::t_7f06f77cd54a4f 175
+  s_37904604351395::t_5fdf19f4242459 19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "907d16d58259b79fe967b11757297a8cccf6a54a",
+  "prompts": {},
+  "sessions": {
+    "s_37904604351395": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "41994e1f-1493-45f4-856b-7e2945e40aef",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
