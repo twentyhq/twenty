@@ -2,16 +2,18 @@ import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
+import { attachExistingRecallBotToCallRecording } from 'src/logic-functions/flows/attach-existing-recall-bot-to-call-recording.util';
 import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findOpenScheduledCallRecordings } from 'src/logic-functions/data/find-open-scheduled-call-recordings.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 
 export type ScheduleRecallBotsForPendingCallRecordingsResult = {
+  attachedCallRecordingIds: string[];
   scheduledCallRecordingIds: string[];
 };
 
-// Closes the create-winner crash gap: a run that inserted the row but died before POSTing leaves a botless recording, and the cron is the single writer that re-POSTs it.
+// Resumes a CallRecording inserted before its Recall bot was scheduled.
 export const scheduleRecallBotsForPendingCallRecordings = async ({
   client,
   now,
@@ -24,7 +26,7 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
   ).filter((callRecording) => isUndefined(callRecording.externalBotId));
 
   if (pendingCallRecordings.length === 0) {
-    return { scheduledCallRecordingIds: [] };
+    return { attachedCallRecordingIds: [], scheduledCallRecordingIds: [] };
   }
 
   const calendarEventsById = new Map(
@@ -39,6 +41,7 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
       )
     ).map((calendarEvent) => [calendarEvent.id, calendarEvent]),
   );
+  const attachedCallRecordingIds: string[] = [];
   const scheduledCallRecordingIds: string[] = [];
 
   for (const callRecording of pendingCallRecordings) {
@@ -50,17 +53,35 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
       continue;
     }
 
-    const didScheduleCallRecorder = await scheduleRecallBotForCallRecording(client, {
+    const attachResult = await attachExistingRecallBotToCallRecording(client, {
       callRecording,
       calendarEvent,
     });
 
-    if (didScheduleCallRecorder) {
+    if (attachResult.status === 'attached') {
+      attachedCallRecordingIds.push(callRecording.id);
+      continue;
+    }
+
+    // A failed lookup can hide an existing bot; creating one now could duplicate it, so defer to the next run.
+    if (attachResult.status === 'lookup-failed') {
+      continue;
+    }
+
+    const didScheduleRecallBot = await scheduleRecallBotForCallRecording(
+      client,
+      {
+        callRecording,
+        calendarEvent,
+      },
+    );
+
+    if (didScheduleRecallBot) {
       scheduledCallRecordingIds.push(callRecording.id);
     }
   }
 
-  return { scheduledCallRecordingIds };
+  return { attachedCallRecordingIds, scheduledCallRecordingIds };
 };
 
 const hasMeetingEnded = ({

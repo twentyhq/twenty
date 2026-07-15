@@ -38,16 +38,16 @@ export const listScheduledRecallBots = async ({
   }
 
   const bots: RecallScheduledBot[] = [];
-  const searchParams = new URLSearchParams({
+  const searchParameters = new URLSearchParams({
     join_at_after: joinAtAfter,
     join_at_before: joinAtBefore,
   });
 
   Object.entries(metadata ?? {}).forEach(([key, value]) => {
-    searchParams.set(`metadata__${key}`, value);
+    searchParameters.set(`metadata__${key}`, value);
   });
 
-  let path: string | undefined = `/bot/?${searchParams.toString()}`;
+  let path: string | undefined = `/bot/?${searchParameters.toString()}`;
 
   for (
     let pageIndex = 0;
@@ -72,7 +72,7 @@ export const listScheduledRecallBots = async ({
 
   if (truncated && process.env.NODE_ENV !== 'test') {
     console.warn(
-      `[call-recorder] Recall bot list exceeded ${RECALL_BOT_LIST_MAX_PAGES} pages; continuing with ${bots.length} fetched bots`,
+      `[call-recorder] Recall bot list exceeded ${RECALL_BOT_LIST_MAX_PAGES} pages; continuing with ${bots.length} fetched bots and capped per-id fallback for misses`,
     );
   }
 
