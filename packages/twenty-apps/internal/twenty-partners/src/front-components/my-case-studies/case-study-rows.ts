@@ -7,6 +7,7 @@ export type CaseStudyRow = {
   headline: string;
   bodyMarkdown: string;
   caseStudyLink: string;
+  coverImageUrl: string;
   published: boolean;
 };
 
@@ -22,6 +23,7 @@ export const buildInitialRows = (
     headline: cs.headline ?? '',
     bodyMarkdown: cs.bodyMarkdown ?? '',
     caseStudyLink: cs.caseStudyLink ?? '',
+    coverImageUrl: cs.coverImageUrl ?? '',
     published: derivePublished(cs.status),
   }));
 
@@ -32,6 +34,7 @@ export const newDraftRow = (): CaseStudyRow => ({
   headline: '',
   bodyMarkdown: '',
   caseStudyLink: '',
+  coverImageUrl: '',
   published: false,
 });
 
@@ -44,7 +47,8 @@ export const isBlankDraft = (row: CaseStudyRow): boolean =>
   row.headline.trim() === '' &&
   row.bodyMarkdown.trim() === '' &&
   row.clientName.trim() === '' &&
-  row.caseStudyLink.trim() === '';
+  row.caseStudyLink.trim() === '' &&
+  row.coverImageUrl.trim() === '';
 
 // The reconcile route needs the whole desired list; blank never-saved drafts are excluded
 // so an untouched "Add" doesn't create an empty record.
@@ -58,6 +62,7 @@ export const toSaveBody = (rows: CaseStudyRow[]): Record<string, unknown> => ({
       headline: row.headline,
       bodyMarkdown: row.bodyMarkdown,
       caseStudyLink: row.caseStudyLink,
+      coverImageUrl: row.coverImageUrl,
       published: row.published,
     })),
 });

@@ -16,6 +16,7 @@ const persisted = (over: Partial<CaseStudyRow> = {}): CaseStudyRow => ({
   clientName: 'Acme',
   headline: 'Migration',
   bodyMarkdown: '## Hi',
+  coverImageUrl: '',
   caseStudyLink: 'https://x.io',
   published: true,
   ...over,
@@ -64,5 +65,21 @@ describe('case-study-rows', () => {
     expect(body.caseStudies[0]).toMatchObject({ id: 'r1', name: 'Migration', clientName: 'Acme', bodyMarkdown: '## Hi', caseStudyLink: 'https://x.io', published: true });
     expect(body.caseStudies[1]).toMatchObject({ name: 'Fresh', published: true });
     expect(body.caseStudies[1].id).toBeUndefined();
+  });
+
+  it('carries coverImageUrl into the save body and reads it from the load payload', () => {
+    const rows = buildInitialRows([
+      { id: 'a', name: 'n', clientName: 'C', headline: 'H', bodyMarkdown: 'B', coverImageUrl: 'https://img.example.com/a.png', caseStudyLink: 'https://y', status: 'APPROVED' },
+    ]);
+    expect(rows[0].coverImageUrl).toBe('https://img.example.com/a.png');
+
+    const body = toSaveBody([persisted({ coverImageUrl: 'https://img.example.com/c.png' })]) as {
+      caseStudies: Array<Record<string, unknown>>;
+    };
+    expect(body.caseStudies[0].coverImageUrl).toBe('https://img.example.com/c.png');
+  });
+
+  it('a new draft with only a cover URL set is not treated as blank', () => {
+    expect(isBlankDraft({ ...newDraftRow(), coverImageUrl: 'https://img.example.com/x.png' })).toBe(false);
   });
 });
