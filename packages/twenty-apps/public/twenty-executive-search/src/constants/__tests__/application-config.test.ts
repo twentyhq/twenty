@@ -28,3 +28,25 @@ describe('executive-search app constants', () => {
     expect(DIRECTUS_API_KEY_ENV_VAR_NAME).toBe('DIRECTUS_API_KEY');
   });
 });
+
+describe('application-config validation', () => {
+  it('app definition validates without errors', async () => {
+    const mod = await import('src/application-config');
+    const result = mod.default;
+    expect(result.success, result.errors.join('; ')).toBe(true);
+    expect(result.errors).toEqual([]);
+    expect(result.config.universalIdentifier).toBe('executive-search');
+  });
+
+  it('default role validates without errors', async () => {
+    const mod = await import('src/default-role');
+    const result = mod.default;
+    expect(result.success, result.errors.join('; ')).toBe(true);
+    expect(result.errors).toEqual([]);
+    expect(result.config.universalIdentifier).toBe(
+      'executive-search-default-role',
+    );
+    expect(result.config.canReadAllObjectRecords).toBe(false);
+    expect(result.config.objectPermissions).toEqual([]);
+  });
+});
