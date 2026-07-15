@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
-import { ReconcileSystemRelationFieldUniversalIdentifierCommand } from 'src/database/commands/upgrade-version-command/2-22/2-22-workspace-command-1783925900000-reconcile-system-relation-field-universal-identifier.command';
+import { ReconcileSystemRelationFieldUniversalIdentifierCommand } from 'src/database/commands/upgrade-version-command/2-22/2-22-workspace-command-1784130194000-reconcile-system-relation-field-universal-identifier.command';
 import { BackfillCompanyPersonImageIdentifierFieldMetadataIdCommand } from 'src/database/commands/upgrade-version-command/2-22/2-22-workspace-command-1783959648000-backfill-company-person-image-identifier-field-metadata-id.command';
 import { MigratePersonAvatarUrlToAvatarFileCommand } from 'src/database/commands/upgrade-version-command/2-22/2-22-workspace-command-1783960128000-migrate-person-avatar-url-to-avatar-file.command';
 import { AddWorkflowVersionCoreSoftRefFieldCommand } from 'src/database/commands/upgrade-version-command/2-22/2-22-workspace-command-1784193206000-add-workflow-version-core-soft-ref-field.command';

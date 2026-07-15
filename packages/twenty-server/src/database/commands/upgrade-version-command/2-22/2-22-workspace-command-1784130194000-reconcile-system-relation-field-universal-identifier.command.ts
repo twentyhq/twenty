@@ -10,7 +10,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -42,13 +42,13 @@ type ReverseSystemRelationFieldUpdate = {
   >;
 };
 
-@RegisteredWorkspaceCommand('2.22.0', 1783925900000)
+@RegisteredWorkspaceCommand('2.22.0', 1784130194000)
 @Command({
   name: 'upgrade:2-22:reconcile-system-relation-field-universal-identifier',
   description:
     'Reconcile the reverse morph fields of default relations (timelineActivity/attachment/noteTarget/taskTarget) with the engine convention: name-free deterministic universal identifier, isSystemSideEffect: true, and name-derived label/icon, so an object rename becomes a lossless update and standard fields match custom ones.',
 })
-export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
