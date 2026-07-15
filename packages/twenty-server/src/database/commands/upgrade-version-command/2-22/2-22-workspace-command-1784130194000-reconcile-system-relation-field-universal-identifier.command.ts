@@ -1,7 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { getSystemRelationFieldUniversalIdentifier } from 'twenty-shared/application';
+import {
+  getSystemRelationFieldUniversalIdentifier,
+  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+} from 'twenty-shared/application';
 import {
   DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
   STANDARD_OBJECTS,
@@ -40,7 +43,7 @@ const TARGET_MORPH_ID_BY_DEFAULT_RELATION_OBJECT_UNIVERSAL_IDENTIFIER: Record<
   ]),
 );
 
-type ReverseSystemRelationFieldUpdate = {
+type SystemRelationFieldUpdate = {
   id: string;
   update: Partial<
     Pick<
@@ -54,7 +57,7 @@ type ReverseSystemRelationFieldUpdate = {
 @Command({
   name: 'upgrade:2-22:reconcile-system-relation-field-universal-identifier',
   description:
-    'Reconcile the reverse morph fields of default relations (timelineActivity/attachment/noteTarget/taskTarget) with the engine convention: name-free deterministic universal identifier, isSystemSideEffect: true, and name-derived label/icon, so an object rename becomes a lossless update and standard fields match custom ones.',
+    'Reconcile the default relations (timelineActivity/attachment/noteTarget/taskTarget) with the engine convention. Reverse morph fields get a name-free deterministic universal identifier, isSystemSideEffect: true, and name-derived label/icon, so an object rename becomes a lossless update and standard fields match custom ones. Forward fields of engine-provisioned relations (non twenty-standard source objects) are flagged isSystemSideEffect: true so both sides of a side-effect relation share the same engine ownership.',
 })
 export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -79,7 +82,7 @@ export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends Prov
         'flatObjectMetadataMaps',
       ]);
 
-    const reverseFieldUpdates: ReverseSystemRelationFieldUpdate[] = [];
+    const systemRelationFieldUpdates: SystemRelationFieldUpdate[] = [];
 
     for (const flatFieldMetadata of Object.values(
       flatFieldMetadataMaps.byUniversalIdentifier,
@@ -145,7 +148,7 @@ export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends Prov
           hostFlatObjectMetadata.nameSingular as keyof typeof STANDARD_OBJECT_ICONS
         ] ?? 'IconBuildingSkyscraper';
 
-      const update: ReverseSystemRelationFieldUpdate['update'] = {};
+      const update: SystemRelationFieldUpdate['update'] = {};
 
       if (flatFieldMetadata.universalIdentifier !== derivedUniversalIdentifier) {
         update.universalIdentifier = derivedUniversalIdentifier;
@@ -161,27 +164,66 @@ export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends Prov
       }
 
       if (Object.keys(update).length > 0) {
-        reverseFieldUpdates.push({ id: flatFieldMetadata.id, update });
+        systemRelationFieldUpdates.push({ id: flatFieldMetadata.id, update });
+      }
+
+      // Both sides of an engine-provisioned relation are engine-owned. The
+      // forward field on the source object was provisioned alongside the
+      // reverse field, so it must carry isSystemSideEffect too — matching what
+      // the create side-effect handler emits for objects created post-2.22.
+      // twenty-standard source objects are excluded: their forward fields
+      // (e.g. person.attachments) are authored by the standard application
+      // with isSystemSideEffect: false, and flagging them here would diverge
+      // from the standard builders.
+      const isStandardAuthoredRelation =
+        sourceFlatObjectMetadata.applicationUniversalIdentifier ===
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER;
+
+      if (isStandardAuthoredRelation) {
+        continue;
+      }
+
+      const forwardFlatFieldMetadata = isDefined(
+        flatFieldMetadata.relationTargetFieldMetadataId,
+      )
+        ? findFlatEntityByIdInFlatEntityMaps({
+            flatEntityMaps: flatFieldMetadataMaps,
+            flatEntityId: flatFieldMetadata.relationTargetFieldMetadataId,
+          })
+        : undefined;
+
+      if (!isDefined(forwardFlatFieldMetadata)) {
+        this.logger.warn(
+          `Missing forward field for reverse relation field ${flatFieldMetadata.name} (${flatFieldMetadata.id}) in workspace ${workspaceId}, skipping`,
+        );
+        continue;
+      }
+
+      if (!forwardFlatFieldMetadata.isSystemSideEffect) {
+        systemRelationFieldUpdates.push({
+          id: forwardFlatFieldMetadata.id,
+          update: { isSystemSideEffect: true },
+        });
       }
     }
 
-    if (reverseFieldUpdates.length === 0) {
+    if (systemRelationFieldUpdates.length === 0) {
       this.logger.log(
-        `No default-relation reverse field to reconcile for workspace ${workspaceId}`,
+        `No default-relation field to reconcile for workspace ${workspaceId}`,
       );
 
       return;
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Reconciling ${reverseFieldUpdates.length} default-relation reverse field(s) for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Reconciling ${systemRelationFieldUpdates.length} default-relation field(s) for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
       return;
     }
 
-    for (const { id, update } of reverseFieldUpdates) {
+    for (const { id, update } of systemRelationFieldUpdates) {
       await this.fieldMetadataRepository.update({ id, workspaceId }, update);
     }
 
@@ -191,7 +233,7 @@ export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends Prov
     });
 
     this.logger.log(
-      `Reconciled ${reverseFieldUpdates.length} default-relation reverse field(s) for workspace ${workspaceId}`,
+      `Reconciled ${systemRelationFieldUpdates.length} default-relation field(s) for workspace ${workspaceId}`,
     );
   }
 }
