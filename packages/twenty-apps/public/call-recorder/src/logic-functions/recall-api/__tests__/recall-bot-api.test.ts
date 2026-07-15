@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
 import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
 import { createAsyncRecallTranscript } from 'src/logic-functions/recall-api/create-async-recall-transcript.util';
 import { ejectRecallBot } from 'src/logic-functions/recall-api/eject-recall-bot.util';
@@ -9,33 +10,34 @@ import { listScheduledRecallBots } from 'src/logic-functions/recall-api/list-sch
 import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-recall-bot.util';
 import { retrieveRecallTranscript } from 'src/logic-functions/recall-api/retrieve-recall-transcript.util';
 import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
+import { CALL_RECORDER_NAME_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-name-env-var-name';
 import { CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-retention-hours-env-var-name';
+import { RECALL_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-api-key-env-var-name';
+import { RECALL_REGION_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-region-env-var-name';
 
-const getRecallApiConfigMock = vi.hoisted(() => vi.fn());
 const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
 const RECALL_ROUTING_METADATA = {
   twentyWorkspaceId: WORKSPACE_ID,
   twentyCallRecordingId: 'call-recording-id',
 };
-
-vi.mock('src/logic-functions/recall-api/get-recall-api-config.util', () => ({
-  getRecallApiConfig: getRecallApiConfigMock,
-}));
+const ENV_VAR_NAMES = [
+  RECALL_API_KEY_ENV_VAR_NAME,
+  RECALL_REGION_ENV_VAR_NAME,
+  CALL_RECORDER_NAME_ENV_VAR_NAME,
+  CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME,
+] as const;
+const ORIGINAL_ENV_VALUES = ENV_VAR_NAMES.map(
+  (envVarName) => [envVarName, process.env[envVarName]] as const,
+);
 
 describe('recall bot api', () => {
   const fetchMock = vi.fn();
 
   beforeEach(() => {
     delete process.env[CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME];
-    getRecallApiConfigMock.mockReset();
-    getRecallApiConfigMock.mockReturnValue({
-      success: true,
-      config: {
-        apiKey: 'recall-api-key',
-        baseUrl: 'https://ap-northeast-1.recall.ai/api/v1',
-        botName: 'Call Recorder',
-      },
-    });
+    process.env[RECALL_API_KEY_ENV_VAR_NAME] = 'recall-api-key';
+    process.env[RECALL_REGION_ENV_VAR_NAME] = 'ap-northeast-1';
+    process.env[CALL_RECORDER_NAME_ENV_VAR_NAME] = 'Call Recorder';
     fetchMock.mockReset();
     fetchMock.mockResolvedValue({
       ok: true,
@@ -43,6 +45,17 @@ describe('recall bot api', () => {
       json: async () => ({ id: 'recall-bot-id' }),
     });
     vi.stubGlobal('fetch', fetchMock);
+  });
+
+  afterEach(() => {
+    ORIGINAL_ENV_VALUES.forEach(([envVarName, originalValue]) => {
+      if (originalValue === undefined) {
+        delete process.env[envVarName];
+      } else {
+        process.env[envVarName] = originalValue;
+      }
+    });
+    vi.unstubAllGlobals();
   });
 
   it('creates Recall bot requests with the Token authorization scheme', async () => {
@@ -166,14 +179,7 @@ describe('recall bot api', () => {
   });
 
   it('does not duplicate an existing Token authorization prefix', async () => {
-    getRecallApiConfigMock.mockReturnValue({
-      success: true,
-      config: {
-        apiKey: 'Token recall-api-key',
-        baseUrl: 'https://ap-northeast-1.recall.ai/api/v1',
-        botName: 'Call Recorder',
-      },
-    });
+    process.env[RECALL_API_KEY_ENV_VAR_NAME] = 'Token recall-api-key';
 
     await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
@@ -220,9 +226,15 @@ describe('recall bot api', () => {
     expect(result).toEqual({
       ok: true,
       bots: [
-        { id: 'bot-1', metadata: { twentyCallRecordingId: 'recording-1' } },
-        { id: 'bot-2', metadata: {} },
+        {
+          id: 'bot-1',
+          metadata: { twentyCallRecordingId: 'recording-1' },
+          statusChanges: [],
+          recordings: [],
+        },
+        { id: 'bot-2', metadata: {}, statusChanges: [], recordings: [] },
       ],
+      truncated: false,
     });
     expect(fetchMock).toHaveBeenNthCalledWith(
       1,
@@ -236,7 +248,7 @@ describe('recall bot api', () => {
     );
   });
 
-  it('fails the scheduled bot list when the pagination cap would truncate results', async () => {
+  it('flags the result as truncated when the pagination cap leaves more pages', async () => {
     for (let pageIndex = 1; pageIndex <= 10; pageIndex++) {
       fetchMock.mockResolvedValueOnce({
         ok: true,
@@ -254,9 +266,14 @@ describe('recall bot api', () => {
     });
 
     expect(result).toEqual({
-      ok: false,
-      status: null,
-      errorMessage: 'Recall bot list exceeded 10 pages',
+      ok: true,
+      bots: Array.from({ length: 10 }, (_, index) => ({
+        id: `bot-${index + 1}`,
+        metadata: {},
+        statusChanges: [],
+        recordings: [],
+      })),
+      truncated: true,
     });
     expect(fetchMock).toHaveBeenCalledTimes(10);
   });
@@ -278,7 +295,8 @@ describe('recall bot api', () => {
 
     expect(result).toEqual({
       ok: true,
-      bots: [{ id: 'bot-1', metadata: {} }],
+      bots: [{ id: 'bot-1', metadata: {}, statusChanges: [], recordings: [] }],
+      truncated: false,
     });
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
@@ -319,7 +337,7 @@ describe('recall bot api', () => {
     );
   });
 
-  it('fetches a single bot and returns the raw response', async () => {
+  it('fetches a single bot and returns its parsed snapshot', async () => {
     const botResponse = {
       id: 'recall-bot-id',
       status_changes: [{ code: 'done' }],
@@ -334,7 +352,21 @@ describe('recall bot api', () => {
 
     const result = await getRecallBot({ externalBotId: 'recall-bot-id' });
 
-    expect(result).toEqual({ ok: true, bot: botResponse });
+    expect(result).toEqual({
+      ok: true,
+      bot: {
+        id: 'recall-bot-id',
+        metadata: {},
+        statusChanges: [{ code: 'done', createdAt: undefined }],
+        recordings: [
+          {
+            id: 'recall-recording-id',
+            startedAt: undefined,
+            completedAt: undefined,
+          },
+        ],
+      },
+    });
     expect(fetchMock).toHaveBeenCalledWith(
       'https://ap-northeast-1.recall.ai/api/v1/bot/recall-bot-id/',
       expect.objectContaining({ method: 'GET' }),
@@ -645,7 +677,12 @@ describe('recall bot api', () => {
 
       expect(await resultPromise).toEqual({
         ok: true,
-        bot: { id: 'recall-bot-id' },
+        bot: {
+          id: 'recall-bot-id',
+          metadata: {},
+          statusChanges: [],
+          recordings: [],
+        },
       });
       expect(fetchMock).toHaveBeenCalledTimes(2);
     });
@@ -668,7 +705,12 @@ describe('recall bot api', () => {
 
       expect(await resultPromise).toEqual({
         ok: true,
-        bot: { id: 'recall-bot-id' },
+        bot: {
+          id: 'recall-bot-id',
+          metadata: {},
+          statusChanges: [],
+          recordings: [],
+        },
       });
       expect(fetchMock).toHaveBeenCalledTimes(2);
     });
@@ -691,6 +733,100 @@ describe('recall bot api', () => {
           'Recall API responded with HTTP 500: {"detail":"server error"}',
       });
       expect(fetchMock).toHaveBeenCalledTimes(3);
+    });
+
+    it('defers instead of retrying in-process when Retry-After exceeds the invocation budget', async () => {
+      fetchMock.mockResolvedValue({
+        ok: false,
+        status: 429,
+        headers: {
+          get: (headerName: string) =>
+            headerName.toLowerCase() === 'retry-after' ? '120' : null,
+        },
+        json: async () => ({ detail: 'rate limited' }),
+      });
+
+      const result = await getRecallBot({ externalBotId: 'recall-bot-id' });
+
+      expect(result).toEqual({
+        ok: false,
+        status: 429,
+        errorMessage:
+          'Recall API responded with HTTP 429: {"detail":"rate limited"}',
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('stops retrying once accumulated retry waits exhaust the invocation budget', async () => {
+      fetchMock.mockResolvedValue({
+        ok: false,
+        status: 429,
+        headers: {
+          get: (headerName: string) =>
+            headerName.toLowerCase() === 'retry-after' ? '9' : null,
+        },
+        json: async () => ({ detail: 'rate limited' }),
+      });
+
+      const resultPromise = getRecallBot({ externalBotId: 'recall-bot-id' });
+
+      await vi.runAllTimersAsync();
+
+      expect(await resultPromise).toEqual({
+        ok: false,
+        status: 429,
+        errorMessage:
+          'Recall API responded with HTTP 429: {"detail":"rate limited"}',
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
+    it('reports the eject failure when both cancel and eject fail', async () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      fetchMock.mockImplementation(async (_url: string, init: RequestInit) => ({
+        ok: false,
+        status: init.method === 'DELETE' ? 409 : 500,
+        json: async () => ({
+          detail:
+            init.method === 'DELETE'
+              ? 'cannot delete a joined bot'
+              : 'leave call failed',
+        }),
+      }));
+
+      const resultPromise = cancelOrEjectRecallBot('recall-bot-id');
+
+      await vi.runAllTimersAsync();
+
+      expect(await resultPromise).toBe(false);
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'failed to cancel or eject Recall bot recall-bot-id',
+        ),
+      );
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('HTTP 500: {"detail":"leave call failed"}'),
+      );
+      warnSpy.mockRestore();
+    });
+
+    it('defers 507 adhoc pool exhaustion instead of sleeping in-process', async () => {
+      fetchMock.mockResolvedValue({
+        ok: false,
+        status: 507,
+        json: async () => ({ detail: 'adhoc pool exhausted' }),
+      });
+
+      const result = await getRecallBot({ externalBotId: 'recall-bot-id' });
+
+      expect(result).toEqual({
+        ok: false,
+        status: 507,
+        errorMessage:
+          'Recall API responded with HTTP 507: {"detail":"adhoc pool exhausted"}',
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 
     it('does not retry client errors', async () => {

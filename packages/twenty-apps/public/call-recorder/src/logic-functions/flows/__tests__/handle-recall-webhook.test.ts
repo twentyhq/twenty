@@ -829,6 +829,9 @@ describe('handleRecallWebhook', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
+        id: 'recall-bot-1',
+        metadata: {},
+        statusChanges: [],
         recordings: [{ id: 'recall-recording-9' }],
       },
     });
@@ -885,7 +888,7 @@ describe('handleRecallWebhook', () => {
   it('imports media on recording.done and completes once all artifacts are present', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
-      bot: { id: 'recall-bot-1' },
+      bot: { id: 'recall-bot-1', metadata: {}, statusChanges: [], recordings: [] },
     });
     importCallRecordingMediaMock.mockResolvedValue({
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
@@ -939,7 +942,7 @@ describe('handleRecallWebhook', () => {
   it('completes and keeps the size marker when a media file is too large', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
-      bot: { id: 'recall-bot-1' },
+      bot: { id: 'recall-bot-1', metadata: {}, statusChanges: [], recordings: [] },
     });
     importCallRecordingMediaMock.mockResolvedValue({
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
@@ -993,7 +996,7 @@ describe('handleRecallWebhook', () => {
   it('keeps the real failure reason over the size marker on recording.failed', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
-      bot: { id: 'recall-bot-1' },
+      bot: { id: 'recall-bot-1', metadata: {}, statusChanges: [], recordings: [] },
     });
     importCallRecordingMediaMock.mockResolvedValue({
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
@@ -1043,7 +1046,7 @@ describe('handleRecallWebhook', () => {
   it('stays PROCESSING on recording.done while artifacts are missing', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
-      bot: { id: 'recall-bot-1' },
+      bot: { id: 'recall-bot-1', metadata: {}, statusChanges: [], recordings: [] },
     });
     importCallRecordingMediaMock.mockResolvedValue({
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
@@ -1088,7 +1091,7 @@ describe('handleRecallWebhook', () => {
   it('marks FAILED on recording.done when no recording artifact path exists', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
-      bot: { id: 'recall-bot-1', recordings: [] },
+      bot: { id: 'recall-bot-1', metadata: {}, statusChanges: [], recordings: [] },
     });
     const client = new FakeCoreApiClient([
       {

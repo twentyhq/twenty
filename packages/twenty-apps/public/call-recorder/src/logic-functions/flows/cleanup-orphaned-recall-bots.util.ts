@@ -1,10 +1,9 @@
-import { isNull, isUndefined } from '@sniptt/guards';
+import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
-import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
-import { ejectRecallBot } from 'src/logic-functions/recall-api/eject-recall-bot.util';
+import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
@@ -17,6 +16,7 @@ import {
 export type CleanupOrphanedRecallBotsResult = {
   scannedBotCount: number;
   canceledExternalBotIds: string[];
+  truncatedScan: boolean;
 };
 
 // Bots no open CallRecording request claims would still join; cancel them on Recall.
@@ -39,7 +39,11 @@ export const cleanupOrphanedRecallBots = async ({
       `[call-recorder] failed to list Recall bots for orphan cancellation: ${listResult.errorMessage}`,
     );
 
-    return { scannedBotCount: 0, canceledExternalBotIds: [] };
+    return {
+      scannedBotCount: 0,
+      canceledExternalBotIds: [],
+      truncatedScan: false,
+    };
   }
 
   const currentWorkspaceId = getCurrentWorkspaceId();
@@ -52,6 +56,7 @@ export const cleanupOrphanedRecallBots = async ({
     return {
       scannedBotCount: listResult.bots.length,
       canceledExternalBotIds: [],
+      truncatedScan: listResult.truncated,
     };
   }
 
@@ -63,6 +68,7 @@ export const cleanupOrphanedRecallBots = async ({
     return {
       scannedBotCount: listResult.bots.length,
       canceledExternalBotIds: [],
+      truncatedScan: listResult.truncated,
     };
   }
 
@@ -99,6 +105,7 @@ export const cleanupOrphanedRecallBots = async ({
   return {
     scannedBotCount: listResult.bots.length,
     canceledExternalBotIds,
+    truncatedScan: listResult.truncated,
   };
 };
 
@@ -152,31 +159,6 @@ const isBotClaimed = ({
 
   // An id-less REQUESTED recording may have a bot-id write-back in flight; spare its bot.
   return isUndefined(callRecording.externalBotId);
-};
-
-const cancelOrEjectRecallBot = async (
-  externalBotId: string,
-): Promise<boolean> => {
-  const cancelResult = await cancelRecallBot({ externalBotId });
-
-  if (cancelResult.ok) {
-    return true;
-  }
-
-  // Deleting only works for not-yet-joined bots; eject the ones already in a call.
-  if (!isNull(cancelResult.status)) {
-    const ejectResult = await ejectRecallBot({ externalBotId });
-
-    if (ejectResult.ok) {
-      return true;
-    }
-  }
-
-  console.warn(
-    `[call-recorder] failed to cancel orphaned Recall bot ${externalBotId}: ${cancelResult.errorMessage}`,
-  );
-
-  return false;
 };
 
 const normalizeOptionalString = (value: unknown): string | undefined =>

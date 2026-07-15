@@ -125,16 +125,16 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'in_call_recording', created_at: '2026-06-09T13:02:30.000Z' },
-          { code: 'call_ended', created_at: '2026-06-09T14:00:30.000Z' },
-          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'in_call_recording', createdAt: '2026-06-09T13:02:30.000Z' },
+          { code: 'call_ended', createdAt: '2026-06-09T14:00:30.000Z' },
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-09T13:02:00.000Z',
-            completed_at: '2026-06-09T14:00:00.000Z',
+            startedAt: '2026-06-09T13:02:00.000Z',
+            completedAt: '2026-06-09T14:00:00.000Z',
           },
         ],
       },
@@ -187,8 +187,8 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [],
       },
@@ -218,14 +218,14 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-09T13:02:00.000Z',
-            completed_at: '2026-06-09T14:00:00.000Z',
+            startedAt: '2026-06-09T13:02:00.000Z',
+            completedAt: '2026-06-09T14:00:00.000Z',
           },
         ],
       },
@@ -283,14 +283,14 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-09T13:02:00.000Z',
-            completed_at: '2026-06-09T14:00:00.000Z',
+            startedAt: '2026-06-09T13:02:00.000Z',
+            completedAt: '2026-06-09T14:00:00.000Z',
           },
         ],
       },
@@ -339,14 +339,14 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-09T13:02:00.000Z',
-            completed_at: '2026-06-09T14:00:00.000Z',
+            startedAt: '2026-06-09T13:02:00.000Z',
+            completedAt: '2026-06-09T14:00:00.000Z',
           },
         ],
       },
@@ -392,14 +392,14 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'fatal', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'fatal', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-09T13:02:00.000Z',
-            completed_at: '2026-06-09T14:00:00.000Z',
+            startedAt: '2026-06-09T13:02:00.000Z',
+            completedAt: '2026-06-09T14:00:00.000Z',
           },
         ],
       },
@@ -462,14 +462,14 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-10T11:30:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-10T11:30:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-10T11:05:00.000Z',
-            completed_at: '2026-06-10T11:25:00.000Z',
+            startedAt: '2026-06-10T11:05:00.000Z',
+            completedAt: '2026-06-10T11:25:00.000Z',
           },
         ],
       },
@@ -566,9 +566,10 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'in_call_recording', created_at: '2026-06-09T13:02:00.000Z' },
+        statusChanges: [
+          { code: 'in_call_recording', createdAt: '2026-06-09T13:02:00.000Z' },
         ],
+        recordings: [],
       },
     });
     const client = buildClient([
@@ -593,11 +594,11 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'in_call_recording', created_at: '2026-06-09T13:02:00.000Z' },
+        statusChanges: [
+          { code: 'in_call_recording', createdAt: '2026-06-09T13:02:00.000Z' },
         ],
         recordings: [
-          { id: 'recall-recording-1', started_at: '2026-06-09T13:02:00.000Z' },
+          { id: 'recall-recording-1', startedAt: '2026-06-09T13:02:00.000Z' },
         ],
       },
     });
@@ -625,14 +626,14 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-09T13:02:00.000Z',
-            completed_at: '2026-06-09T14:00:00.000Z',
+            startedAt: '2026-06-09T13:02:00.000Z',
+            completedAt: '2026-06-09T14:00:00.000Z',
           },
         ],
       },
@@ -676,14 +677,14 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-09T13:02:00.000Z',
-            completed_at: '2026-06-09T14:00:00.000Z',
+            startedAt: '2026-06-09T13:02:00.000Z',
+            completedAt: '2026-06-09T14:00:00.000Z',
           },
         ],
       },
@@ -732,14 +733,14 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-09T13:02:00.000Z',
-            completed_at: '2026-06-09T14:00:00.000Z',
+            startedAt: '2026-06-09T13:02:00.000Z',
+            completedAt: '2026-06-09T14:00:00.000Z',
           },
         ],
       },
@@ -805,14 +806,14 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'done', created_at: '2026-06-09T14:05:00.000Z' },
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
         ],
         recordings: [
           {
             id: 'recall-recording-1',
-            started_at: '2026-06-09T13:02:00.000Z',
-            completed_at: '2026-06-09T14:00:00.000Z',
+            startedAt: '2026-06-09T13:02:00.000Z',
+            completedAt: '2026-06-09T14:00:00.000Z',
           },
         ],
       },
@@ -864,9 +865,10 @@ describe('convergeDivergedCallRecordings', () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
-        status_changes: [
-          { code: 'in_call_recording', created_at: '2026-06-09T13:02:00.000Z' },
+        statusChanges: [
+          { code: 'in_call_recording', createdAt: '2026-06-09T13:02:00.000Z' },
         ],
+        recordings: [],
       },
     });
     const client = buildClient([
