@@ -15,9 +15,9 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
   {
     key: FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
     metadata: {
-      label: 'Calendar Week View',
+      label: 'Calendar Day and Week Views',
       description:
-        'Display calendar records in a weekly layout with optional end dates',
+        'Display calendar records in daily or weekly layouts with optional end dates',
     },
   },
   {

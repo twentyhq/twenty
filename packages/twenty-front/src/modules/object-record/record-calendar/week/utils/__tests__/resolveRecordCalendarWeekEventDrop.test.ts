@@ -28,6 +28,19 @@ describe('resolveRecordCalendarWeekEventDrop', () => {
     });
   });
 
+  it('resolves every valid horizontal position to the only visible day', () => {
+    expect(
+      resolveRecordCalendarWeekEventDrop({
+        dayCount: 1,
+        grabOffsetY: 0,
+        gridRect,
+        pointerX: gridRect.left + gridRect.width - 1,
+        pointerY:
+          gridRect.top + 14.25 * RECORD_CALENDAR_WEEK_DIMENSIONS.hourHeight,
+      }),
+    ).toEqual({ dayIndex: 0, destinationMinutes: 14 * 60 });
+  });
+
   it.each([
     ['time gutter', gridRect.left + 20, gridRect.top + 100],
     ['left of grid', gridRect.left - 1, gridRect.top + 100],

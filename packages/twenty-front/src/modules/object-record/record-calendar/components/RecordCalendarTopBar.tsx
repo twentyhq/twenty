@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
@@ -80,6 +81,7 @@ export const RecordCalendarTopBar = () => {
   });
 
   const dateLocale = useAtomStateValue(dateLocaleState);
+  const { timeZone } = useDateTimeFormat();
   const { firstDayOfWeek, lastDayOfWeek } = useRecordCalendarWeekDaysRange(
     recordCalendarSelectedDate,
   );
@@ -97,26 +99,33 @@ export const RecordCalendarTopBar = () => {
   };
 
   const handlePreviousPeriod = () => {
-    setRecordCalendarSelectedDate(
-      supportedCalendarLayout === ViewCalendarLayout.WEEK
-        ? recordCalendarSelectedDate.subtract({ weeks: 1 })
-        : recordCalendarSelectedDate.subtract({ months: 1 }),
-    );
+    const previousDate =
+      supportedCalendarLayout === ViewCalendarLayout.DAY
+        ? recordCalendarSelectedDate.subtract({ days: 1 })
+        : supportedCalendarLayout === ViewCalendarLayout.WEEK
+          ? recordCalendarSelectedDate.subtract({ weeks: 1 })
+          : recordCalendarSelectedDate.subtract({ months: 1 });
+
+    setRecordCalendarSelectedDate(previousDate);
   };
 
   const handleNextPeriod = () => {
-    setRecordCalendarSelectedDate(
-      supportedCalendarLayout === ViewCalendarLayout.WEEK
-        ? recordCalendarSelectedDate.add({ weeks: 1 })
-        : recordCalendarSelectedDate.add({ months: 1 }),
-    );
+    const nextDate =
+      supportedCalendarLayout === ViewCalendarLayout.DAY
+        ? recordCalendarSelectedDate.add({ days: 1 })
+        : supportedCalendarLayout === ViewCalendarLayout.WEEK
+          ? recordCalendarSelectedDate.add({ weeks: 1 })
+          : recordCalendarSelectedDate.add({ months: 1 });
+
+    setRecordCalendarSelectedDate(nextDate);
   };
 
   const handleCalendarLayoutChange = (calendarLayout: ViewCalendarLayout) => {
-    if (
-      calendarLayout === ViewCalendarLayout.WEEK &&
-      !isCalendarWeekViewEnabled
-    ) {
+    const isTimeGridLayout =
+      calendarLayout === ViewCalendarLayout.DAY ||
+      calendarLayout === ViewCalendarLayout.WEEK;
+
+    if (isTimeGridLayout && !isCalendarWeekViewEnabled) {
       return;
     }
 
@@ -125,23 +134,27 @@ export const RecordCalendarTopBar = () => {
   };
 
   const handleTodayClick = () => {
-    setRecordCalendarSelectedDate(Temporal.Now.plainDateISO());
+    setRecordCalendarSelectedDate(Temporal.Now.plainDateISO(timeZone));
   };
 
   const formattedDate =
-    supportedCalendarLayout === ViewCalendarLayout.WEEK
-      ? formatRecordCalendarWeekRange({
-          firstDayOfWeek,
-          lastDayOfWeek,
-          locale: dateLocale.localeCatalog,
+    supportedCalendarLayout === ViewCalendarLayout.DAY
+      ? recordCalendarSelectedDate.toLocaleString(dateLocale.locale, {
+          dateStyle: 'full',
         })
-      : format(
-          turnPlainDateToShiftedDateInSystemTimeZone(
-            recordCalendarSelectedDate,
-          ),
-          'MMMM yyyy',
-          { locale: dateLocale.localeCatalog },
-        );
+      : supportedCalendarLayout === ViewCalendarLayout.WEEK
+        ? formatRecordCalendarWeekRange({
+            firstDayOfWeek,
+            lastDayOfWeek,
+            locale: dateLocale.localeCatalog,
+          })
+        : format(
+            turnPlainDateToShiftedDateInSystemTimeZone(
+              recordCalendarSelectedDate,
+            ),
+            'MMMM yyyy',
+            { locale: dateLocale.localeCatalog },
+          );
 
   const dropdownContentOffset = { x: 140, y: 0 } satisfies DropdownOffset;
 
@@ -153,6 +166,7 @@ export const RecordCalendarTopBar = () => {
             dropdownId={`record-calendar-layout-${recordCalendarId}`}
             value={supportedCalendarLayout}
             options={[
+              { label: t`Day`, value: ViewCalendarLayout.DAY },
               { label: t`Week`, value: ViewCalendarLayout.WEEK },
               { label: t`Month`, value: ViewCalendarLayout.MONTH },
             ]}
@@ -186,7 +200,7 @@ export const RecordCalendarTopBar = () => {
           }
           dropdownOffset={dropdownContentOffset}
         />
-        {supportedCalendarLayout !== ViewCalendarLayout.WEEK && (
+        {supportedCalendarLayout === ViewCalendarLayout.MONTH && (
           <TimeZoneAbbreviation instant={Temporal.Now.instant()} />
         )}
       </StyledLeftSection>
@@ -194,6 +208,7 @@ export const RecordCalendarTopBar = () => {
       <StyledNavigationSection>
         <StyledNavigationButtonContainer>
           <Button
+            ariaLabel={t`Previous period`}
             size="small"
             variant="tertiary"
             Icon={IconChevronLeft}
@@ -208,6 +223,7 @@ export const RecordCalendarTopBar = () => {
         />
         <StyledNavigationButtonContainer>
           <Button
+            ariaLabel={t`Next period`}
             size="small"
             variant="tertiary"
             Icon={IconChevronRight}

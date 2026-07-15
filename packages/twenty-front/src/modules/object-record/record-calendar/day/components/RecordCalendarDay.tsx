@@ -1,13 +1,14 @@
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { RecordCalendarTimeGrid } from '@/object-record/record-calendar/time-grid/components/RecordCalendarTimeGrid';
-import { useRecordCalendarWeekDaysRange } from '@/object-record/record-calendar/week/hooks/useRecordCalendarWeekDaysRange';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { format } from 'date-fns';
+import { turnPlainDateToShiftedDateInSystemTimeZone } from 'twenty-shared/utils';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
-const RECORD_CALENDAR_WEEK_MIN_WIDTH_IN_PIXELS = 1000;
-
-export const RecordCalendarWeek = () => {
+export const RecordCalendarDay = () => {
   const recordCalendarId = useAvailableComponentInstanceIdOrThrow(
     RecordCalendarComponentInstanceContext,
   );
@@ -15,14 +16,22 @@ export const RecordCalendarWeek = () => {
     recordCalendarSelectedDateComponentState,
     recordCalendarId,
   );
-  const { weekDays } = useRecordCalendarWeekDaysRange(
-    recordCalendarSelectedDate,
-  );
+  const dateLocale = useAtomStateValue(dateLocaleState);
 
   return (
     <RecordCalendarTimeGrid
-      days={weekDays}
-      minWidthInPixels={RECORD_CALENDAR_WEEK_MIN_WIDTH_IN_PIXELS}
+      days={[
+        {
+          date: recordCalendarSelectedDate,
+          label: format(
+            turnPlainDateToShiftedDateInSystemTimeZone(
+              recordCalendarSelectedDate,
+            ),
+            'EEE',
+            { locale: dateLocale.localeCatalog },
+          ),
+        },
+      ]}
     />
   );
 };
