@@ -72,6 +72,11 @@ export class ExecutiveSearchOutboxRedriveJob {
         );
 
         for (const entry of staleEntries) {
+          // Reset to PENDING so deliver()'s atomic claim can pick it up
+          await this.outboxService.resetStaleToPending(
+            workspace.id,
+            entry.id,
+          );
           await this.executiveSyncQueue.add(
             ExecutiveSyncProcessOutboxJob.name,
             { workspaceId: workspace.id, outboxId: entry.id },

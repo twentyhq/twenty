@@ -16,7 +16,7 @@ export class OutboundHmacSignerService {
 
     const signature = crypto
       .createHmac('sha256', secret)
-      .update(`${timestamp}:${body}`)
+      .update(`${timestamp}:${nonce}:${body}`)
       .digest('hex');
 
     return { signature, timestamp, nonce, body };

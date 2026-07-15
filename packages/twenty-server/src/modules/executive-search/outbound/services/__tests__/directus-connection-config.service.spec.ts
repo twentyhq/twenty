@@ -33,33 +33,25 @@ describe('DirectusConnectionConfigService', () => {
   it('should throw when DIRECTUS_BASE_URL is missing', () => {
     delete process.env.DIRECTUS_BASE_URL;
 
-    expect(() => service.getConfig()).toThrow(
-      'DirectusConnectionConfigService: DIRECTUS_BASE_URL is not set',
-    );
+    expect(() => service.getConfig()).toThrow(/baseUrl.*is not set/);
   });
 
   it('should throw when DIRECTUS_EMAIL is missing', () => {
     delete process.env.DIRECTUS_EMAIL;
 
-    expect(() => service.getConfig()).toThrow(
-      'DirectusConnectionConfigService: DIRECTUS_EMAIL is not set',
-    );
+    expect(() => service.getConfig()).toThrow(/email.*is not set/);
   });
 
   it('should throw when DIRECTUS_PASSWORD is missing', () => {
     delete process.env.DIRECTUS_PASSWORD;
 
-    expect(() => service.getConfig()).toThrow(
-      'DirectusConnectionConfigService: DIRECTUS_PASSWORD is not set',
-    );
+    expect(() => service.getConfig()).toThrow(/password.*is not set/);
   });
 
   it('should throw when DIRECTUS_OUTBOUND_HMAC_SECRET is missing', () => {
     delete process.env.DIRECTUS_OUTBOUND_HMAC_SECRET;
 
-    expect(() => service.getConfig()).toThrow(
-      'DirectusConnectionConfigService: DIRECTUS_OUTBOUND_HMAC_SECRET is not set',
-    );
+    expect(() => service.getConfig()).toThrow(/hmacSecret.*is not set/);
   });
 
   it('should not include secret value in thrown error message', () => {

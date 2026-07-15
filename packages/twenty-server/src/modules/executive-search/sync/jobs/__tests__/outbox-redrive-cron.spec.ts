@@ -21,6 +21,7 @@ describe('ExecutiveSearchOutboxRedriveJob', () => {
   let mockOutboxService: {
     findReadyForRetry: jest.Mock;
     findStaleProcessing: jest.Mock;
+    resetStaleToPending: jest.Mock;
   };
   let mockExecutiveSyncQueue: { add: jest.Mock };
 
@@ -30,6 +31,7 @@ describe('ExecutiveSearchOutboxRedriveJob', () => {
     mockOutboxService = {
       findReadyForRetry: jest.fn().mockResolvedValue([]),
       findStaleProcessing: jest.fn().mockResolvedValue([]),
+      resetStaleToPending: jest.fn().mockResolvedValue(undefined),
     };
     mockExecutiveSyncQueue = { add: jest.fn().mockResolvedValue(undefined) };
 
@@ -170,6 +172,16 @@ describe('ExecutiveSearchOutboxRedriveJob', () => {
     expect(mockOutboxService.findStaleProcessing).toHaveBeenCalledWith(
       'ws-1',
       100,
+    );
+    // Reset to PENDING before re-enqueuing
+    expect(mockOutboxService.resetStaleToPending).toHaveBeenCalledTimes(2);
+    expect(mockOutboxService.resetStaleToPending).toHaveBeenCalledWith(
+      'ws-1',
+      'stale-1',
+    );
+    expect(mockOutboxService.resetStaleToPending).toHaveBeenCalledWith(
+      'ws-1',
+      'stale-2',
     );
     expect(mockExecutiveSyncQueue.add).toHaveBeenCalledTimes(2);
     expect(mockExecutiveSyncQueue.add).toHaveBeenCalledWith(

@@ -36,7 +36,7 @@ describe('OutboundHmacSignerService', () => {
       const crypto = require('crypto');
       const expectedSignature = crypto
         .createHmac('sha256', secret)
-        .update(`${result1.timestamp}:${result1.body}`)
+        .update(`${result1.timestamp}:${result1.nonce}:${result1.body}`)
         .digest('hex');
 
       expect(result1.signature).toBe(expectedSignature);
@@ -47,19 +47,20 @@ describe('OutboundHmacSignerService', () => {
       const payload2 = { a: 2 };
       const secret = 'same-secret';
 
-      // Force same timestamp by using known values
+      // Force same timestamp+nonce by using known values
       const crypto = require('crypto');
       const timestamp = '1234567890';
+      const nonce = 'a'.repeat(32);
       const body1 = JSON.stringify(payload1);
       const body2 = JSON.stringify(payload2);
 
       const sig1 = crypto
         .createHmac('sha256', secret)
-        .update(`${timestamp}:${body1}`)
+        .update(`${timestamp}:${nonce}:${body1}`)
         .digest('hex');
       const sig2 = crypto
         .createHmac('sha256', secret)
-        .update(`${timestamp}:${body2}`)
+        .update(`${timestamp}:${nonce}:${body2}`)
         .digest('hex');
 
       expect(sig1).not.toBe(sig2);
@@ -70,15 +71,16 @@ describe('OutboundHmacSignerService', () => {
 
       const crypto = require('crypto');
       const timestamp = '1234567890';
+      const nonce = 'b'.repeat(32);
       const body = JSON.stringify(payload);
 
       const sig1 = crypto
         .createHmac('sha256', 'secret-1')
-        .update(`${timestamp}:${body}`)
+        .update(`${timestamp}:${nonce}:${body}`)
         .digest('hex');
       const sig2 = crypto
         .createHmac('sha256', 'secret-2')
-        .update(`${timestamp}:${body}`)
+        .update(`${timestamp}:${nonce}:${body}`)
         .digest('hex');
 
       expect(sig1).not.toBe(sig2);

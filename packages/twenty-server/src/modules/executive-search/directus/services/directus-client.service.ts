@@ -12,9 +12,8 @@ import {
 /**
  * Directus REST API client.
  *
- * Handles authentication, schema retrieval, and item access with
- * rate-limit awareness and secure credential handling.  Writes are
- * disabled — this is a read-only/shadow adapter.
+ * Handles authentication, schema retrieval, and item read/write access
+ * with rate-limit awareness and secure credential handling.
  */
 @Injectable()
 export class DirectusClientService {

@@ -217,4 +217,29 @@ export class ExecutiveSearchOutboxService {
       });
     }, authContext);
   }
+
+  /**
+   * Reset a stale PROCESSING entry back to PENDING so it can be re-claimed.
+   * Conditional — only resets if still PROCESSING (markSent/markFailed may
+   * have raced ahead and already transitioned the row).
+   */
+  async resetStaleToPending(
+    workspaceId: string,
+    outboxId: string,
+  ): Promise<void> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const repository = await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        ExternalSyncOutboxWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
+
+      await repository.update(
+        { id: outboxId, status: OUTBOX_STATUS.PROCESSING },
+        { status: OUTBOX_STATUS.PENDING } as any,
+      );
+    }, authContext);
+  }
 }

@@ -7,10 +7,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { OutboundEventMapperService } from 'src/modules/executive-search/outbound/services/outbound-event-mapper.service';
 import { ExecutiveSearchOutboxService } from 'src/modules/executive-search/sync/services/outbox.service';
-import { ObjectRecordCreateEvent } from 'twenty-shared/database-events';
-import { ObjectRecordDestroyEvent } from 'twenty-shared/database-events';
-import { ObjectRecordDeleteEvent } from 'twenty-shared/database-events';
-import { ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
+import { ObjectRecordCreateEvent, ObjectRecordDestroyEvent, ObjectRecordDeleteEvent, ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
 
 @Injectable()
 export class OutboundProjectionListener {
