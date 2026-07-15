@@ -120,7 +120,7 @@ Impórtalos desde `twenty-sdk/front-component`:
 * **`Command`** — Ejecuta un callback asíncrono mediante la prop `execute`.
 * **`CommandLink`** — Navega a una ruta de la aplicación. Props: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — Abre un modal de confirmación. Si el usuario confirma, ejecuta el callback `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Abre una página del panel lateral. Las props dependen de `page` — por ejemplo, `ViewRecord` recibe `recordId` + `objectNameSingular`, otras páginas reciben `pageTitle` + `pageIcon`.
+* **`CommandOpenSidePanelPage`** — Abre una página del panel lateral. Las props dependen de `page` — por ejemplo, `ViewRecord` recibe `recordId` + `objectNameSingular` (además de un id opcional de `tab` para abrir el registro en una pestaña específica), otras páginas reciben `pageTitle` + `pageIcon`.
 
 Aquí tienes un ejemplo completo de un componente de front headless que usa `Command` para ejecutar una acción desde el menú de comandos:
 
@@ -190,6 +190,44 @@ export default defineFrontComponent({
   name: 'delete-draft',
   description: 'Deletes a draft with confirmation',
   component: DeleteDraft,
+  isHeadless: true,
+});
+```
+
+Y un ejemplo que usa `CommandOpenSidePanelPage` para abrir el registro actual en el panel lateral en una pestaña específica. `tab` es un id de pestaña de diseño de página (los diseños predeterminados usan ids como `company-tab-emails` o `company-tab-timeline`; los diseños personalizados usan el id propio de la pestaña). Si el id no existe en el diseño del registro, en su lugar se abre la pestaña predeterminada:
+
+```tsx src/front-components/open-company-emails.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  CommandOpenSidePanelPage,
+  SidePanelPages,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const OpenCompanyEmails = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+
+  if (!recordId) {
+    return null;
+  }
+
+  return (
+    <CommandOpenSidePanelPage
+      page={SidePanelPages.ViewRecord}
+      recordId={recordId}
+      objectNameSingular="company"
+      tab="company-tab-emails"
+      resetNavigationStack={false}
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+  name: 'open-company-emails',
+  description: 'Opens the current company on its Emails tab',
+  component: OpenCompanyEmails,
   isHeadless: true,
 });
 ```

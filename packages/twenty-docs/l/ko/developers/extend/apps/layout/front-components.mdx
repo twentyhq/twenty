@@ -120,7 +120,7 @@ export default defineFrontComponent({
 * **`Command`** — `execute` prop을 통해 비동기 콜백을 실행합니다.
 * **`CommandLink`** — 앱 경로로 이동합니다. Props: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — 확인 모달을 엽니다. 사용자가 확인하면 `execute` 콜백을 실행합니다. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — 사이드 패널 페이지를 엽니다. Props는 `page`에 따라 달라집니다. 예를 들어 `ViewRecord`는 `recordId` + `objectNameSingular`를 받고, 다른 페이지는 `pageTitle` + `pageIcon`을 받습니다.
+* **`CommandOpenSidePanelPage`** — 사이드 패널 페이지를 엽니다. Props는 `page`에 따라 달라집니다. 예를 들어 `ViewRecord`는 `recordId`와 `objectNameSingular`를 받고, 선택적으로 특정 탭에서 레코드를 열기 위한 `tab` id도 받을 수 있습니다. 다른 페이지는 `pageTitle`과 `pageIcon`을 받습니다.
 
 `Command`를 사용해 명령 메뉴에서 동작을 실행하는 헤드리스 프런트 컴포넌트의 전체 예시는 다음과 같습니다:
 
@@ -190,6 +190,44 @@ export default defineFrontComponent({
   name: 'delete-draft',
   description: 'Deletes a draft with confirmation',
   component: DeleteDraft,
+  isHeadless: true,
+});
+```
+
+그리고 `CommandOpenSidePanelPage`를 사용하여 현재 레코드를 사이드 패널의 특정 탭에서 여는 예시는 다음과 같습니다. `tab`은 페이지 레이아웃 탭 id입니다(기본 레이아웃은 `company-tab-emails` 또는 `company-tab-timeline`과 같은 id를 사용하고, 사용자 지정 레이아웃은 탭 고유의 id를 사용합니다). 해당 id가 레코드의 레이아웃에 존재하지 않으면, 대신 기본 탭이 열립니다:
+
+```tsx src/front-components/open-company-emails.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  CommandOpenSidePanelPage,
+  SidePanelPages,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const OpenCompanyEmails = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+
+  if (!recordId) {
+    return null;
+  }
+
+  return (
+    <CommandOpenSidePanelPage
+      page={SidePanelPages.ViewRecord}
+      recordId={recordId}
+      objectNameSingular="company"
+      tab="company-tab-emails"
+      resetNavigationStack={false}
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+  name: 'open-company-emails',
+  description: 'Opens the current company on its Emails tab',
+  component: OpenCompanyEmails,
   isHeadless: true,
 });
 ```

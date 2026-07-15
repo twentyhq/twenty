@@ -120,7 +120,7 @@ export default defineFrontComponent({
 * **`Command`** — 通过 `execute` 属性运行异步回调。
 * **`CommandLink`** — 导航到某个应用路径。 属性：`to`、`params`、`queryParams`、`options`。
 * **`CommandModal`** — 打开一个确认模态框。 如果用户确认，则执行 `execute` 回调。 属性：`title`、`subtitle`、`execute`、`confirmButtonText`、`confirmButtonAccent`。
-* **`CommandOpenSidePanelPage`** — 打开一个侧边栏页面。 Props 取决于 `page` —— 例如，`ViewRecord` 需要 `recordId` + `objectNameSingular`，其他页面需要 `pageTitle` + `pageIcon`。
+* **`CommandOpenSidePanelPage`** — 打开一个侧边栏页面。 Props 取决于 `page` —— 例如，`ViewRecord` 需要 `recordId` + `objectNameSingular`（以及一个可选的 `tab` id，用于在特定标签页中打开该记录），其他页面需要 `pageTitle` + `pageIcon`。
 
 下面是一个完整示例：无头前端组件使用 `Command` 从命令菜单运行一个操作：
 
@@ -190,6 +190,44 @@ export default defineFrontComponent({
   name: 'delete-draft',
   description: 'Deletes a draft with confirmation',
   component: DeleteDraft,
+  isHeadless: true,
+});
+```
+
+以及一个使用 `CommandOpenSidePanelPage` 的示例，用于在特定标签页的侧边栏中打开当前记录。 `tab` 是页面布局的标签页 id（默认布局使用类似 `company-tab-emails` 或 `company-tab-timeline` 这样的 id；自定义布局使用标签页自身的 id）。 如果该 id 在记录的布局中不存在，则会改为打开默认标签页：
+
+```tsx src/front-components/open-company-emails.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  CommandOpenSidePanelPage,
+  SidePanelPages,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const OpenCompanyEmails = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+
+  if (!recordId) {
+    return null;
+  }
+
+  return (
+    <CommandOpenSidePanelPage
+      page={SidePanelPages.ViewRecord}
+      recordId={recordId}
+      objectNameSingular="company"
+      tab="company-tab-emails"
+      resetNavigationStack={false}
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+  name: 'open-company-emails',
+  description: 'Opens the current company on its Emails tab',
+  component: OpenCompanyEmails,
   isHeadless: true,
 });
 ```

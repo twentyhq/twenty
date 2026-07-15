@@ -120,7 +120,7 @@ Importujte je z `twenty-sdk/front-component`:
 * **`Command`** — Spustí asynchronní callback přes prop `execute`.
 * **`CommandLink`** — Naviguje na cestu v aplikaci. Props: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — Otevře potvrzovací modální okno. Pokud uživatel potvrdí, provede callback `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Otevře stránku postranního panelu. Props závisí na `page` — např. `ViewRecord` bere `recordId` + `objectNameSingular`, ostatní stránky berou `pageTitle` + `pageIcon`.
+* **`CommandOpenSidePanelPage`** — Otevře stránku postranního panelu. Props závisí na `page` — např. `ViewRecord` bere `recordId` + `objectNameSingular` (plus volitelné id `tab` pro otevření záznamu na konkrétní záložce), ostatní stránky berou `pageTitle` + `pageIcon`.
 
 Zde je kompletní příklad headless front-endové komponenty, která pomocí `Command` spouští akci z menu příkazů:
 
@@ -190,6 +190,44 @@ export default defineFrontComponent({
   name: 'delete-draft',
   description: 'Deletes a draft with confirmation',
   component: DeleteDraft,
+  isHeadless: true,
+});
+```
+
+A zde je příklad použití `CommandOpenSidePanelPage` k otevření aktuálního záznamu v postranním panelu na konkrétní záložce. `tab` je ID záložky rozvržení stránky (výchozí rozvržení používají ID jako `company-tab-emails` nebo `company-tab-timeline`; vlastní rozvržení používají vlastní ID záložky). Pokud ID v rozvržení záznamu neexistuje, místo toho se otevře výchozí záložka:
+
+```tsx src/front-components/open-company-emails.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  CommandOpenSidePanelPage,
+  SidePanelPages,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const OpenCompanyEmails = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+
+  if (!recordId) {
+    return null;
+  }
+
+  return (
+    <CommandOpenSidePanelPage
+      page={SidePanelPages.ViewRecord}
+      recordId={recordId}
+      objectNameSingular="company"
+      tab="company-tab-emails"
+      resetNavigationStack={false}
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+  name: 'open-company-emails',
+  description: 'Opens the current company on its Emails tab',
+  component: OpenCompanyEmails,
   isHeadless: true,
 });
 ```

@@ -120,7 +120,7 @@ export default defineFrontComponent({
 * **`Command`** — يشغّل رد نداء غير متزامن عبر الخاصية `execute`.
 * **`CommandLink`** — ينتقل إلى مسار في التطبيق. الخصائص: `to`، `params`، `queryParams`، `options`.
 * **`CommandModal`** — يفتح نافذة تأكيد منبثقة. إذا أكّد المستخدم، ينفّذ رد النداء `execute`. الخصائص: `title`، `subtitle`، `execute`، `confirmButtonText`، `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — يفتح صفحة في اللوحة الجانبية. الـ props تعتمد على `page` — على سبيل المثال، `ViewRecord` يأخذ `recordId` + `objectNameSingular`، بينما الصفحات الأخرى تأخذ `pageTitle` + `pageIcon`.
+* **`CommandOpenSidePanelPage`** — يفتح صفحة في اللوحة الجانبية. الـ props تعتمد على `page` — على سبيل المثال، `ViewRecord` يأخذ `recordId` + `objectNameSingular` (بالإضافة إلى معرّف `tab` اختياري لفتح السجل في تبويب معيّن)، بينما الصفحات الأخرى تأخذ `pageTitle` + `pageIcon`.
 
 فيما يلي مثال كامل لمكوّن واجهة أمامية عديم الرأس يستخدم `Command` لتشغيل إجراء من قائمة الأوامر:
 
@@ -190,6 +190,44 @@ export default defineFrontComponent({
   name: 'delete-draft',
   description: 'Deletes a draft with confirmation',
   component: DeleteDraft,
+  isHeadless: true,
+});
+```
+
+ومثال يستخدم `CommandOpenSidePanelPage` لفتح السجل الحالي في اللوحة الجانبية على تبويب معيّن. `tab` هو معرّف تبويب تخطيط الصفحة (تستخدم التخطيطات الافتراضية معرّفات مثل `company-tab-emails` أو `company-tab-timeline`؛ وتستخدم التخطيطات المخصّصة معرّف التبويب نفسه). إذا لم يكن المعرّف موجودًا في تخطيط السجل، فسيتم فتح التبويب الافتراضي بدلًا منه:
+
+```tsx src/front-components/open-company-emails.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  CommandOpenSidePanelPage,
+  SidePanelPages,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const OpenCompanyEmails = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+
+  if (!recordId) {
+    return null;
+  }
+
+  return (
+    <CommandOpenSidePanelPage
+      page={SidePanelPages.ViewRecord}
+      recordId={recordId}
+      objectNameSingular="company"
+      tab="company-tab-emails"
+      resetNavigationStack={false}
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+  name: 'open-company-emails',
+  description: 'Opens the current company on its Emails tab',
+  component: OpenCompanyEmails,
   isHeadless: true,
 });
 ```
