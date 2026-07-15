@@ -49,7 +49,7 @@ export const useDuplicateWorkflowVersionStep = () => {
       setFlow({
         workflowVersionId: updatedWorkflowVersion.id,
         trigger: updatedWorkflowVersion.trigger,
-        steps: updatedWorkflowVersion.steps,
+        steps: updatedWorkflowVersion.steps ?? [],
       });
     }
 

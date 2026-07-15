@@ -83,7 +83,7 @@ export const useRunWorkflowRunOpeningInSidePanelEffects = () => {
         {
           workflowVersionId: workflowRunRecord.workflowVersionId,
           trigger: workflowRunRecord.state.flow.trigger,
-          steps: workflowRunRecord.state.flow.steps,
+          steps: workflowRunRecord.state.flow.steps ?? [],
         },
       );
       store.set(

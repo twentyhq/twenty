@@ -119,7 +119,7 @@ export const WorkflowRunVisualizerEffect = ({
       store.set(flow, {
         workflowVersionId: versionId,
         trigger: workflowRunState.flow.trigger,
-        steps: workflowRunState.flow.steps,
+        steps: workflowRunState.flow.steps ?? [],
       });
 
       const { diagram: baseWorkflowRunDiagram, stepToOpenByDefault } =

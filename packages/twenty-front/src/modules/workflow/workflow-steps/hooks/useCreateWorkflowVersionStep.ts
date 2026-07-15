@@ -48,7 +48,7 @@ export const useCreateWorkflowVersionStep = () => {
       setFlow({
         workflowVersionId: updatedWorkflowVersion.id,
         trigger: updatedWorkflowVersion.trigger,
-        steps: updatedWorkflowVersion.steps,
+        steps: updatedWorkflowVersion.steps ?? [],
       });
     }
 

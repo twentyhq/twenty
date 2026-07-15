@@ -65,7 +65,7 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
         {
           workflowVersionId: workflowVersion.id,
           trigger: workflowVersion.trigger,
-          steps: workflowVersion.steps,
+          steps: workflowVersion.steps ?? [],
         },
       );
       store.set(

@@ -191,8 +191,7 @@ export class ApolloFactory implements ApolloManager {
           renewalPromise = attemptTokenRenewal()
             .then(() => true)
             .catch(() => {
-              // oxlint-disable-next-line no-console
-              console.log(
+              logDebug(
                 'Failed to renew token after retries, triggering unauthenticated error',
               );
               onUnauthenticatedError?.();
@@ -245,6 +244,10 @@ export class ApolloFactory implements ApolloManager {
                 const genericOperationName = getGenericOperationName(
                   operation.operationName,
                 );
+                scope.setTag(
+                  'graphql.operation',
+                  genericOperationName ?? operation.operationName,
+                );
 
                 if (isDefined(genericOperationName)) {
                   fingerPrint.push(genericOperationName);
@@ -272,8 +275,7 @@ export class ApolloFactory implements ApolloManager {
           onErrorCb?.(error.errors);
           for (const graphQLError of error.errors) {
             if (graphQLError.message === 'Unauthorized') {
-              // oxlint-disable-next-line no-console
-              console.log('Unauthorized, triggering token renewal');
+              logDebug('Unauthorized, triggering token renewal');
               return handleTokenRenewal(operation, forward);
             }
 
@@ -286,13 +288,14 @@ export class ApolloFactory implements ApolloManager {
                 return;
               }
               case 'UNAUTHENTICATED': {
-                // oxlint-disable-next-line no-console
-                console.log('UNAUTHENTICATED, triggering token renewal');
+                logDebug('UNAUTHENTICATED, triggering token renewal');
                 return handleTokenRenewal(operation, forward);
               }
               case 'NOT_FOUND':
               case 'BAD_USER_INPUT':
               case 'FORBIDDEN':
+              case 'METHOD_NOT_ALLOWED':
+              case 'TIMEOUT':
               case 'CONFLICT':
               case 'METADATA_VALIDATION_FAILED': {
                 return;
@@ -316,8 +319,7 @@ export class ApolloFactory implements ApolloManager {
             this.isRestOperation(operation) &&
             this.isAuthenticationError(error)
           ) {
-            // oxlint-disable-next-line no-console
-            console.log(
+            logDebug(
               'Authentication error, triggering token renewal from errorLink',
             );
             return handleTokenRenewal(operation, forward);

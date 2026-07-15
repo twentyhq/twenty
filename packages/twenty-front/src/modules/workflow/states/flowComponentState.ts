@@ -9,7 +9,7 @@ export const flowComponentState = createAtomComponentState<
   | {
       workflowVersionId: string;
       trigger: WorkflowTrigger | null;
-      steps: WorkflowAction[] | null;
+      steps: WorkflowAction[];
     }
   | undefined
 >({

@@ -83,7 +83,7 @@ export const WorkflowDiagramEffect = () => {
     setFlow({
       workflowVersionId: currentVersion.id,
       trigger: currentVersion.trigger,
-      steps: currentVersion.steps,
+      steps: currentVersion.steps ?? [],
     });
 
     computeAndMergeNewWorkflowDiagram(currentVersion);
