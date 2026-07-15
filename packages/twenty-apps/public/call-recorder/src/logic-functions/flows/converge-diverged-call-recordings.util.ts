@@ -15,6 +15,12 @@ import {
   type ConnectionPage,
 } from 'src/logic-functions/data/fetch-all-nodes.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
+import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
+import {
+  listScheduledRecallBots,
+  type RecallScheduledBot,
+} from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
+import { type RecallBotSnapshot } from 'src/logic-functions/recall-api/recall-bot-snapshot.type';
 import { importCallRecordingMedia } from 'src/logic-functions/flows/import-call-recording-media.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
@@ -27,6 +33,10 @@ import { updateCallRecording } from 'src/logic-functions/data/update-call-record
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
 const CONVERGENCE_LOOKBACK_DAYS = 7;
+const CONVERGENCE_BOT_LIST_LOOKBACK_DAYS = CONVERGENCE_LOOKBACK_DAYS + 1;
+const CONVERGENCE_BOT_LIST_LOOKAHEAD_MILLISECONDS = 60 * 60 * 1000;
+const PER_RECORDING_FALLBACK_LIMIT = 25;
+const FALLBACK_ROTATION_INTERVAL_MILLISECONDS = 15 * 60 * 1000;
 
 type DivergedCallRecordingCandidate = {
   id: string;
@@ -79,6 +89,9 @@ export const convergeDivergedCallRecordings = async ({
     unconvergeableCallRecordingIds: [],
     skippedNotStartedCallRecordingIds: [],
   };
+  const actionableCandidates: Array<
+    DivergedCallRecordingCandidate & { externalBotId: string }
+  > = [];
 
   for (const candidate of candidates) {
     if (isOutsideConvergenceBound(candidate, convergenceLowerBound)) {
@@ -102,10 +115,53 @@ export const convergeDivergedCallRecordings = async ({
       continue;
     }
 
+    actionableCandidates.push({
+      ...candidate,
+      externalBotId: candidate.externalBotId,
+    });
+  }
+
+  if (actionableCandidates.length === 0) {
+    return result;
+  }
+
+  const listedRecallBotsById = await listRecallBotsByIdForConvergence(now);
+
+  // A failed list means Recall is degraded; avoid fanning out per-recording reads while the provider asks for less load.
+  if (isUndefined(listedRecallBotsById)) {
+    return result;
+  }
+
+  const orderedActionableCandidates =
+    rotateActionableCandidatesForFallback({
+      candidates: actionableCandidates,
+      now,
+    });
+  let remainingPerRecordingFallbackCount = PER_RECORDING_FALLBACK_LIMIT;
+
+  for (const candidate of orderedActionableCandidates) {
+    const listedBot = listedRecallBotsById.get(candidate.externalBotId);
+
+    if (
+      isUndefined(listedBot) &&
+      remainingPerRecordingFallbackCount === 0
+    ) {
+      console.warn(
+        `[call-recorder] skipping Recall bot ${candidate.externalBotId} for call recording ${candidate.id}: per-recording convergence fallback budget exhausted`,
+      );
+
+      continue;
+    }
+
+    if (isUndefined(listedBot)) {
+      remainingPerRecordingFallbackCount -= 1;
+    }
+
     await convergeCallRecording({
       client,
       candidate,
       externalBotId: candidate.externalBotId,
+      listedBot,
       now,
       result,
     });
@@ -201,7 +257,11 @@ const isOutsideConvergenceBound = (
   convergenceLowerBound: Date,
 ): boolean => {
   const meetingEndReference =
-    candidate.calendarEventEndsAt ?? candidate.createdAt;
+    candidate.calendarEventEndsAt ??
+    candidate.calendarEventStartsAt ??
+    candidate.endedAt ??
+    candidate.startedAt ??
+    candidate.createdAt;
 
   return (
     !isUndefined(meetingEndReference) &&
@@ -221,16 +281,20 @@ const convergeCallRecording = async ({
   client,
   candidate,
   externalBotId,
+  listedBot,
   now,
   result,
 }: {
   client: CoreApiClient;
   candidate: DivergedCallRecordingCandidate;
   externalBotId: string;
+  listedBot: RecallBotSnapshot | undefined;
   now: Date;
   result: ConvergeDivergedCallRecordingsResult;
 }): Promise<void> => {
-  const botResult = await getRecallBot({ externalBotId });
+  const botResult = isUndefined(listedBot)
+    ? await getRecallBot({ externalBotId })
+    : ({ ok: true, bot: listedBot } as const);
 
   if (!botResult.ok) {
     if (botResult.status === 404) {
@@ -315,6 +379,88 @@ const convergeCallRecording = async ({
   });
 
   result.updatedCallRecordingIds.push(candidate.id);
+};
+
+const rotateActionableCandidatesForFallback = <
+  Candidate extends { externalBotId: string },
+>({
+  candidates,
+  now,
+}: {
+  candidates: Candidate[];
+  now: Date;
+}): Candidate[] => {
+  if (candidates.length <= PER_RECORDING_FALLBACK_LIMIT) {
+    return candidates;
+  }
+
+  const completedRotationIntervalCount = Math.floor(
+    now.getTime() / FALLBACK_ROTATION_INTERVAL_MILLISECONDS,
+  );
+  const rotationOffset =
+    (completedRotationIntervalCount * PER_RECORDING_FALLBACK_LIMIT) %
+    candidates.length;
+
+  return [
+    ...candidates.slice(rotationOffset),
+    ...candidates.slice(0, rotationOffset),
+  ];
+};
+
+const listRecallBotsByIdForConvergence = async (
+  now: Date,
+): Promise<Map<string, RecallBotSnapshot> | undefined> => {
+  const currentWorkspaceId = getCurrentWorkspaceId();
+
+  if (isUndefined(currentWorkspaceId)) {
+    console.warn(
+      '[call-recorder] workspace id unavailable for Recall bot list fetch; using capped per-recording convergence fallback',
+    );
+
+    return new Map();
+  }
+
+  const listResult = await listScheduledRecallBots({
+    joinAtAfter: new Date(
+      now.getTime() -
+        CONVERGENCE_BOT_LIST_LOOKBACK_DAYS * 24 * 60 * 60 * 1000,
+    ).toISOString(),
+    joinAtBefore: new Date(
+      now.getTime() + CONVERGENCE_BOT_LIST_LOOKAHEAD_MILLISECONDS,
+    ).toISOString(),
+    metadata: { twentyWorkspaceId: currentWorkspaceId },
+  });
+
+  if (!listResult.ok) {
+    console.warn(
+      `[call-recorder] Recall bot list fetch failed; deferring stale recording convergence to the next run: ${listResult.errorMessage}`,
+    );
+
+    return undefined;
+  }
+
+  return new Map(
+    listResult.bots
+      .filter((bot) =>
+        isCurrentWorkspaceManagedBot({ bot, currentWorkspaceId }),
+      )
+      .map((bot) => [bot.id, bot]),
+  );
+};
+
+const isCurrentWorkspaceManagedBot = ({
+  bot,
+  currentWorkspaceId,
+}: {
+  bot: RecallScheduledBot;
+  currentWorkspaceId: string;
+}): boolean => {
+  const claimedWorkspaceId = bot.metadata.twentyWorkspaceId;
+
+  return (
+    isNonEmptyString(claimedWorkspaceId) &&
+    claimedWorkspaceId.trim() === currentWorkspaceId
+  );
 };
 
 // Pure merge: fill only unset candidate fields and never downgrade status.
