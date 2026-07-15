@@ -663,28 +663,48 @@ describe('recall bot api', () => {
       vi.useRealTimers();
     });
 
-    it('retries a network failure and succeeds on the next attempt', async () => {
+    it('reuses the idempotency key for the same bot creation operation', async () => {
       fetchMock.mockRejectedValueOnce(new Error('socket hang up'));
       fetchMock.mockResolvedValueOnce({
         ok: true,
-        status: 200,
+        status: 201,
         json: async () => ({ id: 'recall-bot-id' }),
       });
-
-      const resultPromise = getRecallBot({ externalBotId: 'recall-bot-id' });
+      const scheduleArguments = {
+        meetingUrl: 'https://meet.google.com/abc-defg-hij',
+        joinAt: '2026-01-01T13:00:00.000Z',
+        metadata: RECALL_ROUTING_METADATA,
+      };
+      const resultPromise = scheduleRecallBot(scheduleArguments);
 
       await vi.runAllTimersAsync();
 
       expect(await resultPromise).toEqual({
         ok: true,
-        bot: {
-          id: 'recall-bot-id',
-          metadata: {},
-          statusChanges: [],
-          recordings: [],
-        },
+        externalBotId: 'recall-bot-id',
       });
       expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(fetchMock.mock.calls[0][1].headers['Idempotency-Key']).toEqual(
+        expect.stringMatching(/^[a-f0-9]{64}$/),
+      );
+      expect(fetchMock.mock.calls[1][1].headers['Idempotency-Key']).toBe(
+        fetchMock.mock.calls[0][1].headers['Idempotency-Key'],
+      );
+
+      await scheduleRecallBot(scheduleArguments);
+
+      expect(fetchMock.mock.calls[2][1].headers['Idempotency-Key']).toBe(
+        fetchMock.mock.calls[0][1].headers['Idempotency-Key'],
+      );
+
+      await scheduleRecallBot({
+        ...scheduleArguments,
+        joinAt: '2026-01-01T14:00:00.000Z',
+      });
+
+      expect(fetchMock.mock.calls[3][1].headers['Idempotency-Key']).not.toBe(
+        fetchMock.mock.calls[0][1].headers['Idempotency-Key'],
+      );
     });
 
     it('retries a 503 response and succeeds on the next attempt', async () => {
