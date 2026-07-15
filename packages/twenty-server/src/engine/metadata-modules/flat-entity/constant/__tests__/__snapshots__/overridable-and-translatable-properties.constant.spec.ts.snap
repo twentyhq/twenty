@@ -69,6 +69,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "anyFieldFilterValue",
     "calendarLayout",
     "calendarFieldMetadataId",
+    "calendarEndFieldMetadataId",
     "visibility",
     "mainGroupByFieldMetadataId",
     "shouldHideEmptyGroups",

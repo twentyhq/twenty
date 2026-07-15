@@ -5,6 +5,7 @@ import { useGroupByRecordsQuery } from '@/object-record/hooks/useGroupByRecordsQ
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { useRecordCalendarQueryDateRangeFilter } from '@/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter';
 import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
+import { recordIndexCalendarEndFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdState';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
@@ -29,10 +30,16 @@ export const useRecordCalendarGroupByRecords = (
   const recordIndexCalendarFieldMetadataId = useAtomStateValue(
     recordIndexCalendarFieldMetadataIdState,
   );
+  const recordIndexCalendarEndFieldMetadataId = useAtomStateValue(
+    recordIndexCalendarEndFieldMetadataIdState,
+  );
 
   const recordGqlFields = useRelevantRecordsGqlFields({
     objectMetadataItem,
-    additionalFieldMetadataId: recordIndexCalendarFieldMetadataId,
+    additionalFieldMetadataIds: [
+      recordIndexCalendarFieldMetadataId,
+      recordIndexCalendarEndFieldMetadataId,
+    ],
   });
 
   const { dateRangeFilter } =
