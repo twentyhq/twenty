@@ -81,10 +81,16 @@ export class DirectusSyncService {
   async captureAndSaveFingerprint(workspaceId: string): Promise<void> {
     const snapshot = await this.directusClient.getRawSchemaSnapshot();
 
+    const fields = await this.directusClient.getAllFields();
+
     const fingerprint = this.schemaFingerprinter.buildFingerprint(
       snapshot.collections,
+      fields,
       snapshot.serverInfo.directusVersion,
     );
+
+    // Serialise the full fingerprint so future drift checks have a baseline
+    const fingerprintJson = JSON.stringify(fingerprint);
 
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -103,6 +109,7 @@ export class DirectusSyncService {
 
       if (checkpoint) {
         await repository.update(checkpoint.id, {
+          lastExternalEventId: fingerprintJson,
           lastExternalEventTimestamp: fingerprint.capturedAt,
           lastSyncCompletedAt: new Date().toISOString(),
         } as any);
@@ -111,9 +118,9 @@ export class DirectusSyncService {
           workspaceId,
           externalSystemName: 'directus',
           entityName: '_schema',
+          lastExternalEventId: fingerprintJson,
           lastExternalEventTimestamp: fingerprint.capturedAt,
           lastSyncCompletedAt: new Date().toISOString(),
-          lastExternalEventId: null,
           lastSyncStartedAt: null,
           status: 'IDLE',
         });
@@ -122,7 +129,7 @@ export class DirectusSyncService {
     }, authContext);
 
     this.logger.log(
-      `Schema fingerprint captured: ${fingerprint.collectionsHash.slice(0, 8)} (${fingerprint.collectionsCount} collections)`,
+      `Schema fingerprint captured: ${fingerprint.collectionsHash.slice(0, 8)} (${fingerprint.collectionsCount} collections, ${fingerprint.fieldsCount} fields)`,
     );
   }
 
@@ -142,7 +149,16 @@ export class DirectusSyncService {
     let processed = 0;
 
     for (const item of items) {
-      const externalId = (item as any).id?.toString() || '';
+      const rawId = (item as any).id;
+
+      if (rawId === undefined || rawId === null || rawId === '') {
+        this.logger.warn(
+          `Skipping item in "${collection}" with missing or empty id`,
+        );
+        continue;
+      }
+
+      const externalId = rawId.toString();
 
       await this.inboxService.receive({
         workspaceId,

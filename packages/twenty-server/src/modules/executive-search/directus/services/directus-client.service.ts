@@ -90,6 +90,29 @@ export class DirectusClientService {
   }
 
   /**
+   * Fetch all fields across all collections.
+   * Uses the Directus /fields endpoint without a collection filter.
+   */
+  async getAllFields(): Promise<DirectusField[]> {
+    let allFields: DirectusField[] = [];
+    let page = 0;
+    const limit = 200;
+
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const { data } = await this.request<DirectusItemsResponse<DirectusField>>(
+        `${this.baseUrl}/fields?limit=${limit}&offset=${page * limit}`,
+      );
+      if (!data || data.length === 0) break;
+
+      allFields = allFields.concat(data);
+      page++;
+    }
+
+    return allFields;
+  }
+
+  /**
    * Fetch all fields for a collection.
    */
   async getFields(collection: string): Promise<DirectusField[]> {

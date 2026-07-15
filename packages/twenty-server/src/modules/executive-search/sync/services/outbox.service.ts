@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { LessThan, IsNull } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -180,8 +181,8 @@ export class ExecutiveSearchOutboxService {
 
       return repository.find({
         where: [
-          { status: OUTBOX_STATUS.PENDING, nextRetryAt: null },
-          { status: OUTBOX_STATUS.PENDING, nextRetryAt: { $lt: now } } as any,
+          { status: OUTBOX_STATUS.PENDING, nextRetryAt: IsNull() },
+          { status: OUTBOX_STATUS.PENDING, nextRetryAt: LessThan(now) },
         ],
         order: { createdAt: 'ASC' },
         take: limit,

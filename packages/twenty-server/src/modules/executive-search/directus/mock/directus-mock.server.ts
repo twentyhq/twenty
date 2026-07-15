@@ -129,8 +129,20 @@ export class DirectusMockServer {
       return;
     }
 
+    // Fields (all collections) — /fields (no collection)
+    if (url.split('?')[0] === '/fields' && method === 'GET') {
+      const allFields: Record<string, unknown>[] = [];
+      const fieldsFixture = this.fixtures.fields || {};
+      for (const collectionFields of Object.values(fieldsFixture)) {
+        allFields.push(...collectionFields);
+      }
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ data: allFields }));
+      return;
+    }
+
     // Fields (per collection) — /fields/:collection
-    const fieldsMatch = url.match(/^\/fields\/(.+)$/);
+    const fieldsMatch = url.split('?')[0].match(/^\/fields\/(.+)$/);
     if (fieldsMatch && method === 'GET') {
       const collection = decodeURIComponent(fieldsMatch[1]);
       const collectionFields = this.fixtures.fields?.[collection] || [];

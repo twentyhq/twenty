@@ -3,6 +3,7 @@ import { createHash } from 'crypto';
 
 import {
   DirectusCollection,
+  DirectusField,
   DirectusSchemaFingerprint,
 } from 'src/modules/executive-search/directus/types/directus-types';
 
@@ -42,13 +43,14 @@ export class DirectusSchemaFingerprinterService {
    */
   buildFingerprint(
     collections: DirectusCollection[],
+    fields: DirectusField[],
     directusVersion: string,
   ): DirectusSchemaFingerprint {
     return {
       collectionsHash: this.computeCollectionsHash(collections),
-      fieldsHash: this.hash(JSON.stringify(collections)),
+      fieldsHash: this.computeFieldsHash(collections, fields),
       collectionsCount: collections.length,
-      fieldsCount: this.countFields(collections),
+      fieldsCount: fields.length,
       capturedAt: new Date().toISOString(),
       directusVersion,
     };
@@ -104,9 +106,26 @@ export class DirectusSchemaFingerprinterService {
     return createHash('sha256').update(input).digest('hex');
   }
 
-  private countFields(collections: DirectusCollection[]): number {
-    // Approximate — full field count requires fetching /fields per collection
-    return collections.length;
+  /**
+   * Compute a stable fields hash from sorted collections and fields data.
+   * Normalizes collection names with their field names to produce a
+   * deterministic hash that detects additions, removals, or renames.
+   */
+  private computeFieldsHash(
+    collections: DirectusCollection[],
+    fields: DirectusField[],
+  ): string {
+    const collectionNames = collections.map((c) => c.collection).sort();
+
+    const normalized = collectionNames.map((name) => ({
+      collection: name,
+      fields: fields
+        .filter((f) => f.collection === name)
+        .map((f) => f.field)
+        .sort(),
+    }));
+
+    return this.hash(JSON.stringify(normalized));
   }
 }
 
