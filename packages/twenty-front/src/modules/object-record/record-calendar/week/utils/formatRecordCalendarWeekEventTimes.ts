@@ -1,19 +1,24 @@
 import { getRecordCalendarDateTimeRange } from '@/object-record/record-calendar/utils/getRecordCalendarDateTimeRange';
 import { formatInTimeZone } from 'date-fns-tz';
 
-type FormatRecordCalendarWeekEventTimeRangeArgs = {
+type FormatRecordCalendarWeekEventTimesArgs = {
   endDateTime?: unknown;
   startDateTime: unknown;
   timeFormat: string;
   timeZone: string;
 };
 
-export const formatRecordCalendarWeekEventTimeRange = ({
+export type RecordCalendarWeekEventTimes = {
+  startTime: string;
+  timeRange: string;
+};
+
+export const formatRecordCalendarWeekEventTimes = ({
   endDateTime,
   startDateTime,
   timeFormat,
   timeZone,
-}: FormatRecordCalendarWeekEventTimeRangeArgs) => {
+}: FormatRecordCalendarWeekEventTimesArgs): RecordCalendarWeekEventTimes | null => {
   const range = getRecordCalendarDateTimeRange({
     endDateTime,
     startDateTime,
@@ -31,7 +36,7 @@ export const formatRecordCalendarWeekEventTimeRange = ({
   );
 
   if (range.isEndDateTimeFallback) {
-    return startTime;
+    return { startTime, timeRange: startTime };
   }
 
   const endTime = formatInTimeZone(
@@ -40,5 +45,5 @@ export const formatRecordCalendarWeekEventTimeRange = ({
     timeFormat,
   );
 
-  return `${startTime} - ${endTime}`;
+  return { startTime, timeRange: `${startTime} - ${endTime}` };
 };

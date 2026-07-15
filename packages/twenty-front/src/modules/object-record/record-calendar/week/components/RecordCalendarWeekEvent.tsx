@@ -7,7 +7,7 @@ import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-recor
 import { getRecordCalendarCardDraggableId } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardDraggableId';
 import { RECORD_CALENDAR_WEEK_DIMENSIONS } from '@/object-record/record-calendar/week/constants/RecordCalendarWeekDimensions';
 import { type RecordCalendarWeekDndData } from '@/object-record/record-calendar/week/types/RecordCalendarWeekDndData';
-import { formatRecordCalendarWeekEventTimeRange } from '@/object-record/record-calendar/week/utils/formatRecordCalendarWeekEventTimeRange';
+import { formatRecordCalendarWeekEventTimes } from '@/object-record/record-calendar/week/utils/formatRecordCalendarWeekEventTimes';
 import { getRecordCalendarWeekTimedEventHeight } from '@/object-record/record-calendar/week/utils/getRecordCalendarWeekTimedEventMetrics';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
@@ -25,6 +25,10 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const RECORD_CALENDAR_WEEK_EVENT_HORIZONTAL_INSET = 4;
 const RECORD_CALENDAR_WEEK_EVENT_COLUMN_GAP = 2;
+const RECORD_CALENDAR_WEEK_EVENT_TIME_ROW_HEIGHT = 14;
+const RECORD_CALENDAR_WEEK_EVENT_EXPANDED_MIN_HEIGHT =
+  RECORD_CALENDAR_WEEK_DIMENSIONS.minimumEventSlotHeight +
+  RECORD_CALENDAR_WEEK_EVENT_TIME_ROW_HEIGHT;
 
 const getTimedEventLeft = (columnIndex: number, columnCount: number) => {
   const leftPercentage = (columnIndex * 100) / columnCount;
@@ -102,12 +106,19 @@ const StyledEventHeader = styled.div`
   width: 100%;
 `;
 
-const StyledRecordChipContainer = styled.div`
+const StyledEventLabel = styled.div`
   align-items: center;
   display: flex;
   flex: 1;
-  font-size: ${themeCssVariables.font.size.sm};
+  font-size: ${themeCssVariables.font.size.xs};
   height: 20px;
+  min-width: 0;
+  overflow: hidden;
+`;
+
+const StyledRecordChipContainer = styled.div`
+  display: flex;
+  flex: 0 1 auto;
   min-width: 0;
   overflow: hidden;
 
@@ -115,11 +126,26 @@ const StyledRecordChipContainer = styled.div`
   [data-testid='chip'] > * {
     color: ${themeCssVariables.font.color.primary};
   }
+
+  [data-testid='chip'] {
+    min-width: 0;
+    padding-right: 0;
+  }
+`;
+
+const StyledCompactEventStartTime = styled.span`
+  color: ${themeCssVariables.font.color.primary};
+  flex-shrink: 0;
+  font-size: ${themeCssVariables.font.size.xxs};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  line-height: 12px;
+  white-space: nowrap;
 `;
 
 const StyledCheckboxContainer = styled.div`
   align-items: center;
   display: flex;
+  flex-shrink: 0;
   height: 20px;
   margin-left: auto;
 `;
@@ -127,7 +153,7 @@ const StyledCheckboxContainer = styled.div`
 const StyledEventTimeRow = styled.div`
   align-items: center;
   display: flex;
-  height: 20px;
+  height: ${RECORD_CALENDAR_WEEK_EVENT_TIME_ROW_HEIGHT}px;
   min-width: 0;
   overflow: hidden;
   width: 100%;
@@ -135,7 +161,7 @@ const StyledEventTimeRow = styled.div`
 
 const StyledEventTime = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.xs};
+  font-size: ${themeCssVariables.font.size.xxs};
   line-height: 12px;
   white-space: nowrap;
 `;
@@ -208,8 +234,8 @@ export const RecordCalendarWeekEvent = ({
     return null;
   }
 
-  const eventTime = !isDateOnly
-    ? formatRecordCalendarWeekEventTimeRange({
+  const eventTimes = !isDateOnly
+    ? formatRecordCalendarWeekEventTimes({
         startDateTime: recordDate,
         endDateTime: recordEndDate,
         timeFormat,
@@ -220,6 +246,11 @@ export const RecordCalendarWeekEvent = ({
     endInPixels,
     startInPixels,
   });
+  const isCompactTimedEvent =
+    !isAllDay &&
+    heightInPixels < RECORD_CALENDAR_WEEK_EVENT_EXPANDED_MIN_HEIGHT;
+  const expandedEventTime =
+    columnCount > 1 ? eventTimes?.startTime : eventTimes?.timeRange;
 
   return (
     <StyledEventPositioner
@@ -242,18 +273,23 @@ export const RecordCalendarWeekEvent = ({
       >
         <StyledEventContent isAllDay={isAllDay}>
           <StyledEventHeader>
-            <StyledRecordChipContainer>
-              <RecordChip
-                objectNameSingular={objectNameSingular}
-                record={recordStore}
-                variant={ChipVariant.Transparent}
-                isBold
-                isIconHidden
-                maxWidth={128}
-                forceDisableClick
-                triggerEvent="CLICK"
-              />
-            </StyledRecordChipContainer>
+            <StyledEventLabel>
+              <StyledRecordChipContainer>
+                <RecordChip
+                  objectNameSingular={objectNameSingular}
+                  record={recordStore}
+                  variant={ChipVariant.Transparent}
+                  isIconHidden
+                  forceDisableClick
+                  triggerEvent="CLICK"
+                />
+              </StyledRecordChipContainer>
+              {isCompactTimedEvent && isDefined(eventTimes) && (
+                <StyledCompactEventStartTime>
+                  {`, ${eventTimes.startTime}`}
+                </StyledCompactEventStartTime>
+              )}
+            </StyledEventLabel>
             <StyledCheckboxContainer className="checkbox-container">
               <StopPropagationContainer>
                 <Checkbox
@@ -267,11 +303,13 @@ export const RecordCalendarWeekEvent = ({
               </StopPropagationContainer>
             </StyledCheckboxContainer>
           </StyledEventHeader>
-          {!isAllDay && isDefined(eventTime) && (
-            <StyledEventTimeRow>
-              <StyledEventTime>{eventTime}</StyledEventTime>
-            </StyledEventTimeRow>
-          )}
+          {!isAllDay &&
+            !isCompactTimedEvent &&
+            isDefined(expandedEventTime) && (
+              <StyledEventTimeRow>
+                <StyledEventTime>{expandedEventTime}</StyledEventTime>
+              </StyledEventTimeRow>
+            )}
         </StyledEventContent>
       </RecordCard>
     </StyledEventPositioner>
