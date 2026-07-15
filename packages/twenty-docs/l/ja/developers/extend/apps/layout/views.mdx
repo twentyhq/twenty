@@ -34,7 +34,7 @@ export default defineView({
 
 * `objectUniversalIdentifier` は、このビューを適用するオブジェクトを指定します。 定義したカスタムオブジェクトでも、Twenty の標準オブジェクトでも可能です。
 * `key: ViewKey.INDEX` は、そのビューがオブジェクトのメイン一覧ビュー（`OBJECT` ナビゲーション項目を開いたときに表示されるビュー）であることを示します。
-* `fields` は、どの列をどの順序で表示するかを制御します。 各フィールドは `fieldMetadataUniversalIdentifier` を参照します。
+* `fields` は、どの列をどの順序で表示するかを制御します。 各フィールドは `fieldMetadataUniversalIdentifier` を参照します。 `createdAt` などの自動作成システムフィールドの参照方法については、[システムフィールドのターゲット指定](/l/ja/developers/extend/apps/data/system-fields)を参照してください。
 * さらに高度な構成のために、`filters`、`filterGroups`、`sorts`、`groups`、`fieldGroups` も定義できます。
 * 同じオブジェクトに複数のビューがある場合、`position` が表示順を制御します。
 

@@ -7851,11 +7851,6 @@ msgstr "فشل في إضافة المزود"
 msgid "Failed to claim ownership."
 msgstr "فشل في المطالبة بالملكية."
 
-#. js-lingui-id: 5UH0/o
-#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
-msgid "Failed to create email channel. Email channels may not be configured on this server."
-msgstr "فشل إنشاء قناة البريد الإلكتروني. قد لا تكون قنوات البريد الإلكتروني مكوَّنة على هذا الخادم."
-
 #. js-lingui-id: ITWxKI
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 msgid "Failed to create unsubscribe topic."
@@ -10748,6 +10743,11 @@ msgstr "جارٍ تحميل {formattedNames}"
 msgid "Loading applications..."
 msgstr "جارٍ تحميل التطبيقات..."
 
+#. js-lingui-id: 58V8TX
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Loading apps..."
+msgstr ""
+
 #. js-lingui-id: Nx262D
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "Loading csv ... "
@@ -12080,6 +12080,11 @@ msgstr "لا توجد تطبيقات متاحة"
 msgid "No apps are available to install right now"
 msgstr ""
 
+#. js-lingui-id: pfRh+M
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "No apps found"
+msgstr ""
+
 #. js-lingui-id: tFxVHz
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "No available fields to select"
@@ -12682,6 +12687,11 @@ msgstr "لا توجد مساحات عمل فاشلة"
 #: src/modules/settings/lab/hooks/useLabPublicFeatureFlags.ts
 msgid "No workspace selected"
 msgstr "لم يتم تحديد مساحة عمل"
+
+#. js-lingui-id: /XvL19
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
+msgid "No workspaces found"
+msgstr ""
 
 #. js-lingui-id: TiRphK
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -16316,6 +16326,7 @@ msgid "Show hidden objects"
 msgstr "عرض الكائنات المخفية"
 
 #. js-lingui-id: fMPkxb
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show more"
 msgstr "إظهار المزيد"

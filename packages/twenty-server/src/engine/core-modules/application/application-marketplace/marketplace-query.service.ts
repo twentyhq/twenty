@@ -8,18 +8,19 @@ import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/app
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
 import { MarketplaceAppRoleDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-role.dto';
+import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
-import { toGalleryImagePaths } from 'src/engine/core-modules/application/application-registration/utils/to-gallery-image-paths.util';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 
 @Injectable()
 export class MarketplaceQueryService {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
@@ -82,13 +83,10 @@ export class MarketplaceQueryService {
   private toMarketplaceAppDetailDTO(
     registration: ApplicationRegistrationEntity,
   ): MarketplaceAppDetailDTO {
-    // TODO: simplify in a follow-up PR to read galleryImages only, once the
-    // deprecated screenshots column and manifest fallback are backfilled away.
-    const galleryImagePaths = isNonEmptyArray(registration.galleryImages)
-      ? registration.galleryImages.map((galleryImage) => galleryImage.path)
-      : isNonEmptyArray(registration.screenshots)
-        ? registration.screenshots
-        : toGalleryImagePaths(registration.manifest?.application);
+    const galleryImageUrls =
+      this.applicationRegistrationAssetUrlService.buildGalleryImageUrls(
+        registration,
+      );
 
     return {
       id: registration.id,
@@ -111,7 +109,10 @@ export class MarketplaceQueryService {
         registration.category ??
         registration.manifest?.application?.category ??
         undefined,
-      logo: registration.logoUrl ?? undefined,
+      logo:
+        this.applicationRegistrationAssetUrlService.buildLogoUrl(
+          registration,
+        ) ?? undefined,
       websiteUrl:
         registration.websiteUrl ??
         registration.manifest?.application?.websiteUrl ??
@@ -132,8 +133,8 @@ export class MarketplaceQueryService {
         registration.issueReportUrl ??
         registration.manifest?.application?.issueReportUrl ??
         undefined,
-      screenshots: galleryImagePaths,
-      galleryImages: galleryImagePaths,
+      screenshots: galleryImageUrls,
+      galleryImages: galleryImageUrls,
       defaultRoleUniversalIdentifier:
         registration.manifest?.application?.defaultRoleUniversalIdentifier,
       roles: registration.manifest?.roles?.map((role) =>

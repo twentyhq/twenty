@@ -54,10 +54,11 @@ export interface ApplicationRegistration {
     isListed: Scalars['Boolean']
     isVetted: Scalars['Boolean']
     isPreInstalled: Scalars['Boolean']
-    logoUrl?: Scalars['String']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     isConfigured: Scalars['Boolean']
+    logoUrl?: Scalars['String']
+    galleryImagesUrls: Scalars['String'][]
     __typename: 'ApplicationRegistration'
 }
 
@@ -3093,10 +3094,11 @@ export interface ApplicationRegistrationGenqlSelection{
     isListed?: boolean | number
     isVetted?: boolean | number
     isPreInstalled?: boolean | number
-    logoUrl?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     isConfigured?: boolean | number
+    logoUrl?: boolean | number
+    galleryImagesUrls?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

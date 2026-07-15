@@ -294,8 +294,8 @@ export const SettingsAvailableApplicationDetails = () => {
         icon={
           <AppChip
             applicationId={application?.id}
+            logoUrl={detail?.logo}
             fallbackApplicationData={{
-              logo: detail?.logo,
               name: displayName,
             }}
             size="md"

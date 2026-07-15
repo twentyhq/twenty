@@ -34,7 +34,7 @@ export default defineView({
 
 * `objectUniversalIdentifier` specifica a quale oggetto si applica questa vista. Può essere un oggetto personalizzato che hai definito o un oggetto Twenty standard.
 * `key: ViewKey.INDEX` contrassegna la vista come vista elenco principale dell'oggetto (quella che un elemento di navigazione `OBJECT` apre).
-* `fields` controlla quali colonne compaiono e in quale ordine. Ogni campo fa riferimento a un `fieldMetadataUniversalIdentifier`.
+* `fields` controlla quali colonne compaiono e in quale ordine. Ogni campo fa riferimento a un `fieldMetadataUniversalIdentifier`. Per fare riferimento a un campo di sistema creato automaticamente come `createdAt`, vedi [Targeting System Fields](/l/it/developers/extend/apps/data/system-fields).
 * Puoi anche definire `filters`, `filterGroups`, `sorts`, `groups` e `fieldGroups` per configurazioni più avanzate.
 * `position` controlla l'ordinamento quando esistono più viste per lo stesso oggetto.
 
