@@ -12,6 +12,7 @@ import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.
 
 type CallRecordingNode = {
   id: string;
+  updatedAt?: string | null;
   title?: string | null;
   status?: string | null;
   recordingRequestStatus?: unknown;
@@ -43,6 +44,7 @@ export const findCallRecordingsByFilter = async (
           edges: {
             node: {
               id: true,
+              updatedAt: true,
               title: true,
               status: true,
               recordingRequestStatus: true,
@@ -65,6 +67,7 @@ export const findCallRecordingsByFilter = async (
 
   return callRecordingNodes.map((callRecording) => ({
     id: callRecording.id,
+    updatedAt: normalizeOptionalString(callRecording.updatedAt),
     title: callRecording.title ?? undefined,
     status: callRecording.status ?? undefined,
     recordingRequestStatus: normalizeCallRecordingRequestStatus(

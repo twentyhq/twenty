@@ -53,6 +53,7 @@ export const scheduleRecallBotForCallRecording = async (
   const scheduleResult = await scheduleRecallBot({
     meetingUrl,
     joinAt,
+    requestRevision: freshCallRecording.updatedAt ?? '',
     metadata: buildRecallRoutingMetadata({
       callRecordingId: callRecording.id,
       workspaceId,

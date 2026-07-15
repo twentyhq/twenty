@@ -11,7 +11,8 @@ import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-ap
 import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
 import { type ScheduleRecallBotArgs } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 
-type RescheduleRecallBotArgs = ScheduleRecallBotArgs & {
+// PATCHing absolute bot state is naturally idempotent, so no request revision.
+type RescheduleRecallBotArgs = Omit<ScheduleRecallBotArgs, 'requestRevision'> & {
   externalBotId: string;
 };
 

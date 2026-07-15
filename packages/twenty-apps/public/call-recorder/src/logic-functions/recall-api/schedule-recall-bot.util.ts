@@ -17,6 +17,10 @@ import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-a
 export type ScheduleRecallBotArgs = {
   meetingUrl: string;
   joinAt: string;
+  // Identifies the current generation of the recording request; a canceled
+  // then re-requested recording must rotate this so Recall's one-hour
+  // idempotency cache cannot replay the previously canceled bot.
+  requestRevision: string;
   metadata: RecallRoutingMetadata;
   automaticVideoOutput?: RecallBotAutomaticVideoOutput;
 };
@@ -24,6 +28,7 @@ export type ScheduleRecallBotArgs = {
 export const scheduleRecallBot = async ({
   meetingUrl,
   joinAt,
+  requestRevision,
   metadata,
   automaticVideoOutput,
 }: ScheduleRecallBotArgs): Promise<RecallBotScheduleResult> => {
@@ -37,6 +42,7 @@ export const scheduleRecallBot = async ({
   const idempotencyKey = computeRecallBotCreationIdempotencyKey({
     meetingUrl,
     joinAt,
+    requestRevision,
     metadata,
   });
 
@@ -84,8 +90,12 @@ export const scheduleRecallBot = async ({
 const computeRecallBotCreationIdempotencyKey = ({
   meetingUrl,
   joinAt,
+  requestRevision,
   metadata,
-}: Pick<ScheduleRecallBotArgs, 'meetingUrl' | 'joinAt' | 'metadata'>): string =>
+}: Pick<
+  ScheduleRecallBotArgs,
+  'meetingUrl' | 'joinAt' | 'requestRevision' | 'metadata'
+>): string =>
   createHash('sha256')
     .update(
       JSON.stringify({
@@ -93,6 +103,7 @@ const computeRecallBotCreationIdempotencyKey = ({
         callRecordingId: metadata.twentyCallRecordingId,
         meetingUrl,
         joinAt,
+        requestRevision,
       }),
     )
     .digest('hex');

@@ -3,6 +3,7 @@ import { type CallRecordingRequestStatus } from 'src/logic-functions/constants/c
 // Domain read shape: absence is always undefined; null lives only on wire types.
 export type CallRecordingRecord = {
   id: string;
+  updatedAt?: string;
   title?: string;
   status?: string;
   recordingRequestStatus?: CallRecordingRequestStatus;

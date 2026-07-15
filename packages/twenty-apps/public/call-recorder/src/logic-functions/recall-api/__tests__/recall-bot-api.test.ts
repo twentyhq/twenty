@@ -62,6 +62,7 @@ describe('recall bot api', () => {
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
+      requestRevision: '2026-01-01T10:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
 
@@ -95,6 +96,7 @@ describe('recall bot api', () => {
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
+      requestRevision: '2026-01-01T10:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
 
@@ -115,6 +117,7 @@ describe('recall bot api', () => {
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
+      requestRevision: '2026-01-01T10:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
 
@@ -138,6 +141,7 @@ describe('recall bot api', () => {
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
+      requestRevision: '2026-01-01T10:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
 
@@ -184,6 +188,7 @@ describe('recall bot api', () => {
     await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
+      requestRevision: '2026-01-01T10:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
 
@@ -674,6 +679,7 @@ describe('recall bot api', () => {
       const scheduleArguments = {
         meetingUrl: 'https://meet.google.com/abc-defg-hij',
         joinAt: '2026-01-01T13:00:00.000Z',
+        requestRevision: '2026-01-01T10:00:00.000Z',
         metadata: RECALL_ROUTING_METADATA,
       };
       const resultPromise = scheduleRecallBot(scheduleArguments);
@@ -704,6 +710,17 @@ describe('recall bot api', () => {
       });
 
       expect(fetchMock.mock.calls[3][1].headers['Idempotency-Key']).not.toBe(
+        fetchMock.mock.calls[0][1].headers['Idempotency-Key'],
+      );
+
+      // A re-requested recording carries a new revision, so Recall's cached
+      // response for the canceled bot cannot be replayed.
+      await scheduleRecallBot({
+        ...scheduleArguments,
+        requestRevision: '2026-01-01T12:30:00.000Z',
+      });
+
+      expect(fetchMock.mock.calls[4][1].headers['Idempotency-Key']).not.toBe(
         fetchMock.mock.calls[0][1].headers['Idempotency-Key'],
       );
     });
