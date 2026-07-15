@@ -95,6 +95,22 @@ export class ApplicationInstallService {
       return true;
     }
 
+    // A tarball registration carries another workspace's private code: unless
+    // it was published (listed or pre-installed), only the owner workspace
+    // can install or upgrade it.
+    if (
+      appRegistration.sourceType ===
+        ApplicationRegistrationSourceType.TARBALL &&
+      !appRegistration.isListed &&
+      !appRegistration.isPreInstalled &&
+      appRegistration.ownerWorkspaceId !== params.workspaceId
+    ) {
+      throw new ApplicationException(
+        `Application registration ${appRegistration.universalIdentifier} is not available for this workspace`,
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
+
     const lockKey = `app-install:${params.workspaceId}:${appRegistration.universalIdentifier}`;
 
     return this.cacheLockService.withLock(

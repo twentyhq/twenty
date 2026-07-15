@@ -199,7 +199,7 @@ export class ApplicationTarballService {
         applicationRegistrationId: appRegistration.id,
         manifest: manifest as Manifest,
         sourceType: ApplicationRegistrationSourceType.TARBALL,
-        latestAvailableVersion: packageJson?.version ?? undefined,
+        latestAvailableVersion: packageJson?.version ?? null,
         additionalFields: {
           tarballFileId: savedFile.id,
           isListed: false,

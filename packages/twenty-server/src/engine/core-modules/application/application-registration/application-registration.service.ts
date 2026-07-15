@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { ILike, IsNull, type FindOptionsWhere, type Repository } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -391,7 +392,8 @@ export class ApplicationRegistrationService {
     applicationRegistrationId: string;
     manifest: Manifest;
     sourceType?: ApplicationRegistrationSourceType;
-    latestAvailableVersion?: string;
+    // null clears the stored version; undefined leaves it untouched.
+    latestAvailableVersion?: string | null;
     preventVersionDowngrade?: boolean;
     additionalFields?: Partial<
       Pick<
@@ -427,26 +429,37 @@ export class ApplicationRegistrationService {
           return false;
         }
 
+        const manifestUpdateFields = buildRegistrationManifestUpdateFields({
+          manifestApplication: manifest.application,
+          existingGalleryImages: existing.galleryImages,
+        });
+
+        // The stored logo file belongs to the previous logo path; the source
+        // flows (tarball upload, dev sync, catalog sync) re-store assets for
+        // the new path right after this refresh.
+        const hasLogoPathChanged =
+          (manifestUpdateFields.logo ?? null) !== (existing.logo ?? null);
+
         // One transaction so the registration row and its variable schemas
         // always come from the same manifest, even when the sync fails midway.
+        // Partial update: writing only manifest-derived columns cannot restore
+        // stale values on unrelated columns (OAuth settings, stored file ids)
+        // written by flows that do not take this lock.
         await this.applicationRegistrationRepository.manager.transaction(
           async (entityManager) => {
             await entityManager
               .getRepository(ApplicationRegistrationEntity)
-              .save({
-                ...existing,
+              .update(applicationRegistrationId, {
                 name: manifest.application?.displayName ?? existing.name,
                 manifest,
-                ...buildRegistrationManifestUpdateFields({
-                  manifestApplication: manifest.application,
-                  existingGalleryImages: existing.galleryImages,
-                }),
+                ...manifestUpdateFields,
+                ...(hasLogoPathChanged && { logoFileId: null }),
                 ...(sourceType !== undefined && { sourceType }),
                 ...(latestAvailableVersion !== undefined && {
                   latestAvailableVersion,
                 }),
                 ...additionalFields,
-              });
+              } as QueryDeepPartialEntity<ApplicationRegistrationEntity>);
 
             if (isDefined(manifest.application?.serverVariables)) {
               await this.applicationRegistrationVariableService.syncVariableSchemas(
@@ -543,7 +556,7 @@ export class ApplicationRegistrationService {
         applicationRegistrationId: existing.id,
         manifest: params.manifest,
         sourceType: params.sourceType,
-        latestAvailableVersion: params.latestAvailableVersion ?? undefined,
+        latestAvailableVersion: params.latestAvailableVersion,
         additionalFields: {
           name: params.name,
           sourcePackage: params.sourcePackage,
