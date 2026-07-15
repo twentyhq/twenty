@@ -16,6 +16,6 @@ export class ExecutiveSearchPreferenceWorkspaceEntity extends BaseWorkspaceEntit
   openToRelocation: boolean;
   travelWillingness: TravelWillingness;
   availability: Availability;
-  compensationExpectation: string | null;
+  compensationExpectation: number | null;
   notes: RichTextMetadata | null;
 }

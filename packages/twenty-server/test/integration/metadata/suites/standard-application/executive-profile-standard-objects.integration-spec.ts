@@ -120,7 +120,7 @@ const EXPECTED_FIELDS: Record<
     { name: 'openToRelocation', type: FieldMetadataType.BOOLEAN },
     { name: 'travelWillingness', type: FieldMetadataType.SELECT },
     { name: 'availability', type: FieldMetadataType.SELECT },
-    { name: 'compensationExpectation', type: FieldMetadataType.TEXT },
+    { name: 'compensationExpectation', type: FieldMetadataType.CURRENCY },
     { name: 'notes', type: FieldMetadataType.RICH_TEXT },
   ],
 };

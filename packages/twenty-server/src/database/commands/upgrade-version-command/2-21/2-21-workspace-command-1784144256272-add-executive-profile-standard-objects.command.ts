@@ -45,12 +45,15 @@ const EXECUTIVE_INDEX_UNIVERSAL_IDENTIFIERS = EXECUTIVE_OBJECTS.flatMap((obj) =>
   Object.values(obj.indexes).map((i) => i.universalIdentifier),
 );
 
-const EXECUTIVE_ALL_VIEW_UNIVERSAL_IDENTIFIERS = EXECUTIVE_OBJECTS.flatMap(
+const EXECUTIVE_VIEW_UNIVERSAL_IDENTIFIERS = EXECUTIVE_OBJECTS.flatMap((obj) =>
+  Object.values(obj.views).map((v) => v.universalIdentifier),
+);
+
+const EXECUTIVE_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = EXECUTIVE_OBJECTS.flatMap(
   (obj) =>
-    Object.values(obj.views).flatMap((v) => [
-      v.universalIdentifier,
-      ...Object.values(v.viewFields).map((vf) => vf.universalIdentifier),
-    ]),
+    Object.values(obj.views).flatMap((v) =>
+      Object.values(v.viewFields).map((vf) => vf.universalIdentifier),
+    ),
 );
 
 @RegisteredWorkspaceCommand('2.21.0', 1784144256272)
@@ -155,7 +158,7 @@ export class AddExecutiveProfileStandardObjectsCommand extends ActiveOrSuspended
           getStandardFlatEntitiesToCreateOrThrow<FlatView>({
             standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewMaps,
             existingFlatEntityMaps: flatViewMaps,
-            universalIdentifiers: EXECUTIVE_ALL_VIEW_UNIVERSAL_IDENTIFIERS,
+            universalIdentifiers: EXECUTIVE_VIEW_UNIVERSAL_IDENTIFIERS,
           }),
         flatEntityToDelete: [],
         flatEntityToUpdate: [],
@@ -166,7 +169,7 @@ export class AddExecutiveProfileStandardObjectsCommand extends ActiveOrSuspended
             standardFlatEntityMaps:
               standardAllFlatEntityMaps.flatViewFieldMaps,
             existingFlatEntityMaps: flatViewFieldMaps,
-            universalIdentifiers: EXECUTIVE_ALL_VIEW_UNIVERSAL_IDENTIFIERS,
+            universalIdentifiers: EXECUTIVE_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
           }),
         flatEntityToDelete: [],
         flatEntityToUpdate: [],
