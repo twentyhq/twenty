@@ -12,6 +12,7 @@ const CONFIG_VALUES: Record<string, string> = {
 };
 
 const baseRegistration = {
+  id: 'registration-id',
   sourceType: ApplicationRegistrationSourceType.TARBALL,
   sourcePackage: null,
   latestAvailableVersion: '1.0.0',
@@ -50,7 +51,19 @@ describe('ApplicationRegistrationAssetUrlService', () => {
       });
 
       expect(logoUrl).toBe(
-        'https://api.twenty.com/file/server/application-registration/file-id',
+        'https://api.twenty.com/files/application-registrations/registration-id/public/logo.png',
+      );
+    });
+
+    it('should url-encode stored asset path segments', () => {
+      const logoUrl = service.buildLogoUrl({
+        ...baseRegistration,
+        logo: 'public/logo #1.png',
+        logoFileId: 'file-id',
+      });
+
+      expect(logoUrl).toBe(
+        'https://api.twenty.com/files/application-registrations/registration-id/public/logo%20%231.png',
       );
     });
 
@@ -105,7 +118,7 @@ describe('ApplicationRegistrationAssetUrlService', () => {
       });
 
       expect(urls).toEqual([
-        'https://api.twenty.com/file/server/application-registration/file-1',
+        'https://api.twenty.com/files/application-registrations/registration-id/public/one.png',
         'https://example.com/two.png',
       ]);
     });
