@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
 
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { DirectusModule } from 'src/modules/executive-search/directus/directus.module';
+import { DirectusConnectionConfigService } from 'src/modules/executive-search/outbound/services/directus-connection-config.service';
+import { OutboundHmacSignerService } from 'src/modules/executive-search/outbound/services/outbound-hmac-signer.service';
 import { ExecutiveSearchOutboxService } from 'src/modules/executive-search/sync/services/outbox.service';
 import { ExecutiveSearchInboxService } from 'src/modules/executive-search/sync/services/inbox.service';
 import { ExecutiveSearchDLQService } from 'src/modules/executive-search/sync/services/dlq.service';
@@ -29,6 +32,7 @@ import { ExternalSyncReconciliationWorkspaceEntity } from 'src/modules/executive
     TwentyORMModule,
     WorkspaceEventEmitterModule,
     DirectusModule,
+    FeatureFlagModule,
   ],
   providers: [
     ExecutiveSearchOutboxService,
@@ -36,6 +40,8 @@ import { ExternalSyncReconciliationWorkspaceEntity } from 'src/modules/executive
     ExecutiveSearchDLQService,
     ExecutiveSearchReplayService,
     ExecutiveSearchReconciliationService,
+    OutboundHmacSignerService,
+    DirectusConnectionConfigService,
   ],
   exports: [
     ExecutiveSearchOutboxService,
@@ -43,6 +49,8 @@ import { ExternalSyncReconciliationWorkspaceEntity } from 'src/modules/executive
     ExecutiveSearchDLQService,
     ExecutiveSearchReplayService,
     ExecutiveSearchReconciliationService,
+    OutboundHmacSignerService,
+    DirectusConnectionConfigService,
   ],
 })
 export class ExecutiveSearchModule {}
