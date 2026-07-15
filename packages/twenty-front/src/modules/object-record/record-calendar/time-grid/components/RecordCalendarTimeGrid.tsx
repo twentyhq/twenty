@@ -2,6 +2,7 @@ import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { RecordCalendarAddNew } from '@/object-record/record-calendar/components/RecordCalendarAddNew';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
+import { RecordCalendarTimeGridAllDayCell } from '@/object-record/record-calendar/time-grid/components/RecordCalendarTimeGridAllDayCell';
 import { RecordCalendarWeekEvent } from '@/object-record/record-calendar/week/components/RecordCalendarWeekEvent';
 import { RecordCalendarWeekDragDropContext } from '@/object-record/record-calendar/week/components/RecordCalendarWeekDragDropContext';
 import { RECORD_CALENDAR_WEEK_DIMENSIONS } from '@/object-record/record-calendar/week/constants/RecordCalendarWeekDimensions';
@@ -112,24 +113,6 @@ const StyledDayNumber = styled.span<{ isToday: boolean }>`
 const StyledAllDayLabel = styled(StyledHeaderGutter)`
   border-top: 1px solid ${themeCssVariables.border.color.light};
   height: 28px;
-`;
-
-const StyledAllDayCell = styled.div`
-  align-items: center;
-  border-left: 1px solid ${themeCssVariables.border.color.light};
-  border-top: 1px solid ${themeCssVariables.border.color.light};
-  display: flex;
-  gap: ${themeCssVariables.spacing['0.5']};
-  height: 28px;
-  min-width: 0;
-  overflow: hidden;
-  padding: ${themeCssVariables.spacing['0.5']};
-`;
-
-const StyledAdditionalEventCount = styled.span`
-  color: ${themeCssVariables.font.color.light};
-  font-size: ${themeCssVariables.font.size.xs};
-  white-space: nowrap;
 `;
 
 const StyledGrid = styled.div<{ dayCount: number }>`
@@ -244,7 +227,6 @@ type WeekDayCellProps = {
   timeZone: string;
 };
 
-type RecordCalendarWeekAllDayCellProps = WeekDayCellProps;
 type RecordCalendarWeekDayColumnProps = Omit<WeekDayCellProps, 'day'> & {
   activeSlotIndex: number | null;
   dayString: string;
@@ -253,44 +235,6 @@ type RecordCalendarWeekDayColumnProps = Omit<WeekDayCellProps, 'day'> & {
     slotIndex: number | null,
     interactionMode: RecordCalendarWeekSlotInteractionMode,
   ) => void;
-};
-
-const RecordCalendarWeekAllDayCell = ({
-  calendarFieldName,
-  calendarFieldType,
-  day,
-  timeFormat,
-  timeZone,
-}: RecordCalendarWeekAllDayCellProps) => {
-  const recordIds = useAtomComponentFamilySelectorValue(
-    calendarDayRecordIdsComponentFamilySelector,
-    { day, timeZone },
-  );
-
-  const allDayRecordIds =
-    calendarFieldType === FieldMetadataType.DATE ? recordIds : [];
-
-  return (
-    <StyledAllDayCell>
-      {allDayRecordIds.slice(0, 1).map((recordId) => (
-        <RecordCalendarWeekEvent
-          key={recordId}
-          calendarDay={day}
-          calendarFieldName={calendarFieldName}
-          calendarFieldType={calendarFieldType}
-          isAllDay
-          recordId={recordId}
-          timeFormat={timeFormat}
-          timeZone={timeZone}
-        />
-      ))}
-      {allDayRecordIds.length > 1 && (
-        <StyledAdditionalEventCount>
-          +{allDayRecordIds.length - 1}
-        </StyledAdditionalEventCount>
-      )}
-    </StyledAllDayCell>
-  );
 };
 
 const RecordCalendarWeekDayColumn = memo(
@@ -628,7 +572,7 @@ export const RecordCalendarTimeGrid = ({
             <>
               <StyledAllDayLabel>{t`All day`}</StyledAllDayLabel>
               {days.map(({ date }) => (
-                <RecordCalendarWeekAllDayCell
+                <RecordCalendarTimeGridAllDayCell
                   key={`all-day-${date.toString()}`}
                   calendarFieldName={calendarFieldMetadataItem.name}
                   calendarFieldType={calendarFieldMetadataItem.type}
