@@ -27,6 +27,7 @@ const mockEnqueueWarningSnackBar = jest.fn();
 const mockCloseSidePanelMenu = jest.fn();
 const mockSetCommandMenuItemProgress = jest.fn();
 const mockCopyToClipboard = jest.fn();
+const mockSetRecordPageActiveTabId = jest.fn();
 
 let mockCurrentUser: { id: string } | null = { id: 'user-123' };
 let mockIsMobile = false;
@@ -128,6 +129,11 @@ jest.mock('~/hooks/useCopyToClipboard', () => ({
   useCopyToClipboard: () => ({
     copyToClipboard: mockCopyToClipboard,
   }),
+}));
+
+jest.mock('@/page-layout/utils/setRecordPageActiveTabId', () => ({
+  setRecordPageActiveTabId: (params: unknown) =>
+    mockSetRecordPageActiveTabId(params),
 }));
 
 const renderUseFrontComponentExecutionContext = (
@@ -395,6 +401,63 @@ describe('useFrontComponentExecutionContext', () => {
       });
       expect(mockNavigateApp).not.toHaveBeenCalled();
       expect(mockNavigateSidePanel).not.toHaveBeenCalled();
+    });
+
+    it('should forward the tab to the side panel record page', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            page: SidePanelPages.ViewRecord,
+            recordId: 'lead-1',
+            objectNameSingular: 'lead',
+            tab: 'tab-emails',
+          },
+        );
+      });
+
+      expect(mockOpenRecordInSidePanel).toHaveBeenCalledWith({
+        recordId: 'lead-1',
+        objectNameSingular: 'lead',
+        tab: 'tab-emails',
+        resetNavigationStack: undefined,
+      });
+    });
+
+    it('should set the record page active tab when falling back to full-page navigation', async () => {
+      mockIsMobile = true;
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            page: SidePanelPages.ViewRecord,
+            recordId: 'lead-1',
+            objectNameSingular: 'lead',
+            tab: 'tab-emails',
+          },
+        );
+      });
+
+      expect(mockSetRecordPageActiveTabId).toHaveBeenCalledWith({
+        recordId: 'lead-1',
+        objectNameSingular: 'lead',
+        tabId: 'tab-emails',
+        store: expect.anything(),
+      });
+      expect(mockNavigateApp).toHaveBeenCalledWith(
+        AppPath.RecordShowPage,
+        { objectNameSingular: 'lead', objectRecordId: 'lead-1' },
+        undefined,
+        undefined,
+      );
+      expect(mockOpenRecordInSidePanel).not.toHaveBeenCalled();
     });
 
     it('should fall back to full-page navigation on mobile', async () => {
