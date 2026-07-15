@@ -29,14 +29,14 @@ describe('requestCallRecordingSummaryGeneration', () => {
     });
   });
 
-  it('posts the route path and lets the client resolve the functions url', async () => {
+  it('posts the /s-prefixed route path and lets the client resolve the url', async () => {
     await requestCallRecordingSummaryGeneration({
       calendarEventIds: ['calendar-event-1'],
     });
 
     expect(restApiClientMock).toHaveBeenCalledWith();
     expect(postMock).toHaveBeenCalledWith(
-      GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH,
+      `/s${GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH}`,
       { calendarEventIds: ['calendar-event-1'] },
     );
   });
@@ -61,7 +61,7 @@ describe('requestCallRecordingSummaryGeneration', () => {
     });
 
     expect(postMock).toHaveBeenCalledWith(
-      GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH,
+      `/s${GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH}`,
       { calendarEventIds: ['calendar-event-1', 'calendar-event-2'] },
     );
     expect(enqueueSnackbarMock).toHaveBeenCalledWith({

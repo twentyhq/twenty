@@ -64,10 +64,8 @@ export const requestCallRecordingSummaryGeneration = async ({
   }
 
   try {
-    const client = new RestApiClient();
-
-    const response = await client.post<GenerateSummariesResponse>(
-      GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH,
+    const response = await new RestApiClient().post<GenerateSummariesResponse>(
+      `/s${GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH}`,
       { calendarEventIds },
     );
 

@@ -203,7 +203,7 @@ const GenerateDocumentForm = () => {
 
     try {
       const result = await new RestApiClient().post<GenerateResponse>(
-        '/documents/generate',
+        '/s/documents/generate',
         { templateId, recordId },
       );
 
