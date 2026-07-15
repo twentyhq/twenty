@@ -8,6 +8,7 @@ import { getRecordCalendarCardDraggableId } from '@/object-record/record-calenda
 import { RECORD_CALENDAR_WEEK_DIMENSIONS } from '@/object-record/record-calendar/week/constants/RecordCalendarWeekDimensions';
 import { type RecordCalendarWeekDndData } from '@/object-record/record-calendar/week/types/RecordCalendarWeekDndData';
 import { formatRecordCalendarWeekEventTimes } from '@/object-record/record-calendar/week/utils/formatRecordCalendarWeekEventTimes';
+import { getRecordCalendarWeekEventHorizontalPosition } from '@/object-record/record-calendar/week/utils/getRecordCalendarWeekEventHorizontalPosition';
 import { getRecordCalendarWeekTimedEventHeight } from '@/object-record/record-calendar/week/utils/getRecordCalendarWeekTimedEventMetrics';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
@@ -23,35 +24,10 @@ import { Checkbox, CheckboxVariant } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-const RECORD_CALENDAR_WEEK_EVENT_HORIZONTAL_INSET = 4;
-const RECORD_CALENDAR_WEEK_EVENT_COLUMN_GAP = 2;
 const RECORD_CALENDAR_WEEK_EVENT_TIME_ROW_HEIGHT = 14;
 const RECORD_CALENDAR_WEEK_EVENT_EXPANDED_MIN_HEIGHT =
   RECORD_CALENDAR_WEEK_DIMENSIONS.minimumEventSlotHeight +
   RECORD_CALENDAR_WEEK_EVENT_TIME_ROW_HEIGHT;
-
-const getTimedEventLeft = (columnIndex: number, columnCount: number) => {
-  const leftPercentage = (columnIndex * 100) / columnCount;
-  const pixelOffset =
-    RECORD_CALENDAR_WEEK_EVENT_HORIZONTAL_INSET -
-    ((RECORD_CALENDAR_WEEK_EVENT_HORIZONTAL_INSET * 2 -
-      RECORD_CALENDAR_WEEK_EVENT_COLUMN_GAP) *
-      columnIndex) /
-      columnCount;
-
-  return `calc(${leftPercentage}% + ${pixelOffset}px)`;
-};
-
-const getTimedEventWidth = (columnCount: number) => {
-  const widthPercentage = 100 / columnCount;
-  const pixelReduction =
-    RECORD_CALENDAR_WEEK_EVENT_COLUMN_GAP +
-    (RECORD_CALENDAR_WEEK_EVENT_HORIZONTAL_INSET * 2 -
-      RECORD_CALENDAR_WEEK_EVENT_COLUMN_GAP) /
-      columnCount;
-
-  return `calc(${widthPercentage}% - ${pixelReduction}px)`;
-};
 
 const StyledEventPositioner = styled.div<{
   columnCount: number;
@@ -64,7 +40,12 @@ const StyledEventPositioner = styled.div<{
   height: ${({ heightInPixels, isAllDay }) =>
     isAllDay ? '22px' : `${heightInPixels}px`};
   left: ${({ columnCount, columnIndex, isAllDay }) =>
-    isAllDay ? 'auto' : getTimedEventLeft(columnIndex, columnCount)};
+    isAllDay
+      ? 'auto'
+      : getRecordCalendarWeekEventHorizontalPosition({
+          columnCount,
+          columnIndex,
+        }).left};
   min-width: 0;
   overflow: hidden;
   position: ${({ isAllDay }) => (isAllDay ? 'relative' : 'absolute')};
@@ -73,9 +54,31 @@ const StyledEventPositioner = styled.div<{
     isAllDay
       ? 'auto'
       : `${topInPixels + RECORD_CALENDAR_WEEK_DIMENSIONS.eventVerticalGap / 2}px`};
-  width: ${({ columnCount, isAllDay }) =>
-    isAllDay ? '100%' : getTimedEventWidth(columnCount)};
-  z-index: 1;
+  width: ${({ columnCount, columnIndex, isAllDay }) =>
+    isAllDay
+      ? '100%'
+      : getRecordCalendarWeekEventHorizontalPosition({
+          columnCount,
+          columnIndex,
+        }).width};
+  z-index: ${({ columnCount, columnIndex, isAllDay }) =>
+    isAllDay
+      ? 1
+      : getRecordCalendarWeekEventHorizontalPosition({
+          columnCount,
+          columnIndex,
+        }).stackingOrder};
+
+  &:focus-within,
+  &:hover {
+    z-index: ${({ columnCount, columnIndex, isAllDay }) =>
+      isAllDay
+        ? 1
+        : getRecordCalendarWeekEventHorizontalPosition({
+            columnCount,
+            columnIndex,
+          }).hoverStackingOrder};
+  }
 
   > div {
     height: 100%;

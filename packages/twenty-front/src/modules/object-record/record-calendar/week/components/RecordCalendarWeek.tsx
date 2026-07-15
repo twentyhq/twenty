@@ -1,6 +1,5 @@
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { RecordCalendarAddNew } from '@/object-record/record-calendar/components/RecordCalendarAddNew';
-import { RECORD_CALENDAR_WEEK_VISIBLE_RECORD_LIMIT } from '@/object-record/record-calendar/constants/RecordCalendarWeekVisibleRecordLimit';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
@@ -174,6 +173,7 @@ const StyledDayColumn = styled.div<{ isWeekend: boolean }>`
   );
   border-left: 1px solid ${themeCssVariables.border.color.light};
   height: ${RECORD_CALENDAR_WEEK_DIMENSIONS.gridHeight}px;
+  isolation: isolate;
   overflow: hidden;
   position: relative;
 `;
@@ -350,9 +350,8 @@ const RecordCalendarWeekDayColumn = memo(
                 eventA.recordId.localeCompare(eventB.recordId),
             );
 
-    const eventLayouts = computeRecordCalendarWeekEventLayouts(
-      eventLayoutInputs.slice(0, RECORD_CALENDAR_WEEK_VISIBLE_RECORD_LIMIT),
-    );
+    const eventLayouts =
+      computeRecordCalendarWeekEventLayouts(eventLayoutInputs);
 
     const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
       if (

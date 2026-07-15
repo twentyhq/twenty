@@ -45,6 +45,30 @@ describe('computeRecordCalendarWeekEventLayouts', () => {
     ]);
   });
 
+  it('keeps every event in a larger overlapping group', () => {
+    const layouts = computeRecordCalendarWeekEventLayouts([
+      { recordId: 'first', startInPixels: 0, endInPixels: 60 },
+      { recordId: 'second', startInPixels: 0, endInPixels: 60 },
+      { recordId: 'third', startInPixels: 0, endInPixels: 60 },
+      { recordId: 'fourth', startInPixels: 15, endInPixels: 75 },
+      { recordId: 'fifth', startInPixels: 30, endInPixels: 90 },
+    ]);
+
+    expect(
+      layouts.map(({ recordId, columnIndex, columnCount }) => ({
+        recordId,
+        columnIndex,
+        columnCount,
+      })),
+    ).toEqual([
+      { recordId: 'first', columnIndex: 0, columnCount: 5 },
+      { recordId: 'second', columnIndex: 1, columnCount: 5 },
+      { recordId: 'third', columnIndex: 2, columnCount: 5 },
+      { recordId: 'fourth', columnIndex: 3, columnCount: 5 },
+      { recordId: 'fifth', columnIndex: 4, columnCount: 5 },
+    ]);
+  });
+
   it('reuses a free column within an overlapping group', () => {
     const layouts = computeRecordCalendarWeekEventLayouts([
       { recordId: 'first', startInPixels: 0, endInPixels: 44 },
