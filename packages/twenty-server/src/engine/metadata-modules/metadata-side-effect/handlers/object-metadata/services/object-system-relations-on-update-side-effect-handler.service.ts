@@ -75,8 +75,7 @@ export class ObjectSystemRelationsOnUpdateSideEffectHandlerService extends Metad
         flatFieldMetadataMaps: relatedFlatEntityMaps.flatFieldMetadataMaps,
         flatObjectMetadataMaps: relatedFlatEntityMaps.flatObjectMetadataMaps,
         flatIndexMaps: relatedFlatEntityMaps.flatIndexMaps,
-        shouldRenameMorphFlatFieldMetadata: (morphFlatFieldMetadata) =>
-          morphFlatFieldMetadata.isSystemSideEffect === true,
+        systemSideEffectMorphFieldsOnly: true,
       });
 
     if (
