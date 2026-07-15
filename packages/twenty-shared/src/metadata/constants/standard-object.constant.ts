@@ -2162,6 +2162,9 @@ export const STANDARD_OBJECTS = {
       lastPublishedVersionId: {
         universalIdentifier: '20202020-326a-4fba-8639-3456c0a169e8',
       },
+      coreWorkflowId: {
+        universalIdentifier: '20202020-058a-42ad-8eb8-0662a5552aad',
+      },
       statuses: { universalIdentifier: '20202020-357c-4432-8c50-8c31b4a552d9' },
       versions: { universalIdentifier: '20202020-9432-416e-8f3c-27ee3153d099' },
       runs: { universalIdentifier: '20202020-759b-4340-b58b-e73595c4df4f' },
@@ -2402,6 +2405,9 @@ export const STANDARD_OBJECTS = {
       },
       runs: { universalIdentifier: '20202020-1d08-46df-901a-85045f18099a' },
       steps: { universalIdentifier: '20202020-5988-4a64-b94a-1f9b7b989039' },
+      coreWorkflowVersionId: {
+        universalIdentifier: '20202020-58b4-46e8-b6d2-f1f3c74cf7f4',
+      },
       timelineActivities: {
         universalIdentifier: '20202020-fcb0-4695-b17e-3b43a421c633',
       },
