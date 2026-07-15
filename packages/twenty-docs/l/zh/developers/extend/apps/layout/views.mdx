@@ -49,7 +49,7 @@ export default defineView({
 | `isCompact`                                                                                                 | `boolean`                                                                          | 紧凑的行显示。                                                         |
 | `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | 按字段对记录进行分组（例如看板列）。                                              |
 | `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | 看板列聚合和列宽设置。                                                     |
-| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`                                                | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | 日历视图：布局以及用于定位记录的日期字段。                                           |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | 日历视图：布局、用于定位记录的日期字段，以及可选的结束日期字段。                                |
 
 上述所有枚举都从 `twenty-sdk/define` 导出。
 
