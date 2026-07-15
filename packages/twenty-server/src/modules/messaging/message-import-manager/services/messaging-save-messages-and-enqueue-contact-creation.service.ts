@@ -15,6 +15,7 @@ import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manage
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { CONTACT_CREATION_JOB_RETRY_LIMIT } from 'src/modules/contact-creation-manager/constants/contact-creation-job-retry-limit.constant';
 import {
   CreateCompanyAndContactJob,
   type CreateCompanyAndContactJobData,
@@ -188,6 +189,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
           contactsToCreate,
           source: FieldActorSource.EMAIL,
         },
+        { retryLimit: CONTACT_CREATION_JOB_RETRY_LIMIT },
       );
     }
 

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type FullNameMetadata } from 'twenty-shared/types';
 import { DeepPartial } from 'typeorm';
 
+import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -17,6 +18,7 @@ export class CreatePersonService {
   public async createPeople(
     peopleToCreate: Partial<PersonWorkspaceEntity>[],
     workspaceId: string,
+    transactionManager?: WorkspaceEntityManager,
   ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
     if (peopleToCreate.length === 0) return [];
 
@@ -33,15 +35,17 @@ export class CreatePersonService {
             },
           );
 
-        const lastPersonPosition =
-          await this.getLastPersonPosition(personRepository);
+        const lastPersonPosition = await this.getLastPersonPosition(
+          personRepository,
+          transactionManager,
+        );
 
         const createdPeople = await personRepository.insert(
           peopleToCreate.map((person, index) => ({
             ...person,
             position: lastPersonPosition + index,
           })),
-          undefined,
+          transactionManager,
           ['companyId', 'id'],
         );
 
@@ -54,6 +58,7 @@ export class CreatePersonService {
   public async restorePeople(
     people: { personId: string; companyId: string | undefined }[],
     workspaceId: string,
+    transactionManager?: WorkspaceEntityManager,
   ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
     if (people.length === 0) {
       return [];
@@ -80,7 +85,7 @@ export class CreatePersonService {
               companyId,
             },
           })),
-          undefined,
+          transactionManager,
           ['companyId', 'id'],
         );
 
@@ -93,6 +98,7 @@ export class CreatePersonService {
   public async enrichPeopleNames(
     peopleToEnrich: { personId: string; name: FullNameMetadata }[],
     workspaceId: string,
+    transactionManager?: WorkspaceEntityManager,
   ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
     if (peopleToEnrich.length === 0) {
       return [];
@@ -116,7 +122,7 @@ export class CreatePersonService {
             criteria: personId,
             partialEntity: { name },
           })),
-          undefined,
+          transactionManager,
           ['id'],
         );
 
@@ -128,10 +134,12 @@ export class CreatePersonService {
 
   private async getLastPersonPosition(
     personRepository: WorkspaceRepository<PersonWorkspaceEntity>,
+    transactionManager?: WorkspaceEntityManager,
   ): Promise<number> {
     const lastPersonPosition = await personRepository.maximum(
       'position',
       undefined,
+      transactionManager,
     );
 
     return lastPersonPosition ?? 0;

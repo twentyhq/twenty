@@ -3,7 +3,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { FieldActorSource } from 'twenty-shared/types';
 
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -49,10 +48,6 @@ describe('CreateCompanyAndPersonService', () => {
           useValue: {},
         },
         {
-          provide: ExceptionHandlerService,
-          useValue: {},
-        },
-        {
           provide: getRepositoryToken(UserWorkspaceEntity),
           useValue: {
             findOne: jest.fn(),
@@ -70,6 +65,88 @@ describe('CreateCompanyAndPersonService', () => {
     service = module.get<CreateCompanyAndPersonService>(
       CreateCompanyAndPersonService,
     );
+  });
+
+  describe('createCompaniesAndPeopleAndUpdateParticipants', () => {
+    let localService: CreateCompanyAndPersonService;
+    let createCompaniesAndPeopleSpy: jest.SpyInstance;
+
+    const workspaceId = 'workspace-1';
+    const connectedAccount = {
+      userWorkspaceId: 'user-workspace-1',
+      provider: 'google',
+    } as unknown as ConnectedAccountEntity;
+    const contacts: Contact[] = [
+      { handle: 'contact@company.com', displayName: 'Contact' },
+    ];
+
+    beforeEach(async () => {
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [
+          CreateCompanyAndPersonService,
+          { provide: CreateCompanyService, useValue: {} },
+          { provide: CreatePersonService, useValue: {} },
+          {
+            provide: GlobalWorkspaceOrmManager,
+            useValue: {
+              executeInWorkspaceContext: (fn: () => unknown) => fn(),
+              getRepository: jest.fn().mockResolvedValue({
+                findOne: jest
+                  .fn()
+                  .mockResolvedValue({ id: 'workspace-member-1' }),
+              }),
+            },
+          },
+          {
+            provide: getRepositoryToken(UserWorkspaceEntity),
+            useValue: {
+              findOne: jest.fn().mockResolvedValue({
+                id: 'user-workspace-1',
+                userId: 'user-1',
+              }),
+            },
+          },
+          {
+            provide: getRepositoryToken(WorkspaceEntity),
+            useValue: { findOne: jest.fn() },
+          },
+        ],
+      }).compile();
+
+      localService = module.get<CreateCompanyAndPersonService>(
+        CreateCompanyAndPersonService,
+      );
+      createCompaniesAndPeopleSpy = jest
+        .spyOn(localService, 'createCompaniesAndPeople')
+        .mockResolvedValue([]);
+    });
+
+    it('should resolve when every batch succeeds', async () => {
+      await expect(
+        localService.createCompaniesAndPeopleAndUpdateParticipants(
+          connectedAccount,
+          contacts,
+          workspaceId,
+          FieldActorSource.CALENDAR,
+        ),
+      ).resolves.toBeUndefined();
+      expect(createCompaniesAndPeopleSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw when a batch fails so the job is retried instead of silently dropped', async () => {
+      createCompaniesAndPeopleSpy.mockRejectedValueOnce(
+        new Error('insert timeout'),
+      );
+
+      await expect(
+        localService.createCompaniesAndPeopleAndUpdateParticipants(
+          connectedAccount,
+          contacts,
+          workspaceId,
+          FieldActorSource.CALENDAR,
+        ),
+      ).rejects.toThrow('Contact creation failed for 1/1 batch(es)');
+    });
   });
 
   describe('computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate', () => {

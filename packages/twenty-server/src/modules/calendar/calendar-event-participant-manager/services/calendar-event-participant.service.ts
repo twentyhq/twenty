@@ -16,6 +16,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { type FetchedCalendarEventParticipant } from 'src/modules/calendar/common/types/fetched-calendar-event';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { CONTACT_CREATION_JOB_RETRY_LIMIT } from 'src/modules/contact-creation-manager/constants/contact-creation-job-retry-limit.constant';
 import {
   CreateCompanyAndContactJob,
   type CreateCompanyAndContactJobData,
@@ -171,6 +172,7 @@ export class CalendarEventParticipantService {
               })),
               source: FieldActorSource.CALENDAR,
             },
+            { retryLimit: CONTACT_CREATION_JOB_RETRY_LIMIT },
           );
         }
 

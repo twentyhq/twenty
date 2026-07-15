@@ -174,9 +174,11 @@ describe('CreateCompanyService', () => {
       await service.createOrRestoreCompanies([companyToCreate1], workspaceId);
 
       expect(mockCompanyRepository.find).toHaveBeenCalled();
-      expect(mockCompanyRepository.save).toHaveBeenCalledWith([
-        inputForCompanyToCreate1,
-      ]);
+      expect(mockCompanyRepository.save).toHaveBeenCalledWith(
+        [inputForCompanyToCreate1],
+        undefined,
+        undefined,
+      );
     });
 
     it('should successfully two companies', async () => {
@@ -200,10 +202,11 @@ describe('CreateCompanyService', () => {
       );
 
       expect(mockCompanyRepository.find).toHaveBeenCalled();
-      expect(mockCompanyRepository.save).toHaveBeenCalledWith([
-        inputForCompanyToCreate1,
-        inputForCompanyToCreate2,
-      ]);
+      expect(mockCompanyRepository.save).toHaveBeenCalledWith(
+        [inputForCompanyToCreate1, inputForCompanyToCreate2],
+        undefined,
+        undefined,
+      );
     });
 
     it('should create only one of example.com & example.com/ ', async () => {
@@ -221,6 +224,8 @@ describe('CreateCompanyService', () => {
             },
           }),
         ]),
+        undefined,
+        undefined,
       );
     });
   });
@@ -246,7 +251,11 @@ describe('CreateCompanyService', () => {
       );
 
       expect(mockCompanyRepository.find).toHaveBeenCalled();
-      expect(mockCompanyRepository.save).toHaveBeenCalledWith([]);
+      expect(mockCompanyRepository.save).toHaveBeenCalledWith(
+        [],
+        undefined,
+        undefined,
+      );
     });
   });
 
@@ -274,7 +283,11 @@ describe('CreateCompanyService', () => {
       await service.createOrRestoreCompanies([companyToRestore], workspaceId);
 
       expect(mockCompanyRepository.find).toHaveBeenCalled();
-      expect(mockCompanyRepository.save).toHaveBeenCalledWith([]);
+      expect(mockCompanyRepository.save).toHaveBeenCalledWith(
+        [],
+        undefined,
+        undefined,
+      );
       expect(mockCompanyRepository.updateMany).toHaveBeenCalledWith(
         [
           {

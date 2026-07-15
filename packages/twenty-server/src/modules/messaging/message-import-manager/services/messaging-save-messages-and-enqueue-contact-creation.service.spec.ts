@@ -273,6 +273,7 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
           },
         ],
       },
+      { retryLimit: 3 },
     );
   });
 
@@ -303,6 +304,7 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
         source: FieldActorSource.EMAIL,
         contactsToCreate: [],
       },
+      { retryLimit: 3 },
     );
   });
   it('should not create contact if the participant is the connected account', async () => {
@@ -340,6 +342,7 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
         source: FieldActorSource.EMAIL,
         contactsToCreate: [],
       },
+      { retryLimit: 3 },
     );
   });
 
@@ -376,6 +379,7 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
         source: FieldActorSource.EMAIL,
         contactsToCreate: [],
       },
+      { retryLimit: 3 },
     );
   });
 });

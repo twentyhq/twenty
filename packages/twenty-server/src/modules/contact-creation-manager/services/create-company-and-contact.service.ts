@@ -13,10 +13,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { type DeepPartial, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CONTACTS_CREATION_BATCH_SIZE } from 'src/modules/contact-creation-manager/constants/contacts-creation-batch-size.constant';
@@ -39,7 +39,6 @@ export class CreateCompanyAndPersonService {
     private readonly createPersonService: CreatePersonService,
     private readonly createCompaniesService: CreateCompanyService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly exceptionHandlerService: ExceptionHandlerService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -125,46 +124,63 @@ export class CreateCompanyAndPersonService {
             accountOwner,
           );
 
-        const companiesMap =
-          await this.createCompaniesService.createOrRestoreCompanies(
+        const companiesToPersist =
+          await this.createCompaniesService.prepareCompaniesToPersist(
             workDomainNamesToCreate,
             workspaceId,
           );
 
-        const peopleToCreate = this.formatPeopleToCreateFromContacts({
-          contactsToCreate: contactsThatNeedPersonCreate,
-          createdBy: {
-            source: source,
-            workspaceMember: accountOwner,
-            context: {
-              provider: connectedAccount.provider,
-            },
+        const workspaceDataSource =
+          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+
+        return workspaceDataSource.transaction(
+          async (transactionManager: WorkspaceEntityManager) => {
+            const companiesMap =
+              await this.createCompaniesService.persistCompanies(
+                companiesToPersist,
+                workspaceId,
+                transactionManager,
+              );
+
+            const peopleToCreate = this.formatPeopleToCreateFromContacts({
+              contactsToCreate: contactsThatNeedPersonCreate,
+              createdBy: {
+                source: source,
+                workspaceMember: accountOwner,
+                context: {
+                  provider: connectedAccount.provider,
+                },
+              },
+              companiesMap,
+            });
+
+            const createdPeople = await this.createPersonService.createPeople(
+              peopleToCreate,
+              workspaceId,
+              transactionManager,
+            );
+
+            const peopleToRestore = this.formatPeopleToRestoreFromContacts({
+              contactsToRestore: contactsThatNeedPersonRestore,
+              companiesMap,
+              shouldCreateOrRestorePeopleByHandleMap,
+            });
+
+            const restoredPeople = await this.createPersonService.restorePeople(
+              peopleToRestore,
+              workspaceId,
+              transactionManager,
+            );
+
+            await this.createPersonService.enrichPeopleNames(
+              peopleToEnrichNames,
+              workspaceId,
+              transactionManager,
+            );
+
+            return { ...createdPeople, ...restoredPeople };
           },
-          companiesMap,
-        });
-
-        const createdPeople = await this.createPersonService.createPeople(
-          peopleToCreate,
-          workspaceId,
         );
-
-        const peopleToRestore = this.formatPeopleToRestoreFromContacts({
-          contactsToRestore: contactsThatNeedPersonRestore,
-          companiesMap,
-          shouldCreateOrRestorePeopleByHandleMap,
-        });
-
-        const restoredPeople = await this.createPersonService.restorePeople(
-          peopleToRestore,
-          workspaceId,
-        );
-
-        await this.createPersonService.enrichPeopleNames(
-          peopleToEnrichNames,
-          workspaceId,
-        );
-
-        return { ...createdPeople, ...restoredPeople };
       },
       authContext,
     );
@@ -210,6 +226,8 @@ export class CreateCompanyAndPersonService {
         authContext,
       );
 
+    const failedBatchErrors: Error[] = [];
+
     for (const contactsBatch of contactsBatches) {
       try {
         await this.createCompaniesAndPeople(
@@ -220,12 +238,16 @@ export class CreateCompanyAndPersonService {
           accountOwner,
         );
       } catch (error) {
-        this.exceptionHandlerService.captureExceptions([error], {
-          workspace: {
-            id: workspaceId,
-          },
-        });
+        failedBatchErrors.push(
+          error instanceof Error ? error : new Error(String(error)),
+        );
       }
+    }
+
+    if (failedBatchErrors.length > 0) {
+      throw new Error(
+        `Contact creation failed for ${failedBatchErrors.length}/${contactsBatches.length} batch(es) in workspace ${workspaceId}: ${failedBatchErrors[0].message}`,
+      );
     }
   }
 
