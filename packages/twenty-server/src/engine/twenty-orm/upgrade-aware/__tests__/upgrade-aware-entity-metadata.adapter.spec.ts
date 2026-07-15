@@ -12,6 +12,7 @@ import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/
 import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
+import { UPGRADE_METADATA_REFRESH_INTERVAL_MS } from 'src/engine/twenty-orm/upgrade-aware/constants/upgrade-metadata-refresh-interval.constant';
 import { UpgradeAwareEntityMetadataAdapter } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-entity-metadata.adapter';
 
 const RENAME_STEP = '2.6.0_Rename_1700000000000';
@@ -41,6 +42,11 @@ const buildColumn = (propertyName: string): ColumnMetadata =>
     isInsert: true,
     isUpdate: true,
   }) as unknown as ColumnMetadata;
+
+const flushMicrotasks = async (): Promise<void> => {
+  await Promise.resolve();
+  await Promise.resolve();
+};
 
 describe('UpgradeAwareEntityMetadataAdapter', () => {
   it('rewrites tableName / tablePath / givenTableName when the rename step is not yet applied', async () => {
@@ -251,5 +257,187 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
     await adapter.onModuleInit();
 
     await expect(adapter.refreshOnSchedule()).resolves.toBeUndefined();
+
+    adapter.onModuleDestroy();
+  });
+
+  it('refreshOnSchedule skips a run while a previous refresh is still in flight', async () => {
+    const dataSource = {
+      entityMetadatas: [],
+    } as unknown as DataSource;
+
+    let releaseInFlightRead!: () => void;
+    const getLastAttemptedInstanceCommand = jest
+      .fn()
+      .mockResolvedValueOnce(null);
+
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        UpgradeAwareEntityMetadataAdapter,
+        {
+          provide: UpgradeMigrationService,
+          useValue: { getLastAttemptedInstanceCommand },
+        },
+        {
+          provide: UpgradeSequenceReaderService,
+          useValue: {
+            getUpgradeSequence: jest.fn().mockReturnValue([]),
+          },
+        },
+        { provide: getDataSourceToken(), useValue: dataSource },
+      ],
+    }).compile();
+
+    const adapter = moduleRef.get(UpgradeAwareEntityMetadataAdapter);
+
+    await adapter.onModuleInit();
+
+    getLastAttemptedInstanceCommand.mockClear();
+    getLastAttemptedInstanceCommand.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          releaseInFlightRead = () => resolve(null);
+        }),
+    );
+
+    const firstRun = adapter.refreshOnSchedule();
+    const secondRun = adapter.refreshOnSchedule();
+
+    await flushMicrotasks();
+
+    expect(getLastAttemptedInstanceCommand).toHaveBeenCalledTimes(1);
+
+    releaseInFlightRead();
+    await Promise.all([firstRun, secondRun]);
+
+    adapter.onModuleDestroy();
+  });
+
+  it('serializes concurrent refresh calls so a slow stale read cannot roll the cursor backwards', async () => {
+    const removedColumn = buildColumn('removedColumn');
+    const visibleColumn = buildColumn('visibleColumn');
+
+    const metadata = {
+      target: EntityWithHideableColumns,
+      tableName: 'entityWithHideableColumns',
+      tablePath: 'core.entityWithHideableColumns',
+      givenTableName: 'entityWithHideableColumns',
+      schema: 'core',
+      columns: [removedColumn, visibleColumn],
+    } as unknown as EntityMetadata;
+
+    const dataSource = {
+      entityMetadatas: [metadata],
+    } as unknown as DataSource;
+
+    let releaseStaleRead!: () => void;
+    const getLastAttemptedInstanceCommand = jest
+      .fn()
+      .mockResolvedValueOnce(null);
+
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        UpgradeAwareEntityMetadataAdapter,
+        {
+          provide: UpgradeMigrationService,
+          useValue: { getLastAttemptedInstanceCommand },
+        },
+        {
+          provide: UpgradeSequenceReaderService,
+          useValue: {
+            getUpgradeSequence: jest
+              .fn()
+              .mockReturnValue([
+                { name: REMOVE_STEP },
+                { name: INTRODUCE_STEP },
+              ]),
+          },
+        },
+        { provide: getDataSourceToken(), useValue: dataSource },
+      ],
+    }).compile();
+
+    const adapter = moduleRef.get(UpgradeAwareEntityMetadataAdapter);
+
+    await adapter.onModuleInit();
+
+    // First refresh hangs on a stale read (migration not completed yet),
+    // second refresh reads the completed migration.
+    getLastAttemptedInstanceCommand.mockClear();
+    getLastAttemptedInstanceCommand.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          releaseStaleRead = () => resolve(null);
+        }),
+    );
+    getLastAttemptedInstanceCommand.mockResolvedValue({
+      name: REMOVE_STEP,
+      status: 'completed',
+    });
+
+    const staleRefresh = adapter.refresh();
+    const freshRefresh = adapter.refresh();
+
+    await flushMicrotasks();
+
+    // The second read must not start until the first one has finished.
+    expect(getLastAttemptedInstanceCommand).toHaveBeenCalledTimes(1);
+
+    releaseStaleRead();
+    await Promise.all([staleRefresh, freshRefresh]);
+
+    expect(getLastAttemptedInstanceCommand).toHaveBeenCalledTimes(2);
+    expect(removedColumn.isSelect).toBe(false);
+
+    adapter.onModuleDestroy();
+  });
+
+  it('refreshes on an interval after boot and stops after onModuleDestroy', async () => {
+    jest.useFakeTimers();
+
+    try {
+      const dataSource = {
+        entityMetadatas: [],
+      } as unknown as DataSource;
+
+      const getLastAttemptedInstanceCommand = jest.fn().mockResolvedValue(null);
+
+      const moduleRef = await Test.createTestingModule({
+        providers: [
+          UpgradeAwareEntityMetadataAdapter,
+          {
+            provide: UpgradeMigrationService,
+            useValue: { getLastAttemptedInstanceCommand },
+          },
+          {
+            provide: UpgradeSequenceReaderService,
+            useValue: {
+              getUpgradeSequence: jest.fn().mockReturnValue([]),
+            },
+          },
+          { provide: getDataSourceToken(), useValue: dataSource },
+        ],
+      }).compile();
+
+      const adapter = moduleRef.get(UpgradeAwareEntityMetadataAdapter);
+
+      await adapter.onModuleInit();
+
+      getLastAttemptedInstanceCommand.mockClear();
+
+      jest.advanceTimersByTime(UPGRADE_METADATA_REFRESH_INTERVAL_MS);
+      await flushMicrotasks();
+
+      expect(getLastAttemptedInstanceCommand).toHaveBeenCalledTimes(1);
+
+      adapter.onModuleDestroy();
+      getLastAttemptedInstanceCommand.mockClear();
+
+      jest.advanceTimersByTime(UPGRADE_METADATA_REFRESH_INTERVAL_MS * 3);
+
+      expect(getLastAttemptedInstanceCommand).not.toHaveBeenCalled();
+    } finally {
+      jest.useRealTimers();
+    }
   });
 });

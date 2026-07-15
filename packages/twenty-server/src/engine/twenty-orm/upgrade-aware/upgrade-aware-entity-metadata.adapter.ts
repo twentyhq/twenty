@@ -1,12 +1,16 @@
-import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+import {
+  Injectable,
+  Logger,
+  type OnModuleDestroy,
+  type OnModuleInit,
+} from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { type ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 import { type EntityMetadata } from 'typeorm/metadata/EntityMetadata';
 
-import { DataSource } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { DataSource } from 'typeorm';
 
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
@@ -18,7 +22,7 @@ import {
   formatUpgradeAwareDecoratorReferenceProblems,
   validateUpgradeAwareEntityDecorators,
 } from 'src/engine/core-modules/upgrade/utils/validate-upgrade-aware-entity-decorators.util';
-import { UPGRADE_METADATA_REFRESH_CRON_INTERVAL } from 'src/engine/twenty-orm/upgrade-aware/constants/upgrade-metadata-refresh-cron-interval.constant';
+import { UPGRADE_METADATA_REFRESH_INTERVAL_MS } from 'src/engine/twenty-orm/upgrade-aware/constants/upgrade-metadata-refresh-interval.constant';
 import { UpgradeAwareRepositoryState } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository-state';
 
 type EntityMetadataSnapshot = {
@@ -33,7 +37,9 @@ type EntityMetadataSnapshot = {
 };
 
 @Injectable()
-export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
+export class UpgradeAwareEntityMetadataAdapter
+  implements OnModuleInit, OnModuleDestroy
+{
   private readonly logger = new Logger(UpgradeAwareEntityMetadataAdapter.name);
 
   private readonly snapshotByMetadata = new WeakMap<
@@ -49,6 +55,9 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
 
   private stepNameToIndex: Map<string, number> = new Map();
   private currentCursor = Number.MAX_SAFE_INTEGER;
+  private refreshIntervalId: ReturnType<typeof setInterval> | null = null;
+  private isRefreshing = false;
+  private refreshChain: Promise<void> = Promise.resolve();
 
   constructor(
     @InjectDataSource()
@@ -81,10 +90,27 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
         }`,
       );
     }
+
+    this.refreshIntervalId = setInterval(() => {
+      void this.refreshOnSchedule();
+    }, UPGRADE_METADATA_REFRESH_INTERVAL_MS);
+    this.refreshIntervalId.unref();
   }
 
-  @Cron(UPGRADE_METADATA_REFRESH_CRON_INTERVAL)
+  onModuleDestroy(): void {
+    if (isDefined(this.refreshIntervalId)) {
+      clearInterval(this.refreshIntervalId);
+      this.refreshIntervalId = null;
+    }
+  }
+
   async refreshOnSchedule(): Promise<void> {
+    if (this.isRefreshing) {
+      return;
+    }
+
+    this.isRefreshing = true;
+
     try {
       await this.refresh();
     } catch (error) {
@@ -93,10 +119,20 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
           error instanceof Error ? error.message : String(error)
         }`,
       );
+    } finally {
+      this.isRefreshing = false;
     }
   }
 
   async refresh(): Promise<void> {
+    const chainedRefresh = this.refreshChain.then(() => this.executeRefresh());
+
+    this.refreshChain = chainedRefresh.catch(() => {});
+
+    return chainedRefresh;
+  }
+
+  private async executeRefresh(): Promise<void> {
     const lastAttempted =
       await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
 
