@@ -47,6 +47,15 @@ export const sanitizeRawUpdateFieldInput = ({
   // such as deletedAt / searchVector). Every structural property is derived by
   // the engine and renames flow through the owning object update. Users may only
   // edit the explicitly allowed properties (e.g. toggle activation).
+  //
+  // This guard lives here (direct updateOneField input) rather than in the
+  // engine-level FlatFieldMetadataValidatorService because the validator also
+  // sees engine-generated cascade updates (e.g. reverse morph field renamed when
+  // its object is renamed) which carry isSystemBuild=false and must be allowed.
+  // TODO(core-team-issues#2671): move to FlatFieldMetadataValidatorService as
+  // the uniform gate once operation-origin (direct field mutation vs engine
+  // cascade) is threaded through the migration matrix, then drop this API-only
+  // guard.
   if (existingFlatFieldMetadata.isSystemSideEffect === true && !isSystemBuild) {
     const forbiddenUpdatedProperties = Object.keys(
       updatedEditableFieldProperties,

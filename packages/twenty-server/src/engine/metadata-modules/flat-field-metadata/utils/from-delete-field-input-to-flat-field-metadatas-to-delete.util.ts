@@ -69,6 +69,16 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
   // Engine-owned side effects (e.g. default relation fields to standard objects)
   // are provisioned and torn down by the metadata side-effect engine, never
   // deleted directly through the API.
+  //
+  // This guard lives here (direct deleteOneField input) rather than in the
+  // engine-level FlatFieldMetadataValidatorService because the validator also
+  // sees engine-generated cascade deletes (e.g. morph-part removed when a
+  // participating object is deleted) which must be allowed even though the
+  // standard parent object is not itself deleted.
+  // TODO(core-team-issues#2671): move to FlatFieldMetadataValidatorService as
+  // the uniform gate once operation-origin (direct field mutation vs engine
+  // cascade) is threaded through the migration matrix, then drop this API-only
+  // guard.
   if (flatFieldMetadataToDelete.isSystemSideEffect === true) {
     throw new FieldMetadataException(
       `Cannot delete system-managed field "${flatFieldMetadataToDelete.name}"`,
