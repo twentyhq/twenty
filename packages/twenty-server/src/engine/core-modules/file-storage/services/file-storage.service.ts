@@ -419,7 +419,9 @@ export class FileStorageService {
     });
   }
 
-  async deleteFile(params: ResourceIdentifier): Promise<void> {
+  async deleteFile(
+    params: ResourceIdentifier & { applicationId?: string },
+  ): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
     const { onStorageFilePath, filePath } =
       this.validateAndBuildFileStoragePathOrThrow(params);
@@ -429,10 +431,12 @@ export class FileStorageService {
       filename: basename(onStorageFilePath),
     });
 
-    const applicationId = await this.resolveApplicationIdOrThrow({
-      applicationUniversalIdentifier: params.applicationUniversalIdentifier,
-      workspaceId: params.workspaceId,
-    });
+    const applicationId =
+      params.applicationId ??
+      (await this.resolveApplicationIdOrThrow({
+        applicationUniversalIdentifier: params.applicationUniversalIdentifier,
+        workspaceId: params.workspaceId,
+      }));
 
     await this.fileRepository.delete(params.workspaceId, {
       path: filePath,
@@ -498,6 +502,7 @@ export class FileStorageService {
     await this.deleteFile({
       workspaceId,
       applicationUniversalIdentifier,
+      applicationId: file.applicationId,
       fileFolder,
       resourcePath: removeFileFolderFromFileEntityPath(file.path),
     });
