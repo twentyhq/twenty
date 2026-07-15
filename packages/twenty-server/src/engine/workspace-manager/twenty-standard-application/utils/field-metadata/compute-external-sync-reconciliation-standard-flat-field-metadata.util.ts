@@ -1,9 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
-import {
-  DateDisplayFormat,
-  FieldMetadataType,
-} from 'twenty-shared/types';
+import { DateDisplayFormat, FieldMetadataType } from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -160,9 +157,7 @@ export const buildExternalSyncReconciliationStandardFlatFieldMetadatas = ({
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
       label: i18nLabel(msg`Position`),
-      description: i18nLabel(
-        msg`External sync reconciliation record position`,
-      ),
+      description: i18nLabel(msg`External sync reconciliation record position`),
       icon: 'IconHierarchy2',
       isSystem: true,
       isNullable: false,

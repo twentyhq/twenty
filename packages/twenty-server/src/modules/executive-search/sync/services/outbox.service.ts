@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { IsNull, LessThan, Or } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -48,59 +49,64 @@ export class ExecutiveSearchOutboxService {
    * Persist an outbound event to the outbox.  Duplicate idempotency keys
    * are silently ignored (the existing entry is returned unchanged).
    */
-  async enqueue(input: OutboxEventInput): Promise<ExternalSyncOutboxWorkspaceEntity | null> {
+  async enqueue(
+    input: OutboxEventInput,
+  ): Promise<ExternalSyncOutboxWorkspaceEntity | null> {
     const authContext = buildSystemAuthContext(input.workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const repository = await this.globalWorkspaceOrmManager.getRepository(
-        input.workspaceId,
-        ExternalSyncOutboxWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
-
-      // Deduplicate by domain idempotency key
-      const existing = await repository.findOneBy({
-        domainIdempotencyKey: input.domainIdempotencyKey,
-      });
-
-      if (existing) {
-        this.logger.debug(
-          `Outbox event already exists for key "${input.domainIdempotencyKey}" — skipping`,
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const repository = await this.globalWorkspaceOrmManager.getRepository(
+          input.workspaceId,
+          ExternalSyncOutboxWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
         );
-        return existing;
-      }
 
-      const entity = repository.create({
-        workspaceId: input.workspaceId,
-        eventId: v4(),
-        domainIdempotencyKey: input.domainIdempotencyKey,
-        eventType: input.eventType,
-        entityName: input.entityName,
-        entityId: input.entityId,
-        payload: input.payload,
-        status: OUTBOX_STATUS.PENDING,
-        retryCount: 0,
-        maxRetries: input.maxRetries ?? 3,
-        lastError: null,
-        nextRetryAt: null,
-      });
+        // Deduplicate by domain idempotency key
+        const existing = await repository.findOneBy({
+          domainIdempotencyKey: input.domainIdempotencyKey,
+        });
 
-      const saved = await repository.save(entity);
+        if (existing) {
+          this.logger.debug(
+            `Outbox event already exists for key "${input.domainIdempotencyKey}" — skipping`,
+          );
+          return existing;
+        }
 
-      // Enqueue for async processing
-      await this.messageQueueService.add(
-        ExecutiveSyncProcessOutboxJob.name,
-        {
+        const entity = repository.create({
           workspaceId: input.workspaceId,
-          outboxId: saved.id,
-        },
-        {
-          retryLimit: 3,
-        },
-      );
+          eventId: v4(),
+          domainIdempotencyKey: input.domainIdempotencyKey,
+          eventType: input.eventType,
+          entityName: input.entityName,
+          entityId: input.entityId,
+          payload: input.payload,
+          status: OUTBOX_STATUS.PENDING,
+          retryCount: 0,
+          maxRetries: input.maxRetries ?? 3,
+          lastError: null,
+          nextRetryAt: null,
+        });
 
-      return saved;
-    }, authContext);
+        const saved = await repository.save(entity);
+
+        // Enqueue for async processing
+        await this.messageQueueService.add(
+          ExecutiveSyncProcessOutboxJob.name,
+          {
+            workspaceId: input.workspaceId,
+            outboxId: saved.id,
+          },
+          {
+            retryLimit: 3,
+          },
+        );
+
+        return saved;
+      },
+      authContext,
+    );
   }
 
   /**
@@ -156,6 +162,7 @@ export class ExecutiveSearchOutboxService {
         updates.nextRetryAt = new Date(Date.now() + delayMs).toISOString();
       }
 
+      // TwentyORM workspace-scoped repository update expects plain values
       await repository.update(outboxId, updates as any);
     }, authContext);
   }
@@ -169,23 +176,26 @@ export class ExecutiveSearchOutboxService {
     limit = 100,
   ): Promise<ExternalSyncOutboxWorkspaceEntity[]> {
     const authContext = buildSystemAuthContext(workspaceId);
-    const now = new Date().toISOString();
+    const now = new Date();
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const repository = await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        ExternalSyncOutboxWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const repository = await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          ExternalSyncOutboxWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+        );
 
-      return repository.find({
-        where: [
-          { status: OUTBOX_STATUS.PENDING, nextRetryAt: null },
-          { status: OUTBOX_STATUS.PENDING, nextRetryAt: { $lt: now } } as any,
-        ],
-        order: { createdAt: 'ASC' },
-        take: limit,
-      });
-    }, authContext);
+        return repository.find({
+          where: {
+            status: OUTBOX_STATUS.PENDING,
+            nextRetryAt: Or(IsNull(), LessThan(now)),
+          },
+          order: { createdAt: 'ASC' },
+          take: limit,
+        });
+      },
+      authContext,
+    );
   }
 }

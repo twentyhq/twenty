@@ -50,8 +50,7 @@ const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   company: buildCompanyStandardFlatIndexMetadatas,
   dashboard: buildDashboardStandardFlatIndexMetadatas,
   externalEntityLink: buildExternalEntityLinkStandardFlatIndexMetadatas,
-  externalSyncCheckpoint:
-    buildExternalSyncCheckpointStandardFlatIndexMetadatas,
+  externalSyncCheckpoint: buildExternalSyncCheckpointStandardFlatIndexMetadatas,
   externalSyncInbox: buildExternalSyncInboxStandardFlatIndexMetadatas,
   externalSyncOutbox: buildExternalSyncOutboxStandardFlatIndexMetadatas,
   messageCampaign: buildMessageCampaignStandardFlatIndexMetadatas,

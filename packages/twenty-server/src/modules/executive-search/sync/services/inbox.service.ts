@@ -43,53 +43,58 @@ export class ExecutiveSearchInboxService {
    * Receive an external event.  Returns the inbox entry (new or existing).
    * Duplicates are marked and never re-processed.
    */
-  async receive(input: InboxEventInput): Promise<ExternalSyncInboxWorkspaceEntity | null> {
+  async receive(
+    input: InboxEventInput,
+  ): Promise<ExternalSyncInboxWorkspaceEntity | null> {
     const authContext = buildSystemAuthContext(input.workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const repository = await this.globalWorkspaceOrmManager.getRepository(
-        input.workspaceId,
-        ExternalSyncInboxWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
-
-      // Idempotency: check for existing event from the same external source
-      const existing = await repository.findOneBy({
-        externalEventId: input.externalEventId,
-        externalSystemName: input.externalSystemName,
-      });
-
-      if (existing) {
-        this.logger.debug(
-          `Duplicate inbox event "${input.externalEventId}" from "${input.externalSystemName}" — skipping`,
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const repository = await this.globalWorkspaceOrmManager.getRepository(
+          input.workspaceId,
+          ExternalSyncInboxWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
         );
 
-        // If somehow still PENDING, mark as DUPLICATE
-        if (existing.status === INBOX_STATUS.PENDING) {
-          await repository.update(existing.id, {
-            status: INBOX_STATUS.DUPLICATE,
-          });
-          existing.status = INBOX_STATUS.DUPLICATE;
+        // Idempotency: check for existing event from the same external source
+        const existing = await repository.findOneBy({
+          externalEventId: input.externalEventId,
+          externalSystemName: input.externalSystemName,
+        });
+
+        if (existing) {
+          this.logger.debug(
+            `Duplicate inbox event "${input.externalEventId}" from "${input.externalSystemName}" — skipping`,
+          );
+
+          // If somehow still PENDING, mark as DUPLICATE
+          if (existing.status === INBOX_STATUS.PENDING) {
+            await repository.update(existing.id, {
+              status: INBOX_STATUS.DUPLICATE,
+            });
+            existing.status = INBOX_STATUS.DUPLICATE;
+          }
+
+          return existing;
         }
 
-        return existing;
-      }
+        const entity = repository.create({
+          workspaceId: input.workspaceId,
+          externalEventId: input.externalEventId,
+          externalSystemName: input.externalSystemName,
+          eventType: input.eventType,
+          entityName: input.entityName,
+          entityId: input.entityId,
+          payload: input.payload,
+          status: INBOX_STATUS.PENDING,
+          processedAt: null,
+          error: null,
+        });
 
-      const entity = repository.create({
-        workspaceId: input.workspaceId,
-        externalEventId: input.externalEventId,
-        externalSystemName: input.externalSystemName,
-        eventType: input.eventType,
-        entityName: input.entityName,
-        entityId: input.entityId,
-        payload: input.payload,
-        status: INBOX_STATUS.PENDING,
-        processedAt: null,
-        error: null,
-      });
-
-      return repository.save(entity);
-    }, authContext);
+        return repository.save(entity);
+      },
+      authContext,
+    );
   }
 
   /**
@@ -144,18 +149,21 @@ export class ExecutiveSearchInboxService {
   async isEcho(workspaceId: string, externalEventId: string): Promise<boolean> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const repository = await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        ExternalSyncOutboxWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const repository = await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          ExternalSyncOutboxWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+        );
 
-      const match = await repository.findOneBy({
-        eventId: externalEventId,
-      });
+        const match = await repository.findOneBy({
+          eventId: externalEventId,
+        });
 
-      return !!match;
-    }, authContext);
+        return !!match;
+      },
+      authContext,
+    );
   }
 }

@@ -32,19 +32,22 @@ export class ExecutiveSearchReplayService {
   ): Promise<ExternalSyncOutboxWorkspaceEntity[]> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const repository = await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        ExternalSyncOutboxWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const repository = await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          ExternalSyncOutboxWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+        );
 
-      return repository.find({
-        where: { status: 'PENDING' },
-        order: { createdAt: 'ASC' },
-        take: ExecutiveSearchReplayService.MAX_BATCH_SIZE,
-      });
-    }, authContext);
+        return repository.find({
+          where: { status: 'PENDING' },
+          order: { createdAt: 'ASC' },
+          take: ExecutiveSearchReplayService.MAX_BATCH_SIZE,
+        });
+      },
+      authContext,
+    );
   }
 
   /**
@@ -55,19 +58,22 @@ export class ExecutiveSearchReplayService {
   ): Promise<ExternalSyncInboxWorkspaceEntity[]> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const repository = await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        ExternalSyncInboxWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const repository = await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          ExternalSyncInboxWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+        );
 
-      return repository.find({
-        where: { status: 'FAILED' },
-        order: { createdAt: 'ASC' },
-        take: ExecutiveSearchReplayService.MAX_BATCH_SIZE,
-      });
-    }, authContext);
+        return repository.find({
+          where: { status: 'FAILED' },
+          order: { createdAt: 'ASC' },
+          take: ExecutiveSearchReplayService.MAX_BATCH_SIZE,
+        });
+      },
+      authContext,
+    );
   }
 
   /**

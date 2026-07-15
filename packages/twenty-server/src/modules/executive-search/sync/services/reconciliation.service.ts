@@ -36,30 +36,33 @@ export class ExecutiveSearchReconciliationService {
   ): Promise<ExternalSyncReconciliationWorkspaceEntity> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const repository = await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        ExternalSyncReconciliationWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const repository = await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          ExternalSyncReconciliationWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+        );
 
-      const entity = repository.create({
-        workspaceId,
-        externalSystemName,
-        entityName,
-        startedAt: new Date().toISOString(),
-        completedAt: null,
-        status: RECONCILIATION_STATUS.RUNNING,
-        totalCompared: 0,
-        matched: 0,
-        onlyInTwenty: 0,
-        onlyInExternal: 0,
-        differenceCount: 0,
-        findings: null,
-      });
+        const entity = repository.create({
+          workspaceId,
+          externalSystemName,
+          entityName,
+          startedAt: new Date().toISOString(),
+          completedAt: null,
+          status: RECONCILIATION_STATUS.RUNNING,
+          totalCompared: 0,
+          matched: 0,
+          onlyInTwenty: 0,
+          onlyInExternal: 0,
+          differenceCount: 0,
+          findings: null,
+        });
 
-      return repository.save(entity);
-    }, authContext);
+        return repository.save(entity);
+      },
+      authContext,
+    );
   }
 
   /**
@@ -86,6 +89,7 @@ export class ExecutiveSearchReconciliationService {
         { shouldBypassPermissionChecks: true },
       );
 
+      // TwentyORM workspace-scoped repository update expects plain values
       await repository.update(runId, {
         status: RECONCILIATION_STATUS.COMPLETED,
         completedAt: new Date().toISOString(),
@@ -108,17 +112,20 @@ export class ExecutiveSearchReconciliationService {
   ): Promise<ExternalSyncReconciliationWorkspaceEntity[]> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const repository = await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        ExternalSyncReconciliationWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const repository = await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          ExternalSyncReconciliationWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+        );
 
-      return repository.find({
-        order: { startedAt: 'DESC' },
-        take: limit,
-      });
-    }, authContext);
+        return repository.find({
+          order: { startedAt: 'DESC' },
+          take: limit,
+        });
+      },
+      authContext,
+    );
   }
 }
