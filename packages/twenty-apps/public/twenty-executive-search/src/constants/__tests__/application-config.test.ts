@@ -47,16 +47,15 @@ describe('application-config validation', () => {
       'executive-search-default-role',
     );
     expect(result.config.canReadAllObjectRecords).toBe(false);
+    expect(result.config.objectPermissions).toBeDefined();
     const permissions = result.config.objectPermissions;
-    expect(permissions).toBeDefined();
-    if (permissions) {
-      expect(permissions).toHaveLength(6);
-      for (const perm of permissions) {
-        expect(perm.canReadObjectRecords).toBe(true);
-        expect(perm.canUpdateObjectRecords).toBe(true);
-        expect(perm.canSoftDeleteObjectRecords).toBe(false);
-        expect(perm.canDestroyObjectRecords).toBe(false);
-      }
+    if (!permissions) throw new Error('objectPermissions missing');
+    expect(permissions).toHaveLength(6);
+    for (const perm of permissions) {
+      expect(perm.canReadObjectRecords).toBe(true);
+      expect(perm.canUpdateObjectRecords).toBe(true);
+      expect(perm.canSoftDeleteObjectRecords).toBe(false);
+      expect(perm.canDestroyObjectRecords).toBe(false);
     }
   });
 });
