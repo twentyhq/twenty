@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
+import { FirewallModule } from 'src/modules/executive-search/firewall/firewall.module';
 import { ExecutiveSearchOutboxService } from 'src/modules/executive-search/sync/services/outbox.service';
 import { ExecutiveSearchInboxService } from 'src/modules/executive-search/sync/services/inbox.service';
 import { ExecutiveSearchDLQService } from 'src/modules/executive-search/sync/services/dlq.service';
@@ -27,6 +28,7 @@ import { ExternalSyncReconciliationWorkspaceEntity } from 'src/modules/executive
     ]),
     TwentyORMModule,
     WorkspaceEventEmitterModule,
+    FirewallModule,
   ],
   providers: [
     ExecutiveSearchOutboxService,
