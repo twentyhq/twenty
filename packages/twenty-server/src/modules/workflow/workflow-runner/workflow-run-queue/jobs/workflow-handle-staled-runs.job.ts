@@ -19,12 +19,13 @@ export class WorkflowHandleStaledRunsJob {
   async handle({
     workspaceId,
   }: WorkflowHandleStaledRunsJobData): Promise<void> {
-    await this.workflowHandleStaledRunsWorkspaceService.handleStaledRunsForWorkspace(
-      workspaceId,
-    );
-
-    await this.workflowHandleStaledRunsWorkspaceService.handleStuckStoppingRunsForWorkspace(
-      workspaceId,
-    );
+    await Promise.all([
+      this.workflowHandleStaledRunsWorkspaceService.handleStaledRunsForWorkspace(
+        workspaceId,
+      ),
+      this.workflowHandleStaledRunsWorkspaceService.handleStuckStoppingRunsForWorkspace(
+        workspaceId,
+      ),
+    ]);
   }
 }
