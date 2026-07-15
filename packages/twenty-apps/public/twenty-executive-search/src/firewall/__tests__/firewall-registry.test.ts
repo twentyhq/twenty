@@ -135,7 +135,7 @@ describe('getProhibitedSelectorsForContext', () => {
     ['client_report', 2],
     ['slate_presentation', 1],
     ['pipeline_automation', 1],
-  ] as const)('returns %i selectors for %s', (context, expectedCount) => {
+  ] as const)('%s has %i prohibited selectors', (context, expectedCount) => {
     expect(getProhibitedSelectorsForContext(context).length).toBe(
       expectedCount,
     );

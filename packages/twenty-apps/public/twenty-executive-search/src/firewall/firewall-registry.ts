@@ -37,7 +37,7 @@ export type FirewallProhibitedEntry = {
   status: FirewallProhibitedStatus;
 };
 
-export const FIREWALL_PROHIBITED_ENTRIES: FirewallProhibitedEntry[] = [
+export const FIREWALL_PROHIBITED_ENTRIES: readonly FirewallProhibitedEntry[] = [
   {
     selector: 'subscription_tier',
     context: 'search_filter',
