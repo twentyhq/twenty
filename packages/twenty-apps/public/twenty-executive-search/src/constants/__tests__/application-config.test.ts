@@ -47,6 +47,18 @@ describe('application-config validation', () => {
       'executive-search-default-role',
     );
     expect(result.config.canReadAllObjectRecords).toBe(false);
-    expect(result.config.objectPermissions).toEqual([]);
+    expect(result.config.objectPermissions).toHaveLength(11);
+    for (const perm of result.config.objectPermissions) {
+      expect(perm.canReadObjectRecords).toBe(true);
+      expect(perm.canUpdateObjectRecords).toBe(false);
+      expect(perm.canSoftDeleteObjectRecords).toBe(false);
+      expect(perm.canDestroyObjectRecords).toBe(false);
+    }
+    expect(
+      result.config.objectPermissions.some(
+        (p) =>
+          p.objectUniversalIdentifier === '20202020-e674-48e5-a542-72570eee7213',
+      ),
+    ).toBe(true);
   });
 });
