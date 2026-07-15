@@ -130,8 +130,12 @@ describe('OutboundPublishIntegration', () => {
       );
     });
 
-    it('should use Date.now() in idempotency key when updatedAt is missing', async () => {
-      const recordWithoutUpdatedAt = { id: companyId, name: 'No Date Corp' };
+    it('should use record.updatedAt directly in the idempotency key', async () => {
+      const recordWithCustomUpdatedAt = {
+        id: companyId,
+        name: 'Custom Date Corp',
+        updatedAt: '2026-01-01T00:00:00Z',
+      };
       const payload: WorkspaceEventBatch<any> = {
         workspaceId,
         name: 'company.created',
@@ -139,23 +143,18 @@ describe('OutboundPublishIntegration', () => {
         events: [
           {
             recordId: companyId,
-            properties: { after: recordWithoutUpdatedAt },
+            properties: { after: recordWithCustomUpdatedAt },
           },
         ],
       };
 
-      const before = Date.now();
       await listener.handleCompanyCreated(payload);
-      const after = Date.now();
 
       const input = mockOutboxService.enqueue.mock
         .calls[0][0] as OutboxEventInput;
-      const timestampInKey = parseInt(
-        input.domainIdempotencyKey.split(':').pop() ?? '0',
-        10,
+      expect(input.domainIdempotencyKey).toBe(
+        `${workspaceId}:company.projection_updated:${companyId}:2026-01-01T00:00:00Z`,
       );
-      expect(timestampInKey).toBeGreaterThanOrEqual(before);
-      expect(timestampInKey).toBeLessThanOrEqual(after);
     });
   });
 

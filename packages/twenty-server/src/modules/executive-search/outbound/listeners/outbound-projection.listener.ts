@@ -78,8 +78,8 @@ export class OutboundProjectionListener {
       // Map to event type (the mapper returns correct eventType per action)
       const mapped = this.mapper.mapCompanyEvent(action, record);
 
-      // Build domain idempotency key
-      const domainIdempotencyKey = `${workspaceId}:${mapped.eventType}:${event.recordId}:${record.updatedAt ?? Date.now()}`;
+      // Build domain idempotency key (updatedAt is always present on Twenty standard objects)
+      const domainIdempotencyKey = `${workspaceId}:${mapped.eventType}:${event.recordId}:${record.updatedAt}`;
 
       // Enqueue
       await this.outboxService.enqueue({
