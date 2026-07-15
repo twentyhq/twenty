@@ -407,6 +407,7 @@ export class BillingSubscriptionService {
         currentBillingSubscription.status,
       )
     ) {
+      // TODO: drop the ::text cast once the CREATED enum migration has run everywhere (follow-up PR of #22904)
       const activationResult = await this.workspaceRepository
         .createQueryBuilder()
         .update()
