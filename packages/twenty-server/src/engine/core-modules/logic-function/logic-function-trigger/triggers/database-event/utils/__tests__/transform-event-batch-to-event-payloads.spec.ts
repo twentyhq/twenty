@@ -333,6 +333,139 @@ describe('transformEventBatchToEventPayloads', () => {
     });
   });
 
+  describe('upserted updatedFields filtering', () => {
+    it('should filter upserted events to only those matching updatedFields', () => {
+      const workspaceEventBatch = createMockWorkspaceEventBatch({
+        name: 'company.upserted',
+        events: [
+          createMockEvent({
+            recordId: 'record-1',
+            properties: { after: {}, updatedFields: ['name'] },
+          }),
+          createMockEvent({
+            recordId: 'record-2',
+            properties: { after: {}, updatedFields: ['address'] },
+          }),
+          createMockEvent({
+            recordId: 'record-3',
+            properties: { after: {}, updatedFields: ['name'] },
+          }),
+        ],
+      });
+      const logicFunctions = [
+        createMockLogicFunction({
+          databaseEventTriggerSettings: {
+            eventName: 'company.upserted',
+            updatedFields: ['name'],
+          },
+        }),
+      ];
+
+      const result = transformEventBatchToEventPayloads({
+        workspaceEventBatch,
+        logicFunctions,
+      });
+
+      expect(result).toHaveLength(2);
+      expect(
+        result.map((r) => (r.payload as ObjectRecordEvent).recordId),
+      ).toEqual(['record-1', 'record-3']);
+    });
+
+    it('should exclude upserted events whose changed fields do not match the filter', () => {
+      const workspaceEventBatch = createMockWorkspaceEventBatch({
+        name: 'company.upserted',
+        events: [
+          createMockEvent({
+            recordId: 'record-1',
+            properties: { after: {}, updatedFields: ['name'] },
+          }),
+          createMockEvent({
+            recordId: 'record-2',
+            properties: { after: {}, updatedFields: ['address'] },
+          }),
+        ],
+      });
+      const logicFunctions = [
+        createMockLogicFunction({
+          databaseEventTriggerSettings: {
+            eventName: 'company.upserted',
+            updatedFields: ['phone'],
+          },
+        }),
+      ];
+
+      const result = transformEventBatchToEventPayloads({
+        workspaceEventBatch,
+        logicFunctions,
+      });
+
+      expect(result).toHaveLength(0);
+    });
+
+    it('should pass pure-create upserted events (no updatedFields) through the filter', () => {
+      const workspaceEventBatch = createMockWorkspaceEventBatch({
+        name: 'company.upserted',
+        events: [
+          createMockEvent({
+            recordId: 'record-1',
+            properties: { after: {} },
+          }),
+          createMockEvent({
+            recordId: 'record-2',
+            properties: { after: {}, updatedFields: ['name'] },
+          }),
+        ],
+      });
+      const logicFunctions = [
+        createMockLogicFunction({
+          databaseEventTriggerSettings: {
+            eventName: 'company.upserted',
+            updatedFields: ['name'],
+          },
+        }),
+      ];
+
+      const result = transformEventBatchToEventPayloads({
+        workspaceEventBatch,
+        logicFunctions,
+      });
+
+      expect(result).toHaveLength(2);
+      expect(
+        result.map((r) => (r.payload as ObjectRecordEvent).recordId),
+      ).toEqual(['record-1', 'record-2']);
+    });
+
+    it('should include all upserted events when no updatedFields filter is set', () => {
+      const workspaceEventBatch = createMockWorkspaceEventBatch({
+        name: 'company.upserted',
+        events: [
+          createMockEvent({
+            recordId: 'record-1',
+            properties: { after: {}, updatedFields: ['name'] },
+          }),
+          createMockEvent({
+            recordId: 'record-2',
+            properties: { after: {}, updatedFields: ['address'] },
+          }),
+        ],
+      });
+      const logicFunctions = [
+        createMockLogicFunction({
+          databaseEventTriggerSettings: { eventName: 'company.upserted' },
+        }),
+      ];
+
+      const result = transformEventBatchToEventPayloads({
+        workspaceEventBatch,
+        logicFunctions,
+      });
+
+      expect(result).toHaveLength(2);
+    });
+  });
+
   describe('position-only updates', () => {
     it('should include position-only events when the trigger has no updatedFields filter', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch({

@@ -53,7 +53,7 @@ const filterEventsByUpdatedFields = ({
   operation: string;
   triggerUpdatedFields?: string[];
 }): ObjectRecordEvent[] => {
-  if (operation !== 'updated') {
+  if (operation !== 'updated' && operation !== 'upserted') {
     return events;
   }
 
@@ -67,7 +67,7 @@ const filterEventsByUpdatedFields = ({
     )?.updatedFields;
 
     if (!isDefined(eventUpdatedFields) || eventUpdatedFields.length === 0) {
-      return false;
+      return operation === 'upserted';
     }
 
     return eventUpdatedFields.some((fieldName: string) =>
