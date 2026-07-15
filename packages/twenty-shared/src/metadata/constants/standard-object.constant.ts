@@ -2681,6 +2681,9 @@ export const STANDARD_OBJECTS = {
       statusNextRetryIndex: {
         universalIdentifier: 'c91cd01a-3600-5ee1-8c51-8b8e10f27bac',
       },
+      domainIdempotencyKeyUniqueIndex: {
+        universalIdentifier: 'd90db8cc-927b-59d9-a54a-6024159a221b',
+      },
     },
   },
   externalSyncInbox: {
