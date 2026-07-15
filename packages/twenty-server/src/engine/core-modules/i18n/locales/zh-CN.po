@@ -1781,6 +1781,16 @@ msgstr "内容包含使用危险协议的 URL。"
 msgid "Contradicting field permissions have been detected on a relation field."
 msgstr "检测到关系字段上存在相互矛盾的字段权限。"
 
+#. js-lingui-id: 1M+KVf
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
+msgid "Core workflow id"
+msgstr ""
+
+#. js-lingui-id: 63q4o1
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
+msgid "Core workflow version id"
+msgstr ""
+
 #. js-lingui-id: xuYXJX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -6333,6 +6343,16 @@ msgstr "录音摘要"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 msgid "Recurring Event ID"
 msgstr "重复事件 ID"
+
+#. js-lingui-id: V3DAOp
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
+msgid "Reference to the core workflow row"
+msgstr ""
+
+#. js-lingui-id: ODfTA/
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
+msgid "Reference to the core workflowVersion row"
+msgstr ""
 
 #. js-lingui-id: 1GvzpH
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
