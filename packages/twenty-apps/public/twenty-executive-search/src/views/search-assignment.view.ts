@@ -1,0 +1,72 @@
+import { defineView, ViewKey } from 'twenty-sdk/define';
+
+import {
+  SEARCH_ASSIGNMENTS_VIEW_COMPANY_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_ASSIGNMENTS_VIEW_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_ASSIGNMENTS_VIEW_SEARCH_TYPE_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_ASSIGNMENTS_VIEW_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_ASSIGNMENTS_VIEW_TARGET_CLOSE_DATE_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_ASSIGNMENTS_VIEW_UNIVERSAL_IDENTIFIER,
+  SEARCH_ASSIGNMENT_COMPANY_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_ASSIGNMENT_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_ASSIGNMENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  SEARCH_ASSIGNMENT_SEARCH_TYPE_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_ASSIGNMENT_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_ASSIGNMENT_TARGET_CLOSE_DATE_FIELD_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+
+export default defineView({
+  universalIdentifier: SEARCH_ASSIGNMENTS_VIEW_UNIVERSAL_IDENTIFIER,
+  name: 'All Search Assignments',
+  objectUniversalIdentifier: SEARCH_ASSIGNMENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconBriefcase',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier:
+        SEARCH_ASSIGNMENTS_VIEW_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        SEARCH_ASSIGNMENT_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 260,
+    },
+    {
+      universalIdentifier:
+        SEARCH_ASSIGNMENTS_VIEW_COMPANY_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        SEARCH_ASSIGNMENT_COMPANY_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 1,
+      isVisible: true,
+      size: 200,
+    },
+    {
+      universalIdentifier:
+        SEARCH_ASSIGNMENTS_VIEW_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        SEARCH_ASSIGNMENT_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 2,
+      isVisible: true,
+      size: 150,
+    },
+    {
+      universalIdentifier:
+        SEARCH_ASSIGNMENTS_VIEW_SEARCH_TYPE_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        SEARCH_ASSIGNMENT_SEARCH_TYPE_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 3,
+      isVisible: true,
+      size: 180,
+    },
+    {
+      universalIdentifier:
+        SEARCH_ASSIGNMENTS_VIEW_TARGET_CLOSE_DATE_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        SEARCH_ASSIGNMENT_TARGET_CLOSE_DATE_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 4,
+      isVisible: true,
+      size: 160,
+    },
+  ],
+});

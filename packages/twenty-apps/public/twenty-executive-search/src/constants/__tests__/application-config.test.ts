@@ -50,9 +50,13 @@ describe('application-config validation', () => {
     const permissions = result.config.objectPermissions;
     expect(permissions).toBeDefined();
     if (permissions) {
-      expect(permissions).toHaveLength(1);
-      expect(permissions[0].canReadObjectRecords).toBe(true);
-      expect(permissions[0].canUpdateObjectRecords).toBe(true);
+      expect(permissions).toHaveLength(4);
+      for (const perm of permissions) {
+        expect(perm.canReadObjectRecords).toBe(true);
+        expect(perm.canUpdateObjectRecords).toBe(true);
+        expect(perm.canSoftDeleteObjectRecords).toBe(false);
+        expect(perm.canDestroyObjectRecords).toBe(false);
+      }
     }
   });
 });
