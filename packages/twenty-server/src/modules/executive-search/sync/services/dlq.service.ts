@@ -98,6 +98,7 @@ export class ExecutiveSearchDLQService {
 
   /**
    * Count DLQ entries by error class for health reporting.
+   * Uses DB-side aggregation via query builder to avoid pulling all rows into memory.
    */
   async countByErrorClass(
     workspaceId: string,
@@ -111,13 +112,16 @@ export class ExecutiveSearchDLQService {
         { shouldBypassPermissionChecks: true },
       );
 
-      const entries = await repository.find({
-        where: {},
-      });
+      const result = await repository
+        .createQueryBuilder('dlq')
+        .select('dlq.errorClass', 'errorClass')
+        .addSelect('COUNT(*)', 'count')
+        .groupBy('dlq.errorClass')
+        .getRawMany<{ errorClass: string; count: string }>();
 
       const counts: Record<string, number> = {};
-      for (const entry of entries) {
-        counts[entry.errorClass] = (counts[entry.errorClass] || 0) + 1;
+      for (const row of result) {
+        counts[row.errorClass] = parseInt(row.count, 10);
       }
 
       return counts;

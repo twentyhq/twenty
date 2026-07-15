@@ -8,9 +8,9 @@ import { ExternalSyncInboxWorkspaceEntity } from 'src/modules/executive-search/s
 /**
  * Bounded replay service.
  *
- * Allows re-processing failed or stuck events within configurable limits.
- * Prevents unbounded replay storms by enforcing a per-batch cap and
- * a total replay count per workspace per time window.
+ * Allows re-processing failed or stuck events within a fixed per-batch cap.
+ * Query methods return no more than the batch size, providing natural
+ * back-pressure for replay operations.
  */
 @Injectable()
 export class ExecutiveSearchReplayService {

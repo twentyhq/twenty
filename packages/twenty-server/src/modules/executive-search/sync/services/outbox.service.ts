@@ -80,7 +80,7 @@ export class ExecutiveSearchOutboxService {
         payload: input.payload,
         status: OUTBOX_STATUS.PENDING,
         retryCount: 0,
-        maxRetries: input.maxRetries ?? 5,
+        maxRetries: input.maxRetries ?? 3,
         lastError: null,
         nextRetryAt: null,
       });
@@ -149,6 +149,8 @@ export class ExecutiveSearchOutboxService {
         updates.status = OUTBOX_STATUS.FAILED;
         updates.nextRetryAt = null;
       } else {
+        // Reset to PENDING and schedule next retry with exponential backoff
+        updates.status = OUTBOX_STATUS.PENDING;
         // Exponential backoff: 2^retryCount seconds, capped at 1 hour
         const delayMs = Math.min(Math.pow(2, newRetryCount) * 1000, 3600000);
         updates.nextRetryAt = new Date(Date.now() + delayMs).toISOString();
@@ -160,12 +162,14 @@ export class ExecutiveSearchOutboxService {
 
   /**
    * Find outbox entries that are ready for processing.
+   * Only returns PENDING entries whose nextRetryAt is null or in the past.
    */
   async findReadyForRetry(
     workspaceId: string,
     limit = 100,
   ): Promise<ExternalSyncOutboxWorkspaceEntity[]> {
     const authContext = buildSystemAuthContext(workspaceId);
+    const now = new Date().toISOString();
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const repository = await this.globalWorkspaceOrmManager.getRepository(
@@ -175,9 +179,10 @@ export class ExecutiveSearchOutboxService {
       );
 
       return repository.find({
-        where: {
-          status: OUTBOX_STATUS.PENDING,
-        },
+        where: [
+          { status: OUTBOX_STATUS.PENDING, nextRetryAt: null },
+          { status: OUTBOX_STATUS.PENDING, nextRetryAt: { $lt: now } } as any,
+        ],
         order: { createdAt: 'ASC' },
         take: limit,
       });

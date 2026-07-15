@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { ExternalSyncInboxWorkspaceEntity } from 'src/modules/executive-search/standard-objects/external-sync-inbox.workspace-entity';
+import { ExternalSyncOutboxWorkspaceEntity } from 'src/modules/executive-search/standard-objects/external-sync-outbox.workspace-entity';
 
 export type InboxEventInput = {
   workspaceId: string;
@@ -146,13 +147,12 @@ export class ExecutiveSearchInboxService {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const repository = await this.globalWorkspaceOrmManager.getRepository(
         workspaceId,
-        ExternalSyncInboxWorkspaceEntity,
+        ExternalSyncOutboxWorkspaceEntity,
         { shouldBypassPermissionChecks: true },
       );
 
       const match = await repository.findOneBy({
-        externalEventId,
-        status: INBOX_STATUS.ECHO,
+        eventId: externalEventId,
       });
 
       return !!match;
