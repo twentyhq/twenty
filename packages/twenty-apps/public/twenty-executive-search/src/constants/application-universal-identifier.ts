@@ -1,1 +1,1 @@
-export const APPLICATION_UNIVERSAL_IDENTIFIER = 'executive-search';
+export const APPLICATION_UNIVERSAL_IDENTIFIER = 'b64e7e15-e7bf-468e-8bfb-83a4d92ea966';
