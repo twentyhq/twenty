@@ -33,7 +33,6 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @CoreResolver()
 @UseGuards(
   WorkspaceAuthGuard,
-  UserAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
 )
 @UsePipes(ResolverValidationPipe)
@@ -49,6 +48,7 @@ export class WorkflowTriggerResolver {
   ) {}
 
   @Mutation(() => Boolean)
+  @UseGuards(UserAuthGuard)
   async activateWorkflowVersion(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowVersionId', { type: () => UUIDScalarType })
@@ -61,6 +61,7 @@ export class WorkflowTriggerResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(UserAuthGuard)
   async deactivateWorkflowVersion(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowVersionId', { type: () => UUIDScalarType })
@@ -73,6 +74,7 @@ export class WorkflowTriggerResolver {
   }
 
   @Mutation(() => RunWorkflowVersionDTO)
+  @UseGuards(UserAuthGuard)
   async runWorkflowVersion(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -135,6 +137,7 @@ export class WorkflowTriggerResolver {
   }
 
   @Mutation(() => WorkflowRunDTO)
+  @UseGuards(UserAuthGuard)
   async retryWorkflowRun(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowRunId', { type: () => UUIDScalarType })
