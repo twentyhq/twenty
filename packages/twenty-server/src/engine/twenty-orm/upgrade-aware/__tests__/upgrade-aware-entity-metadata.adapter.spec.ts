@@ -206,13 +206,10 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
 
     const adapter = moduleRef.get(UpgradeAwareEntityMetadataAdapter);
 
-    // Simulates a pod that booted before the drop-column migration completed
-    // elsewhere: the column is still reported as selectable.
     await adapter.onModuleInit();
 
     expect(removedColumn.isSelect).toBe(true);
 
-    // The migration completes on another process; this pod is never restarted.
     getLastAttemptedInstanceCommand.mockResolvedValue({
       name: REMOVE_STEP,
       status: 'completed',
@@ -361,8 +358,6 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
 
     await adapter.onModuleInit();
 
-    // First refresh hangs on a stale read (migration not completed yet),
-    // second refresh reads the completed migration.
     getLastAttemptedInstanceCommand.mockClear();
     getLastAttemptedInstanceCommand.mockImplementationOnce(
       () =>
@@ -380,7 +375,6 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
 
     await flushMicrotasks();
 
-    // The second read must not start until the first one has finished.
     expect(getLastAttemptedInstanceCommand).toHaveBeenCalledTimes(1);
 
     releaseStaleRead();
