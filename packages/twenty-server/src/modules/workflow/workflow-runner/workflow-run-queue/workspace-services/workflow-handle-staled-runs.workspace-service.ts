@@ -83,7 +83,7 @@ export class WorkflowHandleStaledRunsWorkspaceService {
   async handleStuckStoppingRunsForWorkspace(workspaceId: string) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    const stuckStoppingRunIds =
+    const stuckStoppingRunsCount =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const workflowRunRepository =
@@ -93,34 +93,63 @@ export class WorkflowHandleStaledRunsWorkspaceService {
               { shouldBypassPermissionChecks: true },
             );
 
-          const stuckStoppingRuns = await workflowRunRepository.find({
+          return workflowRunRepository.count({
             where: getStuckStoppingRunsFindOptions(),
-            select: {
-              id: true,
-            },
-            order: {
-              createdAt: 'ASC',
-            },
-            take: QUERY_MAX_RECORDS,
           });
-
-          return stuckStoppingRuns.map((workflowRun) => workflowRun.id);
         },
         authContext,
       );
 
-    for (const workflowRunId of stuckStoppingRunIds) {
-      try {
-        await this.workflowRunWorkspaceService.endWorkflowRun({
-          workflowRunId,
-          workspaceId,
-          status: WorkflowRunStatus.STOPPED,
-        });
-      } catch (error) {
-        this.logger.error(
-          `Failed to finalize stuck stopping workflow run ${workflowRunId} for workspace ${workspaceId}`,
-          error,
+    if (stuckStoppingRunsCount <= 0) {
+      return;
+    }
+
+    const batchCount = Math.ceil(stuckStoppingRunsCount / QUERY_MAX_RECORDS);
+
+    for (let batchIndex = 0; batchIndex < batchCount; batchIndex++) {
+      const stuckStoppingRunIds =
+        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+          async () => {
+            const workflowRunRepository =
+              await this.globalWorkspaceOrmManager.getRepository(
+                workspaceId,
+                WorkflowRunWorkspaceEntity,
+                { shouldBypassPermissionChecks: true },
+              );
+
+            const stuckStoppingRuns = await workflowRunRepository.find({
+              where: getStuckStoppingRunsFindOptions(),
+              select: {
+                id: true,
+              },
+              order: {
+                createdAt: 'ASC',
+              },
+              take: QUERY_MAX_RECORDS,
+            });
+
+            return stuckStoppingRuns.map((workflowRun) => workflowRun.id);
+          },
+          authContext,
         );
+
+      if (stuckStoppingRunIds.length === 0) {
+        break;
+      }
+
+      for (const workflowRunId of stuckStoppingRunIds) {
+        try {
+          await this.workflowRunWorkspaceService.endWorkflowRun({
+            workflowRunId,
+            workspaceId,
+            status: WorkflowRunStatus.STOPPED,
+          });
+        } catch (error) {
+          this.logger.error(
+            `Failed to finalize stuck stopping workflow run ${workflowRunId} for workspace ${workspaceId}`,
+            error,
+          );
+        }
       }
     }
   }

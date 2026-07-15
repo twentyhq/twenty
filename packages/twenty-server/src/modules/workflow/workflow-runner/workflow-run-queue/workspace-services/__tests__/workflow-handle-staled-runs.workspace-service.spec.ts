@@ -147,16 +147,18 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
 
   describe('handleStuckStoppingRunsForWorkspace', () => {
     it('should do nothing when there are no stuck stopping runs', async () => {
-      mockRepository.find.mockResolvedValueOnce([]);
+      mockRepository.count.mockResolvedValueOnce(0);
 
       await service.handleStuckStoppingRunsForWorkspace(workspaceId);
 
+      expect(mockRepository.find).not.toHaveBeenCalled();
       expect(
         mockWorkflowRunWorkspaceService.endWorkflowRun,
       ).not.toHaveBeenCalled();
     });
 
     it('should finalize each stuck stopping run to STOPPED', async () => {
+      mockRepository.count.mockResolvedValueOnce(3);
       mockRepository.find.mockResolvedValueOnce(buildStaledRuns(3));
 
       await service.handleStuckStoppingRunsForWorkspace(workspaceId);
@@ -173,7 +175,27 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
       });
     });
 
+    it('should drain a multi-batch backlog based on the initial count', async () => {
+      // 450 stuck stopping runs => 3 batches (200, 200, 50)
+      mockRepository.count.mockResolvedValueOnce(450);
+      mockRepository.find
+        .mockResolvedValueOnce(buildStaledRuns(QUERY_MAX_RECORDS))
+        .mockResolvedValueOnce(buildStaledRuns(QUERY_MAX_RECORDS))
+        .mockResolvedValueOnce(buildStaledRuns(50));
+
+      await service.handleStuckStoppingRunsForWorkspace(workspaceId);
+
+      expect(mockRepository.find).toHaveBeenCalledTimes(3);
+      expect(mockRepository.find).toHaveBeenCalledWith(
+        expect.objectContaining({ take: QUERY_MAX_RECORDS }),
+      );
+      expect(
+        mockWorkflowRunWorkspaceService.endWorkflowRun,
+      ).toHaveBeenCalledTimes(450);
+    });
+
     it('should keep finalizing remaining runs when one fails', async () => {
+      mockRepository.count.mockResolvedValueOnce(3);
       mockRepository.find.mockResolvedValueOnce(buildStaledRuns(3));
       mockWorkflowRunWorkspaceService.endWorkflowRun
         .mockRejectedValueOnce(new Error('boom'))
