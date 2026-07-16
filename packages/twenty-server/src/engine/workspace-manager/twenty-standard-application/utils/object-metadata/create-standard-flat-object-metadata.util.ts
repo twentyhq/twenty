@@ -190,6 +190,104 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
+  externalEntityLink: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'externalEntityLink'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'externalEntityLink',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.externalEntityLink.universalIdentifier,
+        nameSingular: 'externalEntityLink',
+        namePlural: 'externalEntityLinks',
+        labelSingular: i18nLabel(msg`External Entity Link`),
+        labelPlural: i18nLabel(msg`External Entity Links`),
+        description: i18nLabel(
+          msg`Link between an external entity and a local record`,
+        ),
+        icon: 'IconLink',
+        isSystem: true,
+        isAuditLogged: false,
+        isUICreatable: false,
+        labelIdentifierFieldMetadataName: 'externalRecordId',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  inboundEventLedger: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'inboundEventLedger'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'inboundEventLedger',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.inboundEventLedger.universalIdentifier,
+        nameSingular: 'inboundEventLedger',
+        namePlural: 'inboundEventLedgers',
+        labelSingular: i18nLabel(msg`Inbound Event Ledger`),
+        labelPlural: i18nLabel(msg`Inbound Event Ledgers`),
+        description: i18nLabel(msg`Ledger of inbound sync events`),
+        icon: 'IconInboxArrowDown',
+        isSystem: true,
+        isAuditLogged: false,
+        isUICreatable: false,
+        labelIdentifierFieldMetadataName: 'eventId',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  outboundEventLedger: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'outboundEventLedger'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'outboundEventLedger',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.outboundEventLedger.universalIdentifier,
+        nameSingular: 'outboundEventLedger',
+        namePlural: 'outboundEventLedgers',
+        labelSingular: i18nLabel(msg`Outbound Event Ledger`),
+        labelPlural: i18nLabel(msg`Outbound Event Ledgers`),
+        description: i18nLabel(msg`Ledger of outbound sync events`),
+        icon: 'IconInboxArrowUp',
+        isSystem: true,
+        isAuditLogged: false,
+        isUICreatable: false,
+        labelIdentifierFieldMetadataName: 'eventId',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
   company: ({
     now,
     workspaceId,

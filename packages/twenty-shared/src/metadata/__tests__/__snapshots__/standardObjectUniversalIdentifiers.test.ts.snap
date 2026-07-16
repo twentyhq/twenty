@@ -2436,6 +2436,103 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
   },
+  "outboundEventLedger": {
+    "fields": {
+      "causationId": {
+        "universalIdentifier": "363d9a8e-e79f-417b-ae32-4a0e27df5548",
+      },
+      "correlationId": {
+        "universalIdentifier": "4e19b379-ac25-4f5d-9349-52a3ead9655c",
+      },
+      "createdAt": {
+        "universalIdentifier": "2872d442-07df-5498-ac25-9d8023f0261d",
+      },
+      "createdBy": {
+        "universalIdentifier": "48baf697-f350-52fd-84c5-ff5058bfeca2",
+      },
+      "deletedAt": {
+        "universalIdentifier": "352c499a-910f-54c4-b337-d7d43360aad8",
+      },
+      "deliveredAt": {
+        "universalIdentifier": "e80356b8-5bbf-49f4-8756-172dc36a63e2",
+      },
+      "deliveryAttempts": {
+        "universalIdentifier": "9eb240d1-77bb-4be0-9b83-f7b1f1c2ea71",
+      },
+      "eventId": {
+        "universalIdentifier": "c8f50671-868b-47a0-bc4b-6cb617407d02",
+      },
+      "eventType": {
+        "universalIdentifier": "a3e4d8c9-b8b4-4f7d-a41b-c95f1da43dd1",
+      },
+      "eventVersion": {
+        "universalIdentifier": "8c80a331-2b42-4716-ad70-5251f8bc0aef",
+      },
+      "id": {
+        "universalIdentifier": "b1fdbefe-b255-5a1e-92cf-906dd7a5a268",
+      },
+      "idempotencyKey": {
+        "universalIdentifier": "124de3db-3ae8-4a48-b942-e411da5fe665",
+      },
+      "lastDeliveryAttemptAt": {
+        "universalIdentifier": "bcb5d353-ed4c-4912-bf54-b90bcc704aa0",
+      },
+      "occurredAt": {
+        "universalIdentifier": "3320f03f-309a-4de5-887e-a0578c96baf6",
+      },
+      "payload": {
+        "universalIdentifier": "604231f4-c0ff-45e8-84b9-36bc30116e0d",
+      },
+      "position": {
+        "universalIdentifier": "eb9693f1-29c6-58de-b2ac-1d7bb6aced30",
+      },
+      "searchVector": {
+        "universalIdentifier": "d3101904-b124-5863-8f16-3aebb71b1ea8",
+      },
+      "sourceCollection": {
+        "universalIdentifier": "8a61f562-0095-4a35-9c4e-87c0cf407734",
+      },
+      "sourceHash": {
+        "universalIdentifier": "fe39423c-d542-4750-9c74-58d49a461c18",
+      },
+      "sourceRecordId": {
+        "universalIdentifier": "8a2e7c90-ee35-4ba8-883c-aa94415cb394",
+      },
+      "sourceSystem": {
+        "universalIdentifier": "5c4dfea1-2fca-49cd-8fc2-053de68e62b2",
+      },
+      "sourceUpdatedAt": {
+        "universalIdentifier": "ee5ea9ed-5ba9-4d99-acaf-d1d3c9a9e730",
+      },
+      "status": {
+        "universalIdentifier": "23635d0b-0914-4a5d-a4bf-c3938ab338a0",
+      },
+      "statusMessage": {
+        "universalIdentifier": "4af5ab85-17cd-49f5-a3dd-103392f4451d",
+      },
+      "updatedAt": {
+        "universalIdentifier": "a6ca77a5-bf70-5ff5-bb21-60347aae0e75",
+      },
+      "updatedBy": {
+        "universalIdentifier": "a6c8c5c6-308d-5842-be11-3543c3afd628",
+      },
+      "workspaceKey": {
+        "universalIdentifier": "cc00f238-16b0-434d-bb08-0e1a9e96e407",
+      },
+    },
+    "indexes": {
+      "eventIdIndex": {
+        "universalIdentifier": "d2b25ab9-e7ec-4166-b686-ca7c5a459481",
+      },
+      "idempotencyKeyIndex": {
+        "universalIdentifier": "a80b9832-b0d0-4d28-b892-922d8dce8d3a",
+      },
+      "statusIndex": {
+        "universalIdentifier": "f2fd5668-fc6b-489e-a86c-4f0859821bb1",
+      },
+    },
+    "universalIdentifier": "0ed927ff-d4f5-4c01-89eb-bbe2c1081de7",
+  },
   "person": {
     "fields": {
       "attachments": {

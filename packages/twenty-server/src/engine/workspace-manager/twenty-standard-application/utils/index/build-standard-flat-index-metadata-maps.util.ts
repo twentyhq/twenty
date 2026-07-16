@@ -9,6 +9,9 @@ import { buildCalendarChannelEventAssociationStandardFlatIndexMetadatas } from '
 import { buildCalendarEventParticipantStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-calendar-event-participant-standard-flat-index-metadata.util';
 import { buildCallRecordingStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-call-recording-standard-flat-index-metadata.util';
 import { buildCompanyStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-company-standard-flat-index-metadata.util';
+import { buildExternalEntityLinkStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-external-entity-link-standard-flat-index-metadata.util';
+import { buildInboundEventLedgerStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-inbound-event-ledger-standard-flat-index-metadata.util';
+import { buildOutboundEventLedgerStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-outbound-event-ledger-standard-flat-index-metadata.util';
 import { buildDashboardStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-dashboard-standard-flat-index-metadata.util';
 import { buildExternalEntityLinkStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-external-entity-link-standard-flat-index-metadata.util';
 import { buildExternalSyncCheckpointStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-external-sync-checkpoint-standard-flat-index-metadata.util';
@@ -48,6 +51,9 @@ const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
     buildCalendarEventParticipantStandardFlatIndexMetadatas,
   callRecording: buildCallRecordingStandardFlatIndexMetadatas,
   company: buildCompanyStandardFlatIndexMetadatas,
+  externalEntityLink: buildExternalEntityLinkStandardFlatIndexMetadatas,
+  inboundEventLedger: buildInboundEventLedgerStandardFlatIndexMetadatas,
+  outboundEventLedger: buildOutboundEventLedgerStandardFlatIndexMetadatas,
   dashboard: buildDashboardStandardFlatIndexMetadatas,
   externalEntityLink: buildExternalEntityLinkStandardFlatIndexMetadatas,
   externalSyncCheckpoint: buildExternalSyncCheckpointStandardFlatIndexMetadatas,
