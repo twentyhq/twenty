@@ -1,13 +1,18 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { CommandMenuItemNumberInput } from '@/command-menu/components/CommandMenuItemNumberInput';
+import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
+import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useRecordTableWidgetFieldCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFieldCallbacks';
+import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
+import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { RecordTableDataSourceDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableDataSourceDropdownContent';
 import { RecordTableFieldsDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableFieldsDropdownContent';
+import { RecordTableGroupByDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableGroupByDropdownContent';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useRecordTableSettingsDescriptions } from '@/side-panel/pages/page-layout/hooks/useRecordTableSettingsDescriptions';
@@ -23,7 +28,9 @@ import {
   IconArrowBarToDownDashed,
   IconArrowsSort,
   IconBox,
+  IconEyeOff,
   IconFilter,
+  IconLayoutList,
   IconListDetails,
   IconTable,
 } from 'twenty-ui/icon';
@@ -96,11 +103,39 @@ export const SidePanelDashboardRecordTableSettings = () => {
       viewId: viewId ?? '',
     });
 
+  const { handleShouldHideEmptyGroupsChange } =
+    useRecordTableWidgetLayoutCallbacks({
+      pageLayoutId,
+      widgetId: widgetInEditMode?.id ?? '',
+    });
+
+  const { view: widgetView } = useRecordTableWidgetViewForDisplay({
+    viewId: viewId ?? '',
+    widgetId: widgetInEditMode?.id ?? '',
+    pageLayoutId,
+  });
+
+  const mainGroupByFieldMetadataId =
+    widgetView?.mainGroupByFieldMetadataId ?? null;
+  const shouldHideEmptyGroups = widgetView?.shouldHideEmptyGroups ?? false;
+
+  const { objectMetadataItem } = useObjectMetadataItemById({
+    objectId: widgetInEditMode?.objectMetadataId ?? '',
+  });
+
+  const mainGroupByFieldLabel = isDefined(mainGroupByFieldMetadataId)
+    ? (objectMetadataItem?.fields.find(
+        (fieldMetadataItem) =>
+          fieldMetadataItem.id === mainGroupByFieldMetadataId,
+      )?.label ?? t`None`)
+    : t`None`;
+
   if (!isDefined(widgetInEditMode)) {
     return null;
   }
 
   const hasViewId = isDefined(viewId);
+  const hasGroupBy = isDefined(mainGroupByFieldMetadataId);
 
   const selectableItemIds = [
     'record-table-source',
@@ -109,7 +144,9 @@ export const SidePanelDashboardRecordTableSettings = () => {
           'record-table-fields',
           'record-table-filter',
           'record-table-sort',
-          'record-table-limit',
+          'record-table-group-by',
+          ...(hasGroupBy ? ['record-table-hide-empty-groups'] : []),
+          ...(hasGroupBy ? [] : ['record-table-limit']),
         ]
       : []),
   ];
@@ -210,16 +247,55 @@ export const SidePanelDashboardRecordTableSettings = () => {
                       contextualTextPosition="right"
                     />
                   </SelectableListItem>
-                  <SelectableListItem itemId="record-table-limit">
-                    <CommandMenuItemNumberInput
-                      id="record-table-limit"
-                      label={t`Limit`}
-                      Icon={IconArrowBarToDownDashed}
-                      value={isDefined(limit) ? `${limit}` : ''}
-                      onChange={handleLimitChange}
-                      placeholder={t`No limit`}
+                  <SelectableListItem itemId="record-table-group-by">
+                    <CommandMenuItemDropdown
+                      Icon={IconLayoutList}
+                      label={t`Group by`}
+                      id="record-table-group-by"
+                      dropdownId="record-table-group-by"
+                      dropdownComponents={
+                        <DropdownContent>
+                          <RecordTableGroupByDropdownContent
+                            pageLayoutId={pageLayoutId}
+                            widgetId={widgetInEditMode.id}
+                            objectMetadataId={
+                              widgetInEditMode.objectMetadataId!
+                            }
+                            currentMainGroupByFieldMetadataId={
+                              mainGroupByFieldMetadataId
+                            }
+                          />
+                        </DropdownContent>
+                      }
+                      dropdownPlacement="bottom-end"
+                      hasSubMenu
+                      description={mainGroupByFieldLabel}
+                      contextualTextPosition="right"
                     />
                   </SelectableListItem>
+                  {hasGroupBy && (
+                    <SelectableListItem itemId="record-table-hide-empty-groups">
+                      <CommandMenuItemToggle
+                        LeftIcon={IconEyeOff}
+                        text={t`Hide empty groups`}
+                        id="record-table-hide-empty-groups"
+                        toggled={shouldHideEmptyGroups}
+                        onToggleChange={handleShouldHideEmptyGroupsChange}
+                      />
+                    </SelectableListItem>
+                  )}
+                  {!hasGroupBy && (
+                    <SelectableListItem itemId="record-table-limit">
+                      <CommandMenuItemNumberInput
+                        id="record-table-limit"
+                        label={t`Limit`}
+                        Icon={IconArrowBarToDownDashed}
+                        value={isDefined(limit) ? `${limit}` : ''}
+                        onChange={handleLimitChange}
+                        placeholder={t`No limit`}
+                      />
+                    </SelectableListItem>
+                  )}
                 </>
               )}
             </SidePanelGroup>

@@ -45,6 +45,12 @@ export const useSaveRecordTableWidgetViews = () => {
         }),
       );
 
+      const recordTableWidgetViewPersisted = store.get(
+        recordTableWidgetViewPersistedComponentState.atomFamily({
+          instanceId: pageLayoutId,
+        }),
+      );
+
       const draftRecordTableWidgets = draft.tabs
         .flatMap((tab) => tab.widgets)
         .filter(widgetUsesRecordTableView);
@@ -89,10 +95,54 @@ export const useSaveRecordTableWidgetViews = () => {
           [widget.id]: normalizedWidgetViewDraft,
         };
 
+        const persistedView = recordTableWidgetViewPersisted[widget.id]?.view;
+        const draftView = widgetViewDraft.view;
+
+        const hasViewSettingsChanges =
+          !isDefined(persistedView) ||
+          persistedView.type !== draftView.type ||
+          (persistedView.mainGroupByFieldMetadataId ?? null) !==
+            (draftView.mainGroupByFieldMetadataId ?? null) ||
+          persistedView.shouldHideEmptyGroups !==
+            draftView.shouldHideEmptyGroups ||
+          (persistedView.kanbanAggregateOperation ?? null) !==
+            (draftView.kanbanAggregateOperation ?? null) ||
+          (persistedView.kanbanAggregateOperationFieldMetadataId ?? null) !==
+            (draftView.kanbanAggregateOperationFieldMetadataId ?? null) ||
+          (persistedView.kanbanColumnWidth ?? null) !==
+            (draftView.kanbanColumnWidth ?? null) ||
+          (persistedView.calendarLayout ?? null) !==
+            (draftView.calendarLayout ?? null) ||
+          (persistedView.calendarFieldMetadataId ?? null) !==
+            (draftView.calendarFieldMetadataId ?? null) ||
+          (persistedView.calendarEndFieldMetadataId ?? null) !==
+            (draftView.calendarEndFieldMetadataId ?? null);
+
         await upsertViewWidgetMutation({
           variables: {
             input: {
               widgetId: widget.id,
+              ...(hasViewSettingsChanges
+                ? {
+                    view: {
+                      type: draftView.type,
+                      mainGroupByFieldMetadataId:
+                        draftView.mainGroupByFieldMetadataId ?? null,
+                      shouldHideEmptyGroups: draftView.shouldHideEmptyGroups,
+                      kanbanAggregateOperation:
+                        draftView.kanbanAggregateOperation ?? null,
+                      kanbanAggregateOperationFieldMetadataId:
+                        draftView.kanbanAggregateOperationFieldMetadataId ??
+                        undefined,
+                      kanbanColumnWidth: draftView.kanbanColumnWidth ?? null,
+                      calendarLayout: draftView.calendarLayout ?? null,
+                      calendarFieldMetadataId:
+                        draftView.calendarFieldMetadataId ?? null,
+                      calendarEndFieldMetadataId:
+                        draftView.calendarEndFieldMetadataId ?? null,
+                    },
+                  }
+                : {}),
               viewFields: normalizedWidgetViewDraft.viewFields.map((field) => ({
                 fieldMetadataId: field.fieldMetadataId,
                 isVisible: field.isVisible,
