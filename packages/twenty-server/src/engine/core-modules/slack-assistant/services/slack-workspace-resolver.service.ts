@@ -9,10 +9,8 @@ import { ApplicationConnectionsListService } from 'src/engine/core-modules/appli
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SLACK_CONNECTION_PROVIDER_NAME } from 'src/engine/core-modules/slack-assistant/constants/slack-assistant.constants';
-import {
-  callSlackApi,
-  type SlackApiResponse,
-} from 'src/engine/core-modules/slack-assistant/utils/slack-web-api.util';
+import { type SlackApiResponse } from 'src/engine/core-modules/slack-assistant/types/slack-api-response.type';
+import { callSlackApi } from 'src/engine/core-modules/slack-assistant/utils/call-slack-api.util';
 
 const TEAM_WORKSPACE_CACHE_TTL_SECONDS = 24 * 60 * 60;
 const TEAM_WORKSPACE_NEGATIVE_TTL_SECONDS = 60;

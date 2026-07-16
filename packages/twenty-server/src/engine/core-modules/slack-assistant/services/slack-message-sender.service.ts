@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { postSlackMessage } from 'src/engine/core-modules/slack-assistant/utils/slack-web-api.util';
+import { postSlackMessage } from 'src/engine/core-modules/slack-assistant/utils/post-slack-message.util';
 
 @Injectable()
 export class SlackMessageSenderService {

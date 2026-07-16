@@ -2,11 +2,10 @@ import {
   Controller,
   Headers,
   HttpCode,
-  Logger,
   Post,
   type RawBodyRequest,
   Req,
-  UnauthorizedException,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
@@ -16,6 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { SlackAssistantApiExceptionFilter } from 'src/engine/core-modules/slack-assistant/filters/slack-assistant-api-exception.filter';
 import {
   SLACK_ASSISTANT_REPLY_JOB_NAME,
   SLACK_EVENTS_WEBHOOK_ROUTE,
@@ -26,14 +26,13 @@ import {
   SlackAssistantExceptionCode,
 } from 'src/engine/core-modules/slack-assistant/slack-assistant.exception';
 import { type SlackAssistantReplyJobData } from 'src/engine/core-modules/slack-assistant/types/slack-assistant-reply-job.type';
-import { parseSlackWebhookBody } from 'src/engine/core-modules/slack-assistant/utils/slack-webhook.util';
+import { parseSlackWebhookBody } from 'src/engine/core-modules/slack-assistant/utils/parse-slack-webhook-body.util';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller()
+@UseFilters(SlackAssistantApiExceptionFilter)
 export class SlackAssistantController {
-  private readonly logger = new Logger(SlackAssistantController.name);
-
   constructor(
     private readonly slackSignatureVerifierService: SlackSignatureVerifierService,
     @InjectMessageQueue(MessageQueue.aiQueue)
@@ -57,15 +56,11 @@ export class SlackAssistantController {
       );
     }
 
-    try {
-      await this.slackSignatureVerifierService.verifyOrThrow({
-        rawBody,
-        signature,
-        timestamp,
-      });
-    } catch {
-      throw new UnauthorizedException('Invalid Slack signature');
-    }
+    await this.slackSignatureVerifierService.verifyOrThrow({
+      rawBody,
+      signature,
+      timestamp,
+    });
 
     const payload = parseSlackWebhookBody(rawBody);
 

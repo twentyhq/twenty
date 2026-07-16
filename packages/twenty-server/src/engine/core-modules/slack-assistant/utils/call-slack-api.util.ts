@@ -1,10 +1,6 @@
-const SLACK_API_BASE_URL = 'https://slack.com/api/';
+import { type SlackApiResponse } from 'src/engine/core-modules/slack-assistant/types/slack-api-response.type';
 
-export type SlackApiResponse = {
-  ok: boolean;
-  error?: string;
-  [key: string]: unknown;
-};
+const SLACK_API_BASE_URL = 'https://slack.com/api/';
 
 const encodeValue = (value: unknown): string =>
   typeof value === 'string' ||
@@ -46,32 +42,4 @@ export const callSlackApi = async <
   }
 
   return payload;
-};
-
-export const postSlackMessage = async ({
-  token,
-  channel,
-  threadTs,
-  markdownText,
-}: {
-  token: string;
-  channel: string;
-  threadTs?: string;
-  markdownText: string;
-}): Promise<void> => {
-  const response = await callSlackApi(
-    'chat.postMessage',
-    {
-      channel,
-      thread_ts: threadTs,
-      markdown_text: markdownText,
-    },
-    token,
-  );
-
-  if (response.ok !== true) {
-    throw new Error(
-      `Slack chat.postMessage failed: ${response.error ?? 'unknown_error'}`,
-    );
-  }
 };

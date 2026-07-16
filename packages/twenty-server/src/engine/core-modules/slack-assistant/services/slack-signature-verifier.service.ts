@@ -7,7 +7,7 @@ import {
   SlackAssistantException,
   SlackAssistantExceptionCode,
 } from 'src/engine/core-modules/slack-assistant/slack-assistant.exception';
-import { verifySlackSignature } from 'src/engine/core-modules/slack-assistant/utils/slack-webhook.util';
+import { verifySlackSignature } from 'src/engine/core-modules/slack-assistant/utils/verify-slack-signature.util';
 
 @Injectable()
 export class SlackSignatureVerifierService {
