@@ -1,6 +1,10 @@
 import { isNull, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import {
+  claimCallRecordingArtifactsImport,
+  releaseCallRecordingArtifactsImportClaim,
+} from 'src/logic-functions/data/claim-call-recording-artifacts-import.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { type RecallBotSnapshot } from 'src/logic-functions/recall-api/recall-bot-snapshot.type';
 import {
@@ -62,28 +66,49 @@ export const importCallRecordingArtifacts = async ({
     };
   }
 
-  const bot = await fetchRecallBotWhenRecordingIdMissing(callRecording);
-  const syncResult = await syncCallRecording({
-    client,
-    callRecording,
-    bot,
-    treatRecordingAsDone: true,
-    requestedAt: request.requestedAt,
+  // Svix redelivers a webhook to several workers at once; the lease ensures only
+  // one performs the provider transcript request and media upload.
+  const claimedImport = await claimCallRecordingArtifactsImport(client, {
+    callRecordingId: callRecording.id,
+    now: new Date(request.requestedAt),
   });
 
-  if (!syncResult.updated) {
+  if (!claimedImport) {
     return {
       status: 'skipped',
       callRecordingId: callRecording.id,
-      reason: 'no artifact updates',
+      reason: 'artifact import already in progress',
     };
   }
 
-  return {
-    status: 'imported',
-    callRecordingId: callRecording.id,
-    outcome: 'call-recording-artifacts-imported',
-  };
+  try {
+    const bot = await fetchRecallBotWhenRecordingIdMissing(callRecording);
+    const syncResult = await syncCallRecording({
+      client,
+      callRecording,
+      bot,
+      treatRecordingAsDone: true,
+      requestedAt: request.requestedAt,
+    });
+
+    if (!syncResult.updated) {
+      return {
+        status: 'skipped',
+        callRecordingId: callRecording.id,
+        reason: 'no artifact updates',
+      };
+    }
+
+    return {
+      status: 'imported',
+      callRecordingId: callRecording.id,
+      outcome: 'call-recording-artifacts-imported',
+    };
+  } finally {
+    await releaseCallRecordingArtifactsImportClaim(client, {
+      callRecordingId: callRecording.id,
+    });
+  }
 };
 
 const fetchRecallBotWhenRecordingIdMissing = async (

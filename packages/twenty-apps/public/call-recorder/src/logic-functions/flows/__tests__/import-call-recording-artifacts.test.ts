@@ -9,6 +9,8 @@ const createAsyncRecallTranscriptMock = vi.hoisted(() => vi.fn());
 const downloadTranscriptMock = vi.hoisted(() => vi.fn());
 const importCallRecordingMediaMock = vi.hoisted(() => vi.fn());
 const chargeCompletedCallRecordingMock = vi.hoisted(() => vi.fn());
+const claimArtifactsImportMock = vi.hoisted(() => vi.fn());
+const releaseArtifactsImportClaimMock = vi.hoisted(() => vi.fn());
 
 vi.mock('src/logic-functions/recall-api/get-recall-bot.util', () => ({
   getRecallBot: getRecallBotMock,
@@ -37,6 +39,14 @@ vi.mock(
   'src/logic-functions/flows/charge-completed-call-recording.util',
   () => ({
     chargeCompletedCallRecording: chargeCompletedCallRecordingMock,
+  }),
+);
+
+vi.mock(
+  'src/logic-functions/data/claim-call-recording-artifacts-import.util',
+  () => ({
+    claimCallRecordingArtifactsImport: claimArtifactsImportMock,
+    releaseCallRecordingArtifactsImportClaim: releaseArtifactsImportClaimMock,
   }),
 );
 
@@ -139,6 +149,10 @@ describe('importCallRecordingArtifacts', () => {
     importCallRecordingMediaMock.mockResolvedValue({});
     chargeCompletedCallRecordingMock.mockReset();
     chargeCompletedCallRecordingMock.mockResolvedValue('charged');
+    claimArtifactsImportMock.mockReset();
+    claimArtifactsImportMock.mockResolvedValue(true);
+    releaseArtifactsImportClaimMock.mockReset();
+    releaseArtifactsImportClaimMock.mockResolvedValue(undefined);
   });
 
   it('requests transcript and media artifacts after a recording completion webhook', async () => {
@@ -445,5 +459,49 @@ describe('importCallRecordingArtifacts', () => {
       callRecordingId: 'call-recording-1',
       outcome: 'call-recording-artifacts-imported',
     });
+  });
+
+  it('skips provider work when another worker holds the import lease', async () => {
+    claimArtifactsImportMock.mockResolvedValue(false);
+    const client = buildClient([buildProcessingCallRecording()]);
+
+    const result = await importCallRecordingArtifacts({
+      client: client as unknown as CoreApiClient,
+      request: {
+        callRecordingId: 'call-recording-1',
+        requestedAt: '2026-01-01T14:06:00.000Z',
+      },
+    });
+
+    expect(claimArtifactsImportMock).toHaveBeenCalledWith(expect.anything(), {
+      callRecordingId: 'call-recording-1',
+      now: new Date('2026-01-01T14:06:00.000Z'),
+    });
+    expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
+    expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
+    expect(releaseArtifactsImportClaimMock).not.toHaveBeenCalled();
+    expect(client.mutations).toEqual([]);
+    expect(result).toEqual({
+      status: 'skipped',
+      callRecordingId: 'call-recording-1',
+      reason: 'artifact import already in progress',
+    });
+  });
+
+  it('releases the import lease after doing provider work', async () => {
+    const client = buildClient([buildProcessingCallRecording()]);
+
+    await importCallRecordingArtifacts({
+      client: client as unknown as CoreApiClient,
+      request: {
+        callRecordingId: 'call-recording-1',
+        requestedAt: '2026-01-01T14:06:00.000Z',
+      },
+    });
+
+    expect(releaseArtifactsImportClaimMock).toHaveBeenCalledWith(
+      expect.anything(),
+      { callRecordingId: 'call-recording-1' },
+    );
   });
 });
