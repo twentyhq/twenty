@@ -1,6 +1,9 @@
 import { isUndefined } from '@sniptt/guards';
 
-import { directusApiRequest } from 'src/logic-functions/directus-api/directus-api-request.util';
+import {
+  directusApiRequest,
+  extractDirectusApiErrorMessage,
+} from 'src/logic-functions/directus-api/directus-api-request.util';
 import { type DirectusApiConfig } from 'src/logic-functions/directus-api/get-directus-api-config.util';
 
 /**
@@ -79,17 +82,7 @@ export const uploadDirectusFile = async ({
   }
 
   if (!response.ok) {
-    const fallback = `Directus API responded with HTTP ${response.status}`;
-
-    let errorMessage: string;
-
-    try {
-      const body = (await response.json()) as unknown;
-
-      errorMessage = `${fallback}: ${JSON.stringify(body)}`;
-    } catch {
-      errorMessage = fallback;
-    }
+    const errorMessage = await extractDirectusApiErrorMessage(response);
 
     return {
       ok: false as const,

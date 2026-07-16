@@ -141,7 +141,7 @@ const sleep = (delayMs: number): Promise<void> =>
     setTimeout(resolve, delayMs);
   });
 
-const extractDirectusApiErrorMessage = async (
+export const extractDirectusApiErrorMessage = async (
   response: Response,
 ): Promise<string> => {
   const fallback = `Directus API responded with HTTP ${response.status}`;

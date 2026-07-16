@@ -1,7 +1,7 @@
 import { isNull, isUndefined } from '@sniptt/guards';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
-import { DIRECTUS_WEBHOOK_SECRET_ENV_VAR_NAME } from 'src/constants/directus-webhook-secret-env-var-name';
+import { DIRECTUS_WEBHOOK_SECRET_ENV_VAR_NAME } from 'src/constants/server-variable-names';
 import { PROCESS_DIRECTUS_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/process-directus-webhook-logic-function-universal-identifier';
 import { RECEIVE_DIRECTUS_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/receive-directus-webhook-logic-function-universal-identifier';
 import { verifyDirectusWebhookSignature } from 'src/logic-functions/directus-api/verify-directus-webhook-signature.util';
