@@ -67,10 +67,12 @@ export const importCallRecordingArtifacts = async ({
   }
 
   // Svix redelivers a webhook to several workers at once; the lease ensures only
-  // one performs the provider transcript request and media upload.
+  // one performs the provider transcript request and media upload. The lease clock
+  // is wall-clock, not request.requestedAt, so a retry of the same delivery still
+  // measures real elapsed time and can reclaim a lease left behind by a crash.
   const claimedImport = await claimCallRecordingArtifactsImport(client, {
     callRecordingId: callRecording.id,
-    now: new Date(request.requestedAt),
+    now: new Date(),
   });
 
   if (!claimedImport) {

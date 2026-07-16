@@ -475,7 +475,7 @@ describe('importCallRecordingArtifacts', () => {
 
     expect(claimArtifactsImportMock).toHaveBeenCalledWith(expect.anything(), {
       callRecordingId: 'call-recording-1',
-      now: new Date('2026-01-01T14:06:00.000Z'),
+      now: expect.any(Date),
     });
     expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
     expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
