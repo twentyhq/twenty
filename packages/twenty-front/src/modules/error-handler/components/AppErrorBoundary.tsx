@@ -26,10 +26,10 @@ export const AppErrorBoundary = ({
       const { captureException } = await import('@sentry/react');
       captureException(error, (scope) => {
         scope.setExtras({ info });
+        scope.setTag('error-handler', 'app-error-boundary');
 
         const fingerprint = hasErrorCode(error) ? error.code : error.message;
         scope.setFingerprint([fingerprint]);
-        error.name = error.message;
         return scope;
       });
     } catch (sentryError) {

@@ -21,10 +21,24 @@ const isApolloError = (error: unknown): boolean =>
   ServerParseError.is(error) ||
   UnconventionalError.is(error);
 
+const hasAbortErrorName = (value: unknown): boolean => {
+  return (
+    isDefined(value) &&
+    typeof value === 'object' &&
+    'name' in value &&
+    value.name === 'AbortError'
+  );
+};
+
 const hasErrorCode = (
-  error: CustomError | any,
+  error: unknown,
 ): error is CustomError & { code: string } => {
-  return 'code' in error && isDefined(error.code);
+  return (
+    isDefined(error) &&
+    typeof error === 'object' &&
+    'code' in error &&
+    typeof error.code === 'string'
+  );
 };
 
 export const PromiseRejectionEffect = () => {
@@ -41,23 +55,39 @@ export const PromiseRejectionEffect = () => {
       }
 
       const isAbortError =
-        error?.networkError?.name === 'AbortError' ||
-        error?.name === 'AbortError';
+        hasAbortErrorName(error) ||
+        (isDefined(error) &&
+          typeof error === 'object' &&
+          'networkError' in error &&
+          hasAbortErrorName(error.networkError));
 
-      if (!isAbortError) {
-        enqueueErrorSnackBar(
-          error instanceof Error ? { message: error.message } : {},
-        );
+      if (isAbortError) {
+        return;
       }
+
+      enqueueErrorSnackBar(
+        error instanceof Error ? { message: error.message } : {},
+      );
 
       try {
         const { captureException } = await import('@sentry/react');
         captureException(error, (scope) => {
-          scope.setExtras({ mechanism: 'onUnhandle' });
+          scope.setExtras({ mechanism: 'onUnhandledRejection' });
+          scope.setTag('error-handler', 'promise-rejection');
 
-          const fingerprint = hasErrorCode(error) ? error.code : error.message;
+          const fingerprint = hasErrorCode(error)
+            ? error.code
+            : error instanceof Error
+              ? error.message
+              : 'non-error-promise-rejection';
+
           scope.setFingerprint([fingerprint]);
-          error.name = error.message;
+
+          if (!(error instanceof Error)) {
+            scope.setLevel('warning');
+            scope.setTag('error-kind', 'non-error-rejection');
+          }
+
           return scope;
         });
       } catch (sentryError) {
