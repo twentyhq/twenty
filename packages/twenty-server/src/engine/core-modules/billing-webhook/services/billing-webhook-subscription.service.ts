@@ -178,9 +178,8 @@ export class BillingWebhookSubscriptionService {
       !hasOtherActivatingSubscription &&
       this.shouldSuspendWorkspace(subscriptionWithSchedule);
     const shouldReactivateWorkspace =
-      !shouldSuspendWorkspace &&
-      (hasOtherActivatingSubscription ||
-        this.shouldReactivateWorkspace(subscriptionWithSchedule));
+      hasOtherActivatingSubscription ||
+      this.shouldReactivateWorkspace(subscriptionWithSchedule);
 
     if (shouldSuspendWorkspace) {
       const refreshedWorkspace = await this.workspaceRepository.findOne({
@@ -215,9 +214,7 @@ export class BillingWebhookSubscriptionService {
             assertUnreachable(refreshedWorkspace.activationStatus);
         }
       }
-    }
-
-    if (shouldReactivateWorkspace) {
+    } else if (shouldReactivateWorkspace) {
       const hasBeenReactivated =
         await this.workspaceService.reactivateWorkspace(workspaceId);
 
