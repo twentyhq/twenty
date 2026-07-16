@@ -1,23 +1,19 @@
-import { type RefObject, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const VIEWPORT_PRELOAD_MARGIN = '200px';
 
-// Latches to true the first time the element intersects the viewport
-// (clipping ancestors like scroll containers are accounted for) and
-// never resets, so consumers can safely mount-once on visibility.
-export const useHasEnteredViewport = (
-  elementRef: RefObject<HTMLElement | null>,
-) => {
+// Latches to true the first time the observed element intersects the
+// viewport (clipping ancestors like scroll containers are accounted
+// for) and never resets, so consumers can safely mount-once on
+// visibility. Attach the returned elementRef as the element's ref —
+// it is state-backed, so observation starts (or re-arms) whenever the
+// element appears, even if it was absent on first render.
+export const useHasEnteredViewport = () => {
+  const [element, setElement] = useState<HTMLElement | null>(null);
   const [hasEnteredViewport, setHasEnteredViewport] = useState(false);
 
   useEffect(() => {
-    if (hasEnteredViewport) {
-      return;
-    }
-
-    const element = elementRef.current;
-
-    if (element === null) {
+    if (hasEnteredViewport || element === null) {
       return;
     }
 
@@ -39,7 +35,7 @@ export const useHasEnteredViewport = (
     observer.observe(element);
 
     return () => observer.disconnect();
-  }, [hasEnteredViewport, elementRef]);
+  }, [hasEnteredViewport, element]);
 
-  return hasEnteredViewport;
+  return { elementRef: setElement, hasEnteredViewport };
 };

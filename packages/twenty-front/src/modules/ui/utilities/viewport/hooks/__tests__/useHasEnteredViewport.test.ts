@@ -16,11 +16,13 @@ describe('useHasEnteredViewport', () => {
     delete (globalThis as { IntersectionObserver?: unknown })
       .IntersectionObserver;
 
-    const elementRef = { current: document.createElement('div') };
+    const { result } = renderHook(() => useHasEnteredViewport());
 
-    const { result } = renderHook(() => useHasEnteredViewport(elementRef));
+    act(() => {
+      result.current.elementRef(document.createElement('div'));
+    });
 
-    expect(result.current).toBe(true);
+    expect(result.current.hasEnteredViewport).toBe(true);
   });
 
   it('stays false until the element intersects, then latches to true', () => {
@@ -40,12 +42,16 @@ describe('useHasEnteredViewport', () => {
     (globalThis as { IntersectionObserver?: unknown }).IntersectionObserver =
       MockIntersectionObserver;
 
-    const elementRef = { current: document.createElement('div') };
+    const element = document.createElement('div');
 
-    const { result } = renderHook(() => useHasEnteredViewport(elementRef));
+    const { result } = renderHook(() => useHasEnteredViewport());
 
-    expect(result.current).toBe(false);
-    expect(observe).toHaveBeenCalledWith(elementRef.current);
+    act(() => {
+      result.current.elementRef(element);
+    });
+
+    expect(result.current.hasEnteredViewport).toBe(false);
+    expect(observe).toHaveBeenCalledWith(element);
 
     act(() => {
       observerCallback(
@@ -54,7 +60,7 @@ describe('useHasEnteredViewport', () => {
       );
     });
 
-    expect(result.current).toBe(false);
+    expect(result.current.hasEnteredViewport).toBe(false);
 
     act(() => {
       observerCallback(
@@ -63,11 +69,11 @@ describe('useHasEnteredViewport', () => {
       );
     });
 
-    expect(result.current).toBe(true);
+    expect(result.current.hasEnteredViewport).toBe(true);
     expect(disconnect).toHaveBeenCalled();
   });
 
-  it('does nothing when the element ref is empty', () => {
+  it('does nothing while no element is attached', () => {
     const observe = jest.fn();
 
     class MockIntersectionObserver {
@@ -78,11 +84,47 @@ describe('useHasEnteredViewport', () => {
     (globalThis as { IntersectionObserver?: unknown }).IntersectionObserver =
       MockIntersectionObserver;
 
-    const elementRef = { current: null };
+    const { result } = renderHook(() => useHasEnteredViewport());
 
-    const { result } = renderHook(() => useHasEnteredViewport(elementRef));
-
-    expect(result.current).toBe(false);
+    expect(result.current.hasEnteredViewport).toBe(false);
     expect(observe).not.toHaveBeenCalled();
+  });
+
+  it('starts observing when the element appears after the first render', () => {
+    let observerCallback: IntersectionObserverCallback = () => {};
+    const observe = jest.fn();
+
+    class MockIntersectionObserver {
+      constructor(callback: IntersectionObserverCallback) {
+        observerCallback = callback;
+      }
+
+      observe = observe;
+      disconnect = jest.fn();
+    }
+
+    (globalThis as { IntersectionObserver?: unknown }).IntersectionObserver =
+      MockIntersectionObserver;
+
+    const { result } = renderHook(() => useHasEnteredViewport());
+
+    expect(observe).not.toHaveBeenCalled();
+
+    const lateElement = document.createElement('div');
+
+    act(() => {
+      result.current.elementRef(lateElement);
+    });
+
+    expect(observe).toHaveBeenCalledWith(lateElement);
+
+    act(() => {
+      observerCallback(
+        [{ isIntersecting: true } as IntersectionObserverEntry],
+        {} as IntersectionObserver,
+      );
+    });
+
+    expect(result.current.hasEnteredViewport).toBe(true);
   });
 });

@@ -5,7 +5,7 @@ import { RecordTableWidgetRendererContent } from '@/page-layout/widgets/record-t
 import { useHasEnteredViewport } from '@/ui/utilities/viewport/hooks/useHasEnteredViewport';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
@@ -26,8 +26,7 @@ export const RecordTableWidgetRenderer = ({
 }: RecordTableWidgetRendererProps) => {
   const { configuration } = widget;
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const hasEnteredViewport = useHasEnteredViewport(containerRef);
+  const { elementRef, hasEnteredViewport } = useHasEnteredViewport();
 
   const pageLayoutEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
@@ -66,7 +65,7 @@ export const RecordTableWidgetRenderer = ({
   }
 
   return (
-    <StyledLazyMountContainer ref={containerRef}>
+    <StyledLazyMountContainer ref={elementRef}>
       {shouldMountContent || hasMountedContentOnce ? (
         <RecordTableWidgetRendererContent
           objectMetadataId={widget.objectMetadataId}
