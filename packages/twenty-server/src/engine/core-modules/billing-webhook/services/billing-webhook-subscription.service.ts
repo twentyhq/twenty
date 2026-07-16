@@ -157,18 +157,36 @@ export class BillingWebhookSubscriptionService {
 
     // Stripe events can arrive out of order or concurrently: decide from the
     // live subscription state and a fresh workspace read, not the event payload.
-    const refreshedWorkspace =
-      (await this.workspaceRepository.findOne({
-        where: { id: workspaceId },
-        withDeleted: true,
-      })) ?? workspace;
+    const refreshedWorkspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+      withDeleted: true,
+    });
 
-    const shouldSuspendWorkspace = this.shouldSuspendWorkspace(
-      subscriptionWithSchedule,
+    if (!isDefined(refreshedWorkspace)) {
+      throw new BillingException(
+        `Workspace not found on re-read for subscription event ${event.id} / workspaceId: ${workspaceId}`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`Workspace ${workspaceId} is not found.`,
+        },
+      );
+    }
+
+    const hasOtherActivatingSubscription = billingSubscriptions.some(
+      (billingSubscription) =>
+        billingSubscription.stripeSubscriptionId !== data.object.id &&
+        WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES.includes(
+          billingSubscription.status,
+        ),
     );
+
+    const shouldSuspendWorkspace =
+      !hasOtherActivatingSubscription &&
+      this.shouldSuspendWorkspace(subscriptionWithSchedule);
     const shouldReactivateWorkspace =
       !shouldSuspendWorkspace &&
-      this.shouldReactivateWorkspace(subscriptionWithSchedule);
+      (hasOtherActivatingSubscription ||
+        this.shouldReactivateWorkspace(subscriptionWithSchedule));
 
     switch (refreshedWorkspace.activationStatus) {
       case WorkspaceActivationStatus.ACTIVE:
@@ -178,7 +196,7 @@ export class BillingWebhookSubscriptionService {
         break;
       case WorkspaceActivationStatus.PENDING_CREATION:
         if (shouldSuspendWorkspace) {
-          await this.workspaceService.deleteWorkspace(workspace.id);
+          await this.workspaceService.deleteWorkspace(workspaceId);
         }
         break;
       case WorkspaceActivationStatus.SUSPENDED:

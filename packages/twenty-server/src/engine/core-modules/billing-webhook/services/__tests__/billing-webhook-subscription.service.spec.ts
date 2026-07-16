@@ -12,6 +12,7 @@ import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billi
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
@@ -69,6 +70,7 @@ describe('BillingWebhookSubscriptionService', () => {
     getSubscriptionWithSchedule: jest.Mock;
   };
   let messageQueueService: { add: jest.Mock };
+  let billingSubscriptionRepository: { upsert: jest.Mock; find: jest.Mock };
 
   beforeEach(async () => {
     workspaceRepository = { findOne: jest.fn() };
@@ -81,6 +83,16 @@ describe('BillingWebhookSubscriptionService', () => {
       getSubscriptionWithSchedule: jest.fn(),
     };
     messageQueueService = { add: jest.fn() };
+    billingSubscriptionRepository = {
+      upsert: jest.fn(),
+      find: jest.fn().mockResolvedValue([
+        {
+          id: 'billing-subscription-id',
+          stripeSubscriptionId:
+            mockStripeSubscriptionUpdatedEventWithoutUpdatedItem.data.object.id,
+        },
+      ]),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -95,17 +107,7 @@ describe('BillingWebhookSubscriptionService', () => {
         },
         {
           provide: getRepositoryToken(BillingSubscriptionEntity),
-          useValue: {
-            upsert: jest.fn(),
-            find: jest.fn().mockResolvedValue([
-              {
-                id: 'billing-subscription-id',
-                stripeSubscriptionId:
-                  mockStripeSubscriptionUpdatedEventWithoutUpdatedItem.data
-                    .object.id,
-              },
-            ]),
-          },
+          useValue: billingSubscriptionRepository,
         },
         {
           provide: getRepositoryToken(BillingSubscriptionItemEntity),
@@ -215,6 +217,74 @@ describe('BillingWebhookSubscriptionService', () => {
         WORKSPACE_ID,
       );
       expect(workspaceService.suspendWorkspace).not.toHaveBeenCalled();
+    });
+
+    it('should not suspend when the event subscription is canceled but the workspace has another activating subscription', async () => {
+      const staleDeletionEvent = buildSubscriptionUpdatedEvent({
+        status: 'canceled',
+      });
+
+      stripeSubscriptionScheduleService.getSubscriptionWithSchedule.mockResolvedValue(
+        buildLiveSubscription({ status: 'canceled' }),
+      );
+
+      billingSubscriptionRepository.find.mockResolvedValue([
+        {
+          id: 'billing-subscription-id',
+          stripeSubscriptionId:
+            mockStripeSubscriptionUpdatedEventWithoutUpdatedItem.data.object.id,
+          status: SubscriptionStatus.Canceled,
+        },
+        {
+          id: 'new-billing-subscription-id',
+          stripeSubscriptionId: 'sub_new_active_subscription',
+          status: SubscriptionStatus.Active,
+        },
+      ]);
+
+      workspaceRepository.findOne.mockResolvedValue(
+        buildWorkspace(WorkspaceActivationStatus.ACTIVE),
+      );
+
+      await service.processStripeEvent(WORKSPACE_ID, staleDeletionEvent);
+
+      expect(workspaceService.suspendWorkspace).not.toHaveBeenCalled();
+      expect(workspaceService.deleteWorkspace).not.toHaveBeenCalled();
+    });
+
+    it('should reactivate a suspended workspace on a canceled subscription event when another activating subscription exists', async () => {
+      const staleDeletionEvent = buildSubscriptionUpdatedEvent({
+        status: 'canceled',
+      });
+
+      stripeSubscriptionScheduleService.getSubscriptionWithSchedule.mockResolvedValue(
+        buildLiveSubscription({ status: 'canceled' }),
+      );
+
+      billingSubscriptionRepository.find.mockResolvedValue([
+        {
+          id: 'billing-subscription-id',
+          stripeSubscriptionId:
+            mockStripeSubscriptionUpdatedEventWithoutUpdatedItem.data.object.id,
+          status: SubscriptionStatus.Canceled,
+        },
+        {
+          id: 'new-billing-subscription-id',
+          stripeSubscriptionId: 'sub_new_active_subscription',
+          status: SubscriptionStatus.Trialing,
+        },
+      ]);
+
+      workspaceRepository.findOne.mockResolvedValue(
+        buildWorkspace(WorkspaceActivationStatus.SUSPENDED),
+      );
+
+      await service.processStripeEvent(WORKSPACE_ID, staleDeletionEvent);
+
+      expect(workspaceService.suspendWorkspace).not.toHaveBeenCalled();
+      expect(workspaceService.reactivateWorkspace).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+      );
     });
 
     it('should not reactivate a suspended workspace when the live subscription is past_due outside the trial window', async () => {
