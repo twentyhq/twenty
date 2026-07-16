@@ -38,7 +38,9 @@ import {
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-const StyledContentContainer = styled(StyledOnboardingContentContainer)`
+const StyledWorkspaceSelectionContentContainer = styled(
+  StyledOnboardingContentContainer,
+)`
   max-width: 100%;
   width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
@@ -171,7 +173,7 @@ export const SignInUpGlobalScopeForm = () => {
   return (
     <>
       {signInUpStep === SignInUpStep.WorkspaceSelection && (
-        <StyledContentContainer>
+        <StyledWorkspaceSelectionContentContainer>
           <StyledWorkspaceContainer>
             {availableWorkspacesList.map((availableWorkspace, index) => (
               <OnboardingStepAnimatedItem
@@ -235,10 +237,10 @@ export const SignInUpGlobalScopeForm = () => {
               </OnboardingStepAnimatedItem>
             )}
           </StyledWorkspaceContainer>
-        </StyledContentContainer>
+        </StyledWorkspaceSelectionContentContainer>
       )}
       {signInUpStep !== SignInUpStep.WorkspaceSelection && (
-        <StyledContentContainer>
+        <StyledOnboardingContentContainer>
           {authProviders.google && (
             <SignInUpWithGoogle
               action="list-available-workspaces"
@@ -269,7 +271,7 @@ export const SignInUpGlobalScopeForm = () => {
               </ClickToActionLink>
             </StyledForgotPasswordLinkContainer>
           )}
-        </StyledContentContainer>
+        </StyledOnboardingContentContainer>
       )}
     </>
   );
