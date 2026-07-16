@@ -411,6 +411,8 @@ exports[`syncApplication should delete old field and create equivalent one when 
         "flatEntity": {
           "applicationId": Any<String>,
           "applicationUniversalIdentifier": Any<String>,
+          "calendarEndViewIds": [],
+          "calendarEndViewUniversalIdentifiers": [],
           "calendarViewIds": [],
           "calendarViewUniversalIdentifiers": [],
           "createdAt": Any<String>,

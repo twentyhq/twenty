@@ -3,7 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { DataSource } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -15,7 +15,7 @@ import { addGlobalKeyValuePairUniqueIndexQueries } from 'src/database/typeorm/co
   description:
     'Deduplicate global keyValuePair rows and add the null/null unique index',
 })
-export class AddGlobalKeyValuePairUniqueIndexCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class AddGlobalKeyValuePairUniqueIndexCommand extends ProvisionedWorkspaceCommandRunner {
   private hasRunOnce = false;
 
   private async deduplicateGlobalKeyValuePairs(

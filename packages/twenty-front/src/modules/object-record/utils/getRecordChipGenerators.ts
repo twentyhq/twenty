@@ -5,6 +5,7 @@ import {
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
 import { getAvatarUrl } from '@/object-metadata/utils/getAvatarUrl';
+import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldValue } from '@/object-metadata/utils/getLabelIdentifierFieldValue';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
@@ -72,13 +73,9 @@ export const getRecordChipGenerators = (
             getLabelIdentifierFieldMetadataItem(objectMetadataItemToUse);
 
           const imageIdentifierFieldMetadataToUse =
-            objectMetadataItemToUse.fields.find(
-              (field) =>
-                field.id ===
-                objectMetadataItemToUse.imageIdentifierFieldMetadataId,
-            );
+            getImageIdentifierFieldMetadataItem(objectMetadataItemToUse);
 
-          const avatarType = getAvatarType(objectNameSingularToFind);
+          const avatarType = getAvatarType(objectMetadataItemToUse);
 
           return [
             fieldMetadataItem.name,

@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 
 import { CalendarChannelVisibility } from 'twenty-shared/types';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { RelatedPersonIdsService } from 'src/engine/core-modules/related-person-ids/services/related-person-ids.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
@@ -29,6 +30,7 @@ describe('TimelineCalendarEventService', () => {
   let mockConnectedAccountRepository: { find: jest.Mock };
   let mockUserWorkspaceRepository: { findOne: jest.Mock };
   let mockWorkspaceMemberRepository: { findOne: jest.Mock };
+  let mockFileUrlService: { signFirstFilesFieldFileUrl: jest.Mock };
 
   const mockCalendarEvent: Partial<CalendarEventWorkspaceEntity> = {
     id: '1',
@@ -61,6 +63,10 @@ describe('TimelineCalendarEventService', () => {
 
     mockWorkspaceMemberRepository = {
       findOne: jest.fn().mockResolvedValue(null),
+    };
+
+    mockFileUrlService = {
+      signFirstFilesFieldFileUrl: jest.fn().mockResolvedValue(null),
     };
 
     const mockGlobalWorkspaceOrmManager = {
@@ -100,6 +106,10 @@ describe('TimelineCalendarEventService', () => {
         {
           provide: RelatedPersonIdsService,
           useValue: { getRelatedPersonIds: jest.fn().mockResolvedValue([]) },
+        },
+        {
+          provide: FileUrlService,
+          useValue: mockFileUrlService,
         },
       ],
     }).compile();
@@ -248,6 +258,115 @@ describe('TimelineCalendarEventService', () => {
     expect(result.timelineCalendarEvents[0].title).toBe('Test Event');
     expect(result.timelineCalendarEvents[0].description).toBe(
       'Test Description',
+    );
+  });
+
+  it('should resolve the participant avatar from the signed avatarFile URL over the legacy avatarUrl', async () => {
+    const signedAvatarFileUrl = 'https://files.example.com/signed-avatar.png';
+
+    mockFileUrlService.signFirstFilesFieldFileUrl.mockResolvedValue(
+      signedAvatarFileUrl,
+    );
+
+    mockCalendarEventRepository.find.mockResolvedValue([
+      { id: '1', startsAt: new Date() },
+    ]);
+    mockCalendarEventRepository.findAndCount.mockResolvedValue([
+      [
+        {
+          ...mockCalendarEvent,
+          calendarEventParticipants: [
+            {
+              personId: 'person-1',
+              handle: 'john@example.com',
+              person: {
+                id: 'person-1',
+                name: { firstName: 'John', lastName: 'Doe' },
+                avatarFile: [{ fileId: 'file-1' }],
+                avatarUrl: 'https://legacy.example.com/avatar.png',
+              },
+            },
+          ],
+          calendarChannelEventAssociations: [
+            { calendarChannelId: 'channel-1' },
+          ],
+        },
+      ],
+      1,
+    ]);
+    mockCalendarChannelCoreRepository.find.mockResolvedValue([
+      {
+        id: 'channel-1',
+        visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
+        connectedAccountId: 'connected-account-1',
+      },
+    ]);
+
+    const result = await service.getCalendarEventsFromPersonIds({
+      currentWorkspaceMemberId: 'current-workspace-member-id',
+      personIds: ['person-1'],
+      workspaceId: 'test-workspace-id',
+      page: 1,
+      pageSize: 10,
+    });
+
+    expect(mockFileUrlService.signFirstFilesFieldFileUrl).toHaveBeenCalledWith({
+      filesFieldValue: [{ fileId: 'file-1' }],
+      workspaceId: 'test-workspace-id',
+    });
+    expect(result.timelineCalendarEvents[0].participants[0].avatarUrl).toBe(
+      signedAvatarFileUrl,
+    );
+  });
+
+  it('should fall back to the legacy avatarUrl when no avatarFile is signed', async () => {
+    mockFileUrlService.signFirstFilesFieldFileUrl.mockResolvedValue(null);
+
+    const legacyAvatarUrl = 'https://legacy.example.com/avatar.png';
+
+    mockCalendarEventRepository.find.mockResolvedValue([
+      { id: '1', startsAt: new Date() },
+    ]);
+    mockCalendarEventRepository.findAndCount.mockResolvedValue([
+      [
+        {
+          ...mockCalendarEvent,
+          calendarEventParticipants: [
+            {
+              personId: 'person-1',
+              handle: 'john@example.com',
+              person: {
+                id: 'person-1',
+                name: { firstName: 'John', lastName: 'Doe' },
+                avatarUrl: legacyAvatarUrl,
+              },
+            },
+          ],
+          calendarChannelEventAssociations: [
+            { calendarChannelId: 'channel-1' },
+          ],
+        },
+      ],
+      1,
+    ]);
+    mockCalendarChannelCoreRepository.find.mockResolvedValue([
+      {
+        id: 'channel-1',
+        visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
+        connectedAccountId: 'connected-account-1',
+      },
+    ]);
+
+    const result = await service.getCalendarEventsFromPersonIds({
+      currentWorkspaceMemberId: 'current-workspace-member-id',
+      personIds: ['person-1'],
+      workspaceId: 'test-workspace-id',
+      page: 1,
+      pageSize: 10,
+    });
+
+    expect(result.timelineCalendarEvents[0].participants[0].avatarUrl).toBe(
+      legacyAvatarUrl,
     );
   });
 });

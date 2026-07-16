@@ -51,12 +51,7 @@ export default defineLogicFunction({
 ```
 
 利用可能なトリガーの種類：
-* **httpRoute**: ワークスペースの **関数 ベース URL** の HTTP パスとメソッドにあなたの関数を公開します。値 Twenty_FUNCTIONS_URL\` (Twenty Cloud 上) ワークスペースごとの専用ドメイン:
-> 例：`path: '/post-card/create'` は `https://your-workspace.withtwenty.com/post-card/create` で呼び出せます
-
-<Warning>
-レガシーの `/s/` prefix route (`https://your-20-server.com/s/post-card/create`)は\*\*Twenty Cloudで非推奨になっており、**2026-07-24**で無効になります。 分離された関数ドメインを設定しない自己ホストおよびローカルインスタンスでも使用できます — 設定時は `TWENTY_FUNCTIONS_URL` を使用してください。 そして、 `\<server-url>/s/\<path>` に戻ります。
-</Warning>
+* **httpRoute**：HTTP のパスとメソッドで関数を公開します。 アプリのコードでは、`RestApiClient` を使用する際、ルートパスの先頭に `/s/` を付けてください。デプロイ後の URL では、`TWENTY_FUNCTIONS_URL` で注入されたベース URL が使用され、未設定の場合は `\<server-url>/s` が使用されます。
 
 <Note>
 (ヘッドレスの)フロントコンポーネントからルートトリガー型ロジック関数を呼び出す方法については、[ロジック関数を呼び出す](/l/ja/developers/extend/apps/layout/front-components#calling-a-logic-function)を参照してください。

@@ -4,18 +4,25 @@ import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/use
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const RecordIndexLoadBaseOnContextStoreEffect = () => {
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
   const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
-
-  const [loadedViewId, setLoadedViewId] = useState<string | undefined>(
-    undefined,
+  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
   );
+
+  const currentViewLoadKey = isDefined(contextStoreCurrentViewId)
+    ? `${contextStoreCurrentViewId}-${isCalendarWeekViewEnabled}`
+    : undefined;
+
+  const [loadedViewKey, setLoadedViewKey] = useState<string | undefined>();
 
   const view = useAtomFamilySelectorValue(viewFromViewIdFamilySelector, {
     viewId: contextStoreCurrentViewId ?? '',
@@ -24,10 +31,7 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   useEffect(() => {
-    if (
-      isDefined(contextStoreCurrentViewId) &&
-      loadedViewId === contextStoreCurrentViewId
-    ) {
+    if (isDefined(currentViewLoadKey) && loadedViewKey === currentViewLoadKey) {
       return;
     }
 
@@ -37,12 +41,12 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
 
     if (isDefined(view)) {
       loadRecordIndexStates(view, objectMetadataItem);
-      setLoadedViewId(contextStoreCurrentViewId);
+      setLoadedViewKey(currentViewLoadKey);
     }
   }, [
-    contextStoreCurrentViewId,
+    currentViewLoadKey,
     loadRecordIndexStates,
-    loadedViewId,
+    loadedViewKey,
     objectMetadataItem,
     view,
   ]);

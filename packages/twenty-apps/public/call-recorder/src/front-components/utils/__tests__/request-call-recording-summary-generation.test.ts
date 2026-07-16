@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH } from 'src/constants/generate-call-recording-summaries-route-path';
 import { requestCallRecordingSummaryGeneration } from 'src/front-components/utils/request-call-recording-summary-generation.util';
@@ -29,22 +29,14 @@ describe('requestCallRecordingSummaryGeneration', () => {
     });
   });
 
-  afterEach(() => {
-    vi.unstubAllEnvs();
-  });
-
-  it('posts to the injected functions origin without the legacy prefix', async () => {
-    vi.stubEnv('TWENTY_FUNCTIONS_URL', 'https://acme.functions.example.com');
-
+  it('posts the /s-prefixed route path and lets the client resolve the url', async () => {
     await requestCallRecordingSummaryGeneration({
       calendarEventIds: ['calendar-event-1'],
     });
 
-    expect(restApiClientMock).toHaveBeenCalledWith({
-      baseUrl: 'https://acme.functions.example.com',
-    });
+    expect(restApiClientMock).toHaveBeenCalledWith();
     expect(postMock).toHaveBeenCalledWith(
-      GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH,
+      `/s${GENERATE_CALL_RECORDING_SUMMARIES_ROUTE_PATH}`,
       { calendarEventIds: ['calendar-event-1'] },
     );
   });

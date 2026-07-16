@@ -8,7 +8,7 @@ import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v5 } from 'uuid';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -93,7 +93,7 @@ const isMorphOrRelationFieldMetadataType = (type: FieldMetadataType) =>
   description:
     'Recompute the universal identifier of auto-provisioned field metadata (system fields and default relation fields) to the deterministic getFieldUniversalIdentifier derivation.',
 })
-export class BackfillDeterministicFieldUniversalIdentifiersCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class BackfillDeterministicFieldUniversalIdentifiersCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
