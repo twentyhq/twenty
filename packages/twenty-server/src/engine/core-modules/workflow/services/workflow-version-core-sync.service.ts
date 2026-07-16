@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 import { v4 as uuidv4, v5 as uuidv5 } from 'uuid';
@@ -25,6 +26,8 @@ const CORE_WORKFLOW_VERSION_ID_NAMESPACE =
 
 @Injectable()
 export class WorkflowVersionCoreSyncService {
+  private readonly logger = new Logger(WorkflowVersionCoreSyncService.name);
+
   constructor(
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly workflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
@@ -128,6 +131,14 @@ export class WorkflowVersionCoreSyncService {
       return;
     }
 
+    if (!(await this.workspaceHasCoreWorkflowVersionIdField(workspaceId))) {
+      this.logger.warn(
+        `workflowVersion.coreWorkflowVersionId field missing for workspace ${workspaceId}, skipping core id write-back`,
+      );
+
+      return;
+    }
+
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersionRepository =
         await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -145,6 +156,22 @@ export class WorkflowVersionCoreSyncService {
         });
       }
     }, buildSystemAuthContext(workspaceId));
+  }
+
+  private async workspaceHasCoreWorkflowVersionIdField(
+    workspaceId: string,
+  ): Promise<boolean> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    return isDefined(
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.workflowVersion.fields.coreWorkflowVersionId
+          .universalIdentifier
+      ],
+    );
   }
 
   private async getCustomApplicationIdOrThrow(
