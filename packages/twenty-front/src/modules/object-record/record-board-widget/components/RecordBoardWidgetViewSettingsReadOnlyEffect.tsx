@@ -1,6 +1,6 @@
 import { isRecordBoardViewSettingsReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardViewSettingsReadOnlyComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 
 type RecordBoardWidgetViewSettingsReadOnlyEffectProps = {
   recordBoardId: string;
@@ -16,7 +16,9 @@ export const RecordBoardWidgetViewSettingsReadOnlyEffect = ({
     recordBoardId,
   );
 
-  useEffect(() => {
+  // Synchronized before paint so read-only widgets never flash (or
+  // briefly accept interaction on) their editable controls.
+  useLayoutEffect(() => {
     setIsRecordBoardViewSettingsReadOnly(isViewSettingsReadOnly);
 
     // Reset to the default on unmount so the flag cannot outlive the

@@ -119,8 +119,9 @@ export const useRecordTableWidgetLayoutCallbacks = ({
             view: {
               ...widgetViewDraft.view,
               type: targetViewType,
-              calendarLayout:
-                widgetViewDraft.view.calendarLayout ?? ViewCalendarLayout.MONTH,
+              // Widget calendars are month-only for now, so switching to
+              // the calendar layout always normalizes to MONTH.
+              calendarLayout: ViewCalendarLayout.MONTH,
               calendarFieldMetadataId: hasCalendarField
                 ? widgetViewDraft.view.calendarFieldMetadataId
                 : defaultCalendarFieldMetadataItem?.id,

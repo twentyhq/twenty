@@ -4,6 +4,7 @@ import {
   type RecordTableWidgetLayoutViewType,
   useRecordTableWidgetLayoutCallbacks,
 } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
+import { isFieldMetadataItemAvailableAsWidgetCalendarField } from '@/page-layout/widgets/record-table/utils/isFieldMetadataItemAvailableAsWidgetCalendarField';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -64,10 +65,7 @@ export const RecordTableLayoutDropdownContent = ({
 
   const defaultCalendarFieldMetadataItem =
     (objectMetadataItem?.readableFields ?? []).find(
-      (fieldMetadataItem) =>
-        fieldMetadataItem.isActive === true &&
-        (fieldMetadataItem.type === FieldMetadataType.DATE ||
-          fieldMetadataItem.type === FieldMetadataType.DATE_TIME),
+      isFieldMetadataItemAvailableAsWidgetCalendarField,
     ) ?? null;
 
   const isKanbanAvailable = isDefined(defaultGroupByFieldMetadataItem);
