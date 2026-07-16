@@ -49,9 +49,9 @@ export class EntitySubscriber implements EntitySubscriberInterface {
    * With dynamic EntitySchema targets, listenTo() returning the base
    * workspace entity class is the practical approach.
    */
-  listenTo(): Function | string | undefined {
-    // Return undefined to listen to all entities — we filter by name
-    return undefined;
+  listenTo(): Function | string {
+    // Return the base entity class to listen to all entities — we filter by name
+    return Object;
   }
 
   async afterInsert(

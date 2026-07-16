@@ -1,7 +1,7 @@
-import { Process, Processor } from '@nestjs/bullmq';
 import { Logger } from '@nestjs/common';
-import { Job } from 'bullmq';
 
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 import { InboundEventLedgerService } from '../inbound/inbound-event-ledger.service';
@@ -9,17 +9,9 @@ import { TransactionalOutboxService } from '../outbox/transactional-outbox.servi
 import {
   validateSyncEnvelope,
   isEchoEvent,
+  type SyncEnvelope,
 } from '../inbound/validate-sync-envelope.util';
 import { filterAuthoritativeFields } from './field-ownership-guard.util';
-
-interface SyncEnvelope {
-  eventId: string;
-  sourceSystem: string;
-  sourceCollection: string;
-  workspaceKey: string;
-  payload: Record<string, unknown>;
-  [key: string]: unknown;
-}
 
 /**
  * Inbound sync processor.
@@ -37,10 +29,11 @@ export class InboundSyncProcessor {
   ) {}
 
   @Process('process-inbound-event')
-  async processInboundEvent(
-    job: Job<{ recordId: string; workspaceId: string }>,
-  ): Promise<void> {
-    const { recordId, workspaceId } = job.data;
+  async processInboundEvent(data: {
+    recordId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const { recordId, workspaceId } = data;
 
     this.logger.log(
       `Processing inbound event record ${recordId} (workspace ${workspaceId})`,

@@ -1,7 +1,7 @@
-import { Process, Processor } from '@nestjs/bullmq';
 import { Logger } from '@nestjs/common';
-import { Job } from 'bullmq';
 
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 import { TransactionalOutboxService } from './transactional-outbox.service';
@@ -20,8 +20,8 @@ export class OutboxRelayProcessor {
   constructor(private readonly outboxService: TransactionalOutboxService) {}
 
   @Process('process-outbox')
-  async processOutbox(job: Job<{ entryId: string }>): Promise<void> {
-    const { entryId } = job.data;
+  async processOutbox(data: { entryId: string }): Promise<void> {
+    const { entryId } = data;
 
     const entry = await this.outboxService.getEntry(entryId);
     if (!entry) {

@@ -1,7 +1,7 @@
-import { Process, Processor } from '@nestjs/bullmq';
 import { Logger } from '@nestjs/common';
-import { Job } from 'bullmq';
 
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 import { OutboundEventLedgerService } from '../outbound/outbound-event-ledger.service';
@@ -24,10 +24,11 @@ export class OutboundSyncProcessor {
   ) {}
 
   @Process('process-outbound-event')
-  async processOutboundEvent(
-    job: Job<{ outboxEntryId: string; workspaceId: string }>,
-  ): Promise<void> {
-    const { outboxEntryId, workspaceId } = job.data;
+  async processOutboundEvent(data: {
+    outboxEntryId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const { outboxEntryId, workspaceId } = data;
 
     this.logger.log(
       `Processing outbound event from outbox ${outboxEntryId} (workspace ${workspaceId})`,
