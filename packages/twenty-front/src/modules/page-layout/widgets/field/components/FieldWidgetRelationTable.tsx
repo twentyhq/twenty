@@ -4,6 +4,7 @@ import { type FieldRelationMetadata } from '@/object-record/record-field/ui/type
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { RecordTableWidgetRendererContent } from '@/page-layout/widgets/record-table/components/RecordTableWidgetRendererContent';
+import { getRelationTableFilter } from '@/page-layout/widgets/field/utils/getRelationTableFilter';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -42,10 +43,39 @@ export const FieldWidgetRelationTable = ({
     ? widget.configuration.viewId
     : undefined;
 
-  const relationObjectMetadataId =
-    fieldDefinition.metadata.relationObjectMetadataId;
+  const {
+    relationFieldMetadataId,
+    relationObjectMetadataNameSingular,
+    relationObjectMetadataId,
+    relationType,
+    objectMetadataNameSingular,
+  } = fieldDefinition.metadata;
   const recordPageObjectMetadataNameSingular =
     fieldDefinition.metadata.objectMetadataNameSingular;
+
+  const { objectMetadataItem: relationObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: relationObjectMetadataNameSingular,
+    });
+
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const recordObjectMetadataItem = objectMetadataItems.find(
+    ({ nameSingular }) => nameSingular === objectMetadataNameSingular,
+  );
+
+  const inverseRelationFieldMetadataItem =
+    relationObjectMetadataItem.fields.find(
+      ({ id }) => id === relationFieldMetadataId,
+    );
+
+  const relationTableFilter = getRelationTableFilter({
+    recordId,
+    relationType,
+    inverseRelationFieldMetadataItem,
+    recordObjectMetadataNameSingular: recordObjectMetadataItem?.nameSingular,
+    recordObjectMetadataNamePlural: recordObjectMetadataItem?.namePlural,
+  });
 
   if (
     !isDefined(viewId) ||
@@ -62,6 +92,7 @@ export const FieldWidgetRelationTable = ({
           id: recordId,
           objectMetadataNameSingular: recordPageObjectMetadataNameSingular,
         },
+        relationTableFilter,
       }}
     >
       <StyledContainer>
@@ -77,3 +108,5 @@ export const FieldWidgetRelationTable = ({
     </RecordFilterValueDependenciesContext.Provider>
   );
 };
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
