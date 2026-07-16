@@ -54,11 +54,19 @@ export class EntitySubscriber implements EntitySubscriberInterface {
     return undefined;
   }
 
-  async afterInsert(event: InsertEvent<Record<string, unknown>>): Promise<void> {
-    await this.handleEntityEvent(event.metadata?.tableName, event.entity, event);
+  async afterInsert(
+    event: InsertEvent<Record<string, unknown>>,
+  ): Promise<void> {
+    await this.handleEntityEvent(
+      event.metadata?.tableName,
+      event.entity,
+      event,
+    );
   }
 
-  async afterUpdate(event: UpdateEvent<Record<string, unknown>>): Promise<void> {
+  async afterUpdate(
+    event: UpdateEvent<Record<string, unknown>>,
+  ): Promise<void> {
     await this.handleEntityEvent(
       event.metadata?.tableName,
       event.entity as Record<string, unknown>,
@@ -69,7 +77,9 @@ export class EntitySubscriber implements EntitySubscriberInterface {
   private async handleEntityEvent(
     tableName: string | undefined,
     entity: Record<string, unknown> | undefined,
-    _event: InsertEvent<Record<string, unknown>> | UpdateEvent<Record<string, unknown>>,
+    _event:
+      | InsertEvent<Record<string, unknown>>
+      | UpdateEvent<Record<string, unknown>>,
   ): Promise<void> {
     // Skip sync tables to prevent recursion
     if (!tableName || this.syncTableNames.has(tableName)) {
@@ -82,12 +92,16 @@ export class EntitySubscriber implements EntitySubscriberInterface {
 
     // At PR2 time we don't know which objects are executive-profile entities.
     // The scoping guard handles this: no externalEntityLink table → no-op.
-    const workspaceId = (entity as Record<string, unknown>).workspaceId as string;
+    const workspaceId = (entity as Record<string, unknown>)
+      .workspaceId as string;
     if (!workspaceId) {
       return;
     }
 
-    const isEnabled = await this.scopingGuard.isSyncEnabled(workspaceId, tableName);
+    const isEnabled = await this.scopingGuard.isSyncEnabled(
+      workspaceId,
+      tableName,
+    );
     if (!isEnabled) {
       return;
     }

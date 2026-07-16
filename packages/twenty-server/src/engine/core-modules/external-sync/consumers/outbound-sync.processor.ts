@@ -55,7 +55,7 @@ export class OutboundSyncProcessor {
         targetCollection: outboxEntry.eventType,
         payload: outboxEntry.payload,
         beforeHash: undefined, // PR2 stub — computed in PR4
-        afterHash: undefined,  // PR2 stub — computed in PR4
+        afterHash: undefined, // PR2 stub — computed in PR4
       });
 
       // 3. Mark as SIGNED

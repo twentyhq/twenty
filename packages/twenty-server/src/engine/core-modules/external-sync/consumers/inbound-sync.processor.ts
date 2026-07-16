@@ -6,7 +6,10 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 
 import { InboundEventLedgerService } from '../inbound/inbound-event-ledger.service';
 import { TransactionalOutboxService } from '../outbox/transactional-outbox.service';
-import { validateSyncEnvelope, isEchoEvent } from '../inbound/validate-sync-envelope.util';
+import {
+  validateSyncEnvelope,
+  isEchoEvent,
+} from '../inbound/validate-sync-envelope.util';
 import { filterAuthoritativeFields } from './field-ownership-guard.util';
 
 interface SyncEnvelope {
@@ -58,13 +61,18 @@ export class InboundSyncProcessor {
       const envelope = this.parseEnvelope(record);
       if (!envelope) {
         await this.inboundLedger.markDead(recordId, 'Failed to parse envelope');
-        this.logger.error(`Inbound event ${record.eventId}: envelope parse failed`);
+        this.logger.error(
+          `Inbound event ${record.eventId}: envelope parse failed`,
+        );
         return;
       }
       const validation = validateSyncEnvelope(envelope);
 
       if (!validation.valid) {
-        await this.inboundLedger.markDead(recordId, validation.errors.join('; '));
+        await this.inboundLedger.markDead(
+          recordId,
+          validation.errors.join('; '),
+        );
         this.logger.error(
           `Inbound event ${record.eventId} failed validation: ${validation.errors.join('; ')}`,
         );
@@ -99,9 +107,7 @@ export class InboundSyncProcessor {
       // 7. Mark as PROCESSED
       await this.inboundLedger.markProcessed(recordId);
 
-      this.logger.log(
-        `Successfully processed inbound event ${record.eventId}`,
-      );
+      this.logger.log(`Successfully processed inbound event ${record.eventId}`);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
@@ -114,11 +120,15 @@ export class InboundSyncProcessor {
     }
   }
 
-  private parseEnvelope(record: { eventId: string; rawEnvelope?: unknown }): SyncEnvelope | undefined {
+  private parseEnvelope(record: {
+    eventId: string;
+    rawEnvelope?: unknown;
+  }): SyncEnvelope | undefined {
     try {
-      const raw = typeof record.rawEnvelope === 'string'
-        ? JSON.parse(record.rawEnvelope)
-        : record.rawEnvelope;
+      const raw =
+        typeof record.rawEnvelope === 'string'
+          ? JSON.parse(record.rawEnvelope)
+          : record.rawEnvelope;
       if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
         return raw as SyncEnvelope;
       }

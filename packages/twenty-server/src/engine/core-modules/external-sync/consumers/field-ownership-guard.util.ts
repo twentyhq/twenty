@@ -18,7 +18,10 @@ export type FieldAuthority =
 
 // Per-collection field authority rules
 // Replaced by CSV parsing in PR3+
-const COLLECTION_FIELD_AUTHORITY: Record<string, Record<string, FieldAuthority>> = {};
+const COLLECTION_FIELD_AUTHORITY: Record<
+  string,
+  Record<string, FieldAuthority>
+> = {};
 
 /**
  * Filter envelope fields according to the field ownership rules.

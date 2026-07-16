@@ -78,8 +78,7 @@ export class TransactionalOutboxService {
     const now = new Date();
     return Array.from(this.store.values()).filter(
       (e) =>
-        e.status === 'PENDING' &&
-        (!e.nextAttemptAt || e.nextAttemptAt <= now),
+        e.status === 'PENDING' && (!e.nextAttemptAt || e.nextAttemptAt <= now),
     );
   }
 

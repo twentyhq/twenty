@@ -130,7 +130,9 @@ export class InboundEventLedgerService {
         return;
       }
     }
-    this.logger.warn(`Inbound event record ${recordId} not found for status update`);
+    this.logger.warn(
+      `Inbound event record ${recordId} not found for status update`,
+    );
   }
 
   /**

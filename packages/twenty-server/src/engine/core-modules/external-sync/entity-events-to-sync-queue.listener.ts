@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  type ObjectRecordCreateEvent,
-} from 'twenty-shared/database-events';
+import { type ObjectRecordCreateEvent } from 'twenty-shared/database-events';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -25,10 +23,7 @@ export class EntityEventsToSyncQueueListener {
     private readonly externalSyncQueueService: MessageQueueService,
   ) {}
 
-  @OnDatabaseBatchEvent(
-    'externalSyncInboundEvent',
-    DatabaseEventAction.CREATED,
-  )
+  @OnDatabaseBatchEvent('externalSyncInboundEvent', DatabaseEventAction.CREATED)
   async handleInboundEventCreated(
     batchEvent: WorkspaceEventBatch<ObjectRecordCreateEvent>,
   ): Promise<void> {

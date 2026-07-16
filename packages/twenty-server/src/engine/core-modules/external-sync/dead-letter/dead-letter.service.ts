@@ -124,15 +124,18 @@ export class DeadLetterService {
  */
 @Injectable()
 export class ConflictService {
-  private readonly store: Map<string, {
-    id: string;
-    recordRef: string;
-    field: string;
-    authoritativeValue: unknown;
-    status: 'OPEN' | 'RESOLVED';
-    resolvedBy?: string;
-    resolvedAt?: Date;
-  }> = new Map();
+  private readonly store: Map<
+    string,
+    {
+      id: string;
+      recordRef: string;
+      field: string;
+      authoritativeValue: unknown;
+      status: 'OPEN' | 'RESOLVED';
+      resolvedBy?: string;
+      resolvedAt?: Date;
+    }
+  > = new Map();
 
   async createConflict(params: {
     recordRef: string;
@@ -165,7 +168,9 @@ export class ConflictService {
     return { id, status: 'RESOLVED' };
   }
 
-  async getOpenConflicts(): Promise<Array<{ id: string; recordRef: string; field: string }>> {
+  async getOpenConflicts(): Promise<
+    Array<{ id: string; recordRef: string; field: string }>
+  > {
     return Array.from(this.store.values())
       .filter((c) => c.status === 'OPEN')
       .map(({ id, recordRef, field }) => ({ id, recordRef, field }));
@@ -181,11 +186,14 @@ export class ConflictService {
  */
 @Injectable()
 export class CheckpointService {
-  private readonly store: Map<string, {
-    collection: string;
-    lastSyncedAt: Date;
-    cursor?: Record<string, unknown>;
-  }> = new Map();
+  private readonly store: Map<
+    string,
+    {
+      collection: string;
+      lastSyncedAt: Date;
+      cursor?: Record<string, unknown>;
+    }
+  > = new Map();
 
   async upsertCheckpoint(params: {
     workspaceId: string;
@@ -223,23 +231,29 @@ export class CheckpointService {
  */
 @Injectable()
 export class ReconciliationService {
-  private readonly runStore: Map<string, {
-    id: string;
-    scope: string;
-    status: string;
-    startedAt: Date;
-    finishedAt?: Date;
-    summary?: Record<string, unknown>;
-  }> = new Map();
+  private readonly runStore: Map<
+    string,
+    {
+      id: string;
+      scope: string;
+      status: string;
+      startedAt: Date;
+      finishedAt?: Date;
+      summary?: Record<string, unknown>;
+    }
+  > = new Map();
 
-  private readonly findingStore: Map<string, {
-    id: string;
-    runId: string;
-    kind: string;
-    recordRef: string;
-    severity: string;
-    detail: string;
-  }> = new Map();
+  private readonly findingStore: Map<
+    string,
+    {
+      id: string;
+      runId: string;
+      kind: string;
+      recordRef: string;
+      severity: string;
+      detail: string;
+    }
+  > = new Map();
 
   async createRun(params: {
     scope: string;
@@ -287,12 +301,14 @@ export class ReconciliationService {
     return { id };
   }
 
-  async getFindingsByRun(runId: string): Promise<Array<{
-    id: string;
-    kind: string;
-    recordRef: string;
-    severity: string;
-  }>> {
+  async getFindingsByRun(runId: string): Promise<
+    Array<{
+      id: string;
+      kind: string;
+      recordRef: string;
+      severity: string;
+    }>
+  > {
     return Array.from(this.findingStore.values())
       .filter((f) => f.runId === runId)
       .map(({ id, kind, recordRef, severity }) => ({

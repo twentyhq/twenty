@@ -1,6 +1,12 @@
 import { describe, expect, it, beforeEach } from '@jest/globals';
 
-import { DeadLetterService, DeadLetterDirection, ConflictService, CheckpointService, ReconciliationService } from '../dead-letter/dead-letter.service';
+import {
+  DeadLetterService,
+  DeadLetterDirection,
+  ConflictService,
+  CheckpointService,
+  ReconciliationService,
+} from '../dead-letter/dead-letter.service';
 
 describe('DeadLetterService', () => {
   let service: DeadLetterService;
@@ -107,8 +113,16 @@ describe('ConflictService', () => {
   });
 
   it('returns all open conflicts', async () => {
-    await service.createConflict({ recordRef: 'rec-001', field: 'name', authoritativeValue: 'Jane' });
-    const resolved = await service.createConflict({ recordRef: 'rec-002', field: 'title', authoritativeValue: 'CEO' });
+    await service.createConflict({
+      recordRef: 'rec-001',
+      field: 'name',
+      authoritativeValue: 'Jane',
+    });
+    const resolved = await service.createConflict({
+      recordRef: 'rec-002',
+      field: 'title',
+      authoritativeValue: 'CEO',
+    });
     await service.resolveConflict(resolved.id, 'admin');
 
     const open = await service.getOpenConflicts();

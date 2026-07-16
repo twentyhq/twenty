@@ -1,6 +1,9 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { validateSyncEnvelope, isEchoEvent } from '../inbound/validate-sync-envelope.util';
+import {
+  validateSyncEnvelope,
+  isEchoEvent,
+} from '../inbound/validate-sync-envelope.util';
 
 describe('validateSyncEnvelope', () => {
   const validEnvelope = {
@@ -63,30 +66,34 @@ describe('validateSyncEnvelope', () => {
 
 describe('isEchoEvent', () => {
   it('returns true for TWENTY source system', () => {
-    expect(isEchoEvent({
-      eventId: 'evt-echo',
-      idempotencyKey: 'key-echo',
-      eventVersion: '1.0',
-      sourceSystem: 'TWENTY',
-      sourceCollection: 'executives',
-      sourceRecordId: 'rec-echo',
-      workspaceKey: 'ws-echo',
-      timestamp: '2026-07-16T00:00:00Z',
-      payload: {},
-    })).toBe(true);
+    expect(
+      isEchoEvent({
+        eventId: 'evt-echo',
+        idempotencyKey: 'key-echo',
+        eventVersion: '1.0',
+        sourceSystem: 'TWENTY',
+        sourceCollection: 'executives',
+        sourceRecordId: 'rec-echo',
+        workspaceKey: 'ws-echo',
+        timestamp: '2026-07-16T00:00:00Z',
+        payload: {},
+      }),
+    ).toBe(true);
   });
 
   it('returns false for DIRECTUS source system', () => {
-    expect(isEchoEvent({
-      eventId: 'evt-dir',
-      idempotencyKey: 'key-dir',
-      eventVersion: '1.0',
-      sourceSystem: 'DIRECTUS',
-      sourceCollection: 'executives',
-      sourceRecordId: 'rec-dir',
-      workspaceKey: 'ws-dir',
-      timestamp: '2026-07-16T00:00:00Z',
-      payload: {},
-    })).toBe(false);
+    expect(
+      isEchoEvent({
+        eventId: 'evt-dir',
+        idempotencyKey: 'key-dir',
+        eventVersion: '1.0',
+        sourceSystem: 'DIRECTUS',
+        sourceCollection: 'executives',
+        sourceRecordId: 'rec-dir',
+        workspaceKey: 'ws-dir',
+        timestamp: '2026-07-16T00:00:00Z',
+        payload: {},
+      }),
+    ).toBe(false);
   });
 });

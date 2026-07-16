@@ -17,9 +17,7 @@ export class OutboxRelayProcessor {
   private readonly logger = new Logger(OutboxRelayProcessor.name);
   private readonly maxAttempts = 5;
 
-  constructor(
-    private readonly outboxService: TransactionalOutboxService,
-  ) {}
+  constructor(private readonly outboxService: TransactionalOutboxService) {}
 
   @Process('process-outbox')
   async processOutbox(job: Job<{ entryId: string }>): Promise<void> {

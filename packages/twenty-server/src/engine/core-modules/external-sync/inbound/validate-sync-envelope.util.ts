@@ -30,9 +30,7 @@ export interface ValidationResult {
  * Validate a sync envelope against the schema rules.
  * Processing rules: reject unknown eventVersion; echo prevention.
  */
-export function validateSyncEnvelope(
-  envelope: unknown,
-): ValidationResult {
+export function validateSyncEnvelope(envelope: unknown): ValidationResult {
   const errors: string[] = [];
 
   if (!envelope || typeof envelope !== 'object') {
@@ -67,7 +65,9 @@ export function validateSyncEnvelope(
   if (!KNOWN_EVENT_VERSIONS.includes(env.eventVersion as string)) {
     return {
       valid: false,
-      errors: [`Unknown eventVersion: ${env.eventVersion}. Known versions: ${KNOWN_EVENT_VERSIONS.join(', ')}`],
+      errors: [
+        `Unknown eventVersion: ${env.eventVersion}. Known versions: ${KNOWN_EVENT_VERSIONS.join(', ')}`,
+      ],
       reason: 'UNKNOWN_EVENT_VERSION',
     };
   }

@@ -25,7 +25,10 @@ export class OutboxScopingGuard {
       // PR2: externalEntityLink table doesn't exist yet → return false (no-op)
       // PR4: this will check if any externalEntityLink records exist for
       //       this object type in the workspace
-      return await this.checkExternalEntityLink(workspaceId, objectNameSingular);
+      return await this.checkExternalEntityLink(
+        workspaceId,
+        objectNameSingular,
+      );
     } catch {
       // Table doesn't exist or connection issue → safe no-op
       this.logger.debug(

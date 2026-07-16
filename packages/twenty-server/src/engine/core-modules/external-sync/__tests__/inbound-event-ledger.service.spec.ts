@@ -1,6 +1,9 @@
 import { describe, expect, it, beforeEach } from '@jest/globals';
 
-import { InboundEventLedgerService, InboundEventReceipt } from '../inbound/inbound-event-ledger.service';
+import {
+  InboundEventLedgerService,
+  InboundEventReceipt,
+} from '../inbound/inbound-event-ledger.service';
 
 describe('InboundEventLedgerService', () => {
   let service: InboundEventLedgerService;
