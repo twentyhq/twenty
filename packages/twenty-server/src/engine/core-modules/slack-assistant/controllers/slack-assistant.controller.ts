@@ -26,7 +26,7 @@ import {
   SlackAssistantExceptionCode,
 } from 'src/engine/core-modules/slack-assistant/slack-assistant.exception';
 import { type SlackAssistantReplyJobData } from 'src/engine/core-modules/slack-assistant/types/slack-assistant-reply-job.type';
-import { loadSlackWebhookModule } from 'src/engine/core-modules/slack-assistant/utils/load-chat-adapter-slack.util';
+import { parseSlackWebhookBody } from 'src/engine/core-modules/slack-assistant/utils/slack-webhook.util';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
@@ -47,7 +47,6 @@ export class SlackAssistantController {
     @Req() request: RawBodyRequest<Request>,
     @Headers('x-slack-signature') signature: string | undefined,
     @Headers('x-slack-request-timestamp') timestamp: string | undefined,
-    @Headers('content-type') contentType: string | undefined,
   ): Promise<{ challenge: string } | { ok: true }> {
     const rawBody = request.rawBody?.toString('utf-8');
 
@@ -68,11 +67,7 @@ export class SlackAssistantController {
       throw new UnauthorizedException('Invalid Slack signature');
     }
 
-    const { parseSlackWebhookBody } = await loadSlackWebhookModule();
-
-    const payload = parseSlackWebhookBody(rawBody, {
-      contentType: contentType ?? null,
-    });
+    const payload = parseSlackWebhookBody(rawBody);
 
     if (payload.kind === 'url_verification') {
       return { challenge: payload.challenge };
