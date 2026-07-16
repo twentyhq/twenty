@@ -1,7 +1,7 @@
 import { msg, t } from '@lingui/core/macro';
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
@@ -85,34 +85,20 @@ export class ObjectSystemRelationsOnUpdateSideEffectHandlerService extends Metad
       return { status: 'noop' };
     }
 
-    const fieldMetadataToUpdate: Record<
-      string,
-      MetadataUniversalFlatEntity<'fieldMetadata'>
-    > = {};
-
-    for (const morphFlatFieldMetadata of morphFlatFieldMetadatasToUpdate) {
-      fieldMetadataToUpdate[morphFlatFieldMetadata.universalIdentifier] =
-        morphFlatFieldMetadata;
-    }
-
-    const indexToUpdate: Record<
-      string,
-      MetadataUniversalFlatEntity<'index'>
-    > = {};
-
-    for (const morphRelatedFlatIndex of morphRelatedFlatIndexesToUpdate) {
-      indexToUpdate[morphRelatedFlatIndex.universalIdentifier] =
-        morphRelatedFlatIndex;
-    }
-
     return {
       status: 'success',
       operations: {
         fieldMetadata: {
-          flatEntityToUpdate: fieldMetadataToUpdate,
+          flatEntityToUpdate: fromArrayToUniqueKeyRecord({
+            array: morphFlatFieldMetadatasToUpdate,
+            uniqueKey: 'universalIdentifier',
+          }),
         },
         index: {
-          flatEntityToUpdate: indexToUpdate,
+          flatEntityToUpdate: fromArrayToUniqueKeyRecord({
+            array: morphRelatedFlatIndexesToUpdate,
+            uniqueKey: 'universalIdentifier',
+          }),
         },
       },
     };
