@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
@@ -18,10 +18,10 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES } from 'src/engine/core-modules/billing/constants/workspace-activating-subscription-statuses.constant';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES } from 'src/engine/core-modules/billing/constants/workspace-activating-subscription-statuses.constant';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
@@ -81,7 +81,7 @@ export class BillingWebhookSubscriptionService {
       withDeleted: true,
     });
 
-    if (!workspace) {
+    if (!isDefined(workspace)) {
       throw new BillingException(
         `Workspace not found for subscription event ${event.id} / workspaceId: ${workspaceId}`,
         BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
@@ -155,41 +155,48 @@ export class BillingWebhookSubscriptionService {
       'currentBillingSubscription',
     ]);
 
-    // Stripe events can be delivered out of order or processed concurrently.
-    // Base the suspend/reactivate decision on the subscription state freshly
-    // fetched from Stripe (not the event payload, which may be stale) and on a
-    // re-read of the workspace (the snapshot above predates slow awaits), so
-    // every event converges the workspace to the current subscription state.
+    // Stripe events can arrive out of order or concurrently: decide from the
+    // live subscription state and a fresh workspace read, not the event payload.
     const refreshedWorkspace =
       (await this.workspaceRepository.findOne({
         where: { id: workspaceId },
         withDeleted: true,
       })) ?? workspace;
 
-    if (this.shouldSuspendWorkspace(subscriptionWithSchedule)) {
-      if (
-        refreshedWorkspace.activationStatus === WorkspaceActivationStatus.ACTIVE
-      ) {
-        await this.workspaceService.suspendWorkspace(workspaceId);
-      } else if (
-        refreshedWorkspace.activationStatus ===
-        WorkspaceActivationStatus.PENDING_CREATION
-      ) {
-        await this.workspaceService.deleteWorkspace(workspace.id);
-      }
-    } else if (
-      this.shouldReactivateWorkspace(subscriptionWithSchedule) &&
-      (refreshedWorkspace.activationStatus ===
-        WorkspaceActivationStatus.SUSPENDED ||
-        refreshedWorkspace.activationStatus ===
-          WorkspaceActivationStatus.CREATED)
-    ) {
-      await this.workspaceService.reactivateWorkspace(workspaceId);
+    const shouldSuspendWorkspace = this.shouldSuspendWorkspace(
+      subscriptionWithSchedule,
+    );
+    const shouldReactivateWorkspace =
+      !shouldSuspendWorkspace &&
+      this.shouldReactivateWorkspace(subscriptionWithSchedule);
 
-      await this.messageQueueService.add<CleanWorkspaceDeletionWarningUserVarsJobData>(
-        CleanWorkspaceDeletionWarningUserVarsJob.name,
-        { workspaceId },
-      );
+    switch (refreshedWorkspace.activationStatus) {
+      case WorkspaceActivationStatus.ACTIVE:
+        if (shouldSuspendWorkspace) {
+          await this.workspaceService.suspendWorkspace(workspaceId);
+        }
+        break;
+      case WorkspaceActivationStatus.PENDING_CREATION:
+        if (shouldSuspendWorkspace) {
+          await this.workspaceService.deleteWorkspace(workspace.id);
+        }
+        break;
+      case WorkspaceActivationStatus.SUSPENDED:
+      case WorkspaceActivationStatus.CREATED:
+        if (shouldReactivateWorkspace) {
+          await this.workspaceService.reactivateWorkspace(workspaceId);
+
+          await this.messageQueueService.add<CleanWorkspaceDeletionWarningUserVarsJobData>(
+            CleanWorkspaceDeletionWarningUserVarsJob.name,
+            { workspaceId },
+          );
+        }
+        break;
+      case WorkspaceActivationStatus.ONGOING_CREATION:
+      case WorkspaceActivationStatus.INACTIVE:
+        break;
+      default:
+        assertUnreachable(refreshedWorkspace.activationStatus);
     }
 
     await this.stripeCustomerService.updateCustomerMetadataWorkspaceId(
