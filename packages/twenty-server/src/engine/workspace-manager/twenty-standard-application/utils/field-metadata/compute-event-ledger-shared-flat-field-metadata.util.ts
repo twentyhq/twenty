@@ -44,6 +44,7 @@ export const buildEventLedgerCommonFields = <O extends EventLedgerObjectName>(
     CreateStandardFieldArgs<O, FieldMetadataType>,
     'context'
   >,
+  defaultSourceSystem?: string,
 ): Record<EventLedgerCommonFieldName, FlatFieldMetadata> => ({
   id: createStandardFieldFlatMetadata({
     ...base,
@@ -212,7 +213,7 @@ export const buildEventLedgerCommonFields = <O extends EventLedgerObjectName>(
       icon: 'IconPlug',
       isNullable: false,
       isUIEditable: false,
-      defaultValue: `'${InboundEventLedgerSourceSystem.DIRECTUS}'`,
+      defaultValue: `'${defaultSourceSystem ?? InboundEventLedgerSourceSystem.DIRECTUS}'`,
       options: [
         {
           id: '2a850e5c-125a-4bc2-bbc0-b174b96f684f',

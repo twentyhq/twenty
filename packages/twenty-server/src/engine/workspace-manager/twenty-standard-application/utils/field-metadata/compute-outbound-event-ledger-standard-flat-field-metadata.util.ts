@@ -9,6 +9,7 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { buildEventLedgerCommonFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-event-ledger-shared-flat-field-metadata.util';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
+import { InboundEventLedgerSourceSystem } from 'src/modules/executive-search/standard-objects/enums/inbound-event-ledger-source-system.enum';
 import { OutboundEventLedgerStatus } from 'src/modules/executive-search/standard-objects/enums/outbound-event-ledger-status.enum';
 
 export const buildOutboundEventLedgerStandardFlatFieldMetadatas = ({
@@ -35,7 +36,7 @@ export const buildOutboundEventLedgerStandardFlatFieldMetadatas = ({
   };
 
   return {
-    ...buildEventLedgerCommonFields(base),
+    ...buildEventLedgerCommonFields(base, InboundEventLedgerSourceSystem.TWENTY),
     status: createStandardFieldFlatMetadata({
       ...base,
       context: {

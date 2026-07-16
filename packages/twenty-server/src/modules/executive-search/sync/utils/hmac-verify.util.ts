@@ -13,14 +13,18 @@ export function verifyHmacSignature(args: {
     }
 
     const timestamp = match[1];
-    const receivedSignature = match[2];
+    const receivedSignatureHex = match[2];
+
+    // Build the HMAC input as raw bytes: timestamp + ':' + rawBody
+    const timestampBytes = Buffer.from(`${timestamp}:`, 'utf-8');
+    const hmacInput = Buffer.concat([timestampBytes, args.rawBody]);
 
     const expectedSignature = createHmac('sha256', args.secret)
-      .update(`${timestamp}:${args.rawBody}`)
+      .update(hmacInput)
       .digest('hex');
 
-    const expectedBuffer = Buffer.from(expectedSignature, 'utf-8');
-    const receivedBuffer = Buffer.from(receivedSignature, 'utf-8');
+    const expectedBuffer = Buffer.from(expectedSignature, 'hex');
+    const receivedBuffer = Buffer.from(receivedSignatureHex, 'hex');
 
     if (expectedBuffer.length !== receivedBuffer.length) {
       return false;

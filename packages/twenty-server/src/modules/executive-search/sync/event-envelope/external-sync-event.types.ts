@@ -7,8 +7,8 @@ export type ExternalSyncEventActorType =
   | 'CLIENT';
 
 export interface ExternalSyncEventActor {
-  type: ExternalSyncEventActorType;
-  id: string | null;
+  type?: ExternalSyncEventActorType;
+  id?: string | null;
 }
 
 export interface ExternalSyncEvent {
@@ -25,9 +25,9 @@ export interface ExternalSyncEvent {
   causationId: string | null;
   idempotencyKey: string;
   occurredAt: string;
-  actor: ExternalSyncEventActor | null;
-  changedFields: string[] | null;
-  payload: Record<string, unknown> | null;
+  actor?: ExternalSyncEventActor | null;
+  changedFields?: string[] | null;
+  payload?: Record<string, unknown> | null;
 }
 
 export type ExternalSyncEventValidationResult =
