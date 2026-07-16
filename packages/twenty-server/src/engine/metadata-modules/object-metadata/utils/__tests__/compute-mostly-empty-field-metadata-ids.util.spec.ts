@@ -121,6 +121,38 @@ describe('computeMostlyEmptyFieldMetadataIds', () => {
     expect(resultWithAllColumnsEmpty).toEqual(['field-id']);
   });
 
+  it('should not flag a links field whose label or secondary links carry data', () => {
+    const linksFieldMetadata = buildFieldMetadata({
+      name: 'introVideo',
+      type: FieldMetadataType.LINKS,
+    });
+
+    const resultWithFilledLabel = computeMostlyEmptyFieldMetadataIds({
+      fieldMetadatas: [linksFieldMetadata],
+      labelIdentifierFieldMetadataId: null,
+      emptyFractionByColumnName: new Map([
+        ['introVideoPrimaryLinkLabel', 0.4],
+        ['introVideoPrimaryLinkUrl', 1],
+        ['introVideoSecondaryLinks', 1],
+      ]),
+      now: NOW,
+    });
+
+    const resultWithAllColumnsEmpty = computeMostlyEmptyFieldMetadataIds({
+      fieldMetadatas: [linksFieldMetadata],
+      labelIdentifierFieldMetadataId: null,
+      emptyFractionByColumnName: new Map([
+        ['introVideoPrimaryLinkLabel', 1],
+        ['introVideoPrimaryLinkUrl', 1],
+        ['introVideoSecondaryLinks', 1],
+      ]),
+      now: NOW,
+    });
+
+    expect(resultWithFilledLabel).toEqual([]);
+    expect(resultWithAllColumnsEmpty).toEqual(['field-id']);
+  });
+
   it('should ignore the currency code column when evaluating a currency field', () => {
     const result = computeMostlyEmptyFieldMetadataIds({
       fieldMetadatas: [

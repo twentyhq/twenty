@@ -61,8 +61,9 @@ export class MostlyEmptyFieldsService {
       await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
     // Per-column emptiness: null fraction plus the sampled frequency of the
-    // type's empty sentinel — '' for text columns (NOT NULL DEFAULT ''),
-    // '{}'/'[]' for array and json columns
+    // column type's empty sentinel — '' for text columns (NOT NULL DEFAULT ''),
+    // '{}' for arrays, '{}'/'[]' for json. Sentinels are matched per physical
+    // column type so a text value that happens to be '{}' does not count
     const columnStatisticsRows: {
       column_name: string;
       empty_fraction: number;
@@ -70,11 +71,22 @@ export class MostlyEmptyFieldsService {
       `SELECT s.attname AS column_name,
               (s.null_frac + COALESCE(empty_sentinel.frequency, 0))::float AS empty_fraction
        FROM pg_stats s
+       JOIN pg_namespace n ON n.nspname = s.schemaname
+       JOIN pg_class c ON c.relnamespace = n.oid AND c.relname = s.tablename
+       JOIN pg_attribute a ON a.attrelid = c.oid AND a.attname = s.attname
+       JOIN pg_type t ON t.oid = a.atttypid
        LEFT JOIN LATERAL (
          SELECT SUM(most_common_value_frequency) AS frequency
          FROM unnest(s.most_common_vals::text::text[], s.most_common_freqs)
            AS most_common_value_entry(most_common_value, most_common_value_frequency)
-         WHERE most_common_value_entry.most_common_value IN ('', '{}', '[]')
+         WHERE most_common_value_entry.most_common_value = ANY (
+           CASE
+             WHEN t.typcategory = 'S' THEN ARRAY['']
+             WHEN t.typcategory = 'A' THEN ARRAY['{}']
+             WHEN t.typname IN ('json', 'jsonb') THEN ARRAY['{}', '[]']
+             ELSE ARRAY[]::text[]
+           END
+         )
        ) empty_sentinel ON TRUE
        WHERE s.schemaname = $1
        AND s.tablename = $2

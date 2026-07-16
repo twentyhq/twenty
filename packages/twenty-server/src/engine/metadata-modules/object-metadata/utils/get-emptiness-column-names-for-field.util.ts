@@ -1,9 +1,43 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-import { assertUnreachable } from 'twenty-shared/utils';
+import {
+  compositeTypeDefinitions,
+  FieldMetadataType,
+} from 'twenty-shared/types';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
+import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
-import { getSubfieldsForAggregateOperation } from 'src/engine/twenty-orm/utils/get-subfields-for-aggregate-operation.util';
+
+// Composite properties that carry workspace defaults (currency codes, phone
+// country/calling codes): a stamped default would mask emptiness of the value
+// users actually fill in
+const DEFAULT_BEARING_COMPOSITE_PROPERTIES: Partial<
+  Record<FieldMetadataType, string[]>
+> = {
+  [FieldMetadataType.CURRENCY]: ['currencyCode'],
+  [FieldMetadataType.PHONES]: [
+    'primaryPhoneCountryCode',
+    'primaryPhoneCallingCode',
+  ],
+};
+
+const getCompositeEmptinessColumnNames = (
+  flatFieldMetadata: Pick<FlatFieldMetadata, 'name' | 'type'>,
+): string[] | null => {
+  const compositeType = compositeTypeDefinitions.get(flatFieldMetadata.type);
+
+  if (!isDefined(compositeType)) {
+    return null;
+  }
+
+  const defaultBearingProperties =
+    DEFAULT_BEARING_COMPOSITE_PROPERTIES[flatFieldMetadata.type] ?? [];
+
+  return compositeType.properties
+    .filter((property) => !defaultBearingProperties.includes(property.name))
+    .map((property) =>
+      computeCompositeColumnName(flatFieldMetadata.name, property),
+    );
+};
 
 // Returns the physical columns whose emptiness determines whether the field is
 // empty, or null for types where emptiness is not meaningful (relations,
@@ -24,27 +58,14 @@ export const getEmptinessColumnNamesForField = (
     case FieldMetadataType.RAW_JSON:
     case FieldMetadataType.FILES:
       return [flatFieldMetadata.name];
-    // Currency codes and phone country/calling codes often carry workspace
-    // defaults, which would mask emptiness of the value users actually fill in
     case FieldMetadataType.CURRENCY:
-      return formatColumnNamesFromCompositeFieldAndSubfields(
-        flatFieldMetadata.name,
-        ['amountMicros'],
-      );
     case FieldMetadataType.PHONES:
-      return formatColumnNamesFromCompositeFieldAndSubfields(
-        flatFieldMetadata.name,
-        ['primaryPhoneNumber'],
-      );
     case FieldMetadataType.FULL_NAME:
     case FieldMetadataType.ADDRESS:
     case FieldMetadataType.LINKS:
     case FieldMetadataType.EMAILS:
     case FieldMetadataType.RICH_TEXT:
-      return formatColumnNamesFromCompositeFieldAndSubfields(
-        flatFieldMetadata.name,
-        getSubfieldsForAggregateOperation(flatFieldMetadata.type),
-      );
+      return getCompositeEmptinessColumnNames(flatFieldMetadata);
     case FieldMetadataType.ACTOR:
     case FieldMetadataType.BOOLEAN:
     case FieldMetadataType.MORPH_RELATION:
