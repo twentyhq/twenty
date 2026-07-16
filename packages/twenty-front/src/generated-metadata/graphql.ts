@@ -5797,20 +5797,6 @@ export type UpsertViewWidgetInput = {
   widgetId: Scalars['UUID']['input'];
 };
 
-export type UpsertViewWidgetViewSettingsInput = {
-  calendarEndFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  calendarFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  calendarLayout?: InputMaybe<ViewCalendarLayout>;
-  kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
-  kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  kanbanColumnWidth?: InputMaybe<Scalars['Int']['input']>;
-  mainGroupByFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  openRecordIn?: InputMaybe<ViewOpenRecordIn>;
-  shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
-  /** The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, CALENDAR_WIDGET) are allowed. */
-  type?: InputMaybe<ViewType>;
-};
-
 export type UpsertViewWidgetViewFieldInput = {
   /** The field metadata id. Used to create a new view field when viewFieldId is not provided. */
   fieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
@@ -5837,6 +5823,20 @@ export type UpsertViewWidgetViewFilterInput = {
   subFieldName?: InputMaybe<Scalars['String']['input']>;
   value: Scalars['JSON']['input'];
   viewFilterGroupId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+export type UpsertViewWidgetViewSettingsInput = {
+  calendarEndFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  calendarFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  calendarLayout?: InputMaybe<ViewCalendarLayout>;
+  kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
+  kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  kanbanColumnWidth?: InputMaybe<Scalars['Int']['input']>;
+  mainGroupByFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  openRecordIn?: InputMaybe<ViewOpenRecordIn>;
+  shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
+  /** The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, CALENDAR_WIDGET) are allowed. */
+  type?: InputMaybe<ViewType>;
 };
 
 export type UpsertViewWidgetViewSortInput = {

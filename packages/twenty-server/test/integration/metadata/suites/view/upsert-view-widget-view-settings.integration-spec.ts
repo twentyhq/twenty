@@ -1,6 +1,8 @@
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
+import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/destroy-one-page-layout-tab.util';
 import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/create-one-page-layout-widget.util';
+import { destroyOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/destroy-one-page-layout-widget.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -8,6 +10,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { findViewGroups } from 'test/integration/metadata/suites/view-group/utils/find-view-groups.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { upsertViewWidget } from 'test/integration/metadata/suites/view/utils/upsert-view-widget.util';
 import {
   FieldMetadataType,
@@ -35,6 +38,7 @@ describe('upsertViewWidget view settings', () => {
   let selectFieldMetadataId: string;
   let dateFieldMetadataId: string;
   let pageLayoutId: string;
+  let pageLayoutTabId: string;
   let widgetId: string;
   let viewId: string;
 
@@ -110,6 +114,8 @@ describe('upsertViewWidget view settings', () => {
       },
     });
 
+    pageLayoutTabId = tabData.createPageLayoutTab.id;
+
     const { data: viewData } = await createOneView({
       expectToFail: false,
       input: {
@@ -127,7 +133,7 @@ describe('upsertViewWidget view settings', () => {
       input: {
         title: 'Test Record Table Widget For View Settings',
         type: WidgetType.RECORD_TABLE,
-        pageLayoutTabId: tabData.createPageLayoutTab.id,
+        pageLayoutTabId,
         objectMetadataId,
         gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
         configuration: {
@@ -141,6 +147,18 @@ describe('upsertViewWidget view settings', () => {
   });
 
   afterAll(async () => {
+    await destroyOnePageLayoutWidget({
+      expectToFail: false,
+      input: { id: widgetId },
+    });
+    await destroyOneView({
+      expectToFail: false,
+      viewId,
+    });
+    await destroyOnePageLayoutTab({
+      expectToFail: false,
+      input: { id: pageLayoutTabId },
+    });
     await destroyOnePageLayout({
       expectToFail: false,
       input: { id: pageLayoutId },
@@ -186,7 +204,9 @@ describe('upsertViewWidget view settings', () => {
       },
     });
 
-    expect(errors?.[0]?.message).toBeDefined();
+    expect(JSON.stringify(errors)).toContain(
+      'Kanban view must have a main group by field',
+    );
   });
 
   it('should switch the widget view to KANBAN_WIDGET and auto-create view groups', async () => {
@@ -233,7 +253,9 @@ describe('upsertViewWidget view settings', () => {
       },
     });
 
-    expect(errors?.[0]?.message).toBeDefined();
+    expect(JSON.stringify(errors)).toContain(
+      'Calendar view must have a calendar field',
+    );
   });
 
   it('should switch the widget view to CALENDAR_WIDGET with a date field and layout', async () => {
@@ -313,7 +335,7 @@ describe('upsertViewWidget view settings', () => {
     expect(data.upsertViewWidget.type).toBe(ViewType.KANBAN_WIDGET);
     expect(data.upsertViewWidget.shouldHideEmptyGroups).toBe(true);
     expect(
-      data.upsertViewWidget.viewFields.some(
+      (data.upsertViewWidget.viewFields ?? []).some(
         (viewField) => viewField.fieldMetadataId === selectFieldMetadataId,
       ),
     ).toBe(true);

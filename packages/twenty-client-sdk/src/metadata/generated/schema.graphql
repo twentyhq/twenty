@@ -843,6 +843,8 @@ enum ViewType {
   CALENDAR
   FIELDS_WIDGET
   TABLE_WIDGET
+  KANBAN_WIDGET
+  CALENDAR_WIDGET
 }
 
 enum ViewKey {
@@ -3649,6 +3651,11 @@ input UpsertViewWidgetInput {
   """The id of the view widget (page layout widget)."""
   widgetId: UUID!
 
+  """
+  View-level settings (layout type, group by, kanban and calendar settings) to apply to the widget view.
+  """
+  view: UpsertViewWidgetViewSettingsInput
+
   """The view fields to upsert."""
   viewFields: [UpsertViewWidgetViewFieldInput!]
 
@@ -3660,6 +3667,22 @@ input UpsertViewWidgetInput {
 
   """The view sorts to upsert."""
   viewSorts: [UpsertViewWidgetViewSortInput!]
+}
+
+input UpsertViewWidgetViewSettingsInput {
+  """
+  The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, CALENDAR_WIDGET) are allowed.
+  """
+  type: ViewType
+  mainGroupByFieldMetadataId: UUID
+  shouldHideEmptyGroups: Boolean
+  openRecordIn: ViewOpenRecordIn
+  kanbanAggregateOperation: AggregateOperations
+  kanbanAggregateOperationFieldMetadataId: UUID
+  kanbanColumnWidth: Int
+  calendarLayout: ViewCalendarLayout
+  calendarFieldMetadataId: UUID
+  calendarEndFieldMetadataId: UUID
 }
 
 input UpsertViewWidgetViewFieldInput {
