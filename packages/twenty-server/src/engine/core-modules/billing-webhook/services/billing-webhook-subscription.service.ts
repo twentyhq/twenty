@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
@@ -113,10 +113,24 @@ export class BillingWebhookSubscriptionService {
       },
     );
 
-    const subscriptionWithSchedule =
-      await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
-        data.object.id,
+    // Fetch every subscription of the customer live from Stripe: the event
+    // payload can be stale and sibling subscription rows in the database are
+    // only as fresh as their own last webhook.
+    const liveCustomerSubscriptions =
+      await this.stripeSubscriptionScheduleService.listCustomerSubscriptionsWithSchedule(
+        String(data.object.customer),
       );
+
+    const subscriptionWithSchedule = liveCustomerSubscriptions.find(
+      (customerSubscription) => customerSubscription.id === data.object.id,
+    );
+
+    if (!isDefined(subscriptionWithSchedule)) {
+      throw new BillingException(
+        `Subscription ${data.object.id} not found on Stripe customer ${String(data.object.customer)} for event ${event.id}`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+      );
+    }
 
     await this.billingSubscriptionRepository.upsert(
       transformStripeSubscriptionEventToDatabaseSubscription(
@@ -129,15 +143,12 @@ export class BillingWebhookSubscriptionService {
       },
     );
 
-    const billingSubscriptions = await this.billingSubscriptionRepository.find({
-      where: { workspaceId },
-    });
+    const updatedBillingSubscription =
+      await this.billingSubscriptionRepository.findOne({
+        where: { workspaceId, stripeSubscriptionId: data.object.id },
+      });
 
-    const updatedBillingSubscription = billingSubscriptions.find(
-      (subscription) => subscription.stripeSubscriptionId === data.object.id,
-    );
-
-    if (!updatedBillingSubscription) {
+    if (!isDefined(updatedBillingSubscription)) {
       throw new BillingException(
         'Billing subscription not found after upsert',
         BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
@@ -172,11 +183,11 @@ export class BillingWebhookSubscriptionService {
       );
     }
 
-    const hasOtherActivatingSubscription = billingSubscriptions.some(
-      (billingSubscription) =>
-        billingSubscription.stripeSubscriptionId !== data.object.id &&
+    const hasOtherActivatingSubscription = liveCustomerSubscriptions.some(
+      (customerSubscription) =>
+        customerSubscription.id !== data.object.id &&
         WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES.includes(
-          billingSubscription.status,
+          customerSubscription.status as SubscriptionStatus,
         ),
     );
 
@@ -188,33 +199,36 @@ export class BillingWebhookSubscriptionService {
       (hasOtherActivatingSubscription ||
         this.shouldReactivateWorkspace(subscriptionWithSchedule));
 
-    switch (refreshedWorkspace.activationStatus) {
-      case WorkspaceActivationStatus.ACTIVE:
-        if (shouldSuspendWorkspace) {
-          await this.workspaceService.suspendWorkspace(workspaceId);
-        }
-        break;
-      case WorkspaceActivationStatus.PENDING_CREATION:
-        if (shouldSuspendWorkspace) {
-          await this.workspaceService.deleteWorkspace(workspaceId);
-        }
-        break;
-      case WorkspaceActivationStatus.SUSPENDED:
-      case WorkspaceActivationStatus.CREATED:
-        if (shouldReactivateWorkspace) {
-          await this.workspaceService.reactivateWorkspace(workspaceId);
+    // A soft-deleted workspace is past billing-driven transitions: the cleaner
+    // cron owns its lifecycle from here (destroy or manual restore).
+    const isWorkspaceSoftDeleted = isDefined(refreshedWorkspace.deletedAt);
 
-          await this.messageQueueService.add<CleanWorkspaceDeletionWarningUserVarsJobData>(
-            CleanWorkspaceDeletionWarningUserVarsJob.name,
-            { workspaceId },
-          );
-        }
-        break;
-      case WorkspaceActivationStatus.ONGOING_CREATION:
-      case WorkspaceActivationStatus.INACTIVE:
-        break;
-      default:
-        assertUnreachable(refreshedWorkspace.activationStatus);
+    if (shouldSuspendWorkspace && !isWorkspaceSoftDeleted) {
+      if (
+        refreshedWorkspace.activationStatus ===
+        WorkspaceActivationStatus.PENDING_CREATION
+      ) {
+        await this.workspaceService.deleteWorkspace(workspaceId);
+      } else if (
+        refreshedWorkspace.activationStatus === WorkspaceActivationStatus.ACTIVE
+      ) {
+        await this.workspaceService.suspendWorkspace(workspaceId);
+      }
+    }
+
+    if (shouldReactivateWorkspace && !isWorkspaceSoftDeleted) {
+      // Guarded transition: only applies if the workspace is still SUSPENDED or
+      // CREATED and not soft-deleted, so a stale workspace read cannot skip it
+      // nor reactivate a workspace it should not.
+      const hasBeenReactivated =
+        await this.workspaceService.reactivateWorkspace(workspaceId);
+
+      if (hasBeenReactivated) {
+        await this.messageQueueService.add<CleanWorkspaceDeletionWarningUserVarsJobData>(
+          CleanWorkspaceDeletionWarningUserVarsJob.name,
+          { workspaceId },
+        );
+      }
     }
 
     await this.stripeCustomerService.updateCustomerMetadataWorkspaceId(

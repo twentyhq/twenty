@@ -68,6 +68,17 @@ export class StripeSubscriptionScheduleService {
     })) as SubscriptionWithSchedule;
   }
 
+  async listCustomerSubscriptionsWithSchedule(stripeCustomerId: string) {
+    const { data } = await this.stripe.subscriptions.list({
+      customer: stripeCustomerId,
+      status: 'all',
+      expand: ['data.schedule'],
+      limit: 100,
+    });
+
+    return data as SubscriptionWithSchedule[];
+  }
+
   async updateSchedule(
     scheduleId: string,
     params: Stripe.SubscriptionScheduleUpdateParams,

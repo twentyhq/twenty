@@ -7,7 +7,15 @@ import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { DataSource, LessThan, QueryRunner, Repository } from 'typeorm';
+import {
+  DataSource,
+  In,
+  IsNull,
+  LessThan,
+  Not,
+  QueryRunner,
+  Repository,
+} from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -480,22 +488,56 @@ export class WorkspaceService {
     }
   }
 
-  async suspendWorkspace(id: string) {
-    await this.workspaceRepository.update(id, {
-      activationStatus: WorkspaceActivationStatus.SUSPENDED,
-      suspendedAt: new Date(),
-    });
+  // Suspend and reactivate are guarded transitions (compare-and-swap): callers
+  // like Stripe webhook handlers can run concurrently and decide from a stale
+  // read, so the UPDATE only applies when the workspace is still in a state the
+  // transition is valid from. Returns whether the transition was applied.
+  // Keeping the first suspendedAt on repeated suspensions is intentional: it
+  // anchors the cleanup countdown to the original suspension date.
+  async suspendWorkspace(id: string): Promise<boolean> {
+    const { affected } = await this.workspaceRepository.update(
+      {
+        id,
+        activationStatus: Not(WorkspaceActivationStatus.SUSPENDED),
+      },
+      {
+        activationStatus: WorkspaceActivationStatus.SUSPENDED,
+        suspendedAt: new Date(),
+      },
+    );
 
-    await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+    const hasBeenSuspended = isDefined(affected) && affected > 0;
+
+    if (hasBeenSuspended) {
+      await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+    }
+
+    return hasBeenSuspended;
   }
 
-  async reactivateWorkspace(id: string) {
-    await this.workspaceRepository.update(id, {
-      activationStatus: WorkspaceActivationStatus.ACTIVE,
-      suspendedAt: null,
-    });
+  async reactivateWorkspace(id: string): Promise<boolean> {
+    const { affected } = await this.workspaceRepository.update(
+      {
+        id,
+        activationStatus: In([
+          WorkspaceActivationStatus.SUSPENDED,
+          WorkspaceActivationStatus.CREATED,
+        ]),
+        deletedAt: IsNull(),
+      },
+      {
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+        suspendedAt: null,
+      },
+    );
 
-    await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+    const hasBeenReactivated = isDefined(affected) && affected > 0;
+
+    if (hasBeenReactivated) {
+      await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+    }
+
+    return hasBeenReactivated;
   }
 
   async deleteWorkspace(id: string, softDelete = false) {
