@@ -8,7 +8,6 @@ import { BackfillWorkflowVersionCoreLinksCommand } from 'src/database/commands/u
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FilesFieldModule } from 'src/engine/core-modules/file/files-field/files-field.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
-import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -17,7 +16,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ApplicationModule,
     FilesFieldModule,
     SecureHttpClientModule,
-    WorkflowVersionCoreModule,
     WorkspaceCacheModule,
     WorkspaceMigrationModule,
     WorkspaceIteratorModule,
