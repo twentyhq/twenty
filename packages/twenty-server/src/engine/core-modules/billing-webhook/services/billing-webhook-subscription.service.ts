@@ -27,6 +27,7 @@ import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billi
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
+import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -112,12 +113,15 @@ export class BillingWebhookSubscriptionService {
       },
     );
 
+    const subscriptionWithSchedule =
+      await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
+        data.object.id,
+      );
+
     await this.billingSubscriptionRepository.upsert(
       transformStripeSubscriptionEventToDatabaseSubscription(
         workspaceId,
-        await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
-          data.object.id,
-        ),
+        subscriptionWithSchedule,
       ),
       {
         conflictPaths: ['stripeSubscriptionId'],
@@ -151,19 +155,34 @@ export class BillingWebhookSubscriptionService {
       'currentBillingSubscription',
     ]);
 
-    if (this.shouldSuspendWorkspace(data)) {
-      if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) {
+    // Stripe events can be delivered out of order or processed concurrently.
+    // Base the suspend/reactivate decision on the subscription state freshly
+    // fetched from Stripe (not the event payload, which may be stale) and on a
+    // re-read of the workspace (the snapshot above predates slow awaits), so
+    // every event converges the workspace to the current subscription state.
+    const refreshedWorkspace =
+      (await this.workspaceRepository.findOne({
+        where: { id: workspaceId },
+        withDeleted: true,
+      })) ?? workspace;
+
+    if (this.shouldSuspendWorkspace(subscriptionWithSchedule)) {
+      if (
+        refreshedWorkspace.activationStatus === WorkspaceActivationStatus.ACTIVE
+      ) {
         await this.workspaceService.suspendWorkspace(workspaceId);
       } else if (
-        workspace.activationStatus ===
+        refreshedWorkspace.activationStatus ===
         WorkspaceActivationStatus.PENDING_CREATION
       ) {
         await this.workspaceService.deleteWorkspace(workspace.id);
       }
     } else if (
-      this.shouldReactivateWorkspace(data) &&
-      (workspace.activationStatus === WorkspaceActivationStatus.SUSPENDED ||
-        workspace.activationStatus === WorkspaceActivationStatus.CREATED)
+      this.shouldReactivateWorkspace(subscriptionWithSchedule) &&
+      (refreshedWorkspace.activationStatus ===
+        WorkspaceActivationStatus.SUSPENDED ||
+        refreshedWorkspace.activationStatus ===
+          WorkspaceActivationStatus.CREATED)
     ) {
       await this.workspaceService.reactivateWorkspace(workspaceId);
 
@@ -184,13 +203,8 @@ export class BillingWebhookSubscriptionService {
     };
   }
 
-  shouldSuspendWorkspace(
-    data:
-      | Stripe.CustomerSubscriptionUpdatedEvent.Data
-      | Stripe.CustomerSubscriptionCreatedEvent.Data
-      | Stripe.CustomerSubscriptionDeletedEvent.Data,
-  ): boolean {
-    const status = data.object.status as SubscriptionStatus;
+  shouldSuspendWorkspace(subscription: SubscriptionWithSchedule): boolean {
+    const status = subscription.status as SubscriptionStatus;
 
     const suspendedStatuses = [
       SubscriptionStatus.Canceled,
@@ -201,15 +215,15 @@ export class BillingWebhookSubscriptionService {
       return true;
     }
 
-    const timeSinceTrialEnd = Date.now() / 1000 - (data.object.trial_end || 0);
+    const timeSinceTrialEnd = Date.now() / 1000 - (subscription.trial_end || 0);
     const hasTrialJustEnded =
       timeSinceTrialEnd > 0 && timeSinceTrialEnd < 60 * 60 * 24;
 
     const canceledDuringTrial =
-      data.object.cancel_at_period_end &&
-      isDefined(data.object.canceled_at) &&
-      isDefined(data.object.trial_end) &&
-      data.object.canceled_at <= data.object.trial_end;
+      subscription.cancel_at_period_end &&
+      isDefined(subscription.canceled_at) &&
+      isDefined(subscription.trial_end) &&
+      subscription.canceled_at <= subscription.trial_end;
 
     return (
       hasTrialJustEnded &&
@@ -217,13 +231,8 @@ export class BillingWebhookSubscriptionService {
     );
   }
 
-  shouldReactivateWorkspace(
-    data:
-      | Stripe.CustomerSubscriptionUpdatedEvent.Data
-      | Stripe.CustomerSubscriptionCreatedEvent.Data
-      | Stripe.CustomerSubscriptionDeletedEvent.Data,
-  ): boolean {
-    const status = data.object.status as SubscriptionStatus;
+  shouldReactivateWorkspace(subscription: SubscriptionWithSchedule): boolean {
+    const status = subscription.status as SubscriptionStatus;
 
     return WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES.includes(status);
   }
