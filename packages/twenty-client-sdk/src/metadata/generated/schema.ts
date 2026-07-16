@@ -1,10 +1,10 @@
 // @ts-nocheck
 export type Scalars = {
     String: string,
-    Boolean: boolean,
     UUID: string,
-    JSON: Record<string, unknown>,
     DateTime: string,
+    Boolean: boolean,
+    JSON: Record<string, unknown>,
     Float: number,
     Int: number,
     ConnectionCursor: any,
@@ -14,6 +14,17 @@ export type Scalars = {
 }
 
 export type BillingProductDTO = (BillingLicensedProduct | BillingMeteredProduct) & { __isUnion?: true }
+
+export interface ApiKey {
+    id: Scalars['UUID']
+    name: Scalars['String']
+    expiresAt: Scalars['DateTime']
+    revokedAt?: Scalars['DateTime']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    role: Role
+    __typename: 'ApiKey'
+}
 
 export interface ApplicationRegistrationVariable {
     id: Scalars['UUID']
@@ -29,16 +40,29 @@ export interface ApplicationRegistrationVariable {
     __typename: 'ApplicationRegistrationVariable'
 }
 
-export interface ApiKey {
+export interface ApplicationRegistration {
     id: Scalars['UUID']
+    universalIdentifier: Scalars['String']
     name: Scalars['String']
-    expiresAt: Scalars['DateTime']
-    revokedAt?: Scalars['DateTime']
+    oAuthClientId: Scalars['String']
+    oAuthRedirectUris: Scalars['String'][]
+    oAuthScopes: Scalars['String'][]
+    ownerWorkspaceId?: Scalars['UUID']
+    sourceType: ApplicationRegistrationSourceType
+    sourcePackage?: Scalars['String']
+    latestAvailableVersion?: Scalars['String']
+    isListed: Scalars['Boolean']
+    isVetted: Scalars['Boolean']
+    isPreInstalled: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    role: Role
-    __typename: 'ApiKey'
+    isConfigured: Scalars['Boolean']
+    logoUrl?: Scalars['String']
+    galleryImagesUrls: Scalars['String'][]
+    __typename: 'ApplicationRegistration'
 }
+
+export type ApplicationRegistrationSourceType = 'NPM' | 'TARBALL' | 'LOCAL' | 'OAUTH_ONLY'
 
 export interface TwoFactorAuthenticationMethodSummary {
     twoFactorAuthenticationMethodId: Scalars['UUID']
@@ -218,8 +242,6 @@ export interface ApplicationRegistrationSummary {
     logoUrl?: Scalars['String']
     __typename: 'ApplicationRegistrationSummary'
 }
-
-export type ApplicationRegistrationSourceType = 'NPM' | 'TARBALL' | 'LOCAL' | 'OAUTH_ONLY'
 
 export interface ApplicationVariable {
     id: Scalars['UUID']
@@ -648,33 +670,6 @@ export interface Workspace {
 export type WorkspaceDiscoverability = 'PUBLIC' | 'MEMBERS_AND_INVITEES' | 'HIDDEN'
 
 export type WorkspaceActivationStatus = 'ONGOING_CREATION' | 'PENDING_CREATION' | 'CREATED' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED'
-
-export interface ApplicationRegistration {
-    id: Scalars['UUID']
-    universalIdentifier: Scalars['String']
-    name: Scalars['String']
-    oAuthClientId: Scalars['String']
-    oAuthRedirectUris: Scalars['String'][]
-    oAuthScopes: Scalars['String'][]
-    ownerWorkspaceId?: Scalars['UUID']
-    sourceType: ApplicationRegistrationSourceType
-    sourcePackage?: Scalars['String']
-    latestAvailableVersion?: Scalars['String']
-    isListed: Scalars['Boolean']
-    isVetted: Scalars['Boolean']
-    isPreInstalled: Scalars['Boolean']
-    listingRequestStatus: ApplicationRegistrationListingRequestStatus
-    listingRequestedAt?: Scalars['DateTime']
-    listingRequestContactEmail?: Scalars['String']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    isConfigured: Scalars['Boolean']
-    logoUrl?: Scalars['String']
-    galleryImagesUrls: Scalars['String'][]
-    __typename: 'ApplicationRegistration'
-}
-
-export type ApplicationRegistrationListingRequestStatus = 'NONE' | 'REQUESTED' | 'APPROVED' | 'CHANGE_REQUESTED' | 'REJECTED'
 
 export interface User {
     id: Scalars['UUID']
@@ -1608,14 +1603,6 @@ export interface UsageBreakdownItem {
     __typename: 'UsageBreakdownItem'
 }
 
-export interface ApplicationRegistrationClaimChallenge {
-    applicationRegistrationId: Scalars['String']
-    sourcePackage: Scalars['String']
-    token: Scalars['String']
-    expiresAt: Scalars['DateTime']
-    __typename: 'ApplicationRegistrationClaimChallenge'
-}
-
 export interface ClaimableApplicationRegistration {
     id: Scalars['String']
     universalIdentifier: Scalars['String']
@@ -1626,18 +1613,6 @@ export interface ClaimableApplicationRegistration {
     author?: Scalars['String']
     isOwned: Scalars['Boolean']
     __typename: 'ClaimableApplicationRegistration'
-}
-
-export interface PendingApplicationRegistrationClaim {
-    applicationRegistrationId: Scalars['String']
-    universalIdentifier: Scalars['String']
-    name: Scalars['String']
-    logoUrl?: Scalars['String']
-    description?: Scalars['String']
-    sourcePackage: Scalars['String']
-    token: Scalars['String']
-    expiresAt: Scalars['DateTime']
-    __typename: 'PendingApplicationRegistrationClaim'
 }
 
 export interface CreateApplicationRegistration {
@@ -2791,7 +2766,7 @@ export interface Query {
     findApplicationRegistrationVariables: ApplicationRegistrationVariableDTO[]
     applicationRegistrationTarballUrl?: Scalars['String']
     findClaimableApplicationRegistration?: ClaimableApplicationRegistration
-    findPendingApplicationRegistrationClaims: PendingApplicationRegistrationClaim[]
+    githubClaimAuthorizationUrl: Scalars['String']
     getRoles: Role[]
     previewMessageCampaignAudience: CampaignAudiencePreviewDTO
     unsubscribeTopics: UnsubscribeTopic[]
@@ -2972,11 +2947,7 @@ export interface Mutation {
     deleteApplicationRegistrationVariable: Scalars['Boolean']
     uploadAppTarball: ApplicationRegistration
     claimApplicationRegistrationOwnership: ApplicationRegistration
-    startApplicationRegistrationClaim: ApplicationRegistrationClaimChallenge
-    verifyApplicationRegistrationClaim: ApplicationRegistration
-    cancelApplicationRegistrationClaim: Scalars['Boolean']
     transferApplicationRegistrationOwnership: ApplicationRegistration
-    requestApplicationRegistrationListing: ApplicationRegistration
     updateWorkspaceMemberRole: WorkspaceMember
     createOneRole: Role
     updateOneRole: Role
@@ -3098,6 +3069,18 @@ export interface BillingProductDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApiKeyGenqlSelection{
+    id?: boolean | number
+    name?: boolean | number
+    expiresAt?: boolean | number
+    revokedAt?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    role?: RoleGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ApplicationRegistrationVariableGenqlSelection{
     id?: boolean | number
     key?: boolean | number
@@ -3113,14 +3096,25 @@ export interface ApplicationRegistrationVariableGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ApiKeyGenqlSelection{
+export interface ApplicationRegistrationGenqlSelection{
     id?: boolean | number
+    universalIdentifier?: boolean | number
     name?: boolean | number
-    expiresAt?: boolean | number
-    revokedAt?: boolean | number
+    oAuthClientId?: boolean | number
+    oAuthRedirectUris?: boolean | number
+    oAuthScopes?: boolean | number
+    ownerWorkspaceId?: boolean | number
+    sourceType?: boolean | number
+    sourcePackage?: boolean | number
+    latestAvailableVersion?: boolean | number
+    isListed?: boolean | number
+    isVetted?: boolean | number
+    isPreInstalled?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
-    role?: RoleGenqlSelection
+    isConfigured?: boolean | number
+    logoUrl?: boolean | number
+    galleryImagesUrls?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -3737,32 +3731,6 @@ export interface WorkspaceGenqlSelection{
     hasValidEnterpriseValidityToken?: boolean | number
     workspaceUrls?: WorkspaceUrlsGenqlSelection
     workspaceCustomApplicationId?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ApplicationRegistrationGenqlSelection{
-    id?: boolean | number
-    universalIdentifier?: boolean | number
-    name?: boolean | number
-    oAuthClientId?: boolean | number
-    oAuthRedirectUris?: boolean | number
-    oAuthScopes?: boolean | number
-    ownerWorkspaceId?: boolean | number
-    sourceType?: boolean | number
-    sourcePackage?: boolean | number
-    latestAvailableVersion?: boolean | number
-    isListed?: boolean | number
-    isVetted?: boolean | number
-    isPreInstalled?: boolean | number
-    listingRequestStatus?: boolean | number
-    listingRequestedAt?: boolean | number
-    listingRequestContactEmail?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
-    isConfigured?: boolean | number
-    logoUrl?: boolean | number
-    galleryImagesUrls?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4740,15 +4708,6 @@ export interface UsageBreakdownItemGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ApplicationRegistrationClaimChallengeGenqlSelection{
-    applicationRegistrationId?: boolean | number
-    sourcePackage?: boolean | number
-    token?: boolean | number
-    expiresAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface ClaimableApplicationRegistrationGenqlSelection{
     id?: boolean | number
     universalIdentifier?: boolean | number
@@ -4758,19 +4717,6 @@ export interface ClaimableApplicationRegistrationGenqlSelection{
     description?: boolean | number
     author?: boolean | number
     isOwned?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface PendingApplicationRegistrationClaimGenqlSelection{
-    applicationRegistrationId?: boolean | number
-    universalIdentifier?: boolean | number
-    name?: boolean | number
-    logoUrl?: boolean | number
-    description?: boolean | number
-    sourcePackage?: boolean | number
-    token?: boolean | number
-    expiresAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6021,7 +5967,7 @@ export interface QueryGenqlSelection{
     findApplicationRegistrationVariables?: (ApplicationRegistrationVariableDTOGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     applicationRegistrationTarballUrl?: { __args: {id: Scalars['String']} }
     findClaimableApplicationRegistration?: (ClaimableApplicationRegistrationGenqlSelection & { __args?: {sourcePackage?: (Scalars['String'] | null), universalIdentifier?: (Scalars['String'] | null)} })
-    findPendingApplicationRegistrationClaims?: PendingApplicationRegistrationClaimGenqlSelection
+    githubClaimAuthorizationUrl?: { __args: {applicationRegistrationId: Scalars['String']} }
     getRoles?: RoleGenqlSelection
     previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
     unsubscribeTopics?: UnsubscribeTopicGenqlSelection
@@ -6229,11 +6175,7 @@ export interface MutationGenqlSelection{
     deleteApplicationRegistrationVariable?: { __args: {id: Scalars['String']} }
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
     claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
-    startApplicationRegistrationClaim?: (ApplicationRegistrationClaimChallengeGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
-    verifyApplicationRegistrationClaim?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
-    cancelApplicationRegistrationClaim?: { __args: {applicationRegistrationId: Scalars['String']} }
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
-    requestApplicationRegistrationListing?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], contactEmail: Scalars['String']} })
     updateWorkspaceMemberRole?: (WorkspaceMemberGenqlSelection & { __args: {workspaceMemberId: Scalars['UUID'], roleId: Scalars['UUID']} })
     createOneRole?: (RoleGenqlSelection & { __args: {createRoleInput: CreateRoleInput} })
     updateOneRole?: (RoleGenqlSelection & { __args: {updateRoleInput: UpdateRoleInput} })
@@ -6731,6 +6673,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const ApiKey_possibleTypes: string[] = ['ApiKey']
+    export const isApiKey = (obj?: { __typename?: any } | null): obj is ApiKey => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApiKey"')
+      return ApiKey_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const ApplicationRegistrationVariable_possibleTypes: string[] = ['ApplicationRegistrationVariable']
     export const isApplicationRegistrationVariable = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationVariable => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationVariable"')
@@ -6739,10 +6689,10 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const ApiKey_possibleTypes: string[] = ['ApiKey']
-    export const isApiKey = (obj?: { __typename?: any } | null): obj is ApiKey => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApiKey"')
-      return ApiKey_possibleTypes.includes(obj.__typename)
+    const ApplicationRegistration_possibleTypes: string[] = ['ApplicationRegistration']
+    export const isApplicationRegistration = (obj?: { __typename?: any } | null): obj is ApplicationRegistration => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistration"')
+      return ApplicationRegistration_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -7015,14 +6965,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isWorkspace = (obj?: { __typename?: any } | null): obj is Workspace => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspace"')
       return Workspace_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ApplicationRegistration_possibleTypes: string[] = ['ApplicationRegistration']
-    export const isApplicationRegistration = (obj?: { __typename?: any } | null): obj is ApplicationRegistration => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistration"')
-      return ApplicationRegistration_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -7779,26 +7721,10 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const ApplicationRegistrationClaimChallenge_possibleTypes: string[] = ['ApplicationRegistrationClaimChallenge']
-    export const isApplicationRegistrationClaimChallenge = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationClaimChallenge => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationClaimChallenge"')
-      return ApplicationRegistrationClaimChallenge_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const ClaimableApplicationRegistration_possibleTypes: string[] = ['ClaimableApplicationRegistration']
     export const isClaimableApplicationRegistration = (obj?: { __typename?: any } | null): obj is ClaimableApplicationRegistration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isClaimableApplicationRegistration"')
       return ClaimableApplicationRegistration_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const PendingApplicationRegistrationClaim_possibleTypes: string[] = ['PendingApplicationRegistrationClaim']
-    export const isPendingApplicationRegistrationClaim = (obj?: { __typename?: any } | null): obj is PendingApplicationRegistrationClaim => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isPendingApplicationRegistrationClaim"')
-      return PendingApplicationRegistrationClaim_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8794,6 +8720,13 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     }
     
 
+export const enumApplicationRegistrationSourceType = {
+   NPM: 'NPM' as const,
+   TARBALL: 'TARBALL' as const,
+   LOCAL: 'LOCAL' as const,
+   OAUTH_ONLY: 'OAUTH_ONLY' as const
+}
+
 export const enumRowLevelPermissionPredicateGroupLogicalOperator = {
    AND: 'AND' as const,
    OR: 'OR' as const
@@ -8866,13 +8799,6 @@ export const enumWorkspaceMemberNumberFormatEnum = {
    SPACES_AND_COMMA: 'SPACES_AND_COMMA' as const,
    DOTS_AND_COMMA: 'DOTS_AND_COMMA' as const,
    APOSTROPHE_AND_DOT: 'APOSTROPHE_AND_DOT' as const
-}
-
-export const enumApplicationRegistrationSourceType = {
-   NPM: 'NPM' as const,
-   TARBALL: 'TARBALL' as const,
-   LOCAL: 'LOCAL' as const,
-   OAUTH_ONLY: 'OAUTH_ONLY' as const
 }
 
 export const enumEngineComponentKey = {
@@ -9077,14 +9003,6 @@ export const enumWorkspaceActivationStatus = {
    ACTIVE: 'ACTIVE' as const,
    INACTIVE: 'INACTIVE' as const,
    SUSPENDED: 'SUSPENDED' as const
-}
-
-export const enumApplicationRegistrationListingRequestStatus = {
-   NONE: 'NONE' as const,
-   REQUESTED: 'REQUESTED' as const,
-   APPROVED: 'APPROVED' as const,
-   CHANGE_REQUESTED: 'CHANGE_REQUESTED' as const,
-   REJECTED: 'REJECTED' as const
 }
 
 export const enumOnboardingStatus = {

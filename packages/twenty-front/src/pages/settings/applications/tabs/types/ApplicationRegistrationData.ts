@@ -1,7 +1,4 @@
-import type {
-  ApplicationRegistrationListingRequestStatus,
-  ApplicationRegistrationSourceType,
-} from '~/generated-metadata/graphql';
+import type { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 
 export type ApplicationRegistrationData = {
   id: string;
@@ -12,7 +9,6 @@ export type ApplicationRegistrationData = {
   sourcePackage?: string | null;
   isListed: boolean;
   isVetted: boolean;
-  listingRequestStatus: ApplicationRegistrationListingRequestStatus;
   oAuthClientId: string;
   oAuthScopes?: string[] | null;
   oAuthRedirectUris?: string[] | null;

@@ -9,8 +9,6 @@ export const FIND_ADMIN_APPLICATION_REGISTRATION_CLAIMS = gql`
     ) {
       workspaceId
       workspaceDisplayName
-      isOwner
-      expiresAt
     }
   }
 `;

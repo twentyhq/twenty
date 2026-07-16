@@ -38,7 +38,6 @@ import {
   type ApplicationRegistrationFragmentFragment,
   ApplicationRegistrationSourceType,
   FindAllApplicationRegistrationsDocument,
-  FindApplicationRegistrationListingRequestsDocument,
   SyncMarketplaceCatalogDocument,
 } from '~/generated-admin/graphql';
 
@@ -55,17 +54,10 @@ const StyledShowMoreContainer = styled.div`
 
 const TABLE_GRID = '1fr 100px 100px 100px 40px';
 const TABLE_GRID_MOBILE = '3fr 3fr 1fr 1fr 40px';
-const LISTING_REQUESTS_GRID = '1fr 1fr 160px';
 const PAGE_SIZE = 25;
-
-const StyledListingActionsCell = styled(TableCell)`
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: flex-end;
-`;
 
 export const SettingsAdminApps = () => {
   const apolloAdminClient = useApolloAdminClient();
-  const { theme } = useContext(ThemeContext);
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
@@ -89,14 +81,6 @@ export const SettingsAdminApps = () => {
     SyncMarketplaceCatalogDocument,
     { client: apolloAdminClient },
   );
-
-  const { data: listingRequestsData } = useQuery(
-    FindApplicationRegistrationListingRequestsDocument,
-    { client: apolloAdminClient },
-  );
-
-  const listingRequests =
-    listingRequestsData?.findApplicationRegistrationListingRequests ?? [];
 
   const handleSyncCatalog = async () => {
     try {
@@ -179,55 +163,6 @@ export const SettingsAdminApps = () => {
           disabled={isSyncing}
         />
       </Section>
-      {listingRequests.length > 0 && (
-        <Section>
-          <H2Title
-            title={t`Listing requests`}
-            description={t`Developers asking to list their app in the marketplace`}
-          />
-          <StyledTableContainer>
-            <Table>
-              <TableRow gridAutoColumns={LISTING_REQUESTS_GRID}>
-                <TableHeader>{t`Name`}</TableHeader>
-                <TableHeader>{t`Package`}</TableHeader>
-                <TableHeader align="right">{''}</TableHeader>
-              </TableRow>
-              <TableBody>
-                {listingRequests.map((request) => (
-                  <TableRow
-                    key={request.id}
-                    to={getSettingsPath(
-                      SettingsPath.AdminPanelApplicationRegistrationDetail,
-                      { applicationRegistrationId: request.id },
-                    )}
-                    gridAutoColumns={LISTING_REQUESTS_GRID}
-                    isClickable
-                  >
-                    <StyledNameTableCell minWidth="0" overflow="hidden">
-                      <ApplicationDisplay
-                        application={{
-                          name: request.name,
-                          logo: request.logoUrl,
-                        }}
-                      />
-                    </StyledNameTableCell>
-                    <TableCell overflow="hidden">
-                      {request.sourcePackage ?? ''}
-                    </TableCell>
-                    <StyledListingActionsCell>
-                      <Tag text={t`Review pending`} color="orange" />
-                      <IconChevronRight
-                        size={theme.icon.size.md}
-                        color={theme.font.color.tertiary}
-                      />
-                    </StyledListingActionsCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </StyledTableContainer>
-        </Section>
-      )}
       <Section>
         <H2Title
           title={t`All App Registrations`}

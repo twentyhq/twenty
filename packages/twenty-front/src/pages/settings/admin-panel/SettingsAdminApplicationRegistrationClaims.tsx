@@ -10,9 +10,8 @@ import { Tag } from 'twenty-ui/data-display';
 import { Section } from 'twenty-ui/layout';
 import { H2Title } from 'twenty-ui/typography';
 import { FindAdminApplicationRegistrationClaimsDocument } from '~/generated-admin/graphql';
-import { beautifyExactDateTime } from '~/utils/date-utils';
 
-const CLAIMS_TABLE_GRID = '1fr 140px 1fr';
+const CLAIMS_TABLE_GRID = '1fr 140px';
 
 export const SettingsAdminApplicationRegistrationClaims = ({
   applicationRegistrationId,
@@ -36,35 +35,25 @@ export const SettingsAdminApplicationRegistrationClaims = ({
   return (
     <Section>
       <H2Title
-        title={t`Claims`}
-        description={t`Workspaces that own this app or have a pending ownership claim`}
+        title={t`Ownership`}
+        description={t`The workspace that claimed this app registration`}
       />
       <Table>
         <TableRow gridAutoColumns={CLAIMS_TABLE_GRID}>
           <TableHeader>{t`Workspace`}</TableHeader>
           <TableHeader>{t`Status`}</TableHeader>
-          <TableHeader>{t`Claim expires`}</TableHeader>
         </TableRow>
         <TableBody>
           {claims.map((claim) => (
             <TableRow
-              key={`${claim.workspaceId}-${claim.isOwner}`}
+              key={claim.workspaceId}
               gridAutoColumns={CLAIMS_TABLE_GRID}
             >
               <TableCell overflow="hidden">
                 {claim.workspaceDisplayName ?? claim.workspaceId}
               </TableCell>
               <TableCell>
-                {claim.isOwner ? (
-                  <Tag text={t`Owner`} color="green" />
-                ) : (
-                  <Tag text={t`Claim pending`} color="orange" />
-                )}
-              </TableCell>
-              <TableCell>
-                {claim.expiresAt !== null && claim.expiresAt !== undefined
-                  ? beautifyExactDateTime(claim.expiresAt)
-                  : '-'}
+                <Tag text={t`Owner`} color="green" />
               </TableCell>
             </TableRow>
           ))}

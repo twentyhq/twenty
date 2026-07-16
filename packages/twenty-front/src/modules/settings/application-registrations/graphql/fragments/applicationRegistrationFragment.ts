@@ -18,9 +18,6 @@ export const APPLICATION_REGISTRATION_FRAGMENT = gql`
     isPreInstalled
     isConfigured
     ownerWorkspaceId
-    listingRequestStatus
-    listingRequestedAt
-    listingRequestContactEmail
     createdAt
     updatedAt
   }

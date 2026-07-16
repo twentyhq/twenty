@@ -31,8 +31,6 @@ import {
   type UpdateApplicationRegistrationInput,
   type UpdateApplicationRegistrationPayload,
 } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
-import { ApplicationRegistrationListingRequestStatus } from 'src/engine/core-modules/application/application-registration/enums/application-registration-listing-request-status.enum';
-import { ApplicationRegistrationListingReviewDecision } from 'src/engine/core-modules/application/application-registration/enums/application-registration-listing-review-decision.enum';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -84,8 +82,6 @@ const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegist
     'issueReportUrl',
     'screenshots',
     'galleryImages',
-    'listingRequestStatus',
-    'listingRequestedAt',
     'createdAt',
     'updatedAt',
   ];
@@ -876,127 +872,6 @@ export class ApplicationRegistrationService {
     return this.applicationRegistrationRepository.findOneOrFail({
       where: { id: registration.id },
     });
-  }
-
-  // Owner asks a server admin to list their app in the marketplace catalog.
-  async requestListing(params: {
-    applicationRegistrationId: string;
-    ownerWorkspaceId: string;
-    contactEmail: string;
-  }): Promise<ApplicationRegistrationEntity> {
-    const registration = await this.applicationRegistrationRepository.findOne({
-      where: {
-        id: params.applicationRegistrationId,
-        ownerWorkspaceId: params.ownerWorkspaceId,
-      },
-    });
-
-    if (!isDefined(registration)) {
-      throw new ApplicationRegistrationException(
-        `Application registration with id ${params.applicationRegistrationId} not found`,
-        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
-      );
-    }
-
-    if (registration.isListed) {
-      throw new ApplicationRegistrationException(
-        'Application is already listed in the marketplace',
-        ApplicationRegistrationExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    if (
-      registration.listingRequestStatus ===
-      ApplicationRegistrationListingRequestStatus.REQUESTED
-    ) {
-      throw new ApplicationRegistrationException(
-        'A listing request is already pending for this application',
-        ApplicationRegistrationExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    if (
-      !isNonEmptyString(registration.description) ||
-      !isDefined(
-        this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
-      )
-    ) {
-      throw new ApplicationRegistrationException(
-        'A logo and description are required before requesting a listing',
-        ApplicationRegistrationExceptionCode.INCOMPLETE_LISTING_METADATA,
-      );
-    }
-
-    await this.applicationRegistrationRepository.update(registration.id, {
-      listingRequestStatus:
-        ApplicationRegistrationListingRequestStatus.REQUESTED,
-      listingRequestedAt: new Date(),
-      listingRequestContactEmail: params.contactEmail,
-    });
-
-    return this.findOneById(registration.id, params.ownerWorkspaceId);
-  }
-
-  async findManyListingRequests(): Promise<ApplicationRegistrationEntity[]> {
-    return this.applicationRegistrationRepository.find({
-      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
-      where: {
-        listingRequestStatus:
-          ApplicationRegistrationListingRequestStatus.REQUESTED,
-      },
-      order: { listingRequestedAt: 'ASC' },
-    });
-  }
-
-  // Server admin decision on a pending listing request. Approval also flips
-  // "Allow installation" (isListed) on.
-  async reviewListing(params: {
-    applicationRegistrationId: string;
-    decision: ApplicationRegistrationListingReviewDecision;
-  }): Promise<ApplicationRegistrationEntity> {
-    const registration = await this.findOneByIdGlobal(
-      params.applicationRegistrationId,
-    );
-
-    const decisionToStatus: Record<
-      ApplicationRegistrationListingReviewDecision,
-      ApplicationRegistrationListingRequestStatus
-    > = {
-      [ApplicationRegistrationListingReviewDecision.APPROVED]:
-        ApplicationRegistrationListingRequestStatus.APPROVED,
-      [ApplicationRegistrationListingReviewDecision.CHANGE_REQUESTED]:
-        ApplicationRegistrationListingRequestStatus.CHANGE_REQUESTED,
-      [ApplicationRegistrationListingReviewDecision.REJECTED]:
-        ApplicationRegistrationListingRequestStatus.REJECTED,
-    };
-
-    const isApproval =
-      params.decision === ApplicationRegistrationListingReviewDecision.APPROVED;
-
-    // Conditional on the pending status so concurrent reviews can't overwrite
-    // a decision another admin already made.
-    const updateResult = await this.applicationRegistrationRepository.update(
-      {
-        id: registration.id,
-        listingRequestStatus:
-          ApplicationRegistrationListingRequestStatus.REQUESTED,
-      },
-      {
-        listingRequestStatus: decisionToStatus[params.decision],
-        ...(isApproval ? { isListed: true } : {}),
-      },
-    );
-
-    if (updateResult.affected === 0) {
-      throw new ApplicationRegistrationException(
-        'No pending listing request to review',
-        ApplicationRegistrationExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    await this.invalidateMarketplaceAppsCache();
-
-    return this.findOneByIdGlobal(registration.id);
   }
 
   async transferOwnership(params: {

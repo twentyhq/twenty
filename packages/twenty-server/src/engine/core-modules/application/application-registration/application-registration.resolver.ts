@@ -28,15 +28,11 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
-import { ApplicationRegistrationLifecycleEmailService } from 'src/engine/core-modules/application/application-registration/application-registration-lifecycle-email.service';
-import { ApplicationRegistrationClaimChallengeDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-claim-challenge.dto';
 import { ApplicationRegistrationClaimInput } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-claim.input';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { ClaimApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/claim-application-registration-ownership.input';
 import { ClaimableApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/claimable-application-registration.dto';
 import { FindClaimableApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/find-claimable-application-registration.input';
-import { PendingApplicationRegistrationClaimDTO } from 'src/engine/core-modules/application/application-registration/dtos/pending-application-registration-claim.dto';
-import { RequestApplicationRegistrationListingInput } from 'src/engine/core-modules/application/application-registration/dtos/request-application-registration-listing.input';
 import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.dto';
 import { CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
@@ -76,7 +72,6 @@ export class ApplicationRegistrationResolver {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationClaimService: ApplicationRegistrationClaimService,
-    private readonly applicationRegistrationLifecycleEmailService: ApplicationRegistrationLifecycleEmailService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationTarballService: ApplicationTarballService,
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
@@ -363,64 +358,26 @@ export class ApplicationRegistrationResolver {
     });
   }
 
+  // Where to send the user to prove — via GitHub OAuth — that they own the
+  // GitHub account or organization that publishes the npm package (trusted
+  // publishing provenance).
   @UseGuards(
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
   )
-  @Mutation(() => ApplicationRegistrationClaimChallengeDTO)
-  async startApplicationRegistrationClaim(
+  @Query(() => String)
+  async githubClaimAuthorizationUrl(
     @Args() { applicationRegistrationId }: ApplicationRegistrationClaimInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
-  ): Promise<ApplicationRegistrationClaimChallengeDTO> {
-    return this.applicationRegistrationClaimService.startClaim({
-      applicationRegistrationId,
-      workspaceId,
-      userId: user?.id ?? null,
-    });
-  }
-
-  @UseGuards(
-    WorkspaceAuthGuard,
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
-  )
-  @Mutation(() => ApplicationRegistrationEntity)
-  async verifyApplicationRegistrationClaim(
-    @Args() { applicationRegistrationId }: ApplicationRegistrationClaimInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ApplicationRegistrationEntity> {
-    return this.applicationRegistrationClaimService.verifyClaim({
-      applicationRegistrationId,
-      workspaceId,
-    });
-  }
-
-  @UseGuards(
-    WorkspaceAuthGuard,
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
-  )
-  @Query(() => [PendingApplicationRegistrationClaimDTO])
-  async findPendingApplicationRegistrationClaims(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<PendingApplicationRegistrationClaimDTO[]> {
-    return this.applicationRegistrationClaimService.findPendingClaimsForWorkspace(
-      workspaceId,
+  ): Promise<string> {
+    return this.applicationRegistrationClaimService.buildGithubAuthorizationUrl(
+      {
+        applicationRegistrationId,
+        workspaceId,
+        userId: user?.id ?? null,
+      },
     );
-  }
-
-  @UseGuards(
-    WorkspaceAuthGuard,
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
-  )
-  @Mutation(() => Boolean)
-  async cancelApplicationRegistrationClaim(
-    @Args() { applicationRegistrationId }: ApplicationRegistrationClaimInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<boolean> {
-    return this.applicationRegistrationClaimService.cancelClaim({
-      applicationRegistrationId,
-      workspaceId,
-    });
   }
 
   @UseGuards(
@@ -441,33 +398,6 @@ export class ApplicationRegistrationResolver {
       targetWorkspaceSubdomain,
       currentOwnerWorkspaceId: workspaceId,
     });
-  }
-
-  @UseGuards(
-    WorkspaceAuthGuard,
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
-  )
-  @Mutation(() => ApplicationRegistrationEntity)
-  async requestApplicationRegistrationListing(
-    @Args()
-    {
-      applicationRegistrationId,
-      contactEmail,
-    }: RequestApplicationRegistrationListingInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ApplicationRegistrationEntity> {
-    const registration =
-      await this.applicationRegistrationService.requestListing({
-        applicationRegistrationId,
-        ownerWorkspaceId: workspaceId,
-        contactEmail,
-      });
-
-    await this.applicationRegistrationLifecycleEmailService.sendListingRequestSubmittedEmail(
-      { registration },
-    );
-
-    return registration;
   }
 
   @ResolveField(() => Boolean)

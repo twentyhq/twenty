@@ -18,7 +18,6 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type Manifest } from 'twenty-shared/application';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
-import { ApplicationRegistrationListingRequestStatus } from 'src/engine/core-modules/application/application-registration/enums/application-registration-listing-request-status.enum';
 import { type ApplicationRegistrationGalleryImage } from 'src/engine/core-modules/application/application-registration/types/application-registration-gallery-image.type';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -222,37 +221,6 @@ export class ApplicationRegistrationEntity {
       '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
   })
   screenshots: string[];
-
-  // Marketplace listing request lifecycle. Catalog-synced apps start unlisted;
-  // the owner requests a listing and a server admin approves it.
-  @Field(() => ApplicationRegistrationListingRequestStatus)
-  @Column({
-    type: 'text',
-    default: ApplicationRegistrationListingRequestStatus.NONE,
-  })
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      '2.22.0_AddListingRequestFieldsToApplicationRegistrationFastInstanceCommand_1784106205002',
-  })
-  listingRequestStatus: ApplicationRegistrationListingRequestStatus;
-
-  @Field(() => Date, { nullable: true })
-  @Column({ nullable: true, type: 'timestamptz' })
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      '2.22.0_AddListingRequestFieldsToApplicationRegistrationFastInstanceCommand_1784106205002',
-  })
-  listingRequestedAt: Date | null;
-
-  // Where the admin's listing decision (approval / rejection / change
-  // request) is emailed.
-  @Field(() => String, { nullable: true })
-  @Column({ nullable: true, type: 'text' })
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      '2.22.0_ReplaceApplicationRegistrationClaimWithAppTokenFastInstanceCommand_1784153821819',
-  })
-  listingRequestContactEmail: string | null;
 
   @OneToMany(
     () => ApplicationRegistrationVariableEntity,

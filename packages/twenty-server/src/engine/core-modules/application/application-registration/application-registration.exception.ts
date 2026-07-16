@@ -18,12 +18,11 @@ export enum ApplicationRegistrationExceptionCode {
   INVALID_SERVER_VERSION = 'INVALID_SERVER_VERSION',
   APPLICATION_REGISTRATION_ALREADY_OWNED = 'APPLICATION_REGISTRATION_ALREADY_OWNED',
   CLAIM_NOT_SUPPORTED = 'CLAIM_NOT_SUPPORTED',
-  CLAIM_NOT_STARTED = 'CLAIM_NOT_STARTED',
-  CLAIM_EXPIRED = 'CLAIM_EXPIRED',
-  CLAIM_CODE_NOT_FOUND = 'CLAIM_CODE_NOT_FOUND',
-  CLAIM_CODE_CHECK_UNAVAILABLE = 'CLAIM_CODE_CHECK_UNAVAILABLE',
-  CLAIM_CODE_MISMATCH = 'CLAIM_CODE_MISMATCH',
-  INCOMPLETE_LISTING_METADATA = 'INCOMPLETE_LISTING_METADATA',
+  CLAIM_NOT_CONFIGURED = 'CLAIM_NOT_CONFIGURED',
+  PROVENANCE_NOT_FOUND = 'PROVENANCE_NOT_FOUND',
+  PROVENANCE_CHECK_UNAVAILABLE = 'PROVENANCE_CHECK_UNAVAILABLE',
+  GITHUB_AUTH_FAILED = 'GITHUB_AUTH_FAILED',
+  GITHUB_ORG_OWNERSHIP_REQUIRED = 'GITHUB_ORG_OWNERSHIP_REQUIRED',
 }
 
 const getExceptionUserFriendlyMessage = (
@@ -56,18 +55,16 @@ const getExceptionUserFriendlyMessage = (
       return msg`This application is already owned by a workspace.`;
     case ApplicationRegistrationExceptionCode.CLAIM_NOT_SUPPORTED:
       return msg`Only applications published to npm can be claimed this way.`;
-    case ApplicationRegistrationExceptionCode.CLAIM_NOT_STARTED:
-      return msg`No claim is in progress for this application. Start a claim first.`;
-    case ApplicationRegistrationExceptionCode.CLAIM_EXPIRED:
-      return msg`This claim has expired. Start a new claim to get a fresh code.`;
-    case ApplicationRegistrationExceptionCode.CLAIM_CODE_NOT_FOUND:
-      return msg`No claim code was found in the published package. Add it to package.json and publish a new version.`;
-    case ApplicationRegistrationExceptionCode.CLAIM_CODE_CHECK_UNAVAILABLE:
-      return msg`The package registry could not be reached to verify the claim. Try again later.`;
-    case ApplicationRegistrationExceptionCode.CLAIM_CODE_MISMATCH:
-      return msg`The claim code in the published package does not match. Publish a new version with the exact code shown.`;
-    case ApplicationRegistrationExceptionCode.INCOMPLETE_LISTING_METADATA:
-      return msg`A logo and description are required before requesting a listing.`;
+    case ApplicationRegistrationExceptionCode.CLAIM_NOT_CONFIGURED:
+      return msg`Claiming is not configured on this server. Ask an administrator to configure the GitHub OAuth app.`;
+    case ApplicationRegistrationExceptionCode.PROVENANCE_NOT_FOUND:
+      return msg`No provenance attestation was found for the published package. Publish it with npm trusted publishing from GitHub Actions, then try again.`;
+    case ApplicationRegistrationExceptionCode.PROVENANCE_CHECK_UNAVAILABLE:
+      return msg`The package registry could not be reached to verify the package provenance. Try again later.`;
+    case ApplicationRegistrationExceptionCode.GITHUB_AUTH_FAILED:
+      return msg`GitHub authentication failed. Try connecting your GitHub account again.`;
+    case ApplicationRegistrationExceptionCode.GITHUB_ORG_OWNERSHIP_REQUIRED:
+      return msg`Your GitHub account does not own the organization that publishes this package.`;
     default:
       assertUnreachable(code);
   }

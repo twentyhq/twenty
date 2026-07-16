@@ -1,44 +1,28 @@
 import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useLazyQuery, useMutation, useQuery } from '@apollo/client/react';
+import { useLazyQuery, useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import {
-  IconCopy,
-  IconEye,
-  IconRefresh,
-  IconSearch,
-  IconUserPlus,
-} from 'twenty-ui/icon';
+import { IconBrandGithub, IconRefresh, IconSearch } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 import {
-  CancelApplicationRegistrationClaimDocument,
   FindClaimableApplicationRegistrationDocument,
-  FindManyApplicationRegistrationsDocument,
-  FindPendingApplicationRegistrationClaimsDocument,
+  GithubClaimAuthorizationUrlDocument,
   PermissionFlagType,
-  StartApplicationRegistrationClaimDocument,
   SyncMarketplaceCatalogDocument,
-  VerifyApplicationRegistrationClaimDocument,
 } from '~/generated-metadata/graphql';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-const CANCEL_CLAIM_MODAL_ID = 'cancel-application-claim-modal';
 
 const StyledRow = styled.div`
   align-items: flex-end;
@@ -60,10 +44,11 @@ const StyledResultCard = styled.div`
   padding: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledResultTitleLink = styled(UndecoratedLink)`
+const StyledResultTitleLink = styled(Link)`
   align-self: flex-start;
   color: ${themeCssVariables.font.color.primary};
   font-weight: ${themeCssVariables.font.weight.medium};
+  text-decoration: none;
 
   :hover {
     text-decoration: underline;
@@ -75,43 +60,15 @@ const StyledHint = styled.div`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
-const StyledCodeBlock = styled.pre`
-  background: ${themeCssVariables.background.transparent.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.secondary};
-  font-family: ${themeCssVariables.font.family};
-  margin: 0;
-  overflow-x: auto;
-  padding: ${themeCssVariables.spacing[3]};
-  white-space: pre;
-`;
-
-const buildPackageJsonSnippet = (claimCode: string) =>
-  `"twenty": {\n  "claimCode": "${claimCode}"\n}`;
-
 export const SettingsClaimApplicationSection = () => {
   const { t } = useLingui();
-  const navigate = useNavigateSettings();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-  const { copyToClipboard } = useCopyToClipboard();
-  const { openModal, closeModal } = useModal();
 
   const [lookupValue, setLookupValue] = useState('');
   const [notFound, setNotFound] = useState(false);
-  const [challengeCode, setChallengeCode] = useState<string | null>(null);
-  const [revealedClaimIds, setRevealedClaimIds] = useState<string[]>([]);
-  const [claimToCancel, setClaimToCancel] = useState<{
-    applicationRegistrationId: string;
-    name: string;
-  } | null>(null);
 
   const canSyncCatalog = useHasPermissionFlag(
     PermissionFlagType.MARKETPLACE_APPS,
-  );
-
-  const { data: pendingClaimsData, refetch: refetchPendingClaims } = useQuery(
-    FindPendingApplicationRegistrationClaimsDocument,
-    { fetchPolicy: 'network-only' },
   );
 
   const [runLookup, { data: lookupData, loading: isLookingUp }] = useLazyQuery(
@@ -119,40 +76,16 @@ export const SettingsClaimApplicationSection = () => {
     { fetchPolicy: 'network-only' },
   );
 
-  const [startClaim, { loading: isStarting }] = useMutation(
-    StartApplicationRegistrationClaimDocument,
-  );
-
-  const [verifyClaim, { loading: isVerifying }] = useMutation(
-    VerifyApplicationRegistrationClaimDocument,
-    { refetchQueries: [FindManyApplicationRegistrationsDocument] },
-  );
-
-  const [cancelClaim, { loading: isCancelling }] = useMutation(
-    CancelApplicationRegistrationClaimDocument,
-  );
+  const [getGithubAuthorizationUrl, { loading: isRedirectingToGithub }] =
+    useLazyQuery(GithubClaimAuthorizationUrlDocument, {
+      fetchPolicy: 'network-only',
+    });
 
   const [syncCatalog, { loading: isSyncing }] = useMutation(
     SyncMarketplaceCatalogDocument,
   );
 
   const registration = lookupData?.findClaimableApplicationRegistration ?? null;
-
-  const pendingClaims =
-    pendingClaimsData?.findPendingApplicationRegistrationClaims ?? [];
-
-  const lookupPendingClaim = isDefined(registration)
-    ? (pendingClaims.find(
-        (claim) => claim.applicationRegistrationId === registration.id,
-      ) ?? null)
-    : null;
-
-  // Claims started earlier stay visible until verified or canceled, even
-  // without a fresh lookup; the one matching the current lookup renders in
-  // the lookup card instead.
-  const standingClaims = pendingClaims.filter(
-    (claim) => claim.applicationRegistrationId !== registration?.id,
-  );
 
   const handleLookup = async () => {
     const trimmed = lookupValue.trim();
@@ -162,7 +95,6 @@ export const SettingsClaimApplicationSection = () => {
     }
 
     setNotFound(false);
-    setChallengeCode(null);
 
     const variables = UUID_REGEX.test(trimmed)
       ? { universalIdentifier: trimmed }
@@ -182,88 +114,29 @@ export const SettingsClaimApplicationSection = () => {
     }
   };
 
-  const handleStartClaim = async () => {
+  const handleClaimWithGithub = async () => {
     if (!isDefined(registration)) {
       return;
     }
 
     try {
-      const result = await startClaim({
+      const result = await getGithubAuthorizationUrl({
         variables: { applicationRegistrationId: registration.id },
       });
 
-      const token =
-        result.data?.startApplicationRegistrationClaim?.token ?? null;
+      const authorizationUrl = result.data?.githubClaimAuthorizationUrl;
 
-      setChallengeCode(token);
-      await refetchPendingClaims();
-    } catch (error) {
-      enqueueErrorSnackBar({
-        message:
-          error instanceof Error ? error.message : t`Could not start the claim`,
-      });
-    }
-  };
+      if (!isDefined(authorizationUrl)) {
+        throw new Error(result.error?.message ?? 'Missing authorization URL');
+      }
 
-  const handleVerifyClaim = async (applicationRegistrationId: string) => {
-    try {
-      await verifyClaim({
-        variables: { applicationRegistrationId },
-      });
-
-      enqueueSuccessSnackBar({ message: t`Application claimed successfully` });
-
-      navigate(SettingsPath.ApplicationRegistrationDetail, {
-        applicationRegistrationId,
-      });
+      window.location.href = authorizationUrl;
     } catch (error) {
       enqueueErrorSnackBar({
         message:
           error instanceof Error
             ? error.message
-            : t`Could not verify the claim`,
-      });
-      await refetchPendingClaims();
-    }
-  };
-
-  const handleOpenCancelModal = (claim: {
-    applicationRegistrationId: string;
-    name: string;
-  }) => {
-    setClaimToCancel(claim);
-    openModal(CANCEL_CLAIM_MODAL_ID);
-  };
-
-  const handleConfirmCancelClaim = async () => {
-    if (!isDefined(claimToCancel)) {
-      return;
-    }
-
-    try {
-      await cancelClaim({
-        variables: {
-          applicationRegistrationId: claimToCancel.applicationRegistrationId,
-        },
-      });
-
-      enqueueSuccessSnackBar({ message: t`Claim canceled` });
-
-      setChallengeCode(null);
-      setRevealedClaimIds((previousRevealedClaimIds) =>
-        previousRevealedClaimIds.filter(
-          (id) => id !== claimToCancel.applicationRegistrationId,
-        ),
-      );
-      await refetchPendingClaims();
-      closeModal(CANCEL_CLAIM_MODAL_ID);
-      setClaimToCancel(null);
-    } catch (error) {
-      enqueueErrorSnackBar({
-        message:
-          error instanceof Error
-            ? error.message
-            : t`Could not cancel the claim`,
+            : t`Could not start the GitHub claim`,
       });
     }
   };
@@ -296,67 +169,6 @@ export const SettingsClaimApplicationSection = () => {
     >
       <ApplicationDisplay application={{ name: app.name, logo: app.logoUrl }} />
     </StyledResultTitleLink>
-  );
-
-  const renderChallengeActions = (claim: {
-    applicationRegistrationId: string;
-    name: string;
-    token: string;
-    isRevealed: boolean;
-    onReveal: () => void;
-  }) => (
-    <>
-      {claim.isRevealed && (
-        <>
-          <StyledHint>
-            {t`Add this to your package.json, publish a new version to npm, then verify.`}
-          </StyledHint>
-          <StyledCodeBlock>
-            {buildPackageJsonSnippet(claim.token)}
-          </StyledCodeBlock>
-        </>
-      )}
-      <StyledRow>
-        {claim.isRevealed ? (
-          <Button
-            title={t`Copy`}
-            variant="secondary"
-            Icon={IconCopy}
-            onClick={() =>
-              copyToClipboard(
-                buildPackageJsonSnippet(claim.token),
-                t`Copied to clipboard`,
-              )
-            }
-          />
-        ) : (
-          <Button
-            title={t`Reveal claim code`}
-            Icon={IconEye}
-            variant="secondary"
-            onClick={claim.onReveal}
-          />
-        )}
-        <Button
-          title={t`Verify`}
-          accent="blue"
-          onClick={() => handleVerifyClaim(claim.applicationRegistrationId)}
-          disabled={isVerifying}
-        />
-        <Button
-          title={t`Cancel claim`}
-          variant="secondary"
-          accent="danger"
-          onClick={() =>
-            handleOpenCancelModal({
-              applicationRegistrationId: claim.applicationRegistrationId,
-              name: claim.name,
-            })
-          }
-          disabled={isCancelling}
-        />
-      </StyledRow>
-    </>
   );
 
   return (
@@ -414,76 +226,20 @@ export const SettingsClaimApplicationSection = () => {
           {isDefined(registration.description) && (
             <StyledHint>{registration.description}</StyledHint>
           )}
-          {isDefined(lookupPendingClaim) || isDefined(challengeCode) ? (
-            <>
-              {!isDefined(challengeCode) && (
-                <StyledHint>
-                  {t`A claim is already pending for this workspace. Reveal its code to finish the challenge, or verify if you already published it.`}
-                </StyledHint>
-              )}
-              {renderChallengeActions({
-                applicationRegistrationId: registration.id,
-                name: registration.name,
-                token: challengeCode ?? lookupPendingClaim?.token ?? '',
-                isRevealed: isDefined(challengeCode),
-                onReveal: () =>
-                  setChallengeCode(lookupPendingClaim?.token ?? null),
-              })}
-            </>
-          ) : (
-            <StyledRow>
-              <Button
-                title={t`Start claim`}
-                Icon={IconUserPlus}
-                accent="blue"
-                onClick={handleStartClaim}
-                disabled={isStarting}
-              />
-            </StyledRow>
-          )}
+          <StyledHint>
+            {t`Ownership is verified through npm trusted publishing: the package must be published from GitHub Actions with provenance, and you must own the GitHub account or organization it is published from.`}
+          </StyledHint>
+          <StyledRow>
+            <Button
+              title={t`Claim with GitHub`}
+              Icon={IconBrandGithub}
+              accent="blue"
+              onClick={handleClaimWithGithub}
+              disabled={isRedirectingToGithub}
+            />
+          </StyledRow>
         </StyledResultCard>
       )}
-
-      {standingClaims.map((claim) => {
-        const isRevealed = revealedClaimIds.includes(
-          claim.applicationRegistrationId,
-        );
-
-        return (
-          <StyledResultCard key={claim.applicationRegistrationId}>
-            {renderCardTitle(claim)}
-            {isDefined(claim.description) && (
-              <StyledHint>{claim.description}</StyledHint>
-            )}
-            {!isRevealed && (
-              <StyledHint>
-                {t`A claim is pending for this workspace. Reveal its code to finish the challenge, or verify if you already published it.`}
-              </StyledHint>
-            )}
-            {renderChallengeActions({
-              applicationRegistrationId: claim.applicationRegistrationId,
-              name: claim.name,
-              token: claim.token,
-              isRevealed,
-              onReveal: () =>
-                setRevealedClaimIds((previousRevealedClaimIds) => [
-                  ...previousRevealedClaimIds,
-                  claim.applicationRegistrationId,
-                ]),
-            })}
-          </StyledResultCard>
-        );
-      })}
-
-      <ConfirmationModal
-        modalInstanceId={CANCEL_CLAIM_MODAL_ID}
-        title={t`Cancel claim`}
-        subtitle={t`This will discard the pending ownership claim for "${claimToCancel?.name ?? ''}". The published claim code will no longer work and you will have to start a new claim.`}
-        onConfirmClick={handleConfirmCancelClaim}
-        confirmButtonText={t`Cancel claim`}
-        confirmButtonAccent="danger"
-        loading={isCancelling}
-      />
     </Section>
   );
 };

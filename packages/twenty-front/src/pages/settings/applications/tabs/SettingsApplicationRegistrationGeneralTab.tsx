@@ -1,7 +1,4 @@
-import {
-  ApplicationRegistrationListingRequestStatus,
-  type ApplicationRegistration,
-} from '~/generated-metadata/graphql';
+import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +7,6 @@ import { SettingsApplicationRegistrationGeneralInfo } from '~/pages/settings/app
 
 import { SettingsAdminApplicationRegistrationClaims } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims';
 import { SettingsAdminApplicationRegistrationDangerZone } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone';
-import { SettingsAdminApplicationRegistrationListingReview } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationListingReview';
 import { SettingsApplicationRegistrationGeneralStats } from '~/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats';
 import { SettingsAdminApplicationRegistrationGeneralToggles } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles';
 
@@ -37,13 +33,6 @@ export const SettingsApplicationRegistrationGeneralTab = ({
         />
       )}
       <SettingsApplicationRegistrationGeneralInfo registration={registration} />
-      {fromAdmin &&
-        registration.listingRequestStatus ===
-          ApplicationRegistrationListingRequestStatus.REQUESTED && (
-          <SettingsAdminApplicationRegistrationListingReview
-            registration={registration}
-          />
-        )}
       {fromAdmin && (
         <SettingsAdminApplicationRegistrationGeneralToggles
           registration={registration}

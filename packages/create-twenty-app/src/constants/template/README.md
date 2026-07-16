@@ -14,6 +14,10 @@ List the top things your app does, for example:
 
 Setup instructions live in [SETUP.md](SETUP.md).
 
+## Publishing
+
+The `Publish` GitHub Actions workflow (`.github/workflows/publish.yml`) publishes the app to npm with provenance using [npm trusted publishing](https://docs.npmjs.com/trusted-publishers). Register this repository as a trusted publisher of your package on npmjs.com, then push a version tag (e.g. `v1.0.0`). Publishing with provenance is also how you prove ownership when claiming your app in a Twenty marketplace.
+
 ## Changelog
 
 Notable changes are documented in [CHANGELOG.md](CHANGELOG.md).

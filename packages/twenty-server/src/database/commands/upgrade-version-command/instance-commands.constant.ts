@@ -112,10 +112,7 @@ import { BackfillWorkspaceDatabaseSchemaSlowInstanceCommand } from './2-21/2-21-
 import { AddLogoFileIdToApplicationRegistrationFastInstanceCommand } from './2-21/2-21-instance-command-fast-1783945979243-add-logo-file-id-to-application-registration';
 import { AddCalendarEndFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-22/2-22-instance-command-fast-1783956795000-add-calendar-end-field-metadata-id-to-view';
 import { AddCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2-22/2-22-instance-command-slow-1784106205000-add-created-workspace-activation-status';
-import { CreateApplicationRegistrationClaimCoreTableFastInstanceCommand } from './2-22/2-22-instance-command-fast-1784106205001-create-application-registration-claim-core-table';
-import { AddListingRequestFieldsToApplicationRegistrationFastInstanceCommand } from './2-22/2-22-instance-command-fast-1784106205002-add-listing-request-fields-to-application-registration';
 import { UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand } from './2-22/2-22-instance-command-slow-1784106205003-unlist-unclaimed-npm-application-registrations';
-import { ReplaceApplicationRegistrationClaimWithAppTokenFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-22/2-22-instance-command-fast-1784153821819-replace-application-registration-claim-with-app-token';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -230,8 +227,5 @@ export const INSTANCE_COMMANDS = [
   AddLogoFileIdToApplicationRegistrationFastInstanceCommand,
   AddCalendarEndFieldMetadataIdToViewFastInstanceCommand,
   AddCreatedWorkspaceActivationStatusSlowInstanceCommand,
-  CreateApplicationRegistrationClaimCoreTableFastInstanceCommand,
-  AddListingRequestFieldsToApplicationRegistrationFastInstanceCommand,
   UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand,
-  ReplaceApplicationRegistrationClaimWithAppTokenFastInstanceCommand,
 ];

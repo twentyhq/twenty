@@ -9,10 +9,7 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { H2Title } from 'twenty-ui/typography';
-import {
-  ApplicationRegistrationListingRequestStatus,
-  type ApplicationRegistration,
-} from '~/generated-metadata/graphql';
+import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 import {
   BackfillApplicationInstallationDocument,
   UpdateAdminApplicationRegistrationDocument,
@@ -71,13 +68,6 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
     { client: apolloAdminClient },
   );
 
-  // While a listing request is pending, installation stays off; the admin
-  // resolves the request with the explicit review actions and approval turns
-  // it back on.
-  const isListingReviewPending =
-    registration.listingRequestStatus ===
-    ApplicationRegistrationListingRequestStatus.REQUESTED;
-
   const handleBackfill = async () => {
     setIsBackfilling(true);
     try {
@@ -105,13 +95,8 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
           <SettingsOptionCardContentToggle
             Icon={IconArrowBarToDown}
             title={t`Allow installation`}
-            description={
-              isListingReviewPending
-                ? t`A listing request is pending. Resolve it with the review actions above.`
-                : t`Display this app in the NPM packages list`
-            }
-            checked={isListingReviewPending ? false : registration.isListed}
-            disabled={isListingReviewPending}
+            description={t`Display this app in the NPM packages list`}
+            checked={registration.isListed}
             onChange={(checked) =>
               updateRegistration({
                 variables: {
