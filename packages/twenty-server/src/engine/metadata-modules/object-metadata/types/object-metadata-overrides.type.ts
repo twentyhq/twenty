@@ -6,6 +6,7 @@ export type ObjectMetadataOverrides = {
   description?: string | null;
   icon?: string | null;
   color?: string | null;
+  imageIdentifierFieldMetadataId?: string | null;
   translations?: Partial<
     Record<
       keyof typeof APP_LOCALES,

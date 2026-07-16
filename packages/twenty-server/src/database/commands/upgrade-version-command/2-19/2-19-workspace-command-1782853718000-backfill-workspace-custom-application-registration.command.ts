@@ -4,7 +4,7 @@ import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -18,7 +18,7 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
   description:
     'Create a workspace-scoped application registration for each existing workspace Custom application so custom object/field labels become translatable.',
 })
-export class BackfillWorkspaceCustomApplicationRegistrationCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class BackfillWorkspaceCustomApplicationRegistrationCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     @InjectRepository(WorkspaceEntity)

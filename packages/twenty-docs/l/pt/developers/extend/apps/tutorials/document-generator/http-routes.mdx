@@ -9,15 +9,10 @@ O mesmo manipulador também pode responder solicitações HTTP. Vamos adicionar 
 * um terminal **POST** aponta as chamadas da UI para gerar um documento e
 * um endpoint de **GET** público que renderiza um documento como uma página web impressa.
 
-Ambos usam `httpRouteTriggerSettings`. No servidor local de desenvolvimento, as rotas de aplicativos são
-servidas sob o prefixo `/s` (por exemplo, `http://localhost:2020/s/documents/generate`).
-
-<Note>
-Em Vinte nuvens, as rotas são servidas no domínio de funções dedicadas do espaço de trabalho
-— a URL de 20 injeções como `TWENTY_FUNCTIONS_URL`, sem prefixo `/s`. O prefixo `/s`
-está obsoleto e só permanece para instâncias auto-hospedadas e locais.
-Ver [Chamando uma função lógica](/l/pt/developers/extend/apps/layout/front-components#calling-a-logic-function).
-</Note>
+Ambos usam `httpRouteTriggerSettings`. As rotas do aplicativo são acessadas com um caminho `/s/`; em instâncias locais
+e auto-hospedadas, esse caminho é servido pelo seu servidor Twenty
+(por exemplo, `http://localhost:2020/s/documents/generate`). No Twenty Cloud, `RestApiClient`
+resolve o caminho por meio do domínio de funções do espaço de trabalho.
 
 ## Rota POST - gerar sob demanda
 

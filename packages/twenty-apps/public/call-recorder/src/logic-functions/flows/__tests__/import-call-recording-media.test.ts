@@ -1,11 +1,13 @@
+import { type ClientRequest, type IncomingMessage } from 'node:http';
+import { PassThrough, Readable } from 'node:stream';
+
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-video-field-universal-identifier';
 import { importCallRecordingMedia } from 'src/logic-functions/flows/import-call-recording-media.util';
 
 const mutationMock = vi.hoisted(() => vi.fn());
-const getRecallRecordingMock = vi.hoisted(() => vi.fn());
-const putMediaDownloadBodyToUploadTargetMock = vi.hoisted(() => vi.fn());
+const requestOverHttpsMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-client-sdk/metadata', () => ({
   MetadataApiClient: class {
@@ -13,19 +15,17 @@ vi.mock('twenty-client-sdk/metadata', () => ({
   },
 }));
 
-vi.mock('src/logic-functions/recall-api/get-recall-recording.util', () => ({
-  getRecallRecording: getRecallRecordingMock,
-}));
+vi.mock('node:https', async () => {
+  const actualHttps =
+    await vi.importActual<typeof import('node:https')>('node:https');
 
-vi.mock(
-  'src/logic-functions/flows/put-media-download-body-to-upload-target.util',
-  () => ({
-    putMediaDownloadBodyToUploadTarget: putMediaDownloadBodyToUploadTargetMock,
-  }),
-);
+  return { ...actualHttps, request: requestOverHttpsMock };
+});
 
 const VIDEO_URL = 'https://media.example.com/video.mp4';
 const AUDIO_URL = 'https://media.example.com/audio.mp3';
+const RECALL_RECORDING_URL =
+  'https://us-west-2.recall.ai/api/v1/recording/recall-recording-1/';
 
 const RECORDING_WITH_MEDIA = {
   id: 'recall-recording-1',
@@ -34,6 +34,8 @@ const RECORDING_WITH_MEDIA = {
     audio_mixed: { download_url: AUDIO_URL },
   },
 };
+
+let buildRecallRecordingResponse: () => Response;
 
 const uploadUrlForFilename = (filename: string) =>
   `https://storage.example.com/${filename}`;
@@ -88,6 +90,10 @@ const stubFetch = ({
       throw new Error('Upload requests should go through the upload bridge');
     }
 
+    if (url === RECALL_RECORDING_URL) {
+      return Promise.resolve(buildRecallRecordingResponse());
+    }
+
     const downloadResponse = downloadsByUrl[url];
 
     if (downloadResponse === undefined) {
@@ -139,23 +145,50 @@ const stubDirectUpload = ({
   });
 };
 
-const getUploadBridgeCall = (fileName: string) =>
-  putMediaDownloadBodyToUploadTargetMock.mock.calls.find(
-    ([uploadInput]) => uploadInput.fileName === fileName,
+const buildUploadResponse = (): IncomingMessage => {
+  const uploadResponse = Readable.from([]) as IncomingMessage;
+
+  uploadResponse.statusCode = 200;
+
+  return uploadResponse;
+};
+
+const uploadedBytesByUrl = new Map<string, number[]>();
+
+const stubUploadRequests = () => {
+  uploadedBytesByUrl.clear();
+  requestOverHttpsMock.mockReset();
+  requestOverHttpsMock.mockImplementation((uploadUrl: URL) => {
+    const uploadRequest = new PassThrough();
+    const uploadedBytes: number[] = [];
+
+    uploadedBytesByUrl.set(uploadUrl.href, uploadedBytes);
+    uploadRequest.on('data', (chunk: Buffer) => {
+      uploadedBytes.push(...chunk);
+    });
+    uploadRequest.on('finish', () => {
+      uploadRequest.emit('response', buildUploadResponse());
+    });
+
+    return uploadRequest as unknown as ClientRequest;
+  });
+};
+
+const getUploadRequestCall = (fileName: string) =>
+  requestOverHttpsMock.mock.calls.find(
+    ([uploadUrl]) => uploadUrl.href === uploadUrlForFilename(fileName),
   );
 
 describe('importCallRecordingMedia', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.stubEnv('RECALL_API_KEY', 'recall-api-key');
+    vi.stubEnv('RECALL_REGION', 'us-west-2');
     mutationMock.mockReset();
-    getRecallRecordingMock.mockReset();
-    putMediaDownloadBodyToUploadTargetMock.mockReset();
-    putMediaDownloadBodyToUploadTargetMock.mockResolvedValue(undefined);
-    getRecallRecordingMock.mockResolvedValue({
-      ok: true,
-      recording: RECORDING_WITH_MEDIA,
-    });
+    stubUploadRequests();
+    buildRecallRecordingResponse = () =>
+      new Response(JSON.stringify(RECORDING_WITH_MEDIA), { status: 200 });
     stubDirectUpload({
       finalFileIdByFilename: {
         'video.mp4': 'file-video-1',
@@ -172,6 +205,9 @@ describe('importCallRecordingMedia', () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+    vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
   it('streams and uploads every missing artifact', async () => {
@@ -186,24 +222,32 @@ describe('importCallRecordingMedia', () => {
       video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
     });
-    expect(getUploadBridgeCall('video.mp4')).toMatchObject([
-      expect.objectContaining({
-        fileName: 'video.mp4',
-        sizeBytes: 8,
-        uploadTarget: expect.objectContaining({
-          uploadUrl: uploadUrlForFilename('video.mp4'),
-        }),
-      }),
-    ]);
-    expect(getUploadBridgeCall('audio.mp3')).toMatchObject([
-      expect.objectContaining({
-        fileName: 'audio.mp3',
-        sizeBytes: 8,
-        uploadTarget: expect.objectContaining({
-          uploadUrl: uploadUrlForFilename('audio.mp3'),
-        }),
-      }),
-    ]);
+    const [videoUploadUrl, videoUploadOptions] =
+      getUploadRequestCall('video.mp4') ?? [];
+    expect(videoUploadUrl?.href).toBe(uploadUrlForFilename('video.mp4'));
+    expect(videoUploadOptions).toMatchObject({
+      method: 'PUT',
+      headers: {
+        'Content-Length': 8,
+        'Content-Type': 'application/octet-stream',
+      },
+    });
+    expect(
+      uploadedBytesByUrl.get(uploadUrlForFilename('video.mp4')),
+    ).toHaveLength(8);
+    const [audioUploadUrl, audioUploadOptions] =
+      getUploadRequestCall('audio.mp3') ?? [];
+    expect(audioUploadUrl?.href).toBe(uploadUrlForFilename('audio.mp3'));
+    expect(audioUploadOptions).toMatchObject({
+      method: 'PUT',
+      headers: {
+        'Content-Length': 8,
+        'Content-Type': 'application/octet-stream',
+      },
+    });
+    expect(
+      uploadedBytesByUrl.get(uploadUrlForFilename('audio.mp3')),
+    ).toHaveLength(8);
   });
 
   it('declares the presigned upload with the download size, folder and field identifier', async () => {
@@ -247,7 +291,7 @@ describe('importCallRecordingMedia', () => {
     expect(updateFields).toEqual({
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
     });
-    expect(getUploadBridgeCall('video.mp4')).toBeUndefined();
+    expect(getUploadRequestCall('video.mp4')).toBeUndefined();
   });
 
   it('does not fetch the recording when both artifacts are present', async () => {
@@ -259,7 +303,7 @@ describe('importCallRecordingMedia', () => {
     });
 
     expect(updateFields).toEqual({});
-    expect(getRecallRecordingMock).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
     expect(mutationMock).not.toHaveBeenCalled();
   });
 
@@ -296,7 +340,7 @@ describe('importCallRecordingMedia', () => {
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
     });
     expect(cancelMock).toHaveBeenCalledTimes(1);
-    expect(getUploadBridgeCall('video.mp4')).toBeUndefined();
+    expect(getUploadRequestCall('video.mp4')).toBeUndefined();
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('upload target exploded'),
     );
@@ -324,7 +368,7 @@ describe('importCallRecordingMedia', () => {
     expect(updateFields).toEqual({
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
     });
-    expect(getUploadBridgeCall('video.mp4')).toBeUndefined();
+    expect(getUploadRequestCall('video.mp4')).toBeUndefined();
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('content-length'),
     );
@@ -334,10 +378,10 @@ describe('importCallRecordingMedia', () => {
   });
 
   it('returns nothing when the recording exposes no media urls', async () => {
-    getRecallRecordingMock.mockResolvedValue({
-      ok: true,
-      recording: { id: 'recall-recording-1' },
-    });
+    buildRecallRecordingResponse = () =>
+      new Response(JSON.stringify({ id: 'recall-recording-1' }), {
+        status: 200,
+      });
 
     const updateFields = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
@@ -351,18 +395,20 @@ describe('importCallRecordingMedia', () => {
   });
 
   it('warns and returns nothing when the recording fetch fails', async () => {
-    getRecallRecordingMock.mockResolvedValue({
-      ok: false,
-      status: 500,
-      errorMessage: 'recording boom',
-    });
+    buildRecallRecordingResponse = () =>
+      new Response(JSON.stringify({ error: 'recording boom' }), {
+        status: 500,
+      });
+    vi.useFakeTimers();
 
-    const updateFields = await importCallRecordingMedia({
+    const updateFieldsPromise = importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
       hasVideo: false,
     });
+    await vi.runAllTimersAsync();
+    const updateFields = await updateFieldsPromise;
 
     expect(updateFields).toEqual({});
     expect(mutationMock).not.toHaveBeenCalled();
@@ -395,7 +441,7 @@ describe('importCallRecordingMedia', () => {
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
       callRecorderFailureReason: 'video_file_too_large',
     });
-    expect(getUploadBridgeCall('video.mp4')).toBeUndefined();
+    expect(getUploadRequestCall('video.mp4')).toBeUndefined();
     expect(cancelMock).toHaveBeenCalled();
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('artifact-too-large'),

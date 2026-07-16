@@ -16,7 +16,6 @@ import { type Readable } from 'stream';
 import { Request, Response } from 'express';
 import { FileFolder, ServerFileFolder } from 'twenty-shared/types';
 
-import { SERVER_FILE_STORAGE_PREFIX } from 'src/engine/core-modules/file-storage/constants/server-file-storage-prefix.constant';
 import {
   FileStorageException,
   FileStorageExceptionCode,
@@ -48,27 +47,32 @@ export class FileController {
     private readonly serverFileStorageService: ServerFileStorageService,
   ) {}
 
-  // Serves application registration assets (logo, gallery images). These are
-  // instance-global marketplace resources, also displayed on the public OAuth
-  // authorize page, hence no auth token. The /server/ segment separates
-  // instance-global server files from the workspace-scoped /file/:folder/:id.
-  @Get(`file/${SERVER_FILE_STORAGE_PREFIX}/application-registration/:id`)
+  // Serves application registration assets (logo, gallery images) by their
+  // public folder path. These are instance-global marketplace resources, also
+  // displayed on the public OAuth authorize page, hence no auth token, unlike
+  // the workspace-scoped /file/:folder/:id.
+  @Get('files/application-registrations/:applicationRegistrationId/*path')
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-  async getApplicationRegistrationFileById(
+  async getApplicationRegistrationAsset(
     @Res() res: Response,
-    @Param('id') fileId: string,
+    @Req() req: Request,
+    @Param('applicationRegistrationId') applicationRegistrationId: string,
   ) {
+    const filepath = join(...req.params.path);
+
     let fileResponse: { stream: Readable; mimeType: string };
 
     try {
-      fileResponse = await this.serverFileStorageService.readServerFileById(
-        fileId,
-        ServerFileFolder.ApplicationRegistration,
-      );
+      fileResponse = await this.serverFileStorageService.readServerFile({
+        fileFolder: ServerFileFolder.ApplicationRegistration,
+        applicationRegistrationId,
+        resourcePath: filepath,
+      });
     } catch (error) {
       if (
         error instanceof FileStorageException &&
-        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+        (error.code === FileStorageExceptionCode.FILE_NOT_FOUND ||
+          error.code === FileStorageExceptionCode.ACCESS_DENIED)
       ) {
         throw new FileException(
           'File not found',
@@ -76,7 +80,7 @@ export class FileController {
         );
       }
 
-      this.logger.error('readServerFileById failed unexpectedly', { error });
+      this.logger.error('readServerFile failed unexpectedly', { error });
 
       throw new FileException(
         'Error retrieving file',

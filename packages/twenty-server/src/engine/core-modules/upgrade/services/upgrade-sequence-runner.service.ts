@@ -77,19 +77,19 @@ export class UpgradeSequenceRunnerService {
     sequence: UpgradeStep[];
     options: ParsedUpgradeCommandOptions;
   }): Promise<UpgradeSequenceRunnerReport> {
-    const allActiveOrSuspendedWorkspaceIds =
-      await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
+    const allProvisionedWorkspaceIds =
+      await this.workspaceVersionService.getProvisionedWorkspaceIds();
 
     const startCursor = await this.resolveStartCursor({
       sequence,
-      allActiveOrSuspendedWorkspaceIds,
+      allProvisionedWorkspaceIds,
     });
 
     let totalSuccesses = 0;
     let totalFailures = 0;
     let cursor = startCursor;
     let workspaceCursors = await this.fetchWorkspaceCursors(
-      allActiveOrSuspendedWorkspaceIds,
+      allProvisionedWorkspaceIds,
     );
 
     while (cursor < sequence.length) {
@@ -131,7 +131,7 @@ export class UpgradeSequenceRunnerService {
 
         await this.runInstanceStep({
           instanceStep: step,
-          skipDataMigration: allActiveOrSuspendedWorkspaceIds.length === 0,
+          skipDataMigration: allProvisionedWorkspaceIds.length === 0,
         });
 
         await this.upgradeAwareEntityMetadataAdapter.refresh();
@@ -149,7 +149,7 @@ export class UpgradeSequenceRunnerService {
       const report = await this.resumeWorkspaceCommandsFromCursors({
         workspaceCommandsSegment,
         workspaceCursors,
-        allActiveOrSuspendedWorkspaceIds,
+        allProvisionedWorkspaceIds,
         options,
       });
 
@@ -176,7 +176,7 @@ export class UpgradeSequenceRunnerService {
       cursor += workspaceCommandsSegment.length;
 
       workspaceCursors = await this.fetchWorkspaceCursors(
-        allActiveOrSuspendedWorkspaceIds,
+        allProvisionedWorkspaceIds,
       );
     }
 
@@ -185,14 +185,14 @@ export class UpgradeSequenceRunnerService {
 
   private async resolveStartCursor({
     sequence,
-    allActiveOrSuspendedWorkspaceIds,
+    allProvisionedWorkspaceIds,
   }: {
     sequence: UpgradeStep[];
-    allActiveOrSuspendedWorkspaceIds: string[];
+    allProvisionedWorkspaceIds: string[];
   }): Promise<number> {
     const lastAttempted =
       await this.upgradeMigrationService.getLastAttemptedCommandNameOrThrow(
-        allActiveOrSuspendedWorkspaceIds,
+        allProvisionedWorkspaceIds,
       );
 
     const lastAttemptedCursor =
@@ -219,7 +219,7 @@ export class UpgradeSequenceRunnerService {
 
         await this.validateWorkspaceCursorsAreInWorkspaceSegment({
           sequence,
-          allActiveOrSuspendedWorkspaceIds,
+          allProvisionedWorkspaceIds,
           workspaceSliceBounds,
         });
 
@@ -231,17 +231,17 @@ export class UpgradeSequenceRunnerService {
   }
 
   private async validateWorkspaceCursorsAreInWorkspaceSegment({
-    allActiveOrSuspendedWorkspaceIds,
+    allProvisionedWorkspaceIds,
     sequence,
     workspaceSliceBounds: { startCursor, endCursor },
   }: {
     sequence: UpgradeStep[];
-    allActiveOrSuspendedWorkspaceIds: string[];
+    allProvisionedWorkspaceIds: string[];
     workspaceSliceBounds: { startCursor: number; endCursor: number };
   }): Promise<void> {
     const workspaceCursors =
       await this.upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow(
-        allActiveOrSuspendedWorkspaceIds,
+        allProvisionedWorkspaceIds,
       );
     const precedingStep =
       startCursor > 0 ? sequence[startCursor - 1] : undefined;
@@ -293,10 +293,10 @@ export class UpgradeSequenceRunnerService {
   }
 
   private async fetchWorkspaceCursors(
-    allActiveOrSuspendedWorkspaceIds: string[],
+    allProvisionedWorkspaceIds: string[],
   ): Promise<Map<string, WorkspaceLastAttemptedCommand>> {
     return this.upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow(
-      allActiveOrSuspendedWorkspaceIds,
+      allProvisionedWorkspaceIds,
     );
   }
 
@@ -343,16 +343,16 @@ export class UpgradeSequenceRunnerService {
   private async resumeWorkspaceCommandsFromCursors({
     workspaceCommandsSegment,
     workspaceCursors,
-    allActiveOrSuspendedWorkspaceIds,
+    allProvisionedWorkspaceIds,
     options,
   }: {
     workspaceCommandsSegment: WorkspaceUpgradeStep[];
     workspaceCursors: Map<string, WorkspaceLastAttemptedCommand>;
-    allActiveOrSuspendedWorkspaceIds: string[];
+    allProvisionedWorkspaceIds: string[];
     options: ParsedUpgradeCommandOptions;
   }): Promise<WorkspaceIteratorReport> {
     const workspaceIds = this.deriveWorkspaceIdsToProcess({
-      allActiveOrSuspendedWorkspaceIds,
+      allProvisionedWorkspaceIds,
       options,
     });
 
@@ -384,17 +384,17 @@ export class UpgradeSequenceRunnerService {
   }
 
   private deriveWorkspaceIdsToProcess({
-    allActiveOrSuspendedWorkspaceIds,
+    allProvisionedWorkspaceIds,
     options,
   }: {
-    allActiveOrSuspendedWorkspaceIds: string[];
+    allProvisionedWorkspaceIds: string[];
     options: ParsedUpgradeCommandOptions;
   }): string[] {
     if (isDefined(options.workspaceIds) && options.workspaceIds.length > 0) {
       return options.workspaceIds;
     }
 
-    let workspaceIds = allActiveOrSuspendedWorkspaceIds;
+    let workspaceIds = allProvisionedWorkspaceIds;
 
     if (isDefined(options.startFromWorkspaceId)) {
       workspaceIds = workspaceIds.filter(
