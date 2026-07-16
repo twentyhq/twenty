@@ -69,7 +69,8 @@ describe('BillingWebhookSubscriptionService', () => {
     deleteWorkspace: jest.Mock;
   };
   let stripeSubscriptionScheduleService: {
-    listCustomerSubscriptionsWithSchedule: jest.Mock;
+    listCustomerNotEndedSubscriptionsWithSchedule: jest.Mock;
+    getSubscriptionWithSchedule: jest.Mock;
   };
   let messageQueueService: { add: jest.Mock };
   let billingSubscriptionRepository: { upsert: jest.Mock; findOne: jest.Mock };
@@ -82,7 +83,8 @@ describe('BillingWebhookSubscriptionService', () => {
       deleteWorkspace: jest.fn(),
     };
     stripeSubscriptionScheduleService = {
-      listCustomerSubscriptionsWithSchedule: jest.fn(),
+      listCustomerNotEndedSubscriptionsWithSchedule: jest.fn(),
+      getSubscriptionWithSchedule: jest.fn(),
     };
     messageQueueService = { add: jest.fn() };
     billingSubscriptionRepository = {
@@ -157,7 +159,7 @@ describe('BillingWebhookSubscriptionService', () => {
         trial_end: trialEndOneHourAgo,
       });
 
-      stripeSubscriptionScheduleService.listCustomerSubscriptionsWithSchedule.mockResolvedValue(
+      stripeSubscriptionScheduleService.listCustomerNotEndedSubscriptionsWithSchedule.mockResolvedValue(
         [
           buildLiveSubscription({
             status: 'active',
@@ -182,7 +184,7 @@ describe('BillingWebhookSubscriptionService', () => {
     it('should suspend an active workspace when the live subscription is unpaid even if the event payload says active', async () => {
       const staleEvent = buildSubscriptionUpdatedEvent({ status: 'active' });
 
-      stripeSubscriptionScheduleService.listCustomerSubscriptionsWithSchedule.mockResolvedValue(
+      stripeSubscriptionScheduleService.listCustomerNotEndedSubscriptionsWithSchedule.mockResolvedValue(
         [buildLiveSubscription({ status: 'unpaid' })],
       );
 
@@ -201,7 +203,7 @@ describe('BillingWebhookSubscriptionService', () => {
     it('should attempt the guarded reactivation even when the workspace snapshot is stale', async () => {
       const activeEvent = buildSubscriptionUpdatedEvent({ status: 'active' });
 
-      stripeSubscriptionScheduleService.listCustomerSubscriptionsWithSchedule.mockResolvedValue(
+      stripeSubscriptionScheduleService.listCustomerNotEndedSubscriptionsWithSchedule.mockResolvedValue(
         [buildLiveSubscription({ status: 'active' })],
       );
 
@@ -225,14 +227,18 @@ describe('BillingWebhookSubscriptionService', () => {
         status: 'canceled',
       });
 
-      stripeSubscriptionScheduleService.listCustomerSubscriptionsWithSchedule.mockResolvedValue(
+      // The canceled event subscription is not in the not-canceled list and
+      // is fetched through the direct retrieve fallback instead
+      stripeSubscriptionScheduleService.listCustomerNotEndedSubscriptionsWithSchedule.mockResolvedValue(
         [
-          buildLiveSubscription({ status: 'canceled' }),
           buildLiveSubscription({
             id: 'sub_new_active_subscription',
             status: 'active',
           }),
         ],
+      );
+      stripeSubscriptionScheduleService.getSubscriptionWithSchedule.mockResolvedValue(
+        buildLiveSubscription({ status: 'canceled' }),
       );
 
       workspaceRepository.findOne.mockResolvedValue(
@@ -245,19 +251,53 @@ describe('BillingWebhookSubscriptionService', () => {
       expect(workspaceService.deleteWorkspace).not.toHaveBeenCalled();
     });
 
+    it('should neither suspend nor reactivate when a sibling subscription is in a past_due grace period', async () => {
+      const deletionEvent = buildSubscriptionUpdatedEvent({
+        status: 'canceled',
+      });
+
+      // The sibling is past_due outside the trial window: not suspend-worthy
+      // (payment retries are in progress) but not activating either, so the
+      // workspace must be left untouched
+      stripeSubscriptionScheduleService.listCustomerNotEndedSubscriptionsWithSchedule.mockResolvedValue(
+        [
+          buildLiveSubscription({
+            id: 'sub_sibling_in_grace_period',
+            status: 'past_due',
+            trial_end: null,
+          }),
+        ],
+      );
+      stripeSubscriptionScheduleService.getSubscriptionWithSchedule.mockResolvedValue(
+        buildLiveSubscription({ status: 'canceled' }),
+      );
+
+      workspaceRepository.findOne.mockResolvedValue(
+        buildWorkspace(WorkspaceActivationStatus.ACTIVE),
+      );
+
+      await service.processStripeEvent(WORKSPACE_ID, deletionEvent);
+
+      expect(workspaceService.suspendWorkspace).not.toHaveBeenCalled();
+      expect(workspaceService.deleteWorkspace).not.toHaveBeenCalled();
+      expect(workspaceService.reactivateWorkspace).not.toHaveBeenCalled();
+    });
+
     it('should reactivate a suspended workspace on a canceled subscription event when another live activating subscription exists', async () => {
       const staleDeletionEvent = buildSubscriptionUpdatedEvent({
         status: 'canceled',
       });
 
-      stripeSubscriptionScheduleService.listCustomerSubscriptionsWithSchedule.mockResolvedValue(
+      stripeSubscriptionScheduleService.listCustomerNotEndedSubscriptionsWithSchedule.mockResolvedValue(
         [
-          buildLiveSubscription({ status: 'canceled' }),
           buildLiveSubscription({
             id: 'sub_new_trialing_subscription',
             status: 'trialing',
           }),
         ],
+      );
+      stripeSubscriptionScheduleService.getSubscriptionWithSchedule.mockResolvedValue(
+        buildLiveSubscription({ status: 'canceled' }),
       );
 
       workspaceRepository.findOne.mockResolvedValue(
@@ -275,7 +315,7 @@ describe('BillingWebhookSubscriptionService', () => {
     it('should not enqueue the deletion warning cleanup job when the guarded reactivation did not apply', async () => {
       const activeEvent = buildSubscriptionUpdatedEvent({ status: 'active' });
 
-      stripeSubscriptionScheduleService.listCustomerSubscriptionsWithSchedule.mockResolvedValue(
+      stripeSubscriptionScheduleService.listCustomerNotEndedSubscriptionsWithSchedule.mockResolvedValue(
         [buildLiveSubscription({ status: 'active' })],
       );
 
@@ -298,7 +338,7 @@ describe('BillingWebhookSubscriptionService', () => {
     it('should not reactivate a suspended workspace when the live subscription is past_due outside the trial window', async () => {
       const staleEvent = buildSubscriptionUpdatedEvent({ status: 'active' });
 
-      stripeSubscriptionScheduleService.listCustomerSubscriptionsWithSchedule.mockResolvedValue(
+      stripeSubscriptionScheduleService.listCustomerNotEndedSubscriptionsWithSchedule.mockResolvedValue(
         [buildLiveSubscription({ status: 'past_due', trial_end: null })],
       );
 
@@ -312,20 +352,54 @@ describe('BillingWebhookSubscriptionService', () => {
       expect(workspaceService.reactivateWorkspace).not.toHaveBeenCalled();
     });
 
+    it('should fall back to a direct subscription retrieve when the customer subscription list does not contain the event subscription', async () => {
+      const deletionEvent = {
+        ...buildSubscriptionUpdatedEvent({ status: 'canceled' }),
+        type: 'customer.subscription.deleted',
+      } as unknown as Stripe.CustomerSubscriptionDeletedEvent;
+
+      // Deleted Stripe customer: listing its subscriptions returns nothing,
+      // but retrieving the canceled subscription by id still works
+      stripeSubscriptionScheduleService.listCustomerNotEndedSubscriptionsWithSchedule.mockResolvedValue(
+        [],
+      );
+      stripeSubscriptionScheduleService.getSubscriptionWithSchedule.mockResolvedValue(
+        buildLiveSubscription({ status: 'canceled' }),
+      );
+
+      workspaceRepository.findOne.mockResolvedValue(
+        buildWorkspace(WorkspaceActivationStatus.ACTIVE),
+      );
+
+      await service.processStripeEvent(WORKSPACE_ID, deletionEvent);
+
+      expect(
+        stripeSubscriptionScheduleService.getSubscriptionWithSchedule,
+      ).toHaveBeenCalledWith(
+        mockStripeSubscriptionUpdatedEventWithoutUpdatedItem.data.object.id,
+      );
+      expect(workspaceService.suspendWorkspace).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+      );
+      expect(workspaceService.reactivateWorkspace).not.toHaveBeenCalled();
+    });
+
     it('should not transition a workspace that was soft-deleted mid-processing', async () => {
       const deletionEvent = {
         ...buildSubscriptionUpdatedEvent({ status: 'canceled' }),
         type: 'customer.subscription.deleted',
       } as unknown as Stripe.CustomerSubscriptionDeletedEvent;
 
-      stripeSubscriptionScheduleService.listCustomerSubscriptionsWithSchedule.mockResolvedValue(
+      stripeSubscriptionScheduleService.listCustomerNotEndedSubscriptionsWithSchedule.mockResolvedValue(
         [
-          buildLiveSubscription({ status: 'canceled' }),
           buildLiveSubscription({
             id: 'sub_new_active_subscription',
             status: 'active',
           }),
         ],
+      );
+      stripeSubscriptionScheduleService.getSubscriptionWithSchedule.mockResolvedValue(
+        buildLiveSubscription({ status: 'canceled' }),
       );
 
       // The workspace was soft-deleted mid-processing: billing must not

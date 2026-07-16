@@ -10,6 +10,8 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { NOT_ENDED_SUBSCRIPTION_STATUSES } from 'src/engine/core-modules/billing/constants/not-ended-subscription-statuses.constant';
+import { type SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -68,15 +70,22 @@ export class StripeSubscriptionScheduleService {
     })) as SubscriptionWithSchedule;
   }
 
-  async listCustomerSubscriptionsWithSchedule(stripeCustomerId: string) {
-    const { data } = await this.stripe.subscriptions.list({
-      customer: stripeCustomerId,
-      status: 'all',
-      expand: ['data.schedule'],
-      limit: 100,
-    });
+  async listCustomerNotEndedSubscriptionsWithSchedule(
+    stripeCustomerId: string,
+  ) {
+    const subscriptions = await this.stripe.subscriptions
+      .list({
+        customer: stripeCustomerId,
+        expand: ['data.schedule'],
+        limit: 100,
+      })
+      .autoPagingToArray({ limit: 1000 });
 
-    return data as SubscriptionWithSchedule[];
+    return subscriptions.filter((subscription) =>
+      NOT_ENDED_SUBSCRIPTION_STATUSES.includes(
+        subscription.status as SubscriptionStatus,
+      ),
+    ) as SubscriptionWithSchedule[];
   }
 
   async updateSchedule(

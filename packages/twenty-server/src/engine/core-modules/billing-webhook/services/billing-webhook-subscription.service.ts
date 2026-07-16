@@ -113,24 +113,24 @@ export class BillingWebhookSubscriptionService {
       },
     );
 
-    // Fetch every subscription of the customer live from Stripe: the event
-    // payload can be stale and sibling subscription rows in the database are
-    // only as fresh as their own last webhook.
     const liveCustomerSubscriptions =
-      await this.stripeSubscriptionScheduleService.listCustomerSubscriptionsWithSchedule(
+      await this.stripeSubscriptionScheduleService.listCustomerNotEndedSubscriptionsWithSchedule(
         String(data.object.customer),
       );
 
-    const subscriptionWithSchedule = liveCustomerSubscriptions.find(
+    const subscriptionFromList = liveCustomerSubscriptions.find(
       (customerSubscription) => customerSubscription.id === data.object.id,
     );
 
-    if (!isDefined(subscriptionWithSchedule)) {
-      throw new BillingException(
-        `Subscription ${data.object.id} not found on Stripe customer ${String(data.object.customer)} for event ${event.id}`,
-        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
-      );
-    }
+    const subscriptionWithSchedule = isDefined(subscriptionFromList)
+      ? subscriptionFromList
+      : await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
+          data.object.id,
+        );
+
+    const allLiveSubscriptions = isDefined(subscriptionFromList)
+      ? liveCustomerSubscriptions
+      : [...liveCustomerSubscriptions, subscriptionWithSchedule];
 
     await this.billingSubscriptionRepository.upsert(
       transformStripeSubscriptionEventToDatabaseSubscription(
@@ -166,20 +166,14 @@ export class BillingWebhookSubscriptionService {
       'currentBillingSubscription',
     ]);
 
-    const hasOtherActivatingSubscription = liveCustomerSubscriptions.some(
+    const shouldSuspendWorkspace = allLiveSubscriptions.every(
       (customerSubscription) =>
-        customerSubscription.id !== data.object.id &&
-        WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES.includes(
-          customerSubscription.status as SubscriptionStatus,
-        ),
+        this.shouldSuspendWorkspace(customerSubscription),
     );
-
-    const shouldSuspendWorkspace =
-      !hasOtherActivatingSubscription &&
-      this.shouldSuspendWorkspace(subscriptionWithSchedule);
-    const shouldReactivateWorkspace =
-      hasOtherActivatingSubscription ||
-      this.shouldReactivateWorkspace(subscriptionWithSchedule);
+    const shouldReactivateWorkspace = allLiveSubscriptions.some(
+      (customerSubscription) =>
+        this.shouldReactivateWorkspace(customerSubscription),
+    );
 
     if (shouldSuspendWorkspace) {
       const refreshedWorkspace = await this.workspaceRepository.findOne({
