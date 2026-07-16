@@ -2,10 +2,8 @@ import { differenceInDays } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import {
-  MOSTLY_EMPTY_FIELD_MINIMUM_AGE_IN_DAYS,
-  MOSTLY_EMPTY_FRACTION_THRESHOLD,
-} from 'src/engine/metadata-modules/object-metadata/constants/mostly-empty-field.constants';
+import { MOSTLY_EMPTY_FIELD_MINIMUM_AGE_IN_DAYS } from 'src/engine/metadata-modules/object-metadata/constants/mostly-empty-field-minimum-age-in-days.constant';
+import { MOSTLY_EMPTY_FRACTION_THRESHOLD } from 'src/engine/metadata-modules/object-metadata/constants/mostly-empty-fraction-threshold.constant';
 import { getEmptinessColumnNamesForField } from 'src/engine/metadata-modules/object-metadata/utils/get-emptiness-column-names-for-field.util';
 
 export type FieldMetadataForEmptinessCheck = Pick<

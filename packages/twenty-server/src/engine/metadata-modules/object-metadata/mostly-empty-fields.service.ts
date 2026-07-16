@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { MOSTLY_EMPTY_MINIMUM_ROW_COUNT } from 'src/engine/metadata-modules/object-metadata/constants/mostly-empty-field.constants';
+import { MOSTLY_EMPTY_MINIMUM_ROW_COUNT } from 'src/engine/metadata-modules/object-metadata/constants/mostly-empty-minimum-row-count.constant';
 import { ObjectRecordCountService } from 'src/engine/metadata-modules/object-metadata/object-record-count.service';
 import { computeMostlyEmptyFieldMetadataIds } from 'src/engine/metadata-modules/object-metadata/utils/compute-mostly-empty-field-metadata-ids.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
