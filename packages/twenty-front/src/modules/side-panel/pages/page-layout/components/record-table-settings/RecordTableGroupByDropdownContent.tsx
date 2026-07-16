@@ -1,4 +1,4 @@
-import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { canGroupRecordsByFieldMetadataItem } from '@/object-record/record-group/utils/canGroupRecordsByFieldMetadataItem';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -37,9 +37,11 @@ export const RecordTableGroupByDropdownContent = ({
   const [searchQuery, setSearchQuery] = useState('');
   const { getIcon } = useIcons();
 
-  const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: objectMetadataId,
-  });
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const objectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItemToFind) =>
+      objectMetadataItemToFind.id === objectMetadataId,
+  );
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -60,7 +62,7 @@ export const RecordTableGroupByDropdownContent = ({
   // Relation group-by is not offered on widgets for now: the server only
   // auto-generates view groups from select options, and widgets have no
   // add-group-per-record flow like the record index page.
-  const groupableFields = (objectMetadataItem?.fields ?? []).filter(
+  const groupableFields = (objectMetadataItem?.readableFields ?? []).filter(
     (fieldMetadataItem) =>
       fieldMetadataItem.isActive === true &&
       fieldMetadataItem.type === FieldMetadataType.SELECT &&

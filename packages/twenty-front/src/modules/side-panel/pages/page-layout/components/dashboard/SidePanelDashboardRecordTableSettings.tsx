@@ -2,7 +2,7 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { CommandMenuItemNumberInput } from '@/command-menu/components/CommandMenuItemNumberInput';
 import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
-import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useRecordTableWidgetFieldCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFieldCallbacks';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
@@ -119,9 +119,11 @@ export const SidePanelDashboardRecordTableSettings = () => {
     widgetView?.mainGroupByFieldMetadataId ?? null;
   const shouldHideEmptyGroups = widgetView?.shouldHideEmptyGroups ?? false;
 
-  const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: widgetInEditMode?.objectMetadataId ?? '',
-  });
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const objectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItemToFind) =>
+      objectMetadataItemToFind.id === widgetInEditMode?.objectMetadataId,
+  );
 
   const mainGroupByFieldLabel = isDefined(mainGroupByFieldMetadataId)
     ? (objectMetadataItem?.fields.find(
