@@ -11,13 +11,14 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { TWENTY_SLACK_APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/engine/core-modules/slack-assistant/constants/slack-assistant.constants';
 import { SlackConnectionService } from 'src/engine/core-modules/slack-assistant/services/slack-connection.service';
-import { SlackMessageSenderService } from 'src/engine/core-modules/slack-assistant/services/slack-message-sender.service';
+import { postSlackMessage } from 'src/engine/core-modules/slack-assistant/utils/post-slack-message.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
+import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 
 const SLACK_ASSISTANT_AGENT_NAME = 'slack-assistant';
 
@@ -37,7 +38,6 @@ export class SlackAssistantService {
     private readonly aiAgentRoleService: AiAgentRoleService,
     private readonly applicationService: ApplicationService,
     private readonly slackConnectionService: SlackConnectionService,
-    private readonly slackMessageSenderService: SlackMessageSenderService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
@@ -63,10 +63,20 @@ export class SlackAssistantService {
       return;
     }
 
-    const agent = await this.agentService.findOneAgentByName({
-      name: SLACK_ASSISTANT_AGENT_NAME,
-      workspaceId,
-    });
+    let agent: AgentEntity;
+
+    try {
+      agent = await this.agentService.findOneAgentByName({
+        name: SLACK_ASSISTANT_AGENT_NAME,
+        workspaceId,
+      });
+    } catch {
+      this.logger.warn(
+        `The ${SLACK_ASSISTANT_AGENT_NAME} agent does not exist in workspace ${workspaceId}; is twenty-slack fully installed?`,
+      );
+
+      return;
+    }
 
     const agentRoleId = await this.aiAgentRoleService.getAssignedRoleId({
       workspaceId,
@@ -74,9 +84,9 @@ export class SlackAssistantService {
     });
 
     if (!isDefined(agentRoleId)) {
-      await this.slackMessageSenderService.postThreadReply({
+      await postSlackMessage({
         token: botToken,
-        channelId,
+        channel: channelId,
         threadTs,
         markdownText: MISSING_ROLE_REPLY,
       });
@@ -115,9 +125,9 @@ export class SlackAssistantService {
       return;
     }
 
-    await this.slackMessageSenderService.postThreadReply({
+    await postSlackMessage({
       token: botToken,
-      channelId,
+      channel: channelId,
       threadTs,
       markdownText: replyText,
     });

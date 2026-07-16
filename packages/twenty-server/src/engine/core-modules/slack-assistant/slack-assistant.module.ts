@@ -12,7 +12,6 @@ import { SlackAssistantReplyJob } from 'src/engine/core-modules/slack-assistant/
 import { SlackAssistantConfigService } from 'src/engine/core-modules/slack-assistant/services/slack-assistant-config.service';
 import { SlackAssistantService } from 'src/engine/core-modules/slack-assistant/services/slack-assistant.service';
 import { SlackConnectionService } from 'src/engine/core-modules/slack-assistant/services/slack-connection.service';
-import { SlackMessageSenderService } from 'src/engine/core-modules/slack-assistant/services/slack-message-sender.service';
 import { SlackSignatureVerifierService } from 'src/engine/core-modules/slack-assistant/services/slack-signature-verifier.service';
 import { SlackWorkspaceResolverService } from 'src/engine/core-modules/slack-assistant/services/slack-workspace-resolver.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -39,7 +38,6 @@ import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.
   providers: [
     SlackAssistantConfigService,
     SlackSignatureVerifierService,
-    SlackMessageSenderService,
     SlackConnectionService,
     SlackWorkspaceResolverService,
     SlackAssistantService,
