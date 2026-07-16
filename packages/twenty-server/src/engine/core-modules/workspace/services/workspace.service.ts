@@ -27,13 +27,13 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import {
   EmailingDomainWorkspaceCleanupJob,
   type EmailingDomainWorkspaceCleanupJobData,
 } from 'src/engine/core-modules/emailing-domain/jobs/emailing-domain-workspace-cleanup.job';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import {
   FileWorkspaceFolderDeletionJob,
@@ -488,12 +488,6 @@ export class WorkspaceService {
     }
   }
 
-  // Suspend and reactivate are guarded transitions (compare-and-swap): callers
-  // like Stripe webhook handlers can run concurrently and decide from a stale
-  // read, so the UPDATE only applies when the workspace is still in a state the
-  // transition is valid from. Returns whether the transition was applied.
-  // Keeping the first suspendedAt on repeated suspensions is intentional: it
-  // anchors the cleanup countdown to the original suspension date.
   async suspendWorkspace(id: string): Promise<boolean> {
     const { affected } = await this.workspaceRepository.update(
       {
