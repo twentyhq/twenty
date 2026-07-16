@@ -79,6 +79,7 @@ import { CreateCalendarEventModule } from 'src/modules/calendar/calendar-event-c
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
 import { SendEmailModule } from 'src/modules/messaging/message-outbound-manager/send-email.module';
 import { ClientConfigModule } from './client-config/client-config.module';
+import { ExecutiveSearchModule } from 'src/modules/executive-search/executive-search.module';
 import { EventLogsViewerModule } from './event-logs/event-logs-viewer.module';
 import { FileModule } from './file/file.module';
 
@@ -166,6 +167,7 @@ import { FileModule } from './file/file.module';
     CodeInterpreterSessionCleanupModule,
     DashboardModule,
     EventLogsViewerModule,
+    ExecutiveSearchModule,
     PreInstalledAppsModule,
     AppBillingModule,
   ],
