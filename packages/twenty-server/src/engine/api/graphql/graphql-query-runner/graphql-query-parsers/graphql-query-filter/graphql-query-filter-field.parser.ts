@@ -23,6 +23,11 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 
 import { GraphqlQueryFilterConditionParser } from './graphql-query-filter-condition.parser';
@@ -30,6 +35,7 @@ import { GraphqlQueryFilterConditionParser } from './graphql-query-filter-condit
 const ARRAY_OPERATORS = ['in', 'contains', 'notContains'];
 
 export class GraphqlQueryFilterFieldParser {
+  private flatObjectMetadata: FlatObjectMetadata;
   private flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   private flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
   private fieldIdByName: Record<string, string>;
@@ -42,6 +48,7 @@ export class GraphqlQueryFilterFieldParser {
     flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>,
     depth = 0,
   ) {
+    this.flatObjectMetadata = flatObjectMetadata;
     this.flatFieldMetadataMaps = flatFieldMetadataMaps;
     this.flatObjectMetadataMaps = flatObjectMetadataMaps;
     this.depth = depth;
@@ -76,6 +83,19 @@ export class GraphqlQueryFilterFieldParser {
 
     if (!isDefined(fieldMetadata)) {
       throw new Error(`Field metadata not found for field: ${key}`);
+    }
+
+    const objectPermissions =
+      outerQueryBuilder.objectRecordsPermissions[this.flatObjectMetadata.id];
+
+    if (
+      objectPermissions?.canReadObjectRecords === false ||
+      objectPermissions?.restrictedFields[fieldMetadata.id]?.canRead === false
+    ) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
     }
 
     if (
