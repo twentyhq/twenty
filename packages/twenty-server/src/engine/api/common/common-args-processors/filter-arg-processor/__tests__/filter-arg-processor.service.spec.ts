@@ -7,7 +7,6 @@ import { FilterArgProcessorService } from 'src/engine/api/common/common-args-pro
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 import { failingFilterInputsByFieldMetadataType } from './constants/failing-filter-inputs-by-field-metadata-type.constant';
 import { successfulFilterInputsByFieldMetadataType } from './constants/successful-filter-inputs-by-field-metadata-type.constant';
@@ -107,7 +106,6 @@ describe('FilterArgProcessorService', () => {
                 filter: testCase.filter,
                 flatObjectMetadata,
                 flatFieldMetadataMaps,
-                objectsPermissions: {},
               }),
             ).toThrowErrorMatchingSnapshot();
           });
@@ -144,7 +142,6 @@ describe('FilterArgProcessorService', () => {
               filter: testCase.filter,
               flatObjectMetadata,
               flatFieldMetadataMaps,
-              objectsPermissions: {},
             });
 
             const expectedResult = testCase.expected ?? testCase.filter;
@@ -171,7 +168,6 @@ describe('FilterArgProcessorService', () => {
         filter,
         flatObjectMetadata,
         flatFieldMetadataMaps,
-        objectsPermissions: {},
       });
 
       expect(result).toEqual(filter);
@@ -190,7 +186,6 @@ describe('FilterArgProcessorService', () => {
         filter,
         flatObjectMetadata,
         flatFieldMetadataMaps,
-        objectsPermissions: {},
       });
 
       expect(result).toEqual(filter);
@@ -209,7 +204,6 @@ describe('FilterArgProcessorService', () => {
         filter,
         flatObjectMetadata,
         flatFieldMetadataMaps,
-        objectsPermissions: {},
       });
 
       expect(result).toEqual(filter);
@@ -236,39 +230,9 @@ describe('FilterArgProcessorService', () => {
         filter,
         flatObjectMetadata,
         flatFieldMetadataMaps,
-        objectsPermissions: {},
       });
 
       expect(result).toEqual(filter);
-    });
-  });
-
-  describe('field permissions', () => {
-    it('should reject filters on fields without read permission', () => {
-      const fieldNames = ['textField'];
-      const flatFieldMetadataMaps = createFlatFieldMetadataMaps(fieldNames);
-      const flatObjectMetadata = createFlatObjectMetadata(fieldNames);
-
-      expect(() =>
-        filterArgProcessorService.process({
-          filter: { textField: { like: 'secret%' } },
-          flatObjectMetadata,
-          flatFieldMetadataMaps,
-          objectsPermissions: {
-            'object-id': {
-              canReadObjectRecords: true,
-              canUpdateObjectRecords: false,
-              canSoftDeleteObjectRecords: false,
-              canDestroyObjectRecords: false,
-              restrictedFields: {
-                'textField-id': { canRead: false, canUpdate: null },
-              },
-              rowLevelPermissionPredicates: [],
-              rowLevelPermissionPredicateGroups: [],
-            },
-          },
-        }),
-      ).toThrow(PermissionsException);
     });
   });
 
@@ -282,7 +246,6 @@ describe('FilterArgProcessorService', () => {
         filter: { numberField: { eq: '42' } },
         flatObjectMetadata,
         flatFieldMetadataMaps,
-        objectsPermissions: {},
       });
 
       expect(result).toEqual({ numberField: { eq: 42 } });
@@ -297,7 +260,6 @@ describe('FilterArgProcessorService', () => {
         filter: { booleanField: { eq: 'true' } },
         flatObjectMetadata,
         flatFieldMetadataMaps,
-        objectsPermissions: {},
       });
 
       expect(result).toEqual({ booleanField: { eq: true } });
@@ -312,7 +274,6 @@ describe('FilterArgProcessorService', () => {
         filter: { numberField: { in: [1, null, 3] } },
         flatObjectMetadata,
         flatFieldMetadataMaps,
-        objectsPermissions: {},
       });
 
       expect(result).toEqual({ numberField: { in: [1, null, 3] } });
@@ -425,71 +386,9 @@ describe('FilterArgProcessorService', () => {
         flatObjectMetadata: sourceObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        objectsPermissions: {},
       });
 
       expect(result).toEqual({ target: { name: { eq: 'Airbnb' } } });
-    });
-
-    it('should reject a relation traversal onto a restricted target field', () => {
-      const {
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-        sourceObjectMetadata,
-      } = createRelationFixture();
-
-      expect(() =>
-        filterArgProcessorService.process({
-          filter: { target: { name: { like: 'secret%' } } },
-          flatObjectMetadata: sourceObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          objectsPermissions: {
-            'target-obj-id': {
-              canReadObjectRecords: true,
-              canUpdateObjectRecords: false,
-              canSoftDeleteObjectRecords: false,
-              canDestroyObjectRecords: false,
-              restrictedFields: {
-                'target-text-field-id': {
-                  canRead: false,
-                  canUpdate: null,
-                },
-              },
-              rowLevelPermissionPredicates: [],
-              rowLevelPermissionPredicateGroups: [],
-            },
-          },
-        }),
-      ).toThrow(PermissionsException);
-    });
-
-    it('should reject a relation traversal onto an unreadable target object', () => {
-      const {
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-        sourceObjectMetadata,
-      } = createRelationFixture();
-
-      expect(() =>
-        filterArgProcessorService.process({
-          filter: { target: { name: { like: 'secret%' } } },
-          flatObjectMetadata: sourceObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          objectsPermissions: {
-            'target-obj-id': {
-              canReadObjectRecords: false,
-              canUpdateObjectRecords: false,
-              canSoftDeleteObjectRecords: false,
-              canDestroyObjectRecords: false,
-              restrictedFields: {},
-              rowLevelPermissionPredicates: [],
-              rowLevelPermissionPredicateGroups: [],
-            },
-          },
-        }),
-      ).toThrow(PermissionsException);
     });
 
     it('should accept a relation traversal onto a composite sub-field without tripping the depth cap', () => {
@@ -512,7 +411,6 @@ describe('FilterArgProcessorService', () => {
         flatObjectMetadata: sourceObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        objectsPermissions: {},
       });
 
       expect(result).toEqual({
@@ -539,7 +437,6 @@ describe('FilterArgProcessorService', () => {
           flatObjectMetadata: sourceObjectMetadata,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
-          objectsPermissions: {},
         }),
       ).toThrow(/targetObject doesn't have any "eq" field/);
     });
@@ -557,7 +454,6 @@ describe('FilterArgProcessorService', () => {
           },
           flatObjectMetadata: sourceObjectMetadata,
           flatFieldMetadataMaps,
-          objectsPermissions: {},
         }),
       ).toThrow(/use "targetId" instead/);
     });

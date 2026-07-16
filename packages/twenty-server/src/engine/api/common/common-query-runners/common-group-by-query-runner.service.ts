@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import {
   CompositeFieldSubFieldName,
-  type ObjectsPermissions,
   PartialFieldMetadataItemOption,
   RecordFilterGroupLogicalOperator,
+  type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import {
   assertIsDefinedOrThrow,
@@ -113,9 +113,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       appliedFilters,
       queryBuilder,
       flatObjectMetadata,
-      flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      objectsPermissions: queryBuilder.objectRecordsPermissions,
       workspaceId: authContext.workspace.id,
       commonQueryParser,
     });
@@ -185,17 +183,15 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   private async addFiltersFromView({
     args,
     flatObjectMetadata,
-    flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-    objectsPermissions,
+    restrictedFields,
     appliedFilters,
     workspaceId,
   }: {
     args: GroupByQueryArgs;
     flatObjectMetadata: FlatObjectMetadata;
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    objectsPermissions: ObjectsPermissions;
+    restrictedFields: RestrictedFieldsPermissions;
     appliedFilters: ObjectRecordFilter;
     workspaceId: string;
   }): Promise<ObjectRecordFilter> {
@@ -248,9 +244,6 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       };
     });
 
-    const restrictedFields =
-      objectsPermissions[flatObjectMetadata.id]?.restrictedFields ?? {};
-
     const fields = getFlatFieldsFromFlatObjectMetadata(
       flatObjectMetadata,
       flatFieldMetadataMaps,
@@ -290,18 +283,11 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         filterValue: viewAnyFieldFilterValue ?? '',
       });
 
-    const processedViewFilters = this.filterArgProcessor.process({
-      filter: combineFilters([
-        filtersFromView,
-        anyFieldFilter,
-      ]) as ObjectRecordFilter,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      objectsPermissions,
-    });
-
-    appliedFilters = combineFilters([appliedFilters, processedViewFilters]);
+    appliedFilters = combineFilters([
+      appliedFilters,
+      filtersFromView,
+      anyFieldFilter,
+    ]);
 
     return appliedFilters;
   }
@@ -311,9 +297,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     appliedFilters,
     queryBuilder,
     flatObjectMetadata,
-    flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-    objectsPermissions,
     workspaceId,
     commonQueryParser,
   }: {
@@ -321,9 +305,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     appliedFilters: ObjectRecordFilter;
     queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     flatObjectMetadata: FlatObjectMetadata;
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    objectsPermissions: ObjectsPermissions;
     workspaceId: string;
     commonQueryParser: GraphqlQueryParser;
   }): Promise<void> {
@@ -333,9 +315,10 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       appliedFilters = await this.addFiltersFromView({
         args,
         flatObjectMetadata,
-        flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        objectsPermissions,
+        restrictedFields:
+          queryBuilder.objectRecordsPermissions[flatObjectMetadata.id]
+            ?.restrictedFields ?? {},
         appliedFilters,
         workspaceId,
       });
@@ -436,7 +419,6 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   async computeArgs(
     args: CommonInput<GroupByQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
-    objectsPermissions: ObjectsPermissions,
   ): Promise<CommonInput<GroupByQueryArgs>> {
     const {
       flatObjectMetadata,
@@ -460,7 +442,6 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        objectsPermissions,
       }),
     };
   }

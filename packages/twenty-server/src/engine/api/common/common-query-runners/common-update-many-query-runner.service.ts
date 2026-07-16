@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
-import { ObjectRecord, type ObjectsPermissions } from 'twenty-shared/types';
+import { ObjectRecord } from 'twenty-shared/types';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
@@ -97,7 +97,6 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   async computeArgs(
     args: CommonInput<UpdateManyQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
-    objectsPermissions: ObjectsPermissions,
   ): Promise<CommonInput<UpdateManyQueryArgs>> {
     const {
       authContext,
@@ -113,7 +112,6 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        objectsPermissions,
       }),
       data: (
         await this.dataArgProcessor.process({

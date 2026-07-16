@@ -19,10 +19,6 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import {
-  buildFieldPermissionDeniedMessage,
-  validateFieldReadPermissionOrThrow,
-} from 'src/engine/metadata-modules/permissions/utils/validate-field-read-permission-or-throw.util';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
 
 const WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER =
@@ -143,7 +139,7 @@ export const validateOperationIsPermittedOrThrow = ({
         );
       }
 
-      validateSelectedFieldsReadPermissionOrThrow({
+      validateReadFieldPermissionOrThrow({
         restrictedFields: permissionsForEntity.restrictedFields,
         selectedColumns,
         columnNameToFieldMetadataIdMap,
@@ -160,7 +156,7 @@ export const validateOperationIsPermittedOrThrow = ({
         );
       }
 
-      validateSelectedFieldsReadPermissionOrThrow({
+      validateReadFieldPermissionOrThrow({
         restrictedFields: permissionsForEntity.restrictedFields,
         selectedColumns,
         columnNameToFieldMetadataIdMap,
@@ -199,7 +195,7 @@ export const validateOperationIsPermittedOrThrow = ({
         );
       }
 
-      validateSelectedFieldsReadPermissionOrThrow({
+      validateReadFieldPermissionOrThrow({
         restrictedFields: permissionsForEntity.restrictedFields,
         selectedColumns,
         columnNameToFieldMetadataIdMap,
@@ -225,7 +221,7 @@ export const validateOperationIsPermittedOrThrow = ({
         );
       }
 
-      validateSelectedFieldsReadPermissionOrThrow({
+      validateReadFieldPermissionOrThrow({
         restrictedFields: permissionsForEntity.restrictedFields,
         selectedColumns,
         columnNameToFieldMetadataIdMap,
@@ -242,7 +238,7 @@ export const validateOperationIsPermittedOrThrow = ({
         );
       }
 
-      validateSelectedFieldsReadPermissionOrThrow({
+      validateReadFieldPermissionOrThrow({
         restrictedFields: permissionsForEntity.restrictedFields,
         selectedColumns,
         columnNameToFieldMetadataIdMap,
@@ -415,7 +411,29 @@ const validatePermissionsForJoinsAndReturnSelectsWithoutJoins = ({
   return { selectsWithoutJoinedAliases };
 };
 
-const validateSelectedFieldsReadPermissionOrThrow = ({
+const buildFieldPermissionDeniedMessage = ({
+  action,
+  column,
+  fieldMetadataId,
+  entityName,
+  flatFieldMetadataMaps,
+}: {
+  action: 'read' | 'write';
+  column: string;
+  fieldMetadataId: string;
+  entityName: string;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+}): string => {
+  const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: fieldMetadataId,
+    flatEntityMaps: flatFieldMetadataMaps,
+  });
+  const fieldName = fieldMetadata?.name ?? column;
+
+  return `${PermissionsExceptionMessage.PERMISSION_DENIED}: no permission to ${action} field "${fieldName}" on "${entityName}"`;
+};
+
+const validateReadFieldPermissionOrThrow = ({
   restrictedFields,
   selectedColumns,
   columnNameToFieldMetadataIdMap,
@@ -454,17 +472,18 @@ const validateSelectedFieldsReadPermissionOrThrow = ({
       );
     }
 
-    const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldMetadataId,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
-
-    validateFieldReadPermissionOrThrow({
-      restrictedFields,
-      fieldMetadataId,
-      fieldName: fieldMetadata?.name ?? column,
-      entityName,
-    });
+    if (restrictedFields[fieldMetadataId]?.canRead === false) {
+      throw new PermissionsException(
+        buildFieldPermissionDeniedMessage({
+          action: 'read',
+          column,
+          fieldMetadataId,
+          entityName,
+          flatFieldMetadataMaps,
+        }),
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
   }
 };
 
@@ -495,16 +514,13 @@ const validateUpdateFieldPermissionOrThrow = ({
     }
 
     if (restrictedFields[fieldMetadataId]?.canUpdate === false) {
-      const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: fieldMetadataId,
-        flatEntityMaps: flatFieldMetadataMaps,
-      });
-
       throw new PermissionsException(
         buildFieldPermissionDeniedMessage({
           action: 'write',
-          fieldName: fieldMetadata?.name ?? column,
+          column,
+          fieldMetadataId,
           entityName,
+          flatFieldMetadataMaps,
         }),
         PermissionsExceptionCode.PERMISSION_DENIED,
       );

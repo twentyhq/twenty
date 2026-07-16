@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
-import { ObjectRecord, type ObjectsPermissions } from 'twenty-shared/types';
+import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
@@ -96,7 +96,6 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
   async computeArgs(
     args: CommonInput<DeleteManyQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
-    objectsPermissions: ObjectsPermissions,
   ): Promise<CommonInput<DeleteManyQueryArgs>> {
     const {
       flatObjectMetadata,
@@ -111,7 +110,6 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        objectsPermissions,
       }),
     };
   }

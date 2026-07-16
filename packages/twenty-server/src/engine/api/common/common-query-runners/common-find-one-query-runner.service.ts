@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
-import { ObjectRecord, type ObjectsPermissions } from 'twenty-shared/types';
+import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
@@ -115,7 +115,6 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
   async computeArgs(
     args: CommonInput<FindOneQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
-    objectsPermissions: ObjectsPermissions,
   ): Promise<CommonInput<FindOneQueryArgs>> {
     const {
       flatObjectMetadata,
@@ -130,7 +129,6 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        objectsPermissions,
       }),
     };
   }

@@ -4,7 +4,6 @@ import { msg } from '@lingui/core/macro';
 import {
   compositeTypeDefinitions,
   FieldMetadataType,
-  type ObjectsPermissions,
   RelationType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,12 +26,6 @@ import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metada
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { validateFieldReadPermissionOrThrow } from 'src/engine/metadata-modules/permissions/utils/validate-field-read-permission-or-throw.util';
 
 function throwUseJoinColumnInstead(key: string): never {
   const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
@@ -55,13 +48,11 @@ export class FilterArgProcessorService {
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-    objectsPermissions,
   }: {
     filter: T;
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    objectsPermissions: ObjectsPermissions;
   }): T {
     if (!isDefined(filter)) {
       return filter;
@@ -80,7 +71,6 @@ export class FilterArgProcessorService {
       flatFieldMetadataMaps,
       fieldIdByName,
       fieldIdByJoinColumnName,
-      objectsPermissions,
       0,
     ) as T;
   }
@@ -92,18 +82,8 @@ export class FilterArgProcessorService {
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     fieldIdByName: Record<string, string>,
     fieldIdByJoinColumnName: Record<string, string>,
-    objectsPermissions: ObjectsPermissions,
     depth: number,
   ): ObjectRecordFilter {
-    if (
-      objectsPermissions[flatObjectMetadata.id]?.canReadObjectRecords === false
-    ) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
-    }
-
     const transformedFilter: ObjectRecordFilter = {};
 
     for (const [key, value] of Object.entries(filterObject)) {
@@ -117,7 +97,6 @@ export class FilterArgProcessorService {
               flatFieldMetadataMaps,
               fieldIdByName,
               fieldIdByJoinColumnName,
-              objectsPermissions,
               depth,
             ),
         );
@@ -132,28 +111,9 @@ export class FilterArgProcessorService {
           flatFieldMetadataMaps,
           fieldIdByName,
           fieldIdByJoinColumnName,
-          objectsPermissions,
           depth,
         );
         continue;
-      }
-
-      const fieldMetadataId =
-        fieldIdByName[key] ?? fieldIdByJoinColumnName[key];
-
-      if (isDefined(fieldMetadataId)) {
-        const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: fieldMetadataId,
-          flatEntityMaps: flatFieldMetadataMaps,
-        });
-
-        validateFieldReadPermissionOrThrow({
-          restrictedFields:
-            objectsPermissions[flatObjectMetadata.id]?.restrictedFields ?? {},
-          fieldMetadataId,
-          fieldName: fieldMetadata?.name ?? key,
-          entityName: flatObjectMetadata.nameSingular,
-        });
       }
 
       const fieldMetadataForRelation = this.resolveRelationFieldMetadataByName({
@@ -170,7 +130,6 @@ export class FilterArgProcessorService {
           fieldMetadataForRelation,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
-          objectsPermissions,
           depth,
         );
         continue;
@@ -239,7 +198,6 @@ export class FilterArgProcessorService {
     >,
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> | undefined,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-    objectsPermissions: ObjectsPermissions,
     depth: number,
   ): ObjectRecordFilter {
     if (fieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE) {
@@ -300,7 +258,6 @@ export class FilterArgProcessorService {
       flatFieldMetadataMaps,
       targetFieldIdByName,
       targetFieldIdByJoinColumnName,
-      objectsPermissions,
       depth + 1,
     );
   }

@@ -298,7 +298,9 @@ describe('Field permissions restrictions', () => {
         await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
       expectNoGraphQLErrors(response);
-      expect(response.body.data.companies.edges[0].node.position).toBeDefined();
+      expect(
+        response.body.data.companies.edges[0].node.position,
+      ).toBeDefined();
     });
 
     it('2. findOne', async () => {
@@ -410,8 +412,8 @@ describe('Field permissions restrictions', () => {
     const graphqlOperation = findManyOperationFactory({
       objectMetadataSingularName: 'company',
       objectMetadataPluralName: 'companies',
-      gqlFields: COMPANY_GQL_FIELDS_WITH_PEOPLE_JOB_TITLE,
-    });
+        gqlFields: COMPANY_GQL_FIELDS_WITH_PEOPLE_JOB_TITLE,
+      });
     const response =
       await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
@@ -437,8 +439,7 @@ describe('Field permissions restrictions', () => {
     const graphqlOperation = findManyOperationFactory({
       objectMetadataSingularName: 'company',
       objectMetadataPluralName: 'companies',
-      gqlFields:
-        COMPANY_GQL_FIELDS_WITHOUT_POSITION_AND_WITHOUT_PEOPLE_JOB_TITLE,
+      gqlFields: COMPANY_GQL_FIELDS_WITHOUT_POSITION_AND_WITHOUT_PEOPLE_JOB_TITLE,
     });
     const response =
       await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
@@ -523,8 +524,7 @@ describe('Field permissions restrictions', () => {
 
       expectNoGraphQLErrors(response);
       expect(
-        response.body.data.companies.edges[0].node.people
-          .percentageEmptyJobTitle,
+        response.body.data.companies.edges[0].node.people.percentageEmptyJobTitle,
       ).toBeDefined();
     });
   });

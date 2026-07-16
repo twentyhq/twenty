@@ -5,11 +5,7 @@ import {
   QUERY_MAX_RECORDS,
   QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
-import {
-  ObjectRecord,
-  type ObjectsPermissions,
-  OrderByDirection,
-} from 'twenty-shared/types';
+import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import {
@@ -236,7 +232,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
   async computeArgs(
     args: CommonInput<FindManyQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
-    objectsPermissions: ObjectsPermissions,
   ): Promise<CommonInput<FindManyQueryArgs>> {
     const {
       flatObjectMetadata,
@@ -254,7 +249,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        objectsPermissions,
       }),
     };
   }
