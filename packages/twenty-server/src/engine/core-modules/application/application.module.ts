@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationResolver } from 'src/engine/core-modules/application/application.resolver';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceFlatApplicationMapCacheService } from 'src/engine/core-modules/application/workspace-flat-application-map-cache.service';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
@@ -38,6 +39,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   ],
   exports: [ApplicationService, WorkspaceFlatApplicationMapCacheService],
   providers: [
+    ApplicationResolver,
     ApplicationService,
     WorkspaceFlatApplicationMapCacheService,
     provideWorkspaceScopedRepository(AgentEntity),

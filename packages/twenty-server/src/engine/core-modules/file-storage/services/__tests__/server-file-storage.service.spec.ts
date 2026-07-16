@@ -193,6 +193,7 @@ describe('ServerFileStorageService', () => {
       mockServerFileRepository.findOneBy.mockResolvedValue({
         id: 'server-file-id',
         path: 'application-registration/registration-id/manifests/manifest.json',
+        mimeType: 'application/json',
       } as FileEntity);
       mockDriver.readFile.mockResolvedValue(stream);
 
@@ -203,6 +204,7 @@ describe('ServerFileStorageService', () => {
       });
 
       expect(mockServerFileRepository.findOneBy).toHaveBeenCalledWith({
+        applicationRegistrationId: 'registration-id',
         path: 'application-registration/registration-id/manifests/manifest.json',
         workspaceId: IsNull(),
       });
@@ -210,7 +212,7 @@ describe('ServerFileStorageService', () => {
         filePath:
           'server/application-registration/registration-id/manifests/manifest.json',
       });
-      expect(result).toBe(stream);
+      expect(result).toEqual({ stream, mimeType: 'application/json' });
     });
 
     it('should propagate the missing-file exception from the driver', async () => {
@@ -257,48 +259,39 @@ describe('ServerFileStorageService', () => {
     });
   });
 
-  describe('readServerFileById', () => {
-    it('should read the bytes of the row storage path', async () => {
-      const stream = Readable.from(['{}']);
-
-      mockServerFileRepository.findOneBy.mockResolvedValue({
+  describe('findServerFile', () => {
+    it('should return the row matching the registration and path', async () => {
+      const serverFile = {
         id: 'server-file-id',
         path: 'application-registration/registration-id/manifest.json',
-        mimeType: 'application/json',
-      } as FileEntity);
-      mockDriver.readFile.mockResolvedValue(stream);
+      } as FileEntity;
 
-      const result = await service.readServerFileById(
-        'server-file-id',
-        ServerFileFolder.ApplicationRegistration,
-      );
+      mockServerFileRepository.findOneBy.mockResolvedValue(serverFile);
+
+      const result = await service.findServerFile({
+        fileFolder: ServerFileFolder.ApplicationRegistration,
+        applicationRegistrationId: 'registration-id',
+        resourcePath: 'manifest.json',
+      });
 
       expect(mockServerFileRepository.findOneBy).toHaveBeenCalledWith({
-        id: 'server-file-id',
+        applicationRegistrationId: 'registration-id',
+        path: 'application-registration/registration-id/manifest.json',
         workspaceId: IsNull(),
       });
-      expect(mockDriver.readFile).toHaveBeenCalledWith({
-        filePath:
-          'server/application-registration/registration-id/manifest.json',
-      });
-      expect(result).toEqual({ stream, mimeType: 'application/json' });
+      expect(result).toBe(serverFile);
     });
 
-    it('should throw a missing-file exception when the row does not exist', async () => {
+    it('should return null when no row matches', async () => {
       mockServerFileRepository.findOneBy.mockResolvedValue(null);
 
-      await expect(
-        service.readServerFileById(
-          'unknown-id',
-          ServerFileFolder.ApplicationRegistration,
-        ),
-      ).rejects.toThrow(
-        expect.objectContaining({
-          code: FileStorageExceptionCode.FILE_NOT_FOUND,
-        }),
-      );
+      const result = await service.findServerFile({
+        fileFolder: ServerFileFolder.ApplicationRegistration,
+        applicationRegistrationId: 'registration-id',
+        resourcePath: 'missing.json',
+      });
 
-      expect(mockDriver.readFile).not.toHaveBeenCalled();
+      expect(result).toBeNull();
     });
   });
 
@@ -365,38 +358,6 @@ describe('ServerFileStorageService', () => {
           resourcePath: 'manifest.json',
         }),
       ).rejects.toThrow('Row deletion failed');
-    });
-  });
-
-  describe('deleteByServerFileId', () => {
-    it('should delete the bytes and the row of the given id', async () => {
-      mockServerFileRepository.findOneBy.mockResolvedValue({
-        id: 'server-file-id',
-        path: 'application-registration/registration-id/manifest.json',
-      } as FileEntity);
-
-      await service.deleteByServerFileId('server-file-id');
-
-      expect(mockDriver.delete).toHaveBeenCalledWith({
-        folderPath: 'server/application-registration/registration-id',
-        filename: 'manifest.json',
-      });
-      expect(mockServerFileRepository.delete).toHaveBeenCalledWith({
-        id: 'server-file-id',
-        workspaceId: IsNull(),
-      });
-    });
-
-    it('should throw a missing-file exception when the row does not exist', async () => {
-      mockServerFileRepository.findOneBy.mockResolvedValue(null);
-
-      await expect(service.deleteByServerFileId('unknown-id')).rejects.toThrow(
-        expect.objectContaining({
-          code: FileStorageExceptionCode.FILE_NOT_FOUND,
-        }),
-      );
-
-      expect(mockServerFileRepository.delete).not.toHaveBeenCalled();
     });
   });
 

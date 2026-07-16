@@ -117,6 +117,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
     "flatFieldMetadatas": [
       {
         "applicationUniversalIdentifier": Any<String>,
+        "calendarEndViewUniversalIdentifiers": [],
         "calendarViewUniversalIdentifiers": [],
         "createdAt": Any<String>,
         "defaultValue": null,
@@ -153,6 +154,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       },
       {
         "applicationUniversalIdentifier": Any<String>,
+        "calendarEndViewUniversalIdentifiers": [],
         "calendarViewUniversalIdentifiers": [],
         "createdAt": Any<String>,
         "defaultValue": null,
@@ -191,6 +193,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       },
       {
         "applicationUniversalIdentifier": Any<String>,
+        "calendarEndViewUniversalIdentifiers": [],
         "calendarViewUniversalIdentifiers": [],
         "createdAt": Any<String>,
         "defaultValue": null,
@@ -227,6 +230,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       },
       {
         "applicationUniversalIdentifier": Any<String>,
+        "calendarEndViewUniversalIdentifiers": [],
         "calendarViewUniversalIdentifiers": [],
         "createdAt": Any<String>,
         "defaultValue": null,
