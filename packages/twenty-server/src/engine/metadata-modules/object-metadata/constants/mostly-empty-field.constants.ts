@@ -1,0 +1,10 @@
+// A field is hinted as "mostly empty" when at least this fraction of records
+// leave it empty, per Postgres planner statistics (pg_stats)
+export const MOSTLY_EMPTY_FRACTION_THRESHOLD = 0.95;
+
+// Below this approximate record count the emptiness signal is meaningless and
+// young workspaces would get flooded with hints
+export const MOSTLY_EMPTY_MINIMUM_ROW_COUNT = 100;
+
+// Freshly created fields are empty by definition, so they get a grace period
+export const MOSTLY_EMPTY_FIELD_MINIMUM_AGE_IN_DAYS = 30;
