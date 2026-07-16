@@ -8,7 +8,13 @@ export class PendingApplicationRegistrationClaimDTO {
   applicationRegistrationId: string;
 
   @Field(() => String)
+  universalIdentifier: string;
+
+  @Field(() => String)
   name: string;
+
+  @Field(() => String, { nullable: true })
+  logoUrl: string | null;
 
   @Field(() => String, { nullable: true })
   description: string | null;

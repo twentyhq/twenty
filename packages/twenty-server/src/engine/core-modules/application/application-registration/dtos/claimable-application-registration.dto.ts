@@ -8,6 +8,9 @@ export class ClaimableApplicationRegistrationDTO {
   id: string;
 
   @Field(() => String)
+  universalIdentifier: string;
+
+  @Field(() => String)
   name: string;
 
   @Field(() => String, { nullable: true })

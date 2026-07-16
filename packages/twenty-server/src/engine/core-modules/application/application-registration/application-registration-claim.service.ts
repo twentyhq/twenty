@@ -17,6 +17,7 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
+import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationLifecycleEmailService } from 'src/engine/core-modules/application/application-registration/application-registration-lifecycle-email.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { type AdminApplicationRegistrationClaimDTO } from 'src/engine/core-modules/application/application-registration/dtos/admin-application-registration-claim.dto';
@@ -57,6 +58,7 @@ export class ApplicationRegistrationClaimService {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
     private readonly applicationRegistrationLifecycleEmailService: ApplicationRegistrationLifecycleEmailService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -111,7 +113,7 @@ export class ApplicationRegistrationClaimService {
         expiresAt: MoreThan(new Date()),
       },
       relations: ['applicationRegistration'],
-      order: { createdAt: 'ASC' },
+      order: { createdAt: 'DESC' },
     });
 
     return claimTokens.flatMap((claimToken) => {
@@ -128,7 +130,12 @@ export class ApplicationRegistrationClaimService {
       return [
         {
           applicationRegistrationId: registration.id,
+          universalIdentifier: registration.universalIdentifier,
           name: registration.name,
+          logoUrl:
+            this.applicationRegistrationAssetUrlService.buildLogoUrl(
+              registration,
+            ),
           description: registration.description,
           sourcePackage: registration.sourcePackage,
           token: claimToken.value,

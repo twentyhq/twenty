@@ -1966,6 +1966,7 @@ type ApplicationRegistrationClaimChallenge {
 
 type ClaimableApplicationRegistration {
   id: String!
+  universalIdentifier: String!
   name: String!
   sourcePackage: String
   logoUrl: String
@@ -1976,7 +1977,9 @@ type ClaimableApplicationRegistration {
 
 type PendingApplicationRegistrationClaim {
   applicationRegistrationId: String!
+  universalIdentifier: String!
   name: String!
+  logoUrl: String
   description: String
   sourcePackage: String!
   token: String!

@@ -830,6 +830,7 @@ export class ApplicationRegistrationService {
 
     return {
       id: registration.id,
+      universalIdentifier: registration.universalIdentifier,
       name: registration.name,
       sourcePackage: registration.sourcePackage,
       logoUrl:

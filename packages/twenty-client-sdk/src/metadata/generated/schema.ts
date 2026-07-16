@@ -1618,6 +1618,7 @@ export interface ApplicationRegistrationClaimChallenge {
 
 export interface ClaimableApplicationRegistration {
     id: Scalars['String']
+    universalIdentifier: Scalars['String']
     name: Scalars['String']
     sourcePackage?: Scalars['String']
     logoUrl?: Scalars['String']
@@ -1629,7 +1630,9 @@ export interface ClaimableApplicationRegistration {
 
 export interface PendingApplicationRegistrationClaim {
     applicationRegistrationId: Scalars['String']
+    universalIdentifier: Scalars['String']
     name: Scalars['String']
+    logoUrl?: Scalars['String']
     description?: Scalars['String']
     sourcePackage: Scalars['String']
     token: Scalars['String']
@@ -4748,6 +4751,7 @@ export interface ApplicationRegistrationClaimChallengeGenqlSelection{
 
 export interface ClaimableApplicationRegistrationGenqlSelection{
     id?: boolean | number
+    universalIdentifier?: boolean | number
     name?: boolean | number
     sourcePackage?: boolean | number
     logoUrl?: boolean | number
@@ -4760,7 +4764,9 @@ export interface ClaimableApplicationRegistrationGenqlSelection{
 
 export interface PendingApplicationRegistrationClaimGenqlSelection{
     applicationRegistrationId?: boolean | number
+    universalIdentifier?: boolean | number
     name?: boolean | number
+    logoUrl?: boolean | number
     description?: boolean | number
     sourcePackage?: boolean | number
     token?: boolean | number

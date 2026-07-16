@@ -10,6 +10,7 @@ export const FIND_CLAIMABLE_APPLICATION_REGISTRATION = gql`
       universalIdentifier: $universalIdentifier
     ) {
       id
+      universalIdentifier
       name
       sourcePackage
       logoUrl

@@ -8,6 +8,7 @@ import {
   AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
+import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
 import { ApplicationRegistrationLifecycleEmailService } from 'src/engine/core-modules/application/application-registration/application-registration-lifecycle-email.service';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -32,6 +33,7 @@ const buildRegistration = (
 ): ApplicationRegistrationEntity =>
   ({
     id: REGISTRATION_ID,
+    universalIdentifier: 'universal-identifier-1',
     ownerWorkspaceId: null,
     sourceType: ApplicationRegistrationSourceType.NPM,
     sourcePackage: 'my-twenty-app',
@@ -60,6 +62,14 @@ describe('ApplicationRegistrationClaimService', () => {
           provide: getRepositoryToken(WorkspaceEntity),
           useValue: {
             findOne: jest.fn(),
+          },
+        },
+        {
+          provide: ApplicationRegistrationAssetUrlService,
+          useValue: {
+            buildLogoUrl: jest
+              .fn()
+              .mockReturnValue('https://example.com/logo.png'),
           },
         },
         {
@@ -183,7 +193,9 @@ describe('ApplicationRegistrationClaimService', () => {
       expect(pending).toEqual([
         {
           applicationRegistrationId: REGISTRATION_ID,
+          universalIdentifier: 'universal-identifier-1',
           name: 'My app',
+          logoUrl: 'https://example.com/logo.png',
           description: 'A description',
           sourcePackage: 'my-twenty-app',
           token: 'valid-token',

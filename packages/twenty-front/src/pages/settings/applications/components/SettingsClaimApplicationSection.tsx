@@ -1,3 +1,4 @@
+import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -7,7 +8,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import {
   IconCopy,
   IconEye,
@@ -58,9 +60,14 @@ const StyledResultCard = styled.div`
   padding: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledResultTitle = styled.div`
+const StyledResultTitleLink = styled(UndecoratedLink)`
+  align-self: flex-start;
   color: ${themeCssVariables.font.color.primary};
   font-weight: ${themeCssVariables.font.weight.medium};
+
+  :hover {
+    text-decoration: underline;
+  }
 `;
 
 const StyledHint = styled.div`
@@ -277,6 +284,20 @@ export const SettingsClaimApplicationSection = () => {
     }
   };
 
+  const renderCardTitle = (app: {
+    universalIdentifier: string;
+    name: string;
+    logoUrl?: string | null;
+  }) => (
+    <StyledResultTitleLink
+      to={getSettingsPath(SettingsPath.AvailableApplicationDetail, {
+        availableApplicationId: app.universalIdentifier,
+      })}
+    >
+      <ApplicationDisplay application={{ name: app.name, logo: app.logoUrl }} />
+    </StyledResultTitleLink>
+  );
+
   const renderChallengeActions = (claim: {
     applicationRegistrationId: string;
     name: string;
@@ -382,14 +403,14 @@ export const SettingsClaimApplicationSection = () => {
 
       {isDefined(registration) && registration.isOwned && (
         <StyledResultCard>
-          <StyledResultTitle>{registration.name}</StyledResultTitle>
+          {renderCardTitle(registration)}
           <StyledHint>{t`This application has already been claimed.`}</StyledHint>
         </StyledResultCard>
       )}
 
       {isDefined(registration) && !registration.isOwned && (
         <StyledResultCard>
-          <StyledResultTitle>{registration.name}</StyledResultTitle>
+          {renderCardTitle(registration)}
           {isDefined(registration.description) && (
             <StyledHint>{registration.description}</StyledHint>
           )}
@@ -430,7 +451,7 @@ export const SettingsClaimApplicationSection = () => {
 
         return (
           <StyledResultCard key={claim.applicationRegistrationId}>
-            <StyledResultTitle>{claim.name}</StyledResultTitle>
+            {renderCardTitle(claim)}
             {isDefined(claim.description) && (
               <StyledHint>{claim.description}</StyledHint>
             )}

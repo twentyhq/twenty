@@ -3818,6 +3818,9 @@ export default {
             "id": [
                 1
             ],
+            "universalIdentifier": [
+                1
+            ],
             "name": [
                 1
             ],
@@ -3844,7 +3847,13 @@ export default {
             "applicationRegistrationId": [
                 1
             ],
+            "universalIdentifier": [
+                1
+            ],
             "name": [
+                1
+            ],
+            "logoUrl": [
                 1
             ],
             "description": [
