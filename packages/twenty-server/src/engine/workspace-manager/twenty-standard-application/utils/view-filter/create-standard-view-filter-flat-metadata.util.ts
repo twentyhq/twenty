@@ -10,7 +10,6 @@ import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-
 import { type AllStandardObjectViewFilterName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-filter-name.type';
 import { type AllStandardObjectViewName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
-import { computeStandardFieldUniversalIdentifier } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/get-standard-system-relation-field-universal-identifier.util';
 
 export type CreateStandardViewFilterOptions<
   O extends AllStandardObjectName,
@@ -91,11 +90,7 @@ export const createStandardViewFilterFlatMetadata = <
     viewUniversalIdentifier: viewDefinition.universalIdentifier,
     fieldMetadataId:
       standardObjectMetadataRelatedEntityIds[objectName].fields[fieldName].id,
-    fieldMetadataUniversalIdentifier: computeStandardFieldUniversalIdentifier({
-      objectName,
-      fieldName: fieldName.toString(),
-      fallbackUniversalIdentifier: fieldDefinition.universalIdentifier,
-    }),
+    fieldMetadataUniversalIdentifier: fieldDefinition.universalIdentifier,
     viewFilterGroupId,
     viewFilterGroupUniversalIdentifier: null,
     operand,

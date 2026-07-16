@@ -2,8 +2,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import {
+  getFieldUniversalIdentifier,
   getSystemRelationFieldUniversalIdentifier,
-  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 } from 'twenty-shared/application';
 import {
   DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
@@ -57,7 +57,7 @@ type SystemRelationFieldUpdate = {
 @Command({
   name: 'upgrade:2-22:reconcile-system-relation-field-universal-identifier',
   description:
-    'Reconcile the default relations (timelineActivity/attachment/noteTarget/taskTarget) with the engine convention. Reverse morph fields get a name-free deterministic universal identifier, isSystemSideEffect: true, and name-derived label/icon, so an object rename becomes a lossless update and standard fields match custom ones. Forward fields of engine-provisioned relations (non twenty-standard source objects) are flagged isSystemSideEffect: true so both sides of a side-effect relation share the same engine ownership.',
+    'Reconcile the default relations (timelineActivity/attachment/noteTarget/taskTarget) with the engine convention, for standard and custom source objects alike. Reverse morph fields get a name-free deterministic universal identifier, isSystemSideEffect: true, and name-derived label/icon, so an object rename becomes a lossless update and standard fields match custom ones. Forward fields get the name-based deterministic universal identifier and isSystemSideEffect: true so both sides of a default relation share the same engine ownership, as if twenty-standard objects had been provisioned by the side-effect engine.',
 })
 export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -167,22 +167,15 @@ export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends Prov
         systemRelationFieldUpdates.push({ id: flatFieldMetadata.id, update });
       }
 
-      // Both sides of an engine-provisioned relation are engine-owned. The
-      // forward field on the source object was provisioned alongside the
-      // reverse field, so it must carry isSystemSideEffect too — matching what
-      // the create side-effect handler emits for objects created post-2.22.
-      // twenty-standard source objects are excluded: their forward fields
-      // (e.g. person.attachments) are authored by the standard application
-      // with isSystemSideEffect: false, and flagging them here would diverge
-      // from the standard builders.
-      const isStandardAuthoredRelation =
-        sourceFlatObjectMetadata.applicationUniversalIdentifier ===
-        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER;
-
-      if (isStandardAuthoredRelation) {
-        continue;
-      }
-
+      // Both sides of a default relation are engine-owned, for standard and
+      // custom source objects alike: the forward field on the source object
+      // was provisioned alongside the reverse field (by the side-effect engine
+      // for custom objects, by twenty-standard for standard ones), so it must
+      // carry isSystemSideEffect and the name-based deterministic universal
+      // identifier — matching what the create side-effect handler emits for
+      // objects created post-2.22. The forward field is named after the host
+      // standard object namePlural, which never renames, so the name-based
+      // derivation is rename-invariant here.
       const forwardFlatFieldMetadata = isDefined(
         flatFieldMetadata.relationTargetFieldMetadataId,
       )
@@ -199,10 +192,29 @@ export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends Prov
         continue;
       }
 
+      const derivedForwardUniversalIdentifier = getFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          sourceFlatObjectMetadata.applicationUniversalIdentifier,
+        objectUniversalIdentifier: sourceFlatObjectMetadata.universalIdentifier,
+        name: forwardFlatFieldMetadata.name,
+      });
+
+      const forwardUpdate: SystemRelationFieldUpdate['update'] = {};
+
+      if (
+        forwardFlatFieldMetadata.universalIdentifier !==
+        derivedForwardUniversalIdentifier
+      ) {
+        forwardUpdate.universalIdentifier = derivedForwardUniversalIdentifier;
+      }
       if (!forwardFlatFieldMetadata.isSystemSideEffect) {
+        forwardUpdate.isSystemSideEffect = true;
+      }
+
+      if (Object.keys(forwardUpdate).length > 0) {
         systemRelationFieldUpdates.push({
           id: forwardFlatFieldMetadata.id,
-          update: { isSystemSideEffect: true },
+          update: forwardUpdate,
         });
       }
     }

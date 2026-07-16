@@ -320,6 +320,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'person',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -345,6 +346,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'company',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -370,6 +372,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'opportunity',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -395,6 +398,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'note',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -420,6 +424,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'task',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -445,6 +450,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'workflow',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -470,6 +476,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'workflowVersion',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -495,6 +502,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'workflowRun',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -520,6 +528,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'dashboard',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -545,6 +554,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'messageList',
       targetFieldName: 'timelineActivities',
       settings: {
@@ -570,6 +580,7 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'messageCampaign',
       targetFieldName: 'timelineActivities',
       settings: {

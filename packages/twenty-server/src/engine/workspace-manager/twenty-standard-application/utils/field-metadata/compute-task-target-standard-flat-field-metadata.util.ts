@@ -233,6 +233,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       icon: 'IconCheckbox',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'person',
       targetFieldName: 'taskTargets',
       settings: {
@@ -258,6 +259,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       icon: 'IconCheckbox',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'company',
       targetFieldName: 'taskTargets',
       settings: {
@@ -283,6 +285,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       icon: 'IconCheckbox',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'opportunity',
       targetFieldName: 'taskTargets',
       settings: {

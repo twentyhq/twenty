@@ -233,6 +233,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       icon: 'IconCheckbox',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'person',
       targetFieldName: 'noteTargets',
       settings: {
@@ -258,6 +259,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       icon: 'IconCheckbox',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'company',
       targetFieldName: 'noteTargets',
       settings: {
@@ -283,6 +285,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       icon: 'IconCheckbox',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'opportunity',
       targetFieldName: 'noteTargets',
       settings: {

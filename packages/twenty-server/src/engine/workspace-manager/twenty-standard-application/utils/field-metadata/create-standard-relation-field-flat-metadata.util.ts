@@ -1,3 +1,7 @@
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
+import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
+import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
@@ -7,14 +11,6 @@ import {
   type FieldMetadataSettings,
   type FieldMetadataType,
 } from 'twenty-shared/types';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
-import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
-import {
-  computeStandardFieldUniversalIdentifier,
-  isReverseSystemRelationStandardField,
-} from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/get-standard-system-relation-field-universal-identifier.util';
 export type CreateStandardRelationFieldContext<
   O extends AllStandardObjectName,
   T extends AllStandardObjectName,
@@ -38,6 +34,12 @@ export type CreateStandardMorphOrRelationFieldContext<
   targetFieldName: AllStandardObjectFieldName<T>;
   isNullable?: boolean;
   isUIEditable?: boolean;
+  // Reverse fields of the default relations to the standard objects
+  // (timelineActivity/attachment/noteTarget/taskTarget target* morph fields)
+  // are engine-owned: their universal identifier pinned in STANDARD_OBJECTS is
+  // the name-free deterministic one and the engine is their sole authority on
+  // rename/delete.
+  isSystemSideEffect?: boolean;
   defaultValue?: FieldMetadataDefaultValueForAnyType;
   settings: FieldMetadataSettings<F>;
   options?: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[] | null;
@@ -68,6 +70,7 @@ export const createStandardRelationFieldFlatMetadata = <
     targetFieldName,
     isNullable = true,
     isUIEditable = true,
+    isSystemSideEffect = false,
     defaultValue = null,
     settings,
     options: fieldOptions = null,
@@ -90,18 +93,9 @@ export const createStandardRelationFieldFlatMetadata = <
   const targetFieldDefinition =
     targetObjectFields[targetFieldName as keyof typeof targetObjectFields];
 
-  const isReverseSystemRelationField = isReverseSystemRelationStandardField({
-    objectName,
-    fieldName: fieldName.toString(),
-  });
-
   return {
     id: fieldIds[fieldName as keyof typeof fieldIds].id,
-    universalIdentifier: computeStandardFieldUniversalIdentifier({
-      objectName,
-      fieldName: fieldName.toString(),
-      fallbackUniversalIdentifier: fieldDefinition.universalIdentifier,
-    }),
+    universalIdentifier: fieldDefinition.universalIdentifier,
     applicationId: twentyStandardApplicationId,
     workspaceId,
     objectMetadataId: standardObjectMetadataRelatedEntityIds[objectName].id,
@@ -112,7 +106,7 @@ export const createStandardRelationFieldFlatMetadata = <
     icon,
     isActive: true,
     isSystem: false,
-    isSystemSideEffect: isReverseSystemRelationField,
+    isSystemSideEffect,
     isNullable,
     isUnique: false,
     isUIEditable,
@@ -141,11 +135,7 @@ export const createStandardRelationFieldFlatMetadata = <
     relationTargetObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS[targetObjectName].universalIdentifier,
     relationTargetFieldMetadataUniversalIdentifier:
-      computeStandardFieldUniversalIdentifier({
-        objectName: targetObjectName,
-        fieldName: targetFieldName.toString(),
-        fallbackUniversalIdentifier: targetFieldDefinition.universalIdentifier,
-      }),
+      targetFieldDefinition.universalIdentifier,
     viewFilterUniversalIdentifiers: [],
     viewFieldUniversalIdentifiers: [],
     fieldPermissionUniversalIdentifiers: [],

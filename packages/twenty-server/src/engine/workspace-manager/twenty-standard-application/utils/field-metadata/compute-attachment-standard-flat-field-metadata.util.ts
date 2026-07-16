@@ -344,6 +344,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       icon: 'IconFileImport',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'task',
       targetFieldName: 'attachments',
       settings: {
@@ -369,6 +370,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       icon: 'IconFileImport',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'note',
       targetFieldName: 'attachments',
       settings: {
@@ -394,6 +396,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       icon: 'IconFileImport',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'person',
       targetFieldName: 'attachments',
       settings: {
@@ -419,6 +422,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       icon: 'IconFileImport',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'company',
       targetFieldName: 'attachments',
       settings: {
@@ -444,6 +448,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       icon: 'IconFileImport',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'opportunity',
       targetFieldName: 'attachments',
       settings: {
@@ -469,6 +474,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       icon: 'IconFileImport',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'dashboard',
       targetFieldName: 'attachments',
       settings: {
@@ -494,6 +500,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       icon: 'IconFileImport',
       isNullable: true,
       isUIEditable: false,
+      isSystemSideEffect: true,
       targetObjectName: 'workflow',
       targetFieldName: 'attachments',
       settings: {
