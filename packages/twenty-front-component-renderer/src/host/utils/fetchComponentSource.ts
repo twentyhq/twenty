@@ -1,8 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { extractComponentChecksumFromUrl } from '@/remote/worker/utils/extractComponentChecksumFromUrl';
-import { fetchComponentSourceFromNetwork } from '@/remote/worker/utils/fetchComponentSourceFromNetwork';
-import { frontComponentCacheStorageService } from '@/remote/worker/utils/frontComponentCacheStorageService';
+import { extractComponentChecksumFromUrl } from '@/host/utils/extractComponentChecksumFromUrl';
+import { fetchComponentSourceFromNetwork } from '@/host/utils/fetchComponentSourceFromNetwork';
+import { frontComponentCacheStorageService } from '@/host/utils/frontComponentCacheStorageService';
 
 export const fetchComponentSource = async ({
   url,
@@ -47,6 +47,10 @@ export const fetchComponentSource = async ({
 
     if (sourceChecksum === expectedChecksum) {
       frontComponentCacheStorageService.write({ cache, url, source });
+      frontComponentCacheStorageService.evictStaleEntriesForComponent({
+        cache,
+        url,
+      });
     }
   }
 
