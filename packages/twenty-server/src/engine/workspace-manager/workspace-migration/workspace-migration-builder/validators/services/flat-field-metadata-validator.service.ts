@@ -276,23 +276,10 @@ export class FlatFieldMetadataValidatorService {
       relatedFlatObjectMetadata,
     );
 
-    const relationTargetObjectMetadataHasBeenDeleted =
-      isDefined(
-        flatFieldMetadataToDelete.relationTargetObjectMetadataUniversalIdentifier,
-      ) &&
-      !isDefined(
-        findFlatEntityByUniversalIdentifier({
-          universalIdentifier:
-            flatFieldMetadataToDelete.relationTargetObjectMetadataUniversalIdentifier,
-          flatEntityMaps: flatObjectMetadataMaps,
-        }),
-      );
-
     if (
       !buildOptions.isSystemBuild &&
       flatFieldMetadataToDelete.isSystem &&
-      !parentObjectMetadataHasBeenDeleted &&
-      !relationTargetObjectMetadataHasBeenDeleted
+      !parentObjectMetadataHasBeenDeleted
     ) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,

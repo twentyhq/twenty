@@ -262,7 +262,9 @@ describe('syncApplication', () => {
       expect(forwardCreateAction?.flatEntity).toMatchObject({
         name: standardObjectNamePlural,
         type: FieldMetadataType.RELATION,
-        isSystem: true,
+        // Engine-owned (isSystemSideEffect) but not isSystem: the engine
+        // rename/delete cascades must pass the validator system-field gates.
+        isSystem: false,
         isSystemSideEffect: true,
         objectMetadataUniversalIdentifier: TEST_OBJECT.universalIdentifier,
         relationTargetObjectMetadataUniversalIdentifier:
@@ -279,7 +281,7 @@ describe('syncApplication', () => {
       ).toMatchObject({
         name: 'targetTicket',
         type: FieldMetadataType.MORPH_RELATION,
-        isSystem: true,
+        isSystem: false,
         isSystemSideEffect: true,
         universalIdentifier: reverseUniversalIdentifier,
         morphId:
