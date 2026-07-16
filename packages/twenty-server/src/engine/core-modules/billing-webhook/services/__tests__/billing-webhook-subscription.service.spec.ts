@@ -416,5 +416,24 @@ describe('BillingWebhookSubscriptionService', () => {
       expect(workspaceService.deleteWorkspace).not.toHaveBeenCalled();
       expect(messageQueueService.add).not.toHaveBeenCalled();
     });
+
+    it('should reject an already soft-deleted workspace when hard deleting a pending-creation workspace', async () => {
+      const staleEvent = buildSubscriptionUpdatedEvent({ status: 'active' });
+
+      stripeSubscriptionScheduleService.listCustomerNotEndedSubscriptionsWithSchedule.mockResolvedValue(
+        [buildLiveSubscription({ status: 'unpaid' })],
+      );
+
+      workspaceRepository.findOne.mockResolvedValue(
+        buildWorkspace(WorkspaceActivationStatus.PENDING_CREATION),
+      );
+
+      await service.processStripeEvent(WORKSPACE_ID, staleEvent);
+
+      expect(workspaceService.deleteWorkspace).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        { throwIfAlreadySoftDeleted: true },
+      );
+    });
   });
 });

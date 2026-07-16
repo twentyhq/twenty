@@ -194,7 +194,9 @@ export class BillingWebhookSubscriptionService {
       if (!isDefined(refreshedWorkspace.deletedAt)) {
         switch (refreshedWorkspace.activationStatus) {
           case WorkspaceActivationStatus.PENDING_CREATION:
-            await this.workspaceService.deleteWorkspace(workspaceId);
+            await this.workspaceService.deleteWorkspace(workspaceId, {
+              throwIfAlreadySoftDeleted: true,
+            });
             break;
           case WorkspaceActivationStatus.ACTIVE:
             await this.workspaceService.suspendWorkspace(workspaceId);

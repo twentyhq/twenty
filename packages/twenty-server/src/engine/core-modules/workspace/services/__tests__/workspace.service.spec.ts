@@ -1,7 +1,8 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
-import { type Repository } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { IsNull, Not, type Repository } from 'typeorm';
 
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -57,6 +58,7 @@ describe('WorkspaceService', () => {
             findOne: jest.fn(),
             softDelete: jest.fn(),
             delete: jest.fn(),
+            update: jest.fn(),
             manager: {
               connection: { driver: { options: { type: 'postgres' } } },
             },
@@ -297,7 +299,7 @@ describe('WorkspaceService', () => {
         .mockResolvedValue(mockWorkspace);
       jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
 
-      await service.deleteWorkspace(mockWorkspace.id, false);
+      await service.deleteWorkspace(mockWorkspace.id, { softDelete: false });
 
       expect(
         billingSubscriptionService.assertSubscriptionCanceledOrNone,
@@ -322,7 +324,7 @@ describe('WorkspaceService', () => {
         .mockResolvedValue(mockWorkspace);
       jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
 
-      await service.deleteWorkspace(mockWorkspace.id, true);
+      await service.deleteWorkspace(mockWorkspace.id, { softDelete: true });
 
       expect(
         billingSubscriptionService.cancelSubscription,
@@ -346,7 +348,7 @@ describe('WorkspaceService', () => {
         .mockResolvedValue(mockWorkspace);
       jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
 
-      await service.deleteWorkspace(mockWorkspace.id, false);
+      await service.deleteWorkspace(mockWorkspace.id, { softDelete: false });
 
       expect(dnsManagerService.deleteHostnameSilently).toHaveBeenCalledWith(
         customDomain,
@@ -366,12 +368,84 @@ describe('WorkspaceService', () => {
         .mockResolvedValue(mockWorkspace);
       jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
 
-      await service.deleteWorkspace(mockWorkspace.id, true);
+      await service.deleteWorkspace(mockWorkspace.id, { softDelete: true });
 
       expect(dnsManagerService.deleteHostnameSilently).not.toHaveBeenCalled();
       expect(workspaceRepository.softDelete).toHaveBeenCalledWith({
         id: mockWorkspace.id,
       });
+    });
+
+    it('should throw and skip destructive cleanup when the workspace is already soft-deleted and throwIfAlreadySoftDeleted is set', async () => {
+      const mockWorkspace = {
+        id: 'workspace-id',
+        metadataVersion: 0,
+        deletedAt: new Date(),
+      } as WorkspaceEntity;
+
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue(mockWorkspace);
+
+      await expect(
+        service.deleteWorkspace(mockWorkspace.id, {
+          throwIfAlreadySoftDeleted: true,
+        }),
+      ).rejects.toThrow('is already soft-deleted');
+
+      expect(userWorkspaceRepository.find).not.toHaveBeenCalled();
+      expect(workspaceRepository.delete).not.toHaveBeenCalled();
+      expect(workspaceRepository.softDelete).not.toHaveBeenCalled();
+    });
+
+    it('should hard delete when throwIfAlreadySoftDeleted is set but the workspace is not soft-deleted', async () => {
+      const mockWorkspace = {
+        id: 'workspace-id',
+        metadataVersion: 0,
+      } as WorkspaceEntity;
+
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue(mockWorkspace);
+      jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
+
+      await service.deleteWorkspace(mockWorkspace.id, {
+        throwIfAlreadySoftDeleted: true,
+      });
+
+      expect(workspaceRepository.delete).toHaveBeenCalledWith(mockWorkspace.id);
+    });
+  });
+
+  describe('suspendWorkspace', () => {
+    it('should only suspend workspaces that are not already suspended and not soft-deleted', async () => {
+      jest
+        .spyOn(workspaceRepository, 'update')
+        .mockResolvedValue({ affected: 1 } as never);
+
+      const hasBeenSuspended = await service.suspendWorkspace('workspace-id');
+
+      expect(workspaceRepository.update).toHaveBeenCalledWith(
+        {
+          id: 'workspace-id',
+          activationStatus: Not(WorkspaceActivationStatus.SUSPENDED),
+          deletedAt: IsNull(),
+        },
+        expect.objectContaining({
+          activationStatus: WorkspaceActivationStatus.SUSPENDED,
+        }),
+      );
+      expect(hasBeenSuspended).toBe(true);
+    });
+
+    it('should report no suspension when the guarded update affects no rows', async () => {
+      jest
+        .spyOn(workspaceRepository, 'update')
+        .mockResolvedValue({ affected: 0 } as never);
+
+      const hasBeenSuspended = await service.suspendWorkspace('workspace-id');
+
+      expect(hasBeenSuspended).toBe(false);
     });
   });
 });

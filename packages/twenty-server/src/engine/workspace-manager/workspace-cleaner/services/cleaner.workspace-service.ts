@@ -279,7 +279,9 @@ export class CleanerWorkspaceService {
         );
       }
 
-      await this.workspaceService.deleteWorkspace(workspace.id, true);
+      await this.workspaceService.deleteWorkspace(workspace.id, {
+        softDelete: true,
+      });
     }
     this.logger.log(
       `${dryRun ? 'DRY RUN - ' : ''}Soft deleting Workspace ${workspace.id} ${workspace.displayName}`,
@@ -333,7 +335,9 @@ export class CleanerWorkspaceService {
               );
             }
 
-            await this.workspaceService.deleteWorkspace(workspace.id, true);
+            await this.workspaceService.deleteWorkspace(workspace.id, {
+              softDelete: true,
+            });
           }
         } else {
           if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
