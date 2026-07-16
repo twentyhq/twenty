@@ -4,10 +4,10 @@ import {
   isFieldMetadataSupportedInGroupBy,
 } from 'twenty-shared/utils';
 
-// Mirrors useGetAvailableFieldsForCalendar so widget calendar settings
-// offer the same date fields as the record index calendar view picker
-// (excluding system fields like deletedAt).
-export const isFieldMetadataItemAvailableAsWidgetCalendarField = (
+// Single availability rule for calendar date fields, shared by the
+// record index calendar picker and dashboard widget calendar settings:
+// active date fields, excluding system ones like deletedAt.
+export const isFieldMetadataItemAvailableAsCalendarField = (
   fieldMetadataItem: FieldMetadataItem,
 ) =>
   fieldMetadataItem.isActive === true &&

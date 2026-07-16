@@ -1,6 +1,6 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
-import { isFieldMetadataItemAvailableAsWidgetCalendarField } from '@/page-layout/widgets/record-table/utils/isFieldMetadataItemAvailableAsWidgetCalendarField';
+import { isFieldMetadataItemAvailableAsCalendarField } from '@/object-record/record-calendar/utils/isFieldMetadataItemAvailableAsCalendarField';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -50,7 +50,7 @@ export const RecordTableCalendarFieldDropdownContent = ({
   });
 
   const dateFields = (objectMetadataItem?.readableFields ?? []).filter(
-    isFieldMetadataItemAvailableAsWidgetCalendarField,
+    isFieldMetadataItemAvailableAsCalendarField,
   );
 
   return (
