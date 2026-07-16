@@ -45,54 +45,62 @@ export class ApplicationRegistrationLifecycleEmailService {
     workspaceDisplayName: string;
     claimingUserId: string | null;
   }): Promise<void> {
-    const recipients = await this.findInstanceAdmins();
+    try {
+      const recipients = await this.findInstanceAdmins();
 
-    if (isDefined(params.claimingUserId)) {
-      const claimingUser = await this.userRepository.findOne({
-        where: { id: params.claimingUserId },
-      });
+      if (isDefined(params.claimingUserId)) {
+        const claimingUser = await this.userRepository.findOne({
+          where: { id: params.claimingUserId },
+        });
 
-      if (
-        isDefined(claimingUser) &&
-        !recipients.some((recipient) => recipient.id === claimingUser.id)
-      ) {
-        recipients.push(claimingUser);
+        if (
+          isDefined(claimingUser) &&
+          !recipients.some((recipient) => recipient.id === claimingUser.id)
+        ) {
+          recipients.push(claimingUser);
+        }
       }
-    }
 
-    await this.sendToRecipients(recipients, (locale) => ({
-      template: ApplicationClaimedEmail({
-        applicationName: params.registration.name,
-        workspaceDisplayName: params.workspaceDisplayName,
-        locale,
-      }),
-      subject: this.i18nService
-        .getI18nInstance(locale)
-        ._(msg`Application claimed`),
-    }));
+      await this.sendToRecipients(recipients, (locale) => ({
+        template: ApplicationClaimedEmail({
+          applicationName: params.registration.name,
+          workspaceDisplayName: params.workspaceDisplayName,
+          locale,
+        }),
+        subject: this.i18nService
+          .getI18nInstance(locale)
+          ._(msg`Application claimed`),
+      }));
+    } catch (error) {
+      this.logWorkflowFailure('application claimed', error);
+    }
   }
 
   async sendListingRequestSubmittedEmail(params: {
     registration: ApplicationRegistrationEntity;
   }): Promise<void> {
-    const adminApplicationDetailUrl = this.domainServerConfigService
-      .buildBaseUrl({
-        pathname: `settings/admin-panel/applications/registrations/${params.registration.id}`,
-      })
-      .toString();
+    try {
+      const adminApplicationDetailUrl = this.domainServerConfigService
+        .buildBaseUrl({
+          pathname: `settings/admin-panel/applications/registrations/${params.registration.id}`,
+        })
+        .toString();
 
-    const recipients = await this.findInstanceAdmins();
+      const recipients = await this.findInstanceAdmins();
 
-    await this.sendToRecipients(recipients, (locale) => ({
-      template: ApplicationListingRequestSubmittedEmail({
-        applicationName: params.registration.name,
-        adminApplicationDetailUrl,
-        locale,
-      }),
-      subject: this.i18nService
-        .getI18nInstance(locale)
-        ._(msg`New marketplace listing request`),
-    }));
+      await this.sendToRecipients(recipients, (locale) => ({
+        template: ApplicationListingRequestSubmittedEmail({
+          applicationName: params.registration.name,
+          adminApplicationDetailUrl,
+          locale,
+        }),
+        subject: this.i18nService
+          .getI18nInstance(locale)
+          ._(msg`New marketplace listing request`),
+      }));
+    } catch (error) {
+      this.logWorkflowFailure('listing request submitted', error);
+    }
   }
 
   async sendListingReviewedEmail(params: {
@@ -146,6 +154,12 @@ export class ApplicationRegistrationLifecycleEmailService {
     })();
 
     await this.renderAndSend({ to: contactEmail, template, subject });
+  }
+
+  private logWorkflowFailure(workflow: string, error: unknown): void {
+    this.logger.warn(
+      `Failed to send "${workflow}" notification emails: ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 
   private async findInstanceAdmins(): Promise<UserEntity[]> {

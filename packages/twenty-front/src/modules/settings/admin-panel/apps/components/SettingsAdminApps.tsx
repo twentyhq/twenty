@@ -65,6 +65,7 @@ const StyledListingActionsCell = styled(TableCell)`
 
 export const SettingsAdminApps = () => {
   const apolloAdminClient = useApolloAdminClient();
+  const { theme } = useContext(ThemeContext);
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
@@ -214,15 +215,10 @@ export const SettingsAdminApps = () => {
                       {request.sourcePackage ?? ''}
                     </TableCell>
                     <StyledListingActionsCell>
-                      <Button
-                        title={t`Review`}
-                        size="small"
-                        variant="secondary"
-                        accent="blue"
-                        to={getSettingsPath(
-                          SettingsPath.AdminPanelApplicationRegistrationDetail,
-                          { applicationRegistrationId: request.id },
-                        )}
+                      <Tag text={t`Review pending`} color="orange" />
+                      <IconChevronRight
+                        size={theme.icon.size.md}
+                        color={theme.font.color.tertiary}
                       />
                     </StyledListingActionsCell>
                   </TableRow>

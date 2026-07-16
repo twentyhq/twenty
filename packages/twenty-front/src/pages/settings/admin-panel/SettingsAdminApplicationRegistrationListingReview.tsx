@@ -86,6 +86,8 @@ export const SettingsAdminApplicationRegistrationListingReview = ({
             : t`Listing rejected. The developer has been notified.`;
 
       enqueueSuccessSnackBar({ message });
+
+      return true;
     } catch (error) {
       enqueueErrorSnackBar({
         message:
@@ -93,6 +95,8 @@ export const SettingsAdminApplicationRegistrationListingReview = ({
             ? error.message
             : t`Failed to review the listing request`,
       });
+
+      return false;
     }
   };
 
@@ -111,10 +115,15 @@ export const SettingsAdminApplicationRegistrationListingReview = ({
 
     const trimmedReason = reason.trim();
 
-    await submitReview(
+    const succeeded = await submitReview(
       pendingDecision,
       trimmedReason.length > 0 ? trimmedReason : null,
     );
+
+    if (!succeeded) {
+      return;
+    }
+
     closeModal(LISTING_REVIEW_MODAL_ID);
     setPendingDecision(null);
   };

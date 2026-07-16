@@ -97,10 +97,10 @@ export const SettingsClaimApplicationSection = () => {
     { fetchPolicy: 'network-only' },
   );
 
-  const [runPendingClaimLookup] = useLazyQuery(
-    FindPendingApplicationRegistrationClaimDocument,
-    { fetchPolicy: 'network-only' },
-  );
+  const [runPendingClaimLookup, { loading: isPendingClaimLookupLoading }] =
+    useLazyQuery(FindPendingApplicationRegistrationClaimDocument, {
+      fetchPolicy: 'network-only',
+    });
 
   const [startClaim, { loading: isStarting }] = useMutation(
     StartApplicationRegistrationClaimDocument,
@@ -246,7 +246,11 @@ export const SettingsClaimApplicationSection = () => {
           title={t`Look up`}
           Icon={IconSearch}
           onClick={handleLookup}
-          disabled={isLookingUp || lookupValue.trim().length === 0}
+          disabled={
+            isLookingUp ||
+            isPendingClaimLookupLoading ||
+            lookupValue.trim().length === 0
+          }
         />
         {canSyncCatalog && (
           <Button

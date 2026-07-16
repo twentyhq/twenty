@@ -223,18 +223,26 @@ export class ApplicationRegistrationClaimService {
     // concurrent race from other workspaces).
     await this.deleteClaimTokens(registration.id);
 
-    const claimingWorkspace = await this.workspaceRepository.findOne({
-      where: { id: params.workspaceId },
-    });
+    // Best-effort notification: ownership is already assigned, so a failure
+    // here must not fail the claim.
+    try {
+      const claimingWorkspace = await this.workspaceRepository.findOne({
+        where: { id: params.workspaceId },
+      });
 
-    await this.applicationRegistrationLifecycleEmailService.sendApplicationClaimedEmails(
-      {
-        registration: claimed,
-        workspaceDisplayName:
-          claimingWorkspace?.displayName ?? params.workspaceId,
-        claimingUserId: claimToken.userId,
-      },
-    );
+      await this.applicationRegistrationLifecycleEmailService.sendApplicationClaimedEmails(
+        {
+          registration: claimed,
+          workspaceDisplayName:
+            claimingWorkspace?.displayName ?? params.workspaceId,
+          claimingUserId: claimToken.userId,
+        },
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to send claim notification emails for registration ${registration.id}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
 
     return claimed;
   }

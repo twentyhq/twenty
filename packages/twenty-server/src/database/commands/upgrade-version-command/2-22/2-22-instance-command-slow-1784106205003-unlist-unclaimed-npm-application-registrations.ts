@@ -15,7 +15,7 @@ export class UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand
       `UPDATE "core"."applicationRegistration"
        SET "isListed" = false
        WHERE "sourceType" = 'npm'
-         AND "ownerWorkspaceId" IS NULL
+         AND "workspaceId" IS NULL
          AND "isVetted" = false`,
     );
   }
@@ -30,7 +30,7 @@ export class UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand
       `UPDATE "core"."applicationRegistration"
        SET "isListed" = true
        WHERE "sourceType" = 'npm'
-         AND "ownerWorkspaceId" IS NULL
+         AND "workspaceId" IS NULL
          AND "isVetted" = false
          AND "listingRequestStatus" = 'none'`,
     );
