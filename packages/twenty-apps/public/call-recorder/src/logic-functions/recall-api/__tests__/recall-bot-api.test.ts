@@ -249,6 +249,27 @@ describe('recall bot api', () => {
     );
   });
 
+  it('omits join-at bounds for metadata-only lookups', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ next: null, results: [{ id: 'bot-1' }] }),
+    });
+
+    await listScheduledRecallBots({
+      metadata: { twentyCallRecordingId: 'recording-1' },
+    });
+
+    const requestUrl = fetchMock.mock.calls[0][0];
+    const requestParameters = new URL(requestUrl).searchParams;
+
+    expect(requestParameters.has('join_at_after')).toBe(false);
+    expect(requestParameters.has('join_at_before')).toBe(false);
+    expect(requestParameters.get('metadata__twentyCallRecordingId')).toBe(
+      'recording-1',
+    );
+  });
+
   it('flags the result as truncated when the pagination cap leaves more pages', async () => {
     for (let pageIndex = 1; pageIndex <= 10; pageIndex++) {
       fetchMock.mockResolvedValueOnce({

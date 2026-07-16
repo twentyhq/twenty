@@ -124,9 +124,10 @@ const recoverRecallBotIdForCanceledCallRecording = async ({
   }
 
   // Recovery only closes the crash window right after cancellation; once a row ages out the daily cleanup sweep owns it, so stop the per-run Recall lookup instead of listing forever (notably for rows whose calendar event was deleted and can no longer bound the retry).
+  // updatedAt tracks the cancellation write, so a request scheduled far ahead but canceled recently still gets its window; createdAt would age it out from scheduling time.
   if (
     hasCanceledRecoveryWindowElapsed({
-      createdAt: callRecording.createdAt,
+      canceledAt: callRecording.updatedAt ?? callRecording.createdAt,
       now,
     })
   ) {
@@ -166,21 +167,21 @@ const recoverRecallBotIdForCanceledCallRecording = async ({
 };
 
 const hasCanceledRecoveryWindowElapsed = ({
-  createdAt,
+  canceledAt,
   now,
 }: {
-  createdAt: string | undefined;
+  canceledAt: string | undefined;
   now: Date;
 }): boolean => {
-  if (isUndefined(createdAt)) {
+  if (isUndefined(canceledAt)) {
     return false;
   }
 
-  const createdTime = new Date(createdAt).getTime();
+  const canceledTime = new Date(canceledAt).getTime();
 
   return (
-    !Number.isNaN(createdTime) &&
-    createdTime + CANCELED_BOT_RECOVERY_MAX_AGE_HOURS * 60 * 60 * 1000 <=
+    !Number.isNaN(canceledTime) &&
+    canceledTime + CANCELED_BOT_RECOVERY_MAX_AGE_HOURS * 60 * 60 * 1000 <=
       now.getTime()
   );
 };

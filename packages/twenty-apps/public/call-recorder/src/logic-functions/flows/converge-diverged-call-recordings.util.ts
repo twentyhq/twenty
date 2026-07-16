@@ -117,11 +117,19 @@ export const convergeDivergedCallRecordings = async ({
     return result;
   }
 
-  const orderedActionableCandidates =
-    rotateActionableCandidatesForFallback({
-      candidates: actionableCandidates,
+  // Only unlisted candidates spend the per-recording fallback budget, so rotate
+  // them across runs and keep already-listed candidates (which converge for free) last.
+  const orderedActionableCandidates = [
+    ...rotateActionableCandidatesForFallback({
+      candidates: actionableCandidates.filter(
+        (candidate) => !listedRecallBotsById.has(candidate.externalBotId),
+      ),
       now,
-    });
+    }),
+    ...actionableCandidates.filter((candidate) =>
+      listedRecallBotsById.has(candidate.externalBotId),
+    ),
+  ];
   let remainingPerRecordingFallbackCount = PER_RECORDING_FALLBACK_LIMIT;
 
   for (const candidate of orderedActionableCandidates) {
@@ -243,8 +251,8 @@ const isOutsideConvergenceBound = (
 ): boolean => {
   const meetingEndReference =
     candidate.calendarEventEndsAt ??
-    candidate.calendarEventStartsAt ??
     candidate.endedAt ??
+    candidate.calendarEventStartsAt ??
     candidate.startedAt ??
     candidate.createdAt;
 
