@@ -20,7 +20,7 @@ The set is deliberately small because the interesting objects are yours. A **cus
 
 A **field** is a column with a type. The type is a commitment that buys behavior.
 
-- **Currency** fields sum, so a dashboard totals open deals without anyone maintaining the number.
+- **Currency** fields hold money, so a dashboard can total the value of your open deals.
 - **Select** fields hold one value from a fixed list, which is what pipeline columns are built from.
 - **Date** fields put records on a calendar.
 - **Files** fields hold documents, so a contract PDF lives on the record it belongs to.
@@ -33,7 +33,7 @@ There are more than twenty types in total.
 | Structured | Currency, Select, Multi-select, Emails, Phones, Links, Address, Full Name |
 | Technical | Relation, Files, JSON, Array, Unique ID |
 
-Twenty also maintains a few system columns on every record, including creation and update timestamps and who created it.
+Every record also carries system columns Twenty maintains itself: `id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy` and `position`.
 
 ## Relations
 
