@@ -1,0 +1,89 @@
+packages/twenty-front/src/locales/ar-SA.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4060,4068-4069
+packages/twenty-front/src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
+  s_c4892f4ac2fb0e::t_f558bd0f5e661c 48
+packages/twenty-front/src/modules/settings/hooks/useSettingsNavigationItems.tsx
+  s_c4892f4ac2fb0e::t_f558bd0f5e661c 177
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
+  s_c4892f4ac2fb0e::t_f558bd0f5e661c 63,69
+packages/twenty-front/src/locales/ko-KR.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4060,4068-4069
+packages/twenty-front/src/locales/it-IT.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4060,4068-4069
+packages/twenty-front/src/locales/pseudo-en.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4055,4063
+packages/twenty-front/src/locales/ro-RO.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4060,4068-4069
+packages/twenty-front/src/locales/af-ZA.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4060,4068-4069
+packages/twenty-front/src/locales/pt-BR.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4060,4068-4069
+packages/twenty-front/src/locales/pt-PT.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4060,4068-4069
+packages/twenty-front/src/locales/es-ES.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4060,4068-4069
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
+  s_c4892f4ac2fb0e::t_55af3299330539 117
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
+  s_c4892f4ac2fb0e::t_f558bd0f5e661c 83
+packages/twenty-front/src/locales/de-DE.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4060,4068-4069
+packages/twenty-front/src/locales/en.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4055,4063-4064
+packages/twenty-front/src/locales/da-DK.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4060,4068-4069
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
+  s_c4892f4ac2fb0e::t_f558bd0f5e661c 126
+packages/twenty-front/src/locales/he-IL.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4060,4068-4069
+packages/twenty-front/src/locales/el-GR.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4060,4068-4069
+packages/twenty-front/src/locales/fr-FR.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4060,4068-4069
+packages/twenty-front/src/locales/hu-HU.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4060,4068-4069
+packages/twenty-front/src/locales/ja-JP.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4060,4068-4069
+packages/twenty-front/src/locales/nl-NL.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4060,4068-4069
+packages/twenty-front/src/locales/pl-PL.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4060,4068-4069
+packages/twenty-front/src/locales/fi-FI.po
+  s_c4892f4ac2fb0e::t_55c6c4cab68c6e 4060,4068-4069
+packages/twenty-front/src/locales/ca-ES.po
+  s_c4892f4ac2fb0e::t_538e41534a92f4 4060,4068-4069
+packages/twenty-front/src/locales/cs-CZ.po
+  s_c4892f4ac2fb0e::t_536efae2cfc7bb 4060,4068-4069
+packages/twenty-front/src/locales/no-NO.po
+  s_c4892f4ac2fb0e::t_1a2c567544da0e 4060,4068-4069
+packages/twenty-front/src/locales/sr-Cyrl.po
+  s_c4892f4ac2fb0e::t_2664728d05e1a2 4060,4068-4069
+packages/twenty-front/src/locales/sv-SE.po
+  s_c4892f4ac2fb0e::t_bdedda37d7faf3 4060,4068-4069
+packages/twenty-front/src/locales/tr-TR.po
+  s_c4892f4ac2fb0e::t_a3eb5e4b4b3869 4060,4068-4069
+packages/twenty-front/src/locales/uk-UA.po
+  s_c4892f4ac2fb0e::t_96eed9377fa18b 4060,4068-4069
+packages/twenty-front/src/locales/vi-VN.po
+  s_c4892f4ac2fb0e::t_b1f0b50c398891 4060,4068-4069
+packages/twenty-front/src/locales/zh-CN.po
+  s_c4892f4ac2fb0e::t_8e78a4dd5d6481 4060,4068-4069
+packages/twenty-front/src/locales/zh-TW.po
+  s_c4892f4ac2fb0e::t_5882f80f31a66f 4060,4068-4069
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "66f2c3b55ae0471dc8b449e9ec6f393407635cf1",
+  "prompts": {},
+  "sessions": {
+    "s_c4892f4ac2fb0e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "74e7b645-8557-47f5-9aa3-10d3470dabef",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
