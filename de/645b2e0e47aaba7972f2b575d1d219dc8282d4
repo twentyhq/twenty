@@ -1,0 +1,20 @@
+packages/twenty-server/src/modules/connected-account/services/imap-smtp-caldav-apis.service.spec.ts
+  s_c4892f4ac2fb0e::t_e58265d35eef33 661
+  s_c4892f4ac2fb0e::t_551947953101b4 678-709
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "de645b2e0e47aaba7972f2b575d1d219dc8282d4",
+  "prompts": {},
+  "sessions": {
+    "s_c4892f4ac2fb0e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "74e7b645-8557-47f5-9aa3-10d3470dabef",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
