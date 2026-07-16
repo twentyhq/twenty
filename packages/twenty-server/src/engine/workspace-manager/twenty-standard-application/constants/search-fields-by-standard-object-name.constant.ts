@@ -59,6 +59,38 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
     { name: 'name', type: FieldMetadataType.FULL_NAME },
     { name: 'userEmail', type: FieldMetadataType.TEXT },
   ],
+  executiveProfile: [
+    { name: 'headline', type: FieldMetadataType.TEXT },
+    { name: 'currentTitle', type: FieldMetadataType.TEXT },
+  ],
+  executiveCareerExperience: [
+    { name: 'title', type: FieldMetadataType.TEXT },
+  ],
+  executiveEducation: [
+    { name: 'institution', type: FieldMetadataType.TEXT },
+    { name: 'degree', type: FieldMetadataType.TEXT },
+  ],
+  executiveBoardService: [
+    { name: 'companyName', type: FieldMetadataType.TEXT },
+    { name: 'role', type: FieldMetadataType.TEXT },
+  ],
+  executiveCapability: [
+    { name: 'name', type: FieldMetadataType.TEXT },
+  ],
+  executiveLanguage: [
+    { name: 'language', type: FieldMetadataType.TEXT },
+  ],
+  executiveArtifact: [
+    { name: 'title', type: FieldMetadataType.TEXT },
+  ],
+  executiveAward: [
+    { name: 'title', type: FieldMetadataType.TEXT },
+    { name: 'issuer', type: FieldMetadataType.TEXT },
+  ],
+  executiveExternalProfile: [
+    { name: 'handle', type: FieldMetadataType.TEXT },
+  ],
+  executiveSearchPreference: [],
 } satisfies {
   [ObjectName in AllStandardObjectName]: {
     name: AllStandardObjectFieldName<ObjectName>;

@@ -1,0 +1,6 @@
+export enum LanguageProficiency {
+  BASIC = 'BASIC',
+  CONVERSATIONAL = 'CONVERSATIONAL',
+  PROFESSIONAL = 'PROFESSIONAL',
+  NATIVE = 'NATIVE',
+}

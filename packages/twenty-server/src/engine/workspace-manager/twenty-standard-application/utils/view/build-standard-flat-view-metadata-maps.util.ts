@@ -11,6 +11,18 @@ import { computeStandardCalendarEventViews } from 'src/engine/workspace-manager/
 import { computeStandardCallRecordingViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-call-recording-views.util';
 import { computeStandardCompanyViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-company-views.util';
 import { computeStandardDashboardViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-dashboard-views.util';
+import {
+  computeStandardExecutiveArtifactViews,
+  computeStandardExecutiveAwardViews,
+  computeStandardExecutiveBoardServiceViews,
+  computeStandardExecutiveCapabilityViews,
+  computeStandardExecutiveCareerExperienceViews,
+  computeStandardExecutiveEducationViews,
+  computeStandardExecutiveExternalProfileViews,
+  computeStandardExecutiveLanguageViews,
+  computeStandardExecutiveProfileViews,
+  computeStandardExecutiveSearchPreferenceViews,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-executive-views.util';
 import { computeStandardMessageCampaignViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-campaign-views.util';
 import { computeStandardMessageChannelMessageAssociationMessageFolderViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-channel-message-association-message-folder-views.util';
 import { computeStandardMessageChannelMessageAssociationViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-channel-message-association-views.util';
@@ -46,6 +58,16 @@ const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME = {
   callRecording: computeStandardCallRecordingViews,
   company: computeStandardCompanyViews,
   dashboard: computeStandardDashboardViews,
+  executiveArtifact: computeStandardExecutiveArtifactViews,
+  executiveAward: computeStandardExecutiveAwardViews,
+  executiveBoardService: computeStandardExecutiveBoardServiceViews,
+  executiveCapability: computeStandardExecutiveCapabilityViews,
+  executiveCareerExperience: computeStandardExecutiveCareerExperienceViews,
+  executiveEducation: computeStandardExecutiveEducationViews,
+  executiveExternalProfile: computeStandardExecutiveExternalProfileViews,
+  executiveLanguage: computeStandardExecutiveLanguageViews,
+  executiveProfile: computeStandardExecutiveProfileViews,
+  executiveSearchPreference: computeStandardExecutiveSearchPreferenceViews,
   message: computeStandardMessageViews,
   messageCampaign: computeStandardMessageCampaignViews,
   messageChannelMessageAssociation:

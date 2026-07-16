@@ -1,0 +1,7 @@
+export enum EmploymentType {
+  FULL_TIME = 'FULL_TIME',
+  PART_TIME = 'PART_TIME',
+  CONTRACT = 'CONTRACT',
+  SELF_EMPLOYED = 'SELF_EMPLOYED',
+  BOARD_ONLY = 'BOARD_ONLY',
+}
