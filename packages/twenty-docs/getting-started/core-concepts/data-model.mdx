@@ -14,7 +14,7 @@ An **object** is a table and a **record** is a row in it. Twenty ships with the 
 - **Opportunities**, Twenty's term for deals
 - **Tasks** and **Notes**, the work and context around the rest
 
-The set is deliberately small because the interesting objects are yours. A packaging supplier lives off print runs, so it creates a Print Runs **custom object**. Behind the scenes that's a real table in the workspace schema, with the same machinery as Companies: its own place in the sidebar, its own pages and views, its own API endpoints and its own permissions. Custom data in most systems is an afterthought, bolted onto someone else's schema. In Twenty it's a table like any other.
+The set is deliberately small because the interesting objects are yours. A packaging supplier lives off print runs, so it creates a Print Runs **custom object**. Behind the scenes that's a real table in the workspace schema, with the same machinery as Companies: its own place in the sidebar, its own pages and views, its own API endpoints, its own permissions and its own workflow triggers. Custom data in most systems is an afterthought, bolted onto someone else's schema. In Twenty it's a table like any other.
 
 ## Fields
 
@@ -25,12 +25,22 @@ A **field** is a column with a type. The type is a commitment that buys behavior
 - **Date** fields put records on a calendar.
 - **Files** fields hold documents, so the current artwork PDF lives on the record it describes.
 
-There are more than twenty types, from plain text and numbers to composite types like Address and Full Name. Twenty also maintains a few system columns on every record, including who created it and when it last changed.
+There are more than twenty types in total.
+
+| Kind | Types |
+|---|---|
+| Plain | Text, Rich Text, Number, True/False, Date, Date and Time, Rating |
+| Structured | Currency, Select, Multi-select, Emails, Phones, Links, Address, Full Name |
+| Technical | Relation, Files, JSON, Array, Unique ID |
+
+Twenty also maintains a few system columns on every record, including creation and update timestamps and who created it.
 
 ## Relations
 
 A **relation** is a foreign key with an interface. The Company field on a purchasing manager's record holds a reference to the Harbor Foods row, not the text `Harbor Foods`. That reference keeps every fact in one place. The current artwork lives on the Harbor Foods record. Every print run references the company, so each one reads the artwork from the one place it exists. A rebrand becomes a one-field edit. Nothing downstream ships stale.
 
 Relations resolve in both directions. Open Harbor Foods and every person, deal, note and print run that references it is on the page. Open any of those and the company is one click back.
+
+The standard objects arrive already connected. A company has many people, an opportunity belongs to a company. Your custom objects join the same graph, including many-to-many relations where both sides hold lists of each other.
 
 The next page covers the workspace, where records live on screen and how to move between them.
