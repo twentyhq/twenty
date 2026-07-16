@@ -1,7 +1,7 @@
 import { msg, t } from '@lingui/core/macro';
 import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FieldMetadataType, RelationType, ViewType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getViewLayoutFromViewType, isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -27,7 +27,7 @@ export class FlatViewValidatorService {
     flatView: UniversalFlatView;
     flatFieldMetadataMaps: AllUniversalFlatEntityMaps['flatFieldMetadataMaps'];
   }): FlatEntityValidationError[] {
-    if (flatView.type !== ViewType.CALENDAR) {
+    if (getViewLayoutFromViewType(flatView.type) !== ViewType.CALENDAR) {
       return [];
     }
 
@@ -240,8 +240,8 @@ export class FlatViewValidatorService {
     }
 
     const viewBecomesKanban =
-      updatedFlatView.type === ViewType.KANBAN &&
-      existingFlatView.type !== ViewType.KANBAN;
+      getViewLayoutFromViewType(updatedFlatView.type) === ViewType.KANBAN &&
+      getViewLayoutFromViewType(existingFlatView.type) !== ViewType.KANBAN;
 
     if (viewBecomesKanban) {
       if (
@@ -450,7 +450,8 @@ export class FlatViewValidatorService {
       });
     }
 
-    const isKanban = flatViewToValidate.type === ViewType.KANBAN;
+    const isKanban =
+      getViewLayoutFromViewType(flatViewToValidate.type) === ViewType.KANBAN;
 
     if (isKanban) {
       if (

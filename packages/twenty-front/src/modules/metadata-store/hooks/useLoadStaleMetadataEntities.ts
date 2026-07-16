@@ -45,7 +45,11 @@ const PAGE_LAYOUTS_GROUP_KEYS: MetadataEntityKey[] = [
 
 const INDEX_VIEW_TYPES = [ViewType.TABLE, ViewType.KANBAN, ViewType.CALENDAR];
 const FIELDS_WIDGET_VIEW_TYPES = [ViewType.FIELDS_WIDGET];
-const TABLE_WIDGET_VIEW_TYPES = [ViewType.TABLE_WIDGET];
+const TABLE_WIDGET_VIEW_TYPES = [
+  ViewType.TABLE_WIDGET,
+  ViewType.KANBAN_WIDGET,
+  ViewType.CALENDAR_WIDGET,
+];
 
 const hasOverlap = (
   staleKeys: MetadataEntityKey[],

@@ -64,10 +64,19 @@ const CreateViewInputSchema = z.object({
     .default('IconList')
     .describe('Icon identifier (e.g., "IconList", "IconCheckbox")'),
   type: z
-    .enum([ViewType.TABLE, ViewType.KANBAN, ViewType.CALENDAR])
+    .enum([
+      ViewType.TABLE,
+      ViewType.KANBAN,
+      ViewType.CALENDAR,
+      ViewType.TABLE_WIDGET,
+      ViewType.KANBAN_WIDGET,
+      ViewType.CALENDAR_WIDGET,
+    ])
     .optional()
     .default(ViewType.TABLE)
-    .describe('View type'),
+    .describe(
+      'View type. Use the *_WIDGET variants (TABLE_WIDGET, KANBAN_WIDGET, CALENDAR_WIDGET) for views backing a dashboard widget so they stay out of record index view pickers.',
+    ),
   visibility: z
     .enum([ViewVisibility.WORKSPACE, ViewVisibility.UNLISTED])
     .optional()
