@@ -7,6 +7,7 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
 // Full rebuild of the core workflowVersion rows for a workspace once
@@ -22,7 +23,10 @@ import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common
     'Rebuild core workflowVersion rows for each workspace and link every workspace record via coreWorkflowVersionId',
 })
 export class BackfillWorkflowVersionCoreLinksCommand extends ProvisionedWorkspaceCommandRunner {
-  constructor(protected readonly workspaceIteratorService: WorkspaceIteratorService) {
+  constructor(
+    protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+  ) {
     super(workspaceIteratorService);
   }
 
@@ -131,6 +135,12 @@ export class BackfillWorkflowVersionCoreLinksCommand extends ProvisionedWorkspac
 
         throw error;
       }
+
+      // The old sync path invalidated workflowAutomatedTriggerMaps; the raw-SQL
+      // rebuild bypasses it, so recompute it from the fresh core rows.
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'workflowAutomatedTriggerMaps',
+      ]);
 
       this.logger.log(
         `Rebuilt ${workspaceWorkflowVersions.length} core workflowVersion row(s) for workspace ${workspaceId}`,
