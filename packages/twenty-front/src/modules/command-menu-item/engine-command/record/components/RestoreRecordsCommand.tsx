@@ -21,8 +21,6 @@ export const RestoreRecordsCommand = () => {
 
   const isSingleRecord = selectedRecords.length === 1;
 
-  // recordIndexId is null when the command runs outside a record index,
-  // e.g. from a record side panel opened on a page without a view.
   const { resetTableRowSelection } = useResetTableRowSelection(
     recordIndexId ?? PLACEHOLDER_RECORD_INDEX_ID,
   );
