@@ -3326,6 +3326,11 @@ msgstr "Vista Calendario"
 msgid "Calendar View"
 msgstr "Vista Calendario"
 
+#. js-lingui-id: mhcSf1
+#: src/modules/views/types/ViewType.ts
+msgid "Calendar widget"
+msgstr ""
+
 #. js-lingui-id: EUpfsd
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -10209,6 +10214,11 @@ msgstr "Solo per me"
 #: src/modules/views/types/ViewType.ts
 msgid "Kanban"
 msgstr "Kanban"
+
+#. js-lingui-id: lsRWTc
+#: src/modules/views/types/ViewType.ts
+msgid "Kanban widget"
+msgstr ""
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
