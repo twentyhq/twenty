@@ -31,7 +31,10 @@ const graphQLPredefinedExceptions = {
 };
 
 export const graphQLErrorCodesToFilter = [
+  ErrorCode.GRAPHQL_PARSE_FAILED,
   ErrorCode.GRAPHQL_VALIDATION_FAILED,
+  ErrorCode.PERSISTED_QUERY_NOT_FOUND,
+  ErrorCode.PERSISTED_QUERY_NOT_SUPPORTED,
   ErrorCode.UNAUTHENTICATED,
   ErrorCode.FORBIDDEN,
   ErrorCode.NOT_FOUND,
@@ -62,11 +65,15 @@ export const shouldCaptureException = (
   exception: Error,
   statusCode?: number,
 ): boolean => {
-  if (
-    exception instanceof GraphQLError &&
-    (exception?.extensions?.http?.status ?? 500) < 500
-  ) {
-    return false;
+  if (exception instanceof GraphQLError) {
+    if (
+      (exception?.extensions?.http?.status ?? 500) < 500 ||
+      graphQLErrorCodesToFilter.includes(
+        exception.extensions?.code as ErrorCode,
+      )
+    ) {
+      return false;
+    }
   }
 
   if (

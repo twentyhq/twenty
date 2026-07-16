@@ -343,39 +343,39 @@ export class UpgradeMigrationService {
     errorMessage: string | null;
     createdAt: Date;
   } | null> {
-    const migration = await this.upgradeMigrationRepository
-      .createQueryBuilder('migration')
-      .select([
-        'migration.name',
-        'migration.status',
-        'migration.executedByVersion',
-        'migration.errorMessage',
-        'migration.createdAt',
-      ])
-      .where('migration."workspaceId" IS NULL')
-      .andWhere('migration."isInitial" = false')
-      .andWhere(
-        `migration.attempt = (
-          SELECT MAX(sub.attempt)
-          FROM core."upgradeMigration" sub
-          WHERE sub.name = migration.name
-          AND sub."workspaceId" IS NULL
-        )`,
-      )
-      .orderBy('migration.createdAt', 'DESC')
-      .getOne();
+    const rows = await this.upgradeMigrationRepository.manager.query<
+      Array<{
+        name: string;
+        status: UpgradeMigrationStatus;
+        executedByVersion: string;
+        errorMessage: string | null;
+        createdAt: Date;
+      }>
+    >(`
+      SELECT name, status, "executedByVersion", "errorMessage", "createdAt"
+      FROM (
+        SELECT DISTINCT ON (name)
+          name,
+          status,
+          "executedByVersion",
+          "errorMessage",
+          "createdAt"
+        FROM core."upgradeMigration"
+        WHERE "workspaceId" IS NULL
+          AND "isInitial" = false
+        ORDER BY name, attempt DESC
+      ) latest_per_name
+      ORDER BY "createdAt" DESC
+      LIMIT 1
+    `);
+
+    const migration = rows[0];
 
     if (!migration) {
       return null;
     }
 
-    return {
-      name: migration.name,
-      status: migration.status,
-      executedByVersion: migration.executedByVersion,
-      errorMessage: migration.errorMessage,
-      createdAt: migration.createdAt,
-    };
+    return migration;
   }
 
   async getLastAttemptedInstanceCommandOrThrow(): Promise<{
