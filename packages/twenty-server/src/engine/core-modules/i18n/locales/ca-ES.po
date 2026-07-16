@@ -8883,11 +8883,6 @@ msgstr "No s'ha trobat la vista després de la inserció o l'actualització"
 msgid "View not found for widget"
 msgstr "No s'ha trobat la vista del giny"
 
-#. js-lingui-id: wIcQxd
-#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
-msgid "View settings can only be updated on record table widgets"
-msgstr ""
-
 #. js-lingui-id: ipFNcM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -9118,11 +9113,6 @@ msgstr "La fila del giny supera l'alçada de la graella"
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 msgid "Widget type VIEW is not supported yet."
 msgstr "El tipus de giny VIEW encara no és compatible."
-
-#. js-lingui-id: s8y6wj
-#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
-msgid "Widget views must use a widget view type"
-msgstr ""
 
 #. js-lingui-id: qRILxq
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
