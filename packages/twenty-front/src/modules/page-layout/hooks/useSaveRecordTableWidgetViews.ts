@@ -131,6 +131,9 @@ export const useSaveRecordTableWidgetViews = () => {
                       shouldHideEmptyGroups: draftView.shouldHideEmptyGroups,
                       kanbanAggregateOperation:
                         draftView.kanbanAggregateOperation ?? null,
+                      // UpsertViewWidgetInput cannot clear this id (same as
+                      // UpdateViewInput); a stale id is inert once
+                      // kanbanAggregateOperation is null.
                       kanbanAggregateOperationFieldMetadataId:
                         draftView.kanbanAggregateOperationFieldMetadataId ??
                         undefined,

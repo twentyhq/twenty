@@ -231,6 +231,7 @@ export const RecordTableRecordGroupSection = () => {
         </StyledTagContainer>
         <StyledAggregateDropdownContainer
           isNonInteractive={isRecordTableCellsNonEditable}
+          inert={isRecordTableCellsNonEditable || undefined}
         >
           <RecordBoardColumnHeaderAggregateDropdown
             aggregateValue={recordIndexAggregateDisplayValueForGroupValue}

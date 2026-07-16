@@ -124,6 +124,16 @@ describe('cloneRecordTableWidgetViewSnapshot', () => {
     expect(clonedSnapshot.viewFilters[0].viewFilterGroupId).toBe(childGroup.id);
   });
 
+  it('should preserve group content', () => {
+    const clonedSnapshot = cloneRecordTableWidgetViewSnapshot(sourceSnapshot);
+
+    expect(clonedSnapshot.viewGroups[0]).toMatchObject({
+      fieldValue: 'OPTION_1',
+      position: 0,
+      isVisible: true,
+    });
+  });
+
   it('should preserve filter, sort and field content', () => {
     const clonedSnapshot = cloneRecordTableWidgetViewSnapshot(sourceSnapshot);
 
