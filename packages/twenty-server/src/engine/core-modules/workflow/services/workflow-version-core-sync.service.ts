@@ -30,7 +30,7 @@ export class WorkflowVersionCoreSyncService {
 
   constructor(
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
-    private readonly workflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
+    private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
@@ -82,7 +82,9 @@ export class WorkflowVersionCoreSyncService {
       Array.from(coreVersionIdByWorkspaceRecordId.keys()),
     );
 
-    await this.workflowVersionRepository.upsert(workspaceId, coreRows, ['id']);
+    await this.coreWorkflowVersionRepository.upsert(workspaceId, coreRows, [
+      'id',
+    ]);
 
     await this.writeBackCoreVersionIds(
       workspaceId,
@@ -100,7 +102,7 @@ export class WorkflowVersionCoreSyncService {
       return;
     }
 
-    await this.workflowVersionRepository.delete(workspaceId, {
+    await this.coreWorkflowVersionRepository.delete(workspaceId, {
       id: In(coreWorkflowVersionIds),
     });
 
@@ -118,7 +120,7 @@ export class WorkflowVersionCoreSyncService {
       return;
     }
 
-    await this.workflowVersionRepository.delete(workspaceId, {
+    await this.coreWorkflowVersionRepository.delete(workspaceId, {
       id: In(workspaceRecordIds),
     });
   }
@@ -140,7 +142,7 @@ export class WorkflowVersionCoreSyncService {
     }
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowVersionRepository =
+      const workspaceWorkflowVersionRepository =
         await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
           workspaceId,
           'workflowVersion',
@@ -151,7 +153,7 @@ export class WorkflowVersionCoreSyncService {
         workspaceRecordId,
         coreWorkflowVersionId,
       ] of coreVersionIdByWorkspaceRecordId) {
-        await workflowVersionRepository.update(workspaceRecordId, {
+        await workspaceWorkflowVersionRepository.update(workspaceRecordId, {
           coreWorkflowVersionId,
         });
       }
