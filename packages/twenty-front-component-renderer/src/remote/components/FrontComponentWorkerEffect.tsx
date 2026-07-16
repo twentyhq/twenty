@@ -77,16 +77,20 @@ export const FrontComponentWorkerEffect = ({
     // runs in an opaque origin where CacheStorage is unavailable.
     let isCancelled = false;
 
-    fetchComponentSource({
-      url: componentUrl,
-      headers: buildAuthorizationHeadersFromAccessToken(applicationAccessToken),
-    })
-      .then((componentSource) => {
+    const resolveComponentSourceAndRender = async () => {
+      try {
+        const componentSource = await fetchComponentSource({
+          url: componentUrl,
+          headers: buildAuthorizationHeadersFromAccessToken(
+            applicationAccessToken,
+          ),
+        });
+
         if (isCancelled) {
           return;
         }
 
-        return thread.imports.render(newReceiver.connection, {
+        await thread.imports.render(newReceiver.connection, {
           componentUrl,
           componentSource,
           applicationAccessToken,
@@ -96,12 +100,14 @@ export const FrontComponentWorkerEffect = ({
           hostFetchOrigins: hostFetchPolicy.allowedOrigins,
           applicationVariables,
         });
-      })
-      .catch((error: Error) => {
+      } catch (error) {
         if (!isCancelled) {
-          setError(error);
+          setError(error instanceof Error ? error : new Error(String(error)));
         }
-      });
+      }
+    };
+
+    resolveComponentSourceAndRender();
 
     setReceiver(newReceiver);
     isInitializedRef.current = true;
