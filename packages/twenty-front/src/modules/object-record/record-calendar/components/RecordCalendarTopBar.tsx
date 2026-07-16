@@ -1,10 +1,11 @@
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
+import { isRecordCalendarReadOnlyComponentState } from '@/object-record/record-calendar/states/isRecordCalendarReadOnlyComponentState';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
 import { useRecordCalendarWeekDaysRange } from '@/object-record/record-calendar/week/hooks/useRecordCalendarWeekDaysRange';
 import { formatRecordCalendarWeekRange } from '@/object-record/record-calendar/week/utils/formatRecordCalendarWeekRange';
-import { recordIndexCalendarLayoutState } from '@/object-record/record-index/states/recordIndexCalendarLayoutState';
+import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { DatePickerWithoutCalendar } from '@/ui/input/components/internal/date/components/DatePickerWithoutCalendar';
 import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/components/TimeZoneAbbreviation';
 import { Select } from '@/ui/input/components/Select';
@@ -14,8 +15,8 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -70,8 +71,12 @@ export const RecordCalendarTopBar = () => {
   const [recordCalendarSelectedDate, setRecordCalendarSelectedDate] =
     useAtomComponentState(recordCalendarSelectedDateComponentState);
 
+  const isRecordCalendarReadOnly = useAtomComponentStateValue(
+    isRecordCalendarReadOnlyComponentState,
+  );
+
   const [recordIndexCalendarLayout, setRecordIndexCalendarLayout] =
-    useAtomState(recordIndexCalendarLayoutState);
+    useAtomComponentState(recordIndexCalendarLayoutComponentState);
   const isCalendarWeekViewEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
   );
@@ -161,7 +166,7 @@ export const RecordCalendarTopBar = () => {
   return (
     <StyledContainer>
       <StyledLeftSection>
-        {isCalendarWeekViewEnabled && (
+        {isCalendarWeekViewEnabled && !isRecordCalendarReadOnly && (
           <Select
             dropdownId={`record-calendar-layout-${recordCalendarId}`}
             value={supportedCalendarLayout}
