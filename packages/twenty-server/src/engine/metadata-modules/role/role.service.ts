@@ -21,9 +21,13 @@ import {
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { fromCreateRoleInputToFlatRoleToCreate } from 'src/engine/metadata-modules/flat-role/utils/from-create-role-input-to-flat-role-to-create.util';
 import { fromDeleteRoleInputToFlatRoleOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-delete-role-input-to-flat-role-or-throw.util';
 import { fromUpdateRoleInputToFlatRoleToUpdateOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util';
+import { fromFlatFieldPermissionToFieldPermissionDto } from 'src/engine/metadata-modules/object-permission/utils/from-flat-field-permission-to-field-permission-dto.util';
+import { fromFlatObjectPermissionToObjectPermissionDto } from 'src/engine/metadata-modules/object-permission/utils/from-flat-object-permission-to-object-permission-dto.util';
 import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
 import {
   PermissionsException,
@@ -35,6 +39,7 @@ import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { type UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role.input';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
+import { fromFlatRolePermissionFlagToRolePermissionFlagDto } from 'src/engine/metadata-modules/role-permission-flag/utils/from-flat-role-permission-flag-to-role-permission-flag-dto.util';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -56,16 +61,67 @@ export class RoleService {
     private readonly aiAgentRoleService: AiAgentRoleService,
   ) {}
 
-  public async getWorkspaceRoles(workspaceId: string): Promise<RoleEntity[]> {
-    return this.roleRepository.find(workspaceId, {
-      relations: {
-        roleTargets: true,
-        rolePermissionFlags: {
-          permissionFlag: true,
+  public async getWorkspaceRoles(workspaceId: string): Promise<RoleDTO[]> {
+    const { flatRoleMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatRoleMaps'],
         },
-        objectPermissions: true,
-        fieldPermissions: true,
-      },
+      );
+
+    return this.findManyWithRelationsFromCache(
+      Object.values(flatRoleMaps.byUniversalIdentifier).filter(isDefined),
+      workspaceId,
+    );
+  }
+
+  private async findManyWithRelationsFromCache(
+    flatRoles: FlatRole[],
+    workspaceId: string,
+  ): Promise<RoleDTO[]> {
+    const {
+      flatRolePermissionFlagMaps,
+      flatPermissionFlagMaps,
+      flatObjectPermissionMaps,
+      flatFieldPermissionMaps,
+    } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatRolePermissionFlagMaps',
+            'flatPermissionFlagMaps',
+            'flatObjectPermissionMaps',
+            'flatFieldPermissionMaps',
+          ],
+        },
+      );
+
+    return flatRoles.map((flatRole) => {
+      const roleDto = fromFlatRoleToRoleDto(flatRole);
+
+      roleDto.permissionFlags = findManyFlatEntityByIdInFlatEntityMaps({
+        flatEntityIds: flatRole.rolePermissionFlagIds,
+        flatEntityMaps: flatRolePermissionFlagMaps,
+      }).map((flatRolePermissionFlag) =>
+        fromFlatRolePermissionFlagToRolePermissionFlagDto(
+          flatRolePermissionFlag,
+          flatPermissionFlagMaps,
+        ),
+      );
+
+      roleDto.objectPermissions = findManyFlatEntityByIdInFlatEntityMaps({
+        flatEntityIds: flatRole.objectPermissionIds,
+        flatEntityMaps: flatObjectPermissionMaps,
+      }).map(fromFlatObjectPermissionToObjectPermissionDto);
+
+      roleDto.fieldPermissions = findManyFlatEntityByIdInFlatEntityMaps({
+        flatEntityIds: flatRole.fieldPermissionIds,
+        flatEntityMaps: flatFieldPermissionMaps,
+      }).map(fromFlatFieldPermissionToFieldPermissionDto);
+
+      return roleDto;
     });
   }
 
