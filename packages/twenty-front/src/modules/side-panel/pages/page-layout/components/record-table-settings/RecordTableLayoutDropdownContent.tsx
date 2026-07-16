@@ -1,10 +1,10 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { canGroupRecordsByFieldMetadataItem } from '@/object-record/record-group/utils/canGroupRecordsByFieldMetadataItem';
+import { isFieldMetadataItemAvailableAsCalendarField } from '@/object-record/record-calendar/utils/isFieldMetadataItemAvailableAsCalendarField';
 import {
   type RecordTableWidgetLayoutViewType,
   useRecordTableWidgetLayoutCallbacks,
 } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
-import { isFieldMetadataItemAvailableAsCalendarField } from '@/object-record/record-calendar/utils/isFieldMetadataItemAvailableAsCalendarField';
+import { isFieldMetadataItemAvailableAsWidgetGroupByField } from '@/page-layout/widgets/record-table/utils/isFieldMetadataItemAvailableAsWidgetGroupByField';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -14,7 +14,6 @@ import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCalendar, IconLayoutKanban, IconTable } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
@@ -57,10 +56,7 @@ export const RecordTableLayoutDropdownContent = ({
 
   const defaultGroupByFieldMetadataItem =
     (objectMetadataItem?.readableFields ?? []).find(
-      (fieldMetadataItem) =>
-        fieldMetadataItem.isActive === true &&
-        fieldMetadataItem.type === FieldMetadataType.SELECT &&
-        canGroupRecordsByFieldMetadataItem(fieldMetadataItem),
+      isFieldMetadataItemAvailableAsWidgetGroupByField,
     ) ?? null;
 
   const defaultCalendarFieldMetadataItem =

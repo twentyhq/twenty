@@ -1,6 +1,6 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { canGroupRecordsByFieldMetadataItem } from '@/object-record/record-group/utils/canGroupRecordsByFieldMetadataItem';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
+import { isFieldMetadataItemAvailableAsWidgetGroupByField } from '@/page-layout/widgets/record-table/utils/isFieldMetadataItemAvailableAsWidgetGroupByField';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -13,7 +13,6 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
@@ -61,14 +60,8 @@ export const RecordTableGroupByDropdownContent = ({
     widgetId,
   });
 
-  // Relation group-by is not offered on widgets for now: the server only
-  // auto-generates view groups from select options, and widgets have no
-  // add-group-per-record flow like the record index page.
   const groupableFields = (objectMetadataItem?.readableFields ?? []).filter(
-    (fieldMetadataItem) =>
-      fieldMetadataItem.isActive === true &&
-      fieldMetadataItem.type === FieldMetadataType.SELECT &&
-      canGroupRecordsByFieldMetadataItem(fieldMetadataItem),
+    isFieldMetadataItemAvailableAsWidgetGroupByField,
   );
 
   const filteredFields = filterBySearchQuery({

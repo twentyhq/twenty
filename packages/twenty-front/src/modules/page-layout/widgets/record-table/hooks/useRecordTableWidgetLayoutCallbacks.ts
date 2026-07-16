@@ -1,5 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
+import { type RecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewSnapshot';
 import { buildDraftViewGroupsForFieldMetadataItem } from '@/page-layout/widgets/record-table/utils/buildDraftViewGroupsForFieldMetadataItem';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
@@ -27,8 +28,12 @@ export const useRecordTableWidgetLayoutCallbacks = ({
 
   const store = useStore();
 
-  const handleGroupByFieldChange = (
-    fieldMetadataItem: FieldMetadataItem | null,
+  // Returning the received snapshot unchanged from the updater leaves the
+  // whole draft map untouched (no state update is published).
+  const setWidgetViewDraft = (
+    updater: (
+      widgetViewDraft: RecordTableWidgetViewSnapshot,
+    ) => RecordTableWidgetViewSnapshot,
   ) => {
     store.set(recordTableWidgetViewDraftState, (prev) => {
       const widgetViewDraft = prev[widgetId];
@@ -37,23 +42,35 @@ export const useRecordTableWidgetLayoutCallbacks = ({
         return prev;
       }
 
+      const updatedWidgetViewDraft = updater(widgetViewDraft);
+
+      if (updatedWidgetViewDraft === widgetViewDraft) {
+        return prev;
+      }
+
       return {
         ...prev,
-        [widgetId]: {
-          ...widgetViewDraft,
-          view: {
-            ...widgetViewDraft.view,
-            mainGroupByFieldMetadataId: fieldMetadataItem?.id ?? null,
-          },
-          viewGroups: isDefined(fieldMetadataItem)
-            ? buildDraftViewGroupsForFieldMetadataItem({
-                viewId: widgetViewDraft.view.id,
-                fieldMetadataItem,
-              })
-            : [],
-        },
+        [widgetId]: updatedWidgetViewDraft,
       };
     });
+  };
+
+  const handleGroupByFieldChange = (
+    fieldMetadataItem: FieldMetadataItem | null,
+  ) => {
+    setWidgetViewDraft((widgetViewDraft) => ({
+      ...widgetViewDraft,
+      view: {
+        ...widgetViewDraft.view,
+        mainGroupByFieldMetadataId: fieldMetadataItem?.id ?? null,
+      },
+      viewGroups: isDefined(fieldMetadataItem)
+        ? buildDraftViewGroupsForFieldMetadataItem({
+            viewId: widgetViewDraft.view.id,
+            fieldMetadataItem,
+          })
+        : [],
+    }));
   };
 
   const handleLayoutChange = ({
@@ -65,41 +82,32 @@ export const useRecordTableWidgetLayoutCallbacks = ({
     defaultGroupByFieldMetadataItem: FieldMetadataItem | null;
     defaultCalendarFieldMetadataItem?: FieldMetadataItem | null;
   }) => {
-    store.set(recordTableWidgetViewDraftState, (prev) => {
-      const widgetViewDraft = prev[widgetId];
-
-      if (!isDefined(widgetViewDraft)) {
-        return prev;
-      }
-
+    setWidgetViewDraft((widgetViewDraft) => {
       if (targetViewType === ViewType.KANBAN_WIDGET) {
         const hasGroupBy = isDefined(
           widgetViewDraft.view.mainGroupByFieldMetadataId,
         );
 
         if (!hasGroupBy && !isDefined(defaultGroupByFieldMetadataItem)) {
-          return prev;
+          return widgetViewDraft;
         }
 
         return {
-          ...prev,
-          [widgetId]: {
-            ...widgetViewDraft,
-            view: {
-              ...widgetViewDraft.view,
-              type: targetViewType,
-              mainGroupByFieldMetadataId: hasGroupBy
-                ? widgetViewDraft.view.mainGroupByFieldMetadataId
-                : defaultGroupByFieldMetadataItem?.id,
-            },
-            viewGroups:
-              hasGroupBy || !isDefined(defaultGroupByFieldMetadataItem)
-                ? widgetViewDraft.viewGroups
-                : buildDraftViewGroupsForFieldMetadataItem({
-                    viewId: widgetViewDraft.view.id,
-                    fieldMetadataItem: defaultGroupByFieldMetadataItem,
-                  }),
+          ...widgetViewDraft,
+          view: {
+            ...widgetViewDraft.view,
+            type: targetViewType,
+            mainGroupByFieldMetadataId: hasGroupBy
+              ? widgetViewDraft.view.mainGroupByFieldMetadataId
+              : defaultGroupByFieldMetadataItem?.id,
           },
+          viewGroups:
+            hasGroupBy || !isDefined(defaultGroupByFieldMetadataItem)
+              ? widgetViewDraft.viewGroups
+              : buildDraftViewGroupsForFieldMetadataItem({
+                  viewId: widgetViewDraft.view.id,
+                  fieldMetadataItem: defaultGroupByFieldMetadataItem,
+                }),
         };
       }
 
@@ -109,84 +117,56 @@ export const useRecordTableWidgetLayoutCallbacks = ({
         );
 
         if (!hasCalendarField && !isDefined(defaultCalendarFieldMetadataItem)) {
-          return prev;
+          return widgetViewDraft;
         }
 
         return {
-          ...prev,
-          [widgetId]: {
-            ...widgetViewDraft,
-            view: {
-              ...widgetViewDraft.view,
-              type: targetViewType,
-              // Widget calendars are month-only for now, so switching to
-              // the calendar layout always normalizes to MONTH.
-              calendarLayout: ViewCalendarLayout.MONTH,
-              calendarFieldMetadataId: hasCalendarField
-                ? widgetViewDraft.view.calendarFieldMetadataId
-                : defaultCalendarFieldMetadataItem?.id,
-            },
+          ...widgetViewDraft,
+          view: {
+            ...widgetViewDraft.view,
+            type: targetViewType,
+            // Widget calendars are month-only for now, so switching to
+            // the calendar layout always normalizes to MONTH.
+            calendarLayout: ViewCalendarLayout.MONTH,
+            calendarFieldMetadataId: hasCalendarField
+              ? widgetViewDraft.view.calendarFieldMetadataId
+              : defaultCalendarFieldMetadataItem?.id,
           },
         };
       }
 
       return {
-        ...prev,
-        [widgetId]: {
-          ...widgetViewDraft,
-          view: {
-            ...widgetViewDraft.view,
-            type: targetViewType,
-          },
+        ...widgetViewDraft,
+        view: {
+          ...widgetViewDraft.view,
+          type: targetViewType,
         },
       };
     });
   };
 
   const handleCalendarFieldChange = (fieldMetadataItem: FieldMetadataItem) => {
-    store.set(recordTableWidgetViewDraftState, (prev) => {
-      const widgetViewDraft = prev[widgetId];
-
-      if (!isDefined(widgetViewDraft)) {
-        return prev;
-      }
-
-      return {
-        ...prev,
-        [widgetId]: {
-          ...widgetViewDraft,
-          view: {
-            ...widgetViewDraft.view,
-            calendarFieldMetadataId: fieldMetadataItem.id,
-            calendarLayout:
-              widgetViewDraft.view.calendarLayout ?? ViewCalendarLayout.MONTH,
-          },
-        },
-      };
-    });
+    setWidgetViewDraft((widgetViewDraft) => ({
+      ...widgetViewDraft,
+      view: {
+        ...widgetViewDraft.view,
+        calendarFieldMetadataId: fieldMetadataItem.id,
+        calendarLayout:
+          widgetViewDraft.view.calendarLayout ?? ViewCalendarLayout.MONTH,
+      },
+    }));
   };
 
   const handleShouldHideEmptyGroupsChange = (
     shouldHideEmptyGroups: boolean,
   ) => {
-    store.set(recordTableWidgetViewDraftState, (prev) => {
-      const widgetViewDraft = prev[widgetId];
-
-      if (!isDefined(widgetViewDraft)) {
-        return prev;
-      }
-
-      return {
-        ...prev,
-        [widgetId]: {
-          ...widgetViewDraft,
-          view: {
-            ...widgetViewDraft.view,
-            shouldHideEmptyGroups,
-          },
-        },
-      };
-    });
+    setWidgetViewDraft((widgetViewDraft) => ({
+      ...widgetViewDraft,
+      view: {
+        ...widgetViewDraft.view,
+        shouldHideEmptyGroups,
+      },
+    }));
   };
 
   return {
