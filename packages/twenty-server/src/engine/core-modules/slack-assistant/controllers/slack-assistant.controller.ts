@@ -88,7 +88,6 @@ export class SlackAssistantController {
           channelId: payload.channelId,
           threadTs: payload.threadTs,
           text: payload.text,
-          slackUserId: payload.userId,
           eventId: payload.eventId,
         },
       );
