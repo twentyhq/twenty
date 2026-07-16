@@ -1,0 +1,22 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-22/2-22-upgrade-version-command.module.ts
+  s_c4892f4ac2fb0e::t_72518229375dac 4
+  s_c4892f4ac2fb0e::t_16f86a8bff5cc8 27
+packages/twenty-server/src/database/commands/upgrade-version-command/2-22/2-22-workspace-command-1784106300000-add-compose-campaign-command-menu-items.command.ts
+  s_c4892f4ac2fb0e::t_2bc087baae8e69 1-123
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "f6e66eee21520a3e542641e9acdfbfbd84a9cdaa",
+  "prompts": {},
+  "sessions": {
+    "s_c4892f4ac2fb0e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "74e7b645-8557-47f5-9aa3-10d3470dabef",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
