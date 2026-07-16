@@ -145,6 +145,7 @@ export class ApplicationInstallResolver {
       universal_identifier: universalIdentifier,
       app_name: application?.name ?? 'unknown',
       source_type: application?.sourceType ?? 'unknown',
+      version: application?.version ?? 'unknown',
     };
 
     try {

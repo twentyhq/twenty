@@ -10,7 +10,6 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { type ResolvedPackage } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -20,7 +19,10 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
+import {
+  type ResolvedPackage,
+  ApplicationPackageFetcherService,
+} from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
