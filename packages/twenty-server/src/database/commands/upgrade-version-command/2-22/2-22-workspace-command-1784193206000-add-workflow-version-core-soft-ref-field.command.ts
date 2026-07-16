@@ -103,8 +103,14 @@ export class AddWorkflowVersionCoreSoftRefFieldCommand extends ProvisionedWorksp
       return;
     }
 
+    const flatFieldMetadataToCreate: FlatFieldMetadata = {
+      ...standardField,
+      viewFieldIds: [],
+      viewFieldUniversalIdentifiers: [],
+    };
+
     const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           isSystemBuild: true,
           workspaceId,
@@ -112,7 +118,7 @@ export class AddWorkflowVersionCoreSoftRefFieldCommand extends ProvisionedWorksp
             twentyStandardFlatApplication.universalIdentifier,
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {
-              flatEntityToCreate: [standardField],
+              flatEntityToCreate: [flatFieldMetadataToCreate],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
