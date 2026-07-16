@@ -361,9 +361,7 @@ export class UserService {
 
     if (workspaceMembers.length === 1) {
       await this.workspaceService.suspendWorkspace(workspaceId);
-      await this.workspaceService.deleteWorkspace(workspaceId, {
-        softDelete: true,
-      });
+      await this.workspaceService.deleteWorkspace(workspaceId, true);
 
       return;
     }

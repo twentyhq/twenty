@@ -10,7 +10,6 @@ export enum WorkspaceExceptionCode {
   SUBDOMAIN_NOT_VALID = 'SUBDOMAIN_NOT_VALID',
   DOMAIN_ALREADY_TAKEN = 'DOMAIN_ALREADY_TAKEN',
   WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND',
-  WORKSPACE_ALREADY_DELETED = 'WORKSPACE_ALREADY_DELETED',
   WORKSPACE_CUSTOM_DOMAIN_DISABLED = 'WORKSPACE_CUSTOM_DOMAIN_DISABLED',
   ENVIRONMENT_VAR_NOT_ENABLED = 'ENVIRONMENT_VAR_NOT_ENABLED',
   CUSTOM_DOMAIN_NOT_FOUND = 'CUSTOM_DOMAIN_NOT_FOUND',
@@ -30,8 +29,6 @@ const getWorkspaceExceptionUserFriendlyMessage = (
       return msg`This domain is already taken.`;
     case WorkspaceExceptionCode.WORKSPACE_NOT_FOUND:
       return msg`Workspace not found.`;
-    case WorkspaceExceptionCode.WORKSPACE_ALREADY_DELETED:
-      return msg`Workspace is already deleted.`;
     case WorkspaceExceptionCode.WORKSPACE_CUSTOM_DOMAIN_DISABLED:
       return msg`Custom domains are disabled for this workspace.`;
     case WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED:

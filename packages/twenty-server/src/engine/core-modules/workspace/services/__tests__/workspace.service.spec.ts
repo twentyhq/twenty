@@ -299,7 +299,7 @@ describe('WorkspaceService', () => {
         .mockResolvedValue(mockWorkspace);
       jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
 
-      await service.deleteWorkspace(mockWorkspace.id, { softDelete: false });
+      await service.deleteWorkspace(mockWorkspace.id, false);
 
       expect(
         billingSubscriptionService.assertSubscriptionCanceledOrNone,
@@ -324,7 +324,7 @@ describe('WorkspaceService', () => {
         .mockResolvedValue(mockWorkspace);
       jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
 
-      await service.deleteWorkspace(mockWorkspace.id, { softDelete: true });
+      await service.deleteWorkspace(mockWorkspace.id, true);
 
       expect(
         billingSubscriptionService.cancelSubscription,
@@ -348,7 +348,7 @@ describe('WorkspaceService', () => {
         .mockResolvedValue(mockWorkspace);
       jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
 
-      await service.deleteWorkspace(mockWorkspace.id, { softDelete: false });
+      await service.deleteWorkspace(mockWorkspace.id, false);
 
       expect(dnsManagerService.deleteHostnameSilently).toHaveBeenCalledWith(
         customDomain,
@@ -368,52 +368,12 @@ describe('WorkspaceService', () => {
         .mockResolvedValue(mockWorkspace);
       jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
 
-      await service.deleteWorkspace(mockWorkspace.id, { softDelete: true });
+      await service.deleteWorkspace(mockWorkspace.id, true);
 
       expect(dnsManagerService.deleteHostnameSilently).not.toHaveBeenCalled();
       expect(workspaceRepository.softDelete).toHaveBeenCalledWith({
         id: mockWorkspace.id,
       });
-    });
-
-    it('should throw and skip destructive cleanup when the workspace is already soft-deleted and throwIfAlreadySoftDeleted is set', async () => {
-      const mockWorkspace = {
-        id: 'workspace-id',
-        metadataVersion: 0,
-        deletedAt: new Date(),
-      } as WorkspaceEntity;
-
-      jest
-        .spyOn(workspaceRepository, 'findOne')
-        .mockResolvedValue(mockWorkspace);
-
-      await expect(
-        service.deleteWorkspace(mockWorkspace.id, {
-          throwIfAlreadySoftDeleted: true,
-        }),
-      ).rejects.toThrow('is already soft-deleted');
-
-      expect(userWorkspaceRepository.find).not.toHaveBeenCalled();
-      expect(workspaceRepository.delete).not.toHaveBeenCalled();
-      expect(workspaceRepository.softDelete).not.toHaveBeenCalled();
-    });
-
-    it('should hard delete when throwIfAlreadySoftDeleted is set but the workspace is not soft-deleted', async () => {
-      const mockWorkspace = {
-        id: 'workspace-id',
-        metadataVersion: 0,
-      } as WorkspaceEntity;
-
-      jest
-        .spyOn(workspaceRepository, 'findOne')
-        .mockResolvedValue(mockWorkspace);
-      jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
-
-      await service.deleteWorkspace(mockWorkspace.id, {
-        throwIfAlreadySoftDeleted: true,
-      });
-
-      expect(workspaceRepository.delete).toHaveBeenCalledWith(mockWorkspace.id);
     });
   });
 

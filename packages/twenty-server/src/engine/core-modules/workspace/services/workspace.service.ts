@@ -535,29 +535,13 @@ export class WorkspaceService {
     return hasBeenReactivated;
   }
 
-  async deleteWorkspace(
-    id: string,
-    {
-      softDelete = false,
-      throwIfAlreadySoftDeleted = false,
-    }: {
-      softDelete?: boolean;
-      throwIfAlreadySoftDeleted?: boolean;
-    } = {},
-  ) {
+  async deleteWorkspace(id: string, softDelete = false) {
     const workspace = await this.workspaceRepository.findOne({
       where: { id },
       withDeleted: true,
     });
 
     assert(workspace, 'Workspace not found');
-
-    if (throwIfAlreadySoftDeleted && isDefined(workspace.deletedAt)) {
-      throw new WorkspaceException(
-        `Workspace ${id} is already soft-deleted`,
-        WorkspaceExceptionCode.WORKSPACE_ALREADY_DELETED,
-      );
-    }
 
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
