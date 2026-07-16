@@ -54,6 +54,21 @@ export class AiAgentRoleService {
     });
   }
 
+  public async getAssignedRoleId({
+    workspaceId,
+    agentId,
+  }: {
+    workspaceId: string;
+    agentId: string;
+  }): Promise<string | null> {
+    const roleTarget = await this.roleTargetRepository.findOne(workspaceId, {
+      where: { agentId },
+      select: ['roleId'],
+    });
+
+    return roleTarget?.roleId ?? null;
+  }
+
   public async removeRoleFromAgent({
     workspaceId,
     agentId,
