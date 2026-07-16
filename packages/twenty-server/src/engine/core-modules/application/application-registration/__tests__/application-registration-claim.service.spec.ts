@@ -206,6 +206,7 @@ describe('ApplicationRegistrationClaimService', () => {
       expect(url.searchParams.get('client_id')).toBe('github-client-id');
       expect(url.searchParams.get('scope')).toBe('read:org');
       expect(url.searchParams.get('state')).toBe('signed-state');
+      expect(url.searchParams.get('prompt')).toBe('select_account');
       expect(url.searchParams.get('redirect_uri')).toBe(
         'https://server.example.com/application-registration-claim/github/callback',
       );

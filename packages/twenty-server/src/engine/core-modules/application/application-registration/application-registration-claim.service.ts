@@ -122,6 +122,9 @@ export class ApplicationRegistrationClaimService {
     authorizationUrl.searchParams.set('scope', 'read:org');
     authorizationUrl.searchParams.set('redirect_uri', this.buildCallbackUrl());
     authorizationUrl.searchParams.set('state', state);
+    // Always show the account picker: without it GitHub silently reuses the
+    // previous authorization, leaving no way to retry with another account.
+    authorizationUrl.searchParams.set('prompt', 'select_account');
 
     return authorizationUrl.toString();
   }

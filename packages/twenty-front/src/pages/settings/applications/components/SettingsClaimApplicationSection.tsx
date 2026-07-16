@@ -227,7 +227,7 @@ export const SettingsClaimApplicationSection = () => {
             <StyledHint>{registration.description}</StyledHint>
           )}
           <StyledHint>
-            {t`Ownership is verified through npm trusted publishing: the package must be published from GitHub Actions with provenance, and you must own the GitHub account or organization it is published from.`}
+            {t`Ownership is verified through npm trusted publishing: the package must be published from GitHub Actions with provenance. Sign in with a GitHub account that owns the publishing account or organization — when the package is published by an organization, grant this app access to it on GitHub's authorization screen.`}
           </StyledHint>
           <StyledRow>
             <Button

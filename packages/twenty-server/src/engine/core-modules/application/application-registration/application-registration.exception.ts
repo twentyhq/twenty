@@ -64,7 +64,7 @@ const getExceptionUserFriendlyMessage = (
     case ApplicationRegistrationExceptionCode.GITHUB_AUTH_FAILED:
       return msg`GitHub authentication failed. Try connecting your GitHub account again.`;
     case ApplicationRegistrationExceptionCode.GITHUB_ORG_OWNERSHIP_REQUIRED:
-      return msg`Your GitHub account does not own the organization that publishes this package.`;
+      return msg`Your GitHub account does not own the organization that publishes this package. If you are an owner, make sure you granted this app access to the organization on GitHub's authorization screen (Organization access section).`;
     default:
       assertUnreachable(code);
   }

@@ -50,11 +50,10 @@ export class ApplicationRegistrationClaimController {
         throw new Error('GitHub authorization was denied');
       }
 
-      const registration =
-        await this.applicationRegistrationClaimService.completeGithubClaim({
-          statePayload,
-          code,
-        });
+      await this.applicationRegistrationClaimService.completeGithubClaim({
+        statePayload,
+        code,
+      });
 
       if (workspace === null) {
         throw new Error('Workspace not found');
@@ -62,10 +61,10 @@ export class ApplicationRegistrationClaimController {
 
       const url = this.workspaceDomainsService.buildWorkspaceURL({
         workspace,
-        pathname: getSettingsPath(SettingsPath.ApplicationRegistrationDetail, {
-          applicationRegistrationId: registration.id,
-        }),
+        pathname: getSettingsPath(SettingsPath.Applications),
       });
+
+      url.hash = 'developer';
 
       return res.redirect(url.toString());
     } catch (error) {
