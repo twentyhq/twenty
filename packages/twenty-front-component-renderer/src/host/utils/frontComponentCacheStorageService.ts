@@ -79,10 +79,6 @@ export const frontComponentCacheStorageService = {
     cache.delete(url).catch(() => undefined);
   },
 
-  // Entries are keyed by checksummed URLs, so a rebuilt component gets a new
-  // key and would leave its previous entry stranded forever. Evict every
-  // entry sharing the same `.../front-components/{id}/` prefix but a
-  // different checksum.
   evictStaleEntriesForComponent: ({
     cache,
     url,

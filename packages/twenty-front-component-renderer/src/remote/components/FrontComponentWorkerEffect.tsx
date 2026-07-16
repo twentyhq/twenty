@@ -6,12 +6,12 @@ import { buildHostFetchPolicyFromFrontComponentUrls } from '@/host/utils/buildHo
 import { createFrontComponentHostThread } from '@/host/utils/createFrontComponentHostThread';
 import { createHostFetchEnforcingPolicy } from '@/host/utils/createHostFetchEnforcingPolicy';
 import { fetchComponentSource } from '@/host/utils/fetchComponentSource';
-import { buildAuthorizationHeadersFromAccessToken } from '@/utils/buildAuthorizationHeadersFromAccessToken';
 import { FRONT_COMPONENT_SANDBOX_DOCUMENT } from '@/remote/sandbox/generated/frontComponentSandboxDocument';
 import { createFrontComponentSandboxIframe } from '@/remote/sandbox/utils/createFrontComponentSandboxIframe';
 import { createFrontComponentSandboxMessageHandler } from '@/remote/sandbox/utils/createFrontComponentSandboxMessageHandler';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
+import { buildAuthorizationHeadersFromAccessToken } from '@/utils/buildAuthorizationHeadersFromAccessToken';
 
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;
@@ -73,8 +73,6 @@ export const FrontComponentWorkerEffect = ({
 
     setThread(thread);
 
-    // The component source is resolved host-side because the sandboxed worker
-    // runs in an opaque origin where CacheStorage is unavailable.
     let isCancelled = false;
 
     const resolveComponentSourceAndRender = async () => {
