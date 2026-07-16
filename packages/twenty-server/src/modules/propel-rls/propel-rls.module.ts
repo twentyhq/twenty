@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { PropelTierService } from 'src/modules/propel-rls/propel-tier.service';
 import { SecondaryOpportunityRlsPreQueryHook } from 'src/modules/propel-rls/secondary-opportunity-rls.pre-query.hook';
 import { SecondaryOpportunityFindOneRlsPreQueryHook } from 'src/modules/propel-rls/secondary-opportunity-find-one-rls.pre-query.hook';
@@ -60,9 +63,10 @@ import { DealStageGatePreQueryHook } from 'src/modules/propel-rls/deal-stage-gat
 //    read-path hooks (buildTierFilter) and the stage gate (gateBypasses).
 // None derived from @license Enterprise code.
 @Module({
-  imports: [RoleModule],
+  imports: [RoleModule, TypeOrmModule.forFeature([RoleTargetEntity])],
   providers: [
     PropelTierService,
+    provideWorkspaceScopedRepository(RoleTargetEntity),
     SecondaryOpportunityRlsPreQueryHook,
     SecondaryOpportunityFindOneRlsPreQueryHook,
     SecondaryOpportunityGroupByRlsPreQueryHook,

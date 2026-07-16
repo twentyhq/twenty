@@ -4,8 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
-import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { type TierFilterOptions } from 'src/modules/propel-rls/build-tier-filter.util';
 
 // ── Propel clean-room RLS — tier resolution from Twenty ROLE ─────────────────
@@ -51,7 +53,11 @@ export const PROPEL_ROLE_LABEL_TIER_MAP: Record<string, PropelTier> = {
 export class PropelTierService {
   private readonly logger = new Logger(PropelTierService.name);
 
-  constructor(private readonly roleService: RoleService) {}
+  constructor(
+    private readonly roleService: RoleService,
+    @InjectWorkspaceScopedRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
+  ) {}
 
   // Resolves the propel tier for a user auth context. ALWAYS returns a concrete
   // tier; never throws. Non-user contexts should not reach here (callers short
@@ -64,12 +70,25 @@ export class PropelTierService {
 
     try {
       const workspaceId = authContext.workspace.id;
-      const { userWorkspaceRoleMap } = getWorkspaceContext();
 
-      const roleId = userWorkspaceRoleMap[authContext.userWorkspaceId];
+      // NOTE: deliberately NOT using getWorkspaceContext() here — pre-query
+      // hooks (where this is called from) run BEFORE
+      // GlobalWorkspaceOrmManager.executeInWorkspaceContext() wraps the
+      // request, so the ALS-backed workspace context is never populated at
+      // this point and getWorkspaceContext() throws on every call, silently
+      // failing closed to AGENT for everyone. Look the roleTarget row up
+      // directly instead (same repository pattern the cache provider that
+      // *builds* that context uses, which works standalone for the same
+      // reason).
+      const roleTarget = await this.roleTargetRepository.findOne(
+        workspaceId,
+        { where: { userWorkspaceId: authContext.userWorkspaceId } },
+      );
+
+      const roleId = roleTarget?.roleId;
 
       if (!isDefined(roleId)) {
-        // No role assigned / empty map → fail closed.
+        // No role assigned → fail closed.
         return 'AGENT';
       }
 
