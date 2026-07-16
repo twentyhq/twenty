@@ -1,0 +1,1 @@
+export const EXECUTIVE_SYNC_OUTBOX_REDRIVE_CRON_PATTERN = '* * * * *';

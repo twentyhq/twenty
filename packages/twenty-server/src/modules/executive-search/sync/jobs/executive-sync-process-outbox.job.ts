@@ -4,6 +4,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueJob } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
+import { OutboundProjectionService } from 'src/modules/executive-search/outbound/services/outbound-projection.service';
 
 export type ExecutiveSyncProcessOutboxJobData = {
   workspaceId: string;
@@ -20,6 +21,10 @@ export type ExecutiveSyncProcessOutboxJobData = {
 @Processor(MessageQueue.executiveSyncQueue)
 export class ExecutiveSyncProcessOutboxJob {
   private readonly logger = new Logger(ExecutiveSyncProcessOutboxJob.name);
+
+  constructor(
+    private readonly projectionService: OutboundProjectionService,
+  ) {}
 
   @Process(ExecutiveSyncProcessOutboxJob.name)
   async handle(data: ExecutiveSyncProcessOutboxJobData): Promise<void> {

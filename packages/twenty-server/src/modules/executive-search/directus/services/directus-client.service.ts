@@ -4,6 +4,7 @@ import {
   DirectusAuthResponse,
   DirectusCollection,
   DirectusField,
+  DirectusItemResponse,
   DirectusItemsResponse,
   DirectusSchemaInfo,
 } from 'src/modules/executive-search/directus/types/directus-types';
@@ -11,9 +12,8 @@ import {
 /**
  * Directus REST API client.
  *
- * Handles authentication, schema retrieval, and item access with
- * rate-limit awareness and secure credential handling.  Writes are
- * disabled — this is a read-only/shadow adapter.
+ * Handles authentication, schema retrieval, and item read/write access
+ * with rate-limit awareness and secure credential handling.
  */
 @Injectable()
 export class DirectusClientService {
@@ -182,23 +182,102 @@ export class DirectusClientService {
   }
 
   /**
+   * Create an item in a Directus collection.
+   */
+  async createItem<T>(
+    collection: string,
+    body: string,
+    headers?: Record<string, string>,
+  ): Promise<T> {
+    if (!this.isAuthenticated()) {
+      throw new Error(
+        'Cannot perform write operations before authenticating with Directus',
+      );
+    }
+
+    const url = `${this.baseUrl}/items/${collection}`;
+    const response = await this.request<DirectusItemResponse<T>>(url, {
+      method: 'POST',
+      body,
+      headers,
+    });
+
+    return response.data;
+  }
+
+  /**
+   * Update an item in a Directus collection by ID.
+   */
+  async updateItem<T>(
+    collection: string,
+    id: string,
+    body: string,
+    headers?: Record<string, string>,
+  ): Promise<T> {
+    if (!this.isAuthenticated()) {
+      throw new Error(
+        'Cannot perform write operations before authenticating with Directus',
+      );
+    }
+
+    const url = `${this.baseUrl}/items/${collection}/${id}`;
+    const response = await this.request<DirectusItemResponse<T>>(url, {
+      method: 'PATCH',
+      body,
+      headers,
+    });
+
+    return response.data;
+  }
+
+  /**
+   * Delete an item from a Directus collection by ID.
+   */
+  async deleteItem(
+    collection: string,
+    id: string,
+    headers?: Record<string, string>,
+  ): Promise<void> {
+    if (!this.isAuthenticated()) {
+      throw new Error(
+        'Cannot perform write operations before authenticating with Directus',
+      );
+    }
+
+    const url = `${this.baseUrl}/items/${collection}/${id}`;
+    await this.request<void>(url, {
+      method: 'DELETE',
+      headers,
+      suppressJsonParse: true,
+    });
+  }
+
+  /**
    * Core HTTP request wrapper with auth, rate limiting, and error handling.
    */
-  private async request<T>(url: string, options?: RequestInit): Promise<T> {
+  private async request<T>(
+    url: string,
+    options?: RequestInit & { suppressJsonParse?: boolean },
+  ): Promise<T> {
     await this.applyRateLimit();
 
+    const suppressJsonParse = options?.suppressJsonParse;
+    const fetchOptions: RequestInit = options || {};
+
     const headers: Record<string, string> = {
-      ...(options?.headers as Record<string, string>),
+      ...(fetchOptions.headers as Record<string, string>),
     };
 
     if (this.accessToken) {
       headers['Authorization'] = `Bearer ${this.accessToken}`;
     }
 
-    this.logger.debug(`Directus API: ${options?.method || 'GET'} ${url.split('?')[0]}`);
+    this.logger.debug(
+      `Directus API: ${fetchOptions.method || 'GET'} ${url.split('?')[0]}`,
+    );
 
     const response = await fetch(url, {
-      ...options,
+      ...fetchOptions,
       headers,
     });
 
@@ -207,6 +286,10 @@ export class DirectusClientService {
       throw new Error(
         `Directus API error ${response.status} ${response.statusText}: ${body.slice(0, 500)}`,
       );
+    }
+
+    if (suppressJsonParse) {
+      return undefined as T;
     }
 
     const json = (await response.json()) as T;

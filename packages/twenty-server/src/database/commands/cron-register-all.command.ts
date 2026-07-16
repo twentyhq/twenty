@@ -22,6 +22,7 @@ import { CalendarEventListFetchCronCommand } from 'src/modules/calendar/calendar
 import { CalendarEventsImportCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-import.cron.command';
 import { CalendarOngoingStaleCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-ongoing-stale.cron.command';
 import { CalendarRelaunchFailedCalendarChannelsCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-relaunch-failed-calendar-channels.cron.command';
+import { ExecutiveSearchOutboxRedriveCronCommand } from 'src/modules/executive-search/sync/jobs/executive-sync-outbox-redrive.cron.command';
 import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-message-list-fetch.cron.command';
 import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
 import { MessagingOngoingStaleCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-ongoing-stale.cron.command';
@@ -68,6 +69,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly staleRegistrationCleanupCronCommand: StaleRegistrationCleanupCronCommand,
     private readonly pendingFileCleanupCronCommand: PendingFileCleanupCronCommand,
     private readonly billingReminderCronCommand: BillingReminderCronCommand,
+    private readonly executiveSearchOutboxRedriveCronCommand: ExecutiveSearchOutboxRedriveCronCommand,
     private readonly twentyConfigService: TwentyConfigService,
   ) {
     super();
@@ -193,6 +195,10 @@ export class CronRegisterAllCommand extends CommandRunner {
         name: 'BillingReminder',
         command: this.billingReminderCronCommand,
         isEnabled: isBillingEnabled,
+      },
+      {
+        name: 'ExecutiveSearchOutboxRedrive',
+        command: this.executiveSearchOutboxRedriveCronCommand,
       },
     ];
 

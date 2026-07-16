@@ -28,6 +28,14 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
         'Show the per-page hero illustration + video walkthrough modal on settings pages',
     },
   },
+  {
+    key: FeatureFlagKey.IS_EXECUTIVE_SEARCH_OUTBOUND_PUBLISH_ENABLED,
+    metadata: {
+      label: 'Executive Search Outbound Publish',
+      description:
+        'Publish approved company/opportunity projections to Directus',
+    },
+  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {

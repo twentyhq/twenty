@@ -9,7 +9,6 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { ExternalSyncOutboxWorkspaceEntity } from 'src/modules/executive-search/standard-objects/external-sync-outbox.workspace-entity';
-import { ExecutiveSyncProcessOutboxJob } from 'src/modules/executive-search/sync/jobs/executive-sync-process-outbox.job';
 
 export type OutboxEventInput = {
   workspaceId: string;
@@ -197,5 +196,59 @@ export class ExecutiveSearchOutboxService {
       },
       authContext,
     );
+  }
+
+  /**
+   * Find stale PROCESSING outbox entries that have been stuck for more than
+   * 5 minutes (worker crash between claim and mark).
+   */
+  async findStaleProcessing(
+    workspaceId: string,
+    limit = 100,
+  ): Promise<ExternalSyncOutboxWorkspaceEntity[]> {
+    const authContext = buildSystemAuthContext(workspaceId);
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const repository = await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        ExternalSyncOutboxWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
+
+      return repository.find({
+        where: {
+          status: OUTBOX_STATUS.PROCESSING,
+          updatedAt: LessThan(fiveMinutesAgo),
+        },
+        order: { updatedAt: 'ASC' },
+        take: limit,
+      });
+    }, authContext);
+  }
+
+  /**
+   * Reset a stale PROCESSING entry back to PENDING so it can be re-claimed.
+   * Conditional — only resets if still PROCESSING (markSent/markFailed may
+   * have raced ahead and already transitioned the row).
+   */
+  async resetStaleToPending(
+    workspaceId: string,
+    outboxId: string,
+  ): Promise<void> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const repository = await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        ExternalSyncOutboxWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
+
+      await repository.update(
+        { id: outboxId, status: OUTBOX_STATUS.PROCESSING },
+        { status: OUTBOX_STATUS.PENDING } as any,
+      );
+    }, authContext);
   }
 }
