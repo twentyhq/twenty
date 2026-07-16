@@ -245,6 +245,216 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
+  externalEntityLink: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'externalEntityLink'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'externalEntityLink',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.externalEntityLink.universalIdentifier,
+        nameSingular: 'externalEntityLink',
+        namePlural: 'externalEntityLinks',
+        labelSingular: i18nLabel(msg`External Entity Link`),
+        labelPlural: i18nLabel(msg`External Entity Links`),
+        description: i18nLabel(
+          msg`Links between Twenty records and external entity records`,
+        ),
+        icon: 'IconLink',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUICreatable: false,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  externalSyncCheckpoint: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'externalSyncCheckpoint'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'externalSyncCheckpoint',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.externalSyncCheckpoint.universalIdentifier,
+        nameSingular: 'externalSyncCheckpoint',
+        namePlural: 'externalSyncCheckpoints',
+        labelSingular: i18nLabel(msg`External Sync Checkpoint`),
+        labelPlural: i18nLabel(msg`External Sync Checkpoints`),
+        description: i18nLabel(
+          msg`Tracks the last synchronized position for each external system and entity`,
+        ),
+        icon: 'IconBookmark',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUICreatable: false,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  externalSyncDLQ: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'externalSyncDLQ'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'externalSyncDLQ',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.externalSyncDLQ.universalIdentifier,
+        nameSingular: 'externalSyncDLQ',
+        namePlural: 'externalSyncDLQs',
+        labelSingular: i18nLabel(msg`External Sync DLQ`),
+        labelPlural: i18nLabel(msg`External Sync DLQs`),
+        description: i18nLabel(
+          msg`Dead-letter queue for failed external sync events`,
+        ),
+        icon: 'IconAlertTriangle',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUICreatable: false,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  externalSyncInbox: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'externalSyncInbox'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'externalSyncInbox',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.externalSyncInbox.universalIdentifier,
+        nameSingular: 'externalSyncInbox',
+        namePlural: 'externalSyncInboxes',
+        labelSingular: i18nLabel(msg`External Sync Inbox`),
+        labelPlural: i18nLabel(msg`External Sync Inboxes`),
+        description: i18nLabel(
+          msg`Incoming external sync events to be processed`,
+        ),
+        icon: 'IconInbox',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUICreatable: false,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  externalSyncOutbox: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'externalSyncOutbox'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'externalSyncOutbox',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.externalSyncOutbox.universalIdentifier,
+        nameSingular: 'externalSyncOutbox',
+        namePlural: 'externalSyncOutboxes',
+        labelSingular: i18nLabel(msg`External Sync Outbox`),
+        labelPlural: i18nLabel(msg`External Sync Outboxes`),
+        description: i18nLabel(
+          msg`Outgoing outbound sync events to be sent to external systems`,
+        ),
+        icon: 'IconSend',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUICreatable: false,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  externalSyncReconciliation: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'externalSyncReconciliation'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'externalSyncReconciliation',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.externalSyncReconciliation.universalIdentifier,
+        nameSingular: 'externalSyncReconciliation',
+        namePlural: 'externalSyncReconciliations',
+        labelSingular: i18nLabel(msg`External Sync Reconciliation`),
+        labelPlural: i18nLabel(msg`External Sync Reconciliations`),
+        description: i18nLabel(
+          msg`Records the results of data reconciliation between Twenty and external systems`,
+        ),
+        icon: 'IconFileCheck',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUICreatable: false,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
   messageCampaign: ({
     now,
     workspaceId,

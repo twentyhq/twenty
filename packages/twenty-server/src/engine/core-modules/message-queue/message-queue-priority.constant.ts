@@ -18,4 +18,5 @@ export const MESSAGE_QUEUE_PRIORITY = {
   [MessageQueue.cronQueue]: 7,
   [MessageQueue.aiQueue]: 5,
   [MessageQueue.aiStreamQueue]: 2,
+  [MessageQueue.executiveSyncQueue]: 3,
 };
