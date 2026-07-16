@@ -493,6 +493,7 @@ export class WorkspaceService {
       {
         id,
         activationStatus: Not(WorkspaceActivationStatus.SUSPENDED),
+        deletedAt: IsNull(),
       },
       {
         activationStatus: WorkspaceActivationStatus.SUSPENDED,
