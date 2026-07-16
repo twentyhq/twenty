@@ -1,0 +1,25 @@
+packages/twenty-server/src/engine/core-modules/auth/services/google-apis.service.ts
+  s_c4892f4ac2fb0e::t_8c79088d9125c6 157
+packages/twenty-server/test/integration/google/messaging/connected-account-handle-provider-collision.integration-spec.ts
+  s_c4892f4ac2fb0e::t_ca1af534af3af4 1-101
+packages/twenty-server/src/modules/connected-account/services/imap-smtp-caldav-apis.service.ts
+  s_c4892f4ac2fb0e::t_c969a1c72ec98e 89-94
+packages/twenty-server/src/engine/core-modules/auth/services/microsoft-apis.service.ts
+  s_c4892f4ac2fb0e::t_49f06bfd7633d4 123
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "4a078dcce031a255913be16bb01878016ee471db",
+  "prompts": {},
+  "sessions": {
+    "s_c4892f4ac2fb0e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "74e7b645-8557-47f5-9aa3-10d3470dabef",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
