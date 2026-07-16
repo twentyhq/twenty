@@ -6,6 +6,7 @@ import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/application-univ
 import {
   DIRECTUS_API_KEY_ENV_VAR_NAME,
   DIRECTUS_URL_ENV_VAR_NAME,
+  DIRECTUS_WEBHOOK_SECRET_ENV_VAR_NAME,
 } from 'src/constants/server-variable-names';
 
 export default defineApplication({
@@ -33,6 +34,13 @@ export default defineApplication({
     [DIRECTUS_API_KEY_ENV_VAR_NAME]: {
       description:
         'Directus static access token with read-only schema, item, and file permissions. Set by the server admin; must be rotated on schedule. Sync remains disabled until the PR4 exit gate.',
+      isSecret: true,
+      isRequired: false,
+      type: FieldType.TEXT,
+    },
+    [DIRECTUS_WEBHOOK_SECRET_ENV_VAR_NAME]: {
+      description:
+        'Shared secret for HMAC-SHA256 verification of Directus webhook payloads. Set by the server admin; must match the value configured in the Directus webhook endpoint. Inbound sync remains disabled without it.',
       isSecret: true,
       isRequired: false,
       type: FieldType.TEXT,
