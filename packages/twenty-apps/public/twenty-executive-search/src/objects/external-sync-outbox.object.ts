@@ -98,21 +98,21 @@ export default defineObject({
       defaultValue: "'PENDING'",
       options: [
         {
-          id: 'c3d4e5f6-7a8b-4c9d-0e1f-2a3b4c5d6e7f',
+          id: 'f669f28d-2ee0-41ec-85ba-a9fb40616d08',
           value: 'PENDING',
           label: 'Pending',
           position: 0,
           color: 'yellow',
         },
         {
-          id: 'd4e5f6a7-8b9c-4d0e-1f2a-3b4c5d6e7f8a',
+          id: '96914d34-9699-4fb6-a0f2-c68af116049f',
           value: 'SENT',
           label: 'Sent',
           position: 1,
           color: 'green',
         },
         {
-          id: 'e5f6a7b8-9c0d-4e1f-2a3b-4c5d6e7f8a9b',
+          id: 'e7a15cca-45d2-4626-b8e6-d9d757a8ddcc',
           value: 'DEAD',
           label: 'Dead',
           position: 2,

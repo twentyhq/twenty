@@ -129,14 +129,14 @@ export default defineObject({
           color: 'blue',
         },
         {
-          id: 'a3b4c5d6-7e8f-4a9b-0c1d-2e3f4a5b6c7d',
+          id: 'bfa6d8a6-7181-40ac-b3db-6a51a45b9a1f',
           value: 'PROCESSED',
           label: 'Processed',
           position: 2,
           color: 'green',
         },
         {
-          id: 'b4c5d6e7-8f9a-4b0c-1d2e-3f4a5b6c7d8e',
+          id: '92bbcafb-4d4f-4d40-95fc-320ff7b404d8',
           value: 'DEAD',
           label: 'Dead',
           position: 3,

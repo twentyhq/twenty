@@ -110,14 +110,14 @@ export default defineObject({
           color: 'blue',
         },
         {
-          id: 'e3f4a5b6-7c8d-4e9f-0a1b-2c3d4e5f6a7b',
+          id: '89062b97-9811-4ba6-8f9b-51fdff976469',
           value: 'SENT',
           label: 'Sent',
           position: 2,
           color: 'green',
         },
         {
-          id: 'f4a5b6c7-8d9e-4f0a-1b2c-3d4e5f6a7b8c',
+          id: 'ea38f349-9557-42dc-9249-a4f76a2fd948',
           value: 'DEAD',
           label: 'Dead',
           position: 3,
