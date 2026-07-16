@@ -86,7 +86,12 @@ export class ImapSmtpCalDavAPIService {
     const existingAccount =
       input.existingAccount ??
       (await this.connectedAccountRepository.findOne({
-        where: { handle, userWorkspaceId, workspaceId },
+        where: {
+          handle,
+          userWorkspaceId,
+          workspaceId,
+          provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+        },
       }));
 
     const newOrExistingAccountId = existingAccount?.id ?? v4();
