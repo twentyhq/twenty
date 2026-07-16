@@ -34,7 +34,7 @@ export default defineView({
 
 * `objectUniversalIdentifier`, bu görünümün hangi nesneye uygulanacağını belirtir. Bu, tanımladığınız özel bir nesne veya standart bir Twenty nesnesi olabilir.
 * `key: ViewKey.INDEX` görünümü nesnenin ana liste görünümü olarak işaretler (bir `OBJECT` gezinme öğesinin açtığı görünüm).
-* `fields`, hangi sütunların görüneceğini ve hangi sırayla görüneceğini kontrol eder. Her alan bir `fieldMetadataUniversalIdentifier` öğesine referans verir.
+* `fields`, hangi sütunların görüneceğini ve hangi sırayla görüneceğini kontrol eder. Her alan bir `fieldMetadataUniversalIdentifier` öğesine referans verir. Otomatik oluşturulan `createdAt` gibi bir sistem alanına başvurmak için, bkz. [Sistem Alanlarını Hedefleme](/l/tr/developers/extend/apps/data/system-fields).
 * Daha gelişmiş yapılandırmalar için `filters`, `filterGroups`, `sorts`, `groups` ve `fieldGroups` da tanımlayabilirsiniz.
 * `position`, aynı nesne için birden fazla görünüm olduğunda sıralamayı kontrol eder.
 
@@ -49,7 +49,7 @@ export default defineView({
 | `isCompact`                                                                                                 | `boolean`                                                                          | Kompakt satır görünümü.                                                                                                                            |
 | `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | Kayıtları bir alana göre gruplayın (ör. kanban sütunları).                                                                                         |
 | `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | Kanban sütunu toplamları ve boyutlandırması.                                                                                                       |
-| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`                                                | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | Takvim görünümleri: düzen ve kayıtları konumlandıran tarih alanı.                                                                                  |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | Takvim görünümleri: düzen, kayıtları konumlandıran tarih alanı ve isteğe bağlı bir bitiş tarihi alanı.                                             |
 
 Yukarıdaki tüm enum'lar `twenty-sdk/define` içinden dışa aktarılır.
 

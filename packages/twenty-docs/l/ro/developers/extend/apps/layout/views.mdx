@@ -34,7 +34,7 @@ export default defineView({
 
 * `objectUniversalIdentifier` specifică la ce obiect se aplică această vizualizare. Poate fi un obiect personalizat pe care l-ați definit sau un obiect standard Twenty.
 * `key: ViewKey.INDEX` marchează vizualizarea ca vizualizarea principală de listă a obiectului (cea pe care o deschide un element de navigare `OBJECT`).
-* `fields` controlează ce coloane apar și ordinea acestora. Fiecare câmp face referire la un `fieldMetadataUniversalIdentifier`.
+* `fields` controlează ce coloane apar și ordinea acestora. Fiecare câmp face referire la un `fieldMetadataUniversalIdentifier`. Pentru a face referire la un câmp de sistem creat automat, cum ar fi `createdAt`, consultă [Țintirea câmpurilor de sistem](/l/ro/developers/extend/apps/data/system-fields).
 * Puteți declara, de asemenea, `filters`, `filterGroups`, `sorts`, `groups` și `fieldGroups` pentru configurații avansate.
 * `position` controlează ordonarea atunci când există mai multe vizualizări pentru același obiect.
 
@@ -49,7 +49,7 @@ export default defineView({
 | `isCompact`                                                                                                 | `boolean`                                                                          | Afișare compactă a rândurilor.                                                                                                                                        |
 | `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | Gruparea înregistrărilor (de ex. coloane kanban) după un câmp.                                                                                                        |
 | `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | Agregări și dimensionare pentru coloanele kanban.                                                                                                                     |
-| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`                                                | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | Vizualizări de tip calendar: layout și câmpul de dată care poziționează înregistrările.                                                                               |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | Vizualizări de tip calendar: layout, câmpul de dată care poziționează înregistrările și un câmp opțional pentru data de sfârșit.                                      |
 
 Toate enum-urile de mai sus sunt exportate din `twenty-sdk/define`.
 

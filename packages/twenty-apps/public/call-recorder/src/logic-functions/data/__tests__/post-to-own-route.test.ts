@@ -1,29 +1,21 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { postToOwnRoute } from 'src/logic-functions/data/post-to-own-route.util';
 
-const postMock = vi.hoisted(() => vi.fn());
-const restApiClientMock = vi.hoisted(() => vi.fn());
-const resolveOwnRouteBaseUrlMock = vi.hoisted(() => vi.fn());
-
-vi.mock('twenty-client-sdk/rest', () => ({
-  RestApiClient: restApiClientMock,
-}));
-
-vi.mock('src/logic-functions/data/resolve-own-route-base-url.util', () => ({
-  resolveOwnRouteBaseUrl: resolveOwnRouteBaseUrlMock,
-}));
+const fetchMock = vi.fn();
 
 describe('postToOwnRoute', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    restApiClientMock.mockImplementation(function RestApiClient() {
-      return { post: postMock };
-    });
-    postMock.mockResolvedValue({});
-    resolveOwnRouteBaseUrlMock.mockReturnValue(
-      'https://acme.functions.example.com',
-    );
+    vi.stubGlobal('fetch', fetchMock);
+    vi.stubEnv('TWENTY_FUNCTIONS_URL', 'https://acme.functions.example.com');
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'app-access-token');
+    fetchMock.mockResolvedValue(new Response('{}', { status: 200 }));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
   });
 
   it('posts to the functions origin when resolved', async () => {
@@ -33,20 +25,20 @@ describe('postToOwnRoute', () => {
     });
 
     expect(result).toBe(true);
-    expect(restApiClientMock).toHaveBeenCalledWith({
-      baseUrl: 'https://acme.functions.example.com',
-    });
-    expect(postMock).toHaveBeenCalledWith(
-      '/call-recorder/some-route',
-      { key: 'value' },
-      { signal: expect.any(AbortSignal) },
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [requestUrl, requestInit] = fetchMock.mock.calls[0];
+    expect(requestUrl).toBe(
+      'https://acme.functions.example.com/call-recorder/some-route',
     );
+    expect(requestInit.method).toBe('POST');
+    expect(requestInit.body).toBe(JSON.stringify({ key: 'value' }));
+    expect(requestInit.signal).toBeInstanceOf(AbortSignal);
   });
 
   it('treats timeout as a successfully flushed request', async () => {
     const timeoutError = new Error('Timed out');
     timeoutError.name = 'TimeoutError';
-    postMock.mockRejectedValue(timeoutError);
+    fetchMock.mockRejectedValue(timeoutError);
 
     await expect(
       postToOwnRoute({ path: '/call-recorder/some-route', body: {} }),
@@ -54,7 +46,7 @@ describe('postToOwnRoute', () => {
   });
 
   it('returns false when the request fails before flushing', async () => {
-    postMock.mockRejectedValue(new Error('Network failed'));
+    fetchMock.mockRejectedValue(new Error('Network failed'));
 
     await expect(
       postToOwnRoute({ path: '/call-recorder/some-route', body: {} }),
@@ -62,14 +54,11 @@ describe('postToOwnRoute', () => {
   });
 
   it('returns false when the route base url cannot be resolved', async () => {
-    resolveOwnRouteBaseUrlMock.mockImplementation(() => {
-      throw new Error('Unable to resolve target');
-    });
+    vi.stubEnv('TWENTY_FUNCTIONS_URL', '');
 
     await expect(
       postToOwnRoute({ path: '/call-recorder/some-route', body: {} }),
     ).resolves.toBe(false);
-    expect(restApiClientMock).not.toHaveBeenCalled();
-    expect(postMock).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

@@ -5,7 +5,7 @@ import { Command } from 'nest-commander';
 import { type FeatureFlagKey } from 'twenty-shared/types';
 import { type DeepPartial, Repository } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -41,7 +41,7 @@ type LegacyConnectedAccountWorkspaceEntity = {
   description:
     'Backfill connectedAccount, messageChannel, calendarChannel, and messageFolder to core metadata schema',
 })
-export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class MigrateMessagingInfrastructureToMetadataCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     private readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     @InjectRepository(ConnectedAccountEntity)

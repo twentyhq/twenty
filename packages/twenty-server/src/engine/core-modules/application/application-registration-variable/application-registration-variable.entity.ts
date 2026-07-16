@@ -1,6 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Check,
   Column,
@@ -41,7 +39,7 @@ import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/
   `"encryptedValue" = '' OR "encryptedValue" LIKE 'enc:v2:%'`,
 )
 export class ApplicationRegistrationVariableEntity {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

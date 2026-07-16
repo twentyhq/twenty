@@ -43,6 +43,14 @@ const BCRYPT_SALT_ROUNDS = 10;
 
 const MAX_APPLICATION_REGISTRATIONS_PAGE_SIZE = 100;
 
+// Sized well above the manifest save + variable schema sync duration so the
+// lease cannot expire mid-update and let a concurrent refresh interleave.
+const APPLICATION_REGISTRATION_UPDATE_LOCK_OPTIONS = {
+  ttl: 60_000,
+  ms: 500,
+  maxRetries: 120,
+};
+
 const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegistrationEntity)[] =
   [
     'id',
@@ -383,66 +391,89 @@ export class ApplicationRegistrationService {
     sourceType?: ApplicationRegistrationSourceType;
     latestAvailableVersion?: string;
     preventVersionDowngrade?: boolean;
-  }): Promise<void> {
-    await this.cacheLockService.withLock(async () => {
-      const existing =
-        await this.applicationRegistrationRepository.findOneOrFail({
-          where: { id: applicationRegistrationId },
-        });
+  }): Promise<boolean> {
+    return this.cacheLockService.withLock(
+      async () => {
+        const existing =
+          await this.applicationRegistrationRepository.findOneOrFail({
+            where: { id: applicationRegistrationId },
+          });
 
-      if (
-        preventVersionDowngrade &&
-        isDefined(latestAvailableVersion) &&
-        !shouldRefreshApplicationRegistrationOnInstall({
-          installedVersion: latestAvailableVersion,
-          latestAvailableVersion: existing.latestAvailableVersion,
-        })
-      ) {
-        this.logger.log(
-          `Skipping registration update for ${existing.universalIdentifier}: version ${latestAvailableVersion} is older than latest available version ${existing.latestAvailableVersion}`,
+        if (
+          preventVersionDowngrade &&
+          isDefined(latestAvailableVersion) &&
+          !shouldRefreshApplicationRegistrationOnInstall({
+            installedVersion: latestAvailableVersion,
+            latestAvailableVersion: existing.latestAvailableVersion,
+          })
+        ) {
+          this.logger.log(
+            `Skipping registration update for ${existing.universalIdentifier}: version ${latestAvailableVersion} is older than latest available version ${existing.latestAvailableVersion}`,
+          );
+
+          return false;
+        }
+
+        const displayFields = fromManifestApplicationToDisplayFields(
+          manifest.application,
         );
 
-        return;
-      }
+        // Gallery image files are stored by the source-specific flows (tarball
+        // upload, dev sync); keep their fileIds for paths that did not change.
+        const existingFileIdByPath = new Map(
+          (existing.galleryImages ?? []).map(({ path, fileId }) => [
+            path,
+            fileId,
+          ]),
+        );
 
-      const displayFields = fromManifestApplicationToDisplayFields(
-        manifest.application,
-      );
+        // One transaction so the registration row and its variable schemas
+        // always come from the same manifest, even when the sync fails midway.
+        await this.applicationRegistrationRepository.manager.transaction(
+          async (entityManager) => {
+            await entityManager
+              .getRepository(ApplicationRegistrationEntity)
+              .save({
+                ...existing,
+                name: manifest.application.displayName,
+                manifest,
+                ...displayFields,
+                galleryImages: displayFields.galleryImages.map(
+                  (galleryImage) => ({
+                    ...galleryImage,
+                    fileId: existingFileIdByPath.get(galleryImage.path) ?? null,
+                  }),
+                ),
+                ...(sourceType !== undefined && { sourceType }),
+                ...(latestAvailableVersion !== undefined && {
+                  latestAvailableVersion,
+                }),
+              });
 
-      // Gallery image files are stored by the source-specific flows (tarball
-      // upload, dev sync); keep their fileIds for paths that did not change.
-      const existingFileIdByPath = new Map(
-        (existing.galleryImages ?? []).map(({ path, fileId }) => [
-          path,
-          fileId,
-        ]),
-      );
+            if (isDefined(manifest.application.serverVariables)) {
+              await this.applicationRegistrationVariableService.syncVariableSchemas(
+                applicationRegistrationId,
+                manifest.application.serverVariables,
+                entityManager,
+              );
+            }
+          },
+        );
 
-      await this.applicationRegistrationRepository.save({
-        ...existing,
-        name: manifest.application.displayName,
-        manifest,
-        ...displayFields,
-        galleryImages: displayFields.galleryImages.map((galleryImage) => ({
-          ...galleryImage,
-          fileId: existingFileIdByPath.get(galleryImage.path) ?? null,
-        })),
-        ...(sourceType !== undefined && { sourceType }),
-        ...(latestAvailableVersion !== undefined && {
-          latestAvailableVersion,
-        }),
-      });
+        await this.invalidateMarketplaceAppsCache();
 
-      await this.invalidateMarketplaceAppsCache();
-    }, `application-registration-update:${applicationRegistrationId}`);
+        return true;
+      },
+      `application-registration-update:${applicationRegistrationId}`,
+      APPLICATION_REGISTRATION_UPDATE_LOCK_OPTIONS,
+    );
   }
 
   async delete(id: string, ownerWorkspaceId: string): Promise<boolean> {
     await this.findOneById(id, ownerWorkspaceId);
-    await this.applicationRegistrationRepository.softDelete(id);
 
-    // Stored assets (logo, gallery images) are gone for good; deleting the
-    // file rows also nulls logoFileId through its ON DELETE SET NULL fk.
+    // Stored assets (logo, gallery images) go with the registration; deleting
+    // them first also removes the bytes, which the row FK cascade cannot do.
     try {
       await this.serverFileStorageService.deleteByApplicationRegistrationId(id);
     } catch (error) {
@@ -451,6 +482,8 @@ export class ApplicationRegistrationService {
         error,
       );
     }
+
+    await this.applicationRegistrationRepository.delete(id);
 
     await this.invalidateMarketplaceAppsCache();
 

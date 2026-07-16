@@ -18,7 +18,7 @@ export const recordIdentifierToObjectRecordIdentifier = ({
   recordIdentifier: RecordIdentifierDTO;
   objectMetadataItem: EnrichedObjectMetadataItem;
 }): ObjectRecordIdentifier => {
-  const avatarType = getAvatarType(objectMetadataItem.nameSingular);
+  const avatarType = getAvatarType(objectMetadataItem);
 
   const basePathToShowPage = getBasePathToShowPage({
     objectNameSingular: objectMetadataItem.nameSingular,

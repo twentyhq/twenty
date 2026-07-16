@@ -3,7 +3,7 @@ import { DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS } from 'twenty-shared/metadata';
 import { RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -28,7 +28,7 @@ const POLYMORPHIC_STANDARD_OBJECT_NAMES_SINGULAR: ReadonlySet<string> = new Set(
   description:
     'Backfill missing BTREE indexes on target<X>Id join columns added to polymorphic standard objects (timelineActivity, attachment, noteTarget, taskTarget) when custom objects were created before the auto-index fix. Indexes are created with CONCURRENTLY so writes are not blocked.',
 })
-export class BackfillRelationJoinColumnIndexesCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class BackfillRelationJoinColumnIndexesCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -194,7 +194,7 @@ export class BackfillRelationJoinColumnIndexesCommand extends ActiveOrSuspendedW
       );
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           isSystemBuild: true,
           allFlatEntityOperationByMetadataName: {

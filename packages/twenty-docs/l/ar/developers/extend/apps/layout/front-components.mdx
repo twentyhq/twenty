@@ -120,7 +120,7 @@ export default defineFrontComponent({
 * **`Command`** — يشغّل رد نداء غير متزامن عبر الخاصية `execute`.
 * **`CommandLink`** — ينتقل إلى مسار في التطبيق. الخصائص: `to`، `params`، `queryParams`، `options`.
 * **`CommandModal`** — يفتح نافذة تأكيد منبثقة. إذا أكّد المستخدم، ينفّذ رد النداء `execute`. الخصائص: `title`، `subtitle`، `execute`، `confirmButtonText`، `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — يفتح صفحة في اللوحة الجانبية. الـ props تعتمد على `page` — على سبيل المثال، `ViewRecord` يأخذ `recordId` + `objectNameSingular`، بينما الصفحات الأخرى تأخذ `pageTitle` + `pageIcon`.
+* **`CommandOpenSidePanelPage`** — يفتح صفحة في اللوحة الجانبية. الـ props تعتمد على `page` — على سبيل المثال، `ViewRecord` يأخذ `recordId` + `objectNameSingular` (بالإضافة إلى معرّف `tab` اختياري لفتح السجل في تبويب معيّن)، بينما الصفحات الأخرى تأخذ `pageTitle` + `pageIcon`.
 
 فيما يلي مثال كامل لمكوّن واجهة أمامية عديم الرأس يستخدم `Command` لتشغيل إجراء من قائمة الأوامر:
 
@@ -194,33 +194,64 @@ export default defineFrontComponent({
 });
 ```
 
+ومثال يستخدم `CommandOpenSidePanelPage` لفتح السجل الحالي في اللوحة الجانبية على تبويب معيّن. `tab` هو معرّف تبويب تخطيط الصفحة (تستخدم التخطيطات الافتراضية معرّفات مثل `company-tab-emails` أو `company-tab-timeline`؛ وتستخدم التخطيطات المخصّصة معرّف التبويب نفسه). إذا لم يكن المعرّف موجودًا في تخطيط السجل، فسيتم فتح التبويب الافتراضي بدلًا منه:
+
+```tsx src/front-components/open-company-emails.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  CommandOpenSidePanelPage,
+  SidePanelPages,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const OpenCompanyEmails = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+
+  if (!recordId) {
+    return null;
+  }
+
+  return (
+    <CommandOpenSidePanelPage
+      page={SidePanelPages.ViewRecord}
+      recordId={recordId}
+      objectNameSingular="company"
+      tab="company-tab-emails"
+      resetNavigationStack={false}
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+  name: 'open-company-emails',
+  description: 'Opens the current company on its Emails tab',
+  component: OpenCompanyEmails,
+  isHeadless: true,
+});
+```
+
 ## استدعاء دالة منطقية
 
 تعمل مكونات الواجهة الأمامية على جانب المتصفح داخل Web Worker مُعزَل داخل iframe ذو origin غير شفاف، بينما تعمل [الدوال المنطقية](/l/ar/developers/extend/apps/logic/logic-functions) على جانب الخادم. لا توجد استدعاءات مباشرة ضمن العملية بين الاثنين — بدلاً من ذلك، يصل مكون الواجهة الأمامية إلى الدالة المنطقية عبر HTTP.
 
-يتم الوصول إلى الدالة المنطقية المُعلَنة باستخدام `httpRouteTriggerSettings` عبر HTTP عند مسار التوجيه الخاص بها. يقوم Twenty بحقن عنوان URL الأساسي الذي تُقدَّم منه الدوال الخاصة بك في عامل التشغيل على أنه `TWENTY_FUNCTIONS_URL`، إلى جانب `TWENTY_APP_ACCESS_TOKEN` الذي يُصادِّق الاستدعاء. لا يوجد عميل SDK مخصص لاستدعاء دوالك الخاصة بعد، لذا استدعِها باستخدام `fetch` عادي:
+يتم الوصول إلى الدالة المنطقية المُعلَنة باستخدام `httpRouteTriggerSettings` عبر HTTP عند مسار التوجيه الخاص بها. يتعامل `RestApiClient` مع المسارات التي تبدأ بـ `/s/` باعتبارها مسارات للتطبيق، ويُحوِّلها إلى عنوان الـ URL الذي تُقدَّم منه الدوال الخاصة بك، ويُجري عملية المصادقة عليها باستخدام `TWENTY_APP_ACCESS_TOKEN`.
 
-> **على Twenty Cloud، يتم تقديم الدوال المنطقية المُفعَّلة عبر HTTP على نطاق مخصص لكل مساحة عمل** عند `https://\<your-workspace-subdomain>.withtwenty.com\<path>` — وهذا بالضبط ما تُشير إليه قيمة `TWENTY_FUNCTIONS_URL`. للمتصلين الخارجيين، انسخ عنوان URL الدقيق من إعدادات **HTTP trigger** الخاصة بالدالة أو من علامة تبويب **Settings** في التطبيق.
-
-<Warning>
-  مسار الدالة القديم `/s/` **مهمَل (deprecated)** وسيتم **إيقاف تفعيله في 2026-07-24**. استخدم بدلًا من ذلك `TWENTY_FUNCTIONS_URL` (أعلاه)، ورحِّل أي عناوين URL ثابتة من نوع `/s/` قبل ذلك التاريخ. يبقى مسار `/s/` متاحًا للاستضافة الذاتية.
-</Warning>
+> **على Twenty Cloud، يتم تقديم الدوال المنطقية المُفعَّلة عبر HTTP على نطاق مخصص لكل مساحة عمل** عند `https://\<your-workspace-subdomain>.withtwenty.com\<path>`. للمتصلين الخارجيين، انسخ عنوان URL الدقيق من إعدادات **HTTP trigger** الخاصة بالدالة أو من علامة تبويب **Settings** في التطبيق.
 
 يمكن لمكون واجهة أمامية عديم الرأس تنفيذ الاستدعاء عند التركيب عبر مكون `Command`، ثم إلغاء التركيب تلقائيًا:
 
 ```tsx src/front-components/sync-prs.tsx
+import { RestApiClient } from 'twenty-client-sdk/rest';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/front-component';
 
 const SyncPrs = () => {
   const execute = async () => {
-    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
+    await new RestApiClient().post('/s/github/fetch-prs', {
+      owner: 'twentyhq',
+      repo: 'twenty',
     });
   };
 
@@ -236,7 +267,7 @@ export default defineFrontComponent({
 });
 ```
 
-المسار المُضاف إلى `TWENTY_FUNCTIONS_URL` هو قيمة `httpRouteTriggerSettings.path` الخاصة بدالة المنطق (logic function). أبقِ `isAuthRequired: true`؛ فرمز `TWENTY_APP_ACCESS_TOKEN` الذي تُنشئه Twenty لمكوِّنك هو ما يصادق على الطلب:
+المسار المُمرَّر إلى `RestApiClient` هو قيمة `httpRouteTriggerSettings.path` الخاصة بدالة المنطق (logic function) مع إضافة البادئة `/s`. أبقِ `isAuthRequired: true`؛ فرمز `TWENTY_APP_ACCESS_TOKEN` الذي تُنشئه Twenty لمكوِّنك هو ما يصادق على الطلب:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -261,21 +292,22 @@ export default defineLogicFunction({
 ```
 
 <Note>
-يتم حقن `TWENTY_FUNCTIONS_URL` و`TWENTY_APP_ACCESS_TOKEN` تلقائيًا — انظر [متغيرات التطبيق](#application-variables). نظرًا لأن متغيرات التطبيق السرية لا تُعرَض أبدًا على مكونات الواجهة الأمامية، احتفِظ بمفاتيح واجهة برمجة التطبيقات والمنطق الحساس الآخر داخل الدالة المنطقية، وليس في مكون الواجهة الأمامية.
+يتم حقن `TWENTY_APP_ACCESS_TOKEN` تلقائيًا — انظر [متغيرات التطبيق](#application-variables). نظرًا لأن متغيرات التطبيق السرية لا تُعرَض أبدًا على مكونات الواجهة الأمامية، احتفِظ بمفاتيح واجهة برمجة التطبيقات والمنطق الحساس الآخر داخل الدالة المنطقية، وليس في مكون الواجهة الأمامية.
 </Note>
 
 ### استدعاء واجهة REST API الخاصة بـ Twenty
 
-لقراءة سجلات Twenty أو كتابتها من مكوِّن واجهة أمامية، استخدم `RestApiClient` من `twenty-client-sdk/rest`. ينتمي إلى نفس عائلة العملاء مثل `CoreApiClient` و`MetadataApiClient`، لكنه يستهدف واجهة REST API الخاصة بـ Twenty (`/rest/...`) بدلًا من واجهة GraphQL API، ويقرأ عنوان URL الأساسي الخاص بها من `TWENTY_API_URL`.
+لاستدعاء مسارات HTTP الخاصة بالتطبيق أو لقراءة سجلات Twenty وكتابتها من مكوِّن واجهة أمامية، استخدم `RestApiClient` من `twenty-client-sdk/rest`. يُرسل المسارات من نوع `/s/...` إلى عنوان URL الأساسي للدوال في مساحة العمل الخاصة بك، ويُرسل أي مسار آخر، بما في ذلك `/rest/...`، إلى `TWENTY_API_URL`.
 
-| طريقة                             | الوصف                      |
-| --------------------------------- | -------------------------- |
-| `get(path, options?)`             | يرسل طلبًا من نوع `GET`    |
-| `post(path, body?, options?)`     | يرسل طلبًا من نوع `POST`   |
-| `put(path, body?, options?)`      | يرسل طلبًا من نوع `PUT`    |
-| `patch(path, body?, options?)`    | يرسل طلبًا من نوع `PATCH`  |
-| `delete(path, options?)`          | يرسل طلبًا من نوع `DELETE` |
-| `request(method, path, options?)` | طلب عام بأي طريقة HTTP     |
+| طريقة                             | الوصف                                                                   |
+| --------------------------------- | ----------------------------------------------------------------------- |
+| `get(path, options?)`             | يرسل طلبًا من نوع `GET`                                                 |
+| `post(path, body?, options?)`     | يرسل طلبًا من نوع `POST`                                                |
+| `put(path, body?, options?)`      | يرسل طلبًا من نوع `PUT`                                                 |
+| `patch(path, body?, options?)`    | يرسل طلبًا من نوع `PATCH`                                               |
+| `delete(path, options?)`          | يرسل طلبًا من نوع `DELETE`                                              |
+| `request(method, path, options?)` | طلب عام بأي طريقة HTTP                                                  |
+| `resolveUrl(path, options?)`      | يُحوِّل مسارًا إلى عنوان URL كامل بدون إرسال طلب (لاستخدامه في الروابط) |
 
 تدعم `options` كلًا من `headers` و`query` (سجل لمعاملات query-string؛ يتم تخطي القيم nullish) و`AbortSignal` عبر `signal`. يتم تسلسل كائن `body` غير من النوع `FormData` إلى JSON تلقائيًا. عند حدوث `401`، يقوم العميل بتحديث رمز الوصول مرة واحدة عبر المضيف ثم يعيد محاولة الطلب.
 
@@ -379,11 +411,22 @@ export default defineFrontComponent({
 
 متغيرات النظام التالية تكون متاحة دائمًا عبر `process.env`:
 
-| المتغيّر                  | الوصف                                                            |
-| ------------------------- | ---------------------------------------------------------------- |
-| `TWENTY_FUNCTIONS_URL`    | عنوان URL الأساسي الذي تُقدَّم منه دوال منطق HTTP الخاصة بتطبيقك |
-| `TWENTY_API_URL`          | عنوان URL الأساسي لـ Twenty Core API                             |
-| `TWENTY_APP_ACCESS_TOKEN` | رمز مميز قصير العمر مُقيَّد بدور تطبيقك                          |
+| المتغيّر                  | الوصف                                   |
+| ------------------------- | --------------------------------------- |
+| `TWENTY_API_URL`          | عنوان URL الأساسي لـ Twenty Core API    |
+| `TWENTY_APP_ACCESS_TOKEN` | رمز مميز قصير العمر مُقيَّد بدور تطبيقك |
+
+### `TWENTY_FUNCTIONS_URL`
+
+يقوم Twenty أيضًا بحقن `TWENTY_FUNCTIONS_URL` في مكوِّنات الواجهة الأمامية والدوال المنطقية: وهو عنوان URL الأساسي الذي تُقدَّم منه الدوال المنطقية المُفعَّلة عبر HTTP في تطبيقك.
+
+وهو موجود لأن ذلك العنوان (URL) ليس دائمًا هو خادم Twenty نفسه. على Twenty Cloud، يتم تقديم مسارات التطبيق على نطاق مخصص لكل مساحة عمل (`https://\<your-workspace-subdomain>.withtwenty.com`، أو نطاق التطبيق العمومي الأساسي عندما يتم تكوينه) بحيث تعمل الاستجابات المنشأة من التطبيق على أصل (origin) معزول بدلاً من أصل تطبيق Twenty. تُقدِّم النسخ المستضافة ذاتيًا والمحلية مسارات التطبيق تحت البادئة `/s` على الخادم نفسه وقد لا تضبط المتغير إطلاقًا. نظرًا لاختلاف عنوان URL الأساسي حسب مساحة العمل وحسب كل نسخة، لا يمكن لشفرتك (code) أن تُضمِّنه بشكل ثابت (hard-code) — يقوم الخادم بحقن القيمة الصحيحة وقت التشغيل.
+
+نادرًا ما تحتاج إلى قراءته مباشرة. استدعِ مساراتك عبر `RestApiClient` باستخدام مسار يبدأ بالبادئة `/s/`، وسيقوم العميل بحل عنوان URL نيابةً عنك: يزيل بادئة `/s` ويستخدم `TWENTY_FUNCTIONS_URL` كهدف، مع الرجوع إلى `\<TWENTY_API_URL>/s` عندما لا يكون المتغير مضبوطًا. استخدم `resolveUrl('/s/\<path>')` للحصول على عنوان URL مطلق بدون إرسال طلب، على سبيل المثال لاستخدامه في رابط. اقرأ المتغير مباشرةً فقط عند إنشاء عنوان URL يدويًا:
+
+```ts
+const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL}/s`}/documents/generate`;
+```
 
 ## واجهة الاتصال مع المضيف
 
