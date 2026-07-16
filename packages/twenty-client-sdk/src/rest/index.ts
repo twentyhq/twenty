@@ -2,6 +2,7 @@ import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
   DEFAULT_APP_ACCESS_TOKEN_NAME,
+  DEFAULT_FUNCTIONS_URL_NAME,
 } from 'twenty-shared/application';
 
 const isDefined = <T>(value: T): value is NonNullable<T> =>
@@ -52,6 +53,13 @@ const getProcessEnvironment = (): ProcessEnvironment => {
 
   return processObject?.env ?? {};
 };
+
+const isAppRoutePath = (path: string): boolean => /^\/?s\//.test(path);
+
+// The server serves app routes under /s/; isolated functions domains serve
+// them at the root, so the marker prefix is stripped before joining.
+const stripAppRoutePrefix = (path: string): string =>
+  path.replace(/^(\/?)s\//, '$1');
 
 const buildRequestUrl = (
   baseUrl: string,
@@ -111,6 +119,15 @@ export class RestApiClient {
     return this.execute<TResponse>('GET', path, undefined, options);
   }
 
+  resolveUrl(
+    path: string,
+    requestOptions?: Pick<RestApiRequestOptions, 'query'>,
+  ): string {
+    const target = this.resolveTarget(path);
+
+    return buildRequestUrl(target.baseUrl, target.path, requestOptions?.query);
+  }
+
   post<TResponse = unknown>(
     path: string,
     body?: unknown,
@@ -150,6 +167,31 @@ export class RestApiClient {
     }
 
     return baseUrl.replace(/\/+$/, '');
+  }
+
+  private resolveFunctionsBaseUrl(): string | undefined {
+    const functionsBaseUrl =
+      getProcessEnvironment()[DEFAULT_FUNCTIONS_URL_NAME];
+
+    if (!isDefined(functionsBaseUrl) || functionsBaseUrl.trim().length === 0) {
+      return undefined;
+    }
+
+    return functionsBaseUrl.trim().replace(/\/+$/, '');
+  }
+
+  private resolveTarget(path: string): { baseUrl: string; path: string } {
+    if (isDefined(this.baseUrl) || !isAppRoutePath(path)) {
+      return { baseUrl: this.resolveBaseUrl(), path };
+    }
+
+    // /s/ marks an app HTTP route. TWENTY_FUNCTIONS_URL is a complete base
+    // URL (isolated domains serve routes at the root, self-host bakes /s in);
+    // fall back to the same-site /s route when it is not injected.
+    return {
+      baseUrl: this.resolveFunctionsBaseUrl() ?? `${this.resolveBaseUrl()}/s`,
+      path: stripAppRoutePrefix(path),
+    };
   }
 
   private resolveToken(): string {
@@ -304,9 +346,10 @@ export class RestApiClient {
     body: unknown,
     requestOptions?: RestApiRequestOptions,
   ): Promise<TResponse> {
+    const target = this.resolveTarget(path);
     const url = buildRequestUrl(
-      this.resolveBaseUrl(),
-      path,
+      target.baseUrl,
+      target.path,
       requestOptions?.query,
     );
     const token = this.resolveToken();

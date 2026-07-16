@@ -4,6 +4,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowHandleStaledRunsWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-handle-staled-runs.workspace-service';
 import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
+import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const mockRepository = {
   count: jest.fn(),
@@ -23,13 +24,19 @@ const mockWorkflowThrottlingWorkspaceService = {
   recomputeWorkflowRunNotStartedCount: jest.fn().mockResolvedValue(undefined),
 };
 
+const mockWorkflowRunWorkspaceService = {
+  endWorkflowRun: jest.fn().mockResolvedValue(undefined),
+};
+
 // Mirrors QUERY_MAX_RECORDS, the per-batch cap the service applies. Kept as a
 // local literal rather than imported from twenty-shared/constants to avoid a
 // jest circular-init issue with config-variables loading the same barrel.
 const QUERY_MAX_RECORDS = 200;
 
-const buildStaledRuns = (count: number) =>
-  Array.from({ length: count }, (_, index) => ({ id: `run-${index}` }));
+const buildStaledRuns = (count: number, startIndex = 0) =>
+  Array.from({ length: count }, (_, index) => ({
+    id: `run-${startIndex + index}`,
+  }));
 
 describe('WorkflowHandleStaledRunsWorkspaceService', () => {
   let service: WorkflowHandleStaledRunsWorkspaceService;
@@ -49,6 +56,10 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
         {
           provide: WorkflowThrottlingWorkspaceService,
           useValue: mockWorkflowThrottlingWorkspaceService,
+        },
+        {
+          provide: WorkflowRunWorkspaceService,
+          useValue: mockWorkflowRunWorkspaceService,
         },
       ],
     }).compile();
@@ -134,5 +145,96 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
     expect(
       mockWorkflowThrottlingWorkspaceService.recomputeWorkflowRunNotStartedCount,
     ).toHaveBeenCalledTimes(1);
+  });
+
+  describe('handleStuckStoppingRunsForWorkspace', () => {
+    it('should do nothing when there are no stuck stopping runs', async () => {
+      mockRepository.find.mockResolvedValueOnce([]);
+
+      await service.handleStuckStoppingRunsForWorkspace(workspaceId);
+
+      expect(
+        mockWorkflowRunWorkspaceService.endWorkflowRun,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should finalize each stuck stopping run to STOPPED', async () => {
+      mockRepository.find.mockResolvedValueOnce(buildStaledRuns(3));
+
+      await service.handleStuckStoppingRunsForWorkspace(workspaceId);
+
+      expect(
+        mockWorkflowRunWorkspaceService.endWorkflowRun,
+      ).toHaveBeenCalledTimes(3);
+      expect(
+        mockWorkflowRunWorkspaceService.endWorkflowRun,
+      ).toHaveBeenCalledWith({
+        workflowRunId: 'run-0',
+        workspaceId,
+        status: WorkflowRunStatus.STOPPED,
+      });
+    });
+
+    it('should page through a multi-page backlog until a short page', async () => {
+      mockRepository.find
+        .mockResolvedValueOnce(buildStaledRuns(QUERY_MAX_RECORDS))
+        .mockResolvedValueOnce(
+          buildStaledRuns(QUERY_MAX_RECORDS, QUERY_MAX_RECORDS),
+        )
+        .mockResolvedValueOnce(buildStaledRuns(50, 2 * QUERY_MAX_RECORDS));
+
+      await service.handleStuckStoppingRunsForWorkspace(workspaceId);
+
+      expect(mockRepository.find).toHaveBeenCalledTimes(3);
+      expect(mockRepository.find).toHaveBeenCalledWith(
+        expect.objectContaining({ take: QUERY_MAX_RECORDS }),
+      );
+      expect(
+        mockWorkflowRunWorkspaceService.endWorkflowRun,
+      ).toHaveBeenCalledTimes(2 * QUERY_MAX_RECORDS + 50);
+    });
+
+    it('should keep finalizing remaining runs when one fails', async () => {
+      mockRepository.find.mockResolvedValueOnce(buildStaledRuns(3));
+      mockWorkflowRunWorkspaceService.endWorkflowRun
+        .mockRejectedValueOnce(new Error('boom'))
+        .mockResolvedValue(undefined);
+
+      await service.handleStuckStoppingRunsForWorkspace(workspaceId);
+
+      expect(
+        mockWorkflowRunWorkspaceService.endWorkflowRun,
+      ).toHaveBeenCalledTimes(3);
+    });
+
+    it('should advance past a fully failed page instead of starving later runs', async () => {
+      mockRepository.find
+        .mockResolvedValueOnce(buildStaledRuns(QUERY_MAX_RECORDS))
+        .mockResolvedValueOnce(buildStaledRuns(50, QUERY_MAX_RECORDS));
+      // Whole first page fails, later runs still get finalized
+      mockWorkflowRunWorkspaceService.endWorkflowRun.mockImplementation(
+        ({ workflowRunId }: { workflowRunId: string }) => {
+          const index = Number(workflowRunId.replace('run-', ''));
+
+          return index < QUERY_MAX_RECORDS
+            ? Promise.reject(new Error('boom'))
+            : Promise.resolve(undefined);
+        },
+      );
+
+      await service.handleStuckStoppingRunsForWorkspace(workspaceId);
+
+      expect(mockRepository.find).toHaveBeenCalledTimes(2);
+      expect(
+        mockWorkflowRunWorkspaceService.endWorkflowRun,
+      ).toHaveBeenCalledTimes(QUERY_MAX_RECORDS + 50);
+      expect(
+        mockWorkflowRunWorkspaceService.endWorkflowRun,
+      ).toHaveBeenCalledWith({
+        workflowRunId: `run-${QUERY_MAX_RECORDS}`,
+        workspaceId,
+        status: WorkflowRunStatus.STOPPED,
+      });
+    });
   });
 });

@@ -1,6 +1,7 @@
 import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
+import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import { useHandleSseClientConnectionRetry } from '@/sse-db-event/hooks/useHandleSseClientConnectionRetry';
 import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryListenersState';
@@ -19,6 +20,7 @@ export const SSEClientEffect = () => {
   const hasAccessTokenPair = useHasAccessTokenPair();
   const [sseClient, setSseClient] = useAtomState(sseClientState);
   const tokenPair = useAtomStateValue(tokenPairState);
+  const { invalidateMetadataStore } = useInvalidateMetadataStore();
 
   const handleSSEClientConnected = useCallback(
     (reconnected: boolean) => {
@@ -31,10 +33,11 @@ export const SSEClientEffect = () => {
       }
 
       if (reconnected) {
+        invalidateMetadataStore();
         dispatchBrowserEvent(SSE_CLIENT_RECONNECTED_EVENT_NAME);
       }
     },
-    [store],
+    [store, invalidateMetadataStore],
   );
 
   const { handleSseClientConnectionRetry } =

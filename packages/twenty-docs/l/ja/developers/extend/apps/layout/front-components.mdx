@@ -120,7 +120,7 @@ export default defineFrontComponent({
 * **`Command`** — `execute` プロップ経由で非同期コールバックを実行します。
 * **`CommandLink`** — アプリのパスにナビゲートします。 Props: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — 確認モーダルを開きます。 ユーザーが確認すると、`execute` コールバックを実行します。 Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — サイドパネルページを開きます。 Props は `page` に依存します — 例: `ViewRecord` は `recordId` と `objectNameSingular` を受け取り、他のページは `pageTitle` と `pageIcon` を受け取ります。
+* **`CommandOpenSidePanelPage`** — サイドパネルページを開きます。 Props は `page` に依存します。たとえば、`ViewRecord` は `recordId` と `objectNameSingular`（さらに任意で、特定のタブでレコードを開くための `tab` id）を受け取り、他のページは `pageTitle` と `pageIcon` を受け取ります。
 
 `Command` を使用してコマンドメニューからアクションを実行するヘッドレスのフロントコンポーネントの完全な例です:
 
@@ -194,33 +194,64 @@ export default defineFrontComponent({
 });
 ```
 
+そして、`CommandOpenSidePanelPage` を使用して、現在のレコードを特定のタブのサイドパネルで開く例です。 `tab` はページレイアウトのタブ id です（デフォルトのレイアウトでは `company-tab-emails` や `company-tab-timeline` のような id を使用し、カスタムレイアウトではタブ自身の id を使用します）。 その id がレコードのレイアウト内に存在しない場合は、代わりにデフォルトのタブが開きます。
+
+```tsx src/front-components/open-company-emails.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  CommandOpenSidePanelPage,
+  SidePanelPages,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const OpenCompanyEmails = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+
+  if (!recordId) {
+    return null;
+  }
+
+  return (
+    <CommandOpenSidePanelPage
+      page={SidePanelPages.ViewRecord}
+      recordId={recordId}
+      objectNameSingular="company"
+      tab="company-tab-emails"
+      resetNavigationStack={false}
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+  name: 'open-company-emails',
+  description: 'Opens the current company on its Emails tab',
+  component: OpenCompanyEmails,
+  isHeadless: true,
+});
+```
+
 ## ロジック関数の呼び出し
 
 フロントコンポーネントは不透明なオリジンの iframe 内にサンドボックス化された Web Worker 内でブラウザーサイドで実行され、一方で[ロジック関数](/l/ja/developers/extend/apps/logic/logic-functions)はサーバーサイドで実行されます。 両者の間にプロセス内での直接呼び出しはありません。その代わり、フロントコンポーネントは HTTP 経由でロジック関数にアクセスします。
 
-`httpRouteTriggerSettings` で宣言されたロジック関数は、そのルートパスで HTTP 経由でアクセスできます。 Twenty は、関数が提供されるベース URL を `TWENTY_FUNCTIONS_URL` としてワーカーに注入し、呼び出しを認証する `TWENTY_APP_ACCESS_TOKEN` も併せて渡します。 独自の関数を呼び出すための専用 SDK クライアントはまだないため、シンプルな `fetch` を使って呼び出してください。
+`httpRouteTriggerSettings` で宣言されたロジック関数は、そのルートパスで HTTP 経由でアクセスできます。 `RestApiClient` は、`/s/` で始まるパスをアプリのルートとして扱い、それらをあなたの関数が提供されている URL に解決し、`TWENTY_APP_ACCESS_TOKEN` で認証します。
 
-> **Twenty Cloud では、HTTP トリガーのロジック関数はワークスペースごとの専用ドメインで提供されます**。`https://\<your-workspace-subdomain>.withtwenty.com\<path>` がそのドメインであり、これが `TWENTY_FUNCTIONS_URL` が解決される先とまったく同じです。 外部から呼び出す場合は、関数の **HTTP trigger** 設定、もしくはアプリケーションの **Settings** タブから、正確な URL をコピーしてください。
-
-<Warning>
-  レガシーな `/s/` 関数ルートは**非推奨**となっており、**2026-07-24 に無効化されます**。 代わりに（上記の）`TWENTY_FUNCTIONS_URL` を使用し、その日までにハードコードされた `/s/` URL をすべて移行してください。 `/s/` ルートはセルフホスティング向けには引き続き利用可能です。
-</Warning>
+> **Twenty Cloud では、HTTP トリガーのロジック関数はワークスペースごとの専用ドメインで提供されます**。`https://\<your-workspace-subdomain>.withtwenty.com\<path>` で提供されます。 外部から呼び出す場合は、関数の **HTTP trigger** 設定、もしくはアプリケーションの **Settings** タブから、正確な URL をコピーしてください。
 
 ヘッドレスフロントコンポーネントは、`Command` コンポーネント経由でマウント時に呼び出しを実行し、その後自動的にアンマウントできます。
 
 ```tsx src/front-components/sync-prs.tsx
+import { RestApiClient } from 'twenty-client-sdk/rest';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/front-component';
 
 const SyncPrs = () => {
   const execute = async () => {
-    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
+    await new RestApiClient().post('/s/github/fetch-prs', {
+      owner: 'twentyhq',
+      repo: 'twenty',
     });
   };
 
@@ -236,7 +267,7 @@ export default defineFrontComponent({
 });
 ```
 
-`TWENTY_FUNCTIONS_URL` に付加されるパスは、ロジック関数の `httpRouteTriggerSettings.path` です。 `isAuthRequired: true` のままにしておいてください。コンポーネント用に Twenty が発行する `TWENTY_APP_ACCESS_TOKEN` によってリクエストが認証されます。
+`RestApiClient` に渡されるパスは、ロジック関数の `httpRouteTriggerSettings.path` に `/s` を付加したものです。 `isAuthRequired: true` のままにしておいてください。コンポーネント用に Twenty が発行する `TWENTY_APP_ACCESS_TOKEN` によってリクエストが認証されます。
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -261,21 +292,22 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_FUNCTIONS_URL` と `TWENTY_APP_ACCESS_TOKEN` は自動的に挿入されます。詳しくは [Application variables](#application-variables) を参照してください。 秘匿アプリケーション変数はフロントコンポーネントに公開されることがないため、API キーやその他の機密性の高いロジックはフロントコンポーネントではなく、ロジック関数側に保持してください。
+`TWENTY_APP_ACCESS_TOKEN` は自動的に挿入されます。詳しくは [Application variables](#application-variables) を参照してください。 秘匿アプリケーション変数はフロントコンポーネントに公開されることがないため、API キーやその他の機密性の高いロジックはフロントコンポーネントではなく、ロジック関数側に保持してください。
 </Note>
 
 ### Twenty REST API の呼び出し
 
-フロントコンポーネントから Twenty のレコードを読み書きするには、`twenty-client-sdk/rest` の `RestApiClient` を使用します。 これは `CoreApiClient` や `MetadataApiClient` と同じクライアントファミリーに属しますが、GraphQL API ではなく Twenty REST API（`/rest/...`）を対象とし、そのベース URL を `TWENTY_API_URL` から取得します。
+アプリの HTTP ルートを呼び出したり、フロントコンポーネントから Twenty のレコードを読み書きしたりするには、`twenty-client-sdk/rest` の `RestApiClient` を使用します。 これは、`/s/...` のパスをワークスペースの関数のベース URL に送り、`/rest/...` を含むそれ以外のすべてのパスを `TWENTY_API_URL` に送信します。
 
-| メソッド                              | 説明                        |
-| --------------------------------- | ------------------------- |
-| `get(path, options?)`             | `GET` リクエストを送信します         |
-| `post(path, body?, options?)`     | `POST` リクエストを送信します        |
-| `put(path, body?, options?)`      | `PUT` リクエストを送信します         |
-| `patch(path, body?, options?)`    | `PATCH` リクエストを送信します       |
-| `delete(path, options?)`          | `DELETE` リクエストを送信します      |
-| `request(method, path, options?)` | 任意の HTTP メソッドによる汎用的なリクエスト |
+| メソッド                              | 説明                                   |
+| --------------------------------- | ------------------------------------ |
+| `get(path, options?)`             | `GET` リクエストを送信します                    |
+| `post(path, body?, options?)`     | `POST` リクエストを送信します                   |
+| `put(path, body?, options?)`      | `PUT` リクエストを送信します                    |
+| `patch(path, body?, options?)`    | `PATCH` リクエストを送信します                  |
+| `delete(path, options?)`          | `DELETE` リクエストを送信します                 |
+| `request(method, path, options?)` | 任意の HTTP メソッドによる汎用的なリクエスト            |
+| `resolveUrl(path, options?)`      | リクエストを送信せずに、パスを完全な URL に解決します（リンク向け） |
 
 `options` には、`headers`、`query`（クエリ文字列パラメーターのレコード。null 相当の値はスキップされます）、および `signal` 経由の `AbortSignal` を指定できます。 `FormData` ではないオブジェクト `body` は、自動的に JSON シリアル化されます。 `401` が発生した場合、クライアントはホスト経由で一度だけアクセス トークンを更新し、そのリクエストを再試行します。
 
@@ -379,11 +411,22 @@ export default defineFrontComponent({
 
 次のシステム変数は、常に `process.env` 経由で利用できます。
 
-| 変数                        | 説明                            |
-| ------------------------- | ----------------------------- |
-| `TWENTY_FUNCTIONS_URL`    | アプリの HTTP ロジック関数が提供されるベース URL |
-| `TWENTY_API_URL`          | Twenty コア API のベース URL        |
-| `TWENTY_APP_ACCESS_TOKEN` | アプリのロールにスコープされた有効期間の短いトークン    |
+| 変数                        | 説明                         |
+| ------------------------- | -------------------------- |
+| `TWENTY_API_URL`          | Twenty コア API のベース URL     |
+| `TWENTY_APP_ACCESS_TOKEN` | アプリのロールにスコープされた有効期間の短いトークン |
+
+### `TWENTY_FUNCTIONS_URL`
+
+Twenty はまた、`TWENTY_FUNCTIONS_URL` をフロントコンポーネントとロジック関数に挿入します。これは、アプリの HTTP トリガーのロジック関数が提供されるベース URL です。
+
+この変数が存在するのは、その URL が必ずしも Twenty サーバー自体とは限らないためです。 Twenty Cloud では、アプリのルートはワークスペースごとの専用ドメイン（`https://\<your-workspace-subdomain>.withtwenty.com`、または設定されている場合はアプリケーションのプライマリ公開ドメイン）で提供されます。これにより、アプリで作成されたレスポンスが Twenty アプリのオリジンではなく分離されたオリジン上で実行されます。 セルフホストおよびローカルインスタンスでは、アプリのルートはサーバー自体の `/s` プレフィックスの下で提供され、この変数がまったく設定されない場合もあります。 ベース URL はワークスペースやインスタンスごとに異なるため、コードでハードコードすることはできません。サーバーが実行時に正しい値を挿入します。
+
+この変数を直接読む必要があることはほとんどありません。 `/s/` プレフィックス付きのパスで `RestApiClient` を通じてルートを呼び出すと、クライアントが URL を解決します。`/s` プレフィックスを取り除き、`TWENTY_FUNCTIONS_URL` をターゲットにし、この変数が設定されていない場合は `\<TWENTY_API_URL>/s` をフォールバックとして使用します。 リクエストを送信せずに絶対 URL を取得するには、`resolveUrl('/s/\<path>')` を使用します（リンクなどの用途）。 URL を手作業で組み立てる場合にのみ、この変数を直接読み取ってください。
+
+```ts
+const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL}/s`}/documents/generate`;
+```
 
 ## ホスト通信 API
 
