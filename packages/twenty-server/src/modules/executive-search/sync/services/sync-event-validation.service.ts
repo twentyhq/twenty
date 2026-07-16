@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import Ajv from 'ajv';
+import Ajv, { type ValidateFunction } from 'ajv';
 
 import schema from '../event-envelope/external-sync-event.schema.json';
 
@@ -14,7 +14,7 @@ import type {
 
 @Injectable()
 export class SyncEventValidationService {
-  private readonly validateFn: Ajv.ValidateFunction;
+  private readonly validateFn: ValidateFunction;
 
   constructor() {
     const ajv = new Ajv({ allErrors: true, validateSchema: false });

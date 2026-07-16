@@ -135,5 +135,8 @@ export const buildOutboundEventLedgerStandardFlatFieldMetadatas = ({
         isUIEditable: false,
       },
     }),
-  };
+  } as Record<
+    AllStandardObjectFieldName<'outboundEventLedger'>,
+    FlatFieldMetadata
+  >;
 };

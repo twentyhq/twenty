@@ -11,6 +11,30 @@ import { InboundEventLedgerSourceSystem } from 'src/modules/executive-search/sta
 
 type EventLedgerObjectName = 'inboundEventLedger' | 'outboundEventLedger';
 
+export type EventLedgerCommonFieldName =
+  | 'id'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'deletedAt'
+  | 'createdBy'
+  | 'updatedBy'
+  | 'position'
+  | 'searchVector'
+  | 'eventId'
+  | 'eventType'
+  | 'eventVersion'
+  | 'sourceSystem'
+  | 'sourceCollection'
+  | 'sourceRecordId'
+  | 'sourceHash'
+  | 'sourceUpdatedAt'
+  | 'workspaceKey'
+  | 'correlationId'
+  | 'causationId'
+  | 'idempotencyKey'
+  | 'occurredAt'
+  | 'payload';
+
 /**
  * Shared system + event-envelope fields that are identical between
  * inboundEventLedger and outboundEventLedger.
@@ -20,7 +44,7 @@ export const buildEventLedgerCommonFields = <O extends EventLedgerObjectName>(
     CreateStandardFieldArgs<O, FieldMetadataType>,
     'context'
   >,
-): Record<string, FlatFieldMetadata> => ({
+): Record<EventLedgerCommonFieldName, FlatFieldMetadata> => ({
   id: createStandardFieldFlatMetadata({
     ...base,
     context: {
