@@ -9,6 +9,7 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-overridable-properties-by-metadata-name.constant';
 import {
   FLAT_FIELD_METADATA_EDITABLE_PROPERTIES,
@@ -16,7 +17,6 @@ import {
 } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { computeMetadataOverridesBlob } from 'src/engine/metadata-modules/utils/compute-metadata-overrides-blob.util';
@@ -42,20 +42,6 @@ export const sanitizeRawUpdateFieldInput = ({
     ],
   );
 
-  // System-side-effect fields are engine-owned (default relations to standard
-  // objects maintained by the metadata side-effect engine, partial system fields
-  // such as deletedAt / searchVector). Every structural property is derived by
-  // the engine and renames flow through the owning object update. Users may only
-  // edit the explicitly allowed properties (e.g. toggle activation).
-  //
-  // This guard lives here (direct updateOneField input) rather than in the
-  // engine-level FlatFieldMetadataValidatorService because the validator also
-  // sees engine-generated cascade updates (e.g. reverse morph field renamed when
-  // its object is renamed) which carry isSystemBuild=false and must be allowed.
-  // TODO(core-team-issues#2671): move to FlatFieldMetadataValidatorService as
-  // the uniform gate once operation-origin (direct field mutation vs engine
-  // cascade) is threaded through the migration matrix, then drop this API-only
-  // guard.
   if (existingFlatFieldMetadata.isSystemSideEffect === true && !isSystemBuild) {
     const forbiddenUpdatedProperties = Object.keys(
       updatedEditableFieldProperties,

@@ -18,10 +18,6 @@ type FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs 
     flatApplication: FlatApplication;
   };
 
-// The default relations to the four standard relation objects
-// (timelineActivity/attachment/noteTarget/taskTarget) are provisioned by the
-// metadata side-effect engine (objectSystemRelationsOnCreate), not here, so this
-// transpiler only emits the object and its name field.
 export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate =
   ({
     createObjectInput: rawCreateObjectInput,

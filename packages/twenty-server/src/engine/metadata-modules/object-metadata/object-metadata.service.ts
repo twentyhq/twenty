@@ -492,8 +492,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     // Default view fields reference the caller-provided fields (reused as-is from
     // the transpiler output) plus the engine-owned reserved system fields, whose
     // deterministic identifiers we re-derive here (searchVector is never shown).
-    // Default relation fields (RELATION/MORPH_RELATION) are provisioned by the
-    // side-effect engine and are excluded from view fields anyway.
     // TODO: remove once default view fields move to the metadata side effect engine.
     const defaultFlatFieldMetadatasForViewFields: UniversalFlatFieldMetadata[] =
       [
