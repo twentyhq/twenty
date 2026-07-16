@@ -372,7 +372,7 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
         input: {
           viewId: createdView.id,
           fieldMetadataId: createOneField.id,
-          operand: ViewFilterOperand.IS_EMPTY,
+          operand: ViewFilterOperand.IS_NOT_EMPTY,
           value: '',
         },
         expectToFail: false,
@@ -408,7 +408,7 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
       );
 
       expect(updatedViewFilter).toMatchObject({
-        operand: ViewFilterOperand.IS_EMPTY,
+        operand: ViewFilterOperand.IS_NOT_EMPTY,
         value: '',
       });
     });

@@ -62,7 +62,7 @@ describe('recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate', () => {
     const viewFilter = {
       id: FILTER_ID,
       universalIdentifier: FILTER_ID,
-      operand: ViewFilterOperand.IS_EMPTY,
+      operand: ViewFilterOperand.IS_NOT_EMPTY,
       subFieldName: null,
       value: '',
     } as FlatViewFilter;
