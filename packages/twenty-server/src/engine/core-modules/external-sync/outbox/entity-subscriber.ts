@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 import { Injectable, Logger } from '@nestjs/common';
 import {
   EntitySubscriberInterface,

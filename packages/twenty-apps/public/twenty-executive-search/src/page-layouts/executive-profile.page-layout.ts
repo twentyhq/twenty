@@ -1,5 +1,5 @@
 import { definePageLayout } from 'twenty-sdk/define';
-import { PageLayoutType } from 'twenty-shared/types';
+import { PageLayoutType } from 'twenty-sdk/define';
 import { EXECUTIVE_PROFILE_UNIVERSAL_IDENTIFIER } from '../objects/executive-profile.object';
 
 export const EXECUTIVE_PROFILE_PAGE_LAYOUT_ID =

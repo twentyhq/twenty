@@ -8,9 +8,11 @@ import {
   type ObjectRecordBaseEvent,
 } from 'twenty-sdk/define';
 
+import { DIRECTUS_WEBHOOK_SECRET_ENV_VAR_NAME } from 'src/constants/server-variable-names';
 import { PROJECT_EXECUTIVE_CHANGE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/project-executive-change-logic-function-universal-identifier';
 import { getDirectusApiConfig } from 'src/logic-functions/directus-api/get-directus-api-config.util';
 import { signDirectusProjection } from 'src/logic-functions/directus-api/sign-directus-projection.util';
+import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 // Fields to exclude from the projection payload (firewall-prohibited).
@@ -149,10 +151,18 @@ export const projectExecutiveChangeHandler = async (
 
   const payloadJson = JSON.stringify(payload);
 
-  // Sign the projection payload.
+  // Sign the projection payload using the shared webhook secret.
+  const webhookSecret = getApplicationVariableValue(
+    DIRECTUS_WEBHOOK_SECRET_ENV_VAR_NAME,
+  );
+
+  if (!isNonEmptyString(webhookSecret)) {
+    return { skipped: true, reason: 'DIRECTUS_WEBHOOK_SECRET is not configured' };
+  }
+
   const { timestamp, signature } = signDirectusProjection({
     body: payloadJson,
-    secret: configResult.config.apiKey,
+    secret: webhookSecret,
   });
 
   const eventId = randomUUID();

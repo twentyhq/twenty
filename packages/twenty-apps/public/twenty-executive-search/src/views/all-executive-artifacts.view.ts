@@ -1,5 +1,5 @@
 import { defineView } from 'twenty-sdk/define';
-import { ViewType } from 'twenty-shared/types';
+import { ViewType } from 'twenty-sdk/define';
 import { EXECUTIVE_ARTIFACT_UNIVERSAL_IDENTIFIER } from '../objects/executive-artifact.object';
 
 export const EXECUTIVE_ARTIFACT_VIEW_ID =

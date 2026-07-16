@@ -1,5 +1,5 @@
 import { defineNavigationMenuItem } from 'twenty-sdk/define';
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import { NavigationMenuItemType } from 'twenty-sdk/define';
 import { EXECUTIVE_LANGUAGE_UNIVERSAL_IDENTIFIER } from '../objects/executive-language.object';
 
 export default defineNavigationMenuItem({

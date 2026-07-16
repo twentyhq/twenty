@@ -58,8 +58,9 @@ export class OutboxRelayProcessor {
           `Outbox entry ${entryId} exhausted after ${this.maxAttempts} attempts, moving to DLQ`,
         );
       } else {
+        const attempt = entry.attemptCount;
         this.logger.warn(
-          `Outbox entry ${entryId} failed (attempt ${entry.attemptCount + 1}/${this.maxAttempts}): ${errorMessage}`,
+          `Outbox entry ${entryId} failed (attempt ${attempt}/${this.maxAttempts}): ${errorMessage}`,
         );
         // Re-throw to trigger BullMQ retry
         throw error;

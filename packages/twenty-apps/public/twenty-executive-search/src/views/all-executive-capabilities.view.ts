@@ -1,5 +1,5 @@
 import { defineView } from 'twenty-sdk/define';
-import { ViewType } from 'twenty-shared/types';
+import { ViewType } from 'twenty-sdk/define';
 import { EXECUTIVE_CAPABILITY_UNIVERSAL_IDENTIFIER } from '../objects/executive-capability.object';
 
 export const EXECUTIVE_CAPABILITY_VIEW_ID =

@@ -1,5 +1,5 @@
 import { defineView } from 'twenty-sdk/define';
-import { ViewType } from 'twenty-shared/types';
+import { ViewType } from 'twenty-sdk/define';
 import { EXECUTIVE_EXTERNAL_PROFILE_UNIVERSAL_IDENTIFIER } from '../objects/executive-external-profile.object';
 
 export const EXECUTIVE_EXTERNAL_PROFILE_VIEW_ID =

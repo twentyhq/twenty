@@ -1,5 +1,5 @@
 import { definePageLayout } from 'twenty-sdk/define';
-import { PageLayoutType } from 'twenty-shared/types';
+import { PageLayoutType } from 'twenty-sdk/define';
 import { EXECUTIVE_SEARCH_PREFERENCE_UNIVERSAL_IDENTIFIER } from '../objects/executive-search-preference.object';
 
 export default definePageLayout({

@@ -1,5 +1,5 @@
 import { definePageLayout } from 'twenty-sdk/define';
-import { PageLayoutType } from 'twenty-shared/types';
+import { PageLayoutType } from 'twenty-sdk/define';
 import { EXTERNAL_ENTITY_LINK_UNIVERSAL_IDENTIFIER } from '../objects/external-entity-link.object';
 
 export default definePageLayout({

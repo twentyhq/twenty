@@ -1,5 +1,5 @@
 import { defineView } from 'twenty-sdk/define';
-import { ViewType } from 'twenty-shared/types';
+import { ViewType } from 'twenty-sdk/define';
 import { EXECUTIVE_AWARD_UNIVERSAL_IDENTIFIER } from '../objects/executive-award.object';
 
 export const EXECUTIVE_AWARD_VIEW_ID =

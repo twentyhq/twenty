@@ -92,7 +92,7 @@ export class InboundSyncProcessor {
         eventId: record.eventId,
         idempotencyKey: `${workspaceId}::inbound::${record.eventId}`,
         sourceSystem: record.sourceSystem,
-        eventType: record.sourceCollection,
+        eventType: envelope.sourceCollection,
         payload: authoritativeFields,
       });
 

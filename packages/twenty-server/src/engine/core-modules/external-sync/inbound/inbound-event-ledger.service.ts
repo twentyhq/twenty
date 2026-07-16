@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 import { Injectable, Logger } from '@nestjs/common';
 
 // Types for the inbound event lifecycle
@@ -24,6 +26,8 @@ export interface InboundEventRecord {
   eventId: string;
   idempotencyKey: string;
   sourceSystem: string;
+  sourceCollection: string;
+  rawEnvelope: Record<string, unknown>;
   status: string;
   lastError?: string;
   processedAt?: Date;
@@ -73,6 +77,8 @@ export class InboundEventLedgerService {
       eventId: receipt.eventId,
       idempotencyKey: receipt.idempotencyKey,
       sourceSystem: receipt.sourceSystem,
+      sourceCollection: receipt.sourceCollection,
+      rawEnvelope: receipt.rawEnvelope,
       status: InboundEventStatus.RECEIVED,
     };
 

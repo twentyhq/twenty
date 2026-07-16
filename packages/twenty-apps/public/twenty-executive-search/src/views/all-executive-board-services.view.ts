@@ -1,5 +1,5 @@
 import { defineView } from 'twenty-sdk/define';
-import { ViewType } from 'twenty-shared/types';
+import { ViewType } from 'twenty-sdk/define';
 import { EXECUTIVE_BOARD_SERVICE_UNIVERSAL_IDENTIFIER } from '../objects/executive-board-service.object';
 
 export const EXECUTIVE_BOARD_SERVICE_VIEW_ID =

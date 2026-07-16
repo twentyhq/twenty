@@ -35,7 +35,6 @@ export default defineObject({
       name: 'run',
       relationTargetObjectMetadataUniversalIdentifier:
         EXTERNAL_SYNC_RECONCILIATION_RUN_UNIVERSAL_IDENTIFIER,
-      relationTargetFieldMetadataUniversalIdentifier: '',
       universalSettings: {},
       isNullable: true,
       defaultValue: null,

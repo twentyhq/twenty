@@ -1,5 +1,5 @@
 import { defineView } from 'twenty-sdk/define';
-import { ViewType } from 'twenty-shared/types';
+import { ViewType } from 'twenty-sdk/define';
 import { EXTERNAL_ENTITY_LINK_UNIVERSAL_IDENTIFIER } from '../objects/external-entity-link.object';
 
 export const EXTERNAL_ENTITY_LINK_VIEW_ID =

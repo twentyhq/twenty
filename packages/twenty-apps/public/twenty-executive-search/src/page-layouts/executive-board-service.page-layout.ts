@@ -1,5 +1,5 @@
 import { definePageLayout } from 'twenty-sdk/define';
-import { PageLayoutType } from 'twenty-shared/types';
+import { PageLayoutType } from 'twenty-sdk/define';
 import { EXECUTIVE_BOARD_SERVICE_UNIVERSAL_IDENTIFIER } from '../objects/executive-board-service.object';
 
 export default definePageLayout({

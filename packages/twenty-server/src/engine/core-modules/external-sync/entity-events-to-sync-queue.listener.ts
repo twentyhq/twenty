@@ -32,11 +32,11 @@ export class EntityEventsToSyncQueueListener {
   async handleInboundEventCreated(
     batchEvent: WorkspaceEventBatch<ObjectRecordCreateEvent>,
   ): Promise<void> {
-    for (const event of batchEvent.records) {
+    for (const event of batchEvent.events) {
       await this.externalSyncQueueService.add(
         'process-inbound-event',
         {
-          recordId: event.id,
+          recordId: event.recordId,
           workspaceId: batchEvent.workspaceId,
         },
         { retryLimit: 3 },

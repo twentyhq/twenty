@@ -1,5 +1,5 @@
 import { defineView } from 'twenty-sdk/define';
-import { ViewType } from 'twenty-shared/types';
+import { ViewType } from 'twenty-sdk/define';
 import { EXECUTIVE_LANGUAGE_UNIVERSAL_IDENTIFIER } from '../objects/executive-language.object';
 
 export const EXECUTIVE_LANGUAGE_VIEW_ID =
