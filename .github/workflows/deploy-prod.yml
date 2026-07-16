@@ -51,14 +51,14 @@ jobs:
           APP_VERSION="$(node -p "require('./package.json').version")"
           SHA_TAG="regie-${GITHUB_SHA:0:10}"
 
-          # The ECS task definitions reference the mutable `regie-dev-latest` tag, so pushing it and
+          # The ECS task definitions reference the mutable `regie-prod-latest` tag, so pushing it and
           # forcing a new deployment rolls the services onto this build. The SHA tag is for traceability.
           docker buildx build \
             --platform=linux/arm64 \
             --target twenty \
             -f packages/twenty-docker/twenty/Dockerfile \
             --build-arg APP_VERSION="$APP_VERSION" \
-            -t "$IMAGE:regie-dev-latest" \
+            -t "$IMAGE:regie-prod-latest" \
             -t "$IMAGE:$SHA_TAG" \
             --push \
             --progress=plain \
