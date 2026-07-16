@@ -11,6 +11,8 @@ import {
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { type ApplicationRegistrationGithubClaimStateJwtPayload } from 'src/engine/core-modules/auth/types/application-registration-github-claim-state-jwt-payload.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -63,8 +65,9 @@ const buildAttestationsResponse = (repository: string) => ({
   ],
 });
 
-const STATE_PAYLOAD = {
-  type: 'APPLICATION_REGISTRATION_GITHUB_CLAIM' as const,
+const STATE_PAYLOAD: ApplicationRegistrationGithubClaimStateJwtPayload = {
+  sub: REGISTRATION_ID,
+  type: JwtTokenTypeEnum.APPLICATION_REGISTRATION_GITHUB_CLAIM_STATE,
   applicationRegistrationId: REGISTRATION_ID,
   workspaceId: WORKSPACE_ID,
   userId: 'user-1',
