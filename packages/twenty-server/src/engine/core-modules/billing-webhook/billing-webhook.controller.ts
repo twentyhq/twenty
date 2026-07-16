@@ -14,10 +14,12 @@ import {
 
 import { type Response } from 'express';
 import Stripe from 'stripe';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-customer.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-entitlement.service';
 import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-invoice.service';
+import { BillingWebhookMonitoringService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-monitoring.service';
 import { BillingWebhookPriceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-price.service';
 import { BillingWebhookProductService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-product.service';
 import { BillingWebhookSubscriptionScheduleService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-subscription-schedule.service';
@@ -46,6 +48,7 @@ export class BillingWebhookController {
     private readonly billingWebhookProductService: BillingWebhookProductService,
     private readonly billingWebhookPriceService: BillingWebhookPriceService,
     private readonly billingWebhookInvoiceService: BillingWebhookInvoiceService,
+    private readonly billingWebhookMonitoringService: BillingWebhookMonitoringService,
     private readonly billingWebhookCustomerService: BillingWebhookCustomerService,
     private readonly billingWebhookSubscriptionScheduleService: BillingWebhookSubscriptionScheduleService,
   ) {}
@@ -117,10 +120,16 @@ export class BillingWebhookController {
         );
 
       case BillingWebhookEvent.INVOICE_FINALIZED:
-      case BillingWebhookEvent.INVOICE_PAID:
-        return await this.billingWebhookInvoiceService.processStripeEvent(
-          event,
-        );
+      case BillingWebhookEvent.INVOICE_PAID: {
+        const result =
+          await this.billingWebhookInvoiceService.processStripeEvent(event);
+
+        if (event.type === BillingWebhookEvent.INVOICE_PAID) {
+          await this.recordInvoicePaidForMonitoring(event);
+        }
+
+        return result;
+      }
 
       case BillingWebhookEvent.CUSTOMER_CREATED:
         return await this.billingWebhookCustomerService.processStripeEvent(
@@ -139,14 +148,86 @@ export class BillingWebhookController {
           );
         }
 
-        return await this.billingWebhookSubscriptionService.processStripeEvent(
+        const previousActivationStatus =
+          await this.getWorkspaceActivationStatusForMonitoring(workspaceId);
+        const result =
+          await this.billingWebhookSubscriptionService.processStripeEvent(
+            workspaceId,
+            event,
+          );
+
+        await this.recordSubscriptionEventForMonitoring({
           workspaceId,
           event,
-        );
+          previousActivationStatus,
+        });
+
+        return result;
       }
 
       default:
         return {};
+    }
+  }
+
+  private async getWorkspaceActivationStatusForMonitoring(
+    workspaceId: string,
+  ) {
+    const [monitoringResult] = await Promise.allSettled([
+      this.billingWebhookMonitoringService.getWorkspaceActivationStatus(
+        workspaceId,
+      ),
+    ]);
+
+    if (monitoringResult.status === 'rejected') {
+      this.logger.error(
+        `Unable to read workspace activation status for billing monitoring: ${String(monitoringResult.reason)}`,
+      );
+
+      return undefined;
+    }
+
+    return monitoringResult.value;
+  }
+
+  private async recordSubscriptionEventForMonitoring({
+    workspaceId,
+    event,
+    previousActivationStatus,
+  }: {
+    workspaceId: string;
+    event:
+      | Stripe.CustomerSubscriptionUpdatedEvent
+      | Stripe.CustomerSubscriptionCreatedEvent
+      | Stripe.CustomerSubscriptionDeletedEvent;
+    previousActivationStatus?: WorkspaceActivationStatus;
+  }): Promise<void> {
+    const [monitoringResult] = await Promise.allSettled([
+      this.billingWebhookMonitoringService.recordSubscriptionEvent({
+        workspaceId,
+        event,
+        previousActivationStatus,
+      }),
+    ]);
+
+    if (monitoringResult.status === 'rejected') {
+      this.logger.error(
+        `Unable to record billing subscription monitoring event: ${String(monitoringResult.reason)}`,
+      );
+    }
+  }
+
+  private async recordInvoicePaidForMonitoring(
+    event: Stripe.InvoicePaidEvent,
+  ): Promise<void> {
+    const [monitoringResult] = await Promise.allSettled([
+      this.billingWebhookMonitoringService.recordInvoicePaid(event),
+    ]);
+
+    if (monitoringResult.status === 'rejected') {
+      this.logger.error(
+        `Unable to record billing invoice monitoring event: ${String(monitoringResult.reason)}`,
+      );
     }
   }
 }

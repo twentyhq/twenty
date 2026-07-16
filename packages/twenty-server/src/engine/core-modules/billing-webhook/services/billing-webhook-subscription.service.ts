@@ -37,6 +37,12 @@ import {
   type CleanWorkspaceDeletionWarningUserVarsJobData,
 } from 'src/engine/workspace-manager/workspace-cleaner/jobs/clean-workspace-deletion-warning-user-vars.job';
 
+const ACTIVE_WORKSPACE_SUBSCRIPTION_STATUSES = [
+  SubscriptionStatus.Active,
+  SubscriptionStatus.Trialing,
+  SubscriptionStatus.PastDue,
+];
+
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
 export class BillingWebhookSubscriptionService {
@@ -145,7 +151,17 @@ export class BillingWebhookSubscriptionService {
       'billingSubscription',
     ]);
 
-    const shouldSuspend = this.shouldSuspendWorkspace(data);
+    const hasActiveWorkspaceCompatibleSubscription =
+      billingSubscriptions.some((subscription) =>
+        ACTIVE_WORKSPACE_SUBSCRIPTION_STATUSES.includes(subscription.status),
+      );
+    const shouldSuspend =
+      this.shouldSuspendWorkspace(data) &&
+      !hasActiveWorkspaceCompatibleSubscription;
+    const shouldReactivate = [
+      SubscriptionStatus.Active,
+      SubscriptionStatus.Trialing,
+    ].includes(data.object.status as SubscriptionStatus);
 
     if (shouldSuspend) {
       if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) {
@@ -157,6 +173,7 @@ export class BillingWebhookSubscriptionService {
         await this.workspaceService.deleteWorkspace(workspace.id);
       }
     } else if (
+      shouldReactivate &&
       workspace.activationStatus === WorkspaceActivationStatus.SUSPENDED
     ) {
       await this.workspaceRepository.update(workspaceId, {

@@ -6,6 +6,7 @@ import { BillingWebhookController } from 'src/engine/core-modules/billing-webhoo
 import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-customer.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-entitlement.service';
 import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-invoice.service';
+import { BillingWebhookMonitoringService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-monitoring.service';
 import { BillingWebhookPriceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-price.service';
 import { BillingWebhookProductService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-product.service';
 import { BillingWebhookSubscriptionScheduleService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-subscription-schedule.service';
@@ -58,6 +59,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingWebhookProductService,
     BillingWebhookPriceService,
     BillingWebhookInvoiceService,
+    BillingWebhookMonitoringService,
     BillingWebhookCustomerService,
     BillingWebhookSubscriptionService,
     BillingWebhookSubscriptionScheduleService,
