@@ -12,10 +12,7 @@ export const buildOutboundEventLedgerStandardFlatIndexMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<
-  CreateStandardIndexArgs<'outboundEventLedger'>,
-  'context'
->): Record<
+}: Omit<CreateStandardIndexArgs<'outboundEventLedger'>, 'context'>): Record<
   AllStandardObjectIndexName<'outboundEventLedger'>,
   FlatIndexMetadata
 > => ({

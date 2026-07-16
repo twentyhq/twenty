@@ -36,7 +36,10 @@ export const buildOutboundEventLedgerStandardFlatFieldMetadatas = ({
   };
 
   return {
-    ...buildEventLedgerCommonFields(base, InboundEventLedgerSourceSystem.TWENTY),
+    ...buildEventLedgerCommonFields(
+      base,
+      InboundEventLedgerSourceSystem.TWENTY,
+    ),
     status: createStandardFieldFlatMetadata({
       ...base,
       context: {

@@ -40,10 +40,7 @@ export type EventLedgerCommonFieldName =
  * inboundEventLedger and outboundEventLedger.
  */
 export const buildEventLedgerCommonFields = <O extends EventLedgerObjectName>(
-  base: Omit<
-    CreateStandardFieldArgs<O, FieldMetadataType>,
-    'context'
-  >,
+  base: Omit<CreateStandardFieldArgs<O, FieldMetadataType>, 'context'>,
   defaultSourceSystem?: string,
 ): Record<EventLedgerCommonFieldName, FlatFieldMetadata> => ({
   id: createStandardFieldFlatMetadata({

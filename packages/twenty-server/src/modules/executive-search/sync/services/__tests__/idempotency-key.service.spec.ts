@@ -5,7 +5,10 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 
 describe('IdempotencyKeyService', () => {
   let service: IdempotencyKeyService;
-  let mockCacheStorageService: { acquireLock: jest.Mock; releaseLock: jest.Mock };
+  let mockCacheStorageService: {
+    acquireLock: jest.Mock;
+    releaseLock: jest.Mock;
+  };
 
   beforeEach(async () => {
     mockCacheStorageService = {

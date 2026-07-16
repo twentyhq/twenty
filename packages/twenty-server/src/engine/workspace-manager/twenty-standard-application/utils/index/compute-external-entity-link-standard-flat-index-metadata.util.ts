@@ -12,10 +12,7 @@ export const buildExternalEntityLinkStandardFlatIndexMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<
-  CreateStandardIndexArgs<'externalEntityLink'>,
-  'context'
->): Record<
+}: Omit<CreateStandardIndexArgs<'externalEntityLink'>, 'context'>): Record<
   AllStandardObjectIndexName<'externalEntityLink'>,
   FlatIndexMetadata
 > => ({
@@ -24,7 +21,11 @@ export const buildExternalEntityLinkStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'externalLookupIndex',
-      relatedFieldNames: ['externalSystem', 'externalCollection', 'externalRecordId'],
+      relatedFieldNames: [
+        'externalSystem',
+        'externalCollection',
+        'externalRecordId',
+      ],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

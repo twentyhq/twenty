@@ -27,8 +27,7 @@ export class SyncEventValidationService {
     if (!valid) {
       return {
         success: false,
-        errors:
-          this.validateFn.errors?.map((e) => e.message ?? '') ?? [],
+        errors: this.validateFn.errors?.map((e) => e.message ?? '') ?? [],
       };
     }
 
@@ -42,9 +41,7 @@ export class SyncEventValidationService {
     }
 
     if (
-      !(ALL_KNOWN_EVENT_TYPES as readonly string[]).includes(
-        event.eventType,
-      )
+      !(ALL_KNOWN_EVENT_TYPES as readonly string[]).includes(event.eventType)
     ) {
       return {
         success: false,
