@@ -4,9 +4,9 @@ description: "Objects, fields and relations: how you describe your business to T
 icon: "database"
 ---
 
-Suppose you make packaging for food brands. One of your customers rebrands, and their logo changes. That change has to reach everything it touches, from open orders to the next production run. In a spreadsheet, the logo version gets written wherever someone once needed it, across several tabs. Updating one tab leaves the others wrong, and nothing flags the difference. Eventually a print run ships with the old design. That one costs real money.
+Suppose you make packaging for food brands. One of your customers rebrands and their logo changes. That change has to reach everything it touches, from open orders to the next production run. In a spreadsheet, the logo version gets written wherever someone once needed it, across several tabs. Updating one tab leaves the others wrong. Nothing flags the difference. Eventually a print run ships with the old design. That one costs real money.
 
-The underlying problem is structural. A spreadsheet lets the same fact live in many places, and copies drift apart. Twenty is organized so that each fact lives in one place. The way you set that up is the **data model**, and it consists of three ideas: objects, fields and relations.
+The underlying problem is structural. A spreadsheet lets the same fact live in many places. Copies drift apart. Twenty is organized so that each fact lives in one place. The way you set that up is the **data model**. It consists of three ideas: objects, fields and relations.
 
 ## Objects
 
@@ -28,7 +28,7 @@ A **field** is one piece of information on a record, comparable to a spreadsheet
 Every field has a **type**, which defines what the field holds: text, a number, a date, an amount of money, a selection from a list. The type determines what Twenty does with the value:
 
 - **Currency** fields hold amounts Twenty does arithmetic on. A dashboard totals the value of open deals from them.
-- **Select** fields hold one value from a fixed list. Deal stages are Select fields, and pipeline columns come straight from them.
+- **Select** fields hold one value from a fixed list. Deal stages are Select fields. Pipeline columns come straight from them.
 - **Date** fields place records on a calendar.
 - **Files** fields hold documents, so the artwork PDF lives on the record it describes.
 
@@ -38,7 +38,7 @@ There are more than twenty types in total. Twenty also maintains a few fields au
 
 Records rarely stand alone. A person works at a company, an order belongs to a customer. A **relation** is a field that holds another record instead of a plain value: on a contact's record, the Company field holds the Harbor Foods record itself rather than the text `Harbor Foods`.
 
-This is what resolves the rebrand problem. A print run linked to its customer doesn't carry its own copy of the artwork version. The current artwork lives on the customer's record, in one place, and everything linked to that customer reads it from there. When the logo changes, one field changes, and no order is left pointing at a stale copy.
+This is what resolves the rebrand problem. A print run linked to its customer doesn't carry its own copy of the artwork version. The current artwork lives in one place, on the customer's record. Everything linked to that customer reads it from there. When the logo changes, one field changes. No order is left pointing at a stale copy.
 
 Relations work in both directions. The Harbor Foods page lists its people, its open deals, its notes and every print run sent to it. Each of those records shows which company it belongs to. This structure is why the rebrand above becomes a one-field edit rather than a hunt through tabs.
 
