@@ -4,11 +4,12 @@ import { buildDraftViewGroupsForFieldMetadataItem } from '@/page-layout/widgets/
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewType } from '~/generated-metadata/graphql';
+import { ViewCalendarLayout, ViewType } from '~/generated-metadata/graphql';
 
 export type RecordTableWidgetLayoutViewType =
   | ViewType.TABLE_WIDGET
-  | ViewType.KANBAN_WIDGET;
+  | ViewType.KANBAN_WIDGET
+  | ViewType.CALENDAR_WIDGET;
 
 type UseRecordTableWidgetLayoutCallbacksParams = {
   pageLayoutId: string;
@@ -58,9 +59,11 @@ export const useRecordTableWidgetLayoutCallbacks = ({
   const handleLayoutChange = ({
     targetViewType,
     defaultGroupByFieldMetadataItem,
+    defaultCalendarFieldMetadataItem,
   }: {
     targetViewType: RecordTableWidgetLayoutViewType;
     defaultGroupByFieldMetadataItem: FieldMetadataItem | null;
+    defaultCalendarFieldMetadataItem?: FieldMetadataItem | null;
   }) => {
     store.set(recordTableWidgetViewDraftState, (prev) => {
       const widgetViewDraft = prev[widgetId];
@@ -100,6 +103,32 @@ export const useRecordTableWidgetLayoutCallbacks = ({
         };
       }
 
+      if (targetViewType === ViewType.CALENDAR_WIDGET) {
+        const hasCalendarField = isDefined(
+          widgetViewDraft.view.calendarFieldMetadataId,
+        );
+
+        if (!hasCalendarField && !isDefined(defaultCalendarFieldMetadataItem)) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          [widgetId]: {
+            ...widgetViewDraft,
+            view: {
+              ...widgetViewDraft.view,
+              type: targetViewType,
+              calendarLayout:
+                widgetViewDraft.view.calendarLayout ?? ViewCalendarLayout.MONTH,
+              calendarFieldMetadataId: hasCalendarField
+                ? widgetViewDraft.view.calendarFieldMetadataId
+                : defaultCalendarFieldMetadataItem?.id,
+            },
+          },
+        };
+      }
+
       return {
         ...prev,
         [widgetId]: {
@@ -107,6 +136,29 @@ export const useRecordTableWidgetLayoutCallbacks = ({
           view: {
             ...widgetViewDraft.view,
             type: targetViewType,
+          },
+        },
+      };
+    });
+  };
+
+  const handleCalendarFieldChange = (fieldMetadataItem: FieldMetadataItem) => {
+    store.set(recordTableWidgetViewDraftState, (prev) => {
+      const widgetViewDraft = prev[widgetId];
+
+      if (!isDefined(widgetViewDraft)) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        [widgetId]: {
+          ...widgetViewDraft,
+          view: {
+            ...widgetViewDraft.view,
+            calendarFieldMetadataId: fieldMetadataItem.id,
+            calendarLayout:
+              widgetViewDraft.view.calendarLayout ?? ViewCalendarLayout.MONTH,
           },
         },
       };
@@ -137,6 +189,7 @@ export const useRecordTableWidgetLayoutCallbacks = ({
   };
 
   return {
+    handleCalendarFieldChange,
     handleGroupByFieldChange,
     handleLayoutChange,
     handleShouldHideEmptyGroupsChange,

@@ -13,6 +13,7 @@ import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPa
 import { RecordTableDataSourceDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableDataSourceDropdownContent';
 import { RecordTableFieldsDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableFieldsDropdownContent';
 import { RecordTableGroupByDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableGroupByDropdownContent';
+import { RecordTableCalendarFieldDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableCalendarFieldDropdownContent';
 import { RecordTableLayoutDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutDropdownContent';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
@@ -29,6 +30,8 @@ import {
   IconArrowBarToDownDashed,
   IconArrowsSort,
   IconBox,
+  IconCalendar,
+  IconCalendarEvent,
   IconEyeOff,
   IconFilter,
   IconLayoutKanban,
@@ -125,9 +128,14 @@ export const SidePanelDashboardRecordTableSettings = () => {
   const shouldHideEmptyGroups = widgetView?.shouldHideEmptyGroups ?? false;
 
   const isKanbanLayout = widgetView?.type === ViewType.KANBAN_WIDGET;
+  const isCalendarLayout = widgetView?.type === ViewType.CALENDAR_WIDGET;
   const currentLayoutViewType = isKanbanLayout
     ? ViewType.KANBAN_WIDGET
-    : ViewType.TABLE_WIDGET;
+    : isCalendarLayout
+      ? ViewType.CALENDAR_WIDGET
+      : ViewType.TABLE_WIDGET;
+
+  const calendarFieldMetadataId = widgetView?.calendarFieldMetadataId ?? null;
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const objectMetadataItem = objectMetadataItems.find(
@@ -139,6 +147,12 @@ export const SidePanelDashboardRecordTableSettings = () => {
     ? (objectMetadataItem?.fields.find(
         (fieldMetadataItem) =>
           fieldMetadataItem.id === mainGroupByFieldMetadataId,
+      )?.label ?? t`None`)
+    : t`None`;
+
+  const calendarFieldLabel = isDefined(calendarFieldMetadataId)
+    ? (objectMetadataItem?.fields.find(
+        (fieldMetadataItem) => fieldMetadataItem.id === calendarFieldMetadataId,
       )?.label ?? t`None`)
     : t`None`;
 
@@ -156,9 +170,13 @@ export const SidePanelDashboardRecordTableSettings = () => {
           'record-table-fields',
           'record-table-filter',
           'record-table-sort',
-          'record-table-group-by',
-          ...(hasGroupBy ? ['record-table-hide-empty-groups'] : []),
-          ...(hasGroupBy ? [] : ['record-table-limit']),
+          ...(isCalendarLayout
+            ? ['record-table-calendar-field']
+            : ['record-table-group-by']),
+          ...(!isCalendarLayout && hasGroupBy
+            ? ['record-table-hide-empty-groups']
+            : []),
+          ...(!isCalendarLayout && !hasGroupBy ? ['record-table-limit'] : []),
         ]
       : []),
   ];
@@ -181,7 +199,13 @@ export const SidePanelDashboardRecordTableSettings = () => {
             <SidePanelGroup heading={t`Settings`}>
               <SelectableListItem itemId="object-view-layout">
                 <CommandMenuItemDropdown
-                  Icon={isKanbanLayout ? IconLayoutKanban : IconTable}
+                  Icon={
+                    isKanbanLayout
+                      ? IconLayoutKanban
+                      : isCalendarLayout
+                        ? IconCalendar
+                        : IconTable
+                  }
                   label={t`Layout`}
                   id="object-view-layout"
                   dropdownId="object-view-layout"
@@ -201,7 +225,13 @@ export const SidePanelDashboardRecordTableSettings = () => {
                   }
                   dropdownPlacement="bottom-end"
                   hasSubMenu={hasViewId}
-                  description={isKanbanLayout ? t`Kanban` : t`Table`}
+                  description={
+                    isKanbanLayout
+                      ? t`Kanban`
+                      : isCalendarLayout
+                        ? t`Calendar`
+                        : t`Table`
+                  }
                   disabled={!hasViewId}
                   contextualTextPosition="right"
                 />
@@ -273,34 +303,64 @@ export const SidePanelDashboardRecordTableSettings = () => {
                       contextualTextPosition="right"
                     />
                   </SelectableListItem>
-                  <SelectableListItem itemId="record-table-group-by">
-                    <CommandMenuItemDropdown
-                      Icon={IconLayoutList}
-                      label={t`Group by`}
-                      id="record-table-group-by"
-                      dropdownId="record-table-group-by"
-                      dropdownComponents={
-                        <DropdownContent>
-                          <RecordTableGroupByDropdownContent
-                            pageLayoutId={pageLayoutId}
-                            widgetId={widgetInEditMode.id}
-                            objectMetadataId={
-                              widgetInEditMode.objectMetadataId!
-                            }
-                            currentMainGroupByFieldMetadataId={
-                              mainGroupByFieldMetadataId
-                            }
-                            isClearable={!isKanbanLayout}
-                          />
-                        </DropdownContent>
-                      }
-                      dropdownPlacement="bottom-end"
-                      hasSubMenu
-                      description={mainGroupByFieldLabel}
-                      contextualTextPosition="right"
-                    />
-                  </SelectableListItem>
-                  {hasGroupBy && (
+                  {isCalendarLayout && (
+                    <SelectableListItem itemId="record-table-calendar-field">
+                      <CommandMenuItemDropdown
+                        Icon={IconCalendarEvent}
+                        label={t`Date field`}
+                        id="record-table-calendar-field"
+                        dropdownId="record-table-calendar-field"
+                        dropdownComponents={
+                          <DropdownContent>
+                            <RecordTableCalendarFieldDropdownContent
+                              pageLayoutId={pageLayoutId}
+                              widgetId={widgetInEditMode.id}
+                              objectMetadataId={
+                                widgetInEditMode.objectMetadataId!
+                              }
+                              currentCalendarFieldMetadataId={
+                                calendarFieldMetadataId
+                              }
+                            />
+                          </DropdownContent>
+                        }
+                        dropdownPlacement="bottom-end"
+                        hasSubMenu
+                        description={calendarFieldLabel}
+                        contextualTextPosition="right"
+                      />
+                    </SelectableListItem>
+                  )}
+                  {!isCalendarLayout && (
+                    <SelectableListItem itemId="record-table-group-by">
+                      <CommandMenuItemDropdown
+                        Icon={IconLayoutList}
+                        label={t`Group by`}
+                        id="record-table-group-by"
+                        dropdownId="record-table-group-by"
+                        dropdownComponents={
+                          <DropdownContent>
+                            <RecordTableGroupByDropdownContent
+                              pageLayoutId={pageLayoutId}
+                              widgetId={widgetInEditMode.id}
+                              objectMetadataId={
+                                widgetInEditMode.objectMetadataId!
+                              }
+                              currentMainGroupByFieldMetadataId={
+                                mainGroupByFieldMetadataId
+                              }
+                              isClearable={!isKanbanLayout}
+                            />
+                          </DropdownContent>
+                        }
+                        dropdownPlacement="bottom-end"
+                        hasSubMenu
+                        description={mainGroupByFieldLabel}
+                        contextualTextPosition="right"
+                      />
+                    </SelectableListItem>
+                  )}
+                  {!isCalendarLayout && hasGroupBy && (
                     <SelectableListItem itemId="record-table-hide-empty-groups">
                       <CommandMenuItemToggle
                         LeftIcon={IconEyeOff}
@@ -311,7 +371,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                       />
                     </SelectableListItem>
                   )}
-                  {!hasGroupBy && (
+                  {!isCalendarLayout && !hasGroupBy && (
                     <SelectableListItem itemId="record-table-limit">
                       <CommandMenuItemNumberInput
                         id="record-table-limit"

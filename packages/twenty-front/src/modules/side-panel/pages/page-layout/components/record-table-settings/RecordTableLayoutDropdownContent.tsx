@@ -15,7 +15,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLayoutKanban, IconTable } from 'twenty-ui/icon';
+import { IconCalendar, IconLayoutKanban, IconTable } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { ViewType } from '~/generated-metadata/graphql';
 
@@ -62,7 +62,16 @@ export const RecordTableLayoutDropdownContent = ({
         canGroupRecordsByFieldMetadataItem(fieldMetadataItem),
     ) ?? null;
 
+  const defaultCalendarFieldMetadataItem =
+    (objectMetadataItem?.readableFields ?? []).find(
+      (fieldMetadataItem) =>
+        fieldMetadataItem.isActive === true &&
+        (fieldMetadataItem.type === FieldMetadataType.DATE ||
+          fieldMetadataItem.type === FieldMetadataType.DATE_TIME),
+    ) ?? null;
+
   const isKanbanAvailable = isDefined(defaultGroupByFieldMetadataItem);
+  const isCalendarAvailable = isDefined(defaultCalendarFieldMetadataItem);
 
   const handleSelectLayout = (
     targetViewType: RecordTableWidgetLayoutViewType,
@@ -70,6 +79,7 @@ export const RecordTableLayoutDropdownContent = ({
     handleLayoutChange({
       targetViewType,
       defaultGroupByFieldMetadataItem,
+      defaultCalendarFieldMetadataItem,
     });
     closeDropdown();
   };
@@ -81,6 +91,7 @@ export const RecordTableLayoutDropdownContent = ({
         selectableItemIdArray={[
           ViewType.TABLE_WIDGET,
           ...(isKanbanAvailable ? [ViewType.KANBAN_WIDGET] : []),
+          ...(isCalendarAvailable ? [ViewType.CALENDAR_WIDGET] : []),
         ]}
         focusId={dropdownId}
       >
@@ -107,6 +118,20 @@ export const RecordTableLayoutDropdownContent = ({
               selected={currentLayoutViewType === ViewType.KANBAN_WIDGET}
               focused={selectedItemId === ViewType.KANBAN_WIDGET}
               onClick={() => handleSelectLayout(ViewType.KANBAN_WIDGET)}
+            />
+          </SelectableListItem>
+        )}
+        {isCalendarAvailable && (
+          <SelectableListItem
+            itemId={ViewType.CALENDAR_WIDGET}
+            onEnter={() => handleSelectLayout(ViewType.CALENDAR_WIDGET)}
+          >
+            <MenuItemSelect
+              text={t`Calendar`}
+              LeftIcon={IconCalendar}
+              selected={currentLayoutViewType === ViewType.CALENDAR_WIDGET}
+              focused={selectedItemId === ViewType.CALENDAR_WIDGET}
+              onClick={() => handleSelectLayout(ViewType.CALENDAR_WIDGET)}
             />
           </SelectableListItem>
         )}
