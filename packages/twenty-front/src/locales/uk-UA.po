@@ -3326,11 +3326,6 @@ msgstr "Перегляд календаря"
 msgid "Calendar View"
 msgstr "Перегляд календаря"
 
-#. js-lingui-id: mhcSf1
-#: src/modules/views/types/ViewType.ts
-msgid "Calendar widget"
-msgstr ""
-
 #. js-lingui-id: EUpfsd
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
@@ -10214,11 +10209,6 @@ msgstr "Лише для мене"
 #: src/modules/views/types/ViewType.ts
 msgid "Kanban"
 msgstr "Канбан"
-
-#. js-lingui-id: lsRWTc
-#: src/modules/views/types/ViewType.ts
-msgid "Kanban widget"
-msgstr ""
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx

@@ -8883,11 +8883,6 @@ msgstr "執行 upsert 後找不到檢視"
 msgid "View not found for widget"
 msgstr "找不到小工具的檢視"
 
-#. js-lingui-id: wIcQxd
-#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
-msgid "View settings can only be updated on record table widgets"
-msgstr ""
-
 #. js-lingui-id: ipFNcM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -9117,11 +9112,6 @@ msgstr ""
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 msgid "Widget type VIEW is not supported yet."
-msgstr ""
-
-#. js-lingui-id: s8y6wj
-#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
-msgid "Widget views must use a widget view type"
 msgstr ""
 
 #. js-lingui-id: qRILxq
