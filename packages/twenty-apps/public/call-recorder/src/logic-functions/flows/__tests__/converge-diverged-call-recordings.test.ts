@@ -337,6 +337,35 @@ describe('convergeDivergedCallRecordings', () => {
     expect(result.updatedCallRecordingIds).toEqual(['call-recording-1']);
   });
 
+  it('does not fail a completed bot sync when a persisted artifact remains reachable', async () => {
+    getRecallBotMock.mockResolvedValue({
+      ok: true,
+      bot: {
+        statusChanges: [
+          { code: 'done', createdAt: '2026-06-09T14:05:00.000Z' },
+        ],
+        recordings: [],
+      },
+    });
+    const client = buildClient([
+      buildStuckRecordingNode({
+        audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+      }),
+    ]);
+
+    await convergeDivergedCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: { status: 'PROCESSING' },
+      },
+    ]);
+  });
+
   it('completes and charges when convergence lands the last artifact', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
