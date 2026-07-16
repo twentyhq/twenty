@@ -222,9 +222,18 @@ const UpsertCompleteViewInputSchema = z.object({
   name: z.string().optional().describe('View name'),
   icon: z.string().optional().describe('Icon identifier (e.g. "IconList")'),
   type: z
-    .enum([ViewType.TABLE, ViewType.KANBAN, ViewType.CALENDAR])
+    .enum([
+      ViewType.TABLE,
+      ViewType.KANBAN,
+      ViewType.CALENDAR,
+      ViewType.TABLE_WIDGET,
+      ViewType.KANBAN_WIDGET,
+      ViewType.CALENDAR_WIDGET,
+    ])
     .optional()
-    .describe('View type. Defaults to TABLE on create.'),
+    .describe(
+      'View type. Defaults to TABLE on create. Use the *_WIDGET variants for views backing a dashboard widget so they stay out of record index view pickers.',
+    ),
   visibility: z
     .enum([ViewVisibility.WORKSPACE, ViewVisibility.UNLISTED])
     .optional()
