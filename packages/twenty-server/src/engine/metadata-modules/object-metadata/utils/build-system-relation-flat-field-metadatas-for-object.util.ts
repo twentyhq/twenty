@@ -104,12 +104,12 @@ export const buildSystemRelationFlatFieldMetadatasForObject = ({
         targetFieldName: reverseFieldName,
         sourceFieldUniversalIdentifier: forwardFieldUniversalIdentifier,
         targetFieldUniversalIdentifier: reverseFieldUniversalIdentifier,
+        isSystemSideEffect: true,
         createFieldInput: {
           icon: standardFieldProperties.icon,
           type: FieldMetadataType.RELATION,
           name: targetFlatObjectMetadata.namePlural,
           label: i18nLabel(standardFieldProperties.label),
-          isSystem: false,
           relationCreationPayload: {
             // Not consumed by the pair generator (the target object is passed
             // explicitly); universal entities carry no DB id.
@@ -126,14 +126,8 @@ export const buildSystemRelationFlatFieldMetadatasForObject = ({
       flatFieldMetadatas;
 
     return {
-      forwardFlatFieldMetadata: {
-        ...forwardFlatFieldMetadata,
-        isSystemSideEffect: true,
-      },
-      reverseFlatFieldMetadata: {
-        ...reverseFlatFieldMetadata,
-        isSystemSideEffect: true,
-      },
+      forwardFlatFieldMetadata,
+      reverseFlatFieldMetadata,
       flatIndexMetadata: indexMetadatas[0],
     };
   });
