@@ -109,5 +109,8 @@
     "singleQuote": true,
     "trailingComma": "all",
     "endOfLine": "lf"
+  },
+  "dependencies": {
+    "expr-eval": "^2.0.2"
   }
 }

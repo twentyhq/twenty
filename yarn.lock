@@ -26018,7 +26018,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:8.20.0, ajv@npm:^8.0.0, ajv@npm:^8.17.1, ajv@npm:^8.18.0, ajv@npm:^8.9.0":
+"ajv@npm:8.20.0, ajv@npm:^8.0.0, ajv@npm:^8.17.1, ajv@npm:^8.18.0, ajv@npm:^8.20.0, ajv@npm:^8.9.0":
   version: 8.20.0
   resolution: "ajv@npm:8.20.0"
   dependencies:
@@ -32639,6 +32639,13 @@ __metadata:
   version: 3.0.3
   resolution: "expr-eval-fork@npm:3.0.3"
   checksum: 10c0/26655b5e059d404de67ab374008ee03ff94c4b4af13904714404fca7fdfed4a27498032e48e75b5bbe5eac26cbcd360cd999eb9d5bbceb542824d9c588ab44ab
+  languageName: node
+  linkType: hard
+
+"expr-eval@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "expr-eval@npm:2.0.2"
+  checksum: 10c0/642f112ff28ea34574c595c3ad73ccd8e638498879a4dd28620c4dabebab2e11987a851266ba81883dae85a5800e0c93b3d06f81718b71a215f831534646e4f2
   languageName: node
   linkType: hard
 
@@ -53201,6 +53208,7 @@ __metadata:
     "@types/uuid": "npm:^9.0.2"
     addressparser: "npm:1.0.1"
     ai: "npm:6.0.97"
+    ajv: "npm:^8.20.0"
     archiver: "npm:7.0.1"
     axios: "npm:^1.16.0"
     axios-retry: "npm:^4.5.0"
@@ -53510,6 +53518,7 @@ __metadata:
     "@types/react-dom": "npm:^19.2.0"
     "@yarnpkg/types": "npm:^4.0.0"
     concurrently: "npm:^8.2.2"
+    expr-eval: "npm:^2.0.2"
     http-server: "npm:^14.1.1"
     nx: "npm:22.7.5"
     oxfmt: "npm:0.50.0"

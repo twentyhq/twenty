@@ -1,0 +1,7 @@
+export enum InboundEventLedgerStatus {
+  RECEIVED = 'RECEIVED',
+  PROCESSING = 'PROCESSING',
+  PROCESSED = 'PROCESSED',
+  FAILED = 'FAILED',
+  DEAD_LETTERED = 'DEAD_LETTERED',
+}

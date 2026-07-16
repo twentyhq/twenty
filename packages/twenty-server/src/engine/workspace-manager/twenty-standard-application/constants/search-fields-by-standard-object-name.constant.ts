@@ -17,6 +17,10 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
     { name: 'domainName', type: FieldMetadataType.LINKS },
   ],
   dashboard: [{ name: 'title', type: FieldMetadataType.TEXT }],
+  externalEntityLink: [
+    { name: 'externalRecordId', type: FieldMetadataType.TEXT },
+  ],
+  inboundEventLedger: [],
   message: [{ name: 'subject', type: FieldMetadataType.TEXT }],
   messageCampaign: [{ name: 'subject', type: FieldMetadataType.TEXT }],
   messageChannelMessageAssociation: [
@@ -33,6 +37,7 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
   ],
   noteTarget: [{ name: 'id', type: FieldMetadataType.UUID }],
   opportunity: [{ name: 'name', type: FieldMetadataType.TEXT }],
+  outboundEventLedger: [],
   person: [
     { name: 'name', type: FieldMetadataType.FULL_NAME },
     { name: 'emails', type: FieldMetadataType.EMAILS },
