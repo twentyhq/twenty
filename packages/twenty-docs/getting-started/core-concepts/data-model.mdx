@@ -41,6 +41,10 @@ A **relation** is a foreign key with an interface. The Company field on a person
 
 Relations resolve in both directions. Open a company and every person, opportunity, task and note that references it is on the page. Open any of those and the company is one click back.
 
-The standard objects ship with their relations already defined. A Company has many People and an Opportunity belongs to a Company. You can relate any two objects the same way, including many-to-many.
+## Shaping the model
+
+The standard objects ship with their relations already defined. A Company has many People and an Opportunity belongs to a Company. You can define one-to-many or many-to-many relations between any two objects.
+
+The whole model is editable under Settings → Data model. Changes apply immediately: a new object shows up in the sidebar and the API serves it without a restart.
 
 The next page covers the workspace, where records live on screen and how to move between them.
