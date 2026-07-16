@@ -1,6 +1,6 @@
 import { isRecordBoardReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardReadOnlyComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 
 type RecordBoardWidgetReadOnlyEffectProps = {
   recordBoardId: string;
@@ -16,7 +16,9 @@ export const RecordBoardWidgetReadOnlyEffect = ({
     recordBoardId,
   );
 
-  useEffect(() => {
+  // Synchronized before paint so read-only widgets never flash (or
+  // briefly accept interaction on) their editable controls.
+  useLayoutEffect(() => {
     setIsRecordBoardReadOnly(isReadOnly);
   }, [isReadOnly, setIsRecordBoardReadOnly]);
 
