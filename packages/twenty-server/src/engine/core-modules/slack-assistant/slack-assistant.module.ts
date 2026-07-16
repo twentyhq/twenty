@@ -1,0 +1,49 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
+import { ApplicationConnectionsModule } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.module';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
+import { SlackAssistantController } from 'src/engine/core-modules/slack-assistant/controllers/slack-assistant.controller';
+import { SlackAssistantReplyJob } from 'src/engine/core-modules/slack-assistant/jobs/slack-assistant-reply.job';
+import { SlackAssistantConfigService } from 'src/engine/core-modules/slack-assistant/services/slack-assistant-config.service';
+import { SlackAssistantService } from 'src/engine/core-modules/slack-assistant/services/slack-assistant.service';
+import { SlackConnectionService } from 'src/engine/core-modules/slack-assistant/services/slack-connection.service';
+import { SlackMessageSenderService } from 'src/engine/core-modules/slack-assistant/services/slack-message-sender.service';
+import { SlackSignatureVerifierService } from 'src/engine/core-modules/slack-assistant/services/slack-signature-verifier.service';
+import { SlackWorkspaceResolverService } from 'src/engine/core-modules/slack-assistant/services/slack-workspace-resolver.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
+import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
+import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
+
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([
+      ApplicationEntity,
+      ApplicationRegistrationVariableEntity,
+      ConnectionProviderEntity,
+      WorkspaceEntity,
+    ]),
+    SecretEncryptionModule,
+    ApplicationModule,
+    ApplicationConnectionsModule,
+    AiAgentModule,
+    AiAgentExecutionModule,
+    AiAgentRoleModule,
+  ],
+  controllers: [SlackAssistantController],
+  providers: [
+    SlackAssistantConfigService,
+    SlackSignatureVerifierService,
+    SlackMessageSenderService,
+    SlackConnectionService,
+    SlackWorkspaceResolverService,
+    SlackAssistantService,
+    SlackAssistantReplyJob,
+  ],
+})
+export class SlackAssistantModule {}
