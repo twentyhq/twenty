@@ -1,0 +1,72 @@
+import { defineView, ViewKey } from 'twenty-sdk/define';
+
+import {
+  SEARCH_MILESTONES_VIEW_MILESTONE_TYPE_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_MILESTONES_VIEW_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_MILESTONES_VIEW_SEARCH_ASSIGNMENT_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_MILESTONES_VIEW_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_MILESTONES_VIEW_TARGET_DATE_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_MILESTONES_VIEW_UNIVERSAL_IDENTIFIER,
+  SEARCH_MILESTONE_MILESTONE_TYPE_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_MILESTONE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_MILESTONE_OBJECT_UNIVERSAL_IDENTIFIER,
+  SEARCH_MILESTONE_SEARCH_ASSIGNMENT_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_MILESTONE_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+  SEARCH_MILESTONE_TARGET_DATE_FIELD_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+
+export default defineView({
+  universalIdentifier: SEARCH_MILESTONES_VIEW_UNIVERSAL_IDENTIFIER,
+  name: 'All Search Milestones',
+  objectUniversalIdentifier: SEARCH_MILESTONE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconFlag',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier:
+        SEARCH_MILESTONES_VIEW_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        SEARCH_MILESTONE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 220,
+    },
+    {
+      universalIdentifier:
+        SEARCH_MILESTONES_VIEW_SEARCH_ASSIGNMENT_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        SEARCH_MILESTONE_SEARCH_ASSIGNMENT_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 1,
+      isVisible: true,
+      size: 200,
+    },
+    {
+      universalIdentifier:
+        SEARCH_MILESTONES_VIEW_MILESTONE_TYPE_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        SEARCH_MILESTONE_MILESTONE_TYPE_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 2,
+      isVisible: true,
+      size: 180,
+    },
+    {
+      universalIdentifier:
+        SEARCH_MILESTONES_VIEW_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        SEARCH_MILESTONE_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 3,
+      isVisible: true,
+      size: 150,
+    },
+    {
+      universalIdentifier:
+        SEARCH_MILESTONES_VIEW_TARGET_DATE_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        SEARCH_MILESTONE_TARGET_DATE_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 4,
+      isVisible: true,
+      size: 160,
+    },
+  ],
+});

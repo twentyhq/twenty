@@ -4,14 +4,21 @@ import { APP_DISPLAY_NAME } from 'src/constants/app-display-name';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/constants/default-role-universal-identifier';
 import { SEARCH_ENGAGEMENT_TERMS_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
+import {
+  ASSIGNMENT_TEAM_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER,
+  SEARCH_ASSIGNMENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  SEARCH_ENGAGEMENT_TERMS_OBJECT_UNIVERSAL_IDENTIFIER,
+  SEARCH_MILESTONE_OBJECT_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+
 export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 
   label: `${APP_DISPLAY_NAME} default role`,
   description:
     'Least-privilege base role for the executive-search application. ' +
-    'Grants no object access by default — future phases add explicit ' +
-    'object and field permissions as domain records are created.',
+    'Grants read and update access to searchEngagementTerms, searchAssignment, ' +
+    'assignmentTeamMember, and searchMilestone objects.',
 
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
