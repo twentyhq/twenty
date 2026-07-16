@@ -152,6 +152,15 @@ export class ConnectedAccountRefreshTokensService {
       case ConnectedAccountProvider.GOOGLE:
       case ConnectedAccountProvider.MICROSOFT:
       case ConnectedAccountProvider.APP: {
+        // Some app providers (e.g. Slack bot tokens) issue long-lived access
+        // tokens with no refresh token: there is nothing to refresh, so the
+        // stored access token is treated as valid rather than expiring after
+        // CONNECTED_ACCOUNT_ACCESS_TOKEN_EXPIRATION and failing with
+        // REFRESH_TOKEN_NOT_FOUND.
+        // TODO: drive this from the connection provider definition (e.g. an
+        // explicit "tokens are refreshable / long-lived" flag) instead of
+        // inferring it from the absence of a refresh token, which conflates
+        // "cannot be refreshed" with "does not expire" for every app provider.
         if (
           connectedAccount.provider === ConnectedAccountProvider.APP &&
           !isDefined(connectedAccount.refreshToken)

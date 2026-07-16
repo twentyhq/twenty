@@ -155,11 +155,8 @@ export class SlackAssistantService {
   }
 
   private extractReplyText(result: object): string | null {
-    if (
-      'response' in result &&
-      isNonEmptyString((result as { response?: unknown }).response)
-    ) {
-      return (result as { response: string }).response;
+    if ('response' in result && isNonEmptyString(result.response)) {
+      return result.response;
     }
 
     return null;
