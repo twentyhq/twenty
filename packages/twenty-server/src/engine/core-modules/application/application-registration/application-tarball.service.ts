@@ -19,12 +19,12 @@ import { extractTarballSecurely } from 'src/engine/core-modules/application/appl
 import { readJsonFile } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -40,9 +40,9 @@ export class ApplicationTarballService {
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly fileStorageService: FileStorageService,
     private readonly applicationRegistrationAssetService: ApplicationRegistrationAssetService,
-    private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationService: ApplicationService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
   ) {}
 
   async uploadTarball(params: {
@@ -76,6 +76,10 @@ export class ApplicationTarballService {
           },
         },
       );
+
+      const isNewRegistration = !isDefined(existingRegistration);
+      const previousLatestAvailableVersion =
+        existingRegistration?.latestAvailableVersion ?? null;
 
       const appRegistration = isDefined(existingRegistration)
         ? this.assertTarballCanReplaceRegistration({
@@ -118,6 +122,20 @@ export class ApplicationTarballService {
       this.logger.log(
         `Tarball uploaded for app ${universalIdentifier} (registration ${appRegistration.id})`,
       );
+
+      const incomingVersion = packageJson?.version ?? null;
+      if (
+        isNewRegistration ||
+        previousLatestAvailableVersion !== incomingVersion
+      ) {
+        this.applicationRegistrationService.emitRegistrationPublishMetric({
+          isNewRegistration,
+          universalIdentifier,
+          name: manifest.application?.displayName ?? 'Unknown App',
+          sourceType: ApplicationRegistrationSourceType.TARBALL,
+          version: incomingVersion,
+        });
+      }
 
       return this.appRegistrationRepository.findOneOrFail({
         where: { id: appRegistration.id },

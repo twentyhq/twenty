@@ -236,29 +236,22 @@ export default defineFrontComponent({
 
 Ön bileşenler, tarayıcı tarafında, opak kaynaklı bir iframe içinde yer alan korumalı (sandbox) bir Web Worker içinde çalışırken, [mantık işlevleri](/l/tr/developers/extend/apps/logic/logic-functions) sunucu tarafında çalışır. İkisi arasında doğrudan, işlem içi bir çağrı yoktur — bunun yerine, bir ön bileşen bir mantık işlevine HTTP üzerinden erişir.
 
-`httpRouteTriggerSettings` ile bildirilen bir mantık işlevi, rota yolunda HTTP üzerinden erişilebilir durumdadır. Twenty, işlevlerinizin sunulduğu temel URL’yi, çağrıyı kimlik doğrulayan `TWENTY_APP_ACCESS_TOKEN` ile birlikte, worker’a `TWENTY_FUNCTIONS_URL` olarak enjekte eder. Kendi işlevlerinizi çağırmak için henüz özel bir SDK istemcisi yoktur, bu yüzden onları basit bir `fetch` ile çağırın:
+`httpRouteTriggerSettings` ile bildirilen bir mantık işlevi, rota yolunda HTTP üzerinden erişilebilir durumdadır. `RestApiClient`, `/s/` ile başlayan yolları uygulama rotaları olarak ele alır, bunları fonksiyonlarınızın sunulduğu URL'ye çözümler ve `TWENTY_APP_ACCESS_TOKEN` ile kimlik doğrulaması yapar.
 
-> **Twenty Cloud üzerinde, HTTP ile tetiklenen mantık işlevleri, çalışma alanı başına ayrılmış özel bir etki alanında** `https://\<your-workspace-subdomain>.withtwenty.com\<path>` adresinde sunulur — bu, `TWENTY_FUNCTIONS_URL`'ün tam olarak çözümlendiği değerdir. Harici çağrıcılar için, tam URL’yi işlevin **HTTP trigger** ayarlarından veya uygulamanın **Settings** sekmesinden kopyalayın.
-
-<Warning>
-  Eski `/s/` fonksiyon rotası **kullanımdan kaldırılmıştır (deprecated)** ve **2026-07-24 tarihinde devre dışı bırakılacaktır**. Bunun yerine yukarıdaki `TWENTY_FUNCTIONS_URL` değerini kullanın ve o tarihten önce sabit (hard-coded) tüm `/s/` URL’lerini taşıyın. `/s/` rotası, self-hosting için kullanılabilir olmaya devam eder.
-</Warning>
+> **Twenty Cloud üzerinde, HTTP ile tetiklenen mantık işlevleri, çalışma alanı başına ayrılmış özel bir etki alanında** `https://\<your-workspace-subdomain>.withtwenty.com\<path>` adresinde sunulur. Harici çağrıcılar için, tam URL’yi işlevin **HTTP trigger** ayarlarından veya uygulamanın **Settings** sekmesinden kopyalayın.
 
 Başsız bir ön bileşen, çağrıyı `Command` bileşeni aracılığıyla mount sırasında çalıştırabilir ve ardından otomatik olarak unmount olabilir:
 
 ```tsx src/front-components/sync-prs.tsx
+import { RestApiClient } from 'twenty-client-sdk/rest';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/front-component';
 
 const SyncPrs = () => {
   const execute = async () => {
-    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
+    await new RestApiClient().post('/s/github/fetch-prs', {
+      owner: 'twentyhq',
+      repo: 'twenty',
     });
   };
 
@@ -274,7 +267,7 @@ export default defineFrontComponent({
 });
 ```
 
-`TWENTY_FUNCTIONS_URL` değerine eklenen yol (path), mantık fonksiyonunun `httpRouteTriggerSettings.path` değeridir. `isAuthRequired: true` ayarını koruyun; bileşeniniz için Twenty'nin oluşturduğu `TWENTY_APP_ACCESS_TOKEN` isteği kimlik doğrular:
+`RestApiClient`'e iletilen yol, başına `/s` eklenmiş mantık işlevinin `httpRouteTriggerSettings.path` değeridir. `isAuthRequired: true` ayarını koruyun; bileşeniniz için Twenty'nin oluşturduğu `TWENTY_APP_ACCESS_TOKEN` isteği kimlik doğrular:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -299,21 +292,22 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_FUNCTIONS_URL` ve `TWENTY_APP_ACCESS_TOKEN` otomatik olarak enjekte edilir — bkz. [Uygulama değişkenleri](#application-variables). Gizli uygulama değişkenleri asla ön bileşenlere açığa çıkarılmadığından, API anahtarlarını ve diğer hassas mantığı ön bileşende değil, mantık işlevinin içinde tutun.
+`TWENTY_APP_ACCESS_TOKEN` otomatik olarak enjekte edilir — bkz. [Uygulama değişkenleri](#application-variables). Gizli uygulama değişkenleri asla ön bileşenlere açığa çıkarılmadığından, API anahtarlarını ve diğer hassas mantığı ön bileşende değil, mantık işlevinin içinde tutun.
 </Note>
 
 ### Twenty REST API'sini çağırma
 
-Bir front bileşeninden Twenty kayıtlarını okumak veya yazmak için, `twenty-client-sdk/rest` paketinden `RestApiClient` kullanın. `CoreApiClient` ve `MetadataApiClient` ile aynı istemci ailesine aittir, ancak GraphQL API yerine Twenty REST API'sini (`/rest/...`) hedefler ve temel URL'sini `TWENTY_API_URL` değerinden okur.
+Uygulama HTTP rotalarını çağırmak veya bir front bileşeninden Twenty kayıtlarını okumak ve yazmak için `twenty-client-sdk/rest` paketinden `RestApiClient` kullanın. `/s/...` yollarını çalışma alanınızdaki işlevlerin temel URL'sine, `/rest/...` dahil diğer tüm yolları ise `TWENTY_API_URL`'ye gönderir.
 
-| Yöntem                            | Açıklama                                 |
-| --------------------------------- | ---------------------------------------- |
-| `get(path, options?)`             | Bir `GET` isteği gönderir                |
-| `post(path, body?, options?)`     | Bir `POST` isteği gönderir               |
-| `put(path, body?, options?)`      | Bir `PUT` isteği gönderir                |
-| `patch(path, body?, options?)`    | Bir `PATCH` isteği gönderir              |
-| `delete(path, options?)`          | Bir `DELETE` isteği gönderir             |
-| `request(method, path, options?)` | Herhangi bir HTTP yöntemiyle genel istek |
+| Yöntem                            | Açıklama                                                                 |
+| --------------------------------- | ------------------------------------------------------------------------ |
+| `get(path, options?)`             | Bir `GET` isteği gönderir                                                |
+| `post(path, body?, options?)`     | Bir `POST` isteği gönderir                                               |
+| `put(path, body?, options?)`      | Bir `PUT` isteği gönderir                                                |
+| `patch(path, body?, options?)`    | Bir `PATCH` isteği gönderir                                              |
+| `delete(path, options?)`          | Bir `DELETE` isteği gönderir                                             |
+| `request(method, path, options?)` | Herhangi bir HTTP yöntemiyle genel istek                                 |
+| `resolveUrl(path, options?)`      | Bir istekte bulunmadan (bağlantılar için) bir yolu tam URL'sine çözümler |
 
 `options`, `headers`, `query` (sorgu dizesi parametrelerinin kaydı; null benzeri değerler atlanır) ve `signal` aracılığıyla bir `AbortSignal` kabul eder. `FormData` olmayan bir `body` nesnesi otomatik olarak JSON’a serileştirilir. `401` durumunda, istemci erişim jetonunu bir kez ana makine (host) üzerinden yeniler ve isteği yeniden dener.
 
@@ -417,11 +411,22 @@ Gizli değişkenler (`isSecret: true`) ön uç bileşenlere açıklanmaz. Bunlar
 
 Aşağıdaki sistem değişkenleri her zaman `process.env` aracılığıyla kullanılabilir:
 
-| Değişken                  | Açıklama                                                       |
-| ------------------------- | -------------------------------------------------------------- |
-| `TWENTY_FUNCTIONS_URL`    | Uygulamanızın HTTP mantık fonksiyonlarının sunulduğu temel URL |
-| `TWENTY_API_URL`          | Twenty çekirdek API'sinin temel URL'si                         |
-| `TWENTY_APP_ACCESS_TOKEN` | Uygulamanızın rolüyle sınırlanan kısa ömürlü bir belirteç      |
+| Değişken                  | Açıklama                                                  |
+| ------------------------- | --------------------------------------------------------- |
+| `TWENTY_API_URL`          | Twenty çekirdek API'sinin temel URL'si                    |
+| `TWENTY_APP_ACCESS_TOKEN` | Uygulamanızın rolüyle sınırlanan kısa ömürlü bir belirteç |
+
+### `TWENTY_FUNCTIONS_URL`
+
+Twenty ayrıca `TWENTY_FUNCTIONS_URL` değişkenini front bileşenlerine ve mantık işlevlerine enjekte eder: bu, uygulamanızın HTTP ile tetiklenen mantık işlevlerinin sunulduğu temel URL'dir.
+
+Bu değişken, bu URL her zaman Twenty sunucusunun kendisi olmadığı için mevcuttur. Twenty Cloud üzerinde, uygulama rotaları, uygulama tarafından yazılmış yanıtların Twenty uygulamasının kaynağı yerine yalıtılmış bir kaynak üzerinde çalışması için, çalışma alanı başına ayrılmış özel bir etki alanında (`https://\<your-workspace-subdomain>.withtwenty.com` veya yapılandırıldığında uygulamanın birincil genel etki alanında) sunulur. Self-hosted ve yerel örnekler, uygulama rotalarını sunucunun kendisinde `/s` öneki altında sunar ve değişkeni hiç ayarlamayabilir. Temel URL, çalışma alanına ve örneğe göre değiştiğinden, kodunuz bunu sabit olarak yazamaz — sunucu, çalışma zamanında doğru değeri enjekte eder.
+
+Bu değişkeni doğrudan okumanız nadiren gerekir. Rotalarınızı, yolu `/s/` önekiyle birlikte vererek `RestApiClient` üzerinden çağırın; istemci URL'yi sizin için çözümler: `/s` önekini kaldırır ve `TWENTY_FUNCTIONS_URL`'yi hedefler, değişken ayarlı değilse `\<TWENTY_API_URL>/s` adresine geri döner. Mutlak URL'yi bir istek göndermeden elde etmek için, örneğin bir bağlantı için, `resolveUrl('/s/\<path>')` kullanın. Değişkeni yalnızca bir URL'yi elle oluştururken doğrudan okuyun:
+
+```ts
+const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL}/s`}/documents/generate`;
+```
 
 ## Host iletişim API'si
 
