@@ -4,6 +4,11 @@ import { buildDraftViewGroupsForFieldMetadataItem } from '@/page-layout/widgets/
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
+import { ViewType } from '~/generated-metadata/graphql';
+
+export type RecordTableWidgetLayoutViewType =
+  | ViewType.TABLE_WIDGET
+  | ViewType.KANBAN_WIDGET;
 
 type UseRecordTableWidgetLayoutCallbacksParams = {
   pageLayoutId: string;
@@ -50,6 +55,64 @@ export const useRecordTableWidgetLayoutCallbacks = ({
     });
   };
 
+  const handleLayoutChange = ({
+    targetViewType,
+    defaultGroupByFieldMetadataItem,
+  }: {
+    targetViewType: RecordTableWidgetLayoutViewType;
+    defaultGroupByFieldMetadataItem: FieldMetadataItem | null;
+  }) => {
+    store.set(recordTableWidgetViewDraftState, (prev) => {
+      const widgetViewDraft = prev[widgetId];
+
+      if (!isDefined(widgetViewDraft)) {
+        return prev;
+      }
+
+      if (targetViewType === ViewType.KANBAN_WIDGET) {
+        const hasGroupBy = isDefined(
+          widgetViewDraft.view.mainGroupByFieldMetadataId,
+        );
+
+        if (!hasGroupBy && !isDefined(defaultGroupByFieldMetadataItem)) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          [widgetId]: {
+            ...widgetViewDraft,
+            view: {
+              ...widgetViewDraft.view,
+              type: targetViewType,
+              mainGroupByFieldMetadataId: hasGroupBy
+                ? widgetViewDraft.view.mainGroupByFieldMetadataId
+                : defaultGroupByFieldMetadataItem?.id,
+            },
+            viewGroups:
+              hasGroupBy || !isDefined(defaultGroupByFieldMetadataItem)
+                ? widgetViewDraft.viewGroups
+                : buildDraftViewGroupsForFieldMetadataItem({
+                    viewId: widgetViewDraft.view.id,
+                    fieldMetadataItem: defaultGroupByFieldMetadataItem,
+                  }),
+          },
+        };
+      }
+
+      return {
+        ...prev,
+        [widgetId]: {
+          ...widgetViewDraft,
+          view: {
+            ...widgetViewDraft.view,
+            type: targetViewType,
+          },
+        },
+      };
+    });
+  };
+
   const handleShouldHideEmptyGroupsChange = (
     shouldHideEmptyGroups: boolean,
   ) => {
@@ -73,5 +136,9 @@ export const useRecordTableWidgetLayoutCallbacks = ({
     });
   };
 
-  return { handleGroupByFieldChange, handleShouldHideEmptyGroupsChange };
+  return {
+    handleGroupByFieldChange,
+    handleLayoutChange,
+    handleShouldHideEmptyGroupsChange,
+  };
 };

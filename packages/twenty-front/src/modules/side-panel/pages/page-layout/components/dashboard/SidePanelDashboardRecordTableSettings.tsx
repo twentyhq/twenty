@@ -13,6 +13,7 @@ import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPa
 import { RecordTableDataSourceDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableDataSourceDropdownContent';
 import { RecordTableFieldsDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableFieldsDropdownContent';
 import { RecordTableGroupByDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableGroupByDropdownContent';
+import { RecordTableLayoutDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutDropdownContent';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useRecordTableSettingsDescriptions } from '@/side-panel/pages/page-layout/hooks/useRecordTableSettingsDescriptions';
@@ -30,11 +31,15 @@ import {
   IconBox,
   IconEyeOff,
   IconFilter,
+  IconLayoutKanban,
   IconLayoutList,
   IconListDetails,
   IconTable,
 } from 'twenty-ui/icon';
-import { WidgetConfigurationType } from '~/generated-metadata/graphql';
+import {
+  ViewType,
+  WidgetConfigurationType,
+} from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -119,6 +124,11 @@ export const SidePanelDashboardRecordTableSettings = () => {
     widgetView?.mainGroupByFieldMetadataId ?? null;
   const shouldHideEmptyGroups = widgetView?.shouldHideEmptyGroups ?? false;
 
+  const isKanbanLayout = widgetView?.type === ViewType.KANBAN_WIDGET;
+  const currentLayoutViewType = isKanbanLayout
+    ? ViewType.KANBAN_WIDGET
+    : ViewType.TABLE_WIDGET;
+
   const { objectMetadataItems } = useObjectMetadataItems();
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItemToFind) =>
@@ -171,14 +181,28 @@ export const SidePanelDashboardRecordTableSettings = () => {
             <SidePanelGroup heading={t`Settings`}>
               <SelectableListItem itemId="object-view-layout">
                 <CommandMenuItemDropdown
-                  Icon={IconTable}
+                  Icon={isKanbanLayout ? IconLayoutKanban : IconTable}
                   label={t`Layout`}
                   id="object-view-layout"
                   dropdownId="object-view-layout"
-                  dropdownComponents={<></>}
+                  dropdownComponents={
+                    hasViewId ? (
+                      <DropdownContent>
+                        <RecordTableLayoutDropdownContent
+                          pageLayoutId={pageLayoutId}
+                          widgetId={widgetInEditMode.id}
+                          objectMetadataId={widgetInEditMode.objectMetadataId!}
+                          currentLayoutViewType={currentLayoutViewType}
+                        />
+                      </DropdownContent>
+                    ) : (
+                      <></>
+                    )
+                  }
                   dropdownPlacement="bottom-end"
-                  description={t`Table`}
-                  disabled={true}
+                  hasSubMenu={hasViewId}
+                  description={isKanbanLayout ? t`Kanban` : t`Table`}
+                  disabled={!hasViewId}
                   contextualTextPosition="right"
                 />
               </SelectableListItem>
