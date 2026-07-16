@@ -10,7 +10,7 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isNonEmptyString } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import {
   ApplicationRegistrationListingRequestStatus,
   ApplicationRegistrationSourceType,
@@ -23,6 +23,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { type ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
 import { SettingsApplicationRegistrationShareLinkButtons } from '~/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons';
+import { isNonEmptyString } from '@sniptt/guards';
 
 const StyledListingRequestForm = styled.div`
   align-items: flex-end;

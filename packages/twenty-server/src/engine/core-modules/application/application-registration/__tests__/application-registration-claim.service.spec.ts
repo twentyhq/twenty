@@ -163,71 +163,84 @@ describe('ApplicationRegistrationClaimService', () => {
     });
   });
 
-  describe('findPendingClaim', () => {
-    it('returns null when no claim token exists', async () => {
-      appTokenRepository.findOne.mockResolvedValue(null);
-
-      const pending = await service.findPendingClaim({
-        applicationRegistrationId: REGISTRATION_ID,
-        workspaceId: WORKSPACE_ID,
-      });
-
-      expect(pending).toBeNull();
-    });
-
-    it('returns null for an expired claim token', async () => {
-      appTokenRepository.findOne.mockResolvedValue({
-        value: 'valid-token',
-        expiresAt: new Date(Date.now() - 1_000),
-      } as AppTokenEntity);
-
-      const pending = await service.findPendingClaim({
-        applicationRegistrationId: REGISTRATION_ID,
-        workspaceId: WORKSPACE_ID,
-      });
-
-      expect(pending).toBeNull();
-    });
-
-    it('returns the challenge for a pending claim', async () => {
+  describe('findPendingClaimsForWorkspace', () => {
+    it('returns the challenges of unexpired claims', async () => {
       const expiresAt = new Date(Date.now() + 60_000);
 
-      appTokenRepository.findOne.mockResolvedValue({
-        value: 'valid-token',
-        expiresAt,
-      } as AppTokenEntity);
-      applicationRegistrationService.findOneByIdGlobal.mockResolvedValue(
-        buildRegistration(),
-      );
+      appTokenRepository.find.mockResolvedValue([
+        {
+          value: 'valid-token',
+          expiresAt,
+          applicationRegistration: buildRegistration({
+            name: 'My app',
+            description: 'A description',
+          }),
+        } as unknown as AppTokenEntity,
+      ]);
 
-      const pending = await service.findPendingClaim({
-        applicationRegistrationId: REGISTRATION_ID,
-        workspaceId: WORKSPACE_ID,
-      });
+      const pending = await service.findPendingClaimsForWorkspace(WORKSPACE_ID);
 
-      expect(pending).toEqual({
-        applicationRegistrationId: REGISTRATION_ID,
-        sourcePackage: 'my-twenty-app',
-        token: 'valid-token',
-        expiresAt,
-      });
+      expect(pending).toEqual([
+        {
+          applicationRegistrationId: REGISTRATION_ID,
+          name: 'My app',
+          description: 'A description',
+          sourcePackage: 'my-twenty-app',
+          token: 'valid-token',
+          expiresAt,
+        },
+      ]);
     });
 
-    it('returns null once the registration is owned', async () => {
-      appTokenRepository.findOne.mockResolvedValue({
-        value: 'valid-token',
-        expiresAt: new Date(Date.now() + 60_000),
-      } as AppTokenEntity);
-      applicationRegistrationService.findOneByIdGlobal.mockResolvedValue(
-        buildRegistration({ ownerWorkspaceId: 'other-workspace' }),
-      );
+    it('excludes claims whose registration got owned in the meantime', async () => {
+      appTokenRepository.find.mockResolvedValue([
+        {
+          value: 'valid-token',
+          expiresAt: new Date(Date.now() + 60_000),
+          applicationRegistration: buildRegistration({
+            ownerWorkspaceId: 'other-workspace',
+          }),
+        } as unknown as AppTokenEntity,
+      ]);
 
-      const pending = await service.findPendingClaim({
+      const pending = await service.findPendingClaimsForWorkspace(WORKSPACE_ID);
+
+      expect(pending).toEqual([]);
+    });
+  });
+
+  describe('cancelClaim', () => {
+    it('deletes the workspace claim token and reports success', async () => {
+      appTokenRepository.delete.mockResolvedValue({
+        affected: 1,
+        raw: [],
+      });
+
+      const cancelled = await service.cancelClaim({
         applicationRegistrationId: REGISTRATION_ID,
         workspaceId: WORKSPACE_ID,
       });
 
-      expect(pending).toBeNull();
+      expect(appTokenRepository.delete).toHaveBeenCalledWith({
+        applicationRegistrationId: REGISTRATION_ID,
+        workspaceId: WORKSPACE_ID,
+        type: AppTokenType.ApplicationRegistrationClaimToken,
+      });
+      expect(cancelled).toBe(true);
+    });
+
+    it('reports false when there was nothing to cancel', async () => {
+      appTokenRepository.delete.mockResolvedValue({
+        affected: 0,
+        raw: [],
+      });
+
+      const cancelled = await service.cancelClaim({
+        applicationRegistrationId: REGISTRATION_ID,
+        workspaceId: WORKSPACE_ID,
+      });
+
+      expect(cancelled).toBe(false);
     });
   });
 

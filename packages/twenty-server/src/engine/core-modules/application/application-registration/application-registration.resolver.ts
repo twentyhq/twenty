@@ -35,6 +35,7 @@ import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/applica
 import { ClaimApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/claim-application-registration-ownership.input';
 import { ClaimableApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/claimable-application-registration.dto';
 import { FindClaimableApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/find-claimable-application-registration.input';
+import { PendingApplicationRegistrationClaimDTO } from 'src/engine/core-modules/application/application-registration/dtos/pending-application-registration-claim.dto';
 import { RequestApplicationRegistrationListingInput } from 'src/engine/core-modules/application/application-registration/dtos/request-application-registration-listing.input';
 import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.dto';
 import { CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
@@ -398,12 +399,25 @@ export class ApplicationRegistrationResolver {
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
   )
-  @Query(() => ApplicationRegistrationClaimChallengeDTO, { nullable: true })
-  async findPendingApplicationRegistrationClaim(
+  @Query(() => [PendingApplicationRegistrationClaimDTO])
+  async findPendingApplicationRegistrationClaims(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<PendingApplicationRegistrationClaimDTO[]> {
+    return this.applicationRegistrationClaimService.findPendingClaimsForWorkspace(
+      workspaceId,
+    );
+  }
+
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  )
+  @Mutation(() => Boolean)
+  async cancelApplicationRegistrationClaim(
     @Args() { applicationRegistrationId }: ApplicationRegistrationClaimInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ApplicationRegistrationClaimChallengeDTO | null> {
-    return this.applicationRegistrationClaimService.findPendingClaim({
+  ): Promise<boolean> {
+    return this.applicationRegistrationClaimService.cancelClaim({
       applicationRegistrationId,
       workspaceId,
     });

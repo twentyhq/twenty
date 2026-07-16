@@ -1974,6 +1974,15 @@ type ClaimableApplicationRegistration {
   isOwned: Boolean!
 }
 
+type PendingApplicationRegistrationClaim {
+  applicationRegistrationId: String!
+  name: String!
+  description: String
+  sourcePackage: String!
+  token: String!
+  expiresAt: DateTime!
+}
+
 type CreateApplicationRegistration {
   applicationRegistration: ApplicationRegistration!
   clientSecret: String!
@@ -3142,7 +3151,7 @@ type Query {
   findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariableDTO!]!
   applicationRegistrationTarballUrl(id: String!): String
   findClaimableApplicationRegistration(sourcePackage: String, universalIdentifier: String): ClaimableApplicationRegistration
-  findPendingApplicationRegistrationClaim(applicationRegistrationId: String!): ApplicationRegistrationClaimChallenge
+  findPendingApplicationRegistrationClaims: [PendingApplicationRegistrationClaim!]!
   getRoles: [Role!]!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   unsubscribeTopics: [UnsubscribeTopic!]!
@@ -3417,6 +3426,7 @@ type Mutation {
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   startApplicationRegistrationClaim(applicationRegistrationId: String!): ApplicationRegistrationClaimChallenge!
   verifyApplicationRegistrationClaim(applicationRegistrationId: String!): ApplicationRegistration!
+  cancelApplicationRegistrationClaim(applicationRegistrationId: String!): Boolean!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   requestApplicationRegistrationListing(applicationRegistrationId: String!, contactEmail: String!): ApplicationRegistration!
   updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!

@@ -21,6 +21,7 @@ import { ApplicationRegistrationLifecycleEmailService } from 'src/engine/core-mo
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { type AdminApplicationRegistrationClaimDTO } from 'src/engine/core-modules/application/application-registration/dtos/admin-application-registration-claim.dto';
 import { type ApplicationRegistrationClaimChallengeDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-claim-challenge.dto';
+import { type PendingApplicationRegistrationClaimDTO } from 'src/engine/core-modules/application/application-registration/dtos/pending-application-registration-claim.dto';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -98,40 +99,56 @@ export class ApplicationRegistrationClaimService {
     };
   }
 
-  async findPendingClaim(params: {
-    applicationRegistrationId: string;
-    workspaceId: string;
-  }): Promise<ApplicationRegistrationClaimChallengeDTO | null> {
-    const claimToken = await this.appTokenRepository.findOne({
+  // All claims the workspace has started but not yet verified. Claims whose
+  // registration got claimed by someone else in the meantime are excluded.
+  async findPendingClaimsForWorkspace(
+    workspaceId: string,
+  ): Promise<PendingApplicationRegistrationClaimDTO[]> {
+    const claimTokens = await this.appTokenRepository.find({
       where: {
-        applicationRegistrationId: params.applicationRegistrationId,
-        workspaceId: params.workspaceId,
+        workspaceId,
         type: AppTokenType.ApplicationRegistrationClaimToken,
+        expiresAt: MoreThan(new Date()),
       },
+      relations: ['applicationRegistration'],
+      order: { createdAt: 'ASC' },
     });
 
-    if (!isDefined(claimToken) || claimToken.expiresAt.getTime() < Date.now()) {
-      return null;
-    }
+    return claimTokens.flatMap((claimToken) => {
+      const registration = claimToken.applicationRegistration;
 
-    const registration =
-      await this.applicationRegistrationService.findOneByIdGlobal(
-        params.applicationRegistrationId,
-      );
+      if (
+        !isDefined(registration) ||
+        isDefined(registration.ownerWorkspaceId) ||
+        !isDefined(registration.sourcePackage)
+      ) {
+        return [];
+      }
 
-    if (
-      isDefined(registration.ownerWorkspaceId) ||
-      !isDefined(registration.sourcePackage)
-    ) {
-      return null;
-    }
+      return [
+        {
+          applicationRegistrationId: registration.id,
+          name: registration.name,
+          description: registration.description,
+          sourcePackage: registration.sourcePackage,
+          token: claimToken.value,
+          expiresAt: claimToken.expiresAt,
+        },
+      ];
+    });
+  }
 
-    return {
-      applicationRegistrationId: registration.id,
-      sourcePackage: registration.sourcePackage,
-      token: claimToken.value,
-      expiresAt: claimToken.expiresAt,
-    };
+  async cancelClaim(params: {
+    applicationRegistrationId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const deleteResult = await this.appTokenRepository.delete({
+      applicationRegistrationId: params.applicationRegistrationId,
+      workspaceId: params.workspaceId,
+      type: AppTokenType.ApplicationRegistrationClaimToken,
+    });
+
+    return (deleteResult.affected ?? 0) > 0;
   }
 
   async verifyClaim(params: {

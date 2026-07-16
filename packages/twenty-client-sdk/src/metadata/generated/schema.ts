@@ -1627,6 +1627,16 @@ export interface ClaimableApplicationRegistration {
     __typename: 'ClaimableApplicationRegistration'
 }
 
+export interface PendingApplicationRegistrationClaim {
+    applicationRegistrationId: Scalars['String']
+    name: Scalars['String']
+    description?: Scalars['String']
+    sourcePackage: Scalars['String']
+    token: Scalars['String']
+    expiresAt: Scalars['DateTime']
+    __typename: 'PendingApplicationRegistrationClaim'
+}
+
 export interface CreateApplicationRegistration {
     applicationRegistration: ApplicationRegistration
     clientSecret: Scalars['String']
@@ -2778,7 +2788,7 @@ export interface Query {
     findApplicationRegistrationVariables: ApplicationRegistrationVariableDTO[]
     applicationRegistrationTarballUrl?: Scalars['String']
     findClaimableApplicationRegistration?: ClaimableApplicationRegistration
-    findPendingApplicationRegistrationClaim?: ApplicationRegistrationClaimChallenge
+    findPendingApplicationRegistrationClaims: PendingApplicationRegistrationClaim[]
     getRoles: Role[]
     previewMessageCampaignAudience: CampaignAudiencePreviewDTO
     unsubscribeTopics: UnsubscribeTopic[]
@@ -2961,6 +2971,7 @@ export interface Mutation {
     claimApplicationRegistrationOwnership: ApplicationRegistration
     startApplicationRegistrationClaim: ApplicationRegistrationClaimChallenge
     verifyApplicationRegistrationClaim: ApplicationRegistration
+    cancelApplicationRegistrationClaim: Scalars['Boolean']
     transferApplicationRegistrationOwnership: ApplicationRegistration
     requestApplicationRegistrationListing: ApplicationRegistration
     updateWorkspaceMemberRole: WorkspaceMember
@@ -4747,6 +4758,17 @@ export interface ClaimableApplicationRegistrationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface PendingApplicationRegistrationClaimGenqlSelection{
+    applicationRegistrationId?: boolean | number
+    name?: boolean | number
+    description?: boolean | number
+    sourcePackage?: boolean | number
+    token?: boolean | number
+    expiresAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface CreateApplicationRegistrationGenqlSelection{
     applicationRegistration?: ApplicationRegistrationGenqlSelection
     clientSecret?: boolean | number
@@ -5993,7 +6015,7 @@ export interface QueryGenqlSelection{
     findApplicationRegistrationVariables?: (ApplicationRegistrationVariableDTOGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     applicationRegistrationTarballUrl?: { __args: {id: Scalars['String']} }
     findClaimableApplicationRegistration?: (ClaimableApplicationRegistrationGenqlSelection & { __args?: {sourcePackage?: (Scalars['String'] | null), universalIdentifier?: (Scalars['String'] | null)} })
-    findPendingApplicationRegistrationClaim?: (ApplicationRegistrationClaimChallengeGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
+    findPendingApplicationRegistrationClaims?: PendingApplicationRegistrationClaimGenqlSelection
     getRoles?: RoleGenqlSelection
     previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
     unsubscribeTopics?: UnsubscribeTopicGenqlSelection
@@ -6203,6 +6225,7 @@ export interface MutationGenqlSelection{
     claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     startApplicationRegistrationClaim?: (ApplicationRegistrationClaimChallengeGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     verifyApplicationRegistrationClaim?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
+    cancelApplicationRegistrationClaim?: { __args: {applicationRegistrationId: Scalars['String']} }
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
     requestApplicationRegistrationListing?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], contactEmail: Scalars['String']} })
     updateWorkspaceMemberRole?: (WorkspaceMemberGenqlSelection & { __args: {workspaceMemberId: Scalars['UUID'], roleId: Scalars['UUID']} })
@@ -7762,6 +7785,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isClaimableApplicationRegistration = (obj?: { __typename?: any } | null): obj is ClaimableApplicationRegistration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isClaimableApplicationRegistration"')
       return ClaimableApplicationRegistration_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PendingApplicationRegistrationClaim_possibleTypes: string[] = ['PendingApplicationRegistrationClaim']
+    export const isPendingApplicationRegistrationClaim = (obj?: { __typename?: any } | null): obj is PendingApplicationRegistrationClaim => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPendingApplicationRegistrationClaim"')
+      return PendingApplicationRegistrationClaim_possibleTypes.includes(obj.__typename)
     }
     
 
