@@ -26,6 +26,7 @@ type RecordTableGroupByDropdownContentProps = {
   widgetId: string;
   objectMetadataId: string;
   currentMainGroupByFieldMetadataId: string | null;
+  isClearable?: boolean;
 };
 
 export const RecordTableGroupByDropdownContent = ({
@@ -33,6 +34,7 @@ export const RecordTableGroupByDropdownContent = ({
   widgetId,
   objectMetadataId,
   currentMainGroupByFieldMetadataId,
+  isClearable = true,
 }: RecordTableGroupByDropdownContentProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const { getIcon } = useIcons();
@@ -76,7 +78,7 @@ export const RecordTableGroupByDropdownContent = ({
   });
 
   const selectableItemIds = [
-    NO_GROUP_BY_ITEM_ID,
+    ...(isClearable ? [NO_GROUP_BY_ITEM_ID] : []),
     ...filteredFields.map((fieldMetadataItem) => fieldMetadataItem.id),
   ];
 
@@ -94,23 +96,25 @@ export const RecordTableGroupByDropdownContent = ({
           selectableItemIdArray={selectableItemIds}
           focusId={dropdownId}
         >
-          <SelectableListItem
-            itemId={NO_GROUP_BY_ITEM_ID}
-            onEnter={() => {
-              handleGroupByFieldChange(null);
-              closeDropdown();
-            }}
-          >
-            <MenuItemSelect
-              text={t`None`}
-              selected={!isDefined(currentMainGroupByFieldMetadataId)}
-              focused={selectedItemId === NO_GROUP_BY_ITEM_ID}
-              onClick={() => {
+          {isClearable && (
+            <SelectableListItem
+              itemId={NO_GROUP_BY_ITEM_ID}
+              onEnter={() => {
                 handleGroupByFieldChange(null);
                 closeDropdown();
               }}
-            />
-          </SelectableListItem>
+            >
+              <MenuItemSelect
+                text={t`None`}
+                selected={!isDefined(currentMainGroupByFieldMetadataId)}
+                focused={selectedItemId === NO_GROUP_BY_ITEM_ID}
+                onClick={() => {
+                  handleGroupByFieldChange(null);
+                  closeDropdown();
+                }}
+              />
+            </SelectableListItem>
+          )}
           {filteredFields.map((fieldMetadataItem) => (
             <SelectableListItem
               key={fieldMetadataItem.id}

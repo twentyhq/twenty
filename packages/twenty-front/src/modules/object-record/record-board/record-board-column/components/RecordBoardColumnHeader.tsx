@@ -17,6 +17,7 @@ import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFie
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
+import { isRecordBoardReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardReadOnlyComponentState';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
@@ -88,6 +89,14 @@ const StyledTagContainer = styled.div`
   overflow: hidden;
 `;
 
+const StyledAggregateDropdownContainer = styled.div<{
+  isNonInteractive: boolean;
+}>`
+  display: flex;
+  pointer-events: ${({ isNonInteractive }) =>
+    isNonInteractive ? 'none' : 'auto'};
+`;
+
 const StyledDropdownContainer = styled.div`
   min-width: 0;
   overflow: hidden;
@@ -108,6 +117,10 @@ export const RecordBoardColumnHeader = () => {
 
   const { objectMetadataItem, selectFieldMetadataItem } =
     useContext(RecordBoardContext);
+
+  const isRecordBoardReadOnly = useAtomComponentStateValue(
+    isRecordBoardReadOnlyComponentState,
+  );
 
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
@@ -161,34 +174,48 @@ export const RecordBoardColumnHeader = () => {
           <StyledHeaderContainer>
             <StyledLeftContainer>
               <StyledDropdownContainer>
-                <Dropdown
-                  dropdownId={dropdownId}
-                  dropdownPlacement="bottom-start"
-                  dropdownOffset={{
-                    x: 0,
-                    y: 10,
-                  }}
-                  clickableComponent={
-                    <StyledTagContainer>
-                      <RecordGroupChip
-                        recordGroupDefinition={columnDefinition}
-                        fieldMetadataItem={selectFieldMetadataItem}
-                      />
-                    </StyledTagContainer>
-                  }
-                  dropdownComponents={<RecordBoardColumnDropdownMenu />}
-                />
+                {isRecordBoardReadOnly ? (
+                  <StyledTagContainer>
+                    <RecordGroupChip
+                      recordGroupDefinition={columnDefinition}
+                      fieldMetadataItem={selectFieldMetadataItem}
+                    />
+                  </StyledTagContainer>
+                ) : (
+                  <Dropdown
+                    dropdownId={dropdownId}
+                    dropdownPlacement="bottom-start"
+                    dropdownOffset={{
+                      x: 0,
+                      y: 10,
+                    }}
+                    clickableComponent={
+                      <StyledTagContainer>
+                        <RecordGroupChip
+                          recordGroupDefinition={columnDefinition}
+                          fieldMetadataItem={selectFieldMetadataItem}
+                        />
+                      </StyledTagContainer>
+                    }
+                    dropdownComponents={<RecordBoardColumnDropdownMenu />}
+                  />
+                )}
               </StyledDropdownContainer>
 
-              <RecordBoardColumnHeaderAggregateDropdown
-                aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
-                dropdownId={`record-board-column-aggregate-dropdown-${columnDefinition.id}`}
-                objectMetadataItem={objectMetadataItem}
-                aggregateLabel={recordIndexAggregateDisplayLabel}
-              />
+              <StyledAggregateDropdownContainer
+                isNonInteractive={isRecordBoardReadOnly}
+                inert={isRecordBoardReadOnly || undefined}
+              >
+                <RecordBoardColumnHeaderAggregateDropdown
+                  aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
+                  dropdownId={`record-board-column-aggregate-dropdown-${columnDefinition.id}`}
+                  objectMetadataItem={objectMetadataItem}
+                  aggregateLabel={recordIndexAggregateDisplayLabel}
+                />
+              </StyledAggregateDropdownContainer>
             </StyledLeftContainer>
             <StyledRightContainer>
-              {isHeaderHovered && (
+              {isHeaderHovered && !isRecordBoardReadOnly && (
                 <StyledHeaderActions>
                   <LightIconButton
                     accent="tertiary"
@@ -212,7 +239,7 @@ export const RecordBoardColumnHeader = () => {
           </StyledHeaderContainer>
         </StyledHeader>
       </DragDropColumnSortableHandle>
-      <RecordBoardColumnResizeHandler />
+      {!isRecordBoardReadOnly && <RecordBoardColumnResizeHandler />}
     </StyledColumn>
   );
 };
