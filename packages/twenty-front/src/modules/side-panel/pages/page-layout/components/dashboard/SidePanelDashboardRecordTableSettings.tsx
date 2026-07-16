@@ -290,6 +290,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                             currentMainGroupByFieldMetadataId={
                               mainGroupByFieldMetadataId
                             }
+                            isClearable={!isKanbanLayout}
                           />
                         </DropdownContent>
                       }
