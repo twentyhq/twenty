@@ -5,6 +5,8 @@ import { useEffect, useRef } from 'react';
 import { buildHostFetchPolicyFromFrontComponentUrls } from '@/host/utils/buildHostFetchPolicyFromFrontComponentUrls';
 import { createFrontComponentHostThread } from '@/host/utils/createFrontComponentHostThread';
 import { createHostFetchEnforcingPolicy } from '@/host/utils/createHostFetchEnforcingPolicy';
+import { fetchComponentSource } from '@/host/utils/fetchComponentSource';
+import { buildAuthorizationHeadersFromAccessToken } from '@/utils/buildAuthorizationHeadersFromAccessToken';
 import { FRONT_COMPONENT_SANDBOX_DOCUMENT } from '@/remote/sandbox/generated/frontComponentSandboxDocument';
 import { createFrontComponentSandboxIframe } from '@/remote/sandbox/utils/createFrontComponentSandboxIframe';
 import { createFrontComponentSandboxMessageHandler } from '@/remote/sandbox/utils/createFrontComponentSandboxMessageHandler';
@@ -71,24 +73,41 @@ export const FrontComponentWorkerEffect = ({
 
     setThread(thread);
 
-    thread.imports
-      .render(newReceiver.connection, {
-        componentUrl,
-        applicationAccessToken,
-        apiUrl,
-        functionsBaseUrl,
-        sdkClientUrls,
-        hostFetchOrigins: hostFetchPolicy.allowedOrigins,
-        applicationVariables,
+    // The component source is resolved host-side because the sandboxed worker
+    // runs in an opaque origin where CacheStorage is unavailable.
+    let isCancelled = false;
+
+    fetchComponentSource({
+      url: componentUrl,
+      headers: buildAuthorizationHeadersFromAccessToken(applicationAccessToken),
+    })
+      .then((componentSource) => {
+        if (isCancelled) {
+          return;
+        }
+
+        return thread.imports.render(newReceiver.connection, {
+          componentUrl,
+          componentSource,
+          applicationAccessToken,
+          apiUrl,
+          functionsBaseUrl,
+          sdkClientUrls,
+          hostFetchOrigins: hostFetchPolicy.allowedOrigins,
+          applicationVariables,
+        });
       })
       .catch((error: Error) => {
-        setError(error);
+        if (!isCancelled) {
+          setError(error);
+        }
       });
 
     setReceiver(newReceiver);
     isInitializedRef.current = true;
 
     return () => {
+      isCancelled = true;
       window.removeEventListener('message', handleSandboxMessage);
       setThread(null);
       channel.port1.close();

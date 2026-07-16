@@ -1,4 +1,4 @@
-import { fetchComponentSourceFromNetwork } from '@/remote/worker/utils/fetchComponentSourceFromNetwork';
+import { fetchComponentSourceFromNetwork } from '@/host/utils/fetchComponentSourceFromNetwork';
 
 const COMPONENT_URL =
   'https://api.twenty.com/rest/front-components/component-id/checksum-abc.js';
