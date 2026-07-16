@@ -3,6 +3,7 @@ export interface QueueJobOptions {
   priority?: number;
   retryLimit?: number;
   delay?: number;
+  idempotencyKey?: string;
 }
 
 export interface QueueCronJobOptions extends QueueJobOptions {

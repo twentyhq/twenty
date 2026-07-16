@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 
+import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { type MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
   type MessageQueueJob,
@@ -14,6 +15,7 @@ export class SyncDriver implements MessageQueueDriver {
   private workersMap: {
     [queueName: string]: (job: MessageQueueJob) => Promise<void> | void;
   } = {};
+  private seenIdempotencyKeys: Set<string> = new Set();
 
   constructor() {}
 
@@ -21,7 +23,17 @@ export class SyncDriver implements MessageQueueDriver {
     queueName: MessageQueue,
     jobName: string,
     data: T,
+    options?: QueueJobOptions,
   ): Promise<void> {
+    // Idempotency-key dedup: skip duplicate adds for the same key
+    if (options?.idempotencyKey) {
+      if (this.seenIdempotencyKeys.has(options.idempotencyKey)) {
+        return;
+      }
+
+      this.seenIdempotencyKeys.add(options.idempotencyKey);
+    }
+
     await this.processJob(queueName, { id: '', name: jobName, data });
   }
 
