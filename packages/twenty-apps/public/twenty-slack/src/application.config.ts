@@ -31,5 +31,11 @@ export default defineApplication({
       isSecret: true,
       isRequired: true,
     },
+    SLACK_SIGNING_SECRET: {
+      description:
+        'Signing secret from your Slack app (Basic Information → App Credentials). Used to verify Slack Events API requests for the assistant. Only required if you enable the conversational assistant.',
+      isSecret: true,
+      isRequired: false,
+    },
   },
 });
