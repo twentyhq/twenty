@@ -1,16 +1,16 @@
 ---
 title: Data Model
-description: "Objects, fields, and relations: how you describe your business to Twenty."
+description: "Objects, fields and relations: how you describe your business to Twenty."
 icon: "database"
 ---
 
 Suppose you make packaging for food brands. One of your customers rebrands, and their logo changes. That change has to reach everything it touches, from open orders to the next production run. In a spreadsheet, the logo version gets written wherever someone once needed it, across several tabs. Updating one tab leaves the others wrong, and nothing flags the difference. Eventually a print run ships with the old design. That one costs real money.
 
-The underlying problem is structural. A spreadsheet lets the same fact live in many places, and copies drift apart. Twenty is organized so that each fact lives in one place. The way you set that up is the **data model**, and it consists of three ideas: objects, fields, and relations.
+The underlying problem is structural. A spreadsheet lets the same fact live in many places, and copies drift apart. Twenty is organized so that each fact lives in one place. The way you set that up is the **data model**, and it consists of three ideas: objects, fields and relations.
 
 ## Objects
 
-An **object** is one kind of thing you track, comparable to one tab in a spreadsheet. The packaging business tracks the companies that buy from it, the people at those companies, and its open deals. Twenty ships with objects for all of these:
+An **object** is one kind of thing you track, comparable to one tab in a spreadsheet. The packaging business tracks the companies that buy from it, the people at those companies and its open deals. Twenty ships with objects for all of these:
 
 - **Companies**, the organizations you sell to
 - **People**, the contacts at those organizations
@@ -19,7 +19,7 @@ An **object** is one kind of thing you track, comparable to one tab in a spreads
 
 An individual entry inside an object is a **record**: one specific company, one specific deal. Harbor Foods, a customer, is a record in Companies. Their purchasing manager is a record in People.
 
-Most businesses also track something no CRM ships with. The packaging maker cares about print runs: one batch of boxes going through the presses, with a design, a quantity, a ship date, and a destination plant. For that you create a **custom object**. Custom objects behave exactly like built-in ones. They get their own section in the sidebar, their own pages and views, and their own API endpoints. In another business the custom object is property listings or job applications.
+Most businesses also track something no CRM ships with. The packaging maker cares about print runs: one batch of boxes going through the presses, with a design, a quantity, a ship date and a destination plant. For that you create a **custom object**. Custom objects behave exactly like built-in ones. They get their own section in the sidebar, their own pages and views, their own API endpoints. In another business the custom object is property listings or job applications.
 
 ## Fields
 
@@ -40,6 +40,6 @@ Records rarely stand alone. A person works at a company, an order belongs to a c
 
 This is what resolves the rebrand problem. A print run linked to its customer doesn't carry its own copy of the artwork version. The current artwork lives on the customer's record, in one place, and everything linked to that customer reads it from there. When the logo changes, one field changes, and no order is left pointing at a stale copy.
 
-Relations work in both directions. The Harbor Foods page lists its people, its open deals, its notes, and every print run sent to it. Each of those records shows which company it belongs to. This structure is why the rebrand above becomes a one-field edit rather than a hunt through tabs.
+Relations work in both directions. The Harbor Foods page lists its people, its open deals, its notes and every print run sent to it. Each of those records shows which company it belongs to. This structure is why the rebrand above becomes a one-field edit rather than a hunt through tabs.
 
 The next page covers the workspace itself: where records live on screen and how to move between them.
