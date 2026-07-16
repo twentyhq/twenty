@@ -2,6 +2,7 @@ import { defineApplicationRole } from 'twenty-sdk/define';
 
 import { APP_DISPLAY_NAME } from 'src/constants/app-display-name';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/constants/default-role-universal-identifier';
+import { SEARCH_ENGAGEMENT_TERMS_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
@@ -21,7 +22,16 @@ export default defineApplicationRole({
   canBeAssignedToUsers: false,
   canBeAssignedToApiKeys: false,
 
-  objectPermissions: [],
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        SEARCH_ENGAGEMENT_TERMS_OBJECT_UNIVERSAL_IDENTIFIER,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
   fieldPermissions: [],
   permissionFlagUniversalIdentifiers: [],
 });
