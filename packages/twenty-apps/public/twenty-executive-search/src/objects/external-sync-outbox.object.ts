@@ -39,7 +39,7 @@ export default defineObject({
       description: 'Unique identifier for the outbox event',
       icon: 'IconHash',
       name: 'eventId',
-      isUnique: true,
+      isUnique: false,
     },
     {
       universalIdentifier: IDEMPOTENCY_KEY_UID,
@@ -149,6 +149,17 @@ export default defineObject({
       isNullable: true,
       defaultValue: null,
       name: 'lastError',
+    },
+  ],
+  indexes: [
+    {
+      universalIdentifier: 'a1b2c3d4-5e6f-4a7b-8c9d-0e1f2a3b4c10',
+      objectUniversalIdentifier: EXTERNAL_SYNC_OUTBOX_UNIVERSAL_IDENTIFIER,
+      name: 'idx_externalSyncOutbox_workspace_idempotency',
+      isUnique: true,
+      fieldMetadataUniversalIdentifiers: [
+        IDEMPOTENCY_KEY_UID,
+      ],
     },
   ],
 });

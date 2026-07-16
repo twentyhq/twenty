@@ -166,4 +166,25 @@ export default defineObject({
       name: 'lastError',
     },
   ],
+  indexes: [
+    {
+      universalIdentifier: 'b1c2d3e4-5f6a-4b7c-8d9e-0f1a2b3c4d11',
+      objectUniversalIdentifier: EXTERNAL_SYNC_INBOUND_EVENT_UNIVERSAL_IDENTIFIER,
+      name: 'idx_externalSyncInboundEvent_workspace_source_event',
+      isUnique: true,
+      fieldMetadataUniversalIdentifiers: [
+        INBOUND_SOURCE_SYSTEM_UID,
+        INBOUND_EVENT_ID_UID,
+      ],
+    },
+    {
+      universalIdentifier: 'b1c2d3e4-5f6a-4b7c-8d9e-0f1a2b3c4d12',
+      objectUniversalIdentifier: EXTERNAL_SYNC_INBOUND_EVENT_UNIVERSAL_IDENTIFIER,
+      name: 'idx_externalSyncInboundEvent_workspace_idempotency',
+      isUnique: true,
+      fieldMetadataUniversalIdentifiers: [
+        INBOUND_IDEMPOTENCY_KEY_UID,
+      ],
+    },
+  ],
 });

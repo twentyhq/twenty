@@ -9,6 +9,15 @@ import { TransactionalOutboxService } from '../outbox/transactional-outbox.servi
 import { validateSyncEnvelope, isEchoEvent } from '../inbound/validate-sync-envelope.util';
 import { filterAuthoritativeFields } from './field-ownership-guard.util';
 
+interface SyncEnvelope {
+  eventId: string;
+  sourceSystem: string;
+  sourceCollection: string;
+  workspaceKey: string;
+  payload: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
 /**
  * Inbound sync processor.
  * @Process: ledger → dedup/schema/echo → field-ownership guard → record write + outbox append.
@@ -46,8 +55,13 @@ export class InboundSyncProcessor {
 
     try {
       // 3. Validate the envelope
-      const rawEnvelope = this.parseEnvelope(record);
-      const validation = validateSyncEnvelope(rawEnvelope);
+      const envelope = this.parseEnvelope(record);
+      if (!envelope) {
+        await this.inboundLedger.markDead(recordId, 'Failed to parse envelope');
+        this.logger.error(`Inbound event ${record.eventId}: envelope parse failed`);
+        return;
+      }
+      const validation = validateSyncEnvelope(envelope);
 
       if (!validation.valid) {
         await this.inboundLedger.markDead(recordId, validation.errors.join('; '));
@@ -58,7 +72,7 @@ export class InboundSyncProcessor {
       }
 
       // 4. Echo prevention — skip events from Twenty
-      if (isEchoEvent(rawEnvelope as any)) {
+      if (isEchoEvent(envelope)) {
         await this.inboundLedger.markProcessed(recordId);
         this.logger.log(
           `Skipping echo event ${record.eventId} (sourceSystem=TWENTY)`,
@@ -68,8 +82,8 @@ export class InboundSyncProcessor {
 
       // 5. Field-ownership guard — filter to authoritative fields only
       const authoritativeFields = filterAuthoritativeFields(
-        rawEnvelope.sourceCollection,
-        rawEnvelope.payload as Record<string, unknown>,
+        envelope.sourceCollection,
+        envelope.payload,
       );
 
       // 6. PR2: stub record write — PR4 will write to actual domain objects
@@ -100,15 +114,17 @@ export class InboundSyncProcessor {
     }
   }
 
-  private parseEnvelope(record: any): unknown {
-    // In PR2, the envelope is just the rawEnvelope from the record
-    // In PR3+, it's parsed from the stored JSON
+  private parseEnvelope(record: { eventId: string; rawEnvelope?: unknown }): SyncEnvelope | undefined {
     try {
-      return typeof record.rawEnvelope === 'string'
+      const raw = typeof record.rawEnvelope === 'string'
         ? JSON.parse(record.rawEnvelope)
         : record.rawEnvelope;
+      if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+        return raw as SyncEnvelope;
+      }
     } catch {
-      return { eventId: record.eventId };
+      // fall through to undefined
     }
+    return undefined;
   }
 }

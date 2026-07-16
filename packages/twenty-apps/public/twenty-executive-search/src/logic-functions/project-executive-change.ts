@@ -80,9 +80,7 @@ const computeContentHash = (data: Record<string, unknown>): string => {
     hash = Math.imul(hash, 0x01000193);
   }
 
-  return hash >>> 0
-    .toString(16)
-    .padStart(8, '0');
+  return (hash >>> 0).toString(16).padStart(8, '0');
 };
 
 const isDirectusOrigin = (event: ExecutiveDatabaseEvent): boolean => {
