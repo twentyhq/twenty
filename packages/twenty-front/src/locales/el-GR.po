@@ -8361,12 +8361,6 @@ msgstr "Το αρχείο δεν υπάρχει πλέον - {label}"
 msgid "Fill with sample input from"
 msgstr "Συμπλήρωση με δείγμα εισόδου από"
 
-#. js-lingui-id: jb9DOO
-#. placeholder {0}: objectMetadataItem.labelPlural
-#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
-msgid "Filled in fewer than 5% of {0}. Fields that stay empty can be deactivated."
-msgstr ""
-
 #. js-lingui-id: o7J4JM
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -11508,12 +11502,6 @@ msgstr "Περισσότερα γραφικά στοιχεία"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Most installed version"
 msgstr "Η έκδοση με τις περισσότερες εγκαταστάσεις"
-
-#. js-lingui-id: PfWWOa
-#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
-msgid "Mostly empty"
-msgstr ""
 
 #. js-lingui-id: 3Ib6FN
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
