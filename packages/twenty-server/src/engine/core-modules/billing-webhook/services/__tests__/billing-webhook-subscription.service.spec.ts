@@ -198,20 +198,19 @@ describe('BillingWebhookSubscriptionService', () => {
       expect(workspaceService.reactivateWorkspace).not.toHaveBeenCalled();
     });
 
-    it('should reactivate based on the freshly read workspace status when a concurrent handler suspended it mid-processing', async () => {
+    it('should attempt the guarded reactivation even when the workspace snapshot is stale', async () => {
       const activeEvent = buildSubscriptionUpdatedEvent({ status: 'active' });
 
       stripeSubscriptionScheduleService.listCustomerSubscriptionsWithSchedule.mockResolvedValue(
         [buildLiveSubscription({ status: 'active' })],
       );
 
-      // First read (start of handler) sees ACTIVE; a concurrent event suspends
-      // the workspace before the decision, so the re-read returns SUSPENDED
-      workspaceRepository.findOne
-        .mockResolvedValueOnce(buildWorkspace(WorkspaceActivationStatus.ACTIVE))
-        .mockResolvedValueOnce(
-          buildWorkspace(WorkspaceActivationStatus.SUSPENDED),
-        );
+      // The handler's snapshot says ACTIVE (e.g. a concurrent event suspends
+      // the workspace mid-processing): reactivation is still attempted and the
+      // compare-and-swap in WorkspaceService decides whether it applies
+      workspaceRepository.findOne.mockResolvedValue(
+        buildWorkspace(WorkspaceActivationStatus.ACTIVE),
+      );
 
       await service.processStripeEvent(WORKSPACE_ID, activeEvent);
 
@@ -329,17 +328,18 @@ describe('BillingWebhookSubscriptionService', () => {
         ],
       );
 
-      // The workspace was soft-deleted before the re-read: billing must not
-      // suspend, delete, or reactivate it anymore
+      // The workspace was soft-deleted mid-processing: billing must not
+      // suspend or delete it, and the reactivation compare-and-swap refuses
+      // soft-deleted workspaces (deletedAt IS NULL in its WHERE clause)
       workspaceRepository.findOne.mockResolvedValue(
         buildWorkspace(WorkspaceActivationStatus.SUSPENDED, new Date()),
       );
+      workspaceService.reactivateWorkspace.mockResolvedValue(false);
 
       await service.processStripeEvent(WORKSPACE_ID, deletionEvent);
 
       expect(workspaceService.suspendWorkspace).not.toHaveBeenCalled();
       expect(workspaceService.deleteWorkspace).not.toHaveBeenCalled();
-      expect(workspaceService.reactivateWorkspace).not.toHaveBeenCalled();
       expect(messageQueueService.add).not.toHaveBeenCalled();
     });
   });

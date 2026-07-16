@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
@@ -166,23 +166,6 @@ export class BillingWebhookSubscriptionService {
       'currentBillingSubscription',
     ]);
 
-    // Stripe events can arrive out of order or concurrently: decide from the
-    // live subscription state and a fresh workspace read, not the event payload.
-    const refreshedWorkspace = await this.workspaceRepository.findOne({
-      where: { id: workspaceId },
-      withDeleted: true,
-    });
-
-    if (!isDefined(refreshedWorkspace)) {
-      throw new BillingException(
-        `Workspace not found on re-read for subscription event ${event.id} / workspaceId: ${workspaceId}`,
-        BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
-        {
-          userFriendlyMessage: msg`Workspace ${workspaceId} is not found.`,
-        },
-      );
-    }
-
     const hasOtherActivatingSubscription = liveCustomerSubscriptions.some(
       (customerSubscription) =>
         customerSubscription.id !== data.object.id &&
@@ -199,27 +182,42 @@ export class BillingWebhookSubscriptionService {
       (hasOtherActivatingSubscription ||
         this.shouldReactivateWorkspace(subscriptionWithSchedule));
 
-    // A soft-deleted workspace is past billing-driven transitions: the cleaner
-    // cron owns its lifecycle from here (destroy or manual restore).
-    const isWorkspaceSoftDeleted = isDefined(refreshedWorkspace.deletedAt);
+    if (shouldSuspendWorkspace) {
+      const refreshedWorkspace = await this.workspaceRepository.findOne({
+        where: { id: workspaceId },
+        withDeleted: true,
+      });
 
-    if (shouldSuspendWorkspace && !isWorkspaceSoftDeleted) {
-      if (
-        refreshedWorkspace.activationStatus ===
-        WorkspaceActivationStatus.PENDING_CREATION
-      ) {
-        await this.workspaceService.deleteWorkspace(workspaceId);
-      } else if (
-        refreshedWorkspace.activationStatus === WorkspaceActivationStatus.ACTIVE
-      ) {
-        await this.workspaceService.suspendWorkspace(workspaceId);
+      if (!isDefined(refreshedWorkspace)) {
+        throw new BillingException(
+          `Workspace not found on re-read for subscription event ${event.id} / workspaceId: ${workspaceId}`,
+          BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
+          {
+            userFriendlyMessage: msg`Workspace ${workspaceId} is not found.`,
+          },
+        );
+      }
+
+      if (!isDefined(refreshedWorkspace.deletedAt)) {
+        switch (refreshedWorkspace.activationStatus) {
+          case WorkspaceActivationStatus.PENDING_CREATION:
+            await this.workspaceService.deleteWorkspace(workspaceId);
+            break;
+          case WorkspaceActivationStatus.ACTIVE:
+            await this.workspaceService.suspendWorkspace(workspaceId);
+            break;
+          case WorkspaceActivationStatus.SUSPENDED:
+          case WorkspaceActivationStatus.CREATED:
+          case WorkspaceActivationStatus.ONGOING_CREATION:
+          case WorkspaceActivationStatus.INACTIVE:
+            break;
+          default:
+            assertUnreachable(refreshedWorkspace.activationStatus);
+        }
       }
     }
 
-    if (shouldReactivateWorkspace && !isWorkspaceSoftDeleted) {
-      // Guarded transition: only applies if the workspace is still SUSPENDED or
-      // CREATED and not soft-deleted, so a stale workspace read cannot skip it
-      // nor reactivate a workspace it should not.
+    if (shouldReactivateWorkspace) {
       const hasBeenReactivated =
         await this.workspaceService.reactivateWorkspace(workspaceId);
 
