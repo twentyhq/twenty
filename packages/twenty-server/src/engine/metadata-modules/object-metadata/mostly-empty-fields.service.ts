@@ -113,7 +113,6 @@ export class MostlyEmptyFieldsService {
       labelIdentifierFieldMetadataId:
         flatObjectMetadata.labelIdentifierFieldMetadataId,
       emptyFractionByColumnName,
-      now: new Date(),
     });
   }
 }

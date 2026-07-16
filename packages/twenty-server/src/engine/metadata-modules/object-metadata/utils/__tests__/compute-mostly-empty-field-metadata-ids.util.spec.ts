@@ -5,10 +5,6 @@ import {
   type FieldMetadataForEmptinessCheck,
 } from 'src/engine/metadata-modules/object-metadata/utils/compute-mostly-empty-field-metadata-ids.util';
 
-const NOW = new Date('2026-01-01T00:00:00.000Z');
-const ONE_YEAR_BEFORE_NOW = '2025-01-01T00:00:00.000Z';
-const TEN_DAYS_BEFORE_NOW = '2025-12-22T00:00:00.000Z';
-
 const buildFieldMetadata = (
   overrides: Partial<FieldMetadataForEmptinessCheck> = {},
 ): FieldMetadataForEmptinessCheck => ({
@@ -17,17 +13,15 @@ const buildFieldMetadata = (
   type: FieldMetadataType.TEXT,
   isActive: true,
   isSystem: false,
-  createdAt: ONE_YEAR_BEFORE_NOW,
   ...overrides,
 });
 
 describe('computeMostlyEmptyFieldMetadataIds', () => {
-  it('should flag an aged active field when its column reaches the emptiness threshold', () => {
+  it('should flag an active field when its column reaches the emptiness threshold', () => {
     const result = computeMostlyEmptyFieldMetadataIds({
       fieldMetadatas: [buildFieldMetadata()],
       labelIdentifierFieldMetadataId: null,
       emptyFractionByColumnName: new Map([['churnReason', 0.95]]),
-      now: NOW,
     });
 
     expect(result).toEqual(['field-id']);
@@ -38,18 +32,6 @@ describe('computeMostlyEmptyFieldMetadataIds', () => {
       fieldMetadatas: [buildFieldMetadata()],
       labelIdentifierFieldMetadataId: null,
       emptyFractionByColumnName: new Map([['churnReason', 0.5]]),
-      now: NOW,
-    });
-
-    expect(result).toEqual([]);
-  });
-
-  it('should not flag a field created within the grace period', () => {
-    const result = computeMostlyEmptyFieldMetadataIds({
-      fieldMetadatas: [buildFieldMetadata({ createdAt: TEN_DAYS_BEFORE_NOW })],
-      labelIdentifierFieldMetadataId: null,
-      emptyFractionByColumnName: new Map([['churnReason', 1]]),
-      now: NOW,
     });
 
     expect(result).toEqual([]);
@@ -63,7 +45,6 @@ describe('computeMostlyEmptyFieldMetadataIds', () => {
       ],
       labelIdentifierFieldMetadataId: null,
       emptyFractionByColumnName: new Map([['churnReason', 1]]),
-      now: NOW,
     });
 
     expect(result).toEqual([]);
@@ -74,7 +55,6 @@ describe('computeMostlyEmptyFieldMetadataIds', () => {
       fieldMetadatas: [buildFieldMetadata({ id: 'label-identifier-field-id' })],
       labelIdentifierFieldMetadataId: 'label-identifier-field-id',
       emptyFractionByColumnName: new Map([['churnReason', 1]]),
-      now: NOW,
     });
 
     expect(result).toEqual([]);
@@ -85,7 +65,6 @@ describe('computeMostlyEmptyFieldMetadataIds', () => {
       fieldMetadatas: [buildFieldMetadata()],
       labelIdentifierFieldMetadataId: null,
       emptyFractionByColumnName: new Map(),
-      now: NOW,
     });
 
     expect(result).toEqual([]);
@@ -104,7 +83,6 @@ describe('computeMostlyEmptyFieldMetadataIds', () => {
         ['nameFirstName', 0.99],
         ['nameLastName', 0.5],
       ]),
-      now: NOW,
     });
 
     const resultWithAllColumnsEmpty = computeMostlyEmptyFieldMetadataIds({
@@ -114,7 +92,6 @@ describe('computeMostlyEmptyFieldMetadataIds', () => {
         ['nameFirstName', 0.99],
         ['nameLastName', 0.99],
       ]),
-      now: NOW,
     });
 
     expect(resultWithOneFilledColumn).toEqual([]);
@@ -135,7 +112,6 @@ describe('computeMostlyEmptyFieldMetadataIds', () => {
         ['introVideoPrimaryLinkUrl', 1],
         ['introVideoSecondaryLinks', 1],
       ]),
-      now: NOW,
     });
 
     const resultWithAllColumnsEmpty = computeMostlyEmptyFieldMetadataIds({
@@ -146,7 +122,6 @@ describe('computeMostlyEmptyFieldMetadataIds', () => {
         ['introVideoPrimaryLinkUrl', 1],
         ['introVideoSecondaryLinks', 1],
       ]),
-      now: NOW,
     });
 
     expect(resultWithFilledLabel).toEqual([]);
@@ -163,7 +138,6 @@ describe('computeMostlyEmptyFieldMetadataIds', () => {
         ['arrAmountMicros', 0.99],
         ['arrCurrencyCode', 0],
       ]),
-      now: NOW,
     });
 
     expect(result).toEqual(['field-id']);
@@ -188,7 +162,6 @@ describe('computeMostlyEmptyFieldMetadataIds', () => {
         ['company', 1],
         ['idealCustomerProfile', 1],
       ]),
-      now: NOW,
     });
 
     expect(result).toEqual([]);
