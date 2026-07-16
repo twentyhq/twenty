@@ -4959,27 +4959,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chat-adapter/shared@npm:4.33.0":
-  version: 4.33.0
-  resolution: "@chat-adapter/shared@npm:4.33.0"
-  dependencies:
-    chat: "npm:4.33.0"
-  checksum: 10c0/b4f28322d8ce2d7483ac6e3af90bb9da68f8555101f585c4586f08c1aa4ace7f4c56d439d8d91ab53f1171e9efd137cb7554080a7abe6309a114fa3c925f19a2
-  languageName: node
-  linkType: hard
-
-"@chat-adapter/slack@npm:4.33.0":
-  version: 4.33.0
-  resolution: "@chat-adapter/slack@npm:4.33.0"
-  dependencies:
-    "@chat-adapter/shared": "npm:4.33.0"
-    "@slack/socket-mode": "npm:^2.0.5"
-    "@slack/web-api": "npm:^7.14.0"
-    chat: "npm:4.33.0"
-  checksum: 10c0/69a32a93681391212733dc66581aee81296eee9e26fc6e1b3146b42ed42c1c59c5f73db4e04424c3dc4c067b9961a9fdde0c9267a3ee18d5dc52fed21b91f75c
-  languageName: node
-  linkType: hard
-
 "@clickhouse/client-common@npm:1.18.1":
   version: 1.18.1
   resolution: "@clickhouse/client-common@npm:1.18.1"
@@ -18596,56 +18575,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@slack/logger@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "@slack/logger@npm:4.0.1"
-  dependencies:
-    "@types/node": "npm:>=18"
-  checksum: 10c0/10d73b5ef326622da3713a9175a3f9e6ef8c1f166b4e1da4a7596c9b380e59a5fcc6eb37428e8a0454c4733e636e14bb45ac3e433b96d2fb662ad44ddb7a9855
-  languageName: node
-  linkType: hard
-
-"@slack/socket-mode@npm:^2.0.5":
-  version: 2.0.7
-  resolution: "@slack/socket-mode@npm:2.0.7"
-  dependencies:
-    "@slack/logger": "npm:^4.0.1"
-    "@slack/web-api": "npm:^7.15.0"
-    "@types/node": "npm:>=18"
-    "@types/ws": "npm:^8"
-    eventemitter3: "npm:^5"
-    ws: "npm:^8"
-  checksum: 10c0/f1fac9852acaa55a4a8e03cb3cce47e3e2fc2c0caa29ca7bb7f9e2724438f4e2077ba1d98c698793061ef91a290499930a9f05c26187bc46c3111b04bcffc70b
-  languageName: node
-  linkType: hard
-
-"@slack/types@npm:^2.21.0":
-  version: 2.22.0
-  resolution: "@slack/types@npm:2.22.0"
-  checksum: 10c0/0630feebb790957b227821ce4c474c174d9a4473481b9f04bfa589b2dc4f52a615b9f80664222c8a44090590fd1e1aaf5427986eb2c3a98dc75a5fabce3e2d53
-  languageName: node
-  linkType: hard
-
-"@slack/web-api@npm:^7.14.0, @slack/web-api@npm:^7.15.0":
-  version: 7.19.0
-  resolution: "@slack/web-api@npm:7.19.0"
-  dependencies:
-    "@slack/logger": "npm:^4.0.1"
-    "@slack/types": "npm:^2.21.0"
-    "@types/node": "npm:>=18"
-    "@types/retry": "npm:0.12.0"
-    axios: "npm:^1.16.0"
-    eventemitter3: "npm:^5.0.1"
-    form-data: "npm:^4.0.4"
-    is-electron: "npm:2.2.2"
-    is-stream: "npm:^2"
-    p-queue: "npm:^6"
-    p-retry: "npm:^4"
-    retry: "npm:^0.13.1"
-  checksum: 10c0/78d52590feede0e5b55bfb3effa2723e090f3b684878f069d830fee2bad712abc285f4abdd1c0a7d308e19378c330aa86e9795667a229c888ca1862d39dd40d8
-  languageName: node
-  linkType: hard
-
 "@smithy/abort-controller@npm:^4.2.10":
   version: 4.2.10
   resolution: "@smithy/abort-controller@npm:4.2.10"
@@ -22742,13 +22671,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/retry@npm:0.12.0":
-  version: 0.12.0
-  resolution: "@types/retry@npm:0.12.0"
-  checksum: 10c0/7c5c9086369826f569b83a4683661557cab1361bac0897a1cefa1a915ff739acd10ca0d62b01071046fe3f5a3f7f2aec80785fe283b75602dc6726781ea3e328
-  languageName: node
-  linkType: hard
-
 "@types/retry@npm:0.12.2":
   version: 0.12.2
   resolution: "@types/retry@npm:0.12.2"
@@ -23028,21 +22950,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ws@npm:^8, @types/ws@npm:^8.18.1, @types/ws@npm:^8.5.10, @types/ws@npm:^8.5.12":
-  version: 8.18.1
-  resolution: "@types/ws@npm:8.18.1"
-  dependencies:
-    "@types/node": "npm:*"
-  checksum: 10c0/61aff1129143fcc4312f083bc9e9e168aa3026b7dd6e70796276dcfb2c8211c4292603f9c4864fae702f2ed86e4abd4d38aa421831c2fd7f856c931a481afbab
-  languageName: node
-  linkType: hard
-
 "@types/ws@npm:^8.0.0":
   version: 8.5.12
   resolution: "@types/ws@npm:8.5.12"
   dependencies:
     "@types/node": "npm:*"
   checksum: 10c0/3fd77c9e4e05c24ce42bfc7647f7506b08c40a40fe2aea236ef6d4e96fc7cb4006a81ed1b28ec9c457e177a74a72924f4768b7b4652680b42dfd52bc380e15f9
+  languageName: node
+  linkType: hard
+
+"@types/ws@npm:^8.18.1, @types/ws@npm:^8.5.10, @types/ws@npm:^8.5.12":
+  version: 8.18.1
+  resolution: "@types/ws@npm:8.18.1"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/61aff1129143fcc4312f083bc9e9e168aa3026b7dd6e70796276dcfb2c8211c4292603f9c4864fae702f2ed86e4abd4d38aa421831c2fd7f856c931a481afbab
   languageName: node
   linkType: hard
 
@@ -24365,13 +24287,6 @@ __metadata:
     "@whatwg-node/fetch": "npm:^0.9.19"
     tslib: "npm:^2.6.3"
   checksum: 10c0/af4eea053e4e0ba7283f9ef93cf17811633660bc04ed7bcd6f3ef63a375f03d7936f84bf3b657a46cd500f5fee4df4a3ed598d32ce66ffbcee86187f2eec6aab
-  languageName: node
-  linkType: hard
-
-"@workflow/serde@npm:4.1.0-beta.2":
-  version: 4.1.0-beta.2
-  resolution: "@workflow/serde@npm:4.1.0-beta.2"
-  checksum: 10c0/c84efdb22106ab77d95873022de1b645b1ac7288d85a78e74946c11b83fb22a89e301da649aa0750e1f65ff4655a5d7bf02d27b5022aff86ef4d3d8362a97fe7
   languageName: node
   linkType: hard
 
@@ -28374,29 +28289,6 @@ __metadata:
   version: 0.0.2
   resolution: "charenc@npm:0.0.2"
   checksum: 10c0/a45ec39363a16799d0f9365c8dd0c78e711415113c6f14787a22462ef451f5013efae8a28f1c058f81fc01f2a6a16955f7a5fd0cd56247ce94a45349c89877d8
-  languageName: node
-  linkType: hard
-
-"chat@npm:4.33.0":
-  version: 4.33.0
-  resolution: "chat@npm:4.33.0"
-  dependencies:
-    "@workflow/serde": "npm:4.1.0-beta.2"
-    mdast-util-to-string: "npm:^4.0.0"
-    remark-gfm: "npm:^4.0.0"
-    remark-parse: "npm:^11.0.0"
-    remark-stringify: "npm:^11.0.0"
-    remend: "npm:^1.2.1"
-    unified: "npm:^11.0.5"
-  peerDependencies:
-    ai: ^6.0.182
-    zod: ^3.0.0 || ^4.0.0
-  peerDependenciesMeta:
-    ai:
-      optional: true
-    zod:
-      optional: true
-  checksum: 10c0/e3b32e026e83e5acfc0c474c970f7ce9c8eb44f161e588522637132616db424e1441494a91c79568054fe6ed389077cc21e6a4e754140635963b7b86de164c83
   languageName: node
   linkType: hard
 
@@ -32552,17 +32444,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eventemitter3@npm:^4.0.0, eventemitter3@npm:^4.0.4":
+"eventemitter3@npm:^4.0.0":
   version: 4.0.7
   resolution: "eventemitter3@npm:4.0.7"
   checksum: 10c0/5f6d97cbcbac47be798e6355e3a7639a84ee1f7d9b199a07017f1d2f1e2fe236004d14fa5dfaeba661f94ea57805385e326236a6debbc7145c8877fbc0297c6b
-  languageName: node
-  linkType: hard
-
-"eventemitter3@npm:^5, eventemitter3@npm:^5.0.4":
-  version: 5.0.4
-  resolution: "eventemitter3@npm:5.0.4"
-  checksum: 10c0/575b8cac8d709e1473da46f8f15ef311b57ff7609445a7c71af5cd42598583eee6f098fa7a593e30f27e94b8865642baa0689e8fa97c016f742abdb3b1bf6d9a
   languageName: node
   linkType: hard
 
@@ -32570,6 +32455,13 @@ __metadata:
   version: 5.0.1
   resolution: "eventemitter3@npm:5.0.1"
   checksum: 10c0/4ba5c00c506e6c786b4d6262cfbce90ddc14c10d4667e5c83ae993c9de88aa856033994dd2b35b83e8dc1170e224e66a319fa80adc4c32adcd2379bbc75da814
+  languageName: node
+  linkType: hard
+
+"eventemitter3@npm:^5.0.4":
+  version: 5.0.4
+  resolution: "eventemitter3@npm:5.0.4"
+  checksum: 10c0/575b8cac8d709e1473da46f8f15ef311b57ff7609445a7c71af5cd42598583eee6f098fa7a593e30f27e94b8865642baa0689e8fa97c016f742abdb3b1bf6d9a
   languageName: node
   linkType: hard
 
@@ -37084,13 +36976,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-electron@npm:2.2.2":
-  version: 2.2.2
-  resolution: "is-electron@npm:2.2.2"
-  checksum: 10c0/327bb373f7be01b16cdff3998b5ddaa87d28f576092affaa7fe0659571b3306fdd458afbf0683a66841e7999af13f46ad0e1b51647b469526cd05a4dd736438a
-  languageName: node
-  linkType: hard
-
 "is-extendable@npm:^1.0.0, is-extendable@npm:^1.0.1":
   version: 1.0.1
   resolution: "is-extendable@npm:1.0.1"
@@ -37526,7 +37411,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-stream@npm:^2, is-stream@npm:^2.0.0, is-stream@npm:^2.0.1":
+"is-stream@npm:^2.0.0, is-stream@npm:^2.0.1":
   version: 2.0.1
   resolution: "is-stream@npm:2.0.1"
   checksum: 10c0/7c284241313fc6efc329b8d7f08e16c0efeb6baab1b4cd0ba579eb78e5af1aa5da11e68559896a2067cd6c526bd29241dda4eb1225e627d5aa1a89a76d4635a5
@@ -44551,16 +44436,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-queue@npm:^6":
-  version: 6.6.2
-  resolution: "p-queue@npm:6.6.2"
-  dependencies:
-    eventemitter3: "npm:^4.0.4"
-    p-timeout: "npm:^3.2.0"
-  checksum: 10c0/5739ecf5806bbeadf8e463793d5e3004d08bb3f6177bd1a44a005da8fd81bb90f80e4633e1fb6f1dfd35ee663a5c0229abe26aebb36f547ad5a858347c7b0d3e
-  languageName: node
-  linkType: hard
-
 "p-queue@npm:^8.0.1":
   version: 8.1.1
   resolution: "p-queue@npm:8.1.1"
@@ -44578,16 +44453,6 @@ __metadata:
     eventemitter3: "npm:^5.0.4"
     p-timeout: "npm:^7.0.0"
   checksum: 10c0/4bc5461a022903127043eab72f3aa544ba740f74ad24cbc7207e1146b1c3d6b816f59e9eccd543dacd57e9534576b36a1904294c7502633291887ccd285ea945
-  languageName: node
-  linkType: hard
-
-"p-retry@npm:^4":
-  version: 4.6.2
-  resolution: "p-retry@npm:4.6.2"
-  dependencies:
-    "@types/retry": "npm:0.12.0"
-    retry: "npm:^0.13.1"
-  checksum: 10c0/d58512f120f1590cfedb4c2e0c42cb3fa66f3cea8a4646632fcb834c56055bb7a6f138aa57b20cc236fb207c9d694e362e0b5c2b14d9b062f67e8925580c73b0
   languageName: node
   linkType: hard
 
@@ -44618,15 +44483,6 @@ __metadata:
     aggregate-error: "npm:^4.0.0"
     p-cancelable: "npm:^3.0.0"
   checksum: 10c0/cb91501ebd651a9150487173f8330f6065849aa6a0f5dd2e77d458aa0194f3b14059092a7f5b9b8e4e3eb85e0f39b78bcac01b9e3405801d4643fbad94fa9cab
-  languageName: node
-  linkType: hard
-
-"p-timeout@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "p-timeout@npm:3.2.0"
-  dependencies:
-    p-finally: "npm:^1.0.0"
-  checksum: 10c0/524b393711a6ba8e1d48137c5924749f29c93d70b671e6db761afa784726572ca06149c715632da8f70c090073afb2af1c05730303f915604fd38ee207b70a61
   languageName: node
   linkType: hard
 
@@ -48293,13 +48149,6 @@ __metadata:
   version: 1.0.8
   resolution: "remedial@npm:1.0.8"
   checksum: 10c0/ca1e22d2958e3f0f2fdb5f1c23fecadab5d83a0b1e291c67474c806ce07801212f1d2006995bdcfb592803ead7666e2b1fbb9281b3f32d4a87ff2335b3777725
-  languageName: node
-  linkType: hard
-
-"remend@npm:^1.2.1":
-  version: 1.3.0
-  resolution: "remend@npm:1.3.0"
-  checksum: 10c0/12ee4bcdefe9172b89171096ef33ad22ebb0d47b7a5ac958855fcc579a928a5a2a72078d686cf21c8a30ea9b7bae6062fa6f25385258d2df1a9245a48b857326
   languageName: node
   linkType: hard
 
@@ -53262,7 +53111,6 @@ __metadata:
     "@aws-sdk/s3-request-presigner": "npm:3.1001.0"
     "@azure/msal-node": "npm:^5.2.3"
     "@blocknote/server-util": "npm:^0.51.4"
-    "@chat-adapter/slack": "npm:4.33.0"
     "@clickhouse/client": "npm:^1.18.1"
     "@e2b/code-interpreter": "npm:^2.6.0"
     "@envelop/core": "npm:4.0.3"
@@ -56308,7 +56156,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:8.21.0, ws@npm:^8, ws@npm:^8.18.0, ws@npm:^8.18.3, ws@npm:^8.19.0, ws@npm:^8.20.0, ws@npm:^8.21.0, ws@npm:~8.21.0":
+"ws@npm:8.21.0, ws@npm:^8.18.0, ws@npm:^8.18.3, ws@npm:^8.19.0, ws@npm:^8.20.0, ws@npm:^8.21.0, ws@npm:~8.21.0":
   version: 8.21.0
   resolution: "ws@npm:8.21.0"
   peerDependencies:
