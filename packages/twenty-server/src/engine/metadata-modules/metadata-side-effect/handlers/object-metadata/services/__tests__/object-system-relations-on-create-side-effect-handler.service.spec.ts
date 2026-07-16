@@ -2,7 +2,10 @@ import {
   getFieldUniversalIdentifier,
   getSystemRelationFieldUniversalIdentifier,
 } from 'twenty-shared/application';
-import { DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS } from 'twenty-shared/metadata';
+import {
+  DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
 
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
@@ -20,10 +23,12 @@ const NAME_PLURAL_BY_STANDARD_OBJECT_NAME_SINGULAR: Record<string, string> = {
   taskTarget: 'taskTargets',
 };
 
+// The handler resolves the standard relation objects by their pinned standard
+// universal identifiers, so the mocks must carry them.
 const buildStandardTargetFlatObjectMetadatas = () =>
-  DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.map((nameSingular, index) =>
+  DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.map((nameSingular) =>
     getFlatObjectMetadataMock({
-      universalIdentifier: `c1c2c3c4-c5c6-4000-8000-00000000000${index + 1}`,
+      universalIdentifier: STANDARD_OBJECTS[nameSingular].universalIdentifier,
       nameSingular,
       namePlural: NAME_PLURAL_BY_STANDARD_OBJECT_NAME_SINGULAR[nameSingular],
       labelSingular: nameSingular,
@@ -182,17 +187,23 @@ describe('ObjectSystemRelationsOnCreateSideEffectHandlerService', () => {
     ).toBeUndefined();
   });
 
-  it('should fail when a required standard relation object is missing from the maps', () => {
-    const [, ...standardTargetFlatObjectMetadatasMissingFirst] =
+  it('should fail with one error per missing standard relation object', () => {
+    const [, , ...standardTargetFlatObjectMetadatasMissingFirstTwo] =
       buildStandardTargetFlatObjectMetadatas();
 
     const result = handler.buildSideEffects(
       buildArgs({
         standardTargetFlatObjectMetadatas:
-          standardTargetFlatObjectMetadatasMissingFirst,
+          standardTargetFlatObjectMetadatasMissingFirstTwo,
       }),
     );
 
     expect(result.status).toBe('fail');
+
+    if (result.status !== 'fail') {
+      throw new Error('expected fail');
+    }
+
+    expect(result.errors).toHaveLength(2);
   });
 });

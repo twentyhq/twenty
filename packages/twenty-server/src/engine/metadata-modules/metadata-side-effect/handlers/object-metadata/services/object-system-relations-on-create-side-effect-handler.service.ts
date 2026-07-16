@@ -1,7 +1,11 @@
 import { msg, t } from '@lingui/core/macro';
 import { Injectable } from '@nestjs/common';
+import { isNonEmptyArray } from '@sniptt/guards';
 
-import { DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS } from 'twenty-shared/metadata';
+import {
+  DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
@@ -11,7 +15,10 @@ import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
-import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
+import {
+  type MetadataSideEffectFailure,
+  type MetadataSideEffectResult,
+} from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
 import { buildSystemRelationFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/object-metadata/utils/build-system-relation-flat-field-metadatas-for-object.util';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
@@ -41,35 +48,29 @@ export class ObjectSystemRelationsOnCreateSideEffectHandlerService extends Metad
       UniversalFlatObjectMetadata
     >;
 
-    for (const flatObjectMetadataCandidate of Object.values(
-      relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier,
-    )) {
-      if (!isDefined(flatObjectMetadataCandidate)) {
+    const missingStandardObjectErrors: MetadataSideEffectFailure['errors'] = [];
+
+    for (const standardObjectNameSingular of DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS) {
+      const standardTargetFlatObjectMetadata =
+        relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS[standardObjectNameSingular].universalIdentifier
+        ];
+
+      if (!isDefined(standardTargetFlatObjectMetadata)) {
+        missingStandardObjectErrors.push({
+          code: MetadataSideEffectExceptionCode.SIDE_EFFECT_PARENT_METADATA_NOT_FOUND,
+          message: t`Could not resolve standard relation object "${standardObjectNameSingular}" to provision default relations`,
+          userFriendlyMessage: msg`A standard object required to provision default relations could not be found`,
+        });
         continue;
       }
 
-      if (
-        DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.includes(
-          flatObjectMetadataCandidate.nameSingular as DefaultRelationStandardObjectNameSingular,
-        )
-      ) {
-        standardTargetFlatObjectMetadataByNameSingular[
-          flatObjectMetadataCandidate.nameSingular as DefaultRelationStandardObjectNameSingular
-        ] = flatObjectMetadataCandidate;
-      }
+      standardTargetFlatObjectMetadataByNameSingular[
+        standardObjectNameSingular
+      ] = standardTargetFlatObjectMetadata;
     }
 
-    const missingStandardObjectNameSingular =
-      DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.find(
-        (standardObjectNameSingular) =>
-          !isDefined(
-            standardTargetFlatObjectMetadataByNameSingular[
-              standardObjectNameSingular
-            ],
-          ),
-      );
-
-    if (isDefined(missingStandardObjectNameSingular)) {
+    if (isNonEmptyArray(missingStandardObjectErrors)) {
       return {
         status: 'fail',
         type: 'create',
@@ -78,13 +79,7 @@ export class ObjectSystemRelationsOnCreateSideEffectHandlerService extends Metad
           universalIdentifier: sourceFlatObjectMetadata.universalIdentifier,
           nameSingular: sourceFlatObjectMetadata.nameSingular,
         } as Partial<MetadataFlatEntity<'objectMetadata'>>,
-        errors: [
-          {
-            code: MetadataSideEffectExceptionCode.SIDE_EFFECT_PARENT_METADATA_NOT_FOUND,
-            message: t`Could not resolve standard relation object "${missingStandardObjectNameSingular}" to provision default relations`,
-            userFriendlyMessage: msg`A standard object required to provision default relations could not be found`,
-          },
-        ],
+        errors: missingStandardObjectErrors,
       };
     }
 
