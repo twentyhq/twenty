@@ -1,0 +1,29 @@
+packages/twenty-front/src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
+  s_c4892f4ac2fb0e::t_f558bd0f5e661c 48
+packages/twenty-front/src/modules/settings/hooks/useSettingsNavigationItems.tsx
+  s_c4892f4ac2fb0e::t_f558bd0f5e661c 177
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
+  s_c4892f4ac2fb0e::t_f558bd0f5e661c 63,69
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
+  s_c4892f4ac2fb0e::t_f558bd0f5e661c 126
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
+  s_c4892f4ac2fb0e::t_55af3299330539 117
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
+  s_c4892f4ac2fb0e::t_f558bd0f5e661c 83
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "9f45ddf4f3acad9e163bac32f5702d47f374b705",
+  "prompts": {},
+  "sessions": {
+    "s_c4892f4ac2fb0e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "74e7b645-8557-47f5-9aa3-10d3470dabef",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
