@@ -53,7 +53,7 @@ type SystemRelationFieldUpdate = {
   >;
 };
 
-@RegisteredWorkspaceCommand('2.22.0', 1784130194000)
+@RegisteredWorkspaceCommand('2.22.0', 1784218052000)
 @Command({
   name: 'upgrade:2-22:reconcile-system-relation-field-universal-identifier',
   description:
