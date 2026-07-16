@@ -32,12 +32,11 @@ export class ObjectSystemRelationsOnCreateSideEffectHandlerService extends Metad
     metadataName: 'objectMetadata',
     name: 'objectSystemRelationsOnCreate',
     description:
-      'When an object is created, provision its default relations to the four standard relation objects (timelineActivity, attachment, noteTarget, taskTarget): the forward RELATION field on the new object, the reverse MORPH_RELATION field on the standard object (name-free deterministic identifier so an object rename is a lossless update), and the reverse join-column index. All emitted entities are isSystemSideEffect, so the engine owns their lifecycle. twenty-standard authors these fields itself and never reaches this handler (it syncs via the FromTo path). A caller-provided field with the same universal identifier (an override) is preserved: the colliding bundle is skipped.',
+      'When an object is created, provision its default relations to the four standard relation objects (timelineActivity, attachment, noteTarget, taskTarget): the forward RELATION field on the new object, the reverse MORPH_RELATION field on the standard object (name-free deterministic identifier so an object rename is a lossless update), and the reverse join-column index. All emitted entities are isSystemSideEffect, so the engine owns their lifecycle. twenty-standard authors these fields itself and never reaches this handler (it syncs via the FromTo path). The handler always emits its bundles: a caller-provided field colliding on universal identifier hard-fails at merge time (RESERVED_SYSTEM_UNIVERSAL_IDENTIFIER), and a caller field colliding on name hard-fails in the field validator (NOT_AVAILABLE).',
   },
 ) {
   buildSideEffects({
     flatEntity: flatObjectMetadata,
-    allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'objectMetadata'>): MetadataSideEffectResult {
     const sourceFlatObjectMetadata =
@@ -91,16 +90,6 @@ export class ObjectSystemRelationsOnCreateSideEffectHandlerService extends Metad
           sourceFlatObjectMetadata.applicationUniversalIdentifier,
       });
 
-    const callerProvidedFieldUniversalIdentifiers = new Set<string>([
-      ...Object.keys(
-        allFlatEntityOperationRecordByMetadataName.fieldMetadata
-          ?.flatEntityToCreate ?? {},
-      ),
-      ...Object.keys(
-        relatedFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
-      ),
-    ]);
-
     const fieldMetadataToCreate: Record<
       string,
       MetadataUniversalFlatEntity<'fieldMetadata'>
@@ -115,27 +104,11 @@ export class ObjectSystemRelationsOnCreateSideEffectHandlerService extends Metad
       reverseFlatFieldMetadata,
       flatIndexMetadata,
     } of systemRelationBundles) {
-      const isOverriddenByCaller =
-        callerProvidedFieldUniversalIdentifiers.has(
-          forwardFlatFieldMetadata.universalIdentifier,
-        ) ||
-        callerProvidedFieldUniversalIdentifiers.has(
-          reverseFlatFieldMetadata.universalIdentifier,
-        );
-
-      if (isOverriddenByCaller) {
-        continue;
-      }
-
       fieldMetadataToCreate[forwardFlatFieldMetadata.universalIdentifier] =
         forwardFlatFieldMetadata;
       fieldMetadataToCreate[reverseFlatFieldMetadata.universalIdentifier] =
         reverseFlatFieldMetadata;
       indexToCreate[flatIndexMetadata.universalIdentifier] = flatIndexMetadata;
-    }
-
-    if (Object.keys(fieldMetadataToCreate).length === 0) {
-      return { status: 'noop' };
     }
 
     return {

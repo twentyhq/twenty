@@ -30,11 +30,6 @@ const MORPH_ID_BY_STANDARD_OBJECT_NAME_SINGULAR = {
   taskTarget: STANDARD_OBJECTS.taskTarget.morphIds.targetMorphId.morphId,
 } satisfies Record<DefaultRelationStandardObjectNameSingular, string | null>;
 
-// One default system relation between the host object and one of the four
-// standard relation objects (timelineActivity/attachment/noteTarget/taskTarget).
-// The forward field lives on the host object; the reverse morph field lives on
-// the standard object and points back at the host. They are kept together so a
-// caller override of a default relation can skip the whole bundle atomically.
 export type SystemRelationFlatFieldMetadataBundle = {
   forwardFlatFieldMetadata: UniversalFlatFieldMetadata;
   reverseFlatFieldMetadata: UniversalFlatFieldMetadata;

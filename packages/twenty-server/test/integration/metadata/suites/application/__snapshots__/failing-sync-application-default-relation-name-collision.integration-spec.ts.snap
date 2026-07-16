@@ -73,3 +73,39 @@ exports[`Sync application default relation name collision should reject a manife
   "name": "GraphQLError",
 }
 `;
+
+exports[`Sync application default relation name collision should reject a manifest field named after a default relation when it carries the derived universal identifier 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "RESERVED_SYSTEM_UNIVERSAL_IDENTIFIER",
+              "message": "Universal identifier is reserved for system-managed metadata",
+              "userFriendlyMessage": "This identifier is reserved by the system",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "attachments",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This identifier is reserved by the system",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;

@@ -4,14 +4,11 @@ import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/app
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
-import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import {
   getFieldUniversalIdentifier,
   type ObjectManifest,
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 const TEST_APP_ID = uuidv4();
@@ -54,6 +51,10 @@ const buildObjectWithAttachmentsField = ({
     ],
   });
 
+// The default relations are engine-owned: the create side-effect handler
+// always emits them, so a manifest field can never take their place. It either
+// collides on name (random identifier) or on universal identifier (derived
+// identifier), and both collisions hard-fail the sync.
 describe('Sync application default relation name collision', () => {
   beforeAll(async () => {
     await setupApplicationForSync({
@@ -72,8 +73,8 @@ describe('Sync application default relation name collision', () => {
 
   it('should reject a manifest field named after a default relation when it carries a pinned universal identifier', async () => {
     // The pinned identifier differs from the derived forward field identifier,
-    // so the create side-effect handler does not detect an override and emits
-    // its own "attachments" RELATION field - colliding on name.
+    // so the side-effect "attachments" RELATION field and the manifest TEXT
+    // field coexist in the create bucket and collide on name in the validator.
     const { errors } = await syncApplication({
       manifest: buildBaseManifest({
         appId: TEST_APP_ID,
@@ -92,11 +93,12 @@ describe('Sync application default relation name collision', () => {
     expectOneNotInternalServerErrorSnapshot({ errors });
   }, 60000);
 
-  it('should let a manifest field named after a default relation win when it carries the derived universal identifier', async () => {
-    // With the derived identifier the create side-effect handler detects the
-    // override and skips the whole attachment bundle, while the three other
-    // default relations are still provisioned.
-    await syncApplication({
+  it('should reject a manifest field named after a default relation when it carries the derived universal identifier', async () => {
+    // With the derived identifier the manifest field collides with the
+    // side-effect forward field on universal identifier: the engine merge
+    // detects a caller entity squatting a system-reserved identifier and
+    // hard-fails (RESERVED_SYSTEM_UNIVERSAL_IDENTIFIER).
+    const { errors } = await syncApplication({
       manifest: buildBaseManifest({
         appId: TEST_APP_ID,
         roleId: TEST_ROLE_ID,
@@ -109,58 +111,9 @@ describe('Sync application default relation name collision', () => {
           ],
         },
       }),
-      expectToFail: false,
+      expectToFail: true,
     });
 
-    const { objects } = await findManyObjectMetadata({
-      expectToFail: false,
-      input: {
-        filter: {},
-        paging: { first: 1000 },
-      },
-      gqlFields: 'id nameSingular',
-    });
-
-    const createdObject = objects.find(
-      (objectMetadata) => objectMetadata.nameSingular === OBJECT_NAME_SINGULAR,
-    );
-
-    expect(createdObject).toBeDefined();
-
-    if (!isDefined(createdObject)) {
-      throw new Error('expected the synced object to exist');
-    }
-
-    const { fields } = await findManyFieldsMetadata({
-      expectToFail: false,
-      input: {
-        filter: { objectMetadataId: { eq: createdObject.id } },
-        paging: { first: 100 },
-      },
-      gqlFields: 'id name type universalIdentifier',
-    });
-
-    const fetchedFields = fields.map(
-      (edge: {
-        node: { name: string; type: string; universalIdentifier: string };
-      }) => edge.node,
-    );
-
-    const attachmentsField = fetchedFields.find(
-      (field: { name: string }) => field.name === 'attachments',
-    );
-
-    expect(attachmentsField).toBeDefined();
-    expect(attachmentsField?.type).toBe(FieldMetadataType.TEXT);
-    expect(attachmentsField?.universalIdentifier).toBe(
-      DERIVED_ATTACHMENTS_UNIVERSAL_IDENTIFIER,
-    );
-
-    const noteTargetsField = fetchedFields.find(
-      (field: { name: string }) => field.name === 'noteTargets',
-    );
-
-    expect(noteTargetsField).toBeDefined();
-    expect(noteTargetsField?.type).toBe(FieldMetadataType.RELATION);
+    expectOneNotInternalServerErrorSnapshot({ errors });
   }, 60000);
 });

@@ -145,17 +145,20 @@ describe('ObjectSystemRelationsOnCreateSideEffectHandlerService', () => {
     }
   });
 
-  it('should preserve a caller override by skipping the colliding bundle', () => {
-    const overriddenTarget = targets[0];
-    const overriddenForwardUniversalIdentifier = forwardUniversalIdentifierFor(
-      overriddenTarget.namePlural,
+  // The handler always emits its bundles: a caller field colliding on
+  // universal identifier is not skipped but hard-fails at the engine merge
+  // (RESERVED_SYSTEM_UNIVERSAL_IDENTIFIER collision).
+  it('should emit all bundles even when a caller field collides on universal identifier', () => {
+    const collidingTarget = targets[0];
+    const collidingForwardUniversalIdentifier = forwardUniversalIdentifierFor(
+      collidingTarget.namePlural,
     );
 
     const result = handler.buildSideEffects(
       buildArgs({
         callerFieldMetadataToCreateByUniversalIdentifier: {
-          [overriddenForwardUniversalIdentifier]: {
-            universalIdentifier: overriddenForwardUniversalIdentifier,
+          [collidingForwardUniversalIdentifier]: {
+            universalIdentifier: collidingForwardUniversalIdentifier,
           },
         },
       }),
@@ -172,19 +175,14 @@ describe('ObjectSystemRelationsOnCreateSideEffectHandlerService', () => {
     const indexToCreate = result.operations.index?.flatEntityToCreate ?? {};
 
     expect(Object.keys(fieldMetadataToCreate)).toHaveLength(
-      (DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.length - 1) * 2,
+      DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.length * 2,
     );
     expect(Object.keys(indexToCreate)).toHaveLength(
-      DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.length - 1,
+      DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.length,
     );
     expect(
-      fieldMetadataToCreate[overriddenForwardUniversalIdentifier],
-    ).toBeUndefined();
-    expect(
-      fieldMetadataToCreate[
-        reverseUniversalIdentifierFor(overriddenTarget.universalIdentifier)
-      ],
-    ).toBeUndefined();
+      fieldMetadataToCreate[collidingForwardUniversalIdentifier],
+    ).toBeDefined();
   });
 
   it('should fail with one error per missing standard relation object', () => {
