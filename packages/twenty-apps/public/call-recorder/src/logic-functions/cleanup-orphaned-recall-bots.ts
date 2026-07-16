@@ -12,7 +12,6 @@ import {
   type StepFailure,
 } from 'src/logic-functions/utils/build-step-failure.util';
 
-// Pending requests handle incomplete cancellation and bot-id write-back; this daily list fetch only finds unclaimed Recall bots.
 const ORPHANED_BOT_JOIN_AT_LOOKBACK_HOURS = 25;
 const ORPHANED_BOT_JOIN_AT_LOOKAHEAD_HOURS = 24;
 

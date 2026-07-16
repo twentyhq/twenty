@@ -713,8 +713,6 @@ describe('recall bot api', () => {
         fetchMock.mock.calls[0][1].headers['Idempotency-Key'],
       );
 
-      // A re-requested recording carries a new revision, so Recall's cached
-      // response for the canceled bot cannot be replayed.
       await scheduleRecallBot({
         ...scheduleArguments,
         requestRevision: '2026-01-01T12:30:00.000Z',

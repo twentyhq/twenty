@@ -20,7 +20,6 @@ export type RetryFailedRecallCancellationsResult = {
 
 const CANCELED_BOT_RECOVERY_AFTER_START_HOURS = 24;
 
-// Retries the Recall half of cancelCallRecordingRequest when its bot cancel failed; the recording keeps its bot id until the bot is confirmed gone.
 export const retryFailedRecallCancellations = async ({
   client,
   now,
@@ -64,7 +63,6 @@ export const retryFailedRecallCancellations = async ({
       continue;
     }
 
-    // Calendar reconciliation can reactivate the request while this job is running.
     const latestCallRecording = (
       await findCallRecordingsByIds(client, [callRecording.id])
     )[0];

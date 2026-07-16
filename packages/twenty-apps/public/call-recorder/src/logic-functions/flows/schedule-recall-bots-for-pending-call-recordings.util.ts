@@ -13,7 +13,6 @@ export type ScheduleRecallBotsForPendingCallRecordingsResult = {
   scheduledCallRecordingIds: string[];
 };
 
-// Resumes a CallRecording inserted before its Recall bot was scheduled.
 export const scheduleRecallBotsForPendingCallRecordings = async ({
   client,
   now,
@@ -62,7 +61,6 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
       continue;
     }
 
-    // A failed lookup can hide an existing bot; creating one now could duplicate it, so defer to the next run.
     if (attachResult.status === 'lookup-failed') {
       continue;
     }

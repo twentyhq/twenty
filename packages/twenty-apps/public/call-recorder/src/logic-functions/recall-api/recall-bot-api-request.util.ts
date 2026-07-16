@@ -31,8 +31,6 @@ type RecallBotApiRequestResult<TData> =
       errorMessage: string;
     };
 
-// Retried creates provide an idempotency key so ambiguous attempts cannot
-// create duplicates.
 export const recallBotApiRequest = async <TData>(
   requestArgs: RecallBotApiRequestArgs,
 ): Promise<RecallBotApiRequestResult<TData>> => {
@@ -53,7 +51,6 @@ export const recallBotApiRequest = async <TData>(
       attemptNumber,
     });
 
-    // Sleeping past the invocation budget would hit the timeout kill; defer to the reconcilers.
     if (
       totalRetryWaitMs + retryDelayMs >=
       RECALL_API_MAX_IN_PROCESS_RETRY_WAIT_MS

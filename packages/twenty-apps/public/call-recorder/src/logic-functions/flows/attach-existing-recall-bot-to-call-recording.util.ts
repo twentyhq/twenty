@@ -11,7 +11,6 @@ export type AttachExistingRecallBotToCallRecordingResult =
   | { status: 'no-existing-bot' }
   | { status: 'lookup-failed' };
 
-// A run that POSTed a bot but died before the id write-back leaves the bot claimable by metadata; attaching it instead of re-POSTing prevents duplicate bots.
 export const attachExistingRecallBotToCallRecording = async (
   client: CoreApiClient,
   { callRecording }: { callRecording: CallRecordingRecord },

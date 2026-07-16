@@ -43,7 +43,6 @@ export const cleanupOrphanedRecallBots = async ({
     };
   }
 
-  // Server-side workspace filter: the shared Recall account holds every workspace's bots.
   const listResult = await listScheduledRecallBots({
     joinAtAfter,
     joinAtBefore,

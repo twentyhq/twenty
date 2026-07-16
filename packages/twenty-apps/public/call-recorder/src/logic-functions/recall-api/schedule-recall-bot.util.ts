@@ -17,9 +17,6 @@ import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-a
 export type ScheduleRecallBotArgs = {
   meetingUrl: string;
   joinAt: string;
-  // Identifies the current generation of the recording request; a canceled
-  // then re-requested recording must rotate this so Recall's one-hour
-  // idempotency cache cannot replay the previously canceled bot.
   requestRevision: string;
   metadata: RecallRoutingMetadata;
   automaticVideoOutput?: RecallBotAutomaticVideoOutput;
