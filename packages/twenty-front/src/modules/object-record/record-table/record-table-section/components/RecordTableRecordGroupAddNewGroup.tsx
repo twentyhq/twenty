@@ -1,6 +1,7 @@
 import { AddRecordGroupButton } from '@/object-record/record-group/components/AddRecordGroupButton';
 import { canAddRecordGroupForFieldMetadataItem } from '@/object-record/record-group/utils/canAddRecordGroupForFieldMetadataItem';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
+import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -16,6 +17,14 @@ export const RecordTableRecordGroupAddNewGroup = () => {
   const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
+
+  const isRecordTableCellsNonEditable = useAtomComponentStateValue(
+    isRecordTableCellsNonEditableComponentState,
+  );
+
+  if (isRecordTableCellsNonEditable) {
+    return null;
+  }
 
   if (
     !canAddRecordGroupForFieldMetadataItem(recordIndexGroupFieldMetadataItem)

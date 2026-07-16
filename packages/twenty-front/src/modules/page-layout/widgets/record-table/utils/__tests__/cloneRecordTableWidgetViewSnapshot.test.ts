@@ -74,6 +74,15 @@ const sourceSnapshot: RecordTableWidgetViewSnapshot = {
       direction: ViewSortDirection.ASC,
     },
   ],
+  viewGroups: [
+    {
+      id: 'view-group-id',
+      viewId: SOURCE_VIEW_ID,
+      fieldValue: 'OPTION_1',
+      position: 0,
+      isVisible: true,
+    },
+  ],
 };
 
 describe('cloneRecordTableWidgetViewSnapshot', () => {
@@ -88,6 +97,7 @@ describe('cloneRecordTableWidgetViewSnapshot', () => {
     expect(clonedSnapshot.viewFilterGroups[0].viewId).toBe(newViewId);
     expect(clonedSnapshot.viewFilters[0].viewId).toBe(newViewId);
     expect(clonedSnapshot.viewSorts[0].viewId).toBe(newViewId);
+    expect(clonedSnapshot.viewGroups[0].viewId).toBe(newViewId);
   });
 
   it('should regenerate row ids so the duplicate persists without colliding with the source', () => {
@@ -96,6 +106,7 @@ describe('cloneRecordTableWidgetViewSnapshot', () => {
     expect(clonedSnapshot.viewFields[0].id).not.toBe('view-field-id');
     expect(clonedSnapshot.viewFilters[0].id).not.toBe('view-filter-id');
     expect(clonedSnapshot.viewSorts[0].id).not.toBe('view-sort-id');
+    expect(clonedSnapshot.viewGroups[0].id).not.toBe('view-group-id');
     expect(clonedSnapshot.viewFilterGroups[0].id).not.toBe(
       PARENT_FILTER_GROUP_ID,
     );
