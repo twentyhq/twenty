@@ -99,10 +99,8 @@ export class ApplicationUpgradeService {
       where: { id: params.appRegistrationId },
     });
 
-    // TARBALL upgrades re-install the stored tarball, whose contents define
-    // the target version; the install flow gates against same-version and
-    // downgrade installs. LOCAL apps are updated by dev sync and OAUTH_ONLY
-    // registrations have no code artifacts, so neither can be upgraded.
+    // LOCAL apps are updated by dev sync and OAUTH_ONLY registrations have no
+    // code artifacts.
     if (
       appRegistration.sourceType === ApplicationRegistrationSourceType.LOCAL ||
       appRegistration.sourceType ===

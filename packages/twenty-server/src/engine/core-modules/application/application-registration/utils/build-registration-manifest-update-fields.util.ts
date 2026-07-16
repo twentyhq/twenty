@@ -3,9 +3,8 @@ import { type ApplicationManifest } from 'twenty-shared/application';
 import { type ApplicationRegistrationGalleryImage } from 'src/engine/core-modules/application/application-registration/types/application-registration-gallery-image.type';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 
-// Gallery image files are stored by the source-specific flows (tarball
-// upload, dev sync, catalog sync); fileIds are kept for paths that did not
-// change so a metadata refresh cannot drop already stored assets.
+// Gallery fileIds are kept for unchanged paths so a metadata refresh cannot
+// drop already stored assets.
 export const buildRegistrationManifestUpdateFields = ({
   manifestApplication,
   existingGalleryImages,

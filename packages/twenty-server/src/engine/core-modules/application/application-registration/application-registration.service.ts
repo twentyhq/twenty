@@ -45,8 +45,6 @@ const BCRYPT_SALT_ROUNDS = 10;
 
 const MAX_APPLICATION_REGISTRATIONS_PAGE_SIZE = 100;
 
-// Sized well above the manifest save + variable schema sync duration so the
-// lease cannot expire mid-update and let a concurrent refresh interleave.
 const APPLICATION_REGISTRATION_UPDATE_LOCK_OPTIONS = {
   ttl: 60_000,
   ms: 500,
@@ -434,17 +432,13 @@ export class ApplicationRegistrationService {
           existingGalleryImages: existing.galleryImages,
         });
 
-        // The stored logo file belongs to the previous logo path; the source
-        // flows (tarball upload, dev sync, catalog sync) re-store assets for
-        // the new path right after this refresh.
+        // The stored logo file belongs to the previous logo path.
         const hasLogoPathChanged =
           (manifestUpdateFields.logo ?? null) !== (existing.logo ?? null);
 
-        // One transaction so the registration row and its variable schemas
-        // always come from the same manifest, even when the sync fails midway.
-        // Partial update: writing only manifest-derived columns cannot restore
-        // stale values on unrelated columns (OAuth settings, stored file ids)
-        // written by flows that do not take this lock.
+        // Partial update in one transaction: the row and its variable schemas
+        // stay on the same manifest without clobbering columns written by
+        // flows outside this lock.
         await this.applicationRegistrationRepository.manager.transaction(
           async (entityManager) => {
             await entityManager

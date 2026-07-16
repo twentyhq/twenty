@@ -55,48 +55,8 @@ export class ApplicationTarballService {
     await fs.mkdir(tempDir, { recursive: true });
 
     try {
-      const tarballPath = join(tempDir, 'app.tar.gz');
-
-      await fs.writeFile(tarballPath, params.tarballBuffer);
-
-      const extractDir = join(tempDir, 'extracted');
-
-      await fs.mkdir(extractDir, { recursive: true });
-      await extractTarballSecurely(tarballPath, extractDir);
-
-      const contentDir = await resolvePackageContentDir(extractDir);
-
-      const manifest = await readJsonFile<{
-        application?: ApplicationManifest;
-      }>(contentDir, 'manifest.json');
-
-      const packageJson = await readJsonFile<{
-        version: string;
-        engines?: { twenty?: string };
-      }>(contentDir, 'package.json');
-
-      if (manifest === null) {
-        throw new ApplicationRegistrationException(
-          'manifest.json not found or invalid in tarball',
-          ApplicationRegistrationExceptionCode.INVALID_INPUT,
-        );
-      }
-
-      const requiredServerVersion = packageJson?.engines?.twenty;
-
-      const versionValidation =
-        await this.applicationVersionValidationService.validateServerCompatibility(
-          requiredServerVersion,
-        );
-
-      if (!versionValidation.compatible) {
-        throw new ApplicationRegistrationException(
-          versionValidation.message,
-          VERSION_REASON_TO_APPLICATION_REGISTRATION_EXCEPTION_CODE[
-            versionValidation.reason
-          ],
-        );
-      }
+      const { contentDir, manifest, packageJson } =
+        await this.extractAndValidateTarball(tempDir, params.tarballBuffer);
 
       const universalIdentifier =
         params.universalIdentifier ?? manifest.application?.universalIdentifier;
@@ -108,93 +68,34 @@ export class ApplicationTarballService {
         );
       }
 
-      let appRegistration = await this.appRegistrationRepository.findOne({
-        where: {
-          universalIdentifier,
-          ownerWorkspaceId: params.ownerWorkspaceId,
+      const existingRegistration = await this.appRegistrationRepository.findOne(
+        {
+          where: {
+            universalIdentifier,
+            ownerWorkspaceId: params.ownerWorkspaceId,
+          },
         },
+      );
+
+      const appRegistration = isDefined(existingRegistration)
+        ? this.assertTarballCanReplaceRegistration({
+            registration: existingRegistration,
+            incomingVersion: packageJson?.version,
+            universalIdentifier,
+          })
+        : await this.createTarballRegistration({
+            universalIdentifier,
+            manifest,
+            packageJsonVersion: packageJson?.version ?? null,
+            ownerWorkspaceId: params.ownerWorkspaceId,
+          });
+
+      const savedFile = await this.storeTarballFile({
+        appRegistration,
+        tarballBuffer: params.tarballBuffer,
+        ownerWorkspaceId: params.ownerWorkspaceId,
       });
 
-      if (isDefined(appRegistration)) {
-        if (
-          appRegistration.sourceType !==
-            ApplicationRegistrationSourceType.LOCAL &&
-          appRegistration.sourceType !==
-            ApplicationRegistrationSourceType.TARBALL
-        ) {
-          throw new ApplicationRegistrationException(
-            `This app is registered as ${appRegistration.sourceType}. Cannot upload tarball.`,
-            ApplicationRegistrationExceptionCode.SOURCE_CHANNEL_MISMATCH,
-          );
-        }
-
-        if (
-          appRegistration.sourceType ===
-            ApplicationRegistrationSourceType.TARBALL &&
-          isDefined(appRegistration.latestAvailableVersion) &&
-          isDefined(packageJson?.version)
-        ) {
-          const progression =
-            this.applicationVersionValidationService.validateVersionProgression(
-              {
-                incomingVersion: packageJson.version,
-                currentVersion: appRegistration.latestAvailableVersion,
-                universalIdentifier,
-                action: 'deploy',
-              },
-            );
-
-          if (!progression.allowed) {
-            throw new ApplicationRegistrationException(
-              progression.message,
-              VERSION_PROGRESSION_REASON_TO_DEPLOY_EXCEPTION_CODE[
-                progression.reason
-              ],
-            );
-          }
-        }
-      } else {
-        appRegistration = this.appRegistrationRepository.create({
-          universalIdentifier,
-          name: manifest.application?.displayName ?? 'Unknown App',
-          sourceType: ApplicationRegistrationSourceType.TARBALL,
-          manifest,
-          ...fromManifestApplicationToDisplayFields(manifest.application),
-          latestAvailableVersion: packageJson?.version ?? null,
-          isListed: false,
-          isVetted: false,
-          oAuthClientId: v4(),
-          oAuthRedirectUris: [],
-          oAuthScopes: [],
-          ownerWorkspaceId: params.ownerWorkspaceId,
-        });
-
-        appRegistration =
-          await this.appRegistrationRepository.save(appRegistration);
-      }
-
-      const { workspaceCustomFlatApplication } =
-        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-          { workspaceId: params.ownerWorkspaceId },
-        );
-
-      const savedFile = await this.fileStorageService.writeFile({
-        sourceFile: params.tarballBuffer,
-        resourcePath: `${appRegistration.id}/app.tar.gz`,
-        fileFolder: FileFolder.AppTarball,
-        applicationUniversalIdentifier:
-          workspaceCustomFlatApplication.universalIdentifier,
-        workspaceId: params.ownerWorkspaceId,
-        fileId: appRegistration.tarballFileId ?? v4(),
-        settings: {
-          isTemporaryFile: false,
-          toDelete: false,
-        },
-      });
-
-      // Routed through the single registration writer so the tarball flow
-      // serializes with installs and dev sync on the per-registration lock
-      // and gets the same variable schema handling.
       await this.applicationRegistrationService.updateFromManifest({
         applicationRegistrationId: appRegistration.id,
         manifest: manifest as Manifest,
@@ -224,6 +125,161 @@ export class ApplicationTarballService {
     } finally {
       await fs.rm(tempDir, { recursive: true, force: true });
     }
+  }
+
+  private async extractAndValidateTarball(
+    tempDir: string,
+    tarballBuffer: Buffer,
+  ): Promise<{
+    contentDir: string;
+    manifest: { application?: ApplicationManifest };
+    packageJson: { version: string; engines?: { twenty?: string } } | null;
+  }> {
+    const tarballPath = join(tempDir, 'app.tar.gz');
+
+    await fs.writeFile(tarballPath, tarballBuffer);
+
+    const extractDir = join(tempDir, 'extracted');
+
+    await fs.mkdir(extractDir, { recursive: true });
+    await extractTarballSecurely(tarballPath, extractDir);
+
+    const contentDir = await resolvePackageContentDir(extractDir);
+
+    const manifest = await readJsonFile<{
+      application?: ApplicationManifest;
+    }>(contentDir, 'manifest.json');
+
+    const packageJson = await readJsonFile<{
+      version: string;
+      engines?: { twenty?: string };
+    }>(contentDir, 'package.json');
+
+    if (manifest === null) {
+      throw new ApplicationRegistrationException(
+        'manifest.json not found or invalid in tarball',
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const versionValidation =
+      await this.applicationVersionValidationService.validateServerCompatibility(
+        packageJson?.engines?.twenty,
+      );
+
+    if (!versionValidation.compatible) {
+      throw new ApplicationRegistrationException(
+        versionValidation.message,
+        VERSION_REASON_TO_APPLICATION_REGISTRATION_EXCEPTION_CODE[
+          versionValidation.reason
+        ],
+      );
+    }
+
+    return { contentDir, manifest, packageJson };
+  }
+
+  private assertTarballCanReplaceRegistration({
+    registration,
+    incomingVersion,
+    universalIdentifier,
+  }: {
+    registration: ApplicationRegistrationEntity;
+    incomingVersion: string | undefined;
+    universalIdentifier: string;
+  }): ApplicationRegistrationEntity {
+    if (
+      registration.sourceType !== ApplicationRegistrationSourceType.LOCAL &&
+      registration.sourceType !== ApplicationRegistrationSourceType.TARBALL
+    ) {
+      throw new ApplicationRegistrationException(
+        `This app is registered as ${registration.sourceType}. Cannot upload tarball.`,
+        ApplicationRegistrationExceptionCode.SOURCE_CHANNEL_MISMATCH,
+      );
+    }
+
+    if (
+      registration.sourceType === ApplicationRegistrationSourceType.TARBALL &&
+      isDefined(registration.latestAvailableVersion) &&
+      isDefined(incomingVersion)
+    ) {
+      const progression =
+        this.applicationVersionValidationService.validateVersionProgression({
+          incomingVersion,
+          currentVersion: registration.latestAvailableVersion,
+          universalIdentifier,
+          action: 'deploy',
+        });
+
+      if (!progression.allowed) {
+        throw new ApplicationRegistrationException(
+          progression.message,
+          VERSION_PROGRESSION_REASON_TO_DEPLOY_EXCEPTION_CODE[
+            progression.reason
+          ],
+        );
+      }
+    }
+
+    return registration;
+  }
+
+  private async createTarballRegistration({
+    universalIdentifier,
+    manifest,
+    packageJsonVersion,
+    ownerWorkspaceId,
+  }: {
+    universalIdentifier: string;
+    manifest: { application?: ApplicationManifest };
+    packageJsonVersion: string | null;
+    ownerWorkspaceId: string;
+  }): Promise<ApplicationRegistrationEntity> {
+    return this.appRegistrationRepository.save(
+      this.appRegistrationRepository.create({
+        universalIdentifier,
+        name: manifest.application?.displayName ?? 'Unknown App',
+        sourceType: ApplicationRegistrationSourceType.TARBALL,
+        manifest,
+        ...fromManifestApplicationToDisplayFields(manifest.application),
+        latestAvailableVersion: packageJsonVersion,
+        isListed: false,
+        isVetted: false,
+        oAuthClientId: v4(),
+        oAuthRedirectUris: [],
+        oAuthScopes: [],
+        ownerWorkspaceId,
+      }),
+    );
+  }
+
+  private async storeTarballFile({
+    appRegistration,
+    tarballBuffer,
+    ownerWorkspaceId,
+  }: {
+    appRegistration: ApplicationRegistrationEntity;
+    tarballBuffer: Buffer;
+    ownerWorkspaceId: string;
+  }) {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId: ownerWorkspaceId },
+      );
+
+    return this.fileStorageService.writeFile({
+      sourceFile: tarballBuffer,
+      resourcePath: `${appRegistration.id}/app.tar.gz`,
+      fileFolder: FileFolder.AppTarball,
+      applicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+      workspaceId: ownerWorkspaceId,
+      fileId: appRegistration.tarballFileId ?? v4(),
+      settings: {
+        isTemporaryFile: false,
+        toDelete: false,
+      },
+    });
   }
 
   private async readAssetFromContentDir(

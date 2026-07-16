@@ -102,10 +102,8 @@ export class ApplicationVersionValidationService {
     });
   }
 
-  // Single gate for "the incoming version must move forward": used by
-  // workspace installs/upgrades and registration deploys so every source
-  // applies the same semver rules. A current version that is not valid
-  // semver never blocks (there is nothing reliable to compare against).
+  // A current version that is not valid semver never blocks: there is
+  // nothing reliable to compare against.
   validateVersionProgression({
     incomingVersion,
     currentVersion,

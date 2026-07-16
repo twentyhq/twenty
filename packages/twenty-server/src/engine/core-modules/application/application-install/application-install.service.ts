@@ -112,9 +112,8 @@ export class ApplicationInstallService {
     preLockAppRegistration: ApplicationRegistrationEntity,
     params: { version?: string; workspaceId: string },
   ): Promise<boolean> {
-    // Re-read inside the lock: the pre-lock row can be stale, and the
-    // authorization below must see listing or ownership changes that landed
-    // while waiting for the lock.
+    // Re-read inside the lock so the authorization below cannot act on stale
+    // listing or ownership state.
     const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: preLockAppRegistration.id },
     });
@@ -126,9 +125,8 @@ export class ApplicationInstallService {
       );
     }
 
-    // A tarball registration carries another workspace's private code: unless
-    // it was published (listed or pre-installed), only the owner workspace
-    // can install or upgrade it.
+    // Unpublished tarball registrations are only installable by their owner
+    // workspace.
     if (
       appRegistration.sourceType ===
         ApplicationRegistrationSourceType.TARBALL &&
