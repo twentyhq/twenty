@@ -8,13 +8,13 @@ The **data model** is how you describe your business to Twenty. Underneath sits 
 
 ## Objects
 
-An **object** is a table and a **record** is a row in it. Twenty ships with the standard set.
+An **object** is a table and a **record** is a row in it. A packaging supplier that sells to the food brand Harbor Foods keeps each brand as a record in Companies and each buyer there as a record in People. Twenty ships with the standard set.
 
 - **Companies** and **People**, the accounts and their contacts
 - **Opportunities**, Twenty's term for deals
 - **Tasks** and **Notes**, the work and context around the rest
 
-The set is deliberately small because the interesting objects are yours. A packaging supplier lives off print runs, so it creates a Print Runs **custom object**. Behind the scenes that's a real table in the workspace schema, with the same machinery as Companies: its own place in the sidebar, its own pages and views, its own API endpoints, its own permissions and its own workflow triggers. Custom data in most systems is an afterthought, bolted onto someone else's schema. In Twenty it's a table like any other.
+The set is deliberately small because the interesting objects are yours. The supplier lives off print runs, so it creates a Print Runs **custom object**. Behind the scenes that's a real table in the workspace schema, with the same machinery as Companies: its own place in the sidebar, its own pages and views, its own API endpoints, its own permissions and its own workflow triggers. Custom data in most systems is an afterthought, bolted onto someone else's schema. In Twenty it's a table like any other.
 
 ## Fields
 
@@ -23,7 +23,7 @@ A **field** is a column with a type. The type is a commitment that buys behavior
 - **Currency** fields sum, so a dashboard totals open deals without anyone maintaining the number.
 - **Select** fields hold one value from a fixed list, which is what pipeline columns are built from.
 - **Date** fields put records on a calendar.
-- **Files** fields hold documents, so the current artwork PDF lives on the record it describes.
+- **Files** fields hold documents, so Harbor Foods' current artwork PDF lives on its record.
 
 There are more than twenty types in total.
 
