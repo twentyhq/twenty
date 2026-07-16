@@ -135,11 +135,13 @@ not add a second connection or bot identity. To enable it:
    signs this handshake, so `SLACK_SIGNING_SECRET` (step 2) must be set first or
    verification returns 401 and Slack reports *"didn't respond with the value of
    the challenge parameter."*
-4. **Agent role (automatic).** The app ships a **Slack Assistant** role (CRM
-   read/write, never delete). It is assigned to the **`slack-assistant`** agent
-   automatically on first use, so the assistant works out of the box. To
-   restrict access, assign a narrower role to the agent under **Settings → AI**;
-   an admin choice is never overridden.
+4. **Assign the agent a role (required).** The app ships a **Slack Assistant**
+   role (read-only CRM access), but it is **not** bound to the agent
+   automatically — granting CRM access is an explicit admin decision. Under
+   **Settings → Roles**, assign the **Slack Assistant** role (or any role you
+   prefer) to the **`slack-assistant`** agent. Until you do, the bot replies that
+   it needs a role and answers nothing. To let the assistant create or update
+   records, assign or edit the role to include write permissions.
 
 The permission boundary is the agent's role: anyone who can message the bot
 acts with that role's permissions (Slack users are not yet mapped to individual
