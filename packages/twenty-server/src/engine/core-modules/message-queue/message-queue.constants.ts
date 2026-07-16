@@ -20,4 +20,6 @@ export enum MessageQueue {
   triggerQueue = 'trigger-queue',
   aiQueue = 'ai-queue',
   aiStreamQueue = 'ai-stream-queue',
+  externalSyncQueue = 'external-sync-queue',
+  externalSyncReplayQueue = 'external-sync-replay-queue',
 }

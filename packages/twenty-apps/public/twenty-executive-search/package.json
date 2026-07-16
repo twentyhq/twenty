@@ -28,7 +28,7 @@
     "oxlint": "^0.16.0",
     "twenty-sdk": "2.20.0",
     "typescript": "^5.9.3",
-    "vite-tsconfig-paths": "^4.2.1",
+    "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.9"
   }
 }

@@ -80,6 +80,7 @@ import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
 import { SendEmailModule } from 'src/modules/messaging/message-outbound-manager/send-email.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { EventLogsViewerModule } from './event-logs/event-logs-viewer.module';
+import { ExternalSyncModule } from './external-sync/external-sync.module';
 import { FileModule } from './file/file.module';
 
 @Module({
@@ -166,6 +167,7 @@ import { FileModule } from './file/file.module';
     CodeInterpreterSessionCleanupModule,
     DashboardModule,
     EventLogsViewerModule,
+    ExternalSyncModule,
     PreInstalledAppsModule,
     AppBillingModule,
   ],
