@@ -1,3 +1,4 @@
+import { differenceInDays } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -6,8 +7,6 @@ import {
   MOSTLY_EMPTY_FRACTION_THRESHOLD,
 } from 'src/engine/metadata-modules/object-metadata/constants/mostly-empty-field.constants';
 import { getEmptinessColumnNamesForField } from 'src/engine/metadata-modules/object-metadata/utils/get-emptiness-column-names-for-field.util';
-
-const MILLISECONDS_IN_ONE_DAY = 24 * 60 * 60 * 1000;
 
 export type FieldMetadataForEmptinessCheck = Pick<
   FlatFieldMetadata,
@@ -36,13 +35,12 @@ export const computeMostlyEmptyFieldMetadataIds = ({
         return false;
       }
 
-      const fieldAgeInMilliseconds =
-        now.getTime() - new Date(fieldMetadata.createdAt).getTime();
+      const fieldAgeInDays = differenceInDays(
+        now,
+        new Date(fieldMetadata.createdAt),
+      );
 
-      if (
-        fieldAgeInMilliseconds <
-        MOSTLY_EMPTY_FIELD_MINIMUM_AGE_IN_DAYS * MILLISECONDS_IN_ONE_DAY
-      ) {
+      if (fieldAgeInDays < MOSTLY_EMPTY_FIELD_MINIMUM_AGE_IN_DAYS) {
         return false;
       }
 

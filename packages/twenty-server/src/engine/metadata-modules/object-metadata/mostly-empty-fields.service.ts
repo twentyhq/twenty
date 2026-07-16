@@ -4,6 +4,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { MOSTLY_EMPTY_MINIMUM_ROW_COUNT } from 'src/engine/metadata-modules/object-metadata/constants/mostly-empty-field.constants';
+import { ObjectRecordCountService } from 'src/engine/metadata-modules/object-metadata/object-record-count.service';
 import { computeMostlyEmptyFieldMetadataIds } from 'src/engine/metadata-modules/object-metadata/utils/compute-mostly-empty-field-metadata-ids.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -18,6 +19,7 @@ export class MostlyEmptyFieldsService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly objectRecordCountService: ObjectRecordCountService,
   ) {}
 
   async getMostlyEmptyFieldMetadataIds({
@@ -43,31 +45,20 @@ export class MostlyEmptyFieldsService {
     const schemaName = getWorkspaceSchemaName(workspaceId);
     const tableName = computeObjectTargetTable(flatObjectMetadata);
 
-    const dataSource =
-      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
-
-    // reltuples is the planner's row estimate, refreshed by autovacuum's
-    // ANALYZE; -1 means the table was never analyzed, so we know nothing
-    const tableStatisticsRows: { approximate_row_count: string }[] =
-      await dataSource.query(
-        `SELECT c.reltuples::bigint AS approximate_row_count
-         FROM pg_class c
-         JOIN pg_namespace n ON c.relnamespace = n.oid
-         WHERE n.nspname = $1
-         AND c.relname = $2
-         AND c.relkind = 'r'`,
-        [schemaName, tableName],
-        undefined,
-        { shouldBypassPermissionChecks: true },
+    const approximateRecordCountByTableName =
+      await this.objectRecordCountService.getApproximateRecordCountByTableName(
+        workspaceId,
       );
 
-    const approximateRowCount = Number(
-      tableStatisticsRows[0]?.approximate_row_count ?? -1,
-    );
+    const approximateRowCount =
+      approximateRecordCountByTableName.get(tableName) ?? 0;
 
     if (approximateRowCount < MOSTLY_EMPTY_MINIMUM_ROW_COUNT) {
       return [];
     }
+
+    const dataSource =
+      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
     // Per-column emptiness: null fraction plus the sampled frequency of the
     // type's empty sentinel — '' for text columns (NOT NULL DEFAULT ''),

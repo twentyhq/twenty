@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
@@ -44,7 +45,15 @@ export const getEmptinessColumnNamesForField = (
         flatFieldMetadata.name,
         getSubfieldsForAggregateOperation(flatFieldMetadata.type),
       );
-    default:
+    case FieldMetadataType.ACTOR:
+    case FieldMetadataType.BOOLEAN:
+    case FieldMetadataType.MORPH_RELATION:
+    case FieldMetadataType.POSITION:
+    case FieldMetadataType.RELATION:
+    case FieldMetadataType.TS_VECTOR:
+    case FieldMetadataType.UUID:
       return null;
+    default:
+      return assertUnreachable(flatFieldMetadata.type);
   }
 };

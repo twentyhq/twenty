@@ -15,19 +15,11 @@ export class ObjectRecordCountService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
-  async getRecordCounts(workspaceId: string): Promise<ObjectRecordCountDTO[]> {
-    const { flatObjectMetadataMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
-        },
-      );
-
-    const flatObjectMetadatas = Object.values(
-      flatObjectMetadataMaps.byUniversalIdentifier,
-    ).filter(isDefined);
-
+  // reltuples is the planner's row estimate, refreshed by autovacuum's
+  // ANALYZE; never-analyzed tables report -1, clamped to 0 here
+  async getApproximateRecordCountByTableName(
+    workspaceId: string,
+  ): Promise<Map<string, number>> {
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
     const dataSource =
@@ -53,6 +45,25 @@ export class ObjectRecordCountService {
         Math.max(0, Number(row.approximate_count)),
       );
     }
+
+    return countByTableName;
+  }
+
+  async getRecordCounts(workspaceId: string): Promise<ObjectRecordCountDTO[]> {
+    const { flatObjectMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
+
+    const flatObjectMetadatas = Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier,
+    ).filter(isDefined);
+
+    const countByTableName =
+      await this.getApproximateRecordCountByTableName(workspaceId);
 
     return flatObjectMetadatas.map((flatObjectMetadata) => ({
       objectNamePlural: flatObjectMetadata.namePlural,
