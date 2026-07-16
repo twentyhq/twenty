@@ -6,10 +6,9 @@ import {
   DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
   STANDARD_OBJECTS,
 } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
-import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { MetadataSideEffectExceptionCode } from 'src/engine/metadata-modules/metadata-side-effect/exceptions/metadata-side-effect-exception-code';
 import {
   type BuildSideEffectsArgs,
@@ -90,35 +89,27 @@ export class ObjectSystemRelationsOnCreateSideEffectHandlerService extends Metad
           sourceFlatObjectMetadata.applicationUniversalIdentifier,
       });
 
-    const fieldMetadataToCreate: Record<
-      string,
-      MetadataUniversalFlatEntity<'fieldMetadata'>
-    > = {};
-    const indexToCreate: Record<
-      string,
-      MetadataUniversalFlatEntity<'index'>
-    > = {};
-
-    for (const {
-      forwardFlatFieldMetadata,
-      reverseFlatFieldMetadata,
-      flatIndexMetadata,
-    } of systemRelationBundles) {
-      fieldMetadataToCreate[forwardFlatFieldMetadata.universalIdentifier] =
-        forwardFlatFieldMetadata;
-      fieldMetadataToCreate[reverseFlatFieldMetadata.universalIdentifier] =
-        reverseFlatFieldMetadata;
-      indexToCreate[flatIndexMetadata.universalIdentifier] = flatIndexMetadata;
-    }
-
     return {
       status: 'success',
       operations: {
         fieldMetadata: {
-          flatEntityToCreate: fieldMetadataToCreate,
+          flatEntityToCreate: fromArrayToUniqueKeyRecord({
+            array: systemRelationBundles.flatMap(
+              ({ forwardFlatFieldMetadata, reverseFlatFieldMetadata }) => [
+                forwardFlatFieldMetadata,
+                reverseFlatFieldMetadata,
+              ],
+            ),
+            uniqueKey: 'universalIdentifier',
+          }),
         },
         index: {
-          flatEntityToCreate: indexToCreate,
+          flatEntityToCreate: fromArrayToUniqueKeyRecord({
+            array: systemRelationBundles.map(
+              ({ flatIndexMetadata }) => flatIndexMetadata,
+            ),
+            uniqueKey: 'universalIdentifier',
+          }),
         },
       },
     };
