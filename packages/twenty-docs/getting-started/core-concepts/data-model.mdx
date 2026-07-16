@@ -4,13 +4,11 @@ description: "How you describe your business to Twenty, with objects, fields and
 icon: "database"
 ---
 
-The **data model** is how you describe your business to Twenty. It consists of three ideas: objects, fields and relations. Described well, every fact about your business lives in exactly one place.
-
-Suppose you make packaging for food brands. A customer rebrands and their logo changes. The change has to reach everything it touches, from open orders to the next production run. A spreadsheet keeps that logo version wherever someone once needed it, across several tabs. Update one tab and the rest are silently wrong. Eventually a print run ships with the old design, at your cost. The root cause is that the same fact lived in many places. The data model exists to prevent exactly that.
+The **data model** is how you describe your business to Twenty. It consists of three ideas. Objects are the kinds of things you track. Fields are the information you keep on each one. Relations connect them. Done well, every fact about your business lives in exactly one place.
 
 ## Objects
 
-An **object** is one kind of thing you track, comparable to one tab in a spreadsheet. The packaging business tracks the companies that buy from it, the people at those companies and its open deals. Twenty ships with objects for all of these.
+An **object** is one kind of thing you track, comparable to one tab in a spreadsheet. A packaging supplier tracks the companies that buy from it, the people at those companies, its open deals and the work around them. Twenty ships with objects for all of these.
 
 - **Companies**, the organizations you sell to
 - **People**, the contacts at those organizations
@@ -19,7 +17,7 @@ An **object** is one kind of thing you track, comparable to one tab in a spreads
 
 Each entry inside an object is a **record**. Harbor Foods is a record in Companies. The purchasing manager there is a record in People.
 
-Most businesses also track something no CRM ships with. The packaging maker cares about print runs. A print run is one batch of boxes going through the presses, with a design, a quantity, a ship date and a destination plant. For that you create a **custom object**. Custom objects behave exactly like built-in ones. They get their own section in the sidebar, their own pages and views, their own API endpoints. In another business the custom object is property listings or job applications.
+Most businesses also track something no CRM ships with. For the packaging supplier it's print runs. A print run is one batch of boxes going through the presses, with a design, a quantity, a ship date and a destination plant. For that you create a **custom object**. Custom objects behave exactly like built-in ones. They get their own section in the sidebar, their own pages and views, their own API endpoints. In another business the custom object is property listings or job applications.
 
 ## Fields
 
@@ -36,10 +34,10 @@ There are more than twenty types in total. Twenty also maintains a few fields au
 
 ## Relations
 
-Records rarely stand alone. A person works at a company. An order belongs to a customer. A **relation** is a field that holds another record instead of a plain value. On a contact's record, the Company field holds the Harbor Foods record itself rather than the text `Harbor Foods`.
+Records rarely stand alone. A person works at a company. A print run belongs to a customer. A **relation** is a field that holds another record instead of a plain value. On a contact's record, the Company field holds the Harbor Foods record itself rather than the text `Harbor Foods`.
 
-This resolves the rebrand problem. A print run linked to its customer doesn't carry its own copy of the artwork version. The current artwork lives in one place, on the customer's record. Everything linked to that customer reads it from there. The next logo change is one field edit. No order is left pointing at a stale copy.
+Relations keep every fact in one place. Harbor Foods' current artwork lives on its record and every linked print run reads it from there. A rebrand becomes a one-field edit. Nothing downstream ships with a stale design.
 
-Relations work in both directions. The Harbor Foods page lists its people, its open deals, its notes and every print run sent to it. Each of those records shows which company it belongs to. This structure is why a rebrand becomes a one-field edit rather than a hunt through tabs.
+Relations work in both directions. The Harbor Foods page lists its people, its open deals, its notes and every print run sent to it. Each of those records shows which company it belongs to.
 
 The next page covers the workspace itself, where records live on screen and how to move between them.
