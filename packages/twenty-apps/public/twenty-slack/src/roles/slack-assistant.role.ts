@@ -6,11 +6,6 @@ import {
 
 import { SLACK_ASSISTANT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
-// The manifest ships this role but does NOT bind it to the slack-assistant agent
-// (the manifest has no role->agent binding). A workspace admin assigns it to the
-// agent under Settings → Roles before the assistant can touch CRM data. It grants
-// read-only access by default; an admin can widen it (or swap in another role) to
-// allow writes.
 export default defineApplicationRole({
   universalIdentifier: SLACK_ASSISTANT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Slack Assistant',
