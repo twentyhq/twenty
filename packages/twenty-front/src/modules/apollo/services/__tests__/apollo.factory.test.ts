@@ -347,6 +347,7 @@ describe('ApolloFactory', () => {
 
     await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
 
+    expect(renewToken).toHaveBeenCalledTimes(1);
     expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
     expect(mockOnTokenPairChange).not.toHaveBeenCalled();
   });
