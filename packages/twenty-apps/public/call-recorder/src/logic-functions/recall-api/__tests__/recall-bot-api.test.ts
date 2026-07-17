@@ -15,6 +15,7 @@ import { CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME } from 'src/logic-
 import { RECALL_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-api-key-env-var-name';
 import { RECALL_REGION_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-region-env-var-name';
 
+const NOW = new Date('2026-01-01T12:00:00.000Z');
 const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
 const RECALL_ROUTING_METADATA = {
   twentyWorkspaceId: WORKSPACE_ID,
@@ -34,6 +35,8 @@ describe('recall bot api', () => {
   const fetchMock = vi.fn();
 
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(NOW);
     delete process.env[CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME];
     process.env[RECALL_API_KEY_ENV_VAR_NAME] = 'recall-api-key';
     process.env[RECALL_REGION_ENV_VAR_NAME] = 'ap-northeast-1';
@@ -56,6 +59,7 @@ describe('recall bot api', () => {
       }
     });
     vi.unstubAllGlobals();
+    vi.useRealTimers();
   });
 
   it('creates Recall bot requests with the Token authorization scheme', async () => {
