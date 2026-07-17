@@ -40,10 +40,10 @@ export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: APP_DISPLAY_NAME,
   description: APP_DESCRIPTION,
-  logoUrl: 'public/logo.svg',
+  logo: 'public/logo.svg',
   category: 'Productivity',
   author: 'Twenty',
-  screenshots: ['public/gallery/call-recorder-cover.png'],
+  galleryImages: ['public/gallery/call-recorder-cover.png'],
   applicationVariables: {
     [CALL_RECORDER_NAME_ENV_VAR_NAME]: {
       universalIdentifier: CALL_RECORDER_NAME_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
