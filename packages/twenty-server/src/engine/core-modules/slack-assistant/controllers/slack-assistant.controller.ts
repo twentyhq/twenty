@@ -19,6 +19,7 @@ import { SlackAssistantApiExceptionFilter } from 'src/engine/core-modules/slack-
 import {
   SLACK_ASSISTANT_REPLY_JOB_NAME,
   SLACK_EVENTS_WEBHOOK_ROUTE,
+  SLACK_THREAD_BROADCAST_SUBTYPE,
 } from 'src/engine/core-modules/slack-assistant/constants/slack-assistant.constants';
 import { SlackSignatureVerifierService } from 'src/engine/core-modules/slack-assistant/services/slack-signature-verifier.service';
 import { SlackThreadSubscriptionService } from 'src/engine/core-modules/slack-assistant/services/slack-thread-subscription.service';
@@ -77,12 +78,20 @@ export class SlackAssistantController {
     if (
       (payload.kind === 'direct_message' ||
         payload.kind === 'channel_message') &&
-      (isDefined(payload.botId) || isNonEmptyString(payload.subtype))
+      (isDefined(payload.botId) ||
+        (isNonEmptyString(payload.subtype) &&
+          payload.subtype !== SLACK_THREAD_BROADCAST_SUBTYPE))
     ) {
       return { ok: true };
     }
 
-    if (!isDefined(payload.teamId) || !isNonEmptyString(payload.text)) {
+    if (
+      !isDefined(payload.teamId) ||
+      !isNonEmptyString(payload.text) ||
+      !isNonEmptyString(payload.channelId) ||
+      !isNonEmptyString(payload.threadTs) ||
+      !isNonEmptyString(payload.ts)
+    ) {
       return { ok: true };
     }
 
