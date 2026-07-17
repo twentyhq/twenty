@@ -112,7 +112,7 @@ The server is the authoritative check — it validates `engines.twenty` on both 
 
 ## Automated CI/CD (scaffolded workflows)
 
-Apps generated with `create-twenty-app` ship with two GitHub Actions workflows out of the box, under `.github/workflows/`. They are ready to run as soon as you push the repo to GitHub — no extra setup is needed for CI, and CD only requires a single secret.
+Apps generated with `create-twenty-app` ship with three GitHub Actions workflows out of the box, under `.github/workflows/`. CI runs with no setup, CD requires a single secret, and publishing to npm requires a one-time npm trusted-publisher setup.
 
 ### CI — `ci.yml`
 
@@ -156,6 +156,19 @@ The default `TWENTY_DEPLOY_URL` of `http://localhost:3000` is a placeholder — 
 **Triggering a preview deploy from a PR:**
 
 Add the `deploy` label to a pull request. The `if:` guard in `cd.yml` will run the job for that PR using the PR's head commit, letting you validate a change on the target server before merging.
+
+### Publish — `publish.yml`
+
+Publishes your app to npm with provenance when you push a version tag (e.g. `v1.0.0`), or when you run the workflow manually from the Actions tab.
+
+**What it does:**
+
+1. Checks out your app, sets up Node.js, and updates npm (trusted publishing requires npm 11.5.1 or later).
+2. Runs `yarn twenty app:publish`, which builds the app and publishes `.twenty/output` to npm. In CI it automatically adds `--provenance` and `--access public`, so no flags are needed in the workflow.
+
+**One-time setup:**
+
+On npmjs.com open your package > **Settings → Trusted Publisher** and register this repository with the `publish.yml` workflow (see the [npm trusted publishing docs](https://docs.npmjs.com/trusted-publishers)). Publishing with provenance certifies which GitHub repository built the package, which is also how you claim ownership of your app in a Twenty marketplace.
 
 ### Pinning the reusable actions
 
@@ -241,37 +254,12 @@ If your app does not define an `aboutDescription` in `defineApplication()`, the 
 
 ### CI publishing
 
-Use this GitHub Actions workflow to publish automatically on every release (uses [OIDC](https://docs.npmjs.com/trusted-publishers)):
+The scaffolded `publish.yml` workflow described above publishes to npm automatically on version tags, with provenance. Because `yarn twenty app:publish` adds `--provenance` and `--access public` for you when it runs in CI, the workflow needs no npm flags — only the one-time trusted-publisher setup.
 
-```yaml filename=".github/workflows/publish.yml"
-name: Publish
-on:
-  release:
-    types: [published]
-
-permissions:
-  contents: read
-  id-token: write
-
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          registry-url: https://registry.npmjs.org
-      - run: yarn install --immutable
-      - run: npx twenty dev:build
-      - run: npm publish --provenance --access public
-        working-directory: .twenty/output
-```
-
-For other CI systems (GitLab CI, CircleCI, etc.), the same three commands apply: `yarn install`, `yarn twenty dev:build`, then `npm publish` from `.twenty/output`.
+For other CI systems (GitLab CI, CircleCI, etc.), run `yarn install` then `yarn twenty app:publish`. Provenance is emitted when the environment can mint an OIDC token and skipped automatically otherwise.
 
 <Note>
-**npm provenance** is optional but recommended. Publishing with `--provenance` adds a trust badge to your npm listing, letting users verify the package was built from a specific commit in a public CI pipeline. See the [npm provenance docs](https://docs.npmjs.com/generating-provenance-statements) for setup instructions.
+**npm provenance** adds a trust badge to your npm listing, letting users verify the package was built from a specific commit in a public CI pipeline. It is also what lets you claim ownership of your app in a Twenty marketplace. See the [npm provenance docs](https://docs.npmjs.com/generating-provenance-statements) for details.
 </Note>
 
 ## Installing apps
