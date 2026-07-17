@@ -6,7 +6,7 @@ import {
 } from 'src/engine/core-modules/slack-assistant/types/slack-webhook-payload.type';
 
 const asRecord = (value: unknown): Record<string, unknown> | undefined =>
-  typeof value === 'object' && value !== null && !Array.isArray(value)
+  isDefined(value) && typeof value === 'object' && !Array.isArray(value)
     ? (value as Record<string, unknown>)
     : undefined;
 
