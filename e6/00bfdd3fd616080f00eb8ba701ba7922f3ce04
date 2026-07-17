@@ -1,0 +1,20 @@
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/log/services/log-emailing-domain-driver.service.ts
+  s_c4892f4ac2fb0e::t_4638c2690983a6 49,60,64-98
+  s_c4892f4ac2fb0e::t_cfacba7829acfc 99-100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "e600bfdd3fd616080f00eb8ba701ba7922f3ce04",
+  "prompts": {},
+  "sessions": {
+    "s_c4892f4ac2fb0e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "74e7b645-8557-47f5-9aa3-10d3470dabef",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
