@@ -29,7 +29,7 @@ const PEOPLE_DATA_LABS_TARGET_VERSION = '1.0.7';
 // the target version rather than resolving latest, so the upgrade is
 // deterministic and idempotent; workspaces already at or above it are left
 // untouched.
-@RegisteredWorkspaceCommand('2.23.0', 1784281825000)
+@RegisteredWorkspaceCommand('2.23.0', 1784291034000)
 @Command({
   name: 'upgrade:2-23:upgrade-people-data-labs-application',
   description:
