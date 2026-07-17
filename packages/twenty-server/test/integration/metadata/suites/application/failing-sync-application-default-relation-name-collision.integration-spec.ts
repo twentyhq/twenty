@@ -5,9 +5,10 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import {
-  getFieldUniversalIdentifier,
+  getSystemRelationFieldUniversalIdentifier,
   type ObjectManifest,
 } from 'twenty-shared/application';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -18,14 +19,17 @@ const OBJECT_UNIVERSAL_IDENTIFIER = uuidv4();
 const OBJECT_NAME_SINGULAR = 'defaultRelationCollisionTarget';
 const OBJECT_NAME_PLURAL = 'defaultRelationCollisionTargets';
 
-// The engine forward field of the attachment default relation is named after
-// the standard object's namePlural and derives its universal identifier from
-// (app, object, name) - the same derivation the SDK applies to manifest fields.
-const DERIVED_ATTACHMENTS_UNIVERSAL_IDENTIFIER = getFieldUniversalIdentifier({
-  applicationUniversalIdentifier: TEST_APP_ID,
-  objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-  name: 'attachments',
-});
+// The engine forward field of the attachment default relation derives its
+// universal identifier name-free from the host and relation target object
+// identifiers, so a manifest field can only squat it by pinning that exact
+// derived value.
+const DERIVED_ATTACHMENTS_UNIVERSAL_IDENTIFIER =
+  getSystemRelationFieldUniversalIdentifier({
+    applicationUniversalIdentifier: TEST_APP_ID,
+    hostObjectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+    relationTargetObjectUniversalIdentifier:
+      STANDARD_OBJECTS.attachment.universalIdentifier,
+  });
 
 const buildObjectWithAttachmentsField = ({
   attachmentsFieldUniversalIdentifier,
