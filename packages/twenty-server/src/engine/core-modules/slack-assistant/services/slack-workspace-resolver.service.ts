@@ -30,21 +30,11 @@ export class SlackWorkspaceResolverService {
     private readonly applicationConnectionsListService: ApplicationConnectionsListService,
     private readonly redisClientService: RedisClientService,
   ) {}
-
-  // A single Slack app has one global Events URL, so inbound events only carry
-  // the Slack team_id — we have to map that back to a Twenty workspace. On a
-  // cache miss this scans every Slack-connected workspace and calls auth.test
-  // per connection, which is O(connected workspaces) in DB + Slack API calls.
   // TODO: persist the Slack team_id (and enterprise_id) on the connection at
-  // OAuth time so resolution becomes a single indexed lookup and this lazy scan
-  // can be removed before enabling the assistant on multi-tenant cloud.
   async resolveWorkspaceId({
     teamId,
   }: {
     teamId: string;
-    // enterpriseId is threaded through for Enterprise Grid support but is not
-    // used yet: auth.test resolves the workspace from team_id alone. See the
-    // TODO above.
     enterpriseId?: string;
   }): Promise<string | null> {
     const cached = await this.readCache(teamId);
@@ -66,9 +56,6 @@ export class SlackWorkspaceResolverService {
     const providers = await this.connectionProviderRepository.find({
       where: { name: SLACK_CONNECTION_PROVIDER_NAME },
     });
-
-    // Dedupe by (workspaceId, applicationId) — one list call resolves all of a
-    // workspace's Slack connections at once.
     const scopes = new Map<
       string,
       { workspaceId: string; applicationId: string }
