@@ -1,7 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
+import { hasMeetingEnded } from 'src/logic-functions/domain/has-meeting-ended.util';
 import { attachExistingRecallBotToCallRecording } from 'src/logic-functions/flows/attach-existing-recall-bot-to-call-recording.util';
 import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
@@ -49,7 +49,14 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
       ? undefined
       : calendarEventsById.get(callRecording.calendarEventId);
 
-    if (isUndefined(calendarEvent) || hasMeetingEnded({ calendarEvent, now })) {
+    if (
+      isUndefined(calendarEvent) ||
+      hasMeetingEnded({
+        startsAt: calendarEvent.startsAt,
+        endsAt: calendarEvent.endsAt,
+        now,
+      })
+    ) {
       continue;
     }
 
@@ -81,22 +88,4 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
   }
 
   return { attachedCallRecordingIds, scheduledCallRecordingIds };
-};
-
-const hasMeetingEnded = ({
-  calendarEvent,
-  now,
-}: {
-  calendarEvent: CalendarEventRecord;
-  now: Date;
-}): boolean => {
-  const reference = calendarEvent.endsAt ?? calendarEvent.startsAt;
-
-  if (isUndefined(reference)) {
-    return false;
-  }
-
-  const referenceTime = new Date(reference).getTime();
-
-  return !Number.isNaN(referenceTime) && referenceTime <= now.getTime();
 };

@@ -2,6 +2,7 @@ import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
+import { hasMeetingEnded } from 'src/logic-functions/domain/has-meeting-ended.util';
 import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
@@ -118,6 +119,7 @@ const recoverRecallBotIdForCanceledCallRecording = async ({
       startsAt: calendarEvent.startsAt,
       endsAt: calendarEvent.endsAt,
       now,
+      startGraceHours: CANCELED_BOT_RECOVERY_AFTER_START_HOURS,
     })
   ) {
     return undefined;
@@ -182,37 +184,6 @@ const hasCanceledRecoveryWindowElapsed = ({
   return (
     !Number.isNaN(canceledTime) &&
     canceledTime + CANCELED_BOT_RECOVERY_MAX_AGE_HOURS * 60 * 60 * 1000 <=
-      now.getTime()
-  );
-};
-
-const hasMeetingEnded = ({
-  startsAt,
-  endsAt,
-  now,
-}: {
-  startsAt: string | undefined;
-  endsAt: string | undefined;
-  now: Date;
-}): boolean => {
-  if (!isUndefined(endsAt)) {
-    const meetingEndTime = new Date(endsAt).getTime();
-
-    if (!Number.isNaN(meetingEndTime)) {
-      return meetingEndTime <= now.getTime();
-    }
-  }
-
-  if (isUndefined(startsAt)) {
-    return false;
-  }
-
-  const meetingStartTime = new Date(startsAt).getTime();
-
-  return (
-    !Number.isNaN(meetingStartTime) &&
-    meetingStartTime +
-      CANCELED_BOT_RECOVERY_AFTER_START_HOURS * 60 * 60 * 1000 <=
       now.getTime()
   );
 };

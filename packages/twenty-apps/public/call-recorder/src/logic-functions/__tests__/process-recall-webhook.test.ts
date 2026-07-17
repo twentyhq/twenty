@@ -95,7 +95,9 @@ describe('process-recall-webhook', () => {
     expect(queryMock).toHaveBeenCalledWith(
       expect.objectContaining({
         callRecordings: expect.objectContaining({
-          __args: { filter: { id: { eq: 'call-recording-1' } }, first: 1 },
+          __args: expect.objectContaining({
+            filter: { id: { eq: 'call-recording-1' } },
+          }),
         }),
       }),
     );

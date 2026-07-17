@@ -1,7 +1,8 @@
-import { isNull, isUndefined } from '@sniptt/guards';
+import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
 import { requestCallRecordingArtifactsImport } from 'src/logic-functions/data/request-call-recording-artifacts-import.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isRecallRecordingDoneSignal } from 'src/logic-functions/domain/is-recall-recording-done-signal.util';
@@ -11,16 +12,9 @@ import {
   type RecallWebhookBody,
   type RecallWebhookEvent,
 } from 'src/logic-functions/recall-api/parse-recall-webhook-event.util';
+import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
-import { getString } from 'src/logic-functions/utils/get-string.util';
-
-type MatchedCallRecording = {
-  id: string;
-  status?: string;
-  startedAt?: string;
-  endedAt?: string;
-};
 
 type RecallWebhookHandlerResult =
   | {
@@ -208,56 +202,24 @@ const findMatchingCallRecording = async ({
 }: {
   client: CoreApiClient;
   webhookEvent: RecallWebhookEvent;
-}): Promise<MatchedCallRecording | undefined> => {
+}): Promise<CallRecordingRecord | undefined> => {
   if (!isUndefined(webhookEvent.callRecordingIdFromMetadata)) {
-    return findCallRecordingByFilter(client, {
-      id: { eq: webhookEvent.callRecordingIdFromMetadata },
-    });
+    return (
+      await findCallRecordingsByFilter(client, {
+        id: { eq: webhookEvent.callRecordingIdFromMetadata },
+      })
+    )[0];
   }
 
   if (isUndefined(webhookEvent.externalBotId)) {
     return undefined;
   }
 
-  return findCallRecordingByFilter(client, {
-    externalBotId: { eq: webhookEvent.externalBotId },
-  });
-};
-
-const findCallRecordingByFilter = async (
-  client: CoreApiClient,
-  filter: Record<string, unknown>,
-): Promise<MatchedCallRecording | undefined> => {
-  const queryResult = await client.query({
-    callRecordings: {
-      __args: {
-        filter,
-        first: 1,
-      },
-      edges: {
-        node: {
-          id: true,
-          status: true,
-          startedAt: true,
-          endedAt: true,
-        },
-      },
-    },
-  });
-
-  const node = queryResult.callRecordings?.edges?.[0]?.node;
-  const id = getString(node?.id);
-
-  if (isUndefined(node) || isNull(node) || isUndefined(id)) {
-    return undefined;
-  }
-
-  return {
-    id,
-    status: getString(node.status),
-    startedAt: getString(node.startedAt),
-    endedAt: getString(node.endedAt),
-  };
+  return (
+    await findCallRecordingsByFilter(client, {
+      externalBotId: { eq: webhookEvent.externalBotId },
+    })
+  )[0];
 };
 
 const mapRecallEventToCallRecordingStatus = ({
@@ -283,7 +245,7 @@ const buildRecordingTimestampsUpdate = ({
   callRecording,
 }: {
   webhookEvent: RecallWebhookEvent;
-  callRecording: MatchedCallRecording;
+  callRecording: CallRecordingRecord;
 }): { startedAt?: string; endedAt?: string } => {
   const { event, statusCode, statusTimestamp } = webhookEvent;
 

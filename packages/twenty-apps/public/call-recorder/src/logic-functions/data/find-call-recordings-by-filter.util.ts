@@ -8,7 +8,7 @@ import {
   fetchAllNodes,
   type ConnectionPage,
 } from 'src/logic-functions/data/fetch-all-nodes.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { normalizeOptionalString } from 'src/logic-functions/utils/normalize-optional-string.util';
 
 type CallRecordingNode = {
   id: string;
@@ -88,10 +88,6 @@ export const findCallRecordingsByFilter = async (
     ),
   }));
 };
-
-const normalizeOptionalString = (
-  value: string | null | undefined,
-): string | undefined => (isNonEmptyString(value) ? value : undefined);
 
 const normalizeCallRecordingRequestStatus = (
   recordingRequestStatus: unknown,

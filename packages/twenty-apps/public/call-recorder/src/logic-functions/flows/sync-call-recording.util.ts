@@ -122,6 +122,7 @@ export const syncCallRecording = async ({
     id: callRecording.id,
     current: callRecording,
     updateData,
+    completesImport,
   });
 
   return { updated: true, requestedTranscript };
