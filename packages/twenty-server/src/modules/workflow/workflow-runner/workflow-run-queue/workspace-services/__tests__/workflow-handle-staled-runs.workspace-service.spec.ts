@@ -86,7 +86,6 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
       ],
     }).compile();
 
-    // clearAllMocks does not drop implementations set with mockImplementation
     mockWorkflowRunWorkspaceService.endWorkflowRun
       .mockReset()
       .mockResolvedValue(undefined);

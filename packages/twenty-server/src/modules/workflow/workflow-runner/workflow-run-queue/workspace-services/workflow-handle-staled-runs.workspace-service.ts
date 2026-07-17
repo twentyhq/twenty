@@ -123,9 +123,6 @@ export class WorkflowHandleStaledRunsWorkspaceService {
       return;
     }
 
-    // A stale RUNNING run whose job is still in the queue is not stuck, only
-    // slow: never finalize it while its job is alive. Job ids are prefixed
-    // with the workflow run id (see buildRunWorkflowJobOptions).
     const inFlightJobIds = await this.messageQueueService.getInFlightJobIds();
 
     for (const workflowRunId of stuckRunningRunIds) {
@@ -184,21 +181,16 @@ export class WorkflowHandleStaledRunsWorkspaceService {
       (step) => stepInfos[step.id]?.status === StepStatus.PENDING,
     );
 
-    // Pending steps wait on an external resume (delay, form input) that is not
-    // driven by a workflowQueue job: those runs are legitimately idle.
     if (hasPendingSteps) {
       return;
     }
 
     if (workflowShouldKeepRunning({ stepInfos, steps })) {
-      // The job was lost between two steps: next steps never started.
       await this.failWorkflowRunWithLostJob({ workflowRun, workspaceId });
 
       return;
     }
 
-    // The job was lost after the last step but before the final status
-    // computation: finalize with the status the run would have ended with.
     await this.workflowRunWorkspaceService.endWorkflowRun({
       workflowRunId,
       workspaceId,
