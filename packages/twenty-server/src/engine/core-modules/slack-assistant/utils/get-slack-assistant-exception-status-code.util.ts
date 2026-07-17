@@ -14,6 +14,7 @@ export const getSlackAssistantExceptionStatusCode = (
     case SlackAssistantExceptionCode.INVALID_SIGNATURE:
       return 401;
     case SlackAssistantExceptionCode.SIGNING_SECRET_NOT_CONFIGURED:
+    case SlackAssistantExceptionCode.ROLE_NOT_YET_AVAILABLE:
       return 500;
     default:
       return assertUnreachable(exception.code);
