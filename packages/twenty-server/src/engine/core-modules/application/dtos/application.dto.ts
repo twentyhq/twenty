@@ -88,7 +88,7 @@ export class ApplicationDTO {
 
   @Field(() => Boolean)
   @IsBoolean()
-  canAutoUpgrade: boolean;
+  autoUpgrade: boolean;
 
   @IsOptional()
   @IsString()

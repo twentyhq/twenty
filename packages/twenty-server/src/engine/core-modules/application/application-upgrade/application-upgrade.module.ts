@@ -15,7 +15,10 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ApplicationEntity, ApplicationRegistrationEntity]),
+    TypeOrmModule.forFeature([
+      ApplicationEntity,
+      ApplicationRegistrationEntity,
+    ]),
     ApplicationInstallModule,
     ApplicationRegistrationModule,
     FeatureFlagModule,

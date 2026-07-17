@@ -25,7 +25,7 @@ export const SettingsApplicationDetailSettingsTab = ({
     | 'id'
     | 'universalIdentifier'
     | 'canBeUninstalled'
-    | 'canAutoUpgrade'
+    | 'autoUpgrade'
     | 'applicationRegistration'
     | 'logicFunctions'
   >;
@@ -55,12 +55,12 @@ export const SettingsApplicationDetailSettingsTab = ({
               Icon={IconRefresh}
               title={t`Auto-upgrade`}
               description={t`Automatically upgrade this application when a new version is published`}
-              checked={application.canAutoUpgrade}
+              checked={application.autoUpgrade}
               onChange={(checked) =>
                 updateApplication({
                   variables: {
                     id: application.id,
-                    input: { canAutoUpgrade: checked },
+                    input: { autoUpgrade: checked },
                   },
                 })
               }

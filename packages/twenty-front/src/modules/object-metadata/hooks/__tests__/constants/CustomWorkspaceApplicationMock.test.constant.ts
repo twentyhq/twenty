@@ -8,7 +8,7 @@ export const CUSTOM_WORKSPACE_APPLICATION_MOCK = {
   commandMenuItems: [],
   availablePackages: {},
   canBeUninstalled: false,
-  canAutoUpgrade: false,
+  autoUpgrade: false,
   description: 'workpace custom application',
   name: 'custom',
   objects: [],

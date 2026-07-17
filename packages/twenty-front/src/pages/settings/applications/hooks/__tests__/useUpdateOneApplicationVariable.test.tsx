@@ -37,7 +37,7 @@ const buildApplication = (variableValue: string): Application => ({
   applicationRegistrationId: null,
   applicationRegistration: null,
   canBeUninstalled: true,
-  canAutoUpgrade: false,
+  autoUpgrade: false,
   defaultRoleId: null,
   settingsCustomTabFrontComponentId: null,
   availablePackages: {},

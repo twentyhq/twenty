@@ -129,7 +129,7 @@ export class ApplicationUpgradeService {
     const applications = await this.applicationRepository.find({
       where: {
         applicationRegistrationId,
-        ...(onlyAutoUpgrade ? { canAutoUpgrade: true } : {}),
+        ...(onlyAutoUpgrade ? { autoUpgrade: true } : {}),
       },
     });
 

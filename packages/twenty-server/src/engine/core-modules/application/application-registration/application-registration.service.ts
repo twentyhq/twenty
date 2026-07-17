@@ -36,9 +36,9 @@ import { buildRegistrationManifestUpdateFields } from 'src/engine/core-modules/a
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
-  AUTO_UPGRADE_APPLICATIONS_JOB_NAME,
-  type AutoUpgradeApplicationsJobData,
-} from 'src/engine/core-modules/application/jobs/auto-upgrade-applications.job-constants';
+  UPGRADE_APPLICATIONS_JOB_NAME,
+  type UpgradeApplicationsJobData,
+} from 'src/engine/core-modules/application/jobs/upgrade-applications.job-constants';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -129,9 +129,9 @@ export class ApplicationRegistrationService {
   async enqueueAutoUpgradeApplications(
     applicationRegistrationId: string,
   ): Promise<void> {
-    await this.workspaceQueueService.add<AutoUpgradeApplicationsJobData>(
-      AUTO_UPGRADE_APPLICATIONS_JOB_NAME,
-      { applicationRegistrationId },
+    await this.workspaceQueueService.add<UpgradeApplicationsJobData>(
+      UPGRADE_APPLICATIONS_JOB_NAME,
+      { applicationRegistrationId, onlyAutoUpgrade: true },
     );
   }
 

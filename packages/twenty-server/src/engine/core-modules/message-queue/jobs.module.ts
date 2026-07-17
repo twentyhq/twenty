@@ -15,8 +15,8 @@ import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.modu
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
-import { AutoUpgradeApplicationsJob } from 'src/engine/core-modules/application/jobs/auto-upgrade-applications.job';
 import { BackfillApplicationInstallationJob } from 'src/engine/core-modules/application/jobs/backfill-application-installation.job';
+import { UpgradeApplicationsJob } from 'src/engine/core-modules/application/jobs/upgrade-applications.job';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
 import { InstallOnboardingAppsJob } from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
@@ -114,8 +114,8 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     CleanWorkspaceDeletionWarningUserVarsJob,
     UpdateWorkspaceMemberEmailJob,
     GenerateSdkClientJob,
-    AutoUpgradeApplicationsJob,
     BackfillApplicationInstallationJob,
+    UpgradeApplicationsJob,
     InstallOnboardingAppsJob,
   ],
 })

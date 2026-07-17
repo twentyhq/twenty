@@ -61,6 +61,10 @@ import {
   BACKFILL_APPLICATION_INSTALLATION_JOB_NAME,
   type BackfillApplicationInstallationJobData,
 } from 'src/engine/core-modules/application/jobs/backfill-application-installation.job-constants';
+import {
+  UPGRADE_APPLICATIONS_JOB_NAME,
+  type UpgradeApplicationsJobData,
+} from 'src/engine/core-modules/application/jobs/upgrade-applications.job-constants';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AdminAiModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
@@ -540,6 +544,23 @@ export class AdminPanelResolver {
       {
         id: `${BACKFILL_APPLICATION_INSTALLATION_JOB_NAME}-${applicationRegistrationId}`,
       }, // Avoids triggering multiple pending jobs for the same app
+    );
+
+    return true;
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async upgradeRegistrationApplications(
+    @Args('applicationRegistrationId') applicationRegistrationId: string,
+  ): Promise<boolean> {
+    await this.applicationRegistrationService.findOneByIdGlobal(
+      applicationRegistrationId,
+    );
+
+    await this.workspaceQueueService.add<UpgradeApplicationsJobData>(
+      UPGRADE_APPLICATIONS_JOB_NAME,
+      { applicationRegistrationId, onlyAutoUpgrade: false },
     );
 
     return true;

@@ -7,5 +7,5 @@ export class UpdateApplicationInput {
   @IsOptional()
   @IsBoolean()
   @Field(() => Boolean, { nullable: true })
-  canAutoUpgrade?: boolean;
+  autoUpgrade?: boolean;
 }
