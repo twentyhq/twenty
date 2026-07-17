@@ -5,10 +5,13 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationConnectionsListService } from 'src/engine/core-modules/application/connection-provider/connections/services/application-connections-list.service';
-import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
-import { SLACK_CONNECTION_PROVIDER_NAME } from 'src/engine/core-modules/slack-assistant/constants/slack-assistant.constants';
+import {
+  SLACK_CONNECTION_PROVIDER_NAME,
+  TWENTY_SLACK_APPLICATION_UNIVERSAL_IDENTIFIER,
+} from 'src/engine/core-modules/slack-assistant/constants/slack-assistant.constants';
 import { fetchSlackTeamId } from 'src/engine/core-modules/slack-assistant/utils/fetch-slack-team-id.util';
 
 const TEAM_WORKSPACE_CACHE_TTL_SECONDS = 24 * 60 * 60;
@@ -20,11 +23,12 @@ export class SlackWorkspaceResolverService {
   private readonly logger = new Logger(SlackWorkspaceResolverService.name);
 
   constructor(
-    @InjectRepository(ConnectionProviderEntity)
-    private readonly connectionProviderRepository: Repository<ConnectionProviderEntity>,
+    @InjectRepository(ApplicationEntity)
+    private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly applicationConnectionsListService: ApplicationConnectionsListService,
     private readonly redisClientService: RedisClientService,
   ) {}
+
   // TODO: persist the Slack team_id (and enterprise_id) on the connection at
   async resolveWorkspaceId({
     teamId,
@@ -48,27 +52,18 @@ export class SlackWorkspaceResolverService {
   private async rebuildMappingForTeam(
     targetTeamId: string,
   ): Promise<string | null> {
-    const providers = await this.connectionProviderRepository.find({
-      where: { name: SLACK_CONNECTION_PROVIDER_NAME },
+    const applications = await this.applicationRepository.find({
+      where: {
+        universalIdentifier: TWENTY_SLACK_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
     });
-    const scopes = new Map<
-      string,
-      { workspaceId: string; applicationId: string }
-    >();
 
-    for (const provider of providers) {
-      scopes.set(`${provider.workspaceId}:${provider.applicationId}`, {
-        workspaceId: provider.workspaceId,
-        applicationId: provider.applicationId,
-      });
-    }
+    const workspaceIdsByTeamId = new Map<string, Set<string>>();
 
-    let matchedWorkspaceId: string | null = null;
-
-    for (const { workspaceId, applicationId } of scopes.values()) {
+    for (const application of applications) {
       const connections = await this.applicationConnectionsListService.list({
-        applicationId,
-        workspaceId,
+        applicationId: application.id,
+        workspaceId: application.workspaceId,
         requestUserWorkspaceId: null,
         filter: { providerName: SLACK_CONNECTION_PROVIDER_NAME },
       });
@@ -80,21 +75,39 @@ export class SlackWorkspaceResolverService {
           continue;
         }
 
-        await this.writeCache(teamId, workspaceId);
+        const workspaceIds =
+          workspaceIdsByTeamId.get(teamId) ?? new Set<string>();
 
-        if (teamId === targetTeamId) {
-          matchedWorkspaceId = workspaceId;
-        }
+        workspaceIds.add(application.workspaceId);
+        workspaceIdsByTeamId.set(teamId, workspaceIds);
       }
     }
 
-    if (!isDefined(matchedWorkspaceId)) {
-      this.logger.warn(
-        `No Slack connection matched team ${targetTeamId} after scanning ${scopes.size} workspace(s).`,
-      );
+    for (const [teamId, workspaceIds] of workspaceIdsByTeamId) {
+      if (workspaceIds.size === 1) {
+        await this.writeCache(teamId, [...workspaceIds][0]);
+      }
     }
 
-    return matchedWorkspaceId;
+    const targetWorkspaceIds = workspaceIdsByTeamId.get(targetTeamId);
+
+    if (!isDefined(targetWorkspaceIds) || targetWorkspaceIds.size === 0) {
+      this.logger.warn(
+        `No Slack connection matched team ${targetTeamId} after scanning ${applications.length} install(s).`,
+      );
+
+      return null;
+    }
+
+    if (targetWorkspaceIds.size > 1) {
+      this.logger.error(
+        `Slack team ${targetTeamId} resolves to ${targetWorkspaceIds.size} workspaces; refusing to route ambiguously.`,
+      );
+
+      return null;
+    }
+
+    return [...targetWorkspaceIds][0];
   }
 
   private getCacheKey(teamId: string): string {
