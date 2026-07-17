@@ -1,0 +1,25 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/utils/__tests__/parse-microsoft-messages-import.util.spec.ts
+  s_39832274ec7e46::t_51cde3a4070d7a 1-112
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/utils/parse-microsoft-calendar-error.util.ts
+  s_39832274ec7e46::t_e9277dfac4453e 9-14,18,35,73
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/utils/__tests__/parse-microsoft-calendar-error.util.spec.ts
+  s_39832274ec7e46::t_c1086e34be712e 1-116
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/utils/parse-microsoft-messages-import.util.ts
+  s_39832274ec7e46::t_e9277dfac4453e 7-12,39-40,47,54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "727ee784df0798db78ca17f758042fe7b60ae46d",
+  "prompts": {},
+  "sessions": {
+    "s_39832274ec7e46": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e42d985d-03c6-4802-b6ef-1bcfbec24678",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
