@@ -53,9 +53,9 @@ type SystemRelationFieldUpdate = {
   >;
 };
 
-@RegisteredWorkspaceCommand('2.22.0', 1784218052000)
+@RegisteredWorkspaceCommand('2.23.0', 1784276808000)
 @Command({
-  name: 'upgrade:2-22:reconcile-system-relation-field-universal-identifier',
+  name: 'upgrade:2-23:reconcile-system-relation-field-universal-identifier',
   description:
     'Reconcile the default relations (timelineActivity/attachment/noteTarget/taskTarget) with the engine convention, for standard and custom source objects alike. Reverse morph fields get a name-free deterministic universal identifier, isSystemSideEffect: true, and name-derived label/icon, so an object rename becomes a lossless update and standard fields match custom ones. Forward fields get the name-based deterministic universal identifier and isSystemSideEffect: true so both sides of a default relation share the same engine ownership, as if twenty-standard objects had been provisioned by the side-effect engine.',
 })
@@ -173,7 +173,7 @@ export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends Prov
       // for custom objects, by twenty-standard for standard ones), so it must
       // carry isSystemSideEffect and the name-based deterministic universal
       // identifier — matching what the create side-effect handler emits for
-      // objects created post-2.22. The forward field is named after the host
+      // objects created post-2.23. The forward field is named after the host
       // standard object namePlural, which never renames, so the name-based
       // derivation is rename-invariant here.
       const forwardFlatFieldMetadata = isDefined(
