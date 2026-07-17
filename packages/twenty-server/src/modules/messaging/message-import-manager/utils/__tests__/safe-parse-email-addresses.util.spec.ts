@@ -36,6 +36,24 @@ describe('safeParseEmailAddresses', () => {
     ]);
   });
 
+  it('should flatten RFC 5322 address groups into their members', () => {
+    // Group members previously vanished: addressparser nests them under `group`
+    // with no top-level address, so the filter dropped the whole entry.
+    expect(
+      safeParseEmailAddresses(
+        'Team: alice@example.com, Bob <bob@example.com>;, carol@example.com',
+      ),
+    ).toEqual([
+      { address: 'alice@example.com', name: '' },
+      { address: 'bob@example.com', name: 'Bob' },
+      { address: 'carol@example.com', name: '' },
+    ]);
+  });
+
+  it('should return nothing for an empty group', () => {
+    expect(safeParseEmailAddresses('undisclosed-recipients:;')).toEqual([]);
+  });
+
   it('should not split on commas inside quoted display names', () => {
     // RFC 5322 allows commas inside quoted strings — splitting on them would
     // produce a phantom recipient with a garbage address.
