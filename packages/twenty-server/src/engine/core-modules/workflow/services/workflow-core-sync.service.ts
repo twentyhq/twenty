@@ -53,8 +53,6 @@ export class WorkflowCoreSyncService {
       return {
         id: coreWorkflowId,
         name: workflow.name ?? null,
-        // The event payload represents an unset uuid as an empty string, which a
-        // uuid column rejects; normalize it to null.
         lastPublishedVersionId: isNonEmptyString(
           workflow.lastPublishedVersionId,
         )
