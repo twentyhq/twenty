@@ -5,11 +5,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { fromApplicationEntityToFlatApplication } from 'src/engine/core-modules/application/utils/from-application-entity-to-flat-application.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
-import { TWENTY_SLACK_APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/engine/core-modules/slack-assistant/constants/slack-assistant.constants';
+import { SlackApplicationResolverService } from 'src/engine/core-modules/slack-assistant/services/slack-application-resolver.service';
 import { SlackConnectionService } from 'src/engine/core-modules/slack-assistant/services/slack-connection.service';
 import { SlackThreadSubscriptionService } from 'src/engine/core-modules/slack-assistant/services/slack-thread-subscription.service';
 import { postSlackMessage } from 'src/engine/core-modules/slack-assistant/utils/post-slack-message.util';
@@ -27,6 +26,17 @@ import {
 
 const SLACK_ASSISTANT_AGENT_NAME = 'slack-assistant';
 
+const SLACK_MAX_MARKDOWN_TEXT_LENGTH = 12000;
+const SLACK_TRUNCATION_NOTICE = '\n\n_(response truncated)_';
+
+const truncateForSlack = (text: string): string =>
+  text.length <= SLACK_MAX_MARKDOWN_TEXT_LENGTH
+    ? text
+    : text.slice(
+        0,
+        SLACK_MAX_MARKDOWN_TEXT_LENGTH - SLACK_TRUNCATION_NOTICE.length,
+      ) + SLACK_TRUNCATION_NOTICE;
+
 const MISSING_ROLE_REPLY =
   "I don't have access to your CRM yet. An admin needs to assign me a role in " +
   '*Settings → Roles* — assign the *Slack Assistant* role (or another role) to ' +
@@ -41,7 +51,7 @@ export class SlackAssistantService {
     private readonly agentService: AgentService,
     private readonly agentAsyncExecutorService: AgentAsyncExecutorService,
     private readonly aiAgentRoleService: AiAgentRoleService,
-    private readonly applicationService: ApplicationService,
+    private readonly slackApplicationResolverService: SlackApplicationResolverService,
     private readonly slackConnectionService: SlackConnectionService,
     private readonly slackThreadSubscriptionService: SlackThreadSubscriptionService,
     @InjectRepository(WorkspaceEntity)
@@ -147,7 +157,7 @@ export class SlackAssistantService {
       token: botToken,
       channel: channelId,
       threadTs,
-      markdownText: replyText,
+      markdownText: truncateForSlack(replyText),
     });
 
     await this.slackThreadSubscriptionService.subscribe({
@@ -164,12 +174,10 @@ export class SlackAssistantService {
     workspaceId: string;
     roleId: string;
   }): Promise<WorkspaceAuthContext | null> {
-    const application = await this.applicationService.findByUniversalIdentifier(
-      {
-        universalIdentifier: TWENTY_SLACK_APPLICATION_UNIVERSAL_IDENTIFIER,
+    const application =
+      await this.slackApplicationResolverService.findInstalledApplication(
         workspaceId,
-      },
-    );
+      );
 
     const workspace = await this.workspaceRepository.findOneBy({
       id: workspaceId,
