@@ -1,0 +1,23 @@
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_11e59742733dbd::t_ebe7c30ab4b731 5944,8063,8068,9014-9015
+packages/twenty-front/src/modules/activities/emails/utils/__tests__/getReplyToRecipients.spec.ts
+  s_11e59742733dbd::t_ff8aa4bf9b6343 102-116
+packages/twenty-front/src/modules/activities/emails/utils/getReplyToRecipients.ts
+  s_11e59742733dbd::t_db98b4eee7d9f3 36-37,46-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "c6765cb88a1e95936f219e242ecfddf066aa8112",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
