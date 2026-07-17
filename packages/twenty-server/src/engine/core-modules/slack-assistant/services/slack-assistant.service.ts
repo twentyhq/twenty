@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { type ModelMessage } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -11,6 +12,7 @@ import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/
 import { SlackApplicationResolverService } from 'src/engine/core-modules/slack-assistant/services/slack-application-resolver.service';
 import { SlackConnectionService } from 'src/engine/core-modules/slack-assistant/services/slack-connection.service';
 import { SlackThreadSubscriptionService } from 'src/engine/core-modules/slack-assistant/services/slack-thread-subscription.service';
+import { fetchSlackThreadMessages } from 'src/engine/core-modules/slack-assistant/utils/fetch-slack-thread-messages.util';
 import { postSlackMessage } from 'src/engine/core-modules/slack-assistant/utils/post-slack-message.util';
 import { updateSlackMessage } from 'src/engine/core-modules/slack-assistant/utils/update-slack-message.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -26,6 +28,10 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
 const SLACK_ASSISTANT_AGENT_NAME = 'slack-assistant';
+
+const MAX_THREAD_HISTORY_MESSAGES = 30;
+
+const SLACK_THREAD_FETCH_LIMIT = 200;
 
 const SLACK_MAX_MARKDOWN_TEXT_LENGTH = 12000;
 const SLACK_TRUNCATION_NOTICE = '\n\n_(response truncated)_';
@@ -93,12 +99,14 @@ export class SlackAssistantService {
     teamId,
     channelId,
     threadTs,
+    ts,
     text,
   }: {
     workspaceId: string;
     teamId: string;
     channelId: string;
     threadTs: string;
+    ts: string;
     text: string;
   }): Promise<void> {
     const botToken = await this.slackConnectionService.getBotToken({
@@ -165,6 +173,15 @@ export class SlackAssistantService {
       return;
     }
 
+    // Read history before posting the placeholder so it isn't fed back as a turn.
+    const messages = await this.buildConversationMessages({
+      botToken,
+      channelId,
+      threadTs,
+      currentTs: ts,
+      text,
+    });
+
     const placeholderTs = await postSlackMessage({
       token: botToken,
       channel: channelId,
@@ -179,6 +196,7 @@ export class SlackAssistantService {
         {
           agent,
           userPrompt: text,
+          messages,
           authContext,
           workspaceId,
           operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
@@ -230,6 +248,57 @@ export class SlackAssistantService {
       channelId,
       threadTs,
     });
+  }
+
+  // Rebuilds the thread as alternating user/assistant turns so the agent has
+  // conversational context. The current message is always appended last (and
+  // de-duplicated by ts) to stay robust if Slack hasn't indexed it yet.
+  // Best-effort: a failed history fetch falls back to the single current turn.
+  private async buildConversationMessages({
+    botToken,
+    channelId,
+    threadTs,
+    currentTs,
+    text,
+  }: {
+    botToken: string;
+    channelId: string;
+    threadTs: string;
+    currentTs: string;
+    text: string;
+  }): Promise<ModelMessage[]> {
+    const currentMessage: ModelMessage = { role: 'user', content: text };
+
+    try {
+      const history = await fetchSlackThreadMessages({
+        token: botToken,
+        channel: channelId,
+        threadTs,
+        limit: SLACK_THREAD_FETCH_LIMIT,
+      });
+
+      const priorMessages = history
+        .filter(
+          (message) =>
+            message.ts !== currentTs && isNonEmptyString(message.text),
+        )
+        .slice(-MAX_THREAD_HISTORY_MESSAGES)
+        .map<ModelMessage>((message) =>
+          message.isBot
+            ? { role: 'assistant', content: message.text }
+            : { role: 'user', content: message.text },
+        );
+
+      return [...priorMessages, currentMessage];
+    } catch (error) {
+      this.logger.warn(
+        `Failed to load Slack thread history for ${channelId}/${threadTs}; answering without prior context: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+
+      return [currentMessage];
+    }
   }
 
   private async resolveApplicationAuthContext({

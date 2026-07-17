@@ -44,6 +44,7 @@ export class SlackAssistantReplyJob {
       teamId: data.teamId,
       channelId: data.channelId,
       threadTs: data.threadTs,
+      ts: data.ts,
       text: data.text,
     });
   }
