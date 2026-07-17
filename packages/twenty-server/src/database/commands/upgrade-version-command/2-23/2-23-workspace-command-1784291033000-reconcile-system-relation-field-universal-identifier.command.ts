@@ -234,9 +234,22 @@ export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends Prov
       return;
     }
 
-    for (const { id, update } of systemRelationFieldUpdates) {
-      await this.fieldMetadataRepository.update({ id, workspaceId }, update);
-    }
+    // Single transaction per workspace: a partial backfill would leave old and
+    // new universal identifiers coexisting, breaking the reconcile invariant
+    // for the follow-up people-data-labs upgrade command.
+    await this.fieldMetadataRepository.manager.transaction(
+      async (entityManager) => {
+        const transactionalFieldMetadataRepository =
+          entityManager.getRepository(FieldMetadataEntity);
+
+        for (const { id, update } of systemRelationFieldUpdates) {
+          await transactionalFieldMetadataRepository.update(
+            { id, workspaceId },
+            update,
+          );
+        }
+      },
+    );
 
     await this.workspaceMigrationRunnerService.invalidateCache({
       allFlatEntityMapsKeys: [getMetadataFlatEntityMapsKey('fieldMetadata')],
