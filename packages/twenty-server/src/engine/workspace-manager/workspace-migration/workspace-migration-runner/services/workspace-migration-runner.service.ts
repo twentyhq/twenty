@@ -75,9 +75,11 @@ export class WorkspaceMigrationRunnerService {
     const shouldInvalidateFindViewsGraphqlCacheOperation =
       viewRelatedFlatMapsKeys.some((key) => flatMapsKeysSet.has(key));
 
+    // Metadata changes already invalidate versioned GraphQL operation keys.
+    // Avoid a redundant pattern flush, which scans the full Redis keyspace.
     if (
-      shouldInvalidateFindViewsGraphqlCacheOperation ||
-      shouldIncrementMetadataGraphqlSchemaVersion
+      shouldInvalidateFindViewsGraphqlCacheOperation &&
+      !shouldIncrementMetadataGraphqlSchemaVersion
     ) {
       asyncOperations.push(
         this.workspaceCacheStorageService.flushGraphQLOperation({
