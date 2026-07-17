@@ -9,6 +9,10 @@ import {
   SLACK_ASSISTANT_ROLE_ASSIGNMENT_JOB_NAME,
   SLACK_ASSISTANT_ROLE_UNIVERSAL_IDENTIFIER,
 } from 'src/engine/core-modules/slack-assistant/constants/slack-assistant.constants';
+import {
+  SlackAssistantException,
+  SlackAssistantExceptionCode,
+} from 'src/engine/core-modules/slack-assistant/slack-assistant.exception';
 import { type SlackAssistantRoleAssignmentJobData } from 'src/engine/core-modules/slack-assistant/types/slack-assistant-role-assignment-job.type';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 
@@ -40,8 +44,9 @@ export class SlackAssistantRoleAssignmentJob {
     );
 
     if (!isDefined(roleId)) {
-      throw new Error(
+      throw new SlackAssistantException(
         `Slack Assistant role not yet available in workspace ${workspaceId}`,
+        SlackAssistantExceptionCode.ROLE_NOT_YET_AVAILABLE,
       );
     }
 
