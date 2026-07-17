@@ -136,6 +136,11 @@ describe('Custom object renaming', () => {
       const relationFieldMetadataId = relationFieldMetadata?.id;
 
       expect(relationFieldMetadataId).not.toBeUndefined();
+      // Reverse system relation fields carry the engine-derived label
+      // (capitalized source object nameSingular)
+      expect(relationFieldMetadata?.label).toBe(
+        capitalize(CUSTOM_OBJECT.nameSingular),
+      );
 
       // @ts-expect-error legacy noImplicitAny
       standardObjectRelationsMap[relation].relationFieldMetadataId =
@@ -180,9 +185,10 @@ describe('Custom object renaming', () => {
     expect(data.updateOneObject.labelPlural).toBe(HOUSE_LABEL_PLURAL);
 
     // The reverse morph fields on the standard objects must be renamed in place
-    // (name follows the new object name) while keeping their universal
-    // identifier stable, so the rename stays lossless.
+    // (name and engine-derived label follow the new object name) while keeping
+    // their universal identifier stable, so the rename stays lossless.
     const expectedReverseFieldName = `target${capitalize(HOUSE_NAME_SINGULAR)}`;
+    const expectedReverseFieldLabel = capitalize(HOUSE_NAME_SINGULAR);
     const fields = await makeMetadataAPIRequest(fieldsGraphqlOperation);
 
     STANDARD_OBJECT_RELATIONS.forEach((relation) => {
@@ -200,6 +206,7 @@ describe('Custom object renaming', () => {
 
       expect(renamedReverseField).toBeDefined();
       expect(renamedReverseField.name).toBe(expectedReverseFieldName);
+      expect(renamedReverseField.label).toBe(expectedReverseFieldLabel);
       expect(renamedReverseField.universalIdentifier).toBe(
         relationFieldMetadataUniversalIdentifier,
       );

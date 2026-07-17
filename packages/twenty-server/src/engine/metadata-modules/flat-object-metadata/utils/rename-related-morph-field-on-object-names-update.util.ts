@@ -3,6 +3,7 @@ import {
   type FieldMetadataType,
   type FromTo,
 } from 'twenty-shared/types';
+import { capitalize } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { computeMorphRelationFlatFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-flat-field-name.util';
@@ -52,9 +53,15 @@ const updateMorphFlatFieldName = ({
       })
     : undefined;
 
+  const newLabel =
+    fromMorphFlatFieldMetadata.isSystemSideEffect === true
+      ? capitalize(toRelationTargetFlatObjectMetadata.nameSingular)
+      : fromMorphFlatFieldMetadata.label;
+
   return {
     ...fromMorphFlatFieldMetadata,
     name: newMorphFieldName,
+    label: newLabel,
     universalSettings: {
       ...fromMorphFlatFieldMetadata.universalSettings,
       joinColumnName: newJoinColumnName,
