@@ -13,6 +13,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { GENERATE_SDK_CLIENT_JOB_NAME } from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job-constants';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 describe('SdkClientGenerationService', () => {
@@ -51,6 +52,10 @@ describe('SdkClientGenerationService', () => {
         {
           provide: getQueueToken(MessageQueue.workspaceQueue),
           useValue: messageQueueService,
+        },
+        {
+          provide: WorkspaceEventBroadcaster,
+          useValue: { broadcast: jest.fn().mockResolvedValue(undefined) },
         },
       ],
     }).compile();

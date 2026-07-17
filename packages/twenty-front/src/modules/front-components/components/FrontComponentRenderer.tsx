@@ -2,6 +2,7 @@ import { FrontComponentRendererProvider } from '@/front-components/components/Fr
 import { getSdkClientUrls } from '@/front-components/utils/getSdkClientUrls';
 import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
+import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
 import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
 import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
@@ -84,6 +85,11 @@ export const FrontComponentRenderer = ({
   });
 
   const applicationId = data?.frontComponent?.applicationId;
+
+  useOnApplicationSdkClientChecksumsUpdated({
+    frontComponentId,
+    applicationId,
+  });
   const sdkClientChecksums = data?.frontComponent?.sdkClientChecksums;
 
   const sdkClientUrls = useMemo(

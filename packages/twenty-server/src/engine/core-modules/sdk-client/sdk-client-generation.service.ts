@@ -31,6 +31,7 @@ import {
 } from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job-constants';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const SDK_CLIENT_ARCHIVE_NAME = 'twenty-client-sdk.zip';
@@ -51,6 +52,7 @@ export class SdkClientGenerationService {
     private readonly applicationService: ApplicationService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
 
   async enqueueSdkClientGenerationForWorkspace(
@@ -181,6 +183,13 @@ export class SdkClientGenerationService {
         'flatApplicationMaps',
       ]);
 
+      await this.broadcastSdkClientChecksumsUpdate({
+        workspaceId,
+        applicationId,
+        sdkClientCoreChecksum,
+        sdkClientMetadataChecksum,
+      });
+
       return archiveBuffer;
     } catch (error) {
       throw new SdkClientException(
@@ -189,6 +198,52 @@ export class SdkClientGenerationService {
       );
     } finally {
       await temporaryDirManager.clean();
+    }
+  }
+
+  // The application entity is not part of the syncable metadata event system
+  // (ALL_METADATA_NAME), so mounted front components would keep their
+  // session-old SDK checksums until a reload. Broadcasting here lets clients
+  // rebuild the content-addressed SDK URLs as soon as regeneration completes.
+  // Best-effort: a lost event only delays the refresh until the next reload.
+  private async broadcastSdkClientChecksumsUpdate({
+    workspaceId,
+    applicationId,
+    sdkClientCoreChecksum,
+    sdkClientMetadataChecksum,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    sdkClientCoreChecksum: string;
+    sdkClientMetadataChecksum: string;
+  }): Promise<void> {
+    try {
+      await this.workspaceEventBroadcaster.broadcast({
+        workspaceId,
+        events: [
+          {
+            type: 'updated',
+            entityName: 'application',
+            recordId: applicationId,
+            properties: {
+              updatedFields: [
+                'sdkClientCoreChecksum',
+                'sdkClientMetadataChecksum',
+              ],
+              after: {
+                id: applicationId,
+                sdkClientCoreChecksum,
+                sdkClientMetadataChecksum,
+              },
+            },
+          },
+        ],
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to broadcast SDK client checksums update for application ${applicationId} in workspace ${workspaceId}`,
+        error,
+      );
     }
   }
 
