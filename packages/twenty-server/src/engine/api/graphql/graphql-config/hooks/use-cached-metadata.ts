@@ -11,9 +11,9 @@ export type CacheMetadataPluginConfig = {
   cacheGetter: (key: string) => any;
   // oxlint-disable-next-line typescript/no-explicit-any
   cacheSetter: (key: string, value: any) => void;
-  findAllViewsCacheVersionGetter: (
-    workspaceId: string,
-  ) => Promise<string | undefined>;
+  dependencyVersionGetters?: Partial<
+    Record<string, (workspaceId: string) => Promise<string | undefined>>
+  >;
   operationsToCache: string[];
 };
 
@@ -24,7 +24,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
   }: {
     operationName: string;
     request: Pick<Request, 'workspace' | 'locale' | 'body' | 'userWorkspaceId'>;
-  }): Promise<string> => {
+  }): Promise<string | undefined> => {
     const workspace = request.workspace;
 
     if (!isDefined(workspace)) {
@@ -33,40 +33,49 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
 
     const workspaceMetadataVersion = workspace.metadataVersion ?? '0';
     const locale = request.locale;
-    const queryHash = createHash('sha256')
-      .update(request.body.query)
+    const requestHash = createHash('sha256')
+      .update(
+        JSON.stringify({
+          query: request.body.query,
+          variables: request.body.variables ?? null,
+        }),
+      )
       .digest('hex');
+    const dependencyVersionGetter =
+      config.dependencyVersionGetters?.[operationName];
+    const dependencyVersion = await dependencyVersionGetter?.(workspace.id);
 
-    if (operationName === 'FindAllViews') {
-      const findAllViewsCacheVersion =
-        (await config.findAllViewsCacheVersionGetter(workspace.id)) ?? '0';
-
-      return `graphql:operations:${operationName}:${workspace.id}:${workspaceMetadataVersion}:${findAllViewsCacheVersion}:${request.userWorkspaceId}:${queryHash}`;
+    if (isDefined(dependencyVersionGetter) && !isDefined(dependencyVersion)) {
+      return undefined;
     }
 
-    return `graphql:operations:${operationName}:${workspace.id}:${workspaceMetadataVersion}:${locale}:${queryHash}`;
+    if (operationName === 'FindAllViews') {
+      return `graphql:operations:${operationName}:${workspace.id}:${workspaceMetadataVersion}:${dependencyVersion}:${request.userWorkspaceId}:${locale}:${requestHash}`;
+    }
+
+    return `graphql:operations:${operationName}:${workspace.id}:${workspaceMetadataVersion}:${locale}:${requestHash}`;
   };
 
   // oxlint-disable-next-line typescript/no-explicit-any
   const getOperationName = (serverContext: any) =>
     serverContext?.req?.body?.operationName;
 
-  const cacheKeyByRequest = new WeakMap<object, string>();
+  const cacheKeyByRequest = new WeakMap<object, Promise<string | undefined>>();
 
-  const getCacheKey = async ({
+  const getCacheKey = ({
     operationName,
     request,
   }: {
     operationName: string;
     request: Pick<Request, 'workspace' | 'locale' | 'body' | 'userWorkspaceId'>;
-  }): Promise<string> => {
-    const existingCacheKey = cacheKeyByRequest.get(request);
+  }): Promise<string | undefined> => {
+    const cachedKey = cacheKeyByRequest.get(request);
 
-    if (existingCacheKey) {
-      return existingCacheKey;
+    if (isDefined(cachedKey)) {
+      return cachedKey;
     }
 
-    const cacheKey = await computeCacheKey({ operationName, request });
+    const cacheKey = computeCacheKey({ operationName, request });
 
     cacheKeyByRequest.set(request, cacheKey);
 
@@ -90,6 +99,11 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
         operationName: getOperationName(serverContext),
         request,
       });
+
+      if (!isDefined(cacheKey)) {
+        return;
+      }
+
       const cachedResponse = await config.cacheGetter(cacheKey);
 
       if (cachedResponse) {
@@ -113,6 +127,10 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
         operationName: getOperationName(serverContext),
         request,
       });
+
+      if (!isDefined(cacheKey)) {
+        return;
+      }
 
       const cachedResponse = await config.cacheGetter(cacheKey);
 

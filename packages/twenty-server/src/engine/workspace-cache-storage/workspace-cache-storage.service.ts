@@ -19,8 +19,6 @@ export const METADATA_VERSIONED_WORKSPACE_CACHE_KEY = {
   ORMEntitySchemas: 'orm:entity-schemas',
 } as const;
 export const WORKSPACE_CACHE_KEYS = {
-  GraphQLOperations: 'graphql:operations',
-  FindAllViewsCacheVersion: 'graphql:find-all-views-cache-version',
   GraphQLFeatureFlag: 'graphql:feature-flag',
   FeatureFlagMap: 'feature-flag:feature-flag-map',
   FeatureFlagMapVersion: 'feature-flag:feature-flag-map-version',
@@ -182,24 +180,6 @@ export class WorkspaceCacheStorageService {
   getFeatureFlagsMap(workspaceId: string): Promise<FeatureFlagMap | undefined> {
     return this.cacheStorageService.get<FeatureFlagMap>(
       `${WORKSPACE_CACHE_KEYS.FeatureFlagMap}:${workspaceId}`,
-    );
-  }
-
-  getFindAllViewsCacheVersion(
-    workspaceId: string,
-  ): Promise<string | undefined> {
-    return this.cacheStorageService.get<string>(
-      `${WORKSPACE_CACHE_KEYS.FindAllViewsCacheVersion}:${workspaceId}`,
-    );
-  }
-
-  async setFindAllViewsCacheVersion(workspaceId: string): Promise<void> {
-    const version = crypto.randomUUID();
-
-    await this.cacheStorageService.set<string>(
-      `${WORKSPACE_CACHE_KEYS.FindAllViewsCacheVersion}:${workspaceId}`,
-      version,
-      TTL_ONE_WEEK,
     );
   }
 

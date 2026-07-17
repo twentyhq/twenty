@@ -6,13 +6,11 @@ describe('WorkspaceMigrationRunnerService', () => {
   let service: WorkspaceMigrationRunnerService;
   let invalidateFlatEntityMaps: jest.Mock;
   let incrementMetadataVersion: jest.Mock;
-  let setFindAllViewsCacheVersion: jest.Mock;
   let invalidateAndRecompute: jest.Mock;
 
   beforeEach(() => {
     invalidateFlatEntityMaps = jest.fn().mockResolvedValue(undefined);
     incrementMetadataVersion = jest.fn().mockResolvedValue(undefined);
-    setFindAllViewsCacheVersion = jest.fn().mockResolvedValue(undefined);
     invalidateAndRecompute = jest.fn().mockResolvedValue(undefined);
 
     service = new WorkspaceMigrationRunnerService(
@@ -20,7 +18,6 @@ describe('WorkspaceMigrationRunnerService', () => {
       {} as never,
       {} as never,
       { incrementMetadataVersion } as never,
-      { setFindAllViewsCacheVersion } as never,
       { invalidateAndRecompute } as never,
       {
         perfTime: jest.fn(),
@@ -40,7 +37,6 @@ describe('WorkspaceMigrationRunnerService', () => {
       });
 
       expect(incrementMetadataVersion).toHaveBeenCalledWith(workspaceId);
-      expect(setFindAllViewsCacheVersion).not.toHaveBeenCalled();
       expect(invalidateAndRecompute).toHaveBeenCalledWith(workspaceId, [
         'ORMEntityMetadatas',
         'graphQLResolverNameMap',
@@ -48,14 +44,18 @@ describe('WorkspaceMigrationRunnerService', () => {
     },
   );
 
-  it('increments the view cache version for view-only changes', async () => {
+  it('rotates view flat-map hashes without incrementing metadata version', async () => {
     await service.invalidateCache({
       allFlatEntityMapsKeys: ['flatViewMaps'],
       workspaceId,
     });
 
+    expect(invalidateFlatEntityMaps).toHaveBeenCalledWith({
+      flatMapsKeys: ['flatViewMaps'],
+      workspaceId,
+    });
     expect(incrementMetadataVersion).not.toHaveBeenCalled();
-    expect(setFindAllViewsCacheVersion).toHaveBeenCalledWith(workspaceId);
+    expect(invalidateAndRecompute).not.toHaveBeenCalled();
   });
 
   it('uses the metadata version when metadata and views change together', async () => {
@@ -65,6 +65,9 @@ describe('WorkspaceMigrationRunnerService', () => {
     });
 
     expect(incrementMetadataVersion).toHaveBeenCalledWith(workspaceId);
-    expect(setFindAllViewsCacheVersion).not.toHaveBeenCalled();
+    expect(invalidateAndRecompute).toHaveBeenCalledWith(workspaceId, [
+      'ORMEntityMetadatas',
+      'graphQLResolverNameMap',
+    ]);
   });
 });

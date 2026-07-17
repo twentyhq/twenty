@@ -5,6 +5,7 @@ import GraphQLJSON from 'graphql-type-json';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { useCachedMetadata } from 'src/engine/api/graphql/graphql-config/hooks/use-cached-metadata';
+import { getFindAllViewsCacheDependencyVersion } from 'src/engine/api/graphql/graphql-config/utils/get-find-all-views-cache-dependency-version.util';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { ClientConfig } from 'src/engine/core-modules/client-config/client-config.entity';
@@ -19,14 +20,14 @@ import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.ser
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
-import { type WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export const metadataModuleFactory = async (
   twentyConfigService: TwentyConfigService,
   exceptionHandlerService: ExceptionHandlerService,
   dataloaderService: DataloaderService,
   cacheStorageService: CacheStorageService,
-  workspaceCacheStorageService: WorkspaceCacheStorageService,
+  workspaceCacheService: WorkspaceCacheService,
   metricsService: MetricsService,
   i18nService: I18nService,
   _featureFlagService: FeatureFlagService,
@@ -53,10 +54,13 @@ export const metadataModuleFactory = async (
       useCachedMetadata({
         cacheGetter: cacheStorageService.get.bind(cacheStorageService),
         cacheSetter: cacheStorageService.set.bind(cacheStorageService),
-        findAllViewsCacheVersionGetter:
-          workspaceCacheStorageService.getFindAllViewsCacheVersion.bind(
-            workspaceCacheStorageService,
-          ),
+        dependencyVersionGetters: {
+          FindAllViews: (workspaceId) =>
+            getFindAllViewsCacheDependencyVersion({
+              workspaceCacheService,
+              workspaceId,
+            }),
+        },
         operationsToCache: ['ObjectMetadataItems', 'FindAllViews'],
       }),
       useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers(
