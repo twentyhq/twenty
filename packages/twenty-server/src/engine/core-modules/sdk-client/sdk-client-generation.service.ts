@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { createHash } from 'crypto';
 import * as fs from 'fs/promises';
 import { printSchema } from 'graphql';
 import path, { join } from 'path';
@@ -18,6 +19,7 @@ import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logi
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { type SdkModuleName } from 'src/engine/core-modules/sdk-client/constants/allowed-sdk-modules';
 import { SDK_CLIENT_PACKAGE_DIRNAME } from 'src/engine/core-modules/sdk-client/constants/sdk-client-package-dirname';
 import {
   SdkClientException,
@@ -145,6 +147,12 @@ export class SdkClientGenerationService {
 
       await replaceCoreClient({ packageRoot: tempPackageRoot, schema });
 
+      const [sdkClientCoreChecksum, sdkClientMetadataChecksum] =
+        await Promise.all([
+          this.computeSdkModuleChecksum(tempPackageRoot, 'core'),
+          this.computeSdkModuleChecksum(tempPackageRoot, 'metadata'),
+        ]);
+
       const archivePath = join(sourceTemporaryDir, SDK_CLIENT_ARCHIVE_NAME);
 
       await createZipFile(tempPackageRoot, archivePath);
@@ -162,7 +170,11 @@ export class SdkClientGenerationService {
 
       await this.applicationRepository.update(
         { id: applicationId, workspaceId },
-        { isSdkLayerStale: true },
+        {
+          isSdkLayerStale: true,
+          sdkClientCoreChecksum,
+          sdkClientMetadataChecksum,
+        },
       );
 
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
@@ -178,5 +190,18 @@ export class SdkClientGenerationService {
     } finally {
       await temporaryDirManager.clean();
     }
+  }
+
+  // sha-256 (not md5) so the renderer can verify cached bundles against the URL
+  // checksum with WebCrypto, which has no md5 support
+  private async computeSdkModuleChecksum(
+    tempPackageRoot: string,
+    moduleName: SdkModuleName,
+  ): Promise<string> {
+    const moduleBuffer = await fs.readFile(
+      join(tempPackageRoot, 'dist', `${moduleName}.mjs`),
+    );
+
+    return createHash('sha256').update(moduleBuffer).digest('hex');
   }
 }

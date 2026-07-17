@@ -117,6 +117,7 @@ import { BackfillCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2
 import { AddKanbanAndCalendarWidgetViewTypesFastInstanceCommand } from './2-23/2-23-instance-command-fast-1784620626405-add-kanban-and-calendar-widget-view-types';
 import { WidenViewCalendarIntegrityConstraintFastInstanceCommand } from './2-23/2-23-instance-command-fast-1784620626406-widen-view-calendar-integrity-constraint';
 import { AddAutoUpgradeToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-23/2-23-instance-command-fast-1784297307235-add-auto-upgrade-to-application';
+import { AddSdkClientChecksumsToApplicationFastInstanceCommand } from './2-22/2-22-instance-command-fast-1784200000000-add-sdk-client-checksums-to-application';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -236,4 +237,5 @@ export const INSTANCE_COMMANDS = [
   AddKanbanAndCalendarWidgetViewTypesFastInstanceCommand,
   WidenViewCalendarIntegrityConstraintFastInstanceCommand,
   AddAutoUpgradeToApplicationFastInstanceCommand,
+  AddSdkClientChecksumsToApplicationFastInstanceCommand,
 ];

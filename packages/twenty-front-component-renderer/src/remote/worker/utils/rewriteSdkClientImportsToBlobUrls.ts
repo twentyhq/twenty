@@ -1,4 +1,4 @@
-import { type SDK_CLIENT_IMPORT_SPECIFIERS } from '@/remote/worker/constants/SdkClientImportSpecifiers';
+import { type SDK_CLIENT_IMPORT_SPECIFIERS } from '@/constants/SdkClientImportSpecifiers';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 
 const escapeRegExpToken = (value: string): string =>

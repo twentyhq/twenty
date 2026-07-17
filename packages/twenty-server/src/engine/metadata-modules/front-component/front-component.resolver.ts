@@ -92,10 +92,27 @@ export class FrontComponentResolver {
       flatApplicationVariables,
     );
 
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatApplicationMaps',
+      ]);
+
+    const application = flatApplicationMaps.byId[dto.applicationId];
+
+    const sdkClientChecksums =
+      isDefined(application?.sdkClientCoreChecksum) &&
+      isDefined(application?.sdkClientMetadataChecksum)
+        ? {
+            core: application.sdkClientCoreChecksum,
+            metadata: application.sdkClientMetadataChecksum,
+          }
+        : null;
+
     return {
       ...dto,
       applicationTokenPair: tokenPair,
       applicationVariables,
+      sdkClientChecksums,
     };
   }
 

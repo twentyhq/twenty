@@ -29,7 +29,7 @@ export class SdkClientController {
     private readonly sdkClientArchiveService: SdkClientArchiveService,
   ) {}
 
-  @Get(':applicationId/:moduleName')
+  @Get([':applicationId/:moduleName', ':applicationId/:moduleName/:cacheKey'])
   @UseGuards(NoPermissionGuard)
   async getSdkModule(
     @Res() res: Response,
