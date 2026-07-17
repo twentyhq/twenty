@@ -39,11 +39,23 @@ export class FilterWorkflowAction implements WorkflowAction {
       };
     }
 
-    const matchesFilter = evaluateStepFilters({
-      stepFilters,
-      stepFilterGroups,
-      context,
-    });
+    let matchesFilter: boolean;
+
+    try {
+      matchesFilter = evaluateStepFilters({
+        stepFilters,
+        stepFilterGroups,
+        context,
+      });
+    } catch (error) {
+      // Filter evaluation only fails on invalid filter configuration (e.g. a
+      // legacy operand no evaluator supports). Surface it as a user error so
+      // the run fails without being reported as a Twenty system error.
+      throw new WorkflowStepExecutorException(
+        error instanceof Error ? error.message : 'Failed to evaluate filter',
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
 
     return {
       result: {
