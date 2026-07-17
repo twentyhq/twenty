@@ -10,7 +10,7 @@ describe('getSystemRelationFieldUniversalIdentifier', () => {
     expect(
       getSystemRelationFieldUniversalIdentifier({
         applicationUniversalIdentifier: APP,
-        hostObjectUniversalIdentifier: HOST_OBJECT,
+        objectUniversalIdentifier: HOST_OBJECT,
         relationTargetObjectUniversalIdentifier: RELATION_TARGET_OBJECT,
       }),
     ).toBe('d3a641a1-f0fd-5213-a28e-af81e00c991e');
@@ -19,12 +19,12 @@ describe('getSystemRelationFieldUniversalIdentifier', () => {
   it('derives distinct ids for the two sides of the same relation (host and target swapped)', () => {
     const reverseSide = getSystemRelationFieldUniversalIdentifier({
       applicationUniversalIdentifier: APP,
-      hostObjectUniversalIdentifier: HOST_OBJECT,
+      objectUniversalIdentifier: HOST_OBJECT,
       relationTargetObjectUniversalIdentifier: RELATION_TARGET_OBJECT,
     });
     const forwardSide = getSystemRelationFieldUniversalIdentifier({
       applicationUniversalIdentifier: APP,
-      hostObjectUniversalIdentifier: RELATION_TARGET_OBJECT,
+      objectUniversalIdentifier: RELATION_TARGET_OBJECT,
       relationTargetObjectUniversalIdentifier: HOST_OBJECT,
     });
 
@@ -38,7 +38,7 @@ describe('getSystemRelationFieldUniversalIdentifier', () => {
     // object therefore derives a distinct id.
     const systemRelationIdentifier = getSystemRelationFieldUniversalIdentifier({
       applicationUniversalIdentifier: APP,
-      hostObjectUniversalIdentifier: HOST_OBJECT,
+      objectUniversalIdentifier: HOST_OBJECT,
       relationTargetObjectUniversalIdentifier: RELATION_TARGET_OBJECT,
     });
     const nameBasedIdentifier = getFieldUniversalIdentifier({

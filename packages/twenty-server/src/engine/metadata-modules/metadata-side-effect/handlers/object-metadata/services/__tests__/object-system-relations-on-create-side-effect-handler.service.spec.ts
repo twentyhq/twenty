@@ -90,17 +90,15 @@ describe('ObjectSystemRelationsOnCreateSideEffectHandlerService', () => {
   ) =>
     getSystemRelationFieldUniversalIdentifier({
       applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-      hostObjectUniversalIdentifier: SOURCE_OBJECT_UNIVERSAL_IDENTIFIER,
+      objectUniversalIdentifier: SOURCE_OBJECT_UNIVERSAL_IDENTIFIER,
       relationTargetObjectUniversalIdentifier:
         standardObjectUniversalIdentifier,
     });
 
-  const reverseUniversalIdentifierFor = (
-    hostObjectUniversalIdentifier: string,
-  ) =>
+  const reverseUniversalIdentifierFor = (objectUniversalIdentifier: string) =>
     getSystemRelationFieldUniversalIdentifier({
       applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-      hostObjectUniversalIdentifier,
+      objectUniversalIdentifier,
       relationTargetObjectUniversalIdentifier:
         SOURCE_OBJECT_UNIVERSAL_IDENTIFIER,
     });

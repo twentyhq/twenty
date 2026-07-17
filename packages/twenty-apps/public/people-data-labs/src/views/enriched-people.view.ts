@@ -56,7 +56,7 @@ export default defineView({
     { universalIdentifier: '730dfb73-0ff7-429a-a70b-fefc6080b537', fieldMetadataUniversalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.person.pdlSex, position: 36, isVisible: true },
     { universalIdentifier: '1620bf1d-0b12-4f69-ad0e-ba7dd1d8aa44', fieldMetadataUniversalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.person.pdlBirthDate, position: 37, isVisible: true },
     { universalIdentifier: '029770cb-9353-4b5f-8395-b217cc95402e', fieldMetadataUniversalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.person.pdlBirthYear, position: 38, isVisible: true },
-    // TODO: derive these with getDefaultRelationFieldUniversalIdentifier once
+    // TODO: derive these with getSystemRelationFieldUniversalIdentifier once
     // the next twenty-sdk is released. The system relation field universal
     // identifiers were re-derived name-free in twenty v2.23 and the pinned
     // twenty-sdk still embeds the old values.

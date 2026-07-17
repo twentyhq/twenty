@@ -244,14 +244,14 @@ describe('syncApplication', () => {
       const forwardUniversalIdentifier =
         getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier: TEST_APP_ID,
-          hostObjectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
+          objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
           relationTargetObjectUniversalIdentifier:
             standardObjectUniversalIdentifier,
         });
       const reverseUniversalIdentifier =
         getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier: TEST_APP_ID,
-          hostObjectUniversalIdentifier: standardObjectUniversalIdentifier,
+          objectUniversalIdentifier: standardObjectUniversalIdentifier,
           relationTargetObjectUniversalIdentifier:
             TEST_OBJECT.universalIdentifier,
         });

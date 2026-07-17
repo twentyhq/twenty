@@ -176,7 +176,7 @@ describe('Custom object creation deterministic field universal identifiers', () 
       expect(forwardField?.universalIdentifier).toBe(
         getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier,
-          hostObjectUniversalIdentifier: objectUniversalIdentifier,
+          objectUniversalIdentifier: objectUniversalIdentifier,
           relationTargetObjectUniversalIdentifier:
             standardRelationObject.universalIdentifier,
         }),
@@ -184,7 +184,7 @@ describe('Custom object creation deterministic field universal identifiers', () 
       expect(reverseField?.universalIdentifier).toBe(
         getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             standardRelationObject.universalIdentifier,
           relationTargetObjectUniversalIdentifier: objectUniversalIdentifier,
         }),

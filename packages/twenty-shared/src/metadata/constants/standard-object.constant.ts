@@ -1,5 +1,4 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from '@/application/constants/TwentyStandardApplicationUniversalIdentifier';
-import { getDefaultRelationFieldUniversalIdentifier } from '@/application/deterministic-identifier/get-default-relation-field-universal-identifier.util';
 import { getSystemRelationFieldUniversalIdentifier } from '@/application/deterministic-identifier/get-system-relation-field-universal-identifier.util';
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from '@/metadata/constants/standard-object-universal-identifiers.constant';
 import { buildStandardObjectSystemFields } from '@/metadata/utils/internal/build-standard-object-system-fields.util';
@@ -32,7 +31,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task,
@@ -42,7 +41,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
@@ -52,7 +51,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
@@ -62,7 +61,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
@@ -72,7 +71,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
@@ -82,7 +81,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.dashboard,
@@ -92,7 +91,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflow,
@@ -667,42 +666,46 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-95b8-4e10-9881-edb5d4765f9d',
       },
       taskTargets: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
-          defaultRelation: 'taskTargets',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.taskTarget,
         }),
       },
       noteTargets: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
-          defaultRelation: 'noteTargets',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget,
         }),
       },
       opportunities: {
         universalIdentifier: '20202020-add3-4658-8e23-d70dccb6d0ec',
       },
       attachments: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
-          defaultRelation: 'attachments',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
         }),
       },
       timelineActivities: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
-          defaultRelation: 'timelineActivities',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
         }),
       },
     },
@@ -821,21 +824,23 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-bb53-4648-aa36-1d9d54e6f7f2',
       },
       timelineActivities: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.dashboard,
-          defaultRelation: 'timelineActivities',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
         }),
       },
       attachments: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.dashboard,
-          defaultRelation: 'attachments',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
         }),
       },
     },
@@ -896,12 +901,13 @@ export const STANDARD_OBJECTS = {
       },
       list: { universalIdentifier: 'cb24dcdf-f0e8-4c71-8cff-70b714e86530' },
       timelineActivities: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageCampaign,
-          defaultRelation: 'timelineActivities',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
         }),
       },
       messages: { universalIdentifier: 'e5a177a7-512b-4778-928e-69777a528f7c' },
@@ -975,12 +981,13 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: 'e098d838-31ab-4812-91a8-f055f45a6832',
       },
       timelineActivities: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageList,
-          defaultRelation: 'timelineActivities',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
         }),
       },
     },
@@ -1412,19 +1419,21 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-1f25-43fe-8b00-af212fdde823',
       },
       attachments: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
-          defaultRelation: 'attachments',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
         }),
       },
       timelineActivities: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
-          defaultRelation: 'timelineActivities',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
         }),
       },
     },
@@ -1504,7 +1513,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
@@ -1514,7 +1523,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
@@ -1524,7 +1533,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
@@ -1589,39 +1598,43 @@ export const STANDARD_OBJECTS = {
       company: { universalIdentifier: '20202020-cbac-457e-b565-adece5fc815f' },
       owner: { universalIdentifier: '20202020-be7e-4d1e-8e19-3d5c7c4b9f2a' },
       taskTargets: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
-          defaultRelation: 'taskTargets',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.taskTarget,
         }),
       },
       noteTargets: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
-          defaultRelation: 'noteTargets',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget,
         }),
       },
       attachments: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
-          defaultRelation: 'attachments',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
         }),
       },
       timelineActivities: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
-          defaultRelation: 'timelineActivities',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
         }),
       },
     },
@@ -1787,30 +1800,33 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-911b-4a7d-b67b-918aa9a5b33a',
       },
       taskTargets: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
-          defaultRelation: 'taskTargets',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.taskTarget,
         }),
       },
       noteTargets: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
-          defaultRelation: 'noteTargets',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget,
         }),
       },
       attachments: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
-          defaultRelation: 'attachments',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
         }),
       },
       messageParticipants: {
@@ -1820,12 +1836,13 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-52ee-45e9-a702-b64b3753e3a9',
       },
       timelineActivities: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
-          defaultRelation: 'timelineActivities',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
         }),
       },
       listMemberships: {
@@ -1962,20 +1979,22 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-de9c-4d0e-a452-713d4a3e5fc7',
       },
       attachments: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task,
-          defaultRelation: 'attachments',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
         }),
       },
       assignee: { universalIdentifier: '20202020-065a-4f42-a906-e20422c1753f' },
       timelineActivities: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task,
-          defaultRelation: 'timelineActivities',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
         }),
       },
     },
@@ -2152,7 +2171,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.taskTarget,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
@@ -2162,7 +2181,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.taskTarget,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
@@ -2172,7 +2191,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.taskTarget,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
@@ -2239,7 +2258,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
@@ -2249,7 +2268,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
@@ -2259,7 +2278,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
@@ -2269,7 +2288,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task,
@@ -2279,7 +2298,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
@@ -2289,7 +2308,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflow,
@@ -2299,7 +2318,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
@@ -2309,7 +2328,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowRun,
@@ -2319,7 +2338,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.dashboard,
@@ -2329,7 +2348,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageList,
@@ -2339,7 +2358,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageCampaign,
@@ -2460,21 +2479,23 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-3319-4234-a34c-117ecad2b8a9',
       },
       timelineActivities: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflow,
-          defaultRelation: 'timelineActivities',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
         }),
       },
       attachments: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflow,
-          defaultRelation: 'attachments',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
         }),
       },
     },
@@ -2598,12 +2619,13 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-7c4e-4e1a-8fc1-1e3a55d6c2a1',
       },
       timelineActivities: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowRun,
-          defaultRelation: 'timelineActivities',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
         }),
       },
     },
@@ -2715,12 +2737,13 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-58b4-46e8-b6d2-f1f3c74cf7f4',
       },
       timelineActivities: {
-        universalIdentifier: getDefaultRelationFieldUniversalIdentifier({
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           objectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
-          defaultRelation: 'timelineActivities',
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
         }),
       },
     },

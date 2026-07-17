@@ -132,7 +132,7 @@ export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends Prov
         getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             sourceFlatObjectMetadata.applicationUniversalIdentifier,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             hostFlatObjectMetadata.universalIdentifier,
           relationTargetObjectUniversalIdentifier:
             sourceFlatObjectMetadata.universalIdentifier,
@@ -192,7 +192,7 @@ export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends Prov
         getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             sourceFlatObjectMetadata.applicationUniversalIdentifier,
-          hostObjectUniversalIdentifier:
+          objectUniversalIdentifier:
             sourceFlatObjectMetadata.universalIdentifier,
           relationTargetObjectUniversalIdentifier:
             hostFlatObjectMetadata.universalIdentifier,

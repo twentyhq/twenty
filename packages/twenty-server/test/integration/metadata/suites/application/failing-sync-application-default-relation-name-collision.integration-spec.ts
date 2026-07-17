@@ -5,9 +5,10 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import {
-  getDefaultRelationFieldUniversalIdentifier,
+  getSystemRelationFieldUniversalIdentifier,
   type ObjectManifest,
 } from 'twenty-shared/application';
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -23,10 +24,11 @@ const OBJECT_NAME_PLURAL = 'defaultRelationCollisionTargets';
 // identifiers, so a manifest field can only squat it by pinning that exact
 // derived value.
 const DERIVED_ATTACHMENTS_UNIVERSAL_IDENTIFIER =
-  getDefaultRelationFieldUniversalIdentifier({
+  getSystemRelationFieldUniversalIdentifier({
     applicationUniversalIdentifier: TEST_APP_ID,
     objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-    defaultRelation: 'attachments',
+    relationTargetObjectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
   });
 
 const buildObjectWithAttachmentsField = ({

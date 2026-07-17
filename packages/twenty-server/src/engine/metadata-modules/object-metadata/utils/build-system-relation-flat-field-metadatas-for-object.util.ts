@@ -77,7 +77,7 @@ export const buildSystemRelationFlatFieldMetadatasForObject = ({
     const forwardFieldUniversalIdentifier =
       getSystemRelationFieldUniversalIdentifier({
         applicationUniversalIdentifier,
-        hostObjectUniversalIdentifier:
+        objectUniversalIdentifier:
           sourceFlatObjectMetadata.universalIdentifier,
         relationTargetObjectUniversalIdentifier:
           targetFlatObjectMetadata.universalIdentifier,
@@ -85,7 +85,7 @@ export const buildSystemRelationFlatFieldMetadatasForObject = ({
     const reverseFieldUniversalIdentifier =
       getSystemRelationFieldUniversalIdentifier({
         applicationUniversalIdentifier,
-        hostObjectUniversalIdentifier:
+        objectUniversalIdentifier:
           targetFlatObjectMetadata.universalIdentifier,
         relationTargetObjectUniversalIdentifier:
           sourceFlatObjectMetadata.universalIdentifier,
