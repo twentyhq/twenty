@@ -181,6 +181,8 @@ const createBotCalls = () =>
 
 describe('scheduleRecallBotsForPendingCallRecordings', () => {
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(NOW);
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.stubGlobal('fetch', fetchMock);
     vi.stubEnv('RECALL_API_KEY', 'recall-api-key');
