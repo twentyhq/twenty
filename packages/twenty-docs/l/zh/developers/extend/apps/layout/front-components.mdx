@@ -236,29 +236,22 @@ export default defineFrontComponent({
 
 前端组件在浏览器端的 Web Worker 中运行，该 Web Worker 被沙盒化在不透明来源的 iframe 中，而[逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)在服务器端运行。 二者之间没有直接的进程内调用——前端组件通过 HTTP 访问逻辑函数。
 
-使用 `httpRouteTriggerSettings` 声明的逻辑函数，可以通过其路由路径在 HTTP 上进行访问。 Twenty 会将提供你函数服务的基础 URL 作为 `TWENTY_FUNCTIONS_URL` 注入到 worker 中，同时注入用于对调用进行身份验证的 `TWENTY_APP_ACCESS_TOKEN`。 目前还没有用于调用你自定义函数的专用 SDK 客户端，因此请使用普通的 `fetch` 来调用它们：
+使用 `httpRouteTriggerSettings` 声明的逻辑函数，可以通过其路由路径在 HTTP 上进行访问。 `RestApiClient` 会将以 `/s/` 开头的路径视为应用路由，将其解析到你的函数提供服务的 URL，并使用 `TWENTY_APP_ACCESS_TOKEN` 对其进行认证。
 
-> **在 Twenty Cloud 上，HTTP 触发的逻辑函数通过每个工作区的专用域名提供服务**，域名为 `https://\<your-workspace-subdomain>.withtwenty.com\<path>`——这正是 `TWENTY_FUNCTIONS_URL` 所解析到的地址。 对于外部调用方，请从函数的 **HTTP trigger** 设置或应用的 **Settings** 选项卡中复制准确的 URL。
-
-<Warning>
-  旧版的 `/s/` 函数路由已被**弃用**，并将于 **2026-07-24 停用**。 请改用上面的 `TWENTY_FUNCTIONS_URL`，并在该日期之前迁移所有硬编码的 `/s/` URL。 `/s/` 路由在自托管场景下仍可用。
-</Warning>
+> **在 Twenty Cloud 上，HTTP 触发的逻辑函数通过每个工作区的专用域名提供服务**，域名为 `https://\<your-workspace-subdomain>.withtwenty.com\<path>`。 对于外部调用方，请从函数的 **HTTP trigger** 设置或应用的 **Settings** 选项卡中复制准确的 URL。
 
 无头前端组件可以通过 `Command` 组件在挂载时执行调用，然后自动卸载：
 
 ```tsx src/front-components/sync-prs.tsx
+import { RestApiClient } from 'twenty-client-sdk/rest';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/front-component';
 
 const SyncPrs = () => {
   const execute = async () => {
-    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
+    await new RestApiClient().post('/s/github/fetch-prs', {
+      owner: 'twentyhq',
+      repo: 'twenty',
     });
   };
 
@@ -274,7 +267,7 @@ export default defineFrontComponent({
 });
 ```
 
-附加到 `TWENTY_FUNCTIONS_URL` 的路径是逻辑函数的 `httpRouteTriggerSettings.path`。 保持 `isAuthRequired: true`；Twenty 为你的组件生成的 `TWENTY_APP_ACCESS_TOKEN` 会对请求进行认证：
+传递给 `RestApiClient` 的路径是逻辑函数的 `httpRouteTriggerSettings.path`，并以 `/s` 作为前缀。 保持 `isAuthRequired: true`；Twenty 为你的组件生成的 `TWENTY_APP_ACCESS_TOKEN` 会对请求进行认证：
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -299,21 +292,22 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_FUNCTIONS_URL` 和 `TWENTY_APP_ACCESS_TOKEN` 会被自动注入——参见 [应用变量](#application-variables)。 由于机密应用变量永远不会暴露给前端组件，请将 API 密钥和其他敏感逻辑保留在逻辑函数中，而不是前端组件中。
+`TWENTY_APP_ACCESS_TOKEN` 会被自动注入——参见 [应用变量](#application-variables)。 由于机密应用变量永远不会暴露给前端组件，请将 API 密钥和其他敏感逻辑保留在逻辑函数中，而不是前端组件中。
 </Note>
 
 ### 调用 Twenty REST API
 
-要在前端组件中读取或写入 Twenty 记录，请使用来自 `twenty-client-sdk/rest` 的 `RestApiClient`。 它与 `CoreApiClient` 和 `MetadataApiClient` 属于同一客户端家族，但目标是 Twenty REST API（`/rest/...`），而不是 GraphQL API，其基础 URL 来自 `TWENTY_API_URL`。
+要在前端组件中调用应用 HTTP 路由或读取、写入 Twenty 记录，请使用来自 `twenty-client-sdk/rest` 的 `RestApiClient`。 它会将 `/s/...` 路径发送到你工作区的函数基础 URL，而将包括 `/rest/...` 在内的其他所有路径发送到 `TWENTY_API_URL`。
 
-| 方法                                | 描述                |
-| --------------------------------- | ----------------- |
-| `get(path, options?)`             | 发送一个 `GET` 请求     |
-| `post(path, body?, options?)`     | 发送一个 `POST` 请求    |
-| `put(path, body?, options?)`      | 发送一个 `PUT` 请求     |
-| `patch(path, body?, options?)`    | 发送一个 `PATCH` 请求   |
-| `delete(path, options?)`          | 发送一个 `DELETE` 请求  |
-| `request(method, path, options?)` | 使用任意 HTTP 方法的通用请求 |
+| 方法                                | 描述                            |
+| --------------------------------- | ----------------------------- |
+| `get(path, options?)`             | 发送一个 `GET` 请求                 |
+| `post(path, body?, options?)`     | 发送一个 `POST` 请求                |
+| `put(path, body?, options?)`      | 发送一个 `PUT` 请求                 |
+| `patch(path, body?, options?)`    | 发送一个 `PATCH` 请求               |
+| `delete(path, options?)`          | 发送一个 `DELETE` 请求              |
+| `request(method, path, options?)` | 使用任意 HTTP 方法的通用请求             |
+| `resolveUrl(path, options?)`      | 在不发送请求的情况下将路径解析为其完整 URL（用于链接） |
 
 `options` 接受 `headers`、`query`（查询字符串参数记录；空值会被跳过），以及通过 `signal` 传入的 `AbortSignal`。 非 `FormData` 类型的对象 `body` 会被自动进行 JSON 序列化。 在收到 `401` 时，客户端会通过宿主刷新一次访问令牌，然后重试该请求。
 
@@ -417,11 +411,22 @@ export default defineFrontComponent({
 
 以下系统变量始终可以通过 `process.env` 获取：
 
-| 变量                        | 描述                     |
-| ------------------------- | ---------------------- |
-| `TWENTY_FUNCTIONS_URL`    | 提供你应用 HTTP 逻辑函数的基础 URL |
-| `TWENTY_API_URL`          | Twenty 核心 API 的基础 URL  |
-| `TWENTY_APP_ACCESS_TOKEN` | 限定在你的应用角色范围内的短期令牌      |
+| 变量                        | 描述                    |
+| ------------------------- | --------------------- |
+| `TWENTY_API_URL`          | Twenty 核心 API 的基础 URL |
+| `TWENTY_APP_ACCESS_TOKEN` | 限定在你的应用角色范围内的短期令牌     |
+
+### `TWENTY_FUNCTIONS_URL`
+
+Twenty 还会将 `TWENTY_FUNCTIONS_URL` 注入到前端组件和逻辑函数中：也就是你的应用的 HTTP 触发逻辑函数所提供服务的基础 URL。
+
+之所以存在这个变量，是因为该 URL 并不总是 Twenty 服务器本身。 在 Twenty Cloud 上，应用路由通过每个工作区的专用域名提供服务（`https://\<your-workspace-subdomain>.withtwenty.com`，或者在已配置时为应用的主公共域名），以便应用生成的响应运行在一个与 Twenty 应用源不同的隔离源上。 自托管和本地实例会在服务器本身的 `/s` 前缀下提供应用路由，并且可能完全不会设置该变量。 由于基础 URL 会因工作区和实例而异，你的代码不能将其硬编码——服务器会在运行时注入正确的值。
+
+你很少需要直接读取它。 通过 `RestApiClient` 使用带有 `/s/` 前缀的路径来调用你的路由，客户端会为你解析 URL：它会去掉 `/s` 前缀并将请求发往 `TWENTY_FUNCTIONS_URL`，在该变量未设置时则回退到 `\<TWENTY_API_URL>/s`。 使用 `resolveUrl('/s/\<path>')` 来在不发送请求的情况下获取绝对 URL，例如用于链接。 仅在手动构建 URL 时才直接读取该变量：
+
+```ts
+const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL}/s`}/documents/generate`;
+```
 
 ## 宿主通信 API
 

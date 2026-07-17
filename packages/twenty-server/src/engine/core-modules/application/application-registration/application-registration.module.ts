@@ -23,6 +23,7 @@ import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-sto
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -47,6 +48,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     PermissionsModule,
     FileStorageModule,
     FileUrlModule,
+    MetricsModule,
     WorkspaceCacheStorageModule,
   ],
   controllers: [ApplicationRegistrationClaimController],

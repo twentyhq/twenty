@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application version progression gate rejects deploying a version lower than the deployed one 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "VERSION_ALREADY_EXISTS",
+    "userFriendlyMessage": "This version is not higher than the currently deployed version. Please bump the version in package.json before deploying again.",
+  },
+  "message": "Cannot deploy 20202020-6b0e-4b1e-9d3a-000000002931@<version>: version must be higher than the currently deployed version <version>. Please bump the version in package.json.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Application version progression gate rejects re-deploying the currently deployed version 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "VERSION_ALREADY_EXISTS",
+    "userFriendlyMessage": "This version is not higher than the currently deployed version. Please bump the version in package.json before deploying again.",
+  },
+  "message": "Cannot deploy 20202020-6b0e-4b1e-9d3a-000000002931@<version>: version must be higher than the currently deployed version <version>. Please bump the version in package.json.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Application version progression gate rejects re-installing the already installed version 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "APP_ALREADY_INSTALLED",
+    "userFriendlyMessage": "This version of the application is already installed in this workspace.",
+  },
+  "message": "20202020-6b0e-4b1e-9d3a-000000002931@<version> is already installed in this workspace.",
+  "name": "UserInputError",
+}
+`;

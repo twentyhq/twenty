@@ -3076,6 +3076,7 @@ type Query {
   findManyAgents: [Agent!]!
   findOneAgent(input: AgentIdInput!): Agent!
   objectRecordCounts: [ObjectRecordCount!]!
+  mostlyEmptyFieldMetadataIds(objectMetadataId: UUID!): [UUID!]!
   object(
     """The id of the record to find."""
     id: UUID!
