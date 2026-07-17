@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
-
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { PublicDomainService } from 'src/engine/core-modules/public-domain/public-domain.service';
@@ -14,7 +13,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 @Module({
   imports: [
-    NestjsQueryTypeOrmModule.forFeature([
+    TypeOrmModule.forFeature([
       PublicDomainEntity,
       WorkspaceEntity,
       ApplicationEntity,

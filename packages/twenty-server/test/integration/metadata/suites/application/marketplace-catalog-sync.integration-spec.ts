@@ -22,7 +22,7 @@ const MARKETPLACE_QUERY = `
       sourcePackage
       category
       logo
-      isFeatured
+      isVetted
     }
   }
 `;
@@ -68,6 +68,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
     sourcePackage: string;
     latestAvailableVersion?: string;
     manifest?: Record<string, unknown>;
+    category?: string;
   }): Promise<string> => {
     const id = crypto.randomUUID();
     const oAuthClientId = crypto.randomUUID();
@@ -77,8 +78,8 @@ describe('Marketplace Catalog Sync (integration)', () => {
         (id, "universalIdentifier", name, "oAuthClientId",
          "oAuthRedirectUris", "oAuthScopes", "workspaceId",
          "sourceType", "sourcePackage", "latestAvailableVersion",
-         "manifest", "isListed")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+         "manifest", "isListed", "category")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
       [
         id,
         params.universalIdentifier,
@@ -92,6 +93,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
         params.latestAvailableVersion ?? '1.0.0',
         params.manifest ? JSON.stringify(params.manifest) : null,
         true,
+        params.category ?? null,
       ],
     );
 
@@ -146,6 +148,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
             category: 'Data',
           },
         },
+        category: 'Data',
       });
     });
 
@@ -246,10 +249,10 @@ describe('Marketplace Catalog Sync (integration)', () => {
       await fs.writeFile(join(sourceDir, 'manifest.json'), manifest);
       await fs.writeFile(join(sourceDir, 'package.json'), packageJson);
 
-      await tar.create(
-        { file: tarballPath, gzip: true, cwd: sourceDir },
-        ['manifest.json', 'package.json'],
-      );
+      await tar.create({ file: tarballPath, gzip: true, cwd: sourceDir }, [
+        'manifest.json',
+        'package.json',
+      ]);
 
       const tarballBuffer = await fs.readFile(tarballPath);
 

@@ -26,17 +26,17 @@ export const seedFeatureFlags = async ({
         value: false,
       },
       {
+        key: FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
         key: FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },
       {
         key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_MARKETPLACE_SETTING_TAB_VISIBLE,
         workspaceId: workspaceId,
         value: true,
       },

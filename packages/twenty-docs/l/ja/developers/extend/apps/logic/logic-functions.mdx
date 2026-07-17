@@ -51,8 +51,7 @@ export default defineLogicFunction({
 ```
 
 利用可能なトリガーの種類：
-* **httpRoute**：`/s/` エンドポイント配下で、HTTP のパスとメソッドで関数を公開します：
-> 例：`path: '/post-card/create'` は `https://your-twenty-server.com/s/post-card/create` で呼び出せます
+* **httpRoute**：HTTP のパスとメソッドで関数を公開します。 アプリのコードでは、`RestApiClient` を使用する際、ルートパスの先頭に `/s/` を付けてください。デプロイ後の URL では、`TWENTY_FUNCTIONS_URL` で注入されたベース URL が使用され、未設定の場合は `\<server-url>/s` が使用されます。
 
 <Note>
 (ヘッドレスの)フロントコンポーネントからルートトリガー型ロジック関数を呼び出す方法については、[ロジック関数を呼び出す](/l/ja/developers/extend/apps/layout/front-components#calling-a-logic-function)を参照してください。

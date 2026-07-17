@@ -9,11 +9,23 @@
 
 export type { AgentManifest } from './agentManifestType';
 export type { AppConnection } from './appConnectionType';
+export type {
+  KnownApplicationCategory,
+  ApplicationCategory,
+} from './applicationCategoryType';
+export {
+  APPLICATION_CATEGORIES,
+  isKnownApplicationCategory,
+} from './applicationCategoryType';
 export type { ApplicationManifest } from './applicationType';
 export type {
+  ApplicationVariableType,
+  ApplicationVariableOption,
+  ApplicationVariableValue,
   ApplicationVariable,
   ApplicationVariables,
 } from './applicationVariablesType';
+export { APPLICATION_VARIABLE_FIELD_METADATA_TYPES } from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
 export type { ConnectionProviderType } from './connectionProviderType';
@@ -122,6 +134,10 @@ export type { SkillManifest } from './skillManifestType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
 export type { ToolTriggerSettings } from './toolTriggerSettingsType';
+export {
+  serializeApplicationVariableValue,
+  deserializeApplicationVariableValue,
+} from './utils/applicationVariableValueSerialization';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,

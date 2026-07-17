@@ -995,11 +995,11 @@ __metadata:
   linkType: hard
 
 "@types/hast@npm:^3.0.0":
-  version: 3.0.4
-  resolution: "@types/hast@npm:3.0.4"
+  version: 3.0.5
+  resolution: "@types/hast@npm:3.0.5"
   dependencies:
     "@types/unist": "npm:*"
-  checksum: 10c0/3249781a511b38f1d330fd1e3344eed3c4e7ea8eff82e835d35da78e637480d36fad37a78be5a7aed8465d237ad0446abc1150859d0fde395354ea634decf9f7
+  checksum: 10c0/f3af8594a6903a507ed191eda944af18099198d6708c29102ae17118c3e20779f6929e91ed37e033541fd28d58055d8a5910a4366dbdf976cf81b13a464741fb
   languageName: node
   linkType: hard
 
@@ -1086,9 +1086,9 @@ __metadata:
   linkType: hard
 
 "@ungap/structured-clone@npm:^1.0.0":
-  version: 1.3.2
-  resolution: "@ungap/structured-clone@npm:1.3.2"
-  checksum: 10c0/4d76bb376ec3e15f38bdffe045377807c79057daf54ae17eeb977c5b95efddd2d726b38c15aeb5d5c1a45c64ad03aa7e8b1a6dc67895480cba536ffd1c7a06ec
+  version: 1.3.3
+  resolution: "@ungap/structured-clone@npm:1.3.3"
+  checksum: 10c0/b199e280ee06e9c447e0ccd38df60a65c2b2c13d3c77af50b1e6d77230aee1ea7da309d7b80c5a4850c8e22e4eee9e4b2813c6a33f8c360560d7f2e99a9f6e8f
   languageName: node
   linkType: hard
 
@@ -3500,16 +3500,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:2.19.0":
-  version: 2.19.0
-  resolution: "twenty-client-sdk@npm:2.19.0"
+"twenty-client-sdk@npm:2.21.0":
+  version: 2.21.0
+  resolution: "twenty-client-sdk@npm:2.21.0"
   dependencies:
     "@genql/runtime": "npm:^2.10.0"
     esbuild: "npm:^0.28.1"
     graphql: "npm:^16.8.1"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.8.3"
-  checksum: 10c0/647922bda96a98fa163bed50b1e9065e9fc6f624e7ee40abcbe99a4c4bbfdd9a54b19fd2b774e06e6f758dd63a63724daf5ee34d716d7fe1740c04f120d266c0
+  checksum: 10c0/b411ce14c606830f63df27e7fa8efff6bc82968baabfbb0d6d5725cd6f6b023862102a22ce8baed4ae5c99ac5a50c10915e4f983c97e0fb138db9837c76be80a
   languageName: node
   linkType: hard
 
@@ -3526,8 +3526,8 @@ __metadata:
     react-dom: "npm:^19.0.0"
     react-markdown: "npm:^10.1.0"
     tsx: "npm:^4.0.0"
-    twenty-client-sdk: "npm:2.19.0"
-    twenty-sdk: "npm:2.19.0"
+    twenty-client-sdk: "npm:2.21.0"
+    twenty-sdk: "npm:2.21.0"
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^4.0.0"
@@ -3535,9 +3535,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-sdk@npm:2.19.0":
-  version: 2.19.0
-  resolution: "twenty-sdk@npm:2.19.0"
+"twenty-sdk@npm:2.21.0":
+  version: 2.21.0
+  resolution: "twenty-sdk@npm:2.21.0"
   dependencies:
     "@sniptt/guards": "npm:^0.2.0"
     axios: "npm:^1.16.0"
@@ -3556,12 +3556,12 @@ __metadata:
     semver: "npm:7.6.3"
     sharp: "npm:^0.34.5"
     tinyglobby: "npm:^0.2.15"
-    twenty-client-sdk: "npm:2.19.0"
+    twenty-client-sdk: "npm:2.21.0"
     typescript: "npm:^5.9.3"
     uuid: "npm:^13.0.2"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/d5d4126997510112008116ae807f0cbbe46f7a46ca7c061ae91363edc0f009eb159a92fdeaaf16b6f636f2faffc43dd9355ddfeb6ec3506c440fb8f1f39fe9e2
+  checksum: 10c0/ea03d59ca549054b1c065feb0800a103eb707c1755cb250356bbe5c59e7af576ce9f8480c1f658637ded8d3930b110bac7b57305255ff9ce02f8a587963e140c
   languageName: node
   linkType: hard
 

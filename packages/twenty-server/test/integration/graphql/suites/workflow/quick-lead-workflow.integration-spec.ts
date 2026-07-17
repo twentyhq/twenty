@@ -3,14 +3,20 @@ import {
   destroyWorkflowRun,
   getWorkflowRun,
   runWorkflowVersion,
+  waitForWorkflowCompletion,
+  waitForWorkflowRunStatus,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { v4 as uuidv4 } from 'uuid';
 
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { getWorkflowPrefillIds } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflows.util';
+
 const client = request(`http://localhost:${APP_PORT}`);
 
-// Quick Lead workflow IDs from prefill-workflows.ts
-const QUICK_LEAD_WORKFLOW_ID = '8b213cac-a68b-4ffe-817a-3ec994e9932d';
-const QUICK_LEAD_WORKFLOW_VERSION_ID = 'ac67974f-c524-4288-9d88-af8515400b68';
+const {
+  quickLeadWorkflowId: QUICK_LEAD_WORKFLOW_ID,
+  quickLeadWorkflowVersionId: QUICK_LEAD_WORKFLOW_VERSION_ID,
+} = getWorkflowPrefillIds(SEED_APPLE_WORKSPACE_ID);
 const FORM_STEP_ID = '6e089bc9-aabd-435f-865f-f31c01c8f4a7';
 
 describe('Quick Lead Workflow (e2e)', () => {
@@ -125,7 +131,10 @@ describe('Quick Lead Workflow (e2e)', () => {
 
       createdWorkflowRunId = workflowRunId;
 
-      const workflowRun = await getWorkflowRun(workflowRunId);
+      const workflowRun = await waitForWorkflowRunStatus(
+        workflowRunId,
+        'RUNNING',
+      );
 
       expect(workflowRun).toBeDefined();
       expect(workflowRun?.workflowVersionId).toBe(
@@ -238,7 +247,10 @@ describe('Quick Lead Workflow (e2e)', () => {
 
       expect(testWorkflowRunId).toBeDefined();
 
-      let workflowRun = await getWorkflowRun(testWorkflowRunId as string);
+      let workflowRun = await waitForWorkflowRunStatus(
+        testWorkflowRunId as string,
+        'RUNNING',
+      );
 
       expect(workflowRun?.status).toBe('RUNNING');
       expect(workflowRun?.state?.stepInfos?.[FORM_STEP_ID]?.status).toBe(
@@ -276,7 +288,9 @@ describe('Quick Lead Workflow (e2e)', () => {
       expect(submitFormResponse.body.errors).toBeUndefined();
       expect(submitFormResponse.body.data.submitFormStep).toBe(true);
 
-      workflowRun = await getWorkflowRun(testWorkflowRunId as string);
+      workflowRun = await waitForWorkflowCompletion(
+        testWorkflowRunId as string,
+      );
       expect(workflowRun?.status).toBe('COMPLETED');
       expect(workflowRun?.state?.stepInfos?.trigger?.status).toBe('SUCCESS');
       expect(workflowRun?.state?.stepInfos?.[FORM_STEP_ID]?.status).toBe(

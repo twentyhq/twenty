@@ -1,0 +1,149 @@
+---
+title: ٣. مسارات HTTP
+icon: globe
+description: قم بتفعيل الوظيفة على HTTP وتقديم الوثائق كصفحات ويب.
+---
+
+نفس المعالج يمكنه أيضا الإجابة على طلبات HTTP. سوف نضيف مسارين:
+
+* نقطة النهاية **POST** مكالمات واجهة المستخدم لإنشاء وثيقة، و
+* نقطة نهاية عامة **GET** تجعل الوثيقة صفحة ويب قابلة للطباعة.
+
+وكلاهما يستخدم `httpRouteTriggerSettings`. يتم الوصول إلى مسارات التطبيق باستخدام مسار `/s/`؛ على النسخ المحلية
+والمستضافة ذاتيًا، يتم تقديم هذا المسار بواسطة خادم Twenty الخاص بك
+(مثلًا: `http://localhost:2020/s/documents/generate`). على Twenty Cloud، يقوم `RestApiClient`
+بمعالجة المسار عبر نطاق وظائف مساحة العمل.
+
+## مسار POST - توليد حسب الطلب
+
+هذا يعيد استخدام `GenerateDocumentHandler`، لذلك لا يوجد منطق لتكراره - مجرد محول رقيق
+الذي يقرأ الجسم المطلوب.
+
+```ts filename="src/logic-functions/generate-document-route.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { generateDocumentHandler } from 'src/logic-functions/handlers/generate-document-handler';
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const body = event.body as Record<string, unknown> | null;
+
+  const result = await generateDocumentHandler({
+    templateId: (body?.templateId as string) ?? '',
+    recordId: (body?.recordId as string) ?? '',
+  });
+
+  // Map the handler's failure reason onto a real HTTP status (400/404/500)
+  // instead of always returning 200.
+  return new Response(JSON.stringify(result), {
+    status: result.success ? 200 : (result.status ?? 400),
+    headers: { 'Content-Type': 'application/json' },
+  });
+};
+
+export default defineLogicFunction({
+  universalIdentifier: GENERATE_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'generate-document-route',
+  timeoutSeconds: 30,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/generate',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+يقوم المعالج المشترك بإرجاع 'حالة' مقترحة عند الفشل، بحيث يمكن للطريق
+الإجابة مع رمز `4xx`/`5xx`. `isAuthRerequirered: true` يعني أنه يجب على المتصل
+أن يقدم رمزا صالحا - المكون الأمامي في الفصل التالي يمر رمز الوصول إلى
+المستخدم تلقائيا.
+
+## مسار GET - يقدم كصفحة على الشبكة
+
+لإرجاع HTML بدلاً من JSON، قم بتدوين الجسم في 'استجابة` مع رأس
+'محتوى - نوع`. هذا المسار عام ('isAuthRerequirered: false\`) بحيث يمكن مشاركة مستند تم إنشاؤه
+كرابط .
+
+```ts filename="src/logic-functions/view-document.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { documentHtmlPage } from 'src/utils/render-document';
+
+const htmlResponse = (html: string, status = 200): Response =>
+  new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const documentId = event.queryStringParameters?.id;
+
+  if (!documentId) {
+    return htmlResponse(documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'), 400);
+  }
+
+  // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
+  const { documents } = await new CoreApiClient().query({
+    documents: {
+      __args: { filter: { id: { eq: documentId } }, first: 1 },
+      edges: { node: { id: true, name: true, content: true } },
+    },
+  });
+
+  const document = documents?.edges?.[0]?.node;
+  if (!document?.id) {
+    return htmlResponse(documentHtmlPage('Document not found', `No document with id ${documentId}.`), 404);
+  }
+
+  return htmlResponse(documentHtmlPage(document.name ?? 'Document', document.content ?? ''));
+};
+
+export default defineLogicFunction({
+  universalIdentifier: VIEW_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'view-document',
+  timeoutSeconds: 15,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/view',
+    httpMethod: 'GET',
+    isAuthRequired: false,
+  },
+});
+```
+
+'documentHtmlPage' يجعل جسم Markdown إلى HTML (مع [marked](https://marked.js.org/)،
+محسوسة) ويسقط في نظيف، صفحة قابلة للطباعة تعرض فقط محتوى القالب- نفس مظهر PDF والمعاينة داخل التطبيق.
+  [انظر المساعد](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/render-document.ts).
+
+## جرب ذلك
+
+مع قالب وشخص في مساحة العمل الخاصة بك، اتصل بالمسار (التقط الرمز المميز من
+**الإعدادات → APIs & Webhooks**):
+
+```bash filename="Terminal"
+curl -X POST http://localhost:2020/s/documents/generate \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"templateId":"<templateId>","recordId":"<personId>"}'
+# → {"success":true,"documentId":"...","content":"Dear Jeffery Griffin, ..."}
+```
+
+افتح المستند الذي تم إرجاعه في المتصفح الخاص بك:
+
+```
+http://localhost:2020/s/documents/view?id=<documentId>
+```
+
+<Frame caption="ويجعل مسار الهيئة العامة للتكنولوجيا من الوثيقة صفحة قابلة للطباعة.">
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="صفحة وثيقة تم إصدارها" />
+</Frame>
+
+<Tip>
+يمكنك أيضًا بث سجلات الدالة أثناء اختبارها باستخدام
+`yarn 20 dev:function:logs`، أو استدعاء ذلك مباشرة باستخدام
+`yarn 20 dev:function:exec`.
+</Tip>
+
+**بعد هذه الخطوة:** يمكن للتطبيق إنشاء مستندات عبر HTTP وخدمتها كصفحات ويب
+الآن دعونا نجعله قابلا للاستخدام بدون "تعطيل".
+
+<Card title="التالي : بناء واجهة المستخدم →" icon="table-columns" href="/l/ar/developers/extend/apps/tutorials/document-Generator/building-the-ui">
+  المشاهدة، الملاحة، الأوامر، والعنصر الأمامي.
+</Card>

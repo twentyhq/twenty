@@ -1,14 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type QueryRunner, Repository } from 'typeorm';
 
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/onboarding/constants/onboarding-installable-app-universal-identifiers';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
+import {
+  INSTALL_ONBOARDING_APPS_JOB_NAME,
+  type InstallOnboardingAppsJobData,
+} from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job-constants';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -18,14 +25,14 @@ export enum OnboardingStepKeys {
   ONBOARDING_CONNECT_ACCOUNT_PENDING = 'ONBOARDING_CONNECT_ACCOUNT_PENDING',
   ONBOARDING_INVITE_TEAM_PENDING = 'ONBOARDING_INVITE_TEAM_PENDING',
   ONBOARDING_CREATE_PROFILE_PENDING = 'ONBOARDING_CREATE_PROFILE_PENDING',
-  ONBOARDING_BOOK_ONBOARDING_PENDING = 'ONBOARDING_BOOK_ONBOARDING_PENDING',
+  ONBOARDING_INSTALL_APPS_PENDING = 'ONBOARDING_INSTALL_APPS_PENDING',
 }
 
 export type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING]: boolean;
-  [OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING]: boolean;
+  [OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING]: boolean;
 };
 
 @Injectable()
@@ -39,6 +46,8 @@ export class OnboardingService {
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   private isWorkspaceActivationPending(workspace: WorkspaceEntity) {
@@ -85,15 +94,18 @@ export class OnboardingService {
       userVars.get(OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING) ===
       true;
 
+    const isInstallAppsPending =
+      userVars.get(OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING) === true;
+
     const isInviteTeamPending =
       userVars.get(OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING) === true;
 
-    const isBookOnboardingPending =
-      userVars.get(OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING) ===
-      true;
-
     if (isConnectAccountPending) {
       return OnboardingStatus.SYNC_EMAIL;
+    }
+
+    if (isInstallAppsPending) {
+      return OnboardingStatus.APPS_INSTALLATION;
     }
 
     if (isProfileCreationPending) {
@@ -110,26 +122,6 @@ export class OnboardingService {
       )
     ) {
       return OnboardingStatus.PLAN_REQUIRED;
-    }
-
-    if (isBookOnboardingPending) {
-      const calendarBookingPageId = this.twentyConfigService.get(
-        'CALENDAR_BOOKING_PAGE_ID',
-      );
-      const isBookingConfigured =
-        isDefined(calendarBookingPageId) &&
-        isNonEmptyString(calendarBookingPageId);
-
-      if (!isBookingConfigured) {
-        await this.userVarsService.delete({
-          workspaceId: workspace.id,
-          key: OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING,
-        });
-
-        return OnboardingStatus.COMPLETED;
-      }
-
-      return OnboardingStatus.BOOK_ONBOARDING;
     }
 
     return OnboardingStatus.COMPLETED;
@@ -237,6 +229,116 @@ export class OnboardingService {
     }
   }
 
+  async setOnboardingInstallAppsPending(
+    {
+      userId,
+      workspaceId,
+      value,
+    }: {
+      userId: string;
+      workspaceId: string;
+      value: boolean;
+    },
+    queryRunner?: QueryRunner,
+  ) {
+    if (!value) {
+      await this.userVarsService.delete(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
+        },
+        queryRunner,
+      );
+
+      return;
+    }
+
+    await this.userVarsService.set(
+      {
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
+        value: true,
+      },
+      queryRunner,
+    );
+  }
+
+  async triggerInstallAppsOnboardingStep({
+    userId,
+    workspaceId,
+    universalIdentifiers,
+  }: {
+    userId: string;
+    workspaceId: string;
+    universalIdentifiers: string[];
+  }) {
+    const hasClaimedInstallAppsStep = await this.claimInstallAppsOnboardingStep(
+      { userId, workspaceId },
+    );
+
+    if (!hasClaimedInstallAppsStep) {
+      return;
+    }
+
+    const installableUniversalIdentifiers = universalIdentifiers.filter(
+      (universalIdentifier) =>
+        ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS.includes(
+          universalIdentifier,
+        ),
+    );
+
+    if (installableUniversalIdentifiers.length === 0) {
+      return;
+    }
+
+    await this.messageQueueService.add<InstallOnboardingAppsJobData>(
+      INSTALL_ONBOARDING_APPS_JOB_NAME,
+      { workspaceId, universalIdentifiers: installableUniversalIdentifiers },
+      { id: `${INSTALL_ONBOARDING_APPS_JOB_NAME}-${workspaceId}` },
+    );
+  }
+
+  private async claimInstallAppsOnboardingStep({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const affectedRows = await this.userVarsService.delete({
+      userId,
+      workspaceId,
+      key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
+    });
+
+    return isDefined(affectedRows) && affectedRows > 0;
+  }
+
+  async creditInstallAppsReward({
+    workspaceId,
+    rewardAppsCount,
+  }: {
+    workspaceId: string;
+    rewardAppsCount: number;
+  }) {
+    try {
+      await this.billingCreditService.creditWorkspaceBalance({
+        workspaceId,
+        amountMicro:
+          this.twentyConfigService.get(
+            'ONBOARDING_INSTALL_APPS_CREDITS_REWARD_PER_APP',
+          ) * rewardAppsCount,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to credit onboarding install-apps reward for workspace ${workspaceId}`,
+        error,
+      );
+    }
+  }
+
   async setOnboardingInviteTeamPending(
     {
       workspaceId,
@@ -331,37 +433,6 @@ export class OnboardingService {
       userId,
       workspaceId,
       value: false,
-    });
-  }
-
-  async setOnboardingBookOnboardingPending({
-    workspaceId,
-    value,
-  }: {
-    workspaceId: string;
-    value: boolean;
-  }) {
-    const calendarBookingPageId = this.twentyConfigService.get(
-      'CALENDAR_BOOKING_PAGE_ID',
-    );
-
-    const isBookingConfigured =
-      isDefined(calendarBookingPageId) &&
-      isNonEmptyString(calendarBookingPageId);
-
-    if (!value || !isBookingConfigured) {
-      await this.userVarsService.delete({
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING,
-      });
-
-      return;
-    }
-
-    await this.userVarsService.set({
-      workspaceId,
-      key: OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING,
-      value: true,
     });
   }
 }

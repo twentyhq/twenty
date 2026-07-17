@@ -105,7 +105,7 @@ export class WorkspaceResolver {
   @Query(() => WorkspaceEntity)
   @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
   async currentWorkspace(@AuthWorkspace() { id }: WorkspaceEntity) {
-    const workspace = await this.workspaceService.findById(id);
+    const workspace = await this.workspaceService.findOneWorkspaceById(id);
 
     assert(workspace, 'Workspace not found');
 

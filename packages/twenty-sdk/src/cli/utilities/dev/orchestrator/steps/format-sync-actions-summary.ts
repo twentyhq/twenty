@@ -1,4 +1,5 @@
 import { type OrchestratorStateStepEvent } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
+import { getFlatEntityName } from '@/cli/utilities/dev/orchestrator/steps/get-flat-entity-name';
 import { type SyncAction } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -9,18 +10,6 @@ const VERB_BY_TYPE = {
   update: 'updated',
   delete: 'deleted',
 } as const;
-
-const getFlatEntityName = (
-  flatEntity: SyncAction['flatEntity'],
-): string | null => {
-  const universalIdentifier = flatEntity?.universalIdentifier;
-
-  return (
-    flatEntity?.name ??
-    flatEntity?.nameSingular ??
-    (typeof universalIdentifier === 'string' ? universalIdentifier : null)
-  );
-};
 
 const getEntityLabel = (action: SyncAction): string => {
   if (action.type === 'create') {

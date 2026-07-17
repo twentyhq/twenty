@@ -22,13 +22,15 @@ const StyledSettingsNameCellSecondaryLabel = styled.span`
 type SettingsNameCellSecondaryLabelProps = {
   children: ReactNode;
   title?: string;
+  id?: string;
 };
 
 export const SettingsNameCellSecondaryLabel = ({
   children,
   title,
+  id,
 }: SettingsNameCellSecondaryLabelProps) => (
-  <StyledSettingsNameCellSecondaryLabel title={title}>
+  <StyledSettingsNameCellSecondaryLabel title={title} id={id}>
     {children}
   </StyledSettingsNameCellSecondaryLabel>
 );

@@ -51,8 +51,7 @@ export default defineLogicFunction({
 ```
 
 사용 가능한 트리거 유형:
-* **httpRoute**: **`/s/` 엔드포인트** 아래의 HTTP 경로와 메서드로 함수를 노출합니다:
-> 예: `path: '/post-card/create'`는 `https://your-twenty-server.com/s/post-card/create`에서 호출할 수 있습니다
+* **httpRoute**: HTTP 경로와 메서드로 함수를 노출합니다. 앱 코드에서 `RestApiClient`를 사용할 때는 라우트 경로 앞에 `/s/`를 접두사로 붙이십시오. 배포된 URL은 주입된 `TWENTY_FUNCTIONS_URL` 기본 URL(설정되지 않은 경우 `\<server-url>/s`)을 사용합니다.
 
 <Note>
 (헤드리스) 프런트 컴포넌트에서 라우트로 트리거되는 로직 함수를 호출하려면 [로직 함수 호출하기](/l/ko/developers/extend/apps/layout/front-components#calling-a-logic-function)를 참고하세요.

@@ -46,7 +46,6 @@ describe('fromDeleteFieldInputToFlatFieldMetadatasToDelete', () => {
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([]),
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps('obj-1'),
         flatIndexMaps: createEmptyFlatEntityMaps(),
-        flatSearchFieldMetadataMaps: createEmptyFlatEntityMaps(),
       }),
     ).toThrow(
       expect.objectContaining({
@@ -70,7 +69,6 @@ describe('fromDeleteFieldInputToFlatFieldMetadatasToDelete', () => {
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([standardField]),
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps(objectId),
         flatIndexMaps: createEmptyFlatEntityMaps(),
-        flatSearchFieldMetadataMaps: createEmptyFlatEntityMaps(),
       }),
     ).toThrow(
       expect.objectContaining({
@@ -94,7 +92,6 @@ describe('fromDeleteFieldInputToFlatFieldMetadatasToDelete', () => {
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([standardField]),
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps(objectId),
         flatIndexMaps: createEmptyFlatEntityMaps(),
-        flatSearchFieldMetadataMaps: createEmptyFlatEntityMaps(),
       }),
     ).toThrow(new RegExp('Cannot delete standard field "city"'));
   });
@@ -113,7 +110,6 @@ describe('fromDeleteFieldInputToFlatFieldMetadatasToDelete', () => {
       flatFieldMetadataMaps: buildFlatFieldMetadataMaps([customField]),
       flatObjectMetadataMaps: buildFlatObjectMetadataMaps(objectId),
       flatIndexMaps: createEmptyFlatEntityMaps(),
-      flatSearchFieldMetadataMaps: createEmptyFlatEntityMaps(),
     });
 
     expect(result.flatFieldMetadatasToDelete).toContainEqual(
@@ -136,7 +132,6 @@ describe('fromDeleteFieldInputToFlatFieldMetadatasToDelete', () => {
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([standardField]),
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps(objectId),
         flatIndexMaps: createEmptyFlatEntityMaps(),
-        flatSearchFieldMetadataMaps: createEmptyFlatEntityMaps(),
       }),
     ).toThrow(FieldMetadataException);
   });
@@ -160,7 +155,6 @@ describe('fromDeleteFieldInputToFlatFieldMetadatasToDelete', () => {
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([standardAppField]),
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps(objectId),
         flatIndexMaps: createEmptyFlatEntityMaps(),
-        flatSearchFieldMetadataMaps: createEmptyFlatEntityMaps(),
       }),
     ).toThrow(
       expect.objectContaining({

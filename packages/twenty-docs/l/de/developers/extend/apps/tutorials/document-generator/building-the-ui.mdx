@@ -1,0 +1,305 @@
+---
+title: 4. Erstelle die UI
+icon: table-columns
+description: Views, Sidebar Navigation, ein Befehl und Frontkomponenten.
+---
+
+Im Moment sind die Objekte nur über Einstellungen erreichbar. Geben wir der App eine
+echte Präsenz in der Benutzeroberfläche: Listenansichten, Seitenleisteneinträge, ein Ein-Klick-
+**Dokumenten** Befehl generieren, eine Front-Komponente der Eintragsseite für **Vorschau** eines
+Dokuments und einen nativen Reiter für den Volltext **Editor** für Vorlagen.
+
+## Ansichten und Navigation
+
+Eine [view](/l/de/developers/extend/apps/layout/views) ist eine gespeicherte Liste eines bestimmten Objekts.
+Ein [Navigationsmenüeintrag](/l/de/developers/extend/apps/layout/navigation-menu-items)
+bringt diese Ansicht in die Sidebar.
+
+```ts filename="src/views/documents.view.ts"
+import { defineView, ViewKey } from 'twenty-sdk/define';
+
+export default defineView({
+  universalIdentifier: DOCUMENTS_VIEW_UNIVERSAL_IDENTIFIER,
+  name: 'All documents',
+  objectUniversalIdentifier: DOCUMENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconFile',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    { universalIdentifier: DOCUMENTS_VIEW_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier: DOCUMENT_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0, isVisible: true, size: 280 },
+    { universalIdentifier: DOCUMENTS_VIEW_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier: DOCUMENT_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 1, isVisible: true, size: 120 },
+    { universalIdentifier: DOCUMENTS_VIEW_TEMPLATE_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier: DOCUMENT_TEMPLATE_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 2, isVisible: true, size: 200 },
+  ],
+});
+```
+
+```ts filename="src/navigation-menu-items/documents.navigation-menu-item.ts"
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: DOCUMENTS_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER,
+  name: 'Documents',
+  icon: 'IconFile',
+  color: 'green',
+  position: 1,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: DOCUMENTS_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Fügen Sie das gleiche Paar für Vorlagen hinzu. Beide zeigen nun in der Seitenleiste:
+
+<Frame caption="Dokumente und Vorlagen in der Seitenleiste mit dem generierten Dokument.">
+  <img src="/images/docs/developers/extends/apps/document-generator/04-documents-view.png" alt="Dokumentenansicht mit einem generierten Dokument" />
+</Frame>
+
+## Eine Frontkomponente
+
+Eine [Frontkomponent](/l/de/developers/extend/apps/layout/front-components) ist eine Reaktions-
+Komponente mit Sandkasten in Twenty. Wir liest den ausgewählten Datensatz ein, lädt die
+Personen-Vorlagen über `CoreApiClient` und POSTs aus dem letzten
+Kapitel.
+
+```tsx filename="src/front-components/generate-document-form.front-component.tsx"
+import { useEffect, useState } from 'react';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { RestApiClient } from 'twenty-client-sdk/rest';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { enqueueSnackbar, useSelectedRecordIds } from 'twenty-sdk/front-component';
+
+const GenerateDocumentForm = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+  const [templates, setTemplates] = useState<{ id: string; name: string }[]>([]);
+  const [templateId, setTemplateId] = useState('');
+
+  useEffect(() => {
+    new CoreApiClient()
+      .query({ documentTemplates: {
+        __args: { filter: { target: { eq: 'PERSON' } }, first: 100 },
+        edges: { node: { id: true, name: true } } } })
+      .then(({ documentTemplates }) => {
+        const list = documentTemplates?.edges?.map((e) => e.node) ?? [];
+        setTemplates(list);
+        if (list[0]) setTemplateId(list[0].id);
+      });
+  }, []);
+
+  const generate = async () => {
+    const res = await new RestApiClient().post<{ success: boolean }>(
+      '/s/documents/generate',
+      { templateId, recordId },
+    );
+    await enqueueSnackbar({
+      message: res.success ? 'Document generated.' : 'Generation failed.',
+      variant: res.success ? 'success' : 'error',
+    });
+  };
+
+  // ...render a <select> of templates and a Generate button
+};
+
+export default defineFrontComponent({
+  universalIdentifier: GENERATE_DOCUMENT_FORM_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+  name: 'generate-document-form',
+  component: GenerateDocumentForm,
+});
+```
+
+<Warning>
+Stil mit Inline-CSS-Variablen (`var(--t-color-blue)`), nicht aus
+`twenty-ui` importiert. Das SDK verspottet das Paket während des Builds, so dass Modul-Level-Importe von
+Theme-Konstanten `undefiniert` wären. Siehe
+[vollständige Komponente](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/front-components/generate-document-form.front-component.tsx).
+</Warning>
+
+## Ein Befehl um es zu öffnen
+
+Ein [Commandmenu item](/l/de/developers/extend/apps/layout/command-menu-items) mit
+`availabilityType: 'RECORD_SELECTION'` wird angezeigt, wenn eine Person ausgewählt ist, und
+öffnet die Komponente in der Seitenleiste.
+
+```ts filename="src/command-menu-items/generate-document.command-menu-item.ts"
+import { defineCommandMenuItem, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: GENERATE_DOCUMENT_COMMAND_UNIVERSAL_IDENTIFIER,
+  label: 'Generate document',
+  availabilityType: 'RECORD_SELECTION',
+  availabilityObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  frontComponentUniversalIdentifier:
+    GENERATE_DOCUMENT_FORM_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+});
+```
+
+## Den gesamten Fluss testen
+
+Öffne **People**, markiere eine Person und drücke <kbd>⌘K</kbd> / <kbd>Strg K</kbd>.
+"Dokument erstellen" erscheint, mit Ihrer App markiert:
+
+<Frame caption="Der Befehl wird angezeigt, wenn eine Person ausgewählt ist.">
+  <img src="/images/docs/developers/extends/apps/document-generator/06-command-menu.png" alt="Befehlsmenü mit Dokument generieren" />
+</Frame>
+
+Führen Sie es aus — Ihre Komponente öffnet sich in der Seitenleiste. Wähle eine Vorlage, klicke auf
+**Generieren**, und ein neues Datensatzland in **Dokumenten**.
+
+<Frame caption="Die Frontkomponente, das Laden von Vorlagen und das Generieren auf Klick.">
+  <img src="/images/docs/developers/extends/apps/document-generator/06b-front-component.png" alt="Dokumentseite erstellen" />
+</Frame>
+
+Jedes generierte Dokument speichert Ihre App als Autor auf:
+
+<Frame caption="Erstellt vom Dokumentengenerator, Status generiert.">
+  <img src="/images/docs/developers/extends/apps/document-generator/05-document-record.png" alt="Ein generierter Dokumentensatz" />
+</Frame>
+
+## Vorschau eines Dokuments auf seiner Aufzeichnungsseite
+
+Eine Frontkomponente ist nicht nur für Kommandomenüs – Sie können sie als **Tab auf einer
+Aufnahmeseite einhängen**. Fügen wir dem Dokument-Datensatz einen Tab *Vorschau* hinzu, der den
+Markdown-Text als polierte, druckbare Seite darstellt.
+
+Die Komponente liest die aktuelle Datensatz-ID aus ihrem Ausführungskontext, lädt das
+-Dokument und gibt sie aus. Frontkomponenten laufen in einer **Sandbox**, die nur eine
+Whitelist von HTML-Tags erlaubt — Roh-HTML-Einspritzung (`dangerouslySetInnerHTML`) und
+`\<style>` werden blockiert — so dass wir Markdown als React-Elemente mit Inline-
+Styles über einen kleinen [`Markdown`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/markdown-to-react.tsx)
+Helfer machen.
+
+```tsx filename="src/front-components/document-viewer.front-component.tsx"
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { RestApiClient } from 'twenty-client-sdk/rest';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useFrontComponentExecutionContext } from 'twenty-sdk/front-component';
+import { Markdown } from 'src/utils/markdown-to-react';
+
+const DocumentViewer = () => {
+  const recordId = useFrontComponentExecutionContext((c) => c.recordId ?? null);
+  // ...load { content, file } for recordId, then derive the links:
+  const pdfUrl = document.file?.[0]?.url;
+  const webUrl = new RestApiClient().resolveUrl('/s/documents/view', {
+    query: { id: recordId },
+  });
+
+  // Render the template body, plus quick links to the web page and the PDF.
+  // Links open in a new tab so they don't navigate the embedded component.
+  return (
+    <div style={styles.scroll}>
+      <div style={styles.actions}>
+        <a style={styles.actionLink} href={webUrl} target="_blank" rel="noopener noreferrer">
+          Open web page
+        </a>
+        {pdfUrl ? (
+          <a style={styles.actionLink} href={pdfUrl} target="_blank" rel="noopener noreferrer">
+            Download PDF
+          </a>
+        ) : null}
+      </div>
+      <div style={styles.paper}>
+        <div style={styles.body}>
+          <Markdown content={document.content} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: DOCUMENT_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+  name: 'document-viewer',
+  component: DocumentViewer,
+});
+```
+
+Mounten Sie es mit einem [page layout](/l/de/developers/extend/apps/layout/page-layouts). Ein
+`RECORD_PAGE` Layout fügt Tabs zur Datensatzansicht eines Objekts hinzu; ein `FRONT_COMPONENT`
+Widget in einem `CANVAS` Tab Hosts die Komponent:
+
+```ts filename="src/page-layouts/document-record.page-layout.ts"
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+
+export default definePageLayout({
+  universalIdentifier: DOCUMENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  name: 'Document record page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: DOCUMENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [{
+    universalIdentifier: DOCUMENT_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
+    title: 'Preview',
+    icon: 'IconEye',
+    position: 50,
+    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    widgets: [{
+      universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
+      title: 'Document preview',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier: DOCUMENT_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    }],
+  }],
+});
+```
+
+Öffne jedes Dokument — ein **Vorschau** Tab macht es wunderschön, mit Links zur
+freigegebenen Webseite und dem PDF:
+
+<Frame caption="Auf der Registerkarte Vorschau wird das Dokument mit Inline-Styles und Schnelllinks dargestellt.">
+  <img src="/images/docs/developers/extends/apps/document-generator/09-document-viewer.png" alt="Front-Komponente des Dokuments in einem Reiter der Datensatzseite" />
+</Frame>
+
+## Vorlage mit dem Rich-Text-Editor bearbeiten
+
+Templates benötigen überhaupt keine eigene Komponente. Da der `body` ein
+`RICH_TEXT`-Feld ist, stellt Twenty bereits einen vollständigen Rich-Text-Editor dafür bereit – denselben, den auch die Standardobjekte Note und Task verwenden. Wir Oberflächen es nur auf der
+Template-Datensatzseite.
+
+Füge einen Tab mit einem `FIELD` Widget im `EDITOR` Anzeigemodus hinzu und zeigt auf das Feld `body`
+über `fieldMetadataId`:
+
+```ts filename="src/page-layouts/template-record.page-layout.ts"
+{
+  universalIdentifier: TEMPLATE_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
+  title: 'Template',
+  position: 1,
+  layoutMode: PageLayoutTabLayoutMode.GRID,
+  widgets: [{
+    universalIdentifier: TEMPLATE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
+    title: 'Template',
+    type: 'FIELD',
+    gridPosition: { row: 0, column: 0, rowSpan: 6, columnSpan: 12 },
+    configuration: {
+      configurationType: 'FIELD',
+      fieldMetadataId: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldDisplayMode: 'EDITOR',
+    },
+  }],
+}
+```
+
+Ein `RICH_TEXT` Feld speichert sowohl den Editorblock JSON als auch eine Markdown
+Projektion. Die Generation-Pipeline liest diese Markdown-Projektion, also
+Platzhalter, die PDF, und die freigebbare Webseite arbeiten alle unverändert —
+sehen Sie den vollständigen
+[`template-record. age-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/page-layouts/template-record.page-layout.ts).
+Jetzt schreiben Editoren Vorlagen in einem korrekten Rich-Text-Editor:
+
+<Frame caption="Die Registerkarte Template: Der native Rich-Text-Editor von 20 ist an das Bodyfeld gebunden.">
+  <img src="/images/docs/developers/extends/apps/document-generator/10-template-editor.png" alt="Vorlageneintrag mit dem nativen Rich-Text-Editor-Tab" />
+</Frame>
+
+**Nach diesem Schritt:** Dokumente Vorschau wunderschön und Vorlagen sind editierbar
+in-app. Lassen Sie als nächstes einen AI Agenten aus einem Chat generieren.
+
+<Card title="Weiter: ein KI-Agent →" icon="robot" href="/l/de/developers/extend/apps/tutorials/document-generator/ai-agent">
+  Fügen Sie einen Agenten und eine Fertigkeit hinzu, die Ihr Werkzeug aufruft.
+</Card>

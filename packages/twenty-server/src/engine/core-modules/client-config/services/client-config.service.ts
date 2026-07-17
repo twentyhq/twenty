@@ -19,6 +19,7 @@ import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display
 import {
   AUTO_SELECT_FAST_MODEL_ID,
   AUTO_SELECT_SMART_MODEL_ID,
+  ENTERPRISE_INSTANCE_TYPE,
 } from 'twenty-shared/constants';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
 import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
@@ -235,6 +236,11 @@ export class ClientConfigService {
             'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD',
           ),
         ),
+        installAppsCreditsRewardPerApp: toDisplayCredits(
+          this.twentyConfigService.get(
+            'ONBOARDING_INSTALL_APPS_CREDITS_REWARD_PER_APP',
+          ),
+        ),
       },
       isAttachmentPreviewEnabled: this.twentyConfigService.get(
         'IS_ATTACHMENT_PREVIEW_ENABLED',
@@ -275,6 +281,9 @@ export class ClientConfigService {
       isWorkspaceSchemaDDLLocked: this.twentyConfigService.get(
         'WORKSPACE_SCHEMA_DDL_LOCKED',
       ),
+      enterpriseInstanceType:
+        this.twentyConfigService.get('ENTERPRISE_INSTANCE_TYPE') ??
+        ENTERPRISE_INSTANCE_TYPE.PRODUCTION,
     };
 
     const maintenanceMode =

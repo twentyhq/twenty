@@ -183,6 +183,38 @@ describe('WorkspaceDomainsService', () => {
       expect(result.searchParams.get('foo')).toBe('bar');
       expect(result.searchParams.get('baz')).toBe('123');
     });
+
+    it('should set the hash if provided', () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) => {
+          const env = {
+            FRONTEND_URL: 'https://example.com',
+          };
+
+          // @ts-expect-error legacy noImplicitAny
+          return env[key];
+        });
+
+      const result = workspaceDomainsService.buildWorkspaceURL({
+        workspace: {
+          subdomain: 'test',
+          customDomain: null,
+          isCustomDomainEnabled: false,
+        },
+        pathname: '/settings/members',
+        searchParams: {
+          wtdId: 'domain-id',
+        },
+        hash: 'invite',
+      });
+
+      expect(result.hash).toBe('#invite');
+      expect(result.searchParams.get('wtdId')).toBe('domain-id');
+      expect(result.toString()).toBe(
+        'https://example.com/settings/members?wtdId=domain-id#invite',
+      );
+    });
   });
 
   describe('getWorkspaceByOriginOrDefaultWorkspace', () => {

@@ -86,6 +86,22 @@ export default defineObject({
 **Temel alanlar otomatik olarak eklenir.** Özel bir nesne tanımladığınızda Twenty, sizin için `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` ve `deletedAt` gibi standart alanlar oluşturur. Bunları `fields` dizinizde bildirmenize gerek yok — yalnızca özel alanlarınızı ekleyin. Aynı ada sahip bir alan bildirerek varsayılan bir alanı geçersiz kılabilirsiniz, ancak bu nadiren iyi bir fikirdir.
 </Note>
 
+## Alan tipleri
+
+`twenty-sdk/define` içinden dışa aktarılan, `FieldType` değerlerinin tam kümesi:
+
+| Kategori                    | Türler                                                                                                                           |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Metin                       | `TEXT`, `RICH_TEXT`, `ARRAY` (string dizisi), `RAW_JSON`                                                                         |
+| Sayısal                     | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (sınırsız hassasiyet), `RATING`, `POSITION` |
+| Tarihler                    | `DATE`, `DATE_TIME`                                                                                                              |
+| Seçim                       | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                              |
+| Bileşik                     | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES`                                                |
+| Tanımlayıcılar ve ilişkiler | `UUID`, `RELATION`, `MORPH_RELATION` (bkz. [İlişkiler](/l/tr/developers/extend/apps/data/relations))                                  |
+| Sistem                      | `TS_VECTOR` (sunucu tarafından yönetilen tam metin arama vektörü)                                                                |
+
+Bileşik tipler birden çok alt alan depolar (ör. `FULL_NAME` = ad + soyad; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` ve `MULTI_SELECT`, yukarıdaki örnekte olduğu gibi bir `options` dizisi gerektirir.
+
 ## Varsayılan değerler
 
 Sabit (literal) dize varsayılanları, dize **içinde** tek tırnak içine alınmış olmalıdır — `defaultValue: "'Draft'"`, `defaultValue: "Draft"` değil. Bu nedenle yukarıdaki `status` alanı `` `'${PostCardStatus.DRAFT}'` `` kullanır.
@@ -96,6 +112,27 @@ Tırnak içine alınmamış dizeler, bir kayıt oluşturulduğunda değerlendiri
 * `'now'` — geçerli zaman damgası (`DATE_TIME` alanları için)
 
 Aynı kural, bileşik varsayılanların string alt alanları için (örneğin bir `ACTOR` alanında `{ source: "'MANUAL'" }`) ve `SELECT`/`MULTI_SELECT` değerleri için de geçerlidir. Tırnak içine alınmamış bir sabit string varsayılan, uygulamanız oluşturulurken bir uyarıya neden olur.
+
+## Boş değer atanabilirliği
+
+`isNullable`, bir alanın `NULL` kabul edip etmediğini kontrol eder. Varsayılan değeri `true`'dur — isteğe bağlı alanlar için bunu belirtmeyin. Bir alanı veritabanı düzeyinde zorunlu yapmak için `isNullable: false` olarak ayarlayın.
+
+`isNullable` değişiklikleri, mevcut bir alanı güncelleyenler de dahil olmak üzere her senkronizasyonda uygulanır — bu nedenle manifesti düzenleyip yeniden senkronize ederek bir alanın boş değer atanabilirliğini değiştirebilirsiniz.
+
+<Note>
+**Var olan bir alanı boş değer kabul etmeyecek (non-nullable) hale getirmek için bir varsayılan değer gereklidir.** Bir alanı `isNullable: false` olarak değiştirdiğinizde, ayrıca boş olmayan (non-null) bir `defaultValue` sağlamanız gerekir. Varsayılan değer, `NOT NULL` kısıtlaması uygulanmadan önce mevcut `NULL` satırlarını doldurur; bu olmadan senkronizasyon, `Default value cannot be null for non-nullable fields` hatasıyla başarısız olur. İlişki alanları (relation fields) ve `TS_VECTOR` alanları her zaman boş değere izin verir (nullable), bu yüzden `isNullable` bunlar üzerinde hiçbir etkiye sahip değildir.
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
 
 ## Sırada ne var
 

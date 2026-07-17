@@ -5,7 +5,9 @@ import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
 import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
+import { getOnboardingStatus } from 'test/integration/graphql/utils/get-onboarding-status.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
+import { skipSyncEmailOnboardingStep } from 'test/integration/graphql/utils/skip-sync-email-onboarding-step.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-logic-function.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -13,6 +15,7 @@ import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
+import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 describe('Successful user and workspace creation', () => {
@@ -77,6 +80,33 @@ describe('Successful user and workspace creation', () => {
 
     expect(activateWorkspaceData.activationStatus).toBe(
       WorkspaceActivationStatus.ACTIVE,
+    );
+
+    const {
+      data: { currentUser: currentUserAfterActivation },
+    } = await getOnboardingStatus({
+      accessToken: newWorkspaceAccessToken,
+      expectToFail: false,
+    });
+
+    expect(currentUserAfterActivation.onboardingStatus).toBe(
+      OnboardingStatus.SYNC_EMAIL,
+    );
+
+    await skipSyncEmailOnboardingStep({
+      accessToken: newWorkspaceAccessToken,
+      expectToFail: false,
+    });
+
+    const {
+      data: { currentUser: currentUserAfterSyncEmailSkip },
+    } = await getOnboardingStatus({
+      accessToken: newWorkspaceAccessToken,
+      expectToFail: false,
+    });
+
+    expect(currentUserAfterSyncEmailSkip.onboardingStatus).toBe(
+      OnboardingStatus.APPS_INSTALLATION,
     );
 
     const {

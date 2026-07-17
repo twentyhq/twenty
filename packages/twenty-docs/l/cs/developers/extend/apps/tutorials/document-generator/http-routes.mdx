@@ -1,0 +1,150 @@
+---
+title: 3. HTTP trasy
+icon: globe
+description: Spuštění funkce přes HTTP a vykreslení dokumentů jako webových stránek.
+---
+
+Stejný handler může také odpovědět na HTTP požadavky. Přidáme dva trasy:
+
+* **POST** koncový bod uživatelského rozhraní volá, aby vytvořilo dokument, a
+* veřejný **GET** koncový bod, který vykresluje dokument jako tiskovou webovou stránku.
+
+Oba použijte `httpRouteTriggerSettings`. Trasy aplikace jsou dostupné pomocí cesty `/s/`; na lokálních
+a self-hostovaných instancích tuto cestu obsluhuje váš server Twenty
+(např. `http://localhost:2020/s/documents/generate`). Ve Twenty Cloudu `RestApiClient`
+sestavuje cestu prostřednictvím domény funkcí pracovního prostoru.
+
+## POST trasa – generovat na požádání
+
+Toto znovu používá `generateDocumentHandler`, takže není logika opakovat - jen tenký
+adaptér, který čte tělo požadavku.
+
+```ts filename="src/logic-functions/generate-document-route.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { generateDocumentHandler } from 'src/logic-functions/handlers/generate-document-handler';
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const body = event.body as Record<string, unknown> | null;
+
+  const result = await generateDocumentHandler({
+    templateId: (body?.templateId as string) ?? '',
+    recordId: (body?.recordId as string) ?? '',
+  });
+
+  // Map the handler's failure reason onto a real HTTP status (400/404/500)
+  // instead of always returning 200.
+  return new Response(JSON.stringify(result), {
+    status: result.success ? 200 : (result.status ?? 400),
+    headers: { 'Content-Type': 'application/json' },
+  });
+};
+
+export default defineLogicFunction({
+  universalIdentifier: GENERATE_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'generate-document-route',
+  timeoutSeconds: 30,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/generate',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+Sdílený handler vrátí navržený `status` při selhání, takže trasa může
+odpovědět správným `4xx`/`5xx` kódem. `isAuthRequd: true` znamená, že volající
+musí prezentovat platný token — přední komponenta v další kapitole automaticky prochází přístupovým tokenem uživatele
+.
+
+## Cesta GET – vykreslit jako webovou stránku
+
+Chcete-li vrátit HTML místo JSON, zabalte tělo do `Response` pomocí
+`Content-Type` hlavičky. Tato cesta je veřejná (`isAuthRequd: false`), takže
+generovaný dokument může být sdílen jako odkaz.
+
+```ts filename="src/logic-functions/view-document.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { documentHtmlPage } from 'src/utils/render-document';
+
+const htmlResponse = (html: string, status = 200): Response =>
+  new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const documentId = event.queryStringParameters?.id;
+
+  if (!documentId) {
+    return htmlResponse(documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'), 400);
+  }
+
+  // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
+  const { documents } = await new CoreApiClient().query({
+    documents: {
+      __args: { filter: { id: { eq: documentId } }, first: 1 },
+      edges: { node: { id: true, name: true, content: true } },
+    },
+  });
+
+  const document = documents?.edges?.[0]?.node;
+  if (!document?.id) {
+    return htmlResponse(documentHtmlPage('Document not found', `No document with id ${documentId}.`), 404);
+  }
+
+  return htmlResponse(documentHtmlPage(document.name ?? 'Document', document.content ?? ''));
+};
+
+export default defineLogicFunction({
+  universalIdentifier: VIEW_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'view-document',
+  timeoutSeconds: 15,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/view',
+    httpMethod: 'GET',
+    isAuthRequired: false,
+  },
+});
+```
+
+`documentHtmlPage` vykresluje Markdown tělo na HTML (s [marked](https://marked.js.org/),
+zmaskoval) a klesne do čistého, vytisknutelná stránka, která zobrazuje pouze obsah šablony
+– stejný vzhled jako PDF a náhled v aplikaci.
+[Viz pomocník] (https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/render-document.ts).
+
+## Vyzkoušejte
+
+Pomocí šablony a osoby ve vašem pracovním prostoru zavolejte na trasu (získejte token z
+**Nastavení → API a Webhooks**):
+
+```bash filename="Terminal"
+curl -X POST http://localhost:2020/s/documents/generate \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"templateId":"<templateId>","recordId":"<personId>"}'
+# → {"success":true,"documentId":"...","content":"Dear Jeffery Griffin, ..."}
+```
+
+Otevřete vrácený dokument ve vašem prohlížeči:
+
+```
+http://localhost:2020/s/documents/view?id=<documentId>
+```
+
+<Frame caption="Veřejná trasa GET vykresluje dokument jako tiskovou stránku.">
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="Vykreslená webová stránka dokumentu" />
+</Frame>
+
+<Tip>
+Během testování s
+`yarn twenty dev:function:logs`, nebo vyvolat přímo s
+`yarn twenty dev:exec`.
+</Tip>
+
+**Po tomto kroku:** aplikace může generovat dokumenty přes HTTP a sloužit jako
+webové stránky. Nyní ho použijeme bez `curl`.
+
+<Card title="Další: budování UI →" icon="table-columns" href="/l/cs/developers/extend/apps/tutorials/document-generator/building-the-ui">
+  Zobrazení, navigace, příkaz a přední součást.
+</Card>

@@ -1,0 +1,96 @@
+.slider {
+  --slider-thumb-size: 12px;
+  --slider-track-size: 16px;
+
+  cursor: pointer;
+  height: var(--slider-track-size);
+  position: relative;
+  width: 100%;
+
+  &[data-disabled='true'] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:has(.input:focus-visible) {
+    box-shadow: 0 0 0 3px var(--t-color-blue3);
+  }
+}
+
+.track {
+  background: var(--t-background-tertiary);
+  border-radius: var(--t-border-radius-pill);
+  corner-shape: round;
+  height: var(--slider-track-size);
+  inset: 0;
+  overflow: hidden;
+  position: absolute;
+}
+
+.fill {
+  background: var(--slider-main-color);
+  border-radius: var(--t-border-radius-pill);
+  corner-shape: round;
+  height: 100%;
+  left: 0;
+  min-width: var(--slider-track-size);
+  position: absolute;
+  top: 0;
+  width: var(--slider-fill);
+
+  &::after {
+    background: var(--t-background-primary);
+    border-radius: var(--t-border-radius-rounded);
+    corner-shape: round;
+    content: '';
+    height: var(--slider-thumb-size);
+    position: absolute;
+    right: 2px;
+    top: 2px;
+    width: var(--slider-thumb-size);
+  }
+}
+
+.input {
+  appearance: none;
+  background: transparent;
+  cursor: inherit;
+  height: var(--slider-track-size);
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+
+  &::-webkit-slider-runnable-track {
+    background: transparent;
+    border: 0;
+    height: var(--slider-track-size);
+  }
+
+  &::-webkit-slider-thumb {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: var(--t-border-radius-rounded);
+    corner-shape: round;
+    height: var(--slider-thumb-size);
+    margin-top: 2px;
+    width: var(--slider-thumb-size);
+  }
+
+  &::-moz-range-track {
+    background: transparent;
+    border: 0;
+    height: var(--slider-track-size);
+  }
+
+  &::-moz-range-thumb {
+    background: transparent;
+    border: 0;
+    border-radius: var(--t-border-radius-rounded);
+    corner-shape: round;
+    height: var(--slider-thumb-size);
+    width: var(--slider-thumb-size);
+  }
+}

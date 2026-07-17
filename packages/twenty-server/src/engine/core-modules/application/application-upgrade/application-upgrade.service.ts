@@ -7,8 +7,8 @@ import { z } from 'zod';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -26,9 +26,8 @@ export class ApplicationUpgradeService {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly applicationInstallService: ApplicationInstallService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -66,9 +65,21 @@ export class ApplicationUpgradeService {
         return null;
       }
 
-      await this.appRegistrationRepository.update(appRegistration.id, {
-        latestAvailableVersion: parsed.data.version,
-      });
+      const isNewVersion =
+        await this.applicationRegistrationService.setLatestAvailableVersionIfChanged(
+          appRegistration.id,
+          parsed.data.version,
+        );
+
+      if (isNewVersion) {
+        this.applicationRegistrationService.emitRegistrationPublishMetric({
+          isNewRegistration: false,
+          universalIdentifier: appRegistration.universalIdentifier,
+          name: appRegistration.name,
+          sourceType: appRegistration.sourceType,
+          version: parsed.data.version,
+        });
+      }
 
       return parsed.data.version;
     } catch (error) {
@@ -99,15 +110,15 @@ export class ApplicationUpgradeService {
       where: { id: params.appRegistrationId },
     });
 
+    // LOCAL apps are updated by dev sync and OAUTH_ONLY registrations have no
+    // code artifacts.
     if (
       appRegistration.sourceType === ApplicationRegistrationSourceType.LOCAL ||
-      appRegistration.sourceType ===
-        ApplicationRegistrationSourceType.TARBALL ||
       appRegistration.sourceType ===
         ApplicationRegistrationSourceType.OAUTH_ONLY
     ) {
       throw new ApplicationException(
-        'Cannot upgrade an app installed from a tarball, local source, or OAuth-only registration',
+        'Cannot upgrade an app installed from a local source or OAuth-only registration',
         ApplicationExceptionCode.UPGRADE_FAILED,
       );
     }

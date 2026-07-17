@@ -4,7 +4,25 @@ description: Fonksiyonları çalıştırmak, günlükleri akış olarak izlemek,
 icon: terminal
 ---
 
-`dev`, `dev:build`, `dev:add` ve `dev:typecheck` dışında, `yarn twenty` CLI, fonksiyonları çalıştırma, günlükleri görüntüleme ve uygulama kurulumlarını yönetme komutları sağlar.
+`yarn twenty` CLI, uygulama ile ilgili her şey için arayüzünüzdür. Tam komut listesi:
+
+| Komut                                           | Ne yapar                                                                              | Şurada belgelenmiştir                                                                                      |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `dev`                                           | Kaynak dosyaları izleyin ve değişiklikleri gerçek zamanlı olarak eşitleyin            | [Hızlı Başlangıç](/l/tr/developers/extend/apps/getting-started/quick-start)                                     |
+| `plan`                                          | Meta veri değişikliklerini uygulamadan önizleyin                                      | [Senkronizasyon ve kurtarma](/l/tr/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) |
+| `apply`                                         | Planı gösterdikten sonra meta veri değişikliklerini uygulayın                         | [Senkronizasyon ve kurtarma](/l/tr/developers/extend/apps/operations/sync-and-recovery)                         |
+| `dev:build`                                     | Uygulamayı derleyin ve API istemcisini oluşturun (`.tgz` paketlemek için `--tarball`) | [Yayınlama](/l/tr/developers/extend/apps/operations/publishing)                                                 |
+| `dev:typecheck`                                 | TypeScript tür kontrolünü çalıştırın                                                  | [Testing](/l/tr/developers/extend/apps/operations/testing)                                                      |
+| `dev:add`                                       | Yeni bir varlık iskeleti oluşturun                                                    | [İskele oluşturma](/l/tr/developers/extend/apps/getting-started/scaffolding)                                    |
+| `dev:generate-client`                           | Türlendirilmiş API istemcisini yeniden oluşturun                                      | bu sayfa                                                                                                   |
+| `dev:function:exec` / `dev:function:logs`       | Fonksiyonları çalıştırın ve günlüklerini akış halinde alın                            | bu sayfa                                                                                                   |
+| `dev:translations-extract`                      | Çevrilebilir dizeleri `locales/` kataloglarına çıkarın                                | [Çeviriler](/l/tr/developers/extend/apps/translations/overview)                                                 |
+| `dev:catalog-sync`                              | Pazar yeri katalog eşitlemesini tetikleyin                                            | [Yayınlama](/l/tr/developers/extend/apps/operations/publishing#how-marketplace-discovery-works)                 |
+| `app:publish` / `app:install` / `app:uninstall` | Sürüm yaşam döngüsü                                                                   | [Yayınlama](/l/tr/developers/extend/apps/operations/publishing) ve bu sayfa                                     |
+| `docker:*`                                      | Yerel Twenty sunucu konteynerini yönetin                                              | [Yerel Sunucu](/l/tr/developers/extend/apps/getting-started/local-server)                                       |
+| `remote:*`                                      | Sunucu bağlantılarını yönetin                                                         | bu sayfa                                                                                                   |
+
+Her komut, varsayılan yerine belirli bir uzak sunucuyu hedeflemek için `-r, --remote \<name>` parametresini kabul eder.
 
 ## Fonksiyonları çalıştırma (`yarn twenty dev:function:exec`)
 
@@ -20,8 +38,9 @@ yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 # Pass a JSON payload
 yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
 
-# Execute the post-install function
+# Execute the install hooks
 yarn twenty dev:function:exec --postInstall
+yarn twenty dev:function:exec --preInstall
 ```
 
 ## Fonksiyon günlüklerini görüntüleme (`yarn twenty dev:function:logs`)
@@ -100,6 +119,12 @@ yarn twenty remote:list
 
 # Set the active remote
 yarn twenty remote:use <name>
+
+# Check that the active remote's authentication is still valid
+yarn twenty remote:status
+
+# Remove a remote
+yarn twenty remote:remove <name>
 ```
 
 Kimlik bilgileriniz `~/.twenty/config.json` içinde saklanır.

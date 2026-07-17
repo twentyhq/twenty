@@ -93,8 +93,15 @@ describe('useSetNextOnboardingStatus', () => {
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.SYNC_EMAIL);
   });
 
-  it('should create profile after syncing emails', () => {
+  it('should install apps after syncing emails', () => {
     const nextOnboardingStatus = renderHooks(OnboardingStatus.SYNC_EMAIL);
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.APPS_INSTALLATION);
+  });
+
+  it('should create profile after installing apps', () => {
+    const nextOnboardingStatus = renderHooks(
+      OnboardingStatus.APPS_INSTALLATION,
+    );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.PROFILE_CREATION);
   });
 
@@ -140,22 +147,6 @@ describe('useSetNextOnboardingStatus', () => {
 
   it('should require a plan after inviting the team when billing is enabled and the workspace has no subscription', () => {
     const nextOnboardingStatus = renderHooks(OnboardingStatus.INVITE_TEAM, {
-      isBillingEnabled: true,
-      withSubscription: false,
-    });
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.PLAN_REQUIRED);
-  });
-
-  it('should complete after booking onboarding when the workspace already has a subscription', () => {
-    const nextOnboardingStatus = renderHooks(OnboardingStatus.BOOK_ONBOARDING, {
-      isBillingEnabled: true,
-      withSubscription: true,
-    });
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
-  });
-
-  it('should require a plan after booking onboarding when billing is enabled and the workspace has no subscription', () => {
-    const nextOnboardingStatus = renderHooks(OnboardingStatus.BOOK_ONBOARDING, {
       isBillingEnabled: true,
       withSubscription: false,
     });

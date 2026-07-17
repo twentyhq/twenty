@@ -5,6 +5,7 @@ import { join, relative } from 'path';
 import { SyncableEntity } from 'twenty-shared/application';
 import {
   FieldMetadataType,
+  PageLayoutType,
   RelationOnDeleteAction,
   RelationType,
   ViewType,
@@ -12,6 +13,7 @@ import {
 import { assertUnreachable } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { getApplicationUniversalIdentifierOrThrow } from '@/cli/utilities/application/get-application-universal-identifier-or-throw';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { convertToLabel } from '@/cli/utilities/entity/entity-label';
 import { appendServerVariablesToAppConfig } from '@/cli/utilities/file/append-server-variables.util';
@@ -44,6 +46,13 @@ export class EntityAddCommand {
 
   async execute(entityType?: SyncableEntity, path?: string): Promise<void> {
     try {
+      // Generated files embed identifiers derived from the application
+      // universal identifier, so scaffolding is blocked until it is defined.
+      const applicationUniversalIdentifier =
+        await getApplicationUniversalIdentifierOrThrow(
+          CURRENT_EXECUTION_DIRECTORY,
+        );
+
       const entity = entityType ?? (await this.getEntity());
 
       const entityName = this.getFolderName(entity);
@@ -54,7 +63,10 @@ export class EntityAddCommand {
 
       await ensureDir(appPath);
 
-      const { name, file } = await this.getEntityData(entity);
+      const { name, file } = await this.getEntityData(
+        entity,
+        applicationUniversalIdentifier,
+      );
 
       const filePath = join(appPath, this.getFileName(name, entity));
 
@@ -73,7 +85,11 @@ export class EntityAddCommand {
       );
 
       if (entity === SyncableEntity.Object) {
-        await this.promptAndCreateObjectCompanions(name, path);
+        await this.promptAndCreateObjectCompanions({
+          objectName: name,
+          applicationUniversalIdentifier,
+          customPath: path,
+        });
       }
 
       if (entity === SyncableEntity.ConnectionProvider) {
@@ -88,7 +104,10 @@ export class EntityAddCommand {
     }
   }
 
-  private async getEntityData(entity: SyncableEntity) {
+  private async getEntityData(
+    entity: SyncableEntity,
+    applicationUniversalIdentifier: string,
+  ) {
     switch (entity) {
       case SyncableEntity.Object: {
         const entityData = await this.getObjectData();
@@ -191,6 +210,7 @@ export class EntityAddCommand {
 
         const file = getViewBaseFile({
           name,
+          applicationUniversalIdentifier,
         });
 
         return { name, file };
@@ -217,8 +237,20 @@ export class EntityAddCommand {
       case SyncableEntity.PageLayout: {
         const name = await this.getEntityName(entity);
 
+        const { type } = await inquirer.prompt<{
+          type: PageLayoutType;
+        }>([
+          {
+            type: 'select',
+            name: 'type',
+            message: 'Select the page layout type:',
+            choices: Object.values(PageLayoutType),
+          },
+        ]);
+
         const file = getPageLayoutBaseFile({
           name,
+          type,
         });
         return { name, file };
       }
@@ -246,10 +278,15 @@ export class EntityAddCommand {
     }
   }
 
-  private async promptAndCreateObjectCompanions(
-    objectName: string,
-    customPath?: string,
-  ): Promise<void> {
+  private async promptAndCreateObjectCompanions({
+    objectName,
+    applicationUniversalIdentifier,
+    customPath,
+  }: {
+    objectName: string;
+    applicationUniversalIdentifier: string;
+    customPath?: string;
+  }): Promise<void> {
     const { createCompanions } = await inquirer.prompt<{
       createCompanions: boolean;
     }>([
@@ -273,6 +310,7 @@ export class EntityAddCommand {
       name: `all-${kebabCase(objectName)}`,
       universalIdentifier: viewUniversalIdentifier,
       objectUniversalIdentifier: this.lastObjectUniversalIdentifier,
+      applicationUniversalIdentifier,
       fields: this.lastNameFieldUniversalIdentifier
         ? [
             {
@@ -322,6 +360,7 @@ export class EntityAddCommand {
       name: `${kebabCase(objectName)}-record-page-fields`,
       universalIdentifier: fieldsWidgetViewUniversalIdentifier,
       objectUniversalIdentifier: this.lastObjectUniversalIdentifier,
+      applicationUniversalIdentifier,
       type: ViewType.FIELDS_WIDGET,
       fields: recordPageFieldsViewFields,
     });

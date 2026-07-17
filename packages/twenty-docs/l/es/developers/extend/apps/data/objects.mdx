@@ -86,6 +86,22 @@ export default defineObject({
 **Los campos base se añaden automáticamente.** Cuando defines un objeto personalizado, Twenty crea campos estándar como `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` y `deletedAt` por ti. No necesitas declararlos en tu matriz `fields`, solo tus campos personalizados. Puedes sobrescribir un campo predeterminado declarando uno con el mismo nombre, pero esto rara vez es una buena idea.
 </Note>
 
+## Tipos de campo
+
+El conjunto completo de valores de `FieldType`, exportados desde `twenty-sdk/define`:
+
+| Categoría                    | Tipos                                                                                                                             |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Texto                        | `TEXT`, `RICH_TEXT`, `ARRAY` (de cadenas), `RAW_JSON`                                                                             |
+| Numérico                     | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (precisión arbitraria), `RATING`, `POSITION` |
+| Fechas                       | `DATE`, `DATE_TIME`                                                                                                               |
+| Selección                    | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                               |
+| Compuesto                    | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES`                                                 |
+| Identificadores y relaciones | `UUID`, `RELATION`, `MORPH_RELATION` (ver [Relations](/l/es/developers/extend/apps/data/relations))                                    |
+| Sistema                      | `TS_VECTOR` (vector de búsqueda de texto completo, gestionado por el servidor)                                                    |
+
+Los tipos compuestos almacenan múltiples subcampos (por ejemplo, `FULL_NAME` = nombre + apellido; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` y `MULTI_SELECT` requieren un arreglo `options` como en el ejemplo anterior.
+
 ## Valores predeterminados
 
 Los valores predeterminados de cadenas literales deben ir entre comillas simples **dentro** de la cadena — `defaultValue: "'Draft'"`, no `defaultValue: "Draft"`. Por eso el campo `status` anterior utiliza `` `'${PostCardStatus.DRAFT}'` ``.
@@ -96,6 +112,27 @@ Las cadenas sin comillas se reservan para valores predeterminados calculados, ev
 * `'now'` — la marca de tiempo actual (para campos `DATE_TIME`)
 
 La misma convención se aplica a los subcampos de tipo cadena de los valores predeterminados compuestos (por ejemplo, `{ source: "'MANUAL'" }` en un campo `ACTOR`) y a los valores de `SELECT`/`MULTI_SELECT`. Un valor predeterminado de tipo cadena literal dejado sin comillas genera una advertencia cuando se compila tu aplicación.
+
+## Nulabilidad
+
+`isNullable` controla si un campo acepta `NULL`. Su valor predeterminado es `true` — omítelo para campos opcionales. Configura `isNullable: false` para hacer que un campo sea obligatorio a nivel de base de datos.
+
+Los cambios en `isNullable` se aplican en cada sincronización, incluidas las sincronizaciones que actualizan un campo existente; de este modo, puedes cambiar la nulabilidad de un campo editando el manifiesto y sincronizando de nuevo.
+
+<Note>
+**Hacer que un campo existente no acepte valores nulos requiere un valor predeterminado.** Cuando cambies un campo a `isNullable: false`, también debes proporcionar un `defaultValue` no nulo. El valor predeterminado rellena cualquier fila `NULL` existente antes de que se aplique la restricción `NOT NULL`; sin él, la sincronización falla con `Default value cannot be null for non-nullable fields`. Los campos de relación y los campos `TS_VECTOR` siempre aceptan valores nulos, por lo que `isNullable` no tiene ningún efecto en ellos.
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
 
 ## ¿Qué sigue?
 

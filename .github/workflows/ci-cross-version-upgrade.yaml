@@ -221,6 +221,9 @@ jobs:
       - name: Server / Build
         run: npx nx build twenty-server
 
+      - name: Server / Flush cache
+        run: npx nx run twenty-server:command-no-deps -- cache:flush
+
       - name: Server / Run upgrade command
         run: npx nx run twenty-server:command-no-deps -- upgrade --verbose
 

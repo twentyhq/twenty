@@ -5,7 +5,8 @@
   "engines": {
     "node": "^24.5.0",
     "npm": "please-use-yarn",
-    "yarn": ">=4.0.2"
+    "yarn": ">=4.0.2",
+    "twenty": ">=2.19.0"
   },
   "keywords": [],
   "packageManager": "yarn@4.13.0",
@@ -25,8 +26,8 @@
   },
   "dependencies": {
     "react-markdown": "^10.1.0",
-    "twenty-client-sdk": "2.19.0",
-    "twenty-sdk": "2.19.0",
+    "twenty-client-sdk": "2.21.0",
+    "twenty-sdk": "2.21.0",
     "zod": "^4.1.11"
   },
   "devDependencies": {

@@ -160,6 +160,9 @@
             "appsGettingStarted": {
               "label": "البدء"
             },
+            "appsTutorial": {
+              "label": "البرنامج التعليمي"
+            },
             "appsConfig": {
               "label": "التهيئة"
             },
@@ -174,6 +177,9 @@
             },
             "appsOperations": {
               "label": "العمليات"
+            },
+            "appsTranslations": {
+              "label": "الترجمات"
             }
           }
         },

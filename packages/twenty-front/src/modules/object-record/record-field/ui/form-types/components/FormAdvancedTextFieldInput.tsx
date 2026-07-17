@@ -36,7 +36,7 @@ const StyledAdvancedTextFieldFieldContainer = styled.div`
 const StyledAdvancedTextFieldInnerContainer = styled.div`
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
 
   display: flex;
@@ -61,7 +61,7 @@ const StyledEditorActionButtonContainer = styled.div<{
 const StyledFullScreenEditorContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
   border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.md};
   flex: 1;
   min-height: 0;
   overflow-y: auto;

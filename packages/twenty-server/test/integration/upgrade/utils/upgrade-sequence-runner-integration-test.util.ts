@@ -2,8 +2,8 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
 import { config } from 'dotenv';
-import { DataSource, type Repository } from 'typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { DataSource, type Repository } from 'typeorm';
 
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -16,10 +16,10 @@ import {
   type WorkspaceUpgradeStep,
 } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
-import { UpgradeAwareEntityMetadataAdapter } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-entity-metadata.adapter';
 import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
 import { UpgradeMigrationEntity } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
+import { UpgradeAwareEntityMetadataAdapter } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-entity-metadata.adapter';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_EMPTY_WORKSPACE_3_ID,
@@ -200,10 +200,10 @@ export const createUpgradeSequenceRunnerIntegrationTestModule = async () => {
       {
         provide: WorkspaceVersionService,
         useValue: {
-          getActiveOrSuspendedWorkspaceIds: jest
+          getProvisionedWorkspaceIds: jest
             .fn()
             .mockImplementation(async () => mockActiveWorkspaceIds),
-          hasActiveOrSuspendedWorkspaces: jest
+          hasProvisionedWorkspaces: jest
             .fn()
             .mockImplementation(async () => mockActiveWorkspaceIds.length > 0),
         },
@@ -396,6 +396,57 @@ export const seedWorkspaceMigration = async (
       ],
     );
   }
+};
+
+export const snapshotUpgradeMigrations = async (
+  dataSource: DataSource,
+): Promise<UpgradeMigrationEntity[]> =>
+  dataSource.query(
+    `SELECT id, name, status, attempt, "executedByVersion", "errorMessage", "isInitial", "workspaceId", "createdAt"
+     FROM core."upgradeMigration"`,
+  );
+
+export const restoreUpgradeMigrations = async (
+  dataSource: DataSource,
+  rows: UpgradeMigrationEntity[],
+): Promise<void> => {
+  await dataSource.query('DELETE FROM core."upgradeMigration"');
+
+  if (rows.length === 0) {
+    return;
+  }
+
+  const columnsPerRow = 9;
+  const valueGroups: string[] = [];
+  const args: unknown[] = [];
+  let paramIndex = 1;
+
+  for (const row of rows) {
+    const placeholders = Array.from(
+      { length: columnsPerRow },
+      () => `$${paramIndex++}`,
+    );
+
+    valueGroups.push(`(${placeholders.join(', ')})`);
+    args.push(
+      row.id,
+      row.name,
+      row.status,
+      row.attempt,
+      row.executedByVersion,
+      row.errorMessage,
+      row.isInitial,
+      row.workspaceId,
+      row.createdAt,
+    );
+  }
+
+  await dataSource.query(
+    `INSERT INTO core."upgradeMigration"
+       (id, name, status, attempt, "executedByVersion", "errorMessage", "isInitial", "workspaceId", "createdAt")
+     VALUES ${valueGroups.join(', ')}`,
+    args,
+  );
 };
 
 export type ExecutedMigrationRecord = {

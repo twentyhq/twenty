@@ -11,6 +11,8 @@ import { type RemovedCallRecorderOccurrence } from 'src/logic-functions/types/re
 import { computeRealMeetingKey } from 'src/logic-functions/domain/compute-real-meeting-key.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
+import { resolveConferenceLinkUrl } from 'src/logic-functions/domain/resolve-conference-link-url.util';
+import { stripRestrictedFieldValue } from 'src/logic-functions/data/strip-restricted-field-value.util';
 
 const CALENDAR_EVENT_OBJECT_NAME = 'calendarEvent';
 
@@ -18,14 +20,20 @@ const CALL_RECORDER_RELEVANT_CALENDAR_EVENT_FIELDS = [
   'title',
   'callRecorderPreference',
   'conferenceLink',
+  'location',
+  'description',
   'startsAt',
   'endsAt',
   'isCanceled',
   'iCalUid',
 ];
 
+// location and description are key fields because the conference link is
+// parsed out of them when the structured conferenceLink is empty.
 const CALL_RECORDER_KEY_CALENDAR_EVENT_FIELDS = [
   'conferenceLink',
+  'location',
+  'description',
   'startsAt',
   'iCalUid',
 ];
@@ -33,6 +41,8 @@ const CALL_RECORDER_KEY_CALENDAR_EVENT_FIELDS = [
 type CalendarEventForDatabaseEvent = {
   id: string;
   conferenceLink?: { primaryLinkUrl?: string | null } | null;
+  location?: string | null;
+  description?: string | null;
   iCalUid?: string | null;
   startsAt?: string | null;
 };
@@ -156,7 +166,15 @@ const buildRemovedOccurrence = (
     calendarEventId: calendarEvent.id,
     realMeetingKey: computeRealMeetingKey({
       calendarEventId: calendarEvent.id,
-      conferenceLinkUrl: calendarEvent.conferenceLink?.primaryLinkUrl,
+      conferenceLinkUrl: resolveConferenceLinkUrl({
+        conferenceLinkUrl: calendarEvent.conferenceLink?.primaryLinkUrl,
+        location: stripRestrictedFieldValue(
+          calendarEvent.location ?? undefined,
+        ),
+        description: stripRestrictedFieldValue(
+          calendarEvent.description ?? undefined,
+        ),
+      }),
       iCalUid: calendarEvent.iCalUid ?? undefined,
       startsAt: calendarEvent.startsAt ?? undefined,
     }),

@@ -11,7 +11,9 @@ import {
   SidePanelPages,
   type EnqueueSnackbarParams,
 } from 'twenty-shared/types';
+import { type AppLocale } from 'twenty-shared/translations';
 
+import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
 import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
@@ -26,6 +28,7 @@ import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFron
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useOpenRichTextInSidePanel } from '@/side-panel/hooks/useOpenRichTextInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -62,6 +65,7 @@ export const useFrontComponentExecutionContext = ({
     frontComponentId,
   });
   const { openConfirmationModal } = useCommandMenuConfirmationModal();
+  const { openAskAiPageWithPreprompt } = useOpenAskAiPageWithPreprompt();
   const { navigateSidePanel } = useNavigateSidePanel();
   const { openRecordInSidePanel: openRecordInSidePanelInternal } =
     useOpenRecordInSidePanel();
@@ -126,9 +130,19 @@ export const useFrontComponentExecutionContext = ({
   const openSidePanelPage: FrontComponentHostCommunicationApi['openSidePanelPage'] =
     async (params) => {
       if (params.page === SidePanelPages.ViewRecord) {
-        const { recordId, objectNameSingular, resetNavigationStack } = params;
+        const { recordId, objectNameSingular, tab, resetNavigationStack } =
+          params;
 
         if (isMobile || !canOpenObjectInSidePanel(objectNameSingular)) {
+          if (isDefined(tab)) {
+            setRecordPageActiveTabId({
+              recordId,
+              objectNameSingular,
+              tabId: tab,
+              store,
+            });
+          }
+
           await navigate(AppPath.RecordShowPage, {
             objectNameSingular,
             objectRecordId: recordId,
@@ -140,6 +154,7 @@ export const useFrontComponentExecutionContext = ({
         openRecordInSidePanelInternal({
           recordId,
           objectNameSingular,
+          tab,
           resetNavigationStack,
         });
 
@@ -192,6 +207,24 @@ export const useFrontComponentExecutionContext = ({
         return;
       }
 
+      if (
+        params.page === SidePanelPages.AskAI &&
+        isDefined(params.preprompt) &&
+        isNonEmptyString(params.preprompt.text)
+      ) {
+        openAskAiPageWithPreprompt({
+          text: params.preprompt.text,
+          mode: params.preprompt.mode,
+          model: params.preprompt.model,
+        });
+
+        if (params.shouldResetSearchState === true) {
+          setSidePanelSearch('');
+        }
+
+        return;
+      }
+
       navigateSidePanel({
         page: params.page,
         pageTitle: params.pageTitle,
@@ -204,7 +237,12 @@ export const useFrontComponentExecutionContext = ({
     };
 
   const openCommandConfirmationModal: FrontComponentHostCommunicationApi['openCommandConfirmationModal'] =
-    async ({ title, subtitle, confirmButtonText, confirmButtonAccent }) => {
+    async ({
+      title,
+      subtitle,
+      confirmButtonText,
+      confirmButtonAccent = 'danger',
+    }) => {
       openConfirmationModal({
         caller: { type: 'frontComponent', frontComponentId },
         title,
@@ -252,7 +290,9 @@ export const useFrontComponentExecutionContext = ({
     recordId: selectedRecordIds?.length === 1 ? selectedRecordIds[0] : null,
     selectedRecordIds: selectedRecordIds ?? [],
     colorScheme,
-    locale: i18n.locale,
+    // i18n.locale is a Lingui string; the host is always configured with the
+    // APP_LOCALES set, so it is a valid AppLocale.
+    locale: i18n.locale as AppLocale,
   };
 
   const unmountFrontComponent: FrontComponentHostCommunicationApi['unmountFrontComponent'] =

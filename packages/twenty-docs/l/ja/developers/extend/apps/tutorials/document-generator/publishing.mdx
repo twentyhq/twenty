@@ -1,0 +1,136 @@
+---
+title: 6. 公開
+icon: rocket
+description: マーケットプレイスのメタデータを追加し、アプリを公開します。
+---
+
+アプリは動作します。 最後のステップは、マーケットプレイスのためにそれを説明し、公開することです。
+
+## マーケットプレイスのメタデータを追加
+
+[アプリケーション config](/l/ja/developers/extend/apps/config/application) は、マーケットプレイスに表示される
+アイデンティティを持ちます。これは、作成者、カテゴリ、ロゴ、サポート
+リンクです。 `public/`にロゴを入れて、`logo`で参照してください。
+
+```ts filename="src/application-config.ts"
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  displayName: 'Document Generator',
+  description:
+    'Create reusable document templates and generate personalized documents from your CRM records.',
+  logo: 'public/document-generator.svg',
+  author: 'Twenty',
+  category: 'Productivity',
+  websiteUrl: 'https://docs.twenty.com/l/ja/developers/extend/apps',
+  termsUrl: 'https://www.twenty.com/terms',
+  emailSupport: 'contact@twenty.com',
+  issueReportUrl: 'https://github.com/twentyhq/twenty/issues',
+});
+```
+
+<Tip>
+既定のロールは、専用のファイル内で `defineApplicationRole()` を使って宣言します。ここでは `defaultRoleUniversalIdentifier` を渡す必要はもうありません。
+</Tip>
+
+`package.json`に`20app`キーワードを追加すると、アプリが見つかります。
+
+```json filename="package.json"
+{ "keywords": ["twenty-app"] }
+```
+
+## ギャラリースクリーンショットを追加
+
+マーケットプレイスのリストはスクリーンショットで自分自身を販売します。
+`public/gallery/`にPNGをいくつかドロップし、`galleryImages`で参照します。リストページの
+ギャラリーとして表示されます。 行列の順序で入力します。
+
+```ts filename="src/application-config.ts"
+export default defineApplication({
+  // ...identity from above
+  galleryImages: [
+    'public/gallery/01-generated-document.png',
+    'public/gallery/02-command-menu.png',
+    'public/gallery/03-template-editor.png',
+    'public/gallery/04-documents.png',
+  ],
+});
+```
+
+<Tip>
+ペイオフでリード: 最初のスクリーンショットを完成結果(生成された
+ドキュメント)にし、それがどのようにトリガーされ、作成されたかを表示します。 鮮明で高解像度の
+キャプチャを使用する — これはユーザーが最初に目にするものです。
+</Tip>
+
+`README.md` にも同じ処理を与えます。npm と GitHub のトップページです。
+値のプロポジションとスクリーンショットで開き、見出しの機能
+を一覧表示してから、ビルドの詳細を折り目以下に保ちます。
+
+## 出荷前に確認
+
+CI と同じゲートを実行します。
+
+```bash filename="Terminal"
+yarn lint          # oxlint
+yarn typecheck     # tsgo
+yarn test:unit     # unit tests
+yarn twenty plan   # preview the metadata diff
+```
+
+このプランは、適用せずにサーバー上で何が変わるかを正確に出力します。
+最終確認として有用です。
+[Testing](/l/ja/developers/extend/apps/operations/testing) と
+[Syncing & recovery](/l/ja/developers/extend/apps/operations/sync-and-recovery) を参照してください。
+
+## 公開
+
+```bash filename="Terminal"
+# Public app → npm (default)
+yarn twenty app:publish
+
+# Or deploy privately to a specific server's registry
+yarn twenty app:publish --private -r <remote>
+```
+
+`app:publish` はデフォルトで npm にビルドおよび公開します。`--private` は代わりに
+tarball を Twenty サーバーのプライベートレジストリにアップロードします。 公開されたアプリ
+をマーケットプレイスで表示するには、カタログ同期をトリガーします。
+
+```bash filename="Terminal"
+yarn twenty dev:catalog-sync -r <remote>
+```
+
+詳細とリリースのチェックリスト:
+[Publishing](/l/ja/developers/extend/apps/operations/publishing).
+
+## あなたはアプリを構築しました 🎉
+
+6つのチャプターでは、SDKのほとんどを使用しました。
+
+* **データをモデル化するためのオブジェクト、フィールド、リレーション**
+* **AIツール**、**ワークフローアクション**、**HTTPルート**として公開される**ロジック関数**
+* **UIの表示、ナビゲーション、コマンド、フロントコンポーネント**
+* 自然言語生成のための **エージェント + スキル**
+* **マーケットプレースのメタデータ** とパブリッシュフロー
+
+完成したアプリは
+[`packages/20apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator)にあります。
+
+## 次の場所へ
+
+<CardGroup cols={2}>
+  <Card title="データ参照" icon="database" href="/l/ja/developers/extend/apps/data/overview">
+    すべてのフィールドタイプ、リレーション、インデックスオプション。
+  </Card>
+  <Card title="ロジックリファレンス" icon="bolt" href="/l/ja/developers/extend/apps/logic/overview">
+    Cronとdatabase-event トリガー、キー値ストア、OAuth 接続。
+  </Card>
+  <Card title="レイアウト参照" icon="table-columns" href="/l/ja/developers/extend/apps/layout/overview">
+    ページレイアウト、ダッシュボードウィジェット、およびより多くのUIサーフェス。
+  </Card>
+  <Card title="オペレーション" icon="rocket" href="/l/ja/developers/extend/apps/operations/overview">
+    CLI、テスト、リモコン、CI。
+  </Card>
+</CardGroup>

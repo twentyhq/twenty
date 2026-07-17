@@ -86,6 +86,22 @@ export default defineObject({
 **Základní pole jsou přidána automaticky.** Když definujete vlastní objekt, Twenty pro vás vytvoří standardní pole jako `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` a `deletedAt`. Nemusíte je uvádět v poli `fields` — pouze svá vlastní pole. Výchozí pole můžete přepsat tak, že deklarujete pole se stejným názvem, ale jen zřídka je to dobrý nápad.
 </Note>
 
+## Typy polí
+
+Úplná sada hodnot `FieldType`, exportovaných z `twenty-sdk/define`:
+
+| Kategorie               | Typy                                                                                                                            |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Text                    | `TEXT`, `RICH_TEXT`, `ARRAY` (řetězců), `RAW_JSON`                                                                              |
+| Číselné                 | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (libovolná přesnost), `RATING`, `POSITION` |
+| Datumy                  | `DATE`, `DATE_TIME`                                                                                                             |
+| Výběr                   | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                             |
+| Složené                 | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES`                                               |
+| Identifikátory a relace | `UUID`, `RELATION`, `MORPH_RELATION` (viz [Relations](/l/cs/developers/extend/apps/data/relations))                                  |
+| Systém                  | `TS_VECTOR` (vektor pro fulltextové vyhledávání, spravovaný serverem)                                                           |
+
+Složené typy ukládají více podpolí (např. `FULL_NAME` = křestní jméno + příjmení; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` a `MULTI_SELECT` vyžadují pole `options`, jak je ukázáno v příkladu výše.
+
 ## Výchozí hodnoty
 
 Výchozí textové hodnoty musí být uzavřené v jednoduchých uvozovkách **uvnitř** řetězce — `defaultValue: "'Draft'"`, ne `defaultValue: "Draft"`. Proto pole `status` výše používá `` `'${PostCardStatus.DRAFT}'` ``.
@@ -96,6 +112,27 @@ Neuzavřené (necitované) řetězce jsou vyhrazené pro vypočítané výchozí
 * `'now'` — aktuální časové razítko (pro pole `DATE_TIME`)
 
 Stejná konvence platí pro řetězcová podpola složených výchozích hodnot (např. `{ source: "'MANUAL'" }` u pole `ACTOR`) a pro hodnoty `SELECT`/`MULTI_SELECT`. Doslovná řetězcová výchozí hodnota ponechaná bez uvozovek vyvolá při sestavení aplikace varování.
+
+## Možnost hodnoty NULL
+
+`isNullable` určuje, zda pole přijímá `NULL`. Výchozí hodnota je `true` — pro volitelná pole ji můžete vynechat. Nastavte `isNullable: false`, aby bylo pole vyžadováno na úrovni databáze.
+
+Změny `isNullable` se použijí při každé synchronizaci, včetně těch, které aktualizují existující pole — takže můžete změnit, zda pole přijímá hodnotu NULL, úpravou manifestu a opětovnou synchronizací.
+
+<Note>
+**Změna existujícího pole tak, aby neumožňovalo hodnotu NULL, vyžaduje výchozí hodnotu.** Když změníte pole na `isNullable: false`, musíte také zadat nenulovou hodnotu `defaultValue`. Výchozí hodnota doplní všechny existující řádky s hodnotou `NULL` ještě předtím, než se uplatní omezení `NOT NULL`; bez ní synchronizace selže s chybou `Default value cannot be null for non-nullable fields`. Relační pole a pole typu `TS_VECTOR` vždy umožňují hodnotu NULL, takže na ně `isNullable` nemá žádný efekt.
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
 
 ## Co dál
 

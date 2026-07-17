@@ -51,8 +51,7 @@ export default defineLogicFunction({
 ```
 
 Tipos de gatilho disponíveis:
-* **httpRoute**: Expõe sua função em um caminho e método HTTP **no endpoint `/s/`**:
-> por exemplo, `path: '/post-card/create'` é acessível em `https://your-twenty-server.com/s/post-card/create`
+* **httpRoute**: Expõe sua função em um caminho e método HTTP. No código do app, prefixe o caminho da rota com `/s/` ao usar `RestApiClient`; a URL implantada usa a base injetada `TWENTY_FUNCTIONS_URL` (ou `\<server-url>/s` quando ela não está definida).
 
 <Note>
 Para invocar uma função de lógica acionada por rota a partir de um componente de front-end (headless), consulte [Chamando uma função de lógica](/l/pt/developers/extend/apps/layout/front-components#calling-a-logic-function).

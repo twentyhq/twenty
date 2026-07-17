@@ -27,6 +27,7 @@ import {
 } from './PageLayoutTestWrapper';
 
 jest.mock('uuid', () => ({
+  ...jest.requireActual('uuid'),
   v4: jest.fn(),
 }));
 

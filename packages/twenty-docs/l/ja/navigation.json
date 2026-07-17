@@ -160,6 +160,9 @@
             "appsGettingStarted": {
               "label": "始めに"
             },
+            "appsTutorial": {
+              "label": "チュートリアル"
+            },
             "appsConfig": {
               "label": "設定"
             },
@@ -174,6 +177,9 @@
             },
             "appsOperations": {
               "label": "オペレーション"
+            },
+            "appsTranslations": {
+              "label": "翻訳"
             }
           }
         },

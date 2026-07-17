@@ -51,8 +51,7 @@ export default defineLogicFunction({
 ```
 
 Tipos de desencadenadores disponibles:
-* **httpRoute**: Expone tu función en una ruta y método HTTP **bajo el endpoint `/s/`**:
-> p. ej., `path: '/post-card/create'` se puede invocar en `https://your-twenty-server.com/s/post-card/create`
+* **httpRoute**: Expone tu función en una ruta y método HTTP. En el código de la aplicación, añade el prefijo `/s/` a la ruta cuando uses `RestApiClient`; la URL desplegada utiliza la base inyectada `TWENTY_FUNCTIONS_URL` (o `\<server-url>/s` cuando no está configurada).
 
 <Note>
 Para invocar una función de lógica activada por una ruta desde un componente de frontend (headless), consulta [Llamar a una función de lógica](/l/es/developers/extend/apps/layout/front-components#calling-a-logic-function).

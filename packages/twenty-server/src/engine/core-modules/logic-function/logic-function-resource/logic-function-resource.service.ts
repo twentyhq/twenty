@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import {
   getLogicFunctionSeedProjectFiles,
   LogicFunctionSeedProjectFile,

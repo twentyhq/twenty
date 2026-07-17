@@ -5,6 +5,7 @@ import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { useIncrementalDeleteManyRecords } from '@/object-record/hooks/useIncrementalDeleteManyRecords';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
+import { PLACEHOLDER_RECORD_INDEX_ID } from '@/object-record/record-index/constants/PlaceholderRecordIndexId';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
@@ -14,18 +15,20 @@ export const DeleteRecordsCommand = () => {
   const { recordIndexId, objectMetadataItem, selectedRecords, graphqlFilter } =
     useHeadlessCommandContextApi();
 
-  if (!isDefined(recordIndexId) || !isDefined(objectMetadataItem)) {
-    throw new Error(
-      'Record index ID and object metadata are required to delete records',
-    );
+  if (!isDefined(objectMetadataItem)) {
+    throw new Error('Object metadata is required to delete records');
   }
 
   const recordId = selectedRecords[0]?.id;
 
-  const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
+  const { resetTableRowSelection } = useResetTableRowSelection(
+    recordIndexId ?? PLACEHOLDER_RECORD_INDEX_ID,
+  );
 
   const { removeSelectedRecordsFromRecordBoard } =
-    useRemoveSelectedRecordsFromRecordBoard(recordIndexId);
+    useRemoveSelectedRecordsFromRecordBoard(
+      recordIndexId ?? PLACEHOLDER_RECORD_INDEX_ID,
+    );
 
   const noMatchFilter: RecordGqlOperationFilter = { id: { in: [] } };
 
@@ -45,8 +48,10 @@ export const DeleteRecordsCommand = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
 
   const handleExecute = async () => {
-    removeSelectedRecordsFromRecordBoard();
-    resetTableRowSelection();
+    if (isDefined(recordIndexId)) {
+      removeSelectedRecordsFromRecordBoard();
+      resetTableRowSelection();
+    }
     closeSidePanelMenu();
 
     if (isDefined(recordId)) {
