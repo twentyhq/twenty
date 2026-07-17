@@ -4,7 +4,6 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import {
   IconArrowBarToDown,
   IconPinned,
-  IconRefresh,
   IconReload,
   IconShield,
 } from 'twenty-ui/icon';
@@ -14,7 +13,6 @@ import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 import {
   BackfillApplicationInstallationDocument,
   UpdateAdminApplicationRegistrationDocument,
-  UpgradeRegistrationApplicationsDocument,
 } from '~/generated-admin/graphql';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -48,8 +46,6 @@ const BACKFILL_INSTALLATION_MODAL_ID =
 
 const BACKFILL_BUTTON_ID = 'backfill-application-installation-button';
 
-const UPGRADE_APPLICATIONS_MODAL_ID = 'upgrade-registration-applications-modal';
-
 export const SettingsAdminApplicationRegistrationGeneralToggles = ({
   registration,
 }: {
@@ -71,32 +67,6 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
     BackfillApplicationInstallationDocument,
     { client: apolloAdminClient },
   );
-
-  const [isUpgrading, setIsUpgrading] = useState(false);
-
-  const [upgradeApplications] = useMutation(
-    UpgradeRegistrationApplicationsDocument,
-    { client: apolloAdminClient },
-  );
-
-  const handleUpgrade = async () => {
-    setIsUpgrading(true);
-    try {
-      await upgradeApplications({
-        variables: { applicationRegistrationId: registration.id },
-      });
-      enqueueSuccessSnackBar({
-        message: t`Upgrade started. Installed apps will be upgraded to the latest version in the background.`,
-      });
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to start upgrade`,
-      });
-    } finally {
-      setIsUpgrading(false);
-      closeModal(UPGRADE_APPLICATIONS_MODAL_ID);
-    }
-  };
 
   const handleBackfill = async () => {
     setIsBackfilling(true);
@@ -180,7 +150,7 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
         <StyledButtonWrapper id={BACKFILL_BUTTON_ID}>
           <Button
             Icon={IconReload}
-            title={t`Install latest version on all workspaces`}
+            title={t`Install on all workspaces`}
             variant="secondary"
             onClick={() => openModal(BACKFILL_INSTALLATION_MODAL_ID)}
             disabled={isBackfilling || !registration.isPreInstalled}
@@ -196,31 +166,15 @@ export const SettingsAdminApplicationRegistrationGeneralToggles = ({
             delay={TooltipDelay.shortDelay}
           />
         )}
-        <Button
-          Icon={IconRefresh}
-          title={t`Upgrade installed apps on all workspaces`}
-          variant="secondary"
-          onClick={() => openModal(UPGRADE_APPLICATIONS_MODAL_ID)}
-          disabled={isUpgrading}
-        />
       </StyledBackfillContainer>
       <ConfirmationModal
         modalInstanceId={BACKFILL_INSTALLATION_MODAL_ID}
-        title={t`Backfill installation`}
-        subtitle={t`This will install the latest version of "${registration.name}" on all existing active and suspended workspaces, upgrading any workspace that already has an older version. It runs as a background job and may take a while. Continue?`}
+        title={t`Install on all workspaces`}
+        subtitle={t`This will install the latest version of "${registration.name}" on all existing active and suspended workspaces, including the ones that don't have it yet. It runs as a background job and may take a while. Continue?`}
         onConfirmClick={handleBackfill}
-        confirmButtonText={t`Backfill`}
+        confirmButtonText={t`Install`}
         confirmButtonAccent="blue"
         loading={isBackfilling}
-      />
-      <ConfirmationModal
-        modalInstanceId={UPGRADE_APPLICATIONS_MODAL_ID}
-        title={t`Upgrade installed apps`}
-        subtitle={t`This will upgrade every workspace that has "${registration.name}" installed to its latest available version. It runs as a background job and may take a while. Continue?`}
-        onConfirmClick={handleUpgrade}
-        confirmButtonText={t`Upgrade`}
-        confirmButtonAccent="blue"
-        loading={isUpgrading}
       />
     </Section>
   );
