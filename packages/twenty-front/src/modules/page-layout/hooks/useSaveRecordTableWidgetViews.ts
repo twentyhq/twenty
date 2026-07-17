@@ -6,11 +6,13 @@ import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/r
 import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { widgetUsesRecordTableView } from '@/page-layout/utils/widgetUsesRecordTableView';
+import { buildUpsertViewWidgetViewSettingsInput } from '@/page-layout/widgets/record-table/utils/buildUpsertViewWidgetViewSettingsInput';
 import { normalizeRecordTableWidgetViewFields } from '@/page-layout/widgets/record-table/utils/normalizeRecordTableWidgetViewFields';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import {
   type UpsertViewWidgetInput,
   type ViewFragmentFragment,
@@ -93,53 +95,21 @@ export const useSaveRecordTableWidgetViews = () => {
         const persistedView = recordTableWidgetViewPersisted[widget.id]?.view;
         const draftView = widgetViewDraft.view;
 
+        const draftViewSettings =
+          buildUpsertViewWidgetViewSettingsInput(draftView);
+
         const hasViewSettingsChanges =
           !isDefined(persistedView) ||
-          persistedView.type !== draftView.type ||
-          (persistedView.mainGroupByFieldMetadataId ?? null) !==
-            (draftView.mainGroupByFieldMetadataId ?? null) ||
-          persistedView.shouldHideEmptyGroups !==
-            draftView.shouldHideEmptyGroups ||
-          persistedView.openRecordIn !== draftView.openRecordIn ||
-          (persistedView.kanbanAggregateOperation ?? null) !==
-            (draftView.kanbanAggregateOperation ?? null) ||
-          (persistedView.kanbanAggregateOperationFieldMetadataId ?? null) !==
-            (draftView.kanbanAggregateOperationFieldMetadataId ?? null) ||
-          (persistedView.kanbanColumnWidth ?? null) !==
-            (draftView.kanbanColumnWidth ?? null) ||
-          (persistedView.calendarLayout ?? null) !==
-            (draftView.calendarLayout ?? null) ||
-          (persistedView.calendarFieldMetadataId ?? null) !==
-            (draftView.calendarFieldMetadataId ?? null) ||
-          (persistedView.calendarEndFieldMetadataId ?? null) !==
-            (draftView.calendarEndFieldMetadataId ?? null);
+          !isDeeplyEqual(
+            buildUpsertViewWidgetViewSettingsInput(persistedView),
+            draftViewSettings,
+          );
 
         const { data } = await upsertViewWidgetMutation({
           variables: {
             input: {
               widgetId: widget.id,
-              ...(hasViewSettingsChanges
-                ? {
-                    view: {
-                      type: draftView.type,
-                      mainGroupByFieldMetadataId:
-                        draftView.mainGroupByFieldMetadataId ?? null,
-                      shouldHideEmptyGroups: draftView.shouldHideEmptyGroups,
-                      openRecordIn: draftView.openRecordIn,
-                      kanbanAggregateOperation:
-                        draftView.kanbanAggregateOperation ?? null,
-                      kanbanAggregateOperationFieldMetadataId:
-                        draftView.kanbanAggregateOperationFieldMetadataId ??
-                        null,
-                      kanbanColumnWidth: draftView.kanbanColumnWidth ?? null,
-                      calendarLayout: draftView.calendarLayout ?? null,
-                      calendarFieldMetadataId:
-                        draftView.calendarFieldMetadataId ?? null,
-                      calendarEndFieldMetadataId:
-                        draftView.calendarEndFieldMetadataId ?? null,
-                    },
-                  }
-                : {}),
+              ...(hasViewSettingsChanges ? { view: draftViewSettings } : {}),
               viewFields: normalizedWidgetViewDraft.viewFields.map((field) => ({
                 fieldMetadataId: field.fieldMetadataId,
                 isVisible: field.isVisible,
