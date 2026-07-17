@@ -11,7 +11,7 @@
 //     --base-url https://api.mytwenty.com \
 //     --token <ADMIN_ACCESS_TOKEN> \
 //     --app <APPLICATION_UNIVERSAL_IDENTIFIER> \
-//     [--version 1.2.3] [--dry-run] [--force]
+//     [--version 1.2.3] [--dry-run] [--force] [--batch 20]
 //
 // Notes:
 //   --base-url is the server base URL (the one serving /graphql, /metadata, /admin-panel)
@@ -19,14 +19,22 @@
 //   In non-development environments, server-level impersonation requires the admin to
 //   have a verified 2FA method.
 
+import { createInterface } from 'node:readline/promises';
+
 const args = parseArgs(process.argv.slice(2));
 
 const BASE_URL = requireArg('base-url').replace(/\/$/, '');
-const ADMIN_TOKEN = requireArg('token');
+let ADMIN_TOKEN = requireArg('token');
 const APP_UNIVERSAL_IDENTIFIER = requireArg('app');
 const TARGET_VERSION = args['version'] ?? null;
 const DRY_RUN = Boolean(args['dry-run']);
 const FORCE = Boolean(args['force']);
+const BATCH_SIZE = args['batch'] === undefined ? 20 : Number(args['batch']);
+
+if (!Number.isInteger(BATCH_SIZE) || BATCH_SIZE < 1) {
+  console.error('--batch must be a positive integer');
+  process.exit(1);
+}
 
 const ADMIN_PANEL_ENDPOINT = `${BASE_URL}/admin-panel`;
 const METADATA_ENDPOINT = `${BASE_URL}/metadata`;
@@ -61,7 +69,7 @@ function requireArg(name) {
   if (typeof value !== 'string' || value.length === 0) {
     console.error(`Missing required argument --${name}`);
     console.error(
-      'Usage: node upgrade-app-across-workspaces.mjs --base-url <url> --token <admin-access-token> --app <universal-identifier> [--version <x.y.z>] [--dry-run] [--force]',
+      'Usage: node upgrade-app-across-workspaces.mjs --base-url <url> --token <admin-access-token> --app <universal-identifier> [--version <x.y.z>] [--dry-run] [--force] [--batch <n>]',
     );
     process.exit(1);
   }
@@ -80,6 +88,92 @@ function decodeJwtPayload(token) {
     return JSON.parse(Buffer.from(payloadPart, 'base64url').toString('utf8'));
   } catch {
     return {};
+  }
+}
+
+function isTokenExpired(token) {
+  const { exp } = decodeJwtPayload(token);
+
+  return typeof exp === 'number' && exp * 1000 <= Date.now() + 30_000;
+}
+
+async function promptForNewAdminToken(reason) {
+  if (!process.stdin.isTTY) {
+    throw new Error(`${reason} (re-run with a fresh --token)`);
+  }
+
+  const readline = createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  try {
+    while (true) {
+      const answer = (
+        await readline.question(`${reason}. Paste a new admin token: `)
+      ).trim();
+
+      if (answer.length > 0 && !isTokenExpired(answer)) {
+        return answer;
+      }
+
+      console.log('Token is empty or already expired, try again.');
+    }
+  } finally {
+    readline.close();
+  }
+}
+
+// Batched upgrades can hit an expired token concurrently; share one prompt so
+// stdin is not read by several questions at once.
+let adminTokenRefreshPromise = null;
+
+function refreshAdminToken(reason) {
+  adminTokenRefreshPromise ??= promptForNewAdminToken(reason)
+    .then((token) => {
+      ADMIN_TOKEN = token;
+    })
+    .finally(() => {
+      adminTokenRefreshPromise = null;
+    });
+
+  return adminTokenRefreshPromise;
+}
+
+async function ensureAdminToken() {
+  if (isTokenExpired(ADMIN_TOKEN)) {
+    await refreshAdminToken('Admin token has expired');
+  }
+
+  return ADMIN_TOKEN;
+}
+
+function isExpiredTokenError(error) {
+  return /expired/i.test(error.message);
+}
+
+// The admin resolver crashes (server-side) when an installation's workspace has
+// been soft-deleted: the workspace relation comes back null and it reads
+// `workspace.id`. It surfaces as this GraphQL error message.
+function isDeletedWorkspaceError(error) {
+  return /Cannot read properties of null/i.test(error.message);
+}
+
+async function adminGraphqlRequest({ endpoint, query, variables }) {
+  const token = await ensureAdminToken();
+
+  try {
+    return await graphqlRequest({ endpoint, token, query, variables });
+  } catch (error) {
+    if (!isExpiredTokenError(error)) {
+      throw error;
+    }
+
+    if (ADMIN_TOKEN === token) {
+      await refreshAdminToken('Admin token was rejected as expired');
+    }
+
+    return graphqlRequest({ endpoint, token: ADMIN_TOKEN, query, variables });
   }
 }
 
@@ -121,9 +215,8 @@ async function graphqlRequest({ endpoint, token, query, variables }) {
 }
 
 async function findApplicationRegistration() {
-  const data = await graphqlRequest({
+  const data = await adminGraphqlRequest({
     endpoint: ADMIN_PANEL_ENDPOINT,
-    token: ADMIN_TOKEN,
     query: `
       query FindRegistrations($searchTerm: String) {
         findAllApplicationRegistrations(searchTerm: $searchTerm, limit: 25, offset: 0) {
@@ -155,18 +248,13 @@ async function findApplicationRegistration() {
   return registration;
 }
 
-async function listInstalledWorkspaces(registrationId, version) {
-  const workspaces = [];
-  const limit = 100;
-  let offset = 0;
-  let hasMore = true;
-
-  while (hasMore && workspaces.length < 400) {
-    console.log('workspaces', workspaces.length);
-    console.log('offset', offset);
-    const data = await graphqlRequest({
+// Fetches one page, salvaging around the server-side crash on soft-deleted
+// workspaces: on that error the page is bisected until the poisoned rows are
+// isolated to single-row windows, which are skipped while healthy rows survive.
+async function fetchInstalledWorkspacesPage(registrationId, offset, limit) {
+  try {
+    const data = await adminGraphqlRequest({
       endpoint: ADMIN_PANEL_ENDPOINT,
-      token: ADMIN_TOKEN,
       query: `
         query InstalledWorkspaces($input: FindApplicationRegistrationInstalledWorkspacesInput!) {
           findAdminApplicationRegistrationInstalledWorkspaces(input: $input) {
@@ -182,22 +270,63 @@ async function listInstalledWorkspaces(registrationId, version) {
       variables: { input: { id: registrationId, limit, offset } },
     });
 
-    const page = data.findAdminApplicationRegistrationInstalledWorkspaces;
+    return data.findAdminApplicationRegistrationInstalledWorkspaces;
+  } catch (error) {
+    if (!isDeletedWorkspaceError(error)) {
+      throw error;
+    }
+
+    if (limit === 1) {
+      console.warn(
+        `  skipping installation at offset ${offset}: ${error.message} (workspace likely deleted)`,
+      );
+
+      return { workspaces: [], hasMore: true };
+    }
+
+    const half = Math.ceil(limit / 2);
+    const first = await fetchInstalledWorkspacesPage(
+      registrationId,
+      offset,
+      half,
+    );
+    const second = await fetchInstalledWorkspacesPage(
+      registrationId,
+      offset + half,
+      limit - half,
+    );
+
+    return {
+      workspaces: [...first.workspaces, ...second.workspaces],
+      hasMore: first.hasMore || second.hasMore,
+    };
+  }
+}
+
+async function listInstalledWorkspaces(registrationId, version) {
+  const workspaces = [];
+  const limit = 100;
+  let offset = 0;
+  let hasMore = true;
+
+  while (hasMore) {
+    const page = await fetchInstalledWorkspacesPage(
+      registrationId,
+      offset,
+      limit,
+    );
 
     workspaces.push(...page.workspaces.filter((w) => w.version !== version));
     hasMore = page.hasMore;
     offset += limit;
   }
 
-  console.log('workspaces', workspaces.map((w) => w.id).join(',\n'));
-
   return workspaces;
 }
 
 async function lookupWorkspaceUsers(workspaceId) {
-  const data = await graphqlRequest({
+  const data = await adminGraphqlRequest({
     endpoint: ADMIN_PANEL_ENDPOINT,
-    token: ADMIN_TOKEN,
     query: `
       query WorkspaceLookup($workspaceId: UUID!) {
         workspaceLookupAdminPanel(workspaceId: $workspaceId) {
@@ -221,9 +350,8 @@ async function lookupWorkspaceUsers(workspaceId) {
 }
 
 async function impersonateUser(userId, workspaceId) {
-  const data = await graphqlRequest({
+  const data = await adminGraphqlRequest({
     endpoint: METADATA_ENDPOINT,
-    token: ADMIN_TOKEN,
     query: `
       mutation Impersonate($userId: UUID!, $workspaceId: UUID!) {
         impersonate(userId: $userId, workspaceId: $workspaceId) {
@@ -250,9 +378,8 @@ async function exchangeLoginTokenForAccessToken(loginToken, workspaceUrls) {
   const origin = new URL(workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl)
     .origin;
 
-  const data = await graphqlRequest({
+  const data = await adminGraphqlRequest({
     endpoint: METADATA_ENDPOINT,
-    token: ADMIN_TOKEN,
     query: `
       mutation GetAuthTokensFromLoginToken($loginToken: String!, $origin: String!) {
         getAuthTokensFromLoginToken(loginToken: $loginToken, origin: $origin) {
@@ -299,7 +426,7 @@ async function upgradeWorkspace(workspace, adminUserId, adminWorkspaceId) {
   // The admin cannot impersonate themselves in their own workspace, but their own
   // token already carries the right workspace context to install directly.
   if (workspace.id === adminWorkspaceId) {
-    const application = await installApplication(ADMIN_TOKEN);
+    const application = await installApplication(await ensureAdminToken());
 
     console.log(
       `  OK ${workspaceLabel}: upgraded to ${application.version} (own workspace, no impersonation)`,
@@ -349,9 +476,7 @@ async function upgradeWorkspace(workspace, adminUserId, adminWorkspaceId) {
 }
 
 async function main() {
-  const adminJwtPayload = decodeJwtPayload(ADMIN_TOKEN);
-  const adminUserId = adminJwtPayload.sub ?? null;
-  const adminWorkspaceId = adminJwtPayload.workspaceId ?? null;
+  await ensureAdminToken();
 
   console.log(`Instance: ${BASE_URL}`);
   console.log(`Application: ${APP_UNIVERSAL_IDENTIFIER}`);
@@ -368,14 +493,12 @@ async function main() {
     targetVersion,
   );
 
-  console.log('workspaces', workspaces);
-
   console.log(`Found ${workspaces.length} workspace(s) with the app installed\n`);
 
   const results = { upgraded: 0, skipped: 0, failed: 0 };
   const failures = [];
 
-  for (const workspace of workspaces) {
+  const processWorkspace = async (workspace) => {
     const workspaceLabel = `${workspace.displayName ?? '(unnamed)'} [${workspace.id}]`;
 
     if (
@@ -387,7 +510,8 @@ async function main() {
         `  SKIP ${workspaceLabel}: already on ${targetVersion} (use --force to re-install)`,
       );
       results.skipped++;
-      continue;
+
+      return;
     }
 
     if (DRY_RUN) {
@@ -395,17 +519,38 @@ async function main() {
         `  DRY-RUN ${workspaceLabel}: would upgrade from ${workspace.version ?? 'unknown'} to ${targetVersion ?? 'latest'}`,
       );
       results.skipped++;
-      continue;
+
+      return;
     }
 
     try {
-      await upgradeWorkspace(workspace, adminUserId, adminWorkspaceId);
+      const adminJwtPayload = decodeJwtPayload(ADMIN_TOKEN);
+
+      await upgradeWorkspace(
+        workspace,
+        adminJwtPayload.sub ?? null,
+        adminJwtPayload.workspaceId ?? null,
+      );
       results.upgraded++;
     } catch (error) {
       console.error(`  FAIL ${workspaceLabel}: ${error.message}`);
       results.failed++;
       failures.push(workspaceLabel);
     }
+  };
+
+  for (
+    let batchStart = 0;
+    batchStart < workspaces.length;
+    batchStart += BATCH_SIZE
+  ) {
+    const batch = workspaces.slice(batchStart, batchStart + BATCH_SIZE);
+
+    console.log(
+      `Batch ${Math.floor(batchStart / BATCH_SIZE) + 1}/${Math.ceil(workspaces.length / BATCH_SIZE)} (${batch.length} workspace(s))`,
+    );
+
+    await Promise.all(batch.map(processWorkspace));
   }
 
   console.log(
