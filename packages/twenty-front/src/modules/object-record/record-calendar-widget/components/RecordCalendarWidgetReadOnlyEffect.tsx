@@ -20,6 +20,12 @@ export const RecordCalendarWidgetReadOnlyEffect = ({
   // briefly accept interaction on) their editable controls.
   useLayoutEffect(() => {
     setIsRecordCalendarReadOnly(isReadOnly);
+
+    // Reset to the default on unmount so the flag cannot outlive the
+    // widget and leak into a later calendar mounted on the same instance id.
+    return () => {
+      setIsRecordCalendarReadOnly(false);
+    };
   }, [isReadOnly, setIsRecordCalendarReadOnly]);
 
   return null;
