@@ -155,13 +155,15 @@ async function findApplicationRegistration() {
   return registration;
 }
 
-async function listInstalledWorkspaces(registrationId) {
+async function listInstalledWorkspaces(registrationId, version) {
   const workspaces = [];
   const limit = 100;
   let offset = 0;
   let hasMore = true;
 
-  while (hasMore) {
+  while (hasMore && workspaces.length < 400) {
+    console.log('workspaces', workspaces.length);
+    console.log('offset', offset);
     const data = await graphqlRequest({
       endpoint: ADMIN_PANEL_ENDPOINT,
       token: ADMIN_TOKEN,
@@ -182,10 +184,12 @@ async function listInstalledWorkspaces(registrationId) {
 
     const page = data.findAdminApplicationRegistrationInstalledWorkspaces;
 
-    workspaces.push(...page.workspaces);
+    workspaces.push(...page.workspaces.filter((w) => w.version !== version));
     hasMore = page.hasMore;
     offset += limit;
   }
+
+  console.log('workspaces', workspaces.map((w) => w.id).join(',\n'));
 
   return workspaces;
 }
@@ -359,7 +363,12 @@ async function main() {
     `Registration: ${registration.name} (${registration.id}), target version: ${targetVersion ?? 'latest'}`,
   );
 
-  const workspaces = await listInstalledWorkspaces(registration.id);
+  const workspaces = await listInstalledWorkspaces(
+    registration.id,
+    targetVersion,
+  );
+
+  console.log('workspaces', workspaces);
 
   console.log(`Found ${workspaces.length} workspace(s) with the app installed\n`);
 
