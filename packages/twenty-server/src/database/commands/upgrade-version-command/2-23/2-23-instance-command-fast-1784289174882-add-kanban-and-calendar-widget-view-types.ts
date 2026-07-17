@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.23.0', 1784215051728)
+@RegisteredInstanceCommand('2.23.0', 1784289174882)
 export class AddKanbanAndCalendarWidgetViewTypesFastInstanceCommand
   implements FastInstanceCommand
 {
