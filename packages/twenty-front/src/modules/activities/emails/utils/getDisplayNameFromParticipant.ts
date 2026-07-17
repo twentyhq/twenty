@@ -1,7 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
-import { isDefined } from 'twenty-shared/utils';
+import { getEmailIdentityDisplayName } from '@/activities/emails/utils/getEmailIdentityDisplayName';
 
 export const getDisplayNameFromParticipant = ({
   participant,
@@ -10,29 +11,26 @@ export const getDisplayNameFromParticipant = ({
   participant: EmailThreadMessageParticipant;
   shouldUseFullName?: boolean;
 }) => {
-  if (isDefined(participant.person)) {
-    return (
-      `${participant.person?.name?.firstName}` +
-      (shouldUseFullName ? ` ${participant.person?.name?.lastName}` : '')
-    );
-  }
+  const buildName = (name?: { firstName?: string; lastName?: string }) => {
+    if (!isDefined(name)) {
+      return undefined;
+    }
 
-  if (isDefined(participant.workspaceMember)) {
-    return (
-      participant.workspaceMember?.name?.firstName +
-      (shouldUseFullName
-        ? ` ${participant.workspaceMember?.name?.lastName}`
-        : '')
-    );
-  }
+    const nameParts = shouldUseFullName
+      ? [name.firstName, name.lastName]
+      : [name.firstName];
 
-  if (isNonEmptyString(participant.displayName)) {
-    return participant.displayName;
-  }
+    return nameParts.filter(isNonEmptyString).join(' ');
+  };
 
-  if (isNonEmptyString(participant.handle)) {
-    return participant.handle;
-  }
-
-  return 'Unknown';
+  return getEmailIdentityDisplayName({
+    personName: isDefined(participant.person)
+      ? buildName(participant.person.name)
+      : undefined,
+    workspaceMemberName: isDefined(participant.workspaceMember)
+      ? buildName(participant.workspaceMember.name)
+      : undefined,
+    displayName: participant.displayName,
+    handle: participant.handle,
+  });
 };
