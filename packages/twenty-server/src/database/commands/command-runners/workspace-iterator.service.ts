@@ -10,7 +10,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 
-import { activationStatusIn } from 'src/engine/core-modules/workspace/utils/activation-status-in.util';
+import { activationStatusIn } from 'src/database/commands/command-runners/utils/activation-status-in.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
