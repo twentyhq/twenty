@@ -5,6 +5,10 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
+import {
+  ApplicationRegistrationException,
+  ApplicationRegistrationExceptionCode,
+} from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { CustomException } from 'src/utils/custom-exception';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
@@ -47,7 +51,10 @@ export class ApplicationRegistrationClaimController {
         );
 
       if (oauthError !== undefined || code === undefined) {
-        throw new Error('GitHub authorization was denied');
+        throw new ApplicationRegistrationException(
+          'GitHub authorization was denied',
+          ApplicationRegistrationExceptionCode.GITHUB_AUTH_FAILED,
+        );
       }
 
       await this.applicationRegistrationClaimService.completeGithubClaim({
@@ -68,12 +75,8 @@ export class ApplicationRegistrationClaimController {
 
       return res.redirect(url.toString());
     } catch (error) {
-      const errorMessage =
-        error instanceof CustomException
-          ? String(error.userFriendlyMessage?.message ?? error.message)
-          : error instanceof Error
-            ? error.message
-            : 'Could not complete the claim';
+      const claimErrorCode =
+        error instanceof CustomException ? error.code : 'CLAIM_FAILED';
 
       if (workspace !== null) {
         const url = this.workspaceDomainsService.buildWorkspaceURL({
@@ -81,7 +84,7 @@ export class ApplicationRegistrationClaimController {
           pathname: getSettingsPath(SettingsPath.Applications),
         });
 
-        url.searchParams.set('errorMessage', errorMessage);
+        url.searchParams.set('claimErrorCode', claimErrorCode);
         url.hash = 'developer';
 
         return res.redirect(url.toString());

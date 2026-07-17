@@ -1,13 +1,18 @@
 import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLazyQuery, useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
+import { i18n } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Callout } from 'twenty-ui/feedback';
 import { IconBrandGithub, IconRefresh, IconSearch } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -20,6 +25,9 @@ import {
   SyncMarketplaceCatalogDocument,
 } from '~/generated-metadata/graphql';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { getClaimErrorContent } from '~/pages/settings/applications/utils/getClaimErrorContent';
+
+export const CLAIM_ERROR_CODE_SEARCH_PARAM = 'claimErrorCode';
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -60,12 +68,36 @@ const StyledHint = styled.div`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
+const StyledCalloutContainer = styled.div`
+  margin-bottom: ${themeCssVariables.spacing[3]};
+`;
+
 export const SettingsClaimApplicationSection = () => {
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const claimErrorCode = searchParams.get(CLAIM_ERROR_CODE_SEARCH_PARAM);
+
   const [lookupValue, setLookupValue] = useState('');
   const [notFound, setNotFound] = useState(false);
+
+  const dismissClaimError = () => {
+    setSearchParams(
+      (previous) => {
+        previous.delete(CLAIM_ERROR_CODE_SEARCH_PARAM);
+
+        return previous;
+      },
+      { replace: true },
+    );
+  };
+
+  const claimError = isDefined(claimErrorCode)
+    ? getClaimErrorContent(claimErrorCode)
+    : null;
 
   const canSyncCatalog = useHasPermissionFlag(
     PermissionFlagType.MARKETPLACE_APPS,
@@ -177,6 +209,28 @@ export const SettingsClaimApplicationSection = () => {
         title={t`Claim an application`}
         description={t`Take ownership of an app you published to npm. Enter its exact package name (or universal identifier) to find it.`}
       />
+      {isDefined(claimError) && (
+        <StyledCalloutContainer>
+          <Callout
+            variant="error"
+            title={t`Could not claim this application`}
+            description={i18n._(claimError.message)}
+            action={{
+              label: t`Read documentation`,
+              onClick: () =>
+                window.open(
+                  getDocumentationUrl({
+                    locale: currentWorkspaceMember?.locale,
+                    path: claimError.docPath,
+                  }),
+                  '_blank',
+                ),
+            }}
+            isClosable
+            onClose={dismissClaimError}
+          />
+        </StyledCalloutContainer>
+      )}
       <StyledRow>
         <StyledInputContainer>
           <SettingsTextInput
