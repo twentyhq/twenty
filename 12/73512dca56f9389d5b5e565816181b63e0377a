@@ -1,0 +1,44 @@
+packages/twenty-server/src/engine/metadata-modules/message-channel/message-channel-metadata.service.ts
+  s_c4892f4ac2fb0e::t_ddf994d4b38f6a 266
+  s_c4892f4ac2fb0e::t_0e672c4cc633e7 216,221
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-content.type.ts
+  s_c4892f4ac2fb0e::t_ae00f6044643a9 6
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
+  s_c4892f4ac2fb0e::t_ad8282aed965c4 55-57
+packages/twenty-server/src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.input.ts
+  s_c4892f4ac2fb0e::t_f734cad131531d 2-8,18-23
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-email.service.ts
+  s_c4892f4ac2fb0e::t_e2feb7ebdba576 47-49
+  s_c4892f4ac2fb0e::t_20c40efe23d6eb 3
+packages/twenty-server/src/engine/metadata-modules/message-channel/resolvers/message-channel.resolver.ts
+  s_c4892f4ac2fb0e::t_a72ae06400aa84 177
+packages/twenty-server/src/modules/messaging/message-outbound-manager/types/persist-sent-message-input.type.ts
+  s_c4892f4ac2fb0e::t_deac1bed55971e 9
+packages/twenty-server/src/modules/messaging/message-outbound-manager/utils/format-sent-message.util.ts
+  s_c4892f4ac2fb0e::t_b2bc401d6b0556 16-18,24
+packages/twenty-front/src/modules/settings/accounts/hooks/useCreateEmailGroupChannel.ts
+  s_c4892f4ac2fb0e::t_5dca59d3731707 33
+  s_c4892f4ac2fb0e::t_06d443f792da4a 51,53
+packages/twenty-front/src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
+  s_c4892f4ac2fb0e::t_d413cd4e2a4981 23,29-32
+  s_c4892f4ac2fb0e::t_6799eae2191ca8 41
+  s_c4892f4ac2fb0e::t_ca5c54fad07591 87-105
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_c4892f4ac2fb0e::t_e58bcdb2488bae 1115
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "1273512dca56f9389d5b5e565816181b63e0377a",
+  "prompts": {},
+  "sessions": {
+    "s_c4892f4ac2fb0e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "74e7b645-8557-47f5-9aa3-10d3470dabef",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
