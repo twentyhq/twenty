@@ -122,8 +122,8 @@ describe('partner-controlled publish', () => {
     expect(buildContentUpdateData({ name: 'x', published: false }).status).toBe('WIP');
   });
 
-  it('updates a row with published omitted to WIP', () => {
-    expect(buildContentUpdateData({ name: 'x' }).status).toBe('WIP');
+  it('omits status when published is not specified, preserving the existing status', () => {
+    expect(buildContentUpdateData({ name: 'x' })).not.toHaveProperty('status');
   });
 });
 

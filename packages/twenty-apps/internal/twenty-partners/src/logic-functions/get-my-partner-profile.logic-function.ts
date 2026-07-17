@@ -168,7 +168,7 @@ export const mapMyProfilePayload = (node: PartnerNode): MyProfilePayload => ({
       clientName: e.node.clientName ?? null,
       headline: e.node.headline ?? null,
       bodyMarkdown: e.node.body?.markdown ?? null,
-      coverImageUrl: e.node.coverImageUrl ?? firstFileUrl(e.node.coverImage) ?? null,
+      coverImageUrl: e.node.coverImageUrl || firstFileUrl(e.node.coverImage) || null,
       caseStudyLink: e.node.caseStudyLink?.primaryLinkUrl ?? null,
       status: e.node.status ?? null,
     })),

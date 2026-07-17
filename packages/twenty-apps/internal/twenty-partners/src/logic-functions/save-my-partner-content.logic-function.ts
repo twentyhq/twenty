@@ -71,7 +71,8 @@ export function buildContentUpdateData(
     body: { markdown: item.bodyMarkdown ?? '' },
     caseStudyLink: item.caseStudyLink ? { primaryLinkUrl: item.caseStudyLink } : undefined,
     coverImageUrl: item.coverImageUrl,
-    status: item.published ? 'APPROVED' : 'WIP',
+    // Only touch status when the caller specified published; a partial edit must not unpublish an APPROVED case study.
+    ...(item.published !== undefined ? { status: item.published ? 'APPROVED' : 'WIP' } : {}),
   };
 }
 
@@ -121,7 +122,7 @@ const queryContentRows = async (
       clientName: edge.node.clientName ?? null,
       headline: edge.node.headline ?? null,
       bodyMarkdown: edge.node.body?.markdown ?? null,
-      coverImageUrl: edge.node.coverImageUrl ?? firstFileUrl(edge.node.coverImage) ?? null,
+      coverImageUrl: edge.node.coverImageUrl || firstFileUrl(edge.node.coverImage) || null,
       caseStudyLink: edge.node.caseStudyLink?.primaryLinkUrl ?? null,
       status: edge.node.status ?? null,
     }));
