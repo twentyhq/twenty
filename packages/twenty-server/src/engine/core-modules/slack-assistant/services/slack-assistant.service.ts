@@ -14,6 +14,7 @@ import { SlackConnectionService } from 'src/engine/core-modules/slack-assistant/
 import { SlackThreadSubscriptionService } from 'src/engine/core-modules/slack-assistant/services/slack-thread-subscription.service';
 import { fetchSlackThreadMessages } from 'src/engine/core-modules/slack-assistant/utils/fetch-slack-thread-messages.util';
 import { postSlackMessage } from 'src/engine/core-modules/slack-assistant/utils/post-slack-message.util';
+import { truncateForSlack } from 'src/engine/core-modules/slack-assistant/utils/truncate-for-slack.util';
 import { updateSlackMessage } from 'src/engine/core-modules/slack-assistant/utils/update-slack-message.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
@@ -32,40 +33,6 @@ const SLACK_ASSISTANT_AGENT_NAME = 'slack-assistant';
 const MAX_THREAD_HISTORY_MESSAGES = 30;
 
 const SLACK_THREAD_FETCH_LIMIT = 200;
-
-const SLACK_MAX_MARKDOWN_TEXT_LENGTH = 12000;
-const SLACK_TRUNCATION_NOTICE = '\n\n_(response truncated)_';
-
-type GraphemeSegmenter = {
-  segment: (input: string) => Iterable<{ segment: string }>;
-};
-
-const segmentGraphemes = (text: string): string[] => {
-  const segmenter = new (
-    Intl as unknown as {
-      Segmenter: new (
-        locales?: string,
-        options?: { granularity: 'grapheme' },
-      ) => GraphemeSegmenter;
-    }
-  ).Segmenter(undefined, { granularity: 'grapheme' });
-
-  return [...segmenter.segment(text)].map(({ segment }) => segment);
-};
-
-const truncateForSlack = (text: string): string => {
-  const graphemes = segmentGraphemes(text);
-
-  if (graphemes.length <= SLACK_MAX_MARKDOWN_TEXT_LENGTH) {
-    return text;
-  }
-
-  return (
-    graphemes
-      .slice(0, SLACK_MAX_MARKDOWN_TEXT_LENGTH - SLACK_TRUNCATION_NOTICE.length)
-      .join('') + SLACK_TRUNCATION_NOTICE
-  );
-};
 
 const MISSING_ROLE_REPLY =
   "I don't have access to your CRM right now. The *Slack Assistant* role may " +
