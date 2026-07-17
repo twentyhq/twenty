@@ -23,8 +23,6 @@ export class SlackAssistantRoleAssignmentJob {
     workspaceId,
     agentId,
   }: SlackAssistantRoleAssignmentJobData): Promise<void> {
-    // Idempotent: keep any role already assigned (e.g. an admin widened it to
-    // allow writes) rather than overriding a manual choice.
     const existingRoleId = await this.aiAgentRoleService.getAssignedRoleId({
       workspaceId,
       agentId,
@@ -34,13 +32,13 @@ export class SlackAssistantRoleAssignmentJob {
       return;
     }
 
-    const roleId = await this.aiAgentRoleService.getRoleIdByUniversalIdentifier({
-      workspaceId,
-      universalIdentifier: SLACK_ASSISTANT_ROLE_UNIVERSAL_IDENTIFIER,
-    });
+    const roleId = await this.aiAgentRoleService.getRoleIdByUniversalIdentifier(
+      {
+        workspaceId,
+        universalIdentifier: SLACK_ASSISTANT_ROLE_UNIVERSAL_IDENTIFIER,
+      },
+    );
 
-    // The role is synced alongside the agent, so a miss is most likely a
-    // transient cache gap right after install — throw so the queue retries.
     if (!isDefined(roleId)) {
       throw new Error(
         `Slack Assistant role not yet available in workspace ${workspaceId}`,

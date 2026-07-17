@@ -29,8 +29,6 @@ const SLACK_ASSISTANT_AGENT_NAME = 'slack-assistant';
 const SLACK_MAX_MARKDOWN_TEXT_LENGTH = 12000;
 const SLACK_TRUNCATION_NOTICE = '\n\n_(response truncated)_';
 
-// Intl.Segmenter exists at runtime (Node 16+) but is not typed under the
-// server's es2020 lib target, so we declare the minimal surface we use.
 type GraphemeSegmenter = {
   segment: (input: string) => Iterable<{ segment: string }>;
 };
@@ -49,8 +47,6 @@ const segmentGraphemes = (text: string): string[] => {
 };
 
 const truncateForSlack = (text: string): string => {
-  // Segment by grapheme so slicing never splits a visible character (emoji,
-  // ZWJ sequence, skin-tone modifier, surrogate pair) at the cutoff.
   const graphemes = segmentGraphemes(text);
 
   if (graphemes.length <= SLACK_MAX_MARKDOWN_TEXT_LENGTH) {

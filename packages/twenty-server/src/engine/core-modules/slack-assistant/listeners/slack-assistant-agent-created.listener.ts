@@ -13,11 +13,6 @@ import {
 import { type SlackAssistantRoleAssignmentJobData } from 'src/engine/core-modules/slack-assistant/types/slack-assistant-role-assignment-job.type';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 
-// When the slack-assistant agent is synced into a workspace (fresh install or
-// upgrade), enqueue a retryable job to grant it the shipped read-only role.
-// Enqueuing (rather than assigning inline) keeps provisioning off the fire-and-
-// forget event path: the queue retries transient failures instead of losing the
-// assignment.
 @Injectable()
 export class SlackAssistantAgentCreatedListener {
   constructor(
