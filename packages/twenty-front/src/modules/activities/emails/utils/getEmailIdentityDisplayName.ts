@@ -11,6 +11,6 @@ export const getEmailIdentityDisplayName = ({
   displayName?: string;
   handle?: string;
 }): string =>
-  [personName, workspaceMemberName, displayName, handle].find(
+  [workspaceMemberName, personName, displayName, handle].find(
     isNonEmptyString,
   ) ?? 'Unknown';

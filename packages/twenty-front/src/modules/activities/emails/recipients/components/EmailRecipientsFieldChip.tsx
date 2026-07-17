@@ -59,10 +59,10 @@ export const EmailRecipientsFieldChip = ({
     isDefined(workspaceMember) || isDefined(person) ? (
       <Avatar
         avatarUrl={getAbsoluteImageUrl(
-          person?.avatarUrl ?? workspaceMember?.avatarUrl,
+          workspaceMember?.avatarUrl ?? person?.avatarUrl,
         )}
         placeholder={resolvedLabel}
-        placeholderColorSeed={person?.id ?? workspaceMember?.id}
+        placeholderColorSeed={workspaceMember?.id ?? person?.id}
         size="sm"
         type="rounded"
       />

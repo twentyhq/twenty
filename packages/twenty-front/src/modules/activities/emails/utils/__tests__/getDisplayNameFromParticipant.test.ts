@@ -65,19 +65,19 @@ describe('getDisplayNameFromParticipant', () => {
     role: MessageParticipantRole.FROM,
   } as EmailThreadMessageParticipant;
 
-  it('should return full name when shouldUseFullName is true', () => {
+  it('should prefer the workspace member full name when shouldUseFullName is true', () => {
     expect(
       getDisplayNameFromParticipant({
         participant: participantWithName,
         shouldUseFullName: true,
       }),
-    ).toBe('John Doe');
+    ).toBe('Jane Smith');
   });
 
-  it('should return first name when shouldUseFullName is false', () => {
+  it('should prefer the workspace member first name when shouldUseFullName is false', () => {
     expect(
       getDisplayNameFromParticipant({ participant: participantWithName }),
-    ).toBe('John');
+    ).toBe('Jane');
   });
 
   it('should return displayName if it is a non-empty string', () => {

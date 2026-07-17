@@ -92,25 +92,7 @@ export const EmailRecipientChipMenuContent = ({
       {(isDefined(person) || isDefined(workspaceMember) || showAddAsPerson) && (
         <>
           <DropdownMenuItemsContainer>
-            {isDefined(person) ? (
-              <MenuItemAvatar
-                avatar={{
-                  avatarUrl: getAbsoluteImageUrl(person.avatarUrl),
-                  placeholder: isNonEmptyString(personFullName)
-                    ? personFullName
-                    : recipient.address,
-                  placeholderColorSeed: person.id,
-                  size: 'md',
-                  type: 'rounded',
-                }}
-                text={
-                  isNonEmptyString(personFullName)
-                    ? personFullName
-                    : recipient.address
-                }
-                contextualText={recipient.address}
-              />
-            ) : isDefined(workspaceMember) ? (
+            {isDefined(workspaceMember) ? (
               <MenuItemAvatar
                 avatar={{
                   avatarUrl: getAbsoluteImageUrl(workspaceMember.avatarUrl),
@@ -127,6 +109,24 @@ export const EmailRecipientChipMenuContent = ({
                     : recipient.address
                 }
                 contextualText={t`Team member`}
+              />
+            ) : isDefined(person) ? (
+              <MenuItemAvatar
+                avatar={{
+                  avatarUrl: getAbsoluteImageUrl(person.avatarUrl),
+                  placeholder: isNonEmptyString(personFullName)
+                    ? personFullName
+                    : recipient.address,
+                  placeholderColorSeed: person.id,
+                  size: 'md',
+                  type: 'rounded',
+                }}
+                text={
+                  isNonEmptyString(personFullName)
+                    ? personFullName
+                    : recipient.address
+                }
+                contextualText={recipient.address}
               />
             ) : (
               <MenuItem
