@@ -90,11 +90,6 @@ export const useSaveRecordTableWidgetViews = () => {
           viewFields: normalizedViewFields,
         };
 
-        normalizedRecordTableWidgetViewDraft = {
-          ...normalizedRecordTableWidgetViewDraft,
-          [widget.id]: normalizedWidgetViewDraft,
-        };
-
         const persistedView = recordTableWidgetViewPersisted[widget.id]?.view;
         const draftView = widgetViewDraft.view;
 
@@ -118,7 +113,7 @@ export const useSaveRecordTableWidgetViews = () => {
           (persistedView.calendarEndFieldMetadataId ?? null) !==
             (draftView.calendarEndFieldMetadataId ?? null);
 
-        await upsertViewWidgetMutation({
+        const { data } = await upsertViewWidgetMutation({
           variables: {
             input: {
               widgetId: widget.id,
@@ -180,6 +175,28 @@ export const useSaveRecordTableWidgetViews = () => {
             },
           },
         });
+
+        // View groups are not part of the upsert input: the server
+        // regenerates them from mainGroupByFieldMetadataId. Store the
+        // server rows instead of the locally generated draft groups so
+        // the persisted snapshot never claims client-side ids were saved.
+        const upsertedViewGroups = data?.upsertViewWidget.viewGroups;
+
+        normalizedRecordTableWidgetViewDraft = {
+          ...normalizedRecordTableWidgetViewDraft,
+          [widget.id]: {
+            ...normalizedWidgetViewDraft,
+            viewGroups: isDefined(upsertedViewGroups)
+              ? upsertedViewGroups.map((viewGroup) => ({
+                  id: viewGroup.id,
+                  viewId: viewGroup.viewId,
+                  fieldValue: viewGroup.fieldValue,
+                  position: viewGroup.position,
+                  isVisible: viewGroup.isVisible,
+                }))
+              : normalizedWidgetViewDraft.viewGroups,
+          },
+        };
       }
 
       store.set(
