@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -8,6 +8,8 @@ const THREAD_SUBSCRIPTION_TTL_SECONDS = 24 * 60 * 60;
 
 @Injectable()
 export class SlackThreadSubscriptionService {
+  private readonly logger = new Logger(SlackThreadSubscriptionService.name);
+
   constructor(private readonly redisClientService: RedisClientService) {}
 
   async subscribe({
@@ -19,14 +21,22 @@ export class SlackThreadSubscriptionService {
     channelId: string;
     threadTs: string;
   }): Promise<void> {
-    await this.redisClientService
-      .getClient()
-      .set(
-        this.getKey({ teamId, channelId, threadTs }),
-        '1',
-        'EX',
-        THREAD_SUBSCRIPTION_TTL_SECONDS,
+    try {
+      await this.redisClientService
+        .getClient()
+        .set(
+          this.getKey({ teamId, channelId, threadTs }),
+          '1',
+          'EX',
+          THREAD_SUBSCRIPTION_TTL_SECONDS,
+        );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to subscribe Slack thread ${channelId}/${threadTs}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
       );
+    }
   }
 
   async isSubscribed({
