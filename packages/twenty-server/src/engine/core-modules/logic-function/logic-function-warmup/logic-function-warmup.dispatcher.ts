@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
-import { LogicFunctionDriverType } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import {
   LogicFunctionWarmupJob,
   LogicFunctionWarmupJobData,
@@ -12,7 +11,6 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
@@ -24,18 +22,10 @@ export class LogicFunctionWarmupDispatcher implements OnApplicationBootstrap {
     private readonly messageQueueService: MessageQueueService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async onApplicationBootstrap(): Promise<void> {
     try {
-      if (
-        this.twentyConfigService.get('LOGIC_FUNCTION_TYPE') ===
-        LogicFunctionDriverType.DISABLED
-      ) {
-        return;
-      }
-
       const activeWorkspaces = await this.workspaceRepository.find({
         where: {
           activationStatus: WorkspaceActivationStatus.ACTIVE,
