@@ -73,7 +73,8 @@ export class MarketplaceCatalogSyncService {
         // Rehost the logo and gallery images from the registry CDN so display
         // urls are served from fileIds like every other source. Skipped when
         // the version is unchanged and the files are already stored; the
-        // query-time url builder falls back to CDN urls until they are.
+        // query-time url builder falls back to CDN urls until they are. On an
+        // unchanged version, only assets missing a stored file are fetched.
         if (
           previousVersion !== pkg.version ||
           !areRegistrationAssetsStored(
@@ -91,6 +92,7 @@ export class MarketplaceCatalogSyncService {
                   pkg.version,
                   path,
                 ),
+              skipAlreadyStoredPaths: previousVersion === pkg.version,
             },
           );
         }

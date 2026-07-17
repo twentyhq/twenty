@@ -300,6 +300,7 @@ export class CleanerWorkspaceService {
         activationStatus: In([
           WorkspaceActivationStatus.PENDING_CREATION,
           WorkspaceActivationStatus.ONGOING_CREATION,
+          WorkspaceActivationStatus.CREATED,
         ]),
       },
       withDeleted: true,

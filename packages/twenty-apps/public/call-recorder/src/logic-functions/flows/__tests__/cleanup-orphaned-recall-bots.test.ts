@@ -165,10 +165,28 @@ describe('cleanupOrphanedRecallBots', () => {
 
     expect(result).toEqual({
       scannedBotCount: 1,
-      truncatedScan: false,
+      truncatedBotList: false,
       canceledExternalBotIds: [],
     });
     expect(getDeleteCalls()).toHaveLength(0);
+  });
+
+  it('lists only bots claimed by the current workspace', async () => {
+    stubRecallApi({ bots: [] });
+
+    await cleanupOrphanedRecallBots({
+      client: buildClient([]),
+      joinAtAfter: JOIN_AT_AFTER,
+      joinAtBefore: JOIN_AT_BEFORE,
+    });
+
+    const [listRequestUrl] = fetchMock.mock.calls[0];
+    const listRequestParameters = new URL(listRequestUrl).searchParams;
+    expect(listRequestParameters.get('join_at_after')).toBe(JOIN_AT_AFTER);
+    expect(listRequestParameters.get('join_at_before')).toBe(JOIN_AT_BEFORE);
+    expect(listRequestParameters.get('metadata__twentyWorkspaceId')).toBe(
+      CURRENT_WORKSPACE_ID,
+    );
   });
 
   it('cancels bots whose call recording request was canceled locally', async () => {
@@ -195,7 +213,7 @@ describe('cleanupOrphanedRecallBots', () => {
 
     expect(result).toEqual({
       scannedBotCount: 1,
-      truncatedScan: false,
+      truncatedBotList: false,
       canceledExternalBotIds: ['stale-cancel-bot'],
     });
     expect(fetchMock).toHaveBeenCalledWith(
@@ -232,7 +250,7 @@ describe('cleanupOrphanedRecallBots', () => {
 
     expect(result).toEqual({
       scannedBotCount: 2,
-      truncatedScan: false,
+      truncatedBotList: false,
       canceledExternalBotIds: ['superseded-bot'],
     });
     expect(getDeleteCalls()).toHaveLength(1);
@@ -260,7 +278,7 @@ describe('cleanupOrphanedRecallBots', () => {
 
     expect(result).toEqual({
       scannedBotCount: 1,
-      truncatedScan: false,
+      truncatedBotList: false,
       canceledExternalBotIds: ['orphan-bot'],
     });
   });
@@ -289,7 +307,7 @@ describe('cleanupOrphanedRecallBots', () => {
 
     expect(result).toEqual({
       scannedBotCount: 1,
-      truncatedScan: false,
+      truncatedBotList: false,
       canceledExternalBotIds: [],
     });
     expect(getDeleteCalls()).toHaveLength(0);
@@ -306,7 +324,7 @@ describe('cleanupOrphanedRecallBots', () => {
 
     expect(result).toEqual({
       scannedBotCount: 1,
-      truncatedScan: false,
+      truncatedBotList: false,
       canceledExternalBotIds: [],
     });
     expect(getDeleteCalls()).toHaveLength(0);
@@ -330,7 +348,7 @@ describe('cleanupOrphanedRecallBots', () => {
 
     expect(result).toEqual({
       scannedBotCount: 1,
-      truncatedScan: false,
+      truncatedBotList: false,
       canceledExternalBotIds: [],
     });
     expect(getDeleteCalls()).toHaveLength(0);
@@ -355,7 +373,7 @@ describe('cleanupOrphanedRecallBots', () => {
 
     expect(result).toEqual({
       scannedBotCount: 1,
-      truncatedScan: false,
+      truncatedBotList: false,
       canceledExternalBotIds: [],
     });
     expect(getDeleteCalls()).toHaveLength(0);
@@ -379,7 +397,7 @@ describe('cleanupOrphanedRecallBots', () => {
 
     expect(result).toEqual({
       scannedBotCount: 1,
-      truncatedScan: false,
+      truncatedBotList: false,
       canceledExternalBotIds: ['same-workspace-bot'],
     });
     expect(fetchMock).toHaveBeenCalledWith(
@@ -411,7 +429,7 @@ describe('cleanupOrphanedRecallBots', () => {
 
     expect(await resultPromise).toEqual({
       scannedBotCount: 1,
-      truncatedScan: false,
+      truncatedBotList: false,
       canceledExternalBotIds: ['in-call-orphan'],
     });
     expect(fetchMock).toHaveBeenCalledWith(
@@ -456,7 +474,7 @@ describe('cleanupOrphanedRecallBots', () => {
 
     expect(result).toEqual({
       scannedBotCount: 1,
-      truncatedScan: true,
+      truncatedBotList: true,
       canceledExternalBotIds: ['orphan-bot'],
     });
     expect(
@@ -483,13 +501,13 @@ describe('cleanupOrphanedRecallBots', () => {
 
     expect(result).toEqual({
       scannedBotCount: 0,
-      truncatedScan: false,
+      truncatedBotList: false,
       canceledExternalBotIds: [],
     });
     expect(getDeleteCalls()).toHaveLength(0);
   });
 
-  it('skips cancellation when the current workspace cannot be resolved', async () => {
+  it('skips cancellation without listing bots when the current workspace cannot be resolved', async () => {
     delete process.env.TWENTY_APP_ACCESS_TOKEN;
     stubRecallApi({
       bots: [
@@ -507,10 +525,10 @@ describe('cleanupOrphanedRecallBots', () => {
     });
 
     expect(result).toEqual({
-      scannedBotCount: 1,
-      truncatedScan: false,
+      scannedBotCount: 0,
+      truncatedBotList: false,
       canceledExternalBotIds: [],
     });
-    expect(getDeleteCalls()).toHaveLength(0);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

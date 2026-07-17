@@ -1923,6 +1923,7 @@ msgstr "Todos os registros de aplicativos em toda a plataforma, incluindo aplica
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventRow.tsx
+#: src/modules/object-record/record-calendar/time-grid/components/RecordCalendarTimeGrid.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "All day"
 msgstr "Dia inteiro"
@@ -2366,6 +2367,12 @@ msgstr "URL do aplicativo"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
 msgstr "Aparência"
+
+#. js-lingui-id: YhZuwP
+#. placeholder {0}: objectMetadataItem.labelPlural
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
+msgid "Appears filled in fewer than 5% of {0}. Fields that stay empty can be deactivated."
+msgstr ""
 
 #. js-lingui-id: LqRVps
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
@@ -2907,11 +2914,6 @@ msgstr "Modelos disponíveis"
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Available tools"
 msgstr "Ferramentas disponíveis"
-
-#. js-lingui-id: YzokLS
-#: src/modules/object-record/record-show/hooks/usePersonAvatarUpload.ts
-msgid "Avatar file field not found for person object"
-msgstr "Campo de arquivo do avatar não encontrado para o objeto Pessoa"
 
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -4920,6 +4922,18 @@ msgstr "Criar perfil"
 msgid "Create Profile"
 msgstr "Criar perfil"
 
+#. js-lingui-id: Qjz7vW
+#: src/modules/object-record/record-calendar/components/RecordCalendarAddNew.tsx
+msgid "Create record"
+msgstr ""
+
+#. js-lingui-id: 8ETbKP
+#. placeholder {0}: cardDate.toLocaleString(undefined, { dateStyle: 'full', })
+#. placeholder {1}: cardTime.toLocaleString(undefined, { timeStyle: 'short' })
+#: src/modules/object-record/record-calendar/components/RecordCalendarAddNew.tsx
+msgid "Create record on {0} at {1}"
+msgstr ""
+
 #. js-lingui-id: RoyYUE
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
@@ -5596,8 +5610,10 @@ msgid "Date Granularity Y"
 msgstr "Granularidade da data Y"
 
 #. js-lingui-id: H7OUPr
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Day"
 msgstr "Dia"
@@ -6972,6 +6988,14 @@ msgstr "Rotação de chave de criptografia"
 msgid "End date"
 msgstr "Data final"
 
+#. js-lingui-id: DqIce1
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "End date field"
+msgstr ""
+
 #. js-lingui-id: Fqu/aC
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "End date must be after start date."
@@ -7935,6 +7959,11 @@ msgstr "Falha ao carregar webhook"
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
 msgid "Failed to merge records. Please try again."
 msgstr "Falha ao mesclar registros. Tente novamente."
+
+#. js-lingui-id: DvNGzq
+#: src/modules/object-record/record-calendar/week/components/RecordCalendarWeekDragDropContext.tsx
+msgid "Failed to move record"
+msgstr ""
 
 #. js-lingui-id: PnVGrE
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -11413,6 +11442,7 @@ msgstr "mês"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Month"
 msgstr "Mês"
@@ -11478,6 +11508,12 @@ msgstr "Mais widgets"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Most installed version"
 msgstr "Versão com mais instalações"
+
+#. js-lingui-id: PfWWOa
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+msgid "Mostly empty"
+msgstr ""
 
 #. js-lingui-id: 3Ib6FN
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
@@ -11960,6 +11996,11 @@ msgstr "Próximo"
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Next charge {totalRenewDate}. Invoice amount may vary if you add members or credits between periods"
 msgstr "Próxima cobrança {totalRenewDate}. O valor da fatura pode variar se você adicionar membros ou créditos entre os períodos"
+
+#. js-lingui-id: 8+lM81
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
+msgid "Next period"
+msgstr ""
 
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -12705,6 +12746,9 @@ msgstr "Nó"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -12714,6 +12758,7 @@ msgstr "Nó"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -12736,6 +12781,7 @@ msgid "Not available for default view"
 msgstr "Não disponível na Visualização Padrão"
 
 #. js-lingui-id: 0qBE9S
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -14006,6 +14052,11 @@ msgstr "Anterior"
 #: src/modules/ai/utils/groupThreadsByDate.ts
 msgid "Previous 7 days"
 msgstr "Últimos 7 dias"
+
+#. js-lingui-id: KaMwgJ
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
+msgid "Previous period"
+msgstr ""
 
 #. js-lingui-id: aHCEmh
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -15519,6 +15570,7 @@ msgstr "metadados do campo de pesquisa"
 
 #. js-lingui-id: 7taA9j
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
@@ -16601,6 +16653,7 @@ msgid "Something went wrong while loading logs. Please try again."
 msgstr "Algo deu errado ao carregar os registros. Por favor, tente novamente."
 
 #. js-lingui-id: yHwG3y
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/settings/components/SettingsCard.tsx
@@ -19790,6 +19843,7 @@ msgstr "Site"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Week"
 msgstr "Semana"

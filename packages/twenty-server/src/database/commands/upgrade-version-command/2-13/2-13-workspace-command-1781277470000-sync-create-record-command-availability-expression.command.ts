@@ -1,7 +1,7 @@
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -16,7 +16,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
   description:
     'Re-sync conditionalAvailabilityExpression on standard command menu items in existing workspaces (the create-record command is now gated on objectMetadataItem.isUICreatable and isUIEditable)',
 })
-export class SyncCreateRecordCommandAvailabilityExpressionCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class SyncCreateRecordCommandAvailabilityExpressionCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -101,7 +101,7 @@ export class SyncCreateRecordCommandAvailabilityExpressionCommand extends Active
     }
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {

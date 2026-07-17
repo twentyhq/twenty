@@ -8,6 +8,7 @@ describe('renderFrontComponent', () => {
         connection: {} as RemoteConnection,
         renderContext: {
           componentUrl: 'https://api.twenty.test/rest/front-components/id',
+          componentSource: 'export default () => {};',
         },
         hostFetch: null,
       }),

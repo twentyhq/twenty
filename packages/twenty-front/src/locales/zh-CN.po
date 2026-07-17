@@ -1923,6 +1923,7 @@ msgstr "整个平台上的所有应用注册，包括孤立的应用市场应用
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventRow.tsx
+#: src/modules/object-record/record-calendar/time-grid/components/RecordCalendarTimeGrid.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "All day"
 msgstr "全天"
@@ -2366,6 +2367,12 @@ msgstr "应用 URL"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
 msgstr "外观"
+
+#. js-lingui-id: YhZuwP
+#. placeholder {0}: objectMetadataItem.labelPlural
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
+msgid "Appears filled in fewer than 5% of {0}. Fields that stay empty can be deactivated."
+msgstr ""
 
 #. js-lingui-id: LqRVps
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
@@ -2907,11 +2914,6 @@ msgstr "可用模型"
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Available tools"
 msgstr "可用工具"
-
-#. js-lingui-id: YzokLS
-#: src/modules/object-record/record-show/hooks/usePersonAvatarUpload.ts
-msgid "Avatar file field not found for person object"
-msgstr "未找到 Person 对象的头像文件字段"
 
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -4920,6 +4922,18 @@ msgstr "创建个人资料"
 msgid "Create Profile"
 msgstr "创建个人资料"
 
+#. js-lingui-id: Qjz7vW
+#: src/modules/object-record/record-calendar/components/RecordCalendarAddNew.tsx
+msgid "Create record"
+msgstr ""
+
+#. js-lingui-id: 8ETbKP
+#. placeholder {0}: cardDate.toLocaleString(undefined, { dateStyle: 'full', })
+#. placeholder {1}: cardTime.toLocaleString(undefined, { timeStyle: 'short' })
+#: src/modules/object-record/record-calendar/components/RecordCalendarAddNew.tsx
+msgid "Create record on {0} at {1}"
+msgstr ""
+
 #. js-lingui-id: RoyYUE
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
@@ -5596,8 +5610,10 @@ msgid "Date Granularity Y"
 msgstr "日期粒度 Y"
 
 #. js-lingui-id: H7OUPr
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Day"
 msgstr "日"
@@ -6972,6 +6988,14 @@ msgstr "加密密钥轮换"
 msgid "End date"
 msgstr "结束日期"
 
+#. js-lingui-id: DqIce1
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "End date field"
+msgstr ""
+
 #. js-lingui-id: Fqu/aC
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "End date must be after start date."
@@ -7935,6 +7959,11 @@ msgstr "无法加载webhook"
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
 msgid "Failed to merge records. Please try again."
 msgstr "合并记录失败。请重试。"
+
+#. js-lingui-id: DvNGzq
+#: src/modules/object-record/record-calendar/week/components/RecordCalendarWeekDragDropContext.tsx
+msgid "Failed to move record"
+msgstr ""
 
 #. js-lingui-id: PnVGrE
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -11390,6 +11419,7 @@ msgstr "月"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Month"
 msgstr "月"
@@ -11455,6 +11485,12 @@ msgstr "更多小部件"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Most installed version"
 msgstr "安装量最高的版本"
+
+#. js-lingui-id: PfWWOa
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+msgid "Mostly empty"
+msgstr ""
 
 #. js-lingui-id: 3Ib6FN
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
@@ -11937,6 +11973,11 @@ msgstr "下一个"
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Next charge {totalRenewDate}. Invoice amount may vary if you add members or credits between periods"
 msgstr "下次扣费时间为 {totalRenewDate}。如果你在计费周期之间添加成员或积分，发票金额可能会有所变化"
+
+#. js-lingui-id: 8+lM81
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
+msgid "Next period"
+msgstr ""
 
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -12682,6 +12723,9 @@ msgstr "节点"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -12691,6 +12735,7 @@ msgstr "节点"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -12713,6 +12758,7 @@ msgid "Not available for default view"
 msgstr "默认视图中不可用"
 
 #. js-lingui-id: 0qBE9S
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -13983,6 +14029,11 @@ msgstr "上一个"
 #: src/modules/ai/utils/groupThreadsByDate.ts
 msgid "Previous 7 days"
 msgstr "过去7天"
+
+#. js-lingui-id: KaMwgJ
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
+msgid "Previous period"
+msgstr ""
 
 #. js-lingui-id: aHCEmh
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -15496,6 +15547,7 @@ msgstr "搜索字段元数据"
 
 #. js-lingui-id: 7taA9j
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
@@ -16578,6 +16630,7 @@ msgid "Something went wrong while loading logs. Please try again."
 msgstr "加载日志时出现问题。请重试。"
 
 #. js-lingui-id: yHwG3y
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/settings/components/SettingsCard.tsx
@@ -19737,6 +19790,7 @@ msgstr "网站"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Week"
 msgstr "周"

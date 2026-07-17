@@ -5,7 +5,7 @@ import { getFieldUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -34,7 +34,7 @@ const SYSTEM_FIELD_NAMES = new Set<string>([
   description:
     'Flag existing system fields (id, createdAt, updatedAt, deletedAt, createdBy, updatedBy, position, searchVector) as isSystemSideEffect: true so manifest sync deletion inference excludes them.',
 })
-export class BackfillSystemFieldIsSystemSideEffectCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class BackfillSystemFieldIsSystemSideEffectCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,

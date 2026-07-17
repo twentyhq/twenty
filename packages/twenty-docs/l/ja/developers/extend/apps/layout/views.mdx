@@ -49,7 +49,7 @@ export default defineView({
 | `isCompact`                                                                                                 | `boolean`                                                                          | 行のコンパクト表示。                                                                             |
 | `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | レコードをフィールドでグループ化します（例: かんばんのカラム）。                                                      |
 | `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | かんばんカラムの集計とサイズ設定。                                                                      |
-| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`                                                | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | カレンダービュー: レイアウトと、レコードの位置を決める日付フィールド。                                                   |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | カレンダービュー: レイアウト、レコードの位置を決める日付フィールド、オプションの終了日フィールド。                                     |
 
 上記のすべての enum は `twenty-sdk/define` からエクスポートされています。
 

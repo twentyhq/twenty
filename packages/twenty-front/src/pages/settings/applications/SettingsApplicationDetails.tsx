@@ -33,13 +33,13 @@ import {
   IconSettings,
 } from 'twenty-ui/icon';
 import {
-  ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,
   FindMarketplaceAppManifestDocument,
   FindOneApplicationDocument,
   PermissionFlagType,
   UninstallApplicationDocument,
 } from '~/generated-metadata/graphql';
+import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
@@ -115,7 +115,6 @@ export const SettingsApplicationDetails = () => {
   );
 
   const sourceType = application?.applicationRegistration?.sourceType;
-  const isNpmApp = sourceType === ApplicationRegistrationSourceType.NPM;
   const registrationId = detail?.id ?? application?.applicationRegistration?.id;
   const currentVersion = application?.version;
   const latestAvailableVersion =
@@ -123,7 +122,7 @@ export const SettingsApplicationDetails = () => {
     application?.applicationRegistration?.latestAvailableVersion;
 
   const hasUpdate =
-    isNpmApp &&
+    isUpgradableApplicationSourceType(sourceType) &&
     isDefined(latestAvailableVersion) &&
     isDefined(currentVersion) &&
     isNewerSemver(latestAvailableVersion, currentVersion);

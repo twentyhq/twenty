@@ -4,7 +4,7 @@ import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { buildSearchVectorGinIndexBackfillOperations } from 'src/database/commands/upgrade-version-command/2-20/utils/build-search-vector-gin-index-backfill-operations.util';
@@ -37,7 +37,7 @@ type SearchVectorGinIndexReconciliationOperations = {
   description:
     'Converge every searchVector GIN index universal identifier to its deterministic derivation (re-own, all applications) and create the missing GIN index for installed-app objects (backfill). Idempotent, re-own runs before backfill.',
 })
-export class ReconcileSearchVectorGinIndexUniversalIdentifierCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class ReconcileSearchVectorGinIndexUniversalIdentifierCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,

@@ -167,6 +167,7 @@ export {
   getGroupByConnectionTypename,
 } from './graphql/graphql-get-typename.util';
 export { getImageAbsoluteURI } from './image/getImageAbsoluteURI';
+export { getLinkFaviconUrl } from './image/getLinkFaviconUrl';
 export {
   sanitizeURL,
   getLogoUrlFromDomainName,
@@ -219,6 +220,7 @@ export { ensureAbsoluteUrl } from './url/ensureAbsoluteUrl';
 export { getAbsoluteUrlOrThrow } from './url/getAbsoluteUrlOrThrow';
 export { getSafeUrl } from './url/getSafeUrl';
 export { getUrlHostnameOrThrow } from './url/getUrlHostnameOrThrow';
+export { isAbsoluteUrl } from './url/isAbsoluteUrl';
 export { isSafeUrl } from './url/isSafeUrl';
 export { isValidHostname } from './url/isValidHostname';
 export { isValidUrl } from './url/isValidUrl';
@@ -231,6 +233,7 @@ export { emailSchema } from './validation/emailSchema';
 export { escapeForIlike } from './validation/escapeForIlike';
 export { isDefined } from './validation/isDefined';
 export { isEmptyObject } from './validation/isEmptyObject';
+export { isImageIdentifierFieldMetadataType } from './validation/isImageIdentifierFieldMetadataType';
 export { isLabelIdentifierFieldMetadataTypes } from './validation/isLabelIdentifierFieldMetadataTypes';
 export type { SearchableFieldType } from './validation/isSearchableFieldType';
 export { isSearchableFieldType } from './validation/isSearchableFieldType';
