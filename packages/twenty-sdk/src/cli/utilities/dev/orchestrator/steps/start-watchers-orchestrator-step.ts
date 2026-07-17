@@ -37,6 +37,7 @@ export class StartWatchersOrchestratorStep {
   private manifestWatcher: ManifestWatcher | null = null;
   private logicFunctionsWatcher: EsbuildWatcher | null = null;
   private frontComponentsWatcher: EsbuildWatcher | null = null;
+  private sourceWatcher: FileUploadWatcher | null = null;
   private assetWatcher: FileUploadWatcher | null = null;
   private dependencyWatcher: FileUploadWatcher | null = null;
   private tscWatcher: TscWatcher | null = null;
@@ -72,11 +73,16 @@ export class StartWatchersOrchestratorStep {
 
   async handleWatcherRestarts(result: ManifestBuildResult): Promise<void> {
     const { logicFunctions, frontComponents } = result.filePaths;
+    const sourcePaths = [...new Set([...logicFunctions, ...frontComponents])];
 
     if (!this.state.steps.startWatchers.output.watchersStarted) {
       this.state.steps.startWatchers.output.watchersStarted = true;
       this.state.steps.startWatchers.status = 'done';
-      await this.startFileWatchers(logicFunctions, frontComponents);
+      await this.startFileWatchers(
+        logicFunctions,
+        frontComponents,
+        sourcePaths,
+      );
 
       return;
     }
@@ -88,6 +94,10 @@ export class StartWatchersOrchestratorStep {
     if (this.frontComponentsWatcher?.shouldRestart(frontComponents)) {
       await this.frontComponentsWatcher.restart(frontComponents);
     }
+
+    if (this.sourceWatcher?.shouldRestart(sourcePaths)) {
+      await this.sourceWatcher.restart(sourcePaths);
+    }
   }
 
   async close(): Promise<void> {
@@ -97,6 +107,7 @@ export class StartWatchersOrchestratorStep {
       this.manifestWatcher?.close(),
       this.logicFunctionsWatcher?.close(),
       this.frontComponentsWatcher?.close(),
+      this.sourceWatcher?.close(),
       this.assetWatcher?.close(),
       this.dependencyWatcher?.close(),
     ]);
@@ -165,11 +176,13 @@ export class StartWatchersOrchestratorStep {
   private async startFileWatchers(
     logicFunctions: string[],
     frontComponents: string[],
+    sourcePaths: string[],
   ): Promise<void> {
     await Promise.all([
       this.startTscWatcher(),
       this.startLogicFunctionsWatcher(logicFunctions),
       this.startFrontComponentsWatcher(frontComponents),
+      this.startSourceWatcher(sourcePaths),
       this.startAssetWatcher(),
       this.startDependencyWatcher(),
     ]);
@@ -201,6 +214,17 @@ export class StartWatchersOrchestratorStep {
     });
 
     await this.frontComponentsWatcher.start();
+  }
+
+  private async startSourceWatcher(sourcePaths: string[]): Promise<void> {
+    this.sourceWatcher = new FileUploadWatcher({
+      appPath: this.state.appPath,
+      fileFolder: FileFolder.Source,
+      watchPaths: sourcePaths,
+      handleFileBuilt: this.handleFileBuilt.bind(this),
+    });
+
+    await this.sourceWatcher.start();
   }
 
   private async startAssetWatcher(): Promise<void> {

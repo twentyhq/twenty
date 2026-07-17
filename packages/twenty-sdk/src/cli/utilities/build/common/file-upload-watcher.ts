@@ -75,8 +75,20 @@ export class FileUploadWatcher {
     });
   }
 
+  shouldRestart(watchPaths: string[]): boolean {
+    return [...this.watchPaths].sort().join(',') !==
+      [...watchPaths].sort().join(',');
+  }
+
+  async restart(watchPaths: string[]): Promise<void> {
+    await this.close();
+    this.watchPaths = watchPaths;
+    await this.start();
+  }
+
   async close(): Promise<void> {
     await this.watcher?.close();
+    this.watcher = null;
   }
 
   private async copyAndNotify(absoluteFilePath: string): Promise<void> {
