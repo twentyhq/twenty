@@ -11,7 +11,7 @@ import { RecordBoardEffects } from '@/object-record/record-board/components/Reco
 import { RecordBoardFetchMoreInViewTriggerComponent } from '@/object-record/record-board/components/RecordBoardFetchMoreInViewTriggerComponent';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { isRecordBoardReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardReadOnlyComponentState';
+import { isRecordBoardViewSettingsReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardViewSettingsReadOnlyComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
@@ -42,8 +42,8 @@ export const RecordBoard = () => {
   const { recordBoardId } = useContext(RecordBoardContext);
   const boardRef = useRef<HTMLDivElement>(null);
 
-  const isRecordBoardReadOnly = useAtomComponentStateValue(
-    isRecordBoardReadOnlyComponentState,
+  const isRecordBoardViewSettingsReadOnly = useAtomComponentStateValue(
+    isRecordBoardViewSettingsReadOnlyComponentState,
   );
 
   return (
@@ -60,7 +60,7 @@ export const RecordBoard = () => {
               <RecordBoardDragDropContext>
                 <RecordBoardColumns />
               </RecordBoardDragDropContext>
-              {!isRecordBoardReadOnly && (
+              {!isRecordBoardViewSettingsReadOnly && (
                 <RecordBoardDragSelect boardRef={boardRef} />
               )}
               <RecordBoardFetchMoreInViewTriggerComponent />

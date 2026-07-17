@@ -17,7 +17,7 @@ import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFie
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
-import { isRecordBoardReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardReadOnlyComponentState';
+import { isRecordBoardViewSettingsReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardViewSettingsReadOnlyComponentState';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
@@ -118,8 +118,8 @@ export const RecordBoardColumnHeader = () => {
   const { objectMetadataItem, selectFieldMetadataItem } =
     useContext(RecordBoardContext);
 
-  const isRecordBoardReadOnly = useAtomComponentStateValue(
-    isRecordBoardReadOnlyComponentState,
+  const isRecordBoardViewSettingsReadOnly = useAtomComponentStateValue(
+    isRecordBoardViewSettingsReadOnlyComponentState,
   );
 
   const objectPermissions = useObjectPermissionsForObject(
@@ -174,7 +174,7 @@ export const RecordBoardColumnHeader = () => {
           <StyledHeaderContainer>
             <StyledLeftContainer>
               <StyledDropdownContainer>
-                {isRecordBoardReadOnly ? (
+                {isRecordBoardViewSettingsReadOnly ? (
                   <StyledTagContainer>
                     <RecordGroupChip
                       recordGroupDefinition={columnDefinition}
@@ -203,8 +203,8 @@ export const RecordBoardColumnHeader = () => {
               </StyledDropdownContainer>
 
               <StyledAggregateDropdownContainer
-                isNonInteractive={isRecordBoardReadOnly}
-                inert={isRecordBoardReadOnly || undefined}
+                isNonInteractive={isRecordBoardViewSettingsReadOnly}
+                inert={isRecordBoardViewSettingsReadOnly || undefined}
               >
                 <RecordBoardColumnHeaderAggregateDropdown
                   aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
@@ -215,7 +215,7 @@ export const RecordBoardColumnHeader = () => {
               </StyledAggregateDropdownContainer>
             </StyledLeftContainer>
             <StyledRightContainer>
-              {isHeaderHovered && !isRecordBoardReadOnly && (
+              {isHeaderHovered && !isRecordBoardViewSettingsReadOnly && (
                 <StyledHeaderActions>
                   <LightIconButton
                     accent="tertiary"
@@ -239,7 +239,7 @@ export const RecordBoardColumnHeader = () => {
           </StyledHeaderContainer>
         </StyledHeader>
       </DragDropColumnSortableHandle>
-      {!isRecordBoardReadOnly && <RecordBoardColumnResizeHandler />}
+      {!isRecordBoardViewSettingsReadOnly && <RecordBoardColumnResizeHandler />}
     </StyledColumn>
   );
 };

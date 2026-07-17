@@ -1,7 +1,7 @@
 import { DragDropProvider } from '@dnd-kit/react';
 import type { ReactNode } from 'react';
 
-import { isRecordBoardReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardReadOnlyComponentState';
+import { isRecordBoardViewSettingsReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardViewSettingsReadOnlyComponentState';
 import { useRecordBoardColumnDndKit } from '@/object-record/record-board/record-board-column/dnd/hooks/useRecordBoardColumnDndKit';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { RecordGroupReorderConfirmationModal } from '@/object-record/record-group/components/RecordGroupReorderConfirmationModal';
@@ -19,15 +19,15 @@ export const RecordBoardColumnDndKitProvider = ({
   const { contextValues, handlers, handlePendingReorderConfirmClick } =
     useRecordBoardColumnDndKit();
 
-  const isRecordBoardReadOnly = useAtomComponentStateValue(
-    isRecordBoardReadOnlyComponentState,
+  const isRecordBoardViewSettingsReadOnly = useAtomComponentStateValue(
+    isRecordBoardViewSettingsReadOnlyComponentState,
   );
 
   return (
     <>
       <DragDropColumnDndContext.Provider value={contextValues}>
         <DragDropProvider<DragDropColumnData>
-          sensors={isRecordBoardReadOnly ? [] : DND_KIT_SENSORS}
+          sensors={isRecordBoardViewSettingsReadOnly ? [] : DND_KIT_SENSORS}
           onDragStart={handlers.onDragStart}
           onDragMove={handlers.onDragMove}
           onDragEnd={handlers.onDragEnd}

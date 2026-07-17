@@ -1,5 +1,5 @@
 import { RecordBoardContainer } from '@/object-record/record-board/components/RecordBoardContainer';
-import { RecordBoardWidgetReadOnlyEffect } from '@/object-record/record-board-widget/components/RecordBoardWidgetReadOnlyEffect';
+import { RecordBoardWidgetViewSettingsReadOnlyEffect } from '@/object-record/record-board-widget/components/RecordBoardWidgetViewSettingsReadOnlyEffect';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -26,9 +26,9 @@ export const RecordBoardWidget = ({
 
   return (
     <>
-      <RecordBoardWidgetReadOnlyEffect
+      <RecordBoardWidgetViewSettingsReadOnlyEffect
         recordBoardId={recordIndexId}
-        isReadOnly={isReadOnly}
+        isViewSettingsReadOnly={isReadOnly}
       />
       <StyledBoardContainer>
         <RecordBoardContainer
