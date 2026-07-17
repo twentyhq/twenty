@@ -1,7 +1,5 @@
 import { createHmac, timingSafeEqual } from 'crypto';
 
-// Slack signs each request as `v0:{timestamp}:{rawBody}` with the app signing
-// secret (HMAC-SHA256). See https://api.slack.com/authentication/verifying-requests-from-slack
 const SLACK_SIGNATURE_VERSION = 'v0';
 const DEFAULT_MAX_SKEW_SECONDS = 5 * 60;
 
