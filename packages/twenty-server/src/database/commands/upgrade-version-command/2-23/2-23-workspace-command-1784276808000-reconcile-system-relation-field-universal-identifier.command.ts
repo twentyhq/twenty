@@ -1,10 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import {
-  getFieldUniversalIdentifier,
-  getSystemRelationFieldUniversalIdentifier,
-} from 'twenty-shared/application';
+import { getSystemRelationFieldUniversalIdentifier } from 'twenty-shared/application';
 import {
   DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
   STANDARD_OBJECTS,
@@ -57,7 +54,7 @@ type SystemRelationFieldUpdate = {
 @Command({
   name: 'upgrade:2-23:reconcile-system-relation-field-universal-identifier',
   description:
-    'Reconcile the default relations (timelineActivity/attachment/noteTarget/taskTarget) with the engine convention, for standard and custom source objects alike. Reverse morph fields get a name-free deterministic universal identifier, isSystemSideEffect: true, and name-derived label/icon, so an object rename becomes a lossless update and standard fields match custom ones. Forward fields get the name-based deterministic universal identifier and isSystemSideEffect: true so both sides of a default relation share the same engine ownership, as if twenty-standard objects had been provisioned by the side-effect engine.',
+    'Reconcile the default relations (timelineActivity/attachment/noteTarget/taskTarget) with the engine convention, for standard and custom source objects alike. Both sides get the name-free deterministic universal identifier (host and relation target object identifiers, direction encoded by swapping them) and isSystemSideEffect: true; reverse morph fields additionally get the name-derived label/icon. An object rename becomes a lossless update and standard fields match custom ones, as if twenty-standard objects had been provisioned by the side-effect engine.',
 })
 export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -137,7 +134,7 @@ export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends Prov
             sourceFlatObjectMetadata.applicationUniversalIdentifier,
           hostObjectUniversalIdentifier:
             hostFlatObjectMetadata.universalIdentifier,
-          sourceObjectUniversalIdentifier:
+          relationTargetObjectUniversalIdentifier:
             sourceFlatObjectMetadata.universalIdentifier,
         });
       // Name-derived label + host-object icon, matching the engine provisioner
@@ -171,11 +168,10 @@ export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends Prov
       // custom source objects alike: the forward field on the source object
       // was provisioned alongside the reverse field (by the side-effect engine
       // for custom objects, by twenty-standard for standard ones), so it must
-      // carry isSystemSideEffect and the name-based deterministic universal
-      // identifier — matching what the create side-effect handler emits for
-      // objects created post-2.23. The forward field is named after the host
-      // standard object namePlural, which never renames, so the name-based
-      // derivation is rename-invariant here.
+      // carry isSystemSideEffect and the same name-free deterministic
+      // universal identifier as the reverse side, with host and relation
+      // target swapped — matching what the create side-effect handler emits
+      // for objects created post-2.23.
       const forwardFlatFieldMetadata = isDefined(
         flatFieldMetadata.relationTargetFieldMetadataId,
       )
@@ -192,12 +188,15 @@ export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends Prov
         continue;
       }
 
-      const derivedForwardUniversalIdentifier = getFieldUniversalIdentifier({
-        applicationUniversalIdentifier:
-          sourceFlatObjectMetadata.applicationUniversalIdentifier,
-        objectUniversalIdentifier: sourceFlatObjectMetadata.universalIdentifier,
-        name: forwardFlatFieldMetadata.name,
-      });
+      const derivedForwardUniversalIdentifier =
+        getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            sourceFlatObjectMetadata.applicationUniversalIdentifier,
+          hostObjectUniversalIdentifier:
+            sourceFlatObjectMetadata.universalIdentifier,
+          relationTargetObjectUniversalIdentifier:
+            hostFlatObjectMetadata.universalIdentifier,
+        });
 
       const forwardUpdate: SystemRelationFieldUpdate['update'] = {};
 

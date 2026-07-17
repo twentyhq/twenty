@@ -10,7 +10,6 @@ import { findSkills } from 'test/integration/metadata/suites/skill/utils/find-sk
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   type FieldManifest,
-  getFieldUniversalIdentifier,
   getSystemRelationFieldUniversalIdentifier,
   type Manifest,
 } from 'twenty-shared/application';
@@ -242,20 +241,23 @@ describe('syncApplication', () => {
           standardObjectNameSingular
         ];
 
-      const forwardUniversalIdentifier = getFieldUniversalIdentifier({
-        applicationUniversalIdentifier: TEST_APP_ID,
-        objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
-        name: standardObjectNamePlural,
-      });
+      const forwardUniversalIdentifier =
+        getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier: TEST_APP_ID,
+          hostObjectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
+          relationTargetObjectUniversalIdentifier:
+            standardObjectUniversalIdentifier,
+        });
       const reverseUniversalIdentifier =
         getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier: TEST_APP_ID,
           hostObjectUniversalIdentifier: standardObjectUniversalIdentifier,
-          sourceObjectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
+          relationTargetObjectUniversalIdentifier:
+            TEST_OBJECT.universalIdentifier,
         });
 
       // Forward RELATION field on the ticket, named after the standard
-      // object's namePlural, under the name-derived universal identifier.
+      // object's namePlural, under the name-free universal identifier.
       const forwardCreateAction =
         fieldCreateActionByUniversalIdentifier[forwardUniversalIdentifier];
 

@@ -1,13 +1,16 @@
 import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
 
-// A system relation reverse field (e.g. the target* morph field on a standard
-// object like timelineActivity/attachment/noteTarget/taskTarget) is identified
-// by the host object carrying it and the source object it points back to. It is
-// intentionally name-free: the reverse field name is dynamic
-// (target${capitalize(nameSingular)}), so deriving the identifier from the name
-// would make an object rename mutate the field identifier — forcing a lossy
-// delete+create. Keying on the two stable object identifiers instead makes a
-// rename a lossless fieldMetadata.update.
+// A system relation field (either side of a default relation to the standard
+// relation objects timelineActivity/attachment/noteTarget/taskTarget) is
+// identified by the object hosting the field and the object the field points
+// to. It is intentionally name-free: both field names are derived from object
+// names (the reverse target${capitalize(nameSingular)} morph part and the
+// forward field named after the host standard object namePlural), so deriving
+// the identifier from a name would tie it to a rename. Keying on the two
+// stable object identifiers instead makes any rename a lossless
+// fieldMetadata.update. Direction is encoded by the argument order: the
+// forward and reverse fields of the same relation swap host and target, so
+// they derive distinct identifiers.
 //
 // Invariant: the `systemRelation` segment and the three-segment shape cannot
 // collide with the name-based field identifier (`${objectUID}:${name}`) because
@@ -15,14 +18,14 @@ import { computeDeterministicUuid } from '@/application/deterministic-identifier
 export const getSystemRelationFieldUniversalIdentifier = ({
   applicationUniversalIdentifier,
   hostObjectUniversalIdentifier,
-  sourceObjectUniversalIdentifier,
+  relationTargetObjectUniversalIdentifier,
 }: {
   applicationUniversalIdentifier: string;
   hostObjectUniversalIdentifier: string;
-  sourceObjectUniversalIdentifier: string;
+  relationTargetObjectUniversalIdentifier: string;
 }): string =>
   computeDeterministicUuid({
     entityNamespace: 'fieldMetadata',
-    value: `${hostObjectUniversalIdentifier}:systemRelation:${sourceObjectUniversalIdentifier}`,
+    value: `${hostObjectUniversalIdentifier}:systemRelation:${relationTargetObjectUniversalIdentifier}`,
     applicationUniversalIdentifier,
   });

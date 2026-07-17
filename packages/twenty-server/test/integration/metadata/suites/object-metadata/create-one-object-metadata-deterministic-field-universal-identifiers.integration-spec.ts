@@ -143,13 +143,6 @@ describe('Custom object creation deterministic field universal identifiers', () 
       );
 
       expect(forwardField).toBeDefined();
-      expect(forwardField?.universalIdentifier).toBe(
-        getFieldUniversalIdentifier({
-          applicationUniversalIdentifier,
-          objectUniversalIdentifier,
-          name: forwardFieldName,
-        }),
-      );
 
       const standardRelationObject =
         forwardField?.relation?.targetObjectMetadata;
@@ -177,14 +170,23 @@ describe('Custom object creation deterministic field universal identifiers', () 
         .find((field: FetchedField) => field.name === storedReverseFieldName);
 
       expect(reverseField).toBeDefined();
-      // Reverse system relation fields use a name-free deterministic identifier
-      // (host + source object) so an object rename stays a lossless update.
+      // Both sides of a system relation use the name-free deterministic
+      // identifier (host + relation target object, direction encoded by
+      // swapping them) so an object rename stays a lossless update.
+      expect(forwardField?.universalIdentifier).toBe(
+        getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier,
+          hostObjectUniversalIdentifier: objectUniversalIdentifier,
+          relationTargetObjectUniversalIdentifier:
+            standardRelationObject.universalIdentifier,
+        }),
+      );
       expect(reverseField?.universalIdentifier).toBe(
         getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier,
           hostObjectUniversalIdentifier:
             standardRelationObject.universalIdentifier,
-          sourceObjectUniversalIdentifier: objectUniversalIdentifier,
+          relationTargetObjectUniversalIdentifier: objectUniversalIdentifier,
         }),
       );
     },

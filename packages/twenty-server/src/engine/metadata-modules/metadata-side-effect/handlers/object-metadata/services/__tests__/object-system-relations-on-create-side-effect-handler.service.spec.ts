@@ -1,7 +1,4 @@
-import {
-  getFieldUniversalIdentifier,
-  getSystemRelationFieldUniversalIdentifier,
-} from 'twenty-shared/application';
+import { getSystemRelationFieldUniversalIdentifier } from 'twenty-shared/application';
 import {
   DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
   STANDARD_OBJECTS,
@@ -88,11 +85,14 @@ describe('ObjectSystemRelationsOnCreateSideEffectHandlerService', () => {
 
   const targets = buildStandardTargetFlatObjectMetadatas();
 
-  const forwardUniversalIdentifierFor = (namePlural: string) =>
-    getFieldUniversalIdentifier({
+  const forwardUniversalIdentifierFor = (
+    standardObjectUniversalIdentifier: string,
+  ) =>
+    getSystemRelationFieldUniversalIdentifier({
       applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-      objectUniversalIdentifier: SOURCE_OBJECT_UNIVERSAL_IDENTIFIER,
-      name: namePlural,
+      hostObjectUniversalIdentifier: SOURCE_OBJECT_UNIVERSAL_IDENTIFIER,
+      relationTargetObjectUniversalIdentifier:
+        standardObjectUniversalIdentifier,
     });
 
   const reverseUniversalIdentifierFor = (
@@ -101,10 +101,11 @@ describe('ObjectSystemRelationsOnCreateSideEffectHandlerService', () => {
     getSystemRelationFieldUniversalIdentifier({
       applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
       hostObjectUniversalIdentifier,
-      sourceObjectUniversalIdentifier: SOURCE_OBJECT_UNIVERSAL_IDENTIFIER,
+      relationTargetObjectUniversalIdentifier:
+        SOURCE_OBJECT_UNIVERSAL_IDENTIFIER,
     });
 
-  it('should provision a forward (name-based) + reverse (name-free, isSystemSideEffect) field pair and its index for all four standard relation objects', () => {
+  it('should provision a forward + reverse (both name-free, isSystemSideEffect) field pair and its index for all four standard relation objects', () => {
     const result = handler.buildSideEffects(buildArgs({}));
 
     expect(result.status).toBe('success');
@@ -126,7 +127,7 @@ describe('ObjectSystemRelationsOnCreateSideEffectHandlerService', () => {
 
     for (const target of targets) {
       const forwardUniversalIdentifier = forwardUniversalIdentifierFor(
-        target.namePlural,
+        target.universalIdentifier,
       );
       const reverseUniversalIdentifier = reverseUniversalIdentifierFor(
         target.universalIdentifier,
@@ -151,7 +152,7 @@ describe('ObjectSystemRelationsOnCreateSideEffectHandlerService', () => {
   it('should emit all bundles even when a caller field collides on universal identifier', () => {
     const collidingTarget = targets[0];
     const collidingForwardUniversalIdentifier = forwardUniversalIdentifierFor(
-      collidingTarget.namePlural,
+      collidingTarget.universalIdentifier,
     );
 
     const result = handler.buildSideEffects(

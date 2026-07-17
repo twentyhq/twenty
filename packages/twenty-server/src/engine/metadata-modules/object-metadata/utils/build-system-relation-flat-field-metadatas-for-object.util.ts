@@ -1,7 +1,4 @@
-import {
-  getFieldUniversalIdentifier,
-  getSystemRelationFieldUniversalIdentifier,
-} from 'twenty-shared/application';
+import { getSystemRelationFieldUniversalIdentifier } from 'twenty-shared/application';
 import {
   DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
   STANDARD_OBJECTS,
@@ -74,17 +71,23 @@ export const buildSystemRelationFlatFieldMetadatasForObject = ({
         targetFlatObjectMetadata.nameSingular as keyof typeof STANDARD_OBJECT_ICONS
       ] ?? 'IconBuildingSkyscraper';
 
-    const forwardFieldUniversalIdentifier = getFieldUniversalIdentifier({
-      applicationUniversalIdentifier,
-      objectUniversalIdentifier: sourceFlatObjectMetadata.universalIdentifier,
-      name: targetFlatObjectMetadata.namePlural,
-    });
+    // Both sides of the relation are engine-owned and both field names are
+    // object-name-derived, so both identifiers use the same name-free
+    // derivation, direction encoded by swapping host and relation target.
+    const forwardFieldUniversalIdentifier =
+      getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier,
+        hostObjectUniversalIdentifier:
+          sourceFlatObjectMetadata.universalIdentifier,
+        relationTargetObjectUniversalIdentifier:
+          targetFlatObjectMetadata.universalIdentifier,
+      });
     const reverseFieldUniversalIdentifier =
       getSystemRelationFieldUniversalIdentifier({
         applicationUniversalIdentifier,
         hostObjectUniversalIdentifier:
           targetFlatObjectMetadata.universalIdentifier,
-        sourceObjectUniversalIdentifier:
+        relationTargetObjectUniversalIdentifier:
           sourceFlatObjectMetadata.universalIdentifier,
       });
 
