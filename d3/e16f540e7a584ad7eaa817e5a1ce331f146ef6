@@ -1,0 +1,102 @@
+packages/twenty-front/src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
+  s_c4892f4ac2fb0e::t_7e407d18da8914 24,31-32,34,43,54,89-107
+  s_c4892f4ac2fb0e::t_ee384a0a21c42a 1
+  s_c4892f4ac2fb0e::t_d1a662f00ade15 30,33
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
+  s_c4892f4ac2fb0e::t_5c4dfa8863c5cd 55-57
+packages/twenty-server/src/engine/metadata-modules/message-channel/resolvers/message-channel.resolver.ts
+  s_c4892f4ac2fb0e::t_44db502af00c98 177
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
+  s_c4892f4ac2fb0e::t_2e41ed55a154dd 83
+packages/twenty-front/src/modules/activities/emails/utils/getReplyToRecipients.ts
+  s_c4892f4ac2fb0e::t_f3c653fd1e7865 1-43
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/unsubscribe-hostname.service.ts
+  s_c4892f4ac2fb0e::t_825e1e0ec4145f 110-113
+  s_c4892f4ac2fb0e::t_5477cdf1051883 93-96
+  s_c4892f4ac2fb0e::t_892b17a2de5799 175
+packages/twenty-server/src/engine/core-modules/dns-manager/services/dns-manager.service.ts
+  s_c4892f4ac2fb0e::t_4ad1f6e27abfcb 40-43
+packages/twenty-server/src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.input.ts
+  s_c4892f4ac2fb0e::t_c73654f6f43dc4 2-8,18-23
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
+  s_c4892f4ac2fb0e::t_9f0ae1822ff2d5 54-58
+  s_c4892f4ac2fb0e::t_246ff60cbbbe20 98-100
+  s_c4892f4ac2fb0e::t_e1a7210c30918d 48
+  s_c4892f4ac2fb0e::t_4a20da801cf3fc 94-97,101-107
+  s_c4892f4ac2fb0e::t_7f12a1504bff65 128
+  s_c4892f4ac2fb0e::t_287e9fc97c4bab 189-201,204-205
+  s_c4892f4ac2fb0e::t_bfa53809562f2a 28
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-driver.service.ts
+  s_c4892f4ac2fb0e::t_231e5af07f382f 70-73,75-76,106,388-401
+packages/twenty-front/src/modules/activities/emails/hooks/useReplyContext.ts
+  s_c4892f4ac2fb0e::t_2f3c28d7f10a5d 19,76
+  s_c4892f4ac2fb0e::t_11460b60d801e7 55-58
+  s_c4892f4ac2fb0e::t_3543ec89fc99a6 8
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
+  s_c4892f4ac2fb0e::t_110b879b3db68e 126
+packages/twenty-front/src/modules/settings/accounts/hooks/useCreateEmailGroupChannel.ts
+  s_c4892f4ac2fb0e::t_1e0b7020b3135a 33,51,53
+packages/twenty-server/src/engine/metadata-modules/message-channel/message-channel-metadata.service.ts
+  s_c4892f4ac2fb0e::t_23a6f324bdb4aa 216,221,266
+packages/twenty-front/src/modules/settings/emailing-domains/graphql/mutations/verifyEmailingDomain.ts
+  s_c4892f4ac2fb0e::t_5be4f6f2d0095a 10-16
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-email.service.ts
+  s_39832274ec7e46::t_e3b899fec80359 3,47-49
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/log/services/log-emailing-domain-driver.service.ts
+  s_c4892f4ac2fb0e::t_d341c23d827953 126-129,132
+  s_c4892f4ac2fb0e::t_cfacba7829acfc 99-100
+  s_c4892f4ac2fb0e::t_4638c2690983a6 49,60,64-98
+packages/twenty-front/src/modules/settings/emailing-domains/graphql/queries/getAllEmailingDomains.ts
+  s_c4892f4ac2fb0e::t_4c552ae2d00af0 15
+packages/twenty-server/src/modules/messaging/message-outbound-manager/utils/format-sent-message.util.ts
+  s_c4892f4ac2fb0e::t_cb01a944c15275 16-18,24
+packages/twenty-front/src/modules/settings/hooks/useSettingsNavigationItems.tsx
+  s_c4892f4ac2fb0e::t_d7853c32b7d758 177
+packages/twenty-front/src/modules/settings/components/SettingsDnsRecordsTable.tsx
+  s_c4892f4ac2fb0e::t_d43666865e8e23 66-68
+  s_c4892f4ac2fb0e::t_0e730e7a30f68e 141
+  s_c4892f4ac2fb0e::t_e2377e35320d48 82
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/verification-record.dto.ts
+  s_c4892f4ac2fb0e::t_9144871999c2c8 16-17
+  s_c4892f4ac2fb0e::t_0597ef363e26d0 18
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/emailing-domain.service.ts
+  s_c4892f4ac2fb0e::t_107fcfcbe961cf 83-85,224
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
+  s_c4892f4ac2fb0e::t_312fda920ee6cf 63,69
+packages/twenty-server/src/modules/messaging/message-outbound-manager/types/persist-sent-message-input.type.ts
+  s_c4892f4ac2fb0e::t_f855633e35b161 9
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_c4892f4ac2fb0e::t_e58bcdb2488bae 1115
+  s_c4892f4ac2fb0e::t_4fdc693dc77ef9 5939
+  s_c4892f4ac2fb0e::t_5e2301ecf2cf32 8056
+  s_c4892f4ac2fb0e::t_80fd3a05602343 9001
+  s_c4892f4ac2fb0e::t_47596f58ab660a 9002
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-content.type.ts
+  s_c4892f4ac2fb0e::t_b0a8f7d980d202 6
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/types/verifications-record.ts
+  s_c4892f4ac2fb0e::t_a5f04dcfadc57a 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "d3e16f540e7a584ad7eaa817e5a1ce331f146ef6",
+  "prompts": {},
+  "sessions": {
+    "s_39832274ec7e46": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e42d985d-03c6-4802-b6ef-1bcfbec24678",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_c4892f4ac2fb0e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "74e7b645-8557-47f5-9aa3-10d3470dabef",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
