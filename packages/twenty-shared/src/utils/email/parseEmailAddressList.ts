@@ -5,12 +5,22 @@ export type ParsedEmailAddress = {
   name: string;
 };
 
+type AddressparserEntry = ReturnType<typeof addressparser>[number];
+
+const flattenEmailAddressGroups = (
+  parsedAddresses: AddressparserEntry[],
+): AddressparserEntry[] =>
+  parsedAddresses.flatMap((parsedAddress) =>
+    parsedAddress.group
+      ? flattenEmailAddressGroups(parsedAddress.group)
+      : [parsedAddress],
+  );
+
 export const parseEmailAddressList = (
   rawAddressList: string,
 ): ParsedEmailAddress[] => {
   try {
-    return addressparser(rawAddressList)
-      .flatMap((parsedAddress) => parsedAddress.group ?? [parsedAddress])
+    return flattenEmailAddressGroups(addressparser(rawAddressList))
       .map((parsedAddress) => ({
         address: parsedAddress.address ?? '',
         name: (parsedAddress.name ?? '').trim(),

@@ -94,6 +94,38 @@ describe('getDisplayNameFromParticipant', () => {
     ).toBe('user_handle');
   });
 
+  it('should not append whitespace for a missing last name', () => {
+    const participantWithFirstNameOnly = {
+      displayName: '',
+      handle: '',
+      role: MessageParticipantRole.FROM,
+      person: { name: { firstName: 'John', lastName: '' } },
+    } as unknown as EmailThreadMessageParticipant;
+
+    expect(
+      getDisplayNameFromParticipant({
+        participant: participantWithFirstNameOnly,
+        shouldUseFullName: true,
+      }),
+    ).toBe('John');
+  });
+
+  it('should fall back to displayName when the resolved name is empty', () => {
+    const participantWithEmptyPersonName = {
+      displayName: 'User123',
+      handle: '',
+      role: MessageParticipantRole.FROM,
+      person: { name: { firstName: '', lastName: '' } },
+    } as unknown as EmailThreadMessageParticipant;
+
+    expect(
+      getDisplayNameFromParticipant({
+        participant: participantWithEmptyPersonName,
+        shouldUseFullName: true,
+      }),
+    ).toBe('User123');
+  });
+
   it('should return Unknown if no suitable information is available', () => {
     expect(
       getDisplayNameFromParticipant({ participant: participantWithoutInfo }),

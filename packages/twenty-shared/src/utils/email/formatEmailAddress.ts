@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-const DISPLAY_NAME_CHARACTERS_REQUIRING_QUOTING = /[,;<>@"\\]/;
+const DISPLAY_NAME_CHARACTERS_REQUIRING_QUOTING = /[()<>[\]:;@\\,."]/;
 
 export const formatEmailAddress = ({
   address,

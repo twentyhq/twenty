@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
@@ -10,11 +11,17 @@ export const getDisplayNameFromParticipant = ({
   participant: EmailThreadMessageParticipant;
   shouldUseFullName?: boolean;
 }) => {
-  const buildName = (name?: { firstName?: string; lastName?: string }) =>
-    isDefined(name)
-      ? `${name.firstName ?? ''}` +
-        (shouldUseFullName ? ` ${name.lastName ?? ''}` : '')
-      : undefined;
+  const buildName = (name?: { firstName?: string; lastName?: string }) => {
+    if (!isDefined(name)) {
+      return undefined;
+    }
+
+    const nameParts = shouldUseFullName
+      ? [name.firstName, name.lastName]
+      : [name.firstName];
+
+    return nameParts.filter(isNonEmptyString).join(' ');
+  };
 
   return getEmailIdentityDisplayName({
     personName: isDefined(participant.person)

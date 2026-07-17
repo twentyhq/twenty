@@ -55,6 +55,13 @@ describe('parseEmailAddressList', () => {
     expect(parseEmailAddressList('undisclosed-recipients:;')).toEqual([]);
   });
 
+  it('should flatten nested groups recursively', () => {
+    expect(parseEmailAddressList('Outer: Inner: a@b.com;;, c@d.com')).toEqual([
+      { address: 'a@b.com', name: '' },
+      { address: 'c@d.com', name: '' },
+    ]);
+  });
+
   it('should keep name-only tokens with an empty address', () => {
     expect(parseEmailAddressList('NoAddressHere, bob@example.com')).toEqual([
       { address: '', name: 'NoAddressHere' },

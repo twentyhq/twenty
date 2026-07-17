@@ -53,6 +53,28 @@ describe('formatEmailAddress', () => {
     expect(reparsed[1]).toEqual({ address: 'b@example.com', name: '' });
   });
 
+  it('should quote names containing group or comment syntax so they round-trip', () => {
+    const colonFormatted = formatEmailAddress({
+      address: 'a@b.com',
+      name: 'Re: update',
+    });
+
+    expect(colonFormatted).toBe('"Re: update" <a@b.com>');
+    expect(parseEmailAddressList(colonFormatted)).toEqual([
+      { address: 'a@b.com', name: 'Re: update' },
+    ]);
+
+    const parenthesesFormatted = formatEmailAddress({
+      address: 'b@c.com',
+      name: 'Bob (Sales)',
+    });
+
+    expect(parenthesesFormatted).toBe('"Bob (Sales)" <b@c.com>');
+    expect(parseEmailAddressList(parenthesesFormatted)).toEqual([
+      { address: 'b@c.com', name: 'Bob (Sales)' },
+    ]);
+  });
+
   it('should not quote RFC 2047 encoded words', () => {
     expect(
       formatEmailAddress({
