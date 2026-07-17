@@ -16,7 +16,13 @@ Setup instructions live in [SETUP.md](SETUP.md).
 
 ## Publishing
 
-The `Publish` GitHub Actions workflow (`.github/workflows/publish.yml`) publishes the app to npm with provenance using [npm trusted publishing](https://docs.npmjs.com/trusted-publishers). Register this repository as a trusted publisher of your package on npmjs.com, then push a version tag (e.g. `v1.0.0`). Publishing with provenance is also how you prove ownership when claiming your app in a Twenty marketplace.
+The CD workflow (`.github/workflows/cd.yml`) deploys your app to a Twenty server. It also ships a commented-out `publish-to-npm` job that publishes the app to npm with provenance using [npm trusted publishing](https://docs.npmjs.com/trusted-publishers). To publish to npm:
+
+1. Uncomment the `publish-to-npm` job in `.github/workflows/cd.yml`, and the `id-token: write` permission at the top of that file.
+2. Register this repository as a trusted publisher of your package on npmjs.com, pointing at the `cd.yml` workflow.
+3. Bump the version in `package.json` and merge to `main`.
+
+Publishing with provenance is also how you prove ownership when claiming your app in a Twenty marketplace.
 
 ## Changelog
 

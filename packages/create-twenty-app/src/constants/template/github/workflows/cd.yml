@@ -9,6 +9,8 @@ on:
 
 permissions:
   contents: read
+  # Uncomment to let the publish-to-npm job below sign with provenance (OIDC).
+  # id-token: write
 
 env:
   TWENTY_DEPLOY_URL: http://localhost:2020
@@ -40,3 +42,39 @@ jobs:
         with:
           api-url: ${{ env.TWENTY_DEPLOY_URL }}
           api-key: ${{ secrets.TWENTY_DEPLOY_API_KEY }}
+
+  # Publish your app to npm so it can be listed on a Twenty marketplace.
+  # Publishing with provenance certifies which GitHub repository built the
+  # package, which is how you claim ownership of your app on the marketplace.
+  #
+  # To enable:
+  #   1. Uncomment the publish-to-npm job below and the `id-token: write`
+  #      permission near the top of this file.
+  #   2. On npmjs.com open your package > Settings > Trusted Publisher and
+  #      register this repository with the workflow `cd.yml`.
+  #      See https://docs.npmjs.com/trusted-publishers
+  #   3. Bump the version in package.json before merging to main; npm rejects
+  #      republishing a version that already exists.
+  #
+  # publish-to-npm:
+  #   if: github.event_name == 'push'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 24
+  #         registry-url: https://registry.npmjs.org
+  #
+  #     - name: Update npm
+  #       # Trusted publishing requires npm 11.5.1 or later.
+  #       run: npm install -g npm@latest
+  #
+  #     - name: Install dependencies
+  #       run: yarn install --immutable
+  #
+  #     - name: Publish to npm
+  #       run: yarn twenty app:publish
