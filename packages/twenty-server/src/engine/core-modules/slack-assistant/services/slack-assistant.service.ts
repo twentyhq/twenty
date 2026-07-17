@@ -12,6 +12,7 @@ import { SlackApplicationResolverService } from 'src/engine/core-modules/slack-a
 import { SlackConnectionService } from 'src/engine/core-modules/slack-assistant/services/slack-connection.service';
 import { SlackThreadSubscriptionService } from 'src/engine/core-modules/slack-assistant/services/slack-thread-subscription.service';
 import { postSlackMessage } from 'src/engine/core-modules/slack-assistant/utils/post-slack-message.util';
+import { updateSlackMessage } from 'src/engine/core-modules/slack-assistant/utils/update-slack-message.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -64,6 +65,13 @@ const MISSING_ROLE_REPLY =
   "I don't have access to your CRM right now. The *Slack Assistant* role may " +
   'not be assigned yet; an admin can assign it to the *slack-assistant* agent ' +
   'to restore my access.';
+
+const THINKING_PLACEHOLDER = '_Thinking…_';
+
+const NO_RESPONSE_REPLY = "I couldn't come up with a response to that.";
+
+const GENERIC_ERROR_REPLY =
+  'Something went wrong while answering. Please try again.';
 
 @Injectable()
 export class SlackAssistantService {
@@ -157,28 +165,63 @@ export class SlackAssistantService {
       return;
     }
 
-    const executionResult = await this.agentAsyncExecutorService.executeAgent({
-      agent,
-      userPrompt: text,
-      authContext,
-      workspaceId,
-      operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+    const placeholderTs = await postSlackMessage({
+      token: botToken,
+      channel: channelId,
+      threadTs,
+      markdownText: THINKING_PLACEHOLDER,
     });
 
-    const replyText = this.extractReplyText(executionResult.result);
+    let replyText: string | null;
+
+    try {
+      const executionResult = await this.agentAsyncExecutorService.executeAgent(
+        {
+          agent,
+          userPrompt: text,
+          authContext,
+          workspaceId,
+          operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+        },
+      );
+
+      replyText = this.extractReplyText(executionResult.result);
+    } catch (error) {
+      this.logger.error(
+        `Agent execution failed for workspace ${workspaceId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+
+      await updateSlackMessage({
+        token: botToken,
+        channel: channelId,
+        ts: placeholderTs,
+        markdownText: GENERIC_ERROR_REPLY,
+      });
+
+      return;
+    }
 
     if (!isNonEmptyString(replyText)) {
       this.logger.warn(
         `Agent produced no text reply for workspace ${workspaceId}.`,
       );
 
+      await updateSlackMessage({
+        token: botToken,
+        channel: channelId,
+        ts: placeholderTs,
+        markdownText: NO_RESPONSE_REPLY,
+      });
+
       return;
     }
 
-    await postSlackMessage({
+    await updateSlackMessage({
       token: botToken,
       channel: channelId,
-      threadTs,
+      ts: placeholderTs,
       markdownText: truncateForSlack(replyText),
     });
 
