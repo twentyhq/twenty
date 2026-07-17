@@ -9,5 +9,6 @@ describe('getStuckRunningRunsFindOptions', () => {
 
     expect(where.status).toBe(WorkflowRunStatus.RUNNING);
     expect(where.updatedAt).toBeInstanceOf(FindOperator);
+    expect((where.updatedAt as FindOperator<string>).type).toBe('lessThan');
   });
 });

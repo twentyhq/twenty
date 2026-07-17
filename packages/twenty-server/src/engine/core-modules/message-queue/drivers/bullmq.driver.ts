@@ -19,8 +19,14 @@ import {
   type QueueCronJobOptions,
   type QueueJobOptions,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
-import { type MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
-import { type MessageQueueJob } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
+import {
+  type InFlightQueueJob,
+  type MessageQueueDriver,
+} from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
+import {
+  type MessageQueueJob,
+  type MessageQueueJobData,
+} from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
@@ -334,7 +340,7 @@ export class BullMQDriver
     }
 
     // This ensures only one waiting job can be queued for a specific option.id
-    if (options?.id && options?.deduplicate !== false) {
+    if (options?.id && !options?.allowDuplicatedPrefixes) {
       const waitingJobs = await this.queueMap[queueName].getJobs(['waiting']);
 
       const isJobAlreadyWaiting = waitingJobs.some(
@@ -364,7 +370,9 @@ export class BullMQDriver
     await this.queueMap[queueName].add(jobName, data, queueOptions);
   }
 
-  async getInFlightJobIds(queueName: MessageQueue): Promise<string[]> {
+  async getInFlightJobs<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+  ): Promise<InFlightQueueJob<T>[]> {
     if (!this.queueMap[queueName]) {
       throw new Error(
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
@@ -374,13 +382,14 @@ export class BullMQDriver
     const jobs = await this.queueMap[queueName].getJobs([
       'active',
       'waiting',
+      'waiting-children',
+      'paused',
       'prioritized',
       'delayed',
     ]);
 
     return jobs
       .filter(isDefined)
-      .map((job) => job.id)
-      .filter(isDefined);
+      .map((job) => ({ id: job.id, data: job.data }));
   }
 }

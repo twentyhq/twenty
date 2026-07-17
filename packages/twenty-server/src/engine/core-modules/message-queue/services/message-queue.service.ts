@@ -4,7 +4,10 @@ import {
   type QueueCronJobOptions,
   type QueueJobOptions,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
-import { MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
+import {
+  type InFlightQueueJob,
+  MessageQueueDriver,
+} from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
   type MessageQueueJobData,
   type MessageQueueJob,
@@ -35,12 +38,14 @@ export class MessageQueueService {
     return this.driver.add(this.queueName, jobName, data, options);
   }
 
-  getInFlightJobIds(): Promise<string[]> {
-    if (typeof this.driver.getInFlightJobIds !== 'function') {
+  getInFlightJobs<T extends MessageQueueJobData>(): Promise<
+    InFlightQueueJob<T>[]
+  > {
+    if (typeof this.driver.getInFlightJobs !== 'function') {
       return Promise.resolve([]);
     }
 
-    return this.driver.getInFlightJobIds(this.queueName);
+    return this.driver.getInFlightJobs(this.queueName);
   }
 
   addCron<T extends MessageQueueJobData | undefined>({

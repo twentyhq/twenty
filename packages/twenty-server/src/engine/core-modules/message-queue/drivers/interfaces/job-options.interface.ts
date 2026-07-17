@@ -1,6 +1,6 @@
 export interface QueueJobOptions {
   id?: string;
-  deduplicate?: boolean;
+  allowDuplicatedPrefixes?: boolean;
   priority?: number;
   retryLimit?: number;
   delay?: number;

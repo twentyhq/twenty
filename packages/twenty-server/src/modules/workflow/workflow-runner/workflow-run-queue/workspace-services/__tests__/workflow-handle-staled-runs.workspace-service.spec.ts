@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { StepStatus } from 'twenty-shared/workflow';
 
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -35,11 +36,16 @@ const mockWorkflowRunWorkspaceService = {
 };
 
 const mockMessageQueueService = {
-  getInFlightJobIds: jest.fn().mockResolvedValue([]),
+  getInFlightJobs: jest.fn().mockResolvedValue([]),
 };
 
 const mockMetricsService = {
   incrementCounterForEvent: jest.fn().mockResolvedValue(undefined),
+};
+
+const mockCacheStorageService = {
+  get: jest.fn().mockResolvedValue(undefined),
+  set: jest.fn().mockResolvedValue(undefined),
 };
 
 // Mirrors QUERY_MAX_RECORDS, the per-batch cap the service applies. Kept as a
@@ -83,6 +89,10 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
           provide: MetricsService,
           useValue: mockMetricsService,
         },
+        {
+          provide: CacheStorageNamespace.ModuleWorkflow,
+          useValue: mockCacheStorageService,
+        },
       ],
     }).compile();
 
@@ -90,7 +100,9 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
       .mockReset()
       .mockResolvedValue(undefined);
     mockWorkflowRunWorkspaceService.getWorkflowRunOrFail.mockReset();
-    mockMessageQueueService.getInFlightJobIds.mockReset().mockResolvedValue([]);
+    mockMessageQueueService.getInFlightJobs.mockReset().mockResolvedValue([]);
+    mockCacheStorageService.get.mockReset().mockResolvedValue(undefined);
+    mockCacheStorageService.set.mockReset().mockResolvedValue(undefined);
 
     service = module.get<WorkflowHandleStaledRunsWorkspaceService>(
       WorkflowHandleStaledRunsWorkspaceService,
@@ -284,21 +296,26 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
       state: { flow: { steps }, stepInfos },
     });
 
-    it('should do nothing when there are no stuck running runs', async () => {
+    const expectNoWorkflowRunEnded = () => {
+      expect(
+        mockWorkflowRunWorkspaceService.endWorkflowRun,
+      ).not.toHaveBeenCalled();
+    };
+
+    it('should do nothing when there are no stuck running nor flagged runs', async () => {
       mockRepository.find.mockResolvedValueOnce([]);
 
       await service.handleStuckRunningRunsForWorkspace(workspaceId);
 
-      expect(mockMessageQueueService.getInFlightJobIds).not.toHaveBeenCalled();
-      expect(
-        mockWorkflowRunWorkspaceService.endWorkflowRun,
-      ).not.toHaveBeenCalled();
+      expect(mockMessageQueueService.getInFlightJobs).not.toHaveBeenCalled();
+      expect(mockCacheStorageService.set).not.toHaveBeenCalled();
+      expectNoWorkflowRunEnded();
     });
 
-    it('should skip runs that still have an in-flight queue job', async () => {
+    it('should not flag runs that still have an in-flight job matched by id prefix', async () => {
       mockRepository.find.mockResolvedValueOnce([{ id: 'run-0' }]);
-      mockMessageQueueService.getInFlightJobIds.mockResolvedValueOnce([
-        'run-0-8a521c10-92b1-4013-a4a7-71f20b1a4a4a',
+      mockMessageQueueService.getInFlightJobs.mockResolvedValueOnce([
+        { id: 'run-0-8a521c10-92b1-4013-a4a7-71f20b1a4a4a', data: {} },
       ]);
 
       await service.handleStuckRunningRunsForWorkspace(workspaceId);
@@ -306,12 +323,32 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
       expect(
         mockWorkflowRunWorkspaceService.getWorkflowRunOrFail,
       ).not.toHaveBeenCalled();
-      expect(
-        mockWorkflowRunWorkspaceService.endWorkflowRun,
-      ).not.toHaveBeenCalled();
+      expect(mockCacheStorageService.set).toHaveBeenCalledWith(
+        expect.any(String),
+        {},
+      );
+      expectNoWorkflowRunEnded();
     });
 
-    it('should fail a run with an orphaned running step', async () => {
+    it('should not flag runs whose pre-deploy job is matched by job data', async () => {
+      mockRepository.find.mockResolvedValueOnce([{ id: 'run-0' }]);
+      mockMessageQueueService.getInFlightJobs.mockResolvedValueOnce([
+        { id: '12345', data: { workspaceId, workflowRunId: 'run-0' } },
+      ]);
+
+      await service.handleStuckRunningRunsForWorkspace(workspaceId);
+
+      expect(
+        mockWorkflowRunWorkspaceService.getWorkflowRunOrFail,
+      ).not.toHaveBeenCalled();
+      expect(mockCacheStorageService.set).toHaveBeenCalledWith(
+        expect.any(String),
+        {},
+      );
+      expectNoWorkflowRunEnded();
+    });
+
+    it('should flag a run with an orphaned running step without ending it', async () => {
       mockRepository.find.mockResolvedValueOnce([{ id: 'run-0' }]);
       mockWorkflowRunWorkspaceService.getWorkflowRunOrFail.mockResolvedValueOnce(
         buildRunningWorkflowRun({
@@ -322,23 +359,19 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
 
       await service.handleStuckRunningRunsForWorkspace(workspaceId);
 
-      expect(
-        mockWorkflowRunWorkspaceService.endWorkflowRun,
-      ).toHaveBeenCalledWith({
-        workflowRunId: 'run-0',
-        workspaceId,
-        status: WorkflowRunStatus.FAILED,
-        error: expect.stringContaining('its queue job was lost'),
-        isSystemError: true,
-      });
       expect(mockMetricsService.incrementCounterForEvent).toHaveBeenCalledWith(
         expect.objectContaining({
-          key: MetricsKeys.WorkflowRunFailedFromLostJob,
+          key: MetricsKeys.WorkflowRunStuckRunningDetected,
         }),
       );
+      expect(mockCacheStorageService.set).toHaveBeenCalledWith(
+        expect.any(String),
+        { 'run-0': expect.any(String) },
+      );
+      expectNoWorkflowRunEnded();
     });
 
-    it('should skip runs waiting on a pending step', async () => {
+    it('should not flag runs waiting on a pending step', async () => {
       mockRepository.find.mockResolvedValueOnce([{ id: 'run-0' }]);
       mockWorkflowRunWorkspaceService.getWorkflowRunOrFail.mockResolvedValueOnce(
         buildRunningWorkflowRun({
@@ -350,11 +383,41 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
       await service.handleStuckRunningRunsForWorkspace(workspaceId);
 
       expect(
-        mockWorkflowRunWorkspaceService.endWorkflowRun,
+        mockMetricsService.incrementCounterForEvent,
       ).not.toHaveBeenCalled();
+      expect(mockCacheStorageService.set).toHaveBeenCalledWith(
+        expect.any(String),
+        {},
+      );
+      expectNoWorkflowRunEnded();
     });
 
-    it('should fail a run whose job was lost between two steps', async () => {
+    it('should flag a run with a failed branch even when another branch is pending', async () => {
+      mockRepository.find.mockResolvedValueOnce([{ id: 'run-0' }]);
+      mockWorkflowRunWorkspaceService.getWorkflowRunOrFail.mockResolvedValueOnce(
+        buildRunningWorkflowRun({
+          steps: [
+            { id: 'step-1', type: 'CODE', nextStepIds: [] },
+            { id: 'step-2', type: 'DELAY', nextStepIds: [] },
+          ],
+          stepInfos: {
+            'step-1': { status: StepStatus.FAILED },
+            'step-2': { status: StepStatus.PENDING },
+          },
+        }),
+      );
+
+      await service.handleStuckRunningRunsForWorkspace(workspaceId);
+
+      expect(mockMetricsService.incrementCounterForEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          key: MetricsKeys.WorkflowRunStuckRunningDetected,
+        }),
+      );
+      expectNoWorkflowRunEnded();
+    });
+
+    it('should flag a run whose job was lost between two steps', async () => {
       mockRepository.find.mockResolvedValueOnce([{ id: 'run-0' }]);
       mockWorkflowRunWorkspaceService.getWorkflowRunOrFail.mockResolvedValueOnce(
         buildRunningWorkflowRun({
@@ -371,59 +434,15 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
 
       await service.handleStuckRunningRunsForWorkspace(workspaceId);
 
-      expect(
-        mockWorkflowRunWorkspaceService.endWorkflowRun,
-      ).toHaveBeenCalledWith({
-        workflowRunId: 'run-0',
-        workspaceId,
-        status: WorkflowRunStatus.FAILED,
-        error: expect.stringContaining('its queue job was lost'),
-        isSystemError: true,
-      });
-    });
-
-    it('should complete a run whose job was lost after its last step', async () => {
-      mockRepository.find.mockResolvedValueOnce([{ id: 'run-0' }]);
-      mockWorkflowRunWorkspaceService.getWorkflowRunOrFail.mockResolvedValueOnce(
-        buildRunningWorkflowRun({
-          steps: [{ id: 'step-1', type: 'CODE', nextStepIds: [] }],
-          stepInfos: { 'step-1': { status: StepStatus.SUCCESS } },
+      expect(mockMetricsService.incrementCounterForEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          key: MetricsKeys.WorkflowRunStuckRunningDetected,
         }),
       );
-
-      await service.handleStuckRunningRunsForWorkspace(workspaceId);
-
-      expect(
-        mockWorkflowRunWorkspaceService.endWorkflowRun,
-      ).toHaveBeenCalledWith({
-        workflowRunId: 'run-0',
-        workspaceId,
-        status: WorkflowRunStatus.COMPLETED,
-      });
+      expectNoWorkflowRunEnded();
     });
 
-    it('should fail a finished run when one of its steps failed', async () => {
-      mockRepository.find.mockResolvedValueOnce([{ id: 'run-0' }]);
-      mockWorkflowRunWorkspaceService.getWorkflowRunOrFail.mockResolvedValueOnce(
-        buildRunningWorkflowRun({
-          steps: [{ id: 'step-1', type: 'CODE', nextStepIds: [] }],
-          stepInfos: { 'step-1': { status: StepStatus.FAILED } },
-        }),
-      );
-
-      await service.handleStuckRunningRunsForWorkspace(workspaceId);
-
-      expect(
-        mockWorkflowRunWorkspaceService.endWorkflowRun,
-      ).toHaveBeenCalledWith({
-        workflowRunId: 'run-0',
-        workspaceId,
-        status: WorkflowRunStatus.FAILED,
-        error: 'WorkflowRun failed',
-      });
-    });
-
-    it('should skip runs that progressed since the query', async () => {
+    it('should not flag runs that progressed since the query', async () => {
       mockRepository.find.mockResolvedValueOnce([{ id: 'run-0' }]);
       mockWorkflowRunWorkspaceService.getWorkflowRunOrFail.mockResolvedValueOnce(
         {
@@ -435,11 +454,95 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
       await service.handleStuckRunningRunsForWorkspace(workspaceId);
 
       expect(
-        mockWorkflowRunWorkspaceService.endWorkflowRun,
+        mockMetricsService.incrementCounterForEvent,
       ).not.toHaveBeenCalled();
+      expect(mockCacheStorageService.set).toHaveBeenCalledWith(
+        expect.any(String),
+        {},
+      );
+      expectNoWorkflowRunEnded();
     });
 
-    it('should keep finalizing remaining runs when one fails', async () => {
+    it('should keep a still-stuck flagged run without counting it again', async () => {
+      mockCacheStorageService.get.mockResolvedValueOnce({
+        'run-0': '2026-07-16T00:00:00.000Z',
+      });
+      mockRepository.find.mockResolvedValueOnce([{ id: 'run-0' }]);
+      mockWorkflowRunWorkspaceService.getWorkflowRunOrFail.mockResolvedValueOnce(
+        buildRunningWorkflowRun({
+          steps: [{ id: 'step-1', type: 'CODE', nextStepIds: [] }],
+          stepInfos: { 'step-1': { status: StepStatus.RUNNING } },
+        }),
+      );
+
+      await service.handleStuckRunningRunsForWorkspace(workspaceId);
+
+      expect(
+        mockMetricsService.incrementCounterForEvent,
+      ).not.toHaveBeenCalled();
+      expect(mockCacheStorageService.set).toHaveBeenCalledWith(
+        expect.any(String),
+        { 'run-0': '2026-07-16T00:00:00.000Z' },
+      );
+      expectNoWorkflowRunEnded();
+    });
+
+    it('should record a false positive when a flagged run ended on its own', async () => {
+      mockCacheStorageService.get.mockResolvedValueOnce({
+        'run-0': '2026-07-16T00:00:00.000Z',
+      });
+      mockRepository.find.mockResolvedValueOnce([]);
+      mockWorkflowRunWorkspaceService.getWorkflowRunOrFail.mockResolvedValueOnce(
+        {
+          id: 'run-0',
+          status: WorkflowRunStatus.COMPLETED,
+        },
+      );
+
+      await service.handleStuckRunningRunsForWorkspace(workspaceId);
+
+      expect(mockMetricsService.incrementCounterForEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          key: MetricsKeys.WorkflowRunStuckRunningFalsePositive,
+        }),
+      );
+      expect(mockCacheStorageService.set).toHaveBeenCalledWith(
+        expect.any(String),
+        {},
+      );
+      expectNoWorkflowRunEnded();
+    });
+
+    it('should record a false positive when a flagged run got a new queue job', async () => {
+      mockCacheStorageService.get.mockResolvedValueOnce({
+        'run-0': '2026-07-16T00:00:00.000Z',
+      });
+      mockRepository.find.mockResolvedValueOnce([]);
+      mockMessageQueueService.getInFlightJobs.mockResolvedValueOnce([
+        { id: 'run-0-8a521c10-92b1-4013-a4a7-71f20b1a4a4a', data: {} },
+      ]);
+      mockWorkflowRunWorkspaceService.getWorkflowRunOrFail.mockResolvedValueOnce(
+        buildRunningWorkflowRun({
+          steps: [{ id: 'step-1', type: 'CODE', nextStepIds: [] }],
+          stepInfos: { 'step-1': { status: StepStatus.RUNNING } },
+        }),
+      );
+
+      await service.handleStuckRunningRunsForWorkspace(workspaceId);
+
+      expect(mockMetricsService.incrementCounterForEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          key: MetricsKeys.WorkflowRunStuckRunningFalsePositive,
+        }),
+      );
+      expect(mockCacheStorageService.set).toHaveBeenCalledWith(
+        expect.any(String),
+        {},
+      );
+      expectNoWorkflowRunEnded();
+    });
+
+    it('should keep checking remaining runs when one check fails', async () => {
       mockRepository.find.mockResolvedValueOnce([
         { id: 'run-0' },
         { id: 'run-1' },
@@ -456,14 +559,11 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
 
       await service.handleStuckRunningRunsForWorkspace(workspaceId);
 
-      expect(
-        mockWorkflowRunWorkspaceService.endWorkflowRun,
-      ).toHaveBeenCalledTimes(1);
-      expect(
-        mockWorkflowRunWorkspaceService.endWorkflowRun,
-      ).toHaveBeenCalledWith(
-        expect.objectContaining({ workflowRunId: 'run-1' }),
+      expect(mockCacheStorageService.set).toHaveBeenCalledWith(
+        expect.any(String),
+        { 'run-1': expect.any(String) },
       );
+      expectNoWorkflowRunEnded();
     });
   });
 });

@@ -42,5 +42,12 @@ export interface MessageQueueDriver {
     jobId?: string;
   }): Promise<void>;
   register?(queueName: MessageQueue): void;
-  getInFlightJobIds?(queueName: MessageQueue): Promise<string[]>;
+  getInFlightJobs?<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+  ): Promise<InFlightQueueJob<T>[]>;
+}
+
+export interface InFlightQueueJob<T extends MessageQueueJobData> {
+  id?: string;
+  data: T;
 }

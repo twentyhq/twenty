@@ -4,5 +4,5 @@ export const buildRunWorkflowJobOptions = (
   workflowRunId: string,
 ): QueueJobOptions => ({
   id: workflowRunId,
-  deduplicate: false,
+  allowDuplicatedPrefixes: true,
 });
