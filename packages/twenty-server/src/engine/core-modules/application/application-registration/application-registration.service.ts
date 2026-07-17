@@ -7,44 +7,46 @@ import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { ILike, IsNull, type FindOptionsWhere, type Repository } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
-import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { shouldRefreshApplicationRegistrationOnInstall } from 'src/engine/core-modules/application/application-install/utils/should-refresh-application-registration-on-install.util';
+import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
+import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
+import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
-import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { type ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
-import { type PaginatedApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
+import { type PaginatedApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
 import { type PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
 import {
   type UpdateApplicationRegistrationInput,
   type UpdateApplicationRegistrationPayload,
 } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { buildRegistrationManifestUpdateFields } from 'src/engine/core-modules/application/application-registration/utils/build-registration-manifest-update-fields.util';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
-import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
+import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
 const BCRYPT_SALT_ROUNDS = 10;
 
 const MAX_APPLICATION_REGISTRATIONS_PAGE_SIZE = 100;
 
-// Sized well above the manifest save + variable schema sync duration so the
-// lease cannot expire mid-update and let a concurrent refresh interleave.
 const APPLICATION_REGISTRATION_UPDATE_LOCK_OPTIONS = {
   ttl: 60_000,
   ms: 500,
@@ -112,6 +114,7 @@ export class ApplicationRegistrationService {
     private readonly serverFileStorageService: ServerFileStorageService,
     private readonly cacheLockService: CacheLockService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   private async invalidateMarketplaceAppsCache(): Promise<void> {
@@ -123,6 +126,50 @@ export class ApplicationRegistrationService {
     } catch (error) {
       this.logger.error('Failed to invalidate marketplace apps cache', error);
     }
+  }
+
+  emitRegistrationPublishMetric({
+    isNewRegistration,
+    universalIdentifier,
+    name,
+    sourceType,
+    version,
+  }: {
+    isNewRegistration: boolean;
+    universalIdentifier: string;
+    name: string;
+    sourceType: string;
+    version?: string | null;
+  }): void {
+    this.metricsService.incrementCounterBy({
+      key: isNewRegistration
+        ? MetricsKeys.AppRegistrationCreated
+        : MetricsKeys.AppRegistrationVersionPublished,
+      amount: 1,
+      attributes: {
+        universal_identifier: universalIdentifier,
+        app_name: name,
+        source_type: sourceType,
+        version: version ?? 'unknown',
+      },
+    });
+  }
+
+  async setLatestAvailableVersionIfChanged(
+    applicationRegistrationId: string,
+    newVersion: string | null,
+  ): Promise<boolean> {
+    const result = await this.applicationRegistrationRepository
+      .createQueryBuilder()
+      .update(ApplicationRegistrationEntity)
+      .set({ latestAvailableVersion: newVersion })
+      .where('id = :id', { id: applicationRegistrationId })
+      .andWhere('"latestAvailableVersion" IS DISTINCT FROM :newVersion', {
+        newVersion,
+      })
+      .execute();
+
+    return (result.affected ?? 0) > 0;
   }
 
   async findMany(
@@ -385,12 +432,25 @@ export class ApplicationRegistrationService {
     sourceType,
     latestAvailableVersion,
     preventVersionDowngrade = false,
+    additionalFields,
   }: {
     applicationRegistrationId: string;
     manifest: Manifest;
     sourceType?: ApplicationRegistrationSourceType;
-    latestAvailableVersion?: string;
+    // null clears the stored version; undefined leaves it untouched.
+    latestAvailableVersion?: string | null;
     preventVersionDowngrade?: boolean;
+    additionalFields?: Partial<
+      Pick<
+        ApplicationRegistrationEntity,
+        | 'name'
+        | 'sourcePackage'
+        | 'tarballFileId'
+        | 'isListed'
+        | 'isVetted'
+        | 'ownerWorkspaceId'
+      >
+    >;
   }): Promise<boolean> {
     return this.cacheLockService.withLock(
       async () => {
@@ -414,43 +474,35 @@ export class ApplicationRegistrationService {
           return false;
         }
 
-        const displayFields = fromManifestApplicationToDisplayFields(
-          manifest.application,
-        );
+        const manifestUpdateFields = buildRegistrationManifestUpdateFields({
+          manifestApplication: manifest.application,
+          existingGalleryImages: existing.galleryImages,
+        });
 
-        // Gallery image files are stored by the source-specific flows (tarball
-        // upload, dev sync); keep their fileIds for paths that did not change.
-        const existingFileIdByPath = new Map(
-          (existing.galleryImages ?? []).map(({ path, fileId }) => [
-            path,
-            fileId,
-          ]),
-        );
+        // The stored logo file belongs to the previous logo path.
+        const hasLogoPathChanged =
+          (manifestUpdateFields.logo ?? null) !== (existing.logo ?? null);
 
-        // One transaction so the registration row and its variable schemas
-        // always come from the same manifest, even when the sync fails midway.
+        // Partial update in one transaction: the row and its variable schemas
+        // stay on the same manifest without clobbering columns written by
+        // flows outside this lock.
         await this.applicationRegistrationRepository.manager.transaction(
           async (entityManager) => {
             await entityManager
               .getRepository(ApplicationRegistrationEntity)
-              .save({
-                ...existing,
-                name: manifest.application.displayName,
+              .update(applicationRegistrationId, {
+                name: manifest.application?.displayName ?? existing.name,
                 manifest,
-                ...displayFields,
-                galleryImages: displayFields.galleryImages.map(
-                  (galleryImage) => ({
-                    ...galleryImage,
-                    fileId: existingFileIdByPath.get(galleryImage.path) ?? null,
-                  }),
-                ),
+                ...manifestUpdateFields,
+                ...(hasLogoPathChanged && { logoFileId: null }),
                 ...(sourceType !== undefined && { sourceType }),
                 ...(latestAvailableVersion !== undefined && {
                   latestAvailableVersion,
                 }),
-              });
+                ...additionalFields,
+              } as QueryDeepPartialEntity<ApplicationRegistrationEntity>);
 
-            if (isDefined(manifest.application.serverVariables)) {
+            if (isDefined(manifest.application?.serverVariables)) {
               await this.applicationRegistrationVariableService.syncVariableSchemas(
                 applicationRegistrationId,
                 manifest.application.serverVariables,
@@ -540,16 +592,41 @@ export class ApplicationRegistrationService {
 
     const isVetted = vettedIdentifiers.has(params.universalIdentifier);
 
-    if (isDefined(existing)) {
-      const displayFields = fromManifestApplicationToDisplayFields(
-        params.manifest?.application,
+    if (isDefined(existing) && isDefined(params.manifest)) {
+      const isNewVersion = await this.setLatestAvailableVersionIfChanged(
+        existing.id,
+        params.latestAvailableVersion ?? null,
       );
 
-      const existingFileIdByPath = new Map(
-        (existing.galleryImages ?? []).map(({ path, fileId }) => [
-          path,
-          fileId,
-        ]),
+      await this.updateFromManifest({
+        applicationRegistrationId: existing.id,
+        manifest: params.manifest,
+        sourceType: params.sourceType,
+        latestAvailableVersion: params.latestAvailableVersion,
+        additionalFields: {
+          name: params.name,
+          sourcePackage: params.sourcePackage,
+          isVetted,
+        },
+      });
+
+      if (isNewVersion) {
+        this.emitRegistrationPublishMetric({
+          isNewRegistration: false,
+          universalIdentifier: params.universalIdentifier,
+          name: params.name,
+          sourceType: params.sourceType,
+          version: params.latestAvailableVersion,
+        });
+      }
+
+      return;
+    }
+
+    if (isDefined(existing)) {
+      const isNewVersion = await this.setLatestAvailableVersionIfChanged(
+        existing.id,
+        params.latestAvailableVersion ?? null,
       );
 
       await this.applicationRegistrationRepository.save({
@@ -560,43 +637,53 @@ export class ApplicationRegistrationService {
         latestAvailableVersion: params.latestAvailableVersion,
         isVetted,
         manifest: params.manifest,
-        ...displayFields,
-        galleryImages: displayFields.galleryImages.map((galleryImage) => ({
-          ...galleryImage,
-          fileId: existingFileIdByPath.get(galleryImage.path) ?? null,
-        })),
-      });
-    } else {
-      const registration = this.applicationRegistrationRepository.create({
-        universalIdentifier: params.universalIdentifier,
-        name: params.name,
-        sourceType: params.sourceType,
-        sourcePackage: params.sourcePackage,
-        latestAvailableVersion: params.latestAvailableVersion,
-        isListed: true,
-        isVetted,
-        manifest: params.manifest,
         ...fromManifestApplicationToDisplayFields(params.manifest?.application),
-        oAuthClientId: v4(),
-        oAuthRedirectUris: [],
-        oAuthScopes: [],
-        ownerWorkspaceId: null,
       });
 
-      await this.applicationRegistrationRepository.save(registration);
+      await this.invalidateMarketplaceAppsCache();
+
+      if (isNewVersion) {
+        this.emitRegistrationPublishMetric({
+          isNewRegistration: false,
+          universalIdentifier: params.universalIdentifier,
+          name: params.name,
+          sourceType: params.sourceType,
+          version: params.latestAvailableVersion,
+        });
+      }
+
+      return;
     }
+
+    const registration = this.applicationRegistrationRepository.create({
+      universalIdentifier: params.universalIdentifier,
+      name: params.name,
+      sourceType: params.sourceType,
+      sourcePackage: params.sourcePackage,
+      latestAvailableVersion: params.latestAvailableVersion,
+      isListed: true,
+      isVetted,
+      manifest: params.manifest,
+      ...fromManifestApplicationToDisplayFields(params.manifest?.application),
+      oAuthClientId: v4(),
+      oAuthRedirectUris: [],
+      oAuthScopes: [],
+      ownerWorkspaceId: null,
+    });
+
+    await this.applicationRegistrationRepository.save(registration);
+
+    this.emitRegistrationPublishMetric({
+      isNewRegistration: true,
+      universalIdentifier: params.universalIdentifier,
+      name: params.name,
+      sourceType: params.sourceType,
+      version: params.latestAvailableVersion,
+    });
 
     await this.invalidateMarketplaceAppsCache();
 
     if (!isDefined(params.manifest?.application?.serverVariables)) {
-      return;
-    }
-
-    const registration = await this.findOneByUniversalIdentifier(
-      params.universalIdentifier,
-    );
-
-    if (!isDefined(registration)) {
       return;
     }
 

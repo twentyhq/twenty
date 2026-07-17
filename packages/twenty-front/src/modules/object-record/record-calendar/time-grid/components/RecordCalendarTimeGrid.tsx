@@ -111,8 +111,17 @@ const StyledDayNumber = styled.span<{ isToday: boolean }>`
 `;
 
 const StyledAllDayLabel = styled(StyledHeaderGutter)`
-  border-top: 1px solid ${themeCssVariables.border.color.light};
-  height: 28px;
+  align-items: flex-start;
+  height: auto;
+  min-height: 28px;
+  padding-top: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledAllDayGrid = styled.div<{ dayCount: number }>`
+  display: grid;
+  grid-template-columns:
+    ${RECORD_CALENDAR_WEEK_DIMENSIONS.timeGutterWidth}px
+    repeat(${({ dayCount }) => dayCount}, minmax(120px, 1fr));
 `;
 
 const StyledGrid = styled.div<{ dayCount: number }>`
@@ -568,22 +577,20 @@ export const RecordCalendarTimeGrid = ({
               </StyledDayHeader>
             );
           })}
-          {isAllDayView && (
-            <>
-              <StyledAllDayLabel>{t`All day`}</StyledAllDayLabel>
-              {days.map(({ date }) => (
-                <RecordCalendarTimeGridAllDayCell
-                  key={`all-day-${date.toString()}`}
-                  calendarFieldName={calendarFieldMetadataItem.name}
-                  calendarFieldType={calendarFieldMetadataItem.type}
-                  day={date}
-                  timeFormat={timeFormat}
-                  timeZone={timeZone}
-                />
-              ))}
-            </>
-          )}
         </StyledHeader>
+        {isAllDayView && (
+          <StyledAllDayGrid dayCount={days.length}>
+            <StyledAllDayLabel>{t`All day`}</StyledAllDayLabel>
+            {days.map(({ date }) => (
+              <RecordCalendarTimeGridAllDayCell
+                key={`all-day-${date.toString()}`}
+                calendarFieldType={calendarFieldMetadataItem.type}
+                day={date}
+                timeZone={timeZone}
+              />
+            ))}
+          </StyledAllDayGrid>
+        )}
         {isTimedView && (
           <StyledGrid
             ref={gridRef}

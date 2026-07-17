@@ -1,7 +1,7 @@
 import { createHash, webcrypto } from 'node:crypto';
 import { TextEncoder as NodeTextEncoder } from 'node:util';
 
-import { fetchComponentSource } from '@/remote/worker/utils/fetchComponentSource';
+import { fetchComponentSource } from '@/host/utils/fetchComponentSource';
 
 const COMPONENT_SOURCE = 'export default () => {};';
 
@@ -46,7 +46,13 @@ class FakeCache {
     },
   );
 
-  delete = jest.fn(async (key: string) => this.store.delete(key));
+  delete = jest.fn(async (key: string | { url: string }) =>
+    this.store.delete(typeof key === 'string' ? key : key.url),
+  );
+
+  keys = jest.fn(async () =>
+    Array.from(this.store.keys()).map((key) => ({ url: key })),
+  );
 }
 
 const isDefinedString = (value: string | undefined): value is string =>
@@ -118,6 +124,42 @@ describe('fetchComponentSource', () => {
     expect(source).toBe(COMPONENT_SOURCE);
     expect(cache.put).toHaveBeenCalledTimes(1);
     expect(cache.put.mock.calls[0][0]).toBe(FINGERPRINTED_URL);
+  });
+
+  it('evicts stale entries of the same component when caching a new build', async () => {
+    const cache = new FakeCache();
+
+    const staleUrl = buildFingerprintedUrl(
+      computeSha256Hex('previous build output'),
+    );
+    const otherComponentUrl =
+      'https://api.twenty.com/rest/front-components/other-component-id/0000000000000000000000000000000000000000000000000000000000000000.js';
+
+    await cache.put(staleUrl, {
+      text: async () => 'previous build output',
+    });
+    await cache.put(otherComponentUrl, {
+      text: async () => 'other component source',
+    });
+    cache.put.mockClear();
+
+    setupCaches(cache);
+
+    const fetchMock = jest.fn(async () =>
+      createFakeJsResponse(COMPONENT_SOURCE),
+    );
+
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
+
+    // Eviction is fire-and-forget; flush pending promise callbacks
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(source).toBe(COMPONENT_SOURCE);
+    expect(cache.delete).toHaveBeenCalledWith({ url: staleUrl });
+    expect(cache.delete).not.toHaveBeenCalledWith({ url: otherComponentUrl });
+    expect(cache.delete).not.toHaveBeenCalledWith({ url: FINGERPRINTED_URL });
   });
 
   it('serves a verified cache hit without hitting the network', async () => {

@@ -31,6 +31,7 @@ export const fetchComponentSourceFromNetwork = async ({
 }): Promise<string> => {
   const response = await fetch(appendCacheBustQueryParameter(url), {
     headers,
+    credentials: 'omit',
   });
 
   if (!response.ok) {
@@ -51,7 +52,9 @@ export const fetchComponentSourceFromNetwork = async ({
     throw new Error(`Invalid component source handoff response from ${url}`);
   }
 
-  const presignedResponse = await fetch(handoff.data.url);
+  const presignedResponse = await fetch(handoff.data.url, {
+    credentials: 'omit',
+  });
 
   if (!presignedResponse.ok) {
     throw new Error(

@@ -7,7 +7,15 @@ import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { DataSource, LessThan, QueryRunner, Repository } from 'typeorm';
+import {
+  DataSource,
+  In,
+  IsNull,
+  LessThan,
+  Not,
+  QueryRunner,
+  Repository,
+} from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -19,13 +27,13 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import {
   EmailingDomainWorkspaceCleanupJob,
   type EmailingDomainWorkspaceCleanupJobData,
 } from 'src/engine/core-modules/emailing-domain/jobs/emailing-domain-workspace-cleanup.job';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import {
   FileWorkspaceFolderDeletionJob,
@@ -480,22 +488,51 @@ export class WorkspaceService {
     }
   }
 
-  async suspendWorkspace(id: string) {
-    await this.workspaceRepository.update(id, {
-      activationStatus: WorkspaceActivationStatus.SUSPENDED,
-      suspendedAt: new Date(),
-    });
+  async suspendWorkspace(id: string): Promise<boolean> {
+    const { affected } = await this.workspaceRepository.update(
+      {
+        id,
+        activationStatus: Not(WorkspaceActivationStatus.SUSPENDED),
+        deletedAt: IsNull(),
+      },
+      {
+        activationStatus: WorkspaceActivationStatus.SUSPENDED,
+        suspendedAt: new Date(),
+      },
+    );
 
-    await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+    const hasBeenSuspended = isDefined(affected) && affected > 0;
+
+    if (hasBeenSuspended) {
+      await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+    }
+
+    return hasBeenSuspended;
   }
 
-  async reactivateWorkspace(id: string) {
-    await this.workspaceRepository.update(id, {
-      activationStatus: WorkspaceActivationStatus.ACTIVE,
-      suspendedAt: null,
-    });
+  async reactivateWorkspace(id: string): Promise<boolean> {
+    const { affected } = await this.workspaceRepository.update(
+      {
+        id,
+        activationStatus: In([
+          WorkspaceActivationStatus.SUSPENDED,
+          WorkspaceActivationStatus.CREATED,
+        ]),
+        deletedAt: IsNull(),
+      },
+      {
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+        suspendedAt: null,
+      },
+    );
 
-    await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+    const hasBeenReactivated = isDefined(affected) && affected > 0;
+
+    if (hasBeenReactivated) {
+      await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+    }
+
+    return hasBeenReactivated;
   }
 
   async deleteWorkspace(id: string, softDelete = false) {

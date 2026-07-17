@@ -1,4 +1,7 @@
-import { type VersionValidationFailureReason } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
+import {
+  type VersionProgressionFailureReason,
+  type VersionValidationFailureReason,
+} from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationRegistrationExceptionCode } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationExceptionCode } from 'src/engine/core-modules/application/application.exception';
 
@@ -31,4 +34,22 @@ export const VERSION_REASON_TO_APPLICATION_REGISTRATION_EXCEPTION_CODE: Record<
     ApplicationRegistrationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
   WORKSPACE_INCOMPATIBLE:
     ApplicationRegistrationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
+};
+
+export const VERSION_PROGRESSION_REASON_TO_INSTALL_EXCEPTION_CODE: Record<
+  VersionProgressionFailureReason,
+  ApplicationExceptionCode
+> = {
+  INVALID_INCOMING_VERSION: ApplicationExceptionCode.INVALID_INPUT,
+  SAME_VERSION: ApplicationExceptionCode.APP_ALREADY_INSTALLED,
+  DOWNGRADE: ApplicationExceptionCode.CANNOT_DOWNGRADE_APPLICATION,
+};
+
+export const VERSION_PROGRESSION_REASON_TO_DEPLOY_EXCEPTION_CODE: Record<
+  VersionProgressionFailureReason,
+  ApplicationRegistrationExceptionCode
+> = {
+  INVALID_INCOMING_VERSION: ApplicationRegistrationExceptionCode.INVALID_INPUT,
+  SAME_VERSION: ApplicationRegistrationExceptionCode.VERSION_ALREADY_EXISTS,
+  DOWNGRADE: ApplicationRegistrationExceptionCode.VERSION_ALREADY_EXISTS,
 };
