@@ -15,6 +15,10 @@ import { computeDeterministicUuid } from '@/application/deterministic-identifier
 // Invariant: the `systemRelation` segment and the three-segment shape cannot
 // collide with the name-based field identifier (`${objectUID}:${name}`) because
 // field names cannot contain colons.
+//
+// App developers should use getDefaultRelationFieldUniversalIdentifier
+// instead, which resolves the standard relation object identifier from the
+// forward field name.
 export const getSystemRelationFieldUniversalIdentifier = ({
   applicationUniversalIdentifier,
   hostObjectUniversalIdentifier,

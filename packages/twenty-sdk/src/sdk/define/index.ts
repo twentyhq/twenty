@@ -24,8 +24,8 @@ export type {
 export { defineField } from '@/sdk/define/fields/define-field';
 export { FieldType } from '@/sdk/define/fields/field-type';
 export {
+  getDefaultRelationFieldUniversalIdentifier,
   getFieldUniversalIdentifier,
-  getSystemRelationFieldUniversalIdentifier,
 } from 'twenty-shared/application';
 export { OnDeleteAction } from '@/sdk/define/fields/on-delete-action';
 export { RelationType } from '@/sdk/define/fields/relation-type';

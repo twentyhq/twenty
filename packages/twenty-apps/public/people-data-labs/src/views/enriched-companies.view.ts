@@ -52,10 +52,10 @@ export default defineView({
     { universalIdentifier: '0c027ae2-7e63-4354-8962-6922923929c0', fieldMetadataUniversalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlAlternativeDomains, position: 32, isVisible: true },
     { universalIdentifier: '0814427e-6699-44fd-9d57-7af6f2389f7d', fieldMetadataUniversalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlTags, position: 33, isVisible: true },
     { universalIdentifier: '65ca68c9-589f-44dc-bf57-d0a2152cb09c', fieldMetadataUniversalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlAffiliatedProfiles, position: 34, isVisible: true },
-    // TODO: retrieve these from STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS once the
-    // next twenty-sdk is released. The system relation field universal
-    // identifiers were re-derived name-free (getSystemRelationFieldUniversalIdentifier)
-    // in twenty v2.23 and the pinned twenty-sdk still embeds the old values.
+    // TODO: derive these with getDefaultRelationFieldUniversalIdentifier once
+    // the next twenty-sdk is released. The system relation field universal
+    // identifiers were re-derived name-free in twenty v2.23 and the pinned
+    // twenty-sdk still embeds the old values.
     { universalIdentifier: '3f0e5a60-3f49-4872-8451-5344a3715374', fieldMetadataUniversalIdentifier: '0b28db77-8099-5ce3-a11f-86a5778d7740', position: 35, isVisible: true }, // company.noteTargets
     { universalIdentifier: '70ab74e1-d2ff-4f15-81ef-196e223a783e', fieldMetadataUniversalIdentifier: '9d7b0087-7037-55dc-bb59-456064455694', position: 36, isVisible: true }, // company.taskTargets
     { universalIdentifier: '035b3904-59b9-4fce-a366-ee0139770346', fieldMetadataUniversalIdentifier: 'a4399ae3-fe89-59fe-a282-aec77d4e63a8', position: 37, isVisible: true }, // company.attachments

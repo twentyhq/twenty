@@ -50,6 +50,8 @@ export {
   getNavigationCommandUniversalIdentifier,
 } from './deterministic-identifier/get-command-menu-item-universal-identifier.util';
 export { getConnectionProviderUniversalIdentifier } from './deterministic-identifier/get-connection-provider-universal-identifier.util';
+export type { DefaultRelationFieldName } from './deterministic-identifier/get-default-relation-field-universal-identifier.util';
+export { getDefaultRelationFieldUniversalIdentifier } from './deterministic-identifier/get-default-relation-field-universal-identifier.util';
 export { getFieldPermissionUniversalIdentifier } from './deterministic-identifier/get-field-permission-universal-identifier.util';
 export { getFieldUniversalIdentifier } from './deterministic-identifier/get-field-universal-identifier.util';
 export { getFrontComponentUniversalIdentifier } from './deterministic-identifier/get-front-component-universal-identifier.util';
