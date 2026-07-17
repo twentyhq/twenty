@@ -1,3 +1,5 @@
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+
 import {
   AuthException,
   AuthExceptionCode,
@@ -57,6 +59,20 @@ const createSignInUpServiceForTests = () => {
     release: jest.fn(),
   };
 
+  const mockUserWorkspaceService = {
+    create: jest.fn(),
+    checkUserWorkspaceExists: jest.fn(),
+    addUserToWorkspaceIfUserNotInWorkspace: jest.fn(),
+  };
+
+  const mockOnboardingService = {
+    setOnboardingConnectAccountPending: jest.fn(),
+    setOnboardingCreateProfilePending: jest.fn(),
+    setOnboardingInstallAppsPending: jest.fn(),
+    setOnboardingInviteTeamPending: jest.fn(),
+    createOnboardingStatusForWorkspaceMember: jest.fn(),
+  };
+
   const service = new SignInUpService(
     mockUserRepository as any,
     mockWorkspaceRepository as any,
@@ -64,15 +80,8 @@ const createSignInUpServiceForTests = () => {
       validatePersonalInvitation: jest.fn(),
       invalidateWorkspaceInvitation: jest.fn(),
     } as any,
-    {
-      create: jest.fn(),
-      checkUserWorkspaceExists: jest.fn(),
-    } as any,
-    {
-      setOnboardingCreateProfilePending: jest.fn(),
-      setOnboardingInviteTeamPending: jest.fn(),
-      createOnboardingStatusForWorkspaceMember: jest.fn(),
-    } as any,
+    mockUserWorkspaceService as any,
+    mockOnboardingService as any,
     {
       emitCustomBatchEvent: jest.fn(),
     } as any,
@@ -121,6 +130,7 @@ const createSignInUpServiceForTests = () => {
     mockUserRepository,
     mockWorkspaceRepository,
     mockConfigurationValues,
+    mockOnboardingService,
   };
 };
 
@@ -307,5 +317,36 @@ describe('SignInUpService workspace-creation policy', () => {
     ).rejects.toMatchObject({
       code: AuthExceptionCode.SIGNUP_DISABLED,
     });
+  });
+});
+
+describe('SignInUpService onboarding steps', () => {
+  it('does not flag the install-apps step for a new user joining an existing workspace', async () => {
+    const { service, mockOnboardingService } = createSignInUpServiceForTests();
+
+    await service.signInUpOnExistingWorkspace({
+      workspace: {
+        id: 'existing-workspace-id',
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      } as any,
+      userData: {
+        type: 'newUserWithPicture',
+        newUserWithPicture: {
+          email: 'invited.user@acme.dev',
+          firstName: 'Invited',
+          lastName: 'User',
+        },
+      },
+    });
+
+    expect(
+      mockOnboardingService.setOnboardingCreateProfilePending,
+    ).toHaveBeenCalledWith(expect.objectContaining({ value: true }), undefined);
+    expect(
+      mockOnboardingService.setOnboardingInstallAppsPending,
+    ).not.toHaveBeenCalled();
+    expect(
+      mockOnboardingService.setOnboardingConnectAccountPending,
+    ).not.toHaveBeenCalled();
   });
 });
