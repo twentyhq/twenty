@@ -68,7 +68,7 @@ export const parseMicrosoftCalendarError = (
     case 401:
       return new CalendarEventImportDriverException(
         message,
-        CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
       );
     default:
       return new CalendarEventImportDriverException(
