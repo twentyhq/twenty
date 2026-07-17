@@ -1,3 +1,4 @@
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
@@ -9,15 +10,6 @@ import {
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
-
-import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-
-type MetadataValidationErrorExtensions = {
-  code?: string;
-  errors?: {
-    fieldMetadata?: { errors: { code: string }[] }[];
-  };
-};
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
@@ -101,20 +93,6 @@ describe('Sync application should reject hijacking the searchVector universal id
       expectToFail: true,
     });
 
-    expect(errors).toHaveLength(1);
-
-    const [firstError] = errors;
-    const extensions =
-      firstError.extensions as MetadataValidationErrorExtensions;
-
-    expect(extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
-
-    const fieldMetadataErrorCodes = (
-      extensions.errors?.fieldMetadata ?? []
-    ).flatMap((failure) => failure.errors.map((error) => error.code));
-
-    expect(fieldMetadataErrorCodes).toContain(
-      FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
-    );
+    expectOneNotInternalServerErrorSnapshot({ errors });
   }, 60000);
 });

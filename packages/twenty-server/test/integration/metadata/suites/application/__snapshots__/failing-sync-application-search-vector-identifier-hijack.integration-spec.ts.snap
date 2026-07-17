@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sync application should reject hijacking the searchVector universal identifier should reject a second sync that reuses the searchVector deterministic identifier to override its name and settings 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_MUTATION_NOT_ALLOWED",
+              "message": "System fields only allow updating: universalSettings, isActive. Forbidden properties: label, name",
+              "userFriendlyMessage": "System fields cannot be updated",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Field type TS_VECTOR must be named "searchVector", got "stolenSearchVector"",
+              "userFriendlyMessage": "Field type TS_VECTOR must be named "searchVector"",
+              "value": "stolenSearchVector",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "stolenSearchVector",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "System fields cannot be updated",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
