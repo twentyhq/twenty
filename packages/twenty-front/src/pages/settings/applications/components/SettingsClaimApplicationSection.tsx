@@ -9,7 +9,12 @@ import { styled } from '@linaria/react';
 import { i18n } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/feedback';
@@ -81,7 +86,9 @@ export const SettingsClaimApplicationSection = () => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const claimErrorCode = searchParams.get(CLAIM_ERROR_CODE_SEARCH_PARAM);
 
@@ -89,12 +96,12 @@ export const SettingsClaimApplicationSection = () => {
   const [notFound, setNotFound] = useState(false);
 
   const dismissClaimError = () => {
-    setSearchParams(
-      (previous) => {
-        previous.delete(CLAIM_ERROR_CODE_SEARCH_PARAM);
+    const nextSearchParams = new URLSearchParams(searchParams);
 
-        return previous;
-      },
+    nextSearchParams.delete(CLAIM_ERROR_CODE_SEARCH_PARAM);
+
+    navigate(
+      { search: nextSearchParams.toString(), hash: location.hash },
       { replace: true },
     );
   };
