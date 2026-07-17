@@ -20,6 +20,10 @@ import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-age
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 
 const SLACK_ASSISTANT_AGENT_NAME = 'slack-assistant';
 
@@ -74,12 +78,19 @@ export class SlackAssistantService {
         name: SLACK_ASSISTANT_AGENT_NAME,
         workspaceId,
       });
-    } catch {
-      this.logger.warn(
-        `The ${SLACK_ASSISTANT_AGENT_NAME} agent does not exist in workspace ${workspaceId}; is twenty-slack fully installed?`,
-      );
+    } catch (error) {
+      if (
+        error instanceof AiException &&
+        error.code === AiExceptionCode.AGENT_NOT_FOUND
+      ) {
+        this.logger.warn(
+          `The ${SLACK_ASSISTANT_AGENT_NAME} agent does not exist in workspace ${workspaceId}; is twenty-slack fully installed?`,
+        );
 
-      return;
+        return;
+      }
+
+      throw error;
     }
 
     const agentRoleId = await this.aiAgentRoleService.getAssignedRoleId({
