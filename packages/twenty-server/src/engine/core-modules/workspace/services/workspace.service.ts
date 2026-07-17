@@ -19,13 +19,13 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import {
   EmailingDomainWorkspaceCleanupJob,
   type EmailingDomainWorkspaceCleanupJobData,
 } from 'src/engine/core-modules/emailing-domain/jobs/emailing-domain-workspace-cleanup.job';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import {
   FileWorkspaceFolderDeletionJob,
@@ -380,9 +380,9 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
 
       await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
-      await this.installPreInstalledAppsOnCreatedWorkspace({
-        workspaceId: workspace.id,
-      });
+      // await this.installPreInstalledAppsOnCreatedWorkspace({
+      //   workspaceId: workspace.id,
+      // });
 
       await this.activateAndInitializeUpgradeState({
         workspaceId: workspace.id,
@@ -799,22 +799,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
           },
         );
       }
-    }
-  }
-
-  private async installPreInstalledAppsOnCreatedWorkspace({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<void> {
-    try {
-      await this.preInstalledAppsService.installOnWorkspace(workspaceId);
-    } catch (error) {
-      this.logger.error(
-        `Non-critical: failed to install pre-installed apps for workspace ${workspaceId}`,
-        error,
-      );
-      this.exceptionHandlerService.captureExceptions([error as Error]);
     }
   }
 
