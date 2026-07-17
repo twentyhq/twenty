@@ -65,33 +65,35 @@ export const parseSlackWebhookBody = (rawBody: string): SlackWebhookPayload => {
     return { kind: 'unsupported' };
   }
 
-  if (event.type === 'app_mention') {
-    return { kind: 'app_mention', ...buildMessageEvent(envelope, event) };
-  }
-
-  if (event.type === 'message') {
-    const messageMeta = {
-      botId: asOptionalString(event.bot_id),
-      subtype: asOptionalString(event.subtype),
-    };
-
-    if (event.channel_type === 'im') {
-      return {
-        kind: 'direct_message',
-        ...messageMeta,
-        ...buildMessageEvent(envelope, event),
+  switch (event.type) {
+    case 'app_mention':
+      return { kind: 'app_mention', ...buildMessageEvent(envelope, event) };
+    case 'message': {
+      const messageMeta = {
+        botId: asOptionalString(event.bot_id),
+        subtype: asOptionalString(event.subtype),
       };
-    }
 
-    if (
-      (event.channel_type === 'channel' || event.channel_type === 'group') &&
-      isDefined(asOptionalString(event.thread_ts))
-    ) {
-      return {
-        kind: 'channel_message',
-        ...messageMeta,
-        ...buildMessageEvent(envelope, event),
-      };
+      if (event.channel_type === 'im') {
+        return {
+          kind: 'direct_message',
+          ...messageMeta,
+          ...buildMessageEvent(envelope, event),
+        };
+      }
+
+      if (
+        (event.channel_type === 'channel' || event.channel_type === 'group') &&
+        isDefined(asOptionalString(event.thread_ts))
+      ) {
+        return {
+          kind: 'channel_message',
+          ...messageMeta,
+          ...buildMessageEvent(envelope, event),
+        };
+      }
+
+      break;
     }
   }
 
