@@ -46,13 +46,5 @@ export default defineObject({
       icon: 'IconSortAscending',
       isNullable: true,
     },
-    {
-      universalIdentifier: PARTNER_LINK_POSITION_FIELD_ID,
-      type: FieldType.POSITION,
-      name: 'position',
-      label: 'Position',
-      icon: 'IconSortAscending',
-      defaultValue: 0,
-    },
   ],
 });

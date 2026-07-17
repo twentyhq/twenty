@@ -2,7 +2,6 @@ import { ViewFilterOperand, ViewType, defineView } from 'twenty-sdk/define';
 
 import {
   PARTNER_COUNTRY_FIELD_UNIVERSAL_IDENTIFIER,
-  PARTNER_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_INTRODUCTION_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_VALIDATION_STAGE_FIELD_UNIVERSAL_IDENTIFIER,
@@ -41,13 +40,6 @@ export default defineView({
       position: 2,
       isVisible: true,
       size: 280,
-    },
-    {
-      universalIdentifier: '835c9a7e-72ec-46c5-8d90-39a02998f561',
-      fieldMetadataUniversalIdentifier: PARTNER_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
-      position: 3,
-      isVisible: true,
-      size: 180,
     },
     {
       universalIdentifier: '0175e169-377c-4ff5-b0f0-c3359cac48d9',

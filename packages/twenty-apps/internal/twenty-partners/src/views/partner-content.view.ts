@@ -11,7 +11,6 @@ import {
   PARTNER_CONTENT_COVER_IMAGE_FIELD_ID,
   PARTNER_CONTENT_HEADLINE_FIELD_ID,
   PARTNER_CONTENT_NAME_FIELD_ID,
-  PARTNER_CONTENT_POSITION_FIELD_ID,
   PARTNER_CONTENT_STATUS_FIELD_ID,
   PARTNER_CONTENT_TYPE_FIELD_ID,
 } from 'src/objects/partner-content.object';
@@ -71,12 +70,6 @@ export default defineView({
       fieldMetadataUniversalIdentifier: PARTNER_CONTENT_STATUS_FIELD_ID,
       position: 7,
       isVisible: true,
-    },
-    {
-      universalIdentifier: 'af72a2ca-afec-4680-9d58-53550731fd80',
-      fieldMetadataUniversalIdentifier: PARTNER_CONTENT_POSITION_FIELD_ID,
-      position: 8,
-      isVisible: false,
     },
   ],
 });
