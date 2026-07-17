@@ -1,30 +1,170 @@
 packages/twenty-server/src/engine/metadata-modules/message-channel/message-channel-metadata.service.ts
   s_c4892f4ac2fb0e::t_ddf994d4b38f6a 266
   s_c4892f4ac2fb0e::t_0e672c4cc633e7 216,221
+  s_c4892f4ac2fb0e::t_23a6f324bdb4aa 216,221,266
 packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-content.type.ts
   s_c4892f4ac2fb0e::t_ae00f6044643a9 6
+  s_c4892f4ac2fb0e::t_b0a8f7d980d202 6
 packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
   s_c4892f4ac2fb0e::t_ad8282aed965c4 55-57
+  s_c4892f4ac2fb0e::t_5c4dfa8863c5cd 55-57
 packages/twenty-server/src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.input.ts
   s_c4892f4ac2fb0e::t_f734cad131531d 2-8,18-23
+  s_c4892f4ac2fb0e::t_c73654f6f43dc4 2-8,18-23
 packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-email.service.ts
   s_c4892f4ac2fb0e::t_e2feb7ebdba576 47-49
   s_c4892f4ac2fb0e::t_20c40efe23d6eb 3
+  s_39832274ec7e46::t_e3b899fec80359 3,47-49
 packages/twenty-server/src/engine/metadata-modules/message-channel/resolvers/message-channel.resolver.ts
   s_c4892f4ac2fb0e::t_a72ae06400aa84 177
+  s_c4892f4ac2fb0e::t_44db502af00c98 177
 packages/twenty-server/src/modules/messaging/message-outbound-manager/types/persist-sent-message-input.type.ts
   s_c4892f4ac2fb0e::t_deac1bed55971e 9
+  s_c4892f4ac2fb0e::t_f855633e35b161 9
 packages/twenty-server/src/modules/messaging/message-outbound-manager/utils/format-sent-message.util.ts
   s_c4892f4ac2fb0e::t_b2bc401d6b0556 16-18,24
+  s_c4892f4ac2fb0e::t_cb01a944c15275 16-18,24
 packages/twenty-front/src/modules/settings/accounts/hooks/useCreateEmailGroupChannel.ts
   s_c4892f4ac2fb0e::t_5dca59d3731707 33
   s_c4892f4ac2fb0e::t_06d443f792da4a 51,53
+  s_c4892f4ac2fb0e::t_1e0b7020b3135a 33,51,53
 packages/twenty-front/src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
   s_c4892f4ac2fb0e::t_d413cd4e2a4981 23,29-32
   s_c4892f4ac2fb0e::t_6799eae2191ca8 41
   s_c4892f4ac2fb0e::t_ca5c54fad07591 87-105
+  s_c4892f4ac2fb0e::t_7e407d18da8914 23,29-30,32,41,52,87-105
 packages/twenty-front/src/generated-metadata/graphql.ts
   s_c4892f4ac2fb0e::t_e58bcdb2488bae 1115
+packages/create-twenty-app/package.json
+  s_37904604351395::t_c60cc3884b9101 3
+packages/twenty-client-sdk/package.json
+  s_37904604351395::t_d77de8e2a4f6b8 3
+packages/twenty-front/src/locales/generated/af-ZA.ts
+  s_37904604351395::t_ccfde9d0778fef 1
+packages/twenty-front/src/locales/generated/ar-SA.ts
+  s_37904604351395::t_dda272a761845b 1
+packages/twenty-front/src/locales/generated/ca-ES.ts
+  s_37904604351395::t_d5f60cecd8f327 1
+packages/twenty-front/src/locales/generated/cs-CZ.ts
+  s_37904604351395::t_f24069743b8d02 1
+packages/twenty-front/src/locales/generated/da-DK.ts
+  s_37904604351395::t_97186ea025a86d 1
+packages/twenty-front/src/locales/generated/de-DE.ts
+  s_37904604351395::t_f148a4dbb4abb3 1
+packages/twenty-front/src/locales/generated/el-GR.ts
+  s_37904604351395::t_851a14986b17fa 1
+packages/twenty-front/src/locales/generated/en.ts
+  s_37904604351395::t_1c30b8088224a1 1
+packages/twenty-front/src/locales/generated/es-ES.ts
+  s_37904604351395::t_f27948d99ffb5f 1
+packages/twenty-front/src/locales/generated/fi-FI.ts
+  s_37904604351395::t_3d537ed3e62d0a 1
+packages/twenty-front/src/locales/generated/fr-FR.ts
+  s_37904604351395::t_c5e1bd1d6ca445 1
+packages/twenty-front/src/locales/generated/he-IL.ts
+  s_37904604351395::t_f15e80d550d003 1
+packages/twenty-front/src/locales/generated/hu-HU.ts
+  s_37904604351395::t_bae7f6b084ee7e 1
+packages/twenty-front/src/locales/generated/it-IT.ts
+  s_37904604351395::t_bb635896eff17b 1
+packages/twenty-front/src/locales/generated/ja-JP.ts
+  s_37904604351395::t_4c78f6e1b80971 1
+packages/twenty-front/src/locales/generated/ko-KR.ts
+  s_37904604351395::t_7221d905acf901 1
+packages/twenty-front/src/locales/generated/nl-NL.ts
+  s_37904604351395::t_077db63ae69998 1
+packages/twenty-front/src/locales/generated/no-NO.ts
+  s_37904604351395::t_ac996f750b2f37 1
+packages/twenty-front/src/locales/generated/pl-PL.ts
+  s_37904604351395::t_5ffdec6d2b5c1a 1
+packages/twenty-front/src/locales/generated/pseudo-en.ts
+  s_37904604351395::t_19ce5876a69e51 1
+packages/twenty-front/src/locales/generated/pt-BR.ts
+  s_37904604351395::t_816382f3340879 1
+packages/twenty-front/src/locales/generated/pt-PT.ts
+  s_37904604351395::t_ca876a7f667419 1
+packages/twenty-front/src/locales/generated/ro-RO.ts
+  s_37904604351395::t_8ccdd8baf9a88a 1
+packages/twenty-front/src/locales/generated/ru-RU.ts
+  s_37904604351395::t_7a43379af9ed7b 1
+packages/twenty-front/src/locales/generated/sr-Cyrl.ts
+  s_37904604351395::t_03933aae973ff2 1
+packages/twenty-front/src/locales/generated/sv-SE.ts
+  s_37904604351395::t_0ee1bae3506600 1
+packages/twenty-front/src/locales/generated/tr-TR.ts
+  s_37904604351395::t_703b2303653a06 1
+packages/twenty-front/src/locales/generated/uk-UA.ts
+  s_37904604351395::t_5f8a83652ae612 1
+packages/twenty-front/src/locales/generated/vi-VN.ts
+  s_37904604351395::t_31fdcc901ca75b 1
+packages/twenty-front/src/locales/generated/zh-CN.ts
+  s_37904604351395::t_196676d41a1c87 1
+packages/twenty-front/src/locales/generated/zh-TW.ts
+  s_37904604351395::t_5e5411bfb9ec01 1
+packages/twenty-front/src/modules/settings/components/SettingsNameCellSecondaryLabel.tsx
+  s_da5c4fe767d6bc::t_630ffb7f5aac74 31
+packages/twenty-front/src/modules/settings/hooks/useSettingsNavigationItems.tsx
+  s_c4892f4ac2fb0e::t_d7853c32b7d758 177
+packages/twenty-front/src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+  s_37904604351395::t_643a3d814f442e 106
+packages/twenty-front/src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
+  s_da5c4fe767d6bc::t_563498473523e0 10-13,40,42,47,77
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
+  s_c4892f4ac2fb0e::t_312fda920ee6cf 63,69
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
+  s_c4892f4ac2fb0e::t_2e41ed55a154dd 83
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
+  s_c4892f4ac2fb0e::t_110b879b3db68e 126
+packages/twenty-front/src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+  s_da5c4fe767d6bc::t_10e39c07e1a8c4 28,149,151
+packages/twenty-sdk/package.json
+  s_37904604351395::t_41f1b9b96f7ae0 3
+packages/twenty-server/src/database/commands/command-runners/workspace-iterator.service.ts
+  s_37904604351395::t_77a3afc5adcd5b 13
+packages/twenty-server/src/engine/core-modules/application/application-install/application-install.service.ts
+  s_c4892f4ac2fb0e::t_4a1d884f3959e3 7,27,116,268,270-271,274-289
+packages/twenty-server/src/engine/core-modules/application/application-registration/application-registration.service.ts
+  s_c4892f4ac2fb0e::t_43fbc4482f84f6 48-49,439,464-466,468-475,477-478,483-485,487-493,498,500,590-592,595-600,615-619,631-646,648,650-657,665-672
+packages/twenty-server/src/engine/core-modules/application/application-registration/application-tarball.service.ts
+  s_c4892f4ac2fb0e::t_c1244201580362 8,12,16,20,32,44,59-100,112-115,119-169,172-174,176-197,201-212,219-225
+packages/twenty-server/src/engine/core-modules/application/application-upgrade/application-upgrade.service.ts
+  s_c4892f4ac2fb0e::t_4975783ef9fdc5 115-116,121
+packages/twenty-server/src/engine/core-modules/billing/services/billing-subscription.service.ts
+  s_37904604351395::t_2866ac98163bef 410-419
+packages/twenty-server/src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/services/local-child-process-runner.service.ts
+  s_da5c4fe767d6bc::t_457fc854be75c8 96-97,99-100,108-109,114,116,118
+packages/twenty-server/src/engine/core-modules/upgrade/constants/twenty-current-version.constant.ts
+  s_37904604351395::t_0fa25c368d2f10 10
+packages/twenty-server/src/engine/core-modules/upgrade/constants/twenty-next-versions.constant.ts
+  s_37904604351395::t_029f9fa8be2282 11
+packages/twenty-server/src/engine/core-modules/upgrade/services/upgrade-status.service.ts
+  s_37904604351395::t_bcaa8ac269543d 15
+packages/twenty-server/src/engine/core-modules/workspace/services/workspace.service.ts
+  s_c4892f4ac2fb0e::t_96d9358f169fca 471
+packages/twenty-server/src/engine/core-modules/workspace/utils/activation-status-in.util.ts
+  s_37904604351395::t_3139a4ea9db709 4
+packages/twenty-server/src/engine/metadata-modules/object-metadata/object-record-count.service.ts
+  s_da5c4fe767d6bc::t_09ea300f8d0acd 18-30
+packages/twenty-server/src/engine/workspace-manager/workspace-version/services/workspace-version.service.ts
+  s_37904604351395::t_b42e8a6f1723c6 7
+packages/twenty-front/src/modules/activities/emails/hooks/useReplyContext.ts
+  s_c4892f4ac2fb0e::t_2f3c28d7f10a5d 21,102
+packages/twenty-front/src/modules/auth/components/StyledOnboardingContentContainer.ts
+  s_c27ef423d80349::t_62725d151dcef5 7
+packages/twenty-front/src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
+  s_c4892f4ac2fb0e::t_0864c29db63119 12,41-47,176,240
+packages/twenty-front/src/modules/settings/emailing-domains/graphql/mutations/verifyEmailingDomain.ts
+  s_c4892f4ac2fb0e::t_5be4f6f2d0095a 10-16
+packages/twenty-front/src/modules/settings/emailing-domains/graphql/queries/getAllEmailingDomains.ts
+  s_c4892f4ac2fb0e::t_4c552ae2d00af0 15
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
+  s_c4892f4ac2fb0e::t_7f12a1504bff65 117
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-driver.service.ts
+  s_c4892f4ac2fb0e::t_231e5af07f382f 70-73,75-76,106,388-401
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/verification-record.dto.ts
+  s_c4892f4ac2fb0e::t_9144871999c2c8 16-17
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/emailing-domain.service.ts
+  s_c4892f4ac2fb0e::t_107fcfcbe961cf 83-85,224
 ---
 {
   "schema_version": "authorship/3.0.0",
@@ -32,10 +172,42 @@ packages/twenty-front/src/generated-metadata/graphql.ts
   "base_commit_sha": "1273512dca56f9389d5b5e565816181b63e0377a",
   "prompts": {},
   "sessions": {
+    "s_37904604351395": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "41994e1f-1493-45f4-856b-7e2945e40aef",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_39832274ec7e46": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e42d985d-03c6-4802-b6ef-1bcfbec24678",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_c27ef423d80349": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ddb1c98a-e8e7-4d40-8857-266d61867a3a",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
     "s_c4892f4ac2fb0e": {
       "agent_id": {
         "tool": "claude",
         "id": "74e7b645-8557-47f5-9aa3-10d3470dabef",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_da5c4fe767d6bc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8e35158f-9ec9-46ba-a75d-86652103d4ff",
         "model": "claude-opus-4-8"
       },
       "human_author": "neo773 <neo773@protonmail.com>"

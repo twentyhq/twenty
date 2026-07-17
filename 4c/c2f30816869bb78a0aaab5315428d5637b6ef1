@@ -15,7 +15,7 @@ packages/twenty-server/src/engine/core-modules/emailing-domain/services/unsubscr
 packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
   s_c4892f4ac2fb0e::t_246ff60cbbbe20 98-100
   s_c4892f4ac2fb0e::t_bfa53809562f2a 28
-  s_c4892f4ac2fb0e::t_9f0ae1822ff2d5 54-59
+  s_c4892f4ac2fb0e::t_9f0ae1822ff2d5 54-59,59
 ---
 {
   "schema_version": "authorship/3.0.0",
