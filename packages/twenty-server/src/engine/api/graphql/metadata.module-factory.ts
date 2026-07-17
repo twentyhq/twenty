@@ -19,12 +19,14 @@ import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.ser
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
+import { type WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 export const metadataModuleFactory = async (
   twentyConfigService: TwentyConfigService,
   exceptionHandlerService: ExceptionHandlerService,
   dataloaderService: DataloaderService,
   cacheStorageService: CacheStorageService,
+  workspaceCacheStorageService: WorkspaceCacheStorageService,
   metricsService: MetricsService,
   i18nService: I18nService,
   _featureFlagService: FeatureFlagService,
@@ -51,6 +53,10 @@ export const metadataModuleFactory = async (
       useCachedMetadata({
         cacheGetter: cacheStorageService.get.bind(cacheStorageService),
         cacheSetter: cacheStorageService.set.bind(cacheStorageService),
+        findAllViewsCacheVersionGetter:
+          workspaceCacheStorageService.getFindAllViewsCacheVersion.bind(
+            workspaceCacheStorageService,
+          ),
         operationsToCache: ['ObjectMetadataItems', 'FindAllViews'],
       }),
       useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers(

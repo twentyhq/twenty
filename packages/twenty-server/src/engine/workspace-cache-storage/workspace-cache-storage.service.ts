@@ -20,6 +20,7 @@ export const METADATA_VERSIONED_WORKSPACE_CACHE_KEY = {
 } as const;
 export const WORKSPACE_CACHE_KEYS = {
   GraphQLOperations: 'graphql:operations',
+  FindAllViewsCacheVersion: 'graphql:find-all-views-cache-version',
   GraphQLFeatureFlag: 'graphql:feature-flag',
   FeatureFlagMap: 'feature-flag:feature-flag-map',
   FeatureFlagMapVersion: 'feature-flag:feature-flag-map-version',
@@ -184,15 +185,21 @@ export class WorkspaceCacheStorageService {
     );
   }
 
-  async flushGraphQLOperation({
-    operationName,
-    workspaceId,
-  }: {
-    operationName: string;
-    workspaceId: string;
-  }): Promise<void> {
-    await this.cacheStorageService.flushByPattern(
-      `${WORKSPACE_CACHE_KEYS.GraphQLOperations}:${operationName}:${workspaceId}:*`,
+  getFindAllViewsCacheVersion(
+    workspaceId: string,
+  ): Promise<string | undefined> {
+    return this.cacheStorageService.get<string>(
+      `${WORKSPACE_CACHE_KEYS.FindAllViewsCacheVersion}:${workspaceId}`,
+    );
+  }
+
+  async setFindAllViewsCacheVersion(workspaceId: string): Promise<void> {
+    const version = crypto.randomUUID();
+
+    await this.cacheStorageService.set<string>(
+      `${WORKSPACE_CACHE_KEYS.FindAllViewsCacheVersion}:${workspaceId}`,
+      version,
+      TTL_ONE_WEEK,
     );
   }
 

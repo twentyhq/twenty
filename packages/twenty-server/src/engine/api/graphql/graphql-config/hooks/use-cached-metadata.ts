@@ -11,17 +11,20 @@ export type CacheMetadataPluginConfig = {
   cacheGetter: (key: string) => any;
   // oxlint-disable-next-line typescript/no-explicit-any
   cacheSetter: (key: string, value: any) => void;
+  findAllViewsCacheVersionGetter: (
+    workspaceId: string,
+  ) => Promise<string | undefined>;
   operationsToCache: string[];
 };
 
 export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
-  const computeCacheKey = ({
+  const computeCacheKey = async ({
     operationName,
     request,
   }: {
     operationName: string;
     request: Pick<Request, 'workspace' | 'locale' | 'body' | 'userWorkspaceId'>;
-  }) => {
+  }): Promise<string> => {
     const workspace = request.workspace;
 
     if (!isDefined(workspace)) {
@@ -35,7 +38,10 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
       .digest('hex');
 
     if (operationName === 'FindAllViews') {
-      return `graphql:operations:${operationName}:${workspace.id}:${workspaceMetadataVersion}:${request.userWorkspaceId}:${queryHash}`;
+      const findAllViewsCacheVersion =
+        (await config.findAllViewsCacheVersionGetter(workspace.id)) ?? '0';
+
+      return `graphql:operations:${operationName}:${workspace.id}:${workspaceMetadataVersion}:${findAllViewsCacheVersion}:${request.userWorkspaceId}:${queryHash}`;
     }
 
     return `graphql:operations:${operationName}:${workspace.id}:${workspaceMetadataVersion}:${locale}:${queryHash}`;
@@ -44,6 +50,28 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
   // oxlint-disable-next-line typescript/no-explicit-any
   const getOperationName = (serverContext: any) =>
     serverContext?.req?.body?.operationName;
+
+  const cacheKeyByRequest = new WeakMap<object, string>();
+
+  const getCacheKey = async ({
+    operationName,
+    request,
+  }: {
+    operationName: string;
+    request: Pick<Request, 'workspace' | 'locale' | 'body' | 'userWorkspaceId'>;
+  }): Promise<string> => {
+    const existingCacheKey = cacheKeyByRequest.get(request);
+
+    if (existingCacheKey) {
+      return existingCacheKey;
+    }
+
+    const cacheKey = await computeCacheKey({ operationName, request });
+
+    cacheKeyByRequest.set(request, cacheKey);
+
+    return cacheKey;
+  };
 
   return {
     onRequest: async ({ endResponse, serverContext }) => {
@@ -58,7 +86,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
         return;
       }
 
-      const cacheKey = computeCacheKey({
+      const cacheKey = await getCacheKey({
         operationName: getOperationName(serverContext),
         request,
       });
@@ -81,7 +109,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
         return;
       }
 
-      const cacheKey = computeCacheKey({
+      const cacheKey = await getCacheKey({
         operationName: getOperationName(serverContext),
         request,
       });

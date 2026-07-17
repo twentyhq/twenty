@@ -15,7 +15,6 @@ import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadat
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
 import { createSearchFieldMetadatasByTsVectorFieldIdAccessor } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/create-search-field-metadatas-by-ts-vector-field-id-accessor.util';
-import { FIND_ALL_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-views-graphql-operation.constant';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -75,17 +74,14 @@ export class WorkspaceMigrationRunnerService {
     const shouldInvalidateFindViewsGraphqlCacheOperation =
       viewRelatedFlatMapsKeys.some((key) => flatMapsKeysSet.has(key));
 
-    // Metadata changes already invalidate versioned GraphQL operation keys.
-    // Avoid a redundant pattern flush, which scans the full Redis keyspace.
     if (
       shouldInvalidateFindViewsGraphqlCacheOperation &&
       !shouldIncrementMetadataGraphqlSchemaVersion
     ) {
       asyncOperations.push(
-        this.workspaceCacheStorageService.flushGraphQLOperation({
-          operationName: FIND_ALL_VIEWS_GRAPHQL_OPERATION,
+        this.workspaceCacheStorageService.setFindAllViewsCacheVersion(
           workspaceId,
-        }),
+        ),
       );
     }
 

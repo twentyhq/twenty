@@ -1,4 +1,3 @@
-import { FIND_ALL_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-views-graphql-operation.constant';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 describe('WorkspaceMigrationRunnerService', () => {
@@ -7,13 +6,13 @@ describe('WorkspaceMigrationRunnerService', () => {
   let service: WorkspaceMigrationRunnerService;
   let invalidateFlatEntityMaps: jest.Mock;
   let incrementMetadataVersion: jest.Mock;
-  let flushGraphQLOperation: jest.Mock;
+  let setFindAllViewsCacheVersion: jest.Mock;
   let invalidateAndRecompute: jest.Mock;
 
   beforeEach(() => {
     invalidateFlatEntityMaps = jest.fn().mockResolvedValue(undefined);
     incrementMetadataVersion = jest.fn().mockResolvedValue(undefined);
-    flushGraphQLOperation = jest.fn().mockResolvedValue(undefined);
+    setFindAllViewsCacheVersion = jest.fn().mockResolvedValue(undefined);
     invalidateAndRecompute = jest.fn().mockResolvedValue(undefined);
 
     service = new WorkspaceMigrationRunnerService(
@@ -21,7 +20,7 @@ describe('WorkspaceMigrationRunnerService', () => {
       {} as never,
       {} as never,
       { incrementMetadataVersion } as never,
-      { flushGraphQLOperation } as never,
+      { setFindAllViewsCacheVersion } as never,
       { invalidateAndRecompute } as never,
       {
         perfTime: jest.fn(),
@@ -41,7 +40,7 @@ describe('WorkspaceMigrationRunnerService', () => {
       });
 
       expect(incrementMetadataVersion).toHaveBeenCalledWith(workspaceId);
-      expect(flushGraphQLOperation).not.toHaveBeenCalled();
+      expect(setFindAllViewsCacheVersion).not.toHaveBeenCalled();
       expect(invalidateAndRecompute).toHaveBeenCalledWith(workspaceId, [
         'ORMEntityMetadatas',
         'graphQLResolverNameMap',
@@ -49,17 +48,14 @@ describe('WorkspaceMigrationRunnerService', () => {
     },
   );
 
-  it('keeps pattern invalidation for view-only changes', async () => {
+  it('increments the view cache version for view-only changes', async () => {
     await service.invalidateCache({
       allFlatEntityMapsKeys: ['flatViewMaps'],
       workspaceId,
     });
 
     expect(incrementMetadataVersion).not.toHaveBeenCalled();
-    expect(flushGraphQLOperation).toHaveBeenCalledWith({
-      operationName: FIND_ALL_VIEWS_GRAPHQL_OPERATION,
-      workspaceId,
-    });
+    expect(setFindAllViewsCacheVersion).toHaveBeenCalledWith(workspaceId);
   });
 
   it('uses the metadata version when metadata and views change together', async () => {
@@ -69,6 +65,6 @@ describe('WorkspaceMigrationRunnerService', () => {
     });
 
     expect(incrementMetadataVersion).toHaveBeenCalledWith(workspaceId);
-    expect(flushGraphQLOperation).not.toHaveBeenCalled();
+    expect(setFindAllViewsCacheVersion).not.toHaveBeenCalled();
   });
 });
