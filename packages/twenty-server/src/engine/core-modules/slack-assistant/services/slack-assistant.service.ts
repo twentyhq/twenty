@@ -38,10 +38,9 @@ const truncateForSlack = (text: string): string =>
       ) + SLACK_TRUNCATION_NOTICE;
 
 const MISSING_ROLE_REPLY =
-  "I don't have access to your CRM yet. An admin needs to assign me a role in " +
-  '*Settings → Roles* — assign the *Slack Assistant* role (or another role) to ' +
-  'the *slack-assistant* agent. Once that is done, I can answer questions about ' +
-  'your CRM data.';
+  "I don't have access to your CRM right now. The *Slack Assistant* role is " +
+  'granted automatically when the app is installed; if it was removed, an admin ' +
+  'needs to re-assign a role to the *slack-assistant* agent to restore my access.';
 
 @Injectable()
 export class SlackAssistantService {

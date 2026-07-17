@@ -69,6 +69,21 @@ export class AiAgentRoleService {
     return roleTarget?.roleId ?? null;
   }
 
+  public async getRoleIdByUniversalIdentifier({
+    workspaceId,
+    universalIdentifier,
+  }: {
+    workspaceId: string;
+    universalIdentifier: string;
+  }): Promise<string | null> {
+    const role = await this.roleRepository.findOne(workspaceId, {
+      where: { universalIdentifier },
+      select: ['id'],
+    });
+
+    return role?.id ?? null;
+  }
+
   public async removeRoleFromAgent({
     workspaceId,
     agentId,

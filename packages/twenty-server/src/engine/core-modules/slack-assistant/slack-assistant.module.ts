@@ -8,6 +8,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { SlackAssistantController } from 'src/engine/core-modules/slack-assistant/controllers/slack-assistant.controller';
 import { SlackAssistantReplyJob } from 'src/engine/core-modules/slack-assistant/jobs/slack-assistant-reply.job';
+import { SlackAssistantAgentCreatedListener } from 'src/engine/core-modules/slack-assistant/listeners/slack-assistant-agent-created.listener';
 import { SlackApplicationResolverService } from 'src/engine/core-modules/slack-assistant/services/slack-application-resolver.service';
 import { SlackAssistantConfigService } from 'src/engine/core-modules/slack-assistant/services/slack-assistant-config.service';
 import { SlackAssistantService } from 'src/engine/core-modules/slack-assistant/services/slack-assistant.service';
@@ -44,6 +45,7 @@ import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.
     SlackThreadSubscriptionService,
     SlackAssistantService,
     SlackAssistantReplyJob,
+    SlackAssistantAgentCreatedListener,
   ],
 })
 export class SlackAssistantModule {}

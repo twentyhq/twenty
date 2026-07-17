@@ -22,10 +22,10 @@ below):
   by the **`slack-assistant`** agent (this app) and the Twenty server's chat
   runtime, and answers in the thread. Once it has replied in a thread it stays
   active there, so follow-up messages in that thread are answered **without
-  re-mentioning** the bot. A thread stays active for **24 hours after the last
+  re-mentioning**   the bot. A thread stays active for **24 hours after the last
   reply** (each reply renews the window); after a full day of silence, re-mention
   the bot to continue. It requires the extra setup below (signing secret +
-  event subscriptions + agent role assignment).
+  event subscriptions); the agent's CRM role is assigned automatically on install.
 
 ## Tools
 
@@ -147,14 +147,13 @@ not add a second connection or bot identity. To enable it:
 
    Invite the bot to any channel where you want it to follow threads. After
    changing event subscriptions, Slack may require you to reinstall the app.
-4. **Assign the agent a role (required).** The app ships a **Slack Assistant**
-   role (read-only CRM access), but it is **not** bound to the agent
-   automatically — granting CRM access is an explicit admin decision. Under
-   **Settings → Roles**, assign the **Slack Assistant** role (or any role you
-   prefer) to the **`slack-assistant`** agent. Until you do, the bot replies that
-   it needs a role and answers nothing. To let the assistant create or update
-   records, assign or edit the role to include write permissions.
+4. **Agent role (assigned automatically).** On install, the app's **Slack
+   Assistant** role (read-only CRM access) is assigned to the **`slack-assistant`**
+   agent automatically, so the assistant works out of the box without any manual
+   step. To let it create or update records, widen that role to include write
+   permissions. Auto-assignment only happens on first install and never
+   overrides a role you later change.
 
 The permission boundary is the agent's role: anyone who can message the bot
 acts with that role's permissions (Slack users are not yet mapped to individual
-Twenty members). Assign a role scoped to what you're comfortable exposing.
+Twenty members). Keep the role scoped to what you're comfortable exposing.
