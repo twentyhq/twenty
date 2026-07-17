@@ -10,6 +10,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/service
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { GENERATE_SDK_CLIENT_JOB_NAME } from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job-constants';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { getCurrentSdkMetadataModuleChecksum } from 'src/engine/core-modules/sdk-client/utils/get-current-sdk-metadata-module-checksum.util';
@@ -69,6 +70,13 @@ describe('SdkClientGenerationService', () => {
           provide: WorkspaceEventBroadcaster,
           useValue: { broadcast: jest.fn().mockResolvedValue(undefined) },
         },
+        {
+          provide: MetricsService,
+          useValue: {
+            incrementCounterBy: jest.fn(),
+            recordHistogram: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -105,6 +113,7 @@ describe('SdkClientGenerationService', () => {
           workspaceId,
           applicationId: 'std-app-id',
           applicationUniversalIdentifier: 'twenty-standard',
+          trigger: 'workspace-activation',
         },
         {
           id: `sdk-client:${workspaceId}:std-app-id`,
@@ -118,6 +127,7 @@ describe('SdkClientGenerationService', () => {
           workspaceId,
           applicationId: 'custom-app-id',
           applicationUniversalIdentifier: 'workspace-custom',
+          trigger: 'workspace-activation',
         },
         {
           id: `sdk-client:${workspaceId}:custom-app-id`,
@@ -179,6 +189,7 @@ describe('SdkClientGenerationService', () => {
           workspaceId,
           applicationId: 'app-id',
           applicationUniversalIdentifier: 'my-app',
+          trigger: 'release-stale',
         },
         {
           id: `sdk-client:${workspaceId}:app-id`,

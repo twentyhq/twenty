@@ -20,6 +20,8 @@ import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logi
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { type SdkModuleName } from 'src/engine/core-modules/sdk-client/constants/allowed-sdk-modules';
 import { SDK_CLIENT_PACKAGE_DIRNAME } from 'src/engine/core-modules/sdk-client/constants/sdk-client-package-dirname';
 import {
@@ -30,6 +32,7 @@ import {
   GENERATE_SDK_CLIENT_JOB_NAME,
   type GenerateSdkClientJobData,
 } from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job-constants';
+import { type SdkClientGenerationTrigger } from 'src/engine/core-modules/sdk-client/types/sdk-client-generation-trigger.type';
 import { getCurrentSdkMetadataModuleChecksum } from 'src/engine/core-modules/sdk-client/utils/get-current-sdk-metadata-module-checksum.util';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -55,6 +58,7 @@ export class SdkClientGenerationService {
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async enqueueSdkClientGenerationForWorkspace(
@@ -72,6 +76,7 @@ export class SdkClientGenerationService {
             workspaceId,
             applicationId: application.id,
             applicationUniversalIdentifier: application.universalIdentifier,
+            trigger: 'workspace-activation',
           }),
       ),
     );
@@ -111,6 +116,7 @@ export class SdkClientGenerationService {
         workspaceId,
         applicationId: flatApplication.id,
         applicationUniversalIdentifier: flatApplication.universalIdentifier,
+        trigger: 'release-stale',
       });
     } catch (error) {
       this.logger.warn(
@@ -124,10 +130,12 @@ export class SdkClientGenerationService {
     workspaceId,
     applicationId,
     applicationUniversalIdentifier,
+    trigger,
   }: {
     workspaceId: string;
     applicationId: string;
     applicationUniversalIdentifier: string;
+    trigger: SdkClientGenerationTrigger;
   }): Promise<void> {
     await this.messageQueueService.add<GenerateSdkClientJobData>(
       GENERATE_SDK_CLIENT_JOB_NAME,
@@ -135,6 +143,7 @@ export class SdkClientGenerationService {
         workspaceId,
         applicationId,
         applicationUniversalIdentifier,
+        trigger,
       },
       {
         id: `sdk-client:${workspaceId}:${applicationId}`,
@@ -147,32 +156,66 @@ export class SdkClientGenerationService {
     workspaceId,
     applicationId,
     applicationUniversalIdentifier,
+    trigger = 'unknown',
   }: {
     workspaceId: string;
     applicationId: string;
     applicationUniversalIdentifier: string;
+    trigger?: SdkClientGenerationTrigger;
   }): Promise<Buffer> {
-    const workspaceEntity = await this.workspaceRepository.findOneByOrFail({
-      id: workspaceId,
-    });
+    const generationStart = performance.now();
 
-    const graphqlSchema = await this.workspaceSchemaFactory.createGraphQLSchema(
-      fromWorkspaceEntityToFlat(workspaceEntity),
-      applicationId,
-    );
+    try {
+      const workspaceEntity = await this.workspaceRepository.findOneByOrFail({
+        id: workspaceId,
+      });
 
-    const archiveBuffer = await this.generateAndStore({
-      workspaceId,
-      applicationId,
-      applicationUniversalIdentifier,
-      schema: printSchema(graphqlSchema),
-    });
+      const graphqlSchema =
+        await this.workspaceSchemaFactory.createGraphQLSchema(
+          fromWorkspaceEntityToFlat(workspaceEntity),
+          applicationId,
+        );
 
-    this.logger.log(
-      `Generated SDK client for application ${applicationUniversalIdentifier}`,
-    );
+      const { archiveBuffer, coreChecksumChanged, metadataChecksumChanged } =
+        await this.generateAndStore({
+          workspaceId,
+          applicationId,
+          applicationUniversalIdentifier,
+          schema: printSchema(graphqlSchema),
+        });
 
-    return archiveBuffer;
+      const generationDurationMs = performance.now() - generationStart;
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.SdkClientGenerationSucceeded,
+        amount: 1,
+        attributes: {
+          trigger,
+          coreChecksumChanged,
+          metadataChecksumChanged,
+        },
+      });
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.SdkClientGenerationDurationMs,
+        value: generationDurationMs,
+        unit: 'ms',
+        attributes: { trigger },
+      });
+
+      this.logger.log(
+        `Generated SDK client for application ${applicationUniversalIdentifier} (trigger: ${trigger}, core changed: ${coreChecksumChanged}, metadata changed: ${metadataChecksumChanged})`,
+      );
+
+      return archiveBuffer;
+    } catch (error) {
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.SdkClientGenerationFailed,
+        amount: 1,
+        attributes: { trigger },
+      });
+
+      throw error;
+    }
   }
 
   private async generateAndStore({
@@ -185,7 +228,11 @@ export class SdkClientGenerationService {
     applicationId: string;
     applicationUniversalIdentifier: string;
     schema: string;
-  }): Promise<Buffer> {
+  }): Promise<{
+    archiveBuffer: Buffer;
+    coreChecksumChanged: boolean;
+    metadataChecksumChanged: boolean;
+  }> {
     const temporaryDirManager = new TemporaryDirManager();
 
     try {
@@ -231,6 +278,19 @@ export class SdkClientGenerationService {
         settings: { isTemporaryFile: false, toDelete: false },
       });
 
+      // Compared to distinguish regenerations that actually mutated a module
+      // from no-op rebuilds (e.g. a release-stale check that raced a rebuild)
+      const previousApplication = await this.applicationRepository.findOne({
+        where: { id: applicationId, workspaceId },
+        select: ['sdkClientCoreChecksum', 'sdkClientMetadataChecksum'],
+      });
+
+      const coreChecksumChanged =
+        previousApplication?.sdkClientCoreChecksum !== sdkClientCoreChecksum;
+      const metadataChecksumChanged =
+        previousApplication?.sdkClientMetadataChecksum !==
+        sdkClientMetadataChecksum;
+
       await this.applicationRepository.update(
         { id: applicationId, workspaceId },
         {
@@ -251,7 +311,7 @@ export class SdkClientGenerationService {
         sdkClientMetadataChecksum,
       });
 
-      return archiveBuffer;
+      return { archiveBuffer, coreChecksumChanged, metadataChecksumChanged };
     } catch (error) {
       throw new SdkClientException(
         `Failed to generate SDK client for application "${applicationUniversalIdentifier}" in workspace "${workspaceId}": ${error instanceof Error ? error.message : String(error)}`,

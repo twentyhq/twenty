@@ -4,6 +4,7 @@ import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.mo
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { SdkClientController } from 'src/engine/core-modules/sdk-client/controllers/sdk-client.controller';
 import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
@@ -16,6 +17,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
     CoreGraphQLApiModule,
     ApplicationModule,
+    MetricsModule,
   ],
   controllers: [SdkClientController],
   providers: [SdkClientGenerationService, SdkClientArchiveService],
