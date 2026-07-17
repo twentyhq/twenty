@@ -1,6 +1,5 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -10,20 +9,7 @@ export enum SlackAssistantExceptionCode {
   SIGNING_SECRET_NOT_CONFIGURED = 'SIGNING_SECRET_NOT_CONFIGURED',
 }
 
-const getSlackAssistantExceptionUserFriendlyMessage = (
-  code: SlackAssistantExceptionCode,
-) => {
-  switch (code) {
-    case SlackAssistantExceptionCode.MISSING_REQUEST_BODY:
-      return msg`Missing request body.`;
-    case SlackAssistantExceptionCode.INVALID_SIGNATURE:
-      return msg`Invalid Slack request signature.`;
-    case SlackAssistantExceptionCode.SIGNING_SECRET_NOT_CONFIGURED:
-      return msg`The Slack signing secret is not configured.`;
-    default:
-      return assertUnreachable(code);
-  }
-};
+const GENERIC_USER_FRIENDLY_MESSAGE = msg`Something went wrong. Please try again.`;
 
 export class SlackAssistantException extends CustomException<SlackAssistantExceptionCode> {
   constructor(
@@ -32,9 +18,7 @@ export class SlackAssistantException extends CustomException<SlackAssistantExcep
     { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
     super(message, code, {
-      userFriendlyMessage:
-        userFriendlyMessage ??
-        getSlackAssistantExceptionUserFriendlyMessage(code),
+      userFriendlyMessage: userFriendlyMessage ?? GENERIC_USER_FRIENDLY_MESSAGE,
     });
   }
 }
