@@ -3,7 +3,6 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { type Milliseconds } from 'cache-manager';
 import { type RedisCache } from 'cache-manager-redis-yet';
-import { isDefined } from 'twenty-shared/utils';
 
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 
@@ -28,13 +27,13 @@ export class CacheStorageService {
   async setIfAbsent<T>(
     key: string,
     value: T,
-    ttl?: Milliseconds,
+    ttl: Milliseconds,
   ): Promise<boolean> {
     if (this.isRedisCache()) {
       const result = await (this.cache as RedisCache).store.client.set(
         this.getKey(key),
         JSON.stringify(value),
-        isDefined(ttl) ? { NX: true, PX: ttl } : { NX: true },
+        ttl > 0 ? { NX: true, PX: ttl } : { NX: true },
       );
 
       return result === 'OK';
