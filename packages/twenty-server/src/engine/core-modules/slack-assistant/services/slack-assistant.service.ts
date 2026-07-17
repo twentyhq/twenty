@@ -29,13 +29,21 @@ const SLACK_ASSISTANT_AGENT_NAME = 'slack-assistant';
 const SLACK_MAX_MARKDOWN_TEXT_LENGTH = 12000;
 const SLACK_TRUNCATION_NOTICE = '\n\n_(response truncated)_';
 
-const truncateForSlack = (text: string): string =>
-  text.length <= SLACK_MAX_MARKDOWN_TEXT_LENGTH
-    ? text
-    : text.slice(
-        0,
-        SLACK_MAX_MARKDOWN_TEXT_LENGTH - SLACK_TRUNCATION_NOTICE.length,
-      ) + SLACK_TRUNCATION_NOTICE;
+const truncateForSlack = (text: string): string => {
+  // Count code points (not UTF-16 units) so slicing never splits an emoji /
+  // surrogate pair at the cutoff.
+  const characters = Array.from(text);
+
+  if (characters.length <= SLACK_MAX_MARKDOWN_TEXT_LENGTH) {
+    return text;
+  }
+
+  return (
+    characters
+      .slice(0, SLACK_MAX_MARKDOWN_TEXT_LENGTH - SLACK_TRUNCATION_NOTICE.length)
+      .join('') + SLACK_TRUNCATION_NOTICE
+  );
+};
 
 const MISSING_ROLE_REPLY =
   "I don't have access to your CRM right now. The *Slack Assistant* role is " +

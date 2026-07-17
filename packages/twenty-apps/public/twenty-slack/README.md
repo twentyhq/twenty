@@ -22,10 +22,11 @@ below):
   by the **`slack-assistant`** agent (this app) and the Twenty server's chat
   runtime, and answers in the thread. Once it has replied in a thread it stays
   active there, so follow-up messages in that thread are answered **without
-  re-mentioning**   the bot. A thread stays active for **24 hours after the last
-  reply** (each reply renews the window); after a full day of silence, re-mention
-  the bot to continue. It requires the extra setup below (signing secret +
-  event subscriptions); the agent's CRM role is assigned automatically on install.
+  re-mentioning** the bot. Channel threads stay active for **24 hours after the
+  last reply** (each reply renews the window); after a full day of silence,
+  re-mention the bot to continue. Direct-message threads never expire. It
+  requires the extra setup below (signing secret + event subscriptions); the
+  agent's CRM role is assigned automatically on install.
 
 ## Tools
 
