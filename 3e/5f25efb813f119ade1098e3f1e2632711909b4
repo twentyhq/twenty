@@ -1,0 +1,43 @@
+packages/twenty-server/src/database/commands/database-command.module.ts
+  s_db0de5da096547::t_1ad7d10b49e6ec 51
+  s_db0de5da096547::t_5d87c154c01ab2 65
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service.ts
+  s_db0de5da096547::t_b51c514d193faa 98-109,113
+packages/twenty-server/src/database/commands/cron-register-all.command.ts
+  s_db0de5da096547::t_efd3d1af62c5b4 18
+  s_db0de5da096547::t_3a35ce2198c4f8 53-54
+  s_db0de5da096547::t_9053ada8e58746 126-128
+  s_db0de5da096547::t_54e1828651b7cd 125
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service.ts
+  s_db0de5da096547::t_f7229f5462bc22 100-101,103-110,114
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/crons/jobs/webhook-subscription-renewal.cron.job.ts
+  s_db0de5da096547::t_1e64a524102029 4-7
+  s_db0de5da096547::t_96a271308b0e69 8-9,12,16-17,22-31,38-39,44-45,54-55,58,60,64-120,122,124,126-139,141,143-156
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/jobs/renew-webhook-subscription.job.ts
+  s_db0de5da096547::t_7b38acd3c5b924 1-41
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/webhook-subscription.module.ts
+  s_db0de5da096547::t_aa38528eb8b06f 6,13
+  s_db0de5da096547::t_47fbd6e7032386 26
+  s_db0de5da096547::t_4de1b23f433805 45
+  s_db0de5da096547::t_a12cd206194b0e 39
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/google/google-webhook-subscription.driver.ts
+  s_db0de5da096547::t_14d86ccf8b4744 45
+  s_db0de5da096547::t_da71ff2572d620 44
+  s_db0de5da096547::t_8d786614a6011b 46-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "3e5f25efb813f119ade1098e3f1e2632711909b4",
+  "prompts": {},
+  "sessions": {
+    "s_db0de5da096547": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b7f7c885-8913-40f8-aa4b-08cbaef5ba93",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
