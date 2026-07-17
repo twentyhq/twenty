@@ -1,9 +1,5 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import {
-  parseRecordReference,
-  RECORD_REFERENCE_REGEX,
-  RecordLink,
-} from '@/ai/components/RecordLink';
+import { RecordLink } from '@/ai/components/RecordLink';
 import {
   StyledMarkdownContainer,
   StyledParagraph,
@@ -11,45 +7,43 @@ import {
   StyledTableScrollContainer,
 } from '@/ai/components/LazyMarkdownRendererStyledComponents';
 import { MarkdownCodeBlock } from '@/ai/components/MarkdownCodeBlock';
-import { marked } from 'marked';
+import {
+  buildRecordReferenceToken,
+  extractRecordReferences,
+  RECORD_REFERENCE_PLACEHOLDER_REGEX,
+  type RecordReference,
+} from '@/ai/utils/extractRecordReferences';
 import {
   cloneElement,
+  createContext,
   isValidElement,
   lazy,
-  memo,
   Suspense,
   useContext,
-  useMemo,
 } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { getSafeUrl, isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
-const TextWithRecordLinks = ({ text }: { text: string }) => {
+const RecordReferencesContext = createContext<RecordReference[]>([]);
+
+const splitTextOnPlaceholders = (
+  text: string,
+  render: (referenceIndex: number, key: number) => React.ReactNode,
+): React.ReactNode[] => {
   const parts: React.ReactNode[] = [];
   let lastIndex = 0;
 
-  RECORD_REFERENCE_REGEX.lastIndex = 0;
+  RECORD_REFERENCE_PLACEHOLDER_REGEX.lastIndex = 0;
 
   let match;
 
-  while ((match = RECORD_REFERENCE_REGEX.exec(text)) !== null) {
+  while ((match = RECORD_REFERENCE_PLACEHOLDER_REGEX.exec(text)) !== null) {
     if (match.index > lastIndex) {
       parts.push(text.slice(lastIndex, match.index));
     }
 
-    const parsed = parseRecordReference(match[0]);
-
-    if (isDefined(parsed)) {
-      parts.push(
-        <RecordLink
-          key={match.index}
-          objectNameSingular={parsed.objectNameSingular}
-          recordId={parsed.recordId}
-          displayName={parsed.displayName}
-        />,
-      );
-    }
+    parts.push(render(Number(match[1]), match.index));
 
     lastIndex = match.index + match[0].length;
   }
@@ -57,6 +51,30 @@ const TextWithRecordLinks = ({ text }: { text: string }) => {
   if (lastIndex < text.length) {
     parts.push(text.slice(lastIndex));
   }
+
+  return parts;
+};
+
+// Prose: turn each placeholder into a clickable record chip.
+const TextWithRecordLinks = ({ text }: { text: string }) => {
+  const references = useContext(RecordReferencesContext);
+
+  const parts = splitTextOnPlaceholders(text, (referenceIndex, key) => {
+    const reference = references[referenceIndex];
+
+    if (!isDefined(reference)) {
+      return null;
+    }
+
+    return (
+      <RecordLink
+        key={key}
+        objectNameSingular={reference.objectNameSingular}
+        recordId={reference.recordId}
+        displayName={reference.displayName}
+      />
+    );
+  });
 
   return <>{parts}</>;
 };
@@ -85,6 +103,32 @@ const processChildrenForRecordLinks = (
   }
 
   return children;
+};
+
+// Code/pre: references never render as chips inside code, so restore the
+// original [[record:...]] text instead of leaking the placeholder sentinels.
+const CodeChildrenWithRestoredReferences = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const references = useContext(RecordReferencesContext);
+
+  if (typeof children === 'string') {
+    return (
+      <>
+        {splitTextOnPlaceholders(children, (referenceIndex) => {
+          const reference = references[referenceIndex];
+
+          return isDefined(reference)
+            ? buildRecordReferenceToken(reference)
+            : '';
+        })}
+      </>
+    );
+  }
+
+  return <>{children}</>;
 };
 
 const MarkdownRenderer = lazy(async () => {
@@ -154,13 +198,31 @@ const MarkdownRenderer = lazy(async () => {
               {processChildrenForRecordLinks(children)}
             </a>
           ),
+          em: ({ children }) => (
+            <em>{processChildrenForRecordLinks(children)}</em>
+          ),
+          strong: ({ children }) => (
+            <strong>{processChildrenForRecordLinks(children)}</strong>
+          ),
+          del: ({ children }) => (
+            <del>{processChildrenForRecordLinks(children)}</del>
+          ),
+          blockquote: ({ children }) => (
+            <blockquote>{processChildrenForRecordLinks(children)}</blockquote>
+          ),
           code: ({
             className,
             children,
           }: {
             className?: string;
             children?: React.ReactNode;
-          }) => <code className={className}>{children}</code>,
+          }) => (
+            <code className={className}>
+              <CodeChildrenWithRestoredReferences>
+                {children}
+              </CodeChildrenWithRestoredReferences>
+            </code>
+          ),
           pre: ({ children }) => (
             <MarkdownCodeBlock>{children}</MarkdownCodeBlock>
           ),
@@ -206,34 +268,24 @@ const LoadingSkeleton = () => {
   );
 };
 
-const MemoizedMarkdownBlock = memo(
-  ({ blockText }: { blockText: string }) => (
-    <MarkdownRenderer
-      TableScrollContainer={StyledTableScrollContainer}
-      ParagraphComponent={StyledParagraph}
-    >
-      {blockText}
-    </MarkdownRenderer>
-  ),
-  (previousProps, nextProps) => previousProps.blockText === nextProps.blockText,
-);
-
 export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
-  const markdownBlocks = useMemo(
-    () => marked.lexer(text).map((token) => token.raw),
-    [text],
-  );
+  const { sanitizedText, references } = extractRecordReferences(text);
 
   return (
     <StyledMarkdownContainer
       className="markdown-section"
       data-replay-ignore-mutations="true"
     >
-      <Suspense fallback={<LoadingSkeleton />}>
-        {markdownBlocks.map((blockText, blockIndex) => (
-          <MemoizedMarkdownBlock key={blockIndex} blockText={blockText} />
-        ))}
-      </Suspense>
+      <RecordReferencesContext.Provider value={references}>
+        <Suspense fallback={<LoadingSkeleton />}>
+          <MarkdownRenderer
+            TableScrollContainer={StyledTableScrollContainer}
+            ParagraphComponent={StyledParagraph}
+          >
+            {sanitizedText}
+          </MarkdownRenderer>
+        </Suspense>
+      </RecordReferencesContext.Provider>
     </StyledMarkdownContainer>
   );
 };
