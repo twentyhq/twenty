@@ -12,7 +12,6 @@ import { DataSource, LessThan, QueryRunner, Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -20,13 +19,13 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import {
   EmailingDomainWorkspaceCleanupJob,
   type EmailingDomainWorkspaceCleanupJobData,
 } from 'src/engine/core-modules/emailing-domain/jobs/emailing-domain-workspace-cleanup.job';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import {
   FileWorkspaceFolderDeletionJob,
@@ -61,19 +60,9 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
-import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-companies.util';
-import { prefillDashboards } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-dashboards.util';
-import { prefillOpportunities } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-opportunities.util';
-import { prefillPeople } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-people.util';
-import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-code-step-logic-functions.util';
-import { prefillWorkflowCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util';
-import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflows.util';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 // A workspace stuck in ONGOING_CREATION for longer than this is treated as a
 // crashed activation (the process died before the catch block could reset it to
@@ -130,10 +119,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly permissionsService: PermissionsService,
     private readonly dnsManagerService: DnsManagerService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly prefillLogicFunctionService: PrefillLogicFunctionService,
-    private readonly applicationService: ApplicationService,
     private readonly preInstalledAppsService: PreInstalledAppsService,
-    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
@@ -394,10 +380,9 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
 
       await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
-      await this.prefillCreatedWorkspaceRecords({
-        workspaceId: workspace.id,
-        schemaName: getWorkspaceSchemaName(workspace.id),
-      });
+      // await this.installPreInstalledAppsOnCreatedWorkspace({
+      //   workspaceId: workspace.id,
+      // });
 
       await this.activateAndInitializeUpgradeState({
         workspaceId: workspace.id,
@@ -814,102 +799,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
           },
         );
       }
-    }
-  }
-
-  private async prefillCreatedWorkspaceRecords({
-    workspaceId,
-    schemaName,
-  }: {
-    workspaceId: string;
-    schemaName: string;
-  }): Promise<void> {
-    const {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatPageLayoutMaps,
-    } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: [
-            'flatObjectMetadataMaps',
-            'flatFieldMetadataMaps',
-            'flatPageLayoutMaps',
-          ],
-        },
-      );
-
-    await this.prefillLogicFunctionService.ensureSeeded({
-      workspaceId,
-      definitions:
-        getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions(
-          workspaceId,
-        ),
-    });
-
-    const queryRunner = this.coreDataSource.createQueryRunner();
-
-    await queryRunner.connect();
-
-    try {
-      await queryRunner.startTransaction();
-
-      await prefillCompanies(queryRunner.manager, schemaName);
-
-      await prefillPeople(queryRunner.manager, schemaName);
-
-      await prefillWorkflows(
-        queryRunner.manager,
-        workspaceId,
-        schemaName,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      );
-
-      await prefillOpportunities(queryRunner.manager, schemaName);
-
-      await prefillDashboards(
-        queryRunner.manager,
-        schemaName,
-        flatPageLayoutMaps,
-      );
-
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
-      }
-
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
-
-    try {
-      await prefillWorkflowCommandMenuItems({
-        workspaceId,
-        applicationService: this.applicationService,
-        flatEntityMapsCacheService: this.flatEntityMapsCacheService,
-        workspaceMigrationValidateBuildAndRunService:
-          this.workspaceMigrationValidateBuildAndRunService,
-      });
-    } catch (error) {
-      this.logger.error(
-        `Non-critical: failed to prefill workflow command menu items for workspace ${workspaceId}`,
-        error,
-      );
-      this.exceptionHandlerService.captureExceptions([error as Error]);
-    }
-
-    try {
-      await this.preInstalledAppsService.installOnWorkspace(workspaceId);
-    } catch (error) {
-      this.logger.error(
-        `Non-critical: failed to install pre-installed apps for workspace ${workspaceId}`,
-        error,
-      );
-      this.exceptionHandlerService.captureExceptions([error as Error]);
     }
   }
 
