@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-const DISPLAY_NAME_CHARACTERS_REQUIRING_QUOTING = /[,;<>@"]/;
+const DISPLAY_NAME_CHARACTERS_REQUIRING_QUOTING = /[,;<>@"\\]/;
 
 export const formatEmailAddress = ({
   address,
@@ -15,7 +15,7 @@ export const formatEmailAddress = ({
 
   const requiresQuoting = DISPLAY_NAME_CHARACTERS_REQUIRING_QUOTING.test(name);
   const formattedName = requiresQuoting
-    ? `"${name.replace(/"/g, '\\"')}"`
+    ? `"${name.replace(/[\\"]/g, '\\$&')}"`
     : name;
 
   return `${formattedName} <${address}>`;

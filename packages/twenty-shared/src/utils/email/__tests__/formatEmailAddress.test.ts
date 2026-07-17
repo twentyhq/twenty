@@ -29,6 +29,27 @@ describe('formatEmailAddress', () => {
     ).toBe('"A \\"B\\" C" <a@example.com>');
   });
 
+  it('should quote and escape backslashes so they cannot neutralize quote escaping', () => {
+    expect(
+      formatEmailAddress({ address: 'a@example.com', name: 'A \\ B' }),
+    ).toBe('"A \\\\ B" <a@example.com>');
+    expect(
+      formatEmailAddress({ address: 'a@example.com', name: 'x\\"y' }),
+    ).toBe('"x\\\\\\"y" <a@example.com>');
+  });
+
+  it('should keep a backslash-and-quote name inside one recipient when reparsed', () => {
+    const formatted = formatEmailAddress({
+      address: 'a@example.com',
+      name: 'x\\"y',
+    });
+    const reparsed = parseEmailAddressList(`${formatted}, b@example.com`);
+
+    expect(reparsed).toHaveLength(2);
+    expect(reparsed[0].address).toBe('a@example.com');
+    expect(reparsed[1].address).toBe('b@example.com');
+  });
+
   it('should not quote RFC 2047 encoded words', () => {
     expect(
       formatEmailAddress({
