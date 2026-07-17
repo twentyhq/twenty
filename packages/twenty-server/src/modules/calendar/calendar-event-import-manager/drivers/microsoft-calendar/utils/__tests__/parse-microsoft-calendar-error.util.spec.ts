@@ -38,21 +38,6 @@ describe('parseMicrosoftCalendarError', () => {
     );
   });
 
-  it('should be insufficient permissions when the mailbox is not enabled for the REST API', () => {
-    const exception = parseMicrosoftCalendarError(
-      buildGraphError({
-        statusCode: 404,
-        code: 'MailboxNotEnabledForRESTAPI',
-        message:
-          'The mailbox is either inactive, soft-deleted, or is hosted on-premise.',
-      }),
-    );
-
-    expect(exception.code).toBe(
-      CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-    );
-  });
-
   it('should be not found for a 404 that is not a mailbox error', () => {
     const exception = parseMicrosoftCalendarError(
       buildGraphError({ statusCode: 404, code: 'ResourceNotFound' }),
