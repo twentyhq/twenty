@@ -34,9 +34,7 @@ const SERVER_BINDING_REJECTION_CODES: EnterpriseExceptionCode[] = [
 @UsePipes(ResolverValidationPipe)
 @UseFilters(EnterpriseExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
 export class EnterpriseResolver {
-  constructor(
-    private readonly enterprisePlanService: EnterprisePlanService,
-  ) {}
+  constructor(private readonly enterprisePlanService: EnterprisePlanService) {}
 
   // Turn a server-binding rejection from the last refresh into a user-facing
   // error, so activation and manual refresh surface the real reason instead of

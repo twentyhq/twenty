@@ -14,9 +14,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 export class EnterpriseKeyValidationCronJob {
   private readonly logger = new Logger(EnterpriseKeyValidationCronJob.name);
 
-  constructor(
-    private readonly enterprisePlanService: EnterprisePlanService,
-  ) {}
+  constructor(private readonly enterprisePlanService: EnterprisePlanService) {}
 
   @Process(EnterpriseKeyValidationCronJob.name)
   @SentryCronMonitor(
