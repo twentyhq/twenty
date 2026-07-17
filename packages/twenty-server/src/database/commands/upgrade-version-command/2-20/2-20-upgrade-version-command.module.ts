@@ -9,9 +9,7 @@ import { BackfillWorkflowVersionToCoreCommand } from 'src/database/commands/upgr
 import { ReconcileSearchVectorGinIndexUniversalIdentifierCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783529458169-reconcile-search-vector-gin-index-universal-identifier.command';
 import { ReconcileSearchFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783529458170-reconcile-search-field-metadata.command';
 import { RebuildInstalledAppSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1783529458171-rebuild-installed-app-search-vectors.command';
-import { BackfillWorkflowToCoreCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-workspace-command-1784116713322-backfill-workflow-to-core.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
@@ -25,7 +23,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   imports: [
     ApplicationModule,
     TypeOrmModule.forFeature([IndexMetadataEntity, SearchFieldMetadataEntity]),
-    WorkflowCoreModule,
     WorkflowVersionCoreModule,
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
@@ -39,7 +36,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     CreateMessageListViewCommand,
     BackfillActorSourceEnumValuesCommand,
     BackfillWorkflowVersionToCoreCommand,
-    BackfillWorkflowToCoreCommand,
     ReconcileSearchVectorGinIndexUniversalIdentifierCommand,
     ReconcileSearchFieldMetadataCommand,
     RebuildInstalledAppSearchVectorsCommand,

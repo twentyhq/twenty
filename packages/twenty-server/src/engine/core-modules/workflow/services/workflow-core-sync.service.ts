@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 import { v4 as uuidv4, v5 as uuidv5 } from 'uuid';
@@ -11,6 +12,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 // Deriving the core id deterministically from workspaceId + record id makes the
@@ -20,12 +22,15 @@ const CORE_WORKFLOW_ID_NAMESPACE = '4e8433e7-363e-43cf-b7db-97770a37b2d0';
 
 @Injectable()
 export class WorkflowCoreSyncService {
+  private readonly logger = new Logger(WorkflowCoreSyncService.name);
+
   constructor(
     @InjectWorkspaceScopedRepository(WorkflowEntity)
-    private readonly workflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
+    private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async upsertToCore(
@@ -58,33 +63,12 @@ export class WorkflowCoreSyncService {
       };
     });
 
-    await this.purgeSharedIdCoreRows(
-      workspaceId,
-      Array.from(coreWorkflowIdByWorkspaceRecordId.keys()),
-    );
-
-    await this.workflowRepository.upsert(workspaceId, coreRows, ['id']);
+    await this.coreWorkflowRepository.upsert(workspaceId, coreRows, ['id']);
 
     await this.writeBackCoreWorkflowIds(
       workspaceId,
       coreWorkflowIdByWorkspaceRecordId,
     );
-  }
-
-  // The pre-soft-ref model wrote core rows with id === workspace record id.
-  // Delete those before creating own-id rows, otherwise re-migration orphans
-  // them.
-  private async purgeSharedIdCoreRows(
-    workspaceId: string,
-    workspaceRecordIds: string[],
-  ): Promise<void> {
-    if (workspaceRecordIds.length === 0) {
-      return;
-    }
-
-    await this.workflowRepository.delete(workspaceId, {
-      id: In(workspaceRecordIds),
-    });
   }
 
   async deleteFromCore(
@@ -95,7 +79,7 @@ export class WorkflowCoreSyncService {
       return;
     }
 
-    await this.workflowRepository.delete(workspaceId, {
+    await this.coreWorkflowRepository.delete(workspaceId, {
       id: In(coreWorkflowIds),
     });
   }
@@ -108,8 +92,16 @@ export class WorkflowCoreSyncService {
       return;
     }
 
+    if (!(await this.workspaceHasCoreWorkflowIdField(workspaceId))) {
+      this.logger.warn(
+        `workflow.coreWorkflowId field missing for workspace ${workspaceId}, skipping core id write-back`,
+      );
+
+      return;
+    }
+
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowRepository =
+      const workspaceWorkflowRepository =
         await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
           workspaceId,
           'workflow',
@@ -120,9 +112,26 @@ export class WorkflowCoreSyncService {
         workspaceRecordId,
         coreWorkflowId,
       ] of coreWorkflowIdByWorkspaceRecordId) {
-        await workflowRepository.update(workspaceRecordId, { coreWorkflowId });
+        await workspaceWorkflowRepository.update(workspaceRecordId, {
+          coreWorkflowId,
+        });
       }
     }, buildSystemAuthContext(workspaceId));
+  }
+
+  private async workspaceHasCoreWorkflowIdField(
+    workspaceId: string,
+  ): Promise<boolean> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    return isDefined(
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.workflow.fields.coreWorkflowId.universalIdentifier
+      ],
+    );
   }
 
   private async getCustomApplicationIdOrThrow(
