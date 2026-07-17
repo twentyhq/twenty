@@ -12,10 +12,12 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
   logicFunctionManifest,
   applicationUniversalIdentifier,
   now,
+  isLogicFunctionPrebuiltModeEnabled,
 }: {
   logicFunctionManifest: LogicFunctionManifest;
   applicationUniversalIdentifier: string;
   now: string;
+  isLogicFunctionPrebuiltModeEnabled: boolean;
 }): UniversalFlatLogicFunction => {
   const name =
     logicFunctionManifest.name ?? parse(logicFunctionManifest.handlerName).name;
@@ -42,7 +44,9 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     workflowActionTriggerSettings:
       logicFunctionManifest.workflowActionTriggerSettings ?? null,
     isBuildUpToDate: true,
-    executionMode: LogicFunctionExecutionMode.LIVE,
+    executionMode: isLogicFunctionPrebuiltModeEnabled
+      ? LogicFunctionExecutionMode.PREBUILT
+      : LogicFunctionExecutionMode.LIVE,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

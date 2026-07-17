@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { type Manifest } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
@@ -112,6 +113,10 @@ export class ApplicationManifestMigrationService {
         ownerFlatApplication,
         now,
         workspaceId,
+        isLogicFunctionPrebuiltModeEnabled:
+          featureFlagsMap[
+            FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
+          ] === true,
       });
 
     const dependencyAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
@@ -189,8 +194,7 @@ export class ApplicationManifestMigrationService {
       ApplicationManifestMigrationService.name,
     );
 
-    const { featureFlagsMap: _featureFlagsMap, ...existingAllFlatEntityMaps } =
-      cacheResult;
+    const { featureFlagsMap, ...existingAllFlatEntityMaps } = cacheResult;
 
     const fromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
       applicationIds: [ownerFlatApplication.id],
@@ -203,6 +207,10 @@ export class ApplicationManifestMigrationService {
         ownerFlatApplication,
         now,
         workspaceId,
+        isLogicFunctionPrebuiltModeEnabled:
+          featureFlagsMap[
+            FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
+          ] === true,
       });
 
     const allFlatEntityOperationRecordByMetadataName =

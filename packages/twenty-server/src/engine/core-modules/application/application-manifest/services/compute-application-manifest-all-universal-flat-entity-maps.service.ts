@@ -70,11 +70,13 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     ownerFlatApplication,
     now,
     workspaceId,
+    isLogicFunctionPrebuiltModeEnabled,
   }: {
     manifest: Manifest;
     ownerFlatApplication: FlatApplication;
     now: string;
     workspaceId: string;
+    isLogicFunctionPrebuiltModeEnabled: boolean;
   }): AllFlatEntityMaps {
     const allUniversalFlatEntityMaps = createEmptyAllFlatEntityMaps();
 
@@ -208,6 +210,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             logicFunctionManifest,
             applicationUniversalIdentifier,
             now,
+            isLogicFunctionPrebuiltModeEnabled,
           }),
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatLogicFunctionMaps,
