@@ -313,6 +313,18 @@ export class ApplicationInstallService {
         }
       }
 
+      // Upgrades overwrite the previous version's files in place, so the
+      // manifest is validated with a dry-run sync first: a manifest that
+      // cannot be applied fails here, before any file of the running version
+      // has been touched.
+      if (isVersionUpgrade) {
+        await this.applicationSyncService.synchronizeFromManifest({
+          workspaceId: params.workspaceId,
+          manifest: resolvedPackage.manifest,
+          dryRun: true,
+        });
+      }
+
       await this.writeFilesToStorage(
         resolvedPackage.extractedDir,
         resolvedPackage.manifest,
@@ -350,6 +362,14 @@ export class ApplicationInstallService {
         applicationRegistrationId: appRegistration.id,
         application,
       });
+
+      if (isVersionUpgrade) {
+        await this.deleteStaleUpgradeFiles({
+          manifest: resolvedPackage.manifest,
+          applicationUniversalIdentifier: universalIdentifier,
+          workspaceId: params.workspaceId,
+        });
+      }
 
       await this.runPostInstallHook({
         manifest: resolvedPackage.manifest,
@@ -619,6 +639,75 @@ export class ApplicationInstallService {
         resourcePath: relativePath,
         settings: { isTemporaryFile: false, toDelete: false },
       });
+    }
+  }
+
+  // File writes upsert by path, so files whose path was dropped or renamed
+  // between versions linger after an upgrade. Only folders whose contents are
+  // fully owned by the package are swept: Source also holds function sources
+  // seeded outside the install flow, Dependencies also holds yarn.lock, and
+  // the logo lands in PublicAsset next to the declared assets.
+  private async deleteStaleUpgradeFiles({
+    manifest,
+    applicationUniversalIdentifier,
+    workspaceId,
+  }: {
+    manifest: Manifest;
+    applicationUniversalIdentifier: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const sweptFolders = [
+      FileFolder.BuiltLogicFunction,
+      FileFolder.BuiltFrontComponent,
+      FileFolder.PublicAsset,
+    ];
+
+    const expectedPathsByFolder = new Map<FileFolder, Set<string>>(
+      sweptFolders.map((fileFolder) => [fileFolder, new Set<string>()]),
+    );
+
+    for (const { relativePath, fileFolder } of this.buildFileList(manifest)) {
+      expectedPathsByFolder.get(fileFolder)?.add(relativePath);
+    }
+
+    const logo = manifest.application.logo ?? manifest.application.logoUrl;
+
+    if (isDefined(logo)) {
+      expectedPathsByFolder.get(FileFolder.PublicAsset)?.add(logo);
+    }
+
+    try {
+      for (const [fileFolder, expectedPaths] of expectedPathsByFolder) {
+        const storedPaths = await this.fileStorageService.listFileResourcePaths(
+          {
+            workspaceId,
+            applicationUniversalIdentifier,
+            fileFolder,
+          },
+        );
+
+        for (const resourcePath of storedPaths) {
+          if (expectedPaths.has(resourcePath)) {
+            continue;
+          }
+
+          await this.fileStorageService.deleteFile({
+            workspaceId,
+            applicationUniversalIdentifier,
+            fileFolder,
+            resourcePath,
+          });
+
+          this.logger.log(
+            `Deleted stale file ${fileFolder}/${resourcePath} of ${applicationUniversalIdentifier} after upgrade`,
+          );
+        }
+      }
+    } catch (error) {
+      // The upgrade itself succeeded; leftover files only cost storage.
+      this.logger.warn(
+        `Failed to clean up stale files of ${applicationUniversalIdentifier}: ${error}`,
+      );
     }
   }
 
