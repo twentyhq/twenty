@@ -20,8 +20,10 @@ below):
   about your CRM or make changes, e.g. `@twenty how many open opportunities do
   we have?` or `@twenty create a company called ACME`. The assistant is powered
   by the **`slack-assistant`** agent (this app) and the Twenty server's chat
-  runtime, and answers in the thread. It requires the extra setup below
-  (signing secret + agent role assignment).
+  runtime, and answers in the thread. Once it has replied in a thread it stays
+  active there, so follow-up messages in that thread are answered **without
+  re-mentioning** the bot. It requires the extra setup below (signing secret +
+  event subscriptions + agent role assignment).
 
 ## Tools
 
@@ -130,11 +132,19 @@ not add a second connection or bot identity. To enable it:
    Credentials**). The Twenty server uses it to verify Slack Events API
    requests. This is only needed for the assistant.
 3. **Point Slack Events at Twenty.** On your Slack app, enable **Event
-   Subscriptions**, subscribe the bot to `app_mention` and `message.im`, and set
-   the Request URL to `<YOUR_TWENTY_SERVER_URL>/webhooks/slack/events`. Slack
-   signs this handshake, so `SLACK_SIGNING_SECRET` (step 2) must be set first or
-   verification returns 401 and Slack reports *"didn't respond with the value of
-   the challenge parameter."*
+   Subscriptions** and set the Request URL to
+   `<YOUR_TWENTY_SERVER_URL>/webhooks/slack/events`. Slack signs this handshake,
+   so `SLACK_SIGNING_SECRET` (step 2) must be set first or verification returns
+   401 and Slack reports *"didn't respond with the value of the challenge
+   parameter."* Under **Subscribe to bot events**, add:
+   - `app_mention` — mentions of the bot in a channel.
+   - `message.im` — direct messages to the bot.
+   - `message.channels` — replies in public-channel threads (needed for
+     un-mentioned follow-ups; the bot only answers threads it already joined).
+   - `message.groups` — same, for private channels the bot is a member of.
+
+   Invite the bot to any channel where you want it to follow threads. After
+   changing event subscriptions, Slack may require you to reinstall the app.
 4. **Assign the agent a role (required).** The app ships a **Slack Assistant**
    role (read-only CRM access), but it is **not** bound to the agent
    automatically — granting CRM access is an explicit admin decision. Under

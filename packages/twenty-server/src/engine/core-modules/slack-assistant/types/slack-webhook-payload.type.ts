@@ -3,6 +3,7 @@ export type SlackMessageEvent = {
   enterpriseId?: string;
   channelId: string;
   threadTs: string;
+  ts: string;
   text: string;
   userId?: string;
   eventId?: string;
@@ -13,6 +14,11 @@ export type SlackWebhookPayload =
   | ({ kind: 'app_mention' } & SlackMessageEvent)
   | ({
       kind: 'direct_message';
+      botId?: string;
+      subtype?: string;
+    } & SlackMessageEvent)
+  | ({
+      kind: 'channel_message';
       botId?: string;
       subtype?: string;
     } & SlackMessageEvent)

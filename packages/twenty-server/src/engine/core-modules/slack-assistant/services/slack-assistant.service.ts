@@ -11,6 +11,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { TWENTY_SLACK_APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/engine/core-modules/slack-assistant/constants/slack-assistant.constants';
 import { SlackConnectionService } from 'src/engine/core-modules/slack-assistant/services/slack-connection.service';
+import { SlackThreadSubscriptionService } from 'src/engine/core-modules/slack-assistant/services/slack-thread-subscription.service';
 import { postSlackMessage } from 'src/engine/core-modules/slack-assistant/utils/post-slack-message.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
@@ -38,17 +39,20 @@ export class SlackAssistantService {
     private readonly aiAgentRoleService: AiAgentRoleService,
     private readonly applicationService: ApplicationService,
     private readonly slackConnectionService: SlackConnectionService,
+    private readonly slackThreadSubscriptionService: SlackThreadSubscriptionService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   async answerInThread({
     workspaceId,
+    teamId,
     channelId,
     threadTs,
     text,
   }: {
     workspaceId: string;
+    teamId: string;
     channelId: string;
     threadTs: string;
     text: string;
@@ -130,6 +134,12 @@ export class SlackAssistantService {
       channel: channelId,
       threadTs,
       markdownText: replyText,
+    });
+
+    await this.slackThreadSubscriptionService.subscribe({
+      teamId,
+      channelId,
+      threadTs,
     });
   }
 

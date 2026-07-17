@@ -11,7 +11,7 @@ import { SlackAssistantService } from 'src/engine/core-modules/slack-assistant/s
 import { SlackWorkspaceResolverService } from 'src/engine/core-modules/slack-assistant/services/slack-workspace-resolver.service';
 import { type SlackAssistantReplyJobData } from 'src/engine/core-modules/slack-assistant/types/slack-assistant-reply-job.type';
 
-const EVENT_DEDUPE_TTL_SECONDS = 5 * 60;
+const MESSAGE_DEDUPE_TTL_SECONDS = 5 * 60;
 
 @Processor({ queueName: MessageQueue.aiQueue })
 export class SlackAssistantReplyJob {
@@ -25,7 +25,7 @@ export class SlackAssistantReplyJob {
 
   @Process(SLACK_ASSISTANT_REPLY_JOB_NAME)
   async handle(data: SlackAssistantReplyJobData): Promise<void> {
-    if (await this.isDuplicateEvent(data.eventId)) {
+    if (await this.isDuplicateMessage(data)) {
       return;
     }
 
@@ -41,29 +41,30 @@ export class SlackAssistantReplyJob {
 
     await this.slackAssistantService.answerInThread({
       workspaceId,
+      teamId: data.teamId,
       channelId: data.channelId,
       threadTs: data.threadTs,
       text: data.text,
     });
   }
 
-  private async isDuplicateEvent(eventId?: string): Promise<boolean> {
-    if (!isDefined(eventId)) {
-      return false;
-    }
-
+  private async isDuplicateMessage(
+    data: SlackAssistantReplyJobData,
+  ): Promise<boolean> {
     const claim = await this.redisClientService
       .getClient()
       .set(
-        `slack-assistant:event:${eventId}`,
+        `slack-assistant:message:${data.teamId}:${data.channelId}:${data.ts}`,
         '1',
         'EX',
-        EVENT_DEDUPE_TTL_SECONDS,
+        MESSAGE_DEDUPE_TTL_SECONDS,
         'NX',
       );
 
     if (claim !== 'OK') {
-      this.logger.log(`Skipping duplicate Slack event ${eventId}.`);
+      this.logger.log(
+        `Skipping duplicate Slack message ${data.ts} in ${data.channelId}.`,
+      );
 
       return true;
     }

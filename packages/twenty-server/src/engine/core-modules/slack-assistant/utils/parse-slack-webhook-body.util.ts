@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   type SlackMessageEvent,
   type SlackWebhookPayload,
@@ -23,6 +25,7 @@ const buildMessageEvent = (
   return {
     channelId: asString(event.channel),
     threadTs: asString(event.thread_ts) || ts,
+    ts,
     text: asString(event.text),
     teamId:
       asOptionalString(event.team_id) ?? asOptionalString(envelope.team_id),
@@ -66,13 +69,30 @@ export const parseSlackWebhookBody = (rawBody: string): SlackWebhookPayload => {
     return { kind: 'app_mention', ...buildMessageEvent(envelope, event) };
   }
 
-  if (event.type === 'message' && event.channel_type === 'im') {
-    return {
-      kind: 'direct_message',
+  if (event.type === 'message') {
+    const messageMeta = {
       botId: asOptionalString(event.bot_id),
       subtype: asOptionalString(event.subtype),
-      ...buildMessageEvent(envelope, event),
     };
+
+    if (event.channel_type === 'im') {
+      return {
+        kind: 'direct_message',
+        ...messageMeta,
+        ...buildMessageEvent(envelope, event),
+      };
+    }
+
+    if (
+      (event.channel_type === 'channel' || event.channel_type === 'group') &&
+      isDefined(asOptionalString(event.thread_ts))
+    ) {
+      return {
+        kind: 'channel_message',
+        ...messageMeta,
+        ...buildMessageEvent(envelope, event),
+      };
+    }
   }
 
   return { kind: 'unsupported' };

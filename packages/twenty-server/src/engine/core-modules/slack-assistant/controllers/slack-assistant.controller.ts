@@ -21,6 +21,7 @@ import {
   SLACK_EVENTS_WEBHOOK_ROUTE,
 } from 'src/engine/core-modules/slack-assistant/constants/slack-assistant.constants';
 import { SlackSignatureVerifierService } from 'src/engine/core-modules/slack-assistant/services/slack-signature-verifier.service';
+import { SlackThreadSubscriptionService } from 'src/engine/core-modules/slack-assistant/services/slack-thread-subscription.service';
 import {
   SlackAssistantException,
   SlackAssistantExceptionCode,
@@ -35,6 +36,7 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 export class SlackAssistantController {
   constructor(
     private readonly slackSignatureVerifierService: SlackSignatureVerifierService,
+    private readonly slackThreadSubscriptionService: SlackThreadSubscriptionService,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -68,30 +70,44 @@ export class SlackAssistantController {
       return { challenge: payload.challenge };
     }
 
+    if (payload.kind === 'unsupported') {
+      return { ok: true };
+    }
+
     if (
-      payload.kind === 'direct_message' &&
+      (payload.kind === 'direct_message' ||
+        payload.kind === 'channel_message') &&
       (isDefined(payload.botId) || isNonEmptyString(payload.subtype))
     ) {
       return { ok: true };
     }
 
-    if (payload.kind === 'app_mention' || payload.kind === 'direct_message') {
-      if (!isDefined(payload.teamId) || !isNonEmptyString(payload.text)) {
-        return { ok: true };
-      }
-
-      await this.messageQueueService.add<SlackAssistantReplyJobData>(
-        SLACK_ASSISTANT_REPLY_JOB_NAME,
-        {
-          teamId: payload.teamId,
-          enterpriseId: payload.enterpriseId,
-          channelId: payload.channelId,
-          threadTs: payload.threadTs,
-          text: payload.text,
-          eventId: payload.eventId,
-        },
-      );
+    if (!isDefined(payload.teamId) || !isNonEmptyString(payload.text)) {
+      return { ok: true };
     }
+
+    if (
+      payload.kind === 'channel_message' &&
+      !(await this.slackThreadSubscriptionService.isSubscribed({
+        teamId: payload.teamId,
+        channelId: payload.channelId,
+        threadTs: payload.threadTs,
+      }))
+    ) {
+      return { ok: true };
+    }
+
+    await this.messageQueueService.add<SlackAssistantReplyJobData>(
+      SLACK_ASSISTANT_REPLY_JOB_NAME,
+      {
+        teamId: payload.teamId,
+        enterpriseId: payload.enterpriseId,
+        channelId: payload.channelId,
+        threadTs: payload.threadTs,
+        text: payload.text,
+        ts: payload.ts,
+      },
+    );
 
     return { ok: true };
   }

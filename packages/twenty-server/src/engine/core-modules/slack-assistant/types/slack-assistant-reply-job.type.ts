@@ -4,5 +4,5 @@ export type SlackAssistantReplyJobData = {
   channelId: string;
   threadTs: string;
   text: string;
-  eventId?: string;
+  ts: string;
 };

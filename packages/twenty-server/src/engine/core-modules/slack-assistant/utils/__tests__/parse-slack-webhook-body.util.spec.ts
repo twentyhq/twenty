@@ -3,7 +3,10 @@ import { parseSlackWebhookBody } from 'src/engine/core-modules/slack-assistant/u
 describe('parseSlackWebhookBody', () => {
   it('classifies a url_verification handshake', () => {
     const payload = parseSlackWebhookBody(
-      JSON.stringify({ type: 'url_verification', challenge: 'challenge-token' }),
+      JSON.stringify({
+        type: 'url_verification',
+        challenge: 'challenge-token',
+      }),
     );
 
     expect(payload).toEqual({
@@ -96,6 +99,96 @@ describe('parseSlackWebhookBody', () => {
     );
 
     expect(payload).toMatchObject({ enterpriseId: 'E123' });
+  });
+
+  it('classifies a threaded channel reply as a channel_message', () => {
+    const payload = parseSlackWebhookBody(
+      JSON.stringify({
+        type: 'event_callback',
+        team_id: 'T123',
+        event: {
+          type: 'message',
+          channel_type: 'channel',
+          channel: 'C1',
+          ts: '1700000001.000200',
+          thread_ts: '1700000000.000100',
+          text: 'follow-up without a mention',
+          user: 'U1',
+        },
+      }),
+    );
+
+    expect(payload).toMatchObject({
+      kind: 'channel_message',
+      channelId: 'C1',
+      threadTs: '1700000000.000100',
+      ts: '1700000001.000200',
+      text: 'follow-up without a mention',
+    });
+  });
+
+  it('classifies a threaded private-channel (group) reply as a channel_message', () => {
+    const payload = parseSlackWebhookBody(
+      JSON.stringify({
+        type: 'event_callback',
+        team_id: 'T123',
+        event: {
+          type: 'message',
+          channel_type: 'group',
+          channel: 'G1',
+          ts: '1700000001.000200',
+          thread_ts: '1700000000.000100',
+          text: 'private follow-up',
+        },
+      }),
+    );
+
+    expect(payload).toMatchObject({
+      kind: 'channel_message',
+      channelId: 'G1',
+      threadTs: '1700000000.000100',
+    });
+  });
+
+  it('surfaces botId/subtype on a threaded channel reply so the controller can drop the assistant echo', () => {
+    const payload = parseSlackWebhookBody(
+      JSON.stringify({
+        type: 'event_callback',
+        team_id: 'T123',
+        event: {
+          type: 'message',
+          channel_type: 'channel',
+          channel: 'C1',
+          ts: '1700000002.000300',
+          thread_ts: '1700000000.000100',
+          text: 'the assistant reply echoing back',
+          bot_id: 'B1',
+        },
+      }),
+    );
+
+    expect(payload).toMatchObject({
+      kind: 'channel_message',
+      botId: 'B1',
+    });
+  });
+
+  it('returns unsupported for a top-level channel message with no thread_ts', () => {
+    const payload = parseSlackWebhookBody(
+      JSON.stringify({
+        type: 'event_callback',
+        team_id: 'T123',
+        event: {
+          type: 'message',
+          channel_type: 'channel',
+          channel: 'C1',
+          ts: '1700000000.000100',
+          text: 'top-level channel chatter',
+        },
+      }),
+    );
+
+    expect(payload).toEqual({ kind: 'unsupported' });
   });
 
   it('returns unsupported for a non-message event type', () => {
