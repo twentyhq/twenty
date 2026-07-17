@@ -1,6 +1,11 @@
+import axios from 'axios';
+import { isDefined } from 'twenty-shared/utils';
+
 import { type SlackApiResponse } from 'src/engine/core-modules/slack-assistant/types/slack-api-response.type';
 
 const SLACK_API_BASE_URL = 'https://slack.com/api/';
+
+const SLACK_API_TIMEOUT_MS = 10_000;
 
 const encodeValue = (value: unknown): string =>
   typeof value === 'string' ||
@@ -19,27 +24,23 @@ export const callSlackApi = async <
   const body = new URLSearchParams();
 
   for (const [key, value] of Object.entries(params)) {
-    if (value === undefined || value === null) {
+    if (!isDefined(value)) {
       continue;
     }
 
     body.set(key, encodeValue(value));
   }
 
-  const response = await fetch(new URL(method, SLACK_API_BASE_URL), {
-    method: 'POST',
-    headers: {
-      authorization: `Bearer ${token}`,
-      'content-type': 'application/x-www-form-urlencoded',
+  const response = await axios.post<TResponse>(
+    `${SLACK_API_BASE_URL}${method}`,
+    body,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      timeout: SLACK_API_TIMEOUT_MS,
     },
-    body: body.toString(),
-  });
+  );
 
-  const payload = (await response.json()) as TResponse;
-
-  if (!response.ok) {
-    throw new Error(`Slack ${method} returned HTTP ${response.status}`);
-  }
-
-  return payload;
+  return response.data;
 };
