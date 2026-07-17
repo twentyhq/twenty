@@ -1,3 +1,4 @@
+import { isArray, isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -6,7 +7,7 @@ import {
 } from 'src/engine/core-modules/slack-assistant/types/slack-webhook-payload.type';
 
 const asRecord = (value: unknown): Record<string, unknown> | undefined =>
-  isDefined(value) && typeof value === 'object' && !Array.isArray(value)
+  isObject(value) && !isArray(value)
     ? (value as Record<string, unknown>)
     : undefined;
 
