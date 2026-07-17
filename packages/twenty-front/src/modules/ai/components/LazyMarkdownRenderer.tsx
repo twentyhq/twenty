@@ -55,7 +55,6 @@ const splitTextOnPlaceholders = (
   return parts;
 };
 
-// Prose: turn each placeholder into a clickable record chip.
 const TextWithRecordLinks = ({ text }: { text: string }) => {
   const references = useContext(RecordReferencesContext);
 
@@ -105,30 +104,33 @@ const processChildrenForRecordLinks = (
   return children;
 };
 
-// Code/pre: references never render as chips inside code, so restore the
-// original [[record:...]] text instead of leaking the placeholder sentinels.
-const CodeChildrenWithRestoredReferences = ({
+const restorePlaceholdersToTokens = (
+  text: string,
+  references: RecordReference[],
+): string =>
+  text.replace(RECORD_REFERENCE_PLACEHOLDER_REGEX, (_match, referenceIndex) => {
+    const reference = references[Number(referenceIndex)];
+
+    return isDefined(reference) ? buildRecordReferenceToken(reference) : '';
+  });
+
+// References never render as chips inside code; restore the original token as
+// plain text so the placeholder sentinels never reach the DOM or the clipboard.
+const CodeBlock = ({
+  className,
   children,
 }: {
-  children: React.ReactNode;
+  className?: string;
+  children?: React.ReactNode;
 }) => {
   const references = useContext(RecordReferencesContext);
 
-  if (typeof children === 'string') {
-    return (
-      <>
-        {splitTextOnPlaceholders(children, (referenceIndex) => {
-          const reference = references[referenceIndex];
+  const restoredChildren =
+    typeof children === 'string'
+      ? restorePlaceholdersToTokens(children, references)
+      : children;
 
-          return isDefined(reference)
-            ? buildRecordReferenceToken(reference)
-            : '';
-        })}
-      </>
-    );
-  }
-
-  return <>{children}</>;
+  return <code className={className}>{restoredChildren}</code>;
 };
 
 const MarkdownRenderer = lazy(async () => {
@@ -216,13 +218,7 @@ const MarkdownRenderer = lazy(async () => {
           }: {
             className?: string;
             children?: React.ReactNode;
-          }) => (
-            <code className={className}>
-              <CodeChildrenWithRestoredReferences>
-                {children}
-              </CodeChildrenWithRestoredReferences>
-            </code>
-          ),
+          }) => <CodeBlock className={className}>{children}</CodeBlock>,
           pre: ({ children }) => (
             <MarkdownCodeBlock>{children}</MarkdownCodeBlock>
           ),

@@ -4,16 +4,13 @@ export type RecordReference = {
   displayName: string;
 };
 
-// Display names come from real record titles and routinely contain markdown
-// special characters (backticks, brackets, pipes). Matching the display name
-// non-greedily up to the closing "]]" lets titles like "[Billing] Tie key"
-// survive, which "[^\]]+" would truncate at the first "]".
+// Non-greedy display name up to the closing "]]" so titles containing "]" (e.g.
+// "[Billing] Tie key") survive, unlike "[^\]]+" which stops at the first "]".
 const RECORD_REFERENCE_REGEX =
-  /\[\[(?:record:)?([a-zA-Z]+):([a-f0-9-]+):(.+?)\]\]/g;
+  /\[\[(?:record:)?([a-zA-Z]+):([a-f0-9-]+):(.*?)\]\]/g;
 
-// Private Use Area sentinels wrapping the reference index. They carry no
-// markdown meaning, so the parser keeps each placeholder inside a single text
-// node instead of fragmenting the original token on its special characters.
+// Private Use Area sentinels carry no markdown meaning, so the parser keeps each
+// placeholder in one text node instead of fragmenting the token on its content.
 const PLACEHOLDER_START = '\uE000';
 const PLACEHOLDER_END = '\uE001';
 

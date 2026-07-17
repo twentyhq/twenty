@@ -66,6 +66,21 @@ describe('extractRecordReferences', () => {
     expect(countPlaceholders(sanitizedText)).toBe(4);
   });
 
+  it('extracts a reference with an empty display name', () => {
+    const { sanitizedText, references } = extractRecordReferences(
+      'see [[record:person:cf1ca169-ac22-4f5f-afd5-18a11b48c133:]] here',
+    );
+
+    expect(references).toEqual([
+      {
+        objectNameSingular: 'person',
+        recordId: 'cf1ca169-ac22-4f5f-afd5-18a11b48c133',
+        displayName: '',
+      },
+    ]);
+    expect(countPlaceholders(sanitizedText)).toBe(1);
+  });
+
   it('leaves text without references untouched', () => {
     const text =
       'Just a normal answer with `code` and [a link](https://x.com).';
