@@ -20,7 +20,6 @@ describe('parseSlackWebhookBody', () => {
       JSON.stringify({
         type: 'event_callback',
         team_id: 'T123',
-        event_id: 'Ev123',
         event: {
           type: 'app_mention',
           channel: 'C1',
@@ -38,7 +37,6 @@ describe('parseSlackWebhookBody', () => {
       text: 'hey <@U0BOT> hello',
       teamId: 'T123',
       userId: 'U1',
-      eventId: 'Ev123',
     });
   });
 

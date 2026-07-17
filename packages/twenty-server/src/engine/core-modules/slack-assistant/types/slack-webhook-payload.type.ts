@@ -6,7 +6,6 @@ export type SlackMessageEvent = {
   ts: string;
   text: string;
   userId?: string;
-  eventId?: string;
 };
 
 export type SlackWebhookPayload =

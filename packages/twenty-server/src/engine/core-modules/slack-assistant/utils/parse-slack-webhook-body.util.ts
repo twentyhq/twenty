@@ -33,7 +33,6 @@ const buildMessageEvent = (
       asOptionalString(envelope.enterprise_id) ??
       asOptionalString(envelope.context_enterprise_id),
     userId: asOptionalString(event.user),
-    eventId: asOptionalString(envelope.event_id),
   };
 };
 
