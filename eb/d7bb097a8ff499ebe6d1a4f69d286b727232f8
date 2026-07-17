@@ -1,0 +1,62 @@
+packages/twenty-server/src/modules/connected-account-sync-webhooks/drivers/microsoft/microsoft-calendar-notification.handler.ts
+  s_db0de5da096547::t_5b954b6899edcd 100-101
+packages/twenty-server/src/database/commands/database-command.module.ts
+  s_db0de5da096547::t_1ad7d10b49e6ec 51
+  s_db0de5da096547::t_5d87c154c01ab2 65
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/drivers/google/google-webhook-subscription.driver.ts
+  s_db0de5da096547::t_8d786614a6011b 46-54
+  s_db0de5da096547::t_da71ff2572d620 44
+  s_db0de5da096547::t_14d86ccf8b4744 45
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service.ts
+  s_db0de5da096547::t_45f6d42d84246b 112,128
+  s_db0de5da096547::t_902888b6989f4e 129
+  s_db0de5da096547::t_6167fcd9e90a45 103,119-127
+  s_db0de5da096547::t_f7229f5462bc22 107-108,110-111,115-118
+  s_db0de5da096547::t_9c39ea73fcfeec 100-102
+  s_db0de5da096547::t_acf27773639cc3 64-69,98-99
+packages/twenty-server/src/modules/connected-account-sync-webhooks/drivers/microsoft/microsoft-messaging-notification.handler.ts
+  s_db0de5da096547::t_964d9ce7cc37df 99-100
+packages/twenty-server/src/database/commands/cron-register-all.command.ts
+  s_db0de5da096547::t_9053ada8e58746 126-128
+  s_db0de5da096547::t_efd3d1af62c5b4 18
+  s_db0de5da096547::t_54e1828651b7cd 125
+  s_db0de5da096547::t_3a35ce2198c4f8 53-54
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service.ts
+  s_db0de5da096547::t_6c2a86b95721b2 97-98,102
+  s_db0de5da096547::t_b51c514d193faa 105-110,114-117
+  s_db0de5da096547::t_53dda3737ff4e4 111,127
+  s_db0de5da096547::t_e1a3f28a27b928 128
+  s_db0de5da096547::t_9c39ea73fcfeec 99-101
+  s_db0de5da096547::t_42e3766ecf7f85 118-126
+  s_db0de5da096547::t_01e977a99bd58b 64-69
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/crons/jobs/webhook-subscription-renewal.cron.job.ts
+  s_db0de5da096547::t_1e64a524102029 4-7
+  s_db0de5da096547::t_96a271308b0e69 8-9,12,16-17,22-27,34-35,40-41,50-51,58,81,83-85,87-89,91-92,97,99-110,115
+  s_db0de5da096547::t_8da6c58f6f3dfb 54-56
+  s_db0de5da096547::t_d4fb78c1645c79 66-67,70,72-74,76,78-80,86,90,95
+  s_db0de5da096547::t_afa59f52707c0a 52-53,57,59-61
+  s_db0de5da096547::t_fdf5edd6c92bfb 111-114
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/jobs/renew-webhook-subscription.job.ts
+  s_db0de5da096547::t_7b38acd3c5b924 1-41
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/webhook-subscription.module.ts
+  s_db0de5da096547::t_47fbd6e7032386 26
+  s_db0de5da096547::t_aa38528eb8b06f 6,13
+  s_db0de5da096547::t_a12cd206194b0e 39
+  s_db0de5da096547::t_4de1b23f433805 45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "ebd7bb097a8ff499ebe6d1a4f69d286b727232f8",
+  "prompts": {},
+  "sessions": {
+    "s_db0de5da096547": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b7f7c885-8913-40f8-aa4b-08cbaef5ba93",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
