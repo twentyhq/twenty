@@ -17,15 +17,12 @@ export default defineConnectionProvider({
       'chat:write.public',
       'groups:read',
       'reactions:write',
-      // Assistant (inbound) scopes: receive mentions and DMs, read thread
-      // context, resolve requester names, and reply in DMs.
+      // Assistant (inbound) scopes: receive mentions and DMs, and read thread
+      // context so the assistant can follow along and reply in-thread.
       'app_mentions:read',
       'channels:history',
       'groups:history',
       'im:history',
-      'im:read',
-      'im:write',
-      'users:read',
     ],
     clientIdVariable: 'SLACK_CLIENT_ID',
     clientSecretVariable: 'SLACK_CLIENT_SECRET',
