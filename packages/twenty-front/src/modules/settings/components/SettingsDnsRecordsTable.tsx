@@ -63,9 +63,9 @@ export const SettingsDnsRecordsTable = ({
     '100px',
     'minmax(0, 1fr)',
     'minmax(0, 1.5fr)',
-    ...(hasPriorityColumn ? ['max-content'] : []),
-    ...(hasTtlColumn ? ['max-content'] : []),
-    ...(hasStatusColumn ? ['max-content'] : []),
+    ...(hasPriorityColumn ? ['80px'] : []),
+    ...(hasTtlColumn ? ['80px'] : []),
+    ...(hasStatusColumn ? ['112px'] : []),
   ].join(' ');
 
   return (
@@ -79,7 +79,7 @@ export const SettingsDnsRecordsTable = ({
         )}
         {hasTtlColumn && <TableHeader align="center">{t`TTL`}</TableHeader>}
         {hasStatusColumn && (
-          <TableHeader align="center">{t`Status`}</TableHeader>
+          <TableHeader align="right">{t`Status`}</TableHeader>
         )}
       </TableRow>
 
@@ -138,7 +138,7 @@ export const SettingsDnsRecordsTable = ({
           )}
           {hasTtlColumn && <TableCell align="center">{record.ttl}</TableCell>}
           {hasStatusColumn && (
-            <TableCell align="center">
+            <TableCell align="right">
               {isDefined(record.status) && isDefined(record.statusColor) && (
                 <Status
                   color={record.statusColor}
