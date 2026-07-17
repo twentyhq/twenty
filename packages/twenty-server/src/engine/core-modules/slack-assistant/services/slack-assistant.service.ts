@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { fromApplicationEntityToFlatApplication } from 'src/engine/core-modules/application/utils/from-application-entity-to-flat-application.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
+import { SLACK_ASSISTANT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/core-modules/slack-assistant/constants/slack-assistant.constants';
 import { SlackApplicationResolverService } from 'src/engine/core-modules/slack-assistant/services/slack-application-resolver.service';
 import { SlackConnectionService } from 'src/engine/core-modules/slack-assistant/services/slack-connection.service';
 import { SlackThreadSubscriptionService } from 'src/engine/core-modules/slack-assistant/services/slack-thread-subscription.service';
@@ -29,26 +30,45 @@ const SLACK_ASSISTANT_AGENT_NAME = 'slack-assistant';
 const SLACK_MAX_MARKDOWN_TEXT_LENGTH = 12000;
 const SLACK_TRUNCATION_NOTICE = '\n\n_(response truncated)_';
 
-const truncateForSlack = (text: string): string => {
-  // Count code points (not UTF-16 units) so slicing never splits an emoji /
-  // surrogate pair at the cutoff.
-  const characters = Array.from(text);
+// Intl.Segmenter exists at runtime (Node 16+) but is not typed under the
+// server's es2020 lib target, so we declare the minimal surface we use.
+type GraphemeSegmenter = {
+  segment: (input: string) => Iterable<{ segment: string }>;
+};
 
-  if (characters.length <= SLACK_MAX_MARKDOWN_TEXT_LENGTH) {
+const segmentGraphemes = (text: string): string[] => {
+  const segmenter = new (
+    Intl as unknown as {
+      Segmenter: new (
+        locales?: string,
+        options?: { granularity: 'grapheme' },
+      ) => GraphemeSegmenter;
+    }
+  ).Segmenter(undefined, { granularity: 'grapheme' });
+
+  return [...segmenter.segment(text)].map(({ segment }) => segment);
+};
+
+const truncateForSlack = (text: string): string => {
+  // Segment by grapheme so slicing never splits a visible character (emoji,
+  // ZWJ sequence, skin-tone modifier, surrogate pair) at the cutoff.
+  const graphemes = segmentGraphemes(text);
+
+  if (graphemes.length <= SLACK_MAX_MARKDOWN_TEXT_LENGTH) {
     return text;
   }
 
   return (
-    characters
+    graphemes
       .slice(0, SLACK_MAX_MARKDOWN_TEXT_LENGTH - SLACK_TRUNCATION_NOTICE.length)
       .join('') + SLACK_TRUNCATION_NOTICE
   );
 };
 
 const MISSING_ROLE_REPLY =
-  "I don't have access to your CRM right now. The *Slack Assistant* role is " +
-  'granted automatically when the app is installed; if it was removed, an admin ' +
-  'needs to re-assign a role to the *slack-assistant* agent to restore my access.';
+  "I don't have access to your CRM right now. The *Slack Assistant* role may " +
+  'not be assigned yet; an admin can assign it to the *slack-assistant* agent ' +
+  'to restore my access.';
 
 @Injectable()
 export class SlackAssistantService {
@@ -113,7 +133,7 @@ export class SlackAssistantService {
       throw error;
     }
 
-    const agentRoleId = await this.aiAgentRoleService.getAssignedRoleId({
+    const agentRoleId = await this.resolveAgentRoleId({
       workspaceId,
       agentId: agent.id,
     });
@@ -172,6 +192,61 @@ export class SlackAssistantService {
       channelId,
       threadTs,
     });
+  }
+
+  // Resolves the role the agent runs with, granting the shipped read-only role
+  // on first use if none is assigned. This self-heals across new installs,
+  // workspaces installed before auto-assignment existed, and transient failures
+  // at install time. An already-assigned role (e.g. widened to allow writes) is
+  // always kept, so a manual change is never overridden.
+  private async resolveAgentRoleId({
+    workspaceId,
+    agentId,
+  }: {
+    workspaceId: string;
+    agentId: string;
+  }): Promise<string | null> {
+    const assignedRoleId = await this.aiAgentRoleService.getAssignedRoleId({
+      workspaceId,
+      agentId,
+    });
+
+    if (isDefined(assignedRoleId)) {
+      return assignedRoleId;
+    }
+
+    const shippedRoleId =
+      await this.aiAgentRoleService.getRoleIdByUniversalIdentifier({
+        workspaceId,
+        universalIdentifier: SLACK_ASSISTANT_ROLE_UNIVERSAL_IDENTIFIER,
+      });
+
+    if (!isDefined(shippedRoleId)) {
+      this.logger.warn(
+        `Slack Assistant role not found in workspace ${workspaceId}; cannot grant CRM access.`,
+      );
+
+      return null;
+    }
+
+    try {
+      await this.aiAgentRoleService.assignRoleToAgent({
+        workspaceId,
+        agentId,
+        roleId: shippedRoleId,
+      });
+
+      return shippedRoleId;
+    } catch (error) {
+      this.logger.warn(
+        `Failed to auto-assign the Slack Assistant role in workspace ${workspaceId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+
+      // A concurrent reply may have won the race and assigned it already.
+      return this.aiAgentRoleService.getAssignedRoleId({ workspaceId, agentId });
+    }
   }
 
   private async resolveApplicationAuthContext({
