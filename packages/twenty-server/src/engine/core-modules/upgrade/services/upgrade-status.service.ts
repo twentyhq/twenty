@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { UpgradeHealthEnum } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { PROVISIONED_WORKSPACE_ACTIVATION_STATUSES } from 'twenty-shared/workspace';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -12,6 +12,7 @@ import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/servi
 import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { extractVersionFromCommandName } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name.util';
 
+import { activationStatusIn } from 'src/database/commands/command-runners/utils/activation-status-in.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { In, Repository } from 'typeorm';
 
@@ -102,8 +103,7 @@ export class UpgradeStatusService {
   async getWorkspaceStatuses(
     filterWorkspaceIds?: string[],
   ): Promise<WorkspaceUpgradeStatus[]> {
-    const workspaces =
-      await this.loadActiveOrSuspendedWorkspaces(filterWorkspaceIds);
+    const workspaces = await this.loadProvisionedWorkspaces(filterWorkspaceIds);
 
     if (filterWorkspaceIds) {
       const foundIds = new Set(workspaces.map((workspace) => workspace.id));
@@ -111,7 +111,7 @@ export class UpgradeStatusService {
       for (const requestedId of filterWorkspaceIds) {
         if (!foundIds.has(requestedId)) {
           this.logger.warn(
-            `Workspace ${requestedId} not found or not active/suspended`,
+            `Workspace ${requestedId} not found or not provisioned`,
           );
         }
       }
@@ -304,7 +304,7 @@ export class UpgradeStatusService {
     };
   }
 
-  private async loadActiveOrSuspendedWorkspaces(
+  private async loadProvisionedWorkspaces(
     workspaceIds?: string[],
   ): Promise<Pick<WorkspaceEntity, 'id' | 'displayName'>[]> {
     return this.workspaceRepository.find({
@@ -313,10 +313,9 @@ export class UpgradeStatusService {
         ...(workspaceIds && workspaceIds.length > 0
           ? { id: In(workspaceIds) }
           : {}),
-        activationStatus: In([
-          WorkspaceActivationStatus.ACTIVE,
-          WorkspaceActivationStatus.SUSPENDED,
-        ]),
+        activationStatus: activationStatusIn(
+          PROVISIONED_WORKSPACE_ACTIVATION_STATUSES,
+        ),
       },
       order: { id: 'ASC' },
     });

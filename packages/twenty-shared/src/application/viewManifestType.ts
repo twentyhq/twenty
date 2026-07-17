@@ -83,6 +83,7 @@ export type ViewManifest = SyncableEntityOptions & {
   kanbanAggregateOperationFieldMetadataUniversalIdentifier?: string;
   calendarLayout?: ViewCalendarLayout;
   calendarFieldMetadataUniversalIdentifier?: string;
+  calendarEndFieldMetadataUniversalIdentifier?: string;
   isActive?: boolean;
   fields?: ViewFieldManifest[];
   filters?: ViewFilterManifest[];

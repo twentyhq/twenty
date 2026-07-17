@@ -90,9 +90,7 @@ const renderDefineFile = (
 ): string => {
   const body = Object.entries(node)
     .filter(([, value]) => isDefined(value))
-    .map(
-      ([key, value]) => `  ${renderKey(key)}: ${renderValue(value, 1)},`,
-    );
+    .map(([key, value]) => `  ${renderKey(key)}: ${renderValue(value, 1)},`);
 
   return `import { ${definer} } from 'twenty-sdk/define';\n\nexport default ${definer}({\n${body.join('\n')}\n});\n`;
 };

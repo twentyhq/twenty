@@ -279,6 +279,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
       universalProperty: 'imageIdentifierFieldMetadataUniversalIdentifier',
+      isOverridable: true,
     },
     targetTableName: {
       toCompare: false,
@@ -378,6 +379,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: 'calendarFieldMetadataUniversalIdentifier',
+      isOverridable: true,
+    },
+    calendarEndFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'calendarEndFieldMetadataUniversalIdentifier',
       isOverridable: true,
     },
     visibility: {
@@ -1807,6 +1814,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
   },
   searchFieldMetadata: {
+    isSystemSideEffect: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     objectMetadataId: {
       toCompare: false,
       toStringify: false,

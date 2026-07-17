@@ -86,6 +86,22 @@ export default defineObject({
 **Los campos base se añaden automáticamente.** Cuando defines un objeto personalizado, Twenty crea campos estándar como `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` y `deletedAt` por ti. No necesitas declararlos en tu matriz `fields`, solo tus campos personalizados. Puedes sobrescribir un campo predeterminado declarando uno con el mismo nombre, pero esto rara vez es una buena idea.
 </Note>
 
+## Tipos de campo
+
+El conjunto completo de valores de `FieldType`, exportados desde `twenty-sdk/define`:
+
+| Categoría                    | Tipos                                                                                                                             |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Texto                        | `TEXT`, `RICH_TEXT`, `ARRAY` (de cadenas), `RAW_JSON`                                                                             |
+| Numérico                     | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (precisión arbitraria), `RATING`, `POSITION` |
+| Fechas                       | `DATE`, `DATE_TIME`                                                                                                               |
+| Selección                    | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                               |
+| Compuesto                    | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES`                                                 |
+| Identificadores y relaciones | `UUID`, `RELATION`, `MORPH_RELATION` (ver [Relations](/l/es/developers/extend/apps/data/relations))                                    |
+| Sistema                      | `TS_VECTOR` (vector de búsqueda de texto completo, gestionado por el servidor)                                                    |
+
+Los tipos compuestos almacenan múltiples subcampos (por ejemplo, `FULL_NAME` = nombre + apellido; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` y `MULTI_SELECT` requieren un arreglo `options` como en el ejemplo anterior.
+
 ## Valores predeterminados
 
 Los valores predeterminados de cadenas literales deben ir entre comillas simples **dentro** de la cadena — `defaultValue: "'Draft'"`, no `defaultValue: "Draft"`. Por eso el campo `status` anterior utiliza `` `'${PostCardStatus.DRAFT}'` ``.

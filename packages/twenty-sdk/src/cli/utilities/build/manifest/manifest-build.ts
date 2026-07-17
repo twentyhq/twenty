@@ -11,6 +11,7 @@ import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/uti
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/manifest/utils/validate-conditional-availability-usage';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
+import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
 import { type ApplicationConfig, type LogicFunctionConfig } from '@/sdk/define';
 import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
@@ -570,20 +571,31 @@ export const buildManifest = async (
 
   const application: ApplicationManifest | undefined =
     applicationConfig && resolvedDefaultRoleUniversalIdentifier
-      ? {
-          ...applicationConfig,
-          defaultRoleUniversalIdentifier:
-            resolvedDefaultRoleUniversalIdentifier,
-          aboutDescription: readmeContent,
-          yarnLockChecksum: null,
-          packageJsonChecksum: null,
-          ...(postInstallLogicFunctions.length >= 1
-            ? { postInstallLogicFunction: postInstallLogicFunctions[0] }
-            : {}),
-          ...(preInstallLogicFunctions.length >= 1
-            ? { preInstallLogicFunction: preInstallLogicFunctions[0] }
-            : {}),
-        }
+      ? (() => {
+          const {
+            logoUrl: _logoUrl,
+            screenshots: _screenshots,
+            ...applicationConfigRest
+          } = applicationConfig;
+
+          return {
+            ...applicationConfigRest,
+            logo: applicationConfig.logo,
+            galleryImages: applicationConfig.galleryImages ?? [],
+            defaultRoleUniversalIdentifier:
+              resolvedDefaultRoleUniversalIdentifier,
+            aboutDescription: readmeContent,
+            yarnLockChecksum: null,
+            packageJsonChecksum: null,
+            requiredServerVersionRange: getEngineVersionRange(appPath),
+            ...(postInstallLogicFunctions.length >= 1
+              ? { postInstallLogicFunction: postInstallLogicFunctions[0] }
+              : {}),
+            ...(preInstallLogicFunctions.length >= 1
+              ? { preInstallLogicFunction: preInstallLogicFunctions[0] }
+              : {}),
+          };
+        })()
       : undefined;
 
   const byId = <T extends { universalIdentifier: string }>(a: T, b: T) =>

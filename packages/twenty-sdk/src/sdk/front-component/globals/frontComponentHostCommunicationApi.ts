@@ -18,6 +18,7 @@ export type OpenSidePanelPageParams =
       page: SidePanelPages.ViewRecord;
       recordId: string;
       objectNameSingular: string;
+      tab?: string;
       resetNavigationStack?: boolean;
     }
   | {
@@ -53,6 +54,7 @@ export type OpenSidePanelPageParams =
       preprompt?: {
         text: string;
         mode?: 'PREFILL' | 'SEND';
+        model?: 'FAST' | 'SMART';
       };
     }
   | {

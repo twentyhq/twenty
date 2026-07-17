@@ -307,6 +307,52 @@ export class ApplicationService {
     });
   }
 
+  // Number of workspaces each external (non-LOCAL) application is installed in,
+  // ranked by install count. Powers the "most installed apps" gauge/leaderboard.
+  // LOCAL apps (built-in Standard/Custom) exist in every workspace and are not
+  // marketplace installs, so they are excluded to keep the ranking meaningful.
+  async countInstalledWorkspacesByApplication({
+    limit = 100,
+  }: {
+    limit?: number;
+  } = {}): Promise<
+    Array<{
+      universalIdentifier: string;
+      name: string;
+      sourceType: string;
+      installedWorkspaceCount: number;
+    }>
+  > {
+    const rows = await this.applicationRepository
+      .createQueryBuilder('application')
+      .select('application.universalIdentifier', 'universalIdentifier')
+      .addSelect('MAX(application.name)', 'name')
+      .addSelect('MAX(application.sourceType)', 'sourceType')
+      .addSelect('COUNT(*)', 'count')
+      .innerJoin('application.workspace', 'workspace')
+      .where('application.deletedAt IS NULL')
+      .andWhere('workspace.deletedAt IS NULL')
+      .andWhere('application.sourceType != :localSourceType', {
+        localSourceType: ApplicationRegistrationSourceType.LOCAL,
+      })
+      .groupBy('application.universalIdentifier')
+      .orderBy('count', 'DESC')
+      .limit(limit)
+      .getRawMany<{
+        universalIdentifier: string;
+        name: string;
+        sourceType: string;
+        count: string;
+      }>();
+
+    return rows.map((row) => ({
+      universalIdentifier: row.universalIdentifier,
+      name: row.name,
+      sourceType: row.sourceType,
+      installedWorkspaceCount: Number(row.count),
+    }));
+  }
+
   async findTwentyStandardApplicationOrThrow(workspaceId: string): Promise<{
     application: ApplicationEntity;
     workspace: WorkspaceEntity;
@@ -501,6 +547,7 @@ export class ApplicationService {
       sourceFile: defaultPackageFields.packageJsonContent,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
+      applicationId: application.id,
       workspaceId: application.workspaceId,
       resourcePath: 'package.json',
       settings: { isTemporaryFile: false, toDelete: false },
@@ -511,6 +558,7 @@ export class ApplicationService {
       sourceFile: defaultPackageFields.yarnLockContent,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
+      applicationId: application.id,
       workspaceId: application.workspaceId,
       resourcePath: 'yarn.lock',
       settings: { isTemporaryFile: false, toDelete: false },

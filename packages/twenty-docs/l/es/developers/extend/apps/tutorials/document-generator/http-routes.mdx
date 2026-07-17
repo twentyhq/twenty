@@ -9,8 +9,10 @@ El mismo manejador también puede responder a peticiones HTTP. Añadiremos dos r
 * un endpoint **POST** para generar un documento, y
 * un endpoint público **GET** que renderiza un documento como una página web imprimible.
 
-Ambos usan `httpRouteTriggerSettings`. Las rutas de la aplicación se sirven bajo `/s` en tu servidor
-Veenty (por ejemplo, `http://localhost:2020/s/documents/generate`).
+Ambos usan `httpRouteTriggerSettings`. Las rutas de la aplicación se encuentran bajo la ruta `/s/`; en las instancias locales
+y autoalojadas, esa ruta la sirve tu servidor de Twenty
+(p. ej., `http://localhost:2020/s/documents/generate`). En Twenty Cloud, `RestApiClient`
+resuelve la ruta a través del dominio de funciones del espacio de trabajo.
 
 ## Ruta POST — generar bajo demanda
 

@@ -9,7 +9,10 @@ Aynı işleyici HTTP isteklerine de yanıt verebilir. İki rota ekleyeceğiz:
 * belge oluşturmak için arayüzün çağırdığı bir **POST** uç noktası ve
 * belgeyi yazdırılabilir bir web sayfası olarak oluşturan herkese açık bir **GET** uç noktası.
 
-Her ikisi de `httpRouteTriggerSettings` kullanır. Uygulama rotaları Twenty sunucunuzda `/s` altında sunulur (ör. `http://localhost:2020/s/documents/generate`).
+Her ikisi de `httpRouteTriggerSettings` kullanır. Uygulama rotalarına `/s/` yolu ile erişilir; yerel
+ve kendi sunucunuzda barındırılan örneklerde, bu yol Twenty sunucunuz
+tarafından sunulur (örneğin `http://localhost:2020/s/documents/generate`). Twenty Cloud'da, `RestApiClient`
+bu yolu çalışma alanının functions alan adı üzerinden çözümler.
 
 ## POST rotası — istek üzerine oluşturma
 

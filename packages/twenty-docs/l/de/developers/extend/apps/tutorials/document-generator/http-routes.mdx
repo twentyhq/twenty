@@ -9,8 +9,9 @@ Der gleiche Handler kann auch HTTP-Anfragen beantworten. Wir werden zwei Routen 
 * ein **POST** Endpunkt der UI-Aufrufe, um ein Dokument zu generieren, und
 * ein öffentlicher **GET** Endpunkt, der ein Dokument als druckbare Webseite darstellt.
 
-Beide verwenden `httpRouteTriggerSettings`. App-Routen werden unter `/s` auf Ihrem
-20 Server bedient (z.B. `http://localhost:2020/s/documents/generate`).
+Beide verwenden `httpRouteTriggerSettings`. App-Routen werden über einen `/s/`-Pfad adressiert; auf lokalen
+und selbstgehosteten Instanzen wird dieser Pfad von Ihrem Twenty-Server
+bereitgestellt (z. B. `http://localhost:2020/s/documents/generate`). In Twenty Cloud löst `RestApiClient` den Pfad über die Funktionen-Domain des Workspaces auf.
 
 ## POST-Route — bei Bedarf generieren
 

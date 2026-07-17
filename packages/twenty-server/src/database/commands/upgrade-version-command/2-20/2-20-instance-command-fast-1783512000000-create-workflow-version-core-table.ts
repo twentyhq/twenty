@@ -31,7 +31,7 @@ export class CreateWorkflowVersionCoreTableFastInstanceCommand
     );
     await queryRunner.query(
       `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_WORKFLOW_VERSION_ONE_ACTIVE_PER_WORKFLOW"
-        ON "core"."workflowVersion" ("workflowId")
+        ON "core"."workflowVersion" ("workspaceId", "workflowId")
         WHERE "status" = 'ACTIVE'`,
     );
   }

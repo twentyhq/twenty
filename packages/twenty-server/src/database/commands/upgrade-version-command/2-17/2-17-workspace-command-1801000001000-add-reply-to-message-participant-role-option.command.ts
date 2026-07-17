@@ -1,6 +1,6 @@
 import { Command } from 'nest-commander';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { buildReplyToMessageParticipantRoleOptionSyncOperations } from 'src/database/commands/upgrade-version-command/2-17/utils/build-reply-to-message-participant-role-option-sync-operations.util';
@@ -15,7 +15,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
   description:
     'Add the Reply To option to the messageParticipant role field in existing workspaces',
 })
-export class AddReplyToMessageParticipantRoleOptionCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class AddReplyToMessageParticipantRoleOptionCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -64,7 +64,7 @@ export class AddReplyToMessageParticipantRoleOptionCommand extends ActiveOrSuspe
       );
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           isSystemBuild: true,
           workspaceId,

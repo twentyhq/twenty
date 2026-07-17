@@ -9,8 +9,10 @@ Același gestionar poate răspunde și la solicitările HTTP. Vom adăuga două 
 * a **POST** final apeluri interfață pentru a genera un document, și
 * un obiectiv public **GET** care face un document ca o pagină web printabilă.
 
-Ambele folosesc `httpRouteTriggerSettings`. Rutele aplicațiilor sunt servite sub `/s` pe
-Douăzeci de servere (ex. `http://localhost:2020/s/documents/generate`).
+Ambele folosesc `httpRouteTriggerSettings`. Rutele aplicației sunt accesate prin calea `/s/`; pe instanțele locale
+și auto-găzduite, această cale este servită de serverul tău Twenty
+(de ex. `http://localhost:2020/s/documents/generate`). Pe Twenty Cloud, `RestApiClient`
+rezolvă calea prin domeniul de funcții al spațiului de lucru.
 
 ## Ruta POST – generarea la cerere
 

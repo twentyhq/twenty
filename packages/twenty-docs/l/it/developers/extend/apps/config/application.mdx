@@ -109,10 +109,14 @@ Se prevedi di [pubblicare la tua app](/l/it/developers/extend/apps/operations/pu
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `author`           | Nome dell'autore o dell'azienda                                                                                                     |
 | `category`         | Categoria dell'app per il filtraggio nel marketplace                                                                                |
-| `logoUrl`          | Percorso del logo della tua app (ad es., `public/logo.png`)                                                                         |
-| `screenshots`      | Array di percorsi degli screenshot (ad es., `public/screenshot-1.png`)                                                              |
+| `logo`             | Percorso del logo dell'app in bundle in `public/` (ad esempio, `public/logo.png`)                                                   |
+| `galleryImages`    | Array dei percorsi delle immagini della galleria raggruppati in `public/` (ad esempio, `public/screenshot-1.png`)                   |
 | `aboutDescription` | Descrizione markdown più lunga per la scheda "Informazioni". Se omesso, il marketplace utilizza il `README.md` del pacchetto da npm |
 | `websiteUrl`       | Link al tuo sito web                                                                                                                |
 | `termsUrl`         | Link ai Termini di servizio                                                                                                         |
 | `emailSupport`     | Indirizzo email di supporto                                                                                                         |
 | `issueReportUrl`   | Link al sistema di tracciamento dei problemi                                                                                        |
+
+<Note>
+`logoUrl` e `screenshots` sono alias deprecati di `logo` e `galleryImages`. Gli URL assoluti esterni (`http://` o `https://`) non sono supportati per questi campi: vengono eliminati con un avviso al momento della generazione. Raccogli invece le immagini nella cartella `public/` della tua app.
+</Note>

@@ -9,8 +9,10 @@ The same handler can also answer HTTP requests. We'll add two routes:
 - a **POST** endpoint the UI calls to generate a document, and
 - a public **GET** endpoint that renders a document as a printable web page.
 
-Both use `httpRouteTriggerSettings`. App routes are served under `/s` on your
-Twenty server (e.g. `http://localhost:2020/s/documents/generate`).
+Both use `httpRouteTriggerSettings`. App routes are addressed with an `/s/` path; on local
+and self-hosted instances, that path is served by your Twenty server
+(e.g. `http://localhost:2020/s/documents/generate`). On Twenty Cloud, `RestApiClient`
+resolves the path through the workspace's functions domain.
 
 ## POST route — generate on demand
 

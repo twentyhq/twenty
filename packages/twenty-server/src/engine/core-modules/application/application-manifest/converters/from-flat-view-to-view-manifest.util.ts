@@ -63,6 +63,12 @@ export const fromFlatViewToViewManifest = ({
             flatView.calendarFieldMetadataUniversalIdentifier,
         }
       : {}),
+    ...(isDefined(flatView.calendarEndFieldMetadataUniversalIdentifier)
+      ? {
+          calendarEndFieldMetadataUniversalIdentifier:
+            flatView.calendarEndFieldMetadataUniversalIdentifier,
+        }
+      : {}),
     ...(flatView.isActive === false ? { isActive: false } : {}),
     fields,
   };

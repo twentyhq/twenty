@@ -51,8 +51,7 @@ export default defineLogicFunction({
 ```
 
 أنواع المشغّلات المتاحة:
-* **httpRoute**: يعرِض وظيفتك على مسار وطريقة HTTP **تحت نقطة النهاية `/s/`**:
-> مثال: `path: '/post-card/create'` يمكن استدعاؤه عبر `https://your-twenty-server.com/s/post-card/create`
+* **httpRoute**: يعرِض وظيفتك على مسار وطريقة HTTP. في شيفرة التطبيق، أضف البادئة `/s/` إلى مسار التوجيه عند استخدام `RestApiClient`؛ يستخدم عنوان URL المنشور قاعدة `TWENTY_FUNCTIONS_URL` المُحدَّدة (أو `\<server-url>/s` إذا لم تُحدَّد).
 
 <Note>
 لاستدعاء دالة منطقية يتم تشغيلها بواسطة مسار من مكون واجهة (بدون واجهة رسومية)، راجع قسم [استدعاء دالة منطقية](/l/ar/developers/extend/apps/layout/front-components#calling-a-logic-function).

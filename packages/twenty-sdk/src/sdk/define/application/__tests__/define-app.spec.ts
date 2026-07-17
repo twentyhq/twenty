@@ -12,7 +12,11 @@ describe('defineApplication', () => {
     const result = defineApplication(config);
 
     expect(result.success).toBe(true);
-    expect(result.config).toEqual(config);
+    expect(result.config).toEqual({
+      ...config,
+      logo: undefined,
+      galleryImages: [],
+    });
     expect(result.errors).toEqual([]);
   });
 
@@ -34,7 +38,11 @@ describe('defineApplication', () => {
     const result = defineApplication(config);
 
     expect(result.success).toBe(true);
-    expect(result.config).toEqual(config);
+    expect(result.config).toEqual({
+      ...config,
+      logo: undefined,
+      galleryImages: [],
+    });
     expect(result.config?.applicationVariables).toBeDefined();
     expect(result.config?.defaultRoleUniversalIdentifier).toBe(
       '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
@@ -71,6 +79,33 @@ describe('defineApplication', () => {
     expect(warnings).toHaveLength(1);
     expect(warnings[0]).toMatch(/deprecated/i);
     expect(warnings[0]).toMatch(/defineApplicationRole/);
+  });
+
+  it('should warn when category is not a known ApplicationCategory', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      category: 'NotARealCategory',
+    });
+
+    const warnings = result.warnings ?? [];
+
+    expect(result.success).toBe(true);
+    expect(
+      warnings.some((warning) => warning.includes('NotARealCategory')),
+    ).toBe(true);
+  });
+
+  it('should not warn when category is a known ApplicationCategory', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      category: 'Data',
+    });
+
+    expect(result.warnings ?? []).toEqual([]);
   });
 
   it('should return error when universalIdentifier is missing', () => {

@@ -1,6 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Check,
   Column,
@@ -20,9 +18,11 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type Manifest } from 'twenty-shared/application';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { type ApplicationRegistrationGalleryImage } from 'src/engine/core-modules/application/application-registration/types/application-registration-gallery-image.type';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -51,7 +51,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
   `"sourceType" <> 'npm' OR "sourcePackage" IS NOT NULL`,
 )
 export class ApplicationRegistrationEntity {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -122,8 +122,15 @@ export class ApplicationRegistrationEntity {
   isListed: boolean;
 
   @Field(() => Boolean)
-  @Column({ name: 'isFeatured', type: 'boolean', default: false })
-  isFeatured: boolean;
+  @Column({ name: 'isVetted', type: 'boolean', default: false })
+  @WasRenamedInUpgrade([
+    {
+      previousName: 'isFeatured',
+      upgradeCommandName:
+        '2.20.0_RenameIsFeaturedToIsVettedOnApplicationRegistrationFastInstanceCommand_1783527064000',
+    },
+  ])
+  isVetted: boolean;
 
   // Auto-installed on every new workspace; existing workspaces are
   // backfilled by the `install-pre-installed-apps` CLI command.
@@ -140,6 +147,17 @@ export class ApplicationRegistrationEntity {
       '2.19.0_AddLogoToApplicationRegistrationFastInstanceCommand_1783069672191',
   })
   logo: string | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.21.0_AddLogoFileIdToApplicationRegistrationFastInstanceCommand_1783945979243',
+  })
+  logoFileId: string | null;
+
+  @OneToOne(() => FileEntity, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'logoFileId' })
+  logoFile: Relation<FileEntity> | null;
 
   @Column({ nullable: true, type: 'text' })
   @WasIntroducedInUpgrade({
@@ -204,17 +222,19 @@ export class ApplicationRegistrationEntity {
   })
   screenshots: string[];
 
-  @Field(() => String, { nullable: true })
-  get logoUrl(): string | null {
-    return this.logo ?? this.manifest?.application?.logoUrl ?? null;
-  }
-
   @OneToMany(
     () => ApplicationRegistrationVariableEntity,
     (variable) => variable.applicationRegistration,
     { onDelete: 'CASCADE' },
   )
   variables: Relation<ApplicationRegistrationVariableEntity[]>;
+
+  @Column({ type: 'jsonb', nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.20.0_AddGalleryImagesToApplicationRegistrationFastInstanceCommand_1783615890055',
+  })
+  galleryImages: ApplicationRegistrationGalleryImage[] | null;
 
   @Field()
   @CreateDateColumn({ type: 'timestamptz' })

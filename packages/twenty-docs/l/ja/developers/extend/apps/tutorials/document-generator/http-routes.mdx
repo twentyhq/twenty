@@ -9,8 +9,7 @@ description: HTTP 経由で関数をトリガーし、ドキュメントを Web 
 * ドキュメントを生成するUI呼び出しの **POST** エンドポイントと
 * ドキュメントを印刷可能なウェブページとしてレンダリングするパブリック**GET** エンドポイント。
 
-どちらも `httpRouteTriggerSettings` を使用します。 アプリのルートはあなたの
-20のサーバーの`/s`の下で提供されます（例：`http://localhost:2020/s/documents/generate`）。
+どちらも `httpRouteTriggerSettings` を使用します。 アプリのルートは `/s/` パスで指定されます。ローカル環境やセルフホスト環境では、そのパスは Twenty サーバーによって提供されます（例: `http://localhost:2020/s/documents/generate`）。 Twenty Cloud では、`RestApiClient` はワークスペースの functions ドメインを通じてパスを解決します。
 
 ## POST route — オンデマンドで生成
 

@@ -13,9 +13,7 @@ import { formatSecondsAsClockTimestamp } from 'src/logic-functions/utils/format-
 const StyledEntry = styled.div<{ $isActive: boolean }>`
   align-items: flex-start;
   background: ${({ $isActive }) =>
-    $isActive
-      ? themeCssVariables.background.transparent.blue
-      : 'transparent'};
+    $isActive ? themeCssVariables.background.transparent.blue : 'transparent'};
   border-radius: ${() => themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;

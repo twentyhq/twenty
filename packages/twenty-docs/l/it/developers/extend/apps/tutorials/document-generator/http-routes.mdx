@@ -9,8 +9,10 @@ Lo stesso gestore può anche rispondere alle richieste HTTP. Aggiungeremo due pe
 * un endpoint **POST** per generare un documento, e
 * un endpoint pubblico **GET** che rende un documento come una pagina web stampabile.
 
-Entrambi usano `httpRouteTriggerSettings`. Gli itinerari delle app sono serviti sotto `/s` sul tuo server
-Twenty (es. `http://localhost:2020/s/documents/generate`).
+Entrambi usano `httpRouteTriggerSettings`. Le route dell'app sono accessibili tramite il percorso `/s/`; nelle istanze locali
+e self-hosted, tale percorso è gestito dal tuo server Twenty
+(ad es. `http://localhost:2020/s/documents/generate`). Su Twenty Cloud, `RestApiClient`
+risolve il percorso tramite il dominio delle funzioni dell'area di lavoro.
 
 ## Percorso POST — generare su richiesta
 

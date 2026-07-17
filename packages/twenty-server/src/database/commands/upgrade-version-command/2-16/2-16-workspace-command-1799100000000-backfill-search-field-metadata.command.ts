@@ -1,14 +1,14 @@
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { buildSearchFieldMetadataBackfillOperations } from 'src/database/commands/upgrade-version-command/2-16/utils/build-search-field-metadata-backfill-operations.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @RegisteredWorkspaceCommand('2.16.0', 1799100000000)
@@ -17,7 +17,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
   description:
     'Backfill searchFieldMetadata rows for every object whose searchVector indexes a meaningful field (not only the globally searchable ones). Standard objects mirror their SEARCH_FIELDS_FOR_* set; custom objects get their label-identifier field. Idempotent: existing rows are skipped.',
 })
-export class BackfillSearchFieldMetadataCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class BackfillSearchFieldMetadataCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -32,6 +32,15 @@ export class BackfillSearchFieldMetadataCommand extends ActiveOrSuspendedWorkspa
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
+
+    // The migration runner only invalidates the flat-maps keys a migration touched,
+    // so during a cross-version upgrade earlier commands can leave this map stale.
+    // A stale map breaks the existing-rows dedupe below and re-inserts rows,
+    // tripping IDX_SEARCH_FIELD_METADATA_OBJECT_FIELD_UNIQUE. Recompute from the
+    // database before deriving the create-set.
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatSearchFieldMetadataMaps',
+    ]);
 
     const {
       flatObjectMetadataMaps,
@@ -58,16 +67,15 @@ export class BackfillSearchFieldMetadataCommand extends ActiveOrSuspendedWorkspa
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
-    const {
-      flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier,
-    } = buildSearchFieldMetadataBackfillOperations({
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatSearchFieldMetadataMaps,
-      standardFlatSearchFieldMetadataMaps:
-        standardAllFlatEntityMaps.flatSearchFieldMetadataMaps,
-      customApplicationId: workspaceCustomFlatApplication.id,
-    });
+    const { flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier } =
+      buildSearchFieldMetadataBackfillOperations({
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatSearchFieldMetadataMaps,
+        standardFlatSearchFieldMetadataMaps:
+          standardAllFlatEntityMaps.flatSearchFieldMetadataMaps,
+        customApplicationId: workspaceCustomFlatApplication.id,
+      });
 
     const applicationUniversalIdentifiers = Object.keys(
       flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier,
@@ -114,7 +122,7 @@ export class BackfillSearchFieldMetadataCommand extends ActiveOrSuspendedWorkspa
       }
 
       const validateAndBuildResult =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
             isSystemBuild: true,
             allFlatEntityOperationByMetadataName: {

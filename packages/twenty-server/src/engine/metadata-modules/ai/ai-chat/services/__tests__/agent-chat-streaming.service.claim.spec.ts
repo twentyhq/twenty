@@ -63,6 +63,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       eventPublisherService as never,
       { signFileByIdUrl: jest.fn() } as never,
       streamHeartbeatService as never,
+      { incrementCounterBy: jest.fn() } as never,
     );
 
     return {
@@ -92,6 +93,12 @@ describe('AgentChatStreamingService claim & reap', () => {
       const result = await service.streamAgentChat(sendArguments);
 
       expect(result.queued).toBe(false);
+      expect(result).toEqual(
+        expect.objectContaining({
+          messageId: 'user-message-id',
+          turnId: 'turn-id',
+        }),
+      );
       expect(threadRepository.update).toHaveBeenCalledWith(
         'workspace-id',
         expect.objectContaining({ id: 'thread-id' }),

@@ -9,8 +9,10 @@ Stejný handler může také odpovědět na HTTP požadavky. Přidáme dva trasy
 * **POST** koncový bod uživatelského rozhraní volá, aby vytvořilo dokument, a
 * veřejný **GET** koncový bod, který vykresluje dokument jako tiskovou webovou stránku.
 
-Oba použijte `httpRouteTriggerSettings`. Trasy aplikací jsou vedeny pod `/s` na vašem
-serveru (např. `http://localhost:2020/s/documents/generate`).
+Oba použijte `httpRouteTriggerSettings`. Trasy aplikace jsou dostupné pomocí cesty `/s/`; na lokálních
+a self-hostovaných instancích tuto cestu obsluhuje váš server Twenty
+(např. `http://localhost:2020/s/documents/generate`). Ve Twenty Cloudu `RestApiClient`
+sestavuje cestu prostřednictvím domény funkcí pracovního prostoru.
 
 ## POST trasa – generovat na požádání
 

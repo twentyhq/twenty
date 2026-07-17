@@ -28,6 +28,7 @@ import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFron
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useOpenRichTextInSidePanel } from '@/side-panel/hooks/useOpenRichTextInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -129,9 +130,19 @@ export const useFrontComponentExecutionContext = ({
   const openSidePanelPage: FrontComponentHostCommunicationApi['openSidePanelPage'] =
     async (params) => {
       if (params.page === SidePanelPages.ViewRecord) {
-        const { recordId, objectNameSingular, resetNavigationStack } = params;
+        const { recordId, objectNameSingular, tab, resetNavigationStack } =
+          params;
 
         if (isMobile || !canOpenObjectInSidePanel(objectNameSingular)) {
+          if (isDefined(tab)) {
+            setRecordPageActiveTabId({
+              recordId,
+              objectNameSingular,
+              tabId: tab,
+              store,
+            });
+          }
+
           await navigate(AppPath.RecordShowPage, {
             objectNameSingular,
             objectRecordId: recordId,
@@ -143,6 +154,7 @@ export const useFrontComponentExecutionContext = ({
         openRecordInSidePanelInternal({
           recordId,
           objectNameSingular,
+          tab,
           resetNavigationStack,
         });
 
@@ -203,6 +215,7 @@ export const useFrontComponentExecutionContext = ({
         openAskAiPageWithPreprompt({
           text: params.preprompt.text,
           mode: params.preprompt.mode,
+          model: params.preprompt.model,
         });
 
         if (params.shouldResetSearchState === true) {

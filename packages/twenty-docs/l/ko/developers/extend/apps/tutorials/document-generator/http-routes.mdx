@@ -9,7 +9,7 @@ description: HTTP를 통해 함수를 트리거하고 문서를 웹 페이지로
 * UI가 문서를 생성하기 위해 호출하는 **POST** 엔드포인트, 그리고
 * 문서를 인쇄 가능한 웹 페이지로 렌더링하는 공개 **GET** 엔드포인트입니다.
 
-둘 다 `httpRouteTriggerSettings`를 사용합니다. 앱 경로는 Twenty 서버의 `/s` 아래에서 제공됩니다 (예: `http://localhost:2020/s/documents/generate`).
+둘 다 `httpRouteTriggerSettings`를 사용합니다. 앱 라우트는 `/s/` 경로로 접근합니다. 로컬 및 셀프 호스팅 인스턴스에서는 해당 경로가 Twenty 서버에서 제공됩니다(예: `http://localhost:2020/s/documents/generate`). Twenty Cloud에서는 `RestApiClient`가 워크스페이스의 functions 도메인을 통해 경로를 해석합니다.
 
 ## POST 경로 — 온디맨드로 생성하기
 

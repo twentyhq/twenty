@@ -28,6 +28,12 @@ msgstr "-33% 할인"
 msgid "...with AI that actually helps you *work faster*"
 msgstr "...정말로 *더 빠르게 일하도록* 도와주는 AI와 함께"
 
+#. js-lingui-id: PtoUO1
+#. placeholder {0}: app.name
+#: src/app/[locale]/(site)/apps/[slug]/page.tsx
+msgid "{0} — Twenty Apps"
+msgstr ""
+
 #. js-lingui-id: Z6mKXu
 #. placeholder {0}: partner.name
 #: src/app/[locale]/(site)/partners/profile/[slug]/page.tsx
@@ -39,6 +45,12 @@ msgstr "{0} — Twenty 파트너"
 #: src/sections/three-cards/IllustrationCard.tsx
 msgid "{0} case study"
 msgstr "{0} 케이스 스터디"
+
+#. js-lingui-id: tYTgTe
+#. placeholder {0}: app.name
+#: src/apps-marketplace/AppDetail.tsx
+msgid "{0} screenshot"
+msgstr ""
 
 #. js-lingui-id: jC5JCB
 #: src/sections/case-study-promo/CaseStudyPromo.tsx
@@ -697,6 +709,11 @@ msgstr "Albania 🇦🇱"
 msgid "Algeria 🇩🇿"
 msgstr "Algeria 🇩🇿"
 
+#. js-lingui-id: N40H+G
+#: src/apps-marketplace/AppsMarketplaceClient.tsx
+msgid "All"
+msgstr ""
+
 #. js-lingui-id: LIGwFL
 #: src/sections/three-cards/three-cards.data.ts
 #: src/case-studies/case-study-stories.ts
@@ -803,6 +820,11 @@ msgstr "API는 추가 요금입니다. 단순함에는 가격이 따릅니다."
 msgid "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
 msgstr "CRM 데이터 위에 Twenty를 확장하고 앱을 구축하기 위한 API, SDK, 웹훅을 제공합니다."
 
+#. js-lingui-id: L/34fX
+#: src/app/[locale]/(site)/apps/[slug]/page.tsx
+msgid "App not found — Twenty"
+msgstr ""
+
 #. js-lingui-id: k8I7/G
 #: src/partner-application/partner-application-copy.ts
 msgid ""
@@ -816,6 +838,16 @@ msgstr ""
 #: src/platform/routing/static-website-routes.ts
 msgid "Apply to join the Twenty partner ecosystem and grow your practice with the #1 open source CRM."
 msgstr "Twenty 파트너 에코시스템에 합류해, 1위 오픈 소스 CRM과 함께 비즈니스를 성장시키세요."
+
+#. js-lingui-id: VDvaN2
+#: src/sections/menu/data/menu.ts
+msgid "Apps"
+msgstr ""
+
+#. js-lingui-id: lAg+Wy
+#: src/apps-marketplace/AppsMarketplaceHeader.tsx
+msgid "Apps for *Twenty*"
+msgstr ""
 
 #. js-lingui-id: 1AsfMD
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -1221,6 +1253,11 @@ msgstr "카탈루냐어"
 #: src/partners-marketplace/FilterBar.tsx
 msgid "Categories"
 msgstr "카테고리"
+
+#. js-lingui-id: K7tIrx
+#: src/apps-marketplace/AppDetail.tsx
+msgid "Category"
+msgstr ""
 
 #. js-lingui-id: dBApoS
 #: src/partner-application/data/partner-country-options.ts
@@ -1961,6 +1998,11 @@ msgstr "재무 데이터를 위해 특별히 설계된 <0>통화 필드</0>는 �
 msgid "Dev teams power company-wide *change with Twenty*"
 msgstr "개발 팀은 Twenty로 회사 전체의 *변화를 추진합니다*"
 
+#. js-lingui-id: 7aDnUb
+#: src/apps-marketplace/AppDetail.tsx
+msgid "Developer"
+msgstr ""
+
 #. js-lingui-id: n+SX4g
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/menu/data/menu.ts
@@ -2392,6 +2434,21 @@ msgstr "전문성 & 경험"
 msgid "Explore customer stories"
 msgstr "고객 사례 더 보기"
 
+#. js-lingui-id: qu9kGK
+#: src/platform/routing/static-website-routes.ts
+msgid "Extend Twenty with vetted apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click."
+msgstr ""
+
+#. js-lingui-id: ZToPid
+#: src/sections/menu/data/menu.ts
+msgid "Extend your CRM"
+msgstr ""
+
+#. js-lingui-id: wmJ4p4
+#: src/apps-marketplace/AppsMarketplaceHeader.tsx
+msgid "Extend your CRM with apps built and maintained by Twenty. Every app here is vetted by our team — install one in a click and it's live in your workspace."
+msgstr ""
+
 #. js-lingui-id: weFouS
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Extended run!"
@@ -2496,6 +2553,11 @@ msgstr "레코드의 파일"
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
 msgid "Filter"
 msgstr "필터"
+
+#. js-lingui-id: tr2ZvJ
+#: src/apps-marketplace/AppsMarketplaceClient.tsx
+msgid "Filter apps by category"
+msgstr ""
 
 #. js-lingui-id: 1t0xRH
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3159,6 +3221,22 @@ msgstr "무한 스크롤"
 msgid "Infinite scroll is still coming soon, unlike the invoice."
 msgstr "무한 스크롤은 여전히 \"곧 제공\" 상태지만, 송장은 이미 와 있습니다."
 
+#. js-lingui-id: TKQ7K+
+#: src/apps-marketplace/AppDetail.tsx
+#: src/apps-marketplace/AppCard.tsx
+msgid "Install"
+msgstr ""
+
+#. js-lingui-id: qq1x6K
+#: src/sections/menu/data/menu.ts
+msgid "Install call recording, enrichment, Slack, Linear and more — every app built and maintained by Twenty."
+msgstr ""
+
+#. js-lingui-id: R6HbUq
+#: src/apps-marketplace/AppDetail.tsx
+msgid "Install on Twenty"
+msgstr ""
+
 #. js-lingui-id: K8iwJx
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Install shared tarball app"
@@ -3476,6 +3554,17 @@ msgstr "레이아웃"
 msgid "Learn how to use Twenty"
 msgstr "Twenty 사용 방법 학습하기"
 
+#. js-lingui-id: zwWKhA
+#: src/apps-marketplace/AppCard.tsx
+msgid "Learn more"
+msgstr ""
+
+#. js-lingui-id: Pd/m1Q
+#. placeholder {0}: app.name
+#: src/apps-marketplace/AppCard.tsx
+msgid "Learn more about {0}"
+msgstr ""
+
 #. js-lingui-id: wB0DGn
 #: src/partner-application/data/partner-country-options.ts
 msgid "Lebanon 🇱🇧"
@@ -3683,6 +3772,7 @@ msgstr "3월"
 
 #. js-lingui-id: Zt5PUS
 #: src/partners-marketplace/MarketplaceHeader.tsx
+#: src/apps-marketplace/AppsMarketplaceHeader.tsx
 msgid "Marketplace"
 msgstr "마켓플레이스"
 
@@ -4028,6 +4118,11 @@ msgstr "Nine Dots Ventures"
 msgid "No"
 msgstr "아니요"
 
+#. js-lingui-id: UVo4Xv
+#: src/apps-marketplace/AppsMarketplaceClient.tsx
+msgid "No apps are available right now. Check back soon."
+msgstr ""
+
 #. js-lingui-id: 6tRXQ4
 #: src/partner-application/partner-application-copy.ts
 msgid "No matching country."
@@ -4247,6 +4342,11 @@ msgstr "소유권"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Owning your stack remains mysteriously out of stock."
 msgstr "스택을 직접 소유하는 일은 이상하게도 늘 품절 상태입니다."
+
+#. js-lingui-id: mGYa19
+#: src/apps-marketplace/AppDetail.tsx
+msgid "Package"
+msgstr ""
 
 #. js-lingui-id: h/oMMb
 #: src/platform/routing/static-website-routes.ts
@@ -5926,6 +6026,16 @@ msgstr "투발루 🇹🇻"
 msgid "Twenty | #1 Open Source CRM"
 msgstr "Twenty | 오픈 소스 CRM 1위"
 
+#. js-lingui-id: XxKVz4
+#: src/platform/routing/static-website-routes.ts
+msgid "Twenty Apps — Vetted Apps for the Open Source CRM"
+msgstr ""
+
+#. js-lingui-id: jwNPEV
+#: src/sections/menu/data/menu.ts
+msgid "Twenty apps marketplace"
+msgstr ""
+
 #. js-lingui-id: NalB1c
 #: src/sections/testimonials/partner-testimonials.data.ts
 msgid "Twenty Apps opens the door to building products, not just implementations. For example, we're developing a WhatsApp Business integration that any Twenty's client could get. That's a recurring revenue stream we wouldn't have if we were just configuring someone else's platform."
@@ -6250,6 +6360,16 @@ msgstr "베네수엘라 🇻🇪"
 msgid "Version control"
 msgstr "버전 관리"
 
+#. js-lingui-id: vNIHYX
+#: src/sections/menu/data/menu.ts
+msgid "Vetted apps for your workspace"
+msgstr ""
+
+#. js-lingui-id: k5HTQK
+#: src/apps-marketplace/AppDetail.tsx
+msgid "Vetted by Twenty"
+msgstr ""
+
 #. js-lingui-id: FlQ1vR
 #: src/partner-application/data/partner-country-options.ts
 msgid "Vietnam 🇻🇳"
@@ -6422,6 +6542,11 @@ msgstr "웹훅 필터"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Webhooks multi-object filtering"
 msgstr "웹훅 멀티 오브젝트 필터링"
+
+#. js-lingui-id: On0aF2
+#: src/apps-marketplace/AppDetail.tsx
+msgid "Website"
+msgstr ""
 
 #. js-lingui-id: 7kkV4O
 #: src/partner-application/partner-application-copy.ts

@@ -51,8 +51,7 @@ export default defineLogicFunction({
 ```
 
 可用的触发器类型：
-* **httpRoute**：在 **`/s/` 端点**下通过 HTTP 路径和方法公开你的函数：
-> 例如 `path: '/post-card/create'` 可在 `https://your-twenty-server.com/s/post-card/create` 调用
+* **httpRoute**：通过 HTTP 路径和方法公开你的函数。 在应用代码中，使用 `RestApiClient` 时，在路由路径前加上 `/s/` 前缀；已部署的 URL 使用注入的 `TWENTY_FUNCTIONS_URL` 基础地址（如果未设置，则使用 `\<server-url>/s`）。
 
 <Note>
 要从（无头）前端组件调用由路由触发的逻辑函数，请参见[调用逻辑函数](/l/zh/developers/extend/apps/layout/front-components#calling-a-logic-function)。

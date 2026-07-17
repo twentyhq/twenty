@@ -790,6 +790,18 @@ export const STANDARD_OBJECTS = {
       },
       status: { universalIdentifier: 'c7117256-3de6-48e1-87df-c99c32bad610' },
       sentAt: { universalIdentifier: 'e2315b4f-9edf-4df2-96b9-961e76368671' },
+      sentCount: {
+        universalIdentifier: '2f333d2b-37b8-4ddc-ad0d-c07c6ce066ad',
+      },
+      failedCount: {
+        universalIdentifier: 'd373fcd7-b1ce-4c77-8031-a5785c475028',
+      },
+      bouncedCount: {
+        universalIdentifier: '20d884a9-34dd-4667-8ecb-ceec224258e2',
+      },
+      complainedCount: {
+        universalIdentifier: '82842cfa-f12a-4bab-bbde-b2cf587d0406',
+      },
       unsubscribeTopicId: {
         universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c',
       },
@@ -813,6 +825,46 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '975823ad-9b97-4f39-b2c7-fbd7d77f4bd1',
       },
     },
+    views: {
+      allMessageCampaigns: {
+        universalIdentifier: 'ffedb368-33f0-43a7-b84e-e622b4e97be9',
+        viewFields: {
+          subject: {
+            universalIdentifier: 'b017c851-e38d-4a81-ab38-0fb10e9f239e',
+          },
+          status: {
+            universalIdentifier: 'ef35df97-b1a5-4f16-8b85-5751e5019f63',
+          },
+          list: {
+            universalIdentifier: 'c0bf6a48-8695-4520-81e6-7462d35033b5',
+          },
+          fromAddress: {
+            universalIdentifier: '553a0ea6-1f55-4143-a2d0-8c1ad0cf3dd1',
+          },
+          sentAt: {
+            universalIdentifier: '7f4a9d81-afac-4d27-98de-0a2da65114f7',
+          },
+          sentCount: {
+            universalIdentifier: '0be62e57-3955-49bd-a9ef-8f82f7a6e9aa',
+          },
+          failedCount: {
+            universalIdentifier: 'ad346c8e-f462-499e-89c8-da01d5460dc6',
+          },
+          bouncedCount: {
+            universalIdentifier: '135d3fb9-bc45-4426-980b-9836ed792e3a',
+          },
+          complainedCount: {
+            universalIdentifier: '9957dc6d-05ae-4829-ae7d-7cdf9239cdd0',
+          },
+          recipients: {
+            universalIdentifier: '2f99f444-4af3-44fd-b08d-46955c4ac2a2',
+          },
+          createdAt: {
+            universalIdentifier: '6dffa47d-3128-4d54-924a-4f67676116c2',
+          },
+        },
+      },
+    },
   },
   messageList: {
     universalIdentifier: '826561ea-4816-411c-baa0-eec5e6ca8866',
@@ -834,6 +886,25 @@ export const STANDARD_OBJECTS = {
     indexes: {
       searchVectorGinIndex: {
         universalIdentifier: '8e205171-ed74-4620-b7d2-674aab85033a',
+      },
+    },
+    views: {
+      allMessageLists: {
+        universalIdentifier: 'c72bae18-75e9-4cb0-baeb-379d3529b98f',
+        viewFields: {
+          name: {
+            universalIdentifier: 'c9767580-34e6-420b-923d-b4abd8c13d96',
+          },
+          members: {
+            universalIdentifier: '6d314c4b-215a-4094-963a-ff9dd8221aea',
+          },
+          campaigns: {
+            universalIdentifier: '037030a2-9dad-4bfd-957a-313b362172b4',
+          },
+          createdAt: {
+            universalIdentifier: '29f3e7de-c40b-4597-8568-7318c146e4da',
+          },
+        },
       },
     },
   },
@@ -2091,6 +2162,9 @@ export const STANDARD_OBJECTS = {
       lastPublishedVersionId: {
         universalIdentifier: '20202020-326a-4fba-8639-3456c0a169e8',
       },
+      coreWorkflowId: {
+        universalIdentifier: '20202020-058a-42ad-8eb8-0662a5552aad',
+      },
       statuses: { universalIdentifier: '20202020-357c-4432-8c50-8c31b4a552d9' },
       versions: { universalIdentifier: '20202020-9432-416e-8f3c-27ee3153d099' },
       runs: { universalIdentifier: '20202020-759b-4340-b58b-e73595c4df4f' },
@@ -2331,6 +2405,9 @@ export const STANDARD_OBJECTS = {
       },
       runs: { universalIdentifier: '20202020-1d08-46df-901a-85045f18099a' },
       steps: { universalIdentifier: '20202020-5988-4a64-b94a-1f9b7b989039' },
+      coreWorkflowVersionId: {
+        universalIdentifier: '20202020-58b4-46e8-b6d2-f1f3c74cf7f4',
+      },
       timelineActivities: {
         universalIdentifier: '20202020-fcb0-4695-b17e-3b43a421c633',
       },
