@@ -109,10 +109,6 @@ export const useOpenWidgetSettingsInSidePanel = (
       }
 
       if (widgetType === WidgetType.RECORD_TABLE) {
-        if (!isDashboardPageLayout) {
-          return;
-        }
-
         navigatePageLayoutSidePanel({
           sidePanelPage: SidePanelPages.DashboardRecordTableSettings,
           pageTitle: t`Edit Record Table`,

@@ -10,9 +10,11 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultFieldWidget } from '@/page-layout/utils/createDefaultFieldWidget';
 import { createDefaultFieldsWidget } from '@/page-layout/utils/createDefaultFieldsWidget';
+import { createDefaultRecordTableWidget } from '@/page-layout/utils/createDefaultRecordTableWidget';
 import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
+import { useAddDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForRecordTableWidget';
 import { getFieldWidgetDefaultDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -31,7 +33,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconApps, IconList } from 'twenty-ui/icon';
+import { IconApps, IconList, IconTable } from 'twenty-ui/icon';
 import { v4 as uuidv4 } from 'uuid';
 import {
   type FrontComponent,
@@ -78,6 +80,9 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
 
   const { insertCreatedWidgetAtContext } =
     useInsertCreatedWidgetAtContext(pageLayoutId);
+
+  const { addDraftViewForRecordTableWidget } =
+    useAddDraftViewForRecordTableWidget(pageLayoutId);
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetObjectNameSingular,
@@ -264,6 +269,56 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     tabId,
   ]);
 
+  const handleCreateViewWidget = useCallback(() => {
+    const replacePositionIndex = getExistingWidgetPositionIndex();
+    removeExistingWidgetIfReplacing();
+
+    const updatedPageLayout = store.get(pageLayoutDraftState);
+    const activeTab = updatedPageLayout.tabs.find((tab) => tab.id === tabId);
+    const positionIndex =
+      replacePositionIndex ?? activeTab?.widgets.length ?? 0;
+    const widgetId = uuidv4();
+
+    const newWidget = createDefaultRecordTableWidget({
+      id: widgetId,
+      pageLayoutTabId: tabId,
+      title: objectMetadataItem.labelPlural,
+      gridPosition: {
+        row: 0,
+        column: 0,
+        rowSpan: 6,
+        columnSpan: 12,
+      },
+      verticalListPositionIndex: positionIndex,
+      objectMetadataId: objectMetadataItem.id,
+    });
+
+    store.set(pageLayoutDraftState, (prev) => ({
+      ...prev,
+      tabs: addWidgetToTab(prev.tabs, tabId, newWidget),
+    }));
+
+    setPageLayoutEditingWidgetId(widgetId);
+    insertCreatedWidgetAtContext(widgetId);
+    addDraftViewForRecordTableWidget(widgetId, objectMetadataItem);
+
+    navigatePageLayoutSidePanel({
+      sidePanelPage: SidePanelPages.DashboardRecordTableSettings,
+      resetNavigationStack: true,
+    });
+  }, [
+    addDraftViewForRecordTableWidget,
+    getExistingWidgetPositionIndex,
+    insertCreatedWidgetAtContext,
+    navigatePageLayoutSidePanel,
+    objectMetadataItem,
+    pageLayoutDraftState,
+    removeExistingWidgetIfReplacing,
+    setPageLayoutEditingWidgetId,
+    store,
+    tabId,
+  ]);
+
   const handleCreateFrontComponentWidget = useCallback(
     (frontComponent: FrontComponent) => {
       const replacePositionIndex = getExistingWidgetPositionIndex();
@@ -331,6 +386,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
   const selectableItemIds = [
     'fields',
     'field',
+    'view',
     ...frontComponentsWithSelectItemId.map(({ selectItemId }) => selectItemId),
   ];
 
@@ -351,6 +407,14 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
             label={t`Field`}
             id="field"
             onClick={handleCreateFieldWidget}
+          />
+        </SelectableListItem>
+        <SelectableListItem itemId="view" onEnter={handleCreateViewWidget}>
+          <CommandMenuItem
+            Icon={IconTable}
+            label={t`View`}
+            id="view"
+            onClick={handleCreateViewWidget}
           />
         </SelectableListItem>
       </SidePanelGroup>

@@ -11,12 +11,14 @@ export const createDefaultRecordTableWidget = ({
   pageLayoutTabId,
   title,
   gridPosition,
+  verticalListPositionIndex,
   objectMetadataId,
 }: {
   id: string;
   pageLayoutTabId: string;
   title: string;
   gridPosition: GridPosition;
+  verticalListPositionIndex?: number;
   objectMetadataId?: string;
 }): PageLayoutWidget => {
   return {
@@ -31,14 +33,21 @@ export const createDefaultRecordTableWidget = ({
       configurationType: WidgetConfigurationType.RECORD_TABLE,
     },
     gridPosition,
-    position: {
-      __typename: 'PageLayoutWidgetGridPosition',
-      layoutMode: PageLayoutTabLayoutMode.GRID,
-      row: gridPosition.row,
-      column: gridPosition.column,
-      rowSpan: gridPosition.rowSpan,
-      columnSpan: gridPosition.columnSpan,
-    },
+    position:
+      verticalListPositionIndex !== undefined
+        ? {
+            __typename: 'PageLayoutWidgetVerticalListPosition',
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: verticalListPositionIndex,
+          }
+        : {
+            __typename: 'PageLayoutWidgetGridPosition',
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: gridPosition.row,
+            column: gridPosition.column,
+            rowSpan: gridPosition.rowSpan,
+            columnSpan: gridPosition.columnSpan,
+          },
     objectMetadataId: objectMetadataId ?? null,
     isOverridden: false,
     createdAt: new Date().toISOString(),
