@@ -15,6 +15,7 @@ import {
   type SdkModuleName,
 } from 'src/engine/core-modules/sdk-client/constants/allowed-sdk-modules';
 import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
+import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -56,13 +57,21 @@ export class SdkClientController {
       );
     }
 
+    // The metadata module is instance-wide (the metadata GraphQL schema is
+    // the same for every workspace and application), so it is served from the
+    // installed package rather than the per-application archive. This makes
+    // it fresh from the first request after a release, with no dependency on
+    // archive regeneration. The core module stays archive-served: it embeds
+    // the application-scoped schema.
     const fileBuffer =
-      await this.sdkClientArchiveService.getClientModuleFromArchive({
-        workspaceId: workspace.id,
-        applicationId,
-        applicationUniversalIdentifier: application.universalIdentifier,
-        moduleName,
-      });
+      moduleName === 'metadata'
+        ? (await getInstalledSdkMetadataModule()).moduleBuffer
+        : await this.sdkClientArchiveService.getClientModuleFromArchive({
+            workspaceId: workspace.id,
+            applicationId,
+            applicationUniversalIdentifier: application.universalIdentifier,
+            moduleName,
+          });
 
     res.setHeader('Content-Type', 'application/javascript');
     res.send(fileBuffer);

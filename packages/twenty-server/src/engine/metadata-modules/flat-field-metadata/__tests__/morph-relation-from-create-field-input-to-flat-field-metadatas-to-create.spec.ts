@@ -49,7 +49,6 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   deletedAt: null,
   isSdkLayerStale: true,
   sdkClientCoreChecksum: null,
-  sdkClientMetadataChecksum: null,
 };
 
 const flatObjectMetadataMaps = [

@@ -137,16 +137,9 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'text' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.22.0_AddSdkClientChecksumsToApplicationFastInstanceCommand_1784200000000',
+      '2.22.0_AddSdkClientCoreChecksumToApplicationFastInstanceCommand_1784200000000',
   })
   sdkClientCoreChecksum: string | null;
-
-  @Column({ nullable: true, type: 'text' })
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      '2.22.0_AddSdkClientChecksumsToApplicationFastInstanceCommand_1784200000000',
-  })
-  sdkClientMetadataChecksum: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
   applicationRegistrationId: string | null;

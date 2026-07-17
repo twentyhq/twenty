@@ -13,7 +13,6 @@ import { Repository } from 'typeorm';
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
@@ -33,7 +32,7 @@ import {
   type GenerateSdkClientJobData,
 } from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job-constants';
 import { type SdkClientGenerationTrigger } from 'src/engine/core-modules/sdk-client/types/sdk-client-generation-trigger.type';
-import { getCurrentSdkMetadataModuleChecksum } from 'src/engine/core-modules/sdk-client/utils/get-current-sdk-metadata-module-checksum.util';
+import { getCurrentSdkMetadataModuleChecksum } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
@@ -80,50 +79,6 @@ export class SdkClientGenerationService {
           }),
       ),
     );
-  }
-
-  // Lazy post-release invalidation: archives are only rebuilt by manifest
-  // syncs, so after a server upgrade they keep serving the previous release's
-  // metadata module. The persisted sdkClientMetadataChecksum is the hash of
-  // the metadata module frozen in the archive; comparing it against the
-  // currently installed module detects release staleness at usage time and
-  // regenerates incrementally (the job id dedupes concurrent triggers).
-  // A null checksum means the archive predates checksum tracking and is
-  // regenerated too. Never throws: staleness recovery is best-effort and
-  // must not break the calling read path.
-  async enqueueSdkClientGenerationIfStale({
-    workspaceId,
-    flatApplication,
-  }: {
-    workspaceId: string;
-    flatApplication: Pick<
-      FlatApplication,
-      'id' | 'universalIdentifier' | 'sdkClientMetadataChecksum'
-    >;
-  }): Promise<void> {
-    try {
-      const currentMetadataModuleChecksum =
-        await getCurrentSdkMetadataModuleChecksum();
-
-      if (
-        flatApplication.sdkClientMetadataChecksum ===
-        currentMetadataModuleChecksum
-      ) {
-        return;
-      }
-
-      await this.enqueueSdkClientGenerationForApplication({
-        workspaceId,
-        applicationId: flatApplication.id,
-        applicationUniversalIdentifier: flatApplication.universalIdentifier,
-        trigger: 'release-stale',
-      });
-    } catch (error) {
-      this.logger.warn(
-        `Failed to enqueue stale SDK client regeneration for application ${flatApplication.id} in workspace ${workspaceId}`,
-        error,
-      );
-    }
   }
 
   private async enqueueSdkClientGenerationForApplication({
@@ -176,24 +131,19 @@ export class SdkClientGenerationService {
           applicationId,
         );
 
-      const { archiveBuffer, coreChecksumChanged, metadataChecksumChanged } =
-        await this.generateAndStore({
-          workspaceId,
-          applicationId,
-          applicationUniversalIdentifier,
-          schema: printSchema(graphqlSchema),
-        });
+      const archiveBuffer = await this.generateAndStore({
+        workspaceId,
+        applicationId,
+        applicationUniversalIdentifier,
+        schema: printSchema(graphqlSchema),
+      });
 
       const generationDurationMs = performance.now() - generationStart;
 
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.SdkClientGenerationSucceeded,
         amount: 1,
-        attributes: {
-          trigger,
-          coreChecksumChanged,
-          metadataChecksumChanged,
-        },
+        attributes: { trigger },
       });
       this.metricsService.recordHistogram({
         key: MetricsKeys.SdkClientGenerationDurationMs,
@@ -203,7 +153,7 @@ export class SdkClientGenerationService {
       });
 
       this.logger.log(
-        `Generated SDK client for application ${applicationUniversalIdentifier} (trigger: ${trigger}, core changed: ${coreChecksumChanged}, metadata changed: ${metadataChecksumChanged})`,
+        `Generated SDK client for application ${applicationUniversalIdentifier} (trigger: ${trigger})`,
       );
 
       return archiveBuffer;
@@ -228,11 +178,7 @@ export class SdkClientGenerationService {
     applicationId: string;
     applicationUniversalIdentifier: string;
     schema: string;
-  }): Promise<{
-    archiveBuffer: Buffer;
-    coreChecksumChanged: boolean;
-    metadataChecksumChanged: boolean;
-  }> {
+  }): Promise<Buffer> {
     const temporaryDirManager = new TemporaryDirManager();
 
     try {
@@ -257,11 +203,10 @@ export class SdkClientGenerationService {
 
       await replaceCoreClient({ packageRoot: tempPackageRoot, schema });
 
-      const [sdkClientCoreChecksum, sdkClientMetadataChecksum] =
-        await Promise.all([
-          this.computeSdkModuleChecksum(tempPackageRoot, 'core'),
-          this.computeSdkModuleChecksum(tempPackageRoot, 'metadata'),
-        ]);
+      const sdkClientCoreChecksum = await this.computeSdkModuleChecksum(
+        tempPackageRoot,
+        'core',
+      );
 
       const archivePath = join(sourceTemporaryDir, SDK_CLIENT_ARCHIVE_NAME);
 
@@ -278,25 +223,11 @@ export class SdkClientGenerationService {
         settings: { isTemporaryFile: false, toDelete: false },
       });
 
-      // Compared to distinguish regenerations that actually mutated a module
-      // from no-op rebuilds (e.g. a release-stale check that raced a rebuild)
-      const previousApplication = await this.applicationRepository.findOne({
-        where: { id: applicationId, workspaceId },
-        select: ['sdkClientCoreChecksum', 'sdkClientMetadataChecksum'],
-      });
-
-      const coreChecksumChanged =
-        previousApplication?.sdkClientCoreChecksum !== sdkClientCoreChecksum;
-      const metadataChecksumChanged =
-        previousApplication?.sdkClientMetadataChecksum !==
-        sdkClientMetadataChecksum;
-
       await this.applicationRepository.update(
         { id: applicationId, workspaceId },
         {
           isSdkLayerStale: true,
           sdkClientCoreChecksum,
-          sdkClientMetadataChecksum,
         },
       );
 
@@ -308,10 +239,9 @@ export class SdkClientGenerationService {
         workspaceId,
         applicationId,
         sdkClientCoreChecksum,
-        sdkClientMetadataChecksum,
       });
 
-      return { archiveBuffer, coreChecksumChanged, metadataChecksumChanged };
+      return archiveBuffer;
     } catch (error) {
       throw new SdkClientException(
         `Failed to generate SDK client for application "${applicationUniversalIdentifier}" in workspace "${workspaceId}": ${error instanceof Error ? error.message : String(error)}`,
@@ -326,19 +256,22 @@ export class SdkClientGenerationService {
   // (ALL_METADATA_NAME), so mounted front components would keep their
   // session-old SDK checksums until a reload. Broadcasting here lets clients
   // rebuild the content-addressed SDK URLs as soon as regeneration completes.
+  // The metadata checksum is instance-wide (installed package hash), included
+  // so clients receive the full checksum pair in one event.
   // Best-effort: a lost event only delays the refresh until the next reload.
   private async broadcastSdkClientChecksumsUpdate({
     workspaceId,
     applicationId,
     sdkClientCoreChecksum,
-    sdkClientMetadataChecksum,
   }: {
     workspaceId: string;
     applicationId: string;
     sdkClientCoreChecksum: string;
-    sdkClientMetadataChecksum: string;
   }): Promise<void> {
     try {
+      const sdkClientMetadataChecksum =
+        await getCurrentSdkMetadataModuleChecksum();
+
       await this.workspaceEventBroadcaster.broadcast({
         workspaceId,
         events: [
@@ -347,10 +280,7 @@ export class SdkClientGenerationService {
             entityName: 'application',
             recordId: applicationId,
             properties: {
-              updatedFields: [
-                'sdkClientCoreChecksum',
-                'sdkClientMetadataChecksum',
-              ],
+              updatedFields: ['sdkClientCoreChecksum'],
               after: {
                 id: applicationId,
                 sdkClientCoreChecksum,
