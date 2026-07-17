@@ -258,6 +258,25 @@ describe('upsertViewWidget view settings', () => {
     );
   });
 
+  it('should reject a non-month calendar layout on a CALENDAR_WIDGET view', async () => {
+    const { errors } = await upsertViewWidget({
+      expectToFail: true,
+      input: {
+        widgetId,
+        view: {
+          type: ViewType.CALENDAR_WIDGET,
+          calendarLayout: ViewCalendarLayout.DAY,
+          calendarFieldMetadataId: dateFieldMetadataId,
+          mainGroupByFieldMetadataId: null,
+        },
+      },
+    });
+
+    expect(JSON.stringify(errors)).toContain(
+      'Calendar widget views only support the month layout',
+    );
+  });
+
   it('should switch the widget view to CALENDAR_WIDGET with a date field and layout', async () => {
     const { data } = await upsertViewWidget({
       expectToFail: false,

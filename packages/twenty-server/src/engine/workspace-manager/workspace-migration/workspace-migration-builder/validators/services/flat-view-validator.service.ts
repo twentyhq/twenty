@@ -1,6 +1,11 @@
 import { msg, t } from '@lingui/core/macro';
 import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { FieldMetadataType, RelationType, ViewType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationType,
+  ViewCalendarLayout,
+  ViewType,
+} from 'twenty-shared/types';
 import { getViewLayoutFromViewType, isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -38,6 +43,21 @@ export class FlatViewValidatorService {
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`Calendar view must have a calendar layout`,
         userFriendlyMessage: msg`Calendar view must have a calendar layout`,
+      });
+    }
+
+    // Widget calendars only render the month grid; rejecting other
+    // layouts here keeps that a data invariant instead of a UI-only
+    // convention, independent of the week/day view feature flag.
+    if (
+      flatView.type === ViewType.CALENDAR_WIDGET &&
+      isDefined(flatView.calendarLayout) &&
+      flatView.calendarLayout !== ViewCalendarLayout.MONTH
+    ) {
+      errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Calendar widget views only support the month layout`,
+        userFriendlyMessage: msg`Calendar widget views only support the month layout`,
       });
     }
 
