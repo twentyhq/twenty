@@ -44,11 +44,15 @@ export const fetchSlackThreadMessages = async ({
     );
   }
 
-  return response.messages
-    .filter((message) => isDefined(message.ts))
-    .map((message) => ({
-      ts: message.ts as string,
-      text: message.text ?? '',
-      isBot: isDefined(message.bot_id),
-    }));
+  return response.messages.flatMap((message) =>
+    isDefined(message.ts)
+      ? [
+          {
+            ts: message.ts,
+            text: message.text ?? '',
+            isBot: isDefined(message.bot_id),
+          },
+        ]
+      : [],
+  );
 };
