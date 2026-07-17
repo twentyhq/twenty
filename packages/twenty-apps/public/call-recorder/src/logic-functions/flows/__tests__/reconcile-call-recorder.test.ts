@@ -219,6 +219,8 @@ const buildFakeCoreApiClient = (
 
 describe('reconcileCallRecorderForCalendarEventIds', () => {
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(NOW);
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.stubGlobal('fetch', fetchMock);

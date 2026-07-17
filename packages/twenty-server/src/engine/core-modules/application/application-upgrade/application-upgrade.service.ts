@@ -110,15 +110,15 @@ export class ApplicationUpgradeService {
       where: { id: params.appRegistrationId },
     });
 
+    // LOCAL apps are updated by dev sync and OAUTH_ONLY registrations have no
+    // code artifacts.
     if (
       appRegistration.sourceType === ApplicationRegistrationSourceType.LOCAL ||
-      appRegistration.sourceType ===
-        ApplicationRegistrationSourceType.TARBALL ||
       appRegistration.sourceType ===
         ApplicationRegistrationSourceType.OAUTH_ONLY
     ) {
       throw new ApplicationException(
-        'Cannot upgrade an app installed from a tarball, local source, or OAuth-only registration',
+        'Cannot upgrade an app installed from a local source or OAuth-only registration',
         ApplicationExceptionCode.UPGRADE_FAILED,
       );
     }

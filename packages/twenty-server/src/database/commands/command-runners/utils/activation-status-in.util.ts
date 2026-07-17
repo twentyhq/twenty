@@ -1,7 +1,7 @@
 import { type WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Raw } from 'typeorm';
 
-// TODO: drop the ::text cast and use In() once the CREATED enum migration has run everywhere (follow-up PR of #22904)
+// TODO: drop the ::text cast and use In() once upgrades from versions before 2.22 (CREATED enum migration) are no longer supported
 export const activationStatusIn = (statuses: WorkspaceActivationStatus[]) =>
   Raw(
     (alias) => {

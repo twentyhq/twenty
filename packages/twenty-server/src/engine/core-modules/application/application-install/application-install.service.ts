@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { promises as fs } from 'fs';
 import { isAbsolute, relative, resolve } from 'path';
 
-import semver from 'semver';
 import { Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,7 +23,10 @@ import {
   ApplicationPackageFetcherService,
 } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
-import { VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
+import {
+  VERSION_PROGRESSION_REASON_TO_INSTALL_EXCEPTION_CODE,
+  VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE,
+} from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -113,9 +115,37 @@ export class ApplicationInstallService {
   }
 
   private async doInstallApplication(
-    appRegistration: ApplicationRegistrationEntity,
+    preLockAppRegistration: ApplicationRegistrationEntity,
     params: { version?: string; workspaceId: string },
   ): Promise<boolean> {
+    // Re-read inside the lock so the authorization below cannot act on stale
+    // listing or ownership state.
+    const appRegistration = await this.appRegistrationRepository.findOne({
+      where: { id: preLockAppRegistration.id },
+    });
+
+    if (!appRegistration) {
+      throw new ApplicationException(
+        `Application registration with id ${preLockAppRegistration.id} not found`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    // Tarball registrations that are neither listed nor pre-installed are
+    // only installable by their owner workspace.
+    if (
+      appRegistration.sourceType ===
+        ApplicationRegistrationSourceType.TARBALL &&
+      !appRegistration.isListed &&
+      !appRegistration.isPreInstalled &&
+      appRegistration.ownerWorkspaceId !== params.workspaceId
+    ) {
+      throw new ApplicationException(
+        `Application registration ${appRegistration.universalIdentifier} is not available for this workspace`,
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
+
     const resolvedPackage =
       await this.applicationPackageFetcherService.resolvePackage(
         appRegistration,
@@ -265,27 +295,21 @@ export class ApplicationInstallService {
         isDefined(application.version) &&
         isDefined(incomingVersion)
       ) {
-        if (!isDefined(semver.valid(incomingVersion))) {
+        const progression =
+          this.applicationVersionValidationService.validateVersionProgression({
+            incomingVersion,
+            currentVersion: application.version,
+            universalIdentifier,
+            action: 'install',
+          });
+
+        if (!progression.allowed) {
           throw new ApplicationException(
-            `Invalid version "${incomingVersion}" in package.json. Must be a valid semver version.`,
-            ApplicationExceptionCode.INVALID_INPUT,
+            progression.message,
+            VERSION_PROGRESSION_REASON_TO_INSTALL_EXCEPTION_CODE[
+              progression.reason
+            ],
           );
-        }
-
-        if (isDefined(semver.valid(application.version))) {
-          if (semver.eq(incomingVersion, application.version)) {
-            throw new ApplicationException(
-              `${universalIdentifier}@${incomingVersion} is already installed in this workspace.`,
-              ApplicationExceptionCode.APP_ALREADY_INSTALLED,
-            );
-          }
-
-          if (semver.lt(incomingVersion, application.version)) {
-            throw new ApplicationException(
-              `Cannot install ${universalIdentifier}@${incomingVersion}: version ${application.version} is already installed and downgrading is not allowed.`,
-              ApplicationExceptionCode.CANNOT_DOWNGRADE_APPLICATION,
-            );
-          }
         }
       }
 

@@ -407,16 +407,13 @@ export class BillingSubscriptionService {
         currentBillingSubscription.status,
       )
     ) {
-      // TODO: drop the ::text cast once the CREATED enum migration has run everywhere (follow-up PR of #22904)
-      const activationResult = await this.workspaceRepository
-        .createQueryBuilder()
-        .update()
-        .set({ activationStatus: WorkspaceActivationStatus.ACTIVE })
-        .where('id = :workspaceId AND "activationStatus"::text = :fromStatus', {
-          workspaceId,
-          fromStatus: WorkspaceActivationStatus.CREATED,
-        })
-        .execute();
+      const activationResult = await this.workspaceRepository.update(
+        {
+          id: workspaceId,
+          activationStatus: WorkspaceActivationStatus.CREATED,
+        },
+        { activationStatus: WorkspaceActivationStatus.ACTIVE },
+      );
 
       if ((activationResult.affected ?? 0) > 0) {
         await this.coreEntityCacheService.invalidate(

@@ -14,6 +14,7 @@ type RecallBotApiRequestArgs = {
   path: string;
   method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
   body?: unknown;
+  idempotencyKey?: string;
   allowNotFound?: boolean;
   maxAttempts?: number;
 };
@@ -30,8 +31,8 @@ type RecallBotApiRequestResult<TData> =
       errorMessage: string;
     };
 
-// Bot creates tolerate retries because duplicates stay unclaimed and get canceled.
-// Callers that cannot retry idempotently can lower maxAttempts.
+// Retried creates provide an idempotency key so ambiguous attempts cannot
+// create duplicates.
 export const recallBotApiRequest = async <TData>(
   requestArgs: RecallBotApiRequestArgs,
 ): Promise<RecallBotApiRequestResult<TData>> => {
@@ -70,6 +71,7 @@ const performRecallBotApiRequestAttempt = async <TData>({
   path,
   method,
   body,
+  idempotencyKey,
   allowNotFound = false,
 }: RecallBotApiRequestArgs): Promise<{
   result: RecallBotApiRequestResult<TData>;
@@ -83,6 +85,9 @@ const performRecallBotApiRequestAttempt = async <TData>({
       method,
       headers: {
         Authorization: buildRecallApiAuthorizationHeader(config.apiKey),
+        ...(isUndefined(idempotencyKey)
+          ? {}
+          : { 'Idempotency-Key': idempotencyKey }),
         ...(isUndefined(body) ? {} : { 'Content-Type': 'application/json' }),
       },
       ...(isUndefined(body) ? {} : { body: JSON.stringify(body) }),

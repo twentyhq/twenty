@@ -29,6 +29,7 @@ import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/d
 import { ObjectRecordCountDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-record-count.dto';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { getEffectiveImageIdentifierFieldMetadataId } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-image-identifier-field-metadata-id.util';
+import { MostlyEmptyFieldsService } from 'src/engine/metadata-modules/object-metadata/mostly-empty-fields.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { ObjectRecordCountService } from 'src/engine/metadata-modules/object-metadata/object-record-count.service';
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
@@ -47,6 +48,7 @@ export class ObjectMetadataResolver {
   constructor(
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly objectRecordCountService: ObjectRecordCountService,
+    private readonly mostlyEmptyFieldsService: MostlyEmptyFieldsService,
     private readonly i18nService: I18nService,
   ) {}
 
@@ -65,6 +67,27 @@ export class ObjectMetadataResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ObjectRecordCountDTO[]> {
     return this.objectRecordCountService.getRecordCounts(workspaceId);
+  }
+
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
+  @Query(() => [UUIDScalarType])
+  async mostlyEmptyFieldMetadataIds(
+    @Args('objectMetadataId', { type: () => UUIDScalarType })
+    objectMetadataId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<string[]> {
+    try {
+      return await this.mostlyEmptyFieldsService.getMostlyEmptyFieldMetadataIds(
+        {
+          workspaceId,
+          objectMetadataId,
+        },
+      );
+    } catch (error) {
+      objectMetadataGraphqlApiExceptionHandler(error);
+
+      return [];
+    }
   }
 
   private async resolveStandardOverride(
