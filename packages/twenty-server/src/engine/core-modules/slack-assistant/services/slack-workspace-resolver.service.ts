@@ -30,6 +30,9 @@ export class SlackWorkspaceResolverService {
   ) {}
 
   // TODO: persist the Slack team_id (and enterprise_id) on the connection at
+  // connect time so resolution is a direct lookup instead of scanning every
+  // install and calling auth.test per connection. enterprise_id is threaded
+  // through for future Enterprise Grid resolution but is not used yet.
   async resolveWorkspaceId({
     teamId,
   }: {
