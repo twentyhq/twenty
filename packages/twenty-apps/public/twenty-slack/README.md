@@ -148,13 +148,12 @@ not add a second connection or bot identity. To enable it:
 
    Invite the bot to any channel where you want it to follow threads. After
    changing event subscriptions, Slack may require you to reinstall the app.
-4. **Agent role (assigned automatically).** The app's **Slack Assistant** role
-   (read-only CRM access) is granted to the **`slack-assistant`** agent the
-   first time the assistant is used, so it works out of the box with no manual
-   step — this also covers workspaces that installed the app before this
-   behavior existed. To let it create or update records, widen that role to
-   include write permissions; a role you assign or edit is always kept and
-   never overridden.
+4. **Agent role (assigned automatically).** When the app is installed (or
+   upgraded to a version that adds the assistant), the app's **Slack Assistant**
+   role (read-only CRM access) is granted to the **`slack-assistant`** agent by
+   a background job, so it works out of the box with no manual step. To let it
+   create or update records, widen that role to include write permissions; a
+   role you assign or edit is always kept and never overridden.
 
 The permission boundary is the agent's role: anyone who can message the bot
 acts with that role's permissions (Slack users are not yet mapped to individual

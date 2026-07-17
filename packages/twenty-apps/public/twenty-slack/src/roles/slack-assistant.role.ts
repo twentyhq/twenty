@@ -10,7 +10,7 @@ export default defineApplicationRole({
   universalIdentifier: SLACK_ASSISTANT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Slack Assistant',
   description:
-    'Read-only CRM access for the Slack conversational assistant. Lets the slack-assistant agent look up people, companies, opportunities, notes, and tasks. Assigned to the agent automatically the first time the assistant is used; widen it to allow writes.',
+    'Read-only CRM access for the Slack conversational assistant. Lets the slack-assistant agent look up people, companies, opportunities, notes, and tasks. Assigned to the agent automatically when the app is installed; widen it to allow writes.',
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,

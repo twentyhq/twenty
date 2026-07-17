@@ -8,7 +8,6 @@ import { Repository } from 'typeorm';
 import { fromApplicationEntityToFlatApplication } from 'src/engine/core-modules/application/utils/from-application-entity-to-flat-application.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
-import { SLACK_ASSISTANT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/core-modules/slack-assistant/constants/slack-assistant.constants';
 import { SlackApplicationResolverService } from 'src/engine/core-modules/slack-assistant/services/slack-application-resolver.service';
 import { SlackConnectionService } from 'src/engine/core-modules/slack-assistant/services/slack-connection.service';
 import { SlackThreadSubscriptionService } from 'src/engine/core-modules/slack-assistant/services/slack-thread-subscription.service';
@@ -133,7 +132,7 @@ export class SlackAssistantService {
       throw error;
     }
 
-    const agentRoleId = await this.resolveAgentRoleId({
+    const agentRoleId = await this.aiAgentRoleService.getAssignedRoleId({
       workspaceId,
       agentId: agent.id,
     });
@@ -192,63 +191,6 @@ export class SlackAssistantService {
       channelId,
       threadTs,
     });
-  }
-
-  // Resolves the role the agent runs with, granting the shipped read-only role
-  // on first use if none is assigned. This self-heals across new installs,
-  // workspaces installed before auto-assignment existed, and transient failures
-  // at install time. An already-assigned role (e.g. widened to allow writes) is
-  // always kept, so a manual change is never overridden.
-  private async resolveAgentRoleId({
-    workspaceId,
-    agentId,
-  }: {
-    workspaceId: string;
-    agentId: string;
-  }): Promise<string | null> {
-    const assignedRoleId = await this.aiAgentRoleService.getAssignedRoleId({
-      workspaceId,
-      agentId,
-    });
-
-    if (isDefined(assignedRoleId)) {
-      return assignedRoleId;
-    }
-
-    const shippedRoleId =
-      await this.aiAgentRoleService.getRoleIdByUniversalIdentifier({
-        workspaceId,
-        universalIdentifier: SLACK_ASSISTANT_ROLE_UNIVERSAL_IDENTIFIER,
-      });
-
-    if (!isDefined(shippedRoleId)) {
-      this.logger.warn(
-        `Slack Assistant role not found in workspace ${workspaceId}; cannot grant CRM access.`,
-      );
-
-      return null;
-    }
-
-    try {
-      await this.aiAgentRoleService.assignRoleToAgent({
-        workspaceId,
-        agentId,
-        roleId: shippedRoleId,
-      });
-
-      return shippedRoleId;
-    } catch (error) {
-      this.logger.warn(
-        `Failed to auto-assign the Slack Assistant role in workspace ${workspaceId}: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
-
-      return this.aiAgentRoleService.getAssignedRoleId({
-        workspaceId,
-        agentId,
-      });
-    }
   }
 
   private async resolveApplicationAuthContext({
