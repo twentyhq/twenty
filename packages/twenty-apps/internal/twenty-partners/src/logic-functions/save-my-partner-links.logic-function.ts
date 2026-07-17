@@ -2,6 +2,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { z } from 'zod';
 
+import { isHttpUrl } from './http-url';
 import { buildReconcilePlan } from './reconcile-children';
 import { buildAppClient, errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
 
@@ -12,7 +13,9 @@ export const saveLinksSchema = z.object({
     z.object({
       id: z.string().optional(),
       name: z.string(),
-      url: z.string(),
+      url: z.string().refine((value) => value === '' || isHttpUrl(value), {
+        message: 'URL must use http or https',
+      }),
       sortOrder: z.number().optional(),
     }),
   ),

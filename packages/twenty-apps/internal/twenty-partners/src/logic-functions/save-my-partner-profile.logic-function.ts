@@ -4,16 +4,12 @@ import { z } from 'zod';
 
 import { PROFILE_OPTIONS } from 'src/constants/my-profile.constants';
 
+import { optionalHttpUrl } from './http-url';
 import { buildAppClient, errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
 
 export const SAVE_MY_PARTNER_PROFILE_ID = 'de21e2a6-f4b4-4186-90d9-645015e856a1';
 
-// A blank URL field means "clear it" — real records carry LINKS with an empty
-// primaryLinkUrl, so treat '' as null instead of failing `.url()` validation.
-const optionalUrl = z.preprocess(
-  (value) => (value === '' ? null : value),
-  z.string().url().nullable().optional(),
-);
+const optionalUrl = optionalHttpUrl;
 
 export const saveProfileSchema = z
   .object({

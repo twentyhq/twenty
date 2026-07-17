@@ -27,9 +27,11 @@ const resolvePartnerIdForMember = async (
   return partnerRes.partners?.edges?.[0]?.node?.id;
 };
 
-const needsCaseStudyContentType = (
+// Default to CASE_STUDY only when the caller left contentType empty (the self-service path);
+// an explicit CUSTOMER_QUOTE / PARTNER_QUOTE / LOGO must be preserved, not overwritten.
+const hasNoContentType = (
   contentType: CoreSchema.PartnerContent['contentType'] | null | undefined,
-): boolean => !contentType?.includes('CASE_STUDY');
+): boolean => !contentType || contentType.length === 0;
 
 export const handler = async (
   payload: DatabaseEventPayload<ObjectRecordCreateEvent<CoreSchema.PartnerContent>>,
@@ -55,7 +57,7 @@ export const handler = async (
           data: {
             partnerId,
             partnerUserId: memberId,
-            ...(needsCaseStudyContentType(after.contentType)
+            ...(hasNoContentType(after.contentType)
               ? { contentType: CASE_STUDY_CONTENT_TYPE }
               : {}),
           },
@@ -69,7 +71,7 @@ export const handler = async (
 
   await stampPartnerUserFromPartner(client, partnerId, 'partnerContent', childId);
 
-  if (needsCaseStudyContentType(after.contentType)) {
+  if (hasNoContentType(after.contentType)) {
     await client.mutation({
       updatePartnerContent: {
         __args: {

@@ -3,6 +3,7 @@ import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { z } from 'zod';
 
 import { isCaseStudy } from './content-type';
+import { isHttpUrl } from './http-url';
 import { buildReconcilePlan } from './reconcile-children';
 import { firstFileUrl } from './profile-picture';
 import { buildAppClient, errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
@@ -17,7 +18,12 @@ export const saveContentSchema = z.object({
       clientName: z.string().optional(),
       headline: z.string().optional(),
       bodyMarkdown: z.string().optional(),
-      caseStudyLink: z.string().optional(),
+      caseStudyLink: z
+        .string()
+        .refine((value) => value === '' || isHttpUrl(value), {
+          message: 'URL must use http or https',
+        })
+        .optional(),
       coverImageUrl: z.string().optional(),
       published: z.boolean().optional(),
     }),
