@@ -1,3 +1,5 @@
+import { createHash } from 'crypto';
+
 import { isUndefined } from '@sniptt/guards';
 
 import { getRecallBotAutomaticLeave } from 'src/logic-functions/constants/recall-bot-automatic-leave';
@@ -32,11 +34,17 @@ export const scheduleRecallBot = async ({
   }
 
   const automaticLeave = getRecallBotAutomaticLeave();
+  const idempotencyKey = computeRecallBotCreationIdempotencyKey({
+    meetingUrl,
+    joinAt,
+    metadata,
+  });
 
   const result = await recallBotApiRequest<RecallBotResponse>({
     config: configResult.config,
     path: '/bot/',
     method: 'POST',
+    idempotencyKey,
     body: {
       meeting_url: meetingUrl,
       join_at: joinAt,
@@ -72,3 +80,19 @@ export const scheduleRecallBot = async ({
     externalBotId,
   };
 };
+
+const computeRecallBotCreationIdempotencyKey = ({
+  meetingUrl,
+  joinAt,
+  metadata,
+}: Pick<ScheduleRecallBotArgs, 'meetingUrl' | 'joinAt' | 'metadata'>): string =>
+  createHash('sha256')
+    .update(
+      JSON.stringify({
+        workspaceId: metadata.twentyWorkspaceId,
+        callRecordingId: metadata.twentyCallRecordingId,
+        meetingUrl,
+        joinAt,
+      }),
+    )
+    .digest('hex');

@@ -16,7 +16,7 @@ import {
 export type CleanupOrphanedRecallBotsResult = {
   scannedBotCount: number;
   canceledExternalBotIds: string[];
-  truncatedScan: boolean;
+  truncatedBotList: boolean;
 };
 
 // Bots no open CallRecording request claims would still join; cancel them on Recall.
@@ -29,9 +29,25 @@ export const cleanupOrphanedRecallBots = async ({
   joinAtAfter: string;
   joinAtBefore: string;
 }): Promise<CleanupOrphanedRecallBotsResult> => {
+  const currentWorkspaceId = getCurrentWorkspaceId();
+
+  if (isUndefined(currentWorkspaceId)) {
+    console.warn(
+      '[call-recorder] cannot cancel orphaned Recall bots: workspace id unavailable',
+    );
+
+    return {
+      scannedBotCount: 0,
+      canceledExternalBotIds: [],
+      truncatedBotList: false,
+    };
+  }
+
+  // Server-side workspace filter: the shared Recall account holds every workspace's bots.
   const listResult = await listScheduledRecallBots({
     joinAtAfter,
     joinAtBefore,
+    metadata: { twentyWorkspaceId: currentWorkspaceId },
   });
 
   if (!listResult.ok) {
@@ -42,21 +58,7 @@ export const cleanupOrphanedRecallBots = async ({
     return {
       scannedBotCount: 0,
       canceledExternalBotIds: [],
-      truncatedScan: false,
-    };
-  }
-
-  const currentWorkspaceId = getCurrentWorkspaceId();
-
-  if (isUndefined(currentWorkspaceId)) {
-    console.warn(
-      '[call-recorder] cannot cancel orphaned Recall bots: workspace id unavailable',
-    );
-
-    return {
-      scannedBotCount: listResult.bots.length,
-      canceledExternalBotIds: [],
-      truncatedScan: listResult.truncated,
+      truncatedBotList: false,
     };
   }
 
@@ -68,7 +70,7 @@ export const cleanupOrphanedRecallBots = async ({
     return {
       scannedBotCount: listResult.bots.length,
       canceledExternalBotIds: [],
-      truncatedScan: listResult.truncated,
+      truncatedBotList: listResult.truncated,
     };
   }
 
@@ -105,7 +107,7 @@ export const cleanupOrphanedRecallBots = async ({
   return {
     scannedBotCount: listResult.bots.length,
     canceledExternalBotIds,
-    truncatedScan: listResult.truncated,
+    truncatedBotList: listResult.truncated,
   };
 };
 
