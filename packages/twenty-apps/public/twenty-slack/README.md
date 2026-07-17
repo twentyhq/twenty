@@ -22,7 +22,9 @@ below):
   by the **`slack-assistant`** agent (this app) and the Twenty server's chat
   runtime, and answers in the thread. Once it has replied in a thread it stays
   active there, so follow-up messages in that thread are answered **without
-  re-mentioning** the bot. It requires the extra setup below (signing secret +
+  re-mentioning** the bot. A thread stays active for **24 hours after the last
+  reply** (each reply renews the window); after a full day of silence, re-mention
+  the bot to continue. It requires the extra setup below (signing secret +
   event subscriptions + agent role assignment).
 
 ## Tools
@@ -123,10 +125,10 @@ The assistant reuses the **same Slack connection** as the tools above — it doe
 not add a second connection or bot identity. To enable it:
 
 1. **Add the assistant scopes.** This app now requests the inbound scopes
-   `app_mentions:read`, `channels:history`, `groups:history`, `im:history`,
-   `im:read`, `im:write`, and `users:read` (in addition to the outbound scopes).
-   Add them under **Bot Token Scopes** on your Slack app, then **reconnect**
-   (disconnect and **Add connection** again) so the token picks them up.
+   `app_mentions:read`, `channels:history`, `groups:history`, and `im:history`
+   (in addition to the outbound scopes). Add them under **Bot Token Scopes** on
+   your Slack app, then **reconnect** (disconnect and **Add connection** again)
+   so the token picks them up.
 2. **Set `SLACK_SIGNING_SECRET`.** In **Application registration** (admin-only),
    set the signing secret from your Slack app (**Basic Information → App
    Credentials**). The Twenty server uses it to verify Slack Events API
