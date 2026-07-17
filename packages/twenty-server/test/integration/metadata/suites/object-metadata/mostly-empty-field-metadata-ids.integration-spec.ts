@@ -7,7 +7,6 @@ import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/m
 
 import { FieldMetadataType } from 'twenty-shared/types';
 
-const TEST_SCHEMA_NAME = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 const TEST_TABLE_NAME = '_mostlyEmptyProbe';
 
 const MOSTLY_EMPTY_FIELD_METADATA_IDS_QUERY = gql`
@@ -29,25 +28,26 @@ const fetchMostlyEmptyFieldMetadataIds = async (
   return response.body.data.mostlyEmptyFieldMetadataIds;
 };
 
-const insertProbeRecords = async (count: number) => {
-  await global.testDataSource.query(
-    `INSERT INTO "${TEST_SCHEMA_NAME}"."${TEST_TABLE_NAME}"
-       (name, "createdByName", "createdBySource", "updatedByName", "updatedBySource", position)
-     SELECT 'Probe record ' || i, 'Integration Test', 'MANUAL', 'Integration Test', 'MANUAL', i
-     FROM generate_series(1, ${count}) AS i`,
-  );
-};
-
-// Statistics are normally refreshed by autovacuum; tests need them on demand
-const analyzeProbeTable = async () => {
-  await global.testDataSource.query(
-    `ANALYZE "${TEST_SCHEMA_NAME}"."${TEST_TABLE_NAME}"`,
-  );
-};
-
 describe('mostlyEmptyFieldMetadataIds', () => {
   let testObjectMetadataId: string;
   let probeNotesFieldMetadataId: string;
+  let testSchemaName: string;
+
+  const insertProbeRecords = async (count: number) => {
+    await global.testDataSource.query(
+      `INSERT INTO "${testSchemaName}"."${TEST_TABLE_NAME}"
+         (name, "createdByName", "createdBySource", "updatedByName", "updatedBySource", position)
+       SELECT 'Probe record ' || i, 'Integration Test', 'MANUAL', 'Integration Test', 'MANUAL', i
+       FROM generate_series(1, ${count}) AS i`,
+    );
+  };
+
+  // Statistics are normally refreshed by autovacuum; tests need them on demand
+  const analyzeProbeTable = async () => {
+    await global.testDataSource.query(
+      `ANALYZE "${testSchemaName}"."${TEST_TABLE_NAME}"`,
+    );
+  };
 
   beforeAll(async () => {
     const {
@@ -85,6 +85,17 @@ describe('mostlyEmptyFieldMetadataIds', () => {
     });
 
     probeNotesFieldMetadataId = notesFieldId;
+
+    const schemaRows: { schema_name: string }[] =
+      await global.testDataSource.query(
+        `SELECT w."databaseSchema" AS schema_name
+         FROM core."objectMetadata" om
+         JOIN core.workspace w ON w.id = om."workspaceId"
+         WHERE om.id = $1`,
+        [testObjectMetadataId],
+      );
+
+    testSchemaName = schemaRows[0].schema_name;
   });
 
   afterAll(async () => {
@@ -101,37 +112,32 @@ describe('mostlyEmptyFieldMetadataIds', () => {
     });
   });
 
-  it('should return nothing below the minimum record count', async () => {
+  it('should flag a never-filled field only while the record gate passes and the field stays empty', async () => {
+    // Below the minimum record count nothing is flagged
     await insertProbeRecords(50);
     await analyzeProbeTable();
 
-    const mostlyEmptyFieldMetadataIds =
-      await fetchMostlyEmptyFieldMetadataIds(testObjectMetadataId);
+    expect(
+      await fetchMostlyEmptyFieldMetadataIds(testObjectMetadataId),
+    ).toEqual([]);
 
-    expect(mostlyEmptyFieldMetadataIds).toEqual([]);
-  });
-
-  it('should flag only the never-filled text field once the record gate passes', async () => {
+    // Past the gate, the untouched custom text field is the only expected hit:
+    // name is the label identifier and system fields are excluded
     await insertProbeRecords(100);
     await analyzeProbeTable();
 
-    const mostlyEmptyFieldMetadataIds =
-      await fetchMostlyEmptyFieldMetadataIds(testObjectMetadataId);
+    expect(
+      await fetchMostlyEmptyFieldMetadataIds(testObjectMetadataId),
+    ).toEqual([probeNotesFieldMetadataId]);
 
-    // name is the label identifier and system fields are excluded, so the
-    // untouched custom text field is the only expected hit
-    expect(mostlyEmptyFieldMetadataIds).toEqual([probeNotesFieldMetadataId]);
-  });
-
-  it('should return nothing once the field is filled everywhere', async () => {
+    // Once the field is backfilled everywhere the hint disappears
     await global.testDataSource.query(
-      `UPDATE "${TEST_SCHEMA_NAME}"."${TEST_TABLE_NAME}" SET "probeNotes" = 'filled'`,
+      `UPDATE "${testSchemaName}"."${TEST_TABLE_NAME}" SET "probeNotes" = 'filled'`,
     );
     await analyzeProbeTable();
 
-    const mostlyEmptyFieldMetadataIds =
-      await fetchMostlyEmptyFieldMetadataIds(testObjectMetadataId);
-
-    expect(mostlyEmptyFieldMetadataIds).toEqual([]);
+    expect(
+      await fetchMostlyEmptyFieldMetadataIds(testObjectMetadataId),
+    ).toEqual([]);
   });
 });
