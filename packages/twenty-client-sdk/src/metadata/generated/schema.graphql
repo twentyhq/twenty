@@ -2454,6 +2454,7 @@ type VerificationRecord {
   key: String!
   value: String!
   priority: Float
+  status: String
 }
 
 type EmailingDomain {
@@ -4460,6 +4461,7 @@ input UpdateMessageChannelInputUpdates {
 
 input CreateEmailGroupChannelInput {
   handle: String!
+  name: String
 }
 
 input CreateEmailingDomainInput {

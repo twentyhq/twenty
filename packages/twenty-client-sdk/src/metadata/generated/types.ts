@@ -4887,6 +4887,9 @@ export default {
             "priority": [
                 12
             ],
+            "status": [
+                1
+            ],
             "__typename": [
                 1
             ]
@@ -11464,6 +11467,9 @@ export default {
         },
         "CreateEmailGroupChannelInput": {
             "handle": [
+                1
+            ],
+            "name": [
                 1
             ],
             "__typename": [

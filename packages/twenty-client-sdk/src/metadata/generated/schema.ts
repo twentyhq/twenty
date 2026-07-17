@@ -2160,6 +2160,7 @@ export interface VerificationRecord {
     key: Scalars['String']
     value: Scalars['String']
     priority?: Scalars['Float']
+    status?: Scalars['String']
     __typename: 'VerificationRecord'
 }
 
@@ -5311,6 +5312,7 @@ export interface VerificationRecordGenqlSelection{
     key?: boolean | number
     value?: boolean | number
     priority?: boolean | number
+    status?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6564,7 +6566,7 @@ export interface UpdateMessageChannelInput {id: Scalars['UUID'],update: UpdateMe
 
 export interface UpdateMessageChannelInputUpdates {visibility?: (MessageChannelVisibility | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),contactAutoCreationPolicy?: (MessageChannelContactAutoCreationPolicy | null),messageFolderImportPolicy?: (MessageFolderImportPolicy | null),isSyncEnabled?: (Scalars['Boolean'] | null),excludeNonProfessionalEmails?: (Scalars['Boolean'] | null),excludeGroupEmails?: (Scalars['Boolean'] | null)}
 
-export interface CreateEmailGroupChannelInput {handle: Scalars['String']}
+export interface CreateEmailGroupChannelInput {handle: Scalars['String'],name?: (Scalars['String'] | null)}
 
 export interface CreateEmailingDomainInput {domain: Scalars['String']}
 
