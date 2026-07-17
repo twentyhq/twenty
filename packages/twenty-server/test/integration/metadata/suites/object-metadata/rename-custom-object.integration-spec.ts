@@ -246,7 +246,32 @@ describe('Custom object renaming', () => {
     expect(errors.length).toBeGreaterThan(0);
   });
 
-  it('5. should delete custom object', async () => {
+  it('5. should reject a morph relations update payload on a system side-effect relation field', async () => {
+    // @ts-expect-error legacy noImplicitAny
+    const timelineActivityRelation = standardObjectRelationsMap['timelineActivity'];
+    const relationFieldMetadataId =
+      timelineActivityRelation.relationFieldMetadataId;
+
+    // morphRelationsUpdatePayload is not an editable property, so it must be
+    // rejected explicitly for engine-owned fields instead of silently creating
+    // relation fields and indexes on them
+    const { errors } = await updateOneFieldMetadata({
+      expectToFail: true,
+      input: {
+        idToUpdate: relationFieldMetadataId,
+        updatePayload: {
+          morphRelationsUpdatePayload: [
+            { targetObjectMetadataId: listingObjectId },
+          ],
+        },
+      },
+    });
+
+    expect(errors).toBeDefined();
+    expect(errors.length).toBeGreaterThan(0);
+  });
+
+  it('6. should delete custom object', async () => {
     await updateOneObjectMetadata({
       expectToFail: false,
       input: {

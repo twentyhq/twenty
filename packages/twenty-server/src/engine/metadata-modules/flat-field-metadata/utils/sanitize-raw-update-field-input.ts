@@ -43,9 +43,12 @@ export const sanitizeRawUpdateFieldInput = ({
   );
 
   if (existingFlatFieldMetadata.isSystemSideEffect === true && !isSystemBuild) {
-    const forbiddenUpdatedProperties = Object.keys(
-      updatedEditableFieldProperties,
-    ).filter(
+    const forbiddenUpdatedProperties = [
+      ...Object.keys(updatedEditableFieldProperties),
+      ...(isDefined(rawUpdateFieldInput.morphRelationsUpdatePayload)
+        ? ['morphRelationsUpdatePayload']
+        : []),
+    ].filter(
       (property) =>
         !FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES.includes(
           property as (typeof FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES)[number],
