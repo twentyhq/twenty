@@ -1,0 +1,21 @@
+packages/twenty-front/src/modules/activities/emails/hooks/useReplyContext.ts
+  s_c4892f4ac2fb0e::t_662ba70da08ae5 102
+  s_c4892f4ac2fb0e::t_40dd0569ce0b22 58-84
+  s_c4892f4ac2fb0e::t_7c16088ecc2c96 10,21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "998d179b346d5277fa00e2a3944f1fc601b6ddf6",
+  "prompts": {},
+  "sessions": {
+    "s_c4892f4ac2fb0e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "74e7b645-8557-47f5-9aa3-10d3470dabef",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
