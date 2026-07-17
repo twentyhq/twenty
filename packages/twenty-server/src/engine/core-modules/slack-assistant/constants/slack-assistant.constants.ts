@@ -8,3 +8,5 @@ export const SLACK_SIGNING_SECRET_VARIABLE_KEY = 'SLACK_SIGNING_SECRET';
 export const SLACK_EVENTS_WEBHOOK_ROUTE = 'webhooks/slack/events';
 
 export const SLACK_ASSISTANT_REPLY_JOB_NAME = 'SlackAssistantReplyJob';
+
+export const SLACK_THREAD_BROADCAST_SUBTYPE = 'thread_broadcast';
