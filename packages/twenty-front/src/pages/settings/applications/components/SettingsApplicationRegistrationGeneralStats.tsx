@@ -20,7 +20,8 @@ const StyledUpgradeContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[6]};
 `;
 
-const UPGRADE_INSTALLATIONS_MODAL_ID = 'upgrade-registration-applications-modal';
+const UPGRADE_INSTALLATIONS_MODAL_ID =
+  'upgrade-registration-applications-modal';
 
 export const SettingsApplicationRegistrationGeneralStats = ({
   registration,
