@@ -33,6 +33,8 @@ export const getReplyToRecipients = ({
         ? [message.sender]
         : [];
 
+  const seenHandles = new Set<string>();
+
   return replyParticipants
     .filter((participant) => isNonEmptyString(participant.handle))
     .filter(
@@ -41,6 +43,17 @@ export const getReplyToRecipients = ({
         participant.handle.toLowerCase() !==
           connectedAccountHandle.toLowerCase(),
     )
+    .filter((participant) => {
+      const normalizedHandle = participant.handle.toLowerCase();
+
+      if (seenHandles.has(normalizedHandle)) {
+        return false;
+      }
+
+      seenHandles.add(normalizedHandle);
+
+      return true;
+    })
     .map((participant) =>
       formatEmailRecipient({
         address: participant.handle,

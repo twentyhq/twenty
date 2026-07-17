@@ -99,6 +99,21 @@ describe('getReplyToRecipients', () => {
     ).toBe('Bob <bob@example.com>');
   });
 
+  it('deduplicates an address present in both To and Cc case-insensitively', () => {
+    const message = buildMessage([
+      buildParticipant(MessageParticipantRole.FROM, CONNECTED_ACCOUNT_HANDLE),
+      buildParticipant(MessageParticipantRole.TO, 'bob@example.com', 'Bob'),
+      buildParticipant(MessageParticipantRole.CC, 'Bob@Example.com', 'Bob'),
+    ]);
+
+    expect(
+      getReplyToRecipients({
+        message,
+        connectedAccountHandle: CONNECTED_ACCOUNT_HANDLE,
+      }),
+    ).toBe('Bob <bob@example.com>');
+  });
+
   it('ignores participants without a handle', () => {
     const message = buildMessage([
       buildParticipant(MessageParticipantRole.FROM, CONNECTED_ACCOUNT_HANDLE),
