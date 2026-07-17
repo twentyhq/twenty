@@ -366,7 +366,8 @@ export class WorkspaceCacheService implements OnModuleInit {
 
     const computePromises = cacheKeyNames.map(async (keyName) => {
       const provider = this.getProviderOrThrow(keyName);
-      const data = await provider.computeForCache(workspaceId);
+      const { data, contentHash } =
+        await provider.computeForCacheWithContentHash(workspaceId);
 
       if (hashResolution.strategy === 'mint') {
         return { keyName, data, hash: crypto.randomUUID(), isAdopted: false };
@@ -377,7 +378,7 @@ export class WorkspaceCacheService implements OnModuleInit {
       return {
         keyName,
         data,
-        hash: adoptableHash ?? crypto.randomUUID(),
+        hash: adoptableHash ?? contentHash ?? crypto.randomUUID(),
         isAdopted: isDefined(adoptableHash),
       };
     });

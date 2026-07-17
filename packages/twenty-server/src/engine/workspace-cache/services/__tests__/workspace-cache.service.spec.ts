@@ -39,6 +39,21 @@ class MockOrmEntityMetadatasCacheProvider extends WorkspaceCacheProvider<{
   }
 }
 
+class MockContentHashedOrmEntityMetadatasCacheProvider extends WorkspaceCacheProvider<{
+  testData: string;
+}> {
+  async computeForCache(_workspaceId: string) {
+    return { testData: 'orm-computed-value' };
+  }
+
+  override async computeForCacheWithContentHash(_workspaceId: string) {
+    return {
+      data: { testData: 'orm-computed-value' },
+      contentHash: 'content-hash-abc',
+    };
+  }
+}
+
 describe('WorkspaceCacheService', () => {
   let service: WorkspaceCacheService;
   let cacheStorageService: jest.Mocked<CacheStorageService>;
@@ -668,6 +683,109 @@ describe('WorkspaceCacheService', () => {
       expect(cacheStorageService.mset).toHaveBeenCalledWith([
         { key: ormHashKey, value: expect.any(String) },
       ]);
+    });
+  });
+
+  describe('localDataOnly content hash', () => {
+    let contentHashedProvider: MockContentHashedOrmEntityMetadatasCacheProvider;
+    const ormHashKey = `orm:entity-metadatas:${WORKSPACE_ID}:hash`;
+
+    beforeEach(async () => {
+      contentHashedProvider =
+        new MockContentHashedOrmEntityMetadatasCacheProvider();
+
+      discoveryService.getProviders.mockReturnValue([
+        { instance: contentHashedProvider },
+      ] as any);
+
+      reflector.get.mockImplementation((key, target) => {
+        if (target !== MockContentHashedOrmEntityMetadatasCacheProvider) {
+          return undefined;
+        }
+
+        if (key === WORKSPACE_CACHE_KEY) {
+          return 'ORMEntityMetadatas';
+        }
+
+        if (key === WORKSPACE_CACHE_OPTIONS) {
+          return { localDataOnly: true };
+        }
+
+        return undefined;
+      });
+
+      await service.onModuleInit();
+    });
+
+    it('should persist the content hash only if still absent when redis has none', async () => {
+      cacheStorageService.mget.mockResolvedValue([undefined]);
+      cacheStorageService.setIfAbsent.mockResolvedValue(true);
+
+      await service.getOrRecompute(WORKSPACE_ID, ['ORMEntityMetadatas']);
+
+      expect(cacheStorageService.setIfAbsent).toHaveBeenCalledWith(
+        ormHashKey,
+        'content-hash-abc',
+        604800000,
+      );
+      expect(cacheStorageService.mset).not.toHaveBeenCalled();
+    });
+
+    it('should validate against the persisted content hash without recomputing', async () => {
+      cacheStorageService.mget.mockResolvedValue([undefined]);
+      cacheStorageService.mset.mockResolvedValue(undefined);
+
+      const computeSpy = jest.spyOn(
+        contentHashedProvider,
+        'computeForCacheWithContentHash',
+      );
+
+      await service.getOrRecompute(WORKSPACE_ID, ['ORMEntityMetadatas']);
+
+      jest.advanceTimersByTime(15_000);
+
+      cacheStorageService.mget.mockResolvedValue(['content-hash-abc']);
+
+      await service.getOrRecompute(WORKSPACE_ID, ['ORMEntityMetadatas']);
+
+      expect(computeSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should prefer adopting the redis hash over the content hash', async () => {
+      cacheStorageService.mget.mockResolvedValue(['hash-from-another-pod']);
+      cacheStorageService.mset.mockResolvedValue(undefined);
+
+      const computeSpy = jest.spyOn(
+        contentHashedProvider,
+        'computeForCacheWithContentHash',
+      );
+
+      await service.getOrRecompute(WORKSPACE_ID, ['ORMEntityMetadatas']);
+
+      jest.advanceTimersByTime(15_000);
+
+      await service.getOrRecompute(WORKSPACE_ID, ['ORMEntityMetadatas']);
+
+      expect(computeSpy).toHaveBeenCalledTimes(1);
+      expect(cacheStorageService.mset).not.toHaveBeenCalled();
+    });
+
+    it('should mint a random hash instead of the content hash on invalidateAndRecompute', async () => {
+      cacheStorageService.mdel.mockResolvedValue(undefined);
+      cacheStorageService.mset.mockResolvedValue(undefined);
+
+      await service.invalidateAndRecompute(WORKSPACE_ID, [
+        'ORMEntityMetadatas',
+      ]);
+
+      expect(cacheStorageService.mset).toHaveBeenCalledWith([
+        { key: ormHashKey, value: expect.any(String) },
+      ]);
+
+      const persistedEntries = cacheStorageService.mset.mock
+        .calls[0][0] as Array<{ key: string; value: string }>;
+
+      expect(persistedEntries[0].value).not.toBe('content-hash-abc');
     });
   });
 });

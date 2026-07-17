@@ -7,7 +7,10 @@ import { type EntityMetadata, EntitySchema, Repository } from 'typeorm';
 import { EntitySchemaTransformer } from 'typeorm/entity-schema/EntitySchemaTransformer';
 import { EntityMetadataBuilder } from 'typeorm/metadata-builder/EntityMetadataBuilder';
 
-import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
+import {
+  WorkspaceCacheProvider,
+  type WorkspaceCacheComputeResult,
+} from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -16,6 +19,7 @@ import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-sche
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildEntitySchemaMetadataMaps } from 'src/engine/twenty-orm/global-workspace-datasource/types/entity-schema-metadata.type';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { computeRowsContentHash } from 'src/engine/workspace-cache/utils/compute-rows-content-hash.util';
 
 @Injectable()
 @WorkspaceCache('ORMEntityMetadatas', { localDataOnly: true })
@@ -36,6 +40,14 @@ export class WorkspaceORMEntityMetadatasCacheService extends WorkspaceCacheProvi
   }
 
   async computeForCache(workspaceId: string): Promise<EntityMetadata[]> {
+    const { data } = await this.computeForCacheWithContentHash(workspaceId);
+
+    return data;
+  }
+
+  override async computeForCacheWithContentHash(
+    workspaceId: string,
+  ): Promise<WorkspaceCacheComputeResult<EntityMetadata[]>> {
     const [objectMetadatas, fieldMetadatas, twentyStandardApplication] =
       await Promise.all([
         this.objectMetadataRepository.find({
@@ -54,6 +66,14 @@ export class WorkspaceORMEntityMetadatasCacheService extends WorkspaceCacheProvi
           },
         }),
       ]);
+
+    const contentHash = computeRowsContentHash({
+      objectMetadata: objectMetadatas,
+      fieldMetadata: fieldMetadatas,
+      application: isDefined(twentyStandardApplication)
+        ? [twentyStandardApplication]
+        : [],
+    });
 
     const { objectMetadataMaps, fieldMetadataMaps } =
       buildEntitySchemaMetadataMaps(
@@ -75,7 +95,7 @@ export class WorkspaceORMEntityMetadatasCacheService extends WorkspaceCacheProvi
 
     const entityMetadatas = await this.buildEntityMetadatas(entitySchemas);
 
-    return entityMetadatas;
+    return { data: entityMetadatas, contentHash };
   }
 
   private async buildEntityMetadatas(
