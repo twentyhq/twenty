@@ -1,10 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
-import { v4 as uuidv4, v5 as uuidv5 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -14,11 +15,6 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-
-// Deriving the core id deterministically from workspaceId + record id makes the
-// upsert idempotent across retries: a failed write-back re-derives the same id
-// instead of orphaning a row.
-const CORE_WORKFLOW_ID_NAMESPACE = '4e8433e7-363e-43cf-b7db-97770a37b2d0';
 
 @Injectable()
 export class WorkflowCoreSyncService {
@@ -46,18 +42,24 @@ export class WorkflowCoreSyncService {
     const coreWorkflowIdByWorkspaceRecordId = new Map<string, string>();
 
     const coreRows = workflows.map((workflow) => {
-      const coreWorkflowId =
-        workflow.coreWorkflowId ??
-        uuidv5(`${workspaceId}:${workflow.id}`, CORE_WORKFLOW_ID_NAMESPACE);
+      const coreWorkflowId = isNonEmptyString(workflow.coreWorkflowId)
+        ? workflow.coreWorkflowId
+        : uuidv4();
 
-      if (!isDefined(workflow.coreWorkflowId)) {
+      if (!isNonEmptyString(workflow.coreWorkflowId)) {
         coreWorkflowIdByWorkspaceRecordId.set(workflow.id, coreWorkflowId);
       }
 
       return {
         id: coreWorkflowId,
         name: workflow.name ?? null,
-        lastPublishedVersionId: workflow.lastPublishedVersionId ?? null,
+        // The event payload represents an unset uuid as an empty string, which a
+        // uuid column rejects; normalize it to null.
+        lastPublishedVersionId: isNonEmptyString(
+          workflow.lastPublishedVersionId,
+        )
+          ? workflow.lastPublishedVersionId
+          : null,
         universalIdentifier: uuidv4(),
         applicationId,
       };
