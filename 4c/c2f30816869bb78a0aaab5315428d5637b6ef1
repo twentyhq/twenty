@@ -1,0 +1,35 @@
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/types/verifications-record.ts
+  s_c4892f4ac2fb0e::t_a5f04dcfadc57a 6
+packages/twenty-front/src/modules/activities/emails/utils/getReplyToRecipients.ts
+  s_c4892f4ac2fb0e::t_f3c653fd1e7865 1-43
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/verification-record.dto.ts
+  s_c4892f4ac2fb0e::t_0597ef363e26d0 18
+packages/twenty-front/src/modules/activities/emails/hooks/useReplyContext.ts
+  s_c4892f4ac2fb0e::t_3543ec89fc99a6 8
+  s_c4892f4ac2fb0e::t_11460b60d801e7 55-58
+packages/twenty-front/src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
+  s_c4892f4ac2fb0e::t_ee384a0a21c42a 1
+  s_c4892f4ac2fb0e::t_d1a662f00ade15 30,33
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/unsubscribe-hostname.service.ts
+  s_c4892f4ac2fb0e::t_892b17a2de5799 175
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
+  s_c4892f4ac2fb0e::t_246ff60cbbbe20 98-100
+  s_c4892f4ac2fb0e::t_bfa53809562f2a 28
+  s_c4892f4ac2fb0e::t_9f0ae1822ff2d5 54-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "4cc2f30816869bb78a0aaab5315428d5637b6ef1",
+  "prompts": {},
+  "sessions": {
+    "s_c4892f4ac2fb0e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "74e7b645-8557-47f5-9aa3-10d3470dabef",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
