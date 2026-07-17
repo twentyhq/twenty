@@ -151,8 +151,9 @@ export const useRecordTableWidgetLayoutCallbacks = ({
       view: {
         ...widgetViewDraft.view,
         calendarFieldMetadataId: fieldMetadataItem.id,
-        calendarLayout:
-          widgetViewDraft.view.calendarLayout ?? ViewCalendarLayout.MONTH,
+        // Widget calendars are month-only (also enforced server-side by
+        // FlatViewValidatorService), so every draft write pins MONTH.
+        calendarLayout: ViewCalendarLayout.MONTH,
       },
     }));
   };
