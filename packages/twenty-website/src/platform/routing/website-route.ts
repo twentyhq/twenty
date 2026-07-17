@@ -9,6 +9,7 @@ export type WebsiteRouteId =
   | 'home'
   | 'partners'
   | 'partnersApply'
+  | 'partnersBrief'
   | 'partnersList'
   | 'pricing'
   | 'privacyPolicy'
