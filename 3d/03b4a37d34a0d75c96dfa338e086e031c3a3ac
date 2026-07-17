@@ -1,0 +1,19 @@
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_11e59742733dbd::t_ebe7c30ab4b731 5944,8063,8068,9014-9015
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "3d03b4a37d34a0d75c96dfa338e086e031c3a3ac",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
