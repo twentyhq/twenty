@@ -92,25 +92,7 @@ export const EmailRecipientChipMenuContent = ({
       {(isDefined(person) || isDefined(workspaceMember) || showAddAsPerson) && (
         <>
           <DropdownMenuItemsContainer>
-            {isDefined(workspaceMember) ? (
-              <MenuItemAvatar
-                avatar={{
-                  avatarUrl: getAbsoluteImageUrl(workspaceMember.avatarUrl),
-                  placeholder: isNonEmptyString(workspaceMemberFullName)
-                    ? workspaceMemberFullName
-                    : recipient.address,
-                  placeholderColorSeed: workspaceMember.id,
-                  size: 'md',
-                  type: 'rounded',
-                }}
-                text={
-                  isNonEmptyString(workspaceMemberFullName)
-                    ? workspaceMemberFullName
-                    : recipient.address
-                }
-                contextualText={t`Team member`}
-              />
-            ) : isDefined(person) ? (
+            {isDefined(person) ? (
               <MenuItemAvatar
                 avatar={{
                   avatarUrl: getAbsoluteImageUrl(person.avatarUrl),
@@ -127,6 +109,24 @@ export const EmailRecipientChipMenuContent = ({
                     : recipient.address
                 }
                 contextualText={recipient.address}
+              />
+            ) : isDefined(workspaceMember) ? (
+              <MenuItemAvatar
+                avatar={{
+                  avatarUrl: getAbsoluteImageUrl(workspaceMember.avatarUrl),
+                  placeholder: isNonEmptyString(workspaceMemberFullName)
+                    ? workspaceMemberFullName
+                    : recipient.address,
+                  placeholderColorSeed: workspaceMember.id,
+                  size: 'md',
+                  type: 'rounded',
+                }}
+                text={
+                  isNonEmptyString(workspaceMemberFullName)
+                    ? workspaceMemberFullName
+                    : recipient.address
+                }
+                contextualText={t`Team member`}
               />
             ) : (
               <MenuItem
