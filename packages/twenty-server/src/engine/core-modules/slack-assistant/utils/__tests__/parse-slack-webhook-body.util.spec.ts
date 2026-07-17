@@ -84,6 +84,35 @@ describe('parseSlackWebhookBody', () => {
     });
   });
 
+  it('classifies a user-originated direct message without botId/subtype', () => {
+    const payload = parseSlackWebhookBody(
+      JSON.stringify({
+        type: 'event_callback',
+        team_id: 'T123',
+        event: {
+          type: 'message',
+          channel_type: 'im',
+          channel: 'D2',
+          ts: '1700000000.000100',
+          text: 'hey assistant',
+          user: 'U2',
+        },
+      }),
+    );
+
+    expect(payload).toMatchObject({
+      kind: 'direct_message',
+      channelId: 'D2',
+      threadTs: '1700000000.000100',
+      ts: '1700000000.000100',
+      text: 'hey assistant',
+      teamId: 'T123',
+      userId: 'U2',
+      botId: undefined,
+      subtype: undefined,
+    });
+  });
+
   it('falls back to the enterprise_id from the envelope when the event omits team_id', () => {
     const payload = parseSlackWebhookBody(
       JSON.stringify({
