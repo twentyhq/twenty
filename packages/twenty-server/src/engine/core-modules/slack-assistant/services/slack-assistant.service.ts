@@ -244,8 +244,10 @@ export class SlackAssistantService {
         }`,
       );
 
-      // A concurrent reply may have won the race and assigned it already.
-      return this.aiAgentRoleService.getAssignedRoleId({ workspaceId, agentId });
+      return this.aiAgentRoleService.getAssignedRoleId({
+        workspaceId,
+        agentId,
+      });
     }
   }
 
