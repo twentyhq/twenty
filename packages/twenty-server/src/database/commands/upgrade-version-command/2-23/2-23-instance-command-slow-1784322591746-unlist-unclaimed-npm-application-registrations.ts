@@ -6,7 +6,7 @@ import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 // Catalog-synced apps used to be listed automatically. Marketplace listing is
 // now curated by server admins, so unlist the auto-synced ones: npm-sourced,
 // still unclaimed, and not vetted. Owned or vetted rows are left untouched.
-@RegisteredInstanceCommand('2.23.0', 1784106205003, { type: 'slow' })
+@RegisteredInstanceCommand('2.23.0', 1784322591746, { type: 'slow' })
 export class UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand
   implements SlowInstanceCommand
 {
