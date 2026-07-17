@@ -34,11 +34,6 @@ export type CreateStandardMorphOrRelationFieldContext<
   targetFieldName: AllStandardObjectFieldName<T>;
   isNullable?: boolean;
   isUIEditable?: boolean;
-  // Reverse fields of the default relations to the standard objects
-  // (timelineActivity/attachment/noteTarget/taskTarget target* morph fields)
-  // are engine-owned: their universal identifier pinned in STANDARD_OBJECTS is
-  // the name-free deterministic one and the engine is their sole authority on
-  // rename/delete.
   isSystemSideEffect?: boolean;
   defaultValue?: FieldMetadataDefaultValueForAnyType;
   settings: FieldMetadataSettings<F>;

@@ -28,10 +28,6 @@ export const FLAT_FIELD_METADATA_EDITABLE_PROPERTIES = {
   MetadataEntityPropertyName<'fieldMetadata'>[]
 >;
 
-// System-side-effect fields (default relations to standard objects provisioned
-// by the metadata side-effect engine, partial system fields such as deletedAt /
-// searchVector) are engine-owned: every structural property is derived and
-// maintained by the engine. Users may only toggle activation.
 export const FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES = [
   'isActive',
 ] as const satisfies MetadataEntityPropertyName<'fieldMetadata'>[];

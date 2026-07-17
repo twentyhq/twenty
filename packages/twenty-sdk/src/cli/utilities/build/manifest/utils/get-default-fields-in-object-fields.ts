@@ -26,10 +26,6 @@ const getDefaultNameObjectField = ({
   }),
 });
 
-// Default relations to the standard relation objects (timelineActivity,
-// attachment, noteTarget, taskTarget) are provisioned by the server-side
-// metadata side-effect engine on object create, so the SDK manifest only
-// defaults the name field.
 export const getDefaultFieldsInObjectFields = ({
   objectConfig,
   applicationUniversalIdentifier,

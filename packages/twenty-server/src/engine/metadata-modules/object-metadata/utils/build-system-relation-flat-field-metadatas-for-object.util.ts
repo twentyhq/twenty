@@ -71,9 +71,6 @@ export const buildSystemRelationFlatFieldMetadatasForObject = ({
         targetFlatObjectMetadata.nameSingular as keyof typeof STANDARD_OBJECT_ICONS
       ] ?? 'IconBuildingSkyscraper';
 
-    // Both sides of the relation are engine-owned and both field names are
-    // object-name-derived, so both identifiers use the same name-free
-    // derivation, direction encoded by swapping host and relation target.
     const forwardFieldUniversalIdentifier =
       getSystemRelationFieldUniversalIdentifier({
         applicationUniversalIdentifier,
@@ -107,8 +104,6 @@ export const buildSystemRelationFlatFieldMetadatasForObject = ({
           name: targetFlatObjectMetadata.namePlural,
           label: i18nLabel(standardFieldProperties.label),
           relationCreationPayload: {
-            // Not consumed by the pair generator (the target object is passed
-            // explicitly); universal entities carry no DB id.
             targetObjectMetadataId:
               targetFlatObjectMetadata.universalIdentifier,
             type: RelationType.ONE_TO_MANY,
