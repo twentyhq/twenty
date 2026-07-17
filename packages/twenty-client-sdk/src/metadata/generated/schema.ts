@@ -2723,6 +2723,7 @@ export interface Query {
     findManyAgents: Agent[]
     findOneAgent: Agent
     objectRecordCounts: ObjectRecordCount[]
+    mostlyEmptyFieldMetadataIds: Scalars['UUID'][]
     object: Object
     objects: ObjectConnection
     findOneLogicFunction: LogicFunction
@@ -5897,6 +5898,7 @@ export interface QueryGenqlSelection{
     findManyAgents?: AgentGenqlSelection
     findOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
     objectRecordCounts?: ObjectRecordCountGenqlSelection
+    mostlyEmptyFieldMetadataIds?: { __args: {objectMetadataId: Scalars['UUID']} }
     object?: (ObjectGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
