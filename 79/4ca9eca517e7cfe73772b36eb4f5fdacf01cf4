@@ -1,0 +1,21 @@
+packages/twenty-front/src/modules/settings/components/SettingsDnsRecordsTable.tsx
+  s_c4892f4ac2fb0e::t_baf0f9b51d9422 32-34,36-38
+  s_c4892f4ac2fb0e::t_4ab50e148154db 35
+  s_c4892f4ac2fb0e::t_712ceedf8298d2 150-155
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "794ca9eca517e7cfe73772b36eb4f5fdacf01cf4",
+  "prompts": {},
+  "sessions": {
+    "s_c4892f4ac2fb0e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "74e7b645-8557-47f5-9aa3-10d3470dabef",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
