@@ -4,11 +4,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconApps, IconCode, IconDownload, IconPlug } from 'twenty-ui/icon';
@@ -16,7 +12,7 @@ import { Section } from 'twenty-ui/layout';
 import coverDark from '~/pages/settings/applications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/applications/assets/cover-light.png';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { CLAIM_ERROR_CODE_SEARCH_PARAM } from '~/pages/settings/applications/components/SettingsClaimApplicationSection';
+import { SettingsApplicationsClaimErrorTabEffect } from '~/pages/settings/applications/components/SettingsApplicationsClaimErrorTabEffect';
 import { SettingsApplicationsAvailableTab } from '~/pages/settings/applications/tabs/SettingsApplicationsAvailableTab';
 import { SettingsApplicationsDeveloperTab } from '~/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab';
 import { SettingsApplicationsInstalledTab } from '~/pages/settings/applications/tabs/SettingsApplicationsInstalledTab';
@@ -44,22 +40,6 @@ export const SettingsApplications = () => {
     APPLICATIONS_TAB_LIST_ID,
     tabs.map((tab) => tab.id),
   );
-
-  const [searchParams] = useSearchParams();
-  const hasClaimError = searchParams.has(CLAIM_ERROR_CODE_SEARCH_PARAM);
-
-  const setActiveTabId = useSetAtomComponentState(
-    activeTabIdComponentState,
-    APPLICATIONS_TAB_LIST_ID,
-  );
-
-  // The GitHub claim callback lands here with a claim error code but may lose
-  // the URL hash during auth boot redirects, so force the developer tab.
-  useEffect(() => {
-    if (hasClaimError && hasDeveloperAccess) {
-      setActiveTabId(DEVELOPER_TAB_ID);
-    }
-  }, [hasClaimError, hasDeveloperAccess, setActiveTabId]);
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {
@@ -91,6 +71,11 @@ export const SettingsApplications = () => {
         { children: t`Applications` },
       ]}
     >
+      <SettingsApplicationsClaimErrorTabEffect
+        tabListId={APPLICATIONS_TAB_LIST_ID}
+        developerTabId={DEVELOPER_TAB_ID}
+        hasDeveloperAccess={hasDeveloperAccess}
+      />
       <SettingsPageContainer>
         <Section>
           <SettingsDiscoveryHeroCard

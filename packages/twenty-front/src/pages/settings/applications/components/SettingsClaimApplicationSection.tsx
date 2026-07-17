@@ -70,6 +70,10 @@ const StyledHint = styled.div`
 
 const StyledCalloutContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[3]};
+
+  & > div {
+    max-width: 100%;
+  }
 `;
 
 export const SettingsClaimApplicationSection = () => {
