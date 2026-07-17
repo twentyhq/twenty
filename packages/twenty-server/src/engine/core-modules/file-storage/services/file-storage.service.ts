@@ -395,29 +395,6 @@ export class FileStorageService {
     });
   }
 
-  // Returns the resource paths (relative to the folder) of all stored files
-  // for an application in the given folder.
-  async listFileResourcePaths({
-    workspaceId,
-    applicationUniversalIdentifier,
-    fileFolder,
-  }: Omit<ResourceIdentifier, 'resourcePath'>): Promise<string[]> {
-    const applicationId = await this.resolveApplicationIdOrThrow({
-      applicationUniversalIdentifier,
-      workspaceId,
-    });
-
-    const files = await this.fileRepository.find(workspaceId, {
-      select: { path: true },
-      where: {
-        applicationId,
-        path: Like(`${fileFolder}/%`),
-      },
-    });
-
-    return files.map((file) => removeFileFolderFromFileEntityPath(file.path));
-  }
-
   async deleteApplicationFileRows({
     applicationId,
     workspaceId,
