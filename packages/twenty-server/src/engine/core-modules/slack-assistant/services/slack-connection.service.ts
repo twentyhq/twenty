@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -8,6 +9,7 @@ import {
   SLACK_CONNECTION_PROVIDER_NAME,
   TWENTY_SLACK_APPLICATION_UNIVERSAL_IDENTIFIER,
 } from 'src/engine/core-modules/slack-assistant/constants/slack-assistant.constants';
+import { fetchSlackTeamId } from 'src/engine/core-modules/slack-assistant/utils/fetch-slack-team-id.util';
 
 @Injectable()
 export class SlackConnectionService {
@@ -18,7 +20,13 @@ export class SlackConnectionService {
     private readonly applicationConnectionsListService: ApplicationConnectionsListService,
   ) {}
 
-  async getBotToken(workspaceId: string): Promise<string | null> {
+  async getBotToken({
+    workspaceId,
+    teamId,
+  }: {
+    workspaceId: string;
+    teamId?: string;
+  }): Promise<string | null> {
     const application = await this.applicationService.findByUniversalIdentifier(
       {
         universalIdentifier: TWENTY_SLACK_APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -41,10 +49,32 @@ export class SlackConnectionService {
       filter: { providerName: SLACK_CONNECTION_PROVIDER_NAME },
     });
 
-    const connection =
+    if (connections.length === 0) {
+      return null;
+    }
+
+    if (connections.length === 1) {
+      return connections[0].accessToken;
+    }
+
+    if (isNonEmptyString(teamId)) {
+      for (const connection of connections) {
+        const connectionTeamId = await fetchSlackTeamId(connection.accessToken);
+
+        if (connectionTeamId === teamId) {
+          return connection.accessToken;
+        }
+      }
+
+      this.logger.warn(
+        `No Slack connection in workspace ${workspaceId} matched team ${teamId}; using the default connection.`,
+      );
+    }
+
+    const fallbackConnection =
       connections.find((item) => item.visibility === 'workspace') ??
       connections[0];
 
-    return connection?.accessToken ?? null;
+    return fallbackConnection?.accessToken ?? null;
   }
 }

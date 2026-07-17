@@ -9,16 +9,11 @@ import { ApplicationConnectionsListService } from 'src/engine/core-modules/appli
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SLACK_CONNECTION_PROVIDER_NAME } from 'src/engine/core-modules/slack-assistant/constants/slack-assistant.constants';
-import { type SlackApiResponse } from 'src/engine/core-modules/slack-assistant/types/slack-api-response.type';
-import { callSlackApi } from 'src/engine/core-modules/slack-assistant/utils/call-slack-api.util';
+import { fetchSlackTeamId } from 'src/engine/core-modules/slack-assistant/utils/fetch-slack-team-id.util';
 
 const TEAM_WORKSPACE_CACHE_TTL_SECONDS = 24 * 60 * 60;
 const TEAM_WORKSPACE_NEGATIVE_TTL_SECONDS = 60;
 const NEGATIVE_CACHE_SENTINEL = '__none__';
-
-type SlackAuthTestResponse = SlackApiResponse & {
-  team_id?: string;
-};
 
 @Injectable()
 export class SlackWorkspaceResolverService {
@@ -79,7 +74,7 @@ export class SlackWorkspaceResolverService {
       });
 
       for (const connection of connections) {
-        const teamId = await this.fetchTeamId(connection.accessToken);
+        const teamId = await fetchSlackTeamId(connection.accessToken);
 
         if (!isNonEmptyString(teamId)) {
           continue;
@@ -100,26 +95,6 @@ export class SlackWorkspaceResolverService {
     }
 
     return matchedWorkspaceId;
-  }
-
-  private async fetchTeamId(token: string): Promise<string | null> {
-    try {
-      const response = await callSlackApi<SlackAuthTestResponse>(
-        'auth.test',
-        {},
-        token,
-      );
-
-      return response.ok ? (response.team_id ?? null) : null;
-    } catch (error) {
-      this.logger.warn(
-        `Slack auth.test failed while resolving a team mapping: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
-
-      return null;
-    }
   }
 
   private getCacheKey(teamId: string): string {

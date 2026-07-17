@@ -61,7 +61,10 @@ export class SlackAssistantService {
     threadTs: string;
     text: string;
   }): Promise<void> {
-    const botToken = await this.slackConnectionService.getBotToken(workspaceId);
+    const botToken = await this.slackConnectionService.getBotToken({
+      workspaceId,
+      teamId,
+    });
 
     if (!isDefined(botToken)) {
       this.logger.warn(
