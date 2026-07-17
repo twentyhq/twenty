@@ -2,10 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import axios from 'axios';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { z } from 'zod';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -26,6 +28,8 @@ export class ApplicationUpgradeService {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
+    @InjectRepository(ApplicationEntity)
+    private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -79,6 +83,10 @@ export class ApplicationUpgradeService {
           sourceType: appRegistration.sourceType,
           version: parsed.data.version,
         });
+
+        await this.applicationRegistrationService.enqueueAutoUpgradeApplications(
+          appRegistration.id,
+        );
       }
 
       return parsed.data.version;
@@ -98,6 +106,50 @@ export class ApplicationUpgradeService {
 
     for (const registration of npmRegistrations) {
       await this.checkForUpdates(registration);
+    }
+  }
+
+  async upgradeAllApplications({
+    applicationRegistrationId,
+    onlyAutoUpgrade = false,
+  }: {
+    applicationRegistrationId: string;
+    onlyAutoUpgrade?: boolean;
+  }): Promise<void> {
+    const appRegistration = await this.appRegistrationRepository.findOneOrFail({
+      where: { id: applicationRegistrationId },
+    });
+
+    const targetVersion = appRegistration.latestAvailableVersion;
+
+    if (!isDefined(targetVersion)) {
+      return;
+    }
+
+    const applications = await this.applicationRepository.find({
+      where: {
+        applicationRegistrationId,
+        ...(onlyAutoUpgrade ? { canAutoUpgrade: true } : {}),
+      },
+    });
+
+    for (const application of applications) {
+      if (application.version === targetVersion) {
+        continue;
+      }
+
+      try {
+        await this.upgradeApplication({
+          appRegistrationId: applicationRegistrationId,
+          targetVersion,
+          workspaceId: application.workspaceId,
+        });
+      } catch (error) {
+        this.logger.error(
+          `Failed to upgrade application ${application.id} to version ${targetVersion} in workspace ${application.workspaceId}`,
+          error,
+        );
+      }
     }
   }
 

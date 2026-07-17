@@ -125,6 +125,13 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   canBeUninstalled: boolean;
 
   @Column({ nullable: false, type: 'boolean', default: false })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.23.0_AddCanAutoUpgradeToApplicationFastInstanceCommand_1784297307235',
+  })
+  canAutoUpgrade: boolean;
+
+  @Column({ nullable: false, type: 'boolean', default: false })
   isSdkLayerStale: boolean;
 
   @Column({ nullable: true, type: 'uuid' })

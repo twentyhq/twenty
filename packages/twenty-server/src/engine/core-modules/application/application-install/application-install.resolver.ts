@@ -18,6 +18,7 @@ import { ApplicationException } from 'src/engine/core-modules/application/applic
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
+import { UpdateApplicationInput } from 'src/engine/core-modules/application/dtos/update-application.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -126,6 +127,21 @@ export class ApplicationInstallResolver {
       version: params.version,
       workspaceId: params.workspaceId,
     });
+  }
+
+  @Mutation(() => ApplicationDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  async updateApplication(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @Args('input') input: UpdateApplicationInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    await this.applicationService.findOneApplicationOrThrow({
+      id,
+      workspaceId,
+    });
+
+    return this.applicationService.update(id, { ...input, workspaceId });
   }
 
   @Mutation(() => Boolean)
