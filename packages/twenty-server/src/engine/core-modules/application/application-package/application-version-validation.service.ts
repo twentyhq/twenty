@@ -20,6 +20,19 @@ export type VersionValidationResult =
       message: string;
     };
 
+export type VersionProgressionFailureReason =
+  | 'INVALID_INCOMING_VERSION'
+  | 'SAME_VERSION'
+  | 'DOWNGRADE';
+
+export type VersionProgressionResult =
+  | { allowed: true }
+  | {
+      allowed: false;
+      reason: VersionProgressionFailureReason;
+      message: string;
+    };
+
 @Injectable()
 export class ApplicationVersionValidationService {
   constructor(
@@ -87,6 +100,60 @@ export class ApplicationVersionValidationService {
       requiredVersionRange: requiredServerVersion,
       scope: 'workspace',
     });
+  }
+
+  // A current version that is not valid semver never blocks: there is
+  // nothing reliable to compare against.
+  validateVersionProgression({
+    incomingVersion,
+    currentVersion,
+    universalIdentifier,
+    action,
+  }: {
+    incomingVersion: string;
+    currentVersion: string;
+    universalIdentifier: string;
+    action: 'install' | 'deploy';
+  }): VersionProgressionResult {
+    if (!isDefined(semver.valid(incomingVersion))) {
+      return {
+        allowed: false,
+        reason: 'INVALID_INCOMING_VERSION',
+        message: `Invalid version "${incomingVersion}" in package.json. Must be a valid semver version.`,
+      };
+    }
+
+    if (!isDefined(semver.valid(currentVersion))) {
+      return { allowed: true };
+    }
+
+    if (action === 'deploy' && semver.lte(incomingVersion, currentVersion)) {
+      return {
+        allowed: false,
+        reason: semver.eq(incomingVersion, currentVersion)
+          ? 'SAME_VERSION'
+          : 'DOWNGRADE',
+        message: `Cannot deploy ${universalIdentifier}@${incomingVersion}: version must be higher than the currently deployed version ${currentVersion}. Please bump the version in package.json.`,
+      };
+    }
+
+    if (action === 'install' && semver.eq(incomingVersion, currentVersion)) {
+      return {
+        allowed: false,
+        reason: 'SAME_VERSION',
+        message: `${universalIdentifier}@${incomingVersion} is already installed in this workspace.`,
+      };
+    }
+
+    if (action === 'install' && semver.lt(incomingVersion, currentVersion)) {
+      return {
+        allowed: false,
+        reason: 'DOWNGRADE',
+        message: `Cannot install ${universalIdentifier}@${incomingVersion}: version ${currentVersion} is already installed and downgrading is not allowed.`,
+      };
+    }
+
+    return { allowed: true };
   }
 
   private validateVersionAgainstRange({
