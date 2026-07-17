@@ -7,6 +7,8 @@ import {
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
+
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
@@ -16,6 +18,7 @@ import { UninstallApplicationInput } from 'src/engine/core-modules/application/a
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
 import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { UpdateApplicationInput } from 'src/engine/core-modules/application/dtos/update-application.input';
@@ -43,6 +46,7 @@ export class ApplicationInstallResolver {
     private readonly applicationService: ApplicationService,
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly applicationSyncService: ApplicationSyncService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly marketplaceQueryService: MarketplaceQueryService,
     private readonly metricsService: MetricsService,
   ) {}
@@ -136,12 +140,31 @@ export class ApplicationInstallResolver {
     @Args('input') input: UpdateApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    await this.applicationService.findOneApplicationOrThrow({
-      id,
+    const application = await this.applicationService.findOneApplicationOrThrow(
+      {
+        id,
+        workspaceId,
+      },
+    );
+
+    const updatedApplication = await this.applicationService.update(id, {
+      ...(isDefined(input.autoUpgrade)
+        ? { autoUpgrade: input.autoUpgrade }
+        : {}),
       workspaceId,
     });
 
-    return this.applicationService.update(id, { ...input, workspaceId });
+    // Catch up on a version published while the flag was off.
+    if (
+      input.autoUpgrade === true &&
+      isDefined(application.applicationRegistrationId)
+    ) {
+      await this.applicationRegistrationService.enqueueAutoUpgradeApplications(
+        application.applicationRegistrationId,
+      );
+    }
+
+    return updatedApplication;
   }
 
   @Mutation(() => Boolean)

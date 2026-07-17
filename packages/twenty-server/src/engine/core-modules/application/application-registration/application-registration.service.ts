@@ -126,13 +126,22 @@ export class ApplicationRegistrationService {
     private readonly workspaceQueueService: MessageQueueService,
   ) {}
 
+  // Best-effort: a queue outage must not fail the publish flow that
+  // triggered the upgrade.
   async enqueueAutoUpgradeApplications(
     applicationRegistrationId: string,
   ): Promise<void> {
-    await this.workspaceQueueService.add<UpgradeApplicationsJobData>(
-      UPGRADE_APPLICATIONS_JOB_NAME,
-      { applicationRegistrationId, onlyAutoUpgrade: true },
-    );
+    try {
+      await this.workspaceQueueService.add<UpgradeApplicationsJobData>(
+        UPGRADE_APPLICATIONS_JOB_NAME,
+        { applicationRegistrationId, onlyAutoUpgrade: true },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to enqueue auto-upgrade for registration ${applicationRegistrationId}`,
+        error,
+      );
+    }
   }
 
   private async invalidateMarketplaceAppsCache(): Promise<void> {

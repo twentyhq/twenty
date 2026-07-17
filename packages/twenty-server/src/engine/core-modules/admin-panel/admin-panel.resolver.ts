@@ -561,6 +561,9 @@ export class AdminPanelResolver {
     await this.workspaceQueueService.add<UpgradeApplicationsJobData>(
       UPGRADE_APPLICATIONS_JOB_NAME,
       { applicationRegistrationId, onlyAutoUpgrade: false },
+      {
+        id: `${UPGRADE_APPLICATIONS_JOB_NAME}-${applicationRegistrationId}`,
+      }, // Avoids triggering multiple pending jobs for the same app
     );
 
     return true;
