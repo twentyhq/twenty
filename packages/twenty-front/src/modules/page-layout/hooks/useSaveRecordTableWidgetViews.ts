@@ -100,6 +100,7 @@ export const useSaveRecordTableWidgetViews = () => {
             (draftView.mainGroupByFieldMetadataId ?? null) ||
           persistedView.shouldHideEmptyGroups !==
             draftView.shouldHideEmptyGroups ||
+          persistedView.openRecordIn !== draftView.openRecordIn ||
           (persistedView.kanbanAggregateOperation ?? null) !==
             (draftView.kanbanAggregateOperation ?? null) ||
           (persistedView.kanbanAggregateOperationFieldMetadataId ?? null) !==
@@ -124,6 +125,7 @@ export const useSaveRecordTableWidgetViews = () => {
                       mainGroupByFieldMetadataId:
                         draftView.mainGroupByFieldMetadataId ?? null,
                       shouldHideEmptyGroups: draftView.shouldHideEmptyGroups,
+                      openRecordIn: draftView.openRecordIn,
                       kanbanAggregateOperation:
                         draftView.kanbanAggregateOperation ?? null,
                       kanbanAggregateOperationFieldMetadataId:
