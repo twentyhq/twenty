@@ -251,8 +251,6 @@ export class BullMQDriver
       });
     });
 
-    // A stalled job means its worker stopped renewing the lock without
-    // completing or failing it, most likely because the process died.
     this.workerMap[queueName].on('stalled', (jobId) => {
       this.logger.warn(
         `Job ${jobId} stalled on queue ${queueName}: its worker stopped processing it without completing or failing it`,
@@ -366,7 +364,7 @@ export class BullMQDriver
     await this.queueMap[queueName].add(jobName, data, queueOptions);
   }
 
-  async getInFlightJobsData<T>(queueName: MessageQueue): Promise<T[]> {
+  async getInFlightJobIds(queueName: MessageQueue): Promise<string[]> {
     if (!this.queueMap[queueName]) {
       throw new Error(
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
@@ -380,6 +378,9 @@ export class BullMQDriver
       'delayed',
     ]);
 
-    return jobs.filter(isDefined).map((job) => job.data);
+    return jobs
+      .filter(isDefined)
+      .map((job) => job.id)
+      .filter(isDefined);
   }
 }

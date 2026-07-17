@@ -35,12 +35,12 @@ export class MessageQueueService {
     return this.driver.add(this.queueName, jobName, data, options);
   }
 
-  getInFlightJobsData<T extends MessageQueueJobData>(): Promise<T[]> {
-    if (typeof this.driver.getInFlightJobsData !== 'function') {
+  getInFlightJobIds(): Promise<string[]> {
+    if (typeof this.driver.getInFlightJobIds !== 'function') {
       return Promise.resolve([]);
     }
 
-    return this.driver.getInFlightJobsData(this.queueName);
+    return this.driver.getInFlightJobIds(this.queueName);
   }
 
   addCron<T extends MessageQueueJobData | undefined>({

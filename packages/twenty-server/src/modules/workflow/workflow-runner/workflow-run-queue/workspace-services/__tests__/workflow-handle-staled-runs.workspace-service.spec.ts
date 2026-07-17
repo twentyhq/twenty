@@ -35,7 +35,7 @@ const mockWorkflowRunWorkspaceService = {
 };
 
 const mockMessageQueueService = {
-  getInFlightJobsData: jest.fn().mockResolvedValue([]),
+  getInFlightJobIds: jest.fn().mockResolvedValue([]),
 };
 
 const mockMetricsService = {
@@ -91,9 +91,7 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
       .mockReset()
       .mockResolvedValue(undefined);
     mockWorkflowRunWorkspaceService.getWorkflowRunOrFail.mockReset();
-    mockMessageQueueService.getInFlightJobsData
-      .mockReset()
-      .mockResolvedValue([]);
+    mockMessageQueueService.getInFlightJobIds.mockReset().mockResolvedValue([]);
 
     service = module.get<WorkflowHandleStaledRunsWorkspaceService>(
       WorkflowHandleStaledRunsWorkspaceService,
@@ -292,9 +290,7 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
 
       await service.handleStuckRunningRunsForWorkspace(workspaceId);
 
-      expect(
-        mockMessageQueueService.getInFlightJobsData,
-      ).not.toHaveBeenCalled();
+      expect(mockMessageQueueService.getInFlightJobIds).not.toHaveBeenCalled();
       expect(
         mockWorkflowRunWorkspaceService.endWorkflowRun,
       ).not.toHaveBeenCalled();
@@ -302,8 +298,8 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
 
     it('should skip runs that still have an in-flight queue job', async () => {
       mockRepository.find.mockResolvedValueOnce([{ id: 'run-0' }]);
-      mockMessageQueueService.getInFlightJobsData.mockResolvedValueOnce([
-        { workspaceId, workflowRunId: 'run-0' },
+      mockMessageQueueService.getInFlightJobIds.mockResolvedValueOnce([
+        'run-0-8a521c10-92b1-4013-a4a7-71f20b1a4a4a',
       ]);
 
       await service.handleStuckRunningRunsForWorkspace(workspaceId);

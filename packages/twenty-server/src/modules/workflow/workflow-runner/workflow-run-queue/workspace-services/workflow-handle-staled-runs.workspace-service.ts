@@ -19,7 +19,6 @@ import {
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import { workflowShouldFail } from 'src/modules/workflow/workflow-executor/utils/workflow-should-fail.util';
 import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executor/utils/workflow-should-keep-running.util';
-import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { getStaledRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-staled-runs-find-options.util';
 import { getStuckRunningRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-stuck-running-runs-find-options.util';
 import { getStuckStoppingRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-stuck-stopping-runs-find-options.util';
@@ -125,17 +124,16 @@ export class WorkflowHandleStaledRunsWorkspaceService {
     }
 
     // A stale RUNNING run whose job is still in the queue is not stuck, only
-    // slow: never finalize it while its job is alive.
-    const inFlightJobsData =
-      await this.messageQueueService.getInFlightJobsData<RunWorkflowJobData>();
-    const inFlightWorkflowRunIds = new Set(
-      inFlightJobsData
-        .map((jobData) => jobData?.workflowRunId)
-        .filter(isDefined),
-    );
+    // slow: never finalize it while its job is alive. Job ids are prefixed
+    // with the workflow run id (see buildRunWorkflowJobOptions).
+    const inFlightJobIds = await this.messageQueueService.getInFlightJobIds();
 
     for (const workflowRunId of stuckRunningRunIds) {
-      if (inFlightWorkflowRunIds.has(workflowRunId)) {
+      const hasInFlightJob = inFlightJobIds.some((jobId) =>
+        jobId.startsWith(`${workflowRunId}-`),
+      );
+
+      if (hasInFlightJob) {
         continue;
       }
 

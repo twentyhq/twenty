@@ -42,9 +42,5 @@ export interface MessageQueueDriver {
     jobId?: string;
   }): Promise<void>;
   register?(queueName: MessageQueue): void;
-  // Data of jobs not yet completed nor failed (active, waiting, prioritized,
-  // delayed). Drivers without queue introspection can omit it.
-  getInFlightJobsData?<T extends MessageQueueJobData>(
-    queueName: MessageQueue,
-  ): Promise<T[]>;
+  getInFlightJobIds?(queueName: MessageQueue): Promise<string[]>;
 }
