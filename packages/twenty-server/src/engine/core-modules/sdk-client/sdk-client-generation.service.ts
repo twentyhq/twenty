@@ -13,6 +13,7 @@ import { Repository } from 'typeorm';
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
@@ -29,6 +30,7 @@ import {
   GENERATE_SDK_CLIENT_JOB_NAME,
   type GenerateSdkClientJobData,
 } from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job-constants';
+import { getCurrentSdkMetadataModuleChecksum } from 'src/engine/core-modules/sdk-client/utils/get-current-sdk-metadata-module-checksum.util';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
@@ -66,19 +68,78 @@ export class SdkClientGenerationService {
     await Promise.all(
       [twentyStandardFlatApplication, workspaceCustomFlatApplication].map(
         (application) =>
-          this.messageQueueService.add<GenerateSdkClientJobData>(
-            GENERATE_SDK_CLIENT_JOB_NAME,
-            {
-              workspaceId,
-              applicationId: application.id,
-              applicationUniversalIdentifier: application.universalIdentifier,
-            },
-            {
-              id: `sdk-client:${workspaceId}:${application.id}`,
-              retryLimit: SDK_CLIENT_GENERATION_RETRY_LIMIT,
-            },
-          ),
+          this.enqueueSdkClientGenerationForApplication({
+            workspaceId,
+            applicationId: application.id,
+            applicationUniversalIdentifier: application.universalIdentifier,
+          }),
       ),
+    );
+  }
+
+  // Lazy post-release invalidation: archives are only rebuilt by manifest
+  // syncs, so after a server upgrade they keep serving the previous release's
+  // metadata module. The persisted sdkClientMetadataChecksum is the hash of
+  // the metadata module frozen in the archive; comparing it against the
+  // currently installed module detects release staleness at usage time and
+  // regenerates incrementally (the job id dedupes concurrent triggers).
+  // A null checksum means the archive predates checksum tracking and is
+  // regenerated too. Never throws: staleness recovery is best-effort and
+  // must not break the calling read path.
+  async enqueueSdkClientGenerationIfStale({
+    workspaceId,
+    flatApplication,
+  }: {
+    workspaceId: string;
+    flatApplication: Pick<
+      FlatApplication,
+      'id' | 'universalIdentifier' | 'sdkClientMetadataChecksum'
+    >;
+  }): Promise<void> {
+    try {
+      const currentMetadataModuleChecksum =
+        await getCurrentSdkMetadataModuleChecksum();
+
+      if (
+        flatApplication.sdkClientMetadataChecksum ===
+        currentMetadataModuleChecksum
+      ) {
+        return;
+      }
+
+      await this.enqueueSdkClientGenerationForApplication({
+        workspaceId,
+        applicationId: flatApplication.id,
+        applicationUniversalIdentifier: flatApplication.universalIdentifier,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to enqueue stale SDK client regeneration for application ${flatApplication.id} in workspace ${workspaceId}`,
+        error,
+      );
+    }
+  }
+
+  private async enqueueSdkClientGenerationForApplication({
+    workspaceId,
+    applicationId,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<void> {
+    await this.messageQueueService.add<GenerateSdkClientJobData>(
+      GENERATE_SDK_CLIENT_JOB_NAME,
+      {
+        workspaceId,
+        applicationId,
+        applicationUniversalIdentifier,
+      },
+      {
+        id: `sdk-client:${workspaceId}:${applicationId}`,
+        retryLimit: SDK_CLIENT_GENERATION_RETRY_LIMIT,
+      },
     );
   }
 

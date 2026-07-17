@@ -12,9 +12,21 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { GENERATE_SDK_CLIENT_JOB_NAME } from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job-constants';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
+import { getCurrentSdkMetadataModuleChecksum } from 'src/engine/core-modules/sdk-client/utils/get-current-sdk-metadata-module-checksum.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+jest.mock(
+  'src/engine/core-modules/sdk-client/utils/get-current-sdk-metadata-module-checksum.util',
+  () => ({
+    getCurrentSdkMetadataModuleChecksum: jest.fn(),
+  }),
+);
+
+const mockGetCurrentSdkMetadataModuleChecksum = jest.mocked(
+  getCurrentSdkMetadataModuleChecksum,
+);
 
 describe('SdkClientGenerationService', () => {
   let service: SdkClientGenerationService;
@@ -125,6 +137,76 @@ describe('SdkClientGenerationService', () => {
       await expect(
         service.enqueueSdkClientGenerationForWorkspace(workspaceId),
       ).rejects.toBe(failure);
+    });
+  });
+
+  describe('enqueueSdkClientGenerationIfStale', () => {
+    const workspaceId = 'workspace-1';
+    const CURRENT_METADATA_MODULE_CHECKSUM = 'c'.repeat(64);
+
+    const buildFlatApplication = (
+      sdkClientMetadataChecksum: string | null,
+    ) => ({
+      id: 'app-id',
+      universalIdentifier: 'my-app',
+      sdkClientMetadataChecksum,
+    });
+
+    beforeEach(() => {
+      mockGetCurrentSdkMetadataModuleChecksum.mockResolvedValue(
+        CURRENT_METADATA_MODULE_CHECKSUM,
+      );
+    });
+
+    it('does not enqueue when the stored checksum matches the installed module', async () => {
+      await service.enqueueSdkClientGenerationIfStale({
+        workspaceId,
+        flatApplication: buildFlatApplication(CURRENT_METADATA_MODULE_CHECKSUM),
+      });
+
+      expect(messageQueueService.add).not.toHaveBeenCalled();
+    });
+
+    it('enqueues a deduplicated job when the stored checksum is release-stale', async () => {
+      await service.enqueueSdkClientGenerationIfStale({
+        workspaceId,
+        flatApplication: buildFlatApplication('d'.repeat(64)),
+      });
+
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        GENERATE_SDK_CLIENT_JOB_NAME,
+        {
+          workspaceId,
+          applicationId: 'app-id',
+          applicationUniversalIdentifier: 'my-app',
+        },
+        {
+          id: `sdk-client:${workspaceId}:app-id`,
+          retryLimit: 3,
+        },
+      );
+    });
+
+    it('enqueues when the stored checksum is null (archive predates checksum tracking)', async () => {
+      await service.enqueueSdkClientGenerationIfStale({
+        workspaceId,
+        flatApplication: buildFlatApplication(null),
+      });
+
+      expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+    });
+
+    it('swallows errors so read paths are never broken by staleness recovery', async () => {
+      messageQueueService.add.mockRejectedValueOnce(
+        new Error('Redis unavailable'),
+      );
+
+      await expect(
+        service.enqueueSdkClientGenerationIfStale({
+          workspaceId,
+          flatApplication: buildFlatApplication(null),
+        }),
+      ).resolves.toBeUndefined();
     });
   });
 });

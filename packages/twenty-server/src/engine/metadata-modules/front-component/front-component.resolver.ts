@@ -8,6 +8,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -39,6 +40,7 @@ export class FrontComponentResolver {
     @Inject(ApplicationTokenService)
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly sdkClientGenerationService: SdkClientGenerationService,
   ) {}
 
   @Query(() => [FrontComponentDTO])
@@ -98,6 +100,16 @@ export class FrontComponentResolver {
       ]);
 
     const application = flatApplicationMaps.byId[dto.applicationId];
+
+    if (isDefined(application)) {
+      // Fire-and-forget: regenerating a release-stale SDK client must neither
+      // delay nor fail the query. Freshness reaches mounted components through
+      // the application SSE broadcast once the job completes.
+      void this.sdkClientGenerationService.enqueueSdkClientGenerationIfStale({
+        workspaceId: workspace.id,
+        flatApplication: application,
+      });
+    }
 
     const sdkClientChecksums =
       isDefined(application?.sdkClientCoreChecksum) &&
