@@ -1,0 +1,27 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/utils/__tests__/parse-microsoft-messages-import.util.spec.ts
+  s_39832274ec7e46::t_fe06ec2b5b1fc6 12-14,97-99,105-107
+  s_39832274ec7e46::t_51cde3a4070d7a 1-11,15-96,100-104,108-118
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/utils/__tests__/parse-microsoft-calendar-error.util.spec.ts
+  s_39832274ec7e46::t_c1086e34be712e 1-45,48-103
+  s_39832274ec7e46::t_fe06ec2b5b1fc6 46-47
+packages/twenty-server/src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/utils/parse-microsoft-calendar-error.util.ts
+  s_39832274ec7e46::t_e9277dfac4453e 71
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/utils/parse-microsoft-messages-import.util.ts
+  s_39832274ec7e46::t_e9277dfac4453e 7-9,36-37,44,51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "a92be639cd991217ef863c08c19c46eac4ea1d9f",
+  "prompts": {},
+  "sessions": {
+    "s_39832274ec7e46": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e42d985d-03c6-4802-b6ef-1bcfbec24678",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
