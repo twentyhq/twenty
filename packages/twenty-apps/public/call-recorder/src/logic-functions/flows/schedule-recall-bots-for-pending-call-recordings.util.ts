@@ -250,16 +250,15 @@ const hasUnresolvedAttemptAgedOut = ({
   calendarEvent: CalendarEventRecord;
   now: Date;
 }): boolean => {
-  const meetingEndReference = calendarEvent.endsAt ?? calendarEvent.startsAt;
-
-  if (isUndefined(meetingEndReference)) {
-    return false;
-  }
-
-  const meetingEndTime = new Date(meetingEndReference).getTime();
+  // Mirrors hasMeetingEnded: an unparseable end time falls back to the start
+  // time so these rows still age out of the pending sweep eventually.
+  const meetingEndTime = [calendarEvent.endsAt, calendarEvent.startsAt]
+    .filter((candidate) => !isUndefined(candidate))
+    .map((candidate) => new Date(candidate).getTime())
+    .find((candidateTime) => !Number.isNaN(candidateTime));
 
   return (
-    !Number.isNaN(meetingEndTime) &&
+    !isUndefined(meetingEndTime) &&
     meetingEndTime + UNRESOLVED_ATTEMPT_MAX_AGE_DAYS * 24 * 60 * 60 * 1000 <=
       now.getTime()
   );
