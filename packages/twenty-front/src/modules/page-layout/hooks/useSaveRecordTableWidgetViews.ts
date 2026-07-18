@@ -6,6 +6,7 @@ import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/r
 import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { widgetUsesRecordTableView } from '@/page-layout/utils/widgetUsesRecordTableView';
+import { buildUpsertViewWidgetViewFieldInput } from '@/page-layout/widgets/record-table/utils/buildUpsertViewWidgetViewFieldInput';
 import { normalizeRecordTableWidgetViewFields } from '@/page-layout/widgets/record-table/utils/normalizeRecordTableWidgetViewFields';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
@@ -93,12 +94,9 @@ export const useSaveRecordTableWidgetViews = () => {
           variables: {
             input: {
               widgetId: widget.id,
-              viewFields: normalizedWidgetViewDraft.viewFields.map((field) => ({
-                fieldMetadataId: field.fieldMetadataId,
-                isVisible: field.isVisible,
-                position: field.position,
-                size: field.size,
-              })),
+              viewFields: normalizedWidgetViewDraft.viewFields.map(
+                buildUpsertViewWidgetViewFieldInput,
+              ),
               viewFilters: widgetViewDraft.viewFilters.map((filter) => ({
                 id: filter.id,
                 fieldMetadataId: filter.fieldMetadataId,

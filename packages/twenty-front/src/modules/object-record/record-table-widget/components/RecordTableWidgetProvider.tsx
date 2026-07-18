@@ -7,10 +7,14 @@ import { RecordIndexContextProvider } from '@/object-record/record-index/context
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { RecordTableWidgetContextStoreInitEffect } from '@/object-record/record-table-widget/components/RecordTableWidgetContextStoreInitEffect';
 import { RecordTableWidgetViewLoadEffect } from '@/object-record/record-table-widget/components/RecordTableWidgetViewLoadEffect';
+import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type PropsWithChildren, useCallback } from 'react';
+import { type PropsWithChildren, useCallback, useMemo } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
@@ -72,54 +76,77 @@ export const RecordTableWidgetProvider = ({
 
   const handleIndexRecordsLoaded = useCallback(() => {}, []);
 
+  const pageLayoutComponentInstanceContext = useComponentInstanceStateContext(
+    PageLayoutComponentInstanceContext,
+  );
+
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+
+  const recordTableWidgetContext = useMemo(
+    () => ({
+      isPageLayoutInEditMode,
+      pageLayoutId: pageLayoutComponentInstanceContext?.instanceId,
+      viewId,
+      widgetId,
+    }),
+    [
+      isPageLayoutInEditMode,
+      pageLayoutComponentInstanceContext?.instanceId,
+      viewId,
+      widgetId,
+    ],
+  );
+
   if (!objectPermissions.canReadObjectRecords) {
     return null;
   }
 
   return (
-    <ContextStoreComponentInstanceContext.Provider
-      value={{
-        instanceId: isNonEmptyString(instanceIdSuffix)
-          ? `record-table-widget-${widgetId}-${instanceIdSuffix}`
-          : `record-table-widget-${widgetId}`,
-      }}
-    >
-      <RecordTableWidgetContextStoreInitEffect
-        objectMetadataItemId={objectMetadataItem.id}
-        viewId={viewId}
-      />
-      <RecordIndexContextProvider
+    <RecordTableWidgetContext.Provider value={recordTableWidgetContext}>
+      <ContextStoreComponentInstanceContext.Provider
         value={{
-          objectPermissionsByObjectMetadataId,
-          recordIndexId,
-          viewBarInstanceId: recordIndexId,
-          objectNamePlural: objectMetadataItem.namePlural,
-          objectNameSingular,
-          objectMetadataItem,
-          onIndexRecordsLoaded: handleIndexRecordsLoaded,
-          indexIdentifierUrl,
-          recordFieldByFieldMetadataItemId,
-          labelIdentifierFieldMetadataItem,
-          fieldMetadataItemByFieldMetadataItemId,
-          fieldDefinitionByFieldMetadataItemId,
-          recordLimit,
+          instanceId: isNonEmptyString(instanceIdSuffix)
+            ? `record-table-widget-${widgetId}-${instanceIdSuffix}`
+            : `record-table-widget-${widgetId}`,
         }}
       >
-        <ViewComponentInstanceContext.Provider
-          value={{ instanceId: recordIndexId }}
+        <RecordTableWidgetContextStoreInitEffect
+          objectMetadataItemId={objectMetadataItem.id}
+          viewId={viewId}
+        />
+        <RecordIndexContextProvider
+          value={{
+            objectPermissionsByObjectMetadataId,
+            recordIndexId,
+            viewBarInstanceId: recordIndexId,
+            objectNamePlural: objectMetadataItem.namePlural,
+            objectNameSingular,
+            objectMetadataItem,
+            onIndexRecordsLoaded: handleIndexRecordsLoaded,
+            indexIdentifierUrl,
+            recordFieldByFieldMetadataItemId,
+            labelIdentifierFieldMetadataItem,
+            fieldMetadataItemByFieldMetadataItemId,
+            fieldDefinitionByFieldMetadataItemId,
+            recordLimit,
+          }}
         >
-          <RecordComponentInstanceContextsWrapper
-            componentInstanceId={recordIndexId}
+          <ViewComponentInstanceContext.Provider
+            value={{ instanceId: recordIndexId }}
           >
-            <RecordTableWidgetViewLoadEffect
-              viewId={viewId}
-              widgetId={widgetId}
-              objectMetadataItem={objectMetadataItem}
-            />
-            {children}
-          </RecordComponentInstanceContextsWrapper>
-        </ViewComponentInstanceContext.Provider>
-      </RecordIndexContextProvider>
-    </ContextStoreComponentInstanceContext.Provider>
+            <RecordComponentInstanceContextsWrapper
+              componentInstanceId={recordIndexId}
+            >
+              <RecordTableWidgetViewLoadEffect
+                viewId={viewId}
+                widgetId={widgetId}
+                objectMetadataItem={objectMetadataItem}
+              />
+              {children}
+            </RecordComponentInstanceContextsWrapper>
+          </ViewComponentInstanceContext.Provider>
+        </RecordIndexContextProvider>
+      </ContextStoreComponentInstanceContext.Provider>
+    </RecordTableWidgetContext.Provider>
   );
 };

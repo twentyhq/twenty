@@ -5796,6 +5796,7 @@ export type UpsertViewWidgetInput = {
 };
 
 export type UpsertViewWidgetViewFieldInput = {
+  aggregateOperation?: InputMaybe<AggregateOperations>;
   /** The field metadata id. Used to create a new view field when viewFieldId is not provided. */
   fieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   isVisible: Scalars['Boolean']['input'];
