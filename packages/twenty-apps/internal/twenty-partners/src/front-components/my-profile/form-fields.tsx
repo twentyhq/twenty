@@ -213,7 +213,15 @@ export const TagInput = ({
               {tag}
               <span
                 role="button"
+                tabIndex={0}
+                aria-label={`Remove ${tag}`}
                 onClick={() => remove(tag)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    remove(tag);
+                  }
+                }}
                 style={{ cursor: 'pointer', opacity: 0.7, fontSize: 14, lineHeight: 1 }}
               >
                 ×

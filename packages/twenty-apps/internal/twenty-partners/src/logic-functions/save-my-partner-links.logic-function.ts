@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { isHttpUrl } from './http-url';
 import { buildReconcilePlan } from './reconcile-children';
-import { buildAppClient, errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
+import { buildAppClient, errorResponse, failureResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
 
 export const SAVE_MY_PARTNER_LINKS_ID = 'b56d1158-4e79-4fdb-a7c4-e0f8871b2d42';
 
@@ -126,7 +126,7 @@ export const handler = async (event: RoutePayload<unknown>): Promise<SaveLinksRe
     const links = await queryLinkRows(client, resolved.partnerId);
     return { ok: true, links };
   } catch (err) {
-    return errorResponse(err instanceof Error ? err.message : String(err));
+    return failureResponse('save-my-partner-links', err);
   }
 };
 

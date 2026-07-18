@@ -79,3 +79,9 @@ export const errorResponse = (reason: string): PartnerRouteError => ({
   ok: false,
   reason,
 });
+
+// Log the real cause server-side but never surface raw SDK/DB text to partner users.
+export const failureResponse = (logTag: string, err: unknown): PartnerRouteError => {
+  console.error(`[${logTag}]`, err instanceof Error ? (err.stack ?? err.message) : String(err));
+  return { ok: false, reason: 'Something went wrong. Please try again.' };
+};

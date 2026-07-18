@@ -5,8 +5,7 @@ import { z } from 'zod';
 import { isCaseStudy } from './content-type';
 import { isHttpUrl } from './http-url';
 import { buildReconcilePlan } from './reconcile-children';
-import { firstFileUrl } from './profile-picture';
-import { buildAppClient, errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
+import { buildAppClient, errorResponse, failureResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
 
 export const SAVE_MY_PARTNER_CONTENT_ID = 'e574fc61-6d9e-48db-9e98-a9b8160188cc';
 
@@ -111,7 +110,6 @@ const queryContentRows = async (
           clientName: true,
           headline: true,
           body: { markdown: true },
-          coverImage: { url: true },
           coverImageUrl: true,
           caseStudyLink: { primaryLinkUrl: true },
           status: true,
@@ -128,7 +126,7 @@ const queryContentRows = async (
       clientName: edge.node.clientName ?? null,
       headline: edge.node.headline ?? null,
       bodyMarkdown: edge.node.body?.markdown ?? null,
-      coverImageUrl: edge.node.coverImageUrl || firstFileUrl(edge.node.coverImage) || null,
+      coverImageUrl: edge.node.coverImageUrl || null,
       caseStudyLink: edge.node.caseStudyLink?.primaryLinkUrl ?? null,
       status: edge.node.status ?? null,
     }));
@@ -192,10 +190,14 @@ export const handler = async (event: RoutePayload<unknown>): Promise<SaveContent
       });
     }
 
+    // A just-created row can surface in the re-read too once the trigger stamps its
+    // partnerId, so drop those ids before appending the optimistic createdRows.
     const existingRows = await queryContentRows(client, resolved.partnerId);
-    return { ok: true, caseStudies: [...existingRows, ...createdRows] };
+    const createdIds = new Set(createdRows.map((row) => row.id));
+    const deduped = existingRows.filter((row) => !createdIds.has(row.id));
+    return { ok: true, caseStudies: [...deduped, ...createdRows] };
   } catch (err) {
-    return errorResponse(err instanceof Error ? err.message : String(err));
+    return failureResponse('save-my-partner-content', err);
   }
 };
 

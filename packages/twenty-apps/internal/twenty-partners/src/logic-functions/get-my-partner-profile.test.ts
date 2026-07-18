@@ -56,7 +56,7 @@ const makeNode = (overrides: Partial<PartnerNode> = {}): PartnerNode =>
             clientName: 'Acme Corp',
             headline: 'CRM migration',
             body: { markdown: 'Moved 12 teams to Twenty.' },
-            coverImage: [{ url: 'https://images.example.com/case-study.png' }],
+            coverImageUrl: 'https://images.example.com/case-study.png',
             caseStudyLink: { primaryLinkUrl: 'https://example.com/case-study' },
             status: 'APPROVED',
             contentType: ['CASE_STUDY'],
@@ -92,7 +92,7 @@ describe('mapMyProfilePayload', () => {
     expect(mapped.profilePictureUrl).toBe('https://images.example.com/legacy.png');
   });
 
-  it('maps case study body.markdown to bodyMarkdown and coverImage to coverImageUrl', () => {
+  it('maps case study body.markdown to bodyMarkdown and passes coverImageUrl through', () => {
     const mapped = mapMyProfilePayload(makeNode());
 
     expect(mapped.caseStudies[0].bodyMarkdown).toBe('Moved 12 teams to Twenty.');
@@ -113,7 +113,7 @@ describe('mapMyProfilePayload', () => {
                 clientName: 'Acme Corp',
                 headline: 'CRM migration',
                 body: { markdown: 'Moved 12 teams to Twenty.' },
-                coverImage: [{ url: 'https://images.example.com/case-study.png' }],
+                coverImageUrl: 'https://images.example.com/case-study.png',
                 caseStudyLink: { primaryLinkUrl: 'https://example.com/case-study' },
                 status: 'APPROVED',
                 contentType: ['CASE_STUDY'],
@@ -160,7 +160,7 @@ describe('mapMyProfilePayload', () => {
     ]);
   });
 
-  it('prefers the pasted coverImageUrl over the uploaded coverImage file', () => {
+  it('passes the pasted coverImageUrl through for the edit form', () => {
     const mapped = mapMyProfilePayload(
       makeNode({
         partnerContents: {
@@ -173,7 +173,6 @@ describe('mapMyProfilePayload', () => {
                 headline: 'CRM migration',
                 body: { markdown: 'Moved 12 teams to Twenty.' },
                 coverImageUrl: 'https://paste.example.com/cover.png',
-                coverImage: [{ url: 'https://file.example.com/cover.png' }],
                 caseStudyLink: { primaryLinkUrl: 'https://example.com/case-study' },
                 status: 'APPROVED',
                 contentType: ['CASE_STUDY'],
@@ -187,7 +186,9 @@ describe('mapMyProfilePayload', () => {
     expect(mapped.caseStudies[0].coverImageUrl).toBe('https://paste.example.com/cover.png');
   });
 
-  it('falls back to the coverImage file url when coverImageUrl is empty', () => {
+  // The edit form binds the text coverImageUrl only; a file cover's signed URL must not
+  // round-trip through save, so it is not surfaced here (the marketplace mapping still shows it).
+  it('returns null coverImageUrl when the pasted url is empty', () => {
     const mapped = mapMyProfilePayload(
       makeNode({
         partnerContents: {
@@ -200,7 +201,6 @@ describe('mapMyProfilePayload', () => {
                 headline: 'CRM migration',
                 body: { markdown: 'Moved 12 teams to Twenty.' },
                 coverImageUrl: null,
-                coverImage: [{ url: 'https://file.example.com/cover.png' }],
                 caseStudyLink: { primaryLinkUrl: 'https://example.com/case-study' },
                 status: 'APPROVED',
                 contentType: ['CASE_STUDY'],
@@ -211,7 +211,7 @@ describe('mapMyProfilePayload', () => {
       } as Partial<PartnerNode>),
     );
 
-    expect(mapped.caseStudies[0].coverImageUrl).toBe('https://file.example.com/cover.png');
+    expect(mapped.caseStudies[0].coverImageUrl).toBeNull();
   });
 
   it('handles nulls and empty edges', () => {

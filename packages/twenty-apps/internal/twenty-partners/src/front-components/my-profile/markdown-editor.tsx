@@ -87,7 +87,7 @@ const controlBase = {
   padding: '10px 12px',
 } as const;
 
-const textareaStyle = { ...controlBase, resize: 'none', outline: 'none' } as const;
+const textareaStyle = { ...controlBase, resize: 'none' } as const;
 
 const previewBoxStyle = { ...controlBase, overflowY: 'auto' } as const;
 
@@ -128,10 +128,12 @@ export const MarkdownEditor = ({
   value,
   onChange,
   placeholder,
+  ariaLabel,
 }: {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  ariaLabel?: string;
 }) => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
     <div style={toolbarStyle}>
@@ -154,6 +156,7 @@ export const MarkdownEditor = ({
           style={textareaStyle}
           value={value}
           placeholder={placeholder}
+          aria-label={ariaLabel ?? placeholder}
           onChange={(event) => onChange(event.target.value)}
         />
       </div>

@@ -2,7 +2,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { z } from 'zod';
 
-import { buildAppClient, errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
+import { buildAppClient, errorResponse, failureResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
 
 export const SUBMIT_PARTNER_CONTENT_FOR_REVIEW_ID = '6d722484-bbe9-4ffc-b017-5164e3a5a03c';
 
@@ -71,7 +71,7 @@ export const handler = async (
 
     return { ok: true, status: 'UNDER_CUSTOMER_PARTNER_REVIEW' };
   } catch (err) {
-    return errorResponse(err instanceof Error ? err.message : String(err));
+    return failureResponse('submit-partner-content-for-review', err);
   }
 };
 

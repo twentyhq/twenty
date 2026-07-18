@@ -5,31 +5,35 @@ import { z } from 'zod';
 import { PROFILE_OPTIONS } from 'src/constants/my-profile.constants';
 
 import { optionalHttpUrl } from './http-url';
-import { buildAppClient, errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
+import { buildAppClient, errorResponse, failureResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
 
 export const SAVE_MY_PARTNER_PROFILE_ID = 'de21e2a6-f4b4-4186-90d9-645015e856a1';
 
 const optionalUrl = optionalHttpUrl;
+
+// Reject negative/NaN amounts and non-ISO currency codes on marketplace pricing.
+const optionalMoney = z
+  .object({
+    amountMicros: z.number().finite().nonnegative(),
+    currencyCode: z.string().regex(/^[A-Za-z]{3}$/, 'Invalid currency code'),
+  })
+  .nullable()
+  .optional();
 
 export const saveProfileSchema = z
   .object({
     name: z.string().trim().optional(),
     introduction: z.string().optional(),
     city: z.string().optional(),
-    country: z.string().optional(),
+    // null clears the field; the enum/country selectors send null when reset to blank.
+    country: z.string().nullable().optional(),
     languagesSpoken: z.array(z.string()).optional(),
     partnerScope: z.array(z.string()).optional(),
     skills: z.array(z.string()).optional(),
-    typeOfTeam: z.enum(['SOLO', 'AGENCY']).optional(),
-    availability: z.enum(['AVAILABLE', 'UNAVAILABLE']).optional(),
-    hourlyRate: z
-      .object({ amountMicros: z.number(), currencyCode: z.string() })
-      .nullable()
-      .optional(),
-    projectBudgetMin: z
-      .object({ amountMicros: z.number(), currencyCode: z.string() })
-      .nullable()
-      .optional(),
+    typeOfTeam: z.enum(['SOLO', 'AGENCY']).nullable().optional(),
+    availability: z.enum(['AVAILABLE', 'UNAVAILABLE']).nullable().optional(),
+    hourlyRate: optionalMoney,
+    projectBudgetMin: optionalMoney,
     website: optionalUrl,
     linkedin: optionalUrl,
     calendarLink: optionalUrl,
@@ -52,7 +56,7 @@ const PARTNER_SCOPE_VALUES = optionValueSet(PROFILE_OPTIONS.partnerScope);
 export function validateProfileOptionValues(
   input: SaveProfileInput,
 ): { error: string } | null {
-  if (input.country !== undefined && !COUNTRY_VALUES.has(input.country)) {
+  if (input.country != null && !COUNTRY_VALUES.has(input.country)) {
     return { error: `Unknown country: ${input.country}` };
   }
   if (input.languagesSpoken !== undefined) {
@@ -77,7 +81,8 @@ export function buildPartnerUpdateData(
   if (input.introduction !== undefined) data.introduction = input.introduction;
   if (input.city !== undefined) data.city = input.city;
   if (input.country !== undefined) {
-    data.country = input.country as CoreSchema.PartnerCountryEnum;
+    data.country =
+      input.country === null ? null : (input.country as CoreSchema.PartnerCountryEnum);
   }
   if (input.languagesSpoken !== undefined) {
     data.languagesSpoken = input.languagesSpoken.map(
@@ -135,7 +140,7 @@ export const handler = async (event: RoutePayload<unknown>): Promise<SaveResult>
     });
     return { ok: true };
   } catch (err) {
-    return errorResponse(err instanceof Error ? err.message : String(err));
+    return failureResponse('save-my-partner-profile', err);
   }
 };
 

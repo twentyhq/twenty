@@ -119,27 +119,23 @@ const toMicros = (money: MoneyField) =>
     ? null
     : { amountMicros: Math.round(money.amount * MICROS), currencyCode: money.currencyCode || 'USD' };
 
-// Only enum/country fields must be omitted when empty (the save schema rejects ''
-// for those); everything else is safe to send as-is.
-const toSaveBody = (form: ProfileForm): Record<string, unknown> => {
-  const body: Record<string, unknown> = {
-    name: form.name,
-    introduction: form.introduction,
-    city: form.city,
-    languagesSpoken: form.languagesSpoken,
-    partnerScope: form.partnerScope,
-    skills: form.skills,
-    website: form.website,
-    linkedin: form.linkedin,
-    calendarLink: form.calendarLink,
-    hourlyRate: toMicros(form.hourlyRate),
-    projectBudgetMin: toMicros(form.projectBudgetMin),
-  };
-  if (form.availability !== '') body.availability = form.availability;
-  if (form.typeOfTeam !== '') body.typeOfTeam = form.typeOfTeam;
-  if (form.country !== '') body.country = form.country;
-  return body;
-};
+// Enum/country selectors send null (not '') when reset to blank so the field clears.
+const toSaveBody = (form: ProfileForm): Record<string, unknown> => ({
+  name: form.name,
+  introduction: form.introduction,
+  city: form.city,
+  languagesSpoken: form.languagesSpoken,
+  partnerScope: form.partnerScope,
+  skills: form.skills,
+  website: form.website,
+  linkedin: form.linkedin,
+  calendarLink: form.calendarLink,
+  hourlyRate: toMicros(form.hourlyRate),
+  projectBudgetMin: toMicros(form.projectBudgetMin),
+  availability: form.availability === '' ? null : form.availability,
+  typeOfTeam: form.typeOfTeam === '' ? null : form.typeOfTeam,
+  country: form.country === '' ? null : form.country,
+});
 
 const styles = {
   root: {
@@ -285,6 +281,7 @@ const MyProfile = () => {
               value={form.introduction}
               onChange={(value) => set('introduction', value)}
               placeholder="Tell clients about your team…"
+              ariaLabel="Introduction"
             />
           </Field>
         </Section>

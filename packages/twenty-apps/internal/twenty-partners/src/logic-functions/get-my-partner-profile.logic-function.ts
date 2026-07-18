@@ -5,7 +5,7 @@ import { PROFILE_OPTIONS, type ProfileOptions } from 'src/constants/my-profile.c
 
 import { isCaseStudy } from './content-type';
 import { firstFileUrl } from './profile-picture';
-import { buildAppClient, errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
+import { buildAppClient, errorResponse, failureResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
 
 export const GET_MY_PARTNER_PROFILE_ID = 'eacfd95b-de02-4f03-aa38-3cae31bb30a9';
 
@@ -110,7 +110,6 @@ const queryMyPartnerProfile = (client: CoreApiClient, partnerId: string) =>
                 clientName: true,
                 headline: true,
                 body: { markdown: true },
-                coverImage: { url: true },
                 coverImageUrl: true,
                 caseStudyLink: { primaryLinkUrl: true },
                 status: true,
@@ -168,7 +167,9 @@ export const mapMyProfilePayload = (node: PartnerNode): MyProfilePayload => ({
       clientName: e.node.clientName ?? null,
       headline: e.node.headline ?? null,
       bodyMarkdown: e.node.body?.markdown ?? null,
-      coverImageUrl: e.node.coverImageUrl || firstFileUrl(e.node.coverImage) || null,
+      // Edit form binds the text coverImageUrl field only; the file cover's signed URL
+      // must not round-trip through save (it would persist an expiring URL).
+      coverImageUrl: e.node.coverImageUrl || null,
       caseStudyLink: e.node.caseStudyLink?.primaryLinkUrl ?? null,
       status: e.node.status ?? null,
     })),
@@ -191,7 +192,7 @@ export const handler = async (
 
     return { ok: true, profile: mapMyProfilePayload(node), options: PROFILE_OPTIONS };
   } catch (err) {
-    return errorResponse(err instanceof Error ? err.message : String(err));
+    return failureResponse('get-my-partner-profile', err);
   }
 };
 

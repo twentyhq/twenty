@@ -46,6 +46,25 @@ describe('saveProfileSchema', () => {
     const parsed = saveProfileSchema.safeParse({ typeOfTeam: 'FREELANCER' });
     expect(parsed.success).toBe(false);
   });
+
+  it('rejects a negative hourlyRate amount', () => {
+    expect(
+      saveProfileSchema.safeParse({ hourlyRate: { amountMicros: -1, currencyCode: 'USD' } }).success,
+    ).toBe(false);
+  });
+
+  it('rejects a non-ISO currency code', () => {
+    expect(
+      saveProfileSchema.safeParse({ hourlyRate: { amountMicros: 100, currencyCode: 'DOLLARS' } })
+        .success,
+    ).toBe(false);
+  });
+
+  it('accepts null for clearable country and enum fields', () => {
+    expect(
+      saveProfileSchema.safeParse({ country: null, typeOfTeam: null, availability: null }).success,
+    ).toBe(true);
+  });
 });
 
 describe('validateProfileOptionValues', () => {
@@ -70,6 +89,10 @@ describe('validateProfileOptionValues', () => {
 
   it('returns null when nothing to validate is present', () => {
     expect(validateProfileOptionValues({})).toBeNull();
+  });
+
+  it('accepts a null country (clearing it)', () => {
+    expect(validateProfileOptionValues({ country: null })).toBeNull();
   });
 });
 
@@ -127,6 +150,10 @@ describe('buildPartnerUpdateData', () => {
     expect(data.typeOfTeam).toBe('AGENCY');
     expect(data.availability).toBe('AVAILABLE');
     expect(data.skills).toEqual(['Salesforce']);
+  });
+
+  it('maps a null country to null (clearing it)', () => {
+    expect(buildPartnerUpdateData({ country: null }).country).toBeNull();
   });
 
   it('returns an empty object for an empty input', () => {

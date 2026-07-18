@@ -3,7 +3,7 @@ import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { z } from 'zod';
 
 import { buildReconcilePlan } from './reconcile-children';
-import { buildAppClient, errorResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
+import { buildAppClient, errorResponse, failureResponse, resolvePartnerFromRequest } from './resolve-partner-from-request';
 
 export const SAVE_MY_PARTNER_SERVICES_ID = '878a6e36-62f4-4590-807d-ef6204d2d168';
 
@@ -128,7 +128,7 @@ export const handler = async (event: RoutePayload<unknown>): Promise<SaveService
     const services = await queryServiceRows(client, resolved.partnerId);
     return { ok: true, services };
   } catch (err) {
-    return errorResponse(err instanceof Error ? err.message : String(err));
+    return failureResponse('save-my-partner-services', err);
   }
 };
 

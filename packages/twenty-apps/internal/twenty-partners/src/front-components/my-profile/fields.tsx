@@ -157,7 +157,9 @@ export const CurrencyField = ({ label, value, onChange }: CurrencyFieldProps) =>
       onChange(null);
       return;
     }
-    const nextAmountMicros = nextAmountText.trim() === '' ? 0 : Number(nextAmountText);
+    const parsedAmount = Number(nextAmountText.trim());
+    const nextAmountMicros =
+      nextAmountText.trim() === '' || Number.isNaN(parsedAmount) ? 0 : parsedAmount;
     onChange({ amountMicros: nextAmountMicros, currencyCode: nextCurrencyCode });
   };
 
@@ -226,8 +228,9 @@ export const NumberField = ({ label, value, onChange, placeholder }: NumberField
       value={value ?? ''}
       placeholder={placeholder}
       onChange={(event: ChangeEvent<HTMLInputElement>) => {
-        const next = event.target.value;
-        onChange(next.trim() === '' ? null : Number(next));
+        const next = event.target.value.trim();
+        const parsed = Number(next);
+        onChange(next === '' || Number.isNaN(parsed) ? null : parsed);
       }}
       style={inputStyle}
     />

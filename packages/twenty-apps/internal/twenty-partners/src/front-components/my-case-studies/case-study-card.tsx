@@ -119,7 +119,19 @@ export const CaseStudyCard = ({
   onDelete,
 }: CaseStudyCardProps) => (
   <div style={cardStyle}>
-    <div style={summaryStyle} onClick={onToggleExpand}>
+    <div
+      style={summaryStyle}
+      onClick={onToggleExpand}
+      role="button"
+      tabIndex={0}
+      aria-expanded={expanded}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onToggleExpand();
+        }
+      }}
+    >
       <div style={{ minWidth: 0 }}>
         <div style={titleStyle}>{row.headline.trim() !== '' ? row.headline : 'Untitled case study'}</div>
         {row.clientName.trim() !== '' ? <div style={clientStyle}>{row.clientName}</div> : null}
@@ -139,7 +151,7 @@ export const CaseStudyCard = ({
           <TextInput value={row.headline} onChange={(v) => onChange({ headline: v })} placeholder="What you delivered" />
         </Field>
         <Field label="Story">
-          <MarkdownEditor value={row.bodyMarkdown} onChange={(v) => onChange({ bodyMarkdown: v })} placeholder="Tell the story of this project…" />
+          <MarkdownEditor value={row.bodyMarkdown} onChange={(v) => onChange({ bodyMarkdown: v })} placeholder="Tell the story of this project…" ariaLabel="Case study story" />
         </Field>
         <Field label="Case study link">
           <UrlInput value={row.caseStudyLink} onChange={(v) => onChange({ caseStudyLink: v })} placeholder="https://…" />
