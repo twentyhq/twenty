@@ -47,7 +47,8 @@ step_done
 
 step_start "Running upgrade"
 if ! yarn command:prod upgrade; then
-  echo "Warning: Upgrade completed with errors. Some workspaces may not be fully migrated. Check logs for details."
+  echo "Error: Upgrade failed. Some workspaces may not be fully migrated. Check logs for details."
+  exit 1
 fi
 step_done
 
