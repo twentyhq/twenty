@@ -13,6 +13,7 @@ import {
   type LogicFunctionInstallPrebuiltBundleParams,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
+  type LogicFunctionWarmLayersParams,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
@@ -119,6 +120,20 @@ export class LambdaDriver implements LogicFunctionDriver {
     flatLogicFunction: FlatLogicFunction,
   ): Promise<string | null> {
     return this.executorManager.getInstalledBundleChecksum(flatLogicFunction);
+  }
+
+  async warmLayers({
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: LogicFunctionWarmLayersParams): Promise<void> {
+    await this.layerManager.ensureDepsLayer({
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
+    await this.layerManager.ensureSdkLayer({
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
   }
 
   async execute({

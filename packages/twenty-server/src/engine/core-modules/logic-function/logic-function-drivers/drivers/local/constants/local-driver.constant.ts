@@ -1,11 +1,11 @@
 // TTL must exceed the worst-case cold layer build (full yarn install): if the
 // lock expires mid-build, waiters acquire it, wipe the half-built layer and
-// rebuild concurrently — a stampede that saturates the S3 connection pool.
+// rebuild concurrently, a stampede that saturates the S3 connection pool.
 export const LAYER_BUILD_LOCK_TTL_MS = 900_000;
 export const LAYER_BUILD_LOCK_RETRY_MS = 500;
-// Waiters must outlast the TTL so they wait for the winning build to finish
-// instead of timing out while it is still in progress.
-export const LAYER_BUILD_LOCK_MAX_RETRIES = 1_800;
+export const LAYER_BUILD_LOCK_MAX_RETRIES = Math.ceil(
+  LAYER_BUILD_LOCK_TTL_MS / LAYER_BUILD_LOCK_RETRY_MS,
+);
 
 export const LAYER_BUILD_READY_SENTINEL = '.twenty-layer-ready';
 
