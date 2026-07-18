@@ -28,6 +28,7 @@ type CallRecordingNode = {
   recordingRequestStatus?: string | null;
   calendarEventId?: string | null;
   externalBotId?: string | null;
+  botScheduleAttemptedAt?: string | null;
   callRecorderFailureReason?: string | null;
 };
 
@@ -217,6 +218,11 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
 
     expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
     expect(result.attachedCallRecordingIds).toEqual([]);
+    // A row that never attempted a bot creation needs no Recall lookup.
+    expect(listBotRequestUrls()).toHaveLength(0);
+    expect(client.callRecordings[0].botScheduleAttemptedAt).toBe(
+      NOW.toISOString(),
+    );
     expect(createBotCalls()).toHaveLength(1);
     const [requestUrl, requestInit] = createBotCalls()[0];
     expect(requestUrl).toBe(RECALL_CREATE_BOT_URL);
@@ -247,7 +253,11 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
       ],
     });
     const client = new FakeCoreApiClient({
-      callRecordings: [buildPendingCallRecording()],
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
+        }),
+      ],
       calendarEvents: [buildCalendarEvent()],
     });
 
@@ -294,10 +304,13 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     });
     const client = new FakeCoreApiClient({
       callRecordings: [
-        buildPendingCallRecording(),
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
+        }),
         buildPendingCallRecording({
           id: 'call-recording-2',
           calendarEventId: 'calendar-event-2',
+          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
         }),
       ],
       calendarEvents: [
@@ -320,7 +333,11 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
   it('defers scheduling when the existing-bot lookup fails so no duplicate bot is created', async () => {
     stubRecallApi({ listStatus: 400 });
     const client = new FakeCoreApiClient({
-      callRecordings: [buildPendingCallRecording()],
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
+        }),
+      ],
       calendarEvents: [buildCalendarEvent()],
     });
 
@@ -333,6 +350,27 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(result.scheduledCallRecordingIds).toEqual([]);
     expect(createBotCalls()).toHaveLength(0);
     expect(client.callRecordings[0].externalBotId).toBeNull();
+  });
+
+  it('re-schedules an ambiguous recording when the lookup confirms no bot exists', async () => {
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
+        }),
+      ],
+      calendarEvents: [buildCalendarEvent()],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(listBotRequestUrls()).toHaveLength(1);
+    expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
+    expect(createBotCalls()).toHaveLength(1);
+    expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
   });
 
   it('does not report a recording as scheduled when Recall scheduling fails', async () => {

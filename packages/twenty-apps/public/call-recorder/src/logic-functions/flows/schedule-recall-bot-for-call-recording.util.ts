@@ -50,6 +50,14 @@ export const scheduleRecallBotForCallRecording = async (
 
   const automaticVideoOutput = await buildRecallBotAutomaticVideoOutput();
 
+  // Persisted before the POST so a crash leaves proof that a bot creation may
+  // have reached Recall; rows without this marker can be re-scheduled without
+  // asking Recall whether a bot already exists.
+  await updateCallRecording(client, {
+    id: callRecording.id,
+    data: { botScheduleAttemptedAt: new Date().toISOString() },
+  });
+
   const scheduleResult = await scheduleRecallBot({
     meetingUrl,
     joinAt,
