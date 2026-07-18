@@ -52692,6 +52692,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"twenty-agent-skills@workspace:packages/twenty-agent-skills":
+  version: 0.0.0-use.local
+  resolution: "twenty-agent-skills@workspace:packages/twenty-agent-skills"
+  languageName: unknown
+  linkType: soft
+
 "twenty-claude-skills@workspace:packages/twenty-claude-skills":
   version: 0.0.0-use.local
   resolution: "twenty-claude-skills@workspace:packages/twenty-claude-skills"
