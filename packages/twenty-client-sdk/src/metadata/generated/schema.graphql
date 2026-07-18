@@ -3673,6 +3673,7 @@ input UpsertViewWidgetViewFieldInput {
   isVisible: Boolean!
   position: Float!
   size: Float
+  aggregateOperation: AggregateOperations
 }
 
 input UpsertViewWidgetViewFilterInput {

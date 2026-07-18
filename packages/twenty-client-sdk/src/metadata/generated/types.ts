@@ -9654,6 +9654,9 @@ export default {
             "size": [
                 12
             ],
+            "aggregateOperation": [
+                56
+            ],
             "__typename": [
                 1
             ]

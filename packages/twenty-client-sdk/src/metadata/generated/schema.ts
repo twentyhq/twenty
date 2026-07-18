@@ -6302,7 +6302,7 @@ export interface UpsertViewWidgetViewFieldInput {
 /** The id of an existing view field to update. */
 viewFieldId?: (Scalars['UUID'] | null),
 /** The field metadata id. Used to create a new view field when viewFieldId is not provided. */
-fieldMetadataId?: (Scalars['UUID'] | null),isVisible: Scalars['Boolean'],position: Scalars['Float'],size?: (Scalars['Float'] | null)}
+fieldMetadataId?: (Scalars['UUID'] | null),isVisible: Scalars['Boolean'],position: Scalars['Float'],size?: (Scalars['Float'] | null),aggregateOperation?: (AggregateOperations | null)}
 
 export interface UpsertViewWidgetViewFilterInput {id?: (Scalars['UUID'] | null),fieldMetadataId: Scalars['UUID'],operand?: (ViewFilterOperand | null),value: Scalars['JSON'],viewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),subFieldName?: (Scalars['String'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null)}
 
