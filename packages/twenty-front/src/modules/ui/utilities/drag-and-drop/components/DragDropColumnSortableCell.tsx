@@ -1,4 +1,7 @@
-import { RestrictToHorizontalAxis } from '@dnd-kit/abstract/modifiers';
+import {
+  RestrictToHorizontalAxis,
+  RestrictToVerticalAxis,
+} from '@dnd-kit/abstract/modifiers';
 import { SortableKeyboardPlugin } from '@dnd-kit/dom/sortable';
 import { useSortable } from '@dnd-kit/react/sortable';
 import { styled } from '@linaria/react';
@@ -10,9 +13,6 @@ const SORTABLE_COLLISION_PRIORITY = 3;
 
 const PLUGINS_WITHOUT_OPTIMISTIC = [SortableKeyboardPlugin];
 
-// Columns can only be reordered horizontally, so keep the drag preview locked to the header row.
-const SORTABLE_MODIFIERS = [RestrictToHorizontalAxis];
-
 const SORTABLE_TRANSITION = {
   duration: 180,
   easing: 'cubic-bezier(0.2, 0, 0, 1)',
@@ -21,6 +21,7 @@ const SORTABLE_TRANSITION = {
 
 const StyledSortableRoot = styled.div<{ $fill?: boolean }>`
   display: ${({ $fill }) => ($fill ? 'flex' : 'block')};
+  flex-shrink: ${({ $fill }) => ($fill ? 0 : 'initial')};
   height: ${({ $fill }) => ($fill ? '100%' : 'auto')};
   min-height: 0;
   min-width: ${({ $fill }) => ($fill ? '0' : 'auto')};
@@ -30,26 +31,37 @@ const StyledSortableRoot = styled.div<{ $fill?: boolean }>`
 `;
 
 type DragDropColumnSortableCellProps = {
+  accept?: string;
   children: ReactNode;
   disabled?: boolean;
+  enableOptimisticSorting?: boolean;
   fill?: boolean;
   group: string;
   id: string;
   index: number;
+  restrictMovementToXAxis?: boolean;
+  restrictMovementToYAxis?: boolean;
+  type?: string;
 };
 
 export const DragDropColumnSortableCell = ({
+  accept,
   children,
   disabled = false,
   fill = false,
   group,
   id,
   index,
+  restrictMovementToXAxis = false,
+  restrictMovementToYAxis = false,
+  type,
 }: DragDropColumnSortableCellProps) => {
   const { handleRef, ref } = useSortable({
     id,
     index,
     group,
+    type,
+    accept,
     collisionPriority: SORTABLE_COLLISION_PRIORITY,
     data: {
       droppableId: group,
@@ -58,7 +70,10 @@ export const DragDropColumnSortableCell = ({
     disabled,
     transition: SORTABLE_TRANSITION,
     plugins: PLUGINS_WITHOUT_OPTIMISTIC,
-    modifiers: SORTABLE_MODIFIERS,
+    modifiers: [
+      ...(restrictMovementToXAxis ? [RestrictToHorizontalAxis] : []),
+      ...(restrictMovementToYAxis ? [RestrictToVerticalAxis] : []),
+    ],
     feedback: 'clone',
   });
 

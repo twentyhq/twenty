@@ -24,7 +24,11 @@ export const RecordBoardColumnDnd = () => {
         droppableId={RECORD_BOARD_COLUMN_DROPPABLE_ID}
         index={0}
       >
-        <DragDropColumnDropTarget index={0} compact overlay />
+        <DragDropColumnDropTarget
+          index={0}
+          orientation="vertical"
+          overlay
+        />
       </DragDropColumnDroppableSlot>
       {visibleRecordGroupIds.map((recordGroupId, index) => (
         <Fragment key={recordGroupId}>
@@ -33,6 +37,7 @@ export const RecordBoardColumnDnd = () => {
             index={index}
             group={RECORD_BOARD_COLUMN_DROPPABLE_ID}
             fill
+            restrictMovementToXAxis
           >
             <RecordGroupContext.Provider value={{ recordGroupId }}>
               <RecordBoardColumnHeaderWrapper
@@ -45,7 +50,11 @@ export const RecordBoardColumnDnd = () => {
             droppableId={RECORD_BOARD_COLUMN_DROPPABLE_ID}
             index={index + 1}
           >
-            <DragDropColumnDropTarget index={index + 1} compact overlay />
+            <DragDropColumnDropTarget
+              index={index + 1}
+              orientation="vertical"
+              overlay
+            />
           </DragDropColumnDroppableSlot>
         </Fragment>
       ))}

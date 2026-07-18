@@ -1,69 +1,111 @@
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DragDropColumnDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropColumnDndContext';
 
+type DragDropColumnDropTargetOrientation = 'vertical' | 'horizontal';
+
 const StyledDropTarget = styled.div<{
-  $compact?: boolean;
   $overlay?: boolean;
 }>`
-  height: 100%;
-  min-height: ${({ $compact }) =>
-    $compact ? '100%' : themeCssVariables.spacing[2]};
-  position: ${({ $overlay }) => ($overlay ? 'absolute' : 'relative')};
+  position: relative;
   transition: background-color 120ms ease-out;
-  width: 100%;
+
+  &[data-orientation='vertical'] {
+    height: 100%;
+    width: 100%;
+  }
+
+  &[data-orientation='horizontal'] {
+    width: 100%;
+  }
 
   &::before {
     background-color: ${themeCssVariables.color.blue};
-    border-radius: 0 ${themeCssVariables.border.radius.sm}
-      ${themeCssVariables.border.radius.sm} 0;
+    border-radius: ${themeCssVariables.border.radius.sm};
     content: '';
-    height: 100%;
-    left: 0;
     opacity: 0;
     position: absolute;
-    top: 0;
-    transform: scaleY(0.7);
     transform-origin: center;
     transition:
       opacity 120ms ease-out,
       transform 120ms ease-out;
+  }
+
+  &[data-orientation='vertical']::before {
+    height: 100%;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%) scaleY(0.7);
     width: 2px;
+  }
+
+  &[data-orientation='horizontal']::before {
+    height: 2px;
+    left: 0;
+    top: 50%;
+    transform: translateY(calc(-50% - ${themeCssVariables.spacing[1]}))
+      scaleX(0.7);
+    width: 100%;
   }
 
   &[data-drag-over='true'] {
     background-color: ${themeCssVariables.background.transparent.blue};
   }
 
-  &[data-drag-over='true']::before {
+  &[data-orientation='vertical'][data-drag-over='true']::before {
     opacity: 1;
-    transform: scaleY(1);
+    transform: translateX(-50%) scaleY(1);
+  }
+
+  &[data-orientation='horizontal'][data-drag-over='true']::before {
+    opacity: 1;
+    transform: translateY(calc(-50% - ${themeCssVariables.spacing[1]}))
+      scaleX(1);
+  }
+
+  &[data-orientation='horizontal'][data-leading='true']::before {
+    top: 0;
+    transform: scaleX(0.7);
+    z-index: 1;
+  }
+
+  &[data-orientation='horizontal'][data-leading='true'][data-drag-over='true']::before {
+    transform: scaleX(1);
   }
 `;
 
 type DragDropColumnDropTargetProps = {
   children?: ReactNode;
-  compact?: boolean;
+  droppableId?: string;
   index: number;
+  orientation?: DragDropColumnDropTargetOrientation;
   overlay?: boolean;
 };
 
 export const DragDropColumnDropTarget = ({
   children,
-  compact = false,
+  droppableId,
   index,
+  orientation,
   overlay = false,
 }: DragDropColumnDropTargetProps) => {
-  const { activeDropTargetIndex } = useContext(DragDropColumnDndContext);
+  const { activeDropTargetIndex, activeDroppableId } = useContext(
+    DragDropColumnDndContext,
+  );
 
-  const isDragOver = activeDropTargetIndex === index;
+  const matchesDroppable =
+    !isDefined(droppableId) || activeDroppableId === droppableId;
+
+  const isDragOver = activeDropTargetIndex === index && matchesDroppable;
 
   return (
     <StyledDropTarget
-      $compact={compact}
       $overlay={overlay}
+      data-orientation={orientation}
+      data-leading={orientation === 'horizontal' && index === 0 ? 'true' : undefined}
       data-drag-over={isDragOver ? 'true' : undefined}
     >
       {children}

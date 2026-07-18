@@ -35,6 +35,7 @@ import { useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseInOut } from 'twenty-ui/layout';
 import { useDebouncedCallback } from 'use-debounce';
+import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
 
 const StyledCardContainer = styled.div<{ isPrimaryMultiDrag?: boolean }>`
   position: relative;
@@ -115,6 +116,12 @@ export const RecordBoardCard = () => {
   const { activateBoardCard } = useActiveRecordBoardCard(recordBoardId);
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
+  const {
+    onPointerCancel: handlePointerCancel,
+    onPointerDown: handlePointerDown,
+    onPointerUp: handlePointerUp,
+  } = useDisableDragSelectOnPointerDown();
+
   const handleContextMenuOpen = (event: React.MouseEvent) => {
     event.preventDefault();
     setIsRecordBoardCardSelected(true);
@@ -157,7 +164,12 @@ export const RecordBoardCard = () => {
       >
         <StyledBoardCardWrapper
           data-click-outside-id={RECORD_BOARD_CARD_CLICK_OUTSIDE_ID}
+          data-selectable-id={recordId}
+          data-select-disable
           onContextMenu={handleContextMenuOpen}
+          onPointerCancel={handlePointerCancel}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
         >
           <StyledCardContainer
             isPrimaryMultiDrag={isRecordIdPrimaryDragMultiple}

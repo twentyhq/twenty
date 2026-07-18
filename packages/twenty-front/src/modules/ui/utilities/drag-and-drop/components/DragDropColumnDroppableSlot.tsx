@@ -4,6 +4,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { type DragDropColumnData } from '@/ui/utilities/drag-and-drop/types/DragDropColumnData';
+import { DND_KIT_COLLISION_PRIORITY } from '@/ui/utilities/drag-and-drop/constants/DndKitCollisionPriority';
 
 const StyledSlotWrapper = styled.div`
   align-self: stretch;
@@ -15,8 +16,6 @@ const StyledSlotWrapper = styled.div`
   z-index: 100;
 `;
 
-const SLOT_COLLISION_PRIORITY = 1;
-
 type DragDropColumnDroppableSlotProps = {
   children?: ReactNode;
   collisionPriority?: number;
@@ -27,7 +26,7 @@ type DragDropColumnDroppableSlotProps = {
 
 export const DragDropColumnDroppableSlot = ({
   children,
-  collisionPriority = SLOT_COLLISION_PRIORITY,
+  collisionPriority = DND_KIT_COLLISION_PRIORITY,
   disabled = false,
   droppableId,
   index,
