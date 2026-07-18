@@ -46,7 +46,8 @@ export class LogicFunctionWarmupDispatcher implements OnApplicationBootstrap {
           LogicFunctionWarmupJob.name,
           { workspaceId: activeWorkspace.id },
           {
-            id: `logic-function-warmup:${activeWorkspace.id}`,
+            // BullMQ rejects custom job ids containing ':'
+            id: `logic-function-warmup-${activeWorkspace.id}`,
             retryLimit: 2,
           },
         );
