@@ -4,9 +4,9 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
+import { canRescheduleCallRecordingWithoutRecallLookup } from 'src/logic-functions/domain/can-reschedule-call-recording-without-recall-lookup.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { hasMeetingEnded } from 'src/logic-functions/domain/has-meeting-ended.util';
-import { hasUnchangedBotScheduleIdempotencyKey } from 'src/logic-functions/domain/has-unchanged-bot-schedule-idempotency-key.util';
 import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findOpenScheduledCallRecordings } from 'src/logic-functions/data/find-open-scheduled-call-recordings.util';
@@ -99,12 +99,20 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
   // Recall lookup.
   const workspaceId = getCurrentWorkspaceId();
   const ambiguousCallRecordings = resumableCallRecordings.filter(
-    (resumableCallRecording) =>
-      !canRescheduleWithoutRecallLookup(resumableCallRecording, workspaceId),
+    ({ callRecording, calendarEvent }) =>
+      !canRescheduleCallRecordingWithoutRecallLookup({
+        callRecording,
+        calendarEvent,
+        workspaceId,
+      }),
   );
   const unambiguousCallRecordings = resumableCallRecordings.filter(
-    (resumableCallRecording) =>
-      canRescheduleWithoutRecallLookup(resumableCallRecording, workspaceId),
+    ({ callRecording, calendarEvent }) =>
+      canRescheduleCallRecordingWithoutRecallLookup({
+        callRecording,
+        calendarEvent,
+        workspaceId,
+      }),
   );
 
   for (const { callRecording, calendarEvent } of unambiguousCallRecordings) {
@@ -154,18 +162,6 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
 
   return result;
 };
-
-const canRescheduleWithoutRecallLookup = (
-  { callRecording, calendarEvent }: ResumableCallRecording,
-  workspaceId: string | undefined,
-): boolean =>
-  isUndefined(callRecording.botScheduleAttemptedAt) ||
-  (!isUndefined(workspaceId) &&
-    hasUnchangedBotScheduleIdempotencyKey({
-      callRecording,
-      calendarEvent,
-      workspaceId,
-    }));
 
 const scheduleBotForResumableCallRecording = async ({
   client,
