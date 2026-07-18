@@ -2,6 +2,7 @@ import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
+import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
 import { buildRecallBotAutomaticVideoOutput } from 'src/logic-functions/domain/build-recall-bot-automatic-video-output.util';
 import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-recall-routing-metadata.util';
@@ -36,6 +37,7 @@ export const scheduleRecallBotForCallRecording = async (
     isUndefined(freshCallRecording) ||
     freshCallRecording.recordingRequestStatus !==
       CallRecordingRequestStatus.REQUESTED ||
+    freshCallRecording.status !== CallRecordingStatus.SCHEDULED ||
     !isUndefined(freshCallRecording.externalBotId)
   ) {
     return false;
@@ -65,11 +67,19 @@ export const scheduleRecallBotForCallRecording = async (
   // Persisted before the POST so a crash leaves proof that a bot creation may
   // have reached Recall; while the stored key still matches the scheduling
   // inputs, recovery can re-send the creation idempotently instead of asking
-  // Recall whether a bot already exists.
+  // Recall whether a bot already exists. Re-sends of the same key keep the
+  // first attempt's timestamp so repeated unknown outcomes age out of the
+  // resend window instead of staying trusted forever.
+  const recordedAttemptTimestamp =
+    freshCallRecording.botScheduleIdempotencyKey === idempotencyKey
+      ? freshCallRecording.botScheduleAttemptedAt
+      : undefined;
+
   await updateCallRecording(client, {
     id: callRecording.id,
     data: {
-      botScheduleAttemptedAt: new Date().toISOString(),
+      botScheduleAttemptedAt:
+        recordedAttemptTimestamp ?? new Date().toISOString(),
       botScheduleIdempotencyKey: idempotencyKey,
     },
   });

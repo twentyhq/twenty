@@ -33,6 +33,16 @@ export const findScheduledRecallBotIdsByCallRecordingId =
       return { ok: false };
     }
 
+    // A truncated list can hide existing bots; callers treat a map miss as
+    // permission to create, so an incomplete map must read as a failed lookup.
+    if (listResult.truncated) {
+      console.warn(
+        '[call-recorder] Recall bot list was truncated; deferring bot recovery to the next run',
+      );
+
+      return { ok: false };
+    }
+
     const externalBotIdByCallRecordingId = new Map<string, string>();
 
     for (const bot of listResult.bots) {

@@ -212,6 +212,67 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it('defers rows with an ambiguous prior attempt to the recovery cron instead of listing bots', async () => {
+    queryMock.mockImplementationOnce(async () => ({
+      callRecordings: buildConnection([
+        {
+          id: 'call-recording-1',
+          status: 'SCHEDULED',
+          recordingRequestStatus: 'REQUESTED',
+          calendarEventId: 'calendar-event-1',
+          externalBotId: null,
+          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
+          botScheduleIdempotencyKey: 'stale-key-from-moved-meeting',
+        },
+      ]),
+    }));
+    queryMock.mockImplementationOnce(async () => ({
+      calendarEvents: buildConnection([
+        {
+          id: 'calendar-event-1',
+          startsAt: '2026-01-01T13:00:00.000Z',
+          endsAt: '2026-01-01T14:00:00.000Z',
+          conferenceLink: {
+            primaryLinkUrl: 'https://meet.example.com/customer-sync',
+          },
+        },
+      ]),
+    }));
+
+    const result = await scheduleRecallBotOnCallRecordingUpdateHandler(
+      buildUpdateEvent(),
+    );
+
+    expect(result).toEqual({
+      callRecordingId: 'call-recording-1',
+      result: {
+        status: 'deferred',
+        reason: 'ambiguous prior attempt; the recovery cron will reconcile it',
+      },
+    });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('skips slim payloads whose diff shows the bot id was written back', async () => {
+    const result = await scheduleRecallBotOnCallRecordingUpdateHandler(
+      buildUpdateEvent({
+        properties: {
+          updatedFields: ['externalBotId'],
+          diff: {
+            externalBotId: { before: null, after: 'recall-bot-1' },
+          },
+        },
+      } as unknown as HandlerEvent),
+    );
+
+    expect(result).toEqual({
+      skipped: true,
+      reason: 'call recording is not pending',
+    });
+    expect(queryMock).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it('does not schedule anything when the meeting already ended', async () => {
     stubPendingCallRecordingQueries();
     queryMock.mockImplementationOnce(async () => ({

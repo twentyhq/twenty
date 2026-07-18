@@ -48,21 +48,32 @@ export const retryFailedRecallCancellations = async ({
       )
     ).map((calendarEvent) => [calendarEvent.id, calendarEvent]),
   );
+  const recoverableCallRecordingIds = new Set(
+    canceledCallRecordings
+      .filter(
+        (callRecording) =>
+          isUndefined(callRecording.externalBotId) &&
+          isWithinCanceledBotRecoveryWindow({
+            callRecording,
+            calendarEvent: isUndefined(callRecording.calendarEventId)
+              ? undefined
+              : calendarEventsById.get(callRecording.calendarEventId),
+            now,
+          }),
+      )
+      .map((callRecording) => callRecording.id),
+  );
   const externalBotIdByCallRecordingId =
-    await lookupRecoverableExternalBotIds({
-      canceledCallRecordings,
-      calendarEventsById,
-      now,
-    });
+    await lookupRecoverableExternalBotIds(recoverableCallRecordingIds);
   const canceledExternalBotCallRecordingIds: string[] = [];
 
   for (const callRecording of canceledCallRecordings) {
     const externalBotId = await recoverRecallBotIdForCanceledCallRecording({
       client,
       callRecording,
-      listedExternalBotId: externalBotIdByCallRecordingId?.get(
-        callRecording.id,
-      ),
+      listedExternalBotId: recoverableCallRecordingIds.has(callRecording.id)
+        ? externalBotIdByCallRecordingId?.get(callRecording.id)
+        : undefined,
     });
 
     if (isUndefined(externalBotId)) {
@@ -103,28 +114,10 @@ export const retryFailedRecallCancellations = async ({
 
 // One workspace-wide list request covers every recoverable row; undefined
 // means the lookup failed and recovery must wait for the next run.
-const lookupRecoverableExternalBotIds = async ({
-  canceledCallRecordings,
-  calendarEventsById,
-  now,
-}: {
-  canceledCallRecordings: CallRecordingRecord[];
-  calendarEventsById: Map<string, CalendarEventRecord>;
-  now: Date;
-}): Promise<Map<string, string> | undefined> => {
-  const hasRecoverableCallRecording = canceledCallRecordings.some(
-    (callRecording) =>
-      isUndefined(callRecording.externalBotId) &&
-      isWithinCanceledBotRecoveryWindow({
-        callRecording,
-        calendarEvent: isUndefined(callRecording.calendarEventId)
-          ? undefined
-          : calendarEventsById.get(callRecording.calendarEventId),
-        now,
-      }),
-  );
-
-  if (!hasRecoverableCallRecording) {
+const lookupRecoverableExternalBotIds = async (
+  recoverableCallRecordingIds: Set<string>,
+): Promise<Map<string, string> | undefined> => {
+  if (recoverableCallRecordingIds.size === 0) {
     return new Map();
   }
 

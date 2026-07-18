@@ -386,6 +386,11 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
       'Idempotency-Key': unchangedIdempotencyKey,
     });
     expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
+    // The first attempt timestamp survives the re-send so repeated unknown
+    // outcomes age out of the resend window.
+    expect(client.callRecordings[0].botScheduleAttemptedAt).toBe(
+      '2026-01-01T11:55:00.000Z',
+    );
   });
 
   it('falls back to the Recall lookup when the recorded attempt is too old to trust its idempotency key', async () => {
@@ -508,6 +513,59 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(client.callRecordings[0].status).toBe('FAILED');
     expect(client.callRecordings[0].callRecorderFailureReason).toBe(
       'bot_never_scheduled',
+    );
+  });
+
+  it('keeps an ended recording with an unresolved attempt pending while convergence may still resolve it', async () => {
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: '2026-01-01T09:55:00.000Z',
+        }),
+      ],
+      calendarEvents: [
+        buildCalendarEvent({
+          startsAt: PAST_STARTS_AT,
+          endsAt: PAST_ENDS_AT,
+        }),
+      ],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(result.markedFailedCallRecordingIds).toEqual([]);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(client.callRecordings[0].status).toBe('SCHEDULED');
+  });
+
+  it('fails an ended recording with an unresolved attempt once the convergence lookback has passed', async () => {
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: '2025-12-20T09:55:00.000Z',
+        }),
+      ],
+      calendarEvents: [
+        buildCalendarEvent({
+          startsAt: '2025-12-20T10:00:00.000Z',
+          endsAt: '2025-12-20T11:00:00.000Z',
+        }),
+      ],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(result.markedFailedCallRecordingIds).toEqual(['call-recording-1']);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(client.callRecordings[0].status).toBe('FAILED');
+    expect(client.callRecordings[0].callRecorderFailureReason).toBe(
+      'bot_schedule_outcome_unknown',
     );
   });
 

@@ -66,12 +66,7 @@ export const scheduleRecallBotOnCallRecordingUpdateHandler = async (
     return { skipped: true, reason: 'no pending-transition field changed' };
   }
 
-  const callRecordingAfterUpdate = event.properties.after;
-
-  if (
-    !isUndefined(callRecordingAfterUpdate) &&
-    !isPendingCallRecording(callRecordingAfterUpdate)
-  ) {
+  if (contradictsPendingCallRecording(event.properties)) {
     return { skipped: true, reason: 'call recording is not pending' };
   }
 
@@ -84,14 +79,41 @@ export const scheduleRecallBotOnCallRecordingUpdateHandler = async (
   return { callRecordingId: event.recordId, result };
 };
 
-const isPendingCallRecording = (
-  callRecording: CallRecordingForDatabaseEvent,
-): boolean =>
-  callRecording.recordingRequestStatus ===
-    CallRecordingRequestStatus.REQUESTED &&
-  callRecording.status === CallRecordingStatus.SCHEDULED &&
-  (isUndefined(callRecording.externalBotId) ||
-    callRecording.externalBotId === null);
+// Values can come from a full `after` snapshot or, on slim payloads, from the
+// per-field diff; any known value that contradicts the pending shape lets the
+// trigger skip without the authoritative fetch. Unknown values stay ambiguous
+// and the resume flow re-fetches to decide.
+const contradictsPendingCallRecording = (
+  properties: CallRecordingDatabaseEvent['properties'],
+): boolean => {
+  const knownValues = properties.after ?? resolveDiffAfterValues(properties);
+
+  return (
+    (!isUndefined(knownValues.recordingRequestStatus) &&
+      knownValues.recordingRequestStatus !==
+        CallRecordingRequestStatus.REQUESTED) ||
+    (!isUndefined(knownValues.status) &&
+      knownValues.status !== CallRecordingStatus.SCHEDULED) ||
+    (!isUndefined(knownValues.externalBotId) &&
+      knownValues.externalBotId !== null)
+  );
+};
+
+const resolveDiffAfterValues = (
+  properties: CallRecordingDatabaseEvent['properties'],
+): Partial<CallRecordingForDatabaseEvent> => {
+  const diff = properties.diff ?? {};
+
+  return {
+    ...(isUndefined(diff.status) ? {} : { status: diff.status.after }),
+    ...(isUndefined(diff.recordingRequestStatus)
+      ? {}
+      : { recordingRequestStatus: diff.recordingRequestStatus.after }),
+    ...(isUndefined(diff.externalBotId)
+      ? {}
+      : { externalBotId: diff.externalBotId.after }),
+  };
+};
 
 export default defineLogicFunction({
   universalIdentifier:

@@ -39,9 +39,16 @@ const isWithinIdempotentResendWindow = (
 ): boolean => {
   const attemptedTime = new Date(botScheduleAttemptedAt).getTime();
 
+  if (Number.isNaN(attemptedTime)) {
+    return false;
+  }
+
+  const elapsedMilliseconds = now.getTime() - attemptedTime;
+
+  // A future timestamp means clock skew or corrupt data; treat it as
+  // untrustworthy rather than fresh.
   return (
-    !Number.isNaN(attemptedTime) &&
-    now.getTime() - attemptedTime <
-      IDEMPOTENT_RESEND_WINDOW_HOURS * 60 * 60 * 1000
+    elapsedMilliseconds >= 0 &&
+    elapsedMilliseconds < IDEMPOTENT_RESEND_WINDOW_HOURS * 60 * 60 * 1000
   );
 };
