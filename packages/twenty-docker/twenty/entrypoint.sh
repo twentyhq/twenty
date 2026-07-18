@@ -20,8 +20,17 @@ setup_and_migrate_db() {
         echo "Warning: Failed to flush cache before upgrade, but continuing startup..."
     fi
 
+    # Fail-closed: a failed upgrade must abort startup rather than serve a
+    # half-migrated schema (missing columns -> live 500s while the deploy looks
+    # healthy). Opt out with UPGRADE_CONTINUE_ON_ERROR=true to keep the previous
+    # soft-fail behaviour.
     if ! yarn command:prod upgrade; then
-        echo "Warning: Upgrade completed with errors. Some workspaces may not be fully migrated. Check logs for details."
+        if [ "${UPGRADE_CONTINUE_ON_ERROR}" = "true" ]; then
+            echo "Warning: Upgrade completed with errors; continuing because UPGRADE_CONTINUE_ON_ERROR=true. Some workspaces may not be fully migrated. Check logs for details."
+        else
+            echo "ERROR: Upgrade failed. Aborting startup to avoid serving a half-migrated schema. Set UPGRADE_CONTINUE_ON_ERROR=true to override."
+            exit 1
+        fi
     fi
 
     if ! yarn command:prod cache:flush; then

@@ -2023,7 +2023,12 @@ export class ConfigVariables {
   })
   @CastToPositiveNumber()
   @IsOptional()
-  PG_DATABASE_PRIMARY_TIMEOUT_MS: number = 10000;
+  // 10s is too aggressive for migration DDL: adding a GENERATED tsvector column
+  // (e.g. timelineActivity.searchVector) backfills every existing row, so on
+  // large tables the ALTER TABLE exceeds the client query timeout and aborts the
+  // upgrade (see #22760). Default raised so heavy migration DDL is not killed;
+  // operators can still override via env.
+  PG_DATABASE_PRIMARY_TIMEOUT_MS: number = 120000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
