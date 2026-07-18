@@ -104,6 +104,7 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
         callRecording,
         calendarEvent,
         workspaceId,
+        now,
       }),
   );
   const unambiguousCallRecordings = resumableCallRecordings.filter(
@@ -112,6 +113,7 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
         callRecording,
         calendarEvent,
         workspaceId,
+        now,
       }),
   );
 

@@ -388,6 +388,34 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
   });
 
+  it('falls back to the Recall lookup when the recorded attempt is too old to trust its idempotency key', async () => {
+    const unchangedIdempotencyKey = computeRecallBotCreationIdempotencyKey({
+      meetingUrl: 'https://meet.example.com/customer-sync',
+      joinAt: computeRecallBotJoinAt(UPCOMING_STARTS_AT),
+      metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
+        twentyCallRecordingId: 'call-recording-1',
+      },
+    });
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: '2025-12-30T12:00:00.000Z',
+          botScheduleIdempotencyKey: unchangedIdempotencyKey,
+        }),
+      ],
+      calendarEvents: [buildCalendarEvent()],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(listBotRequestUrls()).toHaveLength(1);
+    expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
+  });
+
   it('falls back to the Recall lookup when the meeting moved since the recorded attempt', async () => {
     const staleIdempotencyKey = computeRecallBotCreationIdempotencyKey({
       meetingUrl: 'https://meet.example.com/customer-sync',

@@ -77,6 +77,7 @@ export const resumePendingCallRecording = async ({
       callRecording,
       calendarEvent,
       workspaceId: getCurrentWorkspaceId(),
+      now,
     })
   ) {
     return scheduleBot({ client, callRecording, calendarEvent });
