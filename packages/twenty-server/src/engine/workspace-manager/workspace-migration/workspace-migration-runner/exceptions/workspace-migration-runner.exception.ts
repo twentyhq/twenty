@@ -3,6 +3,7 @@ import { msg } from '@lingui/core/macro';
 import { assertUnreachable, CustomError } from 'twenty-shared/utils';
 
 import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import { CustomException } from 'src/utils/custom-exception';
 
 export const WorkspaceMigrationRunnerExceptionCode = {
   INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
@@ -75,8 +76,17 @@ export class WorkspaceMigrationRunnerException extends CustomError {
       this.code = args.code;
     }
 
+    const nestedError =
+      args.code === WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED
+        ? (args.errors.workspaceSchema ??
+          args.errors.metadata ??
+          args.errors.actionTranspilation)
+        : undefined;
+
     this.userFriendlyMessage =
       args.userFriendlyMessage ??
-      getWorkspaceMigrationRunnerExceptionUserFriendlyMessage(args.code);
+      (nestedError instanceof CustomException
+        ? nestedError.userFriendlyMessage
+        : getWorkspaceMigrationRunnerExceptionUserFriendlyMessage(args.code));
   }
 }

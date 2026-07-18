@@ -5,14 +5,44 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
-
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
+import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
 import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { CustomException } from 'src/utils/custom-exception';
 
+const filteredPostgresErrorCodes = new Set<string>([
+  POSTGRESQL_ERROR_CODES.IN_FAILED_SQL_TRANSACTION,
+]);
+
+type GraphQLErrorExtensions = {
+  code?: string;
+  action?: { type?: string; metadataName?: string };
+  errors?: Record<string, { code?: string }>;
+  exception?: { code?: string };
+};
+
 export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInterface {
+  private shouldSkipCapture(exception: unknown): boolean {
+    if (typeof exception !== 'object' || !exception) {
+      return false;
+    }
+
+    const exceptionExtensions = (exception as {
+      extensions?: GraphQLErrorExtensions;
+    }).extensions;
+
+    const postgresErrorCode =
+      exceptionExtensions?.exception?.code ??
+      (exception instanceof PostgresException ? exception.code : undefined);
+
+    return postgresErrorCode
+      ? filteredPostgresErrorCodes.has(postgresErrorCode)
+      : false;
+  }
+
   captureExceptions(
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     exceptions: ReadonlyArray<any>,
@@ -32,6 +62,10 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
 
       if (options?.workspace) {
         scope.setExtra('workspace', options.workspace);
+
+        if (options.workspace.id) {
+          scope.setTag('workspaceId', options.workspace.id);
+        }
       }
 
       if (options?.additionalData) {
@@ -48,6 +82,16 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
       }
 
       for (const exception of exceptions) {
+        if (this.shouldSkipCapture(exception)) {
+          scope.addBreadcrumb({
+            category: 'sentry.filter',
+            level: 'debug',
+            message: 'Filtered secondary PostgreSQL transaction error',
+          });
+
+          continue;
+        }
+
         const errorPath = (exception.path ?? [])
           .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
           .join(' > ');
@@ -72,6 +116,43 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
             message: exception.cause.message,
             stack: exception.cause.stack,
           });
+        }
+
+        const exceptionExtensions =
+          typeof exception === 'object' && exception
+            ? (exception as { extensions?: GraphQLErrorExtensions })
+                .extensions
+            : undefined;
+
+        if (
+          exceptionExtensions?.code === ErrorCode.APPLICATION_INSTALLATION_FAILED
+        ) {
+          const migrationAction = exceptionExtensions.action;
+          const migrationErrorCodes = Object.values(
+            exceptionExtensions.errors ?? {},
+          )
+            .map((error) => error.code)
+            .filter(isDefined);
+
+          scope.setTag('workspaceMigrationFailure', 'true');
+          scope.setTag(
+            'workspaceMigrationActionType',
+            migrationAction?.type ?? 'unknown',
+          );
+          scope.setTag(
+            'workspaceMigrationMetadataName',
+            migrationAction?.metadataName ?? 'unknown',
+          );
+          scope.setContext('workspaceMigration', {
+            action: migrationAction,
+            errorCodes: migrationErrorCodes,
+          });
+          scope.setFingerprint([
+            'workspace-migration',
+            migrationAction?.type ?? 'unknown',
+            migrationAction?.metadataName ?? 'unknown',
+            ...migrationErrorCodes,
+          ]);
         }
 
         if (

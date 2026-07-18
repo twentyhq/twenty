@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { type QueryRunner } from 'typeorm';
 
 import {
@@ -16,6 +17,17 @@ const ALLOWED_INDEX_TYPES = new Set([
   'GIN',
   'BRIN',
 ]);
+
+const DUPLICATE_INDEX_VALUES_LIMIT = 5;
+
+const formatDuplicateIndexValue = (value: unknown): string => {
+  const serializedValue =
+    typeof value === 'string' || typeof value === 'bigint'
+      ? String(value)
+      : JSON.stringify(value);
+
+  return (serializedValue ?? String(value)).slice(0, 100);
+};
 
 export class WorkspaceSchemaIndexManagerService {
   async createIndex({
@@ -73,6 +85,50 @@ export class WorkspaceSchemaIndexManagerService {
       .filter(Boolean)
       .join(' ')
       .trim();
+
+    if (index.isUnique) {
+      const nonNullCondition = quotedColumns
+        .map((column) => `${column} IS NOT NULL`)
+        .join(' AND ');
+      const duplicateWhereClause = whereClause
+        ? `${whereClause} AND ${nonNullCondition}`
+        : `WHERE ${nonNullCondition}`;
+      const duplicateRows = (await queryRunner.query(
+        [
+          'SELECT',
+          quotedColumns.join(', '),
+          'FROM',
+          `${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`,
+          duplicateWhereClause,
+          'GROUP BY',
+          quotedColumns.join(', '),
+          'HAVING COUNT(*) > 1',
+          `LIMIT ${DUPLICATE_INDEX_VALUES_LIMIT}`,
+        ].join(' '),
+      )) as Record<string, unknown>[];
+
+      if (duplicateRows.length > 0) {
+        const duplicateValues = duplicateRows
+          .map((row) =>
+            quotedColumns
+              .map((column) => {
+                const columnName = column.slice(1, -1).replaceAll('""', '"');
+
+                return `${columnName}=${formatDuplicateIndexValue(row[columnName])}`;
+              })
+              .join(', '),
+          )
+          .join('; ');
+
+        throw new WorkspaceSchemaManagerException(
+          `Cannot create unique index "${index.name}" because duplicate values already exist: ${duplicateValues}`,
+          WorkspaceSchemaManagerExceptionCode.DUPLICATE_INDEX_VALUES,
+          {
+            userFriendlyMessage: msg`Cannot enable uniqueness because duplicate values already exist (${duplicateValues}). Remove or update the duplicate records and try again.`,
+          },
+        );
+      }
+    }
 
     await queryRunner.query(sql);
   }
