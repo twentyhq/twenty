@@ -2,12 +2,13 @@ import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { hasMeetingEnded } from 'src/logic-functions/domain/has-meeting-ended.util';
-import { attachExistingRecallBotToCallRecording } from 'src/logic-functions/flows/attach-existing-recall-bot-to-call-recording.util';
 import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findOpenScheduledCallRecordings } from 'src/logic-functions/data/find-open-scheduled-call-recordings.util';
+import { findScheduledRecallBotIdsByCallRecordingId } from 'src/logic-functions/recall-api/find-scheduled-recall-bot-ids-by-call-recording-id.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
@@ -19,6 +20,11 @@ export type ScheduleRecallBotsForPendingCallRecordingsResult = {
   markedFailedCallRecordingIds: string[];
 };
 
+type ResumableCallRecording = {
+  callRecording: CallRecordingRecord;
+  calendarEvent: CalendarEventRecord;
+};
+
 // Resumes a CallRecording inserted before its Recall bot was scheduled.
 export const scheduleRecallBotsForPendingCallRecordings = async ({
   client,
@@ -27,16 +33,17 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
   client: CoreApiClient;
   now: Date;
 }): Promise<ScheduleRecallBotsForPendingCallRecordingsResult> => {
+  const result: ScheduleRecallBotsForPendingCallRecordingsResult = {
+    attachedCallRecordingIds: [],
+    scheduledCallRecordingIds: [],
+    markedFailedCallRecordingIds: [],
+  };
   const pendingCallRecordings = (
     await findOpenScheduledCallRecordings(client)
   ).filter((callRecording) => isUndefined(callRecording.externalBotId));
 
   if (pendingCallRecordings.length === 0) {
-    return {
-      attachedCallRecordingIds: [],
-      scheduledCallRecordingIds: [],
-      markedFailedCallRecordingIds: [],
-    };
+    return result;
   }
 
   const calendarEventsById = new Map(
@@ -51,9 +58,7 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
       )
     ).map((calendarEvent) => [calendarEvent.id, calendarEvent]),
   );
-  const attachedCallRecordingIds: string[] = [];
-  const scheduledCallRecordingIds: string[] = [];
-  const markedFailedCallRecordingIds: string[] = [];
+  const resumableCallRecordings: ResumableCallRecording[] = [];
 
   for (const callRecording of pendingCallRecordings) {
     const calendarEvent = isUndefined(callRecording.calendarEventId)
@@ -74,21 +79,38 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
       // No bot ever joined, so nothing was recorded; failing the row keeps the
       // pending set from re-fetching it on every run forever.
       await markCallRecordingFailedAsNeverScheduled(client, callRecording);
-      markedFailedCallRecordingIds.push(callRecording.id);
+      result.markedFailedCallRecordingIds.push(callRecording.id);
       continue;
     }
 
-    const attachResult = await attachExistingRecallBotToCallRecording(client, {
-      callRecording,
-    });
+    resumableCallRecordings.push({ callRecording, calendarEvent });
+  }
 
-    if (attachResult.status === 'attached') {
-      attachedCallRecordingIds.push(callRecording.id);
-      continue;
-    }
+  if (resumableCallRecordings.length === 0) {
+    return result;
+  }
 
-    // A failed lookup can hide an existing bot; creating one now could duplicate it, so defer to the next run.
-    if (attachResult.status === 'lookup-failed') {
+  // A run that POSTed a bot but died before the id write-back leaves the bot
+  // claimable by metadata; one workspace-wide lookup finds them all without a
+  // per-recording list call.
+  const lookupResult = await findScheduledRecallBotIdsByCallRecordingId();
+
+  // A failed lookup can hide existing bots; creating one now could duplicate
+  // them, so defer to the next run.
+  if (!lookupResult.ok) {
+    return result;
+  }
+
+  for (const { callRecording, calendarEvent } of resumableCallRecordings) {
+    const existingExternalBotId =
+      lookupResult.externalBotIdByCallRecordingId.get(callRecording.id);
+
+    if (!isUndefined(existingExternalBotId)) {
+      await updateCallRecording(client, {
+        id: callRecording.id,
+        data: { externalBotId: existingExternalBotId },
+      });
+      result.attachedCallRecordingIds.push(callRecording.id);
       continue;
     }
 
@@ -101,15 +123,11 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
     );
 
     if (didScheduleRecallBot) {
-      scheduledCallRecordingIds.push(callRecording.id);
+      result.scheduledCallRecordingIds.push(callRecording.id);
     }
   }
 
-  return {
-    attachedCallRecordingIds,
-    scheduledCallRecordingIds,
-    markedFailedCallRecordingIds,
-  };
+  return result;
 };
 
 const markCallRecordingFailedAsNeverScheduled = async (

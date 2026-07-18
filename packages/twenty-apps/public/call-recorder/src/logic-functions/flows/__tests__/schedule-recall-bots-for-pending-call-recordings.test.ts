@@ -263,8 +263,8 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(lookupParameters.get('metadata__twentyWorkspaceId')).toBe(
       WORKSPACE_ID,
     );
-    expect(lookupParameters.get('metadata__twentyCallRecordingId')).toBe(
-      'call-recording-1',
+    expect(lookupParameters.has('metadata__twentyCallRecordingId')).toBe(
+      false,
     );
     expect(lookupParameters.has('join_at_after')).toBe(false);
     expect(lookupParameters.has('join_at_before')).toBe(false);
@@ -278,6 +278,43 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
       'in_call_recording',
     ]);
     expect(client.callRecordings[0].externalBotId).toBe('recall-bot-existing');
+  });
+
+  it('looks up existing bots once for the whole run instead of per recording', async () => {
+    stubRecallApi({
+      listedBots: [
+        {
+          id: 'recall-bot-existing',
+          metadata: {
+            twentyWorkspaceId: WORKSPACE_ID,
+            twentyCallRecordingId: 'call-recording-1',
+          },
+        },
+      ],
+    });
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording(),
+        buildPendingCallRecording({
+          id: 'call-recording-2',
+          calendarEventId: 'calendar-event-2',
+        }),
+      ],
+      calendarEvents: [
+        buildCalendarEvent(),
+        buildCalendarEvent({ id: 'calendar-event-2' }),
+      ],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(listBotRequestUrls()).toHaveLength(1);
+    expect(result.attachedCallRecordingIds).toEqual(['call-recording-1']);
+    expect(result.scheduledCallRecordingIds).toEqual(['call-recording-2']);
+    expect(createBotCalls()).toHaveLength(1);
   });
 
   it('defers scheduling when the existing-bot lookup fails so no duplicate bot is created', async () => {

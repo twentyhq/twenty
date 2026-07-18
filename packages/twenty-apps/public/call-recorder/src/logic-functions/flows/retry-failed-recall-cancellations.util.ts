@@ -7,10 +7,9 @@ import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/consta
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
-import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { replaceCanceledCallRecordingExternalBotId } from 'src/logic-functions/data/replace-canceled-call-recording-external-bot-id.util';
 import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
-import { findScheduledRecallBotIdForCallRecording } from 'src/logic-functions/recall-api/find-scheduled-recall-bot-id-for-call-recording.util';
+import { findScheduledRecallBotIdsByCallRecordingId } from 'src/logic-functions/recall-api/find-scheduled-recall-bot-ids-by-call-recording-id.util';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
@@ -49,17 +48,21 @@ export const retryFailedRecallCancellations = async ({
       )
     ).map((calendarEvent) => [calendarEvent.id, calendarEvent]),
   );
+  const externalBotIdByCallRecordingId =
+    await lookupRecoverableExternalBotIds({
+      canceledCallRecordings,
+      calendarEventsById,
+      now,
+    });
   const canceledExternalBotCallRecordingIds: string[] = [];
 
   for (const callRecording of canceledCallRecordings) {
-    const calendarEvent = isUndefined(callRecording.calendarEventId)
-      ? undefined
-      : calendarEventsById.get(callRecording.calendarEventId);
     const externalBotId = await recoverRecallBotIdForCanceledCallRecording({
       client,
       callRecording,
-      calendarEvent,
-      now,
+      listedExternalBotId: externalBotIdByCallRecordingId?.get(
+        callRecording.id,
+      ),
     });
 
     if (isUndefined(externalBotId)) {
@@ -98,21 +101,49 @@ export const retryFailedRecallCancellations = async ({
   return { canceledExternalBotCallRecordingIds };
 };
 
-const recoverRecallBotIdForCanceledCallRecording = async ({
-  client,
+// One workspace-wide list request covers every recoverable row; undefined
+// means the lookup failed and recovery must wait for the next run.
+const lookupRecoverableExternalBotIds = async ({
+  canceledCallRecordings,
+  calendarEventsById,
+  now,
+}: {
+  canceledCallRecordings: CallRecordingRecord[];
+  calendarEventsById: Map<string, CalendarEventRecord>;
+  now: Date;
+}): Promise<Map<string, string> | undefined> => {
+  const hasRecoverableCallRecording = canceledCallRecordings.some(
+    (callRecording) =>
+      isUndefined(callRecording.externalBotId) &&
+      isWithinCanceledBotRecoveryWindow({
+        callRecording,
+        calendarEvent: isUndefined(callRecording.calendarEventId)
+          ? undefined
+          : calendarEventsById.get(callRecording.calendarEventId),
+        now,
+      }),
+  );
+
+  if (!hasRecoverableCallRecording) {
+    return new Map();
+  }
+
+  const lookupResult = await findScheduledRecallBotIdsByCallRecordingId();
+
+  return lookupResult.ok
+    ? lookupResult.externalBotIdByCallRecordingId
+    : undefined;
+};
+
+const isWithinCanceledBotRecoveryWindow = ({
   callRecording,
   calendarEvent,
   now,
 }: {
-  client: CoreApiClient;
   callRecording: CallRecordingRecord;
   calendarEvent: CalendarEventRecord | undefined;
   now: Date;
-}): Promise<string | undefined> => {
-  if (!isUndefined(callRecording.externalBotId)) {
-    return callRecording.externalBotId;
-  }
-
+}): boolean => {
   if (
     !isUndefined(calendarEvent) &&
     hasMeetingEnded({
@@ -122,50 +153,15 @@ const recoverRecallBotIdForCanceledCallRecording = async ({
       startGraceHours: CANCELED_BOT_RECOVERY_AFTER_START_HOURS,
     })
   ) {
-    return undefined;
+    return false;
   }
 
   // Recovery only closes the crash window right after cancellation; once a row ages out the daily cleanup sweep owns it, so stop the per-run Recall lookup instead of listing forever (notably for rows whose calendar event was deleted and can no longer bound the retry).
   // updatedAt tracks the cancellation write, so a request scheduled far ahead but canceled recently still gets its window; createdAt would age it out from scheduling time.
-  if (
-    hasCanceledRecoveryWindowElapsed({
-      canceledAt: callRecording.updatedAt ?? callRecording.createdAt,
-      now,
-    })
-  ) {
-    return undefined;
-  }
-
-  const currentWorkspaceId = getCurrentWorkspaceId();
-
-  if (isUndefined(currentWorkspaceId)) {
-    return undefined;
-  }
-
-  const scheduledRecallBotLookupResult =
-    await findScheduledRecallBotIdForCallRecording({
-      callRecordingId: callRecording.id,
-      workspaceId: currentWorkspaceId,
-    });
-
-  if (
-    !scheduledRecallBotLookupResult.ok ||
-    isUndefined(scheduledRecallBotLookupResult.externalBotId)
-  ) {
-    return undefined;
-  }
-
-  const externalBotId = scheduledRecallBotLookupResult.externalBotId;
-  const didClaimRecoveredBot = await replaceCanceledCallRecordingExternalBotId(
-    client,
-    {
-      id: callRecording.id,
-      expectedExternalBotId: null,
-      nextExternalBotId: externalBotId,
-    },
-  );
-
-  return didClaimRecoveredBot ? externalBotId : undefined;
+  return !hasCanceledRecoveryWindowElapsed({
+    canceledAt: callRecording.updatedAt ?? callRecording.createdAt,
+    now,
+  });
 };
 
 const hasCanceledRecoveryWindowElapsed = ({
@@ -186,4 +182,33 @@ const hasCanceledRecoveryWindowElapsed = ({
     canceledTime + CANCELED_BOT_RECOVERY_MAX_AGE_HOURS * 60 * 60 * 1000 <=
       now.getTime()
   );
+};
+
+const recoverRecallBotIdForCanceledCallRecording = async ({
+  client,
+  callRecording,
+  listedExternalBotId,
+}: {
+  client: CoreApiClient;
+  callRecording: CallRecordingRecord;
+  listedExternalBotId: string | undefined;
+}): Promise<string | undefined> => {
+  if (!isUndefined(callRecording.externalBotId)) {
+    return callRecording.externalBotId;
+  }
+
+  if (isUndefined(listedExternalBotId)) {
+    return undefined;
+  }
+
+  const didClaimRecoveredBot = await replaceCanceledCallRecordingExternalBotId(
+    client,
+    {
+      id: callRecording.id,
+      expectedExternalBotId: null,
+      nextExternalBotId: listedExternalBotId,
+    },
+  );
+
+  return didClaimRecoveredBot ? listedExternalBotId : undefined;
 };
