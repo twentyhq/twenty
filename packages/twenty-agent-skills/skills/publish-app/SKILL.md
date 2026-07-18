@@ -19,9 +19,9 @@ Do not use this skill to scaffold (use `create-app`), to change app entities (us
 
 # Publishing Checklist
 
-For background on how Twenty apps work — the SDK packages, remotes, sync lifecycle, and rendering model — read `../../references/concepts/how-apps-work.md`. Cross-skill operating rules that apply to every Twenty app task are in `../../references/concepts/operating-rules.md`.
+For background on how Twenty apps work — the SDK packages, remotes, sync lifecycle, and rendering model — read `references/concepts/how-apps-work.md`. Cross-skill operating rules that apply to every Twenty app task are in `references/concepts/operating-rules.md`.
 
-Use `../../references/publish-app/prepare-for-app-store.md` for detailed README, marketplace copy, logo, screenshot, and public asset guidance.
+Use `references/publish-app/prepare-for-app-store.md` for detailed README, marketplace copy, logo, screenshot, and public asset guidance.
 
 Keep the skill workflow concise:
 

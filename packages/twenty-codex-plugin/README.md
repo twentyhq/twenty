@@ -20,6 +20,16 @@ The plugin teaches Codex how to work with the Twenty CRM platform. After install
 
 Search for "Twenty" in the Codex plugin directory and install.
 
+### As Portable Agent Skills (Any Harness)
+
+The skill content of this plugin is also published as a harness-agnostic [Agent Skills](https://skills.sh/twentyhq/twenty) collection in [`packages/twenty-agent-skills`](../twenty-agent-skills), installable into Claude Code, Codex, Cursor, and any other harness supported by the `skills` CLI:
+
+```bash
+npx skills add https://github.com/twentyhq/twenty/tree/main/packages/twenty-agent-skills --list
+```
+
+That package is generated from the canonical content in this package; see its [README](../twenty-agent-skills/README.md).
+
 ### Locally for Development
 
 Copy the marketplace template to a local marketplace config:
@@ -32,13 +42,13 @@ Then enable it in Codex via the plugin manager. See [`templates/marketplace.exam
 
 ## Skills
 
-| Skill | Use it for |
-|---|---|
-| [`create-app`](./skills/create-app/SKILL.md) | Scaffold a new Twenty app with `create-twenty-app`. |
-| [`develop-app`](./skills/develop-app/SKILL.md) | Add or modify objects, fields, logic functions, layouts, front components, workflows. |
-| [`manage-app`](./skills/manage-app/SKILL.md) | Manage remotes, sync, build, deploy, logs, troubleshooting, CI/CD. |
-| [`publish-app`](./skills/publish-app/SKILL.md) | Prepare README, marketplace metadata, logos, screenshots, public assets. |
-| [`use-twenty-mcp`](./skills/use-twenty-mcp/SKILL.md) | Configure Twenty MCP and retrieve workspace records as readable Markdown. |
+| Skill                                                | Use it for                                                                            |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| [`create-app`](./skills/create-app/SKILL.md)         | Scaffold a new Twenty app with `create-twenty-app`.                                   |
+| [`develop-app`](./skills/develop-app/SKILL.md)       | Add or modify objects, fields, logic functions, layouts, front components, workflows. |
+| [`manage-app`](./skills/manage-app/SKILL.md)         | Manage remotes, sync, build, deploy, logs, troubleshooting, CI/CD.                    |
+| [`publish-app`](./skills/publish-app/SKILL.md)       | Prepare README, marketplace metadata, logos, screenshots, public assets.              |
+| [`use-twenty-mcp`](./skills/use-twenty-mcp/SKILL.md) | Configure Twenty MCP and retrieve workspace records as readable Markdown.             |
 
 Cross-skill operating rules are in [`AGENTS.md`](./AGENTS.md). Reference docs are under [`references/`](./references/).
 

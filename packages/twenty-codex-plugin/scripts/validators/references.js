@@ -16,6 +16,7 @@ const REQUIRED_REFERENCES = [
   'references/manage-app/cli-and-sync.md',
   'references/publish-app/prepare-for-app-store.md',
   'references/concepts/how-apps-work.md',
+  'references/concepts/operating-rules.md',
   'references/use-twenty-mcp/setup.md',
   'references/use-twenty-mcp/result-formatting.md',
 ];
@@ -88,6 +89,10 @@ const assertHowAppsWork = (fail) => {
 
     if (!skill.includes('references/concepts/how-apps-work.md')) {
       fail(`${skillRelPath} must reference how-apps-work.md`);
+    }
+
+    if (!skill.includes('references/concepts/operating-rules.md')) {
+      fail(`${skillRelPath} must reference operating-rules.md`);
     }
   }
 };

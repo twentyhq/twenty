@@ -1,0 +1,21 @@
+{
+  "name": "twenty-agent-skills",
+  "version": "0.1.0",
+  "description": "Harness-agnostic Agent Skills for creating, developing, operating, and publishing Twenty apps.",
+  "private": true,
+  "license": "AGPL-3.0",
+  "scripts": {
+    "build": "node ./scripts/build.js",
+    "validate": "node ./scripts/build.js --check && node ./scripts/validate.js",
+    "test": "node --test ./scripts/__tests__/*.spec.js"
+  },
+  "files": [
+    "README.md",
+    "skills"
+  ],
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  }
+}

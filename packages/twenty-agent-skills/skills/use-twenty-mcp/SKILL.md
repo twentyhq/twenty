@@ -30,11 +30,11 @@ Do not use MCP as the default way to customize a workspace. For example, prefer 
 
 # Setup
 
-Use `../../references/use-twenty-mcp/setup.md` for workspace URL normalization, MCP server configuration, OAuth guardrails, and setup troubleshooting.
+Use `references/use-twenty-mcp/setup.md` for workspace URL normalization, MCP server configuration, OAuth guardrails, and setup troubleshooting.
 
 # Retrieval
 
-Before retrieving, listing, searching, summarizing, or presenting workspace records, read `../../references/use-twenty-mcp/result-formatting.md`.
+Before retrieving, listing, searching, summarizing, or presenting workspace records, read `references/use-twenty-mcp/result-formatting.md`.
 
 Apply that reference when selecting the right Twenty MCP workspace, querying records, building record links, formatting dates and values, and presenting readable Markdown instead of raw API output.
 

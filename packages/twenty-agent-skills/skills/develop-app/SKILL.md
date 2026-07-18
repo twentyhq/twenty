@@ -20,7 +20,7 @@ Do not use this skill to scaffold a brand-new app (use `create-app`), to sync/de
 
 # Boundaries
 
-For background on how Twenty apps work — the SDK packages, remotes, sync lifecycle, and rendering model — read `../../references/concepts/how-apps-work.md`. Cross-skill operating rules that apply to every Twenty app task are in `../../references/concepts/operating-rules.md`.
+For background on how Twenty apps work — the SDK packages, remotes, sync lifecycle, and rendering model — read `references/concepts/how-apps-work.md`. Cross-skill operating rules that apply to every Twenty app task are in `references/concepts/operating-rules.md`.
 
 Do not scaffold a new app here. Use `create-app` first when the app does not exist.
 
@@ -37,7 +37,7 @@ If either file is missing, do not edit blindly. Inspect nearby folders to find t
 
 If setup, dependencies, remotes, authentication, sync, build, deploy, logs, or CI/CD are failing, switch to `manage-app` before continuing with entity work.
 
-For app shape and entity file structure, read `../../references/develop-app/app-structure.md`.
+For app shape and entity file structure, read `references/develop-app/app-structure.md`.
 
 ## Plan Before Editing
 
@@ -58,12 +58,12 @@ Kebab-case filenames. One export per file is mandatory for every helper, type, a
 
 Refactor when:
 
-- A `*.logic-function.ts` or `*.post-install.ts` file exceeds the soft cap (see `../../references/develop-app/logic.md`).
+- A `*.logic-function.ts` or `*.post-install.ts` file exceeds the soft cap (see `references/develop-app/logic.md`).
 - A front component contains duplicated command execution, record loading, logic-function lookup, payload building, result parsing, or snackbar formatting.
 - The same parsing or mapping logic appears across object types.
 - Multiple field files differ only by name and identifier — use a factory under `src/fields/`.
 
-Always create a `*.spec.ts` test file in a sibling `__tests__/` folder for every util/function you add or change, one spec file per source file. See `../../references/develop-app/tests.md`.
+Always create a `*.spec.ts` test file in a sibling `__tests__/` folder for every util/function you add or change, one spec file per source file. See `references/develop-app/tests.md`.
 
 When a front component triggers a logic function for selected records, always prefer a bulk-capable logic function unless the user explicitly states that the function is only for one record. The default payload shape is `records: Array<{ id: string; ...fields }>`: inside `records`, use `id` for the Twenty record ID because the array name already establishes the record context. Do not add flat single-record compatibility payloads unless the user explicitly asks to preserve an existing single-record API.
 
@@ -89,7 +89,7 @@ yarn lint
 yarn twenty apply
 ```
 
-`yarn twenty dev:typecheck` checks generated app types, `yarn lint` checks local lint rules, and `yarn twenty apply` syncs entity definitions to the active remote. Run all three a single time once every edit is done, not repeatedly after each step. When the user explicitly asks to run tests, follow `../../references/develop-app/tests.md`.
+`yarn twenty dev:typecheck` checks generated app types, `yarn lint` checks local lint rules, and `yarn twenty apply` syncs entity definitions to the active remote. Run all three a single time once every edit is done, not repeatedly after each step. When the user explicitly asks to run tests, follow `references/develop-app/tests.md`.
 
 Use the official Twenty docs or local SDK source when exact entity fields, imports, or configuration shapes matter.
 
@@ -97,20 +97,20 @@ Use the official Twenty docs or local SDK source when exact entity fields, impor
 
 Read the smallest reference that matches the requested entity work:
 
-- Objects, fields, relations, roles, and permissions: `../../references/develop-app/data-model.md`
-- Views, navigation, page layouts, page layout tabs, and front component registration: `../../references/develop-app/layout.md`
-- Full-page custom UI and standalone page patterns: `../../references/develop-app/standalone-pages.md`
-- Front component source, Twenty UI imports, data hooks, runtime imports, and browser verification: `../../references/develop-app/front-components.md`
-- Logic functions, skills, agents, post-install hooks, and connection providers: `../../references/develop-app/logic.md`
-- Workflows, manual triggers, draft/activate lifecycle, and seeder pitfalls: `../../references/develop-app/workflows.md`
-- Tests — what to cover and where to put the files: `../../references/develop-app/tests.md`
-- App file structure and entity validation checklist: `../../references/develop-app/app-structure.md`
-- Detailed front component UI design: `../../references/design/front-component-ui.md`
+- Objects, fields, relations, roles, and permissions: `references/develop-app/data-model.md`
+- Views, navigation, page layouts, page layout tabs, and front component registration: `references/develop-app/layout.md`
+- Full-page custom UI and standalone page patterns: `references/develop-app/standalone-pages.md`
+- Front component source, Twenty UI imports, data hooks, runtime imports, and browser verification: `references/develop-app/front-components.md`
+- Logic functions, skills, agents, post-install hooks, and connection providers: `references/develop-app/logic.md`
+- Workflows, manual triggers, draft/activate lifecycle, and seeder pitfalls: `references/develop-app/workflows.md`
+- Tests — what to cover and where to put the files: `references/develop-app/tests.md`
+- App file structure and entity validation checklist: `references/develop-app/app-structure.md`
+- Detailed front component UI design: `references/design/front-component-ui.md`
 
 For front components, read `front-components.md` before implementation. Use `layout.md` for placement, `standalone-pages.md` for full-page custom UI, and `front-component-ui.md` for visual design and Twenty UI component selection.
 
 # Handoffs
 
-Use `../../references/design/front-component-ui.md` when the entity work turns into front component UI design.
+Use `references/design/front-component-ui.md` when the entity work turns into front component UI design.
 
 Use `publish-app` when the task turns into README, marketplace copy, screenshots, logos, or listing assets.

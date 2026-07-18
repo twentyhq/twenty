@@ -11,6 +11,8 @@ Entries reference the canonical skills (`create-app`, `develop-app`, `manage-app
 The first version of the Twenty Codex plugin.
 
 ### Added
+
+- `references/concepts/operating-rules.md`: harness-neutral durable cross-skill rules, referenced from the four app skills and shipped with the portable Agent Skills collection.
 - `AGENTS.md` at the plugin root: durable cross-skill operating rules, skill routing table, and reference-doc map.
 - `CHANGELOG.md` (this file).
 - `CHECKLIST.md`: best-practices compliance matrix mapping each official Codex plugin requirement to an automated check or a manual sign-off.
@@ -24,6 +26,10 @@ The first version of the Twenty Codex plugin.
 - `.github/workflows/ci-codex-plugin.yaml`: CI workflow running `validate` and `test` on PRs touching the plugin.
 
 ### Changed
+
+- Skill and reference content is now the canonical source for the portable `packages/twenty-agent-skills` collection; regenerate it after content changes (`npx nx run twenty-agent-skills:build`).
+- `references/use-twenty-mcp/setup.md`: multi-harness MCP setup covering Codex, Claude Code, Cursor, and generic MCP clients, with self-hosted instances as first-class targets.
+- `skills/use-twenty-mcp/SKILL.md` and `skills/publish-app/SKILL.md`: harness-neutral wording; the Twenty docs MCP server is optional instead of assumed.
 - `scripts/validate.js` refactored from a single 760-line file into a thin entry point plus focused modules under `scripts/validators/` (`lib`, `metadata`, `assets`, `skills`, `references`, `cross-doc-contracts`, `setup-helper`).
 - `package.json`: exposed `test` script; added `AGENTS.md`, `CHANGELOG.md`, `CHECKLIST.md`, `CONTRIBUTING.md`, `templates` to `files`.
 - `.codex-plugin/plugin.json`: rewrote `interface.longDescription` into 3 scannable sentences (was a single ~400-char sentence).
@@ -35,12 +41,14 @@ The first version of the Twenty Codex plugin.
 - `references/develop-app/app-structure.md`, `skills/develop-app/SKILL.md`, `references/develop-app/logic.md`, `references/develop-app/front-components.md`: made the one-export-per-file rule explicit — every helper, type, and client file exports exactly one thing, and multiple function exports in a single file are forbidden. The rule counts exports, not declarations: a local, non-exported type may live alongside the util, but an exported or reused type splits into `src/types/<name>.ts` separate from `src/utils/<name>.util.ts`.
 
 ### Plugin Structure
+
 - `.codex-plugin/plugin.json` manifest with `interface` metadata (display name, descriptions, category, capabilities, branding, default prompts).
 - `package.json` declaring the workspace package and listing shipped files.
 - `.mcp.json` declaring only the public `twenty-docs` MCP server at `https://docs.twenty.com/mcp`.
 - `assets/twenty-logo.png` and `assets/twenty-logo.svg` for marketplace branding.
 
 ### Skills (`skills/`)
+
 - `create-app` — scaffold a new Twenty app via `create-twenty-app`, with prompts for the Twenty instance URL and Docker vs existing-instance choice.
 - `develop-app` — add or modify Twenty app entities (objects, fields, logic functions, roles, views, layouts, skills, agents, connection providers, front components); enforces `yarn twenty dev:add` for entity generation and one-shot `yarn twenty dev --once` sync.
 - `manage-app` — remotes, sync, build, deploy, logs, function execution, uninstall, and CI/CD for existing apps; requires explicit confirmation for production-affecting operations.
@@ -49,6 +57,7 @@ The first version of the Twenty Codex plugin.
 - Per-skill `agents/openai.yaml` with `display_name`, `short_description` (≤64 chars), and `default_prompt` that mentions `$<skill-name>`.
 
 ### References (`references/`)
+
 - `concepts/how-apps-work.md` — foundational SDK packages, remotes, sync lifecycle, front component rendering, app file structure, key concepts (linked from every skill).
 - `develop-app/app-structure.md`, `data-model.md`, `front-components.md`, `layout.md`, `standalone-pages.md`, `logic.md`, `workflows.md`, `tests.md` — entity creation, file structure, validation checklist, full-page UI patterns, runtime verification.
 - `design/front-component-ui.md` — visual design rules, Twenty UI defaults, design tokens, component selection.
@@ -59,5 +68,6 @@ The first version of the Twenty Codex plugin.
 - `use-twenty-mcp/result-formatting.md` — record link building, date formatting, readable Markdown contract.
 
 ### Tooling
+
 - `scripts/setup-mcp.sh` — helper to register a user-local workspace MCP endpoint with Codex; normalizes workspace URLs (adds `https://`, `/mcp` suffix), derives sensible MCP server names, supports localhost and custom domains, integrates with `codex mcp add` and OAuth.
 - `scripts/validate.js` — single-file validation script enforcing version sync, no bundled workspace MCP, no secrets/non-placeholder URLs, canonical skill names, required SKILL.md + `agents/openai.yaml` shape, required reference files, cross-doc contracts (MCP formatting, front-component guidance, CLI guidance split, foundational concepts linkage), and `setup-mcp.sh` syntax + URL-normalization correctness.

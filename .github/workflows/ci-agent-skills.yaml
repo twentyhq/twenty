@@ -1,0 +1,57 @@
+name: CI Agent Skills
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  changed-files-check:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        package.json
+        packages/twenty-agent-skills/**
+        packages/twenty-codex-plugin/**
+        .github/workflows/ci-agent-skills.yaml
+
+  agent-skills-validate:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch local actions
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+
+      - name: Agent Skills / Check sync and validate
+        run: npx nx run twenty-agent-skills:validate
+
+      - name: Agent Skills / Test
+        run: npx nx run twenty-agent-skills:test
+
+      - name: Agent Skills / List with the skills CLI
+        run: npx -y skills@latest add ./packages/twenty-agent-skills --list
+
+      - name: Agent Skills / Install with the skills CLI
+        run: |
+          INSTALL_DIR="$(mktemp -d)"
+          cd "$INSTALL_DIR"
+          npx -y skills@latest add "$GITHUB_WORKSPACE/packages/twenty-agent-skills" --skill create-app --agent claude-code --copy -y
+          test -f .claude/skills/create-app/SKILL.md
+          test -f .claude/skills/create-app/references/concepts/how-apps-work.md
+          test -f .claude/skills/create-app/references/concepts/operating-rules.md

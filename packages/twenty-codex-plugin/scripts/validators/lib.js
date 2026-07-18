@@ -83,6 +83,7 @@ const isAllowedDocumentationHost = (hostname) => {
     host === 'app.twenty.com' ||
     host === 'twenty.com' ||
     host === 'docs.twenty.com' ||
+    host === 'skills.sh' ||
     host === 'www.docker.com' ||
     host === 'github.com' ||
     host === 'www.w3.org' ||

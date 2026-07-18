@@ -22,7 +22,7 @@ Do not use this skill to scaffold (use `create-app`), to change app entities or 
 
 # Boundaries
 
-For background on how Twenty apps work — the SDK packages, remotes, sync lifecycle, and rendering model — read `../../references/concepts/how-apps-work.md`. Cross-skill operating rules that apply to every Twenty app task are in `../../references/concepts/operating-rules.md`.
+For background on how Twenty apps work — the SDK packages, remotes, sync lifecycle, and rendering model — read `references/concepts/how-apps-work.md`. Cross-skill operating rules that apply to every Twenty app task are in `references/concepts/operating-rules.md`.
 
 Do not scaffold a new app here. Use `$create-app` when the app does not exist.
 
@@ -50,9 +50,9 @@ yarn twenty remote:list
 
 Treat deploys, uninstalls, production remote changes, and production syncs as externally visible actions. Ask for explicit confirmation before running them when the target is production or user data could be affected.
 
-For command details, remotes, validation command semantics, sync modes, troubleshooting, build, deploy, logs, exec, and CI/CD, read `../../references/manage-app/cli-and-sync.md`.
+For command details, remotes, validation command semantics, sync modes, troubleshooting, build, deploy, logs, exec, and CI/CD, read `references/manage-app/cli-and-sync.md`.
 
-If the user asks to run tests, also read `../../references/develop-app/tests.md` before running any test command. Full test suites include integration tests that install and uninstall the app on their target server, so start or verify the isolated test instance and run:
+If the user asks to run tests, also read `references/develop-app/tests.md` before running any test command. Full test suites include integration tests that install and uninstall the app on their target server, so start or verify the isolated test instance and run:
 
 ```bash
 yarn twenty docker:start --test

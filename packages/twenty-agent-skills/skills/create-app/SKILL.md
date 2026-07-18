@@ -18,7 +18,7 @@ Do not use this skill when the app already exists — use `develop-app` to add f
 
 # Quickstart an App
 
-For background on how Twenty apps work — the SDK packages, remotes, sync lifecycle, and rendering model — read `../../references/concepts/how-apps-work.md`. Cross-skill operating rules that apply to every Twenty app task are in `../../references/concepts/operating-rules.md`.
+For background on how Twenty apps work — the SDK packages, remotes, sync lifecycle, and rendering model — read `references/concepts/how-apps-work.md`. Cross-skill operating rules that apply to every Twenty app task are in `references/concepts/operating-rules.md`.
 
 Use this as the default way to start an app unless the user gives different instructions.
 
@@ -94,5 +94,5 @@ If the user still wants the local Docker path and Docker is missing, share this 
 Only proceed to these when the user explicitly asks:
 
 - Use `develop-app` when the user wants to add objects, fields, logic functions, roles, views, navigation, page layouts, skills, agents, or front component registrations.
-- Use `../../references/design/front-component-ui.md` when the user wants to design or improve the UI of a Twenty front component.
+- Use `references/design/front-component-ui.md` when the user wants to design or improve the UI of a Twenty front component.
 - When the user later makes changes to app entities, use `yarn twenty apply` to sync those changes. See the `manage-app` skill for sync workflow.
