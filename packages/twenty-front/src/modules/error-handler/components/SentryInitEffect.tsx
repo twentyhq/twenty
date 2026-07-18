@@ -54,6 +54,13 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
+            beforeSend: (event) => {
+              const isNonErrorPromiseRejection =
+                event.tags?.['error-handler'] === 'promise-rejection' &&
+                event.level === 'warning';
+
+              return isNonErrorPromiseRejection ? null : event;
+            },
           });
 
           setIsSentryInitialized(true);

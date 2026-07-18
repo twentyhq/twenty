@@ -32,26 +32,34 @@ export const useRequestFreshCaptchaToken = () => {
 
     let captchaWidget: any;
     switch (captcha.provider) {
-      case CaptchaDriverType.GOOGLE_RECAPTCHA:
-        window.grecaptcha
-          .execute(captcha.siteKey, {
+      case CaptchaDriverType.GOOGLE_RECAPTCHA: {
+        try {
+          const token = await window.grecaptcha.execute(captcha.siteKey, {
             action: 'submit',
-          })
-          .then((token: string) => {
-            setCaptchaToken(token);
-            setIsRequestingCaptchaToken(false);
           });
+          setCaptchaToken(token);
+          setIsRequestingCaptchaToken(false);
+        } catch {
+          setCaptchaToken(undefined);
+          setIsRequestingCaptchaToken(false);
+        }
         break;
+      }
       case CaptchaDriverType.TURNSTILE:
-        captchaWidget = window.turnstile.render('#captcha-widget', {
-          sitekey: captcha.siteKey,
-        });
-        window.turnstile.execute(captchaWidget, {
-          callback: (token: string) => {
-            setCaptchaToken(token);
-            setIsRequestingCaptchaToken(false);
-          },
-        });
+        try {
+          captchaWidget = window.turnstile.render('#captcha-widget', {
+            sitekey: captcha.siteKey,
+          });
+          window.turnstile.execute(captchaWidget, {
+            callback: (token: string) => {
+              setCaptchaToken(token);
+              setIsRequestingCaptchaToken(false);
+            },
+          });
+        } catch {
+          setCaptchaToken(undefined);
+          setIsRequestingCaptchaToken(false);
+        }
     }
   }, [setCaptchaToken, setIsRequestingCaptchaToken, store]);
 

@@ -22,6 +22,8 @@ describe('useRequestFreshCaptchaToken', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jotaiStore.set(captchaState.atom, null);
+    jotaiStore.set(isRequestingCaptchaTokenState.atom, false);
 
     window.grecaptcha = {
       execute: mockGrecaptchaExecute,
@@ -101,6 +103,26 @@ describe('useRequestFreshCaptchaToken', () => {
     await waitFor(() => {
       expect(mockGrecaptchaExecute).toHaveBeenCalled();
     });
+  });
+
+  it('should reset the requesting state when Google reCAPTCHA rejects', async () => {
+    jotaiStore.set(captchaState.atom, {
+      provider: CaptchaDriverType.GOOGLE_RECAPTCHA,
+      siteKey: 'google-site-key',
+    } as Captcha);
+    mockGrecaptchaExecute.mockRejectedValue(
+      new Error('reCAPTCHA token request failed'),
+    );
+
+    const { result } = renderHook(() => useRequestFreshCaptchaToken(), {
+      wrapper: createWrapper,
+    });
+
+    await act(async () => {
+      await result.current.requestFreshCaptchaToken();
+    });
+
+    expect(jotaiStore.get(isRequestingCaptchaTokenState.atom)).toBe(false);
   });
 
   it('should request a token from Turnstile when provider is TURNSTILE', async () => {
