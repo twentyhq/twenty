@@ -28,6 +28,7 @@ type CallRecordingNode = {
   recordingRequestStatus?: string | null;
   calendarEventId?: string | null;
   externalBotId?: string | null;
+  callRecorderFailureReason?: string | null;
 };
 
 type CalendarEventNode = {
@@ -318,7 +319,7 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(client.callRecordings[0].externalBotId).toBeNull();
   });
 
-  it('skips a recording whose meeting has already ended', async () => {
+  it('marks a recording failed when its meeting ended before any bot was scheduled', async () => {
     const client = new FakeCoreApiClient({
       callRecordings: [buildPendingCallRecording()],
       calendarEvents: [
@@ -335,7 +336,28 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     });
 
     expect(result.scheduledCallRecordingIds).toEqual([]);
+    expect(result.markedFailedCallRecordingIds).toEqual(['call-recording-1']);
     expect(fetchMock).not.toHaveBeenCalled();
+    expect(client.callRecordings[0].status).toBe('FAILED');
+    expect(client.callRecordings[0].callRecorderFailureReason).toBe(
+      'bot_never_scheduled',
+    );
+  });
+
+  it('leaves a recording untouched when its calendar event is missing', async () => {
+    const client = new FakeCoreApiClient({
+      callRecordings: [buildPendingCallRecording()],
+      calendarEvents: [],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(result.markedFailedCallRecordingIds).toEqual([]);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(client.callRecordings[0].status).toBe('SCHEDULED');
   });
 
   it('does nothing when every scheduled recording already has a bot', async () => {

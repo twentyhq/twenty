@@ -1,16 +1,22 @@
 import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { hasMeetingEnded } from 'src/logic-functions/domain/has-meeting-ended.util';
 import { attachExistingRecallBotToCallRecording } from 'src/logic-functions/flows/attach-existing-recall-bot-to-call-recording.util';
 import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findOpenScheduledCallRecordings } from 'src/logic-functions/data/find-open-scheduled-call-recordings.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
+import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
+
+export const BOT_NEVER_SCHEDULED_FAILURE_REASON = 'bot_never_scheduled';
 
 export type ScheduleRecallBotsForPendingCallRecordingsResult = {
   attachedCallRecordingIds: string[];
   scheduledCallRecordingIds: string[];
+  markedFailedCallRecordingIds: string[];
 };
 
 // Resumes a CallRecording inserted before its Recall bot was scheduled.
@@ -26,7 +32,11 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
   ).filter((callRecording) => isUndefined(callRecording.externalBotId));
 
   if (pendingCallRecordings.length === 0) {
-    return { attachedCallRecordingIds: [], scheduledCallRecordingIds: [] };
+    return {
+      attachedCallRecordingIds: [],
+      scheduledCallRecordingIds: [],
+      markedFailedCallRecordingIds: [],
+    };
   }
 
   const calendarEventsById = new Map(
@@ -43,20 +53,28 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
   );
   const attachedCallRecordingIds: string[] = [];
   const scheduledCallRecordingIds: string[] = [];
+  const markedFailedCallRecordingIds: string[] = [];
 
   for (const callRecording of pendingCallRecordings) {
     const calendarEvent = isUndefined(callRecording.calendarEventId)
       ? undefined
       : calendarEventsById.get(callRecording.calendarEventId);
 
+    if (isUndefined(calendarEvent)) {
+      continue;
+    }
+
     if (
-      isUndefined(calendarEvent) ||
       hasMeetingEnded({
         startsAt: calendarEvent.startsAt,
         endsAt: calendarEvent.endsAt,
         now,
       })
     ) {
+      // No bot ever joined, so nothing was recorded; failing the row keeps the
+      // pending set from re-fetching it on every run forever.
+      await markCallRecordingFailedAsNeverScheduled(client, callRecording);
+      markedFailedCallRecordingIds.push(callRecording.id);
       continue;
     }
 
@@ -87,5 +105,26 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
     }
   }
 
-  return { attachedCallRecordingIds, scheduledCallRecordingIds };
+  return {
+    attachedCallRecordingIds,
+    scheduledCallRecordingIds,
+    markedFailedCallRecordingIds,
+  };
+};
+
+const markCallRecordingFailedAsNeverScheduled = async (
+  client: CoreApiClient,
+  callRecording: CallRecordingRecord,
+): Promise<void> => {
+  console.warn(
+    `[call-recorder] call recording ${callRecording.id} never got a Recall bot and its meeting has ended; marking it failed`,
+  );
+
+  await updateCallRecording(client, {
+    id: callRecording.id,
+    data: {
+      status: CallRecordingStatus.FAILED,
+      callRecorderFailureReason: BOT_NEVER_SCHEDULED_FAILURE_REASON,
+    },
+  });
 };
