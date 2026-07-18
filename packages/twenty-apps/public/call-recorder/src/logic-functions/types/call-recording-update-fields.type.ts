@@ -14,6 +14,7 @@ export type CallRecordingUpdateFields = Partial<{
   // null clears stale app-owned state on cancel/eject or reschedule.
   externalBotId: string | null;
   botScheduleAttemptedAt: string;
+  botScheduleIdempotencyKey: string;
   externalRecordingId: string;
   callRecorderFailureReason: string | null;
   transcript: Record<string, unknown>;

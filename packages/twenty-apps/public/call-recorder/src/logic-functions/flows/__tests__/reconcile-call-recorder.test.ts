@@ -282,6 +282,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         calendarEventId: 'calendar-event-1',
         externalBotId: 'recall-bot-1',
         botScheduleAttemptedAt: NOW.toISOString(),
+        botScheduleIdempotencyKey: expect.any(String),
       },
     ]);
     expect(recallBotCreateCalls()).toHaveLength(1);

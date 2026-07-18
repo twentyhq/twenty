@@ -4,7 +4,9 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
+import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { hasMeetingEnded } from 'src/logic-functions/domain/has-meeting-ended.util';
+import { hasUnchangedBotScheduleIdempotencyKey } from 'src/logic-functions/domain/has-unchanged-bot-schedule-idempotency-key.util';
 import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findOpenScheduledCallRecordings } from 'src/logic-functions/data/find-open-scheduled-call-recordings.util';
@@ -91,13 +93,18 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
   }
 
   // Rows without a schedule-attempt marker never reached Recall, so no bot
-  // can exist for them; only rows with an ambiguous past attempt pay for a
+  // can exist for them. Rows whose stored idempotency key still matches the
+  // current scheduling inputs can re-send the creation and let Recall dedupe
+  // it. Only attempts whose inputs drifted since the attempt pay for a
   // Recall lookup.
+  const workspaceId = getCurrentWorkspaceId();
   const ambiguousCallRecordings = resumableCallRecordings.filter(
-    ({ callRecording }) => !isUndefined(callRecording.botScheduleAttemptedAt),
+    (resumableCallRecording) =>
+      !canRescheduleWithoutRecallLookup(resumableCallRecording, workspaceId),
   );
   const unambiguousCallRecordings = resumableCallRecordings.filter(
-    ({ callRecording }) => isUndefined(callRecording.botScheduleAttemptedAt),
+    (resumableCallRecording) =>
+      canRescheduleWithoutRecallLookup(resumableCallRecording, workspaceId),
   );
 
   for (const { callRecording, calendarEvent } of unambiguousCallRecordings) {
@@ -147,6 +154,18 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
 
   return result;
 };
+
+const canRescheduleWithoutRecallLookup = (
+  { callRecording, calendarEvent }: ResumableCallRecording,
+  workspaceId: string | undefined,
+): boolean =>
+  isUndefined(callRecording.botScheduleAttemptedAt) ||
+  (!isUndefined(workspaceId) &&
+    hasUnchangedBotScheduleIdempotencyKey({
+      callRecording,
+      calendarEvent,
+      workspaceId,
+    }));
 
 const scheduleBotForResumableCallRecording = async ({
   client,

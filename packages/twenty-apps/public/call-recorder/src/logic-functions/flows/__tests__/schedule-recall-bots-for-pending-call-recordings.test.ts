@@ -1,7 +1,9 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
+import { computeRecallBotCreationIdempotencyKey } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
 const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
@@ -29,6 +31,7 @@ type CallRecordingNode = {
   calendarEventId?: string | null;
   externalBotId?: string | null;
   botScheduleAttemptedAt?: string | null;
+  botScheduleIdempotencyKey?: string | null;
   callRecorderFailureReason?: string | null;
 };
 
@@ -350,6 +353,67 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(result.scheduledCallRecordingIds).toEqual([]);
     expect(createBotCalls()).toHaveLength(0);
     expect(client.callRecordings[0].externalBotId).toBeNull();
+  });
+
+  it('re-sends the creation without any Recall lookup when the stored idempotency key still matches', async () => {
+    const unchangedIdempotencyKey = computeRecallBotCreationIdempotencyKey({
+      meetingUrl: 'https://meet.example.com/customer-sync',
+      joinAt: computeRecallBotJoinAt(UPCOMING_STARTS_AT),
+      metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
+        twentyCallRecordingId: 'call-recording-1',
+      },
+    });
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
+          botScheduleIdempotencyKey: unchangedIdempotencyKey,
+        }),
+      ],
+      calendarEvents: [buildCalendarEvent()],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(listBotRequestUrls()).toHaveLength(0);
+    expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
+    const [, requestInit] = createBotCalls()[0];
+    expect(requestInit.headers).toMatchObject({
+      'Idempotency-Key': unchangedIdempotencyKey,
+    });
+    expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
+  });
+
+  it('falls back to the Recall lookup when the meeting moved since the recorded attempt', async () => {
+    const staleIdempotencyKey = computeRecallBotCreationIdempotencyKey({
+      meetingUrl: 'https://meet.example.com/customer-sync',
+      joinAt: computeRecallBotJoinAt('2026-01-01T09:00:00.000Z'),
+      metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
+        twentyCallRecordingId: 'call-recording-1',
+      },
+    });
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
+          botScheduleIdempotencyKey: staleIdempotencyKey,
+        }),
+      ],
+      calendarEvents: [buildCalendarEvent()],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(listBotRequestUrls()).toHaveLength(1);
+    expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
   });
 
   it('re-schedules an ambiguous recording when the lookup confirms no bot exists', async () => {
