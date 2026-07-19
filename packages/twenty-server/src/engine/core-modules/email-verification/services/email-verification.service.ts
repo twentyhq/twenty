@@ -163,20 +163,18 @@ export class EmailVerificationService {
       );
     }
 
-    // TODO: Remove the dependency on querying user altogether when the endpoint is authenticated.
+    // Public endpoint: always return the same success payload for missing,
+    // verified, and rate-limited accounts so callers cannot enumerate users
+    // or verification state. Only send mail for real unverified users outside
+    // the resend cooldown window.
     const user = await this.userRepository.findOne({
       where: {
         email,
       },
     });
 
-    assertIsDefinedOrThrow(user);
-
-    if (user.isEmailVerified) {
-      throw new EmailVerificationException(
-        'Email already verified',
-        EmailVerificationExceptionCode.EMAIL_ALREADY_VERIFIED,
-      );
+    if (!isDefined(user) || user.isEmailVerified) {
+      return { success: true };
     }
 
     const existingToken = await this.appTokenRepository.findOne({
@@ -194,10 +192,7 @@ export class EmailVerificationService {
       );
 
       if (timeToWaitMs > 0) {
-        throw new EmailVerificationException(
-          `Please wait ${ms(timeToWaitMs, { long: true })} before requesting another verification email`,
-          EmailVerificationExceptionCode.RATE_LIMIT_EXCEEDED,
-        );
+        return { success: true };
       }
 
       await this.appTokenRepository.delete(existingToken.id);
