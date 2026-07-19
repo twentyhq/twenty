@@ -1,16 +1,7 @@
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
+import { reindexWidgetsToVerticalListPositions } from '@/page-layout/utils/reindexWidgetsToVerticalListPositions';
 import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
 import { isDefined } from 'twenty-shared/utils';
-import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
-
-const toVerticalListPosition = (index: number) =>
-  ({
-    __typename: 'PageLayoutWidgetVerticalListPosition' as const,
-    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-    index,
-  }) satisfies PageLayoutWidget['position'];
 
 type MoveWidgetToTabInDraftParams = {
   widgetId: string;
@@ -48,46 +39,27 @@ export const moveWidgetToTabInDraft = (
     return draft;
   }
 
-  const remainingWidgets = sortWidgetsByVerticalListPosition(sourceTab.widgets)
-    .filter((tabWidget) => tabWidget.id !== widgetId)
-    .map((tabWidget, widgetIndex) => ({
-      ...tabWidget,
-      position:
-        isDefined(tabWidget.position) &&
-        isVerticalListPosition(tabWidget.position)
-          ? toVerticalListPosition(widgetIndex)
-          : tabWidget.position,
-    }));
+  const remainingWidgets = reindexWidgetsToVerticalListPositions(
+    sortWidgetsByVerticalListPosition(sourceTab.widgets).filter(
+      (tabWidget) => tabWidget.id !== widgetId,
+    ),
+  );
 
-  const insertAtEnd = !isDefined(destinationIndex);
+  const sortedDestinationWidgets = sortWidgetsByVerticalListPosition(
+    destinationTab.widgets,
+  );
+  const insertIndex = isDefined(destinationIndex)
+    ? Math.max(0, Math.min(destinationIndex, sortedDestinationWidgets.length))
+    : sortedDestinationWidgets.length;
 
-  const destinationWidgets: PageLayoutWidget[] = insertAtEnd
-    ? [
-        ...destinationTab.widgets,
-        {
-          ...widget,
-          pageLayoutTabId: destinationTabId,
-          position: toVerticalListPosition(destinationTab.widgets.length),
-        },
-      ]
-    : (() => {
-        const sortedDestination = sortWidgetsByVerticalListPosition(
-          destinationTab.widgets,
-        );
-        const clampedIndex = Math.max(
-          0,
-          Math.min(destinationIndex, sortedDestination.length),
-        );
-        sortedDestination.splice(clampedIndex, 0, {
-          ...widget,
-          pageLayoutTabId: destinationTabId,
-          position: toVerticalListPosition(clampedIndex),
-        });
-        return sortedDestination.map((tabWidget, widgetIndex) => ({
-          ...tabWidget,
-          position: toVerticalListPosition(widgetIndex),
-        }));
-      })();
+  sortedDestinationWidgets.splice(insertIndex, 0, {
+    ...widget,
+    pageLayoutTabId: destinationTabId,
+  });
+
+  const destinationWidgets = reindexWidgetsToVerticalListPositions(
+    sortedDestinationWidgets,
+  );
 
   return {
     ...draft,

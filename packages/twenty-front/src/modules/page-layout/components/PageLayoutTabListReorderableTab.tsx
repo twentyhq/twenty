@@ -13,6 +13,7 @@ type PageLayoutTabListReorderableTabProps = {
   index: number;
   isActive: boolean;
   disabled?: boolean;
+  isWidgetDropTarget?: boolean;
   onSelect: () => void;
 };
 
@@ -28,6 +29,7 @@ export const PageLayoutTabListReorderableTab = ({
   index,
   isActive,
   disabled,
+  isWidgetDropTarget = false,
   onSelect,
 }: PageLayoutTabListReorderableTabProps) => {
   const pageLayoutTabSettingsOpenTabId = useAtomComponentStateValue(
@@ -35,38 +37,47 @@ export const PageLayoutTabListReorderableTab = ({
   );
 
   const isSettingsOpenForThisTab = pageLayoutTabSettingsOpenTabId === tab.id;
+
+  const draggableTab = (
+    <Draggable draggableId={tab.id} index={index} isDragDisabled={disabled}>
+      {(draggableProvided, draggableSnapshot) => (
+        <StyledTabContainer
+          ref={draggableProvided.innerRef}
+          // oxlint-disable-next-line react/jsx-props-no-spreading
+          {...draggableProvided.draggableProps}
+          // oxlint-disable-next-line react/jsx-props-no-spreading
+          {...draggableProvided.dragHandleProps}
+          onClick={draggableSnapshot.isDragging ? undefined : onSelect}
+          active={isActive}
+          disabled={disabled}
+          style={{
+            ...draggableProvided.draggableProps.style,
+            cursor: draggableSnapshot.isDragging ? 'grabbing' : 'pointer',
+          }}
+        >
+          <StyledTabContentWrapper isBeingEdited={isSettingsOpenForThisTab}>
+            <TabContent
+              id={tab.id}
+              active={isActive}
+              disabled={disabled}
+              LeftIcon={tab.Icon}
+              title={tab.title}
+              logo={tab.logo}
+              pill={tab.pill}
+            />
+          </StyledTabContentWrapper>
+        </StyledTabContainer>
+      )}
+    </Draggable>
+  );
+
+  if (!isWidgetDropTarget) {
+    return draggableTab;
+  }
+
   return (
     <PageLayoutTabWidgetDropTarget tabId={tab.id}>
-      <Draggable draggableId={tab.id} index={index} isDragDisabled={disabled}>
-        {(draggableProvided, draggableSnapshot) => (
-          <StyledTabContainer
-            ref={draggableProvided.innerRef}
-            // oxlint-disable-next-line react/jsx-props-no-spreading
-            {...draggableProvided.draggableProps}
-            // oxlint-disable-next-line react/jsx-props-no-spreading
-            {...draggableProvided.dragHandleProps}
-            onClick={draggableSnapshot.isDragging ? undefined : onSelect}
-            active={isActive}
-            disabled={disabled}
-            style={{
-              ...draggableProvided.draggableProps.style,
-              cursor: draggableSnapshot.isDragging ? 'grabbing' : 'pointer',
-            }}
-          >
-            <StyledTabContentWrapper isBeingEdited={isSettingsOpenForThisTab}>
-              <TabContent
-                id={tab.id}
-                active={isActive}
-                disabled={disabled}
-                LeftIcon={tab.Icon}
-                title={tab.title}
-                logo={tab.logo}
-                pill={tab.pill}
-              />
-            </StyledTabContentWrapper>
-          </StyledTabContainer>
-        )}
-      </Draggable>
+      {draggableTab}
     </PageLayoutTabWidgetDropTarget>
   );
 };

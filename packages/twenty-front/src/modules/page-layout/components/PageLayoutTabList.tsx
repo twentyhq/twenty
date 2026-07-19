@@ -49,7 +49,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { type PageLayoutType } from '~/generated-metadata/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -320,6 +320,8 @@ export const PageLayoutTabList = ({
 
   const shouldRenderStaticDropdown = hasHiddenTabs && !canReorderTabs;
 
+  const enableWidgetDropTarget = pageLayoutType === PageLayoutType.RECORD_PAGE;
+
   return (
     <TabListComponentInstanceContext.Provider
       value={{ instanceId: componentInstanceId }}
@@ -371,6 +373,7 @@ export const PageLayoutTabList = ({
                 onChangeTab={onChangeTab}
                 onSelectTab={handleSelectTab}
                 canReorder={canReorderTabs}
+                enableWidgetDropTarget={enableWidgetDropTarget}
               />
 
               {shouldRenderReorderableDropdown && (
@@ -436,6 +439,7 @@ export const PageLayoutTabList = ({
               onChangeTab={onChangeTab}
               onSelectTab={handleSelectTab}
               canReorder={canReorderTabs}
+              enableWidgetDropTarget={enableWidgetDropTarget}
             />
             {shouldRenderStaticDropdown && (
               <StyledDropdownContainer>

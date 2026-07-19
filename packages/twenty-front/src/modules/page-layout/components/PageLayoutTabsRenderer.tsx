@@ -192,64 +192,60 @@ export const PageLayoutTabsRenderer = () => {
     (tab) => tab.id === activeTabId,
   );
 
-  const layoutContent = (
-    <StyledContainer hasPinnedTab={isDefined(pinnedLeftTab)}>
-      {isDefined(pinnedLeftTab) && (
-        <PageLayoutLeftPanel pinnedLeftTabId={pinnedLeftTab.id} />
-      )}
-
-      <StyledTabsAndDashboardContainer>
-        <PageLayoutTabListEffect
-          tabs={sortedActiveTabs}
-          componentInstanceId={tabListInstanceId}
-          defaultTabToFocusOnMobileAndSidePanelId={
-            currentPageLayout.defaultTabToFocusOnMobileAndSidePanelId ??
-            undefined
-          }
-        />
-        {(sortedActiveTabs.length > 1 || isPageLayoutInEditMode) && (
-          <PageLayoutTabList
-            className="page-layout-tab-list-print-hidden"
-            tabs={sortedActiveTabs}
-            behaveAsLinks={!isInSidePanel && !isPageLayoutInEditMode}
-            isInSidePanel={isInSidePanel}
-            componentInstanceId={tabListInstanceId}
-            addTabStrategy={addTabStrategy}
-            isReorderEnabled={canEnableTabEditing}
-            onReorder={
-              canEnableTabEditing
-                ? (result, provided) =>
-                    reorderRecordPageTabs(
-                      result,
-                      provided,
-                      isDefined(pinnedLeftTab),
-                    )
-                : undefined
-            }
-            pageLayoutType={currentPageLayout.type}
-          />
+  return (
+    <PageLayoutWidgetDndProvider>
+      <StyledContainer hasPinnedTab={isDefined(pinnedLeftTab)}>
+        {isDefined(pinnedLeftTab) && (
+          <PageLayoutLeftPanel pinnedLeftTabId={pinnedLeftTab.id} />
         )}
 
-        <StyledScrollWrapperContainer>
-          <ScrollWrapper
-            className="page-layout-scroll-wrapper"
-            componentInstanceId={getScrollWrapperInstanceIdFromPageLayoutId(
-              currentPageLayout.id,
-            )}
-            defaultEnableXScroll={false}
-          >
-            {isDefined(activeTabId) && activeTabExistsInCurrentPageLayout && (
-              <PageLayoutMainContent tabId={activeTabId} />
-            )}
-          </ScrollWrapper>
-        </StyledScrollWrapperContainer>
-      </StyledTabsAndDashboardContainer>
-    </StyledContainer>
-  );
+        <StyledTabsAndDashboardContainer>
+          <PageLayoutTabListEffect
+            tabs={sortedActiveTabs}
+            componentInstanceId={tabListInstanceId}
+            defaultTabToFocusOnMobileAndSidePanelId={
+              currentPageLayout.defaultTabToFocusOnMobileAndSidePanelId ??
+              undefined
+            }
+          />
+          {(sortedActiveTabs.length > 1 || isPageLayoutInEditMode) && (
+            <PageLayoutTabList
+              className="page-layout-tab-list-print-hidden"
+              tabs={sortedActiveTabs}
+              behaveAsLinks={!isInSidePanel && !isPageLayoutInEditMode}
+              isInSidePanel={isInSidePanel}
+              componentInstanceId={tabListInstanceId}
+              addTabStrategy={addTabStrategy}
+              isReorderEnabled={canEnableTabEditing}
+              onReorder={
+                canEnableTabEditing
+                  ? (result, provided) =>
+                      reorderRecordPageTabs(
+                        result,
+                        provided,
+                        isDefined(pinnedLeftTab),
+                      )
+                  : undefined
+              }
+              pageLayoutType={currentPageLayout.type}
+            />
+          )}
 
-  return isPageLayoutInEditMode ? (
-    <PageLayoutWidgetDndProvider>{layoutContent}</PageLayoutWidgetDndProvider>
-  ) : (
-    layoutContent
+          <StyledScrollWrapperContainer>
+            <ScrollWrapper
+              className="page-layout-scroll-wrapper"
+              componentInstanceId={getScrollWrapperInstanceIdFromPageLayoutId(
+                currentPageLayout.id,
+              )}
+              defaultEnableXScroll={false}
+            >
+              {isDefined(activeTabId) && activeTabExistsInCurrentPageLayout && (
+                <PageLayoutMainContent tabId={activeTabId} />
+              )}
+            </ScrollWrapper>
+          </StyledScrollWrapperContainer>
+        </StyledTabsAndDashboardContainer>
+      </StyledContainer>
+    </PageLayoutWidgetDndProvider>
   );
 };

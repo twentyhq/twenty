@@ -4,9 +4,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { pageLayoutWidgetDragOverTabIdComponentState } from '@/page-layout/states/pageLayoutWidgetDragOverTabIdComponentState';
 import { type PageLayoutTabWidgetDropData } from '@/page-layout/types/PageLayoutWidgetDndData';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const StyledDropTarget = styled.div<{ isActive: boolean }>`
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -18,13 +16,11 @@ const StyledDropTarget = styled.div<{ isActive: boolean }>`
 
 type PageLayoutTabWidgetDropTargetProps = {
   tabId: string;
-  disabled?: boolean;
   children: ReactNode;
 };
 
 export const PageLayoutTabWidgetDropTarget = ({
   tabId,
-  disabled = false,
   children,
 }: PageLayoutTabWidgetDropTargetProps) => {
   const data: PageLayoutTabWidgetDropData = {
@@ -32,22 +28,14 @@ export const PageLayoutTabWidgetDropTarget = ({
     tabId,
   };
 
-  const { ref } = useDroppable({
+  const { ref, isDropTarget } = useDroppable({
     id: `page-layout-tab-widget-drop-${tabId}`,
-    disabled,
     collisionDetector: pointerIntersection,
     data,
   });
 
-  const pageLayoutWidgetDragOverTabId = useAtomComponentStateValue(
-    pageLayoutWidgetDragOverTabIdComponentState,
-  );
-
   return (
-    <StyledDropTarget
-      ref={ref}
-      isActive={pageLayoutWidgetDragOverTabId === tabId}
-    >
+    <StyledDropTarget ref={ref} isActive={isDropTarget}>
       {children}
     </StyledDropTarget>
   );

@@ -4,9 +4,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { type PageLayoutWidgetDragData } from '@/page-layout/types/PageLayoutWidgetDndData';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const PLUGINS_WITHOUT_OPTIMISTIC = [SortableKeyboardPlugin];
 
@@ -43,7 +41,7 @@ export const PageLayoutWidgetSortableItem = ({
     index,
   };
 
-  const { ref, handleRef } = useSortable({
+  const { ref, handleRef, isDragging } = useSortable({
     id: widgetId,
     index,
     group: tabId,
@@ -54,17 +52,13 @@ export const PageLayoutWidgetSortableItem = ({
     feedback: 'clone',
   });
 
-  const pageLayoutDraggingWidgetId = useAtomComponentStateValue(
-    pageLayoutDraggingWidgetIdComponentState,
-  );
-
   return (
     <StyledSortableRoot
       ref={(element) => {
         ref(element);
         handleRef?.(element);
       }}
-      isDragging={pageLayoutDraggingWidgetId === widgetId}
+      isDragging={isDragging}
     >
       {children}
     </StyledSortableRoot>

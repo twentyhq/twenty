@@ -6,7 +6,6 @@ import { PageLayoutInitializationQueryEffect } from '@/page-layout/components/Pa
 import { PageLayoutRecordPageCustomizationSessionRegistrationEffect } from '@/page-layout/components/PageLayoutRecordPageCustomizationSessionRegistrationEffect';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
-import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
@@ -38,7 +37,6 @@ const PageLayoutSingleTabRendererInner = () => {
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const targetRecordIdentifier = useTargetRecord();
   const { isInSidePanel } = useLayoutRenderingContext();
-  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   const sortedActiveTabs = sortTabsByPosition(
     currentPageLayout.tabs.filter((tab) => tab.isActive),
@@ -68,13 +66,9 @@ const PageLayoutSingleTabRendererInner = () => {
           layoutMode,
         }}
       >
-        {isPageLayoutInEditMode ? (
-          <PageLayoutWidgetDndProvider>
-            <PageLayoutContent />
-          </PageLayoutWidgetDndProvider>
-        ) : (
+        <PageLayoutWidgetDndProvider>
           <PageLayoutContent />
-        )}
+        </PageLayoutWidgetDndProvider>
       </PageLayoutContentProvider>
     </>
   );

@@ -20,13 +20,9 @@ export const useMoveWidgetToTab = (pageLayoutIdFromProps?: string) => {
   const store = useStore();
 
   const moveWidgetToTab = useCallback(
-    (widgetId: string, destinationTabId: string, destinationIndex?: number) => {
+    (widgetId: string, destinationTabId: string) => {
       store.set(pageLayoutDraftState, (prev) =>
-        moveWidgetToTabInDraft(prev, {
-          widgetId,
-          destinationTabId,
-          destinationIndex,
-        }),
+        moveWidgetToTabInDraft(prev, { widgetId, destinationTabId }),
       );
     },
     [pageLayoutDraftState, store],
