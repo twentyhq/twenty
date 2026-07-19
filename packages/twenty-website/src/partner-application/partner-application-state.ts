@@ -2,6 +2,7 @@ import { type PartnerCountryValue } from './data/partner-country-options';
 import { type PartnerLanguageValue } from './data/partner-language-options';
 import { type PartnerScopeValue } from './data/partner-scope-options';
 import { type PartnerTeamTypeValue } from './data/partner-team-type-options';
+import { type PartnerTwentyExperienceValue } from './data/partner-twenty-experience-options';
 
 export type CountryFieldValue = PartnerCountryValue | '';
 
@@ -20,11 +21,15 @@ export type PartnerApplicationState = {
   country: CountryFieldValue;
   languages: PartnerLanguageValue[];
 
-  // Expertise & experience
+  // Expertise
   typeOfTeam: PartnerTeamTypeValue | '';
   partnerScope: PartnerScopeValue[];
   skills: string[];
-  applicationNotes: string;
+
+  // Experience (what they've built in Twenty)
+  twentyExperience: PartnerTwentyExperienceValue[];
+  twentyExperienceNotes: string;
+  twentyExperienceProofLink: string;
 
   // Commercials
   hourlyRate: string;
@@ -39,7 +44,8 @@ export type PartnerApplicationState = {
 };
 
 // The scalar (string-valued) fields a single SET_FIELD action can target;
-// multi-value fields (languages, partnerScope, skills) have their own actions.
+// multi-value fields (languages, partnerScope, skills, twentyExperience) have
+// their own actions.
 export type ScalarFieldName =
   | 'name'
   | 'email'
@@ -49,7 +55,8 @@ export type ScalarFieldName =
   | 'city'
   | 'country'
   | 'typeOfTeam'
-  | 'applicationNotes'
+  | 'twentyExperienceNotes'
+  | 'twentyExperienceProofLink'
   | 'hourlyRate'
   | 'projectBudgetMin'
   | 'calendarLink';
@@ -58,6 +65,7 @@ export type PartnerApplicationAction =
   | { type: 'SET_FIELD'; field: ScalarFieldName; value: string }
   | { type: 'TOGGLE_SCOPE'; value: PartnerScopeValue }
   | { type: 'TOGGLE_LANGUAGE'; value: PartnerLanguageValue }
+  | { type: 'TOGGLE_EXPERIENCE'; value: PartnerTwentyExperienceValue }
   | { type: 'SET_SKILLS'; value: string[] }
   | { type: 'GO_NEXT' }
   | { type: 'GO_BACK' }
@@ -79,7 +87,9 @@ export const INITIAL_PARTNER_APPLICATION_STATE: PartnerApplicationState = {
   typeOfTeam: '',
   partnerScope: [],
   skills: [],
-  applicationNotes: '',
+  twentyExperience: [],
+  twentyExperienceNotes: '',
+  twentyExperienceProofLink: '',
   hourlyRate: '',
   projectBudgetMin: '',
   calendarLink: '',
