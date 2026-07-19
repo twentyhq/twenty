@@ -194,11 +194,28 @@ export class SSOService {
       );
     }
 
+    // openid-client defaults to expecting an RS256-signed id_token and rejects
+    // anything else ("unexpected JWT alg received, expected RS256, got: ...").
+    // Align the client with the algorithm the issuer actually advertises so
+    // IdPs signing with EC/EdDSA algorithms (e.g. Logto uses ES384) work too.
+    // Prefer a commonly supported RSA alg when the issuer lists several, then
+    // fall back to the first advertised value, then RS256.
+    const supportedIdTokenAlgs = issuer.metadata
+      .id_token_signing_alg_values_supported as string[] | undefined;
+    const preferredIdTokenAlgs = ['RS256', 'ES256', 'ES384', 'ES512', 'EdDSA'];
+    const idTokenSignedResponseAlg =
+      preferredIdTokenAlgs.find((algorithm) =>
+        supportedIdTokenAlgs?.includes(algorithm),
+      ) ??
+      supportedIdTokenAlgs?.[0] ??
+      'RS256';
+
     return new issuer.Client({
       client_id: identityProvider.clientID,
       client_secret: identityProvider.clientSecret,
       redirect_uris: [this.buildCallbackUrl(identityProvider)],
       response_types: [OIDCResponseType.CODE],
+      id_token_signed_response_alg: idTokenSignedResponseAlg,
     });
   }
 
