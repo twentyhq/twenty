@@ -39,7 +39,7 @@ export const useCreateWorkflowVersionStep = () => {
 
     const workflowVersionStepChanges = result?.data?.createWorkflowVersionStep;
 
-    const updatedWorkflowVersion = updateWorkflowVersionCache({
+    const updatedWorkflowVersion = await updateWorkflowVersionCache({
       workflowVersionStepChanges,
       workflowVersionId: input.workflowVersionId,
     });

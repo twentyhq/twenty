@@ -32,7 +32,7 @@ export const useCreateWorkflowVersionEdge = () => {
 
     const workflowVersionStepChanges = result?.data?.createWorkflowVersionEdge;
 
-    updateWorkflowVersionCache({
+    await updateWorkflowVersionCache({
       workflowVersionStepChanges,
       workflowVersionId: input.workflowVersionId,
     });

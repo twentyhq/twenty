@@ -40,7 +40,7 @@ export const useDuplicateWorkflowVersionStep = () => {
     const workflowVersionStepChanges =
       result?.data?.duplicateWorkflowVersionStep;
 
-    const updatedWorkflowVersion = updateWorkflowVersionCache({
+    const updatedWorkflowVersion = await updateWorkflowVersionCache({
       workflowVersionStepChanges,
       workflowVersionId: input.workflowVersionId,
     });

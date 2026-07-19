@@ -25,7 +25,7 @@ export const useDeleteWorkflowVersionEdge = () => {
 
     const workflowVersionStepChanges = result?.data?.deleteWorkflowVersionEdge;
 
-    updateWorkflowVersionCache({
+    await updateWorkflowVersionCache({
       workflowVersionStepChanges,
       workflowVersionId: input.workflowVersionId,
     });
