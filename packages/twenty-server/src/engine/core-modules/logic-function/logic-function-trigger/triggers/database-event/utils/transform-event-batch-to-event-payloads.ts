@@ -44,6 +44,14 @@ export const transformEventBatchToEventPayloads = ({
   return result;
 };
 
+const isFieldFilterableDatabaseEventOperation = (
+  operation: string,
+): boolean => operation === 'updated' || operation === 'upserted';
+
+// Aligns with the classic workflow listener: field-scope both `updated` and
+// `upserted`. Pure-create upserts (no before-record / empty updatedFields) still
+// pass so first-time processing is not dropped; update-path upserts whose
+// changed fields do not intersect the watched set are filtered out.
 const filterEventsByUpdatedFields = ({
   events,
   operation,
@@ -53,7 +61,7 @@ const filterEventsByUpdatedFields = ({
   operation: string;
   triggerUpdatedFields?: string[];
 }): ObjectRecordEvent[] => {
-  if (operation !== 'updated') {
+  if (!isFieldFilterableDatabaseEventOperation(operation)) {
     return events;
   }
 
@@ -67,7 +75,9 @@ const filterEventsByUpdatedFields = ({
     )?.updatedFields;
 
     if (!isDefined(eventUpdatedFields) || eventUpdatedFields.length === 0) {
-      return false;
+      // Pure create path of an upsert has no field diff — keep it.
+      // For plain `updated`, empty updatedFields means nothing to match.
+      return operation === 'upserted';
     }
 
     return eventUpdatedFields.some((fieldName: string) =>
