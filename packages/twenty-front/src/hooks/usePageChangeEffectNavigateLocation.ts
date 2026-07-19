@@ -99,7 +99,8 @@ export const usePageChangeEffectNavigateLocation = () => {
   ) {
     if (
       isMatchingLocation(location, AppPath.VerifyEmail) &&
-      isDefined(verifyEmailRedirectPath)
+      isDefined(verifyEmailRedirectPath) &&
+      isValidReturnToPath(verifyEmailRedirectPath)
     ) {
       return verifyEmailRedirectPath;
     }

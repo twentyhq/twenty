@@ -1,6 +1,7 @@
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
+import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
@@ -91,7 +92,12 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
           });
         }
 
-        if (isDefined(verifyEmailRedirectPath)) {
+        // nextPath must use the same allowlist as returnToPath or it becomes
+        // an open-redirect (//evil.com, protocol-relative, etc.).
+        if (
+          isDefined(verifyEmailRedirectPath) &&
+          isValidReturnToPath(verifyEmailRedirectPath)
+        ) {
           setVerifyEmailRedirectPath(verifyEmailRedirectPath);
         }
 
