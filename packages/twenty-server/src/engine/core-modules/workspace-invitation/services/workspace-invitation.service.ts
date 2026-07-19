@@ -77,7 +77,13 @@ export class WorkspaceInvitationService {
         throw new Error('Invalid invitation token');
       }
 
-      if (!appToken.context?.email || appToken.context?.email !== email) {
+      const invitationEmail =
+        typeof appToken.context?.email === 'string'
+          ? appToken.context.email.toLowerCase().trim()
+          : undefined;
+      const normalizedEmail = email.toLowerCase().trim();
+
+      if (!invitationEmail || invitationEmail !== normalizedEmail) {
         throw new Error('Email does not match the invitation');
       }
 
@@ -162,14 +168,18 @@ export class WorkspaceInvitationService {
     roleId?: string,
     isOnboardingInvitation = false,
   ) {
+    // Users are stored lowercased; invitations must use the same form so
+    // duplicate invites and "already in workspace" checks cannot miss on case.
+    const normalizedEmail = email.toLowerCase().trim();
+
     const maybeWorkspaceInvitation = await this.getOneWorkspaceInvitation(
       workspace.id,
-      email.toLowerCase(),
+      normalizedEmail,
     );
 
     if (maybeWorkspaceInvitation) {
       throw new WorkspaceInvitationException(
-        `${email} already invited`,
+        `${normalizedEmail} already invited`,
         WorkspaceInvitationExceptionCode.INVITATION_ALREADY_EXIST,
       );
     }
@@ -178,7 +188,7 @@ export class WorkspaceInvitationService {
       where: {
         workspaceId: workspace.id,
         user: {
-          email,
+          email: normalizedEmail,
         },
       },
       relations: {
@@ -188,14 +198,14 @@ export class WorkspaceInvitationService {
 
     if (isUserAlreadyInWorkspace) {
       throw new WorkspaceInvitationException(
-        `${email} is already in the workspace`,
+        `${normalizedEmail} is already in the workspace`,
         WorkspaceInvitationExceptionCode.USER_ALREADY_EXIST,
       );
     }
 
     return this.generateInvitationToken(
       workspace.id,
-      email,
+      normalizedEmail,
       roleId,
       isOnboardingInvitation,
     );
