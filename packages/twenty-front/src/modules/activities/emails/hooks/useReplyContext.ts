@@ -1,12 +1,11 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo } from 'react';
 
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
-import { formatEmailRecipient } from '@/activities/emails/recipients/utils/formatEmailRecipient';
 import {
   type ReplyContext,
   type ReplyContextReady,
 } from '@/activities/emails/types/ReplyContext';
+import { getReplyToRecipients } from '@/activities/emails/utils/getReplyToRecipients';
 import { isDefined } from 'twenty-shared/utils';
 
 export type { ReplyContext, ReplyContextReady };
@@ -17,6 +16,7 @@ export const useReplyContext = (
   const {
     messages,
     connectedAccountId,
+    connectedAccountHandle,
     connectedAccountProvider,
     messageChannelLoading,
     threadLoading,
@@ -52,13 +52,10 @@ export const useReplyContext = (
       };
     }
 
-    const senderHandle = lastSentMessage.sender?.handle ?? '';
-    const replyTo = isNonEmptyString(senderHandle)
-      ? formatEmailRecipient({
-          address: senderHandle,
-          displayName: lastSentMessage.sender?.displayName,
-        })
-      : '';
+    const replyTo = getReplyToRecipients({
+      message: lastSentMessage,
+      connectedAccountHandle,
+    });
 
     const rawSubject = lastSentMessage.subject ?? '';
     const subject = rawSubject.startsWith('Re: ')
@@ -76,6 +73,7 @@ export const useReplyContext = (
   }, [
     messages,
     connectedAccountId,
+    connectedAccountHandle,
     connectedAccountProvider,
     messageChannelLoading,
     threadLoading,
