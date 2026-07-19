@@ -17,15 +17,23 @@ export const prepareBodyWithSignedUrls = (
     }
 
     const imageUrl = block.props.url;
-    const parsedImageUrl = new URL(imageUrl);
 
-    return {
-      ...block,
-      props: {
-        ...block.props,
-        url: parsedImageUrl.toString(),
-      },
-    };
+    // Relative or malformed URLs must not throw — that aborts debounced rich
+    // text persistence (see #23028). Leave the original URL unchanged when
+    // it cannot be parsed as an absolute URL.
+    try {
+      const parsedImageUrl = new URL(imageUrl);
+
+      return {
+        ...block,
+        props: {
+          ...block.props,
+          url: parsedImageUrl.toString(),
+        },
+      };
+    } catch {
+      return block;
+    }
   });
 
   return JSON.stringify(bodyWithSignedPayload);

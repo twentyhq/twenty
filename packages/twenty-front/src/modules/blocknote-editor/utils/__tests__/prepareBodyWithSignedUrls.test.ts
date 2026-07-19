@@ -43,4 +43,28 @@ describe('prepareBodyWithSignedUrls', () => {
     expect(result[0].type).toBe('image');
     expect(result[0].props.url).toContain('example.com');
   });
+
+  it('should leave relative image URLs unchanged without throwing', () => {
+    const input = JSON.stringify([
+      { type: 'image', props: { url: '/files/workspace/image.png' } },
+      { type: 'paragraph', content: 'still saved' },
+    ]);
+
+    expect(() => prepareBodyWithSignedUrls(input)).not.toThrow();
+
+    const result = JSON.parse(prepareBodyWithSignedUrls(input));
+    expect(result[0].props.url).toBe('/files/workspace/image.png');
+    expect(result[1].content).toBe('still saved');
+  });
+
+  it('should leave invalid image URLs unchanged without throwing', () => {
+    const input = JSON.stringify([
+      { type: 'image', props: { url: 'not a url' } },
+    ]);
+
+    expect(() => prepareBodyWithSignedUrls(input)).not.toThrow();
+
+    const result = JSON.parse(prepareBodyWithSignedUrls(input));
+    expect(result[0].props.url).toBe('not a url');
+  });
 });
