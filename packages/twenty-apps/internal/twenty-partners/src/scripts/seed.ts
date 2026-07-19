@@ -325,7 +325,7 @@ async function main() {
     const existing = nodes(await client.query({ people: { __args: { filter: { name: { firstName: { eq: person.firstName } } }, first: 10 }, edges: { node: { id: true, name: { firstName: true, lastName: true } } } } } as any), 'people');
     const match = existing.find((n: any) => n.name?.firstName === person.firstName && n.name?.lastName === person.lastName);
     if (!match) {
-      await client.mutation({ createPerson: { __args: { data: { name: { firstName: person.firstName, lastName: person.lastName }, emails: { primaryEmail: person.email }, companyId: companyIdByName.get(person.companyName) } }, id: true } } as any);
+      await client.mutation({ createPerson: { __args: { data: { name: { firstName: person.firstName, lastName: person.lastName }, emails: { primaryEmail: person.email }, city: person.city, companyId: companyIdByName.get(person.companyName) } }, id: true } } as any);
     }
   }
 
@@ -404,7 +404,10 @@ async function main() {
         await client.query({
           partnerServices: {
             __args: {
-              filter: { title: { eq: service.title } },
+              filter: {
+                title: { eq: service.title },
+                partnerId: { eq: primaryDemoPartnerId },
+              },
               first: 1,
             },
             edges: { node: { id: true } },
@@ -448,7 +451,10 @@ async function main() {
         await client.query({
           partnerContents: {
             __args: {
-              filter: { name: { eq: content.name } },
+              filter: {
+                name: { eq: content.name },
+                partnerId: { eq: primaryDemoPartnerId },
+              },
               first: 1,
             },
             edges: { node: { id: true } },
@@ -496,7 +502,10 @@ async function main() {
         await client.query({
           partnerLinks: {
             __args: {
-              filter: { name: { eq: link.name } },
+              filter: {
+                name: { eq: link.name },
+                partnerId: { eq: primaryDemoPartnerId },
+              },
               first: 1,
             },
             edges: { node: { id: true } },

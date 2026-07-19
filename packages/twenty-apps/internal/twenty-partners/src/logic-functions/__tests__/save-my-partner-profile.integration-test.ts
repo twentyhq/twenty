@@ -70,7 +70,8 @@ async function createUnlinkedPartner(client: CoreApiClient): Promise<string> {
 }
 
 async function destroyPartner(client: CoreApiClient, id: string) {
-  await client.mutation({ destroyPartner: { __args: { id }, id: true } }).catch(() => {});
+  // Let a failed delete surface so leaked fixtures are visible instead of silently kept.
+  await client.mutation({ destroyPartner: { __args: { id }, id: true } });
 }
 
 async function getPartner(client: CoreApiClient, id: string) {

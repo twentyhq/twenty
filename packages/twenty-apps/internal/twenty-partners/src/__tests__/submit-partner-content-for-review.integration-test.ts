@@ -112,11 +112,14 @@ describe('submit-partner-content-for-review handler', () => {
     if (originalToken === undefined) delete process.env.TWENTY_APP_ACCESS_TOKEN;
     else process.env.TWENTY_APP_ACCESS_TOKEN = originalToken;
 
-    await client.mutation({ destroyPartnerContent: { __args: { id: wipId }, id: true } });
-    await client.mutation({ destroyPartnerContent: { __args: { id: approvedId }, id: true } });
-    await client.mutation({ destroyPartnerContent: { __args: { id: otherWipId }, id: true } });
-    await client.mutation({ destroyPartner: { __args: { id: partnerId }, id: true } });
-    await client.mutation({ destroyPartner: { __args: { id: otherPartnerId }, id: true } });
+    // Guard each id: if beforeAll threw partway through, the unset ones stay undefined —
+    // skip them so cleanup still reaches every record that was actually created.
+    for (const id of [wipId, approvedId, otherWipId]) {
+      if (id) await client.mutation({ destroyPartnerContent: { __args: { id }, id: true } });
+    }
+    for (const id of [partnerId, otherPartnerId]) {
+      if (id) await client.mutation({ destroyPartner: { __args: { id }, id: true } });
+    }
   });
 
   const callHandler = (recordId: string) =>

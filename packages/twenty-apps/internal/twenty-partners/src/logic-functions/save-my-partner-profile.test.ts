@@ -60,6 +60,13 @@ describe('saveProfileSchema', () => {
     ).toBe(false);
   });
 
+  it('rejects a lowercase currency code (USD only)', () => {
+    expect(
+      saveProfileSchema.safeParse({ hourlyRate: { amountMicros: 100, currencyCode: 'usd' } })
+        .success,
+    ).toBe(false);
+  });
+
   it('accepts null for clearable country and enum fields', () => {
     expect(
       saveProfileSchema.safeParse({ country: null, typeOfTeam: null, availability: null }).success,

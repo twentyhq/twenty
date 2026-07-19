@@ -28,6 +28,16 @@ describe('buildReconcilePlan', () => {
     expect(buildReconcilePlan(existingIds, incoming)).toBeNull();
   });
 
+  it('returns null when the same id is submitted twice (no double update)', () => {
+    const existingIds = ['a', 'b'];
+    const incoming: Item[] = [
+      { id: 'a', value: 'first' },
+      { id: 'a', value: 'second' },
+    ];
+
+    expect(buildReconcilePlan(existingIds, incoming)).toBeNull();
+  });
+
   it('deletes everything when incoming is empty', () => {
     const existingIds = ['a', 'b', 'c'];
 

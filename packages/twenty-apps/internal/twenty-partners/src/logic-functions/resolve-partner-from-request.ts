@@ -22,7 +22,11 @@ export const decodeJwtClaims = (
       part.replace(/-/g, '+').replace(/_/g, '/'),
       'base64',
     ).toString('utf8');
-    return JSON.parse(json);
+    const parsed = JSON.parse(json);
+    // A JWT payload can decode to a non-object (null, number, string); guard so callers
+    // reading claims.userId reject cleanly instead of throwing on a valid-but-malformed token.
+    if (parsed === null || typeof parsed !== 'object') return {};
+    return parsed;
   } catch {
     return {};
   }

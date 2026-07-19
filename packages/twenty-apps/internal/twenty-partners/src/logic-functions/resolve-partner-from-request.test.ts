@@ -28,6 +28,11 @@ describe('decodeJwtClaims', () => {
   it('returns {} when the payload segment is not valid JSON', () => {
     expect(decodeJwtClaims('header.%%%.sig')).toEqual({});
   });
+
+  it('returns {} when the payload decodes to a non-object (null)', () => {
+    const token = `header.${Buffer.from('null').toString('base64url')}.sig`;
+    expect(decodeJwtClaims(token)).toEqual({});
+  });
 });
 
 describe('resolvePartnerFromRequest guards (no network)', () => {

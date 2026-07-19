@@ -117,6 +117,13 @@ describe('save-my-partner-content handler', () => {
 
     await client.mutation({ destroyPartnerContent: { __args: { id: keepId }, id: true } });
     await client.mutation({ destroyPartnerContent: { __args: { id: otherContentId }, id: true } });
+    // dropId is deleted by the reconcile happy-path; clean it up in case that test bailed early
+    // (tolerate not-found — it is expected to be gone after a successful run).
+    if (dropId) {
+      await client
+        .mutation({ destroyPartnerContent: { __args: { id: dropId }, id: true } })
+        .catch(() => {});
+    }
     await client.mutation({ destroyPartner: { __args: { id: partnerId }, id: true } });
     await client.mutation({ destroyPartner: { __args: { id: otherPartnerId }, id: true } });
   });

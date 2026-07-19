@@ -56,6 +56,7 @@ export const ProfilePictureUpload = ({
         message: error instanceof Error ? error.message : 'Could not open your record',
         variant: 'error',
       });
+    } finally {
       setBusy(false);
     }
   };

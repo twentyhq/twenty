@@ -1,5 +1,6 @@
 import { type CoreSchema } from 'twenty-client-sdk/core';
 
+import { isCaseStudy } from './content-type';
 import { firstFileUrl, resolvePartnerPictureUrl } from './profile-picture';
 import { stripMarkdown } from './strip-markdown';
 
@@ -24,19 +25,6 @@ type PartnerServiceEdge = {
     sortOrder: number | null;
     position: number | null;
   };
-};
-
-const hasContentType = (
-  contentType: string | readonly string[] | null | undefined,
-  value: string,
-): boolean => {
-  if (contentType == null) {
-    return false;
-  }
-
-  return Array.isArray(contentType)
-    ? contentType.includes(value)
-    : contentType === value;
 };
 
 type PartnerContentEdge = {
@@ -213,11 +201,7 @@ const mapPortfolio = (
   edges: ReadonlyArray<PartnerContentEdge>,
 ): MarketplaceProfilePartner['portfolio'] =>
   sortByPositionAscNullsLast(edges)
-    .filter(
-      ({ node }) =>
-        hasContentType(node.contentType, 'CASE_STUDY') &&
-        node.status === 'APPROVED',
-    )
+    .filter(({ node }) => isCaseStudy(node.contentType) && node.status === 'APPROVED')
     .map(({ node }) => ({
       client: node.clientName ?? '',
       title: node.headline ?? '',

@@ -26,7 +26,7 @@ export const saveContentSchema = z.object({
       coverImageUrl: z.string().optional(),
       published: z.boolean().optional(),
     }),
-  ),
+  ).max(50, 'Too many case studies in a single request (max 50)'),
 });
 
 export type SaveContentInput = z.infer<typeof saveContentSchema>;
@@ -52,30 +52,28 @@ export type SaveContentResult =
 // Ownership (partnerId/partnerUser) and contentType are stamped server-side by the
 // on-partner-content-created trigger, never written by the caller — so a partner cannot
 // repoint a case study onto another partner's public marketplace profile.
+// Create and update share every field mapping; they diverge only on how status is
+// derived, so keep the common fields here and let each add its own status handling.
+const buildContentBaseData = (item: CaseStudyItem) => ({
+  name: item.name,
+  clientName: item.clientName,
+  headline: item.headline,
+  body: { markdown: item.bodyMarkdown ?? '' },
+  caseStudyLink: item.caseStudyLink ? { primaryLinkUrl: item.caseStudyLink } : undefined,
+  coverImageUrl: item.coverImageUrl,
+});
+
 export function buildContentCreateData(
   item: CaseStudyItem,
 ): CoreSchema.PartnerContentCreateInput {
-  return {
-    name: item.name,
-    clientName: item.clientName,
-    headline: item.headline,
-    body: { markdown: item.bodyMarkdown ?? '' },
-    caseStudyLink: item.caseStudyLink ? { primaryLinkUrl: item.caseStudyLink } : undefined,
-    coverImageUrl: item.coverImageUrl,
-    status: item.published ? 'APPROVED' : 'WIP',
-  };
+  return { ...buildContentBaseData(item), status: item.published ? 'APPROVED' : 'WIP' };
 }
 
 export function buildContentUpdateData(
   item: CaseStudyItem,
 ): CoreSchema.PartnerContentUpdateInput {
   return {
-    name: item.name,
-    clientName: item.clientName,
-    headline: item.headline,
-    body: { markdown: item.bodyMarkdown ?? '' },
-    caseStudyLink: item.caseStudyLink ? { primaryLinkUrl: item.caseStudyLink } : undefined,
-    coverImageUrl: item.coverImageUrl,
+    ...buildContentBaseData(item),
     // Only touch status when the caller specified published; a partial edit must not unpublish an APPROVED case study.
     ...(item.published !== undefined ? { status: item.published ? 'APPROVED' : 'WIP' } : {}),
   };

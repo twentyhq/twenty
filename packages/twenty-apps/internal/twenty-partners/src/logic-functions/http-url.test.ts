@@ -26,6 +26,14 @@ describe('optionalHttpUrl', () => {
     expect(optionalHttpUrl.parse('https://example.com')).toBe('https://example.com');
   });
 
+  it('passes a valid http url through', () => {
+    expect(optionalHttpUrl.parse('http://example.com')).toBe('http://example.com');
+  });
+
+  it('treats null as null (the schema is nullable)', () => {
+    expect(optionalHttpUrl.parse(null)).toBeNull();
+  });
+
   it('rejects a javascript: url', () => {
     expect(optionalHttpUrl.safeParse('javascript:alert(1)').success).toBe(false);
   });

@@ -132,22 +132,26 @@ const MyCaseStudies = () => {
 
   // The reconcile route takes the whole desired list, so a save persists every card's current
   // values; in the accordion you edit one at a time, so this reads as "save this card".
-  const persist = useCallback(async (nextRows: CaseStudyRow[], successMessage: string) => {
-    const res = (await callAppRoute('/save-my-partner-content', toSaveBody(nextRows))) as SaveContentResult;
-    if (res.ok) {
-      setRows(buildInitialRows(res.caseStudies));
-      await enqueueSnackbar({ message: successMessage, variant: 'success' });
-    } else {
+  const persist = useCallback(
+    async (nextRows: CaseStudyRow[], successMessage: string): Promise<boolean> => {
+      const res = (await callAppRoute('/save-my-partner-content', toSaveBody(nextRows))) as SaveContentResult;
+      if (res.ok) {
+        setRows(buildInitialRows(res.caseStudies));
+        await enqueueSnackbar({ message: successMessage, variant: 'success' });
+        return true;
+      }
       await enqueueSnackbar({ message: res.reason, variant: 'error' });
-    }
-  }, []);
+      return false;
+    },
+    [],
+  );
 
   const handleSave = async (key: string) => {
     if (loadFailed) return;
     setBusyKey(key);
     try {
-      await persist(rows, 'Case study saved');
-      setExpandedKey(null);
+      // Collapse only on success so a rejected save keeps the card open to retry.
+      if (await persist(rows, 'Case study saved')) setExpandedKey(null);
     } catch (error) {
       await enqueueSnackbar({
         message: error instanceof Error ? error.message : 'Failed to save case study',
@@ -201,7 +205,7 @@ const MyCaseStudies = () => {
           type="button"
           style={addButtonStyle}
           onClick={handleAdd}
-          disabled={loading || loadFailed}
+          disabled={loading || loadFailed || busyKey !== null}
         >
           + Add case study
         </button>
@@ -231,7 +235,12 @@ const MyCaseStudies = () => {
               row={row}
               expanded={expandedKey === row.key}
               busy={busyKey === row.key}
-              onToggleExpand={() => setExpandedKey((cur) => (cur === row.key ? null : row.key))}
+              onToggleExpand={() => {
+                // A save/delete persists the whole list, so block switching cards mid-flight
+                // to avoid clobbering another card's in-progress edits.
+                if (busyKey !== null) return;
+                setExpandedKey((cur) => (cur === row.key ? null : row.key));
+              }}
               onChange={(patch) => patchRow(row.key, patch)}
               onSave={() => void handleSave(row.key)}
               onDelete={() => void handleDelete(row.key)}

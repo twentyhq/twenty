@@ -17,6 +17,7 @@ export const buildReconcilePlan = <T extends ReconcileItem>(
       continue;
     }
     if (!owned.has(item.id)) return null; // foreign / stale id → refuse the whole batch
+    if (keptIds.has(item.id)) return null; // same id submitted twice → refuse the whole batch
     keptIds.add(item.id);
     toUpdate.push(item);
   }

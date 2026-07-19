@@ -11,11 +11,12 @@ export const SAVE_MY_PARTNER_PROFILE_ID = 'de21e2a6-f4b4-4186-90d9-645015e856a1'
 
 const optionalUrl = optionalHttpUrl;
 
-// Reject negative/NaN amounts and non-ISO currency codes on marketplace pricing.
+// Marketplace pricing is USD-only (the profile UI has no currency picker), so pin the
+// code and reject negative/NaN amounts rather than accept arbitrary values via the API.
 const optionalMoney = z
   .object({
     amountMicros: z.number().finite().nonnegative(),
-    currencyCode: z.string().regex(/^[A-Za-z]{3}$/, 'Invalid currency code'),
+    currencyCode: z.literal('USD'),
   })
   .nullable()
   .optional();
