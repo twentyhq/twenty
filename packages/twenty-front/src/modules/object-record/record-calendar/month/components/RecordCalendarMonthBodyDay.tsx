@@ -1,12 +1,14 @@
 import { RecordCalendarCardDraggableContainer } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardDraggableContainer';
+import { RECORD_CALENDAR_MONTH_VISIBLE_RECORD_LIMIT } from '@/object-record/record-calendar/constants/RecordCalendarMonthVisibleRecordLimit';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
-import { Droppable } from '@hello-pangea/dnd';
-import { useState } from 'react';
+import { pointerIntersection } from '@dnd-kit/collision';
+import { useDroppable } from '@dnd-kit/react';
+import { Fragment, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import {
   isDefined,
@@ -15,6 +17,9 @@ import {
   isSamePlainDate,
 } from 'twenty-shared/utils';
 import { RecordCalendarAddNew } from '@/object-record/record-calendar/components/RecordCalendarAddNew';
+import { RECORD_CALENDAR_CARD_DND_TYPE } from '@/object-record/record-calendar/record-calendar-dnd/constants/RecordCalendarCardDndType';
+import { DND_KIT_COLLISION_PRIORITY } from '@/ui/utilities/drag-and-drop/constants/DndKitCollisionPriority';
+import { DragDropColumnDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropColumnDropTarget';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{
@@ -130,6 +135,19 @@ export const RecordCalendarMonthBodyDay = ({
 
   const isDayOfWeekend = isPlainDateInWeekend(day);
 
+  const { isDropTarget, ref: dropRef } = useDroppable({
+    id: dayKey,
+    collisionPriority: DND_KIT_COLLISION_PRIORITY,
+    collisionDetector: pointerIntersection,
+    type: RECORD_CALENDAR_CARD_DND_TYPE,
+    accept: RECORD_CALENDAR_CARD_DND_TYPE,
+  });
+
+  const visibleRecordIds = recordIds.slice(
+    0,
+    RECORD_CALENDAR_MONTH_VISIBLE_RECORD_LIMIT,
+  );
+
   return (
     <StyledContainer
       isOtherMonth={isOtherMonth}
@@ -143,25 +161,27 @@ export const RecordCalendarMonthBodyDay = ({
           <StyledDayHeaderDay isToday={isToday}>{day.day}</StyledDayHeaderDay>
         </StyledDayHeaderDayContainer>
       </StyledDayHeader>
-      <Droppable droppableId={dayKey}>
-        {(droppableProvided, droppableSnapshot) => (
-          <StyledCardsContainer
-            // oxlint-disable-next-line react/jsx-props-no-spreading
-            {...droppableProvided.droppableProps}
-            ref={droppableProvided.innerRef}
-            isDraggedOver={droppableSnapshot.isDraggingOver}
-          >
-            {recordIds.slice(0, 5).map((recordId, index) => (
-              <RecordCalendarCardDraggableContainer
-                key={recordId}
-                recordId={recordId}
-                index={index}
-              />
-            ))}
-            {droppableProvided.placeholder}
-          </StyledCardsContainer>
-        )}
-      </Droppable>
+      <StyledCardsContainer ref={dropRef} isDraggedOver={isDropTarget}>
+        {visibleRecordIds.map((recordId, index) => (
+          <Fragment key={recordId}>
+            <DragDropColumnDropTarget
+              index={index}
+              droppableId={dayKey}
+              orientation="horizontal"
+            />
+            <RecordCalendarCardDraggableContainer
+              recordId={recordId}
+              index={index}
+              group={dayKey}
+            />
+          </Fragment>
+        ))}
+        <DragDropColumnDropTarget
+          index={visibleRecordIds.length}
+          droppableId={dayKey}
+          orientation="horizontal"
+        />
+      </StyledCardsContainer>
     </StyledContainer>
   );
 };

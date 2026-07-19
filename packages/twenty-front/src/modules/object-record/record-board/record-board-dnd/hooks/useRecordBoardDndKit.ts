@@ -8,8 +8,8 @@ import { type DragDropColumnData } from '@/ui/utilities/drag-and-drop/types/Drag
 import { isRecordBoardDropProcessingComponentState } from '@/object-record/record-board/states/isRecordBoardDropProcessingComponentState';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { getBoardCardDropBehavior } from '@/object-record/record-board/utils/getBoardCardDropBehavior';
-import { getDestinationIndex } from '@/object-record/record-board/record-board-dnd/utils/getDestinationIndex';
-import { resolveDropTarget } from '@/object-record/record-board/record-board-dnd/utils/resolveDropTarget';
+import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
+import { resolveDropFromPointerY } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointerY';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
@@ -21,7 +21,6 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { isSortable } from '@dnd-kit/react/sortable';
 
 type DragStartPayload = Parameters<
   NonNullable<
@@ -38,13 +37,6 @@ type DragEndPayload = Parameters<
     ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragEnd']
   >
 >[0];
-
-type DropTarget = DragEndPayload['operation']['target'];
-
-type ResolvedDropTarget = {
-  droppableId: string;
-  dropTargetIndex: number;
-};
 
 export type RecordBoardDndKitContextValues = {
   activeDropTargetIndex: number | null;
@@ -104,39 +96,8 @@ export const useRecordBoardDndKit = (): {
     null,
   );
 
-  const resolveDropFromPointerY = (
-    target: DropTarget,
-    pointerY: number,
-  ): ResolvedDropTarget | null => {
-    if (!isDefined(target)) {
-      return null;
-    }
-
-    if (isSortable(target)) {
-      const targetData = target.data as DragDropColumnData | undefined;
-      const cardShape = target.shape;
-
-      if (!isDefined(targetData) || !isDefined(cardShape)) {
-        return null;
-      }
-
-      const { dropTargetIndex } = resolveDropTarget({
-        pointerY,
-        cardPosition: targetData.index,
-        cardShape,
-      });
-
-      return { droppableId: targetData.droppableId, dropTargetIndex };
-    }
-
-    // Dropped over an empty column or the empty space below the cards
-    const droppableId = String(target.id);
-    const recordIdsInColumn = store.get(
-      recordIdsByGroupCallbackState(droppableId),
-    );
-
-    return { droppableId, dropTargetIndex: recordIdsInColumn.length };
-  };
+  const getDroppableItemCount = (droppableId: string) =>
+    store.get(recordIdsByGroupCallbackState(droppableId)).length;
 
   const clearDragState = () => {
     endRecordDrag();
@@ -164,7 +125,11 @@ export const useRecordBoardDndKit = (): {
   const handleDragMove = (event: DragMovePayload) => {
     const { target, position } = event.operation;
 
-    const resolvedDrop = resolveDropFromPointerY(target, position.current.y);
+    const resolvedDrop = resolveDropFromPointerY({
+      target,
+      pointerY: position.current.y,
+      getDroppableItemCount,
+    });
 
     if (!isDefined(resolvedDrop)) {
       setActiveDropTargetIndex(null);
@@ -188,7 +153,11 @@ export const useRecordBoardDndKit = (): {
     const sourceDroppableId = (source.data as DragDropColumnData).droppableId;
     const sourceIndex = (source.data as DragDropColumnData).index;
 
-    const resolvedDrop = resolveDropFromPointerY(target, position.current.y);
+    const resolvedDrop = resolveDropFromPointerY({
+      target,
+      pointerY: position.current.y,
+      getDroppableItemCount,
+    });
     if (!isDefined(resolvedDrop)) {
       resetDragState();
       return;

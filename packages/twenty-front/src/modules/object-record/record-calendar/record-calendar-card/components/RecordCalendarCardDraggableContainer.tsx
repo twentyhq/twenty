@@ -1,14 +1,14 @@
 import { styled } from '@linaria/react';
-import { Draggable } from '@hello-pangea/dnd';
 
-import { getCssCompatibleDraggableProps } from '@/ui/layout/draggable-list/utils/getCssCompatibleDraggableProps';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
+import { RECORD_CALENDAR_CARD_DND_TYPE } from '@/object-record/record-calendar/record-calendar-dnd/constants/RecordCalendarCardDndType';
 import { RecordCalendarCard } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCard';
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
+import { DragDropColumnSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropColumnSortableCell';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -22,9 +22,11 @@ const StyledDraggableContainer = styled.div`
 export const RecordCalendarCardDraggableContainer = ({
   recordId,
   index,
+  group,
 }: {
   recordId: string;
   index: number;
+  group: string;
 }) => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
 
@@ -68,28 +70,21 @@ export const RecordCalendarCardDraggableContainer = ({
     <RecordCalendarCardComponentInstanceContext.Provider
       value={{ instanceId: recordId }}
     >
-      <Draggable
-        key={recordId}
-        draggableId={recordId}
+      <DragDropColumnSortableCell
+        id={recordId}
         index={index}
-        isDragDisabled={dragIsDisabled}
+        group={group}
+        type={RECORD_CALENDAR_CARD_DND_TYPE}
+        accept={RECORD_CALENDAR_CARD_DND_TYPE}
+        disabled={dragIsDisabled}
       >
-        {(draggableProvided) => (
-          <StyledDraggableContainer
-            id={`record-calendar-card-${recordId}`}
-            ref={draggableProvided?.innerRef}
-            // oxlint-disable-next-line react/jsx-props-no-spreading
-            {...draggableProvided?.dragHandleProps}
-            // oxlint-disable-next-line react/jsx-props-no-spreading
-            {...getCssCompatibleDraggableProps(
-              draggableProvided.draggableProps,
-            )}
-            data-selectable-id={recordId}
-          >
-            <RecordCalendarCard recordId={recordId} />
-          </StyledDraggableContainer>
-        )}
-      </Draggable>
+        <StyledDraggableContainer
+          id={`record-calendar-card-${recordId}`}
+          data-selectable-id={recordId}
+        >
+          <RecordCalendarCard recordId={recordId} />
+        </StyledDraggableContainer>
+      </DragDropColumnSortableCell>
     </RecordCalendarCardComponentInstanceContext.Provider>
   );
 };

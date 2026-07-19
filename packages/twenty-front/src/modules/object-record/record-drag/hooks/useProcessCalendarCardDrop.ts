@@ -1,4 +1,3 @@
-import { type DropResult } from '@hello-pangea/dnd';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
@@ -30,16 +29,16 @@ export const useProcessCalendarCardDrop = () => {
     );
 
   const processCalendarCardDrop = useCallback(
-    async (calendarCardDropResult: DropResult) => {
-      if (
-        !calendarCardDropResult.destination ||
-        !currentView?.calendarFieldMetadataId
-      )
-        return;
-
-      const { draggableId: recordId } = calendarCardDropResult;
-      const destinationDate = calendarCardDropResult.destination.droppableId;
-      const destinationIndex = calendarCardDropResult.destination.index;
+    async ({
+      recordId,
+      destinationDate,
+      destinationIndex,
+    }: {
+      recordId: string;
+      destinationDate: string;
+      destinationIndex: number;
+    }) => {
+      if (!currentView?.calendarFieldMetadataId) return;
 
       const destinationPlainDate = Temporal.PlainDate.from(destinationDate);
 
