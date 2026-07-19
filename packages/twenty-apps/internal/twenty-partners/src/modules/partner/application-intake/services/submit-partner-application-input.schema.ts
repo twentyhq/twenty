@@ -5,7 +5,10 @@ import {
   PARTNER_LANGUAGE_VALUES,
   PARTNER_SCOPE_VALUES,
   PARTNER_TYPE_OF_TEAM_VALUES,
+  TWENTY_EXPERIENCE_VALUES,
 } from 'src/modules/partner/constants/partner-option-values.constant';
+
+const TWENTY_EXPERIENCE_NOTES_MIN_LENGTH = 200;
 
 // The request contract. zod is the single source of truth: it validates the
 // incoming body at runtime and the input type is inferred from it, so the two
@@ -25,6 +28,14 @@ export const submitPartnerApplicationSchema = z.object({
   partnerScope: z.array(z.enum(PARTNER_SCOPE_VALUES)).optional(),
   skills: z.array(z.string()).optional(),
   applicationNotes: z.string().optional(),
+  twentyExperience: z.array(z.enum(TWENTY_EXPERIENCE_VALUES)).optional(),
+  // Apply narrative floor at the API boundary (defense in depth vs website).
+  twentyExperienceNotes: z
+    .string()
+    .trim()
+    .min(TWENTY_EXPERIENCE_NOTES_MIN_LENGTH)
+    .optional(),
+  twentyExperienceProofLink: z.string().optional(),
   hourlyRate: z.number().optional(),
   projectBudgetMin: z.number().optional(),
   calendarLink: z.string().optional(),

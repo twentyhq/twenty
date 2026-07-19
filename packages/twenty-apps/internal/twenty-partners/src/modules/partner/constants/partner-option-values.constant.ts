@@ -11,3 +11,10 @@ export const PARTNER_SCOPE_VALUES = [
 ] as const;
 
 export const PARTNER_TYPE_OF_TEAM_VALUES = ['SOLO','AGENCY'] as const;
+
+export const TWENTY_EXPERIENCE_VALUES = [
+  'CUSTOM_APPS',
+  'DATA_MODELS',
+  'WORKFLOWS',
+  'FRONT_COMPONENTS',
+] as const;
