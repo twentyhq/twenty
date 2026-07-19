@@ -31,20 +31,23 @@ export class AdminPanelVersionService {
         })
         .parse(rawResponse);
 
+      // Prefer full x.y.z tags (docker publishes v-prefixed tags like v2.22.0).
+      // semver.clean accepts an optional leading "v"; floating tags (latest, v2,
+      // v2.22) clean to null and are excluded.
       const versions = response.data.results
-        .map((tag) => tag.name)
-        .filter((name) => name !== 'latest' && semver.valid(name));
+        .map((tag) => semver.clean(tag.name))
+        .filter((name): name is string => name !== null);
 
       if (versions.length === 0) {
-        return { currentVersion, latestVersion: 'latest' };
+        return { currentVersion, latestVersion: null };
       }
 
-      versions.sort((a, b) => semver.compare(b, a));
+      versions.sort((a, b) => semver.rcompare(a, b));
       const latestVersion = versions[0];
 
       return { currentVersion, latestVersion };
     } catch {
-      return { currentVersion, latestVersion: 'latest' };
+      return { currentVersion, latestVersion: null };
     }
   }
 }

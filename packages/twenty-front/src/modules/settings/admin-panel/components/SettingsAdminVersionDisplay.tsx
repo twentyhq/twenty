@@ -29,6 +29,25 @@ const StyledSpan = styled.span`
   font-weight: ${themeCssVariables.font.weight.regular};
 `;
 
+// Backend historically fell back to the docker tag name "latest" when it could
+// not resolve a real release version. Treat that placeholder (and empty values)
+// as "no version" so the admin panel never shows a useless "Latest" link.
+const isResolvableVersion = (
+  version: string | undefined | null,
+): version is string => {
+  if (!version) {
+    return false;
+  }
+
+  const normalizedVersion = version.trim().toLowerCase();
+
+  return (
+    normalizedVersion.length > 0 &&
+    normalizedVersion !== 'latest' &&
+    normalizedVersion !== 'unknown'
+  );
+};
+
 export const SettingsAdminVersionDisplay = ({
   version,
   loading,
@@ -38,7 +57,7 @@ export const SettingsAdminVersionDisplay = ({
     return <StyledSpan>{t`Loading...`}</StyledSpan>;
   }
 
-  if (!version) {
+  if (!isResolvableVersion(version)) {
     return <StyledSpan>{noVersionMessage}</StyledSpan>;
   }
 

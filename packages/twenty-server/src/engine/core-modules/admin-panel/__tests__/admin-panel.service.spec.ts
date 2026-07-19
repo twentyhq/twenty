@@ -337,7 +337,7 @@ describe('AdminPanelVersionService', () => {
 
       expect(result).toEqual({
         currentVersion: '1.0.0',
-        latestVersion: 'latest',
+        latestVersion: null,
       });
     });
 
@@ -353,7 +353,7 @@ describe('AdminPanelVersionService', () => {
 
       expect(result).toEqual({
         currentVersion: '1.0.0',
-        latestVersion: 'latest',
+        latestVersion: null,
       });
     });
 
@@ -375,6 +375,28 @@ describe('AdminPanelVersionService', () => {
       expect(result).toEqual({
         currentVersion: '1.0.0',
         latestVersion: '2.0.0',
+      });
+    });
+
+    it('should resolve v-prefixed docker tags and ignore floating major/minor tags', async () => {
+      mockEnvironmentGet.mockReturnValue('2.20.0');
+      mockHttpClientGet.mockResolvedValue({
+        data: {
+          results: [
+            { name: 'latest' },
+            { name: 'v2' },
+            { name: 'v2.22' },
+            { name: 'v2.22.0' },
+            { name: 'v2.21.0' },
+          ],
+        },
+      });
+
+      const result = await versionService.getVersionInfo();
+
+      expect(result).toEqual({
+        currentVersion: '2.20.0',
+        latestVersion: '2.22.0',
       });
     });
   });
