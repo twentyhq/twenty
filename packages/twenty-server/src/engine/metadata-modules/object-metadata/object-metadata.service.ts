@@ -717,6 +717,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       isCustom: true,
       anyFieldFilterValue: null,
       calendarFieldMetadataUniversalIdentifier: null,
+      calendarEndFieldMetadataUniversalIdentifier: null,
       calendarLayout: null,
       isCompact: false,
       shouldHideEmptyGroups: false,

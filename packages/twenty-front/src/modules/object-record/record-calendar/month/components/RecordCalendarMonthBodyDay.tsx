@@ -163,16 +163,16 @@ export const RecordCalendarMonthBodyDay = ({
       </StyledDayHeader>
       <StyledCardsContainer ref={dropRef} isDraggedOver={isDropTarget}>
         {visibleRecordIds.map((recordId, index) => (
-          <Fragment key={recordId}>
+          <Fragment key={`${recordId}-${dayKey}`}>
             <DragDropColumnDropTarget
               index={index}
               droppableId={dayKey}
               orientation="horizontal"
             />
             <RecordCalendarCardDraggableContainer
+              calendarDay={dayKey}
               recordId={recordId}
               index={index}
-              group={dayKey}
             />
           </Fragment>
         ))}

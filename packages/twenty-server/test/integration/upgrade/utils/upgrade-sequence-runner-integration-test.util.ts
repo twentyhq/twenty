@@ -200,10 +200,10 @@ export const createUpgradeSequenceRunnerIntegrationTestModule = async () => {
       {
         provide: WorkspaceVersionService,
         useValue: {
-          getActiveOrSuspendedWorkspaceIds: jest
+          getProvisionedWorkspaceIds: jest
             .fn()
             .mockImplementation(async () => mockActiveWorkspaceIds),
-          hasActiveOrSuspendedWorkspaces: jest
+          hasProvisionedWorkspaces: jest
             .fn()
             .mockImplementation(async () => mockActiveWorkspaceIds.length > 0),
         },

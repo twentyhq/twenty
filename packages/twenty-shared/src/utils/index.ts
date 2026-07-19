@@ -49,6 +49,9 @@ export { turnJSDateToPlainDate } from './date/turnJSDateToPlainDate';
 export { turnPlainDateIntoUserTimeZoneInstantString } from './date/turnPlainDateIntoUserTimeZoneInstantString';
 export { turnPlainDateToShiftedDateInSystemTimeZone } from './date/turnPlainDateToShiftedDateInSystemTimeZone';
 export { deepMerge } from './deepMerge';
+export { formatEmailAddress } from './email/formatEmailAddress';
+export type { ParsedEmailAddress } from './email/parseEmailAddressList';
+export { parseEmailAddressList } from './email/parseEmailAddressList';
 export { CustomError } from './errors/CustomError';
 export { evalFromContext } from './evalFromContext';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
@@ -167,6 +170,7 @@ export {
   getGroupByConnectionTypename,
 } from './graphql/graphql-get-typename.util';
 export { getImageAbsoluteURI } from './image/getImageAbsoluteURI';
+export { getLinkFaviconUrl } from './image/getLinkFaviconUrl';
 export {
   sanitizeURL,
   getLogoUrlFromDomainName,
@@ -219,6 +223,7 @@ export { ensureAbsoluteUrl } from './url/ensureAbsoluteUrl';
 export { getAbsoluteUrlOrThrow } from './url/getAbsoluteUrlOrThrow';
 export { getSafeUrl } from './url/getSafeUrl';
 export { getUrlHostnameOrThrow } from './url/getUrlHostnameOrThrow';
+export { isAbsoluteUrl } from './url/isAbsoluteUrl';
 export { isSafeUrl } from './url/isSafeUrl';
 export { isValidHostname } from './url/isValidHostname';
 export { isValidUrl } from './url/isValidUrl';
@@ -231,6 +236,7 @@ export { emailSchema } from './validation/emailSchema';
 export { escapeForIlike } from './validation/escapeForIlike';
 export { isDefined } from './validation/isDefined';
 export { isEmptyObject } from './validation/isEmptyObject';
+export { isImageIdentifierFieldMetadataType } from './validation/isImageIdentifierFieldMetadataType';
 export { isLabelIdentifierFieldMetadataTypes } from './validation/isLabelIdentifierFieldMetadataTypes';
 export type { SearchableFieldType } from './validation/isSearchableFieldType';
 export { isSearchableFieldType } from './validation/isSearchableFieldType';

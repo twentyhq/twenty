@@ -28,7 +28,7 @@ import { InferDeletionFromMissingEntities } from 'src/engine/workspace-manager/w
 export type WorkspaceMigrationRelatedFlatEntityMaps =
   Partial<AllFlatEntityMaps> & WorkspaceMigrationBuilderAdditionalCacheDataMaps;
 
-type FlatEntityMapsBundle = {
+export type FlatEntityMapsBundle = {
   flatApplicationMaps: FlatApplicationCacheMaps;
   allRelatedFlatEntityMaps: WorkspaceMigrationRelatedFlatEntityMaps;
   allMetadataNameCacheToCompute: AllMetadataName[];

@@ -2,7 +2,7 @@ import { Command } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -18,7 +18,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
   description:
     'Recompute every TS_VECTOR (searchVector) column from its searchFieldMetadata rows, recreate its GIN index, and clear the deprecated cached TS_VECTOR settings. Idempotent.',
 })
-export class RecomputeSearchVectorsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class RecomputeSearchVectorsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,

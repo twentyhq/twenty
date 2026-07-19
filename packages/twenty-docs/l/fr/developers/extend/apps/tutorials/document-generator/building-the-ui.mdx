@@ -69,6 +69,7 @@ par l'intermédiaire de `CoreApiClient`, et POSTs vers la route à partir du der
 ```tsx filename="src/front-components/generate-document-form.front-component.tsx"
 import { useEffect, useState } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { RestApiClient } from 'twenty-client-sdk/rest';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { enqueueSnackbar, useSelectedRecordIds } from 'twenty-sdk/front-component';
 
@@ -91,15 +92,10 @@ const GenerateDocumentForm = () => {
   }, []);
 
   const generate = async () => {
-    // Prefer the injected functions URL; fall back to the legacy /s prefix (self-hosted/local)
-    const functionsBaseUrl =
-      process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL}/s`;
-    const token = process.env.TWENTY_APP_ACCESS_TOKEN ?? process.env.TWENTY_API_KEY;
-    const res = await fetch(`${functionsBaseUrl}/documents/generate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ templateId, recordId }),
-    }).then((r) => r.json());
+    const res = await new RestApiClient().post<{ success: boolean }>(
+      '/s/documents/generate',
+      { templateId, recordId },
+    );
     await enqueueSnackbar({
       message: res.success ? 'Document generated.' : 'Generation failed.',
       variant: res.success ? 'success' : 'error',
@@ -179,6 +175,7 @@ en ligne via un petit [`Markdown`](https://github.com/twentyhq/twenty/blob/main/
 
 ```tsx filename="src/front-components/document-viewer.front-component.tsx"
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { RestApiClient } from 'twenty-client-sdk/rest';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { useFrontComponentExecutionContext } from 'twenty-sdk/front-component';
 import { Markdown } from 'src/utils/markdown-to-react';
@@ -187,9 +184,9 @@ const DocumentViewer = () => {
   const recordId = useFrontComponentExecutionContext((c) => c.recordId ?? null);
   // ...load { content, file } for recordId, then derive the links:
   const pdfUrl = document.file?.[0]?.url;
-  const functionsBaseUrl =
-    process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL ?? ''}/s`;
-  const webUrl = `${functionsBaseUrl}/documents/view?id=${recordId}`;
+  const webUrl = new RestApiClient().resolveUrl('/s/documents/view', {
+    query: { id: recordId },
+  });
 
   // Render the template body, plus quick links to the web page and the PDF.
   // Links open in a new tab so they don't navigate the embedded component.

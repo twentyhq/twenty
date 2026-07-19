@@ -86,6 +86,11 @@ export function PartnerProfileCtas({
             variant="filled"
           />
         )}
+        <Button
+          href="/partners/brief"
+          label={i18n._(msg`Submit a brief`)}
+          variant="outlined"
+        />
       </ButtonStack>
     </Wrapper>
   );

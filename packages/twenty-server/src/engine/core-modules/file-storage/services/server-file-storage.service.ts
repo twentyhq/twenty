@@ -123,38 +123,52 @@ export class ServerFileStorageService {
     fileFolder,
     applicationRegistrationId,
     resourcePath,
-  }: ServerResourceIdentifier): Promise<Readable> {
+  }: ServerResourceIdentifier): Promise<{
+    stream: Readable;
+    mimeType: string;
+  }> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
-    const { onStorageFilePath, filePath } =
+    const { onStorageFilePath } =
       this.validateAndBuildServerFileStoragePathOrThrow({
         fileFolder,
         applicationRegistrationId,
         resourcePath,
       });
 
-    const serverFile = await this.serverFileRepository.findOneBy({
-      path: filePath,
-      workspaceId: IsNull(),
+    const serverFile = await this.findServerFile({
+      fileFolder,
+      applicationRegistrationId,
+      resourcePath,
     });
 
     if (!isDefined(serverFile)) {
       throw new FileStorageException(
-        `Server file ${filePath} not found`,
+        `Server file ${fileFolder}/${applicationRegistrationId}/${resourcePath} not found`,
         FileStorageExceptionCode.FILE_NOT_FOUND,
       );
     }
 
-    return driver.readFile({ filePath: onStorageFilePath });
+    const stream = await driver.readFile({ filePath: onStorageFilePath });
+
+    return { stream, mimeType: serverFile.mimeType };
   }
 
-  async readServerFileById(id: string): Promise<Readable> {
-    const serverFile = await this.findServerFileByIdOrThrow(id);
+  async findServerFile({
+    fileFolder,
+    applicationRegistrationId,
+    resourcePath,
+  }: ServerResourceIdentifier): Promise<FileEntity | null> {
+    const { filePath } = this.validateAndBuildServerFileStoragePathOrThrow({
+      fileFolder,
+      applicationRegistrationId,
+      resourcePath,
+    });
 
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    return driver.readFile({
-      filePath: this.buildServerOnStorageFilePath(serverFile),
+    return this.serverFileRepository.findOneBy({
+      applicationRegistrationId,
+      path: filePath,
+      workspaceId: IsNull(),
     });
   }
 
@@ -195,19 +209,6 @@ export class ServerFileStorageService {
     });
   }
 
-  async deleteByServerFileId(id: string): Promise<void> {
-    const serverFile = await this.findServerFileByIdOrThrow(id);
-
-    await this.deleteServerFileBytesBestEffort(
-      this.buildServerOnStorageFilePath(serverFile),
-    );
-
-    await this.serverFileRepository.delete({
-      id,
-      workspaceId: IsNull(),
-    });
-  }
-
   async deleteByApplicationRegistrationId(
     applicationRegistrationId: string,
   ): Promise<void> {
@@ -226,22 +227,6 @@ export class ServerFileStorageService {
       applicationRegistrationId,
       workspaceId: IsNull(),
     });
-  }
-
-  private async findServerFileByIdOrThrow(id: string): Promise<FileEntity> {
-    const serverFile = await this.serverFileRepository.findOneBy({
-      id,
-      workspaceId: IsNull(),
-    });
-
-    if (!isDefined(serverFile)) {
-      throw new FileStorageException(
-        `Server file ${id} not found`,
-        FileStorageExceptionCode.FILE_NOT_FOUND,
-      );
-    }
-
-    return serverFile;
   }
 
   private buildServerOnStorageFilePath(serverFile: FileEntity): string {

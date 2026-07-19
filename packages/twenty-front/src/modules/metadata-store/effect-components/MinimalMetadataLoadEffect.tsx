@@ -9,7 +9,7 @@ import { metadataLoadedVersionState } from '@/metadata-store/states/metadataLoad
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
+import { isWorkspaceProvisioned } from 'twenty-shared/workspace';
 
 export const MinimalMetadataLoadEffect = () => {
   const hasAccessTokenPair = useHasAccessTokenPair();
@@ -24,9 +24,9 @@ export const MinimalMetadataLoadEffect = () => {
 
   const isOnAuthOrOnboardingPage = useIsOnAuthOrOnboardingPage();
 
-  const isActiveWorkspace = isWorkspaceActiveOrSuspended(currentWorkspace);
+  const isProvisionedWorkspace = isWorkspaceProvisioned(currentWorkspace);
   const shouldLoadRealMetadata =
-    hasAccessTokenPair && isActiveWorkspace && !isOnAuthOrOnboardingPage;
+    hasAccessTokenPair && isProvisionedWorkspace && !isOnAuthOrOnboardingPage;
 
   useEffect(() => {
     if (!isCurrentUserLoaded && !isDefined(currentUser)) {

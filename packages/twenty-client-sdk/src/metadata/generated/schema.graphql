@@ -55,10 +55,11 @@ type ApplicationRegistration {
   isListed: Boolean!
   isVetted: Boolean!
   isPreInstalled: Boolean!
-  logoUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
   isConfigured: Boolean!
+  logoUrl: String
+  galleryImagesUrls: [String!]!
 }
 
 enum ApplicationRegistrationSourceType {
@@ -669,6 +670,7 @@ type Application {
   objects: [Object!]!
   applicationVariables: [ApplicationVariable!]!
   applicationRegistration: ApplicationRegistrationSummary
+  logoUrl: String
 }
 
 type ViewField {
@@ -817,6 +819,7 @@ type View {
   shouldHideEmptyGroups: Boolean!
   kanbanColumnWidth: Int
   calendarFieldMetadataId: UUID
+  calendarEndFieldMetadataId: UUID
   workspaceId: UUID!
   anyFieldFilterValue: String
   calendarLayout: ViewCalendarLayout
@@ -927,6 +930,7 @@ enum WorkspaceDiscoverability {
 enum WorkspaceActivationStatus {
   ONGOING_CREATION
   PENDING_CREATION
+  CREATED
   ACTIVE
   INACTIVE
   SUSPENDED
@@ -1724,6 +1728,7 @@ type FeatureFlag {
 enum FeatureFlagKey {
   IS_UNIQUE_INDEXES_ENABLED
   IS_JSON_FILTER_ENABLED
+  IS_CALENDAR_WEEK_VIEW_ENABLED
   IS_EMAIL_GROUP_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
@@ -2449,6 +2454,7 @@ type VerificationRecord {
   key: String!
   value: String!
   priority: Float
+  status: String
 }
 
 type EmailingDomain {
@@ -3060,6 +3066,7 @@ type Query {
   findManyAgents: [Agent!]!
   findOneAgent(input: AgentIdInput!): Agent!
   objectRecordCounts: [ObjectRecordCount!]!
+  mostlyEmptyFieldMetadataIds(objectMetadataId: UUID!): [UUID!]!
   object(
     """The id of the record to find."""
     id: UUID!
@@ -3615,6 +3622,7 @@ input CreateViewInput {
   anyFieldFilterValue: String
   calendarLayout: ViewCalendarLayout
   calendarFieldMetadataId: UUID
+  calendarEndFieldMetadataId: UUID
   mainGroupByFieldMetadataId: UUID
   visibility: ViewVisibility
 }
@@ -3632,6 +3640,7 @@ input UpdateViewInput {
   anyFieldFilterValue: String
   calendarLayout: ViewCalendarLayout
   calendarFieldMetadataId: UUID
+  calendarEndFieldMetadataId: UUID
   visibility: ViewVisibility
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean

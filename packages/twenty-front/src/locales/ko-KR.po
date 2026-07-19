@@ -1923,6 +1923,7 @@ msgstr "고아 상태의 마켓플레이스 앱을 포함해 플랫폼 전체의
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventRow.tsx
+#: src/modules/object-record/record-calendar/time-grid/components/RecordCalendarTimeGrid.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "All day"
 msgstr "하루 종일"
@@ -2366,6 +2367,12 @@ msgstr "앱 URL"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
 msgstr "외관"
+
+#. js-lingui-id: YhZuwP
+#. placeholder {0}: objectMetadataItem.labelPlural
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
+msgid "Appears filled in fewer than 5% of {0}. Fields that stay empty can be deactivated."
+msgstr ""
 
 #. js-lingui-id: LqRVps
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
@@ -2907,11 +2914,6 @@ msgstr "사용 가능한 모델"
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Available tools"
 msgstr "사용 가능한 도구"
-
-#. js-lingui-id: YzokLS
-#: src/modules/object-record/record-show/hooks/usePersonAvatarUpload.ts
-msgid "Avatar file field not found for person object"
-msgstr "사람 개체에서 아바타 파일 필드를 찾을 수 없습니다"
 
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -4061,7 +4063,7 @@ msgstr "쉼표와 마침표"
 msgid "Comment"
 msgstr ""
 
-#. js-lingui-id: UK5bhd
+#. js-lingui-id: hZotg6
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -4069,8 +4071,8 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
-msgid "Communications"
-msgstr "커뮤니케이션"
+msgid "Communication"
+msgstr ""
 
 #. js-lingui-id: chL5IG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -4920,6 +4922,18 @@ msgstr "프로필 생성"
 msgid "Create Profile"
 msgstr "프로필 생성"
 
+#. js-lingui-id: Qjz7vW
+#: src/modules/object-record/record-calendar/components/RecordCalendarAddNew.tsx
+msgid "Create record"
+msgstr ""
+
+#. js-lingui-id: 8ETbKP
+#. placeholder {0}: cardDate.toLocaleString(undefined, { dateStyle: 'full', })
+#. placeholder {1}: cardTime.toLocaleString(undefined, { timeStyle: 'short' })
+#: src/modules/object-record/record-calendar/components/RecordCalendarAddNew.tsx
+msgid "Create record on {0} at {1}"
+msgstr ""
+
 #. js-lingui-id: RoyYUE
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
@@ -5596,8 +5610,10 @@ msgid "Date Granularity Y"
 msgstr "날짜 세분성 Y"
 
 #. js-lingui-id: H7OUPr
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Day"
 msgstr "일"
@@ -6972,6 +6988,14 @@ msgstr "암호화 키 로테이션"
 msgid "End date"
 msgstr "종료 날짜"
 
+#. js-lingui-id: DqIce1
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "End date field"
+msgstr ""
+
 #. js-lingui-id: Fqu/aC
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "End date must be after start date."
@@ -7936,6 +7960,11 @@ msgstr "웹훅을 불러오지 못했습니다"
 msgid "Failed to merge records. Please try again."
 msgstr "레코드 병합에 실패했습니다. 다시 시도해 주세요."
 
+#. js-lingui-id: DvNGzq
+#: src/modules/object-record/record-calendar/week/components/RecordCalendarWeekDragDropContext.tsx
+msgid "Failed to move record"
+msgstr ""
+
 #. js-lingui-id: PnVGrE
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Failed to parse context: {contextValue}"
@@ -8787,11 +8816,6 @@ msgstr "뒤로 가기"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Go to billing portal"
 msgstr "청구 포털로 이동"
-
-#. js-lingui-id: ABs8Dj
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Go to documentation"
-msgstr "문서로 이동"
 
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
@@ -10743,6 +10767,11 @@ msgstr "{formattedNames} 로드 중"
 msgid "Loading applications..."
 msgstr "애플리케이션을 불러오는 중..."
 
+#. js-lingui-id: 58V8TX
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Loading apps..."
+msgstr ""
+
 #. js-lingui-id: Nx262D
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "Loading csv ... "
@@ -11408,6 +11437,7 @@ msgstr "월"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Month"
 msgstr "월"
@@ -11473,6 +11503,12 @@ msgstr "더 많은 위젯"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Most installed version"
 msgstr "가장 많이 설치된 버전"
+
+#. js-lingui-id: PfWWOa
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+msgid "Mostly empty"
+msgstr ""
 
 #. js-lingui-id: 3Ib6FN
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
@@ -11678,11 +11714,6 @@ msgstr "내비게이션 메뉴 항목"
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
 msgid "Navigation tabs"
 msgstr "내비게이션 탭"
-
-#. js-lingui-id: C0P5zd
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Need help to configure your shared mailbox?"
-msgstr "공유 메일박스 구성이 필요하신가요?"
 
 #. js-lingui-id: wW3b68
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
@@ -11956,6 +11987,11 @@ msgstr "다음"
 msgid "Next charge {totalRenewDate}. Invoice amount may vary if you add members or credits between periods"
 msgstr "다음 청구 {totalRenewDate}. 기간 사이에 멤버나 크레딧을 추가하면 청구 금액이 달라질 수 있습니다"
 
+#. js-lingui-id: 8+lM81
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
+msgid "Next period"
+msgstr ""
+
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
@@ -12073,6 +12109,11 @@ msgstr "사용 가능한 애플리케이션이 없습니다"
 #. js-lingui-id: zLbFMr
 #: src/pages/onboarding/InstallAppsContent.tsx
 msgid "No apps are available to install right now"
+msgstr ""
+
+#. js-lingui-id: pfRh+M
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "No apps found"
 msgstr ""
 
 #. js-lingui-id: tFxVHz
@@ -12678,6 +12719,11 @@ msgstr "실패한 워크스페이스 없음"
 msgid "No workspace selected"
 msgstr "선택된 워크스페이스가 없습니다"
 
+#. js-lingui-id: /XvL19
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
+msgid "No workspaces found"
+msgstr ""
+
 #. js-lingui-id: TiRphK
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "No workspaces found matching your search criteria."
@@ -12690,6 +12736,9 @@ msgstr "노드"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -12699,6 +12748,7 @@ msgstr "노드"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -12721,6 +12771,7 @@ msgid "Not available for default view"
 msgstr "기본 보기에서 사용 불가"
 
 #. js-lingui-id: 0qBE9S
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -13991,6 +14042,11 @@ msgstr "이전"
 #: src/modules/ai/utils/groupThreadsByDate.ts
 msgid "Previous 7 days"
 msgstr "지난 7일"
+
+#. js-lingui-id: KaMwgJ
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
+msgid "Previous period"
+msgstr ""
 
 #. js-lingui-id: aHCEmh
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -15504,6 +15560,7 @@ msgstr "검색 필드 메타데이터"
 
 #. js-lingui-id: 7taA9j
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
@@ -16311,6 +16368,7 @@ msgid "Show hidden objects"
 msgstr "숨겨진 객체 표시"
 
 #. js-lingui-id: fMPkxb
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show more"
 msgstr "더 보기"
@@ -16585,6 +16643,7 @@ msgid "Something went wrong while loading logs. Please try again."
 msgstr "로그를 불러오는 동안 문제가 발생했습니다. 다시 시도해 주세요."
 
 #. js-lingui-id: yHwG3y
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/settings/components/SettingsCard.tsx
@@ -19774,6 +19833,7 @@ msgstr "웹사이트"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Week"
 msgstr "주"

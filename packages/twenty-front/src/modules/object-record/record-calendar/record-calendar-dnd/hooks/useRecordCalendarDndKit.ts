@@ -4,6 +4,7 @@ import { type ComponentProps, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getRecordIdFromRecordCalendarCardDraggableId } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardDraggableId';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
 import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
 import { useProcessCalendarCardDrop } from '@/object-record/record-drag/hooks/useProcessCalendarCardDrop';
@@ -79,13 +80,17 @@ export const useRecordCalendarDndKit = (): {
   };
 
   const handleDragStart = (event: DragStartPayload) => {
-    const draggedRecordId = event.operation.source?.id;
+    const draggedId = event.operation.source?.id;
 
-    if (!isDefined(draggedRecordId)) {
+    if (!isDefined(draggedId)) {
       return;
     }
 
-    startRecordDrag(String(draggedRecordId), []);
+    const draggedRecordId = getRecordIdFromRecordCalendarCardDraggableId(
+      String(draggedId),
+    );
+
+    startRecordDrag(draggedRecordId, []);
   };
 
   const handleDragMove = (event: DragMovePayload) => {
@@ -115,7 +120,9 @@ export const useRecordCalendarDndKit = (): {
       return;
     }
 
-    const sourceId = String(source.id);
+    const sourceRecordId = getRecordIdFromRecordCalendarCardDraggableId(
+      String(source.id),
+    );
     const sourceDroppableId = (source.data as DragDropColumnData).droppableId;
     const sourceIndex = (source.data as DragDropColumnData).index;
 
@@ -146,7 +153,8 @@ export const useRecordCalendarDndKit = (): {
     }
 
     processCalendarCardDrop({
-      recordId: sourceId,
+      recordId: sourceRecordId,
+      sourceDate: sourceDroppableId,
       destinationDate: destinationDroppableId,
       destinationIndex,
     });

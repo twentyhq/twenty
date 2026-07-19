@@ -205,6 +205,10 @@ The marketplace renders `galleryImages` in a fixed `8:5` container (for example,
 Gallery images of any aspect ratio are displayed in full and are never cropped, but anything significantly taller or narrower than `8:5` will show empty bands on the sides.
 </Note>
 
+#### Image size limit
+
+The `logo` and each `galleryImages` file must not exceed **10 MB**. Larger files are skipped when the marketplace rehosts your published assets, so they will not be displayed.
+
 ### Publish
 
 ```bash filename="Terminal"

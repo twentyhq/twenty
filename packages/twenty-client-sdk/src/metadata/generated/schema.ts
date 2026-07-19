@@ -54,10 +54,11 @@ export interface ApplicationRegistration {
     isListed: Scalars['Boolean']
     isVetted: Scalars['Boolean']
     isPreInstalled: Scalars['Boolean']
-    logoUrl?: Scalars['String']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     isConfigured: Scalars['Boolean']
+    logoUrl?: Scalars['String']
+    galleryImagesUrls: Scalars['String'][]
     __typename: 'ApplicationRegistration'
 }
 
@@ -459,6 +460,7 @@ export interface Application {
     objects: Object[]
     applicationVariables: ApplicationVariable[]
     applicationRegistration?: ApplicationRegistrationSummary
+    logoUrl?: Scalars['String']
     __typename: 'Application'
 }
 
@@ -579,6 +581,7 @@ export interface View {
     shouldHideEmptyGroups: Scalars['Boolean']
     kanbanColumnWidth?: Scalars['Int']
     calendarFieldMetadataId?: Scalars['UUID']
+    calendarEndFieldMetadataId?: Scalars['UUID']
     workspaceId: Scalars['UUID']
     anyFieldFilterValue?: Scalars['String']
     calendarLayout?: ViewCalendarLayout
@@ -666,7 +669,7 @@ export interface Workspace {
 
 export type WorkspaceDiscoverability = 'PUBLIC' | 'MEMBERS_AND_INVITEES' | 'HIDDEN'
 
-export type WorkspaceActivationStatus = 'ONGOING_CREATION' | 'PENDING_CREATION' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED'
+export type WorkspaceActivationStatus = 'ONGOING_CREATION' | 'PENDING_CREATION' | 'CREATED' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED'
 
 export interface User {
     id: Scalars['UUID']
@@ -1386,7 +1389,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED'
+export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_CALENDAR_WEEK_VIEW_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -2157,6 +2160,7 @@ export interface VerificationRecord {
     key: Scalars['String']
     value: Scalars['String']
     priority?: Scalars['Float']
+    status?: Scalars['String']
     __typename: 'VerificationRecord'
 }
 
@@ -2720,6 +2724,7 @@ export interface Query {
     findManyAgents: Agent[]
     findOneAgent: Agent
     objectRecordCounts: ObjectRecordCount[]
+    mostlyEmptyFieldMetadataIds: Scalars['UUID'][]
     object: Object
     objects: ObjectConnection
     findOneLogicFunction: LogicFunction
@@ -3093,10 +3098,11 @@ export interface ApplicationRegistrationGenqlSelection{
     isListed?: boolean | number
     isVetted?: boolean | number
     isPreInstalled?: boolean | number
-    logoUrl?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     isConfigured?: boolean | number
+    logoUrl?: boolean | number
+    galleryImagesUrls?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -3519,6 +3525,7 @@ export interface ApplicationGenqlSelection{
     objects?: ObjectGenqlSelection
     applicationVariables?: ApplicationVariableGenqlSelection
     applicationRegistration?: ApplicationRegistrationSummaryGenqlSelection
+    logoUrl?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -3638,6 +3645,7 @@ export interface ViewGenqlSelection{
     shouldHideEmptyGroups?: boolean | number
     kanbanColumnWidth?: boolean | number
     calendarFieldMetadataId?: boolean | number
+    calendarEndFieldMetadataId?: boolean | number
     workspaceId?: boolean | number
     anyFieldFilterValue?: boolean | number
     calendarLayout?: boolean | number
@@ -5305,6 +5313,7 @@ export interface VerificationRecordGenqlSelection{
     key?: boolean | number
     value?: boolean | number
     priority?: boolean | number
+    status?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5891,6 +5900,7 @@ export interface QueryGenqlSelection{
     findManyAgents?: AgentGenqlSelection
     findOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
     objectRecordCounts?: ObjectRecordCountGenqlSelection
+    mostlyEmptyFieldMetadataIds?: { __args: {objectMetadataId: Scalars['UUID']} }
     object?: (ObjectGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
@@ -6276,9 +6286,9 @@ export interface DestroyViewFilterInput {
 /** The id of the view filter to destroy. */
 id: Scalars['UUID']}
 
-export interface CreateViewInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],type?: (ViewType | null),key?: (ViewKey | null),icon: Scalars['String'],position?: (Scalars['Float'] | null),isCompact?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null)}
+export interface CreateViewInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],type?: (ViewType | null),key?: (ViewKey | null),icon: Scalars['String'],position?: (Scalars['Float'] | null),isCompact?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null)}
 
-export interface UpdateViewInput {id?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),type?: (ViewType | null),icon?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isCompact?: (Scalars['Boolean'] | null),openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),kanbanColumnWidth?: (Scalars['Int'] | null)}
+export interface UpdateViewInput {id?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),type?: (ViewType | null),icon?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isCompact?: (Scalars['Boolean'] | null),openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),kanbanColumnWidth?: (Scalars['Int'] | null)}
 
 export interface UpsertViewWidgetInput {
 /** The id of the view widget (page layout widget). */
@@ -8956,6 +8966,7 @@ export const enumWorkspaceDiscoverability = {
 export const enumWorkspaceActivationStatus = {
    ONGOING_CREATION: 'ONGOING_CREATION' as const,
    PENDING_CREATION: 'PENDING_CREATION' as const,
+   CREATED: 'CREATED' as const,
    ACTIVE: 'ACTIVE' as const,
    INACTIVE: 'INACTIVE' as const,
    SUSPENDED: 'SUSPENDED' as const
@@ -9147,6 +9158,7 @@ export const enumLogicFunctionExecutionStatus = {
 export const enumFeatureFlagKey = {
    IS_UNIQUE_INDEXES_ENABLED: 'IS_UNIQUE_INDEXES_ENABLED' as const,
    IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,
+   IS_CALENDAR_WEEK_VIEW_ENABLED: 'IS_CALENDAR_WEEK_VIEW_ENABLED' as const,
    IS_EMAIL_GROUP_ENABLED: 'IS_EMAIL_GROUP_ENABLED' as const,
    IS_JUNCTION_RELATIONS_ENABLED: 'IS_JUNCTION_RELATIONS_ENABLED' as const,
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const,

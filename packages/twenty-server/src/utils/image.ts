@@ -1,5 +1,8 @@
+import { detectPdf } from '@file-type/pdf';
 import { type AxiosInstance } from 'axios';
 import { isNonEmptyString } from '@sniptt/guards';
+import { FileTypeParser } from 'file-type';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getImageBufferFromUrl = async (
   url: string,
@@ -43,4 +46,20 @@ export const getImageBufferFromUrl = async (
 
     throw new Error(`Failed to fetch image from ${url}: ${message}`);
   }
+};
+
+export const fetchImageWithTypeFromUrl = async (
+  imageUrl: string,
+  axiosInstance: AxiosInstance,
+): Promise<{ buffer: Buffer; extension: string } | undefined> => {
+  const buffer = await getImageBufferFromUrl(imageUrl, axiosInstance);
+
+  const parser = new FileTypeParser({ customDetectors: [detectPdf] });
+  const type = await parser.fromBuffer(buffer);
+
+  if (!isDefined(type) || !type.mime.startsWith('image/')) {
+    return undefined;
+  }
+
+  return { buffer, extension: type.ext };
 };

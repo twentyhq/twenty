@@ -2,6 +2,7 @@ import { type SdkClientUrls } from '@/types/SdkClientUrls';
 
 export type HostToWorkerRenderContext = {
   componentUrl: string;
+  componentSource: string;
   applicationAccessToken?: string;
   apiUrl?: string;
   functionsBaseUrl?: string;

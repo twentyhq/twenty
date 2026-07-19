@@ -3,6 +3,7 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
 import { uploadAppTarball } from 'test/integration/metadata/suites/application/utils/upload-app-tarball.util';
+import { scrubSemverVersions } from 'test/utils/scrub-semver-versions.util';
 import { v4 as uuidv4 } from 'uuid';
 
 // The upload flow runs cache-lock retries with real delays, so fake timers
@@ -51,6 +52,9 @@ describe('Publish application is gated by the instance server version', () => {
       expectToFail: true,
     });
 
-    expectOneNotInternalServerErrorSnapshot({ errors });
+    expectOneNotInternalServerErrorSnapshot({
+      errors,
+      normalizeMessage: scrubSemverVersions,
+    });
   });
 });
