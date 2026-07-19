@@ -8,7 +8,7 @@ import ms from 'ms';
 import { SendEmailVerificationLinkEmail } from 'twenty-emails';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -138,13 +138,8 @@ export class EmailVerificationService {
       },
     });
 
-    assertIsDefinedOrThrow(user);
-
-    if (user.isEmailVerified) {
-      throw new EmailVerificationException(
-        'Email already verified',
-        EmailVerificationExceptionCode.EMAIL_ALREADY_VERIFIED,
-      );
+    if (!user || user.isEmailVerified) {
+      return { success: true };
     }
 
     const existingToken = await this.appTokenRepository.findOne({
@@ -162,10 +157,7 @@ export class EmailVerificationService {
       );
 
       if (timeToWaitMs > 0) {
-        throw new EmailVerificationException(
-          `Please wait ${ms(timeToWaitMs, { long: true })} before requesting another verification email`,
-          EmailVerificationExceptionCode.RATE_LIMIT_EXCEEDED,
-        );
+        return { success: true };
       }
 
       await this.appTokenRepository.delete(existingToken.id);

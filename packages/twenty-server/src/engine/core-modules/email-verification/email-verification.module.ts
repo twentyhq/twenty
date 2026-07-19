@@ -8,6 +8,7 @@ import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace
 import { EmailVerificationResolver } from 'src/engine/core-modules/email-verification/email-verification.resolver';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
+import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -16,6 +17,7 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
   imports: [
     TypeOrmModule.forFeature([AppTokenEntity, UserEntity]),
     EmailModule,
+    ThrottlerModule,
     TwentyConfigModule,
     UserWorkspaceModule,
     WorkspaceDomainsModule,

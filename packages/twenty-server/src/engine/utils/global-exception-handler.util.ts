@@ -4,6 +4,8 @@ import { GraphQLError } from 'graphql';
 
 import { type ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 import { type ExceptionHandlerWorkspace } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-workspace.interface';
+import { EmailVerificationException } from 'src/engine/core-modules/email-verification/email-verification.exception';
+import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -62,6 +64,13 @@ export const shouldCaptureException = (
   exception: Error,
   statusCode?: number,
 ): boolean => {
+  if (
+    exception instanceof EmailVerificationException ||
+    exception instanceof ThrottlerException
+  ) {
+    return false;
+  }
+
   if (
     exception instanceof GraphQLError &&
     (exception?.extensions?.http?.status ?? 500) < 500

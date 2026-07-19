@@ -34,7 +34,7 @@ export const useHandleResendEmailVerificationToken = () => {
 
           if (data?.resendEmailVerificationToken?.success === true) {
             enqueueSuccessSnackBar({
-              message: t`Email verification link resent!`,
+              message: t`If an unverified account exists, a verification email will be sent.`,
             });
           } else {
             enqueueErrorSnackBar({});
