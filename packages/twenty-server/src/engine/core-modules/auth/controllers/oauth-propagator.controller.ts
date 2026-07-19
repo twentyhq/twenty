@@ -69,6 +69,9 @@ export class OAuthPropagatorController {
     return res.redirect(302, redirectUrl.toString());
   }
 
+  // Do not use getWorkspaceByOriginOrDefaultWorkspace here: in single-workspace
+  // mode it always returns the default workspace for any origin, which turned
+  // this check into a no-op and allowed open redirects of OAuth codes (#22109).
   private async isValidDomain(url: URL): Promise<boolean> {
     if (
       this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT
@@ -76,11 +79,36 @@ export class OAuthPropagatorController {
       return true;
     }
 
-    const workspace =
-      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
+    const frontHostname = this.domainServerConfigService.getFrontUrl().hostname;
+
+    if (url.hostname === frontHostname) {
+      return true;
+    }
+
+    if (
+      this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') &&
+      url.hostname.endsWith(`.${frontHostname}`)
+    ) {
+      const workspace =
+        await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
+          url.href,
+        );
+
+      return isDefined(workspace);
+    }
+
+    const workspaceByCustomDomain =
+      await this.workspaceDomainsService.findByCustomDomain(url.hostname);
+
+    if (isDefined(workspaceByCustomDomain)) {
+      return true;
+    }
+
+    const { publicDomain } =
+      await this.workspaceDomainsService.resolveWorkspaceAndPublicDomain(
         url.href,
       );
 
-    return isDefined(workspace);
+    return isDefined(publicDomain);
   }
 }
