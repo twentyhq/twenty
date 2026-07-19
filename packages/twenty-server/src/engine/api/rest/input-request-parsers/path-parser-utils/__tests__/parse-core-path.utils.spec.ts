@@ -73,4 +73,41 @@ describe('parseCorePath', () => {
       id: undefined,
     });
   });
+
+  it('should parse restore many object from request path', () => {
+    const request: any = { path: '/rest/restore/companies' };
+
+    expect(parseCorePath(request)).toEqual({
+      object: 'companies',
+      id: undefined,
+    });
+  });
+
+  it('should parse restore one object from request path', () => {
+    const request: any = { path: `/rest/restore/companies/${testUUID}` };
+
+    expect(parseCorePath(request)).toEqual({
+      object: 'companies',
+      id: testUUID,
+    });
+  });
+
+  it('should throw for malformed uuid in restore one request', () => {
+    const malformedUUID = 'malformed-uuid';
+    const request: any = { path: `/rest/restore/companies/${malformedUUID}` };
+
+    expect(() => parseCorePath(request)).toThrow(
+      `'${malformedUUID}' is not a valid UUID`,
+    );
+  });
+
+  it('should throw for restore path with too many segments', () => {
+    const request: any = {
+      path: `/rest/restore/companies/${testUUID}/extra`,
+    };
+
+    expect(() => parseCorePath(request)).toThrow(
+      `Query path '/rest/restore/companies/${testUUID}/extra' invalid`,
+    );
+  });
 });

@@ -12,18 +12,21 @@ export const parseCorePath = (
     .split('/')
     .filter(Boolean);
 
-  if (
-    queryAction.length > 2 ||
-    (queryAction.length > 3 && queryAction[0] === 'restore')
-  ) {
+  // /rest/restore/{object} (length 2) and /rest/restore/{object}/{id} (length 3)
+  // must be accepted. The previous check used (length > 3 && restore) which is
+  // never true when length is already > 2, so restore-one was always rejected.
+  const isRestorePath = queryAction[0] === 'restore';
+  const maxPathSegments = isRestorePath ? 3 : 2;
+
+  if (queryAction.length > maxPathSegments) {
     throw new BadRequestException(
-      `Query path '${request.path}' invalid. Valid examples: /rest/companies/id or /rest/companies or /rest/batch/companies`,
+      `Query path '${request.path}' invalid. Valid examples: /rest/companies/id or /rest/companies or /rest/batch/companies or /rest/restore/companies/id`,
     );
   }
 
   if (queryAction.length === 0) {
     throw new BadRequestException(
-      `Query path '${request.path}' invalid. Valid examples: /rest/companies/id or /rest/companies or /rest/batch/companies`,
+      `Query path '${request.path}' invalid. Valid examples: /rest/companies/id or /rest/companies or /rest/batch/companies or /rest/restore/companies/id`,
     );
   }
 
@@ -43,7 +46,7 @@ export const parseCorePath = (
     return { object: queryAction[0] };
   }
 
-  if (queryAction[0] === 'restore') {
+  if (isRestorePath) {
     const recordId = queryAction[2];
 
     if (isDefined(recordId) && !isValidUuid(recordId)) {
