@@ -8,11 +8,36 @@ import {
 import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
 
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
+import { graphQLErrorCodesToFilter } from 'src/engine/utils/global-exception-handler.util';
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
 import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { CustomException } from 'src/utils/custom-exception';
 
 export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInterface {
+  private getGraphQLErrorCode(exception: unknown): string | undefined {
+    if (typeof exception !== 'object' || exception === null) {
+      return undefined;
+    }
+
+    const graphQLErrorCode = (
+      exception as { extensions?: { code?: unknown } }
+    ).extensions?.code;
+
+    return typeof graphQLErrorCode === 'string'
+      ? graphQLErrorCode
+      : undefined;
+  }
+
+  private shouldSkipCapture(exception: unknown): boolean {
+    const graphQLErrorCode = this.getGraphQLErrorCode(exception);
+
+    return (
+      graphQLErrorCode !== undefined &&
+      graphQLErrorCodesToFilter.includes(graphQLErrorCode as ErrorCode)
+    );
+  }
+
   captureExceptions(
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     exceptions: ReadonlyArray<any>,
@@ -48,6 +73,14 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
       }
 
       for (const exception of exceptions) {
+        if (this.shouldSkipCapture(exception)) {
+          continue;
+        }
+
+        const graphQLErrorCode = this.getGraphQLErrorCode(exception);
+
+        scope.setTag('graphqlErrorCode', graphQLErrorCode ?? 'unknown');
+
         const errorPath = (exception.path ?? [])
           .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
           .join(' > ');
