@@ -104,4 +104,34 @@ describe('transformLinksValue', () => {
       expect(transformLinksValue(input)).toEqual(expected);
     });
   });
+
+  describe('partial composite updates', () => {
+    it('should not null out primary link when only secondaryLinks is updated', () => {
+      const result = transformLinksValue({
+        secondaryLinks: JSON.stringify([
+          { url: 'HTTPS://SECONDARY.EXAMPLE.COM', label: 'Secondary' },
+        ]),
+      });
+
+      expect(result).toEqual({
+        secondaryLinks: JSON.stringify([
+          { url: 'https://secondary.example.com', label: 'Secondary' },
+        ]),
+      });
+      expect('primaryLinkUrl' in (result as object)).toBe(false);
+      expect('primaryLinkLabel' in (result as object)).toBe(false);
+    });
+
+    it('should not null out secondary links when only primaryLinkLabel is updated', () => {
+      const result = transformLinksValue({
+        primaryLinkLabel: 'Renamed',
+      });
+
+      expect(result).toEqual({
+        primaryLinkLabel: 'Renamed',
+      });
+      expect('primaryLinkUrl' in (result as object)).toBe(false);
+      expect('secondaryLinks' in (result as object)).toBe(false);
+    });
+  });
 });

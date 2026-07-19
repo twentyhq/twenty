@@ -14,7 +14,10 @@ export type LinksFieldGraphQLInput =
   | null
   | undefined;
 
-// TODO refactor this function handle partial composite field update
+// Full composite writes (all three subfields present, or empty object used as
+// clear) still run removeEmptyLinks so invalid/empty links are consolidated.
+// Partial writes only transform the provided keys so omitted subfields are not
+// null-written over stored values.
 export const transformLinksValue = (
   value: LinksFieldGraphQLInput,
 ): LinksFieldGraphQLInput => {
@@ -22,35 +25,80 @@ export const transformLinksValue = (
     return value;
   }
 
-  const primaryLinkUrlRaw = value.primaryLinkUrl as string | null;
-  const primaryLinkLabelRaw = value.primaryLinkLabel as string | null;
-  const secondaryLinksRaw = value.secondaryLinks as string | null;
+  const hasPrimaryLinkUrl = 'primaryLinkUrl' in value;
+  const hasPrimaryLinkLabel = 'primaryLinkLabel' in value;
+  const hasSecondaryLinks = 'secondaryLinks' in value;
+  const isFullCompositeWrite =
+    (hasPrimaryLinkUrl && hasPrimaryLinkLabel && hasSecondaryLinks) ||
+    (!hasPrimaryLinkUrl && !hasPrimaryLinkLabel && !hasSecondaryLinks);
 
-  const secondaryLinksArray = isNonEmptyString(secondaryLinksRaw)
-    ? parseJson<LinkMetadataNullable[]>(secondaryLinksRaw)
-    : secondaryLinksRaw;
+  if (isFullCompositeWrite) {
+    const primaryLinkUrlRaw = (value.primaryLinkUrl ?? null) as string | null;
+    const primaryLinkLabelRaw = (value.primaryLinkLabel ??
+      null) as string | null;
+    const secondaryLinksRaw = (value.secondaryLinks ?? null) as string | null;
 
-  const { primaryLinkLabel, primaryLinkUrl, secondaryLinks } = removeEmptyLinks(
-    {
-      primaryLinkUrl: primaryLinkUrlRaw,
-      primaryLinkLabel: primaryLinkLabelRaw,
-      secondaryLinks: secondaryLinksArray,
-    },
-  );
+    const secondaryLinksArray = isNonEmptyString(secondaryLinksRaw)
+      ? parseJson<LinkMetadataNullable[]>(secondaryLinksRaw)
+      : secondaryLinksRaw;
 
-  const processedSecondaryLinks = secondaryLinks?.map((link) => ({
-    ...link,
-    url: isDefined(link.url) ? normalizeUrlOrigin(link.url) : link.url,
-  }));
+    const { primaryLinkLabel, primaryLinkUrl, secondaryLinks } =
+      removeEmptyLinks({
+        primaryLinkUrl: primaryLinkUrlRaw,
+        primaryLinkLabel: primaryLinkLabelRaw,
+        secondaryLinks: secondaryLinksArray,
+      });
 
-  return {
-    ...value,
-    primaryLinkUrl: isDefined(primaryLinkUrl)
-      ? normalizeUrlOrigin(primaryLinkUrl)
-      : primaryLinkUrl,
-    primaryLinkLabel,
-    secondaryLinks: isEmpty(processedSecondaryLinks)
-      ? null
-      : JSON.stringify(processedSecondaryLinks),
-  };
+    const processedSecondaryLinks = secondaryLinks?.map((link) => ({
+      ...link,
+      url: isDefined(link.url) ? normalizeUrlOrigin(link.url) : link.url,
+    }));
+
+    return {
+      primaryLinkUrl: isDefined(primaryLinkUrl)
+        ? normalizeUrlOrigin(primaryLinkUrl)
+        : primaryLinkUrl,
+      primaryLinkLabel,
+      secondaryLinks: isEmpty(processedSecondaryLinks)
+        ? null
+        : JSON.stringify(processedSecondaryLinks),
+    };
+  }
+
+  const result: LinksFieldGraphQLInput = {};
+
+  if (hasPrimaryLinkUrl) {
+    result.primaryLinkUrl = isNonEmptyString(value.primaryLinkUrl)
+      ? normalizeUrlOrigin(value.primaryLinkUrl)
+      : value.primaryLinkUrl;
+  }
+
+  if (hasPrimaryLinkLabel) {
+    result.primaryLinkLabel = value.primaryLinkLabel;
+  }
+
+  if (hasSecondaryLinks) {
+    const secondaryLinksRaw = value.secondaryLinks;
+
+    if (!isDefined(secondaryLinksRaw) || secondaryLinksRaw === null) {
+      result.secondaryLinks = null;
+    } else {
+      const secondaryLinksArray = isNonEmptyString(secondaryLinksRaw)
+        ? parseJson<LinkMetadataNullable[]>(secondaryLinksRaw)
+        : (secondaryLinksRaw as unknown as LinkMetadataNullable[]);
+
+      const processedSecondaryLinks = (secondaryLinksArray ?? [])
+        .filter((link) => isDefined(link) && isNonEmptyString(link.url))
+        .map((link) => ({
+          ...link,
+          url: isDefined(link.url) ? normalizeUrlOrigin(link.url) : link.url,
+        }));
+
+      result.secondaryLinks = isEmpty(processedSecondaryLinks)
+        ? null
+        : JSON.stringify(processedSecondaryLinks);
+    }
+  }
+
+  return result;
 };

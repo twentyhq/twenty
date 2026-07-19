@@ -46,14 +46,17 @@ describe('transformEmailsValue', () => {
     expect(result.primaryEmail).toBeNull();
   });
 
-  it('should return null for primaryEmail when it is undefined', () => {
+  it('should omit primaryEmail when it is not provided (partial update)', () => {
     const value = {
       additionalEmails: null,
     };
 
     const result = transformEmailsValue(value);
 
-    expect(result.primaryEmail).toBeNull();
+    expect(result).toEqual({
+      additionalEmails: null,
+    });
+    expect('primaryEmail' in result).toBe(false);
   });
 
   it('should convert additionalEmails array to lowercase JSON string', () => {
@@ -159,14 +162,37 @@ describe('transformEmailsValue', () => {
     });
   });
 
-  it('should handle empty value object', () => {
+  it('should handle empty value object without inventing subfields', () => {
     const value = {};
 
     const result = transformEmailsValue(value);
 
+    expect(result).toEqual({});
+  });
+
+  it('should not null out primaryEmail when only additionalEmails is updated', () => {
+    const value = {
+      additionalEmails: ['NEW@EXAMPLE.COM'],
+    };
+
+    const result = transformEmailsValue(value);
+
     expect(result).toEqual({
-      primaryEmail: null,
-      additionalEmails: undefined,
+      additionalEmails: '["new@example.com"]',
     });
+    expect('primaryEmail' in result).toBe(false);
+  });
+
+  it('should not null out additionalEmails when only primaryEmail is updated', () => {
+    const value = {
+      primaryEmail: 'NEW@EXAMPLE.COM',
+    };
+
+    const result = transformEmailsValue(value);
+
+    expect(result).toEqual({
+      primaryEmail: 'new@example.com',
+    });
+    expect('additionalEmails' in result).toBe(false);
   });
 });
