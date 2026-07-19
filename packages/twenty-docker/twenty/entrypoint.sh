@@ -20,8 +20,19 @@ setup_and_migrate_db() {
         echo "Warning: Failed to flush cache before upgrade, but continuing startup..."
     fi
 
+    # Fail-closed: a failed upgrade must abort startup rather than serve a
+    # half-migrated schema (missing columns -> live 500s while the deploy looks
+    # healthy). The upgrade command decides what counts as fatal:
+    #   - instance/schema failures always fail (they affect every workspace);
+    #   - workspace-scoped failures fail on a single-workspace instance
+    #     (IS_MULTIWORKSPACE_ENABLED=false), but are tolerated (exit 0, surfaced
+    #     via upgrade status) on a multi-workspace instance so one bad tenant
+    #     does not take healthy ones offline;
+    #   - UPGRADE_CONTINUE_ON_ERROR=true forces the tolerant behaviour.
+    # So a non-zero exit here means "do not serve" -> abort startup.
     if ! yarn command:prod upgrade; then
-        echo "Warning: Upgrade completed with errors. Some workspaces may not be fully migrated. Check logs for details."
+        echo "ERROR: Database upgrade failed. Aborting startup to avoid serving a half-migrated/broken schema. See the upgrade logs above." >&2
+        exit 1
     fi
 
     if ! yarn command:prod cache:flush; then

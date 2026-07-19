@@ -2,6 +2,8 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CommandLogger } from 'src/database/commands/logger';
+import { shouldTolerateUpgradeWorkspaceFailures } from 'src/database/commands/upgrade-version-command/utils/should-tolerate-upgrade-workspace-failures.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
 import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
@@ -34,6 +36,7 @@ export class UpgradeCommand extends CommandRunner {
     protected readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     protected readonly upgradeSequenceRunnerService: UpgradeSequenceRunnerService,
     protected readonly upgradeStatusService: UpgradeStatusService,
+    protected readonly twentyConfigService: TwentyConfigService,
   ) {
     super();
     this.logger = new CommandLogger({
@@ -177,8 +180,51 @@ export class UpgradeCommand extends CommandRunner {
       );
 
       if (totalFailures > 0) {
+        // These are workspace-scoped failures; instance/schema-level failures
+        // throw earlier (from the sequence runner) and are always fatal because
+        // they affect every workspace. A workspace failure only affects that one
+        // tenant, so on a multi-workspace instance we surface it and keep the
+        // server available for the healthy workspaces. On a single-workspace
+        // instance the failed workspace IS the instance, so we fail closed to
+        // avoid coming up on a broken schema. UPGRADE_CONTINUE_ON_ERROR forces
+        // the tolerant behaviour regardless.
+        const isMultiWorkspaceEnabled =
+          this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') === true;
+        const continueOnError =
+          process.env.UPGRADE_CONTINUE_ON_ERROR === 'true';
+
+        if (
+          shouldTolerateUpgradeWorkspaceFailures({
+            isMultiWorkspaceEnabled,
+            continueOnError,
+          })
+        ) {
+          this.logger.warn(
+            formatUpgradeLog({
+              humanMessage:
+                `Upgrade completed with ${totalFailures} workspace failure(s); ` +
+                `continuing startup because ${
+                  isMultiWorkspaceEnabled
+                    ? 'IS_MULTIWORKSPACE_ENABLED is true'
+                    : 'UPGRADE_CONTINUE_ON_ERROR is true'
+                }. Failed workspaces are surfaced via upgrade status and can be re-run.`,
+              event: 'workspace-failures.tolerated',
+              logFields: {
+                totalFailures,
+                isMultiWorkspaceEnabled,
+                continueOnError,
+              },
+            }),
+          );
+
+          return;
+        }
+
         throw new Error(
-          `Upgrade completed with ${totalFailures} workspace failure(s)`,
+          `Upgrade completed with ${totalFailures} workspace failure(s) on a ` +
+            `single-workspace instance. Aborting startup to avoid serving a ` +
+            `broken schema. Set UPGRADE_CONTINUE_ON_ERROR=true to override, or ` +
+            `IS_MULTIWORKSPACE_ENABLED=true if this is a multi-workspace instance.`,
         );
       }
     } catch (error) {
