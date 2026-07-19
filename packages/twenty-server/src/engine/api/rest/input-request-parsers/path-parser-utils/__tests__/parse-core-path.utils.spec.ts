@@ -57,6 +57,15 @@ describe('parseCorePath', () => {
     });
   });
 
+  it('should parse restore one object from request path', () => {
+    const request: any = { path: `/rest/restore/companies/${testUUID}` };
+
+    expect(parseCorePath(request)).toEqual({
+      object: 'companies',
+      id: testUUID,
+    });
+  });
+
   it('should throw for wrong batch request', () => {
     const request: any = { path: `/rest/batch/companies/${testUUID}` };
 

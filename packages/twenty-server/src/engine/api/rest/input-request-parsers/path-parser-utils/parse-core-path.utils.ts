@@ -13,8 +13,8 @@ export const parseCorePath = (
     .filter(Boolean);
 
   if (
-    queryAction.length > 2 ||
-    (queryAction.length > 3 && queryAction[0] === 'restore')
+    (queryAction[0] !== 'restore' && queryAction.length > 2) ||
+    (queryAction[0] === 'restore' && queryAction.length > 3)
   ) {
     throw new BadRequestException(
       `Query path '${request.path}' invalid. Valid examples: /rest/companies/id or /rest/companies or /rest/batch/companies`,
