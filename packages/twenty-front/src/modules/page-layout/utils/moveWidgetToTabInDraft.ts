@@ -2,6 +2,7 @@ import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { reindexWidgetsToVerticalListPositions } from '@/page-layout/utils/reindexWidgetsToVerticalListPositions';
 import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
 import { isDefined } from 'twenty-shared/utils';
+import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 type MoveWidgetToTabInDraftParams = {
   widgetId: string;
@@ -27,7 +28,12 @@ export const moveWidgetToTabInDraft = (
 
   const destinationTab = draft.tabs.find((tab) => tab.id === destinationTabId);
 
-  if (!isDefined(destinationTab)) {
+  // Widgets carry vertical-list positions, so moving one into a canvas/grid tab
+  // would reindex that tab's widgets and clobber their native placement.
+  if (
+    !isDefined(destinationTab) ||
+    destinationTab.layoutMode !== PageLayoutTabLayoutMode.VERTICAL_LIST
+  ) {
     return draft;
   }
 

@@ -41,7 +41,7 @@ export const PageLayoutWidgetSortableItem = ({
     index,
   };
 
-  const { ref, handleRef, isDragging } = useSortable({
+  const { ref, isDragging } = useSortable({
     id: widgetId,
     index,
     group: tabId,
@@ -53,13 +53,7 @@ export const PageLayoutWidgetSortableItem = ({
   });
 
   return (
-    <StyledSortableRoot
-      ref={(element) => {
-        ref(element);
-        handleRef?.(element);
-      }}
-      isDragging={isDragging}
-    >
+    <StyledSortableRoot ref={ref} isDragging={isDragging}>
       {children}
     </StyledSortableRoot>
   );

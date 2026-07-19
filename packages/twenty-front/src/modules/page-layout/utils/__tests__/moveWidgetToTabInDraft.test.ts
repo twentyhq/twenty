@@ -27,13 +27,18 @@ const makeWidget = (
     },
   }) as unknown as PageLayoutWidget;
 
-const makeTab = (id: string, widgets: PageLayoutWidget[], position = 0) => ({
+const makeTab = (
+  id: string,
+  widgets: PageLayoutWidget[],
+  position = 0,
+  layoutMode: PageLayoutTabLayoutMode = PageLayoutTabLayoutMode.VERTICAL_LIST,
+) => ({
   id,
   applicationId: '',
   title: id,
   isActive: true,
   position,
-  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+  layoutMode,
   pageLayoutId: '',
   widgets,
   createdAt: new Date().toISOString(),
@@ -173,6 +178,25 @@ describe('moveWidgetToTabInDraft', () => {
       moveWidgetToTabInDraft(draft, {
         widgetId: 'widget-a',
         destinationTabId: 'missing',
+      }),
+    ).toBe(draft);
+  });
+
+  it('returns the draft unchanged when the destination tab is not a vertical list', () => {
+    const draft = makeDraft([
+      makeTab('tab-1', [makeWidget('widget-a', 0)]),
+      makeTab(
+        'tab-2',
+        [makeWidget('widget-x', 0, 'tab-2')],
+        1,
+        PageLayoutTabLayoutMode.CANVAS,
+      ),
+    ]);
+
+    expect(
+      moveWidgetToTabInDraft(draft, {
+        widgetId: 'widget-a',
+        destinationTabId: 'tab-2',
       }),
     ).toBe(draft);
   });
