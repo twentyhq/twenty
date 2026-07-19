@@ -17,6 +17,8 @@ const ALLOWED = [
   'li',
   'a',
   'br',
+  'code',
+  'pre',
 ];
 
 export const RichText = ({ markdown }: { markdown: string }) => (
