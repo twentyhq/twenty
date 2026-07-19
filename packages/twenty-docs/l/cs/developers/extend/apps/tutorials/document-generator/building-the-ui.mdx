@@ -1,0 +1,306 @@
+---
+title: 4. Budování uživatelského rozhraní
+icon: table-columns
+description: Zobrazení, postranní navigace, příkaz a přední komponenty.
+---
+
+Právě teď jsou objekty dosažitelné pouze v nastavení. Dejme aplikaci
+skutečnou přítomnost v UI: seznam zobrazení, položek postranního panelu, jedním kliknutím
+**Generovat příkaz** dokumentu, přední část rekordové stránky do **náhledu** dokumentu
+a nativní text **editor** pro šablony.
+
+## Zobrazení a navigace
+
+[view](/l/cs/developers/extend/apps/layout/views) je uložený seznam daného objektu.
+[Položka navigačního menu](/l/cs/developers/extend/apps/layout/navigation-menu-items)
+umístí toto zobrazení do postranního panelu.
+
+```ts filename="src/views/documents.view.ts"
+import { defineView, ViewKey } from 'twenty-sdk/define';
+
+export default defineView({
+  universalIdentifier: DOCUMENTS_VIEW_UNIVERSAL_IDENTIFIER,
+  name: 'All documents',
+  objectUniversalIdentifier: DOCUMENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconFile',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    { universalIdentifier: DOCUMENTS_VIEW_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier: DOCUMENT_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0, isVisible: true, size: 280 },
+    { universalIdentifier: DOCUMENTS_VIEW_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier: DOCUMENT_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 1, isVisible: true, size: 120 },
+    { universalIdentifier: DOCUMENTS_VIEW_TEMPLATE_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier: DOCUMENT_TEMPLATE_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 2, isVisible: true, size: 200 },
+  ],
+});
+```
+
+```ts filename="src/navigation-menu-items/documents.navigation-menu-item.ts"
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: DOCUMENTS_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER,
+  name: 'Documents',
+  icon: 'IconFile',
+  color: 'green',
+  position: 1,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: DOCUMENTS_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Přidejte stejný pár šablon. Oba se nyní zobrazí v postranním panelu:
+
+<Frame caption="Dokumenty a šablony v postranním panelu s vygenerovaným dokumentem.">
+  <img src="/images/docs/developers/extends/apps/document-generator/04-documents-view.png" alt="Zobrazení dokumentů s vygenerovaným dokumentem" />
+</Frame>
+
+## Přední část
+
+[přední komponenta](/l/cs/developers/extend/apps/layout/front-components) je komponenta React
+boxovaná uvnitř dvaceti. Náš přečte vybraný záznam, načte
+šablony osob přes `CoreApiClient`, a POSTE na trasu z poslední kapitoly
+.
+
+```tsx filename="src/front-components/generate-document-form.front-component.tsx"
+import { useEffect, useState } from 'react';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { RestApiClient } from 'twenty-client-sdk/rest';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { enqueueSnackbar, useSelectedRecordIds } from 'twenty-sdk/front-component';
+
+const GenerateDocumentForm = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+  const [templates, setTemplates] = useState<{ id: string; name: string }[]>([]);
+  const [templateId, setTemplateId] = useState('');
+
+  useEffect(() => {
+    new CoreApiClient()
+      .query({ documentTemplates: {
+        __args: { filter: { target: { eq: 'PERSON' } }, first: 100 },
+        edges: { node: { id: true, name: true } } } })
+      .then(({ documentTemplates }) => {
+        const list = documentTemplates?.edges?.map((e) => e.node) ?? [];
+        setTemplates(list);
+        if (list[0]) setTemplateId(list[0].id);
+      });
+  }, []);
+
+  const generate = async () => {
+    const res = await new RestApiClient().post<{ success: boolean }>(
+      '/s/documents/generate',
+      { templateId, recordId },
+    );
+    await enqueueSnackbar({
+      message: res.success ? 'Document generated.' : 'Generation failed.',
+      variant: res.success ? 'success' : 'error',
+    });
+  };
+
+  // ...render a <select> of templates and a Generate button
+};
+
+export default defineFrontComponent({
+  universalIdentifier: GENERATE_DOCUMENT_FORM_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+  name: 'generate-document-form',
+  component: GenerateDocumentForm,
+});
+```
+
+<Warning>
+Styl s inline CSS proměnnými (`var(--t-color-blue)`), ne hodnoty importované z
+`twenty-ui`. SDK mocniny, které balí během sestavení, takže importy
+téma na úrovni modulů by byly `nedefinované`. Podívejte se na
+[plnou komponentu](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/front-components/generate-document-form.front-component.tsx).
+</Warning>
+
+## Příkaz k otevření
+
+[položka příkazu](/l/cs/developers/extend/apps/layout/command-menu-items) s
+`availabilityType: 'RECORD_SELECTION'` se zobrazí při výběru osoby, a
+otevře komponentu v postranním panelu.
+
+```ts filename="src/command-menu-items/generate-document.command-menu-item.ts"
+import { defineCommandMenuItem, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: GENERATE_DOCUMENT_COMMAND_UNIVERSAL_IDENTIFIER,
+  label: 'Generate document',
+  availabilityType: 'RECORD_SELECTION',
+  availabilityObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  frontComponentUniversalIdentifier:
+    GENERATE_DOCUMENT_FORM_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+});
+```
+
+## Vyzkoušejte celý tok
+
+Otevřete **People**, zaškrtněte osobu a stiskněte <kbd>⌘K</kbd> / <kbd>Ctrl K</kbd>.
+"Generovat doklad" se zobrazí, označeno vaší aplikací:
+
+<Frame caption="Příkaz se zobrazí při výběru osoby.">
+  <img src="/images/docs/developers/extends/apps/document-generator/06-command-menu.png" alt="Příkazové menu s generováním dokumentu" />
+</Frame>
+
+Spusťte - komponenta se otevře v postranním panelu. Vyberte si šablonu, klikněte na
+**Generovat**, a nový záznam země v **dokumentech**.
+
+<Frame caption="Přední komponenta, načítání šablon a generování kliknutím.">
+  <img src="/images/docs/developers/extends/apps/document-generator/06b-front-component.png" alt="Generovat boční panel dokumentu" />
+</Frame>
+
+Každý vygenerovaný dokument zaznamenává vaši aplikaci jako autora:
+
+<Frame caption="Vytvořeno generátorem dokumentů, stav vygenerován.">
+  <img src="/images/docs/developers/extends/apps/document-generator/05-document-record.png" alt="Generovaný záznam dokladu" />
+</Frame>
+
+## Náhled dokumentu na jeho stránce s záznamem
+
+Přední komponenta není pouze pro menu příkazů — jeden můžete připojit jako \*\*kartu na stránce
+záznamu \*\*. Přidejme kartu \*Náhled \* k záznamu dokumentu, která vykreslí
+Markdown tělo jako leštěnou, vytisknutelnou stránku.
+
+Komponenta čte aktuální id záznamu z kontextového kontextu, načte
+dokument a vykreslí jej. Přední komponenty běží v **sandboxu**, který povoluje pouze
+bílou listinu HTML tagů — syrovou injekci HTML (`dangerouslySetInnerHTML`) a
+`\<style>` jsou blokovány — takže Markdown vykreslujeme jako React prvky s inline
+pomocí malého [`Markdown`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/markdown-to-react.tsx)
+helper.
+
+```tsx filename="src/front-components/document-viewer.front-component.tsx"
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { RestApiClient } from 'twenty-client-sdk/rest';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useFrontComponentExecutionContext } from 'twenty-sdk/front-component';
+import { Markdown } from 'src/utils/markdown-to-react';
+
+const DocumentViewer = () => {
+  const recordId = useFrontComponentExecutionContext((c) => c.recordId ?? null);
+  // ...load { content, file } for recordId, then derive the links:
+  const pdfUrl = document.file?.[0]?.url;
+  const webUrl = new RestApiClient().resolveUrl('/s/documents/view', {
+    query: { id: recordId },
+  });
+
+  // Render the template body, plus quick links to the web page and the PDF.
+  // Links open in a new tab so they don't navigate the embedded component.
+  return (
+    <div style={styles.scroll}>
+      <div style={styles.actions}>
+        <a style={styles.actionLink} href={webUrl} target="_blank" rel="noopener noreferrer">
+          Open web page
+        </a>
+        {pdfUrl ? (
+          <a style={styles.actionLink} href={pdfUrl} target="_blank" rel="noopener noreferrer">
+            Download PDF
+          </a>
+        ) : null}
+      </div>
+      <div style={styles.paper}>
+        <div style={styles.body}>
+          <Markdown content={document.content} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: DOCUMENT_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+  name: 'document-viewer',
+  component: DocumentViewer,
+});
+```
+
+Připojit ji s [page layout](/l/cs/developers/extend/apps/layout/page-layouts). Rozložení
+`RECORD_PAGE` přidává záložky do zobrazení záznamu objektu; widget `FRONT_COMPONENT`
+v záložce `CANVAS` hostí komponentu:
+
+```ts filename="src/page-layouts/document-record.page-layout.ts"
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+
+export default definePageLayout({
+  universalIdentifier: DOCUMENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  name: 'Document record page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: DOCUMENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [{
+    universalIdentifier: DOCUMENT_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
+    title: 'Preview',
+    icon: 'IconEye',
+    position: 50,
+    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    widgets: [{
+      universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
+      title: 'Document preview',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier: DOCUMENT_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    }],
+  }],
+});
+```
+
+Otevřete jakýkoliv dokument - záložka \*\*Náhled \*\* jej krásně vykreslí s odkazy na
+sdílitelnou webovou stránku a PDF:
+
+<Frame caption="Karta Náhled vykresluje dokument s vloženými styly, plus rychlé odkazy.">
+  <img src="/images/docs/developers/extends/apps/document-generator/09-document-viewer.png" alt="Hlavní komponenta prohlížeče dokumentů na záložce záznamu" />
+</Frame>
+
+## Upravit šablonu pomocí editoru s bohatým textem
+
+Šablony vůbec nepotřebují vlastní komponentu. Protože je `body`
+`RICH_TEXT`, Dvacet již poskytuje plně bohatý textový editor –
+stejné jako standardní použití objektů poznámky a úkolu. Prostě jsme ji vykreslili na
+šablonové stránce záznamu.
+
+Přidejte kartu s `FIELD` widgetem v režimu zobrazení `EDITOR` ukazujícím na pole `body`
+pomocí `fieldMetadataId`:
+
+```ts filename="src/page-layouts/template-record.page-layout.ts"
+{
+  universalIdentifier: TEMPLATE_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
+  title: 'Template',
+  position: 1,
+  layoutMode: PageLayoutTabLayoutMode.GRID,
+  widgets: [{
+    universalIdentifier: TEMPLATE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
+    title: 'Template',
+    type: 'FIELD',
+    gridPosition: { row: 0, column: 0, rowSpan: 6, columnSpan: 12 },
+    configuration: {
+      configurationType: 'FIELD',
+      fieldMetadataId: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldDisplayMode: 'EDITOR',
+    },
+  }],
+}
+```
+
+Pole `RICH_TEXT` ukládá JSON blok editoru a Markdown
+projekci. Plynovod pro výrobu čte tyto Markdown projekce, takže
+zástupné symboly, PDF, a sdílitelná webová stránka všechny nefungují beze změny —
+viz celý
+[`template-record. age-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/page-layouts/template-record.page-layout.ts).
+Nyní editoři píší šablony v řádném editoru s bohatým textem:
+
+<Frame caption="Šablona: Dvacátý nativní textový editor vázaný na pole těla.">
+  <img src="/images/docs/developers/extends/apps/document-generator/10-template-editor.png" alt="Záznam šablony s nativním textovým editorem" />
+</Frame>
+
+**Po tomto kroku:** náhled dokumentů krásně a šablony jsou editovatelné
+v aplikaci. Dále nechte AI agenta generovat je z chatu.
+
+<Card title="Další: agent AI →" icon="robot" href="/l/cs/developers/extend/apps/tutorials/document-generator/ai-agent">
+  Přidejte agenta a dovednosti, které volají po nástroji.
+</Card>

@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import {
+  type ApplicationTranslationCatalogLoaderPayload,
   type ObjectMetadataLoaderPayload,
   type StandardApplicationIdLoaderPayload,
 } from 'src/engine/dataloaders/dataloader.service';
@@ -449,6 +450,7 @@ export class CommandMenuItemService {
     fieldName,
     objectMetadataLoader,
     standardApplicationIdLoader,
+    applicationTranslationCatalogLoader,
     workspaceId,
     locale,
   }: {
@@ -461,6 +463,10 @@ export class CommandMenuItemService {
     standardApplicationIdLoader: DataLoader<
       StandardApplicationIdLoaderPayload,
       string
+    >;
+    applicationTranslationCatalogLoader: DataLoader<
+      ApplicationTranslationCatalogLoaderPayload,
+      Record<string, string> | undefined
     >;
     workspaceId: string;
     locale: keyof typeof APP_LOCALES | undefined;
@@ -479,6 +485,16 @@ export class CommandMenuItemService {
       ? objectMetadata.applicationId === standardApplicationId
       : false;
 
+    // The loader returns undefined for the standard app, so the standard-app
+    // short-circuit lives in the loader, not here.
+    const applicationCatalog = isDefined(objectMetadata)
+      ? await applicationTranslationCatalogLoader.load({
+          applicationId: objectMetadata.applicationId,
+          workspaceId,
+          locale: locale ?? SOURCE_LOCALE,
+        })
+      : undefined;
+
     return interpolateNavigationCommandMenuItemField({
       commandMenuItem,
       fieldName,
@@ -486,6 +502,7 @@ export class CommandMenuItemService {
       isStandardApp,
       locale,
       i18nInstance: this.i18nService.getI18nInstance(locale ?? SOURCE_LOCALE),
+      applicationCatalog,
     });
   }
 

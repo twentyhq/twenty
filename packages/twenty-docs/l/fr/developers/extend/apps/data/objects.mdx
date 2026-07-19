@@ -86,6 +86,22 @@ export default defineObject({
 **Les champs de base sont ajoutés automatiquement.** Lorsque vous définissez un objet personnalisé, Twenty crée pour vous des champs standard comme `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` et `deletedAt`. Vous n’avez pas besoin de les déclarer dans votre tableau `fields` — uniquement vos champs personnalisés. Vous pouvez remplacer un champ par défaut en en déclarant un avec le même nom, mais c’est rarement une bonne idée.
 </Note>
 
+## Types de champ
+
+L’ensemble complet des valeurs de `FieldType`, exportées depuis `twenty-sdk/define` :
+
+| Catégorie                 | Types                                                                                                                              |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Texte                     | `TEXT`, `RICH_TEXT`, `ARRAY` (de chaînes), `RAW_JSON`                                                                              |
+| Numérique                 | `NUMBER` (`universalSettings.dataType` : `'float'` / `'int'` / `'bigint'`), `NUMERIC` (précision arbitraire), `RATING`, `POSITION` |
+| Dates                     | `DATE`, `DATE_TIME`                                                                                                                |
+| Choix                     | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                                |
+| Composés                  | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES`                                                  |
+| Identifiants et relations | `UUID`, `RELATION`, `MORPH_RELATION` (voir [Relations](/l/fr/developers/extend/apps/data/relations))                                    |
+| Système                   | `TS_VECTOR` (vecteur de recherche en texte intégral, géré par le serveur)                                                          |
+
+Les types composés stockent plusieurs sous-champs (par exemple `FULL_NAME` = prénom + nom de famille ; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` et `MULTI_SELECT` nécessitent un tableau `options` comme dans l’exemple ci-dessus.
+
 ## Valeurs par défaut
 
 Les valeurs par défaut de type chaîne littérale doivent être entourées de guillemets simples **à l’intérieur** de la chaîne — `defaultValue: "'Draft'"`, et non `defaultValue: "Draft"`. C’est pourquoi le champ `status` ci-dessus utilise `` `'${PostCardStatus.DRAFT}'` ``.
@@ -96,6 +112,27 @@ Les chaînes sans guillemets sont réservées aux valeurs par défaut calculées
 * `'now'` — l’horodatage actuel (pour les champs `DATE_TIME`)
 
 La même convention s’applique aux sous-champs de type chaîne des valeurs par défaut composites (par exemple `{ source: "'MANUAL'" }` sur un champ `ACTOR`) ainsi qu’aux valeurs `SELECT`/`MULTI_SELECT`. Une valeur par défaut littérale de type chaîne laissée sans guillemets génère un avertissement lors de la compilation de votre application.
+
+## Nullabilité
+
+`isNullable` détermine si un champ accepte `NULL`. Sa valeur par défaut est `true` — omettez-le pour les champs facultatifs. Définissez `isNullable: false` pour rendre un champ obligatoire au niveau de la base de données.
+
+Les modifications de `isNullable` sont appliquées à chaque synchronisation, y compris celles qui mettent à jour un champ existant — vous pouvez donc modifier la nullabilité d’un champ en éditant le manifeste puis en relançant la synchronisation.
+
+<Note>
+**Rendre un champ existant non nullable nécessite une valeur par défaut.** Lorsque vous modifiez un champ avec `isNullable: false`, vous devez également fournir une `defaultValue` non nulle. La valeur par défaut remplit rétroactivement toutes les lignes `NULL` existantes avant que la contrainte `NOT NULL` ne soit appliquée ; sans cela, la synchronisation échoue avec `Default value cannot be null for non-nullable fields`. Les champs de relation et les champs `TS_VECTOR` sont toujours nullables, donc `isNullable` n’a aucun effet sur eux.
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
 
 ## Et après
 

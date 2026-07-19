@@ -1,20 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type QueryRunner, type Repository } from 'typeorm';
+import { type DataSource, type QueryRunner, type Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
+import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
+import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
-import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
-import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
+import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
@@ -30,9 +34,15 @@ import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty
 
 @Injectable()
 export class ApplicationService {
+  private readonly logger = new Logger(ApplicationService.name);
+
   constructor(
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectRepository(ApplicationRegistrationEntity)
+    private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fileStorageService: FileStorageService,
     @InjectRepository(WorkspaceEntity)
@@ -288,6 +298,52 @@ export class ApplicationService {
     });
   }
 
+  // Number of workspaces each external (non-LOCAL) application is installed in,
+  // ranked by install count. Powers the "most installed apps" gauge/leaderboard.
+  // LOCAL apps (built-in Standard/Custom) exist in every workspace and are not
+  // marketplace installs, so they are excluded to keep the ranking meaningful.
+  async countInstalledWorkspacesByApplication({
+    limit = 100,
+  }: {
+    limit?: number;
+  } = {}): Promise<
+    Array<{
+      universalIdentifier: string;
+      name: string;
+      sourceType: string;
+      installedWorkspaceCount: number;
+    }>
+  > {
+    const rows = await this.applicationRepository
+      .createQueryBuilder('application')
+      .select('application.universalIdentifier', 'universalIdentifier')
+      .addSelect('MAX(application.name)', 'name')
+      .addSelect('MAX(application.sourceType)', 'sourceType')
+      .addSelect('COUNT(*)', 'count')
+      .innerJoin('application.workspace', 'workspace')
+      .where('application.deletedAt IS NULL')
+      .andWhere('workspace.deletedAt IS NULL')
+      .andWhere('application.sourceType != :localSourceType', {
+        localSourceType: ApplicationRegistrationSourceType.LOCAL,
+      })
+      .groupBy('application.universalIdentifier')
+      .orderBy('count', 'DESC')
+      .limit(limit)
+      .getRawMany<{
+        universalIdentifier: string;
+        name: string;
+        sourceType: string;
+        count: string;
+      }>();
+
+    return rows.map((row) => ({
+      universalIdentifier: row.universalIdentifier,
+      name: row.name,
+      sourceType: row.sourceType,
+      installedWorkspaceCount: Number(row.count),
+    }));
+  }
+
   async findTwentyStandardApplicationOrThrow(workspaceId: string): Promise<{
     application: ApplicationEntity;
     workspace: WorkspaceEntity;
@@ -387,15 +443,25 @@ export class ApplicationService {
   ) {
     const defaultPackageFields = await getDefaultApplicationPackageFields();
 
+    const applicationRegistration =
+      await this.createWorkspaceCustomApplicationRegistration(
+        {
+          workspaceId,
+          universalIdentifier: applicationId,
+        },
+        queryRunner,
+      );
+
     const workspaceCustomApplication = await this.create(
       {
         description: null,
-        name: 'Custom',
+        name: WORKSPACE_CUSTOM_APPLICATION_NAME,
         sourcePath: 'workspace-custom',
         version: '1.0.1',
         universalIdentifier: applicationId,
         workspaceId,
         id: applicationId,
+        applicationRegistrationId: applicationRegistration.id,
         logicFunctionLayerId: null,
         canBeUninstalled: false,
         packageJsonChecksum: defaultPackageFields.packageJsonChecksum,
@@ -413,6 +479,39 @@ export class ApplicationService {
     );
 
     return workspaceCustomApplication;
+  }
+
+  async createWorkspaceCustomApplicationRegistration(
+    {
+      workspaceId,
+      universalIdentifier,
+    }: {
+      workspaceId: string;
+      universalIdentifier: string;
+    },
+    queryRunner?: QueryRunner,
+  ): Promise<ApplicationRegistrationEntity> {
+    const applicationRegistration =
+      this.applicationRegistrationRepository.create({
+        universalIdentifier,
+        name: WORKSPACE_CUSTOM_APPLICATION_NAME,
+        oAuthClientId: v4(),
+        oAuthClientSecretHash: null,
+        oAuthRedirectUris: [],
+        oAuthScopes: [],
+        ownerWorkspaceId: workspaceId,
+        sourceType: ApplicationRegistrationSourceType.LOCAL,
+        createdByUserId: null,
+      });
+
+    if (queryRunner) {
+      return queryRunner.manager.save(
+        ApplicationRegistrationEntity,
+        applicationRegistration,
+      );
+    }
+
+    return this.applicationRegistrationRepository.save(applicationRegistration);
   }
 
   async uploadDefaultPackageFilesAndSetFileIds(
@@ -439,6 +538,7 @@ export class ApplicationService {
       sourceFile: defaultPackageFields.packageJsonContent,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
+      applicationId: application.id,
       workspaceId: application.workspaceId,
       resourcePath: 'package.json',
       settings: { isTemporaryFile: false, toDelete: false },
@@ -449,6 +549,7 @@ export class ApplicationService {
       sourceFile: defaultPackageFields.yarnLockContent,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
+      applicationId: application.id,
       workspaceId: application.workspaceId,
       resourcePath: 'yarn.lock',
       settings: { isTemporaryFile: false, toDelete: false },
@@ -535,15 +636,50 @@ export class ApplicationService {
       );
     }
 
-    await this.fileStorageService.deleteApplicationFiles({
-      workspaceId,
-      applicationUniversalIdentifier: universalIdentifier,
-    });
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
-    await this.applicationRepository.delete({
-      universalIdentifier,
-      workspaceId,
-    });
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager.update(
+        ApplicationEntity,
+        { id: application.id },
+        { packageJsonFileId: null, yarnLockFileId: null },
+      );
+
+      await this.fileStorageService.deleteApplicationFileRows({
+        applicationId: application.id,
+        workspaceId,
+        queryRunner,
+      });
+
+      await queryRunner.manager.delete(ApplicationEntity, {
+        universalIdentifier,
+        workspaceId,
+      });
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
+
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+
+    try {
+      await this.fileStorageService.deleteApplicationFilesFromStorage({
+        workspaceId,
+        applicationUniversalIdentifier: universalIdentifier,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to delete storage folder for application ${universalIdentifier} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatApplicationMaps',

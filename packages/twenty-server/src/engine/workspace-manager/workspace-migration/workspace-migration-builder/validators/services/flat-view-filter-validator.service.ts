@@ -14,7 +14,11 @@ import {
 } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getInvalidSelectFilterOptionValues } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-invalid-select-filter-option-values.util';
 import { ViewFilterExceptionCode } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
+import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -109,6 +113,27 @@ export class FlatViewFilterValidatorService {
 
       if (isDefined(incompatibleOperandError)) {
         validationResult.errors.push(incompatibleOperandError);
+      }
+
+      if (
+        isFieldMetadataEntityOfType(
+          referencedFieldMetadata,
+          FieldMetadataType.SELECT,
+        ) ||
+        isFieldMetadataEntityOfType(
+          referencedFieldMetadata,
+          FieldMetadataType.MULTI_SELECT,
+        )
+      ) {
+        const invalidSelectOptionError = this.getInvalidSelectOptionError({
+          referencedFieldMetadata,
+          operand: flatViewFilterToValidate.operand,
+          value: flatViewFilterToValidate.value,
+        });
+
+        if (isDefined(invalidSelectOptionError)) {
+          validationResult.errors.push(invalidSelectOptionError);
+        }
       }
     }
 
@@ -247,6 +272,30 @@ export class FlatViewFilterValidatorService {
       if (isDefined(incompatibleOperandError)) {
         validationResult.errors.push(incompatibleOperandError);
       }
+
+      if (
+        ('value' in flatEntityUpdate ||
+          'fieldMetadataUniversalIdentifier' in flatEntityUpdate ||
+          'operand' in flatEntityUpdate) &&
+        (isFieldMetadataEntityOfType(
+          referencedFieldMetadata,
+          FieldMetadataType.SELECT,
+        ) ||
+          isFieldMetadataEntityOfType(
+            referencedFieldMetadata,
+            FieldMetadataType.MULTI_SELECT,
+          ))
+      ) {
+        const invalidSelectOptionError = this.getInvalidSelectOptionError({
+          referencedFieldMetadata,
+          operand: updatedFlatViewFilter.operand,
+          value: updatedFlatViewFilter.value,
+        });
+
+        if (isDefined(invalidSelectOptionError)) {
+          validationResult.errors.push(invalidSelectOptionError);
+        }
+      }
     }
 
     if (isDefined(updatedFlatViewFilter.viewFilterGroupUniversalIdentifier)) {
@@ -266,6 +315,42 @@ export class FlatViewFilterValidatorService {
     }
 
     return validationResult;
+  }
+
+  private getInvalidSelectOptionError({
+    referencedFieldMetadata,
+    operand,
+    value,
+  }: {
+    referencedFieldMetadata: Pick<
+      FlatFieldMetadata<
+        FieldMetadataType.SELECT | FieldMetadataType.MULTI_SELECT
+      >,
+      'type' | 'options' | 'label'
+    >;
+    operand: ViewFilterOperand;
+    value: ViewFilterValue;
+  }) {
+    const invalidValues = getInvalidSelectFilterOptionValues({
+      fieldMetadata: referencedFieldMetadata,
+      operand,
+      value,
+    });
+
+    if (invalidValues.length === 0) {
+      return undefined;
+    }
+
+    const invalidValuesText = invalidValues.join(', ');
+    const allowedValuesText = referencedFieldMetadata.options
+      ?.map((option) => option.value)
+      .join(', ');
+
+    return {
+      code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
+      message: t`Filter on "${referencedFieldMetadata.label}" uses option(s) ${invalidValuesText} that do not exist. Allowed values: ${allowedValuesText}.`,
+      userFriendlyMessage: msg`Filter uses a select option that does not exist`,
+    };
   }
 
   private getIncompatibleOperandError({

@@ -29,7 +29,7 @@ export function ClientBriefPageContent() {
   return (
     <BriefBackground data-scheme="dark">
       <BriefContainer>
-        <ClientBriefWizard resetSignal={0} />
+        <ClientBriefWizard />
       </BriefContainer>
     </BriefBackground>
   );

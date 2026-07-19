@@ -16,6 +16,7 @@ export { Container } from './Container';
 export { ExternalArrow } from './ExternalArrow';
 export { ExternalLink } from './ExternalLink';
 export { CornerMarkers } from './CornerMarkers';
+export { EngagementBand } from './EngagementBand';
 export { Eyebrow, type EyebrowProps } from './Eyebrow';
 export { IconButton, type IconButtonProps } from './IconButton';
 export {

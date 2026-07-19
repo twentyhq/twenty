@@ -7,4 +7,5 @@ export enum UsageResourceType {
   STORAGE = 'STORAGE',
   API = 'API',
   LOGIC_FUNCTION = 'LOGIC_FUNCTION',
+  EMAIL = 'EMAIL',
 }

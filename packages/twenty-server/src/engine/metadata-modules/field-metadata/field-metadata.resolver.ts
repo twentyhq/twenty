@@ -5,7 +5,6 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -23,16 +22,16 @@ import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/rel
 import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
-import { resolveFieldMetadataStandardOverride } from 'src/engine/metadata-modules/field-metadata/utils/resolve-field-metadata-standard-override.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
+import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 // Keep @Parent() structurally typed so ResolverValidationPipe does not validate
 // FieldMetadataDTO date decorators on already-loaded parent records.
-type FieldMetadataStandardOverrideParent = Parameters<
-  typeof resolveFieldMetadataStandardOverride
->[0] &
-  Pick<FieldMetadataDTO, 'applicationId'>;
+type FieldMetadataStandardOverrideParent = Pick<
+  FieldMetadataDTO,
+  'label' | 'description' | 'icon' | 'overrides' | 'applicationId'
+>;
 
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)
@@ -45,7 +44,6 @@ export class FieldMetadataResolver {
   constructor(
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly i18nService: I18nService,
-    private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
   ) {}
 
   @ResolveField(() => Boolean, {
@@ -71,28 +69,25 @@ export class FieldMetadataResolver {
 
     const isStandardApp = fieldMetadata.applicationId === standardApplicationId;
 
-    const applicationRegistrationId = isStandardApp
-      ? null
-      : await context.loaders.applicationRegistrationIdLoader.load({
-          workspaceId,
-          applicationId: fieldMetadata.applicationId,
-        });
+    const applicationCatalog =
+      await context.loaders.applicationTranslationCatalogLoader.load({
+        applicationId: fieldMetadata.applicationId,
+        workspaceId,
+        locale: context.req.locale,
+      });
 
-    const applicationCatalog = isDefined(applicationRegistrationId)
-      ? await this.applicationTranslationCacheService.getCatalog({
-          applicationRegistrationId,
-          locale: context.req.locale,
-        })
-      : undefined;
-
-    return resolveFieldMetadataStandardOverride(
-      fieldMetadata,
-      labelKey,
-      context.req.locale,
-      i18n,
-      isStandardApp,
-      applicationCatalog,
-    );
+    return resolveEffectiveEntityProperty({
+      metadataName: 'fieldMetadata',
+      baseValue: fieldMetadata[labelKey],
+      overrides: fieldMetadata.overrides,
+      property: labelKey,
+      i18nContext: {
+        locale: context.req.locale,
+        i18nInstance: i18n,
+        isStandardApp,
+        applicationCatalog,
+      },
+    });
   }
 
   @ResolveField(() => String, { nullable: true })

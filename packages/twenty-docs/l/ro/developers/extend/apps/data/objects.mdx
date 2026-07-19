@@ -86,6 +86,22 @@ export default defineObject({
 **Câmpurile de bază sunt adăugate automat.** Când definiți un obiect personalizat, Twenty creează pentru dvs. câmpuri standard precum `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` și `deletedAt`. Nu trebuie să le declarați în tabloul `fields` — doar câmpurile dvs. personalizate. Puteți suprascrie un câmp implicit declarând unul cu același nume, dar acest lucru este rareori o idee bună.
 </Note>
 
+## Tipuri de câmpuri
+
+Setul complet de valori `FieldType`, exportate din `twenty-sdk/define`:
+
+| Categorie                 | Tipuri                                                                                                                          |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Text                      | `TEXT`, `RICH_TEXT`, `ARRAY` (de șiruri), `RAW_JSON`                                                                            |
+| Numerice                  | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (precizie arbitrară), `RATING`, `POSITION` |
+| Date calendaristice       | `DATE`, `DATE_TIME`                                                                                                             |
+| Alegere                   | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                             |
+| Compuse                   | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES`                                               |
+| Identificatori și relații | `UUID`, `RELATION`, `MORPH_RELATION` (vezi [Relații](/l/ro/developers/extend/apps/data/relations))                                   |
+| Sistem                    | `TS_VECTOR` (vector de căutare full-text, gestionat de server)                                                                  |
+
+Tipurile compuse stochează mai multe sub‑câmpuri (de ex. `FULL_NAME` = prenume + nume de familie; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` și `MULTI_SELECT` necesită un tablou `options`, ca în exemplul de mai sus.
+
 ## Valori implicite
 
 Valorile implicite de tip șir literal trebuie să fie încadrate în ghilimele simple **în interiorul** șirului — `defaultValue: "'Draft'"`, nu `defaultValue: "Draft"`. De aceea câmpul `status` de mai sus folosește `` `'${PostCardStatus.DRAFT}'` ``.
@@ -96,6 +112,27 @@ Valorile implicite de tip șir literal trebuie să fie încadrate în ghilimele 
 * `'now'` — marcajul temporal curent (pentru câmpurile `DATE_TIME`)
 
 Aceeași convenție se aplică și subcâmpurilor de tip șir de caractere ale valorilor implicite compuse (de ex. `{ source: "'MANUAL'" }` pe un câmp `ACTOR`) și valorilor `SELECT`/`MULTI_SELECT`. O valoare implicită literală de tip șir de caractere lăsată neîncadrată în ghilimele generează un avertisment atunci când aplicația este construită.
+
+## Acceptarea valorii NULL
+
+`isNullable` controlează dacă un câmp acceptă `NULL`. Valoarea sa implicită este `true` — omiteți-l pentru câmpurile opționale. Setați `isNullable: false` pentru a face un câmp obligatoriu la nivel de bază de date.
+
+Modificările aduse proprietății `isNullable` sunt aplicate la fiecare sincronizare, inclusiv la sincronizările care actualizează un câmp existent — astfel încât puteți schimba nullabilitatea unui câmp editând manifestul și resincronizând.
+
+<Note>
+**Transformarea unui câmp existent în non-nullable necesită o valoare implicită.** Atunci când modificați un câmp la `isNullable: false`, trebuie să furnizați și un `defaultValue` nenul. Valoarea implicită completează retroactiv orice rânduri `NULL` existente înainte ca restricția `NOT NULL` să fie aplicată; fără aceasta, sincronizarea eșuează cu mesajul `Default value cannot be null for non-nullable fields`. Câmpurile de relație și câmpurile `TS_VECTOR` sunt întotdeauna nullable, astfel încât `isNullable` nu are niciun efect asupra lor.
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
 
 ## Ce urmează
 

@@ -1,7 +1,10 @@
+import { createHash } from 'crypto';
+
 import { isUndefined } from '@sniptt/guards';
 
 import { getRecallBotAutomaticLeave } from 'src/logic-functions/constants/recall-bot-automatic-leave';
 import { getRecallBotRecordingConfig } from 'src/logic-functions/constants/recall-bot-recording-config';
+import { type RecallBotAutomaticVideoOutput } from 'src/logic-functions/types/recall-bot-automatic-video-output.type';
 import { type RecallRoutingMetadata } from 'src/logic-functions/types/recall-routing-metadata.type';
 import { type RecallBotScheduleResult } from 'src/logic-functions/types/recall-bot-operation-result.type';
 import {
@@ -10,17 +13,20 @@ import {
 } from 'src/logic-functions/recall-api/extract-recall-bot-id.util';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
+import { computeMaximumJoinAt } from 'src/logic-functions/recall-api/compute-maximum-join-at.utils';
 
 export type ScheduleRecallBotArgs = {
   meetingUrl: string;
   joinAt: string;
   metadata: RecallRoutingMetadata;
+  automaticVideoOutput?: RecallBotAutomaticVideoOutput;
 };
 
 export const scheduleRecallBot = async ({
   meetingUrl,
   joinAt,
   metadata,
+  automaticVideoOutput,
 }: ScheduleRecallBotArgs): Promise<RecallBotScheduleResult> => {
   const configResult = getRecallApiConfig();
 
@@ -29,18 +35,27 @@ export const scheduleRecallBot = async ({
   }
 
   const automaticLeave = getRecallBotAutomaticLeave();
+  const idempotencyKey = computeRecallBotCreationIdempotencyKey({
+    meetingUrl,
+    joinAt,
+    metadata,
+  });
 
   const result = await recallBotApiRequest<RecallBotResponse>({
     config: configResult.config,
     path: '/bot/',
     method: 'POST',
+    idempotencyKey,
     body: {
       meeting_url: meetingUrl,
-      join_at: joinAt,
+      join_at: computeMaximumJoinAt(joinAt), // We can't join in the past, so we floor this date 1s in the future
       bot_name: configResult.config.botName,
       ...(isUndefined(automaticLeave)
         ? {}
         : { automatic_leave: automaticLeave }),
+      ...(isUndefined(automaticVideoOutput)
+        ? {}
+        : { automatic_video_output: automaticVideoOutput }),
       recording_config: getRecallBotRecordingConfig(),
       metadata,
     },
@@ -66,3 +81,19 @@ export const scheduleRecallBot = async ({
     externalBotId,
   };
 };
+
+const computeRecallBotCreationIdempotencyKey = ({
+  meetingUrl,
+  joinAt,
+  metadata,
+}: Pick<ScheduleRecallBotArgs, 'meetingUrl' | 'joinAt' | 'metadata'>): string =>
+  createHash('sha256')
+    .update(
+      JSON.stringify({
+        workspaceId: metadata.twentyWorkspaceId,
+        callRecordingId: metadata.twentyCallRecordingId,
+        meetingUrl,
+        joinAt,
+      }),
+    )
+    .digest('hex');

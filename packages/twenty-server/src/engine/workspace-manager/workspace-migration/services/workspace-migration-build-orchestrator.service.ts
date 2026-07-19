@@ -21,6 +21,7 @@ import { AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspa
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { aggregateOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/utils/aggregate-orchestrator-actions-report.util';
 import { computeOrderedMigrationActions } from 'src/engine/workspace-manager/workspace-migration/utils/compute-ordered-migration-actions.util';
+import { computeSearchVectorRebuildTargetUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/utils/compute-search-vector-rebuild-target-universal-identifiers.util';
 import { crossEntityTransversalValidation } from 'src/engine/workspace-manager/workspace-migration/utils/cross-entity-transversal-validation.util';
 import { mergeOrchestratorFailureReports } from 'src/engine/workspace-manager/workspace-migration/utils/merge-orchestrator-failure-reports.util';
 import { WorkspaceMigrationAgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/workspace-migration-agent-actions-builder.service';
@@ -390,11 +391,23 @@ export class WorkspaceMigrationBuildOrchestratorService {
       };
     }
 
+    const searchVectorUniversalIdentifiersToRebuild =
+      computeSearchVectorRebuildTargetUniversalIdentifiers({
+        orchestratorActionsReport,
+        fromFlatSearchFieldMetadataMaps:
+          fromToAllFlatEntityMaps.flatSearchFieldMetadataMaps?.from,
+        toFlatSearchFieldMetadataMaps:
+          optimisticAllFlatEntityMaps.flatSearchFieldMetadataMaps,
+        toFlatFieldMetadataMaps:
+          optimisticAllFlatEntityMaps.flatFieldMetadataMaps,
+      });
+
     const { aggregatedOrchestratorActionsReport } =
       aggregateOrchestratorActionsReport({
         orchestratorActionsReport,
         flatFieldMetadataMaps:
           optimisticAllFlatEntityMaps.flatFieldMetadataMaps,
+        searchVectorUniversalIdentifiersToRebuild,
       });
 
     return {

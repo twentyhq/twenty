@@ -22,6 +22,10 @@ import {
   VerifyEmailAndGetWorkspaceAgnosticTokenDocument,
 } from '~/generated-metadata/graphql';
 
+import { currentUserState } from '@/auth/states/currentUserState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { clearSessionLocalStorageKeys } from '@/auth/utils/clearSessionLocalStorageKeys';
@@ -111,8 +115,12 @@ export const useAuth = () => {
 
   const clearSession = useCallback(() => {
     sessionStorage.clear();
-    clearSessionLocalStorageKeys();
     store.set(tokenPairState.atom, null);
+    store.set(currentUserState.atom, null);
+    store.set(currentWorkspaceState.atom, null);
+    store.set(currentWorkspaceMemberState.atom, null);
+    store.set(currentUserWorkspaceState.atom, null);
+    clearSessionLocalStorageKeys();
     setLastAuthenticateWorkspaceDomain(null);
     window.location.assign(AppPath.SignInUp);
   }, [store, setLastAuthenticateWorkspaceDomain]);
@@ -279,9 +287,11 @@ export const useAuth = () => {
       handleSetAuthTokens(authTokens);
       setIsAppEffectRedirectEnabled(false);
 
-      await loadCurrentUser();
-
-      setIsAppEffectRedirectEnabled(true);
+      try {
+        await loadCurrentUser();
+      } finally {
+        setIsAppEffectRedirectEnabled(true);
+      }
     },
     [loadCurrentUser, handleSetAuthTokens, setIsAppEffectRedirectEnabled],
   );

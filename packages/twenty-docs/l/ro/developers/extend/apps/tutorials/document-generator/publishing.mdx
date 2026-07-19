@@ -1,0 +1,136 @@
+---
+title: 6. Publicare
+icon: rocket
+description: Adăugați metadate de bazar și publicați aplicația dvs.
+---
+
+Aplicația dvs. funcționează. Ultimul pas este să îl descriem pentru piață și publicare.
+
+## Adaugă metadate marketplace
+
+[application config](/l/ro/developers/extend/apps/config/application) posedă identitatea
+care apare în bazar: author, categorie, logo, and support
+link-uri. Pune un logo în `public/` și fă referire la el cu `logo`.
+
+```ts filename="src/application-config.ts"
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  displayName: 'Document Generator',
+  description:
+    'Create reusable document templates and generate personalized documents from your CRM records.',
+  logo: 'public/document-generator.svg',
+  author: 'Twenty',
+  category: 'Productivity',
+  websiteUrl: 'https://docs.twenty.com/l/ro/developers/extend/apps',
+  termsUrl: 'https://www.twenty.com/terms',
+  emailSupport: 'contact@twenty.com',
+  issueReportUrl: 'https://github.com/twentyhq/twenty/issues',
+});
+```
+
+<Tip>
+Rolul implicit este declarat cu `defineApplicationRole()` în propriul său fișier —
+nu mai pasa `defaultRoleUniversalIdentifier`.
+</Tip>
+
+Adăugați de asemenea cuvântul cheie `douăzeci și douăzeci de aplicații` în `package.json` astfel încât aplicația să poată fi descoperită:
+
+```json filename="package.json"
+{ "keywords": ["twenty-app"] }
+```
+
+## Adaugă capturi de ecran galerie
+
+O listă de marketplace se vinde cu capturi de ecran. Plasează câteva fișiere PNG în
+`public/gallery/` și fă referire la ele cu `galleryImages` — acestea sunt afișate ca o
+galerie pe pagina listării, în ordinea din array.
+
+```ts filename="src/application-config.ts"
+export default defineApplication({
+  // ...identity from above
+  galleryImages: [
+    'public/gallery/01-generated-document.png',
+    'public/gallery/02-command-menu.png',
+    'public/gallery/03-template-editor.png',
+    'public/gallery/04-documents.png',
+  ],
+});
+```
+
+<Tip>
+Plumb cu plata: fă prima captură de ecran rezultatul final (un document
+generat), apoi arată cum este declanșat și autentic. Utilizează capturi crisp, de înaltă rezoluție- ele sunt primul lucru pe care îl vede utilizatorul.
+</Tip>
+
+Dă același tratament `README.md` — este prima pagină pe npm și GitHub.
+Deschideți cu o propunere de valoare și o captură de ecran, listați funcțiile titlului,
+și păstrați detaliile de construcție sub îndoit.
+
+## Verifică înainte de livrare
+
+Rulează aceleași porți CI face:
+
+```bash filename="Terminal"
+yarn lint          # oxlint
+yarn typecheck     # tsgo
+yarn test:unit     # unit tests
+yarn twenty plan   # preview the metadata diff
+```
+
+Planul afișează exact ce s-ar schimba pe server, fără a aplica modificările —
+o bună verificare finală. Vezi
+[Testing](/l/ro/developers/extend/apps/operations/testing) şi
+[Sincronizare şi Recuperare](/l/ro/developers/extend/apps/operations/sync-and-recovery).
+
+## Publicare
+
+```bash filename="Terminal"
+# Public app → npm (default)
+yarn twenty app:publish
+
+# Or deploy privately to a specific server's registry
+yarn twenty app:publish --private -r <remote>
+```
+
+`app:publish` construiește și publică în npm în mod implicit; `--private` încarcă în schimb o tarball
+către un registru privat de douăzeci de servere. Pentru a întinde o aplicație publicată
+într-o piață de instanță, activați o sincronizare de catalog:
+
+```bash filename="Terminal"
+yarn twenty dev:catalog-sync -r <remote>
+```
+
+Detalii complete şi lista de verificare a versiunii:
+[Publishing](/l/ro/developers/extend/apps/operations/publishing).
+
+## Ai construit o aplicație 🎉
+
+În şase capitole aţi folosit cea mai mare parte a suprafeţei SDK:
+
+* **Obiecte, câmpuri și o relație** pentru a modela datele
+* O **funcţie logică** expusă ca o unealtă \*\*IA, o **acţiune de flux de lucru**, şi **rute HTTP**
+* **Vezi, navigare, o comandă și o componentă față** pentru UI
+* Un **agent + abilitate** pentru generarea limbajului natural
+* \*\*metadate Marketplace \*\* și fluxul de publicare
+
+Aplicația finalizată este la
+[`pachete/douăzeci de aplicații/exemple/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+
+## Unde să mergi mai departe
+
+<CardGroup cols={2}>
+  <Card title="Referință date" icon="database" href="/l/ro/developers/extend/apps/data/overview">
+    Fiecare tip de câmp, relatie si optiune indice.
+  </Card>
+  <Card title="Referință logică" icon="bolt" href="/l/ro/developers/extend/apps/logic/overview">
+    Cron and database-event triggers, the key-value store, OAuth connections.
+  </Card>
+  <Card title="Referință schemă" icon="table-columns" href="/l/ro/developers/extend/apps/layout/overview">
+    Aspectele paginii, widget-urile tabloului de bord și mai multe suprafețe ale interfeței.
+  </Card>
+  <Card title="Operațiuni" icon="rocket" href="/l/ro/developers/extend/apps/operations/overview">
+    CLI, testare, îndepărtări și CI.
+  </Card>
+</CardGroup>

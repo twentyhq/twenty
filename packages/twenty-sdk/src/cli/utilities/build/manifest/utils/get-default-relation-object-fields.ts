@@ -1,8 +1,8 @@
-import { generateDefaultFieldUniversalIdentifier } from '@/sdk/define/objects/generate-default-field-universal-identifier';
 import { RelationType } from '@/sdk/define';
 import type { ObjectConfig } from '@/sdk/define/objects/object-config';
 import {
   type FieldManifest,
+  getFieldUniversalIdentifier,
   type ObjectFieldManifest,
 } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -119,26 +119,30 @@ const buildReverseField = ({
   };
 };
 
-export const getDefaultRelationObjectFields = (
-  objectConfig: ObjectConfig,
-): { objectFields: ObjectFieldManifest[]; fields: FieldManifest[] } => {
+export const getDefaultRelationObjectFields = ({
+  objectConfig,
+  applicationUniversalIdentifier,
+}: {
+  objectConfig: ObjectConfig;
+  applicationUniversalIdentifier: string;
+}): { objectFields: ObjectFieldManifest[]; fields: FieldManifest[] } => {
   const objectFields: ObjectFieldManifest[] = [];
   const fields: FieldManifest[] = [];
 
   for (const config of DEFAULT_RELATION_CONFIGS) {
     const standardObject = STANDARD_OBJECTS[config.standardObjectKey];
 
-    const forwardFieldUniversalIdentifier =
-      generateDefaultFieldUniversalIdentifier({
-        objectUniversalIdentifier: objectConfig.universalIdentifier,
-        fieldName: config.fieldName,
-      });
+    const forwardFieldUniversalIdentifier = getFieldUniversalIdentifier({
+      applicationUniversalIdentifier,
+      objectUniversalIdentifier: objectConfig.universalIdentifier,
+      name: config.fieldName,
+    });
 
-    const reverseFieldUniversalIdentifier =
-      generateDefaultFieldUniversalIdentifier({
-        objectUniversalIdentifier: objectConfig.universalIdentifier,
-        fieldName: `${config.fieldName}Inverse`,
-      });
+    const reverseFieldUniversalIdentifier = getFieldUniversalIdentifier({
+      applicationUniversalIdentifier,
+      objectUniversalIdentifier: standardObject.universalIdentifier,
+      name: config.targetFieldName(objectConfig),
+    });
 
     const forwardField: ObjectFieldManifest = {
       name: config.fieldName,

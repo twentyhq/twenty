@@ -30,7 +30,7 @@ const buildEvent = (personId: string | null) => ({
 beforeEach(() => {
   queryMock.mockReset();
   mutationMock.mockReset();
-  mutationMock.mockResolvedValue({ updatePeople: [] });
+  mutationMock.mockResolvedValue({ updatePeople: [{ id: 'updated' }] });
 });
 
 describe('on-calendar-interaction definition', () => {
@@ -45,33 +45,47 @@ describe('on-calendar-interaction definition', () => {
 
 describe('on-calendar-interaction handler', () => {
   it('should update the person from the event payload without re-querying the participant', async () => {
-    queryMock.mockResolvedValue({
-      calendarEventParticipants: {
-        edges: [
-          {
-            node: {
-              id: 'participant-1',
-              calendarEvent: {
-                id: 'event-1',
-                startsAt: PAST_EVENT_STARTS_AT,
+    queryMock
+      .mockResolvedValueOnce({
+        calendarEventParticipants: {
+          edges: [
+            {
+              node: {
+                id: 'participant-1',
+                calendarEvent: {
+                  id: 'event-1',
+                  startsAt: PAST_EVENT_STARTS_AT,
+                },
               },
             },
-          },
-        ],
-      },
-    });
+          ],
+        },
+      })
+      .mockResolvedValueOnce({
+        calendarEventParticipants: { edges: [] },
+      })
+      .mockResolvedValueOnce({ person: null })
+      .mockResolvedValueOnce({ person: null });
 
     await handler(buildEvent(PERSON_ID));
 
-    expect(queryMock).toHaveBeenCalledTimes(1);
+    expect(queryMock).toHaveBeenCalledTimes(4);
     const queryArgs = queryMock.mock.calls[0][0];
     expect(queryArgs.calendarEventParticipants.__args.filter.personId).toEqual(
       { eq: PERSON_ID },
     );
-    expect(mutationMock).toHaveBeenCalledTimes(1);
+    expect(
+      mutationMock.mock.calls.filter(([mutation]) => mutation.updatePeople),
+    ).toHaveLength(1);
     const mutationArgs = mutationMock.mock.calls[0][0];
     expect(mutationArgs.updatePeople.__args.data).toEqual({
       lastContactAt: PAST_EVENT_STARTS_AT,
+      lastContactById: null,
+      lastContactItemCalendarEventId: 'event-1',
+      lastContactItemMessageId: null,
+      lastOutboundAt: PAST_EVENT_STARTS_AT,
+      lastInboundAt: PAST_EVENT_STARTS_AT,
+      lastMeetingId: 'event-1',
     });
   });
 

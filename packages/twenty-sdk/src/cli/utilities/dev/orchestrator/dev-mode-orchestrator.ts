@@ -1,4 +1,6 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
+import { buildAppTokenPairFetcher } from '@/cli/utilities/auth/build-app-token-pair-fetcher';
+import { type AppTokenSources } from '@/cli/utilities/auth/ensure-app-access-token-is-valid-or-refresh';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
@@ -21,6 +23,9 @@ export type DevModeOrchestratorOptions = {
   state: OrchestratorState;
   debounceMs?: number;
   verbose?: boolean;
+  force?: boolean;
+  interactive?: boolean;
+  onExit?: (params: { code: number; message: string }) => void;
 };
 
 export class DevModeOrchestrator {
@@ -75,6 +80,9 @@ export class DevModeOrchestrator {
       ...stepDeps,
       apiService,
       verbose: this.verbose,
+      force: options.force ?? false,
+      interactive: options.interactive ?? false,
+      onExit: options.onExit,
     });
     this.startWatchersStep = new StartWatchersOrchestratorStep({
       ...stepDeps,
@@ -214,18 +222,36 @@ export class DevModeOrchestrator {
       appPath: this.state.appPath,
     });
 
-    if (this.state.steps.syncApplication.status === 'error') {
+    if (this.state.steps.syncApplication.output.syncStatus !== 'synced') {
       return;
     }
 
     if (objectsOrFieldsChanged) {
       await this.generateApiClientStep.execute({
         appPath: this.state.appPath,
-        credentials: this.registerAppStep.registrationCredentials,
+        tokenSources: this.buildAppTokenSources(),
       });
 
       this.skipTypecheck = false;
     }
+  }
+
+  private buildAppTokenSources(): AppTokenSources {
+    const credentials = this.registerAppStep.registrationCredentials;
+    const applicationId =
+      this.state.steps.resolveApplication.output.applicationId;
+
+    return {
+      credentials: credentials?.clientSecret
+        ? {
+            clientId: credentials.clientId,
+            clientSecret: credentials.clientSecret,
+          }
+        : undefined,
+      fetchTokenPair: applicationId
+        ? buildAppTokenPairFetcher(this.apiService, applicationId)
+        : undefined,
+    };
   }
 
   private async initializePipeline(manifest: Manifest): Promise<boolean> {

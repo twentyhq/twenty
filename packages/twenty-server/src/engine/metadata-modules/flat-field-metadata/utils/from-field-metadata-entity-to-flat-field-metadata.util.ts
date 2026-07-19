@@ -49,6 +49,9 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = (
     kanbanAggregateOperationViewIds:
       fieldMetadataEntity.kanbanAggregateOperationViews.map(({ id }) => id),
     calendarViewIds: fieldMetadataEntity.calendarViews.map(({ id }) => id),
+    calendarEndViewIds: fieldMetadataEntity.calendarEndViews.map(
+      ({ id }) => id,
+    ),
     mainGroupByFieldMetadataViewIds:
       fieldMetadataEntity.mainGroupByFieldMetadataViews?.map(({ id }) => id) ??
       [],
@@ -69,6 +72,10 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = (
     calendarViewUniversalIdentifiers: fieldMetadataEntity.calendarViews.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),
+    calendarEndViewUniversalIdentifiers:
+      fieldMetadataEntity.calendarEndViews.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ),
     mainGroupByFieldMetadataViewUniversalIdentifiers:
       fieldMetadataEntity.mainGroupByFieldMetadataViews?.map(
         ({ universalIdentifier }) => universalIdentifier,
@@ -76,6 +83,12 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = (
     viewSortIds: fieldMetadataEntity.viewSorts?.map(({ id }) => id) ?? [],
     viewSortUniversalIdentifiers:
       fieldMetadataEntity.viewSorts?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
+    searchFieldMetadataIds:
+      fieldMetadataEntity.searchFieldMetadatas?.map(({ id }) => id) ?? [],
+    searchFieldMetadataUniversalIdentifiers:
+      fieldMetadataEntity.searchFieldMetadatas?.map(
         ({ universalIdentifier }) => universalIdentifier,
       ) ?? [],
     fieldPermissionUniversalIdentifiers:

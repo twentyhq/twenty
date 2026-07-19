@@ -45,7 +45,7 @@ export const getDefaultFlatFieldMetadata = ({
     isUnique: createFieldInput.isUnique ?? false,
     label: createFieldInput.label,
     name: createFieldInput.name,
-    standardOverrides: null,
+    overrides: null,
     type: createFieldInput.type,
     universalIdentifier: createFieldInput.universalIdentifier ?? v4(),
     options: createFieldInput.options ?? null,
@@ -74,8 +74,10 @@ export const getDefaultFlatFieldMetadata = ({
     fieldPermissionUniversalIdentifiers: [],
     kanbanAggregateOperationViewUniversalIdentifiers: [],
     calendarViewUniversalIdentifiers: [],
+    calendarEndViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     universalSettings: settings ?? null,
     viewSortUniversalIdentifiers: [],
+    searchFieldMetadataUniversalIdentifiers: [],
   } as const satisfies UniversalFlatFieldMetadata;
 };

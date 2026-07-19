@@ -86,6 +86,22 @@ export default defineObject({
 **ベースフィールドは自動的に追加されます。** カスタムオブジェクトを定義すると、Twenty は `id`、`name`、`createdAt`、`updatedAt`、`createdBy`、`updatedBy`、`deletedAt` などの標準フィールドを自動的に作成します。 これらを `fields` 配列で宣言する必要はありません。カスタムフィールドのみを追加してください。 同じ名前でフィールドを宣言することでデフォルトフィールドを上書きすることもできますが、これはほとんどの場合お勧めできません。
 </Note>
 
+## フィールドタイプ
+
+`twenty-sdk/define` からエクスポートされる、`FieldType` 値の完全な一覧:
+
+| カテゴリ       | タイプ                                                                                                          |
+| ---------- | ------------------------------------------------------------------------------------------------------------ |
+| テキスト       | `TEXT`、`RICH_TEXT`、`ARRAY`（文字列の配列）、`RAW_JSON`                                                                |
+| 数値         | `NUMBER`（`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`）、`NUMERIC`（任意精度）、`RATING`、`POSITION` |
+| 日付         | `DATE`, `DATE_TIME`                                                                                          |
+| 選択         | `BOOLEAN`、`SELECT`、`MULTI_SELECT`                                                                            |
+| 複合         | `FULL_NAME`、`ADDRESS`、`EMAILS`、`PHONES`、`LINKS`、`CURRENCY`、`ACTOR`、`FILES`                                   |
+| 識別子とリレーション | `UUID`、`RELATION`、`MORPH_RELATION`（[Relations](/l/ja/developers/extend/apps/data/relations) を参照）                  |
+| システム       | `TS_VECTOR`（サーバーによって管理される全文検索ベクター）                                                                           |
+
+複合タイプは複数のサブフィールドを保持します（例: `FULL_NAME` = 名 + 姓、`CURRENCY` = `amountMicros` + `currencyCode`）。 `SELECT` と `MULTI_SELECT` は、上記の例のように `options` 配列を必要とします。
+
 ## デフォルト値
 
 文字列リテラルのデフォルト値は、文字列**の内部で**シングルクォートで囲む必要があります。つまり、`defaultValue: "'Draft'"` のように書き、`defaultValue: "Draft"` のようには書きません。 そのため上記の `status` フィールドでは、`` `'${PostCardStatus.DRAFT}'` `` を使用しています。
@@ -96,6 +112,27 @@ export default defineObject({
 * `'now'` — 現在のタイムスタンプ（`DATE_TIME` フィールド用）を表します。
 
 同じ規則が、複合デフォルトの文字列サブフィールド（例: `ACTOR` フィールド上の `{ source: "'MANUAL'" }`）および `SELECT` / `MULTI_SELECT` の値にも適用されます。 引用符で囲まれていないリテラル文字列のデフォルト値がある場合、アプリのビルド時に警告が発生します。
+
+## NULL 許容性
+
+`isNullable` は、フィールドが `NULL` を受け付けるかどうかを制御します。 デフォルトは `true` で、任意のフィールドでは省略できます。 データベースレベルでフィールドを必須にするには、`isNullable: false` を設定します。
+
+`isNullable` への変更は、既存フィールドを更新する同期を含め、すべての同期で適用されます。そのため、マニフェストを編集して再同期することで、フィールドの NULL 許容性を切り替えることができます。
+
+<Note>
+**既存のフィールドを NULL 非許容にするには、デフォルト値が必要です。** フィールドを `isNullable: false` に変更する場合は、NULL ではない `defaultValue` も指定する必要があります。 デフォルト値は、`NOT NULL` 制約が適用される前に既存の `NULL` 行をすべてバックフィルします。これがない場合、同期は `Default value cannot be null for non-nullable fields` というエラーで失敗します。 リレーションフィールドおよび `TS_VECTOR` フィールドは常に NULL を許容するため、`isNullable` はそれらには影響しません。
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
 
 ## 次のステップ
 

@@ -35,7 +35,8 @@ const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes
 const MEMOIZER_TTL_MS = 10_000; // 10 seconds
 const STALE_VERSION_TTL_MS = 5_000; // 5 seconds
 const MAX_LOCAL_STALE_VERSIONS = 5; // 5 stale versions
-const MAX_LOCAL_CACHE_ENTRIES = 7_500;
+// Sized against 4 GiB pods (--max-old-space-size=3500): 7,500 sat at the heap ceiling
+const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
 
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];

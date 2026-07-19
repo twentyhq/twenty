@@ -3,6 +3,9 @@
   backdrop-filter: blur(20px);
   background-color: var(--t-background-transparent-lighter);
   border: 1px solid var(--t-border-color-strong);
+  // sm, not md: the container is ~26px tall, where md would exceed 50% of the
+  // box and clamp to a full squircle, breaking concentricity with the inner
+  // buttons (see FloatingIconButtonGroup for the full rationale).
   border-radius: var(--t-border-radius-sm);
   display: inline-flex;
   gap: 2px;

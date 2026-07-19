@@ -13,6 +13,15 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     title: msg`Twenty | #1 Open Source CRM`,
   },
   {
+    changeFrequency: 'weekly',
+    description: msg`Extend Twenty with vetted apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click.`,
+    id: 'apps',
+    indexed: true,
+    path: '/apps',
+    priority: 0.8,
+    title: msg`Twenty Apps — Vetted Apps for the Open Source CRM`,
+  },
+  {
     changeFrequency: 'monthly',
     description: msg`Pipelines, custom objects, AI assistants, and a native API on top of Postgres. Twenty is the open source CRM with the modern UX teams actually want to use.`,
     id: 'product',

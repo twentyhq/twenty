@@ -8,7 +8,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { buildNavigationCommandMenuItemOperationsOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/build-navigation-command-menu-item-operations-or-throw.util';
@@ -127,7 +127,7 @@ const buildLegacyCalendarEventRecordingPreferenceFieldMetadata = ({
   isUnique: false,
   isUIEditable: true,
   isLabelSyncedWithName: false,
-  standardOverrides: null,
+  overrides: null,
   defaultValue: "'AUTO'",
   settings: null,
   options: [
@@ -161,6 +161,7 @@ const buildLegacyCalendarEventRecordingPreferenceFieldMetadata = ({
   fieldPermissionIds: [],
   kanbanAggregateOperationViewIds: [],
   calendarViewIds: [],
+  calendarEndViewIds: [],
   mainGroupByFieldMetadataViewIds: [],
   createdAt: now,
   updatedAt: now,
@@ -175,9 +176,12 @@ const buildLegacyCalendarEventRecordingPreferenceFieldMetadata = ({
   fieldPermissionUniversalIdentifiers: [],
   kanbanAggregateOperationViewUniversalIdentifiers: [],
   calendarViewUniversalIdentifiers: [],
+  calendarEndViewUniversalIdentifiers: [],
   mainGroupByFieldMetadataViewUniversalIdentifiers: [],
   viewSortIds: [],
   viewSortUniversalIdentifiers: [],
+  searchFieldMetadataIds: [],
+  searchFieldMetadataUniversalIdentifiers: [],
   universalSettings: null,
 });
 
@@ -187,7 +191,7 @@ const buildLegacyCalendarEventRecordingPreferenceFieldMetadata = ({
   description:
     'Create the CallRecording standard metadata in existing workspaces',
 })
-export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class SyncCallRecordingStandardObjectsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -486,7 +490,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
       allFlatEntityOperationByMetadataName,
     } of collisionRenameMigrations) {
       const renameResult =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
             isSystemBuild: true,
             applicationUniversalIdentifier,
@@ -507,7 +511,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
     }
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           isSystemBuild: true,
           applicationUniversalIdentifier:

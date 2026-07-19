@@ -6,7 +6,7 @@ import { DEFAULT_RECALL_REGION } from 'src/logic-functions/constants/default-rec
 import { RECALL_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-api-key-env-var-name';
 import { RECALL_REGION_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-region-env-var-name';
 import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { normalizeOptionalString } from 'src/logic-functions/utils/normalize-optional-string.util';
 
 export type RecallApiConfig = {
   apiKey: string;
@@ -24,7 +24,7 @@ export const getRecallApiConfig = ():
       error: string;
     } => {
   const apiKey = normalizeOptionalString(
-    getApplicationVariableValue(RECALL_API_KEY_ENV_VAR_NAME),
+    getApplicationVariableValue(RECALL_API_KEY_ENV_VAR_NAME)?.trim(),
   );
 
   if (isUndefined(apiKey)) {
@@ -37,11 +37,11 @@ export const getRecallApiConfig = ():
 
   const region =
     normalizeOptionalString(
-      getApplicationVariableValue(RECALL_REGION_ENV_VAR_NAME),
+      getApplicationVariableValue(RECALL_REGION_ENV_VAR_NAME)?.trim(),
     ) ?? DEFAULT_RECALL_REGION;
   const botName =
     normalizeOptionalString(
-      getApplicationVariableValue(CALL_RECORDER_NAME_ENV_VAR_NAME),
+      getApplicationVariableValue(CALL_RECORDER_NAME_ENV_VAR_NAME)?.trim(),
     ) ?? DEFAULT_CALL_RECORDER_NAME;
 
   return {
@@ -53,7 +53,3 @@ export const getRecallApiConfig = ():
     },
   };
 };
-
-const normalizeOptionalString = (
-  value: string | undefined,
-): string | undefined => (isNonEmptyString(value) ? value.trim() : undefined);

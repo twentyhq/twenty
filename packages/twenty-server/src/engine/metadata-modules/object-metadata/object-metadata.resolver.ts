@@ -9,10 +9,8 @@ import {
 } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
-
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -30,11 +28,14 @@ import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadat
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { ObjectRecordCountDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-record-count.dto';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
+import { getEffectiveImageIdentifierFieldMetadataId } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-image-identifier-field-metadata-id.util';
+import { MostlyEmptyFieldsService } from 'src/engine/metadata-modules/object-metadata/mostly-empty-fields.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { ObjectRecordCountService } from 'src/engine/metadata-modules/object-metadata/object-record-count.service';
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
-import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { SearchFieldMetadataDTO } from 'src/engine/metadata-modules/search-field-metadata/dtos/search-field-metadata.dto';
+import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 
 @UseGuards(WorkspaceAuthGuard)
 @MetadataResolver(() => ObjectMetadataDTO)
@@ -47,8 +48,8 @@ export class ObjectMetadataResolver {
   constructor(
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly objectRecordCountService: ObjectRecordCountService,
+    private readonly mostlyEmptyFieldsService: MostlyEmptyFieldsService,
     private readonly i18nService: I18nService,
-    private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
   ) {}
 
   @ResolveField(() => Boolean, {
@@ -66,6 +67,27 @@ export class ObjectMetadataResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ObjectRecordCountDTO[]> {
     return this.objectRecordCountService.getRecordCounts(workspaceId);
+  }
+
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
+  @Query(() => [UUIDScalarType])
+  async mostlyEmptyFieldMetadataIds(
+    @Args('objectMetadataId', { type: () => UUIDScalarType })
+    objectMetadataId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<string[]> {
+    try {
+      return await this.mostlyEmptyFieldsService.getMostlyEmptyFieldMetadataIds(
+        {
+          workspaceId,
+          objectMetadataId,
+        },
+      );
+    } catch (error) {
+      objectMetadataGraphqlApiExceptionHandler(error);
+
+      return [];
+    }
   }
 
   private async resolveStandardOverride(
@@ -87,28 +109,25 @@ export class ObjectMetadataResolver {
     const isStandardApp =
       objectMetadata.applicationId === standardApplicationId;
 
-    const applicationRegistrationId = isStandardApp
-      ? null
-      : await context.loaders.applicationRegistrationIdLoader.load({
-          workspaceId,
-          applicationId: objectMetadata.applicationId,
-        });
+    const applicationCatalog =
+      await context.loaders.applicationTranslationCatalogLoader.load({
+        applicationId: objectMetadata.applicationId,
+        workspaceId,
+        locale: context.req.locale,
+      });
 
-    const applicationCatalog = isDefined(applicationRegistrationId)
-      ? await this.applicationTranslationCacheService.getCatalog({
-          applicationRegistrationId,
-          locale: context.req.locale,
-        })
-      : undefined;
-
-    return resolveObjectMetadataStandardOverride(
-      objectMetadata,
-      labelKey,
-      context.req.locale,
-      i18n,
-      isStandardApp,
-      applicationCatalog,
-    );
+    return resolveEffectiveEntityProperty({
+      metadataName: 'objectMetadata',
+      baseValue: objectMetadata[labelKey],
+      overrides: objectMetadata.overrides,
+      property: labelKey,
+      i18nContext: {
+        locale: context.req.locale,
+        i18nInstance: i18n,
+        isStandardApp,
+        applicationCatalog,
+      },
+    });
   }
 
   @ResolveField(() => String, { nullable: true })
@@ -180,6 +199,13 @@ export class ObjectMetadataResolver {
       context,
       workspaceId,
     );
+  }
+
+  @ResolveField(() => UUIDScalarType, { nullable: true })
+  imageIdentifierFieldMetadataId(
+    @Parent() objectMetadata: ObjectMetadataDTO,
+  ): string | null {
+    return getEffectiveImageIdentifierFieldMetadataId(objectMetadata);
   }
 
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
@@ -277,6 +303,27 @@ export class ObjectMetadataResolver {
       );
 
       return indexMetadataItems;
+    } catch (error) {
+      objectMetadataGraphqlApiExceptionHandler(error);
+
+      return [];
+    }
+  }
+
+  @ResolveField(() => [SearchFieldMetadataDTO], { nullable: false })
+  async searchFieldMetadataList(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Parent() objectMetadata: ObjectMetadataDTO,
+    @Context() context: { loaders: IDataloaders },
+  ): Promise<SearchFieldMetadataDTO[]> {
+    try {
+      const searchFieldMetadataItems =
+        await context.loaders.searchFieldMetadataLoader.load({
+          objectMetadata,
+          workspaceId: workspace.id,
+        });
+
+      return searchFieldMetadataItems;
     } catch (error) {
       objectMetadataGraphqlApiExceptionHandler(error);
 

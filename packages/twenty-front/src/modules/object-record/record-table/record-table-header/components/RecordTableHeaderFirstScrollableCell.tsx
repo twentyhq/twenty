@@ -8,7 +8,7 @@ import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/rec
 import { RecordTableHeaderCellContainer } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCellContainer';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
-import { RecordTableHeaderSortableHandle } from '@/object-record/record-table/record-table-header/dnd/components/RecordTableHeaderSortableHandle';
+import { DragDropColumnSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropColumnSortableHandle';
 import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-record/record-table/states/isRecordTableColumnHeadersReadOnlyComponentState';
 import { isRecordTableColumnResizableComponentState } from '@/object-record/record-table/states/isRecordTableColumnResizableComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
@@ -17,12 +17,12 @@ import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/rec
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
+import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
 import { isDefined } from 'twenty-shared/utils';
-import { useDisableDragSelectOnPointerDown } from '@/object-record/record-table/record-table-header/hooks/useDisableDragSelectOnPointerDown';
 
 type RecordTableHeaderFirstScrollableCellProps = {
   firstScrollableRecordField: RecordField;
@@ -99,7 +99,7 @@ export const RecordTableHeaderFirstScrollableCell = ({
       {isRecordTableColumnResizable && (
         <RecordTableHeaderResizeHandler recordFieldIndex={1} position="left" />
       )}
-      <RecordTableHeaderSortableHandle>
+      <DragDropColumnSortableHandle>
         {isRecordTableColumnHeadersReadOnly ? (
           <RecordTableColumnHead recordField={firstScrollableRecordField} />
         ) : (
@@ -108,7 +108,7 @@ export const RecordTableHeaderFirstScrollableCell = ({
             objectMetadataId={objectMetadataItem.id}
           />
         )}
-      </RecordTableHeaderSortableHandle>
+      </DragDropColumnSortableHandle>
       {isRecordTableColumnResizable && (
         <RecordTableHeaderResizeHandler recordFieldIndex={1} position="right" />
       )}

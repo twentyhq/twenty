@@ -1,0 +1,149 @@
+---
+title: 3. Rute HTTP
+icon: globe
+description: Declanșați funcția de HTTP și redați documentele ca pagini web.
+---
+
+Același gestionar poate răspunde și la solicitările HTTP. Vom adăuga două rute:
+
+* a **POST** final apeluri interfață pentru a genera un document, și
+* un obiectiv public **GET** care face un document ca o pagină web printabilă.
+
+Ambele folosesc `httpRouteTriggerSettings`. Rutele aplicației sunt accesate prin calea `/s/`; pe instanțele locale
+și auto-găzduite, această cale este servită de serverul tău Twenty
+(de ex. `http://localhost:2020/s/documents/generate`). Pe Twenty Cloud, `RestApiClient`
+rezolvă calea prin domeniul de funcții al spațiului de lucru.
+
+## Ruta POST – generarea la cerere
+
+Aceasta refolosește `generateDocumentHandler`, deci nu există logică de repetat — doar un adaptor subțire
+care citește corpul cererii.
+
+```ts filename="src/logic-functions/generate-document-route.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { generateDocumentHandler } from 'src/logic-functions/handlers/generate-document-handler';
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const body = event.body as Record<string, unknown> | null;
+
+  const result = await generateDocumentHandler({
+    templateId: (body?.templateId as string) ?? '',
+    recordId: (body?.recordId as string) ?? '',
+  });
+
+  // Map the handler's failure reason onto a real HTTP status (400/404/500)
+  // instead of always returning 200.
+  return new Response(JSON.stringify(result), {
+    status: result.success ? 200 : (result.status ?? 400),
+    headers: { 'Content-Type': 'application/json' },
+  });
+};
+
+export default defineLogicFunction({
+  universalIdentifier: GENERATE_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'generate-document-route',
+  timeoutSeconds: 30,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/generate',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+Managerul partajat returnează un cod `status` sugerat la eşec, astfel încât ruta poate să răspundă
+cu codul `4xx`/`5xx`. `isAuthRequired: true` înseamnă că apelantul
+trebuie să prezinte un token valid - componenta frontală din capitolul următor trece automat indicativul de acces al utilizatorului
+.
+
+## Ruta GET - redare ca pagină web
+
+Pentru a returna HTML în loc de JSON, înfăşuraţi corpul într-un `Răspuns` cu headerul
+`Content-Type`. Această rută este publică (`isAuthRequired: false`) astfel încât un document generat
+poate fi partajat ca un link.
+
+```ts filename="src/logic-functions/view-document.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { documentHtmlPage } from 'src/utils/render-document';
+
+const htmlResponse = (html: string, status = 200): Response =>
+  new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const documentId = event.queryStringParameters?.id;
+
+  if (!documentId) {
+    return htmlResponse(documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'), 400);
+  }
+
+  // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
+  const { documents } = await new CoreApiClient().query({
+    documents: {
+      __args: { filter: { id: { eq: documentId } }, first: 1 },
+      edges: { node: { id: true, name: true, content: true } },
+    },
+  });
+
+  const document = documents?.edges?.[0]?.node;
+  if (!document?.id) {
+    return htmlResponse(documentHtmlPage('Document not found', `No document with id ${documentId}.`), 404);
+  }
+
+  return htmlResponse(documentHtmlPage(document.name ?? 'Document', document.content ?? ''));
+};
+
+export default defineLogicFunction({
+  universalIdentifier: VIEW_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'view-document',
+  timeoutSeconds: 15,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/view',
+    httpMethod: 'GET',
+    isAuthRequired: false,
+  },
+});
+```
+
+`documentHtmlPage` redă corpul Markdown în HTML (cu [marked](https://marked.js.org/),
+sanitizat) şi îl introduce într-o curată, pagina printabilă care afișează doar conținutul șablonului- aceeași imagine ca PDF și previzualizarea in-app.
+  [Vezi ajutorul](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/render-document.ts).
+
+## Încearcă-l
+
+Cu un șablon și o Persoană în spațiul de lucru, sunați ruta (apucați un token de la
+**Setări → API-uri & Webhooks**):
+
+```bash filename="Terminal"
+curl -X POST http://localhost:2020/s/documents/generate \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"templateId":"<templateId>","recordId":"<personId>"}'
+# → {"success":true,"documentId":"...","content":"Dear Jeffery Griffin, ..."}
+```
+
+Deschide documentul returnat în browser-ul tău:
+
+```
+http://localhost:2020/s/documents/view?id=<documentId>
+```
+
+<Frame caption="Ruta publică GET face ca documentul să fie o pagină imprimabilă.">
+  <img src="/imagini/documente/dezvoltatori/extinderi/aplicații/generator/07-rendered-document.png" alt="O pagină web de document redată" />
+</Frame>
+
+<Tip>
+De asemenea, poți viziona jurnalele unei funcții în timp ce testezi cu
+`yarn douăzeci dev:function:logs`, sau să o invoci direct cu
+`yarn douăzeci dev:function:exec`.
+</Tip>
+
+**După acest pas:** aplicația poate genera documente prin HTTP și le poate servi ca
+pagini web. Acum hai să îl facem utilizabil fără 'curl'.
+
+<Card title="Următorul: construirea interfeței →" icon="table-columns" href="/dezvoltatori/extindere/aplicații/tutoriale/document-generator/building-the-ui">
+  Vizualizări, navigare, o comandă și o componentă frontală.
+</Card>

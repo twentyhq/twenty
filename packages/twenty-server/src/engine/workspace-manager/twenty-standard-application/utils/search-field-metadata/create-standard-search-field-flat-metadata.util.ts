@@ -1,8 +1,10 @@
+import { getSearchFieldUniversalIdentifier } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { v4 } from 'uuid';
 
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
@@ -56,9 +58,21 @@ export const createStandardSearchFieldFlatMetadata = <
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
+  const tsVectorFieldMetadataId =
+    standardObjectMetadataRelatedEntityIds[objectName].fields[
+      SEARCH_VECTOR_FIELD.name as AllStandardObjectFieldName<O>
+    ].id;
+  const tsVectorFieldMetadataUniversalIdentifier =
+    objectFields[SEARCH_VECTOR_FIELD.name as keyof typeof objectFields]
+      .universalIdentifier;
+
   return {
     id: v4(),
-    universalIdentifier: v4(),
+    universalIdentifier: getSearchFieldUniversalIdentifier({
+      applicationUniversalIdentifier:
+        flatObjectMetadata.applicationUniversalIdentifier,
+      fieldMetadataUniversalIdentifier: flatFieldMetadata.universalIdentifier,
+    }),
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:
       flatObjectMetadata.applicationUniversalIdentifier,
@@ -66,7 +80,10 @@ export const createStandardSearchFieldFlatMetadata = <
     objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
     fieldMetadataId,
     fieldMetadataUniversalIdentifier: flatFieldMetadata.universalIdentifier,
+    tsVectorFieldMetadataId,
+    tsVectorFieldMetadataUniversalIdentifier,
     position,
+    isSystemSideEffect: true,
     workspaceId,
     createdAt: now,
     updatedAt: now,

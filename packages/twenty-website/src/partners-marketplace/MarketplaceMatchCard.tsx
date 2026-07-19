@@ -5,67 +5,15 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
-import { type CSSProperties } from 'react';
 
-import {
-  BREAKPOINT_PX,
-  color,
-  EASING,
-  mediaUp,
-  radius,
-  REDUCED_MOTION,
-  semanticColor,
-  SHADOW,
-  spacing,
-} from '@/tokens';
+import { BREAKPOINT_PX, color, mediaUp, spacing } from '@/tokens';
 import { Body, Button, Eyebrow, Heading } from '@/ui';
 
-type MatchCardStyle = CSSProperties & {
-  '--partner-card-index': number;
-};
+import { CardFrame, type PartnerCardIndexStyle } from './MarketplaceCardFrame';
 
-const CardArticle = styled.article`
-  @keyframes partnerCardEnter {
-    from {
-      opacity: 0;
-      transform: translate3d(0, 18px, 0);
-    }
-    to {
-      opacity: 1;
-      transform: translate3d(0, 0, 0);
-    }
-  }
-
-  animation: partnerCardEnter 700ms ${EASING.standard} both;
-  animation-delay: calc(var(--partner-card-index) * 90ms + 180ms);
-  background-color: ${color('white')};
-  border: 1px solid ${semanticColor.line};
-  border-radius: ${radius(2)};
-  display: flex;
-  flex-direction: column;
-  isolation: isolate;
+const CardArticle = styled(CardFrame)`
   min-height: 100%;
   overflow: hidden;
-  position: relative;
-  transition:
-    border-color 0.25s ease,
-    box-shadow 0.25s ease,
-    transform 0.25s ease;
-
-  &:hover {
-    border-color: ${semanticColor.lineStrong};
-    box-shadow: ${SHADOW.card};
-    transform: translateY(-2px);
-  }
-
-  ${REDUCED_MOTION} {
-    animation: none;
-    transition: none;
-
-    &:hover {
-      transform: none;
-    }
-  }
 `;
 
 const AccentBar = styled.div`
@@ -137,7 +85,7 @@ const CtaWrapper = styled.div`
 
 export function MarketplaceMatchCard({ index = 0 }: { index?: number }) {
   const { i18n } = useLingui();
-  const style: MatchCardStyle = { '--partner-card-index': index };
+  const style: PartnerCardIndexStyle = { '--partner-card-index': index };
 
   return (
     <CardArticle style={style}>

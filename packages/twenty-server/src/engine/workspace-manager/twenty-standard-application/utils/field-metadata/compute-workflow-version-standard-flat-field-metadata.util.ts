@@ -15,9 +15,6 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/search-fields-by-standard-object-name.constant';
-
 export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
   now,
   objectName,
@@ -209,6 +206,24 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  coreWorkflowVersionId: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'coreWorkflowVersionId',
+      type: FieldMetadataType.UUID,
+      label: i18nLabel(msg`Core workflow version id`),
+      description: i18nLabel(msg`Reference to the core workflowVersion row`),
+      icon: 'IconSettingsAutomation',
+      isSystem: true,
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   status: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -288,12 +303,6 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: true,
       isUIEditable: false,
-      settings: {
-        generatedType: 'STORED',
-        asExpression: getTsVectorColumnExpressionFromFields(
-          SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME[objectName],
-        ),
-      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

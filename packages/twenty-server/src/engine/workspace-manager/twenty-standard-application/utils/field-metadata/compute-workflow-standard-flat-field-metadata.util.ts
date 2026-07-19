@@ -14,9 +14,6 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/search-fields-by-standard-object-name.constant';
-
 export const buildWorkflowStandardFlatFieldMetadatas = ({
   now,
   objectName,
@@ -131,6 +128,24 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       label: i18nLabel(msg`Last published Version Id`),
       description: i18nLabel(msg`The workflow last published version id`),
       icon: 'IconVersions',
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  coreWorkflowId: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'coreWorkflowId',
+      type: FieldMetadataType.UUID,
+      label: i18nLabel(msg`Core workflow id`),
+      description: i18nLabel(msg`Reference to the core workflow row`),
+      icon: 'IconSettingsAutomation',
+      isSystem: true,
       isNullable: true,
       isUIEditable: false,
     },
@@ -258,12 +273,6 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
-      settings: {
-        generatedType: 'STORED',
-        asExpression: getTsVectorColumnExpressionFromFields(
-          SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME[objectName],
-        ),
-      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

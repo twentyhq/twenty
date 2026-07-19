@@ -88,7 +88,7 @@ const StyledItem = styled.button<StyledItemProps>`
     isSelectedInEditMode
       ? `1px solid ${themeCssVariables.color.blue}`
       : '1px solid transparent'};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   color: ${({ active, isSoon, variant }) => {
     if (variant === 'tertiary') {
@@ -172,7 +172,7 @@ const StyledKeyBoardShortcut = styled.span`
   align-items: center;
   background: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.strong};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -214,7 +214,7 @@ const StyledIconBackgroundTile = styled.div`
 
 const StyledRightOptionsContainer = styled.div`
   align-items: center;
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-grow: 0;
   flex-shrink: 0;

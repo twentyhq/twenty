@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { TranscriptEntryListItem } from 'src/front-components/components/TranscriptEntryListItem';
-import { recordingThemeCssVariables } from 'src/front-components/constants/recording-theme-css-variables';
 import { type CalendarEventRecordingParticipant } from 'src/front-components/types/calendar-event-recording-participant.type';
 import { type TranscriptEntry } from 'src/front-components/types/transcript-entry.type';
 import { buildCalendarEventParticipantBySpeakerName } from 'src/front-components/utils/build-calendar-event-participant-by-speaker-name.util';
@@ -13,7 +13,7 @@ const StyledTranscriptContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${recordingThemeCssVariables.spacing[2]};
+  gap: ${() => themeCssVariables.spacing[2]};
   min-height: 0;
 `;
 

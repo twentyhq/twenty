@@ -11,11 +11,13 @@ import {
 import { pipeline } from 'stream/promises';
 
 import { Response } from 'express';
+import { FileFolder } from 'twenty-shared/types';
 
 import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+import { PRESIGNED_URL_NO_STORE_CACHE_CONTROL } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.utils';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -45,7 +47,7 @@ export class FrontComponentController {
 
   constructor(private readonly frontComponentService: FrontComponentService) {}
 
-  @Get(':frontComponentId')
+  @Get([':frontComponentId', ':frontComponentId/:cacheKey'])
   @UseGuards(NoPermissionGuard)
   async getBuiltJs(
     @Res() res: Response,
@@ -84,10 +86,16 @@ export class FrontComponentController {
       });
 
     if (fileResponse.type === 'redirect') {
-      return res.redirect(fileResponse.presignedUrl);
+      res.setHeader('Cache-Control', PRESIGNED_URL_NO_STORE_CACHE_CONTROL);
+
+      return res.json({ url: fileResponse.presignedUrl });
     }
 
-    setFileResponseHeaders(res, fileResponse.mimeType);
+    setFileResponseHeaders(
+      res,
+      fileResponse.mimeType,
+      FileFolder.BuiltFrontComponent,
+    );
 
     try {
       await pipeline(fileResponse.stream, res);

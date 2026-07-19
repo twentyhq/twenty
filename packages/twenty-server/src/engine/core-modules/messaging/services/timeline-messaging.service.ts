@@ -7,6 +7,7 @@ import {
 } from 'twenty-shared/types';
 import { In, type Repository } from 'typeorm';
 
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -27,6 +28,7 @@ export class TimelineMessagingService {
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly fileUrlService: FileUrlService,
   ) {}
 
   public async getAndCountMessageThreads(
@@ -106,6 +108,7 @@ export class TimelineMessagingService {
               lastMessageBody: lastMessage.text ?? '',
               lastMessageReceivedAt: lastMessage.receivedAt ?? new Date(),
               numberOfMessagesInThread: messageThread.messages.length,
+              lastMessageIsDraft: lastMessage.isDraft ?? false,
             };
           }),
           totalNumberOfThreads,
@@ -158,34 +161,48 @@ export class TimelineMessagingService {
             (b.message.receivedAt ?? new Date()).getTime(),
         );
 
-        const threadParticipantsWithCompositeFields =
-          orderedThreadParticipants.map((threadParticipant) => ({
-            ...threadParticipant,
-            person: {
-              id: threadParticipant.person?.id,
-              name: {
-                //oxlint-disable-next-line
-                //@ts-ignore
-                firstName: threadParticipant.person?.nameFirstName,
-                //oxlint-disable-next-line
-                //@ts-ignore
-                lastName: threadParticipant.person?.nameLastName,
+        const threadParticipantPromises = orderedThreadParticipants.map(
+          async (threadParticipant) => {
+            const personAvatarFileUrl =
+              await this.fileUrlService.signFirstFilesFieldFileUrl({
+                filesFieldValue: threadParticipant.person?.avatarFile,
+                workspaceId,
+              });
+
+            return {
+              ...threadParticipant,
+              person: {
+                id: threadParticipant.person?.id,
+                name: {
+                  //oxlint-disable-next-line
+                  //@ts-ignore
+                  firstName: threadParticipant.person?.nameFirstName,
+                  //oxlint-disable-next-line
+                  //@ts-ignore
+                  lastName: threadParticipant.person?.nameLastName,
+                },
+                avatarUrl:
+                  personAvatarFileUrl || threadParticipant.person?.avatarUrl,
               },
-              avatarUrl: threadParticipant.person?.avatarUrl,
-            },
-            workspaceMember: {
-              id: threadParticipant.workspaceMember?.id,
-              name: {
-                //oxlint-disable-next-line
-                //@ts-ignore
-                firstName: threadParticipant.workspaceMember?.nameFirstName,
-                //oxlint-disable-next-line
-                //@ts-ignore
-                lastName: threadParticipant.workspaceMember?.nameLastName,
+              workspaceMember: {
+                id: threadParticipant.workspaceMember?.id,
+                name: {
+                  //oxlint-disable-next-line
+                  //@ts-ignore
+                  firstName: threadParticipant.workspaceMember?.nameFirstName,
+                  //oxlint-disable-next-line
+                  //@ts-ignore
+                  lastName: threadParticipant.workspaceMember?.nameLastName,
+                },
+                avatarUrl: threadParticipant.workspaceMember?.avatarUrl,
               },
-              avatarUrl: threadParticipant.workspaceMember?.avatarUrl,
-            },
-          }));
+            };
+          },
+        );
+
+        const threadParticipantsWithCompositeFields = await Promise.all(
+          threadParticipantPromises,
+        );
 
         return threadParticipantsWithCompositeFields.reduce(
           (threadParticipantsAcc, threadParticipant) => {

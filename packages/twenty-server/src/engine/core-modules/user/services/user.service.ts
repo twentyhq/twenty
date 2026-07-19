@@ -3,12 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { msg } from '@lingui/core/macro';
-import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import {
-  isWorkspaceActiveOrSuspended,
+  isWorkspaceProvisioned,
   WorkspaceActivationStatus,
 } from 'twenty-shared/workspace';
 import { type QueryRunner, In, IsNull, Not, Repository } from 'typeorm';
@@ -52,7 +51,7 @@ import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-appl
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 // oxlint-disable-next-line twenty/inject-workspace-repository
-export class UserService extends TypeOrmQueryService<UserEntity> {
+export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
@@ -70,9 +69,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
     private readonly twentyConfigService: TwentyConfigService,
-  ) {
-    super(userRepository);
-  }
+  ) {}
 
   async refreshWorkspaceIfPendingOrOngoingCreation<
     TWorkspace extends Pick<WorkspaceEntity, 'id' | 'activationStatus'>,
@@ -86,7 +83,9 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       return workspace;
     }
 
-    const freshWorkspace = await this.workspaceService.findById(workspace.id);
+    const freshWorkspace = await this.workspaceService.findOneWorkspaceById(
+      workspace.id,
+    );
 
     return freshWorkspace ?? workspace;
   }
@@ -99,7 +98,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     const refreshedWorkspace =
       await this.refreshWorkspaceIfPendingOrOngoingCreation(workspace);
 
-    if (!isWorkspaceActiveOrSuspended(refreshedWorkspace)) {
+    if (!isWorkspaceProvisioned(refreshedWorkspace)) {
       return null;
     }
 
@@ -132,7 +131,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     const refreshedWorkspace =
       await this.refreshWorkspaceIfPendingOrOngoingCreation(workspace);
 
-    if (!isWorkspaceActiveOrSuspended(refreshedWorkspace)) {
+    if (!isWorkspaceProvisioned(refreshedWorkspace)) {
       return [];
     }
 
@@ -219,7 +218,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>;
     userIds: string[];
   }): Promise<WorkspaceMemberWorkspaceEntity[]> {
-    if (!isWorkspaceActiveOrSuspended(workspace) || userIds.length === 0) {
+    if (!isWorkspaceProvisioned(workspace) || userIds.length === 0) {
       return [];
     }
 
@@ -246,7 +245,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
   async loadDeletedWorkspaceMembersOnly(
     workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>,
   ) {
-    if (!isWorkspaceActiveOrSuspended(workspace)) {
+    if (!isWorkspaceProvisioned(workspace)) {
       return [];
     }
 

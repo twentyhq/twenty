@@ -1,8 +1,10 @@
 import { msg } from '@lingui/core/macro';
 import {
+  IconApps,
   IconBook,
   IconBrandLinkedin,
   IconBrandX,
+  IconBulb,
   IconCode,
   IconTag,
   IconUsers,
@@ -22,10 +24,23 @@ export const MENU: {
 } = {
   appUrl: SITE_URLS.appWelcome,
   navItems: [
-    { href: '/why-twenty', label: msg`Why` },
+    { href: '/product', label: msg`Product` },
     {
       label: msg`Resources`,
       children: [
+        {
+          label: msg`Why`,
+          description: msg`The story behind Twenty`,
+          href: '/why-twenty',
+          icon: IconBulb,
+          preview: {
+            image: '/images/menu/why.webp',
+            imageAlt: msg`Why Twenty illustration`,
+            imagePosition: 'center',
+            title: msg`Why teams choose Twenty`,
+            description: msg`The principles and product philosophy behind the open source CRM.`,
+          },
+        },
         {
           label: msg`User Guide`,
           description: msg`Learn how to use Twenty`,
@@ -35,6 +50,7 @@ export const MENU: {
           preview: {
             image: '/images/menu/user-guide.webp',
             imageAlt: msg`Twenty user guide preview`,
+            imagePosition: 'center',
             title: msg`Master every corner of Twenty`,
             description: msg`Step-by-step guides and playbooks to help your team get the most out of their workspace.`,
           },
@@ -52,6 +68,20 @@ export const MENU: {
             imageScale: 1.6,
             title: msg`Build on an open platform`,
             description: msg`APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data.`,
+          },
+        },
+        {
+          label: msg`Apps`,
+          description: msg`Extend your CRM`,
+          href: '/apps',
+          icon: IconApps,
+          preview: {
+            image: '/images/menu/developers.webp',
+            imageAlt: msg`Twenty apps marketplace`,
+            imagePosition: 'center',
+            imageScale: 1.6,
+            title: msg`Vetted apps for your workspace`,
+            description: msg`Install call recording, enrichment, Slack, Linear and more — every app built and maintained by Twenty.`,
           },
         },
         {

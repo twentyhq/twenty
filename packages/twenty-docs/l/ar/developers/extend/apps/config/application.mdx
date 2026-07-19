@@ -36,6 +36,60 @@ export default defineApplication({
 * يتم اكتشاف الدور الافتراضي تلقائيًا من ملف الدور المميز بـ [`defineApplicationRole()`](/l/ar/developers/extend/apps/config/roles) — لست بحاجة إلى الإشارة إليه من `defineApplication()`.
 * يتم اكتشاف دوال ما قبل التثبيت وما بعده تلقائيًا أثناء بناء البيان — لا حاجة للإشارة إليها في `defineApplication()`.
 * لا يزال تمرير `defaultRoleUniversalIdentifier` بشكل صريح مدعومًا من أجل التوافق مع الإصدارات السابقة، ولكنه مُهمل لصالح `defineApplicationRole()`.
+* `serverVariables` هي تكوينات وأسرار بنطاق المثيل (مثل مفاتيح واجهة برمجة التطبيقات). على عكس `applicationVariables`، فهي لا تصرح عن أي قيمة في ملف manifest — حيث يقوم مشغّل مساحة العمل بملئها من إعدادات التطبيق، ويتم حقنها في دوال المنطق فقط بعد تعيينها.
+
+## أنواع المتغيرات
+
+كل من `applicationVariables` و`serverVariables` يقبلان حقل `type` اختياريًا (ولـ `SELECT` / `MULTI_SELECT`، قائمة `options`). الأنواع المدعومة: `TEXT` (افتراضي)، `BOOLEAN`، `NUMBER`، `NUMERIC`، `DATE`، `DATE_TIME`، `SELECT`، `MULTI_SELECT`، `ARRAY`، `RAW_JSON`، `RICH_TEXT`.
+
+```ts src/application-config.ts
+import { defineApplication, FieldType } from 'twenty-sdk/define';
+
+export default defineApplication({
+  // ...identity, role...
+  applicationVariables: {
+    MAX_POSTCARDS: {
+      universalIdentifier: '5f4497e4-9030-4085-85eb-2c48b8d53713',
+      description: 'Maximum postcards per batch',
+      type: FieldType.NUMBER,
+      value: 10,
+    },
+    DEFAULT_REGION: {
+      universalIdentifier: '76c5c321-b6b6-46eb-b4fc-f9f04bb04227',
+      description: 'Default shipping region',
+      type: FieldType.SELECT,
+      options: [
+        { label: 'Europe', value: 'eu' },
+        { label: 'United States', value: 'us' },
+      ],
+      value: 'eu',
+    },
+  },
+});
+```
+
+إن `type` يؤثر فقط على **العرض والتحقق** — حيث يختار حقل الإدخال المطابق في واجهة إعدادات مساحة العمل (زر تبديل، حقل أرقام، قائمة منسدلة، منتقي تاريخ، محرر JSON، …) ويسمح لعملية البناء بالتحقق من صحة إعداداتك (على سبيل المثال، يجب أن يعلن `SELECT` / `MULTI_SELECT` عن `options` غير فارغة). وهو **لا** يغيّر كيفية وصول القيمة إلى الشيفرة الخاصة بك.
+
+تُحَقَن القيم **دائمًا كسلاسل نصية** — فهذا جزء جوهري من متغيرات البيئة (`process.env.*` نصية فقط). عند تشغيل دالة المنطق الخاصة بك، يقوم المنفّذ بتسلسل كل قيمة وفقًا لـ `type` المعلن أثناء بناء `process.env`، بحيث يكون تنسيق السلسلة النصية متّسقًا بغض النظر عن كيفية تعيين القيمة (قيمة افتراضية في manifest، من واجهة الإعدادات، أو من إصدار سابق):
+
+| النوع                                 | سلسلة نصية في `process.env`            |
+| ------------------------------------- | -------------------------------------- |
+| `TEXT`، `SELECT`، `DATE`، `DATE_TIME` | القيمة الخام (`"eu"`، `"2026-01-01"`)  |
+| `BOOLEAN`                             | `"true"` / `"false"`                   |
+| `NUMBER`، `NUMERIC`                   | سلسلة عشرية (`"10"`، `"2.5"`)          |
+| `MULTI_SELECT`، `ARRAY`               | مصفوفة JSON (`'["email","postcard"]'`) |
+| `RAW_JSON`، `RICH_TEXT`               | كائن JSON (`'{"retries":3}'`)          |
+
+حوّل السلسلة النصية مرة أخرى إلى النوع الذي تتوقعه:
+
+```ts
+const maxCards = Number(process.env.MAX_POSTCARDS); // "10" -> 10
+const enabled = process.env.ENABLE_TRACKING === 'true'; // "true" -> true
+const channels = JSON.parse(process.env.ENABLED_CHANNELS ?? '[]'); // '["email"]' -> ["email"]
+const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3}' -> { retries: 3 }
+```
+
+ينطبق الأمر نفسه على مكوّنات الواجهة الأمامية التي تقرأ القيم عبر `getApplicationVariable('VARIABLE_NAME')` — فالقيمة المعادة هي سلسلة نصية؛ قم بتحليلها حسب الحاجة.
 
 ## الدور الافتراضي للوظيفة
 
@@ -55,10 +109,14 @@ export default defineApplication({
 | ------------------ | ------------------------------------------------------------------------------------------------------------ |
 | `author`           | اسم المؤلف أو الشركة                                                                                         |
 | `category`         | فئة التطبيق لتصفية سوق التطبيقات                                                                             |
-| `logoUrl`          | مسار شعار تطبيقك (مثلًا، `public/logo.png`)                                                                  |
-| `screenshots`      | مصفوفة لمسارات لقطات الشاشة (مثلًا، `public/screenshot-1.png`)                                               |
+| `logo`             | مسار شعار تطبيقك المضمَّن في `public/` (مثلًا، `public/logo.png`)                                            |
+| `galleryImages`    | مصفوفة لمسارات صور المعرض المضمَّنة في `public/` (مثلًا، `public/screenshot-1.png`)                          |
 | `aboutDescription` | وصف ماركداون أطول لعلامة التبويب "حول". إذا لم يتم تضمينه، يستخدم السوق ملف `README.md` الخاص بالحزمة من npm |
 | `websiteUrl`       | رابط إلى موقعك الإلكتروني                                                                                    |
 | `termsUrl`         | رابط إلى شروط الخدمة                                                                                         |
 | `emailSupport`     | عنوان البريد الإلكتروني للدعم                                                                                |
 | `issueReportUrl`   | رابط إلى متتبّع المشاكل                                                                                      |
+
+<Note>
+القيمتان `logoUrl` و`screenshots` هما اسمَان مهملان بديلان لـ`logo` و`galleryImages`. عناوين URLs المطلقة الخارجية (`http://` أو `https://`) غير مدعومة لهذه الحقول: سيتم تجاهلها مع إظهار تحذير وقت البناء. بدلًا من ذلك، ضمِّن الصور في مجلد `public/` الخاص بتطبيقك.
+</Note>

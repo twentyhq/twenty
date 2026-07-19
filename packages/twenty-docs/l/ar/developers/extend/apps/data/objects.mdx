@@ -86,6 +86,22 @@ export default defineObject({
 **تُضاف الحقول الأساسية تلقائيًا.** عند تعريف كائن مخصص، ينشئ Twenty حقولًا قياسية مثل `id` و`name` و`createdAt` و`updatedAt` و`createdBy` و`updatedBy` و`deletedAt` من أجلك. لا تحتاج إلى تعريفها في مصفوفة `fields` — أضف فقط حقولك المخصصة. يمكنك تجاوز حقلًا افتراضيًا بتعريف حقل يحمل الاسم نفسه، لكن هذا نادرًا ما يكون فكرة جيدة.
 </Note>
 
+## أنواع الحقول
+
+مجموعة القيم الكاملة لـ`FieldType`، والمصدَّرة من `twenty-sdk/define`:
+
+| الفئة                | الأنواع                                                                                                                    |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| نص                   | `TEXT`، `RICH_TEXT`، `ARRAY` (من السلاسل النصية)، `RAW_JSON`                                                               |
+| عددية                | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`)، `NUMERIC` (بدقة اعتباطية)، `RATING`، `POSITION` |
+| التواريخ             | `DATE`, `DATE_TIME`                                                                                                        |
+| اختيار               | `BOOLEAN`، `SELECT`، `MULTI_SELECT`                                                                                        |
+| مركّبة               | `FULL_NAME`، `ADDRESS`، `EMAILS`، `PHONES`، `LINKS`، `CURRENCY`، `ACTOR`، `FILES`                                          |
+| المعرِّفات والعلاقات | `UUID`، `RELATION`، `MORPH_RELATION` (انظر [العلاقات](/l/ar/developers/extend/apps/data/relations))                             |
+| النظام               | `TS_VECTOR` (متجه بحث نصي كامل، يُدار بواسطة الخادم)                                                                       |
+
+تُخزِّن الأنواع المركّبة عدّة حقول فرعية (مثلًا `FULL_NAME` = الاسم الأول + اسم العائلة؛ `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` و`MULTI_SELECT` يتطلّبان مصفوفة `options` كما في المثال أعلاه.
+
 ## القيم الافتراضية
 
 يجب تضمين القيم النصية الافتراضية بين علامات اقتباس أحادية **داخل** السلسلة — `defaultValue: "'Draft'"`، وليس `defaultValue: "Draft"`. لهذا السبب يستخدم الحقل `status` أعلاه `` `'${PostCardStatus.DRAFT}'` ``.
@@ -96,6 +112,27 @@ export default defineObject({
 * `'now'` — الطابع الزمني الحالي (لحقول `DATE_TIME`)
 
 ينطبق نفس الاصطلاح على الحقول الفرعية النصية للقيم الافتراضية المركّبة (على سبيل المثال `{ source: "'MANUAL'" }` في حقل `ACTOR`) وكذلك على قيم `SELECT`/`MULTI_SELECT`. سيتسبّب ترك قيمة افتراضية نصية حرفية بدون علامات اقتباس في ظهور تحذير عند إنشاء التطبيق.
+
+## قابلية قبول NULL
+
+`isNullable` تتحكم في ما إذا كان الحقل يقبل `NULL`. القيمة الافتراضية هي `true` — يمكنك حذفها من الحقول الاختيارية. عيِّن `isNullable: false` لجعل الحقل مطلوبًا على مستوى قاعدة البيانات.
+
+يتم تطبيق التغييرات على `isNullable` في كل عملية مزامنة، بما في ذلك عمليات المزامنة التي تحدّث حقلًا موجودًا — وبالتالي يمكنك تبديل قابلية الحقل لقبول NULL عن طريق تعديل ملف manifest وإعادة المزامنة.
+
+<Note>
+**جعل حقل موجود غير قابل لأن يكون فارغًا يتطلب قيمة افتراضية.** عندما تغيّر حقلًا إلى `isNullable: false`، يجب أيضًا توفير `defaultValue` غير فارغ. القيمة الافتراضية تملأ أي صفوف موجودة تحتوي على `NULL` قبل تطبيق القيد `NOT NULL`؛ من دونها تفشل المزامنة مع الخطأ `Default value cannot be null for non-nullable fields`. حقول العلاقات وحقول `TS_VECTOR` تكون دائمًا قابلة لأن تكون فارغة، لذلك لا يكون لـ `isNullable` أي تأثير عليها.
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
 
 ## ماذا بعد؟
 

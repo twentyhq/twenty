@@ -4,7 +4,7 @@ description: Build React components that render inside Twenty's UI with sandboxe
 icon: "window-maximize"
 ---
 
-Front components are React components that render directly inside Twenty's UI. They run in an **isolated Web Worker** using Remote DOM — your code is sandboxed but renders natively in the page, not in an iframe.
+Front components are React components that render directly inside Twenty's UI. They run in an **isolated Web Worker** using Remote DOM — your code executes inside a sandboxed, opaque-origin iframe, yet its UI still renders natively in the page rather than being confined to that iframe.
 
 ## Where front components can be used
 
@@ -49,14 +49,13 @@ export default defineCommandMenuItem({
   universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
   shortLabel: 'Hello',
   label: 'Hello World',
-  icon: 'IconBolt',
   isPinned: true,
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
 });
 ```
 
-After syncing with `yarn twenty dev` (or running a one-shot `yarn twenty dev --once`), the quick action appears in the top-right corner of the page:
+After syncing with `yarn twenty dev` (or running a one-shot `yarn twenty apply`), the quick action appears in the top-right corner of the page:
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Quick action button in the top-right corner" />
@@ -88,11 +87,11 @@ Front components come in two rendering modes controlled by the `isHeadless` opti
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useRecordId, enqueueSnackbar } from 'twenty-sdk/front-component';
+import { useSelectedRecordIds, enqueueSnackbar } from 'twenty-sdk/front-component';
 import { useEffect } from 'react';
 
 const SyncTracker = () => {
-  const recordId = useRecordId();
+  const [recordId] = useSelectedRecordIds();
 
   useEffect(() => {
     enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
@@ -116,19 +115,19 @@ Because the component returns `null`, Twenty skips rendering a container for it 
 
 The `twenty-sdk` package provides four Command helper components designed for headless front components. Each component executes an action on mount, handles errors by showing a snackbar notification, and automatically unmounts the front component when done.
 
-Import them from `twenty-sdk/command`:
+Import them from `twenty-sdk/front-component`:
 
 - **`Command`** — Runs an async callback via the `execute` prop.
 - **`CommandLink`** — Navigates to an app path. Props: `to`, `params`, `queryParams`, `options`.
 - **`CommandModal`** — Opens a confirmation modal. If the user confirms, executes the `execute` callback. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-- **`CommandOpenSidePanelPage`** — Opens a side panel page. Props depend on `page` — e.g. `ViewRecord` takes `recordId` + `objectNameSingular`, other pages take `pageTitle` + `pageIcon`.
+- **`CommandOpenSidePanelPage`** — Opens a side panel page. Props depend on `page` — e.g. `ViewRecord` takes `recordId` + `objectNameSingular` (plus an optional `tab` id to open the record on a specific tab), other pages take `pageTitle` + `pageIcon`.
 
 Here is a full example of a headless front component using `Command` to run an action from the command menu:
 
 ```tsx src/front-components/run-action.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Command } from 'twenty-sdk/command';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { Command } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const RunAction = () => {
   const execute = async () => {
@@ -160,7 +159,6 @@ import { defineCommandMenuItem } from 'twenty-sdk/define';
 export default defineCommandMenuItem({
   universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
   label: 'Run my action',
-  icon: 'IconPlayerPlay',
   frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
 });
 ```
@@ -169,7 +167,7 @@ And an example using `CommandModal` to ask for confirmation before executing:
 
 ```tsx src/front-components/delete-draft.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { CommandModal } from 'twenty-sdk/command';
+import { CommandModal } from 'twenty-sdk/front-component';
 
 const DeleteDraft = () => {
   const execute = async () => {
@@ -196,33 +194,64 @@ export default defineFrontComponent({
 });
 ```
 
+And an example using `CommandOpenSidePanelPage` to open the current record in the side panel on a specific tab. `tab` is a page layout tab id (default layouts use ids like `company-tab-emails` or `company-tab-timeline`; custom layouts use the tab's own id). If the id doesn't exist in the record's layout, the default tab opens instead:
+
+```tsx src/front-components/open-company-emails.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  CommandOpenSidePanelPage,
+  SidePanelPages,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const OpenCompanyEmails = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+
+  if (!recordId) {
+    return null;
+  }
+
+  return (
+    <CommandOpenSidePanelPage
+      page={SidePanelPages.ViewRecord}
+      recordId={recordId}
+      objectNameSingular="company"
+      tab="company-tab-emails"
+      resetNavigationStack={false}
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+  name: 'open-company-emails',
+  description: 'Opens the current company on its Emails tab',
+  component: OpenCompanyEmails,
+  isHeadless: true,
+});
+```
+
 ## Calling a logic function
 
-Front components run browser-side in a sandboxed Web Worker, while [logic functions](/developers/extend/apps/logic/logic-functions) run server-side. There is no direct in-process call between the two — instead, a front component reaches a logic function over HTTP.
+Front components run browser-side in a Web Worker sandboxed inside an opaque-origin iframe, while [logic functions](/developers/extend/apps/logic/logic-functions) run server-side. There is no direct in-process call between the two — instead, a front component reaches a logic function over HTTP.
 
-A logic function declared with `httpRouteTriggerSettings` is reachable over HTTP at its route path. Twenty injects the base URL your functions are served from into the worker as `TWENTY_FUNCTIONS_URL`, together with the `TWENTY_APP_ACCESS_TOKEN` that authenticates the call. There is no dedicated SDK client for invoking your own functions yet, so call them with a plain `fetch`:
+A logic function declared with `httpRouteTriggerSettings` is reachable over HTTP at its route path. `RestApiClient` treats paths starting with `/s/` as app routes, resolves them to the URL your functions are served from, and authenticates them with `TWENTY_APP_ACCESS_TOKEN`.
 
-> **On Twenty Cloud, HTTP-triggered logic functions are served on a dedicated per-workspace domain** at `https://<your-workspace-subdomain>.twenty.com<path>` — this is exactly what `TWENTY_FUNCTIONS_URL` resolves to. For external callers, copy the exact URL from the function's **HTTP trigger** settings or the application's **Settings** tab.
-
-<Warning>
-  The legacy `/s/` function route is **deprecated** and will be **deactivated on 2026-07-24**. Use `TWENTY_FUNCTIONS_URL` (above) instead, and migrate any hard-coded `/s/` URLs before that date. The `/s/` route remains available for self-hosting.
-</Warning>
+> **On Twenty Cloud, HTTP-triggered logic functions are served on a dedicated per-workspace domain** at `https://<your-workspace-subdomain>.withtwenty.com<path>`. For external callers, copy the exact URL from the function's **HTTP trigger** settings or the application's **Settings** tab.
 
 A headless front component can run the call on mount via the `Command` component, then unmount automatically:
 
 ```tsx src/front-components/sync-prs.tsx
+import { RestApiClient } from 'twenty-client-sdk/rest';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Command } from 'twenty-sdk/command';
+import { Command } from 'twenty-sdk/front-component';
 
 const SyncPrs = () => {
   const execute = async () => {
-    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
+    await new RestApiClient().post('/s/github/fetch-prs', {
+      owner: 'twentyhq',
+      repo: 'twenty',
     });
   };
 
@@ -238,7 +267,7 @@ export default defineFrontComponent({
 });
 ```
 
-The path appended to `TWENTY_FUNCTIONS_URL` is the logic function's `httpRouteTriggerSettings.path`. Keep `isAuthRequired: true`; the `TWENTY_APP_ACCESS_TOKEN` Twenty mints for your component authenticates the request:
+The path passed to `RestApiClient` is the logic function's `httpRouteTriggerSettings.path`, prefixed with `/s`. Keep `isAuthRequired: true`; the `TWENTY_APP_ACCESS_TOKEN` Twenty mints for your component authenticates the request:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -263,12 +292,12 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_FUNCTIONS_URL` and `TWENTY_APP_ACCESS_TOKEN` are injected automatically — see [Application variables](#application-variables). Because secret application variables are never exposed to front components, keep API keys and other sensitive logic in the logic function, not in the front component.
+`TWENTY_APP_ACCESS_TOKEN` is injected automatically — see [Application variables](#application-variables). Because secret application variables are never exposed to front components, keep API keys and other sensitive logic in the logic function, not in the front component.
 </Note>
 
 ### Calling the Twenty REST API
 
-To read or write Twenty records from a front component, use `RestApiClient` from `twenty-client-sdk/rest`. It belongs to the same client family as `CoreApiClient` and `MetadataApiClient`, but targets the Twenty REST API (`/rest/...`) instead of the GraphQL API, reading its base URL from `TWENTY_API_URL`.
+To call app HTTP routes or read and write Twenty records from a front component, use `RestApiClient` from `twenty-client-sdk/rest`. It sends `/s/...` paths to your workspace's functions base URL and every other path, including `/rest/...`, to `TWENTY_API_URL`.
 
 | Method | Description |
 |--------|-------------|
@@ -278,6 +307,7 @@ To read or write Twenty records from a front component, use `RestApiClient` from
 | `patch(path, body?, options?)` | Sends a `PATCH` request |
 | `delete(path, options?)` | Sends a `DELETE` request |
 | `request(method, path, options?)` | Generic request with any HTTP method |
+| `resolveUrl(path, options?)` | Resolves a path to its full URL without sending a request (for links) |
 
 `options` accepts `headers`, `query` (a record of query-string params; nullish values are skipped), and an `AbortSignal` via `signal`. A non-`FormData` object `body` is JSON-serialized automatically. On a `401`, the client refreshes the access token once through the host and retries the request.
 
@@ -316,13 +346,13 @@ Inside your component, use SDK hooks to access the current user, record, and com
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   useUserId,
-  useRecordId,
+  useSelectedRecordIds,
   useFrontComponentId,
 } from 'twenty-sdk/front-component';
 
 const RecordInfo = () => {
   const userId = useUserId();
-  const recordId = useRecordId();
+  const [recordId] = useSelectedRecordIds();
   const componentId = useFrontComponentId();
 
   return (
@@ -377,13 +407,26 @@ export default defineFrontComponent({
 Secret variables (`isSecret: true`) are **not** exposed to front components. They are only available in [logic functions](/developers/extend/apps/logic/logic-functions), which run server-side. This prevents sensitive values like API keys from being sent to the browser.
 </Warning>
 
+`getApplicationVariable` always returns a **string** (or `undefined`), regardless of the variable's declared `type`. The string is serialized consistently by type (booleans as `"true"` / `"false"`, numbers as decimal strings, arrays / objects as JSON), the same format used for logic-function `process.env` — parse it yourself (`Number(...)`, `JSON.parse(...)`, `=== 'true'`). See [Variable types](/developers/extend/apps/config/application#variable-types).
+
 The following system variables are always available via `process.env`:
 
 | Variable | Description |
 |----------|-------------|
-| `TWENTY_FUNCTIONS_URL` | Base URL your app's HTTP logic functions are served from |
 | `TWENTY_API_URL` | Base URL of the Twenty core API |
 | `TWENTY_APP_ACCESS_TOKEN` | Short-lived token scoped to your app's role |
+
+### `TWENTY_FUNCTIONS_URL`
+
+Twenty also injects `TWENTY_FUNCTIONS_URL` into front components and logic functions: the base URL your app's HTTP-triggered logic functions are served from.
+
+It exists because that URL is not always the Twenty server itself. On Twenty Cloud, app routes are served on a dedicated per-workspace domain (`https://<your-workspace-subdomain>.withtwenty.com`, or the application's primary public domain when one is configured) so that app-authored responses run on an isolated origin rather than on the Twenty app origin. Self-hosted and local instances serve app routes under the `/s` prefix on the server itself and may not set the variable at all. Since the base URL varies per workspace and per instance, your code cannot hard-code it — the server injects the right value at runtime.
+
+You rarely need to read it directly. Call your routes through `RestApiClient` with a `/s/`-prefixed path and the client resolves the URL for you: it strips the `/s` prefix and targets `TWENTY_FUNCTIONS_URL`, falling back to `<TWENTY_API_URL>/s` when the variable is not set. Use `resolveUrl('/s/<path>')` to get the absolute URL without sending a request, e.g. for a link. Read the variable directly only when building a URL by hand:
+
+```ts
+const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL}/s`}/documents/generate`;
+```
 
 ## Host communication API
 
@@ -403,12 +446,11 @@ Here is an example that uses the host API to show a snackbar and close the side 
 
 ```tsx src/front-components/archive-record.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useRecordId } from 'twenty-sdk/front-component';
-import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { enqueueSnackbar, closeSidePanel, useSelectedRecordIds } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const ArchiveRecord = () => {
-  const recordId = useRecordId();
+  const [recordId] = useSelectedRecordIds();
 
   const handleArchive = async () => {
     const client = new CoreApiClient();
@@ -449,10 +491,10 @@ export default defineFrontComponent({
 Use `useSelectedRecordIds()` to handle multiple selected records. This is useful for bulk operations:
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const BulkExport = () => {
   const selectedRecordIds = useSelectedRecordIds();
@@ -490,12 +532,19 @@ export default defineFrontComponent({
   name: 'bulk-export',
   description: 'Export selected records',
   component: BulkExport,
-  command: {
-    universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
-    label: 'Bulk Export',
-    availabilityType: 'RECORD_SELECTION',
-    conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
-  },
+});
+```
+
+Surface it with a [command menu item](/developers/extend/apps/layout/command-menu-items) restricted to record selections:
+
+```ts src/command-menu-items/bulk-export.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
+  label: 'Bulk Export',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
 });
 ```
 
@@ -523,15 +572,43 @@ See the [public assets section](/developers/extend/apps/config/public-assets) fo
 Front components support multiple styling approaches. You can use:
 
 - **Inline styles** — `style={{ color: 'red' }}`
-- **Twenty UI components** — import from `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar, and more)
+- **Twenty UI components** — Twenty's own component library; see [Using Twenty UI components](#using-twenty-ui-components) below
 - **Emotion** — CSS-in-JS with `@emotion/react`
 - **Styled-components** — `styled.div` patterns
 - **Tailwind CSS** — utility classes
 - **Any CSS-in-JS library** compatible with React
 
+## Using Twenty UI components
+
+Twenty ships its component library as the [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1) package. Front components can use it for buttons, tags, status pills, chips, avatars, icons, typography, and theme tokens that automatically match the workspace's light and dark theme.
+
+### Installation
+
+Add the package to your app, pinned to the version your Twenty instance ships:
+
+```bash
+yarn add twenty-ui@1.0.0-alpha.1
+```
+
+`twenty-ui` is bundled into your front component at build time, so it only needs to be a dependency of your app — there is nothing to configure at runtime.
+
+### Importing components
+
+Import from the matching subpath rather than the package root, so only the components you use end up in your bundle:
+
+| Subpath | What it exports |
+| --- | --- |
+| `twenty-ui/input` | `Button` and form inputs |
+| `twenty-ui/data-display` | `Tag`, `Status`, `Chip`, `Avatar`, and more |
+| `twenty-ui/feedback` | `Callout`, `Banner`, `Info`, and more |
+| `twenty-ui/typography` | `H1Title`, `H2Title`, `H3Title`, `Label`, and more |
+| `twenty-ui/icon` | `Icon*` components (e.g. `IconCheck`) |
+| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables` |
+
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Button, Tag, Status } from 'twenty-sdk/ui';
+import { Status, Tag } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
 
 const StyledWidget = () => {
   return (
@@ -549,3 +626,43 @@ export default defineFrontComponent({
   component: StyledWidget,
 });
 ```
+
+### Icons
+
+Import individual icons from `twenty-ui/icon`:
+
+```tsx
+import { IconBox, IconCheck } from 'twenty-ui/icon';
+```
+
+Each named icon is tree-shaken, so importing a handful adds little to your bundle. Avoid `IconsProvider`, `useIcons`, and `iconsState` — they pull in the full Tabler icon set (several MB).
+
+### Theming and theme tokens
+
+Twenty UI components automatically match the workspace's light and dark theme — the renderer applies the active color scheme on the host, and the components resolve their colors against it.
+
+To use the same design tokens in your own inline styles, call the `useTheme()` hook. It returns Twenty's theme tokens (spacing, colors, radii, fonts) wired to the active theme, with no `ThemeProvider` setup needed in your component:
+
+```tsx
+import { useTheme } from 'twenty-ui/theme-constants';
+
+const Card = () => {
+  const theme = useTheme();
+
+  return (
+    <div
+      style={{
+        padding: theme.spacing[4],
+        background: theme.background.secondary,
+        color: theme.font.color.primary,
+      }}
+    >
+      Themed card
+    </div>
+  );
+};
+```
+
+Because `useTheme()` is a hook, you read tokens inside the component body, so the values always reflect the live theme. The same token map is also exported as the `themeCssVariables` constant, but prefer `useTheme()` in front components — a module-level constant that dereferences `themeCssVariables` can be undefined while the app manifest is extracted.
+
+To branch on the active scheme explicitly, read it with `useColorScheme()` from `twenty-sdk/front-component`, which returns `'light'` or `'dark'`.

@@ -16,13 +16,14 @@ import {
   createCallRecording,
   type ScheduledCallRecordingFields,
 } from 'src/logic-functions/data/create-call-recording.util';
-import { ensureCallRecorder } from 'src/logic-functions/flows/ensure-call-recorder.util';
+import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { fetchCalendarEventsByStartsAtValues } from 'src/logic-functions/data/fetch-calendar-events-by-starts-at-values.util';
 import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/data/find-call-recordings-by-calendar-event-ids.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { rescheduleCallRecordingBot } from 'src/logic-functions/flows/reschedule-call-recording-bot.util';
+import { resolveCallRecordingTitle } from 'src/logic-functions/domain/resolve-call-recording-title.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
@@ -344,14 +345,19 @@ const createPolicyManagedCallRecording = async ({
   }
 
   // Winning the deterministic-id insert elects this run as the single writer that creates the bot.
-  await ensureCallRecorder(client, {
+  const didScheduleBot = await scheduleRecallBotForCallRecording(client, {
     callRecording: {
       id: callRecordingId,
       ...scheduledFields,
-      title: scheduledFields.title ?? undefined,
     },
     calendarEvent: representativeCalendarEvent,
   });
+
+  if (!didScheduleBot && process.env.NODE_ENV !== 'test') {
+    console.warn(
+      `[call-recorder] created callRecording ${callRecordingId}, but did not schedule a Recall bot`,
+    );
+  }
 
   return {
     action: 'CREATED',
@@ -434,8 +440,7 @@ const reconcileCanceledMeeting = async ({
 const buildCalendarDrivenCallRecordingFields = (
   calendarEvent: CalendarEventRecord,
 ): Omit<ScheduledCallRecordingFields, 'status'> => ({
-  // Wire null clears a stale title when the calendar title is gone or restricted.
-  title: calendarEvent.title ?? null,
+  title: resolveCallRecordingTitle(calendarEvent),
   recordingRequestStatus: CallRecordingRequestStatus.REQUESTED,
   calendarEventId: calendarEvent.id,
 });

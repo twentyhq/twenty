@@ -123,6 +123,8 @@ export const useTriggerEventStreamCreation = () => {
             (item) => item.objectRecordEvent,
           );
 
+          dispatchMetadataEventsFromSseToBrowserEvents(metadataEvents);
+
           triggerOptimisticEffectFromSseEvents({
             objectRecordEvents,
           });
@@ -130,8 +132,6 @@ export const useTriggerEventStreamCreation = () => {
           dispatchObjectRecordEventsFromSseToBrowserEvents(
             objectRecordEventsWithQueryIds,
           );
-
-          dispatchMetadataEventsFromSseToBrowserEvents(metadataEvents);
         },
         error: (error) => {
           captureException(error);
@@ -184,6 +184,11 @@ export const useTriggerEventStreamCreation = () => {
                   },
                 );
 
+                const metadataEvents =
+                  result?.data?.onEventSubscription?.metadataEvents ?? [];
+
+                dispatchMetadataEventsFromSseToBrowserEvents(metadataEvents);
+
                 triggerOptimisticEffectFromSseEvents({
                   objectRecordEvents,
                 });
@@ -191,11 +196,6 @@ export const useTriggerEventStreamCreation = () => {
                 dispatchObjectRecordEventsFromSseToBrowserEvents(
                   objectRecordEventsWithQueryIds,
                 );
-
-                const metadataEvents =
-                  result?.data?.onEventSubscription?.metadataEvents ?? [];
-
-                dispatchMetadataEventsFromSseToBrowserEvents(metadataEvents);
               }
             }
           } catch (error) {
