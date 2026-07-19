@@ -164,8 +164,6 @@ export const RecordBoardCard = () => {
       >
         <StyledBoardCardWrapper
           data-click-outside-id={RECORD_BOARD_CARD_CLICK_OUTSIDE_ID}
-          data-selectable-id={recordId}
-          data-select-disable
           onContextMenu={handleContextMenuOpen}
           onPointerCancel={handlePointerCancel}
           onPointerDown={handlePointerDown}

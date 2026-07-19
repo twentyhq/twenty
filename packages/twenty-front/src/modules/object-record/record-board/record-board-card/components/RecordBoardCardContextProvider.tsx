@@ -1,4 +1,6 @@
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
+
 import { RecordBoardCardMultiDragPreview } from '@/object-record/record-board/record-board-card/components/RecordBoardCardMultiDragPreview';
 import { RecordBoardCardHotkeysEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHotkeysEffect';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
@@ -12,6 +14,16 @@ import { RecordBoardCardContext } from '@/object-record/record-board/record-boar
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { DragDropColumnSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropColumnSortableCell';
 import { RECORD_BOARD_CARD_DND_TYPE } from '@/object-record/record-board/record-board-dnd/constants/RecordBoardCardDndType';
+
+const StyledDraggableContainer = styled.div<{
+  isDragDisabled: boolean;
+}>`
+  cursor: ${({ isDragDisabled }) => (isDragDisabled ? 'default' : 'grab')};
+  position: relative;
+  scroll-margin-left: 8px;
+  scroll-margin-right: 8px;
+  scroll-margin-top: 40px;
+`;
 
 type RecordBoardCardContextProviderProps = {
   recordId: string;
@@ -48,7 +60,6 @@ export const RecordBoardCardContextProvider = ({
     <RecordBoardCardContext.Provider
       value={{ recordId, isRecordReadOnly, rowIndex, columnIndex }}
     >
-      {isRecordBoardCardFocused && <RecordBoardCardHotkeysEffect />}
       <DragDropColumnSortableCell
         id={recordId}
         index={rowIndex}
@@ -57,9 +68,16 @@ export const RecordBoardCardContextProvider = ({
         accept={RECORD_BOARD_CARD_DND_TYPE}
         disabled={isRecordBoardDropProcessing}
       >
-        <RecordBoardCard />
+        <StyledDraggableContainer
+          isDragDisabled={isRecordBoardDropProcessing}
+          id={`record-board-card-${columnIndex}-${rowIndex}`}
+          data-selectable-id={recordId}
+          data-select-disable
+        >
+          {isRecordBoardCardFocused && <RecordBoardCardHotkeysEffect />}
+          <RecordBoardCard />
+        </StyledDraggableContainer>
       </DragDropColumnSortableCell>
-      <RecordBoardCardMultiDragPreview />
     </RecordBoardCardContext.Provider>
   );
 };
