@@ -1,5 +1,6 @@
 import { Draggable } from '@hello-pangea/dnd';
 
+import { PageLayoutTabWidgetDropTarget } from '@/page-layout/components/dnd/PageLayoutTabWidgetDropTarget';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -35,35 +36,37 @@ export const PageLayoutTabListReorderableTab = ({
 
   const isSettingsOpenForThisTab = pageLayoutTabSettingsOpenTabId === tab.id;
   return (
-    <Draggable draggableId={tab.id} index={index} isDragDisabled={disabled}>
-      {(draggableProvided, draggableSnapshot) => (
-        <StyledTabContainer
-          ref={draggableProvided.innerRef}
-          // oxlint-disable-next-line react/jsx-props-no-spreading
-          {...draggableProvided.draggableProps}
-          // oxlint-disable-next-line react/jsx-props-no-spreading
-          {...draggableProvided.dragHandleProps}
-          onClick={draggableSnapshot.isDragging ? undefined : onSelect}
-          active={isActive}
-          disabled={disabled}
-          style={{
-            ...draggableProvided.draggableProps.style,
-            cursor: draggableSnapshot.isDragging ? 'grabbing' : 'pointer',
-          }}
-        >
-          <StyledTabContentWrapper isBeingEdited={isSettingsOpenForThisTab}>
-            <TabContent
-              id={tab.id}
-              active={isActive}
-              disabled={disabled}
-              LeftIcon={tab.Icon}
-              title={tab.title}
-              logo={tab.logo}
-              pill={tab.pill}
-            />
-          </StyledTabContentWrapper>
-        </StyledTabContainer>
-      )}
-    </Draggable>
+    <PageLayoutTabWidgetDropTarget tabId={tab.id}>
+      <Draggable draggableId={tab.id} index={index} isDragDisabled={disabled}>
+        {(draggableProvided, draggableSnapshot) => (
+          <StyledTabContainer
+            ref={draggableProvided.innerRef}
+            // oxlint-disable-next-line react/jsx-props-no-spreading
+            {...draggableProvided.draggableProps}
+            // oxlint-disable-next-line react/jsx-props-no-spreading
+            {...draggableProvided.dragHandleProps}
+            onClick={draggableSnapshot.isDragging ? undefined : onSelect}
+            active={isActive}
+            disabled={disabled}
+            style={{
+              ...draggableProvided.draggableProps.style,
+              cursor: draggableSnapshot.isDragging ? 'grabbing' : 'pointer',
+            }}
+          >
+            <StyledTabContentWrapper isBeingEdited={isSettingsOpenForThisTab}>
+              <TabContent
+                id={tab.id}
+                active={isActive}
+                disabled={disabled}
+                LeftIcon={tab.Icon}
+                title={tab.title}
+                logo={tab.logo}
+                pill={tab.pill}
+              />
+            </StyledTabContentWrapper>
+          </StyledTabContainer>
+        )}
+      </Draggable>
+    </PageLayoutTabWidgetDropTarget>
   );
 };

@@ -1,6 +1,7 @@
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { PageLayoutWidgetDndProvider } from '@/page-layout/components/dnd/PageLayoutWidgetDndProvider';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
@@ -191,7 +192,7 @@ export const PageLayoutTabsRenderer = () => {
     (tab) => tab.id === activeTabId,
   );
 
-  return (
+  const layoutContent = (
     <StyledContainer hasPinnedTab={isDefined(pinnedLeftTab)}>
       {isDefined(pinnedLeftTab) && (
         <PageLayoutLeftPanel pinnedLeftTabId={pinnedLeftTab.id} />
@@ -244,5 +245,11 @@ export const PageLayoutTabsRenderer = () => {
         </StyledScrollWrapperContainer>
       </StyledTabsAndDashboardContainer>
     </StyledContainer>
+  );
+
+  return isPageLayoutInEditMode ? (
+    <PageLayoutWidgetDndProvider>{layoutContent}</PageLayoutWidgetDndProvider>
+  ) : (
+    layoutContent
   );
 };
