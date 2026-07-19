@@ -147,7 +147,57 @@ describe('WorkspaceInvitationService', () => {
     expect(service).toBeDefined();
   });
 
+  describe('validatePersonalInvitation', () => {
+    it('should accept an email with different casing', async () => {
+      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue({
+        context: { email: 'test@example.com' },
+        expiresAt: new Date(Date.now() + 60_000),
+        workspace: { id: 'workspace-id' },
+      } as AppTokenEntity);
+
+      await expect(
+        service.validatePersonalInvitation({
+          workspacePersonalInviteToken: 'token',
+          email: 'Test@Example.com',
+        }),
+      ).resolves.toEqual({
+        isValid: true,
+        workspace: { id: 'workspace-id' },
+      });
+    });
+  });
+
   describe('createWorkspaceInvitation', () => {
+    it('should normalize the email before checking workspace membership', async () => {
+      const email = 'Test@Example.com';
+      const workspace = { id: 'workspace-id' } as WorkspaceEntity;
+
+      jest.spyOn(appTokenRepository, 'createQueryBuilder').mockReturnValue({
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue(null),
+      } as any);
+      jest.spyOn(userWorkspaceRepository, 'exists').mockResolvedValue(false);
+      const generateInvitationTokenSpy = jest
+        .spyOn(service, 'generateInvitationToken')
+        .mockResolvedValue({} as AppTokenEntity);
+
+      await service.createWorkspaceInvitation(email, workspace);
+
+      expect(userWorkspaceRepository.exists).toHaveBeenCalledWith({
+        where: {
+          workspaceId: workspace.id,
+          user: { email: 'test@example.com' },
+        },
+        relations: { user: true },
+      });
+      expect(generateInvitationTokenSpy).toHaveBeenCalledWith(
+        workspace.id,
+        'test@example.com',
+        undefined,
+      );
+    });
+
     it('should create a workspace invitation successfully', async () => {
       const email = 'test@example.com';
       const workspace = { id: 'workspace-id' } as WorkspaceEntity;

@@ -7,6 +7,10 @@ import {
 
 import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
 import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
@@ -48,6 +52,13 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
       }
 
       for (const exception of exceptions) {
+        if (
+          exception instanceof AuthException &&
+          exception.code !== AuthExceptionCode.INTERNAL_SERVER_ERROR
+        ) {
+          continue;
+        }
+
         const errorPath = (exception.path ?? [])
           .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
           .join(' > ');

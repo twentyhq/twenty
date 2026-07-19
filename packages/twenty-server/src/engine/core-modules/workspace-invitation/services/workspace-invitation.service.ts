@@ -76,7 +76,10 @@ export class WorkspaceInvitationService {
         throw new Error('Invalid invitation token');
       }
 
-      if (!appToken.context?.email || appToken.context?.email !== email) {
+      if (
+        !appToken.context?.email ||
+        appToken.context.email.toLowerCase() !== email.toLowerCase()
+      ) {
         throw new Error('Email does not match the invitation');
       }
 
@@ -100,7 +103,10 @@ export class WorkspaceInvitationService {
       .where('"appToken".type = :type', {
         type: AppTokenType.InvitationToken,
       })
-      .andWhere('"appToken".context->>\'email\' = :email', { email })
+      .andWhere(
+        'LOWER("appToken".context->>\'email\') = LOWER(:email)',
+        { email: email.toLowerCase() },
+      )
       .andWhere('appToken.deletedAt IS NULL')
       .andWhere('appToken.expiresAt > :now', {
         now: new Date(),
@@ -117,7 +123,10 @@ export class WorkspaceInvitationService {
       .andWhere('"appToken".type = :type', {
         type: AppTokenType.InvitationToken,
       })
-      .andWhere('"appToken".context->>\'email\' = :email', { email })
+      .andWhere(
+        'LOWER("appToken".context->>\'email\') = LOWER(:email)',
+        { email: email.toLowerCase() },
+      )
       .getOne();
   }
 
@@ -160,9 +169,10 @@ export class WorkspaceInvitationService {
     workspace: WorkspaceEntity,
     roleId?: string,
   ) {
+    const normalizedEmail = email.toLowerCase();
     const maybeWorkspaceInvitation = await this.getOneWorkspaceInvitation(
       workspace.id,
-      email.toLowerCase(),
+      normalizedEmail,
     );
 
     if (maybeWorkspaceInvitation) {
@@ -176,7 +186,7 @@ export class WorkspaceInvitationService {
       where: {
         workspaceId: workspace.id,
         user: {
-          email,
+          email: normalizedEmail,
         },
       },
       relations: {
@@ -191,7 +201,11 @@ export class WorkspaceInvitationService {
       );
     }
 
-    return this.generateInvitationToken(workspace.id, email, roleId);
+    return this.generateInvitationToken(
+      workspace.id,
+      normalizedEmail,
+      roleId,
+    );
   }
 
   async deleteWorkspaceInvitation(appTokenId: string, workspaceId: string) {
@@ -423,7 +437,7 @@ export class WorkspaceInvitationService {
       type: AppTokenType.InvitationToken,
       value: crypto.randomBytes(32).toString('hex'),
       context: {
-        email,
+        email: email.toLowerCase(),
         ...(isDefined(roleId) ? { roleId } : {}),
       },
     });
@@ -440,7 +454,7 @@ export class WorkspaceInvitationService {
       await Promise.all(
         emails.map(async (email) => {
           await this.throttlerService.tokenBucketThrottleOrThrow(
-            `invitation-resending-workspace:throttler:${email}`,
+            `invitation-resending-workspace:throttler:${email.toLowerCase()}`,
             1,
             this.twentyConfigService.get(
               'INVITATION_SENDING_BY_EMAIL_THROTTLE_LIMIT',
