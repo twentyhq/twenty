@@ -92,17 +92,19 @@ export const EmailVerificationSent = ({
     useHandleResendEmailVerificationToken();
 
   const handleOpenGmail = () => {
+    // /mail/u/{n}/ expects an account index (0, 1, …), not an email address.
+    // Use authuser so the correct inbox is selected when possible.
     const gmailUrl = email
-      ? `https://mail.google.com/mail/u/${email}/`
+      ? `https://mail.google.com/mail/?authuser=${encodeURIComponent(email)}`
       : 'https://mail.google.com/';
-    window.open(gmailUrl, '_blank');
+    window.open(gmailUrl, '_blank', 'noopener,noreferrer');
   };
 
   const handleOpenOutlook = () => {
     const outlookUrl = email
-      ? `https://outlook.live.com/mail/${email}/`
+      ? `https://outlook.live.com/mail/?login_hint=${encodeURIComponent(email)}`
       : 'https://outlook.live.com/';
-    window.open(outlookUrl, '_blank');
+    window.open(outlookUrl, '_blank', 'noopener,noreferrer');
   };
 
   const handleChangeEmail = () => {
