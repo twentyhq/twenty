@@ -10,16 +10,6 @@ import { type ValidationError, validate } from 'class-validator';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
-const safeClassValidatorValidateWrapper = async (
-  object: object,
-): Promise<ValidationError[]> => {
-  try {
-    return await validate(object);
-  } catch {
-    return [];
-  }
-};
-
 @Injectable()
 export class ResolverValidationPipe implements PipeTransform {
   async transform(value: unknown, metadata: ArgumentMetadata) {
@@ -30,11 +20,24 @@ export class ResolverValidationPipe implements PipeTransform {
     }
 
     const object = plainToInstance(metatype, value);
-    const errors = await safeClassValidatorValidateWrapper(object);
+
+    let errors: ValidationError[];
+
+    try {
+      errors = await validate(object);
+    } catch (error) {
+      // Fail closed: infrastructure / custom-validator throws must not
+      // silently accept the payload (previous behaviour returned []).
+      const message =
+        error instanceof Error ? error.message : 'Validation failed';
+
+      throw new UserInputError(message);
+    }
 
     if (errors.length === 0) {
-      // TODO shouldn't we return the object here ? As transpilation could bring mutations
-      return value;
+      // Return the transformed instance so @Type() / class-transformer
+      // mutations apply (Nest ValidationPipe behaviour).
+      return object;
     }
 
     const errorMessage = this.formatErrorMessage(errors);
