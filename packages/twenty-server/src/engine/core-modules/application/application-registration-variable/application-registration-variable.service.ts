@@ -174,27 +174,13 @@ export class ApplicationRegistrationVariableService {
   async isConfiguredBatch(
     applicationRegistrationIds: string[],
   ): Promise<Map<string, boolean>> {
-    const [variables, registrations, installedApps] = await Promise.all([
-      this.variableRepository.find({
-        where: { applicationRegistrationId: In(applicationRegistrationIds) },
-      }),
-      this.applicationRegistrationRepository.find({
-        where: { id: In(applicationRegistrationIds) },
-        select: { id: true, manifest: true, ownerWorkspaceId: true },
-      }),
-      this.applicationRepository.find({
-        where: { applicationRegistrationId: In(applicationRegistrationIds) },
-        select: { applicationRegistrationId: true, workspaceId: true },
-      }),
-    ]);
+    const variables = await this.variableRepository.find({
+      where: { applicationRegistrationId: In(applicationRegistrationIds) },
+    });
 
     const result = new Map<string, boolean>();
 
     for (const id of applicationRegistrationIds) {
-      const registration = registrations.find(
-        (registration) => registration.id === id,
-      );
-
       const areVariablesConfigured = variables
         .filter(
           (variable) =>
@@ -202,41 +188,14 @@ export class ApplicationRegistrationVariableService {
         )
         .every((variable) => variable.isFilled);
 
-      const isInstalledOnOwnerWorkspace = installedApps.some(
-        (app) =>
-          app.applicationRegistrationId === id &&
-          app.workspaceId === registration?.ownerWorkspaceId,
-      );
-
-      result.set(
-        id,
-        areVariablesConfigured &&
-          this.isServerRouteConfigured(
-            registration,
-            isInstalledOnOwnerWorkspace,
-          ),
-      );
+      // Server-route apps must remain listable before install. Requiring the
+      // app to already be installed on the owner workspace hid those apps
+      // from the marketplace forever (chicken-and-egg, #22707). Server-route
+      // readiness is enforced at install/runtime, not catalog visibility.
+      result.set(id, areVariablesConfigured);
     }
 
     return result;
-  }
-
-  private isServerRouteConfigured(
-    registration: ApplicationRegistrationEntity | undefined,
-    isInstalledOnOwnerWorkspace: boolean,
-  ): boolean {
-    const hasServerRouteFunction =
-      registration?.manifest?.logicFunctions?.some((logicFunction) =>
-        isDefined(logicFunction.serverRouteTriggerSettings),
-      ) ?? false;
-
-    if (!hasServerRouteFunction) {
-      return true;
-    }
-
-    return (
-      isDefined(registration?.ownerWorkspaceId) && isInstalledOnOwnerWorkspace
-    );
   }
 
   private async findVariableOrThrow(
