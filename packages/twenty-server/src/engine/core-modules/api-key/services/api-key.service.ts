@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { IsNull } from 'typeorm';
+import { IsNull, MoreThan } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -69,8 +69,13 @@ export class ApiKeyService {
   }
 
   async findActiveByWorkspaceId(workspaceId: string): Promise<ApiKeyEntity[]> {
+    // Auth rejects keys with expiresAt < now; the "active" list must match so
+    // expired non-revoked keys are not shown as usable.
     return this.apiKeyRepository.find(workspaceId, {
-      where: { revokedAt: IsNull() },
+      where: {
+        revokedAt: IsNull(),
+        expiresAt: MoreThan(new Date()),
+      },
     });
   }
 

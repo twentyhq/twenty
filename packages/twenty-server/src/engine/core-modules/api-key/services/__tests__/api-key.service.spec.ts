@@ -245,16 +245,22 @@ describe('ApiKeyService', () => {
   });
 
   describe('findActiveByWorkspaceId', () => {
-    it('should find only active (non-revoked) API keys', async () => {
+    it('should find only active (non-revoked, non-expired) API keys', async () => {
       const activeApiKeys = [mockApiKey];
 
       mockApiKeyRepository.find.mockResolvedValue(activeApiKeys);
 
       const result = await service.findActiveByWorkspaceId(mockWorkspaceId);
 
-      expect(mockApiKeyRepository.find).toHaveBeenCalledWith(mockWorkspaceId, {
-        where: { revokedAt: IsNull() },
-      });
+      expect(mockApiKeyRepository.find).toHaveBeenCalledWith(
+        mockWorkspaceId,
+        expect.objectContaining({
+          where: expect.objectContaining({
+            revokedAt: IsNull(),
+            expiresAt: expect.anything(),
+          }),
+        }),
+      );
       expect(result).toEqual(activeApiKeys);
     });
   });
