@@ -11,9 +11,12 @@ export const transformEmailsValue = (
   }
 
   let additionalEmails: string | null = value?.additionalEmails;
-  const primaryEmail = isNonEmptyString(value?.primaryEmail)
-    ? value.primaryEmail.toLowerCase()
-    : null;
+  const primaryEmail =
+    value?.primaryEmail === undefined
+      ? undefined
+      : isNonEmptyString(value.primaryEmail)
+        ? value.primaryEmail.toLowerCase()
+        : null;
 
   if (additionalEmails) {
     try {
