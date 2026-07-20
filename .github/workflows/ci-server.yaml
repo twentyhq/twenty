@@ -376,6 +376,10 @@ jobs:
     needs: server-build
     timeout-minutes: 30
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -389,11 +393,8 @@ jobs:
           key: ${{ env.SERVER_BUILD_CACHE_KEY }}
       - name: Build twenty-shared
         run: npx nx build twenty-shared
-      - name: Server / Run Tests
-        uses: ./.github/actions/nx-affected
-        with:
-          tag: scope:backend
-          tasks: test
+      - name: Server / Run Tests (shard ${{ matrix.shard }}/4)
+        run: npx nx run twenty-server:test:ci --shard=${{ matrix.shard }}/4
 
   server-integration-test:
     timeout-minutes: 30
@@ -485,6 +486,41 @@ jobs:
     with:
       skip: ${{ needs.upgrade-changed-files-check.outputs.any_changed != 'true' }}
 
+  discover-public-apps:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    uses: ./.github/workflows/discover-apps.yaml
+    with:
+      scope: public
+      changed-only: false
+
+  server-apps-install-smoke:
+    needs: [discover-public-apps, server-build]
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJSON(needs.discover-public-apps.outputs.matrix) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+      - name: Spawn Twenty server from monorepo
+        id: twenty
+        uses: ./.github/actions/spawn-twenty-server
+        with:
+          source: local
+          server-build-cache-key: ${{ env.SERVER_BUILD_CACHE_KEY }}
+      - name: Install app against server
+        uses: ./.github/actions/test-twenty-app
+        with:
+          api-url: ${{ steps.twenty.outputs.server-url }}
+          api-key: ${{ steps.twenty.outputs.api-key }}
+          app-path: ${{ matrix.app.path }}
+          mode: installation-only
+
   ci-server-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
@@ -499,6 +535,8 @@ jobs:
         server-test,
         server-integration-test,
         cross-version-upgrade,
+        discover-public-apps,
+        server-apps-install-smoke,
       ]
     steps:
       - name: Fail job if any needs failed

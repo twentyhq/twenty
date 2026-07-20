@@ -15,6 +15,7 @@ import { CronTriggerCronCommand } from 'src/engine/core-modules/logic-function/l
 import { CheckPublicDomainsValidRecordsCronCommand } from 'src/engine/core-modules/public-domain/crons/commands/check-public-domains-valid-records.cron.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/workspace/crons/commands/check-custom-domain-valid-records.cron.command';
+import { WebhookSubscriptionRenewalCronCommand } from 'src/modules/connected-account/webhook-subscription-manager/crons/commands/webhook-subscription-renewal.cron.command';
 import { TrashCleanupCronCommand } from 'src/engine/trash-cleanup/commands/trash-cleanup.cron.command';
 import { CleanOnboardingWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-onboarding-workspaces.cron.command';
 import { CleanSuspendedWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-suspended-workspaces.cron.command';
@@ -48,6 +49,8 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly calendarEventsImportCronCommand: CalendarEventsImportCronCommand,
     private readonly calendarOngoingStaleCronCommand: CalendarOngoingStaleCronCommand,
     private readonly calendarRelaunchFailedCalendarChannelsCronCommand: CalendarRelaunchFailedCalendarChannelsCronCommand,
+
+    private readonly webhookSubscriptionRenewalCronCommand: WebhookSubscriptionRenewalCronCommand,
 
     private readonly workflowCronTriggerCronCommand: WorkflowCronTriggerCronCommand,
     private readonly workflowRunEnqueueCronCommand: WorkflowRunEnqueueCronCommand,
@@ -118,6 +121,10 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'CalendarRelaunchFailedCalendarChannels',
         command: this.calendarRelaunchFailedCalendarChannelsCronCommand,
+      },
+      {
+        name: 'WebhookSubscriptionRenewal',
+        command: this.webhookSubscriptionRenewalCronCommand,
       },
       {
         name: 'CheckCustomDomainValidRecords',

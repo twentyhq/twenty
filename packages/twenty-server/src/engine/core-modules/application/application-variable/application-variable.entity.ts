@@ -1,6 +1,4 @@
-import { ObjectType } from '@nestjs/graphql';
-
-import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import {
   Check,
   Column,
@@ -34,7 +32,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   `"value" = '' OR "value" LIKE 'enc:v2:%'`,
 )
 export class ApplicationVariableEntity extends SyncableEntity {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

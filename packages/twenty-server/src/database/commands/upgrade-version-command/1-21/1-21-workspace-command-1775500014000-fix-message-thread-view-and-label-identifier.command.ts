@@ -2,7 +2,7 @@ import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -51,7 +51,7 @@ const filterViewFieldsByViewUniversalIdentifier = ({
   description:
     'Sync the allMessageThreads standard view fields with the current standard definition (adds subject and updatedAt columns) and repoint messageThread.labelIdentifierFieldMetadataId to the subject field. Fixes workspaces upgraded from <1.21 where PR #19351 changes were not applied because the twenty-standard application is not re-synced on existing workspaces.',
 })
-export class FixMessageThreadViewAndLabelIdentifierCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class FixMessageThreadViewAndLabelIdentifierCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -147,7 +147,7 @@ export class FixMessageThreadViewAndLabelIdentifierCommand extends ActiveOrSuspe
     }
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             objectMetadata: {

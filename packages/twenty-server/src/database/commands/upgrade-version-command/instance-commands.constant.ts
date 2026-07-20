@@ -108,6 +108,11 @@ import { CreateWorkflowCoreTableFastInstanceCommand } from './2-20/2-20-instance
 import { AddGalleryImagesToApplicationRegistrationFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783615890055-add-gallery-images-to-application-registration';
 import { BackfillGalleryImagesOnApplicationRegistrationSlowInstanceCommand } from './2-20/2-20-instance-command-slow-1783615890056-backfill-gallery-images-on-application-registration';
 import { AddWorkflowVersionSyncableColumnsFastInstanceCommand } from './2-20/2-20-instance-command-fast-1783603454480-add-workflow-version-syncable-columns';
+import { BackfillWorkspaceDatabaseSchemaSlowInstanceCommand } from './2-21/2-21-instance-command-slow-1783934147089-backfill-workspace-database-schema';
+import { AddLogoFileIdToApplicationRegistrationFastInstanceCommand } from './2-21/2-21-instance-command-fast-1783945979243-add-logo-file-id-to-application-registration';
+import { AddCalendarEndFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-22/2-22-instance-command-fast-1783956795000-add-calendar-end-field-metadata-id-to-view';
+import { AddCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2-22/2-22-instance-command-slow-1784106205000-add-created-workspace-activation-status';
+import { BackfillCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784286705000-backfill-created-workspace-activation-status';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -218,4 +223,9 @@ export const INSTANCE_COMMANDS = [
   AddGalleryImagesToApplicationRegistrationFastInstanceCommand,
   BackfillGalleryImagesOnApplicationRegistrationSlowInstanceCommand,
   AddWorkflowVersionSyncableColumnsFastInstanceCommand,
+  BackfillWorkspaceDatabaseSchemaSlowInstanceCommand,
+  AddLogoFileIdToApplicationRegistrationFastInstanceCommand,
+  AddCalendarEndFieldMetadataIdToViewFastInstanceCommand,
+  AddCreatedWorkspaceActivationStatusSlowInstanceCommand,
+  BackfillCreatedWorkspaceActivationStatusSlowInstanceCommand,
 ];

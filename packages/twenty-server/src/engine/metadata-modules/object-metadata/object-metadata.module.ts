@@ -24,6 +24,7 @@ import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/d
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { ObjectMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/object-metadata/interceptors/object-metadata-graphql-api-exception.interceptor';
+import { MostlyEmptyFieldsService } from 'src/engine/metadata-modules/object-metadata/mostly-empty-fields.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metadata/object-metadata.resolver';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -103,6 +104,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ObjectMetadataService,
     ObjectMetadataResolver,
     ObjectRecordCountService,
+    MostlyEmptyFieldsService,
     ObjectMetadataToolsFactory,
   ],
   exports: [ObjectMetadataService, ObjectMetadataToolsFactory],

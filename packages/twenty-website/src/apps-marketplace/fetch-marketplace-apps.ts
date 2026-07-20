@@ -12,7 +12,7 @@ const FIND_MANY_MARKETPLACE_APPS_QUERY = `
       category
       logo
       sourcePackage
-      isFeatured
+      isVetted
     }
   }
 `;
@@ -25,7 +25,7 @@ type ApiMarketplaceApp = {
   category: string;
   logo?: string | null;
   sourcePackage?: string | null;
-  isFeatured: boolean;
+  isVetted: boolean;
 };
 
 type FindManyMarketplaceAppsData = {
@@ -41,7 +41,7 @@ const normalizeApp = (apiApp: ApiMarketplaceApp): MarketplaceApp => ({
   category: apiApp.category,
   logoUrl: apiApp.logo ?? undefined,
   sourcePackage: apiApp.sourcePackage ?? undefined,
-  isFeatured: apiApp.isFeatured,
+  isVetted: apiApp.isVetted,
 });
 
 export async function fetchMarketplaceApps(): Promise<

@@ -4,7 +4,7 @@ import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { buildSearchFieldMetadataBackfillOperations } from 'src/database/commands/upgrade-version-command/2-20/utils/build-search-field-metadata-backfill-operations.util';
@@ -37,7 +37,7 @@ type SearchFieldMetadataReconciliationOperations = {
   description:
     'Converge every searchFieldMetadata universal identifier to its deterministic derivation (re-own, all applications) and create the missing searchFieldMetadata row for installed-app searchable objects (backfill). Idempotent, re-own runs before backfill to avoid a unique-identifier collision.',
 })
-export class ReconcileSearchFieldMetadataCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class ReconcileSearchFieldMetadataCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,

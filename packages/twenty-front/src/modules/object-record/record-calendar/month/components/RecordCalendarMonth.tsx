@@ -3,6 +3,7 @@ import { RecordCalendarMonthHeader } from '@/object-record/record-calendar/month
 import { RecordCalendarMonthContextProvider } from '@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext';
 import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
+import { getRecordIdFromRecordCalendarCardDraggableId } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardDraggableId';
 import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
 import { useProcessCalendarCardDrop } from '@/object-record/record-drag/hooks/useProcessCalendarCardDrop';
 import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
@@ -46,7 +47,15 @@ export const RecordCalendarMonth = () => {
   } = useRecordCalendarMonthDaysRange(recordCalendarSelectedDate);
 
   const handleDragStart = (start: DragStart) => {
-    startRecordDrag(start, []);
+    startRecordDrag(
+      {
+        ...start,
+        draggableId: getRecordIdFromRecordCalendarCardDraggableId(
+          start.draggableId,
+        ),
+      },
+      [],
+    );
   };
 
   const handleDragEnd: OnDragEndResponder = (result) => {

@@ -1,44 +1,117 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import sweepLogicFunction, {
   sweepUpcomingCalendarEventsHandler,
 } from 'src/logic-functions/sweep-upcoming-calendar-events';
 
-const fetchUpcomingCalendarEventIdsMock = vi.hoisted(() => vi.fn());
-const reconcileUpcomingCalendarEventBatchesMock = vi.hoisted(() => vi.fn());
+const queryMock = vi.hoisted(() => vi.fn());
+const mutationMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-client-sdk/core', () => ({
-  CoreApiClient: vi.fn(),
+  CoreApiClient: class {
+    query = queryMock;
+    mutation = mutationMock;
+  },
 }));
 
-vi.mock(
-  'src/logic-functions/data/fetch-upcoming-calendar-event-ids.util',
-  () => ({
-    fetchUpcomingCalendarEventIds: fetchUpcomingCalendarEventIdsMock,
-  }),
-);
+const fetchMock = vi.fn();
 
-vi.mock(
-  'src/logic-functions/flows/reconcile-upcoming-calendar-event-batches.util',
-  () => ({
-    reconcileUpcomingCalendarEventBatches:
-      reconcileUpcomingCalendarEventBatchesMock,
-  }),
-);
-
-const BATCH_RESULT = {
-  reconciledCalendarEventIds: ['calendar-event-1'],
-  failedCalendarEventIds: [],
-  remainingCalendarEventIds: [],
-  actionCounts: { created: 1, updated: 0, canceled: 0, skipped: 0, failed: 0 },
-  continuationRequested: false,
+type CalendarEventNode = {
+  id: string;
+  title: string;
+  isCanceled: boolean;
+  startsAt: string;
+  endsAt: string;
 };
+
+type RecordsQuery = {
+  calendarEvents?: {
+    __args: {
+      filter: {
+        id?: { in: string[] };
+        startsAt?: { in: string[] };
+        isCanceled?: { eq: boolean };
+      };
+    };
+  };
+  callRecordings?: { __args: { filter: Record<string, unknown> } };
+};
+
+const UPCOMING_STARTS_AT = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+const UPCOMING_ENDS_AT = new Date(
+  Date.now() + 2 * 60 * 60 * 1000,
+).toISOString();
+
+// Without a conference link the policy deterministically skips each meeting.
+const buildUpcomingCalendarEventNode = (id: string): CalendarEventNode => ({
+  id,
+  title: 'Upcoming Sync',
+  isCanceled: false,
+  startsAt: UPCOMING_STARTS_AT,
+  endsAt: UPCOMING_ENDS_AT,
+});
+
+const buildConnection = <TNode>(nodes: TNode[]) => ({
+  pageInfo: { hasNextPage: false, endCursor: null },
+  edges: nodes.map((node) => ({ node })),
+});
+
+let upcomingCalendarEventNodes: CalendarEventNode[];
 
 describe('sweepUpcomingCalendarEventsHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    fetchUpcomingCalendarEventIdsMock.mockResolvedValue([]);
-    reconcileUpcomingCalendarEventBatchesMock.mockResolvedValue(BATCH_RESULT);
+    vi.stubGlobal('fetch', fetchMock);
+    vi.stubEnv('TWENTY_FUNCTIONS_URL', 'https://acme.functions.example.com');
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'app-access-token');
+    fetchMock.mockResolvedValue(new Response('{}', { status: 200 }));
+    upcomingCalendarEventNodes = [];
+    queryMock.mockImplementation(async (query: RecordsQuery) => {
+      if (query.calendarEvents !== undefined) {
+        const filter = query.calendarEvents.__args.filter;
+
+        if (filter.id !== undefined) {
+          const requestedIds = filter.id.in;
+
+          return {
+            calendarEvents: buildConnection(
+              upcomingCalendarEventNodes.filter((node) =>
+                requestedIds.includes(node.id),
+              ),
+            ),
+          };
+        }
+
+        if (filter.startsAt !== undefined) {
+          const requestedStartsAtValues = filter.startsAt.in;
+
+          return {
+            calendarEvents: buildConnection(
+              upcomingCalendarEventNodes.filter((node) =>
+                requestedStartsAtValues.includes(node.startsAt),
+              ),
+            ),
+          };
+        }
+
+        return {
+          calendarEvents: buildConnection(
+            upcomingCalendarEventNodes.map(({ id }) => ({ id })),
+          ),
+        };
+      }
+
+      if (query.callRecordings !== undefined) {
+        return { callRecordings: buildConnection([]) };
+      }
+
+      throw new Error(`Unhandled query: ${JSON.stringify(query)}`);
+    });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
   });
 
   it('is configured as a daily cron with a self-invokable timeout', () => {
@@ -52,41 +125,68 @@ describe('sweepUpcomingCalendarEventsHandler', () => {
   });
 
   it('reconciles every upcoming calendar event within the horizon', async () => {
-    fetchUpcomingCalendarEventIdsMock.mockResolvedValue([
-      'calendar-event-1',
-      'calendar-event-2',
-    ]);
+    upcomingCalendarEventNodes = [
+      buildUpcomingCalendarEventNode('calendar-event-1'),
+      buildUpcomingCalendarEventNode('calendar-event-2'),
+    ];
 
     const result = await sweepUpcomingCalendarEventsHandler();
 
-    expect(fetchUpcomingCalendarEventIdsMock).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.any(Date),
-    );
-    expect(reconcileUpcomingCalendarEventBatchesMock).toHaveBeenCalledWith(
+    expect(queryMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        calendarEventIds: ['calendar-event-1', 'calendar-event-2'],
+        calendarEvents: expect.objectContaining({
+          __args: expect.objectContaining({
+            filter: expect.objectContaining({ isCanceled: { eq: false } }),
+          }),
+        }),
       }),
     );
-    expect(result).toEqual({ outcome: 'processed', ...BATCH_RESULT });
+    expect(queryMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        calendarEvents: expect.objectContaining({
+          __args: expect.objectContaining({
+            filter: { id: { in: ['calendar-event-1', 'calendar-event-2'] } },
+          }),
+        }),
+      }),
+    );
+    expect(result).toEqual({
+      outcome: 'processed',
+      reconciledCalendarEventIds: ['calendar-event-1', 'calendar-event-2'],
+      failedCalendarEventIds: [],
+      remainingCalendarEventIds: [],
+      actionCounts: {
+        created: 0,
+        updated: 0,
+        canceled: 0,
+        skipped: 2,
+        failed: 0,
+      },
+      continuationRequested: false,
+    });
   });
 
   it('short-circuits without running batches when nothing is upcoming', async () => {
     const result = await sweepUpcomingCalendarEventsHandler();
 
     expect(result).toEqual({ outcome: 'nothing-to-reconcile' });
-    expect(reconcileUpcomingCalendarEventBatchesMock).not.toHaveBeenCalled();
+    expect(queryMock).toHaveBeenCalledTimes(1);
   });
 
   it('passes a deadline that reserves time for the continuation request', async () => {
-    fetchUpcomingCalendarEventIdsMock.mockResolvedValue(['calendar-event-1']);
+    upcomingCalendarEventNodes = [
+      buildUpcomingCalendarEventNode('calendar-event-1'),
+    ];
 
-    await sweepUpcomingCalendarEventsHandler();
+    const result = await sweepUpcomingCalendarEventsHandler();
 
-    const { deadlineAtMs } =
-      reconcileUpcomingCalendarEventBatchesMock.mock.calls[0][0];
-
-    expect(deadlineAtMs).toBeLessThan(Date.now() + 900 * 1000);
-    expect(deadlineAtMs).toBeGreaterThan(Date.now() + 800 * 1000);
+    expect(result).toEqual(
+      expect.objectContaining({
+        outcome: 'processed',
+        remainingCalendarEventIds: [],
+        continuationRequested: false,
+      }),
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

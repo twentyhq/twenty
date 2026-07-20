@@ -1923,6 +1923,7 @@ msgstr "Alla appregistreringar över hela plattformen, inklusive föräldralösa
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventRow.tsx
+#: src/modules/object-record/record-calendar/time-grid/components/RecordCalendarTimeGrid.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "All day"
 msgstr "Hela dagen"
@@ -2366,6 +2367,12 @@ msgstr "App-URL"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
 msgstr "Utseende"
+
+#. js-lingui-id: YhZuwP
+#. placeholder {0}: objectMetadataItem.labelPlural
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
+msgid "Appears filled in fewer than 5% of {0}. Fields that stay empty can be deactivated."
+msgstr ""
 
 #. js-lingui-id: LqRVps
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
@@ -2907,11 +2914,6 @@ msgstr "Tillgängliga modeller"
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Available tools"
 msgstr "Tillgängliga verktyg"
-
-#. js-lingui-id: YzokLS
-#: src/modules/object-record/record-show/hooks/usePersonAvatarUpload.ts
-msgid "Avatar file field not found for person object"
-msgstr "Fältet för avatarfil hittades inte för personobjektet"
 
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -4061,7 +4063,7 @@ msgstr "Komman och punkt"
 msgid "Comment"
 msgstr ""
 
-#. js-lingui-id: UK5bhd
+#. js-lingui-id: hZotg6
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -4069,8 +4071,8 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
-msgid "Communications"
-msgstr "Kommunikation"
+msgid "Communication"
+msgstr ""
 
 #. js-lingui-id: chL5IG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -4920,6 +4922,18 @@ msgstr "Skapa profil"
 msgid "Create Profile"
 msgstr "Skapa profil"
 
+#. js-lingui-id: Qjz7vW
+#: src/modules/object-record/record-calendar/components/RecordCalendarAddNew.tsx
+msgid "Create record"
+msgstr ""
+
+#. js-lingui-id: 8ETbKP
+#. placeholder {0}: cardDate.toLocaleString(undefined, { dateStyle: 'full', })
+#. placeholder {1}: cardTime.toLocaleString(undefined, { timeStyle: 'short' })
+#: src/modules/object-record/record-calendar/components/RecordCalendarAddNew.tsx
+msgid "Create record on {0} at {1}"
+msgstr ""
+
 #. js-lingui-id: RoyYUE
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
@@ -5596,8 +5610,10 @@ msgid "Date Granularity Y"
 msgstr "Datum Granularitet Y"
 
 #. js-lingui-id: H7OUPr
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Day"
 msgstr "Dag"
@@ -6972,6 +6988,14 @@ msgstr "Rotation av krypteringsnycklar"
 msgid "End date"
 msgstr "Slutdatum"
 
+#. js-lingui-id: DqIce1
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
+msgid "End date field"
+msgstr ""
+
 #. js-lingui-id: Fqu/aC
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "End date must be after start date."
@@ -7851,11 +7875,6 @@ msgstr "Det gick inte att lägga till leverantören"
 msgid "Failed to claim ownership."
 msgstr "Det gick inte att begära ägarskap."
 
-#. js-lingui-id: 5UH0/o
-#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
-msgid "Failed to create email channel. Email channels may not be configured on this server."
-msgstr "Det gick inte att skapa e-postkanal. E-postkanaler kanske inte är konfigurerade på den här servern."
-
 #. js-lingui-id: ITWxKI
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 msgid "Failed to create unsubscribe topic."
@@ -7940,6 +7959,11 @@ msgstr "Det gick inte att ladda webbhook"
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
 msgid "Failed to merge records. Please try again."
 msgstr "Det gick inte att slå samman poster. Försök igen."
+
+#. js-lingui-id: DvNGzq
+#: src/modules/object-record/record-calendar/week/components/RecordCalendarWeekDragDropContext.tsx
+msgid "Failed to move record"
+msgstr ""
 
 #. js-lingui-id: PnVGrE
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -8792,11 +8816,6 @@ msgstr "Gå tillbaka"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Go to billing portal"
 msgstr "Gå till faktureringsportalen"
-
-#. js-lingui-id: ABs8Dj
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Go to documentation"
-msgstr "Gå till dokumentation"
 
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
@@ -10748,6 +10767,11 @@ msgstr "Laddar {formattedNames}"
 msgid "Loading applications..."
 msgstr "Laddar applikationer..."
 
+#. js-lingui-id: 58V8TX
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Loading apps..."
+msgstr ""
+
 #. js-lingui-id: Nx262D
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "Loading csv ... "
@@ -11415,6 +11439,7 @@ msgstr "månad"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Month"
 msgstr "Månad"
@@ -11480,6 +11505,12 @@ msgstr "Fler widgetar"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Most installed version"
 msgstr "Mest installerade versionen"
+
+#. js-lingui-id: PfWWOa
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+msgid "Mostly empty"
+msgstr ""
 
 #. js-lingui-id: 3Ib6FN
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
@@ -11685,11 +11716,6 @@ msgstr "Navigationsmenyalternativ"
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
 msgid "Navigation tabs"
 msgstr "Navigeringsflikar"
-
-#. js-lingui-id: C0P5zd
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Need help to configure your shared mailbox?"
-msgstr "Behöver du hjälp med att konfigurera din delade brevlåda?"
 
 #. js-lingui-id: wW3b68
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
@@ -11963,6 +11989,11 @@ msgstr "Nästa"
 msgid "Next charge {totalRenewDate}. Invoice amount may vary if you add members or credits between periods"
 msgstr "Nästa debitering {totalRenewDate}. Fakturabeloppet kan variera om du lägger till medlemmar eller krediter mellan perioderna"
 
+#. js-lingui-id: 8+lM81
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
+msgid "Next period"
+msgstr ""
+
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
@@ -12080,6 +12111,11 @@ msgstr "Inga applikationer tillgängliga"
 #. js-lingui-id: zLbFMr
 #: src/pages/onboarding/InstallAppsContent.tsx
 msgid "No apps are available to install right now"
+msgstr ""
+
+#. js-lingui-id: pfRh+M
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "No apps found"
 msgstr ""
 
 #. js-lingui-id: tFxVHz
@@ -12685,6 +12721,11 @@ msgstr "Ingen arbetsyta har misslyckats"
 msgid "No workspace selected"
 msgstr "Ingen arbetsyta vald"
 
+#. js-lingui-id: /XvL19
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
+msgid "No workspaces found"
+msgstr ""
+
 #. js-lingui-id: TiRphK
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "No workspaces found matching your search criteria."
@@ -12697,6 +12738,9 @@ msgstr "Nod"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -12706,6 +12750,7 @@ msgstr "Nod"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
+#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -12728,6 +12773,7 @@ msgid "Not available for default view"
 msgstr "Inte tillgänglig i standardvyn"
 
 #. js-lingui-id: 0qBE9S
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -13998,6 +14044,11 @@ msgstr "Föregående"
 #: src/modules/ai/utils/groupThreadsByDate.ts
 msgid "Previous 7 days"
 msgstr "Föregående 7 dagar"
+
+#. js-lingui-id: KaMwgJ
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
+msgid "Previous period"
+msgstr ""
 
 #. js-lingui-id: aHCEmh
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -15513,6 +15564,7 @@ msgstr "sök fältmetadata"
 
 #. js-lingui-id: 7taA9j
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
@@ -16320,6 +16372,7 @@ msgid "Show hidden objects"
 msgstr "Visa dolda objekt"
 
 #. js-lingui-id: fMPkxb
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show more"
 msgstr "Visa mer"
@@ -16594,6 +16647,7 @@ msgid "Something went wrong while loading logs. Please try again."
 msgstr "Något gick fel när loggarna laddades. Försök igen."
 
 #. js-lingui-id: yHwG3y
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/settings/components/SettingsCard.tsx
@@ -19787,6 +19841,7 @@ msgstr "Webbplats"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Week"
 msgstr "Vecka"

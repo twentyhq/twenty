@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -6,11 +6,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/application.input';
 import { type DevelopmentApplicationDTO } from 'src/engine/core-modules/application/application-development/dtos/development-application.dto';
 import { type WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
+import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
-import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
-import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
+import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import {
@@ -22,9 +22,8 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { type FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
-import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const APP_DEV_RATE_LIMIT_MAX = 30;
 const APP_DEV_RATE_LIMIT_WINDOW_MS = 30_000;
@@ -41,15 +40,16 @@ const ALLOWED_APPLICATION_FILE_FOLDERS: FileFolder[] = [
 
 @Injectable()
 export class ApplicationDevelopmentService {
+  private readonly logger = new Logger(ApplicationDevelopmentService.name);
+
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly applicationSyncService: ApplicationSyncService,
+    private readonly applicationManifestApplyService: ApplicationManifestApplyService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
-    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
+    private readonly applicationRegistrationAssetService: ApplicationRegistrationAssetService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly fileStorageService: FileStorageService,
-    private readonly sdkClientGenerationService: SdkClientGenerationService,
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly throttlerService: ThrottlerService,
     private readonly cacheLockService: CacheLockService,
   ) {}
@@ -231,29 +231,18 @@ export class ApplicationDevelopmentService {
       );
     }
 
-    const isFirstSync = !isDefined(application.version);
-
-    const { workspaceMigration, hasSchemaMetadataChanged } =
-      await this.applicationSyncService.synchronizeFromManifest({
+    const { workspaceMigration } =
+      await this.applicationManifestApplyService.applyManifestToWorkspace({
         workspaceId,
         manifest,
         applicationRegistrationId,
+        application,
       });
-
-    if (isFirstSync || hasSchemaMetadataChanged) {
-      await this.sdkClientGenerationService.generateSdkClientForApplication({
-        workspaceId,
-        applicationId: application.id,
-        applicationUniversalIdentifier:
-          manifest.application.universalIdentifier,
-      });
-    }
 
     await this.syncRegistrationMetadata(
       applicationRegistrationId,
       manifest,
       workspaceId,
-      application.id,
     );
 
     return {
@@ -297,44 +286,63 @@ export class ApplicationDevelopmentService {
     applicationRegistrationId: string,
     manifest: ApplicationInput['manifest'],
     workspaceId: string,
-    applicationId: string,
   ): Promise<void> {
-    const registration =
-      await this.applicationRegistrationService.findOneByIdGlobal(
-        applicationRegistrationId,
+    const hasRefreshedRegistration =
+      await this.applicationManifestApplyService.refreshRegistrationFromManifest(
+        {
+          applicationRegistrationId,
+          manifest,
+          sourceType: ApplicationRegistrationSourceType.LOCAL,
+          onlyIfOwnedByWorkspaceId: workspaceId,
+        },
       );
 
-    // The registration is instance-global: for catalog-synced (npm) apps it is
-    // the marketplace entry and OAuth identity shared by every workspace, so
-    // dev-mode sync must not overwrite its manifest or flip its sourceType.
-    // Only registrations owned by the syncing workspace (and not npm-sourced)
-    // reflect local dev state.
-    if (
-      registration.sourceType === ApplicationRegistrationSourceType.NPM ||
-      registration.ownerWorkspaceId !== workspaceId
-    ) {
+    if (!hasRefreshedRegistration) {
       return;
     }
 
-    const serverUrl = this.twentyConfigService.get('SERVER_URL');
-
-    const manifestWithResolvedUrls = resolveManifestAssetUrls(
-      manifest,
-      (filePath) =>
-        `${serverUrl}/public-assets/${workspaceId}/${applicationId}/${filePath}`,
-    );
-
-    await this.applicationRegistrationService.updateFromManifest({
+    // Public assets are uploaded to workspace storage before the sync, so the
+    // logo and gallery images can be copied into the registration's
+    // instance-global server files here.
+    await this.applicationRegistrationAssetService.storeRegistrationAssets({
       applicationRegistrationId,
-      manifest: manifestWithResolvedUrls,
-      sourceType: ApplicationRegistrationSourceType.LOCAL,
+      manifestApplication: manifest.application,
+      readAsset: (path) =>
+        this.readPublicAssetFromWorkspaceStorage({
+          workspaceId,
+          applicationUniversalIdentifier:
+            manifest.application.universalIdentifier,
+          path,
+        }),
     });
+  }
 
-    if (manifest.application.serverVariables) {
-      await this.applicationRegistrationVariableService.syncVariableSchemas(
-        applicationRegistrationId,
-        manifest.application.serverVariables,
+  private async readPublicAssetFromWorkspaceStorage({
+    workspaceId,
+    applicationUniversalIdentifier,
+    path,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+    path: string;
+  }): Promise<Buffer | null> {
+    try {
+      const stream = await this.fileStorageService.readFile({
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.PublicAsset,
+        resourcePath: path,
+      });
+
+      return await streamToBuffer(stream);
+    } catch (error) {
+      // A missing or unreadable asset must not fail the whole dev sync; the
+      // registration keeps its previously stored file for that path, if any.
+      this.logger.warn(
+        `Could not read public asset "${path}" for application ${applicationUniversalIdentifier}: ${error.message}`,
       );
+
+      return null;
     }
   }
 }

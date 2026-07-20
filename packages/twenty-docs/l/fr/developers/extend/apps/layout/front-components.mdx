@@ -4,7 +4,7 @@ description: Créez des composants React qui s’affichent dans l’interface ut
 icon: window-maximize
 ---
 
-Les composants frontaux sont des composants React qui s'affichent directement dans l'interface utilisateur de Twenty. Ils s'exécutent dans un **Web Worker isolé** en utilisant Remote DOM — votre code est isolé mais s'affiche nativement dans la page, pas dans un iframe.
+Les composants frontaux sont des composants React qui s'affichent directement dans l'interface utilisateur de Twenty. Ils s'exécutent dans un **Web Worker isolé** en utilisant Remote DOM — votre code s'exécute dans un iframe à origine opaque et sandboxé, mais son interface utilisateur continue de s'afficher nativement dans la page plutôt que d'être confinée à cet iframe.
 
 ## Où les composants frontaux peuvent être utilisés
 
@@ -120,7 +120,7 @@ Importez-les depuis `twenty-sdk/front-component` :
 * **`Command`** — Exécute un callback asynchrone via la prop `execute`.
 * **`CommandLink`** — Navigue vers un chemin d'application. Props : `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — Ouvre une fenêtre modale de confirmation. Si l'utilisateur confirme, exécute le callback `execute`. Props : `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Ouvre une page du panneau latéral. Les propriétés dépendent de `page` — par exemple, `ViewRecord` accepte `recordId` + `objectNameSingular`, les autres pages acceptent `pageTitle` + `pageIcon`.
+* **`CommandOpenSidePanelPage`** — Ouvre une page du panneau latéral. Les propriétés dépendent de `page` — par exemple, `ViewRecord` accepte `recordId` + `objectNameSingular` (plus un identifiant `tab` facultatif pour ouvrir l’enregistrement dans un onglet spécifique), les autres pages acceptent `pageTitle` + `pageIcon`.
 
 Voici un exemple complet d'un composant frontal headless utilisant `Command` pour exécuter une action depuis le menu de commande :
 
@@ -194,33 +194,64 @@ export default defineFrontComponent({
 });
 ```
 
+Et un exemple utilisant `CommandOpenSidePanelPage` pour ouvrir l’enregistrement actuel dans le panneau latéral sur un onglet spécifique. `tab` est un identifiant d’onglet de mise en page (les mises en page par défaut utilisent des identifiants comme `company-tab-emails` ou `company-tab-timeline` ; les mises en page personnalisées utilisent l’identifiant propre de l’onglet). Si l’identifiant n’existe pas dans la mise en page de l’enregistrement, l’onglet par défaut s’ouvre à la place :
+
+```tsx src/front-components/open-company-emails.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  CommandOpenSidePanelPage,
+  SidePanelPages,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const OpenCompanyEmails = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+
+  if (!recordId) {
+    return null;
+  }
+
+  return (
+    <CommandOpenSidePanelPage
+      page={SidePanelPages.ViewRecord}
+      recordId={recordId}
+      objectNameSingular="company"
+      tab="company-tab-emails"
+      resetNavigationStack={false}
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+  name: 'open-company-emails',
+  description: 'Opens the current company on its Emails tab',
+  component: OpenCompanyEmails,
+  isHeadless: true,
+});
+```
+
 ## Appel d’une fonction logique
 
-Les composants front s’exécutent côté navigateur dans un Web Worker isolé (sandboxed), tandis que les [fonctions logiques](/l/fr/developers/extend/apps/logic/logic-functions) s’exécutent côté serveur. Il n’y a aucun appel intra-processus direct entre les deux — à la place, un composant front appelle une fonction logique via HTTP.
+Les composants front s'exécutent côté navigateur dans un Web Worker isolé (sandboxé) à l'intérieur d'un iframe à origine opaque, tandis que les [fonctions logiques](/l/fr/developers/extend/apps/logic/logic-functions) s'exécutent côté serveur. Il n’y a aucun appel intra-processus direct entre les deux — à la place, un composant front appelle une fonction logique via HTTP.
 
-Une fonction logique déclarée avec `httpRouteTriggerSettings` est accessible via HTTP à son chemin de route. Twenty injecte dans le worker l’URL de base à partir de laquelle vos fonctions sont servies sous la forme de `TWENTY_FUNCTIONS_URL`, ainsi que le `TWENTY_APP_ACCESS_TOKEN` qui authentifie l’appel. Il n’existe pas encore de client SDK dédié pour invoquer vos propres fonctions, donc appelez-les avec un simple `fetch` :
+Une fonction logique déclarée avec `httpRouteTriggerSettings` est accessible via HTTP à son chemin de route. `RestApiClient` traite les chemins commençant par `/s/` comme des routes d’application, les résout vers l’URL à partir de laquelle vos fonctions sont servies et les authentifie avec `TWENTY_APP_ACCESS_TOKEN`.
 
-> **Sur Twenty Cloud, les fonctions logiques déclenchées par HTTP sont servies sur un domaine dédié par espace de travail** à l’adresse `https://\<your-workspace-subdomain>.withtwenty.com\<path>` — c’est exactement ce à quoi `TWENTY_FUNCTIONS_URL` correspond. Pour les appelants externes, copiez l’URL exacte à partir des paramètres **HTTP trigger** de la fonction ou de l’onglet **Settings** de l’application.
-
-<Warning>
-  L’ancienne route de fonction `/s/` est **obsolète** et sera **désactivée le 2026-07-24**. Utilisez plutôt `TWENTY_FUNCTIONS_URL` (ci-dessus), et migrez toutes les URL `/s/` en dur avant cette date. La route `/s/` reste disponible pour l’auto-hébergement.
-</Warning>
+> **Sur Twenty Cloud, les fonctions logiques déclenchées par HTTP sont servies sur un domaine dédié par espace de travail** à l’adresse `https://\<your-workspace-subdomain>.withtwenty.com\<path>`. Pour les appelants externes, copiez l’URL exacte à partir des paramètres **HTTP trigger** de la fonction ou de l’onglet **Settings** de l’application.
 
 Un composant front sans interface (headless) peut effectuer l’appel au montage via le composant `Command`, puis se démonter automatiquement :
 
 ```tsx src/front-components/sync-prs.tsx
+import { RestApiClient } from 'twenty-client-sdk/rest';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/front-component';
 
 const SyncPrs = () => {
   const execute = async () => {
-    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
+    await new RestApiClient().post('/s/github/fetch-prs', {
+      owner: 'twentyhq',
+      repo: 'twenty',
     });
   };
 
@@ -236,7 +267,7 @@ export default defineFrontComponent({
 });
 ```
 
-Le chemin ajouté à `TWENTY_FUNCTIONS_URL` correspond au `httpRouteTriggerSettings.path` de la fonction logique. Conservez `isAuthRequired: true` ; le `TWENTY_APP_ACCESS_TOKEN` que Twenty génère pour votre composant authentifie la requête :
+Le chemin transmis à `RestApiClient` est la propriété `httpRouteTriggerSettings.path` de la fonction logique, préfixée par `/s`. Conservez `isAuthRequired: true` ; le `TWENTY_APP_ACCESS_TOKEN` que Twenty génère pour votre composant authentifie la requête :
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -261,21 +292,22 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_FUNCTIONS_URL` et `TWENTY_APP_ACCESS_TOKEN` sont injectés automatiquement — voir [Variables d’application](#application-variables). Comme les variables d’application secrètes ne sont jamais exposées aux composants front, conservez les clés d’API et les autres éléments sensibles dans la fonction logique, et non dans le composant front.
+`TWENTY_APP_ACCESS_TOKEN` est injecté automatiquement — voir [Variables d’application](#application-variables). Comme les variables d’application secrètes ne sont jamais exposées aux composants front, conservez les clés d’API et les autres éléments sensibles dans la fonction logique, et non dans le composant front.
 </Note>
 
 ### Appeler l’API REST de Twenty
 
-Pour lire ou écrire des enregistrements Twenty depuis un composant frontal, utilisez `RestApiClient` depuis `twenty-client-sdk/rest`. Il appartient à la même famille de clients que `CoreApiClient` et `MetadataApiClient`, mais cible l’API REST de Twenty (`/rest/...`) plutôt que l’API GraphQL, en lisant son URL de base depuis `TWENTY_API_URL`.
+Pour appeler des routes HTTP d’application ou lire et écrire des enregistrements Twenty depuis un composant frontal, utilisez `RestApiClient` depuis `twenty-client-sdk/rest`. Il envoie les chemins `/s/...` vers l’URL de base des fonctions de votre espace de travail et tous les autres chemins, y compris `/rest/...`, vers `TWENTY_API_URL`.
 
-| Méthode                           | Description                                          |
-| --------------------------------- | ---------------------------------------------------- |
-| `get(path, options?)`             | Envoie une requête `GET`                             |
-| `post(path, body?, options?)`     | Envoie une requête `POST`                            |
-| `put(path, body?, options?)`      | Envoie une requête `PUT`                             |
-| `patch(path, body?, options?)`    | Envoie une requête `PATCH`                           |
-| `delete(path, options?)`          | Envoie une requête `DELETE`                          |
-| `request(method, path, options?)` | Requête générique avec n’importe quelle méthode HTTP |
+| Méthode                           | Description                                                                     |
+| --------------------------------- | ------------------------------------------------------------------------------- |
+| `get(path, options?)`             | Envoie une requête `GET`                                                        |
+| `post(path, body?, options?)`     | Envoie une requête `POST`                                                       |
+| `put(path, body?, options?)`      | Envoie une requête `PUT`                                                        |
+| `patch(path, body?, options?)`    | Envoie une requête `PATCH`                                                      |
+| `delete(path, options?)`          | Envoie une requête `DELETE`                                                     |
+| `request(method, path, options?)` | Requête générique avec n’importe quelle méthode HTTP                            |
+| `resolveUrl(path, options?)`      | Résout un chemin vers son URL complète sans envoyer de requête (pour les liens) |
 
 `options` accepte `headers`, `query` (un enregistrement de paramètres de chaîne de requête ; les valeurs nullish sont ignorées), et un `AbortSignal` via `signal`. Un objet `body` qui n’est pas de type `FormData` est automatiquement sérialisé en JSON. Sur un `401`, le client actualise une fois le jeton d’accès via l’hôte puis retente la requête.
 
@@ -379,11 +411,22 @@ Les variables secrètes (`isSecret: true`) ne sont **pas** exposées aux composa
 
 Les variables système suivantes sont toujours disponibles via `process.env` :
 
-| Variable                  | Description                                                                                      |
-| ------------------------- | ------------------------------------------------------------------------------------------------ |
-| `TWENTY_FUNCTIONS_URL`    | URL de base à partir de laquelle les fonctions de logique HTTP de votre application sont servies |
-| `TWENTY_API_URL`          | URL de base de l’API principale de Twenty                                                        |
-| `TWENTY_APP_ACCESS_TOKEN` | Jeton de courte durée limité au rôle de votre application                                        |
+| Variable                  | Description                                               |
+| ------------------------- | --------------------------------------------------------- |
+| `TWENTY_API_URL`          | URL de base de l’API principale de Twenty                 |
+| `TWENTY_APP_ACCESS_TOKEN` | Jeton de courte durée limité au rôle de votre application |
+
+### `TWENTY_FUNCTIONS_URL`
+
+Twenty injecte également `TWENTY_FUNCTIONS_URL` dans les composants frontaux et les fonctions logiques : l’URL de base à partir de laquelle les fonctions logiques déclenchées par HTTP de votre application sont servies.
+
+Elle existe parce que cette URL n’est pas toujours le serveur Twenty lui-même. Sur Twenty Cloud, les routes d’application sont servies sur un domaine dédié par espace de travail (`https://\<your-workspace-subdomain>.withtwenty.com`, ou le domaine public principal de l’application lorsqu’il est configuré) afin que les réponses créées par l’application s’exécutent sur une origine isolée plutôt que sur l’origine de l’application Twenty. Les instances auto-hébergées et locales servent les routes d’application sous le préfixe `/s` sur le serveur lui-même et peuvent ne pas définir la variable du tout. Comme l’URL de base varie selon l’espace de travail et l’instance, votre code ne peut pas la coder en dur — le serveur injecte la bonne valeur à l’exécution.
+
+Vous avez rarement besoin de la lire directement. Appelez vos routes via `RestApiClient` avec un chemin préfixé par `/s/` et le client résout l’URL pour vous : il retire le préfixe `/s` et cible `TWENTY_FUNCTIONS_URL`, en revenant à `\<TWENTY_API_URL>/s` lorsque la variable n’est pas définie. Utilisez `resolveUrl('/s/\<path>')` pour obtenir l’URL absolue sans envoyer de requête, par exemple pour un lien. Lisez la variable directement uniquement lorsque vous construisez une URL manuellement :
+
+```ts
+const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL}/s`}/documents/generate`;
+```
 
 ## API de communication de l'hôte
 

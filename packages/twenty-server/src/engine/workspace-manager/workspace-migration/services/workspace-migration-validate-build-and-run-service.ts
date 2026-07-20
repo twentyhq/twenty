@@ -19,7 +19,10 @@ import {
   IdByUniversalIdentifierByMetadataName,
 } from 'src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util';
 import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-build-orchestrator.service';
-import { WorkspaceMigrationFlatEntityMapsService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-flat-entity-maps.service';
+import {
+  FlatEntityMapsBundle,
+  WorkspaceMigrationFlatEntityMapsService,
+} from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-flat-entity-maps.service';
 import {
   WorkspaceMigrationOrchestratorBuildArgs,
   WorkspaceMigrationOrchestratorFailedResult,
@@ -42,6 +45,21 @@ type ValidateBuildAndRunWorkspaceMigrationFromRecordArgs = {
   applicationUniversalIdentifier: string;
   dryRun?: boolean;
 };
+
+type ValidateBuildAndRunWorkspaceMigrationFromRecordInternalArgs =
+  ValidateBuildAndRunWorkspaceMigrationFromRecordArgs & {
+    // Skips the metadata side-effect engine (expandWithSideEffects) and applies the
+    // matrix literally. Only the deprecated legacy path sets this to true.
+    skipSideEffectExpandEngine: boolean;
+  };
+
+type ComputeAndRunWorkspaceMigrationFromResolvedOperationsArgs = {
+  workspaceId: string;
+  allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
+  isSystemBuild: boolean;
+  applicationUniversalIdentifier: string;
+  dryRun?: boolean;
+} & FlatEntityMapsBundle;
 
 @Injectable()
 export class WorkspaceMigrationValidateBuildAndRunService {
@@ -185,13 +203,60 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     });
   }
 
-  public async validateBuildAndRunWorkspaceMigrationFromRecord({
+  public async validateBuildAndRunWorkspaceMigrationFromRecord(
+    args: ValidateBuildAndRunWorkspaceMigrationFromRecordArgs,
+  ): Promise<
+    | WorkspaceMigrationOrchestratorFailedResult
+    | (WorkspaceMigrationOrchestratorSuccessfulResult & {
+        hasSchemaMetadataChanged: boolean;
+      })
+  > {
+    return await this.validateBuildAndRunWorkspaceMigrationFromRecordInternal({
+      ...args,
+      skipSideEffectExpandEngine: false,
+    });
+  }
+
+  /**
+   * @deprecated Legacy path for upgrade commands authored before the metadata
+   * side-effect engine landed in v2.19. These commands declare their operation
+   * matrix literally and must not flow through expandWithSideEffects, which
+   * would inject engine-owned companions and collide on reserved identifiers.
+   * See packages/twenty-server/docs/UPGRADE_COMMANDS.md.
+   */
+  public async validateBuildAndRunLegacyWorkspaceMigration({
+    allFlatEntityOperationByMetadataName,
+    workspaceId,
+    isSystemBuild = false,
+    applicationUniversalIdentifier,
+    dryRun,
+  }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
+    | WorkspaceMigrationOrchestratorFailedResult
+    | (WorkspaceMigrationOrchestratorSuccessfulResult & {
+        hasSchemaMetadataChanged: boolean;
+      })
+  > {
+    return await this.validateBuildAndRunWorkspaceMigrationFromRecordInternal({
+      allFlatEntityOperationRecordByMetadataName:
+        transpileFlatEntityOperationArrayToRecord(
+          allFlatEntityOperationByMetadataName,
+        ),
+      workspaceId,
+      isSystemBuild,
+      applicationUniversalIdentifier,
+      dryRun,
+      skipSideEffectExpandEngine: true,
+    });
+  }
+
+  private async validateBuildAndRunWorkspaceMigrationFromRecordInternal({
     allFlatEntityOperationRecordByMetadataName,
     workspaceId,
     isSystemBuild = false,
     applicationUniversalIdentifier,
     dryRun,
-  }: ValidateBuildAndRunWorkspaceMigrationFromRecordArgs): Promise<
+    skipSideEffectExpandEngine,
+  }: ValidateBuildAndRunWorkspaceMigrationFromRecordInternalArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
     | (WorkspaceMigrationOrchestratorSuccessfulResult & {
         hasSchemaMetadataChanged: boolean;
@@ -213,19 +278,55 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         },
       );
 
-    const sideEffectExpansionResult =
-      this.metadataSideEffectEngineService.expandWithSideEffects({
-        allFlatEntityOperationRecordByMetadataName,
-        sideEffectRelatedFlatEntityMaps: allRelatedFlatEntityMaps,
-        context: {
-          buildOptions: { isSystemBuild, applicationUniversalIdentifier },
-        },
-      });
+    let resolvedFlatEntityOperationRecordByMetadataName =
+      allFlatEntityOperationRecordByMetadataName;
 
-    if (sideEffectExpansionResult.status === 'fail') {
-      return sideEffectExpansionResult;
+    if (!skipSideEffectExpandEngine) {
+      const sideEffectExpansionResult =
+        this.metadataSideEffectEngineService.expandWithSideEffects({
+          allFlatEntityOperationRecordByMetadataName,
+          sideEffectRelatedFlatEntityMaps: allRelatedFlatEntityMaps,
+          context: {
+            buildOptions: { isSystemBuild, applicationUniversalIdentifier },
+          },
+        });
+
+      if (sideEffectExpansionResult.status === 'fail') {
+        return sideEffectExpansionResult;
+      }
+
+      resolvedFlatEntityOperationRecordByMetadataName =
+        sideEffectExpansionResult.allFlatEntityOperationRecordByMetadataName;
     }
 
+    return await this.computeAndRunWorkspaceMigrationFromResolvedOperations({
+      allFlatEntityOperationRecordByMetadataName:
+        resolvedFlatEntityOperationRecordByMetadataName,
+      workspaceId,
+      isSystemBuild,
+      applicationUniversalIdentifier,
+      dryRun,
+      flatApplicationMaps,
+      allRelatedFlatEntityMaps,
+      allMetadataNameCacheToCompute,
+    });
+  }
+
+  private async computeAndRunWorkspaceMigrationFromResolvedOperations({
+    allFlatEntityOperationRecordByMetadataName,
+    workspaceId,
+    isSystemBuild,
+    applicationUniversalIdentifier,
+    dryRun,
+    flatApplicationMaps,
+    allRelatedFlatEntityMaps,
+    allMetadataNameCacheToCompute,
+  }: ComputeAndRunWorkspaceMigrationFromResolvedOperationsArgs): Promise<
+    | WorkspaceMigrationOrchestratorFailedResult
+    | (WorkspaceMigrationOrchestratorSuccessfulResult & {
+        hasSchemaMetadataChanged: boolean;
+      })
+  > {
     const {
       fromToAllFlatEntityMaps,
       inferDeletionFromMissingEntities,
@@ -235,8 +336,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     } =
       this.workspaceMigrationFlatEntityMapsService.computeFromToAllFlatEntityMapsAndBuildOptions(
         {
-          allFlatEntityOperationRecordByMetadataName:
-            sideEffectExpansionResult.allFlatEntityOperationRecordByMetadataName,
+          allFlatEntityOperationRecordByMetadataName,
           applicationUniversalIdentifier,
           flatApplicationMaps,
           allRelatedFlatEntityMaps,

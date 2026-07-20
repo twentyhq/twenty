@@ -1,7 +1,7 @@
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -43,7 +43,7 @@ const TEXT_AGENT_DEFAULT_OUTPUT_SCHEMA = {
   description:
     'Migrate AI agents with text response format to JSON with a default response field',
 })
-export class MigrateAiAgentTextToJsonResponseFormatCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class MigrateAiAgentTextToJsonResponseFormatCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
@@ -129,7 +129,7 @@ export class MigrateAiAgentTextToJsonResponseFormatCommand extends ActiveOrSuspe
       );
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             agent: {
