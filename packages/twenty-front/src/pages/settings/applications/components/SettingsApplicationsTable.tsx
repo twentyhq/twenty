@@ -13,7 +13,7 @@ import {
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
 import { useContext, useState } from 'react';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
-import { isDetachedLocalApplication } from '~/pages/settings/applications/utils/isDetachedLocalApplication';
+import { isLocalApplicationVersion } from '~/pages/settings/applications/utils/isLocalApplicationVersion';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 import { Section } from 'twenty-ui/layout';
@@ -93,16 +93,15 @@ export const SettingsApplicationsTable = ({
             const latestVersion =
               application.applicationRegistration?.latestAvailableVersion;
 
-            const isDetachedLocal = isDetachedLocalApplication({
-              applicationSourceType: application.sourceType,
-              registrationSourceType,
-            });
+            const isLocalDetached = isLocalApplicationVersion(
+              application.version,
+            );
 
             const hasUpdate =
               isUpgradableApplicationSourceType(registrationSourceType) &&
               isDefined(latestVersion) &&
               isDefined(application.version) &&
-              (isDetachedLocal ||
+              (isLocalDetached ||
                 isNewerSemver(latestVersion, application.version));
 
             return (

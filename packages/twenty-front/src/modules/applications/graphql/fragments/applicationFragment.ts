@@ -13,7 +13,6 @@ export const APPLICATION_FRAGMENT = gql`
     description
     logo
     version
-    sourceType
     universalIdentifier
     applicationRegistrationId
     applicationRegistration {

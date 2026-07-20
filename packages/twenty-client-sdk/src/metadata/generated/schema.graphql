@@ -652,7 +652,6 @@ type Application {
   logo: String
   logoFileId: UUID
   version: String
-  sourceType: ApplicationRegistrationSourceType!
   universalIdentifier: String!
   packageJsonChecksum: String
   packageJsonFileId: UUID

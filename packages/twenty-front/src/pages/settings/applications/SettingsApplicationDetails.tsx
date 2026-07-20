@@ -39,7 +39,7 @@ import {
   PermissionFlagType,
   UninstallApplicationDocument,
 } from '~/generated-metadata/graphql';
-import { isDetachedLocalApplication } from '~/pages/settings/applications/utils/isDetachedLocalApplication';
+import { isLocalApplicationVersion } from '~/pages/settings/applications/utils/isLocalApplicationVersion';
 import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
@@ -122,19 +122,17 @@ export const SettingsApplicationDetails = () => {
     detail?.latestAvailableVersion ??
     application?.applicationRegistration?.latestAvailableVersion;
 
-  // A local dev apply detaches the installation from its registration, so the
-  // upgrade button is offered to re-attach it to the latest published version
-  // regardless of the (local) version string's semver comparison.
-  const isDetachedLocal = isDetachedLocalApplication({
-    applicationSourceType: application?.sourceType,
-    registrationSourceType: sourceType,
-  });
+  // A local dev apply stores its version tagged "(local)", detaching the
+  // installation from its registration. The upgrade button is then offered to
+  // re-attach it to the latest published version regardless of the semver
+  // comparison against that tagged version.
+  const isLocalDetached = isLocalApplicationVersion(currentVersion);
 
   const hasUpdate =
     isUpgradableApplicationSourceType(sourceType) &&
     isDefined(latestAvailableVersion) &&
     isDefined(currentVersion) &&
-    (isDetachedLocal || isNewerSemver(latestAvailableVersion, currentVersion));
+    (isLocalDetached || isNewerSemver(latestAvailableVersion, currentVersion));
 
   const handleUpgrade = async () => {
     if (!isDefined(registrationId) || !isDefined(latestAvailableVersion)) {

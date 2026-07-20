@@ -2,7 +2,6 @@ import { renderHook } from '@testing-library/react';
 
 import { useComputeObjectAndFieldsContentForApplication } from '@/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication';
 import { type Manifest } from 'twenty-shared/application';
-import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
@@ -37,7 +36,6 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         agents: [],
         logicFunctions: [],
         frontComponents: [],
-        sourceType: ApplicationRegistrationSourceType.LOCAL,
       };
 
       const { result } = renderHook(
@@ -69,7 +67,6 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         agents: [],
         logicFunctions: [],
         frontComponents: [],
-        sourceType: ApplicationRegistrationSourceType.LOCAL,
       };
 
       const { result } = renderHook(
@@ -99,7 +96,6 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         agents: [],
         logicFunctions: [],
         frontComponents: [],
-        sourceType: ApplicationRegistrationSourceType.LOCAL,
       };
 
       const { result } = renderHook(
@@ -130,7 +126,6 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         agents: [],
         logicFunctions: [],
         frontComponents: [],
-        sourceType: ApplicationRegistrationSourceType.LOCAL,
       };
 
       const { result } = renderHook(
@@ -289,7 +284,6 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         agents: [],
         logicFunctions: [],
         frontComponents: [],
-        sourceType: ApplicationRegistrationSourceType.LOCAL,
       };
 
       const manifestContent = {
