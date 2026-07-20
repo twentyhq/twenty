@@ -990,8 +990,8 @@ __metadata:
     oxlint: "npm:^0.16.0"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
-    twenty-client-sdk: "npm:^2.16.0"
-    twenty-sdk: "npm:^2.16.0"
+    twenty-client-sdk: "npm:^2.22.0"
+    twenty-sdk: "npm:^2.22.0"
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^4.0.0"
@@ -3003,22 +3003,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:2.16.0, twenty-client-sdk@npm:^2.16.0":
-  version: 2.16.0
-  resolution: "twenty-client-sdk@npm:2.16.0"
+"twenty-client-sdk@npm:2.22.0, twenty-client-sdk@npm:^2.22.0":
+  version: 2.22.0
+  resolution: "twenty-client-sdk@npm:2.22.0"
   dependencies:
     "@genql/runtime": "npm:^2.10.0"
     esbuild: "npm:^0.28.1"
     graphql: "npm:^16.8.1"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.8.3"
-  checksum: 10c0/f990220bec103a04ca50dc8bb38c295e94a4e51b27a3188f4a0ae515c204b76bf87f5591739eb705b97e7aa5a9aa6a215d0d4da05297e50a0392801ea64a2234
+  checksum: 10c0/da0a722b76b06f526fc0ef49e16a09b75efff299610aba6bd7f8362c21ec407e5aea65398aaaf8a815a1040d6f0f7615110b57879c5b40ca472c30a7c8517e79
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:^2.16.0":
-  version: 2.16.0
-  resolution: "twenty-sdk@npm:2.16.0"
+"twenty-sdk@npm:^2.22.0":
+  version: 2.22.0
+  resolution: "twenty-sdk@npm:2.22.0"
   dependencies:
     "@sniptt/guards": "npm:^0.2.0"
     axios: "npm:^1.16.0"
@@ -3037,12 +3037,12 @@ __metadata:
     semver: "npm:7.6.3"
     sharp: "npm:^0.34.5"
     tinyglobby: "npm:^0.2.15"
-    twenty-client-sdk: "npm:2.16.0"
+    twenty-client-sdk: "npm:2.22.0"
     typescript: "npm:^5.9.3"
     uuid: "npm:^13.0.2"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/528f275f8bda022061a52c3563af514d2257f291fc5a232be90ca6011c50ff18a250984b6c68fc8e4c690644c92e1ccb0b89c511b8a19d832455c8860f2751a8
+  checksum: 10c0/49410bee296073a57c99d27a29187f80fcc7384e8053793d9b563ee3337d4b6e2a8a9cd55b4ceac88384ac58660b503508884fed20d5242c8a2c54d42d6f1e35
   languageName: node
   linkType: hard
 
