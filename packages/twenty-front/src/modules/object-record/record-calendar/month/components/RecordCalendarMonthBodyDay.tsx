@@ -19,7 +19,7 @@ import {
 import { RecordCalendarAddNew } from '@/object-record/record-calendar/components/RecordCalendarAddNew';
 import { RECORD_CALENDAR_CARD_DND_TYPE } from '@/object-record/record-calendar/month/constants/RecordCalendarCardDndType';
 import { DND_KIT_COLLISION_PRIORITY } from '@/ui/utilities/drag-and-drop/constants/DndKitCollisionPriority';
-import { DragDropColumnDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropColumnDropTarget';
+import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{
@@ -163,7 +163,7 @@ export const RecordCalendarMonthBodyDay = ({
       <StyledCardsContainer ref={dropRef} isDraggedOver={isDropTarget}>
         {visibleRecordIds.map((recordId, index) => (
           <Fragment key={`${recordId}-${dayKey}`}>
-            <DragDropColumnDropTarget
+            <DragDropItemDropTarget
               index={index}
               droppableId={dayKey}
               orientation="horizontal"
@@ -176,7 +176,7 @@ export const RecordCalendarMonthBodyDay = ({
             />
           </Fragment>
         ))}
-        <DragDropColumnDropTarget
+        <DragDropItemDropTarget
           index={visibleRecordIds.length}
           droppableId={dayKey}
           orientation="horizontal"

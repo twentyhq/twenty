@@ -4,8 +4,8 @@ import type { ReactNode } from 'react';
 import { RecordBoardCardDragOverlayContent } from '@/object-record/record-board/record-board-card/components/RecordBoardCardDragOverlayContent';
 import { useRecordBoardDndKit } from '@/object-record/record-board/record-board-dnd/hooks/useRecordBoardDndKit';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
-import { DragDropColumnDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropColumnDndContext';
-import { type DragDropColumnData } from '@/ui/utilities/drag-and-drop/types/DragDropColumnData';
+import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
+import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 
 type RecordBoardDndKitProviderProps = {
   children: ReactNode;
@@ -17,8 +17,8 @@ export const RecordBoardDndKitProvider = ({
   const { contextValues, handlers } = useRecordBoardDndKit();
 
   return (
-    <DragDropColumnDndContext.Provider value={contextValues}>
-      <DragDropProvider<DragDropColumnData>
+    <DragDropItemDndContext.Provider value={contextValues}>
+      <DragDropProvider<DragDropItemData>
         sensors={DND_KIT_SENSORS}
         onDragStart={handlers.onDragStart}
         onDragMove={handlers.onDragMove}
@@ -29,6 +29,6 @@ export const RecordBoardDndKitProvider = ({
           {(source) => <RecordBoardCardDragOverlayContent source={source} />}
         </DragOverlay>
       </DragDropProvider>
-    </DragDropColumnDndContext.Provider>
+    </DragDropItemDndContext.Provider>
   );
 };

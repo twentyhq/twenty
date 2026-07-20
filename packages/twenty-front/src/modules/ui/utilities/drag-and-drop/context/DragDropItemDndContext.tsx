@@ -1,12 +1,12 @@
 import { createContext } from 'react';
 
-type DragDropColumnDndContextValue = {
+type DragDropItemDndContextValue = {
   activeDropTargetIndex: number | null;
   activeDroppableId?: string | null;
 };
 
-export const DragDropColumnDndContext =
-  createContext<DragDropColumnDndContextValue>({
+export const DragDropItemDndContext =
+  createContext<DragDropItemDndContextValue>({
     activeDropTargetIndex: null,
     activeDroppableId: null,
   });

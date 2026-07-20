@@ -3,9 +3,9 @@ import type { ReactNode } from 'react';
 
 import { useRecordBoardColumnDndKit } from '@/object-record/record-board/record-board-column/dnd/hooks/useRecordBoardColumnDndKit';
 import { RecordGroupReorderConfirmationModal } from '@/object-record/record-group/components/RecordGroupReorderConfirmationModal';
-import { DragDropColumnDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropColumnDndContext';
+import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
-import { type DragDropColumnData } from '@/ui/utilities/drag-and-drop/types/DragDropColumnData';
+import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 
 type RecordBoardColumnDndKitProviderProps = {
   children: ReactNode;
@@ -19,8 +19,8 @@ export const RecordBoardColumnDndKitProvider = ({
 
   return (
     <>
-      <DragDropColumnDndContext.Provider value={contextValues}>
-        <DragDropProvider<DragDropColumnData>
+      <DragDropItemDndContext.Provider value={contextValues}>
+        <DragDropProvider<DragDropItemData>
           sensors={DND_KIT_SENSORS}
           onDragStart={handlers.onDragStart}
           onDragMove={handlers.onDragMove}
@@ -28,7 +28,7 @@ export const RecordBoardColumnDndKitProvider = ({
         >
           {children}
         </DragDropProvider>
-      </DragDropColumnDndContext.Provider>
+      </DragDropItemDndContext.Provider>
       <RecordGroupReorderConfirmationModal
         onConfirmClick={handlePendingReorderConfirmClick}
       />

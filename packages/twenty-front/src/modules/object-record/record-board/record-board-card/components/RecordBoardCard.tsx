@@ -50,7 +50,7 @@ const StyledBoardCardWrapper = styled.div`
 `;
 
 export const RecordBoardCard = () => {
-  const { recordId, rowIndex, columnIndex } = useContext(
+  const { recordId, rowIndex, columnIndex, isDragOverlay } = useContext(
     RecordBoardCardContext,
   );
 
@@ -192,8 +192,12 @@ export const RecordBoardCard = () => {
               </AnimatedEaseInOut>
             </RecordCard>
           </StyledCardContainer>
-          <RecordBoardCardCellHoveredPortal />
-          <RecordBoardCardCellEditModePortal />
+          {!isDragOverlay && (
+            <>
+              <RecordBoardCardCellHoveredPortal />
+              <RecordBoardCardCellEditModePortal />
+            </>
+          )}
         </StyledBoardCardWrapper>
       </RecordFieldsScopeContextProvider>
     </RecordBoardCardComponentInstanceContext.Provider>

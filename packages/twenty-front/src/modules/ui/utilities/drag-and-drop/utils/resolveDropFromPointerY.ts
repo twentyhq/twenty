@@ -3,12 +3,12 @@ import { isSortable } from '@dnd-kit/react/sortable';
 import { type ComponentProps } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type DragDropColumnData } from '@/ui/utilities/drag-and-drop/types/DragDropColumnData';
+import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 import { resolveDropTarget } from '@/ui/utilities/drag-and-drop/utils/resolveDropTarget';
 
 type DropTarget = Parameters<
   NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragEnd']
+    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragEnd']
   >
 >[0]['operation']['target'];
 
@@ -31,7 +31,7 @@ export const resolveDropFromPointerY = ({
   }
 
   if (isSortable(target)) {
-    const targetData = target.data as DragDropColumnData | undefined;
+    const targetData = target.data as DragDropItemData | undefined;
     const cardShape = target.shape;
 
     if (!isDefined(targetData) || !isDefined(cardShape)) {

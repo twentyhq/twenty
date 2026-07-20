@@ -3,9 +3,9 @@ import { type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { DragDropColumnDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropColumnDndContext';
+import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
 
-type DragDropColumnDropTargetOrientation = 'vertical' | 'horizontal';
+type DragDropItemDropTargetOrientation = 'vertical' | 'horizontal';
 
 const StyledDropTarget = styled.div<{
   $compact?: boolean;
@@ -80,25 +80,25 @@ const StyledDropTarget = styled.div<{
   }
 `;
 
-type DragDropColumnDropTargetProps = {
+type DragDropItemDropTargetProps = {
   children?: ReactNode;
   compact?: boolean;
   droppableId?: string;
   index: number;
-  orientation?: DragDropColumnDropTargetOrientation;
+  orientation?: DragDropItemDropTargetOrientation;
   overlay?: boolean;
 };
 
-export const DragDropColumnDropTarget = ({
+export const DragDropItemDropTarget = ({
   children,
   compact = false,
   droppableId,
   index,
   orientation,
   overlay = false,
-}: DragDropColumnDropTargetProps) => {
+}: DragDropItemDropTargetProps) => {
   const { activeDropTargetIndex, activeDroppableId } = useContext(
-    DragDropColumnDndContext,
+    DragDropItemDndContext,
   );
 
   const matchesDroppable =

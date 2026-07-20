@@ -11,7 +11,7 @@ import { RecordBoardColumnContext } from '@/object-record/record-board/record-bo
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { type DragDropColumnData } from '@/ui/utilities/drag-and-drop/types/DragDropColumnData';
+import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -26,7 +26,7 @@ export const RecordBoardCardDragOverlayContent = ({
 }: RecordBoardCardDragOverlayContentProps) => {
   const { objectMetadataItem } = useContext(RecordBoardContext);
 
-  const sourceData = source?.data as DragDropColumnData | undefined;
+  const sourceData = source?.data as DragDropItemData | undefined;
 
   const columnId = sourceData?.droppableId ?? '';
   const rowIndex = sourceData?.index ?? 0;
@@ -68,7 +68,13 @@ export const RecordBoardCardDragOverlayContent = ({
       }}
     >
       <RecordBoardCardContext.Provider
-        value={{ recordId, isRecordReadOnly, rowIndex, columnIndex }}
+        value={{
+          recordId,
+          isRecordReadOnly,
+          rowIndex,
+          columnIndex,
+          isDragOverlay: true,
+        }}
       >
         <RecordBoardCard />
         <RecordBoardCardMultiDragPreview />

@@ -5,7 +5,7 @@ import { RecordCalendarCard } from '@/object-record/record-calendar/record-calen
 import { useIsRecordCalendarCardDragDisabled } from '@/object-record/record-calendar/record-calendar-card/hooks/useIsRecordCalendarCardDragDisabled';
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
 import { getRecordCalendarCardDraggableId } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardDraggableId';
-import { DragDropColumnSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropColumnSortableCell';
+import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 
 const StyledDraggableContainer = styled.div`
   position: relative;
@@ -34,7 +34,7 @@ export const RecordCalendarCardDraggableContainer = ({
     <RecordCalendarCardComponentInstanceContext.Provider
       value={{ instanceId: recordId }}
     >
-      <DragDropColumnSortableCell
+      <DragDropItemSortableCell
         id={draggableId}
         index={index}
         group={calendarDay}
@@ -48,7 +48,7 @@ export const RecordCalendarCardDraggableContainer = ({
         >
           <RecordCalendarCard recordId={recordId} />
         </StyledDraggableContainer>
-      </DragDropColumnSortableCell>
+      </DragDropItemSortableCell>
     </RecordCalendarCardComponentInstanceContext.Provider>
   );
 };

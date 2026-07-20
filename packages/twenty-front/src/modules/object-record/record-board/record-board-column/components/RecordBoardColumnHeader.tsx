@@ -6,7 +6,7 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
-import { DragDropColumnSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropColumnSortableHandle';
+import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
 import { RECORD_BOARD_COLUMN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnWidth';
 import { RECORD_BOARD_COLUMN_WIDTH_CSS_VARIABLE_NAME } from '@/object-record/record-board/constants/RecordBoardColumnWidthCssVariableName';
 import { RecordBoardColumnResizeHandler } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnResizeHandler';
@@ -150,7 +150,7 @@ export const RecordBoardColumnHeader = () => {
 
   return (
     <StyledColumn data-has-left-border={columnIndex > 0 ? 'true' : undefined}>
-      <DragDropColumnSortableHandle fill>
+      <DragDropItemSortableHandle fill>
         <StyledHeader
           onMouseEnter={() => setIsHeaderHovered(true)}
           onMouseLeave={() => setIsHeaderHovered(false)}
@@ -211,7 +211,7 @@ export const RecordBoardColumnHeader = () => {
             </StyledRightContainer>
           </StyledHeaderContainer>
         </StyledHeader>
-      </DragDropColumnSortableHandle>
+      </DragDropItemSortableHandle>
       <RecordBoardColumnResizeHandler />
     </StyledColumn>
   );

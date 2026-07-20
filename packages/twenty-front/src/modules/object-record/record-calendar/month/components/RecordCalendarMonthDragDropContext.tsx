@@ -3,8 +3,8 @@ import type { ReactNode } from 'react';
 
 import { useRecordCalendarMonthDndKit } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDndKit';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
-import { DragDropColumnDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropColumnDndContext';
-import { type DragDropColumnData } from '@/ui/utilities/drag-and-drop/types/DragDropColumnData';
+import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
+import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 
 type RecordCalendarMonthDragDropContextProps = {
   children: ReactNode;
@@ -16,8 +16,8 @@ export const RecordCalendarMonthDragDropContext = ({
   const { contextValues, handlers } = useRecordCalendarMonthDndKit();
 
   return (
-    <DragDropColumnDndContext.Provider value={contextValues}>
-      <DragDropProvider<DragDropColumnData>
+    <DragDropItemDndContext.Provider value={contextValues}>
+      <DragDropProvider<DragDropItemData>
         sensors={DND_KIT_SENSORS}
         onDragStart={handlers.onDragStart}
         onDragMove={handlers.onDragMove}
@@ -25,6 +25,6 @@ export const RecordCalendarMonthDragDropContext = ({
       >
         {children}
       </DragDropProvider>
-    </DragDropColumnDndContext.Provider>
+    </DragDropItemDndContext.Provider>
   );
 };

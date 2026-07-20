@@ -7,7 +7,7 @@ import { useSortable } from '@dnd-kit/react/sortable';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
-import { DragDropColumnSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropColumnSortableHandleRefContext';
+import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
 
 const SORTABLE_COLLISION_PRIORITY = 3;
 
@@ -30,7 +30,7 @@ const StyledSortableRoot = styled.div<{ $fill?: boolean }>`
   will-change: transform;
 `;
 
-type DragDropColumnSortableCellProps = {
+type DragDropItemSortableCellProps = {
   accept?: string;
   children: ReactNode;
   disabled?: boolean;
@@ -38,12 +38,11 @@ type DragDropColumnSortableCellProps = {
   group: string;
   id: string;
   index: number;
-  restrictMovementToXAxis?: boolean;
-  restrictMovementToYAxis?: boolean;
+  restrictMovementTo?: 'x' | 'y' | 'none';
   type?: string;
 };
 
-export const DragDropColumnSortableCell = ({
+export const DragDropItemSortableCell = ({
   accept,
   children,
   disabled = false,
@@ -51,10 +50,9 @@ export const DragDropColumnSortableCell = ({
   group,
   id,
   index,
-  restrictMovementToXAxis = false,
-  restrictMovementToYAxis = false,
+  restrictMovementTo = 'none',
   type,
-}: DragDropColumnSortableCellProps) => {
+}: DragDropItemSortableCellProps) => {
   const { handleRef, ref } = useSortable({
     id,
     index,
@@ -70,17 +68,17 @@ export const DragDropColumnSortableCell = ({
     transition: SORTABLE_TRANSITION,
     plugins: PLUGINS_WITHOUT_OPTIMISTIC,
     modifiers: [
-      ...(restrictMovementToXAxis ? [RestrictToHorizontalAxis] : []),
-      ...(restrictMovementToYAxis ? [RestrictToVerticalAxis] : []),
+      ...(restrictMovementTo === 'x' ? [RestrictToHorizontalAxis] : []),
+      ...(restrictMovementTo === 'y' ? [RestrictToVerticalAxis] : []),
     ],
     feedback: 'clone',
   });
 
   return (
-    <DragDropColumnSortableHandleRefContext.Provider value={handleRef}>
+    <DragDropItemSortableHandleRefContext.Provider value={handleRef}>
       <StyledSortableRoot ref={ref} $fill={fill}>
         {children}
       </StyledSortableRoot>
-    </DragDropColumnSortableHandleRefContext.Provider>
+    </DragDropItemSortableHandleRefContext.Provider>
   );
 };

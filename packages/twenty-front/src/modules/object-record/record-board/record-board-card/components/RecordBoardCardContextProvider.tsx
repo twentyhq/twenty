@@ -11,7 +11,7 @@ import { isRecordBoardDropProcessingComponentState } from '@/object-record/recor
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { DragDropColumnSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropColumnSortableCell';
+import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { RECORD_BOARD_CARD_DND_TYPE } from '@/object-record/record-board/record-board-dnd/constants/RecordBoardCardDndType';
 
 const StyledDraggableContainer = styled.div<{
@@ -59,7 +59,7 @@ export const RecordBoardCardContextProvider = ({
     <RecordBoardCardContext.Provider
       value={{ recordId, isRecordReadOnly, rowIndex, columnIndex }}
     >
-      <DragDropColumnSortableCell
+      <DragDropItemSortableCell
         id={recordId}
         index={rowIndex}
         group={group}
@@ -76,7 +76,7 @@ export const RecordBoardCardContextProvider = ({
           {isRecordBoardCardFocused && <RecordBoardCardHotkeysEffect />}
           <RecordBoardCard />
         </StyledDraggableContainer>
-      </DragDropColumnSortableCell>
+      </DragDropItemSortableCell>
     </RecordBoardCardContext.Provider>
   );
 };

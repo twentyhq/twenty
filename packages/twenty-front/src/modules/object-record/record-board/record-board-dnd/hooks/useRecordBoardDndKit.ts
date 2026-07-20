@@ -4,7 +4,7 @@ import { type ComponentProps, useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { type DragDropColumnData } from '@/ui/utilities/drag-and-drop/types/DragDropColumnData';
+import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 import { isRecordBoardDropProcessingComponentState } from '@/object-record/record-board/states/isRecordBoardDropProcessingComponentState';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { getBoardCardDropBehavior } from '@/object-record/record-board/utils/getBoardCardDropBehavior';
@@ -24,17 +24,17 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 
 type DragStartPayload = Parameters<
   NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragStart']
+    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragStart']
   >
 >[0];
 type DragMovePayload = Parameters<
   NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragMove']
+    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragMove']
   >
 >[0];
 type DragEndPayload = Parameters<
   NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragEnd']
+    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragEnd']
   >
 >[0];
 
@@ -149,8 +149,8 @@ export const useRecordBoardDndKit = (): {
     }
 
     const sourceId = source.id;
-    const sourceDroppableId = (source.data as DragDropColumnData).droppableId;
-    const sourceIndex = (source.data as DragDropColumnData).index;
+    const sourceDroppableId = (source.data as DragDropItemData).droppableId;
+    const sourceIndex = (source.data as DragDropItemData).index;
 
     const resolvedDrop = resolveDropFromPointerY({
       target,

@@ -7,7 +7,7 @@ import { RecordBoardColumnLoadingSkeletonCards } from '@/object-record/record-bo
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { DragDropColumnDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropColumnDropTarget';
+import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { RecordBoardCardContextProvider } from '@/object-record/record-board/record-board-card/components/RecordBoardCardContextProvider';
 
 const StyledColumnCardsContainer = styled.div`
@@ -41,7 +41,7 @@ export const RecordBoardColumnCardsContainer = ({
     <StyledColumnCardsContainer data-replay-ignore-mutations="true">
       {recordIndexRecordIdsByGroup.map((recordId, index) => (
         <Fragment key={recordId}>
-          <DragDropColumnDropTarget
+          <DragDropItemDropTarget
             index={index}
             droppableId={recordBoardColumnId}
             orientation="horizontal"
@@ -57,7 +57,7 @@ export const RecordBoardColumnCardsContainer = ({
       {recordBoardShouldFetchMoreInColumn ? (
         <RecordBoardColumnLoadingSkeletonCards />
       ) : null}
-      <DragDropColumnDropTarget
+      <DragDropItemDropTarget
         index={recordIndexRecordIdsByGroup.length}
         droppableId={recordBoardColumnId}
         orientation="horizontal"

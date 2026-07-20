@@ -10,24 +10,24 @@ import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecord
 import { useProcessCalendarCardDrop } from '@/object-record/record-drag/hooks/useProcessCalendarCardDrop';
 import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { type DragDropColumnData } from '@/ui/utilities/drag-and-drop/types/DragDropColumnData';
+import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
 import { resolveDropFromPointerY } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointerY';
 import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
 
 type DragStartPayload = Parameters<
   NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragStart']
+    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragStart']
   >
 >[0];
 type DragMovePayload = Parameters<
   NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragMove']
+    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragMove']
   >
 >[0];
 type DragEndPayload = Parameters<
   NonNullable<
-    ComponentProps<typeof DragDropProvider<DragDropColumnData>>['onDragEnd']
+    ComponentProps<typeof DragDropProvider<DragDropItemData>>['onDragEnd']
   >
 >[0];
 
@@ -123,8 +123,8 @@ export const useRecordCalendarMonthDndKit = (): {
     const sourceRecordId = getRecordIdFromRecordCalendarCardDraggableId(
       String(source.id),
     );
-    const sourceDroppableId = (source.data as DragDropColumnData).droppableId;
-    const sourceIndex = (source.data as DragDropColumnData).index;
+    const sourceDroppableId = (source.data as DragDropItemData).droppableId;
+    const sourceIndex = (source.data as DragDropItemData).index;
 
     const resolvedDrop = resolveDropFromPointerY({
       target,
