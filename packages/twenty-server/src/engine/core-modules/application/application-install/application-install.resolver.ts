@@ -154,13 +154,15 @@ export class ApplicationInstallResolver {
       workspaceId,
     });
 
-    // Catch up on a version published while the flag was off.
+    // Catch up on a version published while the flag was off, scoped to the
+    // caller's workspace.
     if (
       input.autoUpgrade === true &&
       isDefined(application.applicationRegistrationId)
     ) {
       await this.applicationRegistrationService.enqueueAutoUpgradeApplications(
         application.applicationRegistrationId,
+        workspaceId,
       );
     }
 

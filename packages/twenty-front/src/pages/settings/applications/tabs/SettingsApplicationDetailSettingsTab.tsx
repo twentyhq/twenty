@@ -1,18 +1,9 @@
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
-import { IconRefresh } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
-import { H2Title } from 'twenty-ui/typography';
-import {
-  UpdateApplicationDocument,
-  type Application,
-} from '~/generated-metadata/graphql';
+import { type Application } from '~/generated-metadata/graphql';
 import { useUpdateOneApplicationVariable } from '~/pages/settings/applications/hooks/useUpdateOneApplicationVariable';
 import { SettingsApplicationConnectionsSection } from '~/pages/settings/applications/tabs/SettingsApplicationConnectionsSection';
 import { SettingsApplicationDetailEnvironmentVariablesTable } from '~/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable';
 import { SettingsApplicationFunctionDomainSection } from '~/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection';
+import { SettingsApplicationGeneralSection } from '~/pages/settings/applications/tabs/SettingsApplicationGeneralSection';
 import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
 import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 
@@ -32,8 +23,6 @@ export const SettingsApplicationDetailSettingsTab = ({
 }) => {
   const { updateOneApplicationVariable } = useUpdateOneApplicationVariable();
 
-  const [updateApplication] = useMutation(UpdateApplicationDocument);
-
   const envVariables = [...(application?.applicationVariables ?? [])].sort(
     (a, b) => a.key.localeCompare(b.key),
   );
@@ -48,25 +37,10 @@ export const SettingsApplicationDetailSettingsTab = ({
   return (
     <>
       {isUpgradable && application?.id && (
-        <Section>
-          <H2Title title={t`General`} />
-          <Card rounded fullWidth>
-            <SettingsOptionCardContentToggle
-              Icon={IconRefresh}
-              title={t`Auto-upgrade`}
-              description={t`Automatically upgrade this application when a new version is published`}
-              checked={application.autoUpgrade}
-              onChange={(checked) =>
-                updateApplication({
-                  variables: {
-                    id: application.id,
-                    input: { autoUpgrade: checked },
-                  },
-                })
-              }
-            />
-          </Card>
-        </Section>
+        <SettingsApplicationGeneralSection
+          applicationId={application.id}
+          autoUpgrade={application.autoUpgrade}
+        />
       )}
       {hasHttpTriggeredFunctions && application?.id && (
         <SettingsApplicationFunctionDomainSection

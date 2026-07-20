@@ -21,6 +21,8 @@ const npmPackageMetadataSchema = z.object({
   version: z.string(),
 });
 
+const UPGRADE_APPLICATIONS_BATCH_SIZE = 20;
+
 @Injectable()
 export class ApplicationUpgradeService {
   private readonly logger = new Logger(ApplicationUpgradeService.name);
@@ -112,9 +114,11 @@ export class ApplicationUpgradeService {
   async upgradeAllApplications({
     applicationRegistrationId,
     onlyAutoUpgrade = false,
+    workspaceId,
   }: {
     applicationRegistrationId: string;
     onlyAutoUpgrade?: boolean;
+    workspaceId?: string;
   }): Promise<void> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: applicationRegistrationId },
@@ -130,26 +134,40 @@ export class ApplicationUpgradeService {
       where: {
         applicationRegistrationId,
         ...(onlyAutoUpgrade ? { autoUpgrade: true } : {}),
+        ...(isDefined(workspaceId) ? { workspaceId } : {}),
       },
     });
 
-    for (const application of applications) {
-      if (application.version === targetVersion) {
-        continue;
-      }
+    const applicationsToUpgrade = applications.filter(
+      (application) => application.version !== targetVersion,
+    );
 
-      try {
-        await this.upgradeApplication({
-          appRegistrationId: applicationRegistrationId,
-          targetVersion,
-          workspaceId: application.workspaceId,
-        });
-      } catch (error) {
-        this.logger.error(
-          `Failed to upgrade application ${application.id} to version ${targetVersion} in workspace ${application.workspaceId}`,
-          error,
-        );
-      }
+    for (
+      let batchStart = 0;
+      batchStart < applicationsToUpgrade.length;
+      batchStart += UPGRADE_APPLICATIONS_BATCH_SIZE
+    ) {
+      const batch = applicationsToUpgrade.slice(
+        batchStart,
+        batchStart + UPGRADE_APPLICATIONS_BATCH_SIZE,
+      );
+
+      await Promise.all(
+        batch.map(async (application) => {
+          try {
+            await this.upgradeApplicationToVersion({
+              appRegistration,
+              targetVersion,
+              workspaceId: application.workspaceId,
+            });
+          } catch (error) {
+            this.logger.error(
+              `Failed to upgrade application ${application.id} to version ${targetVersion} in workspace ${application.workspaceId}`,
+              error,
+            );
+          }
+        }),
+      );
     }
   }
 
@@ -161,6 +179,20 @@ export class ApplicationUpgradeService {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: params.appRegistrationId },
     });
+
+    return this.upgradeApplicationToVersion({
+      appRegistration,
+      targetVersion: params.targetVersion,
+      workspaceId: params.workspaceId,
+    });
+  }
+
+  private async upgradeApplicationToVersion(params: {
+    appRegistration: ApplicationRegistrationEntity;
+    targetVersion: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const { appRegistration } = params;
 
     // LOCAL apps are updated by dev sync and OAUTH_ONLY registrations have no
     // code artifacts.
@@ -177,7 +209,7 @@ export class ApplicationUpgradeService {
 
     try {
       return await this.applicationInstallService.installApplication({
-        appRegistrationId: params.appRegistrationId,
+        appRegistrationId: appRegistration.id,
         version: params.targetVersion,
         workspaceId: params.workspaceId,
       });
