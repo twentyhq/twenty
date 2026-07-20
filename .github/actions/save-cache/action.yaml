@@ -5,7 +5,6 @@ inputs:
     description: Primary key to the cache, should be retrieved from `cache-restore` composite action outputs.
   additional-paths:
     required: false
-
 runs:
   using: "composite"
   steps:

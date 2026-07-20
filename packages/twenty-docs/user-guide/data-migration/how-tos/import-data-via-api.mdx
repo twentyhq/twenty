@@ -21,21 +21,9 @@ Twenty provides both **GraphQL** and **REST APIs** for programmatic data import.
 
 <Note>For datasets in the hundreds of thousands, the API is significantly faster and more reliable than multiple CSV imports.</Note>
 
-## API Rate Limits
+## API Request Limits
 
-Twenty enforces rate limits to ensure system stability:
-
-| Limit | Value |
-|-------|-------|
-| **Requests per minute** | 100 |
-| **Records per batch call** | 60 |
-| **Maximum throughput** | ~6,000 records/minute |
-
-<Warning>
-**Plan your import around these limits.**
-
-For 100,000 records at maximum throughput, expect approximately 17 minutes of import time. Add buffer time for error handling and retries.
-</Warning>
+Twenty does not impose a general per-minute request limit on workspace data API calls. Bulk create and upsert requests accept up to 200 records per call.
 
 ## Getting Started
 
@@ -64,9 +52,9 @@ Twenty supports two API types:
 
 Both APIs support:
 - Creating, reading, updating, and deleting records
-- **Batch operations** — create or update up to 60 records per call
+- **Batch operations** — create or upsert up to 200 records per call
 
-**For imports, use batch operations** to maximize throughput within rate limits.
+**For imports, use batch operations** to maximize throughput.
 
 ### Step 3: Plan Your Import Order
 
@@ -82,13 +70,13 @@ Just like CSV imports, **order matters** for relations:
 
 ### Batch Your Requests
 - Don't send records one at a time
-- Group up to **60 records per API call**
-- This maximizes throughput within rate limits
+- Group up to **200 records per API call**
+- This maximizes throughput
 
-### Handle Rate Limits
-- Implement delays between requests (600ms minimum for sustained imports)
-- Use exponential backoff when you hit limits
-- Monitor for 429 (Too Many Requests) responses
+### Handle Transient Errors
+- Use bounded concurrency so imports do not overload your deployment
+- Retry transient failures with exponential backoff
+- Monitor failed requests and resume imports safely
 
 ### Validate Data First
 - Clean and validate your data before importing

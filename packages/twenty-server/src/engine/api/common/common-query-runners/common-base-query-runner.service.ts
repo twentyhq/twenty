@@ -38,9 +38,6 @@ import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -86,11 +83,7 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly commonResultGettersService: CommonResultGettersService;
   @Inject()
-  protected readonly throttlerService: ThrottlerService;
-  @Inject()
   protected readonly twentyConfigService: TwentyConfigService;
-  @Inject()
-  protected readonly metricsService: MetricsService;
   @Inject()
   protected readonly featureFlagService: FeatureFlagService;
 
@@ -108,8 +101,6 @@ export abstract class CommonBaseQueryRunnerService<
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     } = queryRunnerContext;
-
-    await this.throttleQueryExecution(authContext);
 
     await this.validate(args, queryRunnerContext);
 
@@ -345,53 +336,6 @@ export abstract class CommonBaseQueryRunnerService<
       rolePermissionConfig,
       repository,
     };
-  }
-
-  private async throttleQueryExecution(authContext: WorkspaceAuthContext) {
-    try {
-      if (!isApiKeyAuthContext(authContext)) return;
-
-      const workspaceId = authContext.workspace.id;
-
-      const shortConfig = {
-        key: `api:throttler:${workspaceId}-short-limit`,
-        maxTokens: this.twentyConfigService.get(
-          'API_RATE_LIMITING_SHORT_LIMIT',
-        ),
-        timeWindow: this.twentyConfigService.get(
-          'API_RATE_LIMITING_SHORT_TTL_IN_MS',
-        ),
-      };
-
-      const longConfig = {
-        key: `api:throttler:${workspaceId}-long-limit`,
-        maxTokens: this.twentyConfigService.get('API_RATE_LIMITING_LONG_LIMIT'),
-        timeWindow: this.twentyConfigService.get(
-          'API_RATE_LIMITING_LONG_TTL_IN_MS',
-        ),
-      };
-
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        shortConfig.key,
-        1,
-        shortConfig.maxTokens,
-        shortConfig.timeWindow,
-      );
-
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        longConfig.key,
-        1,
-        longConfig.maxTokens,
-        longConfig.timeWindow,
-      );
-    } catch (error) {
-      await this.metricsService.incrementCounterForEvent({
-        key: MetricsKeys.CommonApiQueryRateLimited,
-        shouldStoreInCache: false,
-      });
-
-      throw error;
-    }
   }
 
   private validateQueryComplexity(
