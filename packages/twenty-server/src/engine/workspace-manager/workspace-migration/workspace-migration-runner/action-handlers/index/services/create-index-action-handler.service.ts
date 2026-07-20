@@ -12,11 +12,15 @@ import {
   type UniversalCreateIndexAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
 import { fromUniversalFlatIndexToFlatIndex } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/from-universal-flat-index-to-flat-index.util';
-import { createIndexInWorkspaceSchema } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
+import {
+  computeFlatIndexFieldColumnNames,
+  createIndexInWorkspaceSchema,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
 import {
   type WorkspaceMigrationActionRunnerArgs,
   type WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 
 @Injectable()
 export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -49,6 +53,8 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     };
   }
 
+  override canBatchCreate = true;
+
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateIndexAction>,
   ): Promise<void> {
@@ -67,6 +73,31 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     await indexFieldMetadataRepository.insert(
       flatIndexMetadata.flatIndexFieldMetadatas,
     );
+  }
+
+  override async executeForMetadataBatch(
+    contexts: WorkspaceMigrationActionRunnerContext<FlatCreateIndexAction>[],
+  ): Promise<void> {
+    if (contexts.length === 0) {
+      return;
+    }
+
+    const { queryRunner } = contexts[0];
+
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: contexts.map((context) => context.flatAction.flatEntity),
+    });
+
+    const flatIndexFieldMetadatas = contexts.flatMap(
+      (context) => context.flatAction.flatEntity.flatIndexFieldMetadatas,
+    );
+
+    if (flatIndexFieldMetadatas.length > 0) {
+      await queryRunner.manager
+        .getRepository(IndexFieldMetadataEntity)
+        .insert(flatIndexFieldMetadatas);
+    }
   }
 
   async executeForWorkspaceSchema(
@@ -91,6 +122,54 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
       workspaceSchemaManagerService: this.workspaceSchemaManagerService,
       queryRunner,
       workspaceId,
+    });
+  }
+
+  override async executeForWorkspaceSchemaBatch(
+    contexts: WorkspaceMigrationActionRunnerContext<FlatCreateIndexAction>[],
+  ): Promise<void> {
+    if (contexts.length === 0) {
+      return;
+    }
+
+    const indexes = contexts.map((context) => {
+      const {
+        allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
+        flatAction: { flatEntity: flatIndexMetadata },
+        workspaceId,
+      } = context;
+
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityMaps: flatObjectMetadataMaps,
+        flatEntityId: flatIndexMetadata.objectMetadataId,
+      });
+
+      const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
+        workspaceId,
+        objectMetadata: flatObjectMetadata,
+      });
+
+      const columns = computeFlatIndexFieldColumnNames({
+        flatIndexFieldMetadatas: flatIndexMetadata.flatIndexFieldMetadatas,
+        flatFieldMetadataMaps,
+      });
+
+      return {
+        schemaName,
+        tableName,
+        index: {
+          columns,
+          name: flatIndexMetadata.name,
+          isUnique: flatIndexMetadata.isUnique,
+          type: flatIndexMetadata.indexType,
+          where: flatIndexMetadata.indexWhereClause ?? undefined,
+        },
+      };
+    });
+
+    await this.workspaceSchemaManagerService.indexManager.createIndexes({
+      queryRunner: contexts[0].queryRunner,
+      indexes,
     });
   }
 }

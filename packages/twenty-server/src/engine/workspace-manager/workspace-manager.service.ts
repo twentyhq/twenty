@@ -7,10 +7,10 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
@@ -63,6 +63,7 @@ export class WorkspaceManagerService {
 
     await this.applicationService.createTwentyStandardApplication({
       workspaceId,
+      skipCacheInvalidation: true,
     });
 
     await this.twentyStandardApplicationService.synchronizeTwentyStandardApplicationOrThrow(

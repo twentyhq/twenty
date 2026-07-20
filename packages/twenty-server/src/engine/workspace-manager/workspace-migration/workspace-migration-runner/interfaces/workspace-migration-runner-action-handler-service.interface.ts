@@ -287,6 +287,88 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     return { partialOptimisticCache, metadataEvents };
   }
 
+  public canBatchCreate = false;
+
+  protected async executeForMetadataBatch(
+    contexts: WorkspaceMigrationActionRunnerContext<TFlatAction>[],
+  ): Promise<void> {
+    for (const context of contexts) {
+      await this.executeForMetadata(context);
+    }
+  }
+
+  protected async executeForWorkspaceSchemaBatch(
+    contexts: WorkspaceMigrationActionRunnerContext<TFlatAction>[],
+  ): Promise<void> {
+    for (const context of contexts) {
+      await this.executeForWorkspaceSchema(context);
+    }
+  }
+
+  async executeCreateBatch(
+    contexts: WorkspaceMigrationActionRunnerArgs<TUniversalAction>[],
+  ): Promise<ActionHandlerExecuteResult<TMetadataName>> {
+    const flatContexts: WorkspaceMigrationActionRunnerContext<TFlatAction>[] =
+      [];
+
+    for (const context of contexts) {
+      const flatAction =
+        await this.transpileUniversalActionToFlatActionOrThrow(context);
+
+      flatContexts.push({ ...context, flatAction });
+    }
+
+    const [metadataResult, workspaceSchemaResult] = await Promise.allSettled([
+      this.asyncMethodPerformanceMetricWrapper({
+        label: 'executeForMetadataBatch',
+        method: async () => this.executeForMetadataBatch(flatContexts),
+      }),
+      this.asyncMethodPerformanceMetricWrapper({
+        label: 'executeForWorkspaceSchemaBatch',
+        method: async () => this.executeForWorkspaceSchemaBatch(flatContexts),
+      }),
+    ]);
+
+    const hasMetadataError = metadataResult.status === 'rejected';
+    const hasWorkspaceSchemaError = workspaceSchemaResult.status === 'rejected';
+
+    if (hasMetadataError || hasWorkspaceSchemaError) {
+      throw new WorkspaceMigrationRunnerException({
+        action: contexts[0].action,
+        errors: {
+          ...(hasMetadataError && { metadata: metadataResult.reason }),
+          ...(hasWorkspaceSchemaError && {
+            workspaceSchema: workspaceSchemaResult.reason,
+          }),
+        },
+        code: WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED,
+      });
+    }
+
+    const metadataEvents: MetadataEvent[] = [];
+    let partialOptimisticCache =
+      {} as ActionHandlerExecuteResult<TMetadataName>['partialOptimisticCache'];
+
+    for (const flatContext of flatContexts) {
+      metadataEvents.push(
+        ...this.deriveMetadataEventsFromFlatAction({
+          flatAction: flatContext.flatAction,
+          allFlatEntityMaps: flatContext.allFlatEntityMaps,
+        }),
+      );
+
+      partialOptimisticCache = {
+        ...partialOptimisticCache,
+        ...this.optimisticallyApplyActionOnAllFlatEntityMaps({
+          flatAction: flatContext.flatAction,
+          allFlatEntityMaps: flatContext.allFlatEntityMaps,
+        }),
+      };
+    }
+
+    return { partialOptimisticCache, metadataEvents };
+  }
+
   async rollback(
     context: Omit<
       WorkspaceMigrationActionRunnerArgs<TUniversalAction>,
