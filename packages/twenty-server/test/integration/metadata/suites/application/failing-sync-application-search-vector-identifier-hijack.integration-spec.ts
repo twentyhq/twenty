@@ -58,8 +58,9 @@ const buildObjectHijackingSearchVectorUniversalIdentifier =
     };
   };
 
-// System fields are engine-provisioned and never manifest-authored: any
-// manifest declaring a reserved field name is rejected outright.
+// Redeclare searchVector under its derived universal identifier: the builder
+// matches the engine-provisioned field and emits an update, rejected because
+// the manifest defaults mutate properties system fields do not allow updating.
 const buildObjectAuthoringSearchVector = (): ObjectManifest => {
   const cleanObject = buildCleanObject();
 
@@ -72,6 +73,27 @@ const buildObjectAuthoringSearchVector = (): ObjectManifest => {
         type: FieldMetadataType.TS_VECTOR,
         name: 'searchVector',
         label: 'Search vector',
+      },
+    ],
+  };
+};
+
+// Declare a field reusing the reserved searchVector name under a foreign
+// universal identifier: the builder emits a create colliding with the
+// engine-provisioned field name.
+const buildObjectCreatingForeignSearchVector = (): ObjectManifest => {
+  const cleanObject = buildCleanObject();
+
+  return {
+    ...cleanObject,
+    fields: [
+      ...cleanObject.fields,
+      {
+        universalIdentifier: uuidv4(),
+        type: FieldMetadataType.TEXT,
+        name: 'searchVector',
+        label: 'Foreign Search Vector',
+        isNullable: true,
       },
     ],
   };
@@ -108,6 +130,19 @@ describe('Sync application should reject hijacking the searchVector system field
         appId: TEST_APP_ID,
         roleId: TEST_ROLE_ID,
         overrides: { objects: [buildObjectAuthoringSearchVector()] },
+      }),
+      expectToFail: true,
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  }, 60000);
+
+  it('should reject a manifest field reusing the searchVector name under a foreign universal identifier', async () => {
+    const { errors } = await syncApplication({
+      manifest: buildBaseManifest({
+        appId: TEST_APP_ID,
+        roleId: TEST_ROLE_ID,
+        overrides: { objects: [buildObjectCreatingForeignSearchVector()] },
       }),
       expectToFail: true,
     });

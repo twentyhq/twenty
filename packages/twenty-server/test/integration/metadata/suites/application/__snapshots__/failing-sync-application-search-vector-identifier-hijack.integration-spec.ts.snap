@@ -37,6 +37,44 @@ exports[`Sync application should reject hijacking the searchVector system field 
 }
 `;
 
+exports[`Sync application should reject hijacking the searchVector system field should reject a manifest field reusing the searchVector name under a foreign universal identifier 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "searchVector" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "searchVector" is not available as it is already used by another field",
+              "value": "searchVector",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "searchVector",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Name "searchVector" is not available as it is already used by another field",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Sync application should reject hijacking the searchVector system field should reject a manifest field squatting the searchVector deterministic universal identifier 1`] = `
 {
   "extensions": {
