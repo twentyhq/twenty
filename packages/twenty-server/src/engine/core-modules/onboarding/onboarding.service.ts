@@ -19,6 +19,7 @@ import {
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum OnboardingStepKeys {
@@ -46,6 +47,8 @@ export class OnboardingService {
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -190,7 +193,23 @@ export class OnboardingService {
       return;
     }
 
+    if (!(await this.isFirstWorkspaceUser({ workspaceId }))) {
+      return;
+    }
+
     await this.creditImportContactsReward({ workspaceId });
+  }
+
+  private async isFirstWorkspaceUser({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<boolean> {
+    const workspaceUserCount = await this.userWorkspaceRepository.countBy({
+      workspaceId,
+    });
+
+    return workspaceUserCount === 1;
   }
 
   private async claimOnboardingConnectAccountStep({

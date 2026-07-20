@@ -16,6 +16,7 @@ import {
 } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 describe('OnboardingService', () => {
@@ -24,6 +25,7 @@ describe('OnboardingService', () => {
   let billingCreditService: BillingCreditService;
   let twentyConfigService: TwentyConfigService;
   let messageQueueService: MessageQueueService;
+  let userWorkspaceRepository: Repository<UserWorkspaceEntity>;
 
   const userId = 'user-id';
   const workspaceId = 'workspace-id';
@@ -63,6 +65,12 @@ describe('OnboardingService', () => {
           useClass: Repository,
         },
         {
+          provide: getRepositoryToken(UserWorkspaceEntity),
+          useValue: {
+            countBy: jest.fn(),
+          },
+        },
+        {
           provide: getQueueToken(MessageQueue.workspaceQueue),
           useValue: {
             add: jest.fn(),
@@ -79,6 +87,9 @@ describe('OnboardingService', () => {
     messageQueueService = module.get<MessageQueueService>(
       getQueueToken(MessageQueue.workspaceQueue),
     );
+    userWorkspaceRepository = module.get<Repository<UserWorkspaceEntity>>(
+      getRepositoryToken(UserWorkspaceEntity),
+    );
   });
 
   afterEach(() => {
@@ -86,8 +97,9 @@ describe('OnboardingService', () => {
   });
 
   describe('completeOnboardingConnectAccountStep', () => {
-    it('should credit the import-contacts reward when the step was claimed', async () => {
+    it('should credit the import-contacts reward when the step was claimed by the first workspace user', async () => {
       jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+      jest.spyOn(userWorkspaceRepository, 'countBy').mockResolvedValue(1);
       jest.spyOn(twentyConfigService, 'get').mockReturnValue(2_000_000);
 
       await service.completeOnboardingConnectAccountStep({
@@ -104,6 +116,25 @@ describe('OnboardingService', () => {
         workspaceId,
         amountMicro: 2_000_000,
       });
+    });
+
+    it('should claim the step but not credit when the workspace has more than one member', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+      jest.spyOn(userWorkspaceRepository, 'countBy').mockResolvedValue(2);
+
+      await service.completeOnboardingConnectAccountStep({
+        userId,
+        workspaceId,
+      });
+
+      expect(userVarsService.delete).toHaveBeenCalledWith({
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+      });
+      expect(
+        billingCreditService.creditWorkspaceBalance,
+      ).not.toHaveBeenCalled();
     });
 
     it('should not credit anything when the step was already consumed', async () => {
@@ -124,6 +155,7 @@ describe('OnboardingService', () => {
         .spyOn(userVarsService, 'delete')
         .mockResolvedValueOnce(1)
         .mockResolvedValueOnce(0);
+      jest.spyOn(userWorkspaceRepository, 'countBy').mockResolvedValue(1);
       jest.spyOn(twentyConfigService, 'get').mockReturnValue(2_000_000);
 
       await Promise.all([
@@ -138,6 +170,7 @@ describe('OnboardingService', () => {
 
     it('should not throw when crediting fails', async () => {
       jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+      jest.spyOn(userWorkspaceRepository, 'countBy').mockResolvedValue(1);
       jest.spyOn(twentyConfigService, 'get').mockReturnValue(2_000_000);
       jest
         .spyOn(billingCreditService, 'creditWorkspaceBalance')
