@@ -63,7 +63,6 @@ export class WorkspaceManagerService {
 
     await this.applicationService.createTwentyStandardApplication({
       workspaceId,
-      skipCacheInvalidation: true,
     });
 
     await this.twentyStandardApplicationService.synchronizeTwentyStandardApplicationOrThrow(
