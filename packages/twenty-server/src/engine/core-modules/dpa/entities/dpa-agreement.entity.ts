@@ -1,6 +1,4 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
-
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
   CreateDateColumn,
@@ -29,7 +27,7 @@ registerEnumType(DpaRegion, { name: 'DpaRegion' });
 @Index('IDX_DPA_AGREEMENT_WORKSPACE_ID', ['workspaceId'])
 @ObjectType('DpaAgreement')
 export class DpaAgreementEntity {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

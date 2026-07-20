@@ -1,9 +1,10 @@
 import { type MouseEvent } from 'react';
 
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { Avatar } from 'twenty-ui/data-display';
 import { MenuItemSuggestion } from 'twenty-ui/navigation';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type MentionMenuListItemProps = {
   recordId: string;
@@ -24,6 +25,12 @@ export const MentionMenuListItem = ({
   isSelected,
   onClick,
 }: MentionMenuListItemProps) => {
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const objectMetadataItem = objectMetadataItems.find(
+    (item) => item.nameSingular === objectNameSingular,
+  );
+
   const handleClick = (event?: MouseEvent) => {
     event?.preventDefault();
     event?.stopPropagation();
@@ -42,7 +49,7 @@ export const MentionMenuListItem = ({
           placeholder={label}
           placeholderColorSeed={recordId}
           avatarUrl={getAbsoluteImageUrl(imageUrl)}
-          type={getAvatarType(objectNameSingular) ?? 'rounded'}
+          type={getAvatarType(objectMetadataItem)}
           size="sm"
         />
       )}

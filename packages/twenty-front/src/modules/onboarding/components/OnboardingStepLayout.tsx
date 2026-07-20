@@ -4,9 +4,12 @@ import { PrefetchOnboardingBillingEffect } from '@/onboarding/effect-components/
 import { PrefetchOnboardingImagesEffect } from '@/onboarding/effect-components/PrefetchOnboardingImagesEffect';
 import { PrefetchWelcomeAnimationEffect } from '@/onboarding/effect-components/PrefetchWelcomeAnimationEffect';
 import { useOnboardingFreeCreditsTotal } from '@/onboarding/hooks/useOnboardingFreeCreditsTotal';
+import { usePreloadStripeForPlanRequiredStep } from '@/onboarding/hooks/usePreloadStripeForPlanRequiredStep';
 
 export const OnboardingStepLayout = () => {
   const freeCredits = useOnboardingFreeCreditsTotal();
+
+  usePreloadStripeForPlanRequiredStep();
 
   return (
     <OnboardingLayout freeCredits={freeCredits}>

@@ -1,8 +1,6 @@
 /* @license Enterprise */
 
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
-
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import graphqlTypeJson from 'graphql-type-json';
 import {
   Column,
@@ -56,7 +54,7 @@ registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });
 })
 @ObjectType('BillingSubscription')
 export class BillingSubscriptionEntity extends WorkspaceRelatedEntity {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

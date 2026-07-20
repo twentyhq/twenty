@@ -5,7 +5,7 @@ import {
   type FieldMetadataSettings,
 } from 'twenty-shared/types';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -23,7 +23,7 @@ const DISPLAYED_MAX_ROWS = 99;
   description:
     'Set displayedMaxRows setting on calendarEvent.description field',
 })
-export class SetCalendarEventDescriptionDisplayedMaxRowsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class SetCalendarEventDescriptionDisplayedMaxRowsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -92,7 +92,7 @@ export class SetCalendarEventDescriptionDisplayedMaxRowsCommand extends ActiveOr
     };
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {

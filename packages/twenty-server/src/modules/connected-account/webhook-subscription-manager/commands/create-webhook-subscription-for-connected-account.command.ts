@@ -8,7 +8,7 @@ import {
 } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -34,7 +34,7 @@ const WEBHOOK_CAPABLE_PROVIDERS = [
   description:
     'Enqueue webhook subscription creation for existing Google/Microsoft channels still on polling, staggered to avoid provider rate limiting',
 })
-export class CreateWebhookSubscriptionForConnectedAccountCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class CreateWebhookSubscriptionForConnectedAccountCommand extends ProvisionedWorkspaceCommandRunner {
   private enqueueCursorMs = 0;
 
   constructor(

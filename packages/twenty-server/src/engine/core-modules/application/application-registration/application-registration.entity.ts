@@ -1,6 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Check,
   Column,
@@ -53,7 +51,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
   `"sourceType" <> 'npm' OR "sourcePackage" IS NOT NULL`,
 )
 export class ApplicationRegistrationEntity {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -150,6 +148,17 @@ export class ApplicationRegistrationEntity {
   })
   logo: string | null;
 
+  @Column({ nullable: true, type: 'uuid' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.21.0_AddLogoFileIdToApplicationRegistrationFastInstanceCommand_1783945979243',
+  })
+  logoFileId: string | null;
+
+  @OneToOne(() => FileEntity, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'logoFileId' })
+  logoFile: Relation<FileEntity> | null;
+
   @Column({ nullable: true, type: 'text' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
@@ -212,16 +221,6 @@ export class ApplicationRegistrationEntity {
       '2.19.0_AddDisplayFieldsToApplicationRegistrationFastInstanceCommand_1783073776590',
   })
   screenshots: string[];
-
-  @Field(() => String, { nullable: true })
-  get logoUrl(): string | null {
-    return (
-      this.logo ??
-      this.manifest?.application?.logo ??
-      this.manifest?.application?.logoUrl ??
-      null
-    );
-  }
 
   @OneToMany(
     () => ApplicationRegistrationVariableEntity,

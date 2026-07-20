@@ -51,12 +51,7 @@ export default defineLogicFunction({
 ```
 
 Tipos de gatilho disponíveis:
-* **httpRoute**: expõe sua função em um caminho HTTP e método na **URL base do seu espaço de trabalho** — o valor de 20 injeções como `TWENTY_FUNCTIONS_URL` (em Vinte nuvens, um domínio dedicado por espaço de trabalho):
-> por exemplo, `path: '/post-card/create'` é acessível em `https://your-workspace.withtwenty.com/post-card/create`
-
-<Warning>
-A rota de prefixo `/s/` do legado (`https://your-twenty-server.com/s/post-card/create`) está **obsoleta em 20 Cloud** e será desativada em **2026-07-24**. Persiste disponível para instâncias auto-hospedadas e locais que não configuram um domínio de funções isoladas — use `TWENTY_FUNCTIONS_URL` quando estiver definido, e cair de volta para `\<server-url>/s/\<path>` caso contrário.
-</Warning>
+* **httpRoute**: Expõe sua função em um caminho e método HTTP. No código do app, prefixe o caminho da rota com `/s/` ao usar `RestApiClient`; a URL implantada usa a base injetada `TWENTY_FUNCTIONS_URL` (ou `\<server-url>/s` quando ela não está definida).
 
 <Note>
 Para invocar uma função de lógica acionada por rota a partir de um componente de front-end (headless), consulte [Chamando uma função de lógica](/l/pt/developers/extend/apps/layout/front-components#calling-a-logic-function).

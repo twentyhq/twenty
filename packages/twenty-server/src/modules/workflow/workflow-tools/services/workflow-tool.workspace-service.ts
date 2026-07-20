@@ -25,6 +25,7 @@ import { createDeactivateWorkflowVersionTool } from 'src/modules/workflow/workfl
 import { createDeleteWorkflowTool } from 'src/modules/workflow/workflow-tools/tools/delete-workflow.tool';
 import { createDeleteWorkflowVersionEdgeTool } from 'src/modules/workflow/workflow-tools/tools/delete-workflow-version-edge.tool';
 import { createDeleteWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/delete-workflow-version-step.tool';
+import { createGetLogicFunctionSourceTool } from 'src/modules/workflow/workflow-tools/tools/get-logic-function-source.tool';
 import { createGetWorkflowCurrentVersionTool } from 'src/modules/workflow/workflow-tools/tools/get-workflow-current-version.tool';
 import { createGetWorkflowRunTool } from 'src/modules/workflow/workflow-tools/tools/get-workflow-run.tool';
 import { createListLogicFunctionToolsTool } from 'src/modules/workflow/workflow-tools/tools/list-logic-function-tools.tool';
@@ -147,6 +148,10 @@ export class WorkflowToolWorkspaceService {
       this.deps,
       contextWithPermissions,
     );
+    const getLogicFunctionSource = createGetLogicFunctionSourceTool(
+      this.deps,
+      context,
+    );
     const updateLogicFunctionSource = createUpdateLogicFunctionSourceTool(
       this.deps,
       context,
@@ -176,6 +181,7 @@ export class WorkflowToolWorkspaceService {
       [deleteWorkflow.name]: deleteWorkflow,
       [getWorkflowRun.name]: getWorkflowRun,
       [listWorkflowRuns.name]: listWorkflowRuns,
+      [getLogicFunctionSource.name]: getLogicFunctionSource,
       [updateLogicFunctionSource.name]: updateLogicFunctionSource,
       [listLogicFunctionTools.name]: listLogicFunctionTools,
       [updateAgent.name]: updateAgent,

@@ -2,9 +2,13 @@ import { definePostInstallLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { executeWithRetry } from 'src/utils/execute-with-retry';
 
 const PAGE_SIZE = 200;
-const UPDATE_BATCH_SIZE = 20;
+// Kept low so update bursts stay under Cloudflare rate limiting on hosted
+// workspaces; executeWithRetry absorbs the occasional 429 that still slips
+// through.
+const UPDATE_BATCH_SIZE = 10;
 
 type EmailInteraction = {
   personId: string;
@@ -53,23 +57,25 @@ const collectEmailInteractions = async (
   let after: string | undefined;
 
   do {
-    const { messageParticipants } = await client.query({
-      messageParticipants: {
-        __args: {
-          filter: { personId: { is: 'NOT_NULL' } },
-          first: PAGE_SIZE,
-          after,
-        },
-        edges: {
-          node: {
-            id: true,
-            personId: true,
-            message: { id: true, receivedAt: true },
+    const { messageParticipants } = await executeWithRetry(() =>
+      client.query({
+        messageParticipants: {
+          __args: {
+            filter: { personId: { is: 'NOT_NULL' } },
+            first: PAGE_SIZE,
+            after,
           },
+          edges: {
+            node: {
+              id: true,
+              personId: true,
+              message: { id: true, receivedAt: true },
+            },
+          },
+          pageInfo: { hasNextPage: true, endCursor: true },
         },
-        pageInfo: { hasNextPage: true, endCursor: true },
-      },
-    });
+      }),
+    );
 
     for (const edge of messageParticipants?.edges ?? []) {
       const { personId, message } = edge.node;
@@ -98,23 +104,25 @@ const collectMeetingInteractions = async (
   let after: string | undefined;
 
   do {
-    const { calendarEventParticipants } = await client.query({
-      calendarEventParticipants: {
-        __args: {
-          filter: { personId: { is: 'NOT_NULL' } },
-          first: PAGE_SIZE,
-          after,
-        },
-        edges: {
-          node: {
-            id: true,
-            personId: true,
-            calendarEvent: { id: true, startsAt: true, isCanceled: true },
+    const { calendarEventParticipants } = await executeWithRetry(() =>
+      client.query({
+        calendarEventParticipants: {
+          __args: {
+            filter: { personId: { is: 'NOT_NULL' } },
+            first: PAGE_SIZE,
+            after,
           },
+          edges: {
+            node: {
+              id: true,
+              personId: true,
+              calendarEvent: { id: true, startsAt: true, isCanceled: true },
+            },
+          },
+          pageInfo: { hasNextPage: true, endCursor: true },
         },
-        pageInfo: { hasNextPage: true, endCursor: true },
-      },
-    });
+      }),
+    );
 
     for (const edge of calendarEventParticipants?.edges ?? []) {
       const { personId, calendarEvent } = edge.node;
@@ -151,22 +159,24 @@ const collectMessageMemberInfo = async (
     let after: string | undefined;
 
     do {
-      const { messageParticipants } = await client.query({
-        messageParticipants: {
-          __args: {
-            filter: {
-              messageId: { in: ids },
-              workspaceMemberId: { is: 'NOT_NULL' },
+      const { messageParticipants } = await executeWithRetry(() =>
+        client.query({
+          messageParticipants: {
+            __args: {
+              filter: {
+                messageId: { in: ids },
+                workspaceMemberId: { is: 'NOT_NULL' },
+              },
+              first: PAGE_SIZE,
+              after,
             },
-            first: PAGE_SIZE,
-            after,
+            edges: {
+              node: { messageId: true, role: true, workspaceMemberId: true },
+            },
+            pageInfo: { hasNextPage: true, endCursor: true },
           },
-          edges: {
-            node: { messageId: true, role: true, workspaceMemberId: true },
-          },
-          pageInfo: { hasNextPage: true, endCursor: true },
-        },
-      });
+        }),
+      );
 
       for (const edge of messageParticipants?.edges ?? []) {
         const { messageId, role, workspaceMemberId } = edge.node;
@@ -203,26 +213,28 @@ const collectCalendarOwners = async (
     let after: string | undefined;
 
     do {
-      const { calendarEventParticipants } = await client.query({
-        calendarEventParticipants: {
-          __args: {
-            filter: {
-              calendarEventId: { in: ids },
-              workspaceMemberId: { is: 'NOT_NULL' },
+      const { calendarEventParticipants } = await executeWithRetry(() =>
+        client.query({
+          calendarEventParticipants: {
+            __args: {
+              filter: {
+                calendarEventId: { in: ids },
+                workspaceMemberId: { is: 'NOT_NULL' },
+              },
+              first: PAGE_SIZE,
+              after,
             },
-            first: PAGE_SIZE,
-            after,
-          },
-          edges: {
-            node: {
-              calendarEventId: true,
-              isOrganizer: true,
-              workspaceMemberId: true,
+            edges: {
+              node: {
+                calendarEventId: true,
+                isOrganizer: true,
+                workspaceMemberId: true,
+              },
             },
+            pageInfo: { hasNextPage: true, endCursor: true },
           },
-          pageInfo: { hasNextPage: true, endCursor: true },
-        },
-      });
+        }),
+      );
 
       for (const edge of calendarEventParticipants?.edges ?? []) {
         const { calendarEventId, isOrganizer, workspaceMemberId } = edge.node;
@@ -251,17 +263,19 @@ const collectPersonCompanies = async (
   let after: string | undefined;
 
   do {
-    const { people } = await client.query({
-      people: {
-        __args: {
-          filter: { companyId: { is: 'NOT_NULL' } },
-          first: PAGE_SIZE,
-          after,
+    const { people } = await executeWithRetry(() =>
+      client.query({
+        people: {
+          __args: {
+            filter: { companyId: { is: 'NOT_NULL' } },
+            first: PAGE_SIZE,
+            after,
+          },
+          edges: { node: { id: true, companyId: true } },
+          pageInfo: { hasNextPage: true, endCursor: true },
         },
-        edges: { node: { id: true, companyId: true } },
-        pageInfo: { hasNextPage: true, endCursor: true },
-      },
-    });
+      }),
+    );
 
     for (const edge of people?.edges ?? []) {
       const { id, companyId } = edge.node;
@@ -285,15 +299,17 @@ const collectOpportunities = async (
   let after: string | undefined;
 
   do {
-    const { opportunities: page } = await client.query({
-      opportunities: {
-        __args: { first: PAGE_SIZE, after },
-        edges: {
-          node: { id: true, pointOfContactId: true },
+    const { opportunities: page } = await executeWithRetry(() =>
+      client.query({
+        opportunities: {
+          __args: { first: PAGE_SIZE, after },
+          edges: {
+            node: { id: true, pointOfContactId: true },
+          },
+          pageInfo: { hasNextPage: true, endCursor: true },
         },
-        pageInfo: { hasNextPage: true, endCursor: true },
-      },
-    });
+      }),
+    );
 
     for (const edge of page?.edges ?? []) {
       const { id, pointOfContactId } = edge.node;
@@ -401,12 +417,14 @@ const applyUpdates = async (
   for (const batch of chunk(updates, UPDATE_BATCH_SIZE)) {
     await Promise.all(
       batch.map(({ id, data }) =>
-        client.mutation({
-          [mutationName]: {
-            __args: { id, data },
-            id: true,
-          },
-        }),
+        executeWithRetry(() =>
+          client.mutation({
+            [mutationName]: {
+              __args: { id, data },
+              id: true,
+            },
+          }),
+        ),
       ),
     );
   }

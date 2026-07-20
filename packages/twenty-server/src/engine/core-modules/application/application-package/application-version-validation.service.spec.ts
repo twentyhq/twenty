@@ -148,4 +148,93 @@ describe('ApplicationVersionValidationService', () => {
       expect(getInferredVersion).not.toHaveBeenCalled();
     });
   });
+
+  describe('validateVersionProgression', () => {
+    it('should reject an invalid incoming version', () => {
+      const result = service.validateVersionProgression({
+        incomingVersion: 'not-semver',
+        currentVersion: '1.0.0',
+        universalIdentifier: 'my-app',
+        action: 'install',
+      });
+
+      expect(result).toMatchObject({
+        allowed: false,
+        reason: 'INVALID_INCOMING_VERSION',
+      });
+    });
+
+    it('should allow any progression when the current version is not valid semver', () => {
+      expect(
+        service.validateVersionProgression({
+          incomingVersion: '1.0.0',
+          currentVersion: 'unknown',
+          universalIdentifier: 'my-app',
+          action: 'install',
+        }),
+      ).toEqual({ allowed: true });
+    });
+
+    it('should allow a higher version', () => {
+      for (const action of ['install', 'deploy'] as const) {
+        expect(
+          service.validateVersionProgression({
+            incomingVersion: '1.1.0',
+            currentVersion: '1.0.0',
+            universalIdentifier: 'my-app',
+            action,
+          }),
+        ).toEqual({ allowed: true });
+      }
+    });
+
+    it('should reject the same version on install as already installed', () => {
+      const result = service.validateVersionProgression({
+        incomingVersion: '1.0.0',
+        currentVersion: '1.0.0',
+        universalIdentifier: 'my-app',
+        action: 'install',
+      });
+
+      expect(result).toMatchObject({
+        allowed: false,
+        reason: 'SAME_VERSION',
+        message: 'my-app@1.0.0 is already installed in this workspace.',
+      });
+    });
+
+    it('should reject a lower version on install as a downgrade', () => {
+      const result = service.validateVersionProgression({
+        incomingVersion: '0.9.0',
+        currentVersion: '1.0.0',
+        universalIdentifier: 'my-app',
+        action: 'install',
+      });
+
+      expect(result).toMatchObject({
+        allowed: false,
+        reason: 'DOWNGRADE',
+      });
+    });
+
+    it('should reject same and lower versions on deploy with the bump message', () => {
+      for (const [incomingVersion, reason] of [
+        ['1.0.0', 'SAME_VERSION'],
+        ['0.9.0', 'DOWNGRADE'],
+      ] as const) {
+        const result = service.validateVersionProgression({
+          incomingVersion,
+          currentVersion: '1.0.0',
+          universalIdentifier: 'my-app',
+          action: 'deploy',
+        });
+
+        expect(result).toMatchObject({
+          allowed: false,
+          reason,
+          message: `Cannot deploy my-app@${incomingVersion}: version must be higher than the currently deployed version 1.0.0. Please bump the version in package.json.`,
+        });
+      }
+    });
+  });
 });

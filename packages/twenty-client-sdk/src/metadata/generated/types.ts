@@ -214,9 +214,6 @@ export default {
             "isPreInstalled": [
                 6
             ],
-            "logoUrl": [
-                1
-            ],
             "createdAt": [
                 4
             ],
@@ -225,6 +222,12 @@ export default {
             ],
             "isConfigured": [
                 6
+            ],
+            "logoUrl": [
+                1
+            ],
+            "galleryImagesUrls": [
+                1
             ],
             "__typename": [
                 1
@@ -1304,6 +1307,9 @@ export default {
             "applicationRegistration": [
                 30
             ],
+            "logoUrl": [
+                1
+            ],
             "__typename": [
                 1
             ]
@@ -1587,6 +1593,9 @@ export default {
                 21
             ],
             "calendarFieldMetadataId": [
+                3
+            ],
+            "calendarEndFieldMetadataId": [
                 3
             ],
             "workspaceId": [
@@ -4878,6 +4887,9 @@ export default {
             "priority": [
                 12
             ],
+            "status": [
+                1
+            ],
             "__typename": [
                 1
             ]
@@ -6269,6 +6281,15 @@ export default {
             ],
             "objectRecordCounts": [
                 202
+            ],
+            "mostlyEmptyFieldMetadataIds": [
+                3,
+                {
+                    "objectMetadataId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
             ],
             "object": [
                 47,
@@ -9540,6 +9561,9 @@ export default {
             "calendarFieldMetadataId": [
                 3
             ],
+            "calendarEndFieldMetadataId": [
+                3
+            ],
             "mainGroupByFieldMetadataId": [
                 3
             ],
@@ -9585,6 +9609,9 @@ export default {
                 69
             ],
             "calendarFieldMetadataId": [
+                3
+            ],
+            "calendarEndFieldMetadataId": [
                 3
             ],
             "visibility": [

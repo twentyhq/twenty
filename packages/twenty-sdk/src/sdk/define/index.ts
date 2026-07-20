@@ -23,6 +23,7 @@ export type {
 } from '@/sdk/define/fields/composite-fields';
 export { defineField } from '@/sdk/define/fields/define-field';
 export { FieldType } from '@/sdk/define/fields/field-type';
+export { getFieldUniversalIdentifier } from 'twenty-shared/application';
 export { OnDeleteAction } from '@/sdk/define/fields/on-delete-action';
 export { RelationType } from '@/sdk/define/fields/relation-type';
 export { validateFields } from '@/sdk/define/fields/validate-fields';

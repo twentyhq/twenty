@@ -9,6 +9,7 @@ import {
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
+import { getIsPlanRequired } from '@/onboarding/utils/getIsPlanRequired';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { useCallback } from 'react';
@@ -26,9 +27,10 @@ const getNextOnboardingStatus = ({
   currentWorkspace,
   isBillingEnabled,
 }: GetNextOnboardingStatusArgs) => {
-  const isPlanRequired =
-    isBillingEnabled &&
-    (currentWorkspace?.billingSubscriptions?.length ?? 0) === 0;
+  const isPlanRequired = getIsPlanRequired({
+    isBillingEnabled,
+    currentWorkspace,
+  });
 
   if (currentUser?.onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION) {
     return OnboardingStatus.SYNC_EMAIL;

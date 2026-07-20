@@ -8,9 +8,11 @@ import {
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
 
-const normalizeSelectFilterValues = (
+export const normalizeSelectFilterValues = (
   value: ViewFilterValue | null,
 ): string[] => {
+  // TODO: Remove legacy scalar/stringified-value support after all view filter
+  // values have been migrated to their canonical JSON representation.
   if (isArray(value)) {
     return value.filter(isNonEmptyString);
   }

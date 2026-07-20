@@ -34,7 +34,7 @@ export default defineView({
 
 * `objectUniversalIdentifier` 指定此视图适用于哪个对象。 它可以是你定义的自定义对象，也可以是标准的 Twenty 对象。
 * `key: ViewKey.INDEX` 将该视图标记为对象的主列表视图（`OBJECT` 导航项打开的那个）。
-* `fields` 控制显示哪些列以及它们的顺序。 每个字段引用一个 `fieldMetadataUniversalIdentifier`。
+* `fields` 控制显示哪些列以及它们的顺序。 每个字段引用一个 `fieldMetadataUniversalIdentifier`。 若要引用自动创建的系统字段（例如 `createdAt`），请参阅[定位系统字段](/l/zh/developers/extend/apps/data/system-fields)。
 * 你还可以声明 `filters`、`filterGroups`、`sorts`、`groups` 和 `fieldGroups` 以进行更高级的配置。
 * 当同一对象存在多个视图时，`position` 控制其排序。
 
@@ -49,7 +49,7 @@ export default defineView({
 | `isCompact`                                                                                                 | `boolean`                                                                          | 紧凑的行显示。                                                         |
 | `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                  | 按字段对记录进行分组（例如看板列）。                                              |
 | `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                            | 看板列聚合和列宽设置。                                                     |
-| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`                                                | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | 日历视图：布局以及用于定位记录的日期字段。                                           |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                        | 日历视图：布局、用于定位记录的日期字段，以及可选的结束日期字段。                                |
 
 上述所有枚举都从 `twenty-sdk/define` 导出。
 

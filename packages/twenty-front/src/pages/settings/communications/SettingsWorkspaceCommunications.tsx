@@ -60,13 +60,13 @@ export const SettingsWorkspaceCommunications = () => {
 
   return (
     <SettingsPageLayout
-      title={t`Communications`}
+      title={t`Communication`}
       links={[
         {
           children: t`Workspace`,
           href: getSettingsPath(SettingsPath.General),
         },
-        { children: t`Communications` },
+        { children: t`Communication` },
       ]}
     >
       <SettingsPageContainer>
