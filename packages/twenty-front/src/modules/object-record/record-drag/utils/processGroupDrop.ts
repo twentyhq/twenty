@@ -85,7 +85,6 @@ export const processGroupDrop = ({
     : recordsWithPosition.at(targetIndex);
 
   if (!isDefined(targetRecord)) {
-    // TODO: Look into this PR #14743
     throw new Error(
       `targetRecord cannot be found in passed recordsWithPosition, this should not happen.`,
     );

@@ -17,7 +17,7 @@ import {
   isSamePlainDate,
 } from 'twenty-shared/utils';
 import { RecordCalendarAddNew } from '@/object-record/record-calendar/components/RecordCalendarAddNew';
-import { RECORD_CALENDAR_CARD_DND_TYPE } from '@/object-record/record-calendar/record-calendar-dnd/constants/RecordCalendarCardDndType';
+import { RECORD_CALENDAR_CARD_DND_TYPE } from '@/object-record/record-calendar/month/constants/RecordCalendarCardDndType';
 import { DND_KIT_COLLISION_PRIORITY } from '@/ui/utilities/drag-and-drop/constants/DndKitCollisionPriority';
 import { DragDropColumnDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropColumnDropTarget';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

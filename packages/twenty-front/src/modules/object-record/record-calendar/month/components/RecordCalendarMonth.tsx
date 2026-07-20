@@ -1,8 +1,8 @@
 import { RecordCalendarMonthBody } from '@/object-record/record-calendar/month/components/RecordCalendarMonthBody';
+import { RecordCalendarMonthDragDropContext } from '@/object-record/record-calendar/month/components/RecordCalendarMonthDragDropContext';
 import { RecordCalendarMonthHeader } from '@/object-record/record-calendar/month/components/RecordCalendarMonthHeader';
 import { RecordCalendarMonthContextProvider } from '@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext';
 import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
-import { RecordCalendarDndKitProvider } from '@/object-record/record-calendar/record-calendar-dnd/providers/RecordCalendarDndKitProvider';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
@@ -46,12 +46,12 @@ export const RecordCalendarMonth = () => {
         weekStartsOnDayIndex,
       }}
     >
-      <RecordCalendarDndKitProvider>
+      <RecordCalendarMonthDragDropContext>
         <StyledContainer>
           <RecordCalendarMonthHeader />
           <RecordCalendarMonthBody />
         </StyledContainer>
-      </RecordCalendarDndKitProvider>
+      </RecordCalendarMonthDragDropContext>
     </RecordCalendarMonthContextProvider>
   );
 };

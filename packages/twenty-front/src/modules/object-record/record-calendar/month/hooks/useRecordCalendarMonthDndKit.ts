@@ -36,7 +36,7 @@ export type RecordCalendarDndKitContextValues = {
   activeDroppableId: string | null;
 };
 
-export const useRecordCalendarDndKit = (): {
+export const useRecordCalendarMonthDndKit = (): {
   contextValues: RecordCalendarDndKitContextValues;
   handlers: {
     onDragStart: (event: DragStartPayload) => void;
