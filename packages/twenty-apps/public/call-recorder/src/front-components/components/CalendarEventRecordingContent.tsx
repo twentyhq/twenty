@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import { IconLink } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -103,7 +104,7 @@ export const CalendarEventRecordingContent = ({
   const transcriptPlainText = useMemo(() => {
     const entries = parseTranscriptEntries(transcript);
 
-    if (entries === undefined || entries.length === 0) {
+    if (!isNonEmptyArray(entries)) {
       return undefined;
     }
 
