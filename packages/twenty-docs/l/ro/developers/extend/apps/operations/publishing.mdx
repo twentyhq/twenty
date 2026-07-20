@@ -163,16 +163,16 @@ Publică aplicația pe npm, cu proveniență, când împingi un tag de versiune 
 
 **Ce face:**
 
-1. Face checkout pentru aplicația ta, configurează Node.js și actualizează npm (publicarea de încredere necesită npm 11.5.1 sau o versiune ulterioară).
-2. Rulează `yarn twenty app:publish`, care construiește aplicația și publică `.twenty/output` în npm. În CI adaugă automat `--provenance` și `--access public`, astfel încât nu sunt necesari indicatori în workflow.
+1. Face checkout al aplicației tale, configurează Node.js și actualizează npm (publicarea de încredere necesită npm 11.5.1 sau o versiune ulterioară).
+2. Rulează `yarn twenty app:publish`, care construiește aplicația și publică `.twenty/output` în npm. În CI adaugă automat `--provenance` și `--access public`, astfel încât nu sunt necesare flaguri în fluxul de lucru.
 
 **Configurare unică:**
 
-Pe npmjs.com deschide pachetul tău > **Settings → Trusted Publisher** și înregistrează acest repository cu workflow-ul `publish.yml` (vezi [documentația npm trusted publishing](https://docs.npmjs.com/trusted-publishers)). Publicarea cu provenance certifică ce repository GitHub a construit pachetul, ceea ce este, de asemenea, modul în care îți revendici proprietatea asupra aplicației tale într-un marketplace Twenty.
+Pe npmjs.com deschide pachetul tău > **Settings → Trusted Publisher** și înregistrează acest repozitoriu cu fluxul de lucru `publish.yml` (vezi [documentația npm trusted publishing](https://docs.npmjs.com/trusted-publishers)). Publicarea cu provenance certifică ce repozitoriu GitHub a construit pachetul, ceea ce este, de asemenea, modul în care îți revendici proprietatea asupra aplicației tale într-un marketplace Twenty.
 
 ### Fixarea acțiunilor reutilizabile
 
-Workflows `ci.yml` și `cd.yml` fac referire la acțiuni reutilizabile la `@main`, astfel încât actualizările acțiunilor din repo-ul `twentyhq/twenty` sunt preluate automat. Dacă dorești builduri deterministe, înlocuiește `@main` cu un SHA de commit sau cu un tag de release pe fiecare linie `uses:`.
+Fluxurile de lucru `ci.yml` și `cd.yml` fac referire la acțiuni reutilizabile la `@main`, astfel încât actualizările acțiunilor din repo-ul `twentyhq/twenty` sunt preluate automat. Dacă dorești builduri deterministe, înlocuiește `@main` cu un SHA de commit sau cu un tag de release pe fiecare linie `uses:`.
 
 ## Publicarea pe npm
 
@@ -254,7 +254,7 @@ Dacă aplicația ta nu definește un `aboutDescription` în `defineApplication()
 
 ### Publicare CI
 
-Workflow-ul generat `publish.yml` descris mai sus publică automat în npm la etichetele de versiune, cu provenance. Deoarece `yarn twenty app:publish` adaugă `--provenance` și `--access public` pentru tine când rulează în CI, workflow-ul nu are nevoie de indicatori npm — doar de configurarea unică a trusted-publisher.
+Fluxul de lucru generat `publish.yml` descris mai sus publică automat pe npm la etichetele de versiune, cu provenance. Deoarece `yarn twenty app:publish` adaugă `--provenance` și `--access public` pentru tine când rulează în CI, fluxul de lucru nu are nevoie de flaguri npm — doar de configurarea unică a Trusted Publisher.
 
 Pentru alte sisteme CI (GitLab CI, CircleCI etc.), rulează `yarn install` apoi `yarn twenty app:publish`. Provenance este emisă atunci când mediul poate genera un token OIDC și este omisă automat în caz contrar.
 

@@ -84,6 +84,52 @@ export default defineView({
   `getFieldUniversalIdentifier`를 호출하면 이 입력값들이 변경되더라도 참조를 올바르게 유지할 수 있고, 도출 방식이 바뀌더라도 드리프트를 방지할 수 있습니다.
 </Note>
 
+## 시스템 관계 필드
+
+<Note>
+  `getSystemRelationFieldUniversalIdentifier`는 `twenty-sdk`
+  2.23부터 사용 가능하며, Twenty 서버 버전 2.23 이상이 필요합니다.
+</Note>
+
+위에 언급된 스칼라 시스템 필드 외에도 서버는 모든 객체에 `timelineActivities`, `attachments`, `noteTargets`, `taskTargets`라는 네 개의 **시스템 관계 필드**를 제공하며, 각각은 해당하는 표준 관계 객체를 가리킵니다.
+
+이 필드는 `getFieldUniversalIdentifier`로는 해결되지 않습니다. 이들의 식별자는 필드를 호스팅하는 객체와 필드가 가리키는 객체에서 **이름과 무관하게** 도출됩니다. 이 방식이면 객체의 이름을 변경해도 해당 객체의 관계 필드 식별자는 변경되지 않습니다.
+
+이들을 해결하려면 `getSystemRelationFieldUniversalIdentifier`를 사용하세요:
+
+```ts
+import {
+  getSystemRelationFieldUniversalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+// rocket.attachments — the relation field hosted on your custom object
+const rocketAttachmentsFieldId = getSystemRelationFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+});
+```
+
+* `objectUniversalIdentifier`는 필드를 **호스팅하는** 객체입니다.
+* `relationTargetObjectUniversalIdentifier`는 필드가 **가리키는** 객체입니다.
+
+방향은 인수의 순서에 의해 인코딩됩니다. 반대쪽(예: `attachment.targetRocket`, 서버가 표준 관계 객체에 생성하는 morph 필드)을 해결하려면 두 인수의 순서를 바꾸면 됩니다:
+
+```ts
+// attachment.targetRocket — the reverse morph field on Attachment
+const attachmentTargetRocketFieldId =
+  getSystemRelationFieldUniversalIdentifier({
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+    relationTargetObjectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  });
+```
+
+스칼라 시스템 필드와 마찬가지로, 해결된 ID는 `fieldMetadataUniversalIdentifier`가 필요한 곳이면 어디서든 사용할 수 있습니다.
+
 ## 표준 Twenty 객체
 
 **표준** Twenty 객체(Person, Company, Opportunity 등)의 경우 어떤 것도 도출할 필요가 없습니다. 시스템 필드 식별자는 미리 계산된 상수이므로 바로 import해서 사용할 수 있습니다.

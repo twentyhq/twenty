@@ -254,7 +254,7 @@ Si votre application ne définit pas de `aboutDescription` dans `defineApplicati
 
 ### Publication via CI
 
-Le workflow `publish.yml` préconfiguré décrit ci-dessus publie automatiquement sur npm lors des tags de version, avec provenance. Comme `yarn twenty app:publish` ajoute `--provenance` et `--access public` pour vous lorsqu’il s’exécute en CI, le workflow n’a besoin d’aucun indicateur npm — seulement de la configuration unique du trusted publisher.
+Le workflow `publish.yml` préconfiguré décrit ci-dessus publie automatiquement sur npm lors des tags de version, avec provenance. Comme `yarn twenty app:publish` ajoute `--provenance` et `--access public` pour vous lorsqu’il s’exécute en CI, le workflow n’a besoin d’aucune option npm — seulement de la configuration unique de Trusted Publisher.
 
 Pour d’autres systèmes de CI (GitLab CI, CircleCI, etc.), exécutez `yarn install` puis `yarn twenty app:publish`. La provenance est émise lorsque l’environnement peut générer un jeton OIDC et est ignorée automatiquement dans le cas contraire.
 
