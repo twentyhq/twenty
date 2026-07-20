@@ -18,6 +18,7 @@ import {
   LogicFunctionTriggerJob,
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { computeLogicFunctionCronTriggerSpreadDelay } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/utils/compute-logic-function-cron-trigger-spread-delay.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export const CRON_TRIGGER_CRON_PATTERN = '* * * * *';
@@ -85,6 +86,14 @@ export class CronTriggerCronJob {
             continue;
           }
 
+          const spreadDelay = computeLogicFunctionCronTriggerSpreadDelay({
+            workspaceId: activeWorkspace.id,
+            applicationUniversalIdentifier:
+              logicFunction.applicationUniversalIdentifier,
+            logicFunctionUniversalIdentifier: logicFunction.universalIdentifier,
+            cronPattern: cronSettings.pattern,
+          });
+
           await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
             LogicFunctionTriggerJob.name,
             [
@@ -94,7 +103,10 @@ export class CronTriggerCronJob {
                 payload: {},
               },
             ],
-            { retryLimit: 3 },
+            {
+              retryLimit: 3,
+              ...(spreadDelay > 0 ? { delay: spreadDelay } : {}),
+            },
           );
         }
       } catch (error) {
