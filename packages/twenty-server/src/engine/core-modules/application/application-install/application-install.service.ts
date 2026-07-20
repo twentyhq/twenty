@@ -339,6 +339,7 @@ export class ApplicationInstallService {
         manifest: resolvedPackage.manifest,
         workspaceId: params.workspaceId,
         applicationRegistrationId: appRegistration.id,
+        applicationSourceType: appRegistration.sourceType,
         previousVersion,
         newVersion,
         isVersionUpgrade,
@@ -350,6 +351,7 @@ export class ApplicationInstallService {
         manifest: resolvedPackage.manifest,
         applicationRegistrationId: appRegistration.id,
         application,
+        applicationSourceType: appRegistration.sourceType,
       });
 
       await this.runPostInstallHook({
@@ -395,6 +397,7 @@ export class ApplicationInstallService {
     manifest: Manifest;
     workspaceId: string;
     applicationRegistrationId?: string;
+    applicationSourceType: ApplicationRegistrationSourceType;
     previousVersion?: string;
     newVersion: string;
     isVersionUpgrade: boolean;
@@ -404,6 +407,7 @@ export class ApplicationInstallService {
       manifest,
       workspaceId,
       applicationRegistrationId,
+      applicationSourceType,
       previousVersion,
       newVersion,
       isVersionUpgrade,
@@ -418,6 +422,7 @@ export class ApplicationInstallService {
       workspaceId: params.workspaceId,
       manifest,
       applicationRegistrationId,
+      applicationSourceType,
     });
 
     const {

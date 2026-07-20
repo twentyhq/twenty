@@ -84,6 +84,7 @@ describe('ApplicationManifestApplyService', () => {
         manifest: buildManifest(),
         applicationRegistrationId: REGISTRATION_ID,
         application: buildApplication(null),
+        applicationSourceType: ApplicationRegistrationSourceType.LOCAL,
       });
 
       expect(
@@ -93,6 +94,24 @@ describe('ApplicationManifestApplyService', () => {
         applicationId: APPLICATION_ID,
         applicationUniversalIdentifier: 'my-app',
       });
+    });
+
+    it('should forward the application source type to the sync service', async () => {
+      await service.applyManifestToWorkspace({
+        workspaceId: WORKSPACE_ID,
+        manifest: buildManifest(),
+        applicationRegistrationId: REGISTRATION_ID,
+        application: buildApplication('1.0.0'),
+        applicationSourceType: ApplicationRegistrationSourceType.LOCAL,
+      });
+
+      expect(
+        mockApplicationSyncService.synchronizeFromManifest,
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          applicationSourceType: ApplicationRegistrationSourceType.LOCAL,
+        }),
+      );
     });
 
     it('should generate the SDK client when the schema changed', async () => {
@@ -106,6 +125,7 @@ describe('ApplicationManifestApplyService', () => {
         manifest: buildManifest(),
         applicationRegistrationId: REGISTRATION_ID,
         application: buildApplication('1.0.0'),
+        applicationSourceType: ApplicationRegistrationSourceType.NPM,
       });
 
       expect(
@@ -119,6 +139,7 @@ describe('ApplicationManifestApplyService', () => {
         manifest: buildManifest(),
         applicationRegistrationId: REGISTRATION_ID,
         application: buildApplication('1.0.0'),
+        applicationSourceType: ApplicationRegistrationSourceType.NPM,
       });
 
       expect(

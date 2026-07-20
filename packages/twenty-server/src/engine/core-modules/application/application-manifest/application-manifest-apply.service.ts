@@ -25,11 +25,16 @@ export class ApplicationManifestApplyService {
     manifest,
     applicationRegistrationId,
     application,
+    applicationSourceType,
   }: {
     workspaceId: string;
     manifest: Manifest;
     applicationRegistrationId?: string;
     application: ApplicationEntity;
+    // The source type to persist on the installed application. Local dev
+    // applies pass LOCAL to detach the installation from its registration;
+    // marketplace/tarball installs pass the registration's source type.
+    applicationSourceType: ApplicationRegistrationSourceType;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -44,6 +49,7 @@ export class ApplicationManifestApplyService {
         workspaceId,
         manifest,
         applicationRegistrationId,
+        applicationSourceType,
       });
 
     if (isFirstApply || hasSchemaMetadataChanged) {

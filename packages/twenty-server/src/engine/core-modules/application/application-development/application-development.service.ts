@@ -130,6 +130,7 @@ export class ApplicationDevelopmentService {
         await this.applicationSyncService.synchronizeFromManifest({
           workspaceId,
           manifest,
+          applicationSourceType: ApplicationRegistrationSourceType.LOCAL,
           dryRun: true,
         });
 
@@ -237,6 +238,10 @@ export class ApplicationDevelopmentService {
         manifest,
         applicationRegistrationId,
         application,
+        // A local dev apply always detaches the installed application from its
+        // registration so the settings page offers to re-attach to the
+        // registration's latest published version.
+        applicationSourceType: ApplicationRegistrationSourceType.LOCAL,
       });
 
     await this.syncRegistrationMetadata(

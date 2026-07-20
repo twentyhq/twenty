@@ -13,7 +13,9 @@ import {
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
 import { useContext, useState } from 'react';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
+import { isDetachedLocalApplication } from '~/pages/settings/applications/utils/isDetachedLocalApplication';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
+import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 import { Section } from 'twenty-ui/layout';
 import { SearchInput } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -85,18 +87,23 @@ export const SettingsApplicationsTable = ({
         </TableRow>
         <StyledTableRowsContainer>
           {filteredApplications.map((application) => {
-            const isNpmApp =
-              application.applicationRegistration?.sourceType ===
-              ApplicationRegistrationSourceType.NPM;
+            const registrationSourceType =
+              application.applicationRegistration?.sourceType;
 
             const latestVersion =
               application.applicationRegistration?.latestAvailableVersion;
 
+            const isDetachedLocal = isDetachedLocalApplication({
+              applicationSourceType: application.sourceType,
+              registrationSourceType,
+            });
+
             const hasUpdate =
-              isNpmApp &&
+              isUpgradableApplicationSourceType(registrationSourceType) &&
               isDefined(latestVersion) &&
               isDefined(application.version) &&
-              isNewerSemver(latestVersion, application.version);
+              (isDetachedLocal ||
+                isNewerSemver(latestVersion, application.version));
 
             return (
               <SettingsApplicationTableRow

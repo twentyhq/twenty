@@ -8,6 +8,7 @@ import { PackageJson } from 'type-fest';
 import { v4 } from 'uuid';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { buildApplicationVersionForSourceType } from 'src/engine/core-modules/application/application-manifest/utils/build-application-version-for-source-type.util';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
@@ -50,11 +51,16 @@ export class ApplicationSyncService {
     workspaceId,
     manifest,
     applicationRegistrationId,
+    applicationSourceType,
     dryRun = false,
   }: {
     workspaceId: string;
     manifest: Manifest;
     applicationRegistrationId?: string;
+    // The source type to persist on the installed application. A local dev
+    // apply passes LOCAL to detach the installation from its registration,
+    // while marketplace/tarball installs pass the registration's source type.
+    applicationSourceType: ApplicationRegistrationSourceType;
     dryRun?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
@@ -66,6 +72,7 @@ export class ApplicationSyncService {
           workspaceId,
           manifest,
           applicationRegistrationId,
+          applicationSourceType,
         });
 
     let syncResult: {
@@ -179,10 +186,12 @@ export class ApplicationSyncService {
     workspaceId,
     manifest,
     applicationRegistrationId,
+    applicationSourceType,
   }: {
     workspaceId: string;
     manifest: Manifest;
     applicationRegistrationId?: string;
+    applicationSourceType: ApplicationRegistrationSourceType;
   }): Promise<void> {
     if (!isDefined(manifest.application.preInstallLogicFunction)) {
       return;
@@ -192,6 +201,7 @@ export class ApplicationSyncService {
       workspaceId,
       manifest,
       applicationRegistrationId,
+      applicationSourceType,
     });
 
     const ownerFlatApplication: FlatApplication = application;
@@ -211,10 +221,12 @@ export class ApplicationSyncService {
     workspaceId,
     manifest,
     applicationRegistrationId,
+    applicationSourceType,
   }: {
     workspaceId: string;
     manifest: Manifest;
     applicationRegistrationId?: string;
+    applicationSourceType: ApplicationRegistrationSourceType;
   }): Promise<ApplicationEntity> {
     const name = manifest.application.displayName;
     const packageJson = JSON.parse(
@@ -245,7 +257,11 @@ export class ApplicationSyncService {
       name,
       description: manifest.application.description,
       logo: manifest.application.logoUrl ?? null,
-      version: packageJson.version,
+      version: buildApplicationVersionForSourceType({
+        packageJsonVersion: packageJson.version,
+        sourceType: applicationSourceType,
+      }),
+      sourceType: applicationSourceType,
       packageJsonChecksum: manifest.application.packageJsonChecksum,
       yarnLockChecksum: manifest.application.yarnLockChecksum,
       applicationRegistrationId: resolvedRegistrationId,
