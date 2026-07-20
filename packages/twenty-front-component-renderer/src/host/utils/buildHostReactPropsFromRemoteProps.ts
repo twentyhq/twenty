@@ -11,10 +11,16 @@ import { type SerializedEventData } from '@/types/SerializedEventData';
 
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components']);
 
+// remote-dom sends handler props under the React spelling, the DOM spelling or
+// anything in between, so both are indexed: `dblclick` arrives as either
+// `ondblclick` or `onDoubleClick`.
 const LOWERCASE_EVENT_PROP_TO_REACT_PROP: Record<string, string> =
   Object.fromEntries(
-    Object.entries(DOM_EVENT_TYPE_TO_REACT_PROP).map(
-      ([domEventType, reactProp]) => [`on${domEventType}`, reactProp],
+    Object.entries(DOM_EVENT_TYPE_TO_REACT_PROP).flatMap(
+      ([domEventType, reactProp]) => [
+        [`on${domEventType}`, reactProp],
+        [reactProp.toLowerCase(), reactProp],
+      ],
     ),
   );
 

@@ -1,3 +1,5 @@
+import { DOM_EVENT_TYPE_TO_REACT_PROP } from '@/constants/DomEventTypeToReactProp';
+
 import { buildHostReactPropsFromRemoteProps } from '../buildHostReactPropsFromRemoteProps';
 
 describe('buildHostReactPropsFromRemoteProps', () => {
@@ -99,6 +101,19 @@ describe('buildHostReactPropsFromRemoteProps', () => {
     );
 
     expect(result).toEqual({});
+  });
+
+  it('should keep every allow-listed event under its react prop name', () => {
+    const handler = jest.fn();
+
+    for (const reactProp of Object.values(DOM_EVENT_TYPE_TO_REACT_PROP)) {
+      const result = buildHostReactPropsFromRemoteProps(
+        { [reactProp]: handler },
+        'div',
+      );
+
+      expect(Object.keys(result)).toEqual([reactProp]);
+    }
   });
 
   it('should drop capture-phase handler props', () => {
