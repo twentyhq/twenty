@@ -660,6 +660,7 @@ type Application {
   availablePackages: JSON!
   applicationRegistrationId: UUID
   canBeUninstalled: Boolean!
+  autoUpgrade: Boolean!
   defaultRoleId: String
   settingsCustomTabFrontComponentId: UUID @deprecated(reason: "Custom settings tabs are no longer supported. This field is ignored.")
   defaultLogicFunctionRole: Role
@@ -3376,6 +3377,7 @@ type Mutation {
   destroyViewGroup(input: DestroyViewGroupInput!): ViewGroup!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   installApplication(universalIdentifier: String!, version: String): Application!
+  updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!
   uninstallApplication(universalIdentifier: String!): Boolean!
   syncMarketplaceCatalog: Boolean!
   createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
@@ -4275,6 +4277,10 @@ input DeleteViewGroupInput {
 input DestroyViewGroupInput {
   """The id of the view group to destroy."""
   id: UUID!
+}
+
+input UpdateApplicationInput {
+  autoUpgrade: Boolean
 }
 
 input CreateApplicationRegistrationInput {

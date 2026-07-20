@@ -86,6 +86,10 @@ export class ApplicationDTO {
   @IsBoolean()
   canBeUninstalled: boolean;
 
+  @Field(() => Boolean)
+  @IsBoolean()
+  autoUpgrade: boolean;
+
   @IsOptional()
   @IsString()
   @Field({ nullable: true })
