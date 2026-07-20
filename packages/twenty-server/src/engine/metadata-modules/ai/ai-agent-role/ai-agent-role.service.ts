@@ -54,36 +54,6 @@ export class AiAgentRoleService {
     });
   }
 
-  public async getAssignedRoleId({
-    workspaceId,
-    agentId,
-  }: {
-    workspaceId: string;
-    agentId: string;
-  }): Promise<string | null> {
-    const roleTarget = await this.roleTargetRepository.findOne(workspaceId, {
-      where: { agentId },
-      select: ['roleId'],
-    });
-
-    return roleTarget?.roleId ?? null;
-  }
-
-  public async getRoleIdByUniversalIdentifier({
-    workspaceId,
-    universalIdentifier,
-  }: {
-    workspaceId: string;
-    universalIdentifier: string;
-  }): Promise<string | null> {
-    const role = await this.roleRepository.findOne(workspaceId, {
-      where: { universalIdentifier },
-      select: ['id'],
-    });
-
-    return role?.id ?? null;
-  }
-
   public async removeRoleFromAgent({
     workspaceId,
     agentId,

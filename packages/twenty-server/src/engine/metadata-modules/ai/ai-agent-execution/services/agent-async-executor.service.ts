@@ -5,7 +5,6 @@ import {
   generateText,
   jsonSchema,
   type LanguageModelUsage,
-  type ModelMessage,
   Output,
   stepCountIs,
   type StepResult,
@@ -112,7 +111,6 @@ export class AgentAsyncExecutorService {
   async executeAgent({
     agent,
     userPrompt,
-    messages,
     actorContext,
     authContext,
     workspaceId,
@@ -121,7 +119,6 @@ export class AgentAsyncExecutorService {
   }: {
     agent: AgentEntity | null;
     userPrompt: string;
-    messages?: ModelMessage[];
     actorContext?: ActorMetadata;
     authContext?: WorkspaceAuthContext;
     workspaceId: string;
@@ -230,18 +227,11 @@ export class AgentAsyncExecutorService {
 
       let hasNoMoreAvailableCredits = false;
 
-      const promptOrMessages:
-        | { prompt: string }
-        | { messages: ModelMessage[] } =
-        isDefined(messages) && messages.length > 0
-          ? { messages }
-          : { prompt: userPrompt };
-
       const textResponse = await generateText({
         system: `${WORKFLOW_SYSTEM_PROMPTS.BASE}\n\n${agent ? agent.prompt : ''}`,
         tools,
         model: registeredModel.model,
-        ...promptOrMessages,
+        prompt: userPrompt,
         stopWhen: (step) =>
           stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
           hasNoMoreAvailableCredits,

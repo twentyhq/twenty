@@ -55,7 +55,6 @@ import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SearchModule } from 'src/engine/core-modules/search/search.module';
-import { SlackAssistantModule } from 'src/engine/core-modules/slack-assistant/slack-assistant.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
 import { WellKnownModule } from 'src/engine/core-modules/well-known/well-known.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
@@ -93,7 +92,6 @@ import { FileModule } from './file/file.module';
     BillingWebhookModule,
     MessagingWebhooksModule,
     ConnectedAccountSyncWebhooksModule,
-    SlackAssistantModule,
     UsageModule,
     ClientConfigModule,
     FeatureFlagModule,
