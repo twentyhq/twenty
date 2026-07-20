@@ -36,6 +36,7 @@ import {
   type WorkflowBranchExecutorInput,
   type WorkflowExecutorInput,
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
+import { isTransientWorkflowError } from 'src/modules/workflow/workflow-executor/utils/is-transient-workflow-error.util';
 import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
 import { shouldFailSafely } from 'src/modules/workflow/workflow-executor/utils/should-fail-safely.util';
 import { shouldSkipStepExecution } from 'src/modules/workflow/workflow-executor/utils/should-skip-step-execution.util';
@@ -53,6 +54,10 @@ import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const MAX_EXECUTED_STEPS_COUNT = 20;
+
+// A transient infra error (e.g. a DB read timeout) should not permanently
+// abandon a run. Retry the step a couple of times before failing it.
+const TRANSIENT_ERROR_RETRY_DELAYS_MS = [1000, 4000];
 
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
@@ -460,38 +465,52 @@ export class WorkflowExecutorWorkspaceService {
       workspaceId,
     });
 
-    try {
-      return await workflowAction.execute({
-        currentStepId: stepId,
-        steps,
-        context: getWorkflowRunContext(stepInfos),
-        runInfo: {
-          workflowRunId,
-          workspaceId,
-        },
-      });
-    } catch (error) {
-      const isUserError =
-        error instanceof WorkflowStepExecutorException &&
-        (error.code === WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE ||
-          error.code === WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT ||
-          error.code === WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND);
-
-      if (!isUserError) {
-        this.exceptionHandlerService.captureExceptions([error], {
-          workspace: { id: workspaceId },
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await workflowAction.execute({
+          currentStepId: stepId,
+          steps,
+          context: getWorkflowRunContext(stepInfos),
+          runInfo: {
+            workflowRunId,
+            workspaceId,
+          },
         });
+      } catch (error) {
+        if (
+          isTransientWorkflowError(error) &&
+          attempt < TRANSIENT_ERROR_RETRY_DELAYS_MS.length
+        ) {
+          await new Promise((resolve) =>
+            setTimeout(resolve, TRANSIENT_ERROR_RETRY_DELAYS_MS[attempt]),
+          );
 
-        await this.metricsService.incrementCounterForEvent({
-          key: MetricsKeys.WorkflowRunSystemError,
-          eventId: workflowRunId,
-          debugLog: `[Workflow Run System Error] Workflow run ${workflowRunId} in workspace ${workspaceId} ended with system error`,
-        });
+          continue;
+        }
+
+        const isUserError =
+          error instanceof WorkflowStepExecutorException &&
+          (error.code === WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE ||
+            error.code ===
+              WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT ||
+            error.code === WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND);
+
+        if (!isUserError) {
+          this.exceptionHandlerService.captureExceptions([error], {
+            workspace: { id: workspaceId },
+          });
+
+          await this.metricsService.incrementCounterForEvent({
+            key: MetricsKeys.WorkflowRunSystemError,
+            eventId: workflowRunId,
+            debugLog: `[Workflow Run System Error] Workflow run ${workflowRunId} in workspace ${workspaceId} ended with system error`,
+          });
+        }
+
+        return {
+          error: error.message ?? 'Execution result error, no data or error',
+        };
       }
-
-      return {
-        error: error.message ?? 'Execution result error, no data or error',
-      };
     }
   }
 
