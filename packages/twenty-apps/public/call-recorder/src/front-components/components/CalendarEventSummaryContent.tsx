@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CalendarEventSummaryBody } from 'src/front-components/components/CalendarEventSummaryBody';
+import { CopyToClipboardButton } from 'src/front-components/components/CopyToClipboardButton';
 import { useCalendarEventSummary } from 'src/front-components/hooks/use-calendar-event-summary';
 
 const StyledSummaryShell = styled.div`
@@ -60,6 +61,11 @@ export const CalendarEventSummaryContent = ({
     <StyledSummaryShell>
       <StyledSummaryHeader>
         <StyledSummaryTitle>Summary</StyledSummaryTitle>
+        <CopyToClipboardButton
+          textToCopy={summaryMarkdown}
+          ariaLabel="Copy summary"
+          successMessage="Summary copied to clipboard."
+        />
       </StyledSummaryHeader>
       <StyledSummaryBody>
         <StyledSummaryContentFrame>

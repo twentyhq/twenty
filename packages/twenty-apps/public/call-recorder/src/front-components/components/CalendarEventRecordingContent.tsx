@@ -1,10 +1,14 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { IconLink } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CalendarEventRecordingBody } from 'src/front-components/components/CalendarEventRecordingBody';
+import { CopyToClipboardButton } from 'src/front-components/components/CopyToClipboardButton';
 import { useCalendarEventParticipants } from 'src/front-components/hooks/use-calendar-event-participants';
 import { useCalendarEventRecording } from 'src/front-components/hooks/use-calendar-event-recording';
+import { buildTranscriptPlainText } from 'src/front-components/utils/build-transcript-plain-text.util';
+import { parseTranscriptEntries } from 'src/front-components/utils/parse-transcript-entries.util';
 
 const TRANSCRIPT_TIME_UPDATE_INTERVAL_SECONDS = 0.25;
 
@@ -36,6 +40,12 @@ const StyledRecordingTitle = styled.h2`
   overflow: hidden;
   padding-inline: ${() => themeCssVariables.spacing[1]};
   user-select: none;
+`;
+
+const StyledRecordingHeaderActions = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${() => themeCssVariables.spacing[1]};
 `;
 
 const StyledRecordingBody = styled.div`
@@ -90,10 +100,33 @@ export const CalendarEventRecordingContent = ({
 
   const videoFileUrl = videoFile?.url ?? undefined;
 
+  const transcriptPlainText = useMemo(() => {
+    const entries = parseTranscriptEntries(transcript);
+
+    if (entries === undefined || entries.length === 0) {
+      return undefined;
+    }
+
+    return buildTranscriptPlainText({ entries, calendarEventParticipants });
+  }, [transcript, calendarEventParticipants]);
+
   return (
     <StyledRecordingShell>
       <StyledRecordingHeader>
         <StyledRecordingTitle>Recording and Transcript</StyledRecordingTitle>
+        <StyledRecordingHeaderActions>
+          <CopyToClipboardButton
+            textToCopy={transcriptPlainText}
+            ariaLabel="Copy transcript"
+            successMessage="Transcript copied to clipboard."
+          />
+          <CopyToClipboardButton
+            textToCopy={videoFileUrl}
+            ariaLabel="Copy video download link"
+            successMessage="Video download link copied to clipboard."
+            Icon={IconLink}
+          />
+        </StyledRecordingHeaderActions>
       </StyledRecordingHeader>
       <StyledRecordingBody>
         <StyledRecordingContentFrame>
