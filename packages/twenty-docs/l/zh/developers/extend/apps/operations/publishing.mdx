@@ -69,7 +69,7 @@ yarn twenty app:publish --private
 
 1. 将 `package.json` 中的 `version` 字段递增（例如：`1.2.3` → `1.2.4`、`1.3.0` 或 `2.0.0`）
 2. 运行 `yarn twenty app:publish --private`（或 `yarn twenty app:publish --private --remote production`）
-3. 已安装该应用的工作区会在其设置中看到可用的升级
+3. 已安装此应用并在应用的 Settings 选项卡中启用自动升级的工作区会在后台自动升级；其他工作区会在其设置中看到可用的升级
 
 <Note>
 预发布标签按预期工作：将 `1.0.0-rc.1` 递增为 `1.0.0-rc.2` 是允许的，并且像 `1.0.0` 这样的正式发布会被正确识别为高于 `1.0.0-rc.5`。 `package.json` 中的版本本身必须是有效的 SemVer 字符串。

@@ -69,7 +69,7 @@ Bir güncelleme yayımlamak için:
 
 1. `package.json` içindeki `version` alanını artırın (ör. `1.2.3` → `1.2.4`, `1.3.0` veya `2.0.0`)
 2. `yarn twenty app:publish --private` (veya `yarn twenty app:publish --private --remote production`) komutunu çalıştırın
-3. Uygulamayı kurmuş olan çalışma alanları, ayarlarında mevcut güncellemeyi görecektir
+3. Uygulamanın yüklü olduğu ve (uygulamanın Ayarlar sekmesinde) otomatik yükseltmeyi etkinleştirmiş çalışma alanları, arka planda otomatik olarak yükseltilir; diğerleri ise ayarlarında mevcut yükseltmeyi görecektir
 
 <Note>
 Ön sürüm etiketleri beklendiği gibi çalışır: `1.0.0-rc.1` → `1.0.0-rc.2` sürümünü artırmak mümkündür ve `1.0.0` gibi nihai bir sürüm, `1.0.0-rc.5` sürümünden daha yüksek olarak doğru şekilde tanınır. `package.json` içindeki sürümün kendisi geçerli bir semver dizesi olmalıdır.
