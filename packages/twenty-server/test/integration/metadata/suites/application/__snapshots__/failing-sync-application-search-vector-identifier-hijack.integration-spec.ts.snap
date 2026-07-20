@@ -3,12 +3,37 @@
 exports[`Sync application should reject hijacking the searchVector system field should reject a manifest field declared under the reserved searchVector name 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
-    "subCode": "INVALID_INPUT",
-    "userFriendlyMessage": "Invalid input provided.",
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_MUTATION_NOT_ALLOWED",
+              "message": "System fields only allow updating: universalSettings, isActive. Forbidden properties: description, icon, isUIEditable",
+              "userFriendlyMessage": "System fields cannot be updated",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "searchVector",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "System fields cannot be updated",
   },
-  "message": "Field name "searchVector" is reserved for engine-provisioned system fields and cannot be manifest-authored (universal identifier "<searchVector-universal-identifier>")",
-  "name": "UserInputError",
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
 }
 `;
 

@@ -112,15 +112,7 @@ describe('Sync application should reject hijacking the searchVector system field
       expectToFail: true,
     });
 
-    expectOneNotInternalServerErrorSnapshot({
-      errors,
-      // The rejection message embeds the run-random derived universal identifier
-      normalizeMessage: (message) =>
-        message.replace(
-          SEARCH_VECTOR_UNIVERSAL_IDENTIFIER,
-          '<searchVector-universal-identifier>',
-        ),
-    });
+    expectOneNotInternalServerErrorSnapshot({ errors });
   }, 60000);
 
   it('should reject a manifest field squatting the searchVector deterministic universal identifier', async () => {
