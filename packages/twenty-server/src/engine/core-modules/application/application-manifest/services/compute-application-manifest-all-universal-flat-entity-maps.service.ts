@@ -78,8 +78,10 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
   }): AllFlatEntityMaps {
     const allUniversalFlatEntityMaps = createEmptyAllFlatEntityMaps();
 
-    const { universalIdentifier: applicationUniversalIdentifier } =
-      ownerFlatApplication;
+    const {
+      universalIdentifier: applicationUniversalIdentifier,
+      sourceType: applicationSourceType,
+    } = ownerFlatApplication;
 
     for (const objectManifest of manifest.objects) {
       const flatObjectMetadata =
@@ -207,6 +209,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           fromLogicFunctionManifestToUniversalFlatLogicFunction({
             logicFunctionManifest,
             applicationUniversalIdentifier,
+            applicationSourceType,
             now,
           }),
         universalFlatEntityMapsToMutate:

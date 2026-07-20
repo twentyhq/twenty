@@ -138,9 +138,10 @@ export class LogicFunctionExecutorService {
     });
 
     if (effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT) {
-      await this.assertPrebuiltBundleInstalled({
+      await this.ensurePrebuiltBundleInstalled({
         driver,
         flatLogicFunction,
+        flatApplication,
       });
     }
 
@@ -205,17 +206,38 @@ export class LogicFunctionExecutorService {
     return flatLogicFunction.executionMode ?? LogicFunctionExecutionMode.LIVE;
   }
 
-  private async assertPrebuiltBundleInstalled({
+  private async ensurePrebuiltBundleInstalled({
     driver,
     flatLogicFunction,
+    flatApplication,
   }: {
     driver: ReturnType<LogicFunctionDriverFactory['getCurrentDriver']>;
     flatLogicFunction: FlatLogicFunction;
+    flatApplication: FlatApplication;
   }): Promise<void> {
     const installedChecksum =
       await driver.getInstalledBundleChecksum(flatLogicFunction);
 
-    if (installedChecksum !== flatLogicFunction.checksum) {
+    if (installedChecksum === flatLogicFunction.checksum) {
+      return;
+    }
+
+    // The bundle can be missing on this node even though the function is
+    // legitimately PREBUILT: mode was backfilled by an upgrade migration, or
+    // the install ran on another server instance. Self-heal by installing
+    // from the stored build before failing the execution.
+    try {
+      await driver.installPrebuiltBundle({
+        flatLogicFunction,
+        flatApplication,
+        applicationUniversalIdentifier: flatApplication.universalIdentifier,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to install prebuilt bundle on-demand for function '${flatLogicFunction.id}': ` +
+          `${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
+      );
       throw new LogicFunctionException(
         `Prebuilt bundle is not installed for function '${flatLogicFunction.id}' ` +
           `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}). ` +
