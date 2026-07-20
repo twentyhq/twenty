@@ -1,11 +1,8 @@
-import { filterProps } from '../filterProps';
+import { buildHostReactPropsFromRemoteProps } from '../buildHostReactPropsFromRemoteProps';
 
-const filter = (props: Record<string, unknown>, htmlTag: string) =>
-  filterProps(props, htmlTag) as Record<string, unknown>;
-
-describe('filterProps', () => {
+describe('buildHostReactPropsFromRemoteProps', () => {
   it('should drop internal remote-dom props', () => {
-    const result = filter(
+    const result = buildHostReactPropsFromRemoteProps(
       { element: {}, receiver: {}, components: {}, id: 'keep' },
       'div',
     );
@@ -14,21 +11,27 @@ describe('filterProps', () => {
   });
 
   it('should drop undefined values', () => {
-    const result = filter({ title: undefined, id: 'x' }, 'div');
+    const result = buildHostReactPropsFromRemoteProps(
+      { title: undefined, id: 'x' },
+      'div',
+    );
 
     expect('title' in result).toBe(false);
     expect(result.id).toBe('x');
   });
 
   it('should parse the style string into an object', () => {
-    const result = filter({ style: 'color: red' }, 'div');
+    const result = buildHostReactPropsFromRemoteProps(
+      { style: 'color: red' },
+      'div',
+    );
 
     expect(result.style).toEqual({ color: 'red' });
   });
 
   it('should wrap function event handlers and normalize their key', () => {
     const onClick = jest.fn();
-    const result = filter({ onClick }, 'div');
+    const result = buildHostReactPropsFromRemoteProps({ onClick }, 'div');
 
     expect(typeof result.onClick).toBe('function');
     expect(result.onClick).not.toBe(onClick);
@@ -36,7 +39,7 @@ describe('filterProps', () => {
 
   it('should normalize and wrap newly allowed event handlers', () => {
     const handler = jest.fn();
-    const result = filter(
+    const result = buildHostReactPropsFromRemoteProps(
       {
         onTouchstart: handler,
         onDragstart: handler,
@@ -62,14 +65,20 @@ describe('filterProps', () => {
 
   it('should normalize focusin and focusout handlers to their react-style keys', () => {
     const handler = jest.fn();
-    const result = filter({ onFocusin: handler, onFocusout: handler }, 'div');
+    const result = buildHostReactPropsFromRemoteProps(
+      { onFocusin: handler, onFocusout: handler },
+      'div',
+    );
 
     expect(typeof result.onFocusIn).toBe('function');
     expect(typeof result.onFocusOut).toBe('function');
   });
 
   it('should drop event-handler props whose value is not a function', () => {
-    const result = filter({ onClick: 'alert(1)', onmouseover: 'x' }, 'div');
+    const result = buildHostReactPropsFromRemoteProps(
+      { onClick: 'alert(1)', onmouseover: 'x' },
+      'div',
+    );
 
     expect('onClick' in result).toBe(false);
     expect('onMouseOver' in result).toBe(false);
@@ -77,26 +86,35 @@ describe('filterProps', () => {
   });
 
   it('should drop a dangerous scheme on a navigation attribute', () => {
-    const result = filter({ href: 'javascript:alert(1)' }, 'a');
+    const result = buildHostReactPropsFromRemoteProps(
+      { href: 'javascript:alert(1)' },
+      'a',
+    );
 
     expect('href' in result).toBe(false);
   });
 
   it('should keep a dangerous scheme on a non-navigation attribute', () => {
     const dataImage = 'data:image/png;base64,iVBOR';
-    const result = filter({ src: dataImage }, 'img');
+    const result = buildHostReactPropsFromRemoteProps(
+      { src: dataImage },
+      'img',
+    );
 
     expect(result.src).toBe(dataImage);
   });
 
   it('should keep a safe url on a navigation attribute', () => {
-    const result = filter({ href: 'https://twenty.com' }, 'a');
+    const result = buildHostReactPropsFromRemoteProps(
+      { href: 'https://twenty.com' },
+      'a',
+    );
 
     expect(result.href).toBe('https://twenty.com');
   });
 
   it('should forward arbitrary aria-* and data-* attributes', () => {
-    const result = filter(
+    const result = buildHostReactPropsFromRemoteProps(
       {
         'aria-selected': 'true',
         'aria-activedescendant': 'item-2',
@@ -113,12 +131,20 @@ describe('filterProps', () => {
   });
 
   it('should forward the draggable attribute', () => {
-    expect(filter({ draggable: 'true' }, 'div').draggable).toBe('true');
-    expect(filter({ draggable: true }, 'div').draggable).toBe(true);
+    expect(
+      buildHostReactPropsFromRemoteProps({ draggable: 'true' }, 'div')
+        .draggable,
+    ).toBe('true');
+    expect(
+      buildHostReactPropsFromRemoteProps({ draggable: true }, 'div').draggable,
+    ).toBe(true);
   });
 
   it('should still drop a non-function on* handler smuggled as a data-adjacent prop', () => {
-    const result = filter({ onClick: 'alert(1)', 'data-state': 'open' }, 'div');
+    const result = buildHostReactPropsFromRemoteProps(
+      { onClick: 'alert(1)', 'data-state': 'open' },
+      'div',
+    );
 
     expect('onClick' in result).toBe(false);
     expect(result['data-state']).toBe('open');

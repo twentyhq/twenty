@@ -1,13 +1,13 @@
-import { isFunction } from '@sniptt/guards';
 import React, { useContext } from 'react';
 
 import { FrontComponentInputFocusContext } from '@/host/contexts/FrontComponentInputFocusContext';
-import { useHostNativeEventListenerRef } from '@/host/hooks/useHostNativeEventListenerRef';
+import { useReactUnsupportedEventListenerRef } from '@/host/hooks/useReactUnsupportedEventListenerRef';
+import { buildHostReactPropsFromRemoteProps } from '@/host/utils/buildHostReactPropsFromRemoteProps';
 import { createCaretPreservingElement } from '@/host/utils/createCaretPreservingElement';
-import { createDropTargetProps } from '@/host/utils/createDropTargetProps';
-import { extractHostNativeEventHandlers } from '@/host/utils/extractHostNativeEventHandlers';
-import { filterProps } from '@/host/utils/filterProps';
+import { createDropTargetGuardProps } from '@/host/utils/createDropTargetGuardProps';
+import { extractReactUnsupportedEventHandlers } from '@/host/utils/extractReactUnsupportedEventHandlers';
 import { isTextLikeInputType } from '@/host/utils/isTextLikeInputType';
+import { preventDefaultThenForwardToRemote } from '@/host/utils/preventDefaultThenForwardToRemote';
 import { sanitizeIframeSandbox } from '@/host/utils/sanitizeIframeSandbox';
 
 const VOID_ELEMENTS = new Set([
@@ -35,60 +35,50 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
 
   return ({ children, ...props }: WrapperProps) => {
     const setEditableFocused = useContext(FrontComponentInputFocusContext);
-    const { nativeEventHandlers, remainingProps: reactProps } =
-      extractHostNativeEventHandlers(filterProps(props, htmlTag));
 
-    const hostNativeEventListenerRef =
-      useHostNativeEventListenerRef(nativeEventHandlers);
+    const { reactUnsupportedEventHandlers, reactBindableProps } =
+      extractReactUnsupportedEventHandlers(
+        buildHostReactPropsFromRemoteProps(props, htmlTag),
+      );
 
-    const dropTargetProps = createDropTargetProps(reactProps);
+    const reactUnsupportedEventListenerRef =
+      useReactUnsupportedEventListenerRef(reactUnsupportedEventHandlers);
 
-    const forcedProps: Record<string, unknown> | undefined = isIframe
-      ? { sandbox: sanitizeIframeSandbox(reactProps.sandbox) }
-      : isForm
-        ? {
-            // The remote component's onSubmit is forwarded asynchronously across
-            // the remote-dom boundary, so its preventDefault lands too late to
-            // stop a native form submission (which navigates and closes the
-            // page). Guard synchronously on the host while still forwarding the
-            // event to the remote handler. (React 19 also blocks the previous
-            // `action="javascript:void(0)"` guard.)
-            onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-              event.preventDefault();
-              const remoteOnSubmit = reactProps.onSubmit;
-              // The remote prop is untrusted across the remote-dom boundary, so
-              // it may not be a function — guard before invoking.
-              if (isFunction(remoteOnSubmit)) {
-                (
-                  remoteOnSubmit as (
-                    event: React.FormEvent<HTMLFormElement>,
-                  ) => void
-                )(event);
-              }
-            },
-          }
-        : undefined;
+    // Props the host imposes over whatever the untrusted remote component sent.
+    const hostEnforcedProps: Record<string, unknown> = {
+      ...createDropTargetGuardProps(reactBindableProps),
+      ...(isIframe && {
+        sandbox: sanitizeIframeSandbox(reactBindableProps.sandbox),
+      }),
+      // A native form submission navigates away and closes the page, so it has
+      // to be prevented on the host. (React 19 also blocks the previous
+      // `action="javascript:void(0)"` guard.)
+      ...(isForm && {
+        onSubmit: preventDefaultThenForwardToRemote(
+          reactBindableProps.onSubmit,
+        ),
+      }),
+    };
 
     if (
       htmlTag === 'textarea' ||
-      (htmlTag === 'input' && isTextLikeInputType(reactProps.type))
+      (htmlTag === 'input' && isTextLikeInputType(reactBindableProps.type))
     ) {
-      return createCaretPreservingElement(
+      return createCaretPreservingElement({
         htmlTag,
-        reactProps,
-        { ...dropTargetProps, ...forcedProps },
+        reactBindableProps,
+        hostEnforcedProps,
         setEditableFocused,
-        hostNativeEventListenerRef,
-      );
+        reactUnsupportedEventListenerRef,
+      });
     }
 
     return React.createElement(
       htmlTag,
       {
-        ...reactProps,
-        ...dropTargetProps,
-        ...forcedProps,
-        ref: hostNativeEventListenerRef,
+        ...reactBindableProps,
+        ...hostEnforcedProps,
+        ref: reactUnsupportedEventListenerRef,
       },
       isVoid ? undefined : children,
     );

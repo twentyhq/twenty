@@ -1,10 +1,10 @@
-import { createHostNativeEventListenerRef } from '../createHostNativeEventListenerRef';
+import { createReactUnsupportedEventListenerRef } from '../createReactUnsupportedEventListenerRef';
 
-describe('createHostNativeEventListenerRef', () => {
+describe('createReactUnsupportedEventListenerRef', () => {
   it('should forward focusin events to the latest handler', () => {
     const initialHandler = jest.fn();
     const handlersRef = { current: { focusin: initialHandler } };
-    const ref = createHostNativeEventListenerRef(handlersRef);
+    const ref = createReactUnsupportedEventListenerRef(handlersRef);
     const node = document.createElement('div');
 
     ref(node);
@@ -21,7 +21,7 @@ describe('createHostNativeEventListenerRef', () => {
   });
 
   it('should ignore events without a registered handler', () => {
-    const ref = createHostNativeEventListenerRef({ current: {} });
+    const ref = createReactUnsupportedEventListenerRef({ current: {} });
     const node = document.createElement('div');
 
     ref(node);
@@ -31,7 +31,7 @@ describe('createHostNativeEventListenerRef', () => {
 
   it('should stop forwarding after the node detaches', () => {
     const focusinHandler = jest.fn();
-    const ref = createHostNativeEventListenerRef({
+    const ref = createReactUnsupportedEventListenerRef({
       current: { focusin: focusinHandler },
     });
     const node = document.createElement('div');
@@ -45,7 +45,7 @@ describe('createHostNativeEventListenerRef', () => {
 
   it('should move listeners when the node changes', () => {
     const focusinHandler = jest.fn();
-    const ref = createHostNativeEventListenerRef({
+    const ref = createReactUnsupportedEventListenerRef({
       current: { focusin: focusinHandler },
     });
     const firstNode = document.createElement('div');

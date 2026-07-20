@@ -1,4 +1,4 @@
-export const EVENT_TO_REACT: Record<string, string> = {
+export const DOM_EVENT_TYPE_TO_REACT_PROP: Record<string, string> = {
   click: 'onClick',
   dblclick: 'onDoubleClick',
   mousedown: 'onMouseDown',

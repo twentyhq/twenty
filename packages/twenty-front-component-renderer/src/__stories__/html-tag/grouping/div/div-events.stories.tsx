@@ -106,7 +106,7 @@ export const DragDrop: Story = runFrontComponentStory({
 });
 
 export const FocusInOut: Story = runFrontComponentStory({
-  frontComponentBundleName: 'div-focusin',
+  frontComponentBundleName: 'div-focus-in-out',
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

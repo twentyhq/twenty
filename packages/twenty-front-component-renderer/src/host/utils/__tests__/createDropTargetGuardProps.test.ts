@@ -1,13 +1,13 @@
-import { createDropTargetProps } from '../createDropTargetProps';
+import { createDropTargetGuardProps } from '../createDropTargetGuardProps';
 
-describe('createDropTargetProps', () => {
+describe('createDropTargetGuardProps', () => {
   it('should return undefined without drag over or drop handlers', () => {
-    expect(createDropTargetProps({ onClick: jest.fn() })).toBeUndefined();
+    expect(createDropTargetGuardProps({ onClick: jest.fn() })).toBeUndefined();
   });
 
   it('should prevent default on drag over and forward to the remote handler', () => {
     const onDragOver = jest.fn();
-    const props = createDropTargetProps({ onDragOver });
+    const props = createDropTargetGuardProps({ onDragOver });
     const event = { preventDefault: jest.fn() };
 
     (props?.onDragOver as (event: unknown) => void)(event);
@@ -18,7 +18,7 @@ describe('createDropTargetProps', () => {
 
   it('should prevent default on drag over when only a drop handler exists', () => {
     const onDrop = jest.fn();
-    const props = createDropTargetProps({ onDrop });
+    const props = createDropTargetGuardProps({ onDrop });
     const dragOverEvent = { preventDefault: jest.fn() };
     const dropEvent = { preventDefault: jest.fn() };
 
@@ -31,7 +31,7 @@ describe('createDropTargetProps', () => {
   });
 
   it('should prevent default without forwarding to a non-function handler', () => {
-    const props = createDropTargetProps({
+    const props = createDropTargetGuardProps({
       onDragOver: 'alert(1)',
       onDrop: jest.fn(),
     });

@@ -7,7 +7,7 @@ import {
 } from '@/__stories__/shared/front-components/event-log';
 import { FrontComponentCard } from '@/__stories__/shared/front-components/front-component-card';
 
-const DivFocusinFrontComponent = () => {
+const DivFocusInOutFrontComponent = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isListening, setIsListening] = useState(false);
   const { entries, pushEvent } = useEventLog();
@@ -33,7 +33,7 @@ const DivFocusinFrontComponent = () => {
   }, [pushEvent]);
 
   return (
-    <FrontComponentCard title="div:focusin">
+    <FrontComponentCard title="div:focus-in-out">
       <div data-testid="container" ref={containerRef}>
         <input data-testid="subject" placeholder="focus me" />
       </div>
@@ -46,9 +46,10 @@ const DivFocusinFrontComponent = () => {
 };
 
 export default defineFrontComponent({
-  universalIdentifier: 'fc-div-focusin-00000000-0000-0000-0000-000000000020',
-  name: 'div-focusin-front-component',
+  universalIdentifier:
+    'fc-div-focus-in-out-00000000-0000-0000-0000-000000000020',
+  name: 'div-focus-in-out-front-component',
   description:
     'Front component covering focusin and focusout listeners on <div>',
-  component: DivFocusinFrontComponent,
+  component: DivFocusInOutFrontComponent,
 });
