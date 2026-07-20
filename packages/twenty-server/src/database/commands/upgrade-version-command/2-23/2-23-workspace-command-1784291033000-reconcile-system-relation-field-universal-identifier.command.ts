@@ -17,6 +17,8 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
+import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-object-icons';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
@@ -132,8 +134,7 @@ export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends Prov
         getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             sourceFlatObjectMetadata.applicationUniversalIdentifier,
-          objectUniversalIdentifier:
-            hostFlatObjectMetadata.universalIdentifier,
+          objectUniversalIdentifier: hostFlatObjectMetadata.universalIdentifier,
           relationTargetObjectUniversalIdentifier:
             sourceFlatObjectMetadata.universalIdentifier,
         });
@@ -147,7 +148,9 @@ export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends Prov
 
       const update: SystemRelationFieldUpdate['update'] = {};
 
-      if (flatFieldMetadata.universalIdentifier !== derivedUniversalIdentifier) {
+      if (
+        flatFieldMetadata.universalIdentifier !== derivedUniversalIdentifier
+      ) {
         update.universalIdentifier = derivedUniversalIdentifier;
       }
       if (!flatFieldMetadata.isSystemSideEffect) {
@@ -251,8 +254,18 @@ export class ReconcileSystemRelationFieldUniversalIdentifierCommand extends Prov
       },
     );
 
+    const fieldMetadataRelatedNames = [
+      'fieldMetadata',
+      ...getMetadataRelatedMetadataNames('fieldMetadata'),
+      ...getMetadataSerializedRelationNames('fieldMetadata'),
+      'index',
+    ] as const;
+    const allFlatEntityMapsKeys = [
+      ...new Set(fieldMetadataRelatedNames.map(getMetadataFlatEntityMapsKey)),
+    ];
+
     await this.workspaceMigrationRunnerService.invalidateCache({
-      allFlatEntityMapsKeys: [getMetadataFlatEntityMapsKey('fieldMetadata')],
+      allFlatEntityMapsKeys,
       workspaceId,
     });
 

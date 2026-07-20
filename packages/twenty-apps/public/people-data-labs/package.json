@@ -7,7 +7,7 @@
     "node": "^24.5.0",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2",
-    "twenty": ">=2.20.0"
+    "twenty": ">=2.23.0"
   },
   "keywords": [
     "twenty-app"
