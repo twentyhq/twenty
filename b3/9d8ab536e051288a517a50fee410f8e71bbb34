@@ -1,0 +1,69 @@
+packages/twenty-shared/src/types/SettingsPath.ts
+  s_11e59742733dbd::t_722bea86d2ce2d 36
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_11e59742733dbd::t_cc10e7c07c0dbc 1758,8449-8462,9202-9203
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceUnsubscribers.tsx
+  s_11e59742733dbd::t_4779ffc7d2ae8c 28-29,125
+  s_11e59742733dbd::t_ca856622375866 154-155
+  s_11e59742733dbd::t_b7c295d85e72db 10
+  s_11e59742733dbd::t_258844eb38f5a6 16,18
+  s_11e59742733dbd::t_e6e6ff35b411b4 156-178
+  s_11e59742733dbd::t_b4bbd7485afb63 8
+  s_11e59742733dbd::t_46994cb7572937 108-110
+  s_11e59742733dbd::t_e8486ded78651f 179-180
+  s_11e59742733dbd::t_890d15af6bf563 57,64-66
+  s_11e59742733dbd::t_82d6eeb39f7568 1-7,9,11-15,17,19-27,30-56,58-63,67-107,111-124,126-153,181-184
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
+  s_11e59742733dbd::t_d6f179a30d6b47 41
+  s_11e59742733dbd::t_a51261b62bee7b 29
+  s_11e59742733dbd::t_31f90b44dc25fc 17
+  s_11e59742733dbd::t_93b62042bb8d60 126-135
+packages/twenty-server/src/engine/core-modules/emailing-domain/filters/email-group-access-graphql-api-exception.filter.ts
+  s_11e59742733dbd::t_bb09c394560ec3 21
+packages/twenty-server/src/engine/core-modules/emailing-domain/constants/campaign.constant.ts
+  s_11e59742733dbd::t_5ec38fc9d52e95 28-30
+packages/twenty-front/src/modules/app/components/SettingsRoutes.tsx
+  s_11e59742733dbd::t_dd5917d8500d85 217-224
+  s_11e59742733dbd::t_b5f83170a9e166 735-738
+packages/twenty-front/src/modules/settings/unsubscribers/graphql/mutations/deleteMessageSuppression.ts
+  s_11e59742733dbd::t_1f2d5adc9f3d5c 1-7
+packages/twenty-front/src/modules/settings/unsubscribers/graphql/queries/getMessageSuppressions.ts
+  s_11e59742733dbd::t_b18a89df6f3ff3 1-17
+packages/twenty-server/src/modules/emailing/emailing.module.ts
+  s_11e59742733dbd::t_bf86d0f237bb42 28,57,73
+packages/twenty-server/src/engine/twenty-orm/entity-manager/workspace-entity-manager.spec.ts
+  s_11e59742733dbd::t_9147a241570f81 244
+packages/twenty-shared/src/types/FeatureFlagKey.ts
+  s_11e59742733dbd::t_ea6ac77dabc855 7
+packages/twenty-server/src/modules/emailing/services/campaign-send-quota.service.ts
+  s_11e59742733dbd::t_836cf7c554a35f 14,16
+  s_11e59742733dbd::t_1c2877ddaec3db 77-79
+  s_11e59742733dbd::t_8fde342dcee91c 1-13,15,17-76,80-92
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_11e59742733dbd::t_007722cba25036 172-173
+  s_11e59742733dbd::t_836cf7c554a35f 45-48
+  s_11e59742733dbd::t_b2b88d612b4f52 193-199
+  s_11e59742733dbd::t_34af78babac19b 52,120
+packages/twenty-server/src/engine/core-modules/emailing-domain/exceptions/email-group-access.exception.ts
+  s_11e59742733dbd::t_c30af87fc8c78d 13,21
+packages/twenty-front/src/modules/settings/components/SettingsTableListSection.tsx
+  s_11e59742733dbd::t_1b8b32d9db1160 128-138
+  s_11e59742733dbd::t_1cc3015b0a78b4 59-60
+  s_11e59742733dbd::t_b6ff08b957c77c 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "b39d8ab536e051288a517a50fee410f8e71bbb34",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
