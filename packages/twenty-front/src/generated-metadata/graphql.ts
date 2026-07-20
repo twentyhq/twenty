@@ -4483,6 +4483,11 @@ export type QueryApplicationRegistrationTarballUrlArgs = {
 };
 
 
+export type QueryApplicationSdkClientChecksumsArgs = {
+  applicationId: Scalars['UUID']['input'];
+};
+
+
 export type QueryBarChartDataArgs = {
   input: BarChartDataInput;
 };
@@ -4615,11 +4620,6 @@ export type QueryFindOneLogicFunctionArgs = {
 
 export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String']['input'];
-};
-
-
-export type QueryApplicationSdkClientChecksumsArgs = {
-  applicationId: Scalars['UUID']['input'];
 };
 
 
