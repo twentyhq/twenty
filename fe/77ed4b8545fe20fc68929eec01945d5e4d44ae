@@ -1,0 +1,33 @@
+packages/twenty-server/src/database/commands/database-command.module.ts
+  s_11e59742733dbd::t_0638050ce5886f 52
+  s_11e59742733dbd::t_86eda904b37599 67
+packages/twenty-server/src/database/commands/cron-register-all.command.ts
+  s_11e59742733dbd::t_a6bd06f89789b0 19
+  s_11e59742733dbd::t_a2ea009f537330 56-57
+  s_11e59742733dbd::t_a953820b9d2a93 133-135
+  s_11e59742733dbd::t_7c4b5787ddff30 132
+packages/twenty-server/src/modules/emailing/crons/jobs/emailing-domain-reverification.cron.job.ts
+  s_11e59742733dbd::t_69906878266e78 1-72
+packages/twenty-server/src/modules/emailing/crons/commands/emailing-domain-reverification.cron.command.ts
+  s_11e59742733dbd::t_f9be7c4a75303d 1-35
+packages/twenty-server/src/modules/emailing/emailing.module.ts
+  s_11e59742733dbd::t_675ee125f23183 16,19-20
+  s_11e59742733dbd::t_9fbcf38f7f1faf 65
+  s_11e59742733dbd::t_e8baf08046022d 45,50-51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "fe77ed4b8545fe20fc68929eec01945d5e4d44ae",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
