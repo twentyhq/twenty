@@ -276,9 +276,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
     });
 
     it('should handle step execution errors', async () => {
-      mockWorkflowExecutor.execute.mockRejectedValueOnce(
-        new Error('Step execution failed'),
-      );
+      const stepExecutionError = new Error('Step execution failed');
+
+      mockWorkflowExecutor.execute.mockRejectedValueOnce(stepExecutionError);
 
       await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,
@@ -314,6 +314,21 @@ describe('WorkflowExecutorWorkspaceService', () => {
         workflowRunId: mockWorkflowRunId,
         workspaceId: 'workspace-id',
       });
+
+      expect(
+        mockExceptionHandlerService.captureExceptions,
+      ).toHaveBeenCalledWith([stepExecutionError],
+        {
+          workspace: { id: mockWorkspaceId },
+          additionalData: {
+            workflowRunId: mockWorkflowRunId,
+            stepId: 'step-1',
+            workflowActionType: WorkflowActionType.CODE,
+            configuredRetryOnFailure: false,
+            configuredContinueOnFailure: false,
+          },
+        },
+      );
     });
 
     it('should handle pending events', async () => {

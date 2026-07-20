@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -55,6 +55,8 @@ const MAX_EXECUTED_STEPS_COUNT = 20;
 
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
+  private readonly logger = new Logger(WorkflowExecutorWorkspaceService.name);
+
   constructor(
     private readonly workflowActionFactory: WorkflowActionFactory,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
@@ -515,14 +517,40 @@ export class WorkflowExecutorWorkspaceService {
           error.code === WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND);
 
       if (!isUserError) {
+        const errorCode =
+          error instanceof Error &&
+          'code' in error &&
+          typeof error.code === 'string'
+            ? error.code
+            : undefined;
+        const errorHandlingOptions =
+          'settings' in step ? step.settings.errorHandlingOptions : undefined;
+
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: { id: workspaceId },
+          additionalData: {
+            workflowRunId,
+            stepId,
+            workflowActionType: step.type,
+            configuredRetryOnFailure:
+              errorHandlingOptions?.retryOnFailure?.value ?? false,
+            configuredContinueOnFailure:
+              errorHandlingOptions?.continueOnFailure?.value ?? false,
+            ...(errorCode ? { errorCode } : {}),
+          },
         });
+
+        this.logger.error(
+          `[Workflow Run System Error] Workflow run ${workflowRunId} in workspace ${workspaceId} failed at step ${stepId} (${step.type})`,
+          error instanceof Error ? error.stack : String(error),
+        );
 
         await this.metricsService.incrementCounterForEvent({
           key: MetricsKeys.WorkflowRunSystemError,
           eventId: workflowRunId,
-          debugLog: `[Workflow Run System Error] Workflow run ${workflowRunId} in workspace ${workspaceId} ended with system error`,
+          attributes: {
+            workflowActionType: step.type,
+          },
         });
       }
 
