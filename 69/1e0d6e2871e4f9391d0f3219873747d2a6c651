@@ -1,0 +1,23 @@
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-content.type.ts
+  s_11e59742733dbd::t_44e11b2f2bf92b 6
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_11e59742733dbd::t_c9202ab22dde52 397
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/unsubscribe-content.service.ts
+  s_11e59742733dbd::t_7a59515c228aaf 22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "691e0d6e2871e4f9391d0f3219873747d2a6c651",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
