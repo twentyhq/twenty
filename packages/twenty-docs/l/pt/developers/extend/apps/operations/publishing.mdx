@@ -69,7 +69,7 @@ Para lançar uma atualização:
 
 1. Atualize o campo `version` no seu `package.json` (por exemplo, `1.2.3` → `1.2.4`, `1.3.0` ou `2.0.0`)
 2. Execute `yarn twenty app:publish --private` (ou `yarn twenty app:publish --private --remote production`)
-3. Os espaços de trabalho que têm o aplicativo instalado verão a atualização disponível em suas configurações
+3. Espaços de trabalho que têm o app instalado e ativaram a atualização automática para o app (na aba Configurações do app) são atualizados automaticamente em segundo plano; os demais verão a atualização disponível em suas configurações
 
 <Note>
 Tags de pré-lançamento funcionam como esperado: incrementar `1.0.0-rc.1` → `1.0.0-rc.2` é permitido, e uma versão final como `1.0.0` é corretamente reconhecida como superior a `1.0.0-rc.5`. A versão em `package.json` deve ser, ela própria, uma string semver válida.

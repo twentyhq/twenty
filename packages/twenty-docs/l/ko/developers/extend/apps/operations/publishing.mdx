@@ -69,7 +69,7 @@ yarn twenty app:publish --private
 
 1. `package.json`의 `version` 필드를 올리세요(예: `1.2.3` → `1.2.4`, `1.3.0`, 또는 `2.0.0`)
 2. `yarn twenty app:publish --private`(또는 `yarn twenty app:publish --private --remote production`)를 실행합니다.
-3. 앱을 설치한 워크스페이스는 설정에서 사용 가능한 업그레이드를 확인할 수 있습니다
+3. 앱이 설치되어 있고 해당 앱의 Settings 탭에서 자동 업그레이드를 활성화한 워크스페이스는 백그라운드에서 자동으로 업그레이드되며, 나머지 워크스페이스는 설정에서 사용 가능한 업그레이드를 확인할 수 있습니다.
 
 <Note>
 프리릴리스 태그는 예상대로 동작합니다: `1.0.0-rc.1` → `1.0.0-rc.2`로 올리는 것은 허용되며, `1.0.0`과 같은 최종 릴리스는 `1.0.0-rc.5`보다 더 높은 버전으로 올바르게 인식됩니다. `package.json`의 버전은 유효한 semver 문자열이어야 합니다.

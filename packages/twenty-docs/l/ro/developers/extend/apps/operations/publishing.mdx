@@ -69,7 +69,7 @@ Pentru a lansa o actualizare:
 
 1. Incrementează câmpul `version` din `package.json` (de ex. `1.2.3` → `1.2.4`, `1.3.0` sau `2.0.0`)
 2. Rulează `yarn twenty app:publish --private` (sau `yarn twenty app:publish --private --remote production`)
-3. Spațiile de lucru care au aplicația instalată vor vedea actualizarea disponibilă în setările lor
+3. Spațiile de lucru care au aplicația instalată și au activat actualizarea automată pentru aceasta (în fila Setări a aplicației) sunt actualizate automat în fundal; celelalte vor vedea actualizarea disponibilă în setările lor
 
 <Note>
 Etichetele de pre-lansare funcționează conform așteptărilor: incrementarea de la `1.0.0-rc.1` la `1.0.0-rc.2` este permisă, iar o lansare finală precum `1.0.0` este recunoscută corect ca fiind mai mare decât `1.0.0-rc.5`. Versiunea din `package.json` trebuie să fie ea însăși un șir semver valid.
