@@ -1339,6 +1339,7 @@ msgid "Add Model"
 msgstr "Lägg till modell"
 
 #. js-lingui-id: Hkobke
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeader.tsx
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
 msgid "Add new"
 msgstr "Lägg till ny"
@@ -11567,6 +11568,7 @@ msgid "More actions"
 msgstr "Fler åtgärder"
 
 #. js-lingui-id: 3Siwmw
+#: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeader.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
