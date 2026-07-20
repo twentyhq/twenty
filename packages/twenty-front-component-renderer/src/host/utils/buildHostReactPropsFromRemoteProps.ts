@@ -1,4 +1,5 @@
 import { isFunction, isUndefined } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { DOM_EVENT_TYPE_TO_REACT_PROP } from '@/constants/DomEventTypeToReactProp';
 import { hasDangerousUrlScheme } from '@/host/utils/hasDangerousUrlScheme';
@@ -35,12 +36,14 @@ export const buildHostReactPropsFromRemoteProps = (
       continue;
     }
 
-    const reactPropName =
-      LOWERCASE_EVENT_PROP_TO_REACT_PROP[remotePropName.toLowerCase()] ||
-      remotePropName;
+    // A guest can put any property name on the wire via updateRemoteProperty,
+    // so an unmapped handler name is dropped rather than forwarded: React binds
+    // every camelCase on* prop it recognizes, allow-listed or not.
+    if (isEventHandlerKey(remotePropName)) {
+      const reactPropName =
+        LOWERCASE_EVENT_PROP_TO_REACT_PROP[remotePropName.toLowerCase()];
 
-    if (isEventHandlerKey(reactPropName)) {
-      if (isFunction(remotePropValue)) {
+      if (isDefined(reactPropName) && isFunction(remotePropValue)) {
         hostReactProps[reactPropName] = wrapEventHandler(
           remotePropValue as (detail: SerializedEventData) => void,
         );
@@ -49,13 +52,13 @@ export const buildHostReactPropsFromRemoteProps = (
     }
 
     if (
-      isNavigationUrlAttribute(htmlTag, reactPropName) &&
+      isNavigationUrlAttribute(htmlTag, remotePropName) &&
       hasDangerousUrlScheme(remotePropValue)
     ) {
       continue;
     }
 
-    hostReactProps[reactPropName] = remotePropValue;
+    hostReactProps[remotePropName] = remotePropValue;
   }
 
   return hostReactProps;

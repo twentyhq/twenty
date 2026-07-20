@@ -85,6 +85,32 @@ describe('buildHostReactPropsFromRemoteProps', () => {
     expect('onmouseover' in result).toBe(false);
   });
 
+  it('should drop handler props whose event type is not allow-listed', () => {
+    const handler = jest.fn();
+    const result = buildHostReactPropsFromRemoteProps(
+      {
+        onCopy: handler,
+        onCut: handler,
+        onPaste: handler,
+        onSelect: handler,
+        onBeforeInput: handler,
+      },
+      'div',
+    );
+
+    expect(result).toEqual({});
+  });
+
+  it('should drop capture-phase handler props', () => {
+    const handler = jest.fn();
+    const result = buildHostReactPropsFromRemoteProps(
+      { onClickCapture: handler, onKeyDownCapture: handler },
+      'div',
+    );
+
+    expect(result).toEqual({});
+  });
+
   it('should drop a dangerous scheme on a navigation attribute', () => {
     const result = buildHostReactPropsFromRemoteProps(
       { href: 'javascript:alert(1)' },
