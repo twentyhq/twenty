@@ -1,10 +1,8 @@
 import styled from '@emotion/styled';
-import { useEffect, useRef, useState } from 'react';
 import { copyToClipboard } from 'twenty-sdk/front-component';
-import { IconCheck, IconCopy, type IconComponent } from 'twenty-ui/icon';
+import { IconCopy, type IconComponent } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const COPIED_STATE_RESET_DELAY_MS = 1500;
 const COPY_ICON_SIZE = 16;
 
 const StyledButton = styled.button`
@@ -42,41 +40,18 @@ export const CopyToClipboardButton = ({
   ariaLabel,
   Icon = IconCopy,
 }: CopyToClipboardButtonProps) => {
-  const [hasJustCopied, setHasJustCopied] = useState(false);
-  const resetTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined,
-  );
-
-  useEffect(
-    () => () => {
-      if (resetTimeoutRef.current !== undefined) {
-        clearTimeout(resetTimeoutRef.current);
-      }
-    },
-    [],
-  );
-
   const isDisabled = textToCopy === undefined || textToCopy.length === 0;
 
-  const handleClick = async () => {
+  const handleClick = () => {
     if (isDisabled) {
       return;
     }
 
-    // The host handles the actual clipboard write and its own snackbar; the
-    // front-component sandbox has no direct navigator.clipboard access.
-    await copyToClipboard(textToCopy);
-
-    setHasJustCopied(true);
-    if (resetTimeoutRef.current !== undefined) {
-      clearTimeout(resetTimeoutRef.current);
-    }
-    resetTimeoutRef.current = setTimeout(() => {
-      setHasJustCopied(false);
-    }, COPIED_STATE_RESET_DELAY_MS);
+    // The host performs the clipboard write and owns the success/error
+    // snackbar; the front-component sandbox has no direct navigator.clipboard
+    // access, and the host does not report back whether the copy succeeded.
+    void copyToClipboard(textToCopy);
   };
-
-  const DisplayedIcon = hasJustCopied ? IconCheck : Icon;
 
   return (
     <StyledButton
@@ -86,7 +61,7 @@ export const CopyToClipboardButton = ({
       disabled={isDisabled}
       onClick={handleClick}
     >
-      <DisplayedIcon size={COPY_ICON_SIZE} />
+      <Icon size={COPY_ICON_SIZE} />
     </StyledButton>
   );
 };
