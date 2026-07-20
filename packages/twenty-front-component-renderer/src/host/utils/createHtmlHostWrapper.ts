@@ -44,15 +44,13 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
     const reactUnsupportedEventListenerRef =
       useReactUnsupportedEventListenerRef(reactUnsupportedEventHandlers);
 
-    // Props the host imposes over whatever the untrusted remote component sent.
     const hostEnforcedProps: Record<string, unknown> = {
       ...createDropTargetGuardProps(reactBindableProps),
       ...(isIframe && {
         sandbox: sanitizeIframeSandbox(reactBindableProps.sandbox),
       }),
-      // A native form submission navigates away and closes the page, so it has
-      // to be prevented on the host. (React 19 also blocks the previous
-      // `action="javascript:void(0)"` guard.)
+      // A native form submission navigates away and closes the page. React 19
+      // also blocks the previous `action="javascript:void(0)"` guard.
       ...(isForm && {
         onSubmit: preventDefaultThenForwardToRemote(
           reactBindableProps.onSubmit,

@@ -1,1 +1,3 @@
-export type RemoteEventHandler = (event: { preventDefault: () => void }) => void;
+export type RemoteEventHandler = (event: {
+  preventDefault: () => void;
+}) => void;

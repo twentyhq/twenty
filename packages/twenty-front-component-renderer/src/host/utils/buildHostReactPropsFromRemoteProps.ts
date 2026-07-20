@@ -10,8 +10,6 @@ import { type SerializedEventData } from '@/types/SerializedEventData';
 
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components']);
 
-// remote-dom delivers handler props in DOM casing (onclick, ondblclick), so
-// they are looked up lowercased and rewritten to their React spelling.
 const LOWERCASE_EVENT_PROP_TO_REACT_PROP: Record<string, string> =
   Object.fromEntries(
     Object.entries(DOM_EVENT_TYPE_TO_REACT_PROP).map(

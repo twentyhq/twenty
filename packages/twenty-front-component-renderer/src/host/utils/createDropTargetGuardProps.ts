@@ -3,8 +3,7 @@ import { isFunction } from '@sniptt/guards';
 import { preventDefaultThenForwardToRemote } from '@/host/utils/preventDefaultThenForwardToRemote';
 
 // A browser only fires drop on an element whose dragover default was prevented,
-// so the host has to register both handlers as soon as the remote component
-// declares either one.
+// so both handlers are registered as soon as either one is declared.
 export const createDropTargetGuardProps = (
   reactBindableProps: Record<string, unknown>,
 ): Record<string, unknown> | undefined => {

@@ -11,8 +11,6 @@ const TOUCH_COORDINATE_KEYS = [
   'screenY',
 ] as const;
 
-// A touch event carries its coordinates on changedTouches rather than on the
-// event itself, so the first touch stands in for the shared coordinate fields.
 export const applyFirstChangedTouchCoordinates = (
   serializedEvent: SerializedEventData,
   domEvent: Record<string, unknown>,
