@@ -101,7 +101,7 @@ export const useAuth = () => {
     VerifyEmailAndGetWorkspaceAgnosticTokenDocument,
   );
   const [getAuthTokensFromOtp] = useMutation(GetAuthTokensFromOtpDocument);
-  const [getAuthTokensFromSsoExchangeToken] = useMutation(
+  const [getAuthTokensFromSSOExchangeToken] = useMutation(
     GetAuthTokensFromSsoExchangeTokenDocument,
   );
 
@@ -286,9 +286,9 @@ export const useAuth = () => {
     [setLoginToken],
   );
 
-  const handleGetAuthTokensFromSsoExchangeToken = useCallback(
+  const handleGetAuthTokensFromSSOExchangeToken = useCallback(
     async (ssoExchangeToken: string) => {
-      const { data, error } = await getAuthTokensFromSsoExchangeToken({
+      const { data, error } = await getAuthTokensFromSSOExchangeToken({
         variables: { ssoExchangeToken },
       });
 
@@ -296,13 +296,13 @@ export const useAuth = () => {
         throw error;
       }
 
-      if (!data?.getAuthTokensFromSsoExchangeToken) {
-        throw new Error('No getAuthTokensFromSsoExchangeToken result');
+      if (!data?.getAuthTokensFromSSOExchangeToken) {
+        throw new Error('No getAuthTokensFromSSOExchangeToken result');
       }
 
-      handleSetAuthTokens(data.getAuthTokensFromSsoExchangeToken.tokens);
+      handleSetAuthTokens(data.getAuthTokensFromSSOExchangeToken.tokens);
     },
-    [getAuthTokensFromSsoExchangeToken, handleSetAuthTokens],
+    [getAuthTokensFromSSOExchangeToken, handleSetAuthTokens],
   );
 
   const handleLoadWorkspaceAfterAuthentication = useCallback(
@@ -661,7 +661,7 @@ export const useAuth = () => {
     signInWithCredentials: handleCredentialsSignIn,
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,
-    getAuthTokensFromSsoExchangeToken: handleGetAuthTokensFromSsoExchangeToken,
+    getAuthTokensFromSSOExchangeToken: handleGetAuthTokensFromSSOExchangeToken,
     getAuthTokensFromOTP: handleGetAuthTokensFromOTP,
     navigateAfterMultiWorkspaceSignInUp,
   };

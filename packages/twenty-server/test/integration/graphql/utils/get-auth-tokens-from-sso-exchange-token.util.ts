@@ -6,20 +6,20 @@ import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/
 
 import { type AuthTokens } from 'src/engine/core-modules/auth/dto/auth-tokens.dto';
 
-type GetAuthTokensFromSsoExchangeTokenUtilArgs = {
+type GetAuthTokensFromSSOExchangeTokenUtilArgs = {
   ssoExchangeToken: string;
   expectToFail?: boolean;
 };
 
-export const getAuthTokensFromSsoExchangeToken = async ({
+export const getAuthTokensFromSSOExchangeToken = async ({
   ssoExchangeToken,
   expectToFail,
-}: GetAuthTokensFromSsoExchangeTokenUtilArgs): CommonResponseBody<{
-  getAuthTokensFromSsoExchangeToken: AuthTokens;
+}: GetAuthTokensFromSSOExchangeTokenUtilArgs): CommonResponseBody<{
+  getAuthTokensFromSSOExchangeToken: AuthTokens;
 }> => {
   const mutation = gql`
-    mutation GetAuthTokensFromSsoExchangeToken($ssoExchangeToken: String!) {
-      getAuthTokensFromSsoExchangeToken(ssoExchangeToken: $ssoExchangeToken) {
+    mutation GetAuthTokensFromSSOExchangeToken($ssoExchangeToken: String!) {
+      getAuthTokensFromSSOExchangeToken(ssoExchangeToken: $ssoExchangeToken) {
         tokens {
           accessOrWorkspaceAgnosticToken {
             token

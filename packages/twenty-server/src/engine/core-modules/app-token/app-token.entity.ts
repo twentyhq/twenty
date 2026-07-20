@@ -25,7 +25,7 @@ export enum AppTokenType {
   OnboardingInvitationToken = 'ONBOARDING_INVITATION_TOKEN',
   EmailVerificationToken = 'EMAIL_VERIFICATION_TOKEN',
   EnterpriseValidityToken = 'ENTERPRISE_VALIDITY_TOKEN',
-  SsoExchangeToken = 'SSO_EXCHANGE_TOKEN',
+  SSOExchangeToken = 'SSO_EXCHANGE_TOKEN',
 }
 
 @Entity({ name: 'appToken', schema: 'core' })

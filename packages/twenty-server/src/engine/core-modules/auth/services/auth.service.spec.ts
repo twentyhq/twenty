@@ -17,7 +17,7 @@ import { type GoogleRequest } from 'src/engine/core-modules/auth/strategies/goog
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
+import { SSOExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { type ExistingUserOrNewUser } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { buildUrlWithPathnameAndSearchParams } from 'src/engine/core-modules/domain/domain-server-config/utils/build-url-with-pathname-and-search-params.util';
@@ -105,9 +105,9 @@ describe('AuthService', () => {
           },
         },
         {
-          provide: SsoExchangeTokenService,
+          provide: SSOExchangeTokenService,
           useValue: {
-            generateSsoExchangeToken: jest.fn().mockResolvedValue({
+            generateSSOExchangeToken: jest.fn().mockResolvedValue({
               token: 'sso-exchange-token',
               expiresAt: new Date(),
             }),

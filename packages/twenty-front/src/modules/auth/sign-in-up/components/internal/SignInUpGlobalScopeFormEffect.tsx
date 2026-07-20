@@ -16,7 +16,7 @@ export const SignInUpGlobalScopeFormEffect = () => {
   const signInUpStep = useAtomStateValue(signInUpStepState);
   const [searchParams, setSearchParams] = useSearchParams();
   const {
-    getAuthTokensFromSsoExchangeToken,
+    getAuthTokensFromSSOExchangeToken,
     navigateAfterMultiWorkspaceSignInUp,
   } = useAuth();
   const { loadCurrentUser } = useLoadCurrentUser();
@@ -25,7 +25,7 @@ export const SignInUpGlobalScopeFormEffect = () => {
   const { t } = useLingui();
 
   // oxlint-disable-next-line twenty/no-state-useref
-  const hasExchangedSsoTokenRef = useRef(false);
+  const hasExchangedSSOTokenRef = useRef(false);
 
   useEffect(() => {
     const resumeOnCentralDomain = async () => {
@@ -39,13 +39,13 @@ export const SignInUpGlobalScopeFormEffect = () => {
     const ssoExchangeToken = searchParams.get('ssoExchangeToken');
 
     if (isDefined(ssoExchangeToken)) {
-      if (hasExchangedSsoTokenRef.current) return;
-      hasExchangedSsoTokenRef.current = true;
+      if (hasExchangedSSOTokenRef.current) return;
+      hasExchangedSSOTokenRef.current = true;
 
       searchParams.delete('ssoExchangeToken');
       setSearchParams(searchParams, { replace: true });
 
-      void getAuthTokensFromSsoExchangeToken(ssoExchangeToken)
+      void getAuthTokensFromSSOExchangeToken(ssoExchangeToken)
         .then(resumeOnCentralDomain)
         .catch(() => {
           enqueueErrorSnackBar({ message: t`Authentication failed` });
@@ -54,7 +54,7 @@ export const SignInUpGlobalScopeFormEffect = () => {
       return;
     }
 
-    if (hasExchangedSsoTokenRef.current) return;
+    if (hasExchangedSSOTokenRef.current) return;
     if (signInUpStep !== SignInUpStep.Init) return;
     if (!hasAccessTokenPair) return;
 
@@ -63,7 +63,7 @@ export const SignInUpGlobalScopeFormEffect = () => {
     searchParams,
     setSearchParams,
     loadCurrentUser,
-    getAuthTokensFromSsoExchangeToken,
+    getAuthTokensFromSSOExchangeToken,
     signInUpStep,
     hasAccessTokenPair,
     navigateAfterMultiWorkspaceSignInUp,

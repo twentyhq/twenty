@@ -13,22 +13,22 @@ import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
-import { SsoExchangeTokenService } from './sso-exchange-token.service';
+import { SSOExchangeTokenService } from './sso-exchange-token.service';
 
 const USER_ID = '20202020-9e3b-46d4-a556-88b9ddc2b034';
 
 const sha256 = (value: string) =>
   crypto.createHash('sha256').update(value).digest('hex');
 
-describe('SsoExchangeTokenService', () => {
-  let service: SsoExchangeTokenService;
+describe('SSOExchangeTokenService', () => {
+  let service: SSOExchangeTokenService;
   let twentyConfigService: TwentyConfigService;
   let appTokenRepository: Repository<AppTokenEntity>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        SsoExchangeTokenService,
+        SSOExchangeTokenService,
         {
           provide: TwentyConfigService,
           useValue: { get: jest.fn().mockReturnValue('5m') },
@@ -40,7 +40,7 @@ describe('SsoExchangeTokenService', () => {
       ],
     }).compile();
 
-    service = module.get<SsoExchangeTokenService>(SsoExchangeTokenService);
+    service = module.get<SSOExchangeTokenService>(SSOExchangeTokenService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
     appTokenRepository = module.get<Repository<AppTokenEntity>>(
       getRepositoryToken(AppTokenEntity),
@@ -57,9 +57,9 @@ describe('SsoExchangeTokenService', () => {
       .mockImplementation(async (entity) => entity as AppTokenEntity);
   });
 
-  describe('generateSsoExchangeToken', () => {
+  describe('generateSSOExchangeToken', () => {
     it('should persist only the hash of the token, never the plaintext', async () => {
-      const { token } = await service.generateSsoExchangeToken({
+      const { token } = await service.generateSSOExchangeToken({
         userId: USER_ID,
         authProvider: AuthProviderEnum.Google,
       });
@@ -69,7 +69,7 @@ describe('SsoExchangeTokenService', () => {
 
       expect(savedToken.value).toBe(sha256(token));
       expect(savedToken.value).not.toBe(token);
-      expect(savedToken.type).toBe(AppTokenType.SsoExchangeToken);
+      expect(savedToken.type).toBe(AppTokenType.SSOExchangeToken);
       expect(savedToken.userId).toBe(USER_ID);
       expect(savedToken.context).toEqual({
         authProvider: AuthProviderEnum.Google,
@@ -77,7 +77,7 @@ describe('SsoExchangeTokenService', () => {
     });
 
     it('should use the short term token expiration', async () => {
-      await service.generateSsoExchangeToken({
+      await service.generateSSOExchangeToken({
         userId: USER_ID,
         authProvider: AuthProviderEnum.Microsoft,
       });
@@ -88,11 +88,11 @@ describe('SsoExchangeTokenService', () => {
     });
 
     it('should generate a different token on every call', async () => {
-      const first = await service.generateSsoExchangeToken({
+      const first = await service.generateSSOExchangeToken({
         userId: USER_ID,
         authProvider: AuthProviderEnum.Google,
       });
-      const second = await service.generateSsoExchangeToken({
+      const second = await service.generateSSOExchangeToken({
         userId: USER_ID,
         authProvider: AuthProviderEnum.Google,
       });
@@ -101,12 +101,12 @@ describe('SsoExchangeTokenService', () => {
     });
   });
 
-  describe('validateAndConsumeSsoExchangeTokenOrThrow', () => {
+  describe('validateAndConsumeSSOExchangeTokenOrThrow', () => {
     const buildAppToken = (): AppTokenEntity =>
       ({
         id: 'app-token-id',
         userId: USER_ID,
-        type: AppTokenType.SsoExchangeToken,
+        type: AppTokenType.SSOExchangeToken,
         value: sha256('plain-token'),
         expiresAt: new Date(Date.now() + 60_000),
         context: { authProvider: AuthProviderEnum.Google },
@@ -133,7 +133,7 @@ describe('SsoExchangeTokenService', () => {
     it('should claim the token atomically by hash, scoped to the SSO exchange type', async () => {
       const queryBuilder = mockClaimedRows([buildAppToken()]);
 
-      await service.validateAndConsumeSsoExchangeTokenOrThrow('plain-token');
+      await service.validateAndConsumeSSOExchangeTokenOrThrow('plain-token');
 
       expect(queryBuilder.delete).toHaveBeenCalled();
       expect(queryBuilder.returning).toHaveBeenCalledWith('*');
@@ -141,7 +141,7 @@ describe('SsoExchangeTokenService', () => {
         value: sha256('plain-token'),
       });
       expect(queryBuilder.andWhere).toHaveBeenCalledWith('type = :type', {
-        type: AppTokenType.SsoExchangeToken,
+        type: AppTokenType.SSOExchangeToken,
       });
     });
 
@@ -149,7 +149,7 @@ describe('SsoExchangeTokenService', () => {
       mockClaimedRows([buildAppToken()]);
 
       const result =
-        await service.validateAndConsumeSsoExchangeTokenOrThrow('plain-token');
+        await service.validateAndConsumeSSOExchangeTokenOrThrow('plain-token');
 
       expect(result).toEqual({
         userId: USER_ID,
@@ -161,7 +161,7 @@ describe('SsoExchangeTokenService', () => {
       mockClaimedRows([]);
 
       await expect(
-        service.validateAndConsumeSsoExchangeTokenOrThrow('plain-token'),
+        service.validateAndConsumeSSOExchangeTokenOrThrow('plain-token'),
       ).rejects.toThrow(AuthException);
     });
 
@@ -173,7 +173,7 @@ describe('SsoExchangeTokenService', () => {
       mockClaimedRows([expiredToken]);
 
       await expect(
-        service.validateAndConsumeSsoExchangeTokenOrThrow('plain-token'),
+        service.validateAndConsumeSSOExchangeTokenOrThrow('plain-token'),
       ).rejects.toThrow(AuthException);
     });
 
@@ -185,7 +185,7 @@ describe('SsoExchangeTokenService', () => {
       mockClaimedRows([tokenWithoutProvider]);
 
       await expect(
-        service.validateAndConsumeSsoExchangeTokenOrThrow('plain-token'),
+        service.validateAndConsumeSSOExchangeTokenOrThrow('plain-token'),
       ).rejects.toThrow(AuthException);
     });
   });

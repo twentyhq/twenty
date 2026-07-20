@@ -46,7 +46,7 @@ import { type MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/m
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
+import { SSOExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import {
@@ -80,7 +80,7 @@ import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 export class AuthService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
-    private readonly ssoExchangeTokenService: SsoExchangeTokenService,
+    private readonly ssoExchangeTokenService: SSOExchangeTokenService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly domainServerConfigService: DomainServerConfigService,
     private readonly refreshTokenService: RefreshTokenService,
@@ -983,7 +983,7 @@ export class AuthService {
         ));
 
       const ssoExchangeToken =
-        await this.ssoExchangeTokenService.generateSsoExchangeToken({
+        await this.ssoExchangeTokenService.generateSSOExchangeToken({
           userId: user.id,
           authProvider,
         });

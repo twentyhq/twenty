@@ -21,12 +21,12 @@ import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto'
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
-const hashSsoExchangeToken = (ssoExchangeToken: string) =>
+const hashSSOExchangeToken = (ssoExchangeToken: string) =>
   crypto.createHash('sha256').update(ssoExchangeToken).digest('hex');
 
 // A single opaque error for missing, expired and already-consumed tokens:
 // distinguishing them would turn this endpoint into a redemption oracle.
-const buildInvalidSsoExchangeTokenException = () =>
+const buildInvalidSSOExchangeTokenException = () =>
   new AuthException(
     'Invalid SSO exchange token',
     AuthExceptionCode.INVALID_INPUT,
@@ -34,14 +34,14 @@ const buildInvalidSsoExchangeTokenException = () =>
   );
 
 @Injectable()
-export class SsoExchangeTokenService {
+export class SSOExchangeTokenService {
   constructor(
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  async generateSsoExchangeToken({
+  async generateSSOExchangeToken({
     userId,
     authProvider,
   }: {
@@ -59,8 +59,8 @@ export class SsoExchangeTokenService {
       this.appTokenRepository.create({
         userId,
         expiresAt,
-        type: AppTokenType.SsoExchangeToken,
-        value: hashSsoExchangeToken(plainToken),
+        type: AppTokenType.SSOExchangeToken,
+        value: hashSSOExchangeToken(plainToken),
         context: { authProvider },
       }),
     );
@@ -71,7 +71,7 @@ export class SsoExchangeTokenService {
     };
   }
 
-  async validateAndConsumeSsoExchangeTokenOrThrow(
+  async validateAndConsumeSSOExchangeTokenOrThrow(
     ssoExchangeToken: string,
   ): Promise<{ userId: string; authProvider: AuthProviderEnum }> {
     // Claiming the row with a single DELETE ... RETURNING makes redemption
@@ -81,26 +81,26 @@ export class SsoExchangeTokenService {
       .delete()
       .from(AppTokenEntity)
       .where('value = :value', {
-        value: hashSsoExchangeToken(ssoExchangeToken),
+        value: hashSSOExchangeToken(ssoExchangeToken),
       })
-      .andWhere('type = :type', { type: AppTokenType.SsoExchangeToken })
+      .andWhere('type = :type', { type: AppTokenType.SSOExchangeToken })
       .returning('*')
       .execute();
 
     const claimedToken: AppTokenEntity | undefined = raw[0];
 
     if (raw.length !== 1 || !isDefined(claimedToken)) {
-      throw buildInvalidSsoExchangeTokenException();
+      throw buildInvalidSSOExchangeTokenException();
     }
 
     const { userId, expiresAt, context } = claimedToken;
 
     if (new Date() > new Date(expiresAt)) {
-      throw buildInvalidSsoExchangeTokenException();
+      throw buildInvalidSSOExchangeTokenException();
     }
 
     if (!isDefined(userId) || !isDefined(context?.authProvider)) {
-      throw buildInvalidSsoExchangeTokenException();
+      throw buildInvalidSSOExchangeTokenException();
     }
 
     return { userId, authProvider: context.authProvider };
