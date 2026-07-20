@@ -382,4 +382,190 @@ describe('WorkspaceDomainsService', () => {
       expect(result).toEqual(undefined);
     });
   });
+
+  describe('isRedirectUrlWithinResolvedWorkspaceDomains', () => {
+    const setupConfig = (config: Record<string, unknown>) => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        // @ts-expect-error legacy noImplicitAny
+        .mockImplementation((key: string) => config[key]);
+    };
+
+    const mockResolvedWorkspace = (resolved: {
+      workspace?: Partial<WorkspaceEntity>;
+      publicDomain?: Partial<PublicDomainEntity> | null;
+    }) => {
+      jest
+        .spyOn(workspaceDomainsService, 'resolveWorkspaceAndPublicDomain')
+        .mockResolvedValue({
+          workspace: resolved.workspace as WorkspaceEntity | undefined,
+          publicDomain: (resolved.publicDomain ??
+            null) as PublicDomainEntity | null,
+          isIsolatedOrigin: false,
+        });
+    };
+
+    it('should return false when no workspace is resolved', async () => {
+      setupConfig({
+        FRONTEND_URL: 'https://app.twenty.com',
+        IS_MULTIWORKSPACE_ENABLED: false,
+      });
+      mockResolvedWorkspace({ workspace: undefined });
+
+      const result =
+        await workspaceDomainsService.isRedirectUrlWithinResolvedWorkspaceDomains(
+          new URL('https://app.twenty.com/callback'),
+        );
+
+      expect(result).toBe(false);
+    });
+
+    it('should allow a redirect matching the subdomain origin in single-workspace mode', async () => {
+      setupConfig({
+        FRONTEND_URL: 'https://app.twenty.com',
+        IS_MULTIWORKSPACE_ENABLED: false,
+      });
+      mockResolvedWorkspace({
+        workspace: {
+          subdomain: 'acme',
+          customDomain: null,
+          isCustomDomainEnabled: false,
+        },
+      });
+
+      const result =
+        await workspaceDomainsService.isRedirectUrlWithinResolvedWorkspaceDomains(
+          new URL('https://app.twenty.com/callback'),
+        );
+
+      expect(result).toBe(true);
+    });
+
+    it('should allow a redirect matching the subdomain origin in multi-workspace mode', async () => {
+      setupConfig({
+        FRONTEND_URL: 'https://app.twenty.com',
+        IS_MULTIWORKSPACE_ENABLED: true,
+      });
+      mockResolvedWorkspace({
+        workspace: {
+          subdomain: 'acme',
+          customDomain: null,
+          isCustomDomainEnabled: false,
+        },
+      });
+
+      const result =
+        await workspaceDomainsService.isRedirectUrlWithinResolvedWorkspaceDomains(
+          new URL('https://acme.app.twenty.com/callback'),
+        );
+
+      expect(result).toBe(true);
+    });
+
+    it('should reject an http origin when the allowed origin is https', async () => {
+      setupConfig({
+        FRONTEND_URL: 'https://app.twenty.com',
+        IS_MULTIWORKSPACE_ENABLED: false,
+      });
+      mockResolvedWorkspace({
+        workspace: {
+          subdomain: 'acme',
+          customDomain: null,
+          isCustomDomainEnabled: false,
+        },
+      });
+
+      const result =
+        await workspaceDomainsService.isRedirectUrlWithinResolvedWorkspaceDomains(
+          new URL('http://app.twenty.com/callback'),
+        );
+
+      expect(result).toBe(false);
+    });
+
+    it('should reject an origin with a mismatched port', async () => {
+      setupConfig({
+        FRONTEND_URL: 'https://app.twenty.com',
+        IS_MULTIWORKSPACE_ENABLED: false,
+      });
+      mockResolvedWorkspace({
+        workspace: {
+          subdomain: 'acme',
+          customDomain: null,
+          isCustomDomainEnabled: false,
+        },
+      });
+
+      const result =
+        await workspaceDomainsService.isRedirectUrlWithinResolvedWorkspaceDomains(
+          new URL('https://app.twenty.com:8080/callback'),
+        );
+
+      expect(result).toBe(false);
+    });
+
+    it('should allow the custom domain origin when isCustomDomainEnabled is true', async () => {
+      setupConfig({
+        FRONTEND_URL: 'https://app.twenty.com',
+        IS_MULTIWORKSPACE_ENABLED: false,
+      });
+      mockResolvedWorkspace({
+        workspace: {
+          subdomain: 'acme',
+          customDomain: 'custom.example.com',
+          isCustomDomainEnabled: true,
+        },
+      });
+
+      const result =
+        await workspaceDomainsService.isRedirectUrlWithinResolvedWorkspaceDomains(
+          new URL('https://custom.example.com/callback'),
+        );
+
+      expect(result).toBe(true);
+    });
+
+    it('should reject the custom domain origin when isCustomDomainEnabled is false', async () => {
+      setupConfig({
+        FRONTEND_URL: 'https://app.twenty.com',
+        IS_MULTIWORKSPACE_ENABLED: false,
+      });
+      mockResolvedWorkspace({
+        workspace: {
+          subdomain: 'acme',
+          customDomain: 'custom.example.com',
+          isCustomDomainEnabled: false,
+        },
+      });
+
+      const result =
+        await workspaceDomainsService.isRedirectUrlWithinResolvedWorkspaceDomains(
+          new URL('https://custom.example.com/callback'),
+        );
+
+      expect(result).toBe(false);
+    });
+
+    it('should allow the resolved public domain origin', async () => {
+      setupConfig({
+        FRONTEND_URL: 'https://app.twenty.com',
+        IS_MULTIWORKSPACE_ENABLED: false,
+      });
+      mockResolvedWorkspace({
+        workspace: {
+          subdomain: 'acme',
+          customDomain: null,
+          isCustomDomainEnabled: false,
+        },
+        publicDomain: { domain: 'public.example.com' },
+      });
+
+      const result =
+        await workspaceDomainsService.isRedirectUrlWithinResolvedWorkspaceDomains(
+          new URL('https://public.example.com/callback'),
+        );
+
+      expect(result).toBe(true);
+    });
+  });
 });

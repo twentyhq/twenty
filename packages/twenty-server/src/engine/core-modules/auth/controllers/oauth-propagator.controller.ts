@@ -15,7 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
-import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -25,7 +25,6 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 @UseFilters(AuthRestApiExceptionFilter)
 export class OAuthPropagatorController {
   constructor(
-    private readonly domainServerConfigService: DomainServerConfigService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {}
@@ -47,15 +46,22 @@ export class OAuthPropagatorController {
 
     const decodedRedirectUri = decodeURIComponent(state);
 
-    let redirectUrl: URL;
+    const redirectUriValidation = validateRedirectUri(decodedRedirectUri);
 
-    try {
-      redirectUrl = new URL(decodedRedirectUri);
-    } catch {
-      throw new BadRequestException('Invalid redirect URI in state');
+    if (!redirectUriValidation.valid) {
+      throw new BadRequestException(redirectUriValidation.reason);
     }
 
-    const isValidDomain = await this.isValidDomain(redirectUrl);
+    const redirectUrl = redirectUriValidation.parsed;
+
+    const isDevelopment =
+      this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT;
+
+    const isValidDomain =
+      isDevelopment ||
+      (await this.workspaceDomainsService.isRedirectUrlWithinResolvedWorkspaceDomains(
+        redirectUrl,
+      ));
 
     if (!isValidDomain) {
       throw new ForbiddenException(
@@ -67,20 +73,5 @@ export class OAuthPropagatorController {
     redirectUrl.searchParams.set('state', state);
 
     return res.redirect(302, redirectUrl.toString());
-  }
-
-  private async isValidDomain(url: URL): Promise<boolean> {
-    if (
-      this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT
-    ) {
-      return true;
-    }
-
-    const workspace =
-      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
-        url.href,
-      );
-
-    return isDefined(workspace);
   }
 }

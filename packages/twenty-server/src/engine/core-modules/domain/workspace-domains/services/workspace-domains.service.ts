@@ -100,6 +100,35 @@ export class WorkspaceDomainsService {
     return workspace;
   }
 
+  async isRedirectUrlWithinResolvedWorkspaceDomains(
+    url: URL,
+  ): Promise<boolean> {
+    const { workspace, publicDomain } =
+      await this.resolveWorkspaceAndPublicDomain(url.href);
+
+    if (!isDefined(workspace)) {
+      return false;
+    }
+
+    const { customUrl, subdomainUrl } = this.getWorkspaceUrls({
+      subdomain: workspace.subdomain,
+      customDomain: workspace.customDomain,
+      isCustomDomainEnabled: workspace.isCustomDomainEnabled,
+    });
+
+    const allowedOrigins = new Set<string>([new URL(subdomainUrl).origin]);
+
+    if (isDefined(customUrl)) {
+      allowedOrigins.add(new URL(customUrl).origin);
+    }
+
+    if (isDefined(publicDomain)) {
+      allowedOrigins.add(`https://${publicDomain.domain}`);
+    }
+
+    return allowedOrigins.has(url.origin);
+  }
+
   async resolveWorkspaceAndPublicDomain(origin: string): Promise<{
     workspace: WorkspaceEntity | undefined;
     publicDomain: PublicDomainEntity | null;
