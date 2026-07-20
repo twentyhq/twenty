@@ -2227,6 +2227,11 @@ msgstr ""
 msgid "Annual"
 msgstr ""
 
+#. js-lingui-id: +qygei
+#: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
+msgid "Answers"
+msgstr ""
+
 #. js-lingui-id: 9BhGWn
 #. placeholder {0}: fieldLabel ?? ''
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterCompositeSubFieldSelectMenu.tsx
@@ -14337,11 +14342,6 @@ msgstr ""
 #. js-lingui-id: Z9go8W
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
 msgid "Queries that relied on it will fall back to a sequential scan. You can recreate it later."
-msgstr ""
-
-#. js-lingui-id: uH9Vwp
-#: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
-msgid "Questions answered"
 msgstr ""
 
 #. js-lingui-id: /IUt/5
