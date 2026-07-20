@@ -164,15 +164,15 @@ yarn twenty app:publish --private
 **하는 일:**
 
 1. 앱을 체크아웃하고 Node.js를 설정한 다음 npm을 업데이트합니다(신뢰할 수 있는 게시 기능을 사용하려면 npm 11.5.1 이상이 필요합니다).
-2. `yarn twenty app:publish`를 실행하여 앱을 빌드하고 `.twenty/output`를 npm에 게시합니다. CI에서는 자동으로 `--provenance` 및 `--access public`를 추가하므로, 워크플로에는 플래그가 필요하지 않습니다.
+2. `yarn twenty app:publish`를 실행하여 앱을 빌드하고 `.twenty/output`를 npm에 게시합니다. CI에서는 자동으로 `--provenance` 및 `--access public`을 추가하므로, 워크플로에는 플래그가 필요하지 않습니다.
 
-**일회성 설정:**
+**한 번만 설정:**
 
-npmjs.com에서 패키지를 연 다음 **Settings → Trusted Publisher**로 이동하여 이 저장소를 `publish.yml` 워크플로에 등록하세요([npm trusted publishing 문서](https://docs.npmjs.com/trusted-publishers)를 참고하세요). provenance와 함께 게시하면 어떤 GitHub 리포지터리가 패키지를 빌드했는지 증명되며, 이는 Twenty 마켓플레이스에서 앱 소유권을 주장하는 방법이기도 합니다.
+npmjs.com에서 패키지를 연 다음 **Settings → Trusted Publisher**로 이동하여 이 저장소를 `publish.yml` 워크플로에 등록하세요([npm trusted publishing 문서](https://docs.npmjs.com/trusted-publishers)를 참고하세요). provenance와 함께 게시하면 어떤 GitHub 저장소가 패키지를 빌드했는지 증명되며, 이는 Twenty 마켓플레이스에서 앱 소유권을 주장하는 방법이기도 합니다.
 
 ### 재사용 가능한 액션 고정하기
 
-`ci.yml` 및 `cd.yml` 워크플로는 `@main`의 재사용 가능한 액션을 참조하므로, `twentyhq/twenty` 리포지터리의 액션 업데이트가 자동으로 반영됩니다. 결정적 빌드를 원한다면, 각 `uses:` 줄에서 `@main`을 커밋 SHA 또는 릴리스 태그로 바꾸세요.
+`ci.yml` 및 `cd.yml` 워크플로는 `@main`의 재사용 가능한 액션을 참조하므로, `twentyhq/twenty` 저장소의 액션 업데이트가 자동으로 반영됩니다. 결정적 빌드를 원한다면, 각 `uses:` 줄에서 `@main`을 커밋 SHA 또는 릴리스 태그로 바꾸세요.
 
 ## npm에 게시
 
@@ -254,7 +254,7 @@ yarn twenty dev:catalog-sync
 
 ### CI 게시
 
-위에서 설명한 스캐폴딩된 `publish.yml` 워크플로는 버전 태그에 따라 provenance와 함께 npm에 자동으로 게시합니다. `yarn twenty app:publish`는 CI에서 실행될 때 `--provenance` 및 `--access public`를 자동으로 추가하므로, 워크플로에는 npm 플래그가 전혀 필요하지 않고 한 번만 설정하는 trusted-publisher만 있으면 됩니다.
+위에서 설명한 스캐폴딩된 `publish.yml` 워크플로는 버전 태그에 따라 provenance와 함께 npm에 자동으로 게시합니다. `yarn twenty app:publish`는 CI에서 실행될 때 `--provenance` 및 `--access public`을 자동으로 추가하므로, 워크플로에는 npm 플래그가 전혀 필요하지 않고 Trusted Publisher를 한 번만 설정하면 됩니다.
 
 다른 CI 시스템(GitLab CI, CircleCI 등)에서는 `yarn install`을 실행한 다음 `yarn twenty app:publish`를 실행하세요. 환경에서 OIDC 토큰을 생성할 수 있을 때는 provenance가 생성되고, 그렇지 않은 경우에는 자동으로 건너뜁니다.
 

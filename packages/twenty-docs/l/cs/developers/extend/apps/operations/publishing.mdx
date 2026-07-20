@@ -163,7 +163,7 @@ Publikuje vaši aplikaci na npm s doloženým původem, když odešlete tag verz
 
 **K čemu slouží:**
 
-1. Zkontroluje vaši aplikaci, nastaví Node.js a aktualizuje npm (důvěryhodné publikování vyžaduje npm 11.5.1 nebo novější).
+1. Načte repozitář vaší aplikace, nastaví Node.js a aktualizuje npm (důvěryhodné publikování vyžaduje npm 11.5.1 nebo novější).
 2. Spustí `yarn twenty app:publish`, který sestaví aplikaci a publikuje `.twenty/output` na npm. V CI automaticky přidá `--provenance` a `--access public`, takže ve workflowu nejsou potřeba žádné přepínače.
 
 **Jednorázové nastavení:**
@@ -254,7 +254,7 @@ Pokud vaše aplikace nedefinuje `aboutDescription` v `defineApplication()`, trž
 
 ### Publikování pomocí CI
 
-Vygenerované workflow `publish.yml` popsané výše publikuje na npm automaticky při verzovacích tazích (tagách), s provenance. Protože `yarn twenty app:publish` při běhu v CI přidá `--provenance` a `--access public` za vás, workflow nepotřebuje žádné přepínače npm — pouze jednorázové nastavení důvěryhodného vydavatele.
+Vygenerované workflow `publish.yml` popsané výše publikuje na npm automaticky při verzovacích tagách, s provenance. Protože `yarn twenty app:publish` při běhu v CI přidá `--provenance` a `--access public` za vás, workflow nepotřebuje žádné přepínače npm — pouze jednorázové nastavení důvěryhodného vydavatele.
 
 Pro jiné CI systémy (GitLab CI, CircleCI atd.) spusťte `yarn install` a poté `yarn twenty app:publish`. Provenance se vydává, pokud prostředí umí vytvořit token OIDC, a v opačném případě se automaticky vynechá.
 

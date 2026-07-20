@@ -163,8 +163,8 @@ yarn twenty app:publish --private
 
 **ماذا يفعل:**
 
-1. يتحقق من تطبيقك، ويُعد Node.js، ويُحدِّث npm (يتطلّب النشر الموثوق npm 11.5.1 أو أحدث).
-2. يشغّل `yarn twenty app:publish`، الذي يبني التطبيق وينشر `.twenty/output` إلى npm. في بيئة CI يضيف تلقائيًا `--provenance` و`--access public`، لذا لا حاجة للرايات داخل سير العمل.
+1. يجلب شيفرة تطبيقك، ويُعد Node.js، ويُحدِّث npm (يتطلّب النشر الموثوق npm 11.5.1 أو أحدث).
+2. يشغّل `yarn twenty app:publish`، الذي يبني التطبيق وينشر `.twenty/output` إلى npm. في بيئة CI يضيف تلقائيًا `--provenance` و`--access public`، لذا لا حاجة إلى أي أعلام في سير العمل.
 
 **إعداد لمرة واحدة:**
 
@@ -254,7 +254,7 @@ yarn twenty dev:catalog-sync
 
 ### النشر عبر CI
 
-ينشر سير عمل `publish.yml` المُنشأ تلقائيًا والموصوف أعلاه إلى npm تلقائيًا عند علامات الإصدارات، مع بيانات provenance. نظرًا لأن `yarn twenty app:publish` يضيف `--provenance` و`--access public` نيابةً عنك عند تشغيله في CI، فلا يحتاج سير العمل إلى أي رايات npm — فقط إعداد الناشر الموثوق لمرة واحدة.
+ينشر سير عمل `publish.yml` المُنشأ تلقائيًا والموصوف أعلاه إلى npm تلقائيًا عند علامات الإصدارات، مع بيانات provenance. نظرًا لأن `yarn twenty app:publish` يضيف `--provenance` و`--access public` نيابةً عنك عند تشغيله في CI، فلا يحتاج سير العمل إلى أي أعلام npm — فقط إعداد الناشر الموثوق لمرة واحدة.
 
 بالنسبة لأنظمة CI الأخرى (GitLab CI وCircleCI وغيرها)، شغّل `yarn install` ثم `yarn twenty app:publish`. يُصدِر بيانات provenance عندما تتمكّن البيئة من إصدار رمز OIDC، ويتم تخطيه تلقائيًا خلاف ذلك.
 

@@ -93,7 +93,7 @@ export default defineView({
 
 除了上面的标量系统字段之外，服务器还会在每个对象上预置四个**系统关系字段**：`timelineActivities`、`attachments`、`noteTargets` 和 `taskTargets`，它们各自指向相应的标准关系对象。
 
-这些字段不会通过 `getFieldUniversalIdentifier` 解析：它们的标识符是**与名称无关**地，从承载该字段的对象以及该字段指向的对象中派生出来的。 通过这种方式，重命名对象永远不会改变其关系字段的标识符。
+这些字段不会通过 `getFieldUniversalIdentifier` 解析：其标识符不依赖名称，而是由承载该字段的对象和该字段指向的对象推导而来。 通过这种方式，重命名对象永远不会改变其关系字段的标识符。
 
 使用 `getSystemRelationFieldUniversalIdentifier` 来解析它们：
 
@@ -115,7 +115,7 @@ const rocketAttachmentsFieldId = getSystemRelationFieldUniversalIdentifier({
 * `objectUniversalIdentifier` 是**承载**该字段的对象。
 * `relationTargetObjectUniversalIdentifier` 是该字段**指向**的对象。
 
-方向由参数的顺序编码。 要解析反向端（例如 `attachment.targetRocket`，即服务器在标准关联对象上创建的 morph 字段），交换这两个参数：
+方向由参数的顺序编码。 要解析反向端（例如 `attachment.targetRocket`，即服务器在标准关系对象上创建的 morph 字段），交换这两个参数：
 
 ```ts
 // attachment.targetRocket — the reverse morph field on Attachment
