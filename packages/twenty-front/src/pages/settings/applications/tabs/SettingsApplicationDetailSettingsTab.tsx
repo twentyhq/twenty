@@ -49,7 +49,7 @@ export const SettingsApplicationDetailSettingsTab = ({
     <>
       {isUpgradable && application?.id && (
         <Section>
-          <H2Title title={t`Upgrades`} />
+          <H2Title title={t`General`} />
           <Card rounded fullWidth>
             <SettingsOptionCardContentToggle
               Icon={IconRefresh}
