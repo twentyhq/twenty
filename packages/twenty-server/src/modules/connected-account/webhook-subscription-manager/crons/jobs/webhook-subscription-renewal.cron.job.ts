@@ -6,7 +6,7 @@ import {
   WebhookSubscriptionStatus,
 } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, LessThanOrEqual, Repository } from 'typeorm';
+import { type FindManyOptions, In, LessThanOrEqual, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -24,7 +24,9 @@ import {
   type RenewWebhookSubscriptionJobData,
 } from 'src/modules/connected-account/webhook-subscription-manager/jobs/renew-webhook-subscription.job';
 
-type ChannelToProcess = { id: string; workspaceId: string };
+type WebhookSubscribableChannel = MessageChannelEntity | CalendarChannelEntity;
+
+type StaleChannel = Pick<WebhookSubscribableChannel, 'id' | 'workspaceId'>;
 
 @Processor(MessageQueue.cronQueue)
 export class WebhookSubscriptionRenewalCronJob {
@@ -49,6 +51,7 @@ export class WebhookSubscriptionRenewalCronJob {
   async handle(): Promise<void> {
     const activeWorkspaces = await this.workspaceRepository.find({
       where: { activationStatus: WorkspaceActivationStatus.ACTIVE },
+      select: { id: true },
     });
 
     const activeWorkspaceIds = activeWorkspaces.map(
@@ -59,26 +62,17 @@ export class WebhookSubscriptionRenewalCronJob {
       return;
     }
 
-    const renewalThreshold = new Date(
-      Date.now() + WEBHOOK_SUBSCRIPTION_RENEWAL_BUFFER_MS,
-    );
-
-    const staleSubscriptionWhere = [
-      {
-        webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
-        webhookSubscriptionExpiresAt: LessThanOrEqual(renewalThreshold),
-        workspaceId: In(activeWorkspaceIds),
-      },
-      {
-        webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
-        workspaceId: In(activeWorkspaceIds),
-      },
-    ];
-
     const [messageChannels, calendarChannels] = await Promise.all([
-      this.messageChannelRepository.find({ where: staleSubscriptionWhere }),
-      this.calendarChannelRepository.find({ where: staleSubscriptionWhere }),
+      this.findStaleChannels(this.messageChannelRepository, activeWorkspaceIds),
+      this.findStaleChannels(
+        this.calendarChannelRepository,
+        activeWorkspaceIds,
+      ),
     ]);
+
+    if (messageChannels.length === 0 && calendarChannels.length === 0) {
+      return;
+    }
 
     await Promise.all([
       this.enqueueRenewals(
@@ -96,9 +90,36 @@ export class WebhookSubscriptionRenewalCronJob {
     );
   }
 
+  private findStaleChannels<TChannel extends WebhookSubscribableChannel>(
+    repository: Repository<TChannel>,
+    activeWorkspaceIds: string[],
+  ): Promise<StaleChannel[]> {
+    const workspaceScope = { workspaceId: In(activeWorkspaceIds) };
+    const renewalThreshold = new Date(
+      Date.now() + WEBHOOK_SUBSCRIPTION_RENEWAL_BUFFER_MS,
+    );
+
+    const options: FindManyOptions<WebhookSubscribableChannel> = {
+      where: [
+        {
+          ...workspaceScope,
+          webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
+        },
+        {
+          ...workspaceScope,
+          webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
+          webhookSubscriptionExpiresAt: LessThanOrEqual(renewalThreshold),
+        },
+      ],
+      select: { id: true, workspaceId: true },
+    };
+
+    return repository.find(options as FindManyOptions<TChannel>);
+  }
+
   private async enqueueRenewals(
     channelType: WebhookSubscriptionChannelType,
-    channels: ChannelToProcess[],
+    channels: StaleChannel[],
   ): Promise<void> {
     for (const channel of channels) {
       await this.webhookQueueService.add<RenewWebhookSubscriptionJobData>(
