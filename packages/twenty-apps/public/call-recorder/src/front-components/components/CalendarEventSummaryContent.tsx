@@ -53,8 +53,12 @@ type CalendarEventSummaryContentProps = {
 export const CalendarEventSummaryContent = ({
   calendarEventId,
 }: CalendarEventSummaryContentProps) => {
-  const { summaryMarkdown, isCalendarEventSummaryQueryLoading, errorMessage } =
-    useCalendarEventSummary(calendarEventId);
+  const {
+    summaryMarkdown,
+    summaryUnavailableReason,
+    isCalendarEventSummaryQueryLoading,
+    errorMessage,
+  } = useCalendarEventSummary(calendarEventId);
 
   return (
     <StyledSummaryShell>
@@ -65,6 +69,7 @@ export const CalendarEventSummaryContent = ({
         <StyledSummaryContentFrame>
           <CalendarEventSummaryBody
             summaryMarkdown={summaryMarkdown}
+            summaryUnavailableReason={summaryUnavailableReason}
             isCalendarEventSummaryQueryLoading={
               isCalendarEventSummaryQueryLoading
             }

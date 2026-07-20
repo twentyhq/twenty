@@ -19,12 +19,14 @@ const StyledCenteredState = styled.div`
 
 type CalendarEventSummaryBodyProps = {
   summaryMarkdown: string | undefined;
+  summaryUnavailableReason: string | undefined;
   isCalendarEventSummaryQueryLoading: boolean;
   errorMessage: string | undefined;
 };
 
 export const CalendarEventSummaryBody = ({
   summaryMarkdown,
+  summaryUnavailableReason,
   isCalendarEventSummaryQueryLoading,
   errorMessage,
 }: CalendarEventSummaryBodyProps) => {
@@ -44,7 +46,7 @@ export const CalendarEventSummaryBody = ({
   if (isUndefined(summaryMarkdown)) {
     return (
       <StyledCenteredState>
-        No summary for this calendar event yet.
+        {summaryUnavailableReason ?? 'No summary for this calendar event yet.'}
       </StyledCenteredState>
     );
   }

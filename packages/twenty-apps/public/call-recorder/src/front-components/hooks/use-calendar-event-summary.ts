@@ -2,16 +2,20 @@ import { isUndefined } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
+import { getSummaryUnavailableReason } from 'src/front-components/utils/get-summary-unavailable-reason.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 type CalendarEventSummaryState = {
   summaryMarkdown: string | undefined;
+  summaryUnavailableReason: string | undefined;
   isCalendarEventSummaryQueryLoading: boolean;
   errorMessage: string | undefined;
 };
 
 type CalendarEventSummaryCallRecordingNode = {
   id: string;
+  status: string | null;
+  callRecorderFailureReason: string | null;
   summary: { markdown: string | null } | null;
 };
 
@@ -37,6 +41,7 @@ export const useCalendarEventSummary = (
 ): CalendarEventSummaryState => {
   const [state, setState] = useState<CalendarEventSummaryState>({
     summaryMarkdown: undefined,
+    summaryUnavailableReason: undefined,
     isCalendarEventSummaryQueryLoading: !isUndefined(calendarEventId),
     errorMessage: undefined,
   });
@@ -45,6 +50,7 @@ export const useCalendarEventSummary = (
     if (isUndefined(calendarEventId)) {
       setState({
         summaryMarkdown: undefined,
+        summaryUnavailableReason: undefined,
         isCalendarEventSummaryQueryLoading: false,
         errorMessage: undefined,
       });
@@ -56,6 +62,7 @@ export const useCalendarEventSummary = (
     const fetchSummary = async () => {
       setState({
         summaryMarkdown: undefined,
+        summaryUnavailableReason: undefined,
         isCalendarEventSummaryQueryLoading: true,
         errorMessage: undefined,
       });
@@ -72,6 +79,8 @@ export const useCalendarEventSummary = (
             edges: {
               node: {
                 id: true,
+                status: true,
+                callRecorderFailureReason: true,
                 summary: { markdown: true },
               },
             },
@@ -87,9 +96,13 @@ export const useCalendarEventSummary = (
         const callRecordingNodes = callRecordingEdges.map(
           (callRecordingEdge) => callRecordingEdge.node,
         );
+        const summaryMarkdown = selectSummaryMarkdown(callRecordingNodes);
 
         setState({
-          summaryMarkdown: selectSummaryMarkdown(callRecordingNodes),
+          summaryMarkdown,
+          summaryUnavailableReason: isUndefined(summaryMarkdown)
+            ? getSummaryUnavailableReason(callRecordingNodes)
+            : undefined,
           isCalendarEventSummaryQueryLoading: false,
           errorMessage: undefined,
         });
@@ -100,6 +113,7 @@ export const useCalendarEventSummary = (
 
         setState({
           summaryMarkdown: undefined,
+          summaryUnavailableReason: undefined,
           isCalendarEventSummaryQueryLoading: false,
           errorMessage: CALENDAR_EVENT_SUMMARY_ERROR_MESSAGE,
         });
