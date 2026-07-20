@@ -39,7 +39,6 @@
     "@types/node": "^24.0.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
-    "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "@vitest/browser-playwright": "^4.1.0",
     "playwright": "^1.60.0",
     "prettier": "^3.1.1",
@@ -51,6 +50,7 @@
     "twenty-sdk": "workspace:*",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*",
+    "typescript": "^7.0.2",
     "vite-plugin-dts": "^4.5.4"
   },
   "engines": {

@@ -90,11 +90,11 @@
       "cache": true,
       "options": {
         "cwd": "{projectRoot}",
-        "command": "tsgo -p tsconfig.json"
+        "command": "tsc -p tsconfig.json"
       },
       "configurations": {
         "watch": {
-          "command": "tsgo -p tsconfig.json --watch"
+          "command": "tsc -p tsconfig.json --watch"
         }
       },
       "dependsOn": ["^build"]

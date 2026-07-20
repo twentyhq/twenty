@@ -47,7 +47,7 @@
         "cwd": "{projectRoot}",
         "commands": [
           "npx vite build",
-          "tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist"
+          "tsc -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist"
         ],
         "parallel": false
       }

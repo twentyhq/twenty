@@ -37,7 +37,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tsx": "^4.0.0",
-    "typescript": "^5.9.3",
+    "typescript": "^7.0.2",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^4.0.0"
   }

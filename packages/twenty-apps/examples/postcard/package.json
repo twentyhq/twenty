@@ -31,7 +31,7 @@
     "react-dom": "^19.0.0",
     "twenty-client-sdk": "2.19.0-alpha.1",
     "twenty-sdk": "2.19.0-alpha.1",
-    "typescript": "^5.9.3",
+    "typescript": "^7.0.2",
     "vitest": "^4.0.0"
   }
 }

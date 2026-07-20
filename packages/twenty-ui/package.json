@@ -62,7 +62,7 @@
     "storybook-addon-pseudo-states": "^10.3.3",
     "ts-jest": "^29.1.1",
     "tsx": "^4.19.3",
-    "typescript": "^5.9.3",
+    "typescript": "^7.0.2",
     "vite-plugin-checker": "^0.10.2",
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-sass-dts": "^1.3.31",

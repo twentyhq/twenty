@@ -24,7 +24,7 @@
   },
   "license": "AGPL-3.0",
   "name": "twenty",
-  "packageManager": "yarn@4.13.0",
+  "packageManager": "yarn@4.17.1",
   "resolutions": {
     "@module-federation/dts-plugin/undici": "^7.28.0",
     "nx/form-data": "4.0.6",
