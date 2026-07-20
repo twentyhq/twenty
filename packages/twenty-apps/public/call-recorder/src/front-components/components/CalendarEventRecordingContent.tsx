@@ -118,12 +118,10 @@ export const CalendarEventRecordingContent = ({
           <CopyToClipboardButton
             textToCopy={transcriptPlainText}
             ariaLabel="Copy transcript"
-            successMessage="Transcript copied to clipboard."
           />
           <CopyToClipboardButton
             textToCopy={videoFileUrl}
             ariaLabel="Copy video download link"
-            successMessage="Video download link copied to clipboard."
             Icon={IconLink}
           />
         </StyledRecordingHeaderActions>

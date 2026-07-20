@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useEffect, useRef, useState } from 'react';
-import { enqueueSnackbar } from 'twenty-sdk/front-component';
+import { copyToClipboard } from 'twenty-sdk/front-component';
 import { IconCheck, IconCopy, type IconComponent } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -34,14 +34,12 @@ const StyledButton = styled.button`
 type CopyToClipboardButtonProps = {
   textToCopy: string | undefined;
   ariaLabel: string;
-  successMessage: string;
   Icon?: IconComponent;
 };
 
 export const CopyToClipboardButton = ({
   textToCopy,
   ariaLabel,
-  successMessage,
   Icon = IconCopy,
 }: CopyToClipboardButtonProps) => {
   const [hasJustCopied, setHasJustCopied] = useState(false);
@@ -65,24 +63,17 @@ export const CopyToClipboardButton = ({
       return;
     }
 
-    try {
-      await navigator.clipboard.writeText(textToCopy);
+    // The host handles the actual clipboard write and its own snackbar; the
+    // front-component sandbox has no direct navigator.clipboard access.
+    await copyToClipboard(textToCopy);
 
-      setHasJustCopied(true);
-      if (resetTimeoutRef.current !== undefined) {
-        clearTimeout(resetTimeoutRef.current);
-      }
-      resetTimeoutRef.current = setTimeout(() => {
-        setHasJustCopied(false);
-      }, COPIED_STATE_RESET_DELAY_MS);
-
-      await enqueueSnackbar({ message: successMessage, variant: 'success' });
-    } catch {
-      await enqueueSnackbar({
-        message: 'Could not copy to clipboard.',
-        variant: 'error',
-      });
+    setHasJustCopied(true);
+    if (resetTimeoutRef.current !== undefined) {
+      clearTimeout(resetTimeoutRef.current);
     }
+    resetTimeoutRef.current = setTimeout(() => {
+      setHasJustCopied(false);
+    }, COPIED_STATE_RESET_DELAY_MS);
   };
 
   const DisplayedIcon = hasJustCopied ? IconCheck : Icon;

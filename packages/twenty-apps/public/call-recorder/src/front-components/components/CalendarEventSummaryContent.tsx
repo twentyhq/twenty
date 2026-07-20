@@ -64,7 +64,6 @@ export const CalendarEventSummaryContent = ({
         <CopyToClipboardButton
           textToCopy={summaryMarkdown}
           ariaLabel="Copy summary"
-          successMessage="Summary copied to clipboard."
         />
       </StyledSummaryHeader>
       <StyledSummaryBody>
