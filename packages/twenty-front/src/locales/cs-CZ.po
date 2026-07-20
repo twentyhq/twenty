@@ -3521,6 +3521,11 @@ msgstr "Platba kartou je momentálně nedostupná. Ověřte prosím svou konfigu
 msgid "Catalan"
 msgstr "Katalánština"
 
+#. js-lingui-id: MY7CDs
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Catalog sync started. Try your lookup again in a moment."
+msgstr ""
+
 #. js-lingui-id: K7tIrx
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Category"
@@ -3761,11 +3766,31 @@ msgstr "Město"
 msgid "Claim"
 msgstr "Nárokovat"
 
+#. js-lingui-id: B6GVe3
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Claim an application"
+msgstr ""
+
 #. js-lingui-id: aHPKtV
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Claim ownership"
 msgstr "Nárokovat vlastnictví"
+
+#. js-lingui-id: PzqcRM
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Claim with GitHub"
+msgstr ""
+
+#. js-lingui-id: ke+vxJ
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "Claimed by this workspace"
+msgstr ""
+
+#. js-lingui-id: KqRGF3
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "Claiming is not configured on this server. Ask an administrator to set up the GitHub OAuth app."
+msgstr ""
 
 #. js-lingui-id: fcgvCA
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -4699,6 +4724,16 @@ msgstr "Cena za milion tokenů (USD)"
 msgid "Cost per million tokens for cached input (USD)"
 msgstr "Cena za milion tokenů pro vstup z mezipaměti (USD)"
 
+#. js-lingui-id: T8ACay
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Could not claim this application"
+msgstr ""
+
+#. js-lingui-id: LpyyAM
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "Could not complete the claim. Please try again."
+msgstr ""
+
 #. js-lingui-id: VVRHmR
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
 msgid "Could not delete approved access domain"
@@ -4743,6 +4778,21 @@ msgstr "Nelze obnovit token platnosti a nepodařilo se vrátit zpět změnu typu
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Could not refresh validity token. Please contact support."
 msgstr "Nelze obnovit token platnosti. Kontaktujte podporu."
+
+#. js-lingui-id: 5PWKlr
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Could not run the lookup"
+msgstr ""
+
+#. js-lingui-id: p75IO8
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Could not start the GitHub claim"
+msgstr ""
+
+#. js-lingui-id: Yu3v/5
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Could not sync the catalog"
+msgstr ""
 
 #. js-lingui-id: dIvwQK
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -6557,6 +6607,11 @@ msgstr "např. GPT-4o"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "e.g. My OpenAI Proxy"
 msgstr "např. můj OpenAI proxy"
+
+#. js-lingui-id: SwLZ5l
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "e.g. my-twenty-app"
+msgstr ""
 
 #. js-lingui-id: 88vQqv
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -8812,6 +8867,11 @@ msgstr "Získejte maximum ze svého pracovního prostoru tím, že pozvete svůj
 msgid "GIN (full-text search and JSONB)"
 msgstr "GIN (fulltextové vyhledávání a JSONB)"
 
+#. js-lingui-id: BhYbva
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "GitHub authorization failed or was denied. Please connect your GitHub account again."
+msgstr ""
+
 #. js-lingui-id: lwDz5R
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Global search"
@@ -10934,6 +10994,11 @@ msgstr "Pro logy je nutné nakonfigurovat ClickHouse. Kontaktujte prosím svého
 msgid "Longitude"
 msgstr "Zeměpisná délka"
 
+#. js-lingui-id: TMahs7
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Look up"
+msgstr ""
+
 #. js-lingui-id: tL2lBI
 #: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
 msgid "loop"
@@ -12114,6 +12179,11 @@ msgstr "Žádné API klíče nejsou k dispozici"
 msgid "No API keys match your search"
 msgstr "Žádné API klíče neodpovídají vašemu vyhledávání"
 
+#. js-lingui-id: OaNsaF
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "No application found. If you just published it to npm with the \"twenty-app\" keyword, sync the catalog and try again."
+msgstr ""
+
 #. js-lingui-id: rxBnh8
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "No applications available"
@@ -12500,6 +12570,11 @@ msgstr "Pro tuto aplikaci nejsou nakonfigurována žádná oprávnění."
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
 msgid "No permissions have been set for individual objects."
 msgstr "Žádná oprávnění nebyla nastavena pro jednotlivé objekty."
+
+#. js-lingui-id: pRxlf6
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "No provenance attestation was found for this package. Publish it from GitHub Actions with npm trusted publishing, then try claiming again."
+msgstr ""
 
 #. js-lingui-id: 5sv+ia
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
@@ -13163,6 +13238,11 @@ msgstr "Jedno předplatné poskytuje jeden enterprise klíč, který obsluhuje j
 msgid "Only application logs are available on your current plan. Other log types require an Enterprise subscription."
 msgstr "V aktuálním tarifu jsou dostupné pouze aplikační logy. Ostatní typy logů vyžadují Enterprise předplatné."
 
+#. js-lingui-id: JzXn58
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "Only applications published to npm can be claimed this way."
+msgstr ""
+
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
@@ -13487,15 +13567,27 @@ msgstr "Přehled"
 
 #. js-lingui-id: LtI9AS
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOwnerSection.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 msgid "Owner"
 msgstr "Vlastník"
 
+#. js-lingui-id: oDAEQq
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "Ownership"
+msgstr ""
+
 #. js-lingui-id: 9J0yW0
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Ownership claimed successfully"
 msgstr "Vlastnictví bylo úspěšně nárokováno"
+
+#. js-lingui-id: tE6+xk
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Ownership is verified through npm trusted publishing: the package must be published from GitHub Actions with provenance. Sign in with a GitHub account that owns the publishing account or organization — when the package is published by an organization, grant this app access to it on GitHub's authorization screen."
+msgstr ""
 
 #. js-lingui-id: RWJnRQ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -13511,6 +13603,11 @@ msgstr ""
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Package"
 msgstr "Balíček"
+
+#. js-lingui-id: 1K7pVq
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Package name or universal identifier"
+msgstr ""
 
 #. js-lingui-id: 6WdDG7
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -14337,6 +14434,7 @@ msgid "Read changelog"
 msgstr "Přečíst si seznam změn"
 
 #. js-lingui-id: ibPuCP
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Read documentation"
 msgstr "Přečtěte si dokumentaci"
@@ -16847,6 +16945,7 @@ msgstr "Stav"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -17157,6 +17256,11 @@ msgstr "Přepnuto na produkční instanci."
 msgid "Sync Account"
 msgstr "Synchronizovat účet"
 
+#. js-lingui-id: NmHVSC
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Sync catalog"
+msgstr ""
+
 #. js-lingui-id: MsxItJ
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Sync email and calendar accounts"
@@ -17294,6 +17398,11 @@ msgstr "Tabulkový widget"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Table, Kanban, Calendar"
 msgstr "Tabulka, Kanban, Kalendář"
+
+#. js-lingui-id: DBxdLI
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "Take ownership of an app you published to npm. Enter its exact package name (or universal identifier) to find it."
+msgstr ""
 
 #. js-lingui-id: sceIIK
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -17594,6 +17703,11 @@ msgstr "Hodnoty tohoto pole musí být unikátní"
 msgid "The whole event details will be shared with your team."
 msgstr "Kompletní detaily události budou sdíleny s vaším týmem."
 
+#. js-lingui-id: bEXHAZ
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
+msgid "The workspace that claimed this app registration"
+msgstr ""
+
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
@@ -17747,6 +17861,26 @@ msgstr "Tato aplikace není plně nakonfigurovaná. Uživatelé ji nebudou moci 
 #: src/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection.tsx
 msgid "This app's routes are served from this URL. Add a custom domain to use your own."
 msgstr "Trasy této aplikace jsou obsluhovány z této adresy URL. Přidejte vlastní doménu, pokud chcete použít svou."
+
+#. js-lingui-id: 2lDWPO
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "This application could not be found. It may have been removed from the marketplace catalog."
+msgstr ""
+
+#. js-lingui-id: dT2Ibb
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "This application has already been claimed by a workspace."
+msgstr ""
+
+#. js-lingui-id: vZhnyV
+#: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
+msgid "This application has already been claimed."
+msgstr ""
+
+#. js-lingui-id: X7w5n6
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "This application's registration is claimed by your workspace"
+msgstr ""
 
 #. js-lingui-id: WCa/7U
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
@@ -19738,6 +19872,11 @@ msgstr "Sledovat ukázku"
 msgid "Watch members demo"
 msgstr "Sledovat ukázku správy členů"
 
+#. js-lingui-id: icGmU/
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "We could not reach the package registry to verify the package provenance. Please try again in a few minutes."
+msgstr ""
+
 #. js-lingui-id: h4KC4F
 #: src/modules/settings/billing/components/AddPaymentMethodForm.tsx
 #: src/modules/settings/billing/hooks/useSubmitSubscriptionPayment.ts
@@ -20061,6 +20200,7 @@ msgstr "Pracovní postupy"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -20499,6 +20639,11 @@ msgstr "Váš enterprise klíč"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your enterprise subscription has been canceled."
 msgstr "Vaše předplatné Enterprise bylo zrušeno."
+
+#. js-lingui-id: gUv6/H
+#: src/pages/settings/applications/utils/getClaimErrorContent.ts
+msgid "Your GitHub account does not own the organization that publishes this package. If you are an owner, grant this app access to the organization on GitHub's authorization screen (Organization access section)."
+msgstr ""
 
 #. js-lingui-id: leFkCA
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionDatabaseEventTriggerSection.tsx
