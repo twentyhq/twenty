@@ -1,0 +1,57 @@
+packages/twenty-front/src/modules/settings/emailing-domains/components/SettingsEmailingDomainPostalAddressInput.tsx
+  s_11e59742733dbd::t_7d7727c68f009b 1-81
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/unsubscribe-content.service.ts
+  s_11e59742733dbd::t_ac90b965eb2303 5
+  s_11e59742733dbd::t_55c57591709b12 44,49
+  s_11e59742733dbd::t_c803db35fa2000 21
+  s_11e59742733dbd::t_db2293c2463eab 42-43,45,47-48,50
+  s_11e59742733dbd::t_d9032948044711 19
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-html-footer.util.ts
+  s_11e59742733dbd::t_f58d95b65daee9 1-8
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/emailing-domain.dto.ts
+  s_11e59742733dbd::t_fe922dc298259b 33-35
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
+  s_11e59742733dbd::t_35a92973d3b08d 12
+  s_11e59742733dbd::t_8ffa2b5866fa5f 221-232
+packages/twenty-front/src/modules/settings/emailing-domains/graphql/queries/getAllEmailingDomains.ts
+  s_11e59742733dbd::t_93a1ed0d3f585a 10
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/update-emailing-domain-sender-postal-address.input.ts
+  s_11e59742733dbd::t_aac514668730c9 1-15
+packages/twenty-front/src/modules/settings/emailing-domains/graphql/mutations/updateEmailingDomainSenderPostalAddress.ts
+  s_11e59742733dbd::t_2879c136bdd10e 1-12
+packages/twenty-server/src/modules/emailing/crons/jobs/emailing-domain-reverification.cron.job.ts
+  s_11e59742733dbd::t_c26d1a4b5293ea 25-27
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/emailing-domain.service.ts
+  s_11e59742733dbd::t_2ba29cf6ee012e 130-148
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.entity.ts
+  s_11e59742733dbd::t_38cd00ae5ab3a3 56-58
+packages/twenty-front/src/modules/settings/emailing-domains/graphql/mutations/verifyEmailingDomain.ts
+  s_11e59742733dbd::t_93a1ed0d3f585a 10
+packages/twenty-server/src/database/commands/upgrade-version-command/2-23/2-23-instance-command-fast-1784286709000-add-emailing-domain-sender-postal-address.ts
+  s_11e59742733dbd::t_7ebe836f76814c 1-21
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-text-footer.util.ts
+  s_11e59742733dbd::t_d9e253b14ba74b 1-6
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.resolver.ts
+  s_11e59742733dbd::t_c5c460edd338a8 59-73
+  s_11e59742733dbd::t_a4275f834c5d99 10
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_11e59742733dbd::t_3ad03942e2f2e5 160-165
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_11e59742733dbd::t_0c464fabc2dbac 1574,2673,3570-3574,5410-5414,8136-8142,8148,8153,9103-9105
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "8575a00faaa33a4d729b9800800be5cffe892463",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
