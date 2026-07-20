@@ -19,6 +19,7 @@ import {
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
 import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
+import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Processor({
@@ -92,6 +93,7 @@ export class ResumeDelayedWorkflowJob {
             workflowRunId,
             lastExecutedStepId: stepId,
           },
+          buildRunWorkflowJobOptions(workflowRunId),
         );
       } catch (error) {
         await this.workflowRunWorkspaceService.endWorkflowRun({
