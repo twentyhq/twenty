@@ -112,7 +112,7 @@ Il server è l'autorità di controllo — convalida `engines.twenty` sia durante
 
 ## CI/CD automatizzati (workflow preconfigurati)
 
-Le app generate con `create-twenty-app` includono due workflow di GitHub Actions pronti all'uso, nella cartella `.github/workflows/`. Sono pronti all'esecuzione non appena esegui il push del repository su GitHub — non è necessaria alcuna configurazione aggiuntiva per la CI e la CD richiede solo un singolo secret.
+Le app generate con `create-twenty-app` includono tre workflow di GitHub Actions pronti all'uso, nella cartella `.github/workflows/`. L'esecuzione della CI non richiede alcuna configurazione, la CD richiede un solo secret e la pubblicazione su npm richiede una configurazione una tantum di npm trusted-publisher.
 
 ### CI — `ci.yml`
 
@@ -157,9 +157,22 @@ Il valore predefinito di `TWENTY_DEPLOY_URL`, `http://localhost:3000`, è un seg
 
 Aggiungi l'etichetta `deploy` a una pull request. La condizione `if:` in `cd.yml` eseguirà il job per quella PR utilizzando il commit di testa della PR, permettendoti di convalidare una modifica sul server di destinazione prima del merge.
 
+### Pubblica — `publish.yml`
+
+Pubblica la tua app su npm con attestazione di provenienza quando esegui il push di un tag di versione (ad es. `v1.0.0`), oppure quando esegui manualmente il workflow dalla scheda Actions.
+
+**Cosa fa:**
+
+1. Clona la tua app, configura Node.js e aggiorna npm (la pubblicazione con attendibilità richiede npm 11.5.1 o versioni successive).
+2. Esegue `yarn twenty app:publish`, che crea la build dell'app e pubblica `.twenty/output` su npm. In CI aggiunge automaticamente `--provenance` e `--access public`, quindi non sono necessari flag nel workflow.
+
+**Impostazione una tantum:**
+
+Su npmjs.com apri il tuo pacchetto > **Settings → Trusted Publisher** e registra questo repository con il workflow `publish.yml` (consulta la [documentazione su npm trusted publishing](https://docs.npmjs.com/trusted-publishers)). La pubblicazione con provenance certifica quale repository GitHub ha creato il pacchetto ed è anche il modo in cui dichiari la proprietà della tua app in un marketplace Twenty.
+
 ### Bloccare le azioni riutilizzabili
 
-Entrambi i workflow fanno riferimento ad azioni riutilizzabili a `@main`, quindi gli aggiornamenti delle azioni nel repository `twentyhq/twenty` vengono recepiti automaticamente. Se desideri build deterministiche, sostituisci `@main` con uno SHA di commit o un tag di release in ciascuna riga `uses:`.
+I workflow `ci.yml` e `cd.yml` fanno riferimento ad azioni riutilizzabili a `@main`, quindi gli aggiornamenti delle azioni nel repository `twentyhq/twenty` vengono recepiti automaticamente. Se desideri build deterministiche, sostituisci `@main` con uno SHA di commit o un tag di release in ciascuna riga `uses:`.
 
 ## Pubblicazione su npm
 
@@ -241,37 +254,12 @@ Se la tua app non definisce un `aboutDescription` in `defineApplication()`, il m
 
 ### Pubblicazione con CI
 
-Usa questo workflow di GitHub Actions per pubblicare automaticamente a ogni release (usa [OIDC](https://docs.npmjs.com/trusted-publishers)):
+Il workflow `publish.yml` generato dallo scaffold descritto sopra pubblica automaticamente su npm sui tag di versione, con provenance. Poiché `yarn twenty app:publish` aggiunge `--provenance` e `--access public` per te quando viene eseguito in CI, il workflow non ha bisogno di flag npm — serve solo l'impostazione una tantum del trusted publisher.
 
-```yaml filename=".github/workflows/publish.yml"
-name: Publish
-on:
-  release:
-    types: [published]
-
-permissions:
-  contents: read
-  id-token: write
-
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          registry-url: https://registry.npmjs.org
-      - run: yarn install --immutable
-      - run: npx twenty dev:build
-      - run: npm publish --provenance --access public
-        working-directory: .twenty/output
-```
-
-Per altri sistemi CI (GitLab CI, CircleCI, ecc.), si applicano gli stessi tre comandi: `yarn install`, `yarn twenty dev:build`, quindi `npm publish` da `.twenty/output`.
+Per altri sistemi CI (GitLab CI, CircleCI, ecc.), esegui `yarn install` e poi `yarn twenty app:publish`. La provenance viene emessa quando l'ambiente può generare un token OIDC e, in caso contrario, viene saltata automaticamente.
 
 <Note>
-**npm provenance** è opzionale ma consigliata. La pubblicazione con `--provenance` aggiunge un badge di attendibilità alla tua scheda npm, consentendo agli utenti di verificare che il pacchetto sia stato creato a partire da uno specifico commit in una pipeline CI pubblica. Consulta la [documentazione su npm provenance](https://docs.npmjs.com/generating-provenance-statements) per le istruzioni di configurazione.
+La **npm provenance** aggiunge un badge di attendibilità alla tua scheda npm, consentendo agli utenti di verificare che il pacchetto sia stato creato a partire da uno specifico commit in una pipeline CI pubblica. È anche ciò che ti permette di dichiarare la proprietà della tua app in un marketplace Twenty. Consulta la [documentazione su npm provenance](https://docs.npmjs.com/generating-provenance-statements) per maggiori dettagli.
 </Note>
 
 ## Installazione delle app

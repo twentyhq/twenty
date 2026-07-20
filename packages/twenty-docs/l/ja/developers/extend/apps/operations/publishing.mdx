@@ -112,7 +112,7 @@ tarball アプリは公開マーケットプレイスには掲載されないた
 
 ## 自動化された CI/CD（スキャフォールド済みのワークフロー）
 
-`create-twenty-app` で生成されたアプリには、`.github/workflows/` 配下に GitHub Actions のワークフローが 2 つ、最初から同梱されています。 リポジトリを GitHub にプッシュするとすぐに実行可能です。CI に追加のセットアップは不要で、CD にはシークレットを 1 つ用意するだけです。
+`create-twenty-app` で生成されたアプリには、`.github/workflows/` 配下に GitHub Actions のワークフローが 3 つ、最初から同梱されています。 CI はセットアップ不要で実行でき、CD には 1 つのシークレットを設定するだけでよく、npm への公開には 1 回だけの npm trusted-publisher セットアップが必要です。
 
 ### CI — `ci.yml`
 
@@ -157,9 +157,22 @@ tarball アプリは公開マーケットプレイスには掲載されないた
 
 プルリクエストに `deploy` ラベルを追加します。 `cd.yml` の `if:` ガードにより、その PR のヘッドコミットを使ってジョブが実行され、マージ前に対象サーバー上で変更を検証できます。
 
+### 公開 — `publish.yml`
+
+バージョンタグ（例: `v1.0.0`）をプッシュしたとき、または Actions タブからワークフローを手動実行したときに、プロビナンス付きでアプリを npm に公開します。
+
+**機能:**
+
+1. あなたのアプリをチェックアウトし、Node.js をセットアップして npm を更新します（信頼できる公開には npm 11.5.1 以降が必要です）。
+2. `yarn twenty app:publish` を実行します。これによりアプリがビルドされ、`.twenty/output` が npm に公開されます。 CI 環境では自動的に `--provenance` と `--access public` が追加されるため、ワークフロー内でフラグを指定する必要はありません。
+
+**一度きりのセットアップ:**
+
+npmjs.com で自分のパッケージを開き、**Settings → Trusted Publisher** から、このリポジトリを `publish.yml` ワークフローで登録します（詳しくは [npm trusted publishing docs](https://docs.npmjs.com/trusted-publishers) を参照してください）。 provenance 付きで公開すると、どの GitHub リポジトリがそのパッケージをビルドしたかが証明されます。これは、Twenty マーケットプレイスでアプリの所有権を主張する方法にもなります。
+
 ### 再利用可能なアクションのバージョン固定
 
-両方のワークフローは再利用可能なアクションを `@main` で参照しているため、`twentyhq/twenty` リポジトリでのアクション更新が自動的に取り込まれます。 ビルドを決定的にしたい場合は、各 `uses:` 行の `@main` をコミット SHA またはリリースタグに置き換えてください。
+`ci.yml` と `cd.yml` のワークフローは、`@main` の再利用可能なアクションを参照しているため、`twentyhq/twenty` リポジトリでのアクションの更新が自動的に取り込まれます。 ビルドを決定的にしたい場合は、各 `uses:` 行の `@main` をコミット SHA またはリリースタグに置き換えてください。
 
 ## npm への公開
 
@@ -241,37 +254,12 @@ yarn twenty dev:catalog-sync
 
 ### CI での公開
 
-この GitHub Actions のワークフローを使用すると、各リリース時に自動で公開できます（[OIDC](https://docs.npmjs.com/trusted-publishers) を使用）。
+上で説明したスキャフォールド済みの `publish.yml` ワークフローは、バージョンタグが付けられたときに provenance 情報付きで自動的に npm へ公開します。 `yarn twenty app:publish` は CI で実行される際に `--provenance` と `--access public` を自動的に追加するため、ワークフローで npm フラグを指定する必要はありません。一度きりの trusted-publisher セットアップだけが必要です。
 
-```yaml filename=".github/workflows/publish.yml"
-name: Publish
-on:
-  release:
-    types: [published]
-
-permissions:
-  contents: read
-  id-token: write
-
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          registry-url: https://registry.npmjs.org
-      - run: yarn install --immutable
-      - run: npx twenty dev:build
-      - run: npm publish --provenance --access public
-        working-directory: .twenty/output
-```
-
-他の CI システム（GitLab CI、CircleCI など）でも同じ3つのコマンドを使用します: `yarn install`、`yarn twenty dev:build`、そして `.twenty/output` から `npm publish` を実行します。
+その他の CI システム（GitLab CI、CircleCI など）の場合は、`yarn install` を実行してから `yarn twenty app:publish` を実行します。 環境が OIDC トークンを発行できる場合は provenance が生成され、それ以外の場合は自動的にスキップされます。
 
 <Note>
-**npm provenance** は任意ですが、推奨されます。 `--provenance` を付けて公開すると、npm のリスティングにトラストバッジが追加され、公開 CI パイプラインの特定のコミットからビルドされたことをユーザーが検証できるようになります。 セットアップ手順は、[npm provenance のドキュメント](https://docs.npmjs.com/generating-provenance-statements)を参照してください。
+**npm provenance** により npm のリスティングにトラストバッジが追加され、公開 CI パイプライン上の特定のコミットからビルドされたパッケージであることをユーザーが検証できるようになります。 また、これにより Twenty マーケットプレイスでアプリの所有権を主張できるようになります。 詳細は [npm provenance のドキュメント](https://docs.npmjs.com/generating-provenance-statements)を参照してください。
 </Note>
 
 ## アプリのインストール
