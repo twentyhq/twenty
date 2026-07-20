@@ -110,7 +110,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
           targetFlatObjectMetadata,
           targetFlatFieldMetadataType: FieldMetadataType.RELATION,
           morphId,
-          flatApplication,
+          applicationUniversalIdentifier: flatApplication.universalIdentifier,
           junctionTargetFlatFieldMetadata,
         });
 
