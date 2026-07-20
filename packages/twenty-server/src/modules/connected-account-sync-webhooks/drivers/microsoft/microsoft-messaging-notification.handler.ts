@@ -96,10 +96,10 @@ export class MicrosoftMessagingNotificationHandler implements WebhookNotificatio
         notification.lifecycleEvent !== 'missed'
       ) {
         try {
-          await this.messagingWebhookSubscriptionService.renewSubscription(
-            messageChannel.id,
-            messageChannel.workspaceId,
-          );
+          await this.messagingWebhookSubscriptionService.renewSubscription({
+            messageChannelId: messageChannel.id,
+            workspaceId: messageChannel.workspaceId,
+          });
         } catch (error) {
           this.logger.error(
             `Failed to renew messaging subscription for channel ${messageChannel.id}`,

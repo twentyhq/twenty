@@ -25,16 +25,16 @@ export class RenewWebhookSubscriptionJob {
 
     switch (channelType) {
       case WebhookSubscriptionChannelType.MESSAGING:
-        await this.messagingWebhookSubscriptionService.renewSubscription(
-          channelId,
+        await this.messagingWebhookSubscriptionService.renewSubscription({
+          messageChannelId: channelId,
           workspaceId,
-        );
+        });
         break;
       case WebhookSubscriptionChannelType.CALENDAR:
-        await this.calendarWebhookSubscriptionService.renewSubscription(
-          channelId,
+        await this.calendarWebhookSubscriptionService.renewSubscription({
+          calendarChannelId: channelId,
           workspaceId,
-        );
+        });
         break;
     }
   }

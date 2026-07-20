@@ -103,10 +103,13 @@ export class CalendarWebhookSubscriptionService {
     }
   }
 
-  async renewSubscription(
-    calendarChannelId: string,
-    workspaceId: string,
-  ): Promise<void> {
+  async renewSubscription({
+    calendarChannelId,
+    workspaceId,
+  }: {
+    calendarChannelId: string;
+    workspaceId: string;
+  }): Promise<void> {
     const calendarChannel = await this.calendarChannelRepository.findOne({
       where: { id: calendarChannelId, workspaceId },
       relations: ['connectedAccount'],

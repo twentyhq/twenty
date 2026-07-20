@@ -102,10 +102,13 @@ export class MessagingWebhookSubscriptionService {
     }
   }
 
-  async renewSubscription(
-    messageChannelId: string,
-    workspaceId: string,
-  ): Promise<void> {
+  async renewSubscription({
+    messageChannelId,
+    workspaceId,
+  }: {
+    messageChannelId: string;
+    workspaceId: string;
+  }): Promise<void> {
     const messageChannel = await this.messageChannelRepository.findOne({
       where: { id: messageChannelId, workspaceId },
       relations: ['connectedAccount'],

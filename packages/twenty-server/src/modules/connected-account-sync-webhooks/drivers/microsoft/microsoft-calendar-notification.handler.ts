@@ -97,10 +97,10 @@ export class MicrosoftCalendarNotificationHandler implements WebhookNotification
         notification.lifecycleEvent !== 'missed'
       ) {
         try {
-          await this.calendarWebhookSubscriptionService.renewSubscription(
-            calendarChannel.id,
-            calendarChannel.workspaceId,
-          );
+          await this.calendarWebhookSubscriptionService.renewSubscription({
+            calendarChannelId: calendarChannel.id,
+            workspaceId: calendarChannel.workspaceId,
+          });
         } catch (error) {
           this.logger.error(
             `Failed to renew calendar subscription for channel ${calendarChannel.id}`,
