@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto';
 
 import gql from 'graphql-tag';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
+import { getOnboardingStatus } from 'test/integration/graphql/utils/get-onboarding-status.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { signUpInWorkspaceAndGetAccessToken } from 'test/integration/graphql/utils/sign-up-in-workspace-and-get-access-token.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
@@ -76,48 +77,16 @@ describe('updateWorkspaceMemberSettings and profile onboarding', () => {
 
     newUserAccessToken = await signUpInWorkspaceAndGetAccessToken(uniqueEmail);
 
-    const triggerInstallAppsOnboardingStepMutation = gql`
-      mutation TriggerInstallAppsOnboardingStep(
-        $universalIdentifiers: [String!]!
-      ) {
-        triggerInstallAppsOnboardingStep(
-          universalIdentifiers: $universalIdentifiers
-        ) {
-          success
-        }
-      }
-    `;
+    const {
+      data: { currentUser: currentUserBeforeNameUpdate },
+    } = await getOnboardingStatus({
+      accessToken: newUserAccessToken,
+      expectToFail: false,
+    });
 
-    await makeMetadataAPIRequest(
-      {
-        query: triggerInstallAppsOnboardingStepMutation,
-        variables: { universalIdentifiers: [] },
-      },
-      newUserAccessToken,
+    expect(currentUserBeforeNameUpdate.onboardingStatus).toBe(
+      OnboardingStatus.PROFILE_CREATION,
     );
-
-    const currentUserWithOnboardingQuery = gql`
-      query CurrentUserWithOnboarding {
-        currentUser {
-          id
-          onboardingStatus
-        }
-      }
-    `;
-
-    const beforeNameUpdateResponse = await makeMetadataAPIRequest(
-      {
-        query: currentUserWithOnboardingQuery,
-        variables: {},
-      },
-      newUserAccessToken,
-    );
-
-    expect(beforeNameUpdateResponse.status).toBe(200);
-    expect(beforeNameUpdateResponse.body.errors).toBeUndefined();
-    expect(
-      beforeNameUpdateResponse.body.data.currentUser.onboardingStatus,
-    ).toBe(OnboardingStatus.PROFILE_CREATION);
 
     const workspaceMemberQuery = gql`
       query WorkspaceMemberForProfileOnboarding(
@@ -183,20 +152,14 @@ describe('updateWorkspaceMemberSettings and profile onboarding', () => {
       true,
     );
 
-    const afterNameUpdateResponse = await makeMetadataAPIRequest(
-      {
-        query: currentUserWithOnboardingQuery,
-        variables: {},
-      },
-      newUserAccessToken,
-    );
+    const {
+      data: { currentUser: currentUserAfterNameUpdate },
+    } = await getOnboardingStatus({
+      accessToken: newUserAccessToken,
+      expectToFail: false,
+    });
 
-    expect(afterNameUpdateResponse.status).toBe(200);
-    expect(afterNameUpdateResponse.body.errors).toBeUndefined();
-    expect(
-      afterNameUpdateResponse.body.data.currentUser.onboardingStatus,
-    ).not.toBe(OnboardingStatus.PROFILE_CREATION);
-    expect(afterNameUpdateResponse.body.data.currentUser.onboardingStatus).toBe(
+    expect(currentUserAfterNameUpdate.onboardingStatus).toBe(
       OnboardingStatus.COMPLETED,
     );
   });

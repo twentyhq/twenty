@@ -629,12 +629,21 @@ export class ApplicationRegistrationService {
         params.latestAvailableVersion ?? null,
       );
 
+      // A registration first created by a local install (CLI dev / tarball
+      // upload) starts unlisted on purpose. Once the catalog source serves the
+      // same universalIdentifier, surface it in the marketplace — while
+      // preserving an operator's decision to delist a registry-sourced app.
+      const isRelistedFromLocalSource =
+        existing.sourceType === ApplicationRegistrationSourceType.TARBALL ||
+        existing.sourceType === ApplicationRegistrationSourceType.LOCAL;
+
       await this.applicationRegistrationRepository.save({
         ...existing,
         name: params.name,
         sourceType: params.sourceType,
         sourcePackage: params.sourcePackage,
         latestAvailableVersion: params.latestAvailableVersion,
+        isListed: existing.isListed || isRelistedFromLocalSource,
         isVetted,
         manifest: params.manifest,
         ...fromManifestApplicationToDisplayFields(params.manifest?.application),

@@ -27,6 +27,7 @@ import {
   VERSION_PROGRESSION_REASON_TO_INSTALL_EXCEPTION_CODE,
   VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE,
 } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
+import { buildApplicationFileList } from 'src/engine/core-modules/application/application-install/utils/build-application-file-list.util';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -592,9 +593,9 @@ export class ApplicationInstallService {
     applicationUniversalIdentifier: string,
     workspaceId: string,
   ): Promise<void> {
-    const filesToWrite = this.buildFileList(manifest);
+    const filesToWrite = buildApplicationFileList(manifest);
 
-    for (const { relativePath, fileFolder } of filesToWrite) {
+    for (const { relativePath, fileFolder, isRequired } of filesToWrite) {
       const absolutePath = this.resolveWithinDirOrThrow(
         extractedDir,
         relativePath,
@@ -604,7 +605,20 @@ export class ApplicationInstallService {
 
       try {
         content = await fs.readFile(absolutePath);
-      } catch {
+      } catch (error) {
+        if (
+          !isRequired &&
+          error instanceof Error &&
+          'code' in error &&
+          error.code === 'ENOENT'
+        ) {
+          this.logger.warn(
+            `Source file not found in package: ${relativePath}; skipping for backward compatibility`,
+          );
+
+          continue;
+        }
+
         throw new ApplicationException(
           `File not found in package: ${relativePath}`,
           ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
@@ -675,40 +689,6 @@ export class ApplicationInstallService {
     });
 
     return file.id;
-  }
-
-  private buildFileList(
-    manifest: Manifest,
-  ): Array<{ relativePath: string; fileFolder: FileFolder }> {
-    const files: Array<{ relativePath: string; fileFolder: FileFolder }> = [];
-
-    files.push(
-      { relativePath: 'package.json', fileFolder: FileFolder.Dependencies },
-      { relativePath: 'manifest.json', fileFolder: FileFolder.Source },
-    );
-
-    for (const logicFunction of manifest.logicFunctions ?? []) {
-      files.push({
-        relativePath: logicFunction.builtHandlerPath,
-        fileFolder: FileFolder.BuiltLogicFunction,
-      });
-    }
-
-    for (const frontComponent of manifest.frontComponents ?? []) {
-      files.push({
-        relativePath: frontComponent.builtComponentPath,
-        fileFolder: FileFolder.BuiltFrontComponent,
-      });
-    }
-
-    for (const publicAsset of manifest.publicAssets ?? []) {
-      files.push({
-        relativePath: publicAsset.filePath,
-        fileFolder: FileFolder.PublicAsset,
-      });
-    }
-
-    return files;
   }
 
   private async ensureApplicationExists(params: {

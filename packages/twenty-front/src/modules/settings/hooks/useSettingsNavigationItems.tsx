@@ -174,7 +174,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !permissionMap[PermissionFlagType.AI_SETTINGS],
         },
         {
-          label: t`Communications`,
+          label: t`Communication`,
           path: SettingsPath.WorkspaceCommunications,
           Icon: IconMessageCircle,
           isHidden:

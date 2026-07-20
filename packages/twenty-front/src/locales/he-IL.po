@@ -4063,7 +4063,7 @@ msgstr "פסיקים ונקודה"
 msgid "Comment"
 msgstr ""
 
-#. js-lingui-id: UK5bhd
+#. js-lingui-id: hZotg6
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -4071,8 +4071,8 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
-msgid "Communications"
-msgstr "תקשורת"
+msgid "Communication"
+msgstr ""
 
 #. js-lingui-id: chL5IG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -8817,11 +8817,6 @@ msgstr "חזור"
 msgid "Go to billing portal"
 msgstr "עבור לפורטל החיוב"
 
-#. js-lingui-id: ABs8Dj
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Go to documentation"
-msgstr "עבור אל התיעוד"
-
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
 msgid "Go to Draft"
@@ -11719,11 +11714,6 @@ msgstr "פריטי תפריט הניווט"
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
 msgid "Navigation tabs"
 msgstr "לשוניות ניווט"
-
-#. js-lingui-id: C0P5zd
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Need help to configure your shared mailbox?"
-msgstr "צריך עזרה בהגדרת תיבת הדואר המשותפת שלך?"
 
 #. js-lingui-id: wW3b68
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx

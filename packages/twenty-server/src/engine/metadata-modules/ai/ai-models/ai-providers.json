@@ -1357,7 +1357,7 @@
         "modelFamily": "GROK",
         "inputCostPerMillionTokens": 2,
         "outputCostPerMillionTokens": 6,
-        "cachedInputCostPerMillionTokens": 0.5,
+        "cachedInputCostPerMillionTokens": 0.3,
         "longContextCost": {
           "inputCostPerMillionTokens": 4,
           "outputCostPerMillionTokens": 12,

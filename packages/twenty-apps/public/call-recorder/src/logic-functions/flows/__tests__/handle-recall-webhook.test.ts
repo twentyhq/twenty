@@ -1,8 +1,5 @@
-import { type ClientRequest, type IncomingMessage } from 'node:http';
-import { PassThrough, Readable } from 'node:stream';
-
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { handleRecallWebhook } from 'src/logic-functions/flows/handle-recall-webhook.util';
 
@@ -24,175 +21,53 @@ const buildRecordingDoneWebhookBody = () => ({
   },
 });
 
-const metadataMutationMock = vi.hoisted(() => vi.fn());
-const chargeCreditsMock = vi.hoisted(() => vi.fn());
-const requestOverHttpsMock = vi.hoisted(() => vi.fn());
+const getRecallBotMock = vi.hoisted(() => vi.fn());
+const listRecallTranscriptsMock = vi.hoisted(() => vi.fn());
+const createAsyncRecallTranscriptMock = vi.hoisted(() => vi.fn());
+const retrieveRecallTranscriptMock = vi.hoisted(() => vi.fn());
+const importCallRecordingMediaMock = vi.hoisted(() => vi.fn());
+const chargeCompletedCallRecordingMock = vi.hoisted(() => vi.fn());
+const requestArtifactContinuationMock = vi.hoisted(() => vi.fn());
 
-vi.mock('twenty-client-sdk/metadata', () => ({
-  MetadataApiClient: class {
-    mutation = metadataMutationMock;
-  },
+vi.mock('src/logic-functions/recall-api/get-recall-bot.util', () => ({
+  getRecallBot: getRecallBotMock,
 }));
 
-vi.mock('twenty-sdk/billing', () => ({
-  chargeCredits: chargeCreditsMock,
+vi.mock('src/logic-functions/recall-api/list-recall-transcripts.util', () => ({
+  listRecallTranscripts: listRecallTranscriptsMock,
 }));
 
-vi.mock('node:https', async () => {
-  const actualHttps =
-    await vi.importActual<typeof import('node:https')>('node:https');
+vi.mock(
+  'src/logic-functions/recall-api/create-async-recall-transcript.util',
+  () => ({
+    createAsyncRecallTranscript: createAsyncRecallTranscriptMock,
+  }),
+);
 
-  return { ...actualHttps, request: requestOverHttpsMock };
-});
+vi.mock(
+  'src/logic-functions/recall-api/retrieve-recall-transcript.util',
+  () => ({
+    retrieveRecallTranscript: retrieveRecallTranscriptMock,
+  }),
+);
 
-const RECALL_API_BASE_URL = 'https://us-west-2.recall.ai/api/v1';
-const VIDEO_DOWNLOAD_URL = 'https://recall-media.example.com/video.mp4';
-const AUDIO_DOWNLOAD_URL = 'https://recall-media.example.com/audio.mp3';
-const TOO_LARGE_MEDIA_CONTENT_LENGTH_BYTES = 500 * 1024 * 1024 + 1;
+vi.mock('src/logic-functions/flows/import-call-recording-media.util', () => ({
+  importCallRecordingMedia: importCallRecordingMediaMock,
+}));
 
-const fetchMock = vi.fn();
+vi.mock(
+  'src/logic-functions/data/request-call-recording-artifacts-import.util',
+  () => ({
+    requestCallRecordingArtifactsImport: requestArtifactContinuationMock,
+  }),
+);
 
-let fetchRoutes: Record<string, () => Response>;
-
-const jsonResponse = (body: unknown, status = 200): Response =>
-  new Response(JSON.stringify(body), { status });
-
-const mediaDownloadResponse = (contentLengthBytes: number): Response =>
-  new Response(new Uint8Array(8), {
-    status: 200,
-    headers: { 'content-length': String(contentLengthBytes) },
-  });
-
-const setFetchRoute = (
-  method: 'GET' | 'POST',
-  url: string,
-  buildResponse: () => Response,
-) => {
-  fetchRoutes[`${method} ${url}`] = buildResponse;
-};
-
-// Unrouted Recall API calls fail like the old per-util "disabled in test" defaults.
-const defaultRecallApiResponse = (
-  method: string,
-  url: string,
-): Response | undefined => {
-  if (method === 'POST' && url.endsWith('/create_transcript/')) {
-    return jsonResponse({ detail: 'transcript request disabled in test' }, 400);
-  }
-
-  if (method !== 'GET') {
-    return undefined;
-  }
-
-  if (url.startsWith(`${RECALL_API_BASE_URL}/transcript/?recording_id=`)) {
-    return jsonResponse({ results: [], next: null });
-  }
-
-  if (url.startsWith(`${RECALL_API_BASE_URL}/transcript/`)) {
-    return jsonResponse(
-      { detail: 'transcript retrieval disabled in test' },
-      400,
-    );
-  }
-
-  if (url.startsWith(`${RECALL_API_BASE_URL}/bot/`)) {
-    return jsonResponse({ detail: 'bot fetch disabled in test' }, 404);
-  }
-
-  if (url.startsWith(`${RECALL_API_BASE_URL}/recording/`)) {
-    return jsonResponse({ detail: 'media import disabled in test' }, 404);
-  }
-
-  return undefined;
-};
-
-const fetchedUrls = (): string[] =>
-  fetchMock.mock.calls.map(([requestUrl]) => String(requestUrl));
-
-const stubRecallRecordingMedia = ({
-  externalRecordingId,
-  videoContentLengthBytes,
-  audioContentLengthBytes,
-}: {
-  externalRecordingId: string;
-  videoContentLengthBytes?: number;
-  audioContentLengthBytes?: number;
-}) => {
-  setFetchRoute(
-    'GET',
-    `${RECALL_API_BASE_URL}/recording/${externalRecordingId}/`,
-    () =>
-      jsonResponse({
-        id: externalRecordingId,
-        media_shortcuts: {
-          ...(videoContentLengthBytes === undefined
-            ? {}
-            : { video_mixed: { download_url: VIDEO_DOWNLOAD_URL } }),
-          ...(audioContentLengthBytes === undefined
-            ? {}
-            : { audio_mixed: { download_url: AUDIO_DOWNLOAD_URL } }),
-        },
-      }),
-  );
-
-  if (videoContentLengthBytes !== undefined) {
-    setFetchRoute('GET', VIDEO_DOWNLOAD_URL, () =>
-      mediaDownloadResponse(videoContentLengthBytes),
-    );
-  }
-
-  if (audioContentLengthBytes !== undefined) {
-    setFetchRoute('GET', AUDIO_DOWNLOAD_URL, () =>
-      mediaDownloadResponse(audioContentLengthBytes),
-    );
-  }
-};
-
-type MediaUploadMutationRequest =
-  | { createFileUpload: { __args: { filename: string } } }
-  | { completeFileUpload: { __args: { fileId: string } } };
-
-const FINAL_FILE_ID_BY_UPLOAD_FILE_ID: Record<string, string> = {
-  'upload-video.mp4': 'file-video-1',
-  'upload-audio.mp3': 'file-audio-1',
-};
-
-const stubMediaUploadTargets = () => {
-  metadataMutationMock.mockImplementation(
-    (mutation: MediaUploadMutationRequest) => {
-      if ('createFileUpload' in mutation) {
-        const { filename } = mutation.createFileUpload.__args;
-
-        return Promise.resolve({
-          createFileUpload: {
-            fileId: `upload-${filename}`,
-            uploadUrl: `https://storage.example.com/${filename}`,
-            contentType: 'application/octet-stream',
-          },
-        });
-      }
-
-      const { fileId } = mutation.completeFileUpload.__args;
-
-      return Promise.resolve({
-        completeFileUpload: { id: FINAL_FILE_ID_BY_UPLOAD_FILE_ID[fileId] },
-      });
-    },
-  );
-};
-
-const buildUploadRequest = (): ClientRequest => {
-  const uploadRequest = new PassThrough();
-
-  uploadRequest.on('finish', () => {
-    const uploadResponse = Readable.from([]) as IncomingMessage;
-
-    uploadResponse.statusCode = 200;
-    uploadRequest.emit('response', uploadResponse);
-  });
-
-  return uploadRequest as unknown as ClientRequest;
-};
+vi.mock(
+  'src/logic-functions/flows/charge-completed-call-recording.util',
+  () => ({
+    chargeCompletedCallRecording: chargeCompletedCallRecordingMock,
+  }),
+);
 
 type CallRecordingNode = {
   id: string;
@@ -278,43 +153,35 @@ class FakeCoreApiClient {
 describe('handleRecallWebhook', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
-    vi.spyOn(console, 'log').mockImplementation(() => {});
-    vi.stubEnv('RECALL_API_KEY', 'recall-api-key');
-    vi.stubEnv('RECALL_REGION', 'us-west-2');
-    fetchRoutes = {};
-    fetchMock.mockReset();
-    fetchMock.mockImplementation(
-      async (input: RequestInfo | URL, init?: RequestInit) => {
-        const url = String(input);
-        const method = init?.method ?? 'GET';
-        const route = fetchRoutes[`${method} ${url}`];
-
-        if (route !== undefined) {
-          return route();
-        }
-
-        const defaultResponse = defaultRecallApiResponse(method, url);
-
-        if (defaultResponse === undefined) {
-          throw new Error(`Unhandled fetch in test: ${method} ${url}`);
-        }
-
-        return defaultResponse;
-      },
-    );
-    vi.stubGlobal('fetch', fetchMock);
-    metadataMutationMock.mockReset();
-    stubMediaUploadTargets();
-    chargeCreditsMock.mockReset();
-    chargeCreditsMock.mockResolvedValue(undefined);
-    requestOverHttpsMock.mockReset();
-    requestOverHttpsMock.mockImplementation(() => buildUploadRequest());
-  });
-
-  afterEach(() => {
-    vi.unstubAllGlobals();
-    vi.unstubAllEnvs();
-    vi.restoreAllMocks();
+    getRecallBotMock.mockReset();
+    getRecallBotMock.mockResolvedValue({
+      ok: false,
+      status: null,
+      errorMessage: 'bot fetch disabled in test',
+    });
+    listRecallTranscriptsMock.mockReset();
+    listRecallTranscriptsMock.mockResolvedValue({
+      ok: true,
+      transcripts: [],
+    });
+    createAsyncRecallTranscriptMock.mockReset();
+    createAsyncRecallTranscriptMock.mockResolvedValue({
+      ok: false,
+      status: null,
+      errorMessage: 'transcript request disabled in test',
+    });
+    retrieveRecallTranscriptMock.mockReset();
+    retrieveRecallTranscriptMock.mockResolvedValue({
+      ok: false,
+      status: null,
+      errorMessage: 'transcript retrieval disabled in test',
+    });
+    importCallRecordingMediaMock.mockReset();
+    importCallRecordingMediaMock.mockResolvedValue({});
+    chargeCompletedCallRecordingMock.mockReset();
+    chargeCompletedCallRecordingMock.mockResolvedValue('charged');
+    requestArtifactContinuationMock.mockReset();
+    requestArtifactContinuationMock.mockResolvedValue(true);
   });
 
   it('updates a call recording from bot metadata on status change events', async () => {
@@ -889,12 +756,7 @@ describe('handleRecallWebhook', () => {
     expect(client.mutations).toEqual([]);
   });
 
-  it('requests a transcript once when the recording first completes', async () => {
-    setFetchRoute(
-      'POST',
-      `${RECALL_API_BASE_URL}/recording/recall-recording-1/create_transcript/`,
-      () => jsonResponse({ id: 'recall-transcript-1' }),
-    );
+  it('queues artifact import when the recording first completes', async () => {
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
@@ -909,24 +771,12 @@ describe('handleRecallWebhook', () => {
       body: buildRecordingDoneWebhookBody(),
     });
 
-    expect(
-      fetchedUrls().filter((requestUrl) =>
-        requestUrl.endsWith('/create_transcript/'),
-      ),
-    ).toHaveLength(1);
-    expect(fetchMock).toHaveBeenCalledWith(
-      `${RECALL_API_BASE_URL}/recording/recall-recording-1/create_transcript/`,
-      expect.objectContaining({
-        method: 'POST',
-        headers: expect.objectContaining({
-          Authorization: 'Token recall-api-key',
-        }),
-        body: JSON.stringify({
-          provider: { recallai_async: { language_code: 'auto' } },
-          diarization: { use_separate_streams_when_available: true },
-        }),
-      }),
-    );
+    expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
+    expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
+    expect(requestArtifactContinuationMock).toHaveBeenCalledWith({
+      callRecordingId: 'call-recording-1',
+      requestedAt: expect.any(String),
+    });
     expect(client.mutations).toEqual([
       {
         id: 'call-recording-1',
@@ -934,17 +784,33 @@ describe('handleRecallWebhook', () => {
           status: 'PROCESSING',
           externalBotId: 'recall-bot-1',
           externalRecordingId: 'recall-recording-1',
-          transcript: {
-            recallTranscriptId: 'recall-transcript-1',
-            status: 'PENDING',
-            requestedAt: expect.any(String),
-          },
         },
       },
     ]);
   });
 
-  it('does not re-request a transcript on a redelivered done event while Recall list is stale', async () => {
+  it('throws when the artifact import request fails so Svix redelivers', async () => {
+    requestArtifactContinuationMock.mockResolvedValue(false);
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'PROCESSING',
+        externalBotId: 'recall-bot-1',
+        transcript: null,
+      },
+    ]);
+
+    await expect(
+      handleRecallWebhook({
+        client: client as unknown as CoreApiClient,
+        body: buildRecordingDoneWebhookBody(),
+      }),
+    ).rejects.toThrow(
+      'failed to request artifact import for call recording call-recording-1',
+    );
+  });
+
+  it('queues redelivered done events without touching transcript APIs inline', async () => {
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
@@ -964,17 +830,10 @@ describe('handleRecallWebhook', () => {
       body: buildRecordingDoneWebhookBody(),
     });
 
-    expect(
-      fetchedUrls().filter((requestUrl) =>
-        requestUrl.endsWith('/create_transcript/'),
-      ),
-    ).toEqual([]);
-    expect(fetchedUrls()).toContain(
-      `${RECALL_API_BASE_URL}/transcript/?recording_id=recall-recording-1`,
-    );
-    expect(fetchedUrls()).toContain(
-      `${RECALL_API_BASE_URL}/transcript/recall-transcript-1/`,
-    );
+    expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
+    expect(listRecallTranscriptsMock).not.toHaveBeenCalled();
+    expect(retrieveRecallTranscriptMock).not.toHaveBeenCalled();
+    expect(requestArtifactContinuationMock).toHaveBeenCalledTimes(1);
     expect(client.mutations).toEqual([
       {
         id: 'call-recording-1',
@@ -987,15 +846,7 @@ describe('handleRecallWebhook', () => {
     ]);
   });
 
-  it('resolves the recording id from the bot when the payload and record lack one', async () => {
-    setFetchRoute('GET', `${RECALL_API_BASE_URL}/bot/recall-bot-1/`, () =>
-      jsonResponse({ recordings: [{ id: 'recall-recording-9' }] }),
-    );
-    setFetchRoute(
-      'POST',
-      `${RECALL_API_BASE_URL}/recording/recall-recording-9/create_transcript/`,
-      () => jsonResponse({ id: 'recall-transcript-9' }),
-    );
+  it('defers provider lookup when the payload and record lack a recording id', async () => {
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
@@ -1024,35 +875,24 @@ describe('handleRecallWebhook', () => {
       },
     });
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      `${RECALL_API_BASE_URL}/bot/recall-bot-1/`,
-      expect.objectContaining({ method: 'GET' }),
-    );
-    expect(fetchMock).toHaveBeenCalledWith(
-      `${RECALL_API_BASE_URL}/recording/recall-recording-9/create_transcript/`,
-      expect.objectContaining({ method: 'POST' }),
-    );
+    expect(getRecallBotMock).not.toHaveBeenCalled();
+    expect(createAsyncRecallTranscriptMock).not.toHaveBeenCalled();
+    expect(requestArtifactContinuationMock).toHaveBeenCalledWith({
+      callRecordingId: 'call-recording-1',
+      requestedAt: expect.any(String),
+    });
     expect(client.mutations).toEqual([
       expect.objectContaining({
         id: 'call-recording-1',
         data: expect.objectContaining({
           status: 'PROCESSING',
           externalBotId: 'recall-bot-1',
-          externalRecordingId: 'recall-recording-9',
         }),
       }),
     ]);
   });
 
-  it('imports media on recording.done and completes once all artifacts are present', async () => {
-    setFetchRoute('GET', `${RECALL_API_BASE_URL}/bot/recall-bot-1/`, () =>
-      jsonResponse({ id: 'recall-bot-1' }),
-    );
-    stubRecallRecordingMedia({
-      externalRecordingId: 'recall-recording-1',
-      videoContentLengthBytes: 8,
-      audioContentLengthBytes: 8,
-    });
+  it('queues media import on recording.done instead of completing inline', async () => {
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
@@ -1070,98 +910,22 @@ describe('handleRecallWebhook', () => {
       body: buildRecordingDoneWebhookBody(),
     });
 
-    expect(fetchedUrls()).toContain(
-      `${RECALL_API_BASE_URL}/recording/recall-recording-1/`,
-    );
-    expect(fetchedUrls()).toContain(VIDEO_DOWNLOAD_URL);
-    expect(fetchedUrls()).toContain(AUDIO_DOWNLOAD_URL);
+    expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
     expect(client.mutations).toEqual([
       {
         id: 'call-recording-1',
         data: {
+          status: 'PROCESSING',
           externalBotId: 'recall-bot-1',
           externalRecordingId: 'recall-recording-1',
-          audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-          video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
         },
       },
-      {
-        id: 'call-recording-1',
-        data: { status: 'COMPLETED' },
-      },
     ]);
-    expect(chargeCreditsMock).toHaveBeenCalledWith({
-      creditsUsedMicro: 1_050_000,
-      quantity: 63,
-      operationType: 'CALL_RECORDING',
-      resourceContext: 'recall',
-    });
+    expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
+    expect(requestArtifactContinuationMock).toHaveBeenCalledTimes(1);
   });
 
-  it('completes and keeps the size marker when a media file is too large', async () => {
-    setFetchRoute('GET', `${RECALL_API_BASE_URL}/bot/recall-bot-1/`, () =>
-      jsonResponse({ id: 'recall-bot-1' }),
-    );
-    stubRecallRecordingMedia({
-      externalRecordingId: 'recall-recording-1',
-      videoContentLengthBytes: TOO_LARGE_MEDIA_CONTENT_LENGTH_BYTES,
-      audioContentLengthBytes: 8,
-    });
-    const client = new FakeCoreApiClient([
-      {
-        id: 'call-recording-1',
-        status: 'PROCESSING',
-        externalBotId: 'recall-bot-1',
-        externalRecordingId: 'recall-recording-1',
-        startedAt: '2026-01-01T13:02:00.000Z',
-        endedAt: '2026-01-01T14:05:00.000Z',
-        transcript: [{ participant: { id: 1 }, words: [] }],
-      },
-    ]);
-
-    const result = await handleRecallWebhook({
-      client: client as unknown as CoreApiClient,
-      body: buildRecordingDoneWebhookBody(),
-    });
-
-    expect(client.mutations).toEqual([
-      {
-        id: 'call-recording-1',
-        data: {
-          externalBotId: 'recall-bot-1',
-          externalRecordingId: 'recall-recording-1',
-          audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-          callRecorderFailureReason: 'video_file_too_large',
-        },
-      },
-      {
-        id: 'call-recording-1',
-        data: { status: 'COMPLETED' },
-      },
-    ]);
-    expect(chargeCreditsMock).toHaveBeenCalledWith({
-      creditsUsedMicro: 1_050_000,
-      quantity: 63,
-      operationType: 'CALL_RECORDING',
-      resourceContext: 'recall',
-    });
-    expect(result).toEqual({
-      status: 'updated',
-      event: 'recording.done',
-      callRecordingId: 'call-recording-1',
-      callRecordingStatus: 'COMPLETED',
-    });
-  });
-
-  it('keeps the real failure reason over the size marker on recording.failed', async () => {
-    setFetchRoute('GET', `${RECALL_API_BASE_URL}/bot/recall-bot-1/`, () =>
-      jsonResponse({ id: 'recall-bot-1' }),
-    );
-    stubRecallRecordingMedia({
-      externalRecordingId: 'recall-recording-1',
-      videoContentLengthBytes: TOO_LARGE_MEDIA_CONTENT_LENGTH_BYTES,
-      audioContentLengthBytes: 8,
-    });
+  it('keeps the real failure reason on recording.failed and defers media work', async () => {
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
@@ -1186,15 +950,16 @@ describe('handleRecallWebhook', () => {
       {
         id: 'call-recording-1',
         data: {
+          status: 'FAILED',
           externalBotId: 'recall-bot-1',
           externalRecordingId: 'recall-recording-1',
-          status: 'FAILED',
           callRecorderFailureReason: 'recording.failed',
-          audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
         },
       },
     ]);
-    expect(chargeCreditsMock).not.toHaveBeenCalled();
+    expect(importCallRecordingMediaMock).not.toHaveBeenCalled();
+    expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
+    expect(requestArtifactContinuationMock).toHaveBeenCalledTimes(1);
     expect(result).toEqual({
       status: 'updated',
       event: 'recording.failed',
@@ -1203,127 +968,7 @@ describe('handleRecallWebhook', () => {
     });
   });
 
-  it('stays PROCESSING on recording.done while artifacts are missing', async () => {
-    setFetchRoute('GET', `${RECALL_API_BASE_URL}/bot/recall-bot-1/`, () =>
-      jsonResponse({ id: 'recall-bot-1' }),
-    );
-    stubRecallRecordingMedia({
-      externalRecordingId: 'recall-recording-1',
-      audioContentLengthBytes: 8,
-    });
-    setFetchRoute(
-      'POST',
-      `${RECALL_API_BASE_URL}/recording/recall-recording-1/create_transcript/`,
-      () => jsonResponse({ id: 'recall-transcript-1' }),
-    );
-    const client = new FakeCoreApiClient([
-      {
-        id: 'call-recording-1',
-        status: 'PROCESSING',
-        externalBotId: 'recall-bot-1',
-        startedAt: '2026-01-01T13:02:00.000Z',
-        endedAt: '2026-01-01T14:05:00.000Z',
-        transcript: null,
-      },
-    ]);
-
-    await handleRecallWebhook({
-      client: client as unknown as CoreApiClient,
-      body: buildRecordingDoneWebhookBody(),
-    });
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      `${RECALL_API_BASE_URL}/recording/recall-recording-1/create_transcript/`,
-      expect.objectContaining({ method: 'POST' }),
-    );
-    expect(client.mutations).toEqual([
-      expect.objectContaining({
-        id: 'call-recording-1',
-        data: expect.objectContaining({
-          status: 'PROCESSING',
-          externalBotId: 'recall-bot-1',
-          externalRecordingId: 'recall-recording-1',
-          audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-        }),
-      }),
-    ]);
-    expect(chargeCreditsMock).not.toHaveBeenCalled();
-  });
-
-  it('marks FAILED on recording.done when no recording artifact path exists', async () => {
-    setFetchRoute('GET', `${RECALL_API_BASE_URL}/bot/recall-bot-1/`, () =>
-      jsonResponse({ id: 'recall-bot-1', recordings: [] }),
-    );
-    const client = new FakeCoreApiClient([
-      {
-        id: 'call-recording-1',
-        status: 'PROCESSING',
-        externalBotId: 'recall-bot-1',
-        startedAt: '2026-01-01T13:02:00.000Z',
-        endedAt: '2026-01-01T14:05:00.000Z',
-        transcript: null,
-      },
-    ]);
-
-    const result = await handleRecallWebhook({
-      client: client as unknown as CoreApiClient,
-      body: {
-        event: 'recording.done',
-        data: {
-          bot: {
-            id: 'recall-bot-1',
-            metadata: {
-              twentyWorkspaceId: WORKSPACE_ID,
-            },
-          },
-        },
-      },
-    });
-
-    expect(result).toEqual({
-      status: 'updated',
-      event: 'recording.done',
-      callRecordingId: 'call-recording-1',
-      callRecordingStatus: 'FAILED',
-    });
-    expect(client.mutations).toEqual([
-      {
-        id: 'call-recording-1',
-        data: {
-          status: 'FAILED',
-          externalBotId: 'recall-bot-1',
-          callRecorderFailureReason: 'recording_artifacts_unavailable',
-        },
-      },
-    ]);
-    expect(chargeCreditsMock).not.toHaveBeenCalled();
-  });
-
-  it('completes and charges on transcript.done when media is already imported', async () => {
-    const transcriptContent = [
-      {
-        participant: { id: 1, name: 'Alice' },
-        words: [{ text: 'hello', start_timestamp: { relative: 0.5 } }],
-      },
-    ];
-
-    setFetchRoute(
-      'GET',
-      `${RECALL_API_BASE_URL}/transcript/recall-transcript-1/`,
-      () =>
-        jsonResponse({
-          data: {
-            download_url: 'https://recall-transcripts.example.com/transcript-1',
-          },
-          status: { code: 'done', sub_code: null },
-        }),
-    );
-    setFetchRoute(
-      'GET',
-      'https://recall-transcripts.example.com/transcript-1',
-      () => jsonResponse(transcriptContent),
-    );
-
+  it('queues transcript.done without downloading the transcript inline', async () => {
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
@@ -1337,8 +982,6 @@ describe('handleRecallWebhook', () => {
           status: 'PENDING',
           requestedAt: '2026-01-01T14:06:00.000Z',
         },
-        audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
-        video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
       },
     ]);
 
@@ -1362,112 +1005,19 @@ describe('handleRecallWebhook', () => {
     });
 
     expect(result).toEqual({
-      status: 'updated',
+      status: 'queued',
       event: 'transcript.done',
       callRecordingId: 'call-recording-1',
-      transcriptOutcome: 'FILLED',
     });
-    expect(client.mutations).toEqual([
-      {
-        id: 'call-recording-1',
-        data: { transcript: transcriptContent },
-      },
-      {
-        id: 'call-recording-1',
-        data: { status: 'COMPLETED' },
-      },
-    ]);
-    expect(chargeCreditsMock).toHaveBeenCalledWith({
-      creditsUsedMicro: 1_050_000,
-      quantity: 63,
-      operationType: 'CALL_RECORDING',
-      resourceContext: 'recall',
-    });
-  });
-
-  it('fills the transcript from the download URL on transcript.done', async () => {
-    const transcriptContent = [
-      {
-        participant: { id: 1, name: 'Alice' },
-        words: [{ text: 'hello', start_timestamp: { relative: 0.5 } }],
-      },
-    ];
-
-    setFetchRoute(
-      'GET',
-      `${RECALL_API_BASE_URL}/transcript/recall-transcript-1/`,
-      () =>
-        jsonResponse({
-          data: {
-            download_url: 'https://recall-transcripts.example.com/transcript-1',
-          },
-          status: { code: 'done', sub_code: null },
-        }),
-    );
-    setFetchRoute(
-      'GET',
-      'https://recall-transcripts.example.com/transcript-1',
-      () => jsonResponse(transcriptContent),
-    );
-
-    const client = new FakeCoreApiClient([
-      {
-        id: 'call-recording-1',
-        status: 'COMPLETED',
-        externalBotId: 'recall-bot-1',
-        transcript: {
-          recallTranscriptId: 'recall-transcript-1',
-          status: 'PENDING',
-          requestedAt: '2026-01-01T14:06:00.000Z',
-        },
-      },
-    ]);
-
-    const result = await handleRecallWebhook({
-      client: client as unknown as CoreApiClient,
-      body: {
-        event: 'transcript.done',
-        data: {
-          bot: {
-            id: 'recall-bot-1',
-            metadata: {
-              twentyWorkspaceId: WORKSPACE_ID,
-              twentyCallRecordingId: 'call-recording-1',
-            },
-          },
-          transcript: {
-            id: 'recall-transcript-1',
-          },
-          recording: {
-            id: 'recall-recording-1',
-          },
-        },
-      },
-    });
-
-    expect(result).toEqual({
-      status: 'updated',
-      event: 'transcript.done',
+    expect(retrieveRecallTranscriptMock).not.toHaveBeenCalled();
+    expect(requestArtifactContinuationMock).toHaveBeenCalledWith({
       callRecordingId: 'call-recording-1',
-      transcriptOutcome: 'FILLED',
+      requestedAt: expect.any(String),
     });
-    expect(fetchMock).toHaveBeenCalledWith(
-      `${RECALL_API_BASE_URL}/transcript/recall-transcript-1/`,
-      expect.objectContaining({ method: 'GET' }),
-    );
-    expect(client.mutations).toEqual([
-      {
-        id: 'call-recording-1',
-        data: {
-          transcript: transcriptContent,
-          externalRecordingId: 'recall-recording-1',
-        },
-      },
-    ]);
-    expect(chargeCreditsMock).not.toHaveBeenCalled();
+    expect(client.mutations).toEqual([]);
   });
 
-  it('writes a FAILED marker on transcript.failed', async () => {
+  it('queues transcript.failed without writing the failure marker inline', async () => {
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
@@ -1505,64 +1055,13 @@ describe('handleRecallWebhook', () => {
     });
 
     expect(result).toEqual({
-      status: 'updated',
+      status: 'queued',
       event: 'transcript.failed',
       callRecordingId: 'call-recording-1',
-      transcriptOutcome: 'FAILED',
     });
-    expect(client.mutations).toEqual([
-      {
-        id: 'call-recording-1',
-        data: {
-          transcript: {
-            recallTranscriptId: 'recall-transcript-1',
-            status: 'FAILED',
-            subCode: 'transcription_failed',
-          },
-          callRecorderFailureReason: 'transcript_failed:transcription_failed',
-          status: 'FAILED',
-        },
-      },
-    ]);
-    expect(console.warn).toHaveBeenCalled();
-  });
-
-  it('does not clobber a downloaded transcript with a late transcript.failed', async () => {
-    const client = new FakeCoreApiClient([
-      {
-        id: 'call-recording-1',
-        status: 'COMPLETED',
-        externalBotId: 'recall-bot-1',
-        transcript: [{ participant: { id: 1 }, words: [] }],
-      },
-    ]);
-
-    const result = await handleRecallWebhook({
-      client: client as unknown as CoreApiClient,
-      body: {
-        event: 'transcript.failed',
-        data: {
-          bot: {
-            id: 'recall-bot-1',
-            metadata: {
-              twentyWorkspaceId: WORKSPACE_ID,
-              twentyCallRecordingId: 'call-recording-1',
-            },
-          },
-          transcript: {
-            id: 'recall-transcript-1',
-          },
-          status: {
-            sub_code: 'transcription_failed',
-          },
-        },
-      },
-    });
-
-    expect(result).toEqual({
-      status: 'skipped',
-      event: 'transcript.failed',
-      reason: 'transcript already filled',
+    expect(requestArtifactContinuationMock).toHaveBeenCalledWith({
+      callRecordingId: 'call-recording-1',
+      requestedAt: expect.any(String),
     });
     expect(client.mutations).toEqual([]);
   });

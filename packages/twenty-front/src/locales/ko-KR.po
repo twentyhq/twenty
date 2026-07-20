@@ -4063,7 +4063,7 @@ msgstr "쉼표와 마침표"
 msgid "Comment"
 msgstr ""
 
-#. js-lingui-id: UK5bhd
+#. js-lingui-id: hZotg6
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -4071,8 +4071,8 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
-msgid "Communications"
-msgstr "커뮤니케이션"
+msgid "Communication"
+msgstr ""
 
 #. js-lingui-id: chL5IG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -8817,11 +8817,6 @@ msgstr "뒤로 가기"
 msgid "Go to billing portal"
 msgstr "청구 포털로 이동"
 
-#. js-lingui-id: ABs8Dj
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Go to documentation"
-msgstr "문서로 이동"
-
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
 msgid "Go to Draft"
@@ -11719,11 +11714,6 @@ msgstr "내비게이션 메뉴 항목"
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
 msgid "Navigation tabs"
 msgstr "내비게이션 탭"
-
-#. js-lingui-id: C0P5zd
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Need help to configure your shared mailbox?"
-msgstr "공유 메일박스 구성이 필요하신가요?"
 
 #. js-lingui-id: wW3b68
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx

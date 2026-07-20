@@ -38,6 +38,23 @@ type MediaUploadTarget = {
 const MEDIA_DOWNLOAD_TIMEOUT_MS = 120_000;
 const MEDIA_FILE_FOLDER = 'FilesField';
 
+const MEDIA_ARTIFACT_DESCRIPTORS = [
+  {
+    field: 'video',
+    fileName: 'video.mp4',
+    fieldMetadataUniversalIdentifier:
+      CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER,
+    tooLargeFailureReason: VIDEO_FILE_TOO_LARGE_FAILURE_REASON,
+  },
+  {
+    field: 'audio',
+    fileName: 'audio.mp3',
+    fieldMetadataUniversalIdentifier:
+      CALL_RECORDING_AUDIO_FIELD_UNIVERSAL_IDENTIFIER,
+    tooLargeFailureReason: AUDIO_FILE_TOO_LARGE_FAILURE_REASON,
+  },
+] as const;
+
 export const importCallRecordingMedia = async ({
   callRecordingId,
   externalRecordingId,
@@ -67,44 +84,34 @@ export const importCallRecordingMedia = async ({
   const metadataClient = new MetadataApiClient();
   const updateFields: CallRecordingMediaUpdateFields = {};
   const tooLargeFailureReasons: string[] = [];
+  const artifactStateByField = {
+    video: { alreadyImported: hasVideo, url: mediaUrls.videoUrl },
+    audio: { alreadyImported: hasAudio, url: mediaUrls.audioUrl },
+  };
 
-  if (!hasVideo && !isUndefined(mediaUrls.videoUrl)) {
-    const video = await importMediaArtifact({
+  for (const descriptor of MEDIA_ARTIFACT_DESCRIPTORS) {
+    const { alreadyImported, url } = artifactStateByField[descriptor.field];
+
+    if (alreadyImported || isUndefined(url)) {
+      continue;
+    }
+
+    const importResult = await importMediaArtifact({
       callRecordingId,
       metadataClient,
-      url: mediaUrls.videoUrl,
-      fileName: 'video.mp4',
+      url,
+      fileName: descriptor.fileName,
       fieldMetadataUniversalIdentifier:
-        CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER,
+        descriptor.fieldMetadataUniversalIdentifier,
       maxMediaFileSizeBytes: CALL_RECORDER_MAX_MEDIA_FILE_SIZE_BYTES,
     });
 
-    if (video.outcome === 'imported') {
-      updateFields.video = video.files;
+    if (importResult.outcome === 'imported') {
+      updateFields[descriptor.field] = importResult.files;
     }
 
-    if (video.outcome === 'too-large') {
-      tooLargeFailureReasons.push(VIDEO_FILE_TOO_LARGE_FAILURE_REASON);
-    }
-  }
-
-  if (!hasAudio && !isUndefined(mediaUrls.audioUrl)) {
-    const audio = await importMediaArtifact({
-      callRecordingId,
-      metadataClient,
-      url: mediaUrls.audioUrl,
-      fileName: 'audio.mp3',
-      fieldMetadataUniversalIdentifier:
-        CALL_RECORDING_AUDIO_FIELD_UNIVERSAL_IDENTIFIER,
-      maxMediaFileSizeBytes: CALL_RECORDER_MAX_MEDIA_FILE_SIZE_BYTES,
-    });
-
-    if (audio.outcome === 'imported') {
-      updateFields.audio = audio.files;
-    }
-
-    if (audio.outcome === 'too-large') {
-      tooLargeFailureReasons.push(AUDIO_FILE_TOO_LARGE_FAILURE_REASON);
+    if (importResult.outcome === 'too-large') {
+      tooLargeFailureReasons.push(descriptor.tooLargeFailureReason);
     }
   }
 

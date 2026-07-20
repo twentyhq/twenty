@@ -21,6 +21,7 @@
     "@prettier/sync": "^0.5.2",
     "@swc/core": "^1.15.11",
     "@swc/jest": "^0.2.39",
+    "@types/addressparser": "^1.0.3",
     "@types/babel__preset-env": "^7",
     "@types/handlebars": "^4.1.0",
     "@types/jest": "^30.0.0",
@@ -44,6 +45,7 @@
   "dependencies": {
     "@dagrejs/dagre": "^1.1.8",
     "@sniptt/guards": "^0.2.0",
+    "addressparser": "1.0.1",
     "ai": "6.0.97",
     "class-validator": "^0.14.0",
     "expr-eval-fork": "3.0.3",
