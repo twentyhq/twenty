@@ -74,24 +74,28 @@ export class SsoExchangeTokenService {
   async validateAndConsumeSsoExchangeTokenOrThrow(
     ssoExchangeToken: string,
   ): Promise<{ userId: string; authProvider: AuthProviderEnum }> {
-    const appToken = await this.appTokenRepository.findOne({
-      where: {
+    // Claiming the row with a single DELETE ... RETURNING makes redemption
+    // atomic: concurrent requests cannot both read it and each mint a token.
+    const { raw } = await this.appTokenRepository
+      .createQueryBuilder()
+      .delete()
+      .from(AppTokenEntity)
+      .where('value = :value', {
         value: hashSsoExchangeToken(ssoExchangeToken),
-        type: AppTokenType.SsoExchangeToken,
-      },
-    });
+      })
+      .andWhere('type = :type', { type: AppTokenType.SsoExchangeToken })
+      .returning('*')
+      .execute();
 
-    if (!isDefined(appToken)) {
+    const claimedToken: AppTokenEntity | undefined = raw[0];
+
+    if (raw.length !== 1 || !isDefined(claimedToken)) {
       throw buildInvalidSsoExchangeTokenException();
     }
 
-    const { userId, expiresAt, context } = appToken;
+    const { userId, expiresAt, context } = claimedToken;
 
-    // Consume before validating so a replay can never find the row again,
-    // even when the first redemption is rejected.
-    await this.appTokenRepository.remove(appToken);
-
-    if (new Date() > expiresAt) {
+    if (new Date() > new Date(expiresAt)) {
       throw buildInvalidSsoExchangeTokenException();
     }
 

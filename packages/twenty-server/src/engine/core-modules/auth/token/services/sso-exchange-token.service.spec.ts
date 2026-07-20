@@ -112,25 +112,41 @@ describe('SsoExchangeTokenService', () => {
         context: { authProvider: AuthProviderEnum.Google },
       }) as AppTokenEntity;
 
-    it('should look the token up by hash and scoped to the SSO exchange type', async () => {
+    const mockClaimedRows = (rows: AppTokenEntity[]) => {
+      const execute = jest.fn().mockResolvedValue({ raw: rows });
+      const queryBuilder = {
+        delete: jest.fn().mockReturnThis(),
+        from: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockReturnThis(),
+        execute,
+      };
+
       jest
-        .spyOn(appTokenRepository, 'findOne')
-        .mockResolvedValue(buildAppToken());
+        .spyOn(appTokenRepository, 'createQueryBuilder')
+        .mockReturnValue(queryBuilder as never);
+
+      return queryBuilder;
+    };
+
+    it('should claim the token atomically by hash, scoped to the SSO exchange type', async () => {
+      const queryBuilder = mockClaimedRows([buildAppToken()]);
 
       await service.validateAndConsumeSsoExchangeTokenOrThrow('plain-token');
 
-      expect(appTokenRepository.findOne).toHaveBeenCalledWith({
-        where: {
-          value: sha256('plain-token'),
-          type: AppTokenType.SsoExchangeToken,
-        },
+      expect(queryBuilder.delete).toHaveBeenCalled();
+      expect(queryBuilder.returning).toHaveBeenCalledWith('*');
+      expect(queryBuilder.where).toHaveBeenCalledWith('value = :value', {
+        value: sha256('plain-token'),
+      });
+      expect(queryBuilder.andWhere).toHaveBeenCalledWith('type = :type', {
+        type: AppTokenType.SsoExchangeToken,
       });
     });
 
-    it('should return the user and auth provider, and consume the token', async () => {
-      const appToken = buildAppToken();
-
-      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(appToken);
+    it('should return the user and auth provider of the claimed token', async () => {
+      mockClaimedRows([buildAppToken()]);
 
       const result =
         await service.validateAndConsumeSsoExchangeTokenOrThrow('plain-token');
@@ -139,28 +155,26 @@ describe('SsoExchangeTokenService', () => {
         userId: USER_ID,
         authProvider: AuthProviderEnum.Google,
       });
-      expect(appTokenRepository.remove).toHaveBeenCalledWith(appToken);
     });
 
     it('should throw when the token has already been consumed', async () => {
-      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
+      mockClaimedRows([]);
 
       await expect(
         service.validateAndConsumeSsoExchangeTokenOrThrow('plain-token'),
       ).rejects.toThrow(AuthException);
     });
 
-    it('should throw and still consume the token when it has expired', async () => {
+    it('should throw when the claimed token has expired', async () => {
       const expiredToken = buildAppToken();
 
       expiredToken.expiresAt = new Date(Date.now() - 1);
 
-      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(expiredToken);
+      mockClaimedRows([expiredToken]);
 
       await expect(
         service.validateAndConsumeSsoExchangeTokenOrThrow('plain-token'),
       ).rejects.toThrow(AuthException);
-      expect(appTokenRepository.remove).toHaveBeenCalledWith(expiredToken);
     });
 
     it('should throw when the auth provider is missing from the token context', async () => {
@@ -168,9 +182,7 @@ describe('SsoExchangeTokenService', () => {
 
       tokenWithoutProvider.context = null;
 
-      jest
-        .spyOn(appTokenRepository, 'findOne')
-        .mockResolvedValue(tokenWithoutProvider);
+      mockClaimedRows([tokenWithoutProvider]);
 
       await expect(
         service.validateAndConsumeSsoExchangeTokenOrThrow('plain-token'),
