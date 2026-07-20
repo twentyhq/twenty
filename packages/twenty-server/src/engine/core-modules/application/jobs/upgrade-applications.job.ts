@@ -18,7 +18,6 @@ export class UpgradeApplicationsJob {
     await this.applicationUpgradeService.upgradeAllApplications({
       applicationRegistrationId: data.applicationRegistrationId,
       onlyAutoUpgrade: data.onlyAutoUpgrade,
-      workspaceId: data.workspaceId,
     });
   }
 }

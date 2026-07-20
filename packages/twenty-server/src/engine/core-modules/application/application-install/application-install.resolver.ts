@@ -18,7 +18,6 @@ import { UninstallApplicationInput } from 'src/engine/core-modules/application/a
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
 import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { UpdateApplicationInput } from 'src/engine/core-modules/application/dtos/update-application.input';
@@ -46,7 +45,6 @@ export class ApplicationInstallResolver {
     private readonly applicationService: ApplicationService,
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly applicationSyncService: ApplicationSyncService,
-    private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly marketplaceQueryService: MarketplaceQueryService,
     private readonly metricsService: MetricsService,
   ) {}
@@ -140,33 +138,17 @@ export class ApplicationInstallResolver {
     @Args('input') input: UpdateApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    const application = await this.applicationService.findOneApplicationOrThrow(
-      {
-        id,
-        workspaceId,
-      },
-    );
+    await this.applicationService.findOneApplicationOrThrow({
+      id,
+      workspaceId,
+    });
 
-    const updatedApplication = await this.applicationService.update(id, {
+    return this.applicationService.update(id, {
       ...(isDefined(input.autoUpgrade)
         ? { autoUpgrade: input.autoUpgrade }
         : {}),
       workspaceId,
     });
-
-    // Catch up on a version published while the flag was off, scoped to the
-    // caller's workspace.
-    if (
-      input.autoUpgrade === true &&
-      isDefined(application.applicationRegistrationId)
-    ) {
-      await this.applicationRegistrationService.enqueueAutoUpgradeApplications(
-        application.applicationRegistrationId,
-        workspaceId,
-      );
-    }
-
-    return updatedApplication;
   }
 
   @Mutation(() => Boolean)

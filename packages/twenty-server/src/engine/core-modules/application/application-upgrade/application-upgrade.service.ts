@@ -114,11 +114,9 @@ export class ApplicationUpgradeService {
   async upgradeAllApplications({
     applicationRegistrationId,
     onlyAutoUpgrade = false,
-    workspaceId,
   }: {
     applicationRegistrationId: string;
     onlyAutoUpgrade?: boolean;
-    workspaceId?: string;
   }): Promise<void> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: applicationRegistrationId },
@@ -134,7 +132,6 @@ export class ApplicationUpgradeService {
       where: {
         applicationRegistrationId,
         ...(onlyAutoUpgrade ? { autoUpgrade: true } : {}),
-        ...(isDefined(workspaceId) ? { workspaceId } : {}),
       },
     });
 

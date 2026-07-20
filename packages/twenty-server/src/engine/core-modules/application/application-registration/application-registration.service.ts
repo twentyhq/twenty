@@ -130,12 +130,11 @@ export class ApplicationRegistrationService {
   // triggered the upgrade.
   async enqueueAutoUpgradeApplications(
     applicationRegistrationId: string,
-    workspaceId?: string,
   ): Promise<void> {
     try {
       await this.workspaceQueueService.add<UpgradeApplicationsJobData>(
         UPGRADE_APPLICATIONS_JOB_NAME,
-        { applicationRegistrationId, onlyAutoUpgrade: true, workspaceId },
+        { applicationRegistrationId, onlyAutoUpgrade: true },
       );
     } catch (error) {
       this.logger.error(
