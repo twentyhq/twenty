@@ -1,19 +1,18 @@
-import { v4 } from 'uuid';
+import { getViewFieldUniversalIdentifier } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 export const computeFlatViewFieldsToCreate = ({
   objectFlatFieldMetadatas,
   viewUniversalIdentifier,
-  flatApplication,
+  applicationUniversalIdentifier,
   labelIdentifierFieldMetadataUniversalIdentifier,
   excludeLabelIdentifier = false,
 }: {
-  flatApplication: FlatApplication;
+  applicationUniversalIdentifier: string;
   objectFlatFieldMetadatas: UniversalFlatFieldMetadata[];
   viewUniversalIdentifier: string;
   labelIdentifierFieldMetadataUniversalIdentifier: string | null;
@@ -59,7 +58,11 @@ export const computeFlatViewFieldsToCreate = ({
       createdAt,
       updatedAt: createdAt,
       deletedAt: null,
-      universalIdentifier: v4(),
+      universalIdentifier: getViewFieldUniversalIdentifier({
+        applicationUniversalIdentifier,
+        viewUniversalIdentifier,
+        fieldMetadataUniversalIdentifier: field.universalIdentifier,
+      }),
       isVisible: true,
       size: DEFAULT_VIEW_FIELD_SIZE,
       position: index,
@@ -67,7 +70,7 @@ export const computeFlatViewFieldsToCreate = ({
       isActive: true,
       isSystemSideEffect: true,
       universalOverrides: null,
-      applicationUniversalIdentifier: flatApplication.universalIdentifier,
+      applicationUniversalIdentifier,
     }));
 
   return defaultViewFields;

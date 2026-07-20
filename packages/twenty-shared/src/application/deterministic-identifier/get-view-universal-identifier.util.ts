@@ -1,5 +1,5 @@
 import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
-import { ViewKey } from '@/types/ViewKey';
+import { type ViewKey } from '@/types/ViewKey';
 
 // A view is identified by its name within its object.
 export const getViewUniversalIdentifier = ({
@@ -17,18 +17,21 @@ export const getViewUniversalIdentifier = ({
     applicationUniversalIdentifier,
   });
 
-// The INDEX view is an object's singleton main table view; its name is
-// server-generated, so it is keyed by the stable INDEX view key.
-export const getIndexViewUniversalIdentifier = ({
+// A system view is an object's singleton engine-owned view (e.g. the INDEX
+// main table view); its name is server-generated, so it is keyed by its stable
+// view key rather than its name.
+export const getSystemViewUniversalIdentifier = ({
   applicationUniversalIdentifier,
   objectUniversalIdentifier,
+  viewKey,
 }: {
   applicationUniversalIdentifier: string;
   objectUniversalIdentifier: string;
+  viewKey: ViewKey;
 }): string =>
   computeDeterministicUuid({
     entityNamespace: 'view',
-    value: `${objectUniversalIdentifier}:${ViewKey.INDEX}`,
+    value: `${objectUniversalIdentifier}:${viewKey}`,
     applicationUniversalIdentifier,
   });
 
