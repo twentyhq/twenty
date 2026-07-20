@@ -449,6 +449,7 @@ export interface Application {
     availablePackages: Scalars['JSON']
     applicationRegistrationId?: Scalars['UUID']
     canBeUninstalled: Scalars['Boolean']
+    autoUpgrade: Scalars['Boolean']
     defaultRoleId?: Scalars['String']
     /** @deprecated Custom settings tabs are no longer supported. This field is ignored. */
     settingsCustomTabFrontComponentId?: Scalars['UUID']
@@ -2172,6 +2173,7 @@ export interface VerificationRecord {
     key: Scalars['String']
     value: Scalars['String']
     priority?: Scalars['Float']
+    status?: Scalars['String']
     __typename: 'VerificationRecord'
 }
 
@@ -2937,6 +2939,7 @@ export interface Mutation {
     /** @deprecated Use installApplication instead */
     installMarketplaceApp: Scalars['Boolean']
     installApplication: Application
+    updateApplication: Application
     uninstallApplication: Scalars['Boolean']
     syncMarketplaceCatalog: Scalars['Boolean']
     createApplicationRegistration: CreateApplicationRegistration
@@ -3527,6 +3530,7 @@ export interface ApplicationGenqlSelection{
     availablePackages?: boolean | number
     applicationRegistrationId?: boolean | number
     canBeUninstalled?: boolean | number
+    autoUpgrade?: boolean | number
     defaultRoleId?: boolean | number
     /** @deprecated Custom settings tabs are no longer supported. This field is ignored. */
     settingsCustomTabFrontComponentId?: boolean | number
@@ -5339,6 +5343,7 @@ export interface VerificationRecordGenqlSelection{
     key?: boolean | number
     value?: boolean | number
     priority?: boolean | number
+    status?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6166,6 +6171,7 @@ export interface MutationGenqlSelection{
     /** @deprecated Use installApplication instead */
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
     installApplication?: (ApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} })
+    updateApplication?: (ApplicationGenqlSelection & { __args: {id: Scalars['UUID'], input: UpdateApplicationInput} })
     uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
     syncMarketplaceCatalog?: boolean | number
     createApplicationRegistration?: (CreateApplicationRegistrationGenqlSelection & { __args: {input: CreateApplicationRegistrationInput} })
@@ -6546,6 +6552,8 @@ id: Scalars['UUID']}
 export interface DestroyViewGroupInput {
 /** The id of the view group to destroy. */
 id: Scalars['UUID']}
+
+export interface UpdateApplicationInput {autoUpgrade?: (Scalars['Boolean'] | null)}
 
 export interface CreateApplicationRegistrationInput {name: Scalars['String'],universalIdentifier?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null)}
 

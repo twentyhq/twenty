@@ -2869,6 +2869,11 @@ msgstr "Création automatique"
 msgid "Auto-generated role for {agentDisplayName}"
 msgstr ""
 
+#. js-lingui-id: /nv0ml
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
+msgid "Auto-upgrade"
+msgstr ""
+
 #. js-lingui-id: YRT7ZW
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Automatically create contacts for people you've participated in an event with."
@@ -2888,6 +2893,11 @@ msgstr "Créer automatiquement des enregistrements de personnes lors de la réce
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
 msgid "Automatically install this app on every newly created workspace"
 msgstr "Installer automatiquement cette application sur chaque nouvel espace de travail créé"
+
+#. js-lingui-id: XFGV21
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
+msgid "Automatically upgrade this application when a new version is published"
+msgstr ""
 
 #. js-lingui-id: BJgDIM
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
@@ -2948,16 +2958,6 @@ msgstr "Retour au contenu"
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
 msgid "Back to settings"
 msgstr "Retour aux paramètres"
-
-#. js-lingui-id: aHL20j
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Backfill"
-msgstr "Rétro-remplissage"
-
-#. js-lingui-id: mpBETK
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Backfill installation"
-msgstr "Installation rétroactive"
 
 #. js-lingui-id: RJnYR0
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
@@ -4063,7 +4063,7 @@ msgstr "Virgules et point"
 msgid "Comment"
 msgstr ""
 
-#. js-lingui-id: UK5bhd
+#. js-lingui-id: hZotg6
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -4071,8 +4071,8 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
-msgid "Communications"
-msgstr "Communications"
+msgid "Communication"
+msgstr ""
 
 #. js-lingui-id: chL5IG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -8040,6 +8040,11 @@ msgstr "Échec de l'application du mode maintenance."
 msgid "Failed to start backfill"
 msgstr "Échec du démarrage du remplissage rétroactif"
 
+#. js-lingui-id: SwXGP6
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "Failed to start upgrade"
+msgstr ""
+
 #. js-lingui-id: OX7bKt
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Failed to synchronize the marketplace catalog."
@@ -8049,6 +8054,11 @@ msgstr "Échec de la synchronisation du catalogue de la place de marché."
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Failed to transfer ownership. Check that the subdomain is correct."
 msgstr "Échec du transfert de propriété. Vérifiez que le sous-domaine est correct."
+
+#. js-lingui-id: UNwpjb
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
+msgid "Failed to update auto-upgrade setting."
+msgstr ""
 
 #. js-lingui-id: 2D6TRg
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -8717,6 +8727,7 @@ msgstr "Gemini CLI"
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -8816,11 +8827,6 @@ msgstr "Retour"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Go to billing portal"
 msgstr "Accéder au portail de facturation"
-
-#. js-lingui-id: ABs8Dj
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Go to documentation"
-msgstr "Aller à la documentation"
 
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
@@ -9712,6 +9718,7 @@ msgstr "Saisissez vos informations de facturation pour obtenir un essai gratuit 
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/pages/onboarding/InstallAppsContent.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
@@ -9728,11 +9735,6 @@ msgstr "Installer {appDisplayName} sur votre espace de travail"
 msgid "Install and manage applications"
 msgstr "Installer et gérer les applications"
 
-#. js-lingui-id: 7rG5Kz
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Install latest version on all workspaces"
-msgstr "Installer la dernière version sur tous les espaces de travail"
-
 #. js-lingui-id: 0RAaKu
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -9741,6 +9743,12 @@ msgstr "Installer la dernière version sur tous les espaces de travail"
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Install link"
 msgstr "Lien d'installation"
+
+#. js-lingui-id: xif494
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+msgid "Install on all workspaces"
+msgstr ""
 
 #. js-lingui-id: K8iwJx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -11719,11 +11727,6 @@ msgstr "Éléments du menu de navigation"
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
 msgid "Navigation tabs"
 msgstr "Onglets de navigation"
-
-#. js-lingui-id: C0P5zd
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Need help to configure your shared mailbox?"
-msgstr "Besoin d'aide pour configurer votre boîte aux lettres partagée ?"
 
 #. js-lingui-id: wW3b68
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
@@ -17942,11 +17945,11 @@ msgstr "Cela déconnectera tous les modèles de ce fournisseur. Les modèles ne 
 msgid "This will grant {0} to {userLabel}."
 msgstr "Cela accordera {0} à {userLabel}."
 
-#. js-lingui-id: jn8Xjg
+#. js-lingui-id: rr0iQF
 #. placeholder {0}: registration.name
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "This will install the latest version of \"{0}\" on all existing active and suspended workspaces, upgrading any workspace that already has an older version. It runs as a background job and may take a while. Continue?"
-msgstr "Cela installera la dernière version de \"{0}\" sur tous les espaces de travail actifs et suspendus existants, en mettant à niveau tout espace qui dispose déjà d'une version plus ancienne. Cela s'exécute en tâche de fond et peut prendre un certain temps. Continuer ?"
+msgid "This will install the latest version of \"{0}\" on all existing active and suspended workspaces, including the ones that don't have it yet. It runs as a background job and may take a while. Continue?"
+msgstr ""
 
 #. js-lingui-id: y8xx3L
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
@@ -17973,6 +17976,12 @@ msgstr "Cela supprimera définitivement votre méthode d'authentification à deu
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "This will revoke {0} for {userLabel}."
 msgstr "Cela révoquera {0} pour {userLabel}."
+
+#. js-lingui-id: DXNxPk
+#. placeholder {0}: registration.name
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "This will upgrade \"{0}\" to its latest available version on every workspace that already has it installed. Workspaces without the app are not affected. It runs as a background job and may take a while. Continue?"
+msgstr ""
 
 #. js-lingui-id: f8HOUp
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
@@ -18907,8 +18916,15 @@ msgstr "Mise à jour..."
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "Upgrade"
 msgstr "Mettre à niveau"
+
+#. js-lingui-id: 8guwMM
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "Upgrade existing installations"
+msgstr ""
 
 #. js-lingui-id: IEtN5Y
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -18924,6 +18940,11 @@ msgstr "État de santé des mises à niveau dans tous les espaces de travail"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "Upgrade health across instance and workspaces"
 msgstr "État de santé des mises à niveau pour l'instance et les espaces de travail"
+
+#. js-lingui-id: Ngj5VX
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "Upgrade started. Existing installations will be upgraded to the latest version in the background."
+msgstr ""
 
 #. js-lingui-id: 5UfQvA
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx

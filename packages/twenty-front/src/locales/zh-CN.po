@@ -2869,6 +2869,11 @@ msgstr "自动创建"
 msgid "Auto-generated role for {agentDisplayName}"
 msgstr ""
 
+#. js-lingui-id: /nv0ml
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
+msgid "Auto-upgrade"
+msgstr ""
+
 #. js-lingui-id: YRT7ZW
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Automatically create contacts for people you've participated in an event with."
@@ -2888,6 +2893,11 @@ msgstr "接收或发送电子邮件时自动创建人员记录"
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
 msgid "Automatically install this app on every newly created workspace"
 msgstr "在每个新建的工作区中自动安装此应用"
+
+#. js-lingui-id: XFGV21
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
+msgid "Automatically upgrade this application when a new version is published"
+msgstr ""
 
 #. js-lingui-id: BJgDIM
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
@@ -2948,16 +2958,6 @@ msgstr "返回内容"
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
 msgid "Back to settings"
 msgstr "返回设置"
-
-#. js-lingui-id: aHL20j
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Backfill"
-msgstr "回填"
-
-#. js-lingui-id: mpBETK
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Backfill installation"
-msgstr "回填安装"
 
 #. js-lingui-id: RJnYR0
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
@@ -4063,7 +4063,7 @@ msgstr "逗号和点"
 msgid "Comment"
 msgstr ""
 
-#. js-lingui-id: UK5bhd
+#. js-lingui-id: hZotg6
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -4071,8 +4071,8 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
-msgid "Communications"
-msgstr "通信"
+msgid "Communication"
+msgstr ""
 
 #. js-lingui-id: chL5IG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -8040,6 +8040,11 @@ msgstr "设置维护模式失败。"
 msgid "Failed to start backfill"
 msgstr "启动回填失败"
 
+#. js-lingui-id: SwXGP6
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "Failed to start upgrade"
+msgstr ""
+
 #. js-lingui-id: OX7bKt
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Failed to synchronize the marketplace catalog."
@@ -8049,6 +8054,11 @@ msgstr "同步应用市场目录失败。"
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Failed to transfer ownership. Check that the subdomain is correct."
 msgstr "转移所有权失败。请检查子域名是否正确。"
+
+#. js-lingui-id: UNwpjb
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
+msgid "Failed to update auto-upgrade setting."
+msgstr ""
 
 #. js-lingui-id: 2D6TRg
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -8717,6 +8727,7 @@ msgstr "Gemini CLI"
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -8816,11 +8827,6 @@ msgstr "返回"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Go to billing portal"
 msgstr "前往账单门户"
-
-#. js-lingui-id: ABs8Dj
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Go to documentation"
-msgstr "前往文档"
 
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
@@ -9689,6 +9695,7 @@ msgstr "输入你的计费信息以获得免费试用和更多 AI 积分"
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/pages/onboarding/InstallAppsContent.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
@@ -9705,11 +9712,6 @@ msgstr "在你的工作区安装 {appDisplayName}"
 msgid "Install and manage applications"
 msgstr "安装和管理应用程序"
 
-#. js-lingui-id: 7rG5Kz
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Install latest version on all workspaces"
-msgstr "在所有工作区安装最新版本"
-
 #. js-lingui-id: 0RAaKu
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -9718,6 +9720,12 @@ msgstr "在所有工作区安装最新版本"
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Install link"
 msgstr "安装链接"
+
+#. js-lingui-id: xif494
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+msgid "Install on all workspaces"
+msgstr ""
 
 #. js-lingui-id: K8iwJx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -11696,11 +11704,6 @@ msgstr "导航菜单项"
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
 msgid "Navigation tabs"
 msgstr "导航选项卡"
-
-#. js-lingui-id: C0P5zd
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Need help to configure your shared mailbox?"
-msgstr "需要帮助配置你的共享邮箱吗？"
 
 #. js-lingui-id: wW3b68
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
@@ -17887,11 +17890,11 @@ msgstr "这将断开此提供商的所有模型连接。在配置新的提供商
 msgid "This will grant {0} to {userLabel}."
 msgstr "这将为 {userLabel} 授予 {0}。"
 
-#. js-lingui-id: jn8Xjg
+#. js-lingui-id: rr0iQF
 #. placeholder {0}: registration.name
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "This will install the latest version of \"{0}\" on all existing active and suspended workspaces, upgrading any workspace that already has an older version. It runs as a background job and may take a while. Continue?"
-msgstr "这将在所有现有的活跃和已暂停工作区上安装最新版本的“{0}”，并升级已安装旧版本的工作区。此操作将在后台运行，可能需要一段时间。是否继续？"
+msgid "This will install the latest version of \"{0}\" on all existing active and suspended workspaces, including the ones that don't have it yet. It runs as a background job and may take a while. Continue?"
+msgstr ""
 
 #. js-lingui-id: y8xx3L
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
@@ -17918,6 +17921,12 @@ msgstr "这将永久删除您的双重身份验证方法。<0/>由于您的工�
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "This will revoke {0} for {userLabel}."
 msgstr "这将收回 {userLabel} 的 {0}。"
+
+#. js-lingui-id: DXNxPk
+#. placeholder {0}: registration.name
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "This will upgrade \"{0}\" to its latest available version on every workspace that already has it installed. Workspaces without the app are not affected. It runs as a background job and may take a while. Continue?"
+msgstr ""
 
 #. js-lingui-id: f8HOUp
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
@@ -18852,8 +18861,15 @@ msgstr "正在更新..."
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "Upgrade"
 msgstr "升级"
+
+#. js-lingui-id: 8guwMM
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "Upgrade existing installations"
+msgstr ""
 
 #. js-lingui-id: IEtN5Y
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -18869,6 +18885,11 @@ msgstr "所有工作区的升级健康状况"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "Upgrade health across instance and workspaces"
 msgstr "实例和工作区的升级健康状况"
+
+#. js-lingui-id: Ngj5VX
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "Upgrade started. Existing installations will be upgraded to the latest version in the background."
+msgstr ""
 
 #. js-lingui-id: 5UfQvA
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx

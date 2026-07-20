@@ -7,7 +7,9 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   jotaiStore,
@@ -30,7 +32,7 @@ type RenderHooksOptions = {
 };
 
 const renderHooks = (
-  onboardingStatus: OnboardingStatus,
+  onboardingStatus: OnboardingStatus | null,
   {
     withSubscription = false,
     isBillingEnabled = false,
@@ -46,6 +48,9 @@ const renderHooks = (
       const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
       const setBilling = useSetAtomState(billingState);
       const setNextOnboardingStatus = useSetNextOnboardingStatus();
+      const isWelcomeAnimationVisible = useAtomStateValue(
+        isWelcomeAnimationVisibleState,
+      );
       return {
         currentUser,
         setCurrentUser,
@@ -53,6 +58,7 @@ const renderHooks = (
         setCurrentUserWorkspace,
         setBilling,
         setNextOnboardingStatus,
+        isWelcomeAnimationVisible,
       };
     },
     {
@@ -78,7 +84,10 @@ const renderHooks = (
   act(() => {
     result.current.setNextOnboardingStatus();
   });
-  return result.current.currentUser?.onboardingStatus;
+  return {
+    nextOnboardingStatus: result.current.currentUser?.onboardingStatus,
+    isWelcomeAnimationVisible: result.current.isWelcomeAnimationVisible,
+  };
 };
 
 describe('useSetNextOnboardingStatus', () => {
@@ -87,41 +96,50 @@ describe('useSetNextOnboardingStatus', () => {
   });
 
   it('should sync emails right after workspace activation', () => {
-    const nextOnboardingStatus = renderHooks(
+    const { nextOnboardingStatus, isWelcomeAnimationVisible } = renderHooks(
       OnboardingStatus.WORKSPACE_ACTIVATION,
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.SYNC_EMAIL);
+    expect(isWelcomeAnimationVisible).toBe(false);
   });
 
   it('should install apps after syncing emails', () => {
-    const nextOnboardingStatus = renderHooks(OnboardingStatus.SYNC_EMAIL);
+    const { nextOnboardingStatus, isWelcomeAnimationVisible } = renderHooks(
+      OnboardingStatus.SYNC_EMAIL,
+    );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.APPS_INSTALLATION);
+    expect(isWelcomeAnimationVisible).toBe(false);
   });
 
   it('should create profile after installing apps', () => {
-    const nextOnboardingStatus = renderHooks(
+    const { nextOnboardingStatus, isWelcomeAnimationVisible } = renderHooks(
       OnboardingStatus.APPS_INSTALLATION,
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.PROFILE_CREATION);
+    expect(isWelcomeAnimationVisible).toBe(false);
   });
 
   it('should invite the team right after profile creation', () => {
-    const nextOnboardingStatus = renderHooks(OnboardingStatus.PROFILE_CREATION);
+    const { nextOnboardingStatus, isWelcomeAnimationVisible } = renderHooks(
+      OnboardingStatus.PROFILE_CREATION,
+    );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.INVITE_TEAM);
+    expect(isWelcomeAnimationVisible).toBe(false);
   });
 
   it('should complete after profile creation when more than 1 workspaceMember exist', () => {
-    const nextOnboardingStatus = renderHooks(
+    const { nextOnboardingStatus, isWelcomeAnimationVisible } = renderHooks(
       OnboardingStatus.PROFILE_CREATION,
       {
         withOneWorkspaceMember: false,
       },
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
+    expect(isWelcomeAnimationVisible).toBe(true);
   });
 
   it('should require a plan after profile creation when billing is enabled and the workspace has no subscription', () => {
-    const nextOnboardingStatus = renderHooks(
+    const { nextOnboardingStatus, isWelcomeAnimationVisible } = renderHooks(
       OnboardingStatus.PROFILE_CREATION,
       {
         withOneWorkspaceMember: false,
@@ -130,26 +148,53 @@ describe('useSetNextOnboardingStatus', () => {
       },
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.PLAN_REQUIRED);
+    expect(isWelcomeAnimationVisible).toBe(false);
   });
 
   it('should complete after inviting the team when billing is disabled', () => {
-    const nextOnboardingStatus = renderHooks(OnboardingStatus.INVITE_TEAM);
+    const { nextOnboardingStatus, isWelcomeAnimationVisible } = renderHooks(
+      OnboardingStatus.INVITE_TEAM,
+    );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
+    expect(isWelcomeAnimationVisible).toBe(true);
   });
 
   it('should complete after inviting the team when the workspace already has a subscription', () => {
-    const nextOnboardingStatus = renderHooks(OnboardingStatus.INVITE_TEAM, {
-      isBillingEnabled: true,
-      withSubscription: true,
-    });
+    const { nextOnboardingStatus, isWelcomeAnimationVisible } = renderHooks(
+      OnboardingStatus.INVITE_TEAM,
+      {
+        isBillingEnabled: true,
+        withSubscription: true,
+      },
+    );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
+    expect(isWelcomeAnimationVisible).toBe(true);
   });
 
   it('should require a plan after inviting the team when billing is enabled and the workspace has no subscription', () => {
-    const nextOnboardingStatus = renderHooks(OnboardingStatus.INVITE_TEAM, {
-      isBillingEnabled: true,
-      withSubscription: false,
-    });
+    const { nextOnboardingStatus, isWelcomeAnimationVisible } = renderHooks(
+      OnboardingStatus.INVITE_TEAM,
+      {
+        isBillingEnabled: true,
+        withSubscription: false,
+      },
+    );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.PLAN_REQUIRED);
+    expect(isWelcomeAnimationVisible).toBe(false);
+  });
+
+  it('should not show the welcome animation when the onboarding was already completed', () => {
+    const { nextOnboardingStatus, isWelcomeAnimationVisible } = renderHooks(
+      OnboardingStatus.COMPLETED,
+    );
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
+    expect(isWelcomeAnimationVisible).toBe(false);
+  });
+
+  it('should not show the welcome animation when the onboarding status is unknown', () => {
+    const { nextOnboardingStatus, isWelcomeAnimationVisible } =
+      renderHooks(null);
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
+    expect(isWelcomeAnimationVisible).toBe(false);
   });
 });

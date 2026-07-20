@@ -2869,6 +2869,11 @@ msgstr "Авто-створення"
 msgid "Auto-generated role for {agentDisplayName}"
 msgstr ""
 
+#. js-lingui-id: /nv0ml
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
+msgid "Auto-upgrade"
+msgstr ""
+
 #. js-lingui-id: YRT7ZW
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Automatically create contacts for people you've participated in an event with."
@@ -2888,6 +2893,11 @@ msgstr "Автоматично створювати записи Людей пр
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
 msgid "Automatically install this app on every newly created workspace"
 msgstr "Автоматично встановлювати цей застосунок у кожен новостворений робочий простір"
+
+#. js-lingui-id: XFGV21
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
+msgid "Automatically upgrade this application when a new version is published"
+msgstr ""
 
 #. js-lingui-id: BJgDIM
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
@@ -2948,16 +2958,6 @@ msgstr "Повернутися до вмісту"
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
 msgid "Back to settings"
 msgstr "Назад до налаштувань"
-
-#. js-lingui-id: aHL20j
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Backfill"
-msgstr "Доустановлення"
-
-#. js-lingui-id: mpBETK
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Backfill installation"
-msgstr "Доустановлення"
 
 #. js-lingui-id: RJnYR0
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
@@ -4063,7 +4063,7 @@ msgstr "Коми та крапка"
 msgid "Comment"
 msgstr ""
 
-#. js-lingui-id: UK5bhd
+#. js-lingui-id: hZotg6
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -4071,8 +4071,8 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
-msgid "Communications"
-msgstr "Комунікації"
+msgid "Communication"
+msgstr ""
 
 #. js-lingui-id: chL5IG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -8040,6 +8040,11 @@ msgstr "Не вдалося встановити режим технічного
 msgid "Failed to start backfill"
 msgstr "Не вдалося розпочати заповнення даних"
 
+#. js-lingui-id: SwXGP6
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "Failed to start upgrade"
+msgstr ""
+
 #. js-lingui-id: OX7bKt
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Failed to synchronize the marketplace catalog."
@@ -8049,6 +8054,11 @@ msgstr "Не вдалося синхронізувати каталог марк
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Failed to transfer ownership. Check that the subdomain is correct."
 msgstr "Не вдалося передати право власності. Переконайтеся, що піддомен указано правильно."
+
+#. js-lingui-id: UNwpjb
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
+msgid "Failed to update auto-upgrade setting."
+msgstr ""
 
 #. js-lingui-id: 2D6TRg
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -8717,6 +8727,7 @@ msgstr "Gemini CLI"
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationGeneralSection.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -8816,11 +8827,6 @@ msgstr "Повернутися"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Go to billing portal"
 msgstr "Перейти до порталу виставлення рахунків"
-
-#. js-lingui-id: ABs8Dj
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Go to documentation"
-msgstr "Перейти до документації"
 
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
@@ -9712,6 +9718,7 @@ msgstr "Вкажіть свої платіжні дані, щоб отримат
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/pages/onboarding/InstallAppsContent.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
@@ -9728,11 +9735,6 @@ msgstr "Встановити {appDisplayName} у свій робочий про�
 msgid "Install and manage applications"
 msgstr "Встановіть і керуйте застосунками"
 
-#. js-lingui-id: 7rG5Kz
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "Install latest version on all workspaces"
-msgstr "Встановити останню версію в усіх робочих просторах"
-
 #. js-lingui-id: 0RAaKu
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -9741,6 +9743,12 @@ msgstr "Встановити останню версію в усіх робоч�
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Install link"
 msgstr "Посилання для встановлення"
+
+#. js-lingui-id: xif494
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
+msgid "Install on all workspaces"
+msgstr ""
 
 #. js-lingui-id: K8iwJx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -11719,11 +11727,6 @@ msgstr "Пункти навігаційного меню"
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
 msgid "Navigation tabs"
 msgstr "Навігаційні вкладки"
-
-#. js-lingui-id: C0P5zd
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Need help to configure your shared mailbox?"
-msgstr "Потрібна допомога з налаштуванням спільної поштової скриньки?"
 
 #. js-lingui-id: wW3b68
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx
@@ -17942,11 +17945,11 @@ msgstr "Це від'єднає всі моделі від цього прова�
 msgid "This will grant {0} to {userLabel}."
 msgstr "Це надасть {0} користувачу {userLabel}."
 
-#. js-lingui-id: jn8Xjg
+#. js-lingui-id: rr0iQF
 #. placeholder {0}: registration.name
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
-msgid "This will install the latest version of \"{0}\" on all existing active and suspended workspaces, upgrading any workspace that already has an older version. It runs as a background job and may take a while. Continue?"
-msgstr "Буде встановлено останню версію \"{0}\" на всі чинні активні та призупинені робочі простори, оновивши ті, де вже встановлено старішу версію. Дія виконується як фонове завдання й може зайняти певний час. Продовжити?"
+msgid "This will install the latest version of \"{0}\" on all existing active and suspended workspaces, including the ones that don't have it yet. It runs as a background job and may take a while. Continue?"
+msgstr ""
 
 #. js-lingui-id: y8xx3L
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
@@ -17973,6 +17976,12 @@ msgstr "Це назавжди видалить ваш метод двофакт�
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "This will revoke {0} for {userLabel}."
 msgstr "Це відкличе {0} для користувача {userLabel}."
+
+#. js-lingui-id: DXNxPk
+#. placeholder {0}: registration.name
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "This will upgrade \"{0}\" to its latest available version on every workspace that already has it installed. Workspaces without the app are not affected. It runs as a background job and may take a while. Continue?"
+msgstr ""
 
 #. js-lingui-id: f8HOUp
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
@@ -18907,8 +18916,15 @@ msgstr "Оновлення..."
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "Upgrade"
 msgstr "Оновити"
+
+#. js-lingui-id: 8guwMM
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "Upgrade existing installations"
+msgstr ""
 
 #. js-lingui-id: IEtN5Y
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -18924,6 +18940,11 @@ msgstr "Стан оновлення в усіх робочих простора�
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "Upgrade health across instance and workspaces"
 msgstr "Стан оновлення екземпляра та робочих просторів"
+
+#. js-lingui-id: Ngj5VX
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+msgid "Upgrade started. Existing installations will be upgraded to the latest version in the background."
+msgstr ""
 
 #. js-lingui-id: 5UfQvA
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx

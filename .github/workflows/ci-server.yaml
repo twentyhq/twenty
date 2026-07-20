@@ -376,6 +376,10 @@ jobs:
     needs: server-build
     timeout-minutes: 30
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -389,11 +393,8 @@ jobs:
           key: ${{ env.SERVER_BUILD_CACHE_KEY }}
       - name: Build twenty-shared
         run: npx nx build twenty-shared
-      - name: Server / Run Tests
-        uses: ./.github/actions/nx-affected
-        with:
-          tag: scope:backend
-          tasks: test
+      - name: Server / Run Tests (shard ${{ matrix.shard }}/4)
+        run: npx nx run twenty-server:test:ci --shard=${{ matrix.shard }}/4
 
   server-integration-test:
     timeout-minutes: 30

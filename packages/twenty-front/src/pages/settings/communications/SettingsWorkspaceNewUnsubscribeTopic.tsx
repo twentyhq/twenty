@@ -80,7 +80,7 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
           href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: t`Communications`,
+          children: t`Communication`,
           href: getSettingsPath(SettingsPath.WorkspaceCommunications),
         },
         { children: t`New Unsubscribe Topic` },
