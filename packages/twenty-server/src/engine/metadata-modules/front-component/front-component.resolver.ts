@@ -72,9 +72,10 @@ export class FrontComponentResolver {
         userId: user.id,
       });
 
-    const { applicationVariableMaps } =
+    const { applicationVariableMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspace.id, [
         'applicationVariableMaps',
+        'flatApplicationMaps',
       ]);
 
     const variableUniversalIdentifiers =
@@ -92,11 +93,6 @@ export class FrontComponentResolver {
     const applicationVariables = stripSecretFromApplicationVariables(
       flatApplicationVariables,
     );
-
-    const { flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspace.id, [
-        'flatApplicationMaps',
-      ]);
 
     const application = flatApplicationMaps.byId[dto.applicationId];
 

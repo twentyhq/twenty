@@ -32,7 +32,6 @@ import {
   type GenerateSdkClientJobData,
 } from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job-constants';
 import { type SdkClientGenerationTrigger } from 'src/engine/core-modules/sdk-client/types/sdk-client-generation-trigger.type';
-import { getCurrentSdkMetadataModuleChecksum } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
@@ -235,7 +234,7 @@ export class SdkClientGenerationService {
         'flatApplicationMaps',
       ]);
 
-      await this.broadcastSdkClientChecksumsUpdate({
+      await this.broadcastSdkClientCoreChecksumUpdate({
         workspaceId,
         applicationId,
         sdkClientCoreChecksum,
@@ -252,14 +251,21 @@ export class SdkClientGenerationService {
     }
   }
 
-  // The application entity is not part of the syncable metadata event system
-  // (ALL_METADATA_NAME), so mounted front components would keep their
-  // session-old SDK checksums until a reload. Broadcasting here lets clients
-  // rebuild the content-addressed SDK URLs as soon as regeneration completes.
-  // The metadata checksum is instance-wide (installed package hash), included
-  // so clients receive the full checksum pair in one event.
+  // Only the core checksum is broadcast: it is persisted per application on
+  // the application row, which is not part of the syncable metadata event
+  // system (ALL_METADATA_NAME), so without this event mounted front components
+  // would keep their session-old core checksum until a reload. Broadcasting
+  // here lets clients rebuild the content-addressed core SDK URL as soon as
+  // regeneration completes.
+  //
+  // The metadata checksum is deliberately NOT broadcast: it is instance-wide
+  // (installed package hash), never persisted, and only changes on a server
+  // release. The frontComponent resolver serves it fresh on every query, and a
+  // release drops all SSE connections anyway, so clients pick up a new metadata
+  // checksum on the reconnect refetch — no dedicated event needed.
+  //
   // Best-effort: a lost event only delays the refresh until the next reload.
-  private async broadcastSdkClientChecksumsUpdate({
+  private async broadcastSdkClientCoreChecksumUpdate({
     workspaceId,
     applicationId,
     sdkClientCoreChecksum,
@@ -269,9 +275,6 @@ export class SdkClientGenerationService {
     sdkClientCoreChecksum: string;
   }): Promise<void> {
     try {
-      const sdkClientMetadataChecksum =
-        await getCurrentSdkMetadataModuleChecksum();
-
       await this.workspaceEventBroadcaster.broadcast({
         workspaceId,
         events: [
@@ -284,7 +287,6 @@ export class SdkClientGenerationService {
               after: {
                 id: applicationId,
                 sdkClientCoreChecksum,
-                sdkClientMetadataChecksum,
               },
             },
           },
@@ -292,7 +294,7 @@ export class SdkClientGenerationService {
       });
     } catch (error) {
       this.logger.warn(
-        `Failed to broadcast SDK client checksums update for application ${applicationId} in workspace ${workspaceId}`,
+        `Failed to broadcast SDK client core checksum update for application ${applicationId} in workspace ${workspaceId}`,
         error,
       );
     }

@@ -31,12 +31,9 @@ export const useUpdateSdkClientChecksumsApolloCache = ({
       return;
     }
 
-    const { sdkClientCoreChecksum, sdkClientMetadataChecksum } = updatedRecord;
+    const { sdkClientCoreChecksum } = updatedRecord;
 
-    if (
-      !isDefined(sdkClientCoreChecksum) ||
-      !isDefined(sdkClientMetadataChecksum)
-    ) {
+    if (!isDefined(sdkClientCoreChecksum)) {
       return;
     }
 
@@ -46,7 +43,18 @@ export const useUpdateSdkClientChecksumsApolloCache = ({
         variables: { id: frontComponentId },
       },
       (existingData) => {
-        if (!isDefined(existingData?.frontComponent)) {
+        const existingChecksums =
+          existingData?.frontComponent?.sdkClientChecksums;
+
+        // The metadata checksum only ever comes from the resolver query; the
+        // event carries the core checksum alone. Without an already-cached
+        // pair we cannot form a valid SdkClientChecksums, so we leave the cache
+        // untouched and let the next refetch populate both (the URL falls back
+        // to the bare, non-content-addressed form in the meantime).
+        if (
+          !isDefined(existingData?.frontComponent) ||
+          !isDefined(existingChecksums)
+        ) {
           return existingData;
         }
 
@@ -55,9 +63,8 @@ export const useUpdateSdkClientChecksumsApolloCache = ({
           frontComponent: {
             ...existingData.frontComponent,
             sdkClientChecksums: {
-              __typename: 'SdkClientChecksums' as const,
+              ...existingChecksums,
               core: sdkClientCoreChecksum,
-              metadata: sdkClientMetadataChecksum,
             },
           },
         };
