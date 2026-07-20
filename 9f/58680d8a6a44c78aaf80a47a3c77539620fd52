@@ -1,0 +1,65 @@
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/save-message-campaign-draft.input.ts
+  s_11e59742733dbd::t_6f9686c9ff0ba3 1-37
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/message-campaign-draft.dto.ts
+  s_11e59742733dbd::t_32d43e21ffa154 1-7
+packages/twenty-front/src/modules/activities/emails/hooks/useCampaignComposerState.ts
+  s_11e59742733dbd::t_996e026fa69fe2 42-43,45
+  s_11e59742733dbd::t_4e2659ff900e86 3
+  s_11e59742733dbd::t_cd7da41819074c 23-30
+packages/twenty-front/src/modules/activities/emails/hooks/__tests__/useCampaignComposerState.test.ts
+  s_11e59742733dbd::t_fbb01184580d54 35-38
+  s_11e59742733dbd::t_b96b7691c8c68a 4,8,13,16
+  s_11e59742733dbd::t_dd22cff6c0be34 123-134
+  s_11e59742733dbd::t_87af987bca03c2 87
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_11e59742733dbd::t_1c0d6defea8b48 2368-2372,2692,3472-3476,5127-5135,5204,6540-6546,9017
+packages/twenty-server/src/engine/core-modules/emailing-domain/exceptions/email-group-access.exception.ts
+  s_11e59742733dbd::t_326a3481fa691c 14
+  s_11e59742733dbd::t_cfb0ee6f186c2f 23
+packages/twenty-front/src/modules/activities/emails/hooks/useCampaignDraftAutosave.ts
+  s_11e59742733dbd::t_6a67bcec8701e1 68
+  s_11e59742733dbd::t_59f0b36663f3ad 86,93
+  s_11e59742733dbd::t_f3e0b761eb9882 2
+  s_11e59742733dbd::t_bd4e2a214b59f6 74
+  s_11e59742733dbd::t_ce39683cd05b21 34
+  s_11e59742733dbd::t_caeea269753c51 1,3-33,35-67,69-73,75-85,87-92,94-103
+packages/twenty-front/src/modules/activities/emails/hooks/useSendMessageCampaign.ts
+  s_11e59742733dbd::t_5f998db2d3b895 13
+packages/twenty-server/src/engine/core-modules/emailing-domain/filters/email-group-access-graphql-api-exception.filter.ts
+  s_11e59742733dbd::t_4ee8b59320e21c 12
+  s_11e59742733dbd::t_2c8b8665a1cb6d 24-25
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/send-message-campaign.input.ts
+  s_11e59742733dbd::t_39b2fdb5edaf8e 14-18
+packages/twenty-server/src/modules/emailing/services/message-campaign.service.ts
+  s_11e59742733dbd::t_ffac2dc23851c5 235-254
+  s_11e59742733dbd::t_e25fffe0b3c6af 71,79-96
+  s_11e59742733dbd::t_73047237990091 653-658,660
+  s_11e59742733dbd::t_63ef7d7f2a4fef 123-136
+  s_11e59742733dbd::t_089a46a4589cdc 181
+  s_11e59742733dbd::t_a311c385e46d5c 592-619,624,626-652,659,661-669
+  s_11e59742733dbd::t_835b6e3f9643ad 65
+  s_11e59742733dbd::t_de500ec593f05d 620-623,625
+  s_11e59742733dbd::t_d40ade0f595b11 97
+packages/twenty-front/src/modules/activities/emails/graphql/mutations/saveMessageCampaignDraft.ts
+  s_11e59742733dbd::t_4cacfba62e85b9 1-9
+packages/twenty-server/src/modules/emailing/resolvers/emailing-send.resolver.ts
+  s_11e59742733dbd::t_ebbadbe7fb2f00 11,13
+  s_11e59742733dbd::t_07da33dc88d43f 101-121
+  s_11e59742733dbd::t_a9831aaae0210c 92
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "9f58680d8a6a44c78aaf80a47a3c77539620fd52",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
