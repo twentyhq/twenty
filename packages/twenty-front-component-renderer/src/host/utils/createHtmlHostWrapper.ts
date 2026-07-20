@@ -49,8 +49,7 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
       ...(isIframe && {
         sandbox: sanitizeIframeSandbox(reactBindableProps.sandbox),
       }),
-      // A native form submission navigates away and closes the page. React 19
-      // also blocks the previous `action="javascript:void(0)"` guard.
+      // React 19 blocks the previous `action="javascript:void(0)"` guard.
       ...(isForm && {
         onSubmit: preventDefaultThenForwardToRemote(
           reactBindableProps.onSubmit,

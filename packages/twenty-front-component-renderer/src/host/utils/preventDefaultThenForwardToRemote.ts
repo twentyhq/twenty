@@ -2,8 +2,8 @@ import { isFunction } from '@sniptt/guards';
 
 import { type RemoteEventHandler } from '@/host/types/RemoteEventHandler';
 
-// A remote handler crosses the remote-dom boundary asynchronously, so its own
-// preventDefault lands after the browser already acted on the event.
+// A remote handler crosses the boundary asynchronously, so its own
+// preventDefault would land after the browser already acted.
 export const preventDefaultThenForwardToRemote =
   (remoteHandler: unknown) => (event: { preventDefault: () => void }) => {
     event.preventDefault();

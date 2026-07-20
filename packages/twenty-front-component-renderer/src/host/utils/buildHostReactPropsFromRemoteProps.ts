@@ -11,9 +11,7 @@ import { type SerializedEventData } from '@/types/SerializedEventData';
 
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components']);
 
-// remote-dom sends handler props under the React spelling, the DOM spelling or
-// anything in between, so both are indexed: `dblclick` arrives as either
-// `ondblclick` or `onDoubleClick`.
+// Both spellings are indexed: dblclick arrives as ondblclick or onDoubleClick.
 const LOWERCASE_EVENT_PROP_TO_REACT_PROP: Record<string, string> =
   Object.fromEntries(
     Object.entries(DOM_EVENT_TYPE_TO_REACT_PROP).flatMap(
@@ -42,9 +40,8 @@ export const buildHostReactPropsFromRemoteProps = (
       continue;
     }
 
-    // A guest can put any property name on the wire via updateRemoteProperty,
-    // so an unmapped handler name is dropped rather than forwarded: React binds
-    // every camelCase on* prop it recognizes, allow-listed or not.
+    // A guest can put any property name on the wire, and React binds every on*
+    // prop it recognizes, so unmapped handler names are dropped.
     if (isEventHandlerKey(remotePropName)) {
       const reactPropName =
         LOWERCASE_EVENT_PROP_TO_REACT_PROP[remotePropName.toLowerCase()];
