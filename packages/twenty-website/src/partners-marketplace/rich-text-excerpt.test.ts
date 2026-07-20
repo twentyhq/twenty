@@ -11,3 +11,13 @@ test('truncates with an ellipsis', () => {
   expect(out.length).toBeLessThanOrEqual(51);
   expect(out.endsWith('…')).toBe(true);
 });
+test('preserves markdown-marker characters used inline, not as syntax', () => {
+  expect(richTextExcerpt('We use C# and ship up-to-date tooling.')).toBe(
+    'We use C# and ship up-to-date tooling.',
+  );
+});
+test('strips a blockquote marker only at the start of a line', () => {
+  expect(richTextExcerpt('> A quote\n\nRegular text > inline.')).toBe(
+    'A quote Regular text > inline.',
+  );
+});

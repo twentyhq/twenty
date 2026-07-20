@@ -31,6 +31,7 @@ export function CaseStudyModal({
   const bodyRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<Element | null>(null);
+  const previousOverflowRef = useRef('');
   const onCloseRef = useRef(onClose);
 
   useEffect(() => {
@@ -52,11 +53,12 @@ export function CaseStudyModal({
   }, [index, openIndex]);
 
   useEffect(() => {
-    if (openIndex === null) {
+    if (openIndex === null || cases[openIndex] === undefined) {
       return undefined;
     }
 
     previousFocusRef.current = document.activeElement;
+    previousOverflowRef.current = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     closeButtonRef.current?.focus();
 
@@ -95,13 +97,13 @@ export function CaseStudyModal({
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
+      document.body.style.overflow = previousOverflowRef.current;
 
       if (previousFocusRef.current instanceof HTMLElement) {
         previousFocusRef.current.focus();
       }
     };
-  }, [openIndex]);
+  }, [openIndex, cases]);
 
   if (openIndex === null || !mounted) {
     return null;

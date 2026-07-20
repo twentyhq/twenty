@@ -28,8 +28,10 @@ export const RichText = ({ markdown }: { markdown: string }) => (
     components={{
       h1: ({ children }) => <h3>{children}</h3>,
       h2: ({ children }) => <h3>{children}</h3>,
-      a: ({ href, children }) => (
-        <ExternalLink href={href ?? '#'}>{children}</ExternalLink>
+      a: ({ href, title, children }) => (
+        <ExternalLink href={href ?? '#'} title={title}>
+          {children}
+        </ExternalLink>
       ),
     }}
   >

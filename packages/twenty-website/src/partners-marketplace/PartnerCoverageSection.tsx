@@ -102,7 +102,7 @@ export function PartnerCoverageSection({
             <CoverageGroup key={scope.value}>
               <CoverageLabel>{i18n._(scope.label)}</CoverageLabel>
               <Body as="p" muted size="sm">
-                ex. {i18n._(scope.examples)}
+                {i18n._(msg`ex. ${i18n._(scope.examples)}`)}
               </Body>
             </CoverageGroup>
           ))}

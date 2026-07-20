@@ -53,7 +53,7 @@ export function CaseStudyVisual({
 }) {
   return (
     <VisualFrame data-size={size}>
-      <img alt={alt ?? ''} src={imageUrl} />
+      <img alt={alt ?? ''} loading="lazy" src={imageUrl} />
     </VisualFrame>
   );
 }
