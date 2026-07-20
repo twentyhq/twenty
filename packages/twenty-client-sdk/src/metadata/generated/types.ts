@@ -8867,6 +8867,15 @@ export default {
                     ]
                 }
             ],
+            "getAuthTokensFromSsoExchangeToken": [
+                256,
+                {
+                    "ssoExchangeToken": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "authorizeApp": [
                 242,
                 {
