@@ -28,7 +28,9 @@ export const rescheduleRecallBot = async ({
     return { ok: false, status: null, errorMessage: configResult.error };
   }
 
-  const automaticLeave = getRecallBotAutomaticLeave();
+  const automaticLeave = getRecallBotAutomaticLeave({
+    botName: configResult.config.botName,
+  });
 
   const result = await recallBotApiRequest<RecallBotResponse>({
     config: configResult.config,

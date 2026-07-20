@@ -84,6 +84,15 @@ describe('recall bot api', () => {
       meeting_url: 'https://meet.google.com/abc-defg-hij',
       join_at: '2026-01-01T13:00:00.000Z',
       bot_name: 'Call Recorder',
+      automatic_leave: {
+        bot_detection: {
+          using_participant_names: {
+            matches: expect.arrayContaining(['Call Recorder', 'notetaker']),
+            activate_after: 1,
+            timeout: 2,
+          },
+        },
+      },
       recording_config: {
         video_mixed_mp4: {},
         audio_mixed_mp3: {},

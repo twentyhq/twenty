@@ -3,6 +3,8 @@ import { defineApplication, FieldType } from 'twenty-sdk/define';
 import { APP_DESCRIPTION } from 'src/constants/app-description';
 import { APP_DISPLAY_NAME } from 'src/constants/app-display-name';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/application-universal-identifier';
+import { CALL_RECORDER_BOT_DETECTION_ADDITIONAL_NAMES_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-bot-detection-additional-names-app-variable-universal-identifier';
+import { CALL_RECORDER_BOT_DETECTION_USING_PARTICIPANT_EVENTS_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-bot-detection-using-participant-events-enabled-app-variable-universal-identifier';
 import { CALL_RECORDER_BOT_IMAGE_BACKGROUND_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-bot-image-background-app-variable-universal-identifier';
 import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-everyone-left-timeout-seconds-app-variable-universal-identifier';
 import { CALL_RECORDER_JOIN_EARLY_MINUTES_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-join-early-minutes-app-variable-universal-identifier';
@@ -12,6 +14,8 @@ import { CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_APP_VARIABLE_UNIVERSAL_IDENTIFI
 import { CALL_RECORDER_SUMMARY_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-summary-enabled-app-variable-universal-identifier';
 import { CALL_RECORDER_USE_WORKSPACE_LOGO_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-use-workspace-logo-app-variable-universal-identifier';
 import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-waiting-room-timeout-seconds-app-variable-universal-identifier';
+import { CALL_RECORDER_BOT_DETECTION_ADDITIONAL_NAMES_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-bot-detection-additional-names-env-var-name';
+import { CALL_RECORDER_BOT_DETECTION_USING_PARTICIPANT_EVENTS_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-bot-detection-using-participant-events-enabled-env-var-name';
 import { CALL_RECORDER_BOT_IMAGE_BACKGROUND_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-bot-image-background-env-var-name';
 import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS } from 'src/logic-functions/constants/call-recorder-everyone-left-timeout-seconds';
 import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-everyone-left-timeout-seconds-env-var-name';
@@ -25,6 +29,7 @@ import { CALL_RECORDER_SUMMARY_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/
 import { CALL_RECORDER_USE_WORKSPACE_LOGO_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-use-workspace-logo-env-var-name';
 import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS } from 'src/logic-functions/constants/call-recorder-waiting-room-timeout-seconds';
 import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-waiting-room-timeout-seconds-env-var-name';
+import { DEFAULT_CALL_RECORDER_BOT_DETECTION_USING_PARTICIPANT_EVENTS_ENABLED } from 'src/logic-functions/constants/default-call-recorder-bot-detection-using-participant-events-enabled';
 import { DEFAULT_CALL_RECORDER_BOT_IMAGE_BACKGROUND } from 'src/logic-functions/constants/default-call-recorder-bot-image-background';
 import { DEFAULT_CALL_RECORDER_JOIN_EARLY_MINUTES } from 'src/logic-functions/constants/default-call-recorder-join-early-minutes';
 import { DEFAULT_CALL_RECORDER_NAME } from 'src/logic-functions/constants/default-call-recorder-name';
@@ -88,6 +93,25 @@ export default defineApplication({
       type: FieldType.NUMBER,
       value: CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS,
     },
+    [CALL_RECORDER_BOT_DETECTION_ADDITIONAL_NAMES_ENV_VAR_NAME]: {
+      universalIdentifier:
+        CALL_RECORDER_BOT_DETECTION_ADDITIONAL_NAMES_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      description:
+        'Comma-separated participant names treated as recording bots (in addition to the recorder itself and common notetakers), so the bot leaves once only bots remain. Case-insensitive substring match, e.g. "Otter, Fireflies, Acme Notetaker".',
+      isSecret: false,
+      type: FieldType.TEXT,
+    },
+    [CALL_RECORDER_BOT_DETECTION_USING_PARTICIPANT_EVENTS_ENABLED_ENV_VAR_NAME]:
+      {
+        universalIdentifier:
+          CALL_RECORDER_BOT_DETECTION_USING_PARTICIPANT_EVENTS_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+        description:
+          'Whether to also treat a participant that never speaks or shares as a bot. Off by default because it can misidentify a silent human; enable only if unnamed recording bots keep meetings open.',
+        isSecret: false,
+        type: FieldType.BOOLEAN,
+        value:
+          DEFAULT_CALL_RECORDER_BOT_DETECTION_USING_PARTICIPANT_EVENTS_ENABLED,
+      },
     [CALL_RECORDER_SUMMARY_ENABLED_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_SUMMARY_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
