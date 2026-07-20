@@ -1,0 +1,21 @@
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service.ts
+  s_db0de5da096547::t_8574a0d6ccae40 155-156
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service.ts
+  s_db0de5da096547::t_b7a0ac419446a4 157-158
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "048bfc695fac3d5e00966b5d7af37be8b56f37c2",
+  "prompts": {},
+  "sessions": {
+    "s_db0de5da096547": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b7f7c885-8913-40f8-aa4b-08cbaef5ba93",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
