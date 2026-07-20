@@ -12,16 +12,15 @@ import {
 } from 'src/logic-functions/constants/recall-bot-detection-timeouts';
 import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
 import { getCallRecorderBotDetectionNameMatches } from 'src/logic-functions/utils/get-call-recorder-bot-detection-name-matches.util';
-import { isCallRecorderBotDetectionUsingParticipantEventsEnabled } from 'src/logic-functions/utils/is-call-recorder-bot-detection-using-participant-events-enabled.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 type RecallBotDetection = {
-  using_participant_names?: {
+  using_participant_names: {
     matches: string[];
     activate_after: number;
     timeout: number;
   };
-  using_participant_events?: {
+  using_participant_events: {
     activate_after: number;
     timeout: number;
   };
@@ -67,34 +66,25 @@ export const getRecallBotAutomaticLeave = ({
     };
   }
 
-  // everyone_left_timeout counts other recording bots as participants, so a call
-  // where only bots remain never triggers it. bot_detection makes Recall treat
-  // those bots as absent and leave once no humans are left.
+  // https://docs.recall.ai/docs/bot-detection
   automaticLeave.bot_detection = getRecallBotDetection(botName);
 
   return Object.keys(automaticLeave).length === 0 ? undefined : automaticLeave;
 };
 
-const getRecallBotDetection = (botName?: string): RecallBotDetection => {
-  const botDetection: RecallBotDetection = {
-    using_participant_names: {
-      matches: getCallRecorderBotDetectionNameMatches(botName),
-      activate_after:
-        RECALL_BOT_DETECTION_USING_PARTICIPANT_NAMES_ACTIVATE_AFTER_SECONDS,
-      timeout: RECALL_BOT_DETECTION_USING_PARTICIPANT_NAMES_TIMEOUT_SECONDS,
-    },
-  };
-
-  if (isCallRecorderBotDetectionUsingParticipantEventsEnabled()) {
-    botDetection.using_participant_events = {
-      activate_after:
-        RECALL_BOT_DETECTION_USING_PARTICIPANT_EVENTS_ACTIVATE_AFTER_SECONDS,
-      timeout: RECALL_BOT_DETECTION_USING_PARTICIPANT_EVENTS_TIMEOUT_SECONDS,
-    };
-  }
-
-  return botDetection;
-};
+const getRecallBotDetection = (botName?: string): RecallBotDetection => ({
+  using_participant_names: {
+    matches: getCallRecorderBotDetectionNameMatches(botName),
+    activate_after:
+      RECALL_BOT_DETECTION_USING_PARTICIPANT_NAMES_ACTIVATE_AFTER_SECONDS,
+    timeout: RECALL_BOT_DETECTION_USING_PARTICIPANT_NAMES_TIMEOUT_SECONDS,
+  },
+  using_participant_events: {
+    activate_after:
+      RECALL_BOT_DETECTION_USING_PARTICIPANT_EVENTS_ACTIVATE_AFTER_SECONDS,
+    timeout: RECALL_BOT_DETECTION_USING_PARTICIPANT_EVENTS_TIMEOUT_SECONDS,
+  },
+});
 
 const getOptionalPositiveIntegerVariable = (
   variableName: string,

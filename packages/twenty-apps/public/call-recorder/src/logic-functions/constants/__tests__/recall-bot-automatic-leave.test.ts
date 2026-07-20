@@ -6,8 +6,6 @@ const ENV_KEYS = [
   'CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS',
   'CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS',
   'CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS',
-  'CALL_RECORDER_BOT_DETECTION_ADDITIONAL_NAMES',
-  'CALL_RECORDER_BOT_DETECTION_USING_PARTICIPANT_EVENTS_ENABLED',
 ] as const;
 
 describe('getRecallBotAutomaticLeave', () => {
@@ -30,7 +28,7 @@ describe('getRecallBotAutomaticLeave', () => {
     }
   });
 
-  it('always enables name-based bot detection even when no timeout env vars are set', () => {
+  it('enables bot detection even when no timeout env vars are set', () => {
     const automaticLeave = getRecallBotAutomaticLeave();
 
     expect(automaticLeave).toBeDefined();
@@ -48,18 +46,6 @@ describe('getRecallBotAutomaticLeave', () => {
     ).toContain('Twenty.com');
   });
 
-  it('appends comma-separated additional names from the instance variable', () => {
-    process.env.CALL_RECORDER_BOT_DETECTION_ADDITIONAL_NAMES =
-      ' Acme Bot , Zoom Recorder ';
-
-    const matches =
-      getRecallBotAutomaticLeave()?.bot_detection?.using_participant_names
-        ?.matches ?? [];
-
-    expect(matches).toContain('Acme Bot');
-    expect(matches).toContain('Zoom Recorder');
-  });
-
   it('does not duplicate a bot name already present in the default matches (case-insensitive)', () => {
     const matches =
       getRecallBotAutomaticLeave({ botName: 'NoteTaker' })?.bot_detection
@@ -72,18 +58,7 @@ describe('getRecallBotAutomaticLeave', () => {
     expect(noteTakerEntries).toHaveLength(1);
   });
 
-  it('keeps behavioral (participant events) detection off by default', () => {
-    const automaticLeave = getRecallBotAutomaticLeave();
-
-    expect(
-      automaticLeave?.bot_detection?.using_participant_events,
-    ).toBeUndefined();
-  });
-
-  it('enables behavioral detection when the instance variable opts in', () => {
-    process.env.CALL_RECORDER_BOT_DETECTION_USING_PARTICIPANT_EVENTS_ENABLED =
-      'true';
-
+  it('enables behavioral (participant events) detection', () => {
     const automaticLeave = getRecallBotAutomaticLeave();
 
     expect(

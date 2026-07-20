@@ -91,6 +91,10 @@ describe('recall bot api', () => {
             activate_after: 1,
             timeout: 2,
           },
+          using_participant_events: {
+            activate_after: 300,
+            timeout: 10,
+          },
         },
       },
       recording_config: {
