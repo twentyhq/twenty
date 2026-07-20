@@ -230,7 +230,11 @@ export class OnboardingService {
     workspaceId: string;
   }) {
     try {
-      if (!(await this.isFirstWorkspaceUser({ workspaceId }))) {
+      const isFirstWorkspaceUser = await this.isFirstWorkspaceUser({
+        workspaceId,
+      });
+
+      if (!isFirstWorkspaceUser) {
         return;
       }
 

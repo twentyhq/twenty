@@ -1,20 +1,14 @@
 import { getOperationName } from '~/utils/getOperationName';
-import {
-  type Decorator,
-  type Meta,
-  type StoryObj,
-} from '@storybook/react-vite';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
-import { useEffect } from 'react';
 import { expect, within } from 'storybook/test';
 import { AppPath } from 'twenty-shared/types';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 import { GET_CURRENT_USER } from '~/modules/users/graphql/queries/getCurrentUser';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
-import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -25,14 +19,11 @@ import {
   mockedOnboardingUserData,
 } from '~/testing/mock-data/users';
 
-const InvitedWorkspaceDecorator: Decorator = (Story) => {
-  const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
-
-  useEffect(() => {
-    setCurrentWorkspace({ ...mockCurrentWorkspace, workspaceMembersCount: 2 });
-  }, [setCurrentWorkspace]);
-
-  return <Story />;
+const setWorkspaceMembersCount = (workspaceMembersCount: number) => {
+  jotaiStore.set(currentWorkspaceState.atom, {
+    ...mockCurrentWorkspace,
+    workspaceMembersCount,
+  });
 };
 
 const meta: Meta<PageDecoratorArgs> = {
@@ -63,7 +54,9 @@ export default meta;
 export type Story = StoryObj<typeof SyncEmails>;
 
 export const Default: Story = {
-  decorators: [WorkspaceDecorator],
+  beforeEach: () => {
+    setWorkspaceMembersCount(1);
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
     await canvas.findByText('Import your contacts');
@@ -72,7 +65,9 @@ export const Default: Story = {
 };
 
 export const InvitedUser: Story = {
-  decorators: [InvitedWorkspaceDecorator],
+  beforeEach: () => {
+    setWorkspaceMembersCount(2);
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
     await canvas.findByText('Import your contacts');
