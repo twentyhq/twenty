@@ -17,7 +17,7 @@ type FieldMetadataOneToManySyncableRelations =
 type Assertions = [
   // FieldMetadataEntity OneToMany relations (all targets):
   // - indexFieldMetadatas, fieldPermissions, viewFields, viewFilters,
-  // - kanbanAggregateOperationViews, calendarViews, mainGroupByFieldMetadataViews,
+  // - kanbanAggregateOperationViews, calendarViews, calendarEndViews, mainGroupByFieldMetadataViews,
   // - viewSorts, searchFieldMetadatas
   Expect<
     Equal<
@@ -28,6 +28,7 @@ type Assertions = [
       | 'viewFilters'
       | 'kanbanAggregateOperationViews'
       | 'calendarViews'
+      | 'calendarEndViews'
       | 'mainGroupByFieldMetadataViews'
       | 'viewSorts'
       | 'searchFieldMetadatas'
@@ -43,6 +44,7 @@ type Assertions = [
       | 'viewFilters'
       | 'kanbanAggregateOperationViews'
       | 'calendarViews'
+      | 'calendarEndViews'
       | 'mainGroupByFieldMetadataViews'
       | 'viewSorts'
       | 'searchFieldMetadatas'

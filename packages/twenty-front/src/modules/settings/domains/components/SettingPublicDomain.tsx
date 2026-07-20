@@ -93,7 +93,7 @@ export const SettingPublicDomain = () => {
       variables: { domain: selectedPublicDomain.domain },
       onCompleted: () => {
         enqueueSuccessSnackBar({
-          message: t`Public domain successfully deleted`,
+          message: t`Custom domain successfully deleted`,
         });
         navigate(SettingsPath.Applications);
         refetchPublicDomains();
@@ -132,7 +132,7 @@ export const SettingPublicDomain = () => {
       onCompleted: (data) => {
         setSelectedPublicDomain(data.createPublicDomain);
         enqueueSuccessSnackBar({
-          message: t`Public domain created successfully`,
+          message: t`Custom domain successfully created`,
         });
       },
       onError: (error) => {
@@ -146,7 +146,7 @@ export const SettingPublicDomain = () => {
 
   return (
     <SettingsPageLayout
-      title={t`Public domain`}
+      title={t`Custom Domain`}
       links={[
         {
           children: <Trans>Workspace</Trans>,
@@ -156,7 +156,7 @@ export const SettingPublicDomain = () => {
           children: <Trans>Apps</Trans>,
           href: getSettingsPath(SettingsPath.Applications),
         },
-        { children: <Trans>Public Domain</Trans> },
+        { children: <Trans>Custom Domain</Trans> },
       ]}
       actionButton={
         <SaveAndCancelButtons
@@ -169,8 +169,8 @@ export const SettingPublicDomain = () => {
       <SettingsPageContainer>
         <Section>
           <H2Title
-            title={t`Public domain`}
-            description={t`Set the name of your public domain and configure your DNS records.`}
+            title={t`Custom Domain`}
+            description={t`Set the name of your custom domain and configure your DNS records.`}
           />
           {isDefined(selectedPublicDomain) && (
             <CheckPublicDomainValidRecordsEffect
@@ -184,7 +184,7 @@ export const SettingPublicDomain = () => {
               error={newPublicDomainError}
               type="text"
               disabled={isDefined(selectedPublicDomain)}
-              placeholder="crm.yourPublicDomain.com"
+              placeholder="app.yourdomain.com"
               fullWidth
             />
             {isDefined(selectedPublicDomain) && (

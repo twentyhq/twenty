@@ -20,6 +20,10 @@ import { V2_16_UpgradeVersionCommandModule } from 'src/database/commands/upgrade
 import { V2_17_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-17/2-17-upgrade-version-command.module';
 import { V2_18_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-18/2-18-upgrade-version-command.module';
 import { V2_19_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-19/2-19-upgrade-version-command.module';
+import { V2_20_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-20/2-20-upgrade-version-command.module';
+import { V2_21_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-21/2-21-upgrade-version-command.module';
+import { V2_22_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-22/2-22-upgrade-version-command.module';
+import { V2_23_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-23/2-23-upgrade-version-command.module';
 
 @Module({
   imports: [
@@ -43,6 +47,10 @@ import { V2_19_UpgradeVersionCommandModule } from 'src/database/commands/upgrade
     V2_17_UpgradeVersionCommandModule,
     V2_18_UpgradeVersionCommandModule,
     V2_19_UpgradeVersionCommandModule,
+    V2_20_UpgradeVersionCommandModule,
+    V2_21_UpgradeVersionCommandModule,
+    V2_22_UpgradeVersionCommandModule,
+    V2_23_UpgradeVersionCommandModule,
   ],
 })
 export class WorkspaceCommandProviderModule {}

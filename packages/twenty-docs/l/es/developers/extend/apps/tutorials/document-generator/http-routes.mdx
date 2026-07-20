@@ -1,0 +1,150 @@
+---
+title: 3. Rutas HTTP
+icon: globe
+description: Activa la función sobre HTTP y renderiza documentos como páginas web.
+---
+
+El mismo manejador también puede responder a peticiones HTTP. Añadiremos dos rutas:
+
+* un endpoint **POST** para generar un documento, y
+* un endpoint público **GET** que renderiza un documento como una página web imprimible.
+
+Ambos usan `httpRouteTriggerSettings`. Las rutas de la aplicación se encuentran bajo la ruta `/s/`; en las instancias locales
+y autoalojadas, esa ruta la sirve tu servidor de Twenty
+(p. ej., `http://localhost:2020/s/documents/generate`). En Twenty Cloud, `RestApiClient`
+resuelve la ruta a través del dominio de funciones del espacio de trabajo.
+
+## Ruta POST — generar bajo demanda
+
+Esto reutiliza `generateDocumentHandler`, así que no hay lógica para repetir: solo un adaptador
+fino que lee el cuerpo de la solicitud.
+
+```ts filename="src/logic-functions/generate-document-route.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { generateDocumentHandler } from 'src/logic-functions/handlers/generate-document-handler';
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const body = event.body as Record<string, unknown> | null;
+
+  const result = await generateDocumentHandler({
+    templateId: (body?.templateId as string) ?? '',
+    recordId: (body?.recordId as string) ?? '',
+  });
+
+  // Map the handler's failure reason onto a real HTTP status (400/404/500)
+  // instead of always returning 200.
+  return new Response(JSON.stringify(result), {
+    status: result.success ? 200 : (result.status ?? 400),
+    headers: { 'Content-Type': 'application/json' },
+  });
+};
+
+export default defineLogicFunction({
+  universalIdentifier: GENERATE_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'generate-document-route',
+  timeoutSeconds: 30,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/generate',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+El manejador compartido devuelve un `status` sugerido en caso de fallo, así que la ruta puede
+responder con un código apropiado `4xx`/`5xx`. `isAuthRequired: true` significa que la persona que llama
+debe presentar un token válido — el componente frontal en el siguiente capítulo pasa el token de acceso del usuario
+automáticamente.
+
+## Ruta GET — renderizar como una página web
+
+Para devolver HTML en lugar de JSON, envuelve el cuerpo en un encabezado `Response` con una cabecera
+`Content-Type`. Esta ruta es pública (`isAuthRequired: false`) por lo que un documento generado
+puede ser compartido como un enlace.
+
+```ts filename="src/logic-functions/view-document.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { documentHtmlPage } from 'src/utils/render-document';
+
+const htmlResponse = (html: string, status = 200): Response =>
+  new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const documentId = event.queryStringParameters?.id;
+
+  if (!documentId) {
+    return htmlResponse(documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'), 400);
+  }
+
+  // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
+  const { documents } = await new CoreApiClient().query({
+    documents: {
+      __args: { filter: { id: { eq: documentId } }, first: 1 },
+      edges: { node: { id: true, name: true, content: true } },
+    },
+  });
+
+  const document = documents?.edges?.[0]?.node;
+  if (!document?.id) {
+    return htmlResponse(documentHtmlPage('Document not found', `No document with id ${documentId}.`), 404);
+  }
+
+  return htmlResponse(documentHtmlPage(document.name ?? 'Document', document.content ?? ''));
+};
+
+export default defineLogicFunction({
+  universalIdentifier: VIEW_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'view-document',
+  timeoutSeconds: 15,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/view',
+    httpMethod: 'GET',
+    isAuthRequired: false,
+  },
+});
+```
+
+`documentHtmlPage` renderiza el cuerpo de Markdown a HTML (con [marked](https://marked.js.org/),
+saneado) y lo deja caer en una limpieza, página imprimible que muestra sólo el contenido
+plantilla — el mismo aspecto que el PDF y la vista previa dentro de la aplicación.
+[Ver el ayudante](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/render-document.ts).
+
+## Pruébalo
+
+Con una plantilla y una persona en tu espacio de trabajo, llama a la ruta (toma un token desde
+**Ajustes → APIs & Webhooks**):
+
+```bash filename="Terminal"
+curl -X POST http://localhost:2020/s/documents/generate \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"templateId":"<templateId>","recordId":"<personId>"}'
+# → {"success":true,"documentId":"...","content":"Dear Jeffery Griffin, ..."}
+```
+
+Abra el documento devuelto en su navegador:
+
+```
+http://localhost:2020/s/documents/view?id=<documentId>
+```
+
+<Frame caption="La ruta pública GET renderiza el documento como una página imprimible.">
+  <img src="/images/docs/desarrolladores/extends/apps/document-generator/07-rendered-document.png" alt="Una página web de documentos procesados" />
+</Frame>
+
+<Tip>
+También puedes transmitir los registros de una función mientras pruebas con
+`yarn twenty dev:function:logs`, o invocarlo directamente con
+`yarn twenty dev:function:exec`.
+</Tip>
+
+**Después de este paso:** la aplicación puede generar documentos a través de HTTP y servirlos como
+páginas web. Ahora hagámoslo utilizable sin `curl`.
+
+<Card title="Siguiente: construyendo la interfaz de usuario →" icon="table-columns" href="/Developopers/extend/apps/tutorials/document-generator/building-the-ui">
+  Vistas, navegación, un comando y un componente frontal.
+</Card>

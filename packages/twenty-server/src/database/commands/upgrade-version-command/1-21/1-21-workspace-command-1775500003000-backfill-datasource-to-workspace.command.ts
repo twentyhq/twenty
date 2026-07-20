@@ -5,7 +5,7 @@ import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -18,7 +18,7 @@ import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-s
   description:
     'Backfill workspace.databaseSchema from the dataSource entity for workspaces that have not been migrated yet',
 })
-export class BackfillDatasourceToWorkspaceCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class BackfillDatasourceToWorkspaceCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,

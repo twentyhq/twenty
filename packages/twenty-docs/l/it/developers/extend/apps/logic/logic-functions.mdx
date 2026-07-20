@@ -51,8 +51,7 @@ export default defineLogicFunction({
 ```
 
 Tipi di trigger disponibili:
-* **httpRoute**: Espone la tua funzione su un percorso e metodo HTTP **sotto l'endpoint `/s/`**:
-> ad es. `path: '/post-card/create'` è invocabile su `https://your-twenty-server.com/s/post-card/create`
+* **httpRoute**: Espone la tua funzione su un percorso e metodo HTTP. Nel codice dell'app, anteponi al percorso della route `/s/` quando utilizzi `RestApiClient`; l'URL distribuito utilizza la base `TWENTY_FUNCTIONS_URL` iniettata (o `\<server-url>/s` quando non è impostata).
 
 <Note>
 Per richiamare, da un componente front-end (headless), una funzione logica attivata da una rotta, vedi [Chiamare una funzione logica](/l/it/developers/extend/apps/layout/front-components#calling-a-logic-function).

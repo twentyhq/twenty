@@ -49,6 +49,14 @@ export class WorkflowHandleStaledRunsCommand extends CommandRunner {
         await this.workflowHandleStaledRunsWorkspaceService.handleStaledRunsForWorkspace(
           workspaceId,
         );
+
+        await this.workflowHandleStaledRunsWorkspaceService.handleStuckStoppingRunsForWorkspace(
+          workspaceId,
+        );
+
+        await this.workflowHandleStaledRunsWorkspaceService.handleStuckRunningRunsForWorkspace(
+          workspaceId,
+        );
       } catch (error) {
         this.logger.error(
           `Failed to handle staled runs for workspace ${workspaceId}`,

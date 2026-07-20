@@ -5,6 +5,7 @@ import {
   type ReplyContext,
   type ReplyContextReady,
 } from '@/activities/emails/types/ReplyContext';
+import { getReplyToRecipients } from '@/activities/emails/utils/getReplyToRecipients';
 import { isDefined } from 'twenty-shared/utils';
 
 export type { ReplyContext, ReplyContextReady };
@@ -15,6 +16,7 @@ export const useReplyContext = (
   const {
     messages,
     connectedAccountId,
+    connectedAccountHandle,
     connectedAccountProvider,
     messageChannelLoading,
     threadLoading,
@@ -50,7 +52,10 @@ export const useReplyContext = (
       };
     }
 
-    const senderHandle = lastSentMessage.sender?.handle ?? '';
+    const replyTo = getReplyToRecipients({
+      message: lastSentMessage,
+      connectedAccountHandle,
+    });
 
     const rawSubject = lastSentMessage.subject ?? '';
     const subject = rawSubject.startsWith('Re: ')
@@ -59,7 +64,7 @@ export const useReplyContext = (
 
     return {
       loading: false,
-      to: senderHandle,
+      to: replyTo,
       subject,
       inReplyTo: lastSentMessage.headerMessageId ?? '',
       connectedAccountId,
@@ -68,6 +73,7 @@ export const useReplyContext = (
   }, [
     messages,
     connectedAccountId,
+    connectedAccountHandle,
     connectedAccountProvider,
     messageChannelLoading,
     threadLoading,

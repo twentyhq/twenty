@@ -6,7 +6,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { DpaAgreementEntity } from 'src/engine/core-modules/dpa/entities/dpa-agreement.entity';
 import { DpaRegionService } from 'src/engine/core-modules/dpa/services/dpa-region.service';
 import { DpaService } from 'src/engine/core-modules/dpa/services/dpa.service';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 

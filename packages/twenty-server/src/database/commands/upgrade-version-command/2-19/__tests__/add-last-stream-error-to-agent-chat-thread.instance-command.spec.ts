@@ -1,6 +1,6 @@
 import { type QueryRunner } from 'typeorm';
 
-import { AddLastStreamErrorToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1821000000000-add-last-stream-error-to-agent-chat-thread';
+import { AddLastStreamErrorToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-instance-command-fast-1782996657000-add-last-stream-error-to-agent-chat-thread';
 
 describe('AddLastStreamErrorToAgentChatThreadFastInstanceCommand', () => {
   let command: AddLastStreamErrorToAgentChatThreadFastInstanceCommand;

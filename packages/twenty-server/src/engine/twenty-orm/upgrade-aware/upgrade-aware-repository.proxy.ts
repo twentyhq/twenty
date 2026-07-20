@@ -109,6 +109,61 @@ const METHODS_THAT_ACCEPT_FIND_OPTIONS = new Set<string>([
   'existsBy',
 ]);
 
+const stripUnavailableSelect = (
+  entityClass: Function,
+  state: UpgradeAwareRepositoryState,
+  options: unknown,
+): unknown => {
+  if (!isDefined(options) || typeof options !== 'object') {
+    return options;
+  }
+
+  const withSelect = options as { select?: unknown };
+
+  if (!isDefined(withSelect.select)) {
+    return options;
+  }
+
+  const hiddenColumnPropertyNames =
+    state.getHiddenColumnPropertyNames(entityClass);
+
+  if (hiddenColumnPropertyNames.size === 0) {
+    return options;
+  }
+
+  if (Array.isArray(withSelect.select)) {
+    const filtered = withSelect.select.filter(
+      (propertyName) =>
+        typeof propertyName !== 'string' ||
+        !hiddenColumnPropertyNames.has(propertyName),
+    );
+
+    if (filtered.length === withSelect.select.length) {
+      return options;
+    }
+
+    return { ...withSelect, select: filtered };
+  }
+
+  if (typeof withSelect.select === 'object') {
+    const filtered = Object.fromEntries(
+      Object.entries(withSelect.select).filter(
+        ([propertyName]) => !hiddenColumnPropertyNames.has(propertyName),
+      ),
+    );
+
+    if (
+      Object.keys(filtered).length === Object.keys(withSelect.select).length
+    ) {
+      return options;
+    }
+
+    return { ...withSelect, select: filtered };
+  }
+
+  return options;
+};
+
 const stripUnavailableRelations = (
   metadata: EntityMetadata,
   state: UpgradeAwareRepositoryState,
@@ -262,7 +317,11 @@ const handleRepositoryMethodCall = <Entity extends object>({
   const rewrittenArgs =
     METHODS_THAT_ACCEPT_FIND_OPTIONS.has(methodName) && args.length > 0
       ? [
-          stripUnavailableRelations(target.metadata, state, args[0]),
+          stripUnavailableSelect(
+            entityClass,
+            state,
+            stripUnavailableRelations(target.metadata, state, args[0]),
+          ),
           ...args.slice(1),
         ]
       : args;

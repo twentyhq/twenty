@@ -37,6 +37,7 @@ import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-cha
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
+import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import {
   AiException,
@@ -45,6 +46,7 @@ import {
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+
 @UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => AgentChatThreadDTO)
@@ -109,6 +111,17 @@ export class AgentChatResolver {
       userWorkspaceId,
       workspaceId,
     });
+
+    const interruptedError =
+      await this.agentChatStreamingService.reapDeadStream({
+        thread,
+        workspaceId,
+      });
+
+    if (interruptedError) {
+      thread.activeStreamId = null;
+      thread.lastStreamError = interruptedError;
+    }
 
     const { chunks, maxSeq } =
       await this.eventPublisherService.getAccumulatedChunks(threadId);
@@ -188,6 +201,19 @@ export class AgentChatResolver {
       });
     }
 
+    if (isDefined(thread.activeStreamId)) {
+      const interruptedError =
+        await this.agentChatStreamingService.reapDeadStream({
+          thread,
+          workspaceId: workspace.id,
+        });
+
+      if (interruptedError) {
+        thread.activeStreamId = null;
+        thread.lastStreamError = interruptedError;
+      }
+    }
+
     if (
       isDefined(thread.activeStreamId) ||
       isDefined(thread.pendingQuestionMessageId)
@@ -219,6 +245,23 @@ export class AgentChatResolver {
       text,
       messageId,
       fileAttachments: fileAttachments ?? undefined,
+    });
+
+    if (result.queued) {
+      await this.eventPublisherService.publish({
+        threadId,
+        workspaceId: workspace.id,
+        event: { type: 'queue-updated' },
+      });
+
+      return { messageId: result.messageId, queued: true };
+    }
+
+    tagAiChatStreamScope({
+      streamId: result.streamId,
+      turnId: result.turnId,
+      threadId,
+      workspaceId: workspace.id,
     });
 
     return {
@@ -255,6 +298,13 @@ export class AgentChatResolver {
       userWorkspaceId,
       workspace,
       modelId,
+    });
+
+    tagAiChatStreamScope({
+      streamId: result.streamId,
+      turnId: result.turnId,
+      threadId,
+      workspaceId: workspace.id,
     });
 
     return {
@@ -304,13 +354,22 @@ export class AgentChatResolver {
 
     const streamId = generateId();
 
-    const { turnId } = await this.agentChatService.resolvePendingQuestion({
-      threadId,
-      messageId,
-      answers,
-      streamId,
-      workspaceId: workspace.id,
-    });
+    const { turnId, rollback } =
+      await this.agentChatService.resolvePendingQuestion({
+        threadId,
+        messageId,
+        answers,
+        streamId,
+        workspaceId: workspace.id,
+      });
+
+    await this.eventPublisherService
+      .publish({
+        threadId,
+        workspaceId: workspace.id,
+        event: { type: 'question-answered' },
+      })
+      .catch(() => {});
 
     try {
       await this.agentChatStreamingService.enqueueResumeStream({
@@ -322,16 +381,22 @@ export class AgentChatResolver {
         modelId,
       });
     } catch (error) {
-      // Roll back the streaming claim so the thread isn't stuck "streaming".
-      await this.threadRepository
-        .update(
-          workspace.id,
-          { id: threadId, activeStreamId: streamId },
-          { activeStreamId: null },
-        )
-        .catch(() => {});
+      await this.agentChatService.restorePendingQuestion({
+        threadId,
+        messageId,
+        streamId,
+        workspaceId: workspace.id,
+        rollback,
+      });
       throw error;
     }
+
+    tagAiChatStreamScope({
+      streamId,
+      turnId,
+      threadId,
+      workspaceId: workspace.id,
+    });
 
     return { messageId, queued: false, streamId };
   }
@@ -352,11 +417,14 @@ export class AgentChatResolver {
 
     const redis = this.redisClientService.getClient();
 
-    await redis.publish(getCancelChannel(threadId), 'cancel');
+    await redis.publish(
+      getCancelChannel(threadId, thread.activeStreamId),
+      'cancel',
+    );
 
     await this.threadRepository.update(
       workspaceId,
-      { id: threadId, userWorkspaceId },
+      { id: threadId, userWorkspaceId, activeStreamId: thread.activeStreamId },
       { activeStreamId: null },
     );
 
@@ -438,7 +506,10 @@ export class AgentChatResolver {
 
     const redis = this.redisClientService.getClient();
 
-    await redis.publish(getCancelChannel(threadId), 'cancel');
+    await redis.publish(
+      getCancelChannel(threadId, thread.activeStreamId),
+      'cancel',
+    );
   }
 
   @Mutation(() => Boolean)

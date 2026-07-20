@@ -17,9 +17,20 @@ const isTokenExpired = (token: string): boolean => {
   }
 };
 
+export type AppTokenSources = {
+  credentials?: { clientId: string; clientSecret: string };
+  // Workspace-scoped token minting (generateApplicationToken mutation). Used
+  // when the registration is not owned by this workspace (e.g. an app synced
+  // from the marketplace catalog), where no client secret is available and
+  // rotating the shared one would break the published app.
+  fetchTokenPair?: () => Promise<
+    { accessToken: string; refreshToken?: string } | undefined
+  >;
+};
+
 export const ensureAppAccessTokenIsValidOrRefresh = async (
   configService: ConfigService,
-  credentials?: { clientId: string; clientSecret: string },
+  tokenSources?: AppTokenSources,
 ): Promise<string | undefined> => {
   const config = await configService.getConfig();
 
@@ -62,18 +73,31 @@ export const ensureAppAccessTokenIsValidOrRefresh = async (
           appAccessToken: undefined,
           appRefreshToken: undefined,
         });
-
-        return undefined;
       }
     } catch {
-      // Non-JSON error response (e.g. proxy 502) — fall through to credential exchange
+      // Non-JSON error response (e.g. proxy 502) — fall through to the other token sources
     }
   }
 
-  if (credentials) {
+  if (tokenSources?.fetchTokenPair) {
+    const tokenPair = await tokenSources.fetchTokenPair();
+
+    if (tokenPair) {
+      await configService.setConfig({
+        appAccessToken: tokenPair.accessToken,
+        ...(tokenPair.refreshToken
+          ? { appRefreshToken: tokenPair.refreshToken }
+          : {}),
+      });
+
+      return tokenPair.accessToken;
+    }
+  }
+
+  if (tokenSources?.credentials) {
     const result = await exchangeCredentialsForTokens(
       configService,
-      credentials,
+      tokenSources.credentials,
     );
 
     return result.accessToken;

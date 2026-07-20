@@ -41,6 +41,11 @@ export class ApplicationDTO {
   logo?: string;
 
   @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  logoFileId?: string;
+
+  @IsOptional()
   @IsString()
   @Field({ nullable: true })
   version?: string;
@@ -80,6 +85,10 @@ export class ApplicationDTO {
   @Field(() => Boolean)
   @IsBoolean()
   canBeUninstalled: boolean;
+
+  @Field(() => Boolean)
+  @IsBoolean()
+  autoUpgrade: boolean;
 
   @IsOptional()
   @IsString()

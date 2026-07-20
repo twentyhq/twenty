@@ -1,4 +1,4 @@
-import { GetObjectCommand } from '@aws-sdk/client-s3';
+import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 import { S3Driver } from 'src/engine/core-modules/file-storage/drivers/s3.driver';
@@ -51,6 +51,7 @@ describe('S3Driver.getPresignedUrl', () => {
       filePath: 'file.png',
       responseContentType: 'image/png',
       responseContentDisposition: 'inline',
+      responseCacheControl: 'private, max-age=86400, immutable',
     });
 
     expect(result).toBe(
@@ -60,6 +61,12 @@ describe('S3Driver.getPresignedUrl', () => {
       expect.anything(),
       expect.any(GetObjectCommand),
       { expiresIn: 900 },
+    );
+
+    const command = (getSignedUrl as jest.Mock).mock.calls[0][1];
+
+    expect(command.input.ResponseCacheControl).toBe(
+      'private, max-age=86400, immutable',
     );
   });
 
@@ -111,5 +118,68 @@ describe('S3Driver.getPresignedUrl', () => {
       expect.any(GetObjectCommand),
       { expiresIn: 3600 },
     );
+  });
+});
+
+describe('S3Driver.getPresignedUploadUrl', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should return null when presigning is not enabled', async () => {
+    const driver = new S3Driver({
+      bucketName: 'test-bucket',
+      region: 'us-east-1',
+    });
+
+    const result = await driver.getPresignedUploadUrl({
+      filePath: 'some/file.pdf',
+      contentType: 'application/pdf',
+      contentLength: 1024,
+    });
+
+    expect(result).toBeNull();
+    expect(getSignedUrl).not.toHaveBeenCalled();
+  });
+
+  it('should presign a PUT with content-type and content-length in the signature', async () => {
+    (getSignedUrl as jest.Mock).mockResolvedValue(
+      'https://s3.us-east-1.amazonaws.com/test-bucket/some/file.pdf?X-Amz-Signature=abc',
+    );
+
+    const driver = new S3Driver({
+      bucketName: 'test-bucket',
+      region: 'us-east-1',
+      presignEnabled: true,
+    });
+
+    const result = await driver.getPresignedUploadUrl({
+      filePath: 'some/file.pdf',
+      contentType: 'application/pdf',
+      contentLength: 1024,
+      expiresInSeconds: 900,
+    });
+
+    expect(result).toBe(
+      'https://s3.us-east-1.amazonaws.com/test-bucket/some/file.pdf?X-Amz-Signature=abc',
+    );
+    expect(getSignedUrl).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.any(PutObjectCommand),
+      {
+        expiresIn: 900,
+        signableHeaders: new Set(['content-type', 'content-length']),
+      },
+    );
+
+    const command = (getSignedUrl as jest.Mock).mock
+      .calls[0][1] as PutObjectCommand;
+
+    expect(command.input).toMatchObject({
+      Bucket: 'test-bucket',
+      Key: 'some/file.pdf',
+      ContentType: 'application/pdf',
+      ContentLength: 1024,
+    });
   });
 });

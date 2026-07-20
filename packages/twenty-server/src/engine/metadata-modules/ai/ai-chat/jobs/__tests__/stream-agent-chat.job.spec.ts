@@ -5,7 +5,6 @@ import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
-
 type PublishedEvent = { type: string } & Record<string, unknown>;
 
 const TEXT_CHUNKS: UIMessageChunk[] = [
@@ -87,19 +86,32 @@ describe('StreamAgentChatJob', () => {
     chatStream = createFakeChatStream(),
     streamChatRejection,
     addMessageRejection,
+    assistantPersistRejection,
+    totalsUpdateAffected = 1,
   }: {
     workspaceFound?: boolean;
     chatStream?: ReturnType<typeof createFakeChatStream>;
     streamChatRejection?: Error;
     addMessageRejection?: Error;
+    assistantPersistRejection?: Error;
+    totalsUpdateAffected?: number;
   } = {}) => {
     const publishedEvents: PublishedEvent[] = [];
 
     const threadRepository = {
-      findOne: jest
-        .fn()
-        .mockResolvedValue({ id: 'thread-id', deletedAt: null }),
-      update: jest.fn().mockResolvedValue({ affected: 1 }),
+      findOne: jest.fn().mockResolvedValue({
+        id: 'thread-id',
+        deletedAt: null,
+        activeStreamId: 'stream-id',
+      }),
+      update: jest.fn().mockImplementation((_workspaceId, _criteria, values) =>
+        Promise.resolve({
+          affected:
+            values && typeof values.totalInputTokens === 'function'
+              ? totalsUpdateAffected
+              : 1,
+        }),
+      ),
     };
     const workspaceRepository = {
       findOne: jest.fn().mockResolvedValue(workspaceFound ? workspace : null),
@@ -108,7 +120,9 @@ describe('StreamAgentChatJob', () => {
       addMessage: addMessageRejection
         ? jest.fn().mockRejectedValue(addMessageRejection)
         : jest.fn().mockResolvedValue({ id: 'assistant-message-id' }),
-      hasMessageById: jest.fn().mockResolvedValue(false),
+      upsertAssistantMessage: assistantPersistRejection
+        ? jest.fn().mockRejectedValue(assistantPersistRejection)
+        : jest.fn().mockResolvedValue(undefined),
       generateTitleIfNeeded: jest.fn().mockResolvedValue(null),
       notifyThreadUsageUpdated: jest.fn().mockResolvedValue(undefined),
     };
@@ -145,6 +159,11 @@ describe('StreamAgentChatJob', () => {
     const agentChatStreamingService = {
       flushNextQueuedMessage: jest.fn().mockResolvedValue(undefined),
     };
+    const streamHeartbeatService = {
+      startRunning: jest.fn().mockReturnValue(() => {}),
+      markClaimed: jest.fn().mockResolvedValue(undefined),
+      clear: jest.fn().mockResolvedValue(undefined),
+    };
     const job = new StreamAgentChatJob(
       threadRepository as never,
       workspaceRepository as never,
@@ -153,6 +172,8 @@ describe('StreamAgentChatJob', () => {
       eventPublisherService as never,
       cancelSubscriberService as never,
       agentChatStreamingService as never,
+      streamHeartbeatService as never,
+      { incrementCounterBy: jest.fn() } as never,
     );
 
     return {
@@ -185,12 +206,18 @@ describe('StreamAgentChatJob', () => {
     expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
       type: 'message-persisted',
     });
-    expect(agentChatService.addMessage).toHaveBeenCalledWith(
-      expect.objectContaining({ turnId: 'turn-id' }),
+    expect(agentChatService.upsertAssistantMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: expect.any(String),
+        turnId: 'turn-id',
+        parts: expect.arrayContaining([
+          expect.objectContaining({ type: 'text' }),
+        ]),
+      }),
     );
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
-      { id: 'thread-id' },
+      { id: 'thread-id', activeStreamId: 'stream-id' },
       expect.objectContaining({ lastStreamError: null }),
     );
     expect(threadRepository.update).toHaveBeenCalledWith(
@@ -199,6 +226,33 @@ describe('StreamAgentChatJob', () => {
       { activeStreamId: null },
     );
     expect(agentChatStreamingService.flushNextQueuedMessage).toHaveBeenCalled();
+  });
+
+  it('gates the thread totals on still owning the stream so a prior completion is not double-counted', async () => {
+    const { job, agentChatService, threadRepository } = buildJob({
+      totalsUpdateAffected: 0,
+    });
+
+    await job.handle(jobData);
+
+    expect(agentChatService.upsertAssistantMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ turnId: 'turn-id' }),
+    );
+    expect(threadRepository.update).toHaveBeenCalledWith(
+      'workspace-id',
+      { id: 'thread-id', activeStreamId: 'stream-id' },
+      expect.objectContaining({ lastStreamError: null }),
+    );
+    expect(agentChatService.notifyThreadUsageUpdated).not.toHaveBeenCalled();
+  });
+
+  it('applies thread totals when the claim is still held even if the message already exists from a checkpoint', async () => {
+    const { job, agentChatService } = buildJob({ totalsUpdateAffected: 1 });
+
+    await job.handle(jobData);
+
+    expect(agentChatService.upsertAssistantMessage).toHaveBeenCalled();
+    expect(agentChatService.notifyThreadUsageUpdated).toHaveBeenCalled();
   });
 
   it('never publishes the opaque error chunk to subscribers', async () => {
@@ -231,10 +285,13 @@ describe('StreamAgentChatJob', () => {
     );
 
     expect(chunkEvents).toHaveLength(TEXT_CHUNKS.length);
-    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+    expect(publishedEvents[publishedEvents.length - 2]).toMatchObject({
       type: 'stream-error',
       code: 'STREAM_EXECUTION_FAILED',
       message: 'provider exploded',
+    });
+    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+      type: 'queue-updated',
     });
     expect(publishedEvents.map((event) => event.type)).not.toContain(
       'message-persisted',
@@ -265,9 +322,12 @@ describe('StreamAgentChatJob', () => {
       'model resolution failed',
     );
 
-    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+    expect(publishedEvents[publishedEvents.length - 2]).toMatchObject({
       type: 'stream-error',
       message: 'model resolution failed',
+    });
+    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+      type: 'queue-updated',
     });
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
@@ -278,7 +338,7 @@ describe('StreamAgentChatJob', () => {
 
   it('terminates the stream with an error when assistant persistence fails after draining chunks', async () => {
     const { job, publishedEvents } = buildJob({
-      addMessageRejection: new Error('insert failed'),
+      assistantPersistRejection: new Error('insert failed'),
     });
 
     await expect(job.handle(jobData)).rejects.toThrow('insert failed');
@@ -288,8 +348,11 @@ describe('StreamAgentChatJob', () => {
     );
 
     expect(chunkEvents).toHaveLength(TEXT_CHUNKS.length);
-    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+    expect(publishedEvents[publishedEvents.length - 2]).toMatchObject({
       type: 'stream-error',
+    });
+    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+      type: 'queue-updated',
     });
     expect(publishedEvents.map((event) => event.type)).not.toContain(
       'message-persisted',
@@ -305,9 +368,12 @@ describe('StreamAgentChatJob', () => {
       code: AiExceptionCode.WORKSPACE_NOT_FOUND,
     });
 
-    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+    expect(publishedEvents[publishedEvents.length - 2]).toMatchObject({
       type: 'stream-error',
       code: AiExceptionCode.WORKSPACE_NOT_FOUND,
+    });
+    expect(publishedEvents[publishedEvents.length - 1]).toMatchObject({
+      type: 'queue-updated',
     });
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
@@ -325,16 +391,133 @@ describe('StreamAgentChatJob', () => {
     );
   });
 
+  it('bails out without streaming when the thread no longer holds the claim for this stream', async () => {
+    const {
+      job,
+      publishedEvents,
+      threadRepository,
+      eventPublisherService,
+      agentChatStreamingService,
+    } = buildJob();
 
-  it('resolves without flushing the queue when the stream is cancelled', async () => {
-    let triggerCancel: (() => void) | undefined;
+    threadRepository.findOne.mockResolvedValueOnce({
+      id: 'thread-id',
+      deletedAt: null,
+      activeStreamId: 'newer-stream-id',
+    });
+
+    await job.handle(jobData);
+
+    expect(publishedEvents).toHaveLength(0);
+    expect(eventPublisherService.resetStreamState).not.toHaveBeenCalled();
+    expect(threadRepository.update).not.toHaveBeenCalled();
+    expect(
+      agentChatStreamingService.flushNextQueuedMessage,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('bails out without streaming when the thread was deleted', async () => {
+    const { job, publishedEvents, threadRepository, eventPublisherService } =
+      buildJob();
+
+    threadRepository.findOne.mockResolvedValueOnce(null);
+
+    await job.handle(jobData);
+
+    expect(publishedEvents).toHaveLength(0);
+    expect(eventPublisherService.resetStreamState).not.toHaveBeenCalled();
+    expect(threadRepository.update).not.toHaveBeenCalled();
+  });
+
+  it('persists the interrupted error and publishes the terminal sequence when aborted by a worker shutdown', async () => {
+    let triggerShutdown: (() => void) | undefined;
+
+    const {
+      job,
+      publishedEvents,
+      threadRepository,
+      agentChatStreamingService,
+    } = buildJob({
+      chatStream: createFakeChatStream({
+        onFirstChunk: () => triggerShutdown?.(),
+      }),
+    });
+
+    const shutdownController = new AbortController();
+
+    triggerShutdown = () => shutdownController.abort();
+
+    await expect(
+      job.handle(jobData, { abortSignal: shutdownController.signal }),
+    ).rejects.toMatchObject({ code: AiExceptionCode.STREAM_INTERRUPTED });
+
+    const eventTypes = publishedEvents.map((event) => event.type);
+    const streamErrorIndex = eventTypes.indexOf('stream-error');
+    const queueUpdatedIndex = eventTypes.indexOf('queue-updated');
+
+    expect(publishedEvents[streamErrorIndex]).toMatchObject({
+      type: 'stream-error',
+      code: AiExceptionCode.STREAM_INTERRUPTED,
+    });
+    expect(queueUpdatedIndex).toBeGreaterThan(streamErrorIndex);
+    expect(eventTypes).not.toContain('message-persisted');
+    expect(threadRepository.update).toHaveBeenCalledWith(
+      'workspace-id',
+      { id: 'thread-id' },
+      {
+        lastStreamError: expect.objectContaining({
+          code: AiExceptionCode.STREAM_INTERRUPTED,
+        }),
+      },
+    );
+    expect(threadRepository.update).toHaveBeenCalledWith(
+      'workspace-id',
+      { id: 'thread-id', activeStreamId: 'stream-id' },
+      { activeStreamId: null },
+    );
+    expect(
+      agentChatStreamingService.flushNextQueuedMessage,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('keeps user-cancel semantics when a shutdown signal is wired but never aborted', async () => {
+    let triggerUserCancel: (() => void) | undefined;
 
     const { job, publishedEvents, agentChatStreamingService, cancelCallbacks } =
       buildJob({
         chatStream: createFakeChatStream({
-          onFirstChunk: () => triggerCancel?.(),
+          onFirstChunk: () => triggerUserCancel?.(),
         }),
       });
+
+    triggerUserCancel = () => cancelCallbacks.forEach((callback) => callback());
+
+    const shutdownController = new AbortController();
+
+    await job.handle(jobData, { abortSignal: shutdownController.signal });
+
+    expect(publishedEvents.map((event) => event.type)).not.toContain(
+      'stream-error',
+    );
+    expect(
+      agentChatStreamingService.flushNextQueuedMessage,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('resolves without flushing the queue when the stream is cancelled', async () => {
+    let triggerCancel: (() => void) | undefined;
+
+    const {
+      job,
+      publishedEvents,
+      agentChatService,
+      agentChatStreamingService,
+      cancelCallbacks,
+    } = buildJob({
+      chatStream: createFakeChatStream({
+        onFirstChunk: () => triggerCancel?.(),
+      }),
+    });
 
     triggerCancel = () => cancelCallbacks.forEach((callback) => callback());
 
@@ -346,5 +529,6 @@ describe('StreamAgentChatJob', () => {
     expect(
       agentChatStreamingService.flushNextQueuedMessage,
     ).not.toHaveBeenCalled();
+    expect(agentChatService.notifyThreadUsageUpdated).toHaveBeenCalled();
   });
 });

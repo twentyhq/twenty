@@ -86,6 +86,22 @@ export default defineObject({
 **Temel alanlar otomatik olarak eklenir.** Özel bir nesne tanımladığınızda Twenty, sizin için `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` ve `deletedAt` gibi standart alanlar oluşturur. Bunları `fields` dizinizde bildirmenize gerek yok — yalnızca özel alanlarınızı ekleyin. Aynı ada sahip bir alan bildirerek varsayılan bir alanı geçersiz kılabilirsiniz, ancak bu nadiren iyi bir fikirdir.
 </Note>
 
+## Alan tipleri
+
+`twenty-sdk/define` içinden dışa aktarılan, `FieldType` değerlerinin tam kümesi:
+
+| Kategori                    | Türler                                                                                                                           |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Metin                       | `TEXT`, `RICH_TEXT`, `ARRAY` (string dizisi), `RAW_JSON`                                                                         |
+| Sayısal                     | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (sınırsız hassasiyet), `RATING`, `POSITION` |
+| Tarihler                    | `DATE`, `DATE_TIME`                                                                                                              |
+| Seçim                       | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                              |
+| Bileşik                     | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES`                                                |
+| Tanımlayıcılar ve ilişkiler | `UUID`, `RELATION`, `MORPH_RELATION` (bkz. [İlişkiler](/l/tr/developers/extend/apps/data/relations))                                  |
+| Sistem                      | `TS_VECTOR` (sunucu tarafından yönetilen tam metin arama vektörü)                                                                |
+
+Bileşik tipler birden çok alt alan depolar (ör. `FULL_NAME` = ad + soyad; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` ve `MULTI_SELECT`, yukarıdaki örnekte olduğu gibi bir `options` dizisi gerektirir.
+
 ## Varsayılan değerler
 
 Sabit (literal) dize varsayılanları, dize **içinde** tek tırnak içine alınmış olmalıdır — `defaultValue: "'Draft'"`, `defaultValue: "Draft"` değil. Bu nedenle yukarıdaki `status` alanı `` `'${PostCardStatus.DRAFT}'` `` kullanır.

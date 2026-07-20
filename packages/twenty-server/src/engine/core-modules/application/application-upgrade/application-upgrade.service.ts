@@ -2,13 +2,15 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import axios from 'axios';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { z } from 'zod';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -18,6 +20,8 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 const npmPackageMetadataSchema = z.object({
   version: z.string(),
 });
+
+const UPGRADE_APPLICATIONS_BATCH_SIZE = 20;
 
 @Injectable()
 export class ApplicationUpgradeService {
@@ -29,6 +33,7 @@ export class ApplicationUpgradeService {
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly applicationInstallService: ApplicationInstallService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -66,9 +71,25 @@ export class ApplicationUpgradeService {
         return null;
       }
 
-      await this.appRegistrationRepository.update(appRegistration.id, {
-        latestAvailableVersion: parsed.data.version,
-      });
+      const isNewVersion =
+        await this.applicationRegistrationService.setLatestAvailableVersionIfChanged(
+          appRegistration.id,
+          parsed.data.version,
+        );
+
+      if (isNewVersion) {
+        this.applicationRegistrationService.emitRegistrationPublishMetric({
+          isNewRegistration: false,
+          universalIdentifier: appRegistration.universalIdentifier,
+          name: appRegistration.name,
+          sourceType: appRegistration.sourceType,
+          version: parsed.data.version,
+        });
+
+        await this.applicationRegistrationService.enqueueAutoUpgradeApplications(
+          appRegistration.id,
+        );
+      }
 
       return parsed.data.version;
     } catch (error) {
@@ -90,6 +111,63 @@ export class ApplicationUpgradeService {
     }
   }
 
+  async upgradeAllApplications({
+    applicationRegistrationId,
+    onlyAutoUpgrade = false,
+  }: {
+    applicationRegistrationId: string;
+    onlyAutoUpgrade?: boolean;
+  }): Promise<void> {
+    const appRegistration = await this.appRegistrationRepository.findOneOrFail({
+      where: { id: applicationRegistrationId },
+    });
+
+    const targetVersion = appRegistration.latestAvailableVersion;
+
+    if (!isDefined(targetVersion)) {
+      return;
+    }
+
+    const applications = await this.applicationRepository.find({
+      where: {
+        applicationRegistrationId,
+        ...(onlyAutoUpgrade ? { autoUpgrade: true } : {}),
+      },
+    });
+
+    const applicationsToUpgrade = applications.filter(
+      (application) => application.version !== targetVersion,
+    );
+
+    for (
+      let batchStart = 0;
+      batchStart < applicationsToUpgrade.length;
+      batchStart += UPGRADE_APPLICATIONS_BATCH_SIZE
+    ) {
+      const batch = applicationsToUpgrade.slice(
+        batchStart,
+        batchStart + UPGRADE_APPLICATIONS_BATCH_SIZE,
+      );
+
+      await Promise.all(
+        batch.map(async (application) => {
+          try {
+            await this.upgradeApplicationToVersion({
+              appRegistration,
+              targetVersion,
+              workspaceId: application.workspaceId,
+            });
+          } catch (error) {
+            this.logger.error(
+              `Failed to upgrade application ${application.id} to version ${targetVersion} in workspace ${application.workspaceId}`,
+              error,
+            );
+          }
+        }),
+      );
+    }
+  }
+
   async upgradeApplication(params: {
     appRegistrationId: string;
     targetVersion: string;
@@ -99,22 +177,36 @@ export class ApplicationUpgradeService {
       where: { id: params.appRegistrationId },
     });
 
+    return this.upgradeApplicationToVersion({
+      appRegistration,
+      targetVersion: params.targetVersion,
+      workspaceId: params.workspaceId,
+    });
+  }
+
+  private async upgradeApplicationToVersion(params: {
+    appRegistration: ApplicationRegistrationEntity;
+    targetVersion: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const { appRegistration } = params;
+
+    // LOCAL apps are updated by dev sync and OAUTH_ONLY registrations have no
+    // code artifacts.
     if (
       appRegistration.sourceType === ApplicationRegistrationSourceType.LOCAL ||
-      appRegistration.sourceType ===
-        ApplicationRegistrationSourceType.TARBALL ||
       appRegistration.sourceType ===
         ApplicationRegistrationSourceType.OAUTH_ONLY
     ) {
       throw new ApplicationException(
-        'Cannot upgrade an app installed from a tarball, local source, or OAuth-only registration',
+        'Cannot upgrade an app installed from a local source or OAuth-only registration',
         ApplicationExceptionCode.UPGRADE_FAILED,
       );
     }
 
     try {
       return await this.applicationInstallService.installApplication({
-        appRegistrationId: params.appRegistrationId,
+        appRegistrationId: appRegistration.id,
         version: params.targetVersion,
         workspaceId: params.workspaceId,
       });

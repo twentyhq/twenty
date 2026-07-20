@@ -165,6 +165,95 @@ jobs:
             echo "::error::Upgrade commands were added or modified in non-current version directories."
             exit 1
           fi
+      - name: Check upgrade command timestamps are real and keep the sequence append-only
+        if: >
+          steps.changed-files.outputs.any_changed == 'true' &&
+          !contains(github.event.pull_request.labels.*.name, 'ci:allow-upgrade-command-timestamp-exception')
+        run: |
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+
+          if [ -z "$BASE_SHA" ]; then
+            echo "Not a pull request context, skipping timestamp checks."
+            exit 0
+          fi
+
+          git fetch --depth=1 origin "$BASE_SHA"
+
+          COMMANDS_ROOT="packages/twenty-server/src/database/commands/upgrade-version-command"
+
+          extract_ts() {
+            basename "$1" | sed -n -E 's/.*-(instance-command-(fast|slow)|workspace-command)-([0-9]{13})-.*/\3/p'
+          }
+
+          DIFF=$(git diff --name-status --find-renames "$BASE_SHA" HEAD -- "$COMMANDS_ROOT")
+
+          NEW_FILES=$(echo "$DIFF" | awk '$1 == "A" { print $2 } $1 ~ /^[RC]/ { print $3 }')
+          GONE_FILES=$(echo "$DIFF" | awk '$1 == "D" { print $2 } $1 ~ /^R/ { print $2 }')
+
+          NOW_MS=$(($(date +%s) * 1000))
+          MIN_TS=$((NOW_MS - 60 * 24 * 3600 * 1000))
+          MAX_TS=$((NOW_MS + 2 * 24 * 3600 * 1000))
+
+          FAILED=""
+
+          for file in $NEW_FILES; do
+            case "$file" in *.spec.ts) continue ;; esac
+
+            TS=$(extract_ts "$file")
+
+            if [ -z "$TS" ]; then
+              continue
+            fi
+
+            if [ "$TS" -lt "$MIN_TS" ] || [ "$TS" -gt "$MAX_TS" ]; then
+              FAILED="$FAILED\n  - $file (timestamp $TS is outside [now - 60 days, now + 2 days])"
+              continue
+            fi
+
+            VERSION_DIR=$(dirname "$file")
+
+            MAX_BASE_TS=0
+            for base_file in $(git ls-tree -r --name-only "$BASE_SHA" -- "$VERSION_DIR"); do
+              case "$base_file" in *.spec.ts) continue ;; esac
+
+              if echo "$GONE_FILES" | grep -qxF "$base_file"; then
+                continue
+              fi
+
+              BASE_TS=$(extract_ts "$base_file")
+
+              if [ -n "$BASE_TS" ] && [ "$BASE_TS" -gt "$MAX_BASE_TS" ]; then
+                MAX_BASE_TS=$BASE_TS
+              fi
+            done
+
+            if [ "$MAX_BASE_TS" -gt 0 ] && [ "$TS" -le "$MAX_BASE_TS" ]; then
+              FAILED="$FAILED\n  - $file (timestamp $TS <= existing max $MAX_BASE_TS)"
+            fi
+          done
+
+          if [ -n "$FAILED" ]; then
+            echo "Upgrade command timestamps must be the real epoch millis of when the command"
+            echo "is authored (within 60 days before / 2 days after now), and strictly greater"
+            echo "than every existing command in the same version directory."
+            echo ""
+            echo "The upgrade cursor tracks a single last-applied position: a command that sorts"
+            echo "before already-applied commands moves the cursor backwards when it runs,"
+            echo "re-hiding columns gated by @WasIntroducedInUpgrade on instances that already"
+            echo "applied them. Fabricated future timestamps poison the sequence for every"
+            echo "command added after them."
+            echo ""
+            echo "If the blocking existing max is itself a fabricated future timestamp, re-slot"
+            echo "that command to its real merge epoch (rename the file and the timestamp in the"
+            echo "decorator/constant, and make its up() idempotent since it will re-run under"
+            echo "the new name) instead of inflating the new command's timestamp."
+            echo ""
+            echo "To bypass this check for a deliberate exception, add the label"
+            echo "'ci:allow-upgrade-command-timestamp-exception' to this PR and re-run CI."
+            echo -e "$FAILED"
+            echo "::error::Upgrade command timestamps must be real (close to now) and append-only within their version directory."
+            exit 1
+          fi
 
   server-validation:
     needs: server-build
@@ -287,6 +376,10 @@ jobs:
     needs: server-build
     timeout-minutes: 30
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -300,11 +393,8 @@ jobs:
           key: ${{ env.SERVER_BUILD_CACHE_KEY }}
       - name: Build twenty-shared
         run: npx nx build twenty-shared
-      - name: Server / Run Tests
-        uses: ./.github/actions/nx-affected
-        with:
-          tag: scope:backend
-          tasks: test
+      - name: Server / Run Tests (shard ${{ matrix.shard }}/4)
+        run: npx nx run twenty-server:test:ci --shard=${{ matrix.shard }}/4
 
   server-integration-test:
     timeout-minutes: 30
@@ -396,6 +486,41 @@ jobs:
     with:
       skip: ${{ needs.upgrade-changed-files-check.outputs.any_changed != 'true' }}
 
+  discover-public-apps:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    uses: ./.github/workflows/discover-apps.yaml
+    with:
+      scope: public
+      changed-only: false
+
+  server-apps-install-smoke:
+    needs: [discover-public-apps, server-build]
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJSON(needs.discover-public-apps.outputs.matrix) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+      - name: Spawn Twenty server from monorepo
+        id: twenty
+        uses: ./.github/actions/spawn-twenty-server
+        with:
+          source: local
+          server-build-cache-key: ${{ env.SERVER_BUILD_CACHE_KEY }}
+      - name: Install app against server
+        uses: ./.github/actions/test-twenty-app
+        with:
+          api-url: ${{ steps.twenty.outputs.server-url }}
+          api-key: ${{ steps.twenty.outputs.api-key }}
+          app-path: ${{ matrix.app.path }}
+          mode: installation-only
+
   ci-server-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
@@ -410,6 +535,8 @@ jobs:
         server-test,
         server-integration-test,
         cross-version-upgrade,
+        discover-public-apps,
+        server-apps-install-smoke,
       ]
     steps:
       - name: Fail job if any needs failed

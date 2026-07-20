@@ -1,0 +1,128 @@
+---
+title: 6. Yayımlama
+icon: rocket
+description: Pazaryeri meta verilerini ekleyin ve uygulamanızı yayımlayın.
+---
+
+Uygulamanız çalışıyor. Son adım, onu pazaryeri için tanımlamak ve yayımlamaktır.
+
+## Pazaryeri meta verilerini ekleyin
+
+[Application config](/l/tr/developers/extend/apps/config/application), pazaryerinde görünen kimliği taşır: yazar, kategori, logo ve destek bağlantıları. `public/` içine bir logo yerleştirin ve `logo` ile referans verin.
+
+```ts filename="src/application-config.ts"
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  displayName: 'Document Generator',
+  description:
+    'Create reusable document templates and generate personalized documents from your CRM records.',
+  logo: 'public/document-generator.svg',
+  author: 'Twenty',
+  category: 'Productivity',
+  websiteUrl: 'https://docs.twenty.com/l/tr/developers/extend/apps',
+  termsUrl: 'https://www.twenty.com/terms',
+  emailSupport: 'contact@twenty.com',
+  issueReportUrl: 'https://github.com/twentyhq/twenty/issues',
+});
+```
+
+<Tip>
+Varsayılan rol, kendi dosyasında `defineApplicationRole()` ile tanımlanır — artık burada `defaultRoleUniversalIdentifier` iletmiyorsunuz.
+</Tip>
+
+Ayrıca uygulamanın bulunabilir olması için `package.json` dosyasına `twenty-app` anahtar sözcüğünü ekleyin:
+
+```json filename="package.json"
+{ "keywords": ["twenty-app"] }
+```
+
+## Galeri ekran görüntüleri ekleyin
+
+Bir pazaryeri listesi, kendini ekran görüntüleriyle satar. Birkaç PNG dosyasını
+`public/gallery/` içine bırakın ve bunlara `galleryImages` ile referans verin — listeleme sayfasında, dizi sırasına göre bir galeri olarak görüntülenirler.
+
+```ts filename="src/application-config.ts"
+export default defineApplication({
+  // ...identity from above
+  galleryImages: [
+    'public/gallery/01-generated-document.png',
+    'public/gallery/02-command-menu.png',
+    'public/gallery/03-template-editor.png',
+    'public/gallery/04-documents.png',
+  ],
+});
+```
+
+<Tip>
+Sonuçla başlayın: ilk ekran görüntüsü bitmiş sonuç (oluşturulmuş bir belge) olsun, ardından bunun nasıl tetiklendiğini ve oluşturulduğunu gösterin. Net, yüksek çözünürlüklü görüntüler kullanın — bunlar bir kullanıcının gördüğü ilk şeydir.
+</Tip>
+
+`README.md` dosyasına da aynı özeni gösterin — npm ve GitHub üzerindeki ön sayfadır.
+Değer önerisi ve bir ekran görüntüsüyle başlayın, öne çıkan özellikleri listeleyin ve derleme ayrıntılarını sayfanın alt kısmında tutun.
+
+## Yayımlamadan önce kontrol edin
+
+CI ile aynı denetimleri çalıştırın:
+
+```bash filename="Terminal"
+yarn lint          # oxlint
+yarn typecheck     # tsgo
+yarn test:unit     # unit tests
+yarn twenty plan   # preview the metadata diff
+```
+
+Plan, sunucuda neyin değişeceğini uygulamadan tam olarak gösterir —
+iyi bir son sağlama kontrolüdür. Bkz.
+[Testing](/l/tr/developers/extend/apps/operations/testing) ve
+[Syncing & recovery](/l/tr/developers/extend/apps/operations/sync-and-recovery).
+
+## Yayımla
+
+```bash filename="Terminal"
+# Public app → npm (default)
+yarn twenty app:publish
+
+# Or deploy privately to a specific server's registry
+yarn twenty app:publish --private -r <remote>
+```
+
+`app:publish` varsayılan olarak oluşturur ve npm'e yayımlar; `--private` bunun yerine bir tarball dosyasını bir Twenty sunucusunun özel kaydına yükler. Yayımlanmış bir uygulamayı bir örneğin pazaryerinde görünür kılmak için, bir katalog eşitlemesini tetikleyin:
+
+```bash filename="Terminal"
+yarn twenty dev:catalog-sync -r <remote>
+```
+
+Tüm ayrıntılar ve yayımlama kontrol listesi:
+[Publishing](/l/tr/developers/extend/apps/operations/publishing).
+
+## Bir uygulama geliştirdiniz 🎉
+
+Altı bölümde SDK yüzeyinin büyük kısmını kullandınız:
+
+* Verileri modellemek için **nesneler, alanlar ve bir ilişki**
+* Bir **mantık işlevinin**, bir **yapay zekâ aracı**, bir **iş akışı eylemi** ve **HTTP yolları** olarak sunulması
+* Arayüz için **görünümler, gezinme, bir komut ve bir ön uç bileşeni**
+* Doğal dil üretimi için bir **ajan + beceri**
+* **Pazaryeri meta verileri** ve yayımlama akışı
+
+Bitmiş uygulama şurada bulunur:
+[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+
+## Sırada ne var
+
+<CardGroup cols={2}>
+  <Card title="Veri başvurusu" icon="database" href="/l/tr/developers/extend/apps/data/overview">
+    Her alan türü, ilişki ve indeks seçeneği.
+  </Card>
+  <Card title="Mantık başvurusu" icon="bolt" href="/l/tr/developers/extend/apps/logic/overview">
+    Cron ve veritabanı olayı tetikleyicileri, anahtar-değer deposu, OAuth bağlantıları.
+  </Card>
+  <Card title="Düzen başvurusu" icon="table-columns" href="/l/tr/developers/extend/apps/layout/overview">
+    Sayfa düzenleri, pano bileşenleri ve daha fazla arayüz yüzeyi.
+  </Card>
+  <Card title="İşlemler" icon="rocket" href="/l/tr/developers/extend/apps/operations/overview">
+    CLI, test, uzak depolar ve CI.
+  </Card>
+</CardGroup>

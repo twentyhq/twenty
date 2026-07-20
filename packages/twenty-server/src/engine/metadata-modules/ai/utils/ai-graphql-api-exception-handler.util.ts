@@ -27,6 +27,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.MESSAGE_NOT_FOUND:
       case AiExceptionCode.ROLE_NOT_FOUND:
         throw new NotFoundError(error);
+      case AiExceptionCode.CONTEXT_WINDOW_EXCEEDED:
       case AiExceptionCode.INVALID_AGENT_INPUT:
       case AiExceptionCode.INVALID_CHAT_THREAD_TITLE:
       case AiExceptionCode.QUESTION_NOT_PENDING:
@@ -41,6 +42,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.AGENT_EXECUTION_FAILED:
       case AiExceptionCode.API_KEY_NOT_CONFIGURED:
       case AiExceptionCode.USER_WORKSPACE_ID_NOT_FOUND:
+      case AiExceptionCode.STREAM_INTERRUPTED:
         throw new InternalServerError(error);
       default: {
         return assertUnreachable(error.code);

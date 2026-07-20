@@ -55,11 +55,16 @@ import { ApplicationRegistrationService } from 'src/engine/core-modules/applicat
 import { ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { FindApplicationRegistrationInstalledWorkspacesInput } from 'src/engine/core-modules/application/application-registration/dtos/find-application-registration-installed-workspaces.input';
+import { PaginatedApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import {
   BACKFILL_APPLICATION_INSTALLATION_JOB_NAME,
   type BackfillApplicationInstallationJobData,
 } from 'src/engine/core-modules/application/jobs/backfill-application-installation.job-constants';
+import {
+  UPGRADE_APPLICATIONS_JOB_NAME,
+  type UpgradeApplicationsJobData,
+} from 'src/engine/core-modules/application/jobs/upgrade-applications.job-constants';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AdminAiModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
@@ -104,8 +109,6 @@ import { ModelsDevModelSuggestionDTO } from './dtos/models-dev-model-suggestion.
 import { ModelsDevProviderSuggestionDTO } from './dtos/models-dev-provider-suggestion.dto';
 import { QueueMetricsDataDTO } from './dtos/queue-metrics-data.dto';
 import { SetMaintenanceModeInput } from './dtos/set-maintenance-mode.input';
-
-const INSTALLED_WORKSPACES_PAGE_SIZE = 10;
 
 @UsePipes(ResolverValidationPipe)
 @AdminResolver()
@@ -480,11 +483,23 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(AdminPanelGuard)
-  @Query(() => [ApplicationRegistrationEntity])
-  async findAllApplicationRegistrations(): Promise<
-    ApplicationRegistrationEntity[]
-  > {
-    return this.applicationRegistrationService.findAll();
+  @Query(() => PaginatedApplicationRegistrationsDTO)
+  async findAllApplicationRegistrations(
+    @Args('limit', { type: () => Int, nullable: true, defaultValue: 25 })
+    limit: number,
+    @Args('offset', { type: () => Int, nullable: true, defaultValue: 0 })
+    offset: number,
+    @Args('searchTerm', { type: () => String, nullable: true })
+    searchTerm?: string,
+    @Args('isPreInstalledOnly', { type: () => Boolean, nullable: true })
+    isPreInstalledOnly?: boolean,
+  ): Promise<PaginatedApplicationRegistrationsDTO> {
+    return this.applicationRegistrationService.findAll({
+      limit,
+      offset,
+      searchTerm,
+      isPreInstalledOnly,
+    });
   }
 
   @UseGuards(AdminPanelGuard)
@@ -528,6 +543,26 @@ export class AdminPanelResolver {
       { applicationRegistrationId },
       {
         id: `${BACKFILL_APPLICATION_INSTALLATION_JOB_NAME}-${applicationRegistrationId}`,
+      }, // Avoids triggering multiple pending jobs for the same app
+    );
+
+    return true;
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async upgradeRegistrationApplications(
+    @Args('applicationRegistrationId') applicationRegistrationId: string,
+  ): Promise<boolean> {
+    await this.applicationRegistrationService.findOneByIdGlobal(
+      applicationRegistrationId,
+    );
+
+    await this.workspaceQueueService.add<UpgradeApplicationsJobData>(
+      UPGRADE_APPLICATIONS_JOB_NAME,
+      { applicationRegistrationId, onlyAutoUpgrade: false },
+      {
+        id: `${UPGRADE_APPLICATIONS_JOB_NAME}-${applicationRegistrationId}`,
       }, // Avoids triggering multiple pending jobs for the same app
     );
 
@@ -838,14 +873,15 @@ export class AdminPanelResolver {
     @Args('input')
     {
       id,
-      page,
+      limit,
+      offset,
       searchTerm,
     }: FindApplicationRegistrationInstalledWorkspacesInput,
   ): Promise<ApplicationRegistrationInstalledWorkspacesDTO> {
     return this.applicationRegistrationService.getInstalledWorkspacesGlobal(
       id,
-      page ?? 1,
-      INSTALLED_WORKSPACES_PAGE_SIZE,
+      limit,
+      offset,
       searchTerm,
     );
   }

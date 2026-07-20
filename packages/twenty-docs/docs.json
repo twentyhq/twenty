@@ -386,6 +386,18 @@
                     ]
                   },
                   {
+                    "group": "Tutorial",
+                    "pages": [
+                      "developers/extend/apps/tutorials/document-generator/overview",
+                      "developers/extend/apps/tutorials/document-generator/data-model",
+                      "developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "developers/extend/apps/tutorials/document-generator/http-routes",
+                      "developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "Config",
                     "pages": [
                       "developers/extend/apps/config/overview",
@@ -401,6 +413,7 @@
                       "developers/extend/apps/data/overview",
                       "developers/extend/apps/data/objects",
                       "developers/extend/apps/data/extending-objects",
+                      "developers/extend/apps/data/system-fields",
                       "developers/extend/apps/data/relations"
                     ]
                   },
@@ -826,6 +839,18 @@
                     ]
                   },
                   {
+                    "group": "Tutoriel",
+                    "pages": [
+                      "l/fr/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/fr/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/fr/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/fr/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/fr/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/fr/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/fr/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "Configuration",
                     "pages": [
                       "l/fr/developers/extend/apps/config/overview",
@@ -841,6 +866,7 @@
                       "l/fr/developers/extend/apps/data/overview",
                       "l/fr/developers/extend/apps/data/objects",
                       "l/fr/developers/extend/apps/data/extending-objects",
+                      "l/fr/developers/extend/apps/data/system-fields",
                       "l/fr/developers/extend/apps/data/relations"
                     ]
                   },
@@ -1266,6 +1292,18 @@
                     ]
                   },
                   {
+                    "group": "البرنامج التعليمي",
+                    "pages": [
+                      "l/ar/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/ar/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/ar/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/ar/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/ar/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/ar/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/ar/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "التهيئة",
                     "pages": [
                       "l/ar/developers/extend/apps/config/overview",
@@ -1281,6 +1319,7 @@
                       "l/ar/developers/extend/apps/data/overview",
                       "l/ar/developers/extend/apps/data/objects",
                       "l/ar/developers/extend/apps/data/extending-objects",
+                      "l/ar/developers/extend/apps/data/system-fields",
                       "l/ar/developers/extend/apps/data/relations"
                     ]
                   },
@@ -1706,6 +1745,18 @@
                     ]
                   },
                   {
+                    "group": "Návod",
+                    "pages": [
+                      "l/cs/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/cs/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/cs/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/cs/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/cs/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/cs/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/cs/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "Konfigurace",
                     "pages": [
                       "l/cs/developers/extend/apps/config/overview",
@@ -1721,6 +1772,7 @@
                       "l/cs/developers/extend/apps/data/overview",
                       "l/cs/developers/extend/apps/data/objects",
                       "l/cs/developers/extend/apps/data/extending-objects",
+                      "l/cs/developers/extend/apps/data/system-fields",
                       "l/cs/developers/extend/apps/data/relations"
                     ]
                   },
@@ -2146,6 +2198,18 @@
                     ]
                   },
                   {
+                    "group": "Tutorial",
+                    "pages": [
+                      "l/de/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/de/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/de/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/de/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/de/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/de/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/de/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "Konfiguration",
                     "pages": [
                       "l/de/developers/extend/apps/config/overview",
@@ -2161,6 +2225,7 @@
                       "l/de/developers/extend/apps/data/overview",
                       "l/de/developers/extend/apps/data/objects",
                       "l/de/developers/extend/apps/data/extending-objects",
+                      "l/de/developers/extend/apps/data/system-fields",
                       "l/de/developers/extend/apps/data/relations"
                     ]
                   },
@@ -2586,6 +2651,18 @@
                     ]
                   },
                   {
+                    "group": "Tutorial",
+                    "pages": [
+                      "l/es/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/es/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/es/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/es/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/es/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/es/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/es/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "Configuración",
                     "pages": [
                       "l/es/developers/extend/apps/config/overview",
@@ -2601,6 +2678,7 @@
                       "l/es/developers/extend/apps/data/overview",
                       "l/es/developers/extend/apps/data/objects",
                       "l/es/developers/extend/apps/data/extending-objects",
+                      "l/es/developers/extend/apps/data/system-fields",
                       "l/es/developers/extend/apps/data/relations"
                     ]
                   },
@@ -3026,6 +3104,18 @@
                     ]
                   },
                   {
+                    "group": "Tutorial",
+                    "pages": [
+                      "l/it/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/it/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/it/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/it/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/it/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/it/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/it/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "Configurazione",
                     "pages": [
                       "l/it/developers/extend/apps/config/overview",
@@ -3041,6 +3131,7 @@
                       "l/it/developers/extend/apps/data/overview",
                       "l/it/developers/extend/apps/data/objects",
                       "l/it/developers/extend/apps/data/extending-objects",
+                      "l/it/developers/extend/apps/data/system-fields",
                       "l/it/developers/extend/apps/data/relations"
                     ]
                   },
@@ -3466,6 +3557,18 @@
                     ]
                   },
                   {
+                    "group": "チュートリアル",
+                    "pages": [
+                      "l/ja/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/ja/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/ja/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/ja/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/ja/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/ja/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/ja/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "設定",
                     "pages": [
                       "l/ja/developers/extend/apps/config/overview",
@@ -3481,6 +3584,7 @@
                       "l/ja/developers/extend/apps/data/overview",
                       "l/ja/developers/extend/apps/data/objects",
                       "l/ja/developers/extend/apps/data/extending-objects",
+                      "l/ja/developers/extend/apps/data/system-fields",
                       "l/ja/developers/extend/apps/data/relations"
                     ]
                   },
@@ -3906,6 +4010,18 @@
                     ]
                   },
                   {
+                    "group": "튜토리얼",
+                    "pages": [
+                      "l/ko/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/ko/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/ko/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/ko/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/ko/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/ko/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/ko/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "설정",
                     "pages": [
                       "l/ko/developers/extend/apps/config/overview",
@@ -3921,6 +4037,7 @@
                       "l/ko/developers/extend/apps/data/overview",
                       "l/ko/developers/extend/apps/data/objects",
                       "l/ko/developers/extend/apps/data/extending-objects",
+                      "l/ko/developers/extend/apps/data/system-fields",
                       "l/ko/developers/extend/apps/data/relations"
                     ]
                   },
@@ -4346,6 +4463,18 @@
                     ]
                   },
                   {
+                    "group": "Tutorial",
+                    "pages": [
+                      "l/pt/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/pt/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/pt/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/pt/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/pt/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/pt/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/pt/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "Configuração",
                     "pages": [
                       "l/pt/developers/extend/apps/config/overview",
@@ -4361,6 +4490,7 @@
                       "l/pt/developers/extend/apps/data/overview",
                       "l/pt/developers/extend/apps/data/objects",
                       "l/pt/developers/extend/apps/data/extending-objects",
+                      "l/pt/developers/extend/apps/data/system-fields",
                       "l/pt/developers/extend/apps/data/relations"
                     ]
                   },
@@ -4786,6 +4916,18 @@
                     ]
                   },
                   {
+                    "group": "Tutorial",
+                    "pages": [
+                      "l/ro/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/ro/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/ro/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/ro/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/ro/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/ro/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/ro/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "Configurare",
                     "pages": [
                       "l/ro/developers/extend/apps/config/overview",
@@ -4801,6 +4943,7 @@
                       "l/ro/developers/extend/apps/data/overview",
                       "l/ro/developers/extend/apps/data/objects",
                       "l/ro/developers/extend/apps/data/extending-objects",
+                      "l/ro/developers/extend/apps/data/system-fields",
                       "l/ro/developers/extend/apps/data/relations"
                     ]
                   },
@@ -5660,6 +5803,18 @@
                     ]
                   },
                   {
+                    "group": "Öğretici",
+                    "pages": [
+                      "l/tr/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/tr/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/tr/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/tr/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/tr/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/tr/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/tr/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "Yapılandırma",
                     "pages": [
                       "l/tr/developers/extend/apps/config/overview",
@@ -5675,6 +5830,7 @@
                       "l/tr/developers/extend/apps/data/overview",
                       "l/tr/developers/extend/apps/data/objects",
                       "l/tr/developers/extend/apps/data/extending-objects",
+                      "l/tr/developers/extend/apps/data/system-fields",
                       "l/tr/developers/extend/apps/data/relations"
                     ]
                   },
@@ -6100,6 +6256,18 @@
                     ]
                   },
                   {
+                    "group": "教程",
+                    "pages": [
+                      "l/zh/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/zh/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/zh/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/zh/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/zh/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/zh/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/zh/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "配置",
                     "pages": [
                       "l/zh/developers/extend/apps/config/overview",
@@ -6115,6 +6283,7 @@
                       "l/zh/developers/extend/apps/data/overview",
                       "l/zh/developers/extend/apps/data/objects",
                       "l/zh/developers/extend/apps/data/extending-objects",
+                      "l/zh/developers/extend/apps/data/system-fields",
                       "l/zh/developers/extend/apps/data/relations"
                     ]
                   },

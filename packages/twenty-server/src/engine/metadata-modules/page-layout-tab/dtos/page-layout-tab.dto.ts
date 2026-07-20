@@ -5,8 +5,6 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
-
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -19,7 +17,7 @@ registerEnumType(PageLayoutTabLayoutMode, {
 
 @ObjectType('PageLayoutTab')
 export class PageLayoutTabDTO {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @Field(() => UUIDScalarType, { nullable: false })

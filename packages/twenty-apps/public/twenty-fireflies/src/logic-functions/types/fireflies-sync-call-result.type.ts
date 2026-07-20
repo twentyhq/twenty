@@ -1,4 +1,4 @@
-import { type FirefliesSyncableField } from 'src/logic-functions/utils/sync-fireflies-field-to-calendar-event';
+import { type FirefliesSyncableField } from 'src/logic-functions/utils/sync-fireflies-call-to-call-recording';
 
 export type FirefliesSyncCallFieldOutcome =
   | { field: FirefliesSyncableField; status: 'updated' }
@@ -10,6 +10,7 @@ export type FirefliesSyncCallResult = {
   message: string;
   error?: string;
   transcriptId?: string;
+  callRecordingId?: string;
   calendarEventId?: string;
   updatedFields?: FirefliesSyncableField[];
   fieldOutcomes?: FirefliesSyncCallFieldOutcome[];

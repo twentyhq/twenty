@@ -19,49 +19,9 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-msgid "Suspended Workspace"
-msgstr "Spațiu de lucru suspendat"
-
-#. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-#: src/emails/password-update-notify.email.tsx
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Dear {userName},"
-msgstr "Dragă {userName},"
-
-#. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-#: src/emails/password-update-notify.email.tsx
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Hello,"
-msgstr "Salut,"
-
-#. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-msgid "It appears that your workspace <0>{workspaceDisplayName}</0> has been suspended for {daysSinceInactive} days."
-msgstr "Se pare că spațiul dvs. de lucru <0>{workspaceDisplayName}</0> a fost suspendat de {daysSinceInactive} zile."
-
-#. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-msgid "The workspace will be deactivated in {remainingDays} {dayOrDays}, and all its data will be deleted."
-msgstr "Spațiul de lucru va fi dezactivat în {remainingDays} {dayOrDays}, iar toate datele sale vor fi șterse."
-
-#. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-msgid "If you wish to continue using Twenty, please update your subscription within the next {remainingDays} {dayOrDays}."
-msgstr "Dacă doriți să continuați utilizarea Twenty, vă rugăm să vă actualizați abonamentul în următoarele {remainingDays} {dayOrDays}."
-
-#. js-lingui-explicit-id
-#: src/emails/warn-suspended-workspace.email.tsx
-msgid "Update your subscription"
-msgstr "Actualizați abonamentul"
-
-#. js-lingui-explicit-id
-#: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
-msgid "Validate domain"
-msgstr "Validează domeniul"
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) v-a invitat să vă alăturați unui spațiu de lucru numit <1>{workspaceName}</1>."
 
 #. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
@@ -69,19 +29,9 @@ msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow
 msgstr "{senderName} (<0>{senderEmail}</0>): Vă rugăm să validați acest domeniu pentru a permite utilizatorilor cu adrese de email <1>@{domain}</1> să se alăture spațiului dumneavoastră de lucru fără a necesita o invitație."
 
 #. js-lingui-explicit-id
-#: src/emails/test.email.tsx
-msgid "Test email"
-msgstr "Email de test"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Alăturați-vă echipei pe Twenty"
-
-#. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) v-a invitat să vă alăturați unui spațiu de lucru numit <1>{workspaceName}</1>."
+#: src/emails/billing-trial-converting.email.tsx
+msgid "A heads up before your trial ends"
+msgstr "Un anunț înainte să se încheie perioada de probă"
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -89,8 +39,18 @@ msgid "Accept invite"
 msgstr "Acceptați invitația"
 
 #. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Add a payment method"
+msgstr "Adaugă o metodă de plată"
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "After that, the workspace and all of its data will be permanently deleted — and we won't be able to bring it back."
+msgstr "După aceea, spațiul de lucru și toate datele sale vor fi șterse definitiv — și nu le vom mai putea recupera."
+
+#. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your new email address"
+msgid "Confirm new email"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -100,28 +60,8 @@ msgstr "Confirmați adresa de email"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm new email"
+msgid "Confirm your new email address"
 msgstr ""
-
-#. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Verify Email"
-msgstr "Verificați Email"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Password updated"
-msgstr "Parola a fost actualizată"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "Aceasta este o confirmare că parola contului dvs. ({email}) a fost schimbată cu succes la data de {formattedDate}."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "Dacă nu ați inițiat această schimbare, vă rugăm să contactați imediat proprietarul spațiului de lucru."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -129,14 +69,124 @@ msgid "Connect to Twenty"
 msgstr "Conectați-vă la Twenty"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset your password 🗝"
-msgstr "Resetați-vă parola 🗝"
+#: src/emails/password-update-notify.email.tsx
+msgid "Dear {userName},"
+msgstr "Dragă {userName},"
 
 #. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Set your password 🗝"
-msgstr "Setează-ți parola 🗝"
+#: src/components/Footer.tsx
+msgid "Developers"
+msgstr "Dezvoltatori"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Disabled"
+msgstr "Dezactivat"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Enabled"
+msgstr "Activat"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Github"
+msgstr "Github"
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Good news first: your workspace <0>{workspaceDisplayName}</0> is only paused — none of your data is gone."
+msgstr "Mai întâi veștile bune: spațiul tău de lucru <0>{workspaceDisplayName}</0> este doar pus pe pauză — niciuna dintre datele tale nu a dispărut."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+#: src/emails/billing-trial-ending.email.tsx
+#: src/emails/clean-suspended-workspace.email.tsx
+#: src/emails/password-update-notify.email.tsx
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Hello,"
+msgstr "Salut,"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+#: src/emails/billing-trial-ending.email.tsx
+#: src/emails/clean-suspended-workspace.email.tsx
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Hi {userName},"
+msgstr "Bună, {userName},"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
+msgstr "Dacă Twenty funcționează bine pentru tine, ești acoperit — nu trebuie să faci nimic. Dacă nu este potrivit, poți anula cu un singur clic înainte de acea dată și nu vei fi taxat."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "Dacă nu ați inițiat această schimbare, vă rugăm să contactați imediat proprietarul spațiului de lucru."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "If you do nothing, we'll pause your workspace and keep your data safe for {dataRetentionDays} days in case you change your mind — no card will be charged."
+msgstr "Dacă nu faci nimic, vom pune spațiul tău de lucru pe pauză și îți vom păstra datele în siguranță timp de {dataRetentionDays} zile, în cazul în care te răzgândești — nu se va debita niciun card."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
+msgstr "Dacă vei dori vreodată să mai încerci Twenty, poți începe un spațiu de lucru nou în câteva minute — ne-ar plăcea să te avem din nou alături."
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
+msgstr "Este un CRM, un software care ajută companiile să își gestioneze eficient datele și relațiile cu clienții."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Its data has been removed and can no longer be recovered."
+msgstr "Datele sale au fost eliminate și nu mai pot fi recuperate."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Alăturați-vă echipei pe Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Just so it's never a surprise, here's a heads up about your annual plan."
+msgstr "Ca să nu fie niciodată o surpriză, iată un anunț despre planul tău anual."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Manage subscription"
+msgstr "Gestionează abonamentul"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
+msgstr "Nu este necesară nicio acțiune dacă dorești să continui. Dacă preferi să nu reînnoiești, poți anula oricând înainte de acea dată."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Password updated"
+msgstr "Parola a fost actualizată"
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Reactivate it within the next {remainingDays} {dayOrDays} and you'll pick up exactly where you left off, with every record, view and setting right where you left it."
+msgstr "Reactivează-l în următoarele {remainingDays} {dayOrDays} și vei relua exact de unde ai rămas, cu fiecare înregistrare, vizualizare și setare la locul lor."
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Reactivate workspace"
+msgstr "Reactivează spațiul de lucru"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Read Twenty's user guide"
+msgstr "Citiți ghidul utilizatorului Twenty"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -145,8 +195,63 @@ msgstr "Resetează"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
+msgid "Reset your password 🗝"
+msgstr "Resetați-vă parola 🗝"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "San Francisco / Paris"
+msgstr "San Francisco / Paris"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Server administrator access changed"
+msgstr "Accesul de administrator al serverului a fost modificat"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.fullAdmin"
+msgstr "serverAdminAccessChanged.fullAdmin"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.impersonation"
+msgstr "serverAdminAccessChanged.impersonation"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.summary"
+msgstr "serverAdminAccessChanged.summary"
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "serverAdminAccessChanged.warning"
+msgstr "serverAdminAccessChanged.warning"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
 msgid "Set"
 msgstr "Setează"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set your password 🗝"
+msgstr "Setează-ți parola 🗝"
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Start a new workspace"
+msgstr "Începe un nou spațiu de lucru"
+
+#. js-lingui-explicit-id
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "Email de test"
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "Aceasta este o confirmare că parola contului dvs. ({email}) a fost schimbată cu succes la data de {formattedDate}."
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -154,79 +259,9 @@ msgid "This link is only valid for the next {duration}. If the link does not wor
 msgstr "Acest link este valabil doar pentru următoarele {duration}. Dacă linkul nu funcționează, puteți folosi direct linkul de verificare a autentificării:"
 
 #. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Deleted Workspace"
-msgstr "Spațiu de lucru șters"
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
-msgstr "Spațiul dvs. de lucru <0>{workspaceDisplayName}</0> a fost șters, deoarece abonamentul a expirat cu {daysSinceInactive} zile în urmă."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "All data in this workspace has been permanently deleted."
-msgstr "Toate datele din acest spațiu de lucru au fost șterse permanent."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "If you wish to use Twenty again, you can create a new workspace."
-msgstr "Dacă doriți să folosiți din nou Twenty, puteți crea un spațiu de lucru nou."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Create a new workspace"
-msgstr "Creează un nou spațiu de lucru"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "What is Twenty?"
-msgstr "Ce este Twenty?"
-
-#. js-lingui-explicit-id
-#: src/components/WhatIsTwenty.tsx
-msgid "It's a CRM, a software to help businesses manage their customer data and relationships efficiently."
-msgstr "Este un CRM, un software care ajută companiile să își gestioneze eficient datele și relațiile cu clienții."
-
-#. js-lingui-explicit-id
-#: src/components/Footer.tsx
-msgid "Website"
-msgstr "Site web"
-
-#. js-lingui-explicit-id
-#: src/components/Footer.tsx
-msgid "Visit Twenty's website"
-msgstr "Vizitați site-ul Twenty"
-
-#. js-lingui-explicit-id
-#: src/components/Footer.tsx
-msgid "Github"
-msgstr "Github"
-
-#. js-lingui-explicit-id
-#: src/components/Footer.tsx
-msgid "Visit Twenty's GitHub repository"
-msgstr "Vizitați depozitul GitHub al Twenty"
-
-#. js-lingui-explicit-id
-#: src/components/Footer.tsx
-msgid "User guide"
-msgstr "Ghidul Utilizatorului"
-
-#. js-lingui-explicit-id
-#: src/components/Footer.tsx
-msgid "Read Twenty's user guide"
-msgstr "Citiți ghidul utilizatorului Twenty"
-
-#. js-lingui-explicit-id
-#: src/components/Footer.tsx
-msgid "Developers"
-msgstr "Dezvoltatori"
-
-#. js-lingui-explicit-id
-#: src/components/Footer.tsx
-msgid "Visit Twenty's developer documentation"
-msgstr "Vizitați documentația pentru dezvoltatori a Twenty"
+#: src/emails/billing-trial-ending.email.tsx
+msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
+msgstr "Pentru a păstra spațiul de lucru și tot ce ai construit, adaugă o metodă de plată și alege un plan."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -235,5 +270,91 @@ msgstr "Twenty.com, Corporație de Beneficiu Public"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
-msgid "San Francisco / Paris"
-msgstr "San Francisco / Paris"
+msgid "User guide"
+msgstr "Ghidul Utilizatorului"
+
+#. js-lingui-explicit-id
+#: src/emails/validate-approved-access-domain.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Validate domain"
+msgstr "Validează domeniul"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Verify Email"
+msgstr "Verificați Email"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Visit Twenty's developer documentation"
+msgstr "Vizitați documentația pentru dezvoltatori a Twenty"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Visit Twenty's GitHub repository"
+msgstr "Vizitați depozitul GitHub al Twenty"
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Visit Twenty's website"
+msgstr "Vizitați site-ul Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "We don't like surprise charges, so here's a friendly heads up."
+msgstr "Nu ne plac taxările surpriză, așa că iată un mic anunț prietenos."
+
+#. js-lingui-explicit-id
+#: src/components/Footer.tsx
+msgid "Website"
+msgstr "Site web"
+
+#. js-lingui-explicit-id
+#: src/components/WhatIsTwenty.tsx
+msgid "What is Twenty?"
+msgstr "Ce este Twenty?"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your annual plan for <0>{workspaceDisplayName}</0> renews on {formattedDate}."
+msgstr "Planul tău anual pentru <0>{workspaceDisplayName}</0> va fi reînnoit la {formattedDate}."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}."
+msgstr "Perioada ta de probă gratuită pentru <0>{workspaceDisplayName}</0> se încheie la {formattedDate}."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your annual plan."
+msgstr "Perioada ta de probă gratuită pentru <0>{workspaceDisplayName}</0> se încheie la {formattedDate}. Dacă nu anulezi până atunci, cardul salvat va fi debitat pentru planul tău anual."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-converting.email.tsx
+msgid "Your free trial of <0>{workspaceDisplayName}</0> ends on {formattedDate}. Unless you cancel before then, the card on file will be charged for your monthly plan."
+msgstr "Perioada ta de probă gratuită pentru <0>{workspaceDisplayName}</0> se încheie la {formattedDate}. Dacă nu anulezi până atunci, cardul salvat va fi debitat pentru planul tău lunar."
+
+#. js-lingui-explicit-id
+#: src/emails/billing-subscription-renewing.email.tsx
+msgid "Your plan renews soon"
+msgstr "Planul tău va fi reînnoit în curând"
+
+#. js-lingui-explicit-id
+#: src/emails/billing-trial-ending.email.tsx
+msgid "Your trial is ending soon"
+msgstr "Perioada ta de probă se va încheia în curând"
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
+msgstr "Spațiul tău de lucru <0>{workspaceDisplayName}</0> a fost acum șters definitiv — a fost pus pe pauză acum {daysSinceInactive} zile și nu a fost reactivat la timp."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace has been deleted"
+msgstr "Spațiul tău de lucru a fost șters"
+
+#. js-lingui-explicit-id
+#: src/emails/warn-suspended-workspace.email.tsx
+msgid "Your workspace is paused"
+msgstr "Spațiul tău de lucru este în pauză"

@@ -8,6 +8,7 @@ import {
   ensureAppAccessTokenIsValidOrRefresh,
   ensureAppRegistration,
 } from '@/cli/utilities/auth';
+import { buildAppTokenPairFetcher } from '@/cli/utilities/auth/build-app-token-pair-fetcher';
 import { promptForReauthentication } from '@/cli/utilities/auth/reauth-helper';
 import { buildApplication } from '@/cli/utilities/build/common/build-application';
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
@@ -354,7 +355,13 @@ const innerAppDevOnce = async (
   try {
     const appAccessToken = await ensureAppAccessTokenIsValidOrRefresh(
       configService,
-      { clientId, clientSecret },
+      {
+        credentials: clientSecret ? { clientId, clientSecret } : undefined,
+        fetchTokenPair: buildAppTokenPairFetcher(
+          apiService,
+          createDevAppResult.data.id,
+        ),
+      },
     );
 
     const clientService = new ClientService();

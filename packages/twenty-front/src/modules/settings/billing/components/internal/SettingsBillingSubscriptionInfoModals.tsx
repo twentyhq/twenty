@@ -1,8 +1,10 @@
+import { AddCreditCardModal } from '@/settings/billing/components/AddCreditCardModal';
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useLingui } from '@lingui/react/macro';
 
 type SettingsBillingSubscriptionInfoModalsProps = {
+  billingHasPaymentMethod: boolean | null | undefined;
   cancelIntervalSwitchingSubtitle: string;
   cancelPlanSwitchingSubtitle: string;
   isCancellingIntervalSwitch: boolean;
@@ -10,21 +12,19 @@ type SettingsBillingSubscriptionInfoModalsProps = {
   isCancellingPlanSwitch: boolean;
   isEndTrialPeriodLoading: boolean;
   isSwitchingInterval: boolean;
-  isSwitchingPlan: boolean;
   onCancelIntervalSwitching: () => void;
   onCancelPlanSwitching: () => void;
   onCancelResourceCreditSwitching: () => void;
   onEndTrialPeriod: () => void;
+  onPaymentMethodAdded: () => Promise<void>;
   onSwitchInterval: () => void;
-  onSwitchPlan: () => void;
   startSubscriptionSubtitle: string;
   switchToMonthlySubtitle: string;
-  switchToOrganizationSubtitle: string;
-  switchToProSubtitle: string;
   switchToYearlySubtitle: string;
 };
 
 export const SettingsBillingSubscriptionInfoModals = ({
+  billingHasPaymentMethod,
   cancelIntervalSwitchingSubtitle,
   cancelPlanSwitchingSubtitle,
   isCancellingIntervalSwitch,
@@ -32,17 +32,14 @@ export const SettingsBillingSubscriptionInfoModals = ({
   isCancellingPlanSwitch,
   isEndTrialPeriodLoading,
   isSwitchingInterval,
-  isSwitchingPlan,
   onCancelIntervalSwitching,
   onCancelPlanSwitching,
   onCancelResourceCreditSwitching,
   onEndTrialPeriod,
+  onPaymentMethodAdded,
   onSwitchInterval,
-  onSwitchPlan,
   startSubscriptionSubtitle,
   switchToMonthlySubtitle,
-  switchToOrganizationSubtitle,
-  switchToProSubtitle,
   switchToYearlySubtitle,
 }: SettingsBillingSubscriptionInfoModalsProps) => {
   const { t } = useLingui();
@@ -77,24 +74,6 @@ export const SettingsBillingSubscriptionInfoModals = ({
         loading={isCancellingIntervalSwitch}
       />
       <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.switchBillingPlanToEnterprise}
-        title={t`Change to Organization Plan?`}
-        subtitle={switchToOrganizationSubtitle}
-        onConfirmClick={onSwitchPlan}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
-        loading={isSwitchingPlan}
-      />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.switchBillingPlanToPro}
-        title={t`Change to Pro Plan?`}
-        subtitle={switchToProSubtitle}
-        onConfirmClick={onSwitchPlan}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
-        loading={isSwitchingPlan}
-      />
-      <ConfirmationModal
         modalInstanceId={BILLING_MODAL_IDS.cancelSwitchBillingPlan}
         title={t`Cancel plan switching?`}
         subtitle={cancelPlanSwitchingSubtitle}
@@ -103,15 +82,22 @@ export const SettingsBillingSubscriptionInfoModals = ({
         confirmButtonAccent="blue"
         loading={isCancellingPlanSwitch}
       />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.endTrialPeriod}
-        title={t`Start Your Subscription`}
-        subtitle={startSubscriptionSubtitle}
-        onConfirmClick={onEndTrialPeriod}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
-        loading={isEndTrialPeriodLoading}
-      />
+      {billingHasPaymentMethod === false ? (
+        <AddCreditCardModal
+          modalInstanceId={BILLING_MODAL_IDS.endTrialPeriod}
+          onPaymentMethodAdded={onPaymentMethodAdded}
+        />
+      ) : (
+        <ConfirmationModal
+          modalInstanceId={BILLING_MODAL_IDS.endTrialPeriod}
+          title={t`Start Your Subscription`}
+          subtitle={startSubscriptionSubtitle}
+          onConfirmClick={onEndTrialPeriod}
+          confirmButtonText={t`Confirm`}
+          confirmButtonAccent="blue"
+          loading={isEndTrialPeriodLoading}
+        />
+      )}
       <ConfirmationModal
         modalInstanceId={BILLING_MODAL_IDS.cancelSwitchMeteredPrice}
         title={t`Cancel credit pack switching?`}

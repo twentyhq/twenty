@@ -17,6 +17,7 @@ import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResour
 import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhase';
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
+import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -38,7 +39,6 @@ import {
   PermissionFlagType,
   SubscriptionInterval,
   SubscriptionStatus,
-  SwitchBillingPlanDocument,
   SwitchSubscriptionIntervalDocument,
 } from '~/generated-metadata/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
@@ -69,7 +69,7 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const { currentResourceCreditBillingPrice } = useCurrentResourceCredit();
 
-  const { currentPlan, oppositPlan } = useCurrentPlan();
+  const { currentPlan } = useCurrentPlan();
   const { isEnterprisePlan, isYearlyPlan, isMonthlyPlan, isProPlan } =
     useCurrentBillingFlags();
   const { splitedPhaseItemsInPrices } = useSplitPhaseItemsInPrices();
@@ -91,8 +91,6 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const {
     getIntervalLabelAsAdjectiveCapitalize,
-    confirmationModalSwitchToProMessage,
-    confirmationModalSwitchToOrganizationMessage,
     confirmationModalSwitchToMonthlyMessage,
     confirmationModalSwitchToYearlyMessage,
     confirmationModalCancelPlanSwitchingMessage,
@@ -103,8 +101,6 @@ export const SettingsBillingSubscriptionInfo = ({
   const [switchSubscriptionIntervalMutation] = useMutation(
     SwitchSubscriptionIntervalDocument,
   );
-
-  const [switchBillingPlan] = useMutation(SwitchBillingPlanDocument);
 
   const [cancelSwitchBillingInterval] = useMutation(
     CancelSwitchBillingIntervalDocument,
@@ -141,6 +137,14 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const { endTrialPeriod, isLoading: isEndTrialPeriodLoading } =
     useEndSubscriptionTrialPeriod();
+
+  const billingHasPaymentMethod = useAtomStateValue(
+    billingHasPaymentMethodSelector,
+  );
+
+  const startSubscriptionAfterPaymentMethodAdded = async () => {
+    await endTrialPeriod({ skipPaymentMethodRedirect: true });
+  };
 
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
     usePermissionFlagMap();
@@ -277,13 +281,12 @@ export const SettingsBillingSubscriptionInfo = ({
     !shouldUpdatePayment &&
     isYearlyPlan &&
     (!nextInterval || currentInterval === nextInterval);
-  const canSwitchToOrganizationPlan =
-    isProPlan && (!nextPlan || currentPlan.planKey === nextPlan.planKey);
+  const canComparePlans =
+    (isProPlan || isEnterprisePlan) &&
+    (!nextPlan || currentPlan.planKey === nextPlan.planKey);
   const canCancelIntervalSwitch =
     isDefined(nextInterval) && currentInterval !== nextInterval;
   const canStartSubscription = isTrialPeriod && hasPermissionToEndTrialPeriod;
-  const canSwitchToProPlan =
-    isEnterprisePlan && (!nextPlan || currentPlan.planKey === nextPlan.planKey);
   const canCancelPlanSwitch =
     isDefined(nextPlan) && currentPlan.planKey !== nextPlan.planKey;
 
@@ -325,7 +328,6 @@ export const SettingsBillingSubscriptionInfo = ({
       : []),
   ];
   const [isSwitchingInterval, setIsSwitchingInterval] = useState(false);
-  const [isSwitchingPlan, setIsSwitchingPlan] = useState(false);
   const [isCancellingPlanSwitch, setIsCancellingPlanSwitch] = useState(false);
   const [isCancellingIntervalSwitch, setIsCancellingIntervalSwitch] =
     useState(false);
@@ -334,7 +336,6 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const isAnyActionLoading =
     isSwitchingInterval ||
-    isSwitchingPlan ||
     isCancellingPlanSwitch ||
     isCancellingIntervalSwitch ||
     isCancellingMeteredSwitch ||
@@ -413,26 +414,6 @@ export const SettingsBillingSubscriptionInfo = ({
     });
   };
 
-  const switchPlan = async () => {
-    await runBillingAction({
-      action: async () => {
-        const { data } = await switchBillingPlan();
-        if (isDefined(data?.switchBillingPlan.currentBillingSubscription)) {
-          applyBillingUpdate(data.switchBillingPlan);
-        }
-      },
-      getErrorMessage: () =>
-        t`Error while switching subscription to ${oppositPlan} Plan.`,
-      getSuccessMessage: () => {
-        return oppositPlan === BillingPlanKey.ENTERPRISE || isTrialPeriod
-          ? t`Subscription has been switched to ${oppositPlan} Plan.`
-          : t`Subscription will be switched to ${oppositPlan} Plan the ${getBeautifiedRenewDate()}.`;
-      },
-      isLoading: isSwitchingPlan,
-      setIsLoading: setIsSwitchingPlan,
-    });
-  };
-
   const cancelPlanSwitching = async () => {
     await runBillingAction({
       action: async () => {
@@ -504,15 +485,14 @@ export const SettingsBillingSubscriptionInfo = ({
           <SettingsBillingSubscriptionInfoCardHeaderActions
             canCancelIntervalSwitch={canCancelIntervalSwitch}
             canCancelPlanSwitch={canCancelPlanSwitch}
+            canComparePlans={canComparePlans}
             canStartSubscription={canStartSubscription}
-            canSwitchToOrganizationPlan={canSwitchToOrganizationPlan}
-            canSwitchToProPlan={canSwitchToProPlan}
+            isComparePlansActionPrimary={isProPlan && !isTrialPeriod}
             isCancellationScheduled={isCancellationScheduled}
             isEndTrialPeriodDisabled={
               isEndTrialPeriodLoading || isAnyActionLoading
             }
             isSubscriptionActionDisabled={isSubscriptionActionDisabled}
-            isTrialPeriod={isTrialPeriod}
             isUpdatePaymentDisabled={isUpdatePaymentDisabled}
             onCancelIntervalSwitch={() =>
               openModal(BILLING_MODAL_IDS.cancelSwitchBillingInterval)
@@ -521,12 +501,6 @@ export const SettingsBillingSubscriptionInfo = ({
               openModal(BILLING_MODAL_IDS.cancelSwitchBillingPlan)
             }
             onEndTrialPeriod={() => openModal(BILLING_MODAL_IDS.endTrialPeriod)}
-            onSwitchToOrganization={() =>
-              openModal(BILLING_MODAL_IDS.switchBillingPlanToEnterprise)
-            }
-            onSwitchToPro={() =>
-              openModal(BILLING_MODAL_IDS.switchBillingPlanToPro)
-            }
             onUpdatePayment={onUpdatePayment}
             shouldUpdatePayment={shouldUpdatePayment}
           />
@@ -552,6 +526,7 @@ export const SettingsBillingSubscriptionInfo = ({
         workspaceMembers={currentWorkspaceMembers}
       />
       <SettingsBillingSubscriptionInfoModals
+        billingHasPaymentMethod={billingHasPaymentMethod}
         cancelIntervalSwitchingSubtitle={confirmationModalCancelIntervalSwitchingMessage()}
         cancelPlanSwitchingSubtitle={confirmationModalCancelPlanSwitchingMessage()}
         isCancellingIntervalSwitch={isCancellingIntervalSwitch}
@@ -559,17 +534,14 @@ export const SettingsBillingSubscriptionInfo = ({
         isCancellingPlanSwitch={isCancellingPlanSwitch}
         isEndTrialPeriodLoading={isEndTrialPeriodLoading}
         isSwitchingInterval={isSwitchingInterval}
-        isSwitchingPlan={isSwitchingPlan}
         onCancelIntervalSwitching={cancelIntervalSwitching}
         onCancelPlanSwitching={cancelPlanSwitching}
         onCancelResourceCreditSwitching={cancelResourceCreditSwitching}
         onEndTrialPeriod={endTrialPeriod}
+        onPaymentMethodAdded={startSubscriptionAfterPaymentMethodAdded}
         onSwitchInterval={switchInterval}
-        onSwitchPlan={switchPlan}
         startSubscriptionSubtitle={startSubscriptionSubtitle}
         switchToMonthlySubtitle={confirmationModalSwitchToMonthlyMessage()}
-        switchToOrganizationSubtitle={confirmationModalSwitchToOrganizationMessage()}
-        switchToProSubtitle={confirmationModalSwitchToProMessage()}
         switchToYearlySubtitle={confirmationModalSwitchToYearlyMessage()}
       />
     </Section>

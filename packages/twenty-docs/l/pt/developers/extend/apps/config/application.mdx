@@ -36,6 +36,60 @@ Notas:
 * O papel padrão é detectado automaticamente a partir do arquivo de definição de papel marcado com [`defineApplicationRole()`](/l/pt/developers/extend/apps/config/roles) — você não precisa referenciá-lo em `defineApplication()`.
 * As funções de pré-instalação e pós-instalação são detectadas automaticamente durante a construção do manifesto — você não precisa referenciá-las em `defineApplication()`.
 * Passar `defaultRoleUniversalIdentifier` explicitamente ainda é compatível para retrocompatibilidade, mas foi preterido em favor de `defineApplicationRole()`.
+* `serverVariables` são configurações e segredos com escopo de instância (por exemplo, chaves de API). Ao contrário de `applicationVariables`, eles não declaram nenhum valor no manifesto — o operador do workspace os preenche nas configurações do app, e eles são injetados nas funções de lógica somente depois de definidos.
+
+## Tipos de variáveis
+
+Tanto `applicationVariables` quanto `serverVariables` aceitam um `type` opcional (e, para `SELECT` / `MULTI_SELECT`, uma lista de `options`). Tipos compatíveis: `TEXT` (padrão), `BOOLEAN`, `NUMBER`, `NUMERIC`, `DATE`, `DATE_TIME`, `SELECT`, `MULTI_SELECT`, `ARRAY`, `RAW_JSON`, `RICH_TEXT`.
+
+```ts src/application-config.ts
+import { defineApplication, FieldType } from 'twenty-sdk/define';
+
+export default defineApplication({
+  // ...identity, role...
+  applicationVariables: {
+    MAX_POSTCARDS: {
+      universalIdentifier: '5f4497e4-9030-4085-85eb-2c48b8d53713',
+      description: 'Maximum postcards per batch',
+      type: FieldType.NUMBER,
+      value: 10,
+    },
+    DEFAULT_REGION: {
+      universalIdentifier: '76c5c321-b6b6-46eb-b4fc-f9f04bb04227',
+      description: 'Default shipping region',
+      type: FieldType.SELECT,
+      options: [
+        { label: 'Europe', value: 'eu' },
+        { label: 'United States', value: 'us' },
+      ],
+      value: 'eu',
+    },
+  },
+});
+```
+
+O `type` afeta apenas a **apresentação e validação** — ele seleciona a entrada correspondente na interface de configurações do workspace (um toggle, campo numérico, dropdown, seletor de data, editor JSON, …) e permite que o build valide a sua configuração (por exemplo, `SELECT` / `MULTI_SELECT` devem declarar `options` não vazias). Ele **não** altera a forma como o valor chega ao seu código.
+
+Os valores são **sempre injetados como strings** — isso é inerente às variáveis de ambiente (`process.env.*` aceita apenas string). Quando a sua função de lógica é executada, o executor serializa cada valor de acordo com o `type` declarado ao construir o `process.env`, para que o formato da string seja consistente, não importa como o valor foi definido (padrão do manifesto, interface de configurações ou uma versão anterior):
+
+| Tipo                                  | string de `process.env`                |
+| ------------------------------------- | -------------------------------------- |
+| `TEXT`, `SELECT`, `DATE`, `DATE_TIME` | o valor bruto (`"eu"`, `"2026-01-01"`) |
+| `BOOLEAN`                             | `"true"` / `"false"`                   |
+| `NUMBER`, `NUMERIC`                   | string decimal (`"10"`, `"2.5"`)       |
+| `MULTI_SELECT`, `ARRAY`               | array JSON (`'["email","postcard"]'`)  |
+| `RAW_JSON`, `RICH_TEXT`               | objeto JSON (`'{"retries":3}'`)        |
+
+Converta a string de volta para o tipo que você espera:
+
+```ts
+const maxCards = Number(process.env.MAX_POSTCARDS); // "10" -> 10
+const enabled = process.env.ENABLE_TRACKING === 'true'; // "true" -> true
+const channels = JSON.parse(process.env.ENABLED_CHANNELS ?? '[]'); // '["email"]' -> ["email"]
+const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3}' -> { retries: 3 }
+```
+
+O mesmo se aplica a componentes de front-end que leem valores via `getApplicationVariable('VARIABLE_NAME')` — o valor retornado é uma string; converta conforme necessário.
 
 ## Papel de função padrão
 
@@ -55,10 +109,14 @@ Se você planeja [publicar seu app](/l/pt/developers/extend/apps/operations/publ
 | ------------------ | ----------------------------------------------------------------------------------------------------------------- |
 | `author`           | Nome do autor ou da empresa                                                                                       |
 | `category`         | Categoria do app para filtragem no marketplace                                                                    |
-| `logoUrl`          | Caminho para o logo do seu app (por exemplo, `public/logo.png`)                                                   |
-| `screenshots`      | Array de caminhos de capturas de tela (por exemplo, `public/screenshot-1.png`)                                    |
+| `logo`             | Caminho para o logotipo do seu aplicativo empacotado em `public/` (p. ex., `public/logo.png`)                     |
+| `galleryImages`    | Array de caminhos de imagem da galeria empacotado em `public/` (por exemplo, `public/screenshot-1.png`)           |
 | `aboutDescription` | Descrição em markdown mais longa para a aba "Sobre". Se omitido, o marketplace usa o `README.md` do pacote no npm |
 | `websiteUrl`       | Link para seu site                                                                                                |
 | `termsUrl`         | Link para os Termos de Serviço                                                                                    |
 | `emailSupport`     | Endereço de e-mail de suporte                                                                                     |
 | `issueReportUrl`   | Link para o rastreador de problemas                                                                               |
+
+<Note>
+`logoUrl` e `screenshots` são aliases depreciadas de `logo` e `galleryImages`. URLs absolutas externas (`http://` ou `https://`) não são suportados para estes campos: eles são descartados com um aviso no momento da compilação. Agrupe as imagens na pasta `public/` do seu aplicativo.
+</Note>

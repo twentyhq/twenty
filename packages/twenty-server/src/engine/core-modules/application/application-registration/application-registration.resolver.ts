@@ -23,10 +23,12 @@ import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/
 import { CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
+import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
+import { ClaimApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/claim-application-registration-ownership.input';
 import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.dto';
 import { CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
@@ -66,6 +68,7 @@ export class ApplicationRegistrationResolver {
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationTarballService: ApplicationTarballService,
+    private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
     private readonly fileUrlService: FileUrlService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -315,6 +318,22 @@ export class ApplicationRegistrationResolver {
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
   )
   @Mutation(() => ApplicationRegistrationEntity)
+  async claimApplicationRegistrationOwnership(
+    @Args()
+    { applicationRegistrationId }: ClaimApplicationRegistrationOwnershipInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ApplicationRegistrationEntity> {
+    return this.applicationRegistrationService.claimOwnership({
+      applicationRegistrationId,
+      claimingWorkspaceId: workspaceId,
+    });
+  }
+
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+  )
+  @Mutation(() => ApplicationRegistrationEntity)
   async transferApplicationRegistrationOwnership(
     @Args()
     {
@@ -338,5 +357,23 @@ export class ApplicationRegistrationResolver {
     return context.loaders.isConfiguredLoader.load({
       applicationRegistrationId: registration.id,
     });
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  logoUrl(
+    @Parent() registration: ApplicationRegistrationEntity,
+  ): string | null {
+    return this.applicationRegistrationAssetUrlService.buildLogoUrl(
+      registration,
+    );
+  }
+
+  @ResolveField(() => [String])
+  galleryImagesUrls(
+    @Parent() registration: ApplicationRegistrationEntity,
+  ): string[] {
+    return this.applicationRegistrationAssetUrlService.buildGalleryImageUrls(
+      registration,
+    );
   }
 }

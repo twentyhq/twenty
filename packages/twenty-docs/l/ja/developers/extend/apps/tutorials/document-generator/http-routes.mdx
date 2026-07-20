@@ -1,0 +1,140 @@
+---
+title: 3. HTTPルート
+icon: globe
+description: HTTP 経由で関数をトリガーし、ドキュメントを Web ページとしてレンダリングします。
+---
+
+同じハンドラは HTTP リクエストに応答することもできます。 2つのルートを追加します:
+
+* ドキュメントを生成するUI呼び出しの **POST** エンドポイントと
+* ドキュメントを印刷可能なウェブページとしてレンダリングするパブリック**GET** エンドポイント。
+
+どちらも `httpRouteTriggerSettings` を使用します。 アプリのルートは `/s/` パスで指定されます。ローカル環境やセルフホスト環境では、そのパスは Twenty サーバーによって提供されます（例: `http://localhost:2020/s/documents/generate`）。 Twenty Cloud では、`RestApiClient` はワークスペースの functions ドメインを通じてパスを解決します。
+
+## POST route — オンデマンドで生成
+
+ここでは `generateDocumentHandler` を再利用しているため、ロジックを繰り返す必要はありません。リクエストボディを読み取るだけの薄いアダプターになっています。
+
+```ts filename="src/logic-functions/generate-document-route.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { generateDocumentHandler } from 'src/logic-functions/handlers/generate-document-handler';
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const body = event.body as Record<string, unknown> | null;
+
+  const result = await generateDocumentHandler({
+    templateId: (body?.templateId as string) ?? '',
+    recordId: (body?.recordId as string) ?? '',
+  });
+
+  // Map the handler's failure reason onto a real HTTP status (400/404/500)
+  // instead of always returning 200.
+  return new Response(JSON.stringify(result), {
+    status: result.success ? 200 : (result.status ?? 400),
+    headers: { 'Content-Type': 'application/json' },
+  });
+};
+
+export default defineLogicFunction({
+  universalIdentifier: GENERATE_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'generate-document-route',
+  timeoutSeconds: 30,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/generate',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+共有ハンドラーは失敗時に提案された `status` を返すので、ルートは適切な `4xx`/`5xx` コードで
+応答できます。 `isAuthRequired: true` は、呼び出し元が有効なトークンを提示する必要があることを意味します。次の章のフロントエンドのコンポーネントは、ユーザーのアクセストークンを自動的に渡します。
+
+## GET route — ウェブページとしてレンダリング
+
+JSON の代わりに HTML を返すには、本文を
+`Content-Type` ヘッダーで囲みます。 このルートはパブリックなので(`isAuthRequired: false`) 、
+生成されたドキュメントをリンクとして共有できます。
+
+```ts filename="src/logic-functions/view-document.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { documentHtmlPage } from 'src/utils/render-document';
+
+const htmlResponse = (html: string, status = 200): Response =>
+  new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const documentId = event.queryStringParameters?.id;
+
+  if (!documentId) {
+    return htmlResponse(documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'), 400);
+  }
+
+  // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
+  const { documents } = await new CoreApiClient().query({
+    documents: {
+      __args: { filter: { id: { eq: documentId } }, first: 1 },
+      edges: { node: { id: true, name: true, content: true } },
+    },
+  });
+
+  const document = documents?.edges?.[0]?.node;
+  if (!document?.id) {
+    return htmlResponse(documentHtmlPage('Document not found', `No document with id ${documentId}.`), 404);
+  }
+
+  return htmlResponse(documentHtmlPage(document.name ?? 'Document', document.content ?? ''));
+};
+
+export default defineLogicFunction({
+  universalIdentifier: VIEW_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'view-document',
+  timeoutSeconds: 15,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/view',
+    httpMethod: 'GET',
+    isAuthRequired: false,
+  },
+});
+```
+
+`documentHtmlPage` は、Markdown 本文を HTML にレンダリングし（[marked](https://marked.js.org/) を使用し、サニタイズ済み）、テンプレートコンテンツだけが表示される、きれいで印刷可能なページに差し込みます。これは PDF やアプリ内プレビューと同じ見た目です。
+[ヘルパーを参照](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/render-document.ts)。
+
+## お試しください
+
+テンプレートとワークスペース内の人を使用して、ルートを呼び出します（トークンを
+**設定 → APIs & Webhook**から取得します）
+
+```bash filename="Terminal"
+curl -X POST http://localhost:2020/s/documents/generate \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"templateId":"<templateId>","recordId":"<personId>"}'
+# → {"success":true,"documentId":"...","content":"Dear Jeffery Griffin, ..."}
+```
+
+返されたドキュメントをブラウザで開きます:
+
+```
+http://localhost:2020/s/documents/view?id=<documentId>
+```
+
+<Frame caption="公開 GET ルートは、ドキュメントを印刷可能なページとしてレンダリングします。">
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="レンダリングされたドキュメントの Web ページ" />
+</Frame>
+
+<Tip>
+`yarn tindev:function:logs` でテスト中に関数のログをストリーミングしたり、
+`yarn tindev:function:exec` で直接呼び出したりすることもできます。
+</Tip>
+
+**このステップの後:** アプリは HTTP 経由でドキュメントを生成し、Web ページとして配信できるようになります。 `curl`なしで使えるようにしましょう。
+
+<Card title="次へ: UIの構築 →" icon="table-columns" href="/l/ja/developers/extend/apps/tutorials/document-generator/building-the-ui">
+  表示、ナビゲーション、コマンド、およびフロントコンポーネント。
+</Card>

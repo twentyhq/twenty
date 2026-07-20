@@ -1,85 +1,129 @@
 import { SubTitle } from '@/auth/components/SubTitle';
-import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingModalCircularIcon';
-import { ModalContent } from 'twenty-ui/surfaces';
-import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { OnboardingAnimatedReveal } from '@/onboarding/components/OnboardingAnimatedReveal';
+import { OnboardingVerifyLayout } from '@/onboarding/components/OnboardingVerifyLayout';
+import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
+import { useShowWelcomeAnimationAfterOnboardingCheckout } from '@/onboarding/hooks/useShowWelcomeAnimationAfterOnboardingCheckout';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { AppPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { IconCheck } from 'twenty-ui/icon';
-import { Loader } from 'twenty-ui/feedback';
-import { MainButton } from 'twenty-ui/input';
-import { AnimatedEaseIn } from 'twenty-ui/layout';
+import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLazyQuery } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
+import { styled } from '@linaria/react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { MainButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-const StyledTitleContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  text-align: center;
+const SUBSCRIPTION_CONFIRMATION_POLL_INTERVAL_MS = 2000;
+const SUBSCRIPTION_CONFIRMATION_MAX_ATTEMPTS = 30;
+
+const StyledRetryButtonContainer = styled.div`
+  margin-top: ${themeCssVariables.spacing[8]};
+  width: 200px;
 `;
 
 export const PaymentSuccess = () => {
-  const navigate = useNavigateApp();
   const subscriptionStatus = useSubscriptionStatus();
   const [getCurrentUser] = useLazyQuery(GetCurrentUserDocument, {
     fetchPolicy: 'network-only',
   });
   const setCurrentUser = useSetAtomState(currentUserState);
-  const [isLoading, setIsLoading] = useState(false);
-  const navigateWithSubscriptionCheck = async () => {
-    if (isLoading) return;
+  const showWelcomeAnimationAfterOnboardingCheckout =
+    useShowWelcomeAnimationAfterOnboardingCheckout();
+  const { enqueueErrorSnackBar } = useSnackBar();
+  const [hasTimedOut, setHasTimedOut] = useState(false);
+  const [confirmationRunIndex, setConfirmationRunIndex] = useState(0);
 
-    setIsLoading(true);
+  useEffect(() => {
+    let attempts = 0;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    let cancelled = false;
 
-    try {
+    const confirmSubscription = async () => {
+      if (cancelled) {
+        return;
+      }
+
       if (isDefined(subscriptionStatus)) {
-        navigate(AppPath.WorkspaceActivation);
+        showWelcomeAnimationAfterOnboardingCheckout();
         return;
       }
 
       const result = await getCurrentUser();
+
+      if (cancelled) {
+        return;
+      }
+
       const currentUser = result.data?.currentUser;
       const refreshedSubscriptionStatus =
         currentUser?.currentWorkspace?.currentBillingSubscription?.status;
 
       if (isDefined(currentUser) && isDefined(refreshedSubscriptionStatus)) {
         setCurrentUser(currentUser);
-        navigate(AppPath.WorkspaceActivation);
+        showWelcomeAnimationAfterOnboardingCheckout();
         return;
       }
 
-      throw new Error(
-        t`We're waiting for a confirmation from our payment provider (Stripe).\nPlease try again in a few seconds, sorry.`,
+      attempts += 1;
+
+      if (attempts >= SUBSCRIPTION_CONFIRMATION_MAX_ATTEMPTS) {
+        setHasTimedOut(true);
+        enqueueErrorSnackBar({
+          message: t`We're still waiting for a confirmation from our payment provider (Stripe). Please refresh in a few seconds.`,
+        });
+        return;
+      }
+
+      timeoutId = setTimeout(
+        () => void confirmSubscription(),
+        SUBSCRIPTION_CONFIRMATION_POLL_INTERVAL_MS,
       );
-    } catch (error) {
-      setIsLoading(false);
-      throw error;
-    }
+    };
+
+    void confirmSubscription();
+
+    return () => {
+      cancelled = true;
+      if (isDefined(timeoutId)) {
+        clearTimeout(timeoutId);
+      }
+    };
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [confirmationRunIndex, subscriptionStatus]);
+
+  const handleRetry = () => {
+    setHasTimedOut(false);
+    setConfirmationRunIndex((previous) => previous + 1);
   };
 
+  const transition = useOnboardingMotionTransition();
+
   return (
-    <ModalContent gap={8} isVerticallyCentered isHorizontallyCentered>
-      <AnimatedEaseIn>
-        <OnboardingModalCircularIcon Icon={IconCheck} />
-      </AnimatedEaseIn>
-      <StyledTitleContainer>
-        <Title noMarginTop>{t`All set!`}</Title>
-        <SubTitle>{t`Your account has been activated.`}</SubTitle>
-      </StyledTitleContainer>
-      <MainButton
-        title={t`Start`}
-        width={200}
-        onClick={navigateWithSubscriptionCheck}
-        Icon={() => (isLoading ? <Loader /> : null)}
-        disabled={isLoading}
-      />
-    </ModalContent>
+    <OnboardingVerifyLayout>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={hasTimedOut ? 'timed-out' : 'confirming'}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={transition}
+        >
+          <SubTitle>
+            {hasTimedOut
+              ? t`We're still waiting for the payment confirmation`
+              : t`Confirming your payment`}
+          </SubTitle>
+        </motion.div>
+      </AnimatePresence>
+      <OnboardingAnimatedReveal isVisible={hasTimedOut}>
+        <StyledRetryButtonContainer>
+          <MainButton title={t`Retry`} onClick={handleRetry} fullWidth />
+        </StyledRetryButtonContainer>
+      </OnboardingAnimatedReveal>
+    </OnboardingVerifyLayout>
   );
 };
