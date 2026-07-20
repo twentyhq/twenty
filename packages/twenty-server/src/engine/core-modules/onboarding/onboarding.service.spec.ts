@@ -183,6 +183,24 @@ describe('OnboardingService', () => {
         }),
       ).resolves.not.toThrow();
     });
+
+    it('should not throw when the workspace member count is unavailable', async () => {
+      jest.spyOn(userVarsService, 'delete').mockResolvedValue(1);
+      jest
+        .spyOn(userWorkspaceRepository, 'countBy')
+        .mockRejectedValue(new Error('database failure'));
+
+      await expect(
+        service.completeOnboardingConnectAccountStep({
+          userId,
+          workspaceId,
+        }),
+      ).resolves.not.toThrow();
+
+      expect(
+        billingCreditService.creditWorkspaceBalance,
+      ).not.toHaveBeenCalled();
+    });
   });
 
   describe('triggerInstallAppsOnboardingStep', () => {

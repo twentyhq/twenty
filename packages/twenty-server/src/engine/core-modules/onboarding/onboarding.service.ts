@@ -193,11 +193,7 @@ export class OnboardingService {
       return;
     }
 
-    if (!(await this.isFirstWorkspaceUser({ workspaceId }))) {
-      return;
-    }
-
-    await this.creditImportContactsReward({ workspaceId });
+    await this.creditImportContactsRewardForFirstWorkspaceUser({ workspaceId });
   }
 
   private async isFirstWorkspaceUser({
@@ -228,12 +224,16 @@ export class OnboardingService {
     return isDefined(affectedRows) && affectedRows > 0;
   }
 
-  private async creditImportContactsReward({
+  private async creditImportContactsRewardForFirstWorkspaceUser({
     workspaceId,
   }: {
     workspaceId: string;
   }) {
     try {
+      if (!(await this.isFirstWorkspaceUser({ workspaceId }))) {
+        return;
+      }
+
       await this.billingCreditService.creditWorkspaceBalance({
         workspaceId,
         amountMicro: this.twentyConfigService.get(
