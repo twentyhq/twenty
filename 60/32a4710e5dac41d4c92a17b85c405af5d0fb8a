@@ -1,0 +1,50 @@
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_11e59742733dbd::t_d003d28edb3822 1573,1962-1967,2453-2479,2605,3107-3111,4476,4833-4837,8199,9151
+packages/twenty-server/src/modules/emailing/emailing.module.ts
+  s_11e59742733dbd::t_0536899b030843 22,60
+packages/twenty-front/src/modules/settings/emailing-domains/graphql/queries/getAllEmailingDomains.ts
+  s_11e59742733dbd::t_1d0794a9caa471 18-24
+packages/twenty-server/src/modules/emailing/resolvers/message-suppression.resolver.ts
+  s_11e59742733dbd::t_ddb57199a31b45 1-72
+packages/twenty-server/src/engine/metadata-modules/message-channel/utils/message-channel-graphql-api-exception-handler.util.ts
+  s_11e59742733dbd::t_919dfd28ba3e31 44-47
+packages/twenty-server/src/engine/core-modules/emailing-domain/filters/emailing-domain-graphql-api-exception.filter.ts
+  s_11e59742733dbd::t_e3d72778d63817 9-13
+  s_11e59742733dbd::t_37917c4e1d5919 21-24
+packages/twenty-server/src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+  s_11e59742733dbd::t_3b40c3f0286cfc 9-10
+  s_11e59742733dbd::t_4722a68c97d03b 19-22
+packages/twenty-front/src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
+  s_11e59742733dbd::t_9d06d6d1fd9db7 108-117
+  s_11e59742733dbd::t_3fea0cddc696cb 234-239
+  s_11e59742733dbd::t_e0ce69bea0cc55 231-233
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/find-message-suppressions.input.ts
+  s_11e59742733dbd::t_8344b0632c867d 1-22
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/message-suppression.dto.ts
+  s_11e59742733dbd::t_bed8369b328fad 1-43
+packages/twenty-server/src/modules/emailing/services/message-suppression.service.ts
+  s_11e59742733dbd::t_2bc66bd5f38c2d 34-40
+  s_11e59742733dbd::t_4103080a3630e5 13-16
+  s_11e59742733dbd::t_9e0430ef4b434c 60-110
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.resolver.ts
+  s_11e59742733dbd::t_6542e8adf70cc6 2,10-11
+  s_11e59742733dbd::t_250ae1504d6bec 106-112
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-email-authentication-records.util.ts
+  s_11e59742733dbd::t_1d576588780208 1-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "6032a4710e5dac41d4c92a17b85c405af5d0fb8a",
+  "prompts": {},
+  "sessions": {
+    "s_11e59742733dbd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "abb6c0e8-5fd4-4642-8ed9-2146ae9fd9ab",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
