@@ -4890,6 +4890,9 @@ export default {
             "priority": [
                 12
             ],
+            "status": [
+                1
+            ],
             "__typename": [
                 1
             ]

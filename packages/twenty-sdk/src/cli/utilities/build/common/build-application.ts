@@ -132,6 +132,13 @@ export const buildApplication = async (
 
   await copyStaticFiles({
     appPath: options.appPath,
+    fileFolder: FileFolder.Source,
+    filePaths: [...new Set([...logicFunctions, ...frontComponents])],
+    collectFileBuilt,
+  });
+
+  await copyStaticFiles({
+    appPath: options.appPath,
     fileFolder: FileFolder.PublicAsset,
     filePaths: options.filePaths.publicAssets,
     collectFileBuilt,

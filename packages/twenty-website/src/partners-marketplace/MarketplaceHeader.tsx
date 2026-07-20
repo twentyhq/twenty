@@ -1,9 +1,12 @@
 import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { mediaUp, spacing } from '@/tokens';
 import { Body, Eyebrow, Heading, SectionShell } from '@/ui';
+
+import { MarketplaceBriefLink } from './MarketplaceBriefLink';
 
 // Left-aligned page intro on the shared hero rhythm (the old marketplace
 // header's larger one-off top padding normalizes onto rhythm="hero", the
@@ -39,9 +42,15 @@ export function MarketplaceHeader() {
         </Heading>
         <HeaderBody>
           <Body muted size="md">
-            {i18n._(
-              msg`Twenty's certified partners help teams migrate, customise, and operate the open source CRM across regions, languages, and deployment models. Browse profiles and book a call.`,
-            )}
+            <Trans>
+              Twenty&apos;s certified partners help teams migrate, customise,
+              and operate the open source CRM across regions, languages, and
+              deployment models. Browse profiles and book a call, or{' '}
+              <MarketplaceBriefLink href="/partners/brief">
+                tell us what you need
+              </MarketplaceBriefLink>{' '}
+              and we&apos;ll match you.
+            </Trans>
           </Body>
         </HeaderBody>
       </HeaderStack>

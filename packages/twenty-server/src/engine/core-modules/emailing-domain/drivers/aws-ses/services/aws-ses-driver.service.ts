@@ -60,7 +60,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
 
       const tenantName = this.buildTenantName(input.workspaceId);
 
-      const { isVerified, verificationRecords } =
+      const { isVerified, status, verificationRecords } =
         await this.createOrUpdateEmailIdentity(input.domain, tenantName);
 
       if (isVerified) {
@@ -68,10 +68,8 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       }
 
       return {
-        status: isVerified
-          ? EmailingDomainStatus.VERIFIED
-          : EmailingDomainStatus.PENDING,
-        verificationRecords,
+        status,
+        verificationRecords: this.withRecordStatus(verificationRecords, status),
       };
     } catch (error) {
       this.logger.error(`Failed to verify domain ${input.domain}: ${error}`);
@@ -101,7 +99,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
 
       return {
         status,
-        verificationRecords,
+        verificationRecords: this.withRecordStatus(verificationRecords, status),
       };
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -252,6 +250,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     tenantName: string,
   ): Promise<{
     isVerified: boolean;
+    status: EmailingDomainStatus;
     verificationRecords: VerificationRecordDTO[];
   }> {
     const sesClient = this.awsSesClientProvider.getSESClient();
@@ -263,6 +262,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       const existingIdentity = await sesClient.send(getIdentityCommand);
 
       const isVerified = existingIdentity.VerifiedForSendingStatus === true;
+      const status = this.determineVerificationStatus(existingIdentity);
       const verificationRecords = this.buildVerificationRecords(
         domain,
         existingIdentity.DkimAttributes?.Tokens || [],
@@ -270,7 +270,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
 
       await this.associateResourceWithTenant(domain, tenantName);
 
-      return { isVerified, verificationRecords };
+      return { isVerified, status, verificationRecords };
     } catch (error) {
       if (error instanceof NotFoundException) {
         return await this.createNewEmailIdentity(domain, tenantName);
@@ -284,6 +284,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     tenantName: string,
   ): Promise<{
     isVerified: boolean;
+    status: EmailingDomainStatus;
     verificationRecords: VerificationRecordDTO[];
   }> {
     const sesClient = this.awsSesClientProvider.getSESClient();
@@ -305,6 +306,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
 
     return {
       isVerified: false,
+      status: EmailingDomainStatus.PENDING,
       verificationRecords,
     };
   }
@@ -382,5 +384,19 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     }
 
     return EmailingDomainStatus.PENDING;
+  }
+
+  private withRecordStatus(
+    records: VerificationRecordDTO[],
+    status: EmailingDomainStatus,
+  ): VerificationRecordDTO[] {
+    const recordStatus =
+      status === EmailingDomainStatus.VERIFIED
+        ? 'success'
+        : status === EmailingDomainStatus.FAILED
+          ? 'error'
+          : 'pending';
+
+    return records.map((record) => ({ ...record, status: recordStatus }));
   }
 }

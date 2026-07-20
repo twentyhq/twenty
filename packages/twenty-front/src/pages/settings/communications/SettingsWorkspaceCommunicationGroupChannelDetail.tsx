@@ -17,17 +17,18 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
+import {
+  EmailingDomainStatus,
+  GetEmailingDomainsDocument,
+} from '~/generated-metadata/graphql';
 import { Status } from 'twenty-ui/data-display';
 import { IconCopy, IconTrash } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
-import { InlineBanner } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
+import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { getColorByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusColor';
@@ -47,20 +48,17 @@ const StyledForwardingInputContainer = styled.div`
   margin-right: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledDomainStatusRow = styled.div`
+const StyledSendingDomainAdornment = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  justify-content: space-between;
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
-const StyledDomainName = styled.div`
-  color: ${themeCssVariables.font.color.secondary};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
+const RECORD_STATUS_TO_COLOR: Partial<Record<string, ThemeColor>> = {
+  success: 'green',
+  pending: 'yellow',
+  error: 'red',
+};
 
 export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const { t } = useLingui();
@@ -96,6 +94,30 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
     (domain) => domain.domain.toLowerCase() === channelDomain,
   );
 
+  const verificationRecords = (emailingDomain?.verificationRecords ?? []).map(
+    (record) => ({
+      ...record,
+      status: record.status ?? undefined,
+      statusColor: isDefined(record.status)
+        ? (RECORD_STATUS_TO_COLOR[record.status] ?? 'gray')
+        : undefined,
+    }),
+  );
+
+  const isDomainVerified =
+    verificationRecords.length > 0 &&
+    verificationRecords.every((record) => record.status === 'success');
+
+  const hasFailedRecord = verificationRecords.some(
+    (record) => record.status === 'error',
+  );
+
+  const domainStatus = isDomainVerified
+    ? EmailingDomainStatus.VERIFIED
+    : hasFailedRecord
+      ? EmailingDomainStatus.FAILED
+      : EmailingDomainStatus.PENDING;
+
   const handleDelete = async () => {
     try {
       await deleteEmailGroupChannel(channel.id);
@@ -116,7 +138,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
           href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: t`Communications`,
+          children: t`Communication`,
           href: getSettingsPath(SettingsPath.WorkspaceCommunications),
         },
       ]}
@@ -133,18 +155,6 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
       }
     >
       <SettingsPageContainer>
-        <InlineBanner
-          message={t`Need help to configure your shared mailbox?`}
-          button={{
-            title: t`Go to documentation`,
-            onClick: () =>
-              window.open(
-                getDocumentationUrl({}),
-                '_blank',
-                'noopener,noreferrer',
-              ),
-          }}
-        />
         <Section>
           <H2Title
             title={t`Shared email`}
@@ -189,25 +199,22 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
               title={t`Sending domain`}
               description={t`Outbound mail from this channel is sent through this domain. It must be verified before email can be delivered.`}
               adornment={
-                <SettingsEmailingDomainVerifyButton
-                  emailingDomainId={emailingDomain.id}
-                />
+                <StyledSendingDomainAdornment>
+                  <Status
+                    color={getColorByEmailingDomainStatus(domainStatus)}
+                    text={getTextByEmailingDomainStatus(domainStatus)}
+                  />
+                  {!isDomainVerified && (
+                    <SettingsEmailingDomainVerifyButton
+                      emailingDomainId={emailingDomain.id}
+                    />
+                  )}
+                </StyledSendingDomainAdornment>
               }
             />
-            {isDefined(emailingDomain.verificationRecords) && (
-              <SettingsDnsRecordsTable
-                records={emailingDomain.verificationRecords}
-              />
+            {!isDomainVerified && (
+              <SettingsDnsRecordsTable records={verificationRecords} />
             )}
-            <Card rounded>
-              <StyledDomainStatusRow>
-                <StyledDomainName>{emailingDomain.domain}</StyledDomainName>
-                <Status
-                  color={getColorByEmailingDomainStatus(emailingDomain.status)}
-                  text={getTextByEmailingDomainStatus(emailingDomain.status)}
-                />
-              </StyledDomainStatusRow>
-            </Card>
           </Section>
         )}
       </SettingsPageContainer>

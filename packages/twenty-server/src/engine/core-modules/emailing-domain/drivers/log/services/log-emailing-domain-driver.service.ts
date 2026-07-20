@@ -46,7 +46,7 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
 
     return {
       status: EmailingDomainStatus.VERIFIED,
-      verificationRecords: [],
+      verificationRecords: this.buildSyntheticVerificationRecords(input.domain),
     };
   }
 
@@ -57,8 +57,45 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
 
     return {
       status: EmailingDomainStatus.VERIFIED,
-      verificationRecords: [],
+      verificationRecords: this.buildSyntheticVerificationRecords(input.domain),
     };
+  }
+
+  private buildSyntheticVerificationRecords(
+    domain: string,
+  ): EmailingDomainVerificationResult['verificationRecords'] {
+    return [
+      {
+        type: 'CNAME',
+        key: `synthetic1._domainkey.${domain}`,
+        value: `synthetic1.dkim.amazonses.example`,
+        status: 'success',
+      },
+      {
+        type: 'CNAME',
+        key: `synthetic2._domainkey.${domain}`,
+        value: `synthetic2.dkim.amazonses.example`,
+        status: 'success',
+      },
+      {
+        type: 'CNAME',
+        key: `synthetic3._domainkey.${domain}`,
+        value: `synthetic3.dkim.amazonses.example`,
+        status: 'pending',
+      },
+      {
+        type: 'CNAME',
+        key: `${UNSUBSCRIBE_HOSTNAME_PREFIX}.${domain}`,
+        value: `app.localhost`,
+        status: 'pending',
+      },
+      {
+        type: 'CNAME',
+        key: `_acme-challenge.${UNSUBSCRIBE_HOSTNAME_PREFIX}.${domain}`,
+        value: `${domain}.dcv.cloudflare.example`,
+        status: 'error',
+      },
+    ];
   }
 
   async registerDomain(input: EmailingDomainResourceInput): Promise<void> {

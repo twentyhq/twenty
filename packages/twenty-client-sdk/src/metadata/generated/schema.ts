@@ -2161,6 +2161,7 @@ export interface VerificationRecord {
     key: Scalars['String']
     value: Scalars['String']
     priority?: Scalars['Float']
+    status?: Scalars['String']
     __typename: 'VerificationRecord'
 }
 
@@ -5315,6 +5316,7 @@ export interface VerificationRecordGenqlSelection{
     key?: boolean | number
     value?: boolean | number
     priority?: boolean | number
+    status?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

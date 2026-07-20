@@ -15,7 +15,6 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export type EmailRecipientSuggestion = {
   suggestionId: string;
@@ -116,14 +115,23 @@ export const useEmailRecipientSuggestions = ({
   });
 
   const { searchRecords } = useObjectRecordSearchRecords({
-    objectNameSingulars: [CoreObjectNameSingular.Person],
+    objectNameSingulars: [
+      CoreObjectNameSingular.Person,
+      CoreObjectNameSingular.WorkspaceMember,
+    ],
     searchInput: hasSearchInput ? trimmedSearchInput : undefined,
-    limit: EMAIL_RECIPIENT_PEOPLE_SUGGESTIONS_LIMIT,
+    limit:
+      EMAIL_RECIPIENT_PEOPLE_SUGGESTIONS_LIMIT +
+      EMAIL_RECIPIENT_MEMBER_SUGGESTIONS_LIMIT,
   });
 
-  const searchedPersonIds = searchRecords.map(
-    (searchRecord) => searchRecord.recordId,
-  );
+  const searchedPersonIds = searchRecords
+    .filter(
+      (searchRecord) =>
+        searchRecord.objectNameSingular === CoreObjectNameSingular.Person,
+    )
+    .map((searchRecord) => searchRecord.recordId)
+    .slice(0, EMAIL_RECIPIENT_PEOPLE_SUGGESTIONS_LIMIT);
 
   const { records: searchedPeopleRecords } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.Person,
@@ -149,61 +157,62 @@ export const useEmailRecipientSuggestions = ({
       getEmailRecipientPersonFromRecord(personRecord),
     ]),
   );
-  const orderedSearchedPeople = searchedPersonIds
-    .map((personId) => searchedPeopleById.get(personId))
-    .filter(isDefined);
 
   const contextPersonIds = new Set(contextPeople.map((person) => person.id));
 
-  const orderedPeople = hasSearchInput
-    ? [
-        ...orderedSearchedPeople.filter((person) =>
-          contextPersonIds.has(person.id),
-        ),
-        ...orderedSearchedPeople.filter(
-          (person) => !contextPersonIds.has(person.id),
-        ),
-      ]
-    : contextPeople;
+  const workspaceMembersById = new Map(
+    currentWorkspaceMembers.map((workspaceMember) => [
+      workspaceMember.id,
+      workspaceMember,
+    ]),
+  );
 
-  const peopleSuggestions = orderedPeople
-    .filter(isSuggestablePerson)
-    .map(getPersonSuggestion);
+  const contextRankedSuggestions: EmailRecipientSuggestion[] = [];
+  const rankedSuggestions: EmailRecipientSuggestion[] = [];
+  let memberSuggestionCount = 0;
 
-  const memberSuggestions: EmailRecipientSuggestion[] = hasSearchInput
-    ? filterBySearchQuery({
-        items: currentWorkspaceMembers.filter(
-          (workspaceMember) =>
-            isNonEmptyString(workspaceMember.userEmail) &&
-            !excludedKeySet.has(
-              getEmailRecipientKey(workspaceMember.userEmail),
-            ),
-        ),
-        searchQuery: trimmedSearchInput,
-        getSearchableValues: (workspaceMember) => [
-          `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`.trim(),
-          workspaceMember.userEmail,
-        ],
-      })
-        .slice(0, EMAIL_RECIPIENT_MEMBER_SUGGESTIONS_LIMIT)
-        .map((workspaceMember) =>
-          getSuggestion({
-            suggestionId: `workspace-member-${workspaceMember.id}`,
-            fullName:
-              `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`.trim(),
-            address: workspaceMember.userEmail,
-            secondaryText: `${workspaceMember.userEmail} · ${t`Team member`}`,
-            avatarUrl: workspaceMember.avatarUrl ?? null,
-            avatarColorSeed: workspaceMember.id,
-          }),
-        )
-    : [];
+  for (const searchRecord of searchRecords) {
+    if (searchRecord.objectNameSingular === CoreObjectNameSingular.Person) {
+      const person = searchedPeopleById.get(searchRecord.recordId);
+
+      if (isDefined(person) && isSuggestablePerson(person)) {
+        (contextPersonIds.has(person.id)
+          ? contextRankedSuggestions
+          : rankedSuggestions
+        ).push(getPersonSuggestion(person));
+      }
+      continue;
+    }
+
+    const workspaceMember = workspaceMembersById.get(searchRecord.recordId);
+
+    if (
+      isDefined(workspaceMember) &&
+      isNonEmptyString(workspaceMember.userEmail) &&
+      !excludedKeySet.has(getEmailRecipientKey(workspaceMember.userEmail)) &&
+      memberSuggestionCount < EMAIL_RECIPIENT_MEMBER_SUGGESTIONS_LIMIT
+    ) {
+      memberSuggestionCount += 1;
+      rankedSuggestions.push(
+        getSuggestion({
+          suggestionId: `workspace-member-${workspaceMember.id}`,
+          fullName:
+            `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`.trim(),
+          address: workspaceMember.userEmail,
+          secondaryText: `${workspaceMember.userEmail} · ${t`Team member`}`,
+          avatarUrl: workspaceMember.avatarUrl ?? null,
+          avatarColorSeed: workspaceMember.id,
+        }),
+      );
+    }
+  }
+
+  const recordSuggestions = hasSearchInput
+    ? [...contextRankedSuggestions, ...rankedSuggestions]
+    : contextPeople.filter(isSuggestablePerson).map(getPersonSuggestion);
 
   const seenRecipientKeys = new Set<string>();
-  const dedupedRecordSuggestions = [
-    ...peopleSuggestions,
-    ...memberSuggestions,
-  ].filter((suggestion) => {
+  const dedupedRecordSuggestions = recordSuggestions.filter((suggestion) => {
     const recipientKey = getEmailRecipientKey(suggestion.recipient.address);
 
     if (seenRecipientKeys.has(recipientKey)) {

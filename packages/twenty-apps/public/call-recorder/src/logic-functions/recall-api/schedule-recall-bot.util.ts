@@ -13,6 +13,7 @@ import {
 } from 'src/logic-functions/recall-api/extract-recall-bot-id.util';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
+import { computeMaximumJoinAt } from 'src/logic-functions/recall-api/compute-maximum-join-at.utils';
 
 export type ScheduleRecallBotArgs = {
   meetingUrl: string;
@@ -47,7 +48,7 @@ export const scheduleRecallBot = async ({
     idempotencyKey,
     body: {
       meeting_url: meetingUrl,
-      join_at: joinAt,
+      join_at: computeMaximumJoinAt(joinAt), // We can't join in the past, so we floor this date 1s in the future
       bot_name: configResult.config.botName,
       ...(isUndefined(automaticLeave)
         ? {}
