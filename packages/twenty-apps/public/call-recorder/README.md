@@ -23,7 +23,7 @@ variable to `false` to turn summaries off.
 
 ## 🎥 Supported meeting platforms
 
-The recording bot can only join meetings on platforms supported by Recall:
+The recording bot can only join meetings on these platforms:
 
 - ✅ Google Meet
 - ✅ Zoom
@@ -33,8 +33,7 @@ The recording bot can only join meetings on platforms supported by Recall:
 
 Events whose conference link points to any other platform (e.g. ro.am, Daily,
 Whereby) or that only have a dial-in number are **ignored** — no bot is
-scheduled, since Recall cannot join the call. See the up-to-date list at
-[Recall's meeting platforms docs](https://docs.recall.ai/docs/meeting-platforms).
+scheduled, since it can't join the call.
 
 ## 📌 Heads up
 
