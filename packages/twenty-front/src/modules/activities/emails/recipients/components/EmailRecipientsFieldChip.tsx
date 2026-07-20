@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 
@@ -7,11 +6,12 @@ import { EmailRecipientChipMenuContent } from '@/activities/emails/recipients/co
 import { type EmailRecipientResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
 import { formatEmailRecipient } from '@/activities/emails/recipients/utils/formatEmailRecipient';
+import { getEmailIdentityDisplayName } from '@/activities/emails/utils/getEmailIdentityDisplayName';
 import { BaseChip } from '@/object-record/record-field/ui/form-types/components/BaseChip';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-const CHIP_MAX_LABEL_WIDTH = 240;
+const CHIP_MAX_WIDTH = 240;
 
 type EmailRecipientsFieldChipProps = {
   chipId: string;
@@ -48,10 +48,12 @@ export const EmailRecipientsFieldChip = ({
     ? `${person.firstName} ${person.lastName}`.trim()
     : '';
 
-  const resolvedLabel =
-    [workspaceMemberFullName, personFullName, recipient.displayName ?? ''].find(
-      isNonEmptyString,
-    ) ?? recipient.address;
+  const resolvedLabel = getEmailIdentityDisplayName({
+    personName: personFullName,
+    workspaceMemberName: workspaceMemberFullName,
+    displayName: recipient.displayName,
+    handle: recipient.address,
+  });
 
   const avatar =
     isDefined(workspaceMember) || isDefined(person) ? (
@@ -84,7 +86,7 @@ export const EmailRecipientsFieldChip = ({
           selected={selected}
           isFlashing={isFlashing}
           onDoubleClick={onEdit}
-          maxLabelWidth={CHIP_MAX_LABEL_WIDTH}
+          maxWidth={CHIP_MAX_WIDTH}
           onRemove={(event) => {
             event.stopPropagation();
             onRemove();

@@ -80,15 +80,9 @@ export class EmailingDomainService {
       },
     );
 
-    if (isVerifiedOnCreation) {
-      await this.unsubscribeHostnameService.sync(
-        workspaceId,
-        emailingDomain.id,
-        {
-          provision: true,
-        },
-      );
-    }
+    await this.unsubscribeHostnameService.sync(workspaceId, emailingDomain.id, {
+      provision: true,
+    });
 
     return this.unsubscribeHostnameService.withDnsRecords(
       await this.emailingDomainRepository.findOneOrFail(workspaceId, {
@@ -227,7 +221,7 @@ export class EmailingDomainService {
       workspace.id,
       emailingDomain.id,
       {
-        provision: verificationResult.status === EmailingDomainStatus.VERIFIED,
+        provision: true,
       },
     );
 

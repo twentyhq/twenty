@@ -45,7 +45,7 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
           href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: t`Communications`,
+          children: t`Communication`,
           href: getSettingsPath(SettingsPath.WorkspaceCommunications),
         },
         { children: t`New Email Channel` },

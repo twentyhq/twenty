@@ -4887,6 +4887,9 @@ export default {
             "priority": [
                 12
             ],
+            "status": [
+                1
+            ],
             "__typename": [
                 1
             ]
@@ -6278,6 +6281,15 @@ export default {
             ],
             "objectRecordCounts": [
                 202
+            ],
+            "mostlyEmptyFieldMetadataIds": [
+                3,
+                {
+                    "objectMetadataId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
             ],
             "object": [
                 47,
