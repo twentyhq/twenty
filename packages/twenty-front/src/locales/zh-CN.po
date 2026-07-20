@@ -4063,7 +4063,7 @@ msgstr "逗号和点"
 msgid "Comment"
 msgstr ""
 
-#. js-lingui-id: UK5bhd
+#. js-lingui-id: hZotg6
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -4071,8 +4071,8 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
-msgid "Communications"
-msgstr "通信"
+msgid "Communication"
+msgstr ""
 
 #. js-lingui-id: chL5IG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -8817,11 +8817,6 @@ msgstr "返回"
 msgid "Go to billing portal"
 msgstr "前往账单门户"
 
-#. js-lingui-id: ABs8Dj
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Go to documentation"
-msgstr "前往文档"
-
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
 msgid "Go to Draft"
@@ -11696,11 +11691,6 @@ msgstr "导航菜单项"
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
 msgid "Navigation tabs"
 msgstr "导航选项卡"
-
-#. js-lingui-id: C0P5zd
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Need help to configure your shared mailbox?"
-msgstr "需要帮助配置你的共享邮箱吗？"
 
 #. js-lingui-id: wW3b68
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx

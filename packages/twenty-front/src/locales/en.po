@@ -4058,7 +4058,7 @@ msgstr "Commas and dot"
 msgid "Comment"
 msgstr "Comment"
 
-#. js-lingui-id: UK5bhd
+#. js-lingui-id: hZotg6
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -4066,8 +4066,8 @@ msgstr "Comment"
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
-msgid "Communications"
-msgstr "Communications"
+msgid "Communication"
+msgstr "Communication"
 
 #. js-lingui-id: chL5IG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -8812,11 +8812,6 @@ msgstr "Go back"
 msgid "Go to billing portal"
 msgstr "Go to billing portal"
 
-#. js-lingui-id: ABs8Dj
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Go to documentation"
-msgstr "Go to documentation"
-
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
 msgid "Go to Draft"
@@ -11714,11 +11709,6 @@ msgstr "Navigation menu items"
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
 msgid "Navigation tabs"
 msgstr "Navigation tabs"
-
-#. js-lingui-id: C0P5zd
-#: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
-msgid "Need help to configure your shared mailbox?"
-msgstr "Need help to configure your shared mailbox?"
 
 #. js-lingui-id: wW3b68
 #: src/modules/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail.tsx

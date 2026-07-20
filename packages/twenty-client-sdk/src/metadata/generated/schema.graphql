@@ -2454,6 +2454,7 @@ type VerificationRecord {
   key: String!
   value: String!
   priority: Float
+  status: String
 }
 
 type EmailingDomain {
