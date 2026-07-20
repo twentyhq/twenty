@@ -6,13 +6,13 @@ import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSe
 import { DragDropColumnDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropColumnDndContext';
 import { type DragDropColumnData } from '@/ui/utilities/drag-and-drop/types/DragDropColumnData';
 
-type RecordCalendarDndKitProviderProps = {
+type RecordCalendarMonthDragDropContextProps = {
   children: ReactNode;
 };
 
 export const RecordCalendarMonthDragDropContext = ({
   children,
-}: RecordCalendarDndKitProviderProps) => {
+}: RecordCalendarMonthDragDropContextProps) => {
   const { contextValues, handlers } = useRecordCalendarMonthDndKit();
 
   return (

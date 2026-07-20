@@ -45,6 +45,7 @@ export const RecordBoardColumnCardsContainer = ({
             index={index}
             droppableId={recordBoardColumnId}
             orientation="horizontal"
+            compact
           />
           <RecordBoardCardContextProvider
             recordId={recordId}
@@ -60,6 +61,7 @@ export const RecordBoardColumnCardsContainer = ({
         index={recordIndexRecordIdsByGroup.length}
         droppableId={recordBoardColumnId}
         orientation="horizontal"
+        compact
       />
       <StyledNewButtonContainer>
         <RecordBoardColumnNewRecordButton />

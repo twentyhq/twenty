@@ -94,7 +94,6 @@ const StyledCardsContainer = styled.div<{ isDraggedOver?: boolean }>`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing['0.5']};
   min-height: 60px;
   transition: background-color 0.1s ease;
 `;
@@ -168,6 +167,7 @@ export const RecordCalendarMonthBodyDay = ({
               index={index}
               droppableId={dayKey}
               orientation="horizontal"
+              compact
             />
             <RecordCalendarCardDraggableContainer
               calendarDay={dayKey}
@@ -180,6 +180,7 @@ export const RecordCalendarMonthBodyDay = ({
           index={visibleRecordIds.length}
           droppableId={dayKey}
           orientation="horizontal"
+          compact
         />
       </StyledCardsContainer>
     </StyledContainer>

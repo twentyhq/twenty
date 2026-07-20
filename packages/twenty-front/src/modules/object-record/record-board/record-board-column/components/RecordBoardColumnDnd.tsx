@@ -24,11 +24,7 @@ export const RecordBoardColumnDnd = () => {
         droppableId={RECORD_BOARD_COLUMN_DROPPABLE_ID}
         index={0}
       >
-        <DragDropColumnDropTarget
-          index={0}
-          orientation="vertical"
-          overlay
-        />
+        <DragDropColumnDropTarget index={0} orientation="vertical" overlay />
       </DragDropColumnDroppableSlot>
       {visibleRecordGroupIds.map((recordGroupId, index) => (
         <Fragment key={recordGroupId}>

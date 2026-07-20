@@ -8,9 +8,12 @@ import { DragDropColumnDndContext } from '@/ui/utilities/drag-and-drop/context/D
 type DragDropColumnDropTargetOrientation = 'vertical' | 'horizontal';
 
 const StyledDropTarget = styled.div<{
+  $compact?: boolean;
   $overlay?: boolean;
 }>`
-  position: relative;
+  min-height: ${({ $compact }) =>
+    $compact ? '0' : themeCssVariables.spacing[2]};
+  position: ${({ $overlay }) => ($overlay ? 'absolute' : 'relative')};
   transition: background-color 120ms ease-out;
 
   &[data-orientation='vertical'] {
@@ -79,6 +82,7 @@ const StyledDropTarget = styled.div<{
 
 type DragDropColumnDropTargetProps = {
   children?: ReactNode;
+  compact?: boolean;
   droppableId?: string;
   index: number;
   orientation?: DragDropColumnDropTargetOrientation;
@@ -87,6 +91,7 @@ type DragDropColumnDropTargetProps = {
 
 export const DragDropColumnDropTarget = ({
   children,
+  compact = false,
   droppableId,
   index,
   orientation,
@@ -103,9 +108,12 @@ export const DragDropColumnDropTarget = ({
 
   return (
     <StyledDropTarget
+      $compact={compact}
       $overlay={overlay}
       data-orientation={orientation}
-      data-leading={orientation === 'horizontal' && index === 0 ? 'true' : undefined}
+      data-leading={
+        orientation === 'horizontal' && index === 0 ? 'true' : undefined
+      }
       data-drag-over={isDragOver ? 'true' : undefined}
     >
       {children}

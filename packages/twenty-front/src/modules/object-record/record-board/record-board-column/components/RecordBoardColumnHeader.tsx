@@ -150,7 +150,7 @@ export const RecordBoardColumnHeader = () => {
 
   return (
     <StyledColumn data-has-left-border={columnIndex > 0 ? 'true' : undefined}>
-      <DragDropColumnSortableHandle>
+      <DragDropColumnSortableHandle fill>
         <StyledHeader
           onMouseEnter={() => setIsHeaderHovered(true)}
           onMouseLeave={() => setIsHeaderHovered(false)}

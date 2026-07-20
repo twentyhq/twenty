@@ -106,13 +106,13 @@ export const useProcessTableWithGroupRecordDrop = () => {
         store,
         selectedRecordIds,
         recordIdsByGroupFamilyState,
-        onUpdateRecord: ({ recordId, position }, targetRecordGroupId) => {
+        onUpdateRecord: ({ recordId, position }) => {
           updateOneRecord({
             objectNameSingular,
             idToUpdate: recordId,
             updateOneRecordInput: {
               position,
-              [recordGroupColumnName]: targetRecordGroupId,
+              [recordGroupColumnName]: destinationRecordGroup.value,
             },
           });
         },

@@ -39,12 +39,12 @@ export const RecordBoardCardDragOverlayContent = ({
 
   const columnIndex = visibleRecordGroupIds.indexOf(columnId);
 
-  const columnDefinition = useAtomFamilyStateValue(
+  const recordGroupDefinition = useAtomFamilyStateValue(
     recordGroupDefinitionFamilyState,
     columnId,
   );
 
-  const recordIds = useAtomComponentFamilyStateValue(
+  const recordIndexRecordIdsByGroup = useAtomComponentFamilyStateValue(
     recordIndexRecordIdsByGroupComponentFamilyState,
     columnId,
   );
@@ -54,13 +54,18 @@ export const RecordBoardCardDragOverlayContent = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  if (!isDefined(source) || !isDefined(columnDefinition)) {
+  if (!isDefined(source) || !isDefined(recordGroupDefinition)) {
     return null;
   }
 
   return (
     <RecordBoardColumnContext.Provider
-      value={{ columnDefinition, columnId, recordIds, columnIndex }}
+      value={{
+        columnDefinition: recordGroupDefinition,
+        columnId,
+        recordIds: recordIndexRecordIdsByGroup,
+        columnIndex,
+      }}
     >
       <RecordBoardCardContext.Provider
         value={{ recordId, isRecordReadOnly, rowIndex, columnIndex }}

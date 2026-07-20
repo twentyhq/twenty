@@ -33,7 +33,7 @@ export const RecordTableHeaderDnd = () => {
         index={0}
         disabled={isRecordTableColumnHeadersReadOnly}
       >
-        <DragDropColumnDropTarget index={0} orientation="vertical" />
+        <DragDropColumnDropTarget index={0} orientation="vertical" compact />
       </DragDropColumnDroppableSlot>
 
       {isDefined(firstScrollableRecordField) && (
@@ -61,6 +61,7 @@ export const RecordTableHeaderDnd = () => {
             <DragDropColumnDropTarget
               index={index + 1}
               orientation="vertical"
+              compact
             />
           </DragDropColumnDroppableSlot>
           <DragDropColumnSortableCell
@@ -86,6 +87,7 @@ export const RecordTableHeaderDnd = () => {
         <DragDropColumnDropTarget
           index={visibleRecordFields.length - 1}
           orientation="vertical"
+          compact
         />
       </DragDropColumnDroppableSlot>
       {isRecordTableColumnHeadersReadOnly ? (

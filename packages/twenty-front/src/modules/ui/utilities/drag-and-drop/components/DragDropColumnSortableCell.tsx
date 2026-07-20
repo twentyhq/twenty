@@ -34,7 +34,6 @@ type DragDropColumnSortableCellProps = {
   accept?: string;
   children: ReactNode;
   disabled?: boolean;
-  enableOptimisticSorting?: boolean;
   fill?: boolean;
   group: string;
   id: string;
