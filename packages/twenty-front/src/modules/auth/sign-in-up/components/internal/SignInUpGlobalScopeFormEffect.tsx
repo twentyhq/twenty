@@ -8,7 +8,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -24,9 +24,6 @@ export const SignInUpGlobalScopeFormEffect = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
 
-  // oxlint-disable-next-line twenty/no-state-useref
-  const hasExchangedSSOTokenRef = useRef(false);
-
   useEffect(() => {
     const resumeOnCentralDomain = async () => {
       const { user } = await loadCurrentUser();
@@ -39,22 +36,16 @@ export const SignInUpGlobalScopeFormEffect = () => {
     const ssoExchangeToken = searchParams.get('ssoExchangeToken');
 
     if (isDefined(ssoExchangeToken)) {
-      if (hasExchangedSSOTokenRef.current) return;
-      hasExchangedSSOTokenRef.current = true;
-
       searchParams.delete('ssoExchangeToken');
       setSearchParams(searchParams, { replace: true });
 
-      void getAuthTokensFromSSOExchangeToken(ssoExchangeToken)
-        .then(resumeOnCentralDomain)
-        .catch(() => {
-          enqueueErrorSnackBar({ message: t`Authentication failed` });
-        });
+      void getAuthTokensFromSSOExchangeToken(ssoExchangeToken).catch(() => {
+        enqueueErrorSnackBar({ message: t`Authentication failed` });
+      });
 
       return;
     }
 
-    if (hasExchangedSSOTokenRef.current) return;
     if (signInUpStep !== SignInUpStep.Init) return;
     if (!hasAccessTokenPair) return;
 
