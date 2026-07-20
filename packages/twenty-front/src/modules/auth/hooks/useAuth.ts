@@ -13,6 +13,7 @@ import {
   CheckUserExistsDocument,
   GetAuthTokensFromLoginTokenDocument,
   GetAuthTokensFromOtpDocument,
+  GetAuthTokensFromSsoExchangeTokenDocument,
   GetLoginTokenFromCredentialsDocument,
   GetWorkspaceCreationDefaultsDocument,
   SignInDocument,
@@ -100,6 +101,9 @@ export const useAuth = () => {
     VerifyEmailAndGetWorkspaceAgnosticTokenDocument,
   );
   const [getAuthTokensFromOtp] = useMutation(GetAuthTokensFromOtpDocument);
+  const [getAuthTokensFromSsoExchangeToken] = useMutation(
+    GetAuthTokensFromSsoExchangeTokenDocument,
+  );
 
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
 
@@ -280,6 +284,25 @@ export const useAuth = () => {
       setLoginToken(token);
     },
     [setLoginToken],
+  );
+
+  const handleGetAuthTokensFromSsoExchangeToken = useCallback(
+    async (ssoExchangeToken: string) => {
+      const { data, error } = await getAuthTokensFromSsoExchangeToken({
+        variables: { ssoExchangeToken },
+      });
+
+      if (isDefined(error)) {
+        throw error;
+      }
+
+      if (!data?.getAuthTokensFromSsoExchangeToken) {
+        throw new Error('No getAuthTokensFromSsoExchangeToken result');
+      }
+
+      handleSetAuthTokens(data.getAuthTokensFromSsoExchangeToken.tokens);
+    },
+    [getAuthTokensFromSsoExchangeToken, handleSetAuthTokens],
   );
 
   const handleLoadWorkspaceAfterAuthentication = useCallback(
@@ -638,7 +661,7 @@ export const useAuth = () => {
     signInWithCredentials: handleCredentialsSignIn,
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,
-    setAuthTokens: handleSetAuthTokens,
+    getAuthTokensFromSsoExchangeToken: handleGetAuthTokensFromSsoExchangeToken,
     getAuthTokensFromOTP: handleGetAuthTokensFromOTP,
     navigateAfterMultiWorkspaceSignInUp,
   };

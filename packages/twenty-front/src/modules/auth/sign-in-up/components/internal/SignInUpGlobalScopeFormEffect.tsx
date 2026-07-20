@@ -4,18 +4,28 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { useEffect } from 'react';
+import { useLingui } from '@lingui/react/macro';
+import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
 export const SignInUpGlobalScopeFormEffect = () => {
   const signInUpStep = useAtomStateValue(signInUpStepState);
   const [searchParams, setSearchParams] = useSearchParams();
-  const { setAuthTokens, navigateAfterMultiWorkspaceSignInUp } = useAuth();
+  const {
+    getAuthTokensFromSsoExchangeToken,
+    navigateAfterMultiWorkspaceSignInUp,
+  } = useAuth();
   const { loadCurrentUser } = useLoadCurrentUser();
   const hasAccessTokenPair = useHasAccessTokenPair();
+  const { enqueueErrorSnackBar } = useSnackBar();
+  const { t } = useLingui();
+
+  // oxlint-disable-next-line twenty/no-state-useref
+  const hasExchangedSsoTokenRef = useRef(false);
 
   useEffect(() => {
     const resumeOnCentralDomain = async () => {
@@ -26,15 +36,25 @@ export const SignInUpGlobalScopeFormEffect = () => {
       );
     };
 
-    const tokenPairFromUrl = searchParams.get('tokenPair');
-    if (isDefined(tokenPairFromUrl)) {
-      setAuthTokens(JSON.parse(tokenPairFromUrl));
-      searchParams.delete('tokenPair');
-      setSearchParams(searchParams);
-      void resumeOnCentralDomain();
+    const ssoExchangeToken = searchParams.get('ssoExchangeToken');
+
+    if (isDefined(ssoExchangeToken)) {
+      if (hasExchangedSsoTokenRef.current) return;
+      hasExchangedSsoTokenRef.current = true;
+
+      searchParams.delete('ssoExchangeToken');
+      setSearchParams(searchParams, { replace: true });
+
+      void getAuthTokensFromSsoExchangeToken(ssoExchangeToken)
+        .then(resumeOnCentralDomain)
+        .catch(() => {
+          enqueueErrorSnackBar({ message: t`Authentication failed` });
+        });
+
       return;
     }
 
+    if (hasExchangedSsoTokenRef.current) return;
     if (signInUpStep !== SignInUpStep.Init) return;
     if (!hasAccessTokenPair) return;
 
@@ -43,10 +63,12 @@ export const SignInUpGlobalScopeFormEffect = () => {
     searchParams,
     setSearchParams,
     loadCurrentUser,
-    setAuthTokens,
+    getAuthTokensFromSsoExchangeToken,
     signInUpStep,
     hasAccessTokenPair,
     navigateAfterMultiWorkspaceSignInUp,
+    enqueueErrorSnackBar,
+    t,
   ]);
 
   return <></>;

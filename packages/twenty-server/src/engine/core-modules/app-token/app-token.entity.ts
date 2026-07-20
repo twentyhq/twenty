@@ -13,6 +13,7 @@ import {
 } from 'typeorm';
 
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum AppTokenType {
@@ -24,6 +25,7 @@ export enum AppTokenType {
   OnboardingInvitationToken = 'ONBOARDING_INVITATION_TOKEN',
   EmailVerificationToken = 'EMAIL_VERIFICATION_TOKEN',
   EnterpriseValidityToken = 'ENTERPRISE_VALIDITY_TOKEN',
+  SsoExchangeToken = 'SSO_EXCHANGE_TOKEN',
 }
 
 @Entity({ name: 'appToken', schema: 'core' })
@@ -86,5 +88,6 @@ export class AppTokenEntity {
     clientId?: string;
     codeChallenge?: string;
     scope?: string;
+    authProvider?: AuthProviderEnum;
   } | null;
 }

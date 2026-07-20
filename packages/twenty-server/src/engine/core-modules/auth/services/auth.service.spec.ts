@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import bcrypt from 'bcrypt';
 import { type Repository } from 'typeorm';
+import { AppPath } from 'twenty-shared/types';
 
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
@@ -15,9 +16,10 @@ import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-u
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
+import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { type ExistingUserOrNewUser } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { buildUrlWithPathnameAndSearchParams } from 'src/engine/core-modules/domain/domain-server-config/utils/build-url-with-pathname-and-search-params.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
@@ -49,8 +51,9 @@ describe('AuthService', () => {
   let userWorkspaceService: UserWorkspaceService;
   let workspaceInvitationService: WorkspaceInvitationService;
   let permissionsService: PermissionsService;
+  let refreshTokenService: RefreshTokenService;
   let signInUpServiceMock: jest.Mocked<
-    Pick<SignInUpService, 'validatePassword'>
+    Pick<SignInUpService, 'validatePassword' | 'signUpWithoutWorkspace'>
   >;
 
   beforeEach(async () => {
@@ -90,11 +93,24 @@ describe('AuthService', () => {
         },
         {
           provide: DomainServerConfigService,
-          useValue: {},
+          useValue: {
+            buildBaseUrl: jest.fn(({ pathname, searchParams }) =>
+              buildUrlWithPathnameAndSearchParams({
+                baseUrl: new URL('https://app.twenty.com'),
+                pathname,
+                searchParams,
+              }),
+            ),
+          },
         },
         {
-          provide: WorkspaceAgnosticTokenService,
-          useValue: {},
+          provide: SsoExchangeTokenService,
+          useValue: {
+            generateSsoExchangeToken: jest.fn().mockResolvedValue({
+              token: 'sso-exchange-token',
+              expiresAt: new Date(),
+            }),
+          },
         },
         {
           provide: GuardRedirectService,
@@ -105,6 +121,7 @@ describe('AuthService', () => {
           useValue: {
             validatePassword: jest.fn().mockResolvedValue(undefined),
             generateHash: jest.fn(),
+            signUpWithoutWorkspace: jest.fn(),
           },
         },
         {
@@ -123,7 +140,9 @@ describe('AuthService', () => {
         },
         {
           provide: RefreshTokenService,
-          useValue: {},
+          useValue: {
+            generateRefreshToken: jest.fn(),
+          },
         },
         {
           provide: UserWorkspaceService,
@@ -137,6 +156,7 @@ describe('AuthService', () => {
           provide: UserService,
           useValue: {
             hasUserAccessToWorkspaceOrThrow: jest.fn(),
+            findUserByEmailWithWorkspaces: jest.fn(),
           },
         },
         {
@@ -208,8 +228,9 @@ describe('AuthService', () => {
       getRepositoryToken(UserEntity),
     );
     permissionsService = module.get<PermissionsService>(PermissionsService);
+    refreshTokenService = module.get<RefreshTokenService>(RefreshTokenService);
     signInUpServiceMock = module.get(SignInUpService) as jest.Mocked<
-      Pick<SignInUpService, 'validatePassword'>
+      Pick<SignInUpService, 'validatePassword' | 'signUpWithoutWorkspace'>
     >;
   });
 
@@ -674,6 +695,59 @@ describe('AuthService', () => {
       expect(result).toBeDefined();
       expect(spyWorkspaceRepository).toHaveBeenCalledTimes(0);
       expect(spyAuthSsoService).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('signInUpWithSocialSSO - redirect without a target workspace', () => {
+    const socialSSOUser = {
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'John.Doe@twenty.com',
+      picture: 'picture',
+      returnToPath: '/settings/profile',
+    };
+
+    beforeEach(() => {
+      jest
+        .spyOn(userService, 'findUserByEmailWithWorkspaces')
+        .mockResolvedValue({ id: 'user-id' } as UserEntity);
+    });
+
+    // Regression: the redirect used to carry `?tokenPair=` holding a 60-day
+    // refresh token, exposing it to browser history, Referer headers and
+    // access logs. Only an exchange-only token may travel in the URL.
+    it('should not mint a refresh token nor put credentials in the redirect URL', async () => {
+      const url = await service.signInUpWithSocialSSO(
+        socialSSOUser,
+        AuthProviderEnum.Google,
+      );
+
+      expect(refreshTokenService.generateRefreshToken).not.toHaveBeenCalled();
+      expect([...new URL(url).searchParams.keys()].sort()).toEqual([
+        'returnToPath',
+        'ssoExchangeToken',
+      ]);
+    });
+
+    it('should redirect with the sso exchange token', async () => {
+      const url = await service.signInUpWithSocialSSO(
+        socialSSOUser,
+        AuthProviderEnum.Google,
+      );
+
+      expect(new URL(url).searchParams.get('ssoExchangeToken')).toBe(
+        'sso-exchange-token',
+      );
+      expect(new URL(url).pathname).toBe(AppPath.SignInUp);
+    });
+
+    it('should not sign the user up again when they already exist', async () => {
+      await service.signInUpWithSocialSSO(
+        socialSSOUser,
+        AuthProviderEnum.Google,
+      );
+
+      expect(signInUpServiceMock.signUpWithoutWorkspace).not.toHaveBeenCalled();
     });
   });
 });
