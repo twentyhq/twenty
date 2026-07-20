@@ -233,6 +233,7 @@ export const SignInUpTOTPVerification = () => {
               onBlur={onBlur}
               onChange={onChange}
               value={value}
+              autoFocus
               render={({ slots }) => (
                 <StyledOTPContainer>
                   <StyledSlotGroup>
