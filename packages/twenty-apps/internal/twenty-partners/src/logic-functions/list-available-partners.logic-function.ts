@@ -1,7 +1,10 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
-import { resolvePartnerPictureUrl } from './profile-picture';
+import {
+  mapPartnerForMarketplace,
+  type MarketplaceListPartner,
+} from './map-partner-for-marketplace';
 
 export const LIST_AVAILABLE_PARTNERS_LOGIC_FUNCTION_ID =
   '0f91164f-f492-41e8-9bb0-481be5a3d5b9';
@@ -36,6 +39,7 @@ const queryAvailablePartners = (client: CoreApiClient) =>
           hourlyRate: { amountMicros: true, currencyCode: true },
           projectBudgetMin: { amountMicros: true, currencyCode: true },
           linkedin: { primaryLinkUrl: true },
+          website: { primaryLinkUrl: true },
           // profilePicture is the legacy LINKS url; profilePictureFile is the
           // new FILES upload (its items expose `url`). Display prefers the file.
           profilePicture: { primaryLinkUrl: true },
@@ -52,34 +56,28 @@ type AvailablePartnerRaw = NonNullable<
   Awaited<ReturnType<typeof queryAvailablePartners>>['partners']
 >['edges'][number]['node'];
 
-type AvailablePartner = Omit<
-  AvailablePartnerRaw,
-  'profilePicture' | 'profilePictureFile'
-> & {
-  profilePicture: { primaryLinkUrl: string | null };
-};
-
 type ListAvailablePartnersResult =
-  | { ok: true; count: number; partners: AvailablePartner[] }
+  | { ok: true; count: number; partners: MarketplaceListPartner[] }
   | { ok: false; reason: string };
 
-const handler = async (): Promise<ListAvailablePartnersResult> => {
+const mapListPartner = (node: AvailablePartnerRaw): MarketplaceListPartner => {
+  const mapped = mapPartnerForMarketplace(node, 'list');
+
+  if ('projectBudgetTypical' in mapped) {
+    throw new Error(
+      'list-available-partners received profile payload from list mapper',
+    );
+  }
+
+  return mapped;
+};
+
+export const handler = async (): Promise<ListAvailablePartnersResult> => {
   try {
     const client = new CoreApiClient();
     const result = await queryAvailablePartners(client);
-    const partners: AvailablePartner[] = (result.partners?.edges ?? []).map(
-      ({ node }) => {
-        const { profilePictureFile, ...rest } = node;
-        return {
-          ...rest,
-          profilePicture: {
-            primaryLinkUrl: resolvePartnerPictureUrl(
-              profilePictureFile,
-              node.profilePicture?.primaryLinkUrl,
-            ),
-          },
-        };
-      },
+    const partners = (result.partners?.edges ?? []).map(({ node }) =>
+      mapListPartner(node),
     );
 
     return { ok: true, count: partners.length, partners };
