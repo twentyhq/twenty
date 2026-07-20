@@ -7,14 +7,18 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { createHash } from 'crypto';
 import { Response } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
-import { IMMUTABLE_FILE_CACHE_CONTROL } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import {
   ALLOWED_SDK_MODULES,
   type SdkModuleName,
 } from 'src/engine/core-modules/sdk-client/constants/allowed-sdk-modules';
+import {
+  SDK_CLIENT_MODULE_CACHE_CONTROL,
+  SDK_CLIENT_MODULE_NO_STORE_CACHE_CONTROL,
+} from 'src/engine/core-modules/sdk-client/constants/sdk-client-module-cache-control';
 import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -59,12 +63,6 @@ export class SdkClientController {
       );
     }
 
-    // The metadata module is instance-wide (the metadata GraphQL schema is
-    // the same for every workspace and application), so it is served from the
-    // installed package rather than the per-application archive. This makes
-    // it fresh from the first request after a release, with no dependency on
-    // archive regeneration. The core module stays archive-served: it embeds
-    // the application-scoped schema.
     const fileBuffer =
       moduleName === 'metadata'
         ? (await getInstalledSdkMetadataModule()).moduleBuffer
@@ -75,11 +73,20 @@ export class SdkClientController {
             moduleName,
           });
 
+    const servedModuleChecksum = createHash('sha256')
+      .update(fileBuffer)
+      .digest('hex');
+
+    const isChecksumMatch =
+      isDefined(checksum) && checksum === servedModuleChecksum;
+
     res.setHeader('Content-Type', 'application/javascript');
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader(
       'Cache-Control',
-      isDefined(checksum) ? IMMUTABLE_FILE_CACHE_CONTROL : 'no-store',
+      isChecksumMatch
+        ? SDK_CLIENT_MODULE_CACHE_CONTROL
+        : SDK_CLIENT_MODULE_NO_STORE_CACHE_CONTROL,
     );
     res.send(fileBuffer);
   }

@@ -10,10 +10,10 @@ export const getSdkClientUrls = (
 
   return {
     core: isDefined(checksums)
-      ? `${baseUrl}/core/${checksums.core}.js`
+      ? `${baseUrl}/core/${checksums.core}`
       : `${baseUrl}/core`,
     metadata: isDefined(checksums)
-      ? `${baseUrl}/metadata/${checksums.metadata}.js`
+      ? `${baseUrl}/metadata/${checksums.metadata}`
       : `${baseUrl}/metadata`,
   };
 };

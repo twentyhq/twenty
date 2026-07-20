@@ -16,8 +16,8 @@ describe('getSdkClientUrls', () => {
         metadata: 'metadata-checksum',
       }),
     ).toEqual({
-      core: `${REST_API_BASE_URL}/sdk-client/application-id/core/core-checksum.js`,
-      metadata: `${REST_API_BASE_URL}/sdk-client/application-id/metadata/metadata-checksum.js`,
+      core: `${REST_API_BASE_URL}/sdk-client/application-id/core/core-checksum`,
+      metadata: `${REST_API_BASE_URL}/sdk-client/application-id/metadata/metadata-checksum`,
     });
   });
 });

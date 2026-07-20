@@ -1,9 +1,13 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { createHash } from 'crypto';
 import { type Response } from 'express';
 
-import { IMMUTABLE_FILE_CACHE_CONTROL } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import {
+  SDK_CLIENT_MODULE_CACHE_CONTROL,
+  SDK_CLIENT_MODULE_NO_STORE_CACHE_CONTROL,
+} from 'src/engine/core-modules/sdk-client/constants/sdk-client-module-cache-control';
 import { SdkClientController } from 'src/engine/core-modules/sdk-client/controllers/sdk-client.controller';
 import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
@@ -23,6 +27,11 @@ const mockGetInstalledSdkMetadataModule = jest.mocked(
 
 const WORKSPACE_ID = 'workspace-1';
 const APPLICATION_ID = 'app-1';
+
+const CORE_MODULE_BUFFER = Buffer.from('core module from archive');
+const CORE_MODULE_CHECKSUM = createHash('sha256')
+  .update(CORE_MODULE_BUFFER)
+  .digest('hex');
 
 const workspace = { id: WORKSPACE_ID } as WorkspaceEntity;
 
@@ -54,7 +63,7 @@ describe('SdkClientController', () => {
     sdkClientArchiveService = {
       getClientModuleFromArchive: jest
         .fn()
-        .mockResolvedValue(Buffer.from('core module from archive')),
+        .mockResolvedValue(CORE_MODULE_BUFFER),
     };
     response = {
       setHeader: jest.fn(),
@@ -133,11 +142,26 @@ describe('SdkClientController', () => {
     );
     expect(response.setHeader).toHaveBeenCalledWith(
       'Cache-Control',
-      'no-store',
+      SDK_CLIENT_MODULE_NO_STORE_CACHE_CONTROL,
     );
   });
 
-  it('serves fingerprinted (content-addressed) urls as immutable', async () => {
+  it('serves fingerprinted urls as immutable when the checksum matches the served bytes', async () => {
+    await controller.getSdkModule(
+      response as unknown as Response,
+      APPLICATION_ID,
+      'core',
+      workspace,
+      CORE_MODULE_CHECKSUM,
+    );
+
+    expect(response.setHeader).toHaveBeenCalledWith(
+      'Cache-Control',
+      SDK_CLIENT_MODULE_CACHE_CONTROL,
+    );
+  });
+
+  it('opts out of caching when the fingerprint does not match the served bytes', async () => {
     await controller.getSdkModule(
       response as unknown as Response,
       APPLICATION_ID,
@@ -148,7 +172,7 @@ describe('SdkClientController', () => {
 
     expect(response.setHeader).toHaveBeenCalledWith(
       'Cache-Control',
-      IMMUTABLE_FILE_CACHE_CONTROL,
+      SDK_CLIENT_MODULE_NO_STORE_CACHE_CONTROL,
     );
   });
 
