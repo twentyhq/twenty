@@ -25,14 +25,18 @@ describe('WorkflowVersionCoreSyncService', () => {
     invalidateAndRecompute: jest.Mock;
   };
 
-  const buildVersion = (): WorkflowVersionWorkspaceEntity =>
+  const buildVersion = (
+    overrides: Partial<WorkflowVersionWorkspaceEntity> = {},
+  ): WorkflowVersionWorkspaceEntity =>
     ({
       id: '1dddc806-4144-5020-898f-b1ab287b89d5',
       workflowId: 'c95c78b4-48d2-56f6-8e15-36ff8572f1d8',
       status: 'DRAFT',
       trigger: null,
       steps: null,
-      coreWorkflowVersionId: null,
+      // Event payloads represent unset uuids as empty strings, not null.
+      coreWorkflowVersionId: '',
+      ...overrides,
     }) as unknown as WorkflowVersionWorkspaceEntity;
 
   const mockFieldPresence = (present: boolean) =>
@@ -41,6 +45,9 @@ describe('WorkflowVersionCoreSyncService', () => {
         byUniversalIdentifier: present ? { [CORE_VERSION_ID_FIELD]: {} } : {},
       },
     });
+
+  const upsertedRows = (): Array<{ id: string }> =>
+    workflowVersionRepository.upsert.mock.calls[0][1];
 
   beforeEach(() => {
     workflowVersionRepository = { upsert: jest.fn(), delete: jest.fn() };
@@ -85,13 +92,32 @@ describe('WorkflowVersionCoreSyncService', () => {
     ).not.toHaveBeenCalled();
   });
 
-  it('writes the core id back when the field is present', async () => {
+  it('generates an id and writes it back for an unlinked version (empty-string id)', async () => {
     mockFieldPresence(true);
 
     await service.upsertToCore(workspaceId, [buildVersion()]);
 
+    // Empty-string coreWorkflowVersionId is treated as unlinked, not passed through.
+    expect(upsertedRows()[0].id).not.toBe('');
+    expect(upsertedRows()[0].id.length).toBeGreaterThan(0);
     expect(
       globalWorkspaceOrmManager.executeInWorkspaceContext,
     ).toHaveBeenCalledTimes(1);
+  });
+
+  it('reuses the existing id and does not write back for a linked version', async () => {
+    mockFieldPresence(true);
+    const coreWorkflowVersionId = 'e2b1c0d4-0000-4000-8000-000000000000';
+
+    await service.upsertToCore(workspaceId, [
+      buildVersion({
+        coreWorkflowVersionId,
+      } as Partial<WorkflowVersionWorkspaceEntity>),
+    ]);
+
+    expect(upsertedRows()[0].id).toBe(coreWorkflowVersionId);
+    expect(
+      globalWorkspaceOrmManager.executeInWorkspaceContext,
+    ).not.toHaveBeenCalled();
   });
 });
