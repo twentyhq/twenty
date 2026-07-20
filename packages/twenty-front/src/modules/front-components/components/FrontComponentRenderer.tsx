@@ -15,7 +15,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useQuery } from '@apollo/client/react';
-import { FindOneFrontComponentDocument } from '~/generated-metadata/graphql';
+import {
+  FindOneFrontComponentDocument,
+  GetApplicationSdkClientChecksumsDocument,
+} from '~/generated-metadata/graphql';
 
 type FrontComponentRendererProps = {
   frontComponentId: string;
@@ -86,11 +89,22 @@ export const FrontComponentRenderer = ({
 
   const applicationId = data?.frontComponent?.applicationId;
 
+  // SDK client checksums are application-scoped, so they are fetched separately
+  // keyed by applicationId rather than derived from the frontComponent query.
+  const { data: sdkClientChecksumsData } = useQuery(
+    GetApplicationSdkClientChecksumsDocument,
+    {
+      variables: { applicationId: applicationId ?? '' },
+      skip: !isDefined(applicationId),
+    },
+  );
+
   useOnApplicationSdkClientChecksumsUpdated({
-    frontComponentId,
     applicationId,
   });
-  const sdkClientChecksums = data?.frontComponent?.sdkClientChecksums;
+
+  const sdkClientChecksums =
+    sdkClientChecksumsData?.applicationSdkClientChecksums;
 
   const sdkClientUrls = useMemo(
     () =>

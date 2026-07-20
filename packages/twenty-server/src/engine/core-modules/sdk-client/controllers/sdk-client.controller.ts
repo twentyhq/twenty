@@ -10,6 +10,7 @@ import {
 import { Response } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
+import { IMMUTABLE_FILE_CACHE_CONTROL } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import {
   ALLOWED_SDK_MODULES,
   type SdkModuleName,
@@ -30,13 +31,14 @@ export class SdkClientController {
     private readonly sdkClientArchiveService: SdkClientArchiveService,
   ) {}
 
-  @Get([':applicationId/:moduleName', ':applicationId/:moduleName/:cacheKey'])
+  @Get([':applicationId/:moduleName', ':applicationId/:moduleName/:checksum'])
   @UseGuards(NoPermissionGuard)
   async getSdkModule(
     @Res() res: Response,
     @Param('applicationId') applicationId: string,
     @Param('moduleName') moduleName: SdkModuleName,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @Param('checksum') checksum?: string,
   ) {
     if (!ALLOWED_SDK_MODULES.includes(moduleName)) {
       throw new NotFoundException(
@@ -74,6 +76,11 @@ export class SdkClientController {
           });
 
     res.setHeader('Content-Type', 'application/javascript');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader(
+      'Cache-Control',
+      isDefined(checksum) ? IMMUTABLE_FILE_CACHE_CONTROL : 'no-store',
+    );
     res.send(fileBuffer);
   }
 }

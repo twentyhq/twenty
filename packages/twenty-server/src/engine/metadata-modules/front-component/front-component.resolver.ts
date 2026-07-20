@@ -8,7 +8,6 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { getCurrentSdkMetadataModuleChecksum } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -72,10 +71,9 @@ export class FrontComponentResolver {
         userId: user.id,
       });
 
-    const { applicationVariableMaps, flatApplicationMaps } =
+    const { applicationVariableMaps } =
       await this.workspaceCacheService.getOrRecompute(workspace.id, [
         'applicationVariableMaps',
-        'flatApplicationMaps',
       ]);
 
     const variableUniversalIdentifiers =
@@ -94,20 +92,10 @@ export class FrontComponentResolver {
       flatApplicationVariables,
     );
 
-    const application = flatApplicationMaps.byId[dto.applicationId];
-
-    const sdkClientChecksums = isDefined(application?.sdkClientCoreChecksum)
-      ? {
-          core: application.sdkClientCoreChecksum,
-          metadata: await getCurrentSdkMetadataModuleChecksum(),
-        }
-      : null;
-
     return {
       ...dto,
       applicationTokenPair: tokenPair,
       applicationVariables,
-      sdkClientChecksums,
     };
   }
 

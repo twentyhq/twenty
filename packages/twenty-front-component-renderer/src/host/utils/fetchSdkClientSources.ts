@@ -1,11 +1,12 @@
-import { fetchComponentSource } from '@/host/utils/fetchComponentSource';
+import { fetchJavaScriptModuleSourceText } from '@/host/utils/fetchJavaScriptModuleSourceText';
 import { type SdkClientSources } from '@/types/SdkClientSources';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 
-// The fingerprinted `.js` suffix on content-addressed SDK urls makes host-side
-// verification, caching and prefix eviction work through the same path as the
-// component source. Bare urls (SDK not yet generated) fall back to a plain
-// network fetch with no caching.
+// SDK client modules are served directly (no presigned-URL hop) from
+// content-addressed, immutable URLs, so a plain HTTP-cached fetch is enough:
+// the browser HTTP cache serves repeat loads and self-invalidates on any
+// checksum change. Bare fallback URLs (SDK not yet generated) are served
+// no-store and simply refetched each time.
 export const fetchSdkClientSources = async ({
   sdkClientUrls,
   headers,
@@ -14,8 +15,8 @@ export const fetchSdkClientSources = async ({
   headers?: Record<string, string>;
 }): Promise<SdkClientSources> => {
   const [core, metadata] = await Promise.all([
-    fetchComponentSource({ url: sdkClientUrls.core, headers }),
-    fetchComponentSource({ url: sdkClientUrls.metadata, headers }),
+    fetchJavaScriptModuleSourceText(sdkClientUrls.core, headers),
+    fetchJavaScriptModuleSourceText(sdkClientUrls.metadata, headers),
   ]);
 
   return { core, metadata };

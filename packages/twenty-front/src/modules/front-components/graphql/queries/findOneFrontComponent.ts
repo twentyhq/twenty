@@ -10,10 +10,6 @@ export const FIND_ONE_FRONT_COMPONENT = gql`
       isHeadless
       usesSdkClient
       applicationVariables
-      sdkClientChecksums {
-        core
-        metadata
-      }
       applicationTokenPair {
         applicationAccessToken {
           token

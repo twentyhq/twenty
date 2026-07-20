@@ -39,8 +39,9 @@ export const getInstalledSdkMetadataModule =
     return installedSdkMetadataModulePromise;
   };
 
-export const getCurrentSdkMetadataModuleChecksum = async (): Promise<string> => {
-  const { checksum } = await getInstalledSdkMetadataModule();
+export const getCurrentSdkMetadataModuleChecksum =
+  async (): Promise<string> => {
+    const { checksum } = await getInstalledSdkMetadataModule();
 
-  return checksum;
-};
+    return checksum;
+  };

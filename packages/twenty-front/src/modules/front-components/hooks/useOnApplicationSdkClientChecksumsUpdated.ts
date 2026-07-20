@@ -3,21 +3,18 @@ import { useUpdateSdkClientChecksumsApolloCache } from '@/front-components/hooks
 import { type ApplicationSdkClientChecksumsBroadcastRecord } from '@/front-components/types/ApplicationSdkClientChecksumsBroadcastRecord';
 
 type UseOnApplicationSdkClientChecksumsUpdatedArgs = {
-  frontComponentId: string;
   applicationId?: string;
 };
 
-// SDK client regeneration updates the application row, not the frontComponent
-// row, so the frontComponent metadata event never carries the new checksums.
-// Listening to the application broadcast keeps the content-addressed SDK URLs
-// of mounted components fresh without a reload.
+// SDK client regeneration updates the application row, so we listen to the
+// application metadata broadcast and patch the application-scoped checksums
+// query cache to keep the content-addressed SDK URLs of mounted components
+// fresh without a reload.
 export const useOnApplicationSdkClientChecksumsUpdated = ({
-  frontComponentId,
   applicationId,
 }: UseOnApplicationSdkClientChecksumsUpdatedArgs) => {
   const { updateSdkClientChecksumsApolloCache } =
     useUpdateSdkClientChecksumsApolloCache({
-      frontComponentId,
       applicationId,
     });
 

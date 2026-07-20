@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { type Response } from 'express';
 
+import { IMMUTABLE_FILE_CACHE_CONTROL } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { SdkClientController } from 'src/engine/core-modules/sdk-client/controllers/sdk-client.controller';
 import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
@@ -112,6 +113,43 @@ describe('SdkClientController', () => {
       moduleName: 'core',
     });
     expect(mockGetInstalledSdkMetadataModule).not.toHaveBeenCalled();
+  });
+
+  it('disables MIME sniffing and opts out of HTTP caching on the bare fallback url', async () => {
+    await controller.getSdkModule(
+      response as unknown as Response,
+      APPLICATION_ID,
+      'core',
+      workspace,
+    );
+
+    expect(response.setHeader).toHaveBeenCalledWith(
+      'Content-Type',
+      'application/javascript',
+    );
+    expect(response.setHeader).toHaveBeenCalledWith(
+      'X-Content-Type-Options',
+      'nosniff',
+    );
+    expect(response.setHeader).toHaveBeenCalledWith(
+      'Cache-Control',
+      'no-store',
+    );
+  });
+
+  it('serves fingerprinted (content-addressed) urls as immutable', async () => {
+    await controller.getSdkModule(
+      response as unknown as Response,
+      APPLICATION_ID,
+      'core',
+      workspace,
+      'a'.repeat(64),
+    );
+
+    expect(response.setHeader).toHaveBeenCalledWith(
+      'Cache-Control',
+      IMMUTABLE_FILE_CACHE_CONTROL,
+    );
   });
 
   it('rejects unknown module names', async () => {
