@@ -7,7 +7,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { SdkClientChecksumsDTO } from 'src/engine/core-modules/sdk-client/dtos/sdk-client-checksums.dto';
-import { getCurrentSdkMetadataModuleChecksum } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
+import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -39,7 +39,7 @@ export class ApplicationResolver {
     return isDefined(application?.sdkClientCoreChecksum)
       ? {
           core: application.sdkClientCoreChecksum,
-          metadata: await getCurrentSdkMetadataModuleChecksum(),
+          metadata: (await getInstalledSdkMetadataModule()).checksum,
         }
       : null;
   }
