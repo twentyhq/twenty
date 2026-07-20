@@ -5,6 +5,7 @@ import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
 import { getOnboardingStatus } from 'test/integration/graphql/utils/get-onboarding-status.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { signUpInWorkspaceAndGetAccessToken } from 'test/integration/graphql/utils/sign-up-in-workspace-and-get-access-token.util';
+import { skipSyncEmailOnboardingStep } from 'test/integration/graphql/utils/skip-sync-email-onboarding-step.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
@@ -76,6 +77,11 @@ describe('updateWorkspaceMemberSettings and profile onboarding', () => {
     const uniqueEmail = `profile-onboarding-${randomUUID()}@example.com`;
 
     newUserAccessToken = await signUpInWorkspaceAndGetAccessToken(uniqueEmail);
+
+    await skipSyncEmailOnboardingStep({
+      accessToken: newUserAccessToken,
+      expectToFail: false,
+    });
 
     const {
       data: { currentUser: currentUserBeforeNameUpdate },
