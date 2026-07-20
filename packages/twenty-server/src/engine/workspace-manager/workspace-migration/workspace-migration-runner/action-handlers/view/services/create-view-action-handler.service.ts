@@ -78,6 +78,8 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
     };
   }
 
+  override canBatchCreate = true;
+
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateViewAction>,
   ): Promise<void> {
@@ -87,6 +89,19 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
     await this.insertFlatEntitiesInRepository({
       queryRunner,
       flatEntities: [flatEntity],
+    });
+  }
+
+  override async executeForMetadataBatch(
+    contexts: WorkspaceMigrationActionRunnerContext<FlatCreateViewAction>[],
+  ): Promise<void> {
+    if (contexts.length === 0) {
+      return;
+    }
+
+    await this.insertFlatEntitiesInRepository({
+      queryRunner: contexts[0].queryRunner,
+      flatEntities: contexts.map((context) => context.flatAction.flatEntity),
     });
   }
 

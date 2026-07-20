@@ -6,6 +6,7 @@
 .cursor/debug-*.log
 **/**/node_modules/
 .cache
+.transcripts
 
 # yarn is the recommended package manager across the project
 **/**/.package-lock.json

@@ -344,11 +344,13 @@ export class ApplicationService {
         availablePackages: defaultPackageFields.availablePackages,
       },
       queryRunner,
+      { skipCacheInvalidation },
     );
 
     await this.uploadDefaultPackageFilesAndSetFileIds(
       twentyStandardApplication,
       queryRunner,
+      { skipCacheInvalidation },
     );
 
     if (!skipCacheInvalidation) {
@@ -406,6 +408,7 @@ export class ApplicationService {
       'id' | 'universalIdentifier' | 'workspaceId'
     >,
     queryRunner?: QueryRunner,
+    { skipCacheInvalidation = false }: { skipCacheInvalidation?: boolean } = {},
   ): Promise<void> {
     const defaultPackageFields = await getDefaultApplicationPackageFields();
 
@@ -420,25 +423,31 @@ export class ApplicationService {
       defaultPackageFields.yarnLockContent,
     );
 
-    const packageJsonFile = await this.fileStorageService.writeFile({
-      sourceFile: defaultPackageFields.packageJsonContent,
-      fileFolder: FileFolder.Dependencies,
-      applicationUniversalIdentifier: application.universalIdentifier,
-      workspaceId: application.workspaceId,
-      resourcePath: 'package.json',
-      settings: { isTemporaryFile: false, toDelete: false },
-      queryRunner,
-    });
+    const writePackageJson = () =>
+      this.fileStorageService.writeFile({
+        sourceFile: defaultPackageFields.packageJsonContent,
+        fileFolder: FileFolder.Dependencies,
+        applicationUniversalIdentifier: application.universalIdentifier,
+        workspaceId: application.workspaceId,
+        resourcePath: 'package.json',
+        settings: { isTemporaryFile: false, toDelete: false },
+        queryRunner,
+      });
 
-    const yarnLockFile = await this.fileStorageService.writeFile({
-      sourceFile: defaultPackageFields.yarnLockContent,
-      fileFolder: FileFolder.Dependencies,
-      applicationUniversalIdentifier: application.universalIdentifier,
-      workspaceId: application.workspaceId,
-      resourcePath: 'yarn.lock',
-      settings: { isTemporaryFile: false, toDelete: false },
-      queryRunner,
-    });
+    const writeYarnLock = () =>
+      this.fileStorageService.writeFile({
+        sourceFile: defaultPackageFields.yarnLockContent,
+        fileFolder: FileFolder.Dependencies,
+        applicationUniversalIdentifier: application.universalIdentifier,
+        workspaceId: application.workspaceId,
+        resourcePath: 'yarn.lock',
+        settings: { isTemporaryFile: false, toDelete: false },
+        queryRunner,
+      });
+
+    const [packageJsonFile, yarnLockFile] = queryRunner
+      ? [await writePackageJson(), await writeYarnLock()]
+      : await Promise.all([writePackageJson(), writeYarnLock()]);
 
     if (queryRunner) {
       await queryRunner.manager.update(
@@ -453,20 +462,25 @@ export class ApplicationService {
         },
       );
     } else {
-      await this.update(application.id, {
-        packageJsonFileId: packageJsonFile.id,
-        yarnLockFileId: yarnLockFile.id,
-        packageJsonChecksum,
-        yarnLockChecksum,
-        availablePackages,
-        workspaceId: application.workspaceId,
-      });
+      await this.update(
+        application.id,
+        {
+          packageJsonFileId: packageJsonFile.id,
+          yarnLockFileId: yarnLockFile.id,
+          packageJsonChecksum,
+          yarnLockChecksum,
+          availablePackages,
+          workspaceId: application.workspaceId,
+        },
+        { skipCacheInvalidation },
+      );
     }
   }
 
   async create(
     data: Partial<ApplicationEntity> & { workspaceId: string },
     queryRunner?: QueryRunner,
+    { skipCacheInvalidation = false }: { skipCacheInvalidation?: boolean } = {},
   ): Promise<ApplicationEntity> {
     const application = this.applicationRepository.create(data);
 
@@ -476,9 +490,12 @@ export class ApplicationService {
 
     const savedApplication = await this.applicationRepository.save(application);
 
-    await this.workspaceCacheService.invalidateAndRecompute(data.workspaceId, [
-      'flatApplicationMaps',
-    ]);
+    if (!skipCacheInvalidation) {
+      await this.workspaceCacheService.invalidateAndRecompute(
+        data.workspaceId,
+        ['flatApplicationMaps'],
+      );
+    }
 
     return savedApplication;
   }
@@ -488,12 +505,16 @@ export class ApplicationService {
     data: Parameters<typeof this.applicationRepository.update>[1] & {
       workspaceId: string;
     },
+    { skipCacheInvalidation = false }: { skipCacheInvalidation?: boolean } = {},
   ): Promise<ApplicationEntity> {
     await this.applicationRepository.update({ id }, data);
 
-    await this.workspaceCacheService.invalidateAndRecompute(data.workspaceId, [
-      'flatApplicationMaps',
-    ]);
+    if (!skipCacheInvalidation) {
+      await this.workspaceCacheService.invalidateAndRecompute(
+        data.workspaceId,
+        ['flatApplicationMaps'],
+      );
+    }
 
     const updatedApplication = await this.findById(id);
 

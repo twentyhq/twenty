@@ -82,6 +82,34 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService implements OnM
     return await handler.execute(context);
   }
 
+  isBatchableCreateAction(
+    action: AllUniversalWorkspaceMigrationAction,
+  ): boolean {
+    if (action.type !== 'create') {
+      return false;
+    }
+
+    const handler = this.actionHandlers.get(
+      buildActionHandlerKey(action.type, action.metadataName),
+    );
+
+    return handler?.canBatchCreate === true;
+  }
+
+  async executeActionHandlerBatch<
+    T extends AllUniversalWorkspaceMigrationAction,
+  >({
+    actions,
+    contexts,
+  }: {
+    actions: T[];
+    contexts: WorkspaceMigrationActionRunnerArgs<T>[];
+  }) {
+    const handler = this.getActionHandler(actions[0]);
+
+    return await handler.executeCreateBatch(contexts);
+  }
+
   async executeActionRollbackHandler<
     T extends AllUniversalWorkspaceMigrationAction,
   >({

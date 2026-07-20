@@ -5,7 +5,7 @@ name: Deploy to ECS (dev)
 # the `twenty-publish` role. Other environments will get their own accounts; this deploys dev only.
 on:
   push:
-    branches: [main]
+    branches: [develop]
   workflow_dispatch:
 
 # OIDC: the job assumes the `twenty-publish` IAM role via a short-lived token — no stored keys.

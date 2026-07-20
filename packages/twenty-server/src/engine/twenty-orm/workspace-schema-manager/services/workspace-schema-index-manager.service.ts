@@ -18,6 +18,54 @@ const ALLOWED_INDEX_TYPES = new Set([
 ]);
 
 export class WorkspaceSchemaIndexManagerService {
+  private buildCreateIndexSql({
+    schemaName,
+    tableName,
+    index,
+    concurrently = false,
+  }: {
+    schemaName: string;
+    tableName: string;
+    index: WorkspaceSchemaIndexDefinition;
+    concurrently?: boolean;
+  }): string {
+    const quotedColumns = index.columns.map((column) =>
+      escapeIdentifier(column),
+    );
+    const isUnique = index.isUnique ? 'UNIQUE' : '';
+
+    let indexType = '';
+
+    if (index.type && index.type !== 'BTREE') {
+      if (!ALLOWED_INDEX_TYPES.has(index.type)) {
+        throw new Error(`Unsupported index type: ${index.type}`);
+      }
+      indexType = `USING ${index.type}`;
+    }
+
+    const validatedWhereClause = validateAndReturnIndexWhereClause(index.where);
+    const whereClause = validatedWhereClause
+      ? `WHERE ${validatedWhereClause}`
+      : '';
+
+    return [
+      'CREATE',
+      isUnique && 'UNIQUE',
+      'INDEX',
+      concurrently && 'CONCURRENTLY',
+      'IF NOT EXISTS',
+      escapeIdentifier(index.name),
+      'ON',
+      `${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`,
+      indexType,
+      `(${quotedColumns.join(', ')})`,
+      whereClause,
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .trim();
+  }
+
   async createIndex({
     queryRunner,
     schemaName,
@@ -38,41 +86,42 @@ export class WorkspaceSchemaIndexManagerService {
       );
     }
 
-    const quotedColumns = index.columns.map((column) =>
-      escapeIdentifier(column),
-    );
-    const isUnique = index.isUnique ? 'UNIQUE' : '';
+    const sql = this.buildCreateIndexSql({
+      schemaName,
+      tableName,
+      index,
+      concurrently,
+    });
 
-    let indexType = '';
+    await queryRunner.query(sql);
+  }
 
-    if (index.type && index.type !== 'BTREE') {
-      if (!ALLOWED_INDEX_TYPES.has(index.type)) {
-        throw new Error(`Unsupported index type: ${index.type}`);
-      }
-      indexType = `USING ${index.type}`;
+  /**
+   * Creates many indexes in a single multi-statement round-trip. Used by
+   * workspace provisioning to collapse the ~99 standard-index CREATE INDEX
+   * statements into one query. CONCURRENTLY is not supported here (it cannot run
+   * in a transaction); callers needing it use createIndex one at a time.
+   */
+  async createIndexes({
+    queryRunner,
+    indexes,
+  }: {
+    queryRunner: QueryRunner;
+    indexes: {
+      schemaName: string;
+      tableName: string;
+      index: WorkspaceSchemaIndexDefinition;
+    }[];
+  }): Promise<void> {
+    if (indexes.length === 0) {
+      return;
     }
 
-    const validatedWhereClause = validateAndReturnIndexWhereClause(index.where);
-    const whereClause = validatedWhereClause
-      ? `WHERE ${validatedWhereClause}`
-      : '';
-
-    const sql = [
-      'CREATE',
-      isUnique && 'UNIQUE',
-      'INDEX',
-      concurrently && 'CONCURRENTLY',
-      'IF NOT EXISTS',
-      escapeIdentifier(index.name),
-      'ON',
-      `${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`,
-      indexType,
-      `(${quotedColumns.join(', ')})`,
-      whereClause,
-    ]
-      .filter(Boolean)
-      .join(' ')
-      .trim();
+    const sql = indexes
+      .map(({ schemaName, tableName, index }) =>
+        this.buildCreateIndexSql({ schemaName, tableName, index }),
+      )
+      .join(';\n');
 
     await queryRunner.query(sql);
   }
