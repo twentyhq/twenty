@@ -1,22 +1,23 @@
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
-import { getSdkClientUrls } from '@/front-components/utils/getSdkClientUrls';
-import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
 import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
 import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
+import { getSdkClientUrls } from '@/front-components/utils/getSdkClientUrls';
+import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback, useContext, useEffect, useMemo } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useQuery } from '@apollo/client/react';
 import {
   FindOneFrontComponentDocument,
+  type FindOneFrontComponentQuery,
   GetApplicationSdkClientChecksumsDocument,
 } from '~/generated-metadata/graphql';
 
@@ -26,15 +27,64 @@ type FrontComponentRendererProps = {
   selectedRecordIds?: string[];
 };
 
+type ResolvedFrontComponent = NonNullable<
+  FindOneFrontComponentQuery['frontComponent']
+>;
+
+type FrontComponentRendererContentProps = {
+  frontComponent: ResolvedFrontComponent;
+  commandMenuItemId?: string;
+  selectedRecordIds?: string[];
+};
+
 export const FrontComponentRenderer = ({
   frontComponentId,
   commandMenuItemId,
   selectedRecordIds,
 }: FrontComponentRendererProps) => {
-  const { colorScheme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
 
+  const { data, loading, error } = useQuery(FindOneFrontComponentDocument, {
+    variables: { id: frontComponentId },
+  });
+
+  useEffect(() => {
+    if (isDefined(error)) {
+      enqueueErrorSnackBar({
+        message: t`Failed to load front component: ${error.message}`,
+      });
+    }
+  }, [error, enqueueErrorSnackBar]);
+
+  useOnFrontComponentUpdated({
+    frontComponentId,
+  });
+
+  const frontComponent = data?.frontComponent;
+
+  if (loading || !isDefined(frontComponent)) {
+    return null;
+  }
+
+  return (
+    <FrontComponentRendererContent
+      frontComponent={frontComponent}
+      commandMenuItemId={commandMenuItemId}
+      selectedRecordIds={selectedRecordIds}
+    />
+  );
+};
+
+const FrontComponentRendererContent = ({
+  frontComponent,
+  commandMenuItemId,
+  selectedRecordIds,
+}: FrontComponentRendererContentProps) => {
+  const { colorScheme } = useContext(ThemeContext);
+  const { enqueueErrorSnackBar } = useSnackBar();
   const { functionsBaseUrl } = useGetLogicFunctionHttpUrl();
+
+  const { id: frontComponentId, applicationId, usesSdkClient } = frontComponent;
 
   const setFrontComponentApplicationTokenPair = useSetAtomComponentState(
     frontComponentApplicationTokenPairComponentState,
@@ -55,27 +105,14 @@ export const FrontComponentRenderer = ({
         return;
       }
 
-      const errorMessage = error.message;
-
       enqueueErrorSnackBar({
-        message: t`Failed to load front component: ${errorMessage}`,
+        message: t`Failed to load front component: ${error.message}`,
       });
     },
     [enqueueErrorSnackBar],
   );
 
-  const { data, loading, error } = useQuery(FindOneFrontComponentDocument, {
-    variables: { id: frontComponentId },
-  });
-
-  useEffect(() => {
-    if (error) {
-      handleError(error);
-    }
-  }, [error, handleError]);
-
-  const applicationTokenPair =
-    data?.frontComponent?.applicationTokenPair ?? null;
+  const applicationTokenPair = frontComponent.applicationTokenPair ?? null;
 
   useEffect(() => {
     if (isDefined(applicationTokenPair)) {
@@ -83,21 +120,11 @@ export const FrontComponentRenderer = ({
     }
   }, [applicationTokenPair, setFrontComponentApplicationTokenPair]);
 
-  useOnFrontComponentUpdated({
-    frontComponentId,
-  });
-
-  const applicationId = data?.frontComponent?.applicationId;
-
-  // SDK client checksums are application-scoped, so they are fetched separately
-  // keyed by applicationId rather than derived from the frontComponent query.
-  const { data: sdkClientChecksumsData } = useQuery(
-    GetApplicationSdkClientChecksumsDocument,
-    {
-      variables: { applicationId: applicationId ?? '' },
-      skip: !isDefined(applicationId),
-    },
-  );
+  const { data: sdkClientChecksumsData, loading: sdkClientChecksumsLoading } =
+    useQuery(GetApplicationSdkClientChecksumsDocument, {
+      variables: { applicationId },
+      skip: !usesSdkClient,
+    });
 
   useOnApplicationSdkClientChecksumsUpdated({
     applicationId,
@@ -107,30 +134,25 @@ export const FrontComponentRenderer = ({
     sdkClientChecksumsData?.applicationSdkClientChecksums;
 
   const sdkClientUrls = useMemo(
-    () =>
-      isDefined(applicationId)
-        ? getSdkClientUrls(applicationId, sdkClientChecksums)
-        : undefined,
+    () => getSdkClientUrls(applicationId, sdkClientChecksums),
     [applicationId, sdkClientChecksums],
   );
 
   if (
-    loading ||
-    !isDefined(data?.frontComponent) ||
-    !isDefined(applicationTokenPair)
+    !isDefined(applicationTokenPair) ||
+    (usesSdkClient && sdkClientChecksumsLoading)
   ) {
     return null;
   }
 
   const componentUrl = getFrontComponentUrl({
     frontComponentId,
-    checksum: data.frontComponent.builtComponentChecksum,
+    checksum: frontComponent.builtComponentChecksum,
   });
 
   const accessToken = applicationTokenPair.applicationAccessToken.token;
 
-  const applicationVariables =
-    data.frontComponent.applicationVariables ?? undefined;
+  const applicationVariables = frontComponent.applicationVariables ?? undefined;
 
   return (
     <FrontComponentRendererProvider frontComponentId={frontComponentId}>
