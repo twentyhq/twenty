@@ -4,7 +4,7 @@ description: Vytvářejte komponenty Reactu, které se vykreslují uvnitř uživ
 icon: window-maximize
 ---
 
-Frontendové komponenty jsou React komponenty, které se vykreslují přímo v uživatelském rozhraní Twenty. Běží v **izolovaném Web Workeru** s využitím Remote DOM — váš kód je sandboxovaný, ale vykresluje se nativně na stránce, nikoli v iframu.
+Frontendové komponenty jsou React komponenty, které se vykreslují přímo v uživatelském rozhraní Twenty. Běží v **izolovaném Web Workeru** s využitím Remote DOM — váš kód se spouští uvnitř sandboxovaného iframe s nejasným původem (opaque-origin), ale jeho UI se stále vykresluje nativně na stránce, místo aby bylo omezené na tento iframe.
 
 ## Kde lze použít frontendové komponenty
 
@@ -120,7 +120,7 @@ Importujte je z `twenty-sdk/front-component`:
 * **`Command`** — Spustí asynchronní callback přes prop `execute`.
 * **`CommandLink`** — Naviguje na cestu v aplikaci. Props: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — Otevře potvrzovací modální okno. Pokud uživatel potvrdí, provede callback `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Otevře stránku postranního panelu. Props závisí na `page` — např. `ViewRecord` bere `recordId` + `objectNameSingular`, ostatní stránky berou `pageTitle` + `pageIcon`.
+* **`CommandOpenSidePanelPage`** — Otevře stránku postranního panelu. Props závisí na `page` — např. `ViewRecord` bere `recordId` + `objectNameSingular` (plus volitelné id `tab` pro otevření záznamu na konkrétní záložce), ostatní stránky berou `pageTitle` + `pageIcon`.
 
 Zde je kompletní příklad headless front-endové komponenty, která pomocí `Command` spouští akci z menu příkazů:
 
@@ -194,33 +194,64 @@ export default defineFrontComponent({
 });
 ```
 
+A zde je příklad použití `CommandOpenSidePanelPage` k otevření aktuálního záznamu v postranním panelu na konkrétní záložce. `tab` je ID záložky rozvržení stránky (výchozí rozvržení používají ID jako `company-tab-emails` nebo `company-tab-timeline`; vlastní rozvržení používají vlastní ID záložky). Pokud ID v rozvržení záznamu neexistuje, místo toho se otevře výchozí záložka:
+
+```tsx src/front-components/open-company-emails.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  CommandOpenSidePanelPage,
+  SidePanelPages,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const OpenCompanyEmails = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+
+  if (!recordId) {
+    return null;
+  }
+
+  return (
+    <CommandOpenSidePanelPage
+      page={SidePanelPages.ViewRecord}
+      recordId={recordId}
+      objectNameSingular="company"
+      tab="company-tab-emails"
+      resetNavigationStack={false}
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+  name: 'open-company-emails',
+  description: 'Opens the current company on its Emails tab',
+  component: OpenCompanyEmails,
+  isHeadless: true,
+});
+```
+
 ## Volání logické funkce
 
-Front komponenty běží v prohlížeči v izolovaném web workeru, zatímco [logické funkce](/l/cs/developers/extend/apps/logic/logic-functions) běží na serveru. Neexistuje mezi nimi žádné přímé volání v rámci jednoho procesu — místo toho se front komponenta k logické funkci připojuje přes HTTP.
+Front komponenty běží v prohlížeči v sandboxovaném Web Workeru uvnitř iframe s nejasným původem (opaque-origin), zatímco [logické funkce](/l/cs/developers/extend/apps/logic/logic-functions) běží na serveru. Neexistuje mezi nimi žádné přímé volání v rámci jednoho procesu — místo toho se front komponenta k logické funkci připojuje přes HTTP.
 
-Logická funkce deklarovaná pomocí `httpRouteTriggerSettings` je přes HTTP dostupná na své cestě (route path). Twenty vloží do workeru základní URL, ze které jsou vaše funkce poskytovány, jako `TWENTY_FUNCTIONS_URL` spolu s `TWENTY_APP_ACCESS_TOKEN`, který volání autentizuje. Zatím neexistuje žádný specializovaný klient SDK pro volání vlastních funkcí, takže je volejte pomocí prostého `fetch`:
+Logická funkce deklarovaná pomocí `httpRouteTriggerSettings` je přes HTTP dostupná na své cestě (route path). `RestApiClient` považuje cesty začínající na `/s/` za aplikační trasy, převede je na URL, ze které jsou vaše funkce poskytovány, a autentizuje je pomocí `TWENTY_APP_ACCESS_TOKEN`.
 
-> **V Twenty Cloud jsou logické funkce spouštěné přes HTTP poskytovány na vyhrazené doméně pro každý workspace** na adrese `https://\<your-workspace-subdomain>.withtwenty.com\<path>` — právě na tuto adresu `TWENTY_FUNCTIONS_URL` směřuje. Pro externí volající zkopírujte přesnou URL z nastavení funkce **HTTP trigger** nebo z karty **Settings** aplikace.
-
-<Warning>
-  Původní funkční trasa `/s/` je **zastaralá** a bude **deaktivována dne 2026-07-24**. Místo toho použijte `TWENTY_FUNCTIONS_URL` (viz výše) a do tohoto data migrujte všechny pevně zakódované adresy URL `/s/`. Trasa `/s/` zůstává k dispozici pro self-hosting.
-</Warning>
+> **V Twenty Cloud jsou logické funkce spouštěné přes HTTP poskytovány na vyhrazené doméně pro každý workspace** na adrese `https://\<your-workspace-subdomain>.withtwenty.com\<path>`. Pro externí volající zkopírujte přesnou URL z nastavení funkce **HTTP trigger** nebo z karty **Settings** aplikace.
 
 Headless front komponenta může volání spustit při mountu přes komponentu `Command` a poté se automaticky odmountovat:
 
 ```tsx src/front-components/sync-prs.tsx
+import { RestApiClient } from 'twenty-client-sdk/rest';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/front-component';
 
 const SyncPrs = () => {
   const execute = async () => {
-    await fetch(`${process.env.TWENTY_FUNCTIONS_URL}/github/fetch-prs`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.TWENTY_APP_ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ owner: 'twentyhq', repo: 'twenty' }),
+    await new RestApiClient().post('/s/github/fetch-prs', {
+      owner: 'twentyhq',
+      repo: 'twenty',
     });
   };
 
@@ -236,7 +267,7 @@ export default defineFrontComponent({
 });
 ```
 
-Cesta připojená k `TWENTY_FUNCTIONS_URL` je `httpRouteTriggerSettings.path` logické funkce. Ponechte `isAuthRequired: true`; `TWENTY_APP_ACCESS_TOKEN`, který Twenty vygeneruje pro vaši komponentu, požadavek autentizuje:
+Cesta předaná `RestApiClient` je `httpRouteTriggerSettings.path` logické funkce s předponou `/s`. Ponechte `isAuthRequired: true`; `TWENTY_APP_ACCESS_TOKEN`, který Twenty vygeneruje pro vaši komponentu, požadavek autentizuje:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -261,21 +292,22 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_FUNCTIONS_URL` a `TWENTY_APP_ACCESS_TOKEN` jsou vloženy automaticky — viz [Proměnné aplikace](#application-variables). Protože tajné proměnné aplikace nejsou nikdy vystaveny front komponentám, ponechte API klíče a další citlivou logiku v logické funkci, ne ve front komponentě.
+`TWENTY_APP_ACCESS_TOKEN` je vložen automaticky — viz [Proměnné aplikace](#application-variables). Protože tajné proměnné aplikace nejsou nikdy vystaveny front komponentám, ponechte API klíče a další citlivou logiku v logické funkci, ne ve front komponentě.
 </Note>
 
 ### Volání Twenty REST API
 
-Pro čtení nebo zápis záznamů Twenty z front komponenty použijte `RestApiClient` z `twenty-client-sdk/rest`. Patří do stejné rodiny klientů jako `CoreApiClient` a `MetadataApiClient`, ale cílí na Twenty REST API (`/rest/...`) místo na GraphQL API a svou základní URL čte z `TWENTY_API_URL`.
+Pro volání aplikačních HTTP tras nebo čtení a zápis záznamů Twenty z front komponenty použijte `RestApiClient` z `twenty-client-sdk/rest`. Odesílá cesty `/s/...` na základní URL funkcí vašeho workspace a všechny ostatní cesty, včetně `/rest/...`, na `TWENTY_API_URL`.
 
-| Metoda                            | Popis                                      |
-| --------------------------------- | ------------------------------------------ |
-| `get(path, options?)`             | Odešle požadavek `GET`                     |
-| `post(path, body?, options?)`     | Odešle požadavek `POST`                    |
-| `put(path, body?, options?)`      | Odešle požadavek `PUT`                     |
-| `patch(path, body?, options?)`    | Odešle požadavek `PATCH`                   |
-| `delete(path, options?)`          | Odešle požadavek `DELETE`                  |
-| `request(method, path, options?)` | Obecný požadavek s libovolnou metodou HTTP |
+| Metoda                            | Popis                                                                |
+| --------------------------------- | -------------------------------------------------------------------- |
+| `get(path, options?)`             | Odešle požadavek `GET`                                               |
+| `post(path, body?, options?)`     | Odešle požadavek `POST`                                              |
+| `put(path, body?, options?)`      | Odešle požadavek `PUT`                                               |
+| `patch(path, body?, options?)`    | Odešle požadavek `PATCH`                                             |
+| `delete(path, options?)`          | Odešle požadavek `DELETE`                                            |
+| `request(method, path, options?)` | Obecný požadavek s libovolnou metodou HTTP                           |
+| `resolveUrl(path, options?)`      | Převede cestu na její úplnou URL bez odeslání požadavku (pro odkazy) |
 
 `options` přijímá `headers`, `query` (záznam parametrů dotazovacího řetězce; hodnoty typu nullish jsou vynechány) a `AbortSignal` prostřednictvím `signal`. Objekt `body`, který není typu `FormData`, je automaticky serializován do JSON. Při `401` klient jednou obnoví přístupový token prostřednictvím hostitele a požadavek znovu odešle.
 
@@ -379,11 +411,22 @@ Tajné proměnné (`isSecret: true`) **nejsou** zpřístupněny front-endovým k
 
 Následující systémové proměnné jsou vždy dostupné přes `process.env`:
 
-| Proměnná                  | Popis                                                                                          |
-| ------------------------- | ---------------------------------------------------------------------------------------------- |
-| `TWENTY_FUNCTIONS_URL`    | Základní adresa URL, ze které jsou poskytovány funkce aplikační logiky vaší aplikace přes HTTP |
-| `TWENTY_API_URL`          | Základní URL Twenty core API                                                                   |
-| `TWENTY_APP_ACCESS_TOKEN` | Krátkodobý token s oprávněními omezenými na roli vaší aplikace                                 |
+| Proměnná                  | Popis                                                          |
+| ------------------------- | -------------------------------------------------------------- |
+| `TWENTY_API_URL`          | Základní URL Twenty core API                                   |
+| `TWENTY_APP_ACCESS_TOKEN` | Krátkodobý token s oprávněními omezenými na roli vaší aplikace |
+
+### `TWENTY_FUNCTIONS_URL`
+
+Twenty také vkládá `TWENTY_FUNCTIONS_URL` do front komponent a logických funkcí: základní URL, ze které jsou poskytovány vaše logické funkce spouštěné přes HTTP.
+
+Existuje proto, že tato URL není vždy samotný server Twenty. V Twenty Cloud jsou aplikační trasy poskytovány na vyhrazené doméně pro každý workspace (`https://\<your-workspace-subdomain>.withtwenty.com`, nebo hlavní veřejná doména aplikace, pokud je nakonfigurována), aby odpovědi vytvořené aplikací běžely na odděleném původu, a nikoli na původu aplikace Twenty. Self-hostované a lokální instance poskytují aplikační trasy pod předponou `/s` přímo na serveru a proměnnou nemusí vůbec nastavovat. Protože se základní URL liší podle workspace a instance, váš kód ji nemůže napevno zakódovat — server správnou hodnotu vloží za běhu.
+
+Jen zřídka ji potřebujete číst přímo. Volání svých tras provádějte přes `RestApiClient` s cestou s předponou `/s/` a klient za vás URL vyřeší: odstraní předponu `/s` a zacílí na `TWENTY_FUNCTIONS_URL`, přičemž pokud proměnná není nastavena, použije jako zálohu `\<TWENTY_API_URL>/s`. Použijte `resolveUrl('/s/\<path>')` pro získání absolutní URL bez odeslání požadavku, např. pro odkaz. Proměnnou čtěte přímo pouze při ručním sestavování URL:
+
+```ts
+const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL}/s`}/documents/generate`;
+```
 
 ## API komunikace s hostitelem
 

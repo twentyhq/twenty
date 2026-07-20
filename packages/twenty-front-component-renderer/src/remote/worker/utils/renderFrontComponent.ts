@@ -33,7 +33,7 @@ export const renderFrontComponent = async ({
   setWorkerEnvironmentVariablesFromRenderContext(renderContext);
 
   const componentModule = await loadFrontComponentModule({
-    componentUrl: renderContext.componentUrl,
+    componentSource: renderContext.componentSource,
     sdkClientUrls: renderContext.sdkClientUrls,
     applicationAccessToken: renderContext.applicationAccessToken,
   });

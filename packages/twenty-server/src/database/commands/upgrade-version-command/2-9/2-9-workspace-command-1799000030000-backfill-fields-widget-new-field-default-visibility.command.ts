@@ -1,7 +1,7 @@
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -17,7 +17,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
   description:
     'Backfill newFieldDefaultVisibility to true on FIELDS page layout widgets where it is null',
 })
-export class BackfillFieldsWidgetNewFieldDefaultVisibilityCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class BackfillFieldsWidgetNewFieldDefaultVisibilityCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -103,7 +103,7 @@ export class BackfillFieldsWidgetNewFieldDefaultVisibilityCommand extends Active
       updatedWidgets,
     ] of widgetsToBackfillByApplicationUniversalIdentifier) {
       const result =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
             allFlatEntityOperationByMetadataName: {
               pageLayoutWidget: {

@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -55,7 +55,7 @@ const DEMOTED_STANDARD_FIELDS: {
   description:
     'Re-own the demoted Company ARR / ICP / Employees, Company/Person X (Twitter) and Person City standard fields to the workspace custom application, preserving their data and keeping them active',
 })
-export class MoveDemotedStandardFieldsToCustomApplicationCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class MoveDemotedStandardFieldsToCustomApplicationCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,

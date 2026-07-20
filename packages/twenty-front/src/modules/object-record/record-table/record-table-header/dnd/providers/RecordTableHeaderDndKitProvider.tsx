@@ -1,10 +1,10 @@
 import { DragDropProvider } from '@dnd-kit/react';
 import type { ReactNode } from 'react';
 
-import { type RecordTableHeaderDndData } from '@/object-record/record-table/record-table-header/dnd/types/RecordTableHeaderDndData';
-import { RecordTableHeaderDndContext } from '@/object-record/record-table/record-table-header/dnd/context/RecordTableHeaderDndContext';
 import { useRecordTableHeaderDndKit } from '@/object-record/record-table/record-table-header/dnd/hooks/useRecordTableHeaderDndKit';
+import { DragDropColumnDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropColumnDndContext';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
+import { type DragDropColumnData } from '@/ui/utilities/drag-and-drop/types/DragDropColumnData';
 
 type RecordTableHeaderDndKitProviderProps = {
   children: ReactNode;
@@ -16,8 +16,8 @@ export const RecordTableHeaderDndKitProvider = ({
   const { contextValues, handlers } = useRecordTableHeaderDndKit();
 
   return (
-    <RecordTableHeaderDndContext.Provider value={contextValues}>
-      <DragDropProvider<RecordTableHeaderDndData>
+    <DragDropColumnDndContext.Provider value={contextValues}>
+      <DragDropProvider<DragDropColumnData>
         sensors={DND_KIT_SENSORS}
         onDragStart={handlers.onDragStart}
         onDragMove={handlers.onDragMove}
@@ -25,6 +25,6 @@ export const RecordTableHeaderDndKitProvider = ({
       >
         {children}
       </DragDropProvider>
-    </RecordTableHeaderDndContext.Provider>
+    </DragDropColumnDndContext.Provider>
   );
 };

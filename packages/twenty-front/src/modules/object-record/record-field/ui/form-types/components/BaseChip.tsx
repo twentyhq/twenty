@@ -108,7 +108,7 @@ type BaseChipProps = {
   selected?: boolean;
   isFlashing?: boolean;
   onDoubleClick?: () => void;
-  maxLabelWidth?: number;
+  maxWidth?: number;
   leftIcon?: ReactNode;
 };
 
@@ -122,7 +122,7 @@ export const BaseChip = ({
   selected = false,
   isFlashing = false,
   onDoubleClick,
-  maxLabelWidth,
+  maxWidth,
   leftIcon,
 }: BaseChipProps) => {
   const { theme } = useContext(ThemeContext);
@@ -138,7 +138,7 @@ export const BaseChip = ({
       onDoubleClick={onDoubleClick}
     >
       {leftIcon}
-      <StyledLabel title={title ?? label} maxWidth={maxLabelWidth}>
+      <StyledLabel title={title ?? label} maxWidth={maxWidth}>
         {label}
       </StyledLabel>
 

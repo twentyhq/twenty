@@ -7,6 +7,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { CalendarWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service';
 import { WebhookSyncTriggerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-sync-trigger.service';
@@ -26,9 +28,17 @@ export class MicrosoftCalendarNotificationHandler implements WebhookNotification
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     private readonly calendarWebhookSubscriptionService: CalendarWebhookSubscriptionService,
     private readonly webhookSyncTriggerService: WebhookSyncTriggerService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async handle(notifications: MicrosoftGraphNotification[]): Promise<void> {
+    if (notifications.length > 0) {
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.ConnectedAccountSyncWebhookReceivedCalendar,
+        amount: notifications.length,
+      });
+    }
+
     const subscriptionIds = notifications
       .map((notification) => notification.subscriptionId)
       .filter(isNonEmptyString);
@@ -86,15 +96,27 @@ export class MicrosoftCalendarNotificationHandler implements WebhookNotification
         isNonEmptyString(notification.lifecycleEvent) &&
         notification.lifecycleEvent !== 'missed'
       ) {
-        await this.calendarWebhookSubscriptionService.renewSubscription(
-          calendarChannel,
-        );
+        try {
+          await this.calendarWebhookSubscriptionService.renewSubscription({
+            calendarChannelId: calendarChannel.id,
+            workspaceId: calendarChannel.workspaceId,
+          });
+        } catch (error) {
+          this.logger.error(
+            `Failed to renew calendar subscription for channel ${calendarChannel.id}`,
+            error,
+          );
+        }
         continue;
       }
 
       await this.webhookSyncTriggerService.triggerCalendarSync(
         calendarChannel.id,
         calendarChannel.workspaceId,
+      );
+
+      this.logger.log(
+        `Triggered calendar sync for calendar channel ${calendarChannel.id} from Microsoft notification`,
       );
     }
   }
