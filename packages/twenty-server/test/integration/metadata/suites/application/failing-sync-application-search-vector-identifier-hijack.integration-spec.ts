@@ -35,30 +35,49 @@ const buildCleanObject = (): ObjectManifest =>
     universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
   });
 
-// Rebuild the same object but repurpose the engine-owned searchVector slot: reuse
-// its deterministic universal identifier for a foreign, non-system field with a
-// different name and type. This is the exact override a malicious manifest could
+// Squat the engine-owned searchVector slot: declare a foreign, non-system
+// field carrying the deterministic universal identifier the engine derives
+// for searchVector. This is the exact override a malicious manifest could
 // attempt on a second sync to hijack a system field.
-const buildObjectHijackingSearchVector = (): ObjectManifest => {
+const buildObjectHijackingSearchVectorUniversalIdentifier =
+  (): ObjectManifest => {
+    const cleanObject = buildCleanObject();
+
+    return {
+      ...cleanObject,
+      fields: [
+        ...cleanObject.fields,
+        {
+          universalIdentifier: SEARCH_VECTOR_UNIVERSAL_IDENTIFIER,
+          type: FieldMetadataType.TEXT,
+          name: 'stolenSearchVector',
+          label: 'Stolen Search Vector',
+          isNullable: true,
+        },
+      ],
+    };
+  };
+
+// System fields are engine-provisioned and never manifest-authored: any
+// manifest declaring a reserved field name is rejected outright.
+const buildObjectAuthoringSearchVector = (): ObjectManifest => {
   const cleanObject = buildCleanObject();
 
   return {
     ...cleanObject,
-    fields: cleanObject.fields.map((field) =>
-      field.universalIdentifier === SEARCH_VECTOR_UNIVERSAL_IDENTIFIER
-        ? {
-            universalIdentifier: SEARCH_VECTOR_UNIVERSAL_IDENTIFIER,
-            type: FieldMetadataType.TEXT,
-            name: 'stolenSearchVector',
-            label: 'Stolen Search Vector',
-            isNullable: true,
-          }
-        : field,
-    ),
+    fields: [
+      ...cleanObject.fields,
+      {
+        universalIdentifier: SEARCH_VECTOR_UNIVERSAL_IDENTIFIER,
+        type: FieldMetadataType.TS_VECTOR,
+        name: 'searchVector',
+        label: 'Search vector',
+      },
+    ],
   };
 };
 
-describe('Sync application should reject hijacking the searchVector universal identifier', () => {
+describe('Sync application should reject hijacking the searchVector system field', () => {
   beforeAll(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: TEST_APP_ID,
@@ -83,12 +102,35 @@ describe('Sync application should reject hijacking the searchVector universal id
     });
   });
 
-  it('should reject a second sync that reuses the searchVector deterministic identifier to override its name and settings', async () => {
+  it('should reject a manifest field declared under the reserved searchVector name', async () => {
     const { errors } = await syncApplication({
       manifest: buildBaseManifest({
         appId: TEST_APP_ID,
         roleId: TEST_ROLE_ID,
-        overrides: { objects: [buildObjectHijackingSearchVector()] },
+        overrides: { objects: [buildObjectAuthoringSearchVector()] },
+      }),
+      expectToFail: true,
+    });
+
+    expectOneNotInternalServerErrorSnapshot({
+      errors,
+      // The rejection message embeds the run-random derived universal identifier
+      normalizeMessage: (message) =>
+        message.replace(
+          SEARCH_VECTOR_UNIVERSAL_IDENTIFIER,
+          '<searchVector-universal-identifier>',
+        ),
+    });
+  }, 60000);
+
+  it('should reject a manifest field squatting the searchVector deterministic universal identifier', async () => {
+    const { errors } = await syncApplication({
+      manifest: buildBaseManifest({
+        appId: TEST_APP_ID,
+        roleId: TEST_ROLE_ID,
+        overrides: {
+          objects: [buildObjectHijackingSearchVectorUniversalIdentifier()],
+        },
       }),
       expectToFail: true,
     });

@@ -1,6 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Sync application should reject hijacking the searchVector universal identifier should reject a second sync that reuses the searchVector deterministic identifier to override its name and settings 1`] = `
+exports[`Sync application should reject hijacking the searchVector system field should reject a manifest field declared under the reserved searchVector name 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Field name "searchVector" is reserved for engine-provisioned system fields and cannot be manifest-authored (universal identifier "<searchVector-universal-identifier>")",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Sync application should reject hijacking the searchVector system field should reject a manifest field squatting the searchVector deterministic universal identifier 1`] = `
 {
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
@@ -10,7 +22,7 @@ exports[`Sync application should reject hijacking the searchVector universal ide
           "errors": [
             {
               "code": "FIELD_MUTATION_NOT_ALLOWED",
-              "message": "System fields only allow updating: universalSettings, isActive. Forbidden properties: label, name",
+              "message": "System fields only allow updating: universalSettings, isActive. Forbidden properties: description, icon, label, name, isUIEditable",
               "userFriendlyMessage": "System fields cannot be updated",
             },
             {
