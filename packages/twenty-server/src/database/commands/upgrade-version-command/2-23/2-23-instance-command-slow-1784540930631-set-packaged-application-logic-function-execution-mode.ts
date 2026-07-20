@@ -1,5 +1,6 @@
 import { Inject, Logger } from '@nestjs/common';
 
+import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
@@ -9,6 +10,8 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+const INSTALL_BATCH_SIZE = 20;
 
 // Logic functions of packaged applications (tarball, npm) ship an immutable
 // build and now execute their prebuilt bundle. Local-source apps stay LIVE.
@@ -91,37 +94,46 @@ export class SetPackagedApplicationLogicFunctionExecutionModeSlowInstanceCommand
 
       const driver = this.logicFunctionDriverFactory.getCurrentDriver();
 
-      for (const logicFunctionId of logicFunctionIds) {
-        const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: logicFunctionId,
-          flatEntityMaps: flatLogicFunctionMaps,
-        });
-        const flatApplication = isDefined(flatLogicFunction?.applicationId)
-          ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
-          : undefined;
+      for (const logicFunctionIdBatch of chunk(
+        logicFunctionIds,
+        INSTALL_BATCH_SIZE,
+      )) {
+        await Promise.all(
+          logicFunctionIdBatch.map(async (logicFunctionId) => {
+            const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
+              flatEntityId: logicFunctionId,
+              flatEntityMaps: flatLogicFunctionMaps,
+            });
+            const flatApplication = isDefined(flatLogicFunction?.applicationId)
+              ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
+              : undefined;
 
-        if (!isDefined(flatLogicFunction) || !isDefined(flatApplication)) {
-          this.logger.warn(
-            `Skipping prebuilt bundle install for function '${logicFunctionId}' (workspace=${workspaceId}): function or application not found in workspace cache`,
-          );
-          continue;
-        }
+            if (!isDefined(flatLogicFunction) || !isDefined(flatApplication)) {
+              this.logger.warn(
+                `Skipping prebuilt bundle install for function '${logicFunctionId}' (workspace=${workspaceId}): function or application not found in workspace cache`,
+              );
 
-        try {
-          await driver.installPrebuiltBundle({
-            flatLogicFunction,
-            flatApplication,
-            applicationUniversalIdentifier: flatApplication.universalIdentifier,
-          });
-        } catch (error) {
-          // Best-effort: the executor installs the bundle on-demand at first
-          // execution, so a failed install here must not abort the upgrade.
-          this.logger.warn(
-            `Failed to install prebuilt bundle for function '${logicFunctionId}' (workspace=${workspaceId}): ${
-              error instanceof Error ? error.message : String(error)
-            }`,
-          );
-        }
+              return;
+            }
+
+            try {
+              await driver.installPrebuiltBundle({
+                flatLogicFunction,
+                flatApplication,
+                applicationUniversalIdentifier:
+                  flatApplication.universalIdentifier,
+              });
+            } catch (error) {
+              // Best-effort: the executor installs the bundle on-demand at first
+              // execution, so a failed install here must not abort the upgrade.
+              this.logger.warn(
+                `Failed to install prebuilt bundle for function '${logicFunctionId}' (workspace=${workspaceId}): ${
+                  error instanceof Error ? error.message : String(error)
+                }`,
+              );
+            }
+          }),
+        );
       }
     } catch (error) {
       this.logger.warn(
