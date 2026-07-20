@@ -36,6 +36,7 @@ import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { CreateManyFieldsInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-many-fields.input';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -187,6 +188,22 @@ export class FieldMetadataController {
     return (await this.isNewMetadataFormat(workspaceId))
       ? result
       : toLegacyFieldMetadataCreateResponse(result);
+  }
+
+  @Post('batch')
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  async createMany(
+    @Body() input: CreateManyFieldsInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    const flatFields = await this.fieldMetadataService.createManyFields({
+      createFieldInputs: input.fields,
+      workspaceId,
+    });
+
+    return flatFields.map((flatField) =>
+      fromFlatFieldMetadataToFieldMetadataDto(flatField),
+    );
   }
 
   @Patch(':id')
