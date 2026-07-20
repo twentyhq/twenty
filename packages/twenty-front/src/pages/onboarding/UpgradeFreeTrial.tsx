@@ -303,6 +303,7 @@ export const UpgradeFreeTrial = ({
             currency: 'usd',
             paymentMethodTypes: ['card'],
             appearance,
+            loader: 'never',
           }}
         >
           <UpgradeFreeTrialContent billing={billing} isPaymentAvailable />

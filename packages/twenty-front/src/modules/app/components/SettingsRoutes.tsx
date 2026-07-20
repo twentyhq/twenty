@@ -8,11 +8,9 @@ import {
   useParams,
 } from 'react-router-dom';
 
-import { currentUserState } from '@/auth/states/currentUserState';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -651,13 +649,12 @@ const SettingsRoleAddObjectLevel = lazy(() =>
   ),
 );
 
-type SettingsRoutesContentProps = {
-  isAdminPageEnabled: boolean;
+type SettingsRoutesProps = {
+  isFunctionSettingsEnabled?: boolean;
+  isAdminPageEnabled?: boolean;
 };
 
-const SettingsRoutesContent = ({
-  isAdminPageEnabled,
-}: SettingsRoutesContentProps) => (
+export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
       <Route path={SettingsPath.ProfilePage} element={<SettingsProfile />} />
@@ -1100,12 +1097,3 @@ const SettingsRoutesContent = ({
     </Routes>
   </Suspense>
 );
-
-export const SettingsRoutes = () => {
-  const currentUser = useAtomStateValue(currentUserState);
-  const isAdminPageEnabled =
-    (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) ??
-    false;
-
-  return <SettingsRoutesContent isAdminPageEnabled={isAdminPageEnabled} />;
-};

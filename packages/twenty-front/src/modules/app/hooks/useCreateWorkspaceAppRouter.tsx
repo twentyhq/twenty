@@ -1,4 +1,4 @@
-import { lazy, useState } from 'react';
+import { lazy, useMemo } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -27,7 +27,7 @@ import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppL
 import { Verify } from '~/pages/onboarding/Verify';
 import { lazyWithPreload } from '~/utils/lazyWithPreload';
 
-const RecordIndexPage = lazy(() =>
+const RecordIndexPage = lazyWithPreload(() =>
   import('~/pages/object-record/RecordIndexPage').then((module) => ({
     default: module.RecordIndexPage,
   })),
@@ -128,7 +128,17 @@ const preloadOnboardingPages = () => {
   return null;
 };
 
-const createWorkspaceAppRouter = () =>
+const preloadOnboardingStepPages = () => {
+  preloadOnboardingPages();
+  void RecordIndexPage.preload();
+
+  return null;
+};
+
+const createWorkspaceAppRouter = (
+  isFunctionSettingsEnabled?: boolean,
+  isAdminPageEnabled?: boolean,
+) =>
   createBrowserRouter(
     createRoutesFromElements(
       <Route
@@ -168,7 +178,12 @@ const createWorkspaceAppRouter = () =>
               />
               <Route
                 path={AppPath.SettingsCatchAll}
-                element={<SettingsRoutes />}
+                element={
+                  <SettingsRoutes
+                    isFunctionSettingsEnabled={isFunctionSettingsEnabled}
+                    isAdminPageEnabled={isAdminPageEnabled}
+                  />
+                }
               />
               <Route
                 path={AppPath.Dpa}
@@ -203,7 +218,7 @@ const createWorkspaceAppRouter = () =>
           <Route
             path={AppPath.PlanRequiredSuccess}
             element={
-              <LazyRoute fallback={null}>
+              <LazyRoute fallback={<OnboardingPageLoader />}>
                 <PaymentSuccess />
               </LazyRoute>
             }
@@ -211,7 +226,7 @@ const createWorkspaceAppRouter = () =>
           <Route
             path={AppPath.BookCall}
             element={
-              <LazyRoute fallback={null}>
+              <LazyRoute fallback={<OnboardingPageLoader />}>
                 <BookCall />
               </LazyRoute>
             }
@@ -255,7 +270,7 @@ const createWorkspaceAppRouter = () =>
           </Route>
           <Route
             element={<OnboardingStepLayout />}
-            loader={preloadOnboardingPages}
+            loader={preloadOnboardingStepPages}
           >
             <Route
               path={AppPath.CreateProfile}
@@ -311,8 +326,12 @@ const createWorkspaceAppRouter = () =>
     ),
   );
 
-export const useCreateWorkspaceAppRouter = () => {
-  const [router] = useState(createWorkspaceAppRouter);
-
-  return router;
-};
+export const useCreateWorkspaceAppRouter = (
+  isFunctionSettingsEnabled?: boolean,
+  isAdminPageEnabled?: boolean,
+) =>
+  useMemo(
+    () =>
+      createWorkspaceAppRouter(isFunctionSettingsEnabled, isAdminPageEnabled),
+    [isFunctionSettingsEnabled, isAdminPageEnabled],
+  );

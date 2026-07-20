@@ -1,6 +1,8 @@
 import { OnboardingLayout } from '@/onboarding/components/OnboardingLayout';
 import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTransitionOutlet';
-import { PrefetchOnboardingPlansEffect } from '@/onboarding/effect-components/PrefetchOnboardingPlansEffect';
+import { PrefetchOnboardingBillingEffect } from '@/onboarding/effect-components/PrefetchOnboardingBillingEffect';
+import { PrefetchOnboardingImagesEffect } from '@/onboarding/effect-components/PrefetchOnboardingImagesEffect';
+import { PrefetchWelcomeAnimationEffect } from '@/onboarding/effect-components/PrefetchWelcomeAnimationEffect';
 import { useOnboardingFreeCreditsTotal } from '@/onboarding/hooks/useOnboardingFreeCreditsTotal';
 
 export const OnboardingStepLayout = () => {
@@ -8,7 +10,9 @@ export const OnboardingStepLayout = () => {
 
   return (
     <OnboardingLayout freeCredits={freeCredits}>
-      <PrefetchOnboardingPlansEffect />
+      <PrefetchOnboardingBillingEffect />
+      <PrefetchWelcomeAnimationEffect />
+      <PrefetchOnboardingImagesEffect />
       <OnboardingTransitionOutlet />
     </OnboardingLayout>
   );
