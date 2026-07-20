@@ -916,9 +916,6 @@ export class ApplicationRegistrationService {
     };
   }
 
-  // Developer-facing lookup used to claim an app: resolves an npm-sourced
-  // registration by exact package name or universal identifier without
-  // leaking the full catalog.
   async findClaimable(params: {
     sourcePackage?: string;
     universalIdentifier?: string;

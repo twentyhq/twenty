@@ -1,7 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-// Public view of a catalog registration returned by the developer claim
-// lookup. Never exposes the owner workspace id, only whether it is claimed.
 @ObjectType('ClaimableApplicationRegistration')
 export class ClaimableApplicationRegistrationDTO {
   @Field(() => String)

@@ -216,10 +216,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
             />
           )}
           {isUnclaimed
-            ? // One-click claim without proof is an admin-only escape hatch.
-              // Regular workspaces claim by proving npm ownership from the
-              // developer tab's "Claim an application" section.
-              fromAdmin && (
+            ? fromAdmin && (
                 <Button
                   accent="default"
                   variant="secondary"

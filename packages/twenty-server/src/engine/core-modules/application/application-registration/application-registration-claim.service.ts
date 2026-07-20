@@ -23,9 +23,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 
 const GITHUB_CLAIM_STATE_EXPIRES_IN = '15m';
 
-// npm attestations: each entry wraps a DSSE envelope whose payload is an
-// in-toto statement; the SLSA provenance predicate carries the source
-// repository the package was built and published from.
 const attestationsResponseSchema = z.object({
   attestations: z.array(
     z.object({
@@ -63,10 +60,6 @@ const provenancePayloadSchema = z.object({
     .partial(),
 });
 
-// Claiming relies on npm trusted publishing (provenance attestations): the
-// package must be published from GitHub Actions, and the claiming user must
-// prove — via GitHub OAuth — that they own the GitHub account or organization
-// the provenance points to.
 @Injectable()
 export class ApplicationRegistrationClaimService {
   private readonly logger = new Logger(
@@ -184,7 +177,6 @@ export class ApplicationRegistrationClaimService {
     return this.workspaceRepository.findOne({ where: { id: workspaceId } });
   }
 
-  // Admin view: the workspace that owns the registration, if any.
   async findClaimsForRegistration(
     applicationRegistrationId: string,
   ): Promise<AdminApplicationRegistrationClaimDTO[]> {
@@ -209,8 +201,6 @@ export class ApplicationRegistrationClaimService {
     ];
   }
 
-  // Returns the npm package name, or throws if the registration cannot be
-  // claimed via a provenance-based challenge.
   private assertClaimable(registration: ApplicationRegistrationEntity): string {
     if (isDefined(registration.ownerWorkspaceId)) {
       throw new ApplicationRegistrationException(
@@ -238,7 +228,6 @@ export class ApplicationRegistrationClaimService {
     return `${serverUrl}/application-registration-claim/github/callback`;
   }
 
-  // The GitHub user or organization the npm provenance attestation points to.
   private async fetchProvenancePublisherLogin(params: {
     packageName: string;
     version: string | null;
@@ -401,8 +390,6 @@ export class ApplicationRegistrationClaimService {
     }
   }
 
-  // The connected GitHub account must BE the publishing user, or be an owner
-  // (admin) of the publishing organization.
   private async assertGithubOwnership(params: {
     accessToken: string;
     publisherLogin: string;

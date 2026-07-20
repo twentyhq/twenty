@@ -337,10 +337,6 @@ export class ApplicationRegistrationResolver {
     });
   }
 
-  // One-click claim without proof of ownership. AdminPanelGuard restricts it to
-  // server admins, who use it from the Admin Panel to take over seeded / curated
-  // apps. Regular workspaces instead prove control of the npm package via the
-  // start/verify challenge below.
   @UseGuards(
     WorkspaceAuthGuard,
     AdminPanelGuard,
@@ -358,9 +354,6 @@ export class ApplicationRegistrationResolver {
     });
   }
 
-  // Where to send the user to prove — via GitHub OAuth — that they own the
-  // GitHub account or organization that publishes the npm package (trusted
-  // publishing provenance).
   @UseGuards(
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
