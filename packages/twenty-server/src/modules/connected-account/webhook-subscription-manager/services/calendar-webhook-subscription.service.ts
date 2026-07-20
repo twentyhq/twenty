@@ -154,6 +154,8 @@ export class CalendarWebhookSubscriptionService {
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: calendarChannel.workspaceId },
       });
+
+      throw error;
     }
   }
 
