@@ -1727,6 +1727,7 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
+  IS_APP_CLAIMING_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
   IS_JSON_FILTER_ENABLED
   IS_CALENDAR_WEEK_VIEW_ENABLED
@@ -1945,6 +1946,17 @@ type UsageBreakdownItem {
   key: String!
   label: String
   creditsUsed: Float!
+}
+
+type ClaimableApplicationRegistration {
+  id: String!
+  universalIdentifier: String!
+  name: String!
+  sourcePackage: String
+  logoUrl: String
+  description: String
+  author: String
+  isOwned: Boolean!
 }
 
 type CreateApplicationRegistration {
@@ -3116,6 +3128,8 @@ type Query {
   findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
   findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariableDTO!]!
   applicationRegistrationTarballUrl(id: String!): String
+  findClaimableApplicationRegistration(sourcePackage: String, universalIdentifier: String): ClaimableApplicationRegistration
+  githubClaimAuthorizationUrl(applicationRegistrationId: String!): String!
   getRoles: [Role!]!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   unsubscribeTopics: [UnsubscribeTopic!]!

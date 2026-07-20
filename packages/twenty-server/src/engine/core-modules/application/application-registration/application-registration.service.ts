@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,6 +25,7 @@ import {
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { type ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
+import { type ClaimableApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/claimable-application-registration.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { type PaginatedApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
 import { type PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
@@ -914,6 +916,49 @@ export class ApplicationRegistrationService {
     };
   }
 
+  async findClaimable(params: {
+    sourcePackage?: string;
+    universalIdentifier?: string;
+  }): Promise<ClaimableApplicationRegistrationDTO | null> {
+    const hasPackage = isNonEmptyString(params.sourcePackage);
+    const hasUniversalIdentifier = isNonEmptyString(params.universalIdentifier);
+
+    if (hasPackage === hasUniversalIdentifier) {
+      throw new ApplicationRegistrationException(
+        'Provide exactly one of sourcePackage or universalIdentifier',
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const where: FindOptionsWhere<ApplicationRegistrationEntity> = {
+      sourceType: ApplicationRegistrationSourceType.NPM,
+      ...(hasPackage
+        ? { sourcePackage: params.sourcePackage }
+        : { universalIdentifier: params.universalIdentifier }),
+    };
+
+    const registration = await this.applicationRegistrationRepository.findOne({
+      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
+      where,
+    });
+
+    if (!isDefined(registration)) {
+      return null;
+    }
+
+    return {
+      id: registration.id,
+      universalIdentifier: registration.universalIdentifier,
+      name: registration.name,
+      sourcePackage: registration.sourcePackage,
+      logoUrl:
+        this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
+      description: registration.description,
+      author: registration.author,
+      isOwned: isDefined(registration.ownerWorkspaceId),
+    };
+  }
+
   async claimOwnership(params: {
     applicationRegistrationId: string;
     claimingWorkspaceId: string;
@@ -926,7 +971,7 @@ export class ApplicationRegistrationService {
     if (isDefined(registration.ownerWorkspaceId)) {
       throw new ApplicationRegistrationException(
         'Application registration is already owned by a workspace',
-        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_ALREADY_OWNED,
       );
     }
 
@@ -940,7 +985,7 @@ export class ApplicationRegistrationService {
     if (updateResult.affected === 0) {
       throw new ApplicationRegistrationException(
         'Application registration is already owned by a workspace',
-        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_ALREADY_OWNED,
       );
     }
 
