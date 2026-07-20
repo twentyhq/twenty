@@ -16,6 +16,8 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { MetadataEngineModule } from 'src/engine/metadata-modules/metadata-engine.module';
+import { FindAllViewsCacheService } from 'src/engine/workspace-cache-storage/services/find-all-views-cache.service';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 @Module({
   imports: [
@@ -27,12 +29,14 @@ import { MetadataEngineModule } from 'src/engine/metadata-modules/metadata-engin
         DataloaderModule,
         MetricsModule,
         I18nModule,
+        WorkspaceCacheStorageModule,
       ],
       inject: [
         TwentyConfigService,
         ExceptionHandlerService,
         DataloaderService,
         CacheStorageNamespace.EngineWorkspace,
+        FindAllViewsCacheService,
         MetricsService,
         I18nService,
         FeatureFlagService,

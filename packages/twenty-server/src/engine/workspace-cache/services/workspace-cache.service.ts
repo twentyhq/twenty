@@ -38,6 +38,7 @@ const STALE_VERSION_TTL_MS = 5_000; // 5 seconds
 const MAX_LOCAL_STALE_VERSIONS = 5; // 5 stale versions
 // Sized against 4 GiB pods (--max-old-space-size=3500): 7,500 sat at the heap ceiling
 const MAX_LOCAL_CACHE_ENTRIES = 6_000;
+const MAX_INVALIDATION_EPOCHS = 6_000;
 const MIN_EVICT_KEYS = 100;
 
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
@@ -47,6 +48,7 @@ type RecomputeHashResolution =
   | {
       strategy: 'recover';
       adoptableHashes: Partial<Record<WorkspaceCacheKeyName, string>>;
+      expectedHashes: Partial<Record<WorkspaceCacheKeyName, string>>;
     };
 
 @Injectable()
@@ -63,6 +65,8 @@ export class WorkspaceCacheService implements OnModuleInit {
   private readonly memoizer = new PromiseMemoizer<
     Partial<WorkspaceCacheDataMap>
   >(MEMOIZER_TTL_MS);
+  private readonly invalidationEpochByWorkspaceId = new Map<string, number>();
+  private invalidationEpochSequence = 0;
 
   private readonly logger = new Logger(WorkspaceCacheService.name);
 
@@ -132,6 +136,9 @@ export class WorkspaceCacheService implements OnModuleInit {
     const result = await this.memoizer.memoizePromiseAndExecute(
       memoKey,
       async () => {
+        const invalidationEpoch =
+          this.getInvalidationEpochForWorkspace(workspaceId);
+
         // Stage 1: Check local TTL
         const { freshKeys, staleKeys } = this.checkLocalTTL(
           workspaceId,
@@ -152,21 +159,29 @@ export class WorkspaceCacheService implements OnModuleInit {
         } = await this.validateLocalHashAgainstRedisHash(
           workspaceId,
           staleKeys,
+          invalidationEpoch,
         );
         const validatedData = this.getFromLocalCache(workspaceId, validKeys);
 
         // Stage 3: Fetch data from Redis
-        const { redisData, missingInRedis } = await this.fetchDataFromRedis(
-          workspaceId,
-          keysNeedingDataFromRedis,
-        );
+        const { redisData, missingInRedis, redisHashesForMissingData } =
+          await this.fetchDataFromRedis(
+            workspaceId,
+            keysNeedingDataFromRedis,
+            invalidationEpoch,
+          );
 
         // Stage 4: Recompute remaining
         const keysToRecompute = [...keysNeedingRecompute, ...missingInRedis];
         const recomputedData = await this.recomputeDataFromProvider(
           workspaceId,
           keysToRecompute,
-          { strategy: 'recover', adoptableHashes },
+          {
+            strategy: 'recover',
+            adoptableHashes,
+            expectedHashes: redisHashesForMissingData,
+          },
+          invalidationEpoch,
         );
 
         return {
@@ -185,15 +200,24 @@ export class WorkspaceCacheService implements OnModuleInit {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<void> {
+    const invalidationEpoch =
+      this.incrementInvalidationEpochForWorkspace(workspaceId);
+
+    this.deleteFromLocalCache(workspaceId, cacheKeyNames);
     await this.memoizer.clearKeys(`${workspaceId}-`);
 
-    await this.flush(workspaceId, cacheKeyNames);
-    await this.recomputeDataFromProvider(workspaceId, cacheKeyNames, {
-      strategy: 'mint',
-    });
+    await this.deleteFromRedis(workspaceId, cacheKeyNames);
+    await this.recomputeDataFromProvider(
+      workspaceId,
+      cacheKeyNames,
+      { strategy: 'mint' },
+      invalidationEpoch,
+    );
 
-    // Clear memoizer again after recomputation to evict any stale entries
-    // cached by concurrent getOrRecompute calls during the flush window.
+    if (this.isInvalidationEpochCurrent(workspaceId, invalidationEpoch)) {
+      this.incrementInvalidationEpochForWorkspace(workspaceId);
+    }
+
     await this.memoizer.clearKeys(`${workspaceId}-`);
   }
 
@@ -226,9 +250,19 @@ export class WorkspaceCacheService implements OnModuleInit {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<void> {
-    await this.deleteFromRedis(workspaceId, cacheKeyNames);
-
+    this.incrementInvalidationEpochForWorkspace(workspaceId);
     this.deleteFromLocalCache(workspaceId, cacheKeyNames);
+    await this.memoizer.clearKeys(`${workspaceId}-`);
+    await this.deleteFromRedis(workspaceId, cacheKeyNames);
+  }
+
+  public async invalidateLocal(
+    workspaceId: string,
+    cacheKeyNames: WorkspaceCacheKeyName[],
+  ): Promise<void> {
+    this.incrementInvalidationEpochForWorkspace(workspaceId);
+    this.deleteFromLocalCache(workspaceId, cacheKeyNames);
+    await this.memoizer.clearKeys(`${workspaceId}-`);
   }
 
   private checkLocalTTL<K extends WorkspaceCacheKeyName>(
@@ -256,6 +290,7 @@ export class WorkspaceCacheService implements OnModuleInit {
   private async validateLocalHashAgainstRedisHash(
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
+    invalidationEpoch: number,
   ): Promise<{
     validKeys: WorkspaceCacheKeyName[];
     keysNeedingDataFromRedis: WorkspaceCacheKeyName[];
@@ -292,7 +327,9 @@ export class WorkspaceCacheService implements OnModuleInit {
         isDefined(redisHash) &&
         localEntry.latestHash === redisHash
       ) {
-        localEntry.lastHashCheckedAt = Date.now();
+        if (this.isInvalidationEpochCurrent(workspaceId, invalidationEpoch)) {
+          localEntry.lastHashCheckedAt = Date.now();
+        }
         validKeys.push(keyName);
       } else if (this.localDataOnlyKeys.has(keyName)) {
         keysNeedingRecompute.push(keyName);
@@ -316,15 +353,20 @@ export class WorkspaceCacheService implements OnModuleInit {
   private async fetchDataFromRedis(
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
+    invalidationEpoch: number,
   ): Promise<{
     redisData: Partial<WorkspaceCacheDataMap>;
     missingInRedis: WorkspaceCacheKeyName[];
+    redisHashesForMissingData: Partial<Record<WorkspaceCacheKeyName, string>>;
   }> {
     const redisData: Partial<WorkspaceCacheDataMap> = {};
     const missingInRedis: WorkspaceCacheKeyName[] = [];
+    const redisHashesForMissingData: Partial<
+      Record<WorkspaceCacheKeyName, string>
+    > = {};
 
     if (cacheKeyNames.length === 0) {
-      return { redisData, missingInRedis };
+      return { redisData, missingInRedis, redisHashesForMissingData };
     }
 
     // Interleave data and hash keys for atomic fetch: [data1, hash1, data2, hash2, ...]
@@ -344,19 +386,30 @@ export class WorkspaceCacheService implements OnModuleInit {
 
       if (isDefined(data) && isDefined(hash)) {
         Object.assign(redisData, { [keyName]: data });
-        this.setInLocalCache(workspaceId, keyName, data, hash);
+        this.setInLocalCache(
+          workspaceId,
+          keyName,
+          data,
+          hash,
+          invalidationEpoch,
+        );
       } else {
         missingInRedis.push(keyName);
+
+        if (isDefined(hash)) {
+          redisHashesForMissingData[keyName] = hash;
+        }
       }
     }
 
-    return { redisData, missingInRedis };
+    return { redisData, missingInRedis, redisHashesForMissingData };
   }
 
   private async recomputeDataFromProvider(
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
     hashResolution: RecomputeHashResolution,
+    invalidationEpoch?: number,
   ): Promise<Partial<WorkspaceCacheDataMap>> {
     const result: Partial<WorkspaceCacheDataMap> = {};
 
@@ -384,44 +437,115 @@ export class WorkspaceCacheService implements OnModuleInit {
 
     const computed = await Promise.all(computePromises);
 
+    for (const { keyName, data } of computed) {
+      Object.assign(result, { [keyName]: data });
+    }
+
+    if (
+      isDefined(invalidationEpoch) &&
+      !this.isInvalidationEpochCurrent(workspaceId, invalidationEpoch)
+    ) {
+      return result;
+    }
+
     const redisEntries: Array<{ key: string; value: unknown }> = [];
-    const bootstrapHashEntries: Array<{ key: string; value: string }> = [];
+    const localEntries: typeof computed = [];
+    const bootstrapEntries: typeof computed = [];
+    const recoveryEntries: Array<
+      (typeof computed)[number] & {
+        expectedHash: string | undefined;
+      }
+    > = [];
 
     for (const { keyName, data, hash, isAdopted } of computed) {
-      Object.assign(result, { [keyName]: data });
-
       const baseKey = this.buildCacheKey(workspaceId, keyName);
       const isLocalDataOnly = this.localDataOnlyKeys.has(keyName);
-      const isRecoveryBootstrap =
-        hashResolution.strategy === 'recover' && !isAdopted && isLocalDataOnly;
 
-      if (isRecoveryBootstrap) {
-        bootstrapHashEntries.push({ key: `${baseKey}:hash`, value: hash });
-      } else if (!isAdopted) {
-        redisEntries.push({ key: `${baseKey}:hash`, value: hash });
+      if (hashResolution.strategy === 'recover') {
+        if (isLocalDataOnly) {
+          (isAdopted ? localEntries : bootstrapEntries).push({
+            keyName,
+            data,
+            hash,
+            isAdopted,
+          });
+        } else {
+          recoveryEntries.push({
+            keyName,
+            data,
+            hash,
+            isAdopted,
+            expectedHash: hashResolution.expectedHashes[keyName],
+          });
+        }
+
+        continue;
       }
+
+      redisEntries.push({ key: `${baseKey}:hash`, value: hash });
 
       if (!isLocalDataOnly) {
         redisEntries.push({ key: `${baseKey}:data`, value: data });
       }
 
-      this.setInLocalCache(workspaceId, keyName, data, hash);
+      localEntries.push({ keyName, data, hash, isAdopted });
     }
 
     if (redisEntries.length > 0) {
       await this.cacheStorage.mset(redisEntries);
     }
 
-    if (bootstrapHashEntries.length > 0) {
-      const bootstrapHashTtlMs =
-        this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000;
-
-      await Promise.all(
-        bootstrapHashEntries.map(({ key, value }) =>
-          this.cacheStorage.setIfAbsent(key, value, bootstrapHashTtlMs),
-        ),
-      );
+    for (const { keyName, data, hash } of localEntries) {
+      this.setInLocalCache(workspaceId, keyName, data, hash, invalidationEpoch);
     }
+
+    const cacheTtlMs = this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000;
+
+    await Promise.all(
+      bootstrapEntries.map(async ({ keyName, data, hash }) => {
+        const baseKey = this.buildCacheKey(workspaceId, keyName);
+        const wasSet = await this.cacheStorage.setIfAbsent(
+          `${baseKey}:hash`,
+          hash,
+          cacheTtlMs,
+        );
+
+        if (wasSet) {
+          this.setInLocalCache(
+            workspaceId,
+            keyName,
+            data,
+            hash,
+            invalidationEpoch,
+          );
+        }
+      }),
+    );
+
+    await Promise.all(
+      recoveryEntries.map(async ({ keyName, data, hash, expectedHash }) => {
+        const baseKey = this.buildCacheKey(workspaceId, keyName);
+        const wasSet = await this.cacheStorage.msetIfUnchanged({
+          guardKey: `${baseKey}:hash`,
+          expectedGuardValue: expectedHash,
+          entries: [
+            { key: `${baseKey}:data`, value: data },
+            { key: `${baseKey}:hash`, value: hash },
+          ],
+          ttl: cacheTtlMs,
+        });
+
+        if (wasSet) {
+          this.setInLocalCache(
+            workspaceId,
+            keyName,
+            data,
+            hash,
+            invalidationEpoch,
+          );
+        }
+      }),
+    );
 
     return result;
   }
@@ -479,7 +603,15 @@ export class WorkspaceCacheService implements OnModuleInit {
     keyName: WorkspaceCacheKeyName,
     data: CacheDataType,
     hash: string,
+    invalidationEpoch?: number,
   ): void {
+    if (
+      isDefined(invalidationEpoch) &&
+      !this.isInvalidationEpochCurrent(workspaceId, invalidationEpoch)
+    ) {
+      return;
+    }
+
     const localKey = this.buildCacheKey(workspaceId, keyName);
     let entry = this.localCache.get(localKey);
 
@@ -494,6 +626,48 @@ export class WorkspaceCacheService implements OnModuleInit {
 
     this.cleanupStaleVersions(entry);
     this.evictLRUEntriesIfNeeded();
+  }
+
+  private getInvalidationEpochForWorkspace(workspaceId: string): number {
+    const invalidationEpoch =
+      this.invalidationEpochByWorkspaceId.get(workspaceId);
+
+    if (isDefined(invalidationEpoch)) {
+      this.invalidationEpochByWorkspaceId.delete(workspaceId);
+      this.invalidationEpochByWorkspaceId.set(workspaceId, invalidationEpoch);
+
+      return invalidationEpoch;
+    }
+
+    return this.invalidationEpochSequence;
+  }
+
+  private incrementInvalidationEpochForWorkspace(workspaceId: string): number {
+    const nextEpoch = ++this.invalidationEpochSequence;
+
+    this.invalidationEpochByWorkspaceId.delete(workspaceId);
+    this.invalidationEpochByWorkspaceId.set(workspaceId, nextEpoch);
+
+    if (this.invalidationEpochByWorkspaceId.size > MAX_INVALIDATION_EPOCHS) {
+      const oldestWorkspaceId = this.invalidationEpochByWorkspaceId
+        .keys()
+        .next().value;
+
+      if (isDefined(oldestWorkspaceId)) {
+        this.invalidationEpochByWorkspaceId.delete(oldestWorkspaceId);
+      }
+    }
+
+    return nextEpoch;
+  }
+
+  private isInvalidationEpochCurrent(
+    workspaceId: string,
+    invalidationEpoch: number,
+  ): boolean {
+    return (
+      this.getInvalidationEpochForWorkspace(workspaceId) === invalidationEpoch
+    );
   }
 
   private evictLRUEntriesIfNeeded(): void {

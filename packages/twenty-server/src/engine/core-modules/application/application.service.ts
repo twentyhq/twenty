@@ -29,7 +29,9 @@ import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-funct
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 @Injectable()
@@ -59,7 +61,21 @@ export class ApplicationService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(ApplicationVariableEntity)
     private readonly applicationVariableRepository: Repository<ApplicationVariableEntity>,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
+
+  private async invalidateApplicationCache(
+    workspaceId: string,
+    additionalCacheKeys: WorkspaceCacheKeyName[] = [],
+  ): Promise<void> {
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatApplicationMaps',
+      ...additionalCacheKeys,
+    ]);
+    await this.workspaceCacheStorageService.rotateFindAllViewsCacheGeneration(
+      workspaceId,
+    );
+  }
 
   async findApplicationRoleId(
     applicationId: string,
@@ -423,9 +439,7 @@ export class ApplicationService {
     );
 
     if (!skipCacheInvalidation) {
-      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-        'flatApplicationMaps',
-      ]);
+      await this.invalidateApplicationCache(workspaceId);
     }
 
     return twentyStandardApplication;
@@ -592,9 +606,7 @@ export class ApplicationService {
 
     const savedApplication = await this.applicationRepository.save(application);
 
-    await this.workspaceCacheService.invalidateAndRecompute(data.workspaceId, [
-      'flatApplicationMaps',
-    ]);
+    await this.invalidateApplicationCache(data.workspaceId);
 
     return savedApplication;
   }
@@ -607,9 +619,7 @@ export class ApplicationService {
   ): Promise<ApplicationEntity> {
     await this.applicationRepository.update({ id }, data);
 
-    await this.workspaceCacheService.invalidateAndRecompute(data.workspaceId, [
-      'flatApplicationMaps',
-    ]);
+    await this.invalidateApplicationCache(data.workspaceId);
 
     const updatedApplication = await this.findById(id);
 
@@ -681,11 +691,7 @@ export class ApplicationService {
       );
     }
 
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'flatApplicationMaps',
-    ]);
-
-    await this.workspaceCacheService.invalidateAndRecompute(
+    await this.invalidateApplicationCache(
       workspaceId,
       ALL_FLAT_ENTITY_MAPS_PROPERTIES,
     );

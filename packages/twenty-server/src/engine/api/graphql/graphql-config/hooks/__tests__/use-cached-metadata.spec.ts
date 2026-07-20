@@ -10,6 +10,7 @@ jest.mock('@sentry/node', () => ({
 }));
 
 describe('useCachedMetadata', () => {
+  const cacheTtlMilliseconds = 60_000;
   const mockScope = {
     setTransactionName: jest.fn(),
   };
@@ -17,16 +18,16 @@ describe('useCachedMetadata', () => {
     setAttribute: jest.fn(),
   };
 
-  const expectedSpanOptions = (phase: 'request' | 'response') => ({
+  const expectedSpanOptions = {
     name: 'metadata GraphQL cache lookup',
     op: 'cache.get',
     onlyIfParent: true,
     attributes: {
-      'cache.phase': phase,
+      'cache.phase': 'request',
       'graphql.operation.name': 'FindAllViews',
       'graphql.operation.type': 'query',
     },
-  });
+  };
 
   const createRequest = (
     overrides: Partial<
@@ -46,12 +47,20 @@ describe('useCachedMetadata', () => {
 
   const createPlugin = ({
     cacheGetter = jest.fn().mockResolvedValue(undefined),
-    cacheSetter = jest.fn(),
+    cacheSetterIfAbsent = jest.fn().mockResolvedValue(true),
+    cacheGenerationGetter = jest.fn().mockResolvedValue('generation-1'),
   } = {}) =>
     useCachedMetadata({
       cacheGetter,
-      cacheSetter,
-      operationsToCache: ['FindAllViews'],
+      cacheSetterIfAbsent,
+      operationConfigs: {
+        FindAllViews: {
+          cacheGenerationGetter,
+          cacheTtlMilliseconds,
+          variesByLocale: true,
+          variesByUserWorkspace: true,
+        },
+      },
     });
 
   beforeEach(() => {
@@ -65,8 +74,8 @@ describe('useCachedMetadata', () => {
   it('reads the cache once when returning a cached response', async () => {
     const cachedResponse = { data: { views: [{ id: 'view-id' }] } };
     const cacheGetter = jest.fn().mockResolvedValue(cachedResponse);
-    const cacheSetter = jest.fn();
-    const plugin = createPlugin({ cacheGetter, cacheSetter });
+    const cacheSetterIfAbsent = jest.fn();
+    const plugin = createPlugin({ cacheGetter, cacheSetterIfAbsent });
     const request = createRequest();
     const serverContext = { req: request };
     const endResponse = jest.fn();
@@ -78,7 +87,7 @@ describe('useCachedMetadata', () => {
     await plugin.onResponse?.({ response, serverContext } as never);
 
     expect(cacheGetter).toHaveBeenCalledTimes(1);
-    expect(cacheSetter).not.toHaveBeenCalled();
+    expect(cacheSetterIfAbsent).not.toHaveBeenCalled();
     expect(await response.json()).toEqual(cachedResponse);
     expect(Sentry.setTags).toHaveBeenCalledWith({
       operationName: 'FindAllViews',
@@ -87,22 +96,16 @@ describe('useCachedMetadata', () => {
     expect(mockScope.setTransactionName).toHaveBeenCalledWith('FindAllViews');
     expect(Sentry.startSpan).toHaveBeenCalledTimes(1);
     expect(Sentry.startSpan).toHaveBeenCalledWith(
-      expectedSpanOptions('request'),
+      expectedSpanOptions,
       expect.any(Function),
     );
     expect(mockSpan.setAttribute).toHaveBeenCalledWith('cache.hit', true);
   });
 
-  it('preserves a value populated after the request cache miss', async () => {
-    const responseCachedByAnotherRequest = {
-      data: { views: [{ id: 'view-id' }] },
-    };
-    const cacheGetter = jest
-      .fn()
-      .mockResolvedValueOnce(undefined)
-      .mockResolvedValueOnce(responseCachedByAnotherRequest);
-    const cacheSetter = jest.fn();
-    const plugin = createPlugin({ cacheGetter, cacheSetter });
+  it('atomically fills the cache after a request cache miss', async () => {
+    const cacheGetter = jest.fn().mockResolvedValue(undefined);
+    const cacheSetterIfAbsent = jest.fn().mockResolvedValue(false);
+    const plugin = createPlugin({ cacheGetter, cacheSetterIfAbsent });
     const request = createRequest();
     const serverContext = { req: request };
     const response = Response.json({ data: { views: [] } });
@@ -113,24 +116,179 @@ describe('useCachedMetadata', () => {
     } as never);
     await plugin.onResponse?.({ response, serverContext } as never);
 
-    expect(cacheGetter).toHaveBeenCalledTimes(2);
-    expect(cacheSetter).not.toHaveBeenCalled();
-    expect(Sentry.startSpan).toHaveBeenNthCalledWith(
-      1,
-      expectedSpanOptions('request'),
+    expect(cacheGetter).toHaveBeenCalledTimes(1);
+    expect(cacheSetterIfAbsent).toHaveBeenCalledTimes(1);
+    expect(cacheSetterIfAbsent).toHaveBeenCalledWith(
+      cacheGetter.mock.calls[0][0],
+      { data: { views: [] } },
+      cacheTtlMilliseconds,
+    );
+    expect(Sentry.startSpan).toHaveBeenCalledTimes(1);
+    expect(Sentry.startSpan).toHaveBeenCalledWith(
+      expectedSpanOptions,
       expect.any(Function),
     );
-    expect(Sentry.startSpan).toHaveBeenNthCalledWith(
-      2,
-      expectedSpanOptions('response'),
-      expect.any(Function),
+    expect(mockSpan.setAttribute).toHaveBeenCalledWith('cache.hit', false);
+  });
+
+  it('keeps the request cache generation when the generation changes during execution', async () => {
+    const cacheGetter = jest.fn().mockResolvedValue(undefined);
+    const cacheSetterIfAbsent = jest.fn().mockResolvedValue(true);
+    const cacheGenerationGetter = jest
+      .fn()
+      .mockResolvedValueOnce('generation-1')
+      .mockResolvedValueOnce('generation-2');
+    const plugin = createPlugin({
+      cacheGetter,
+      cacheSetterIfAbsent,
+      cacheGenerationGetter,
+    });
+    const request = createRequest();
+    const serverContext = { req: request };
+
+    await plugin.onRequest?.({
+      endResponse: jest.fn(),
+      serverContext,
+    } as never);
+    await plugin.onResponse?.({
+      response: Response.json({ data: { views: [] } }),
+      serverContext,
+    } as never);
+
+    expect(cacheGenerationGetter).toHaveBeenCalledTimes(1);
+    expect(cacheSetterIfAbsent).toHaveBeenCalledWith(
+      cacheGetter.mock.calls[0][0],
+      { data: { views: [] } },
+      cacheTtlMilliseconds,
     );
-    expect(mockSpan.setAttribute).toHaveBeenNthCalledWith(
-      1,
-      'cache.hit',
-      false,
-    );
-    expect(mockSpan.setAttribute).toHaveBeenNthCalledWith(2, 'cache.hit', true);
+  });
+
+  it('bypasses response caching when no generation is available', async () => {
+    const cacheGetter = jest.fn();
+    const cacheSetterIfAbsent = jest.fn();
+    const cacheGenerationGetter = jest.fn().mockResolvedValue(undefined);
+    const plugin = createPlugin({
+      cacheGetter,
+      cacheSetterIfAbsent,
+      cacheGenerationGetter,
+    });
+    const request = createRequest();
+    const serverContext = { req: request };
+
+    await plugin.onRequest?.({
+      endResponse: jest.fn(),
+      serverContext,
+    } as never);
+    await plugin.onResponse?.({
+      response: Response.json({ data: { views: [] } }),
+      serverContext,
+    } as never);
+
+    expect(cacheGenerationGetter).toHaveBeenCalledTimes(1);
+    expect(cacheGetter).not.toHaveBeenCalled();
+    expect(cacheSetterIfAbsent).not.toHaveBeenCalled();
+  });
+
+  it('isolates cache entries by generation', async () => {
+    const cacheGetter = jest.fn().mockResolvedValue(undefined);
+    const cacheGenerationGetter = jest
+      .fn()
+      .mockResolvedValueOnce('generation-1')
+      .mockResolvedValueOnce('generation-2');
+    const plugin = createPlugin({ cacheGetter, cacheGenerationGetter });
+
+    await plugin.onRequest?.({
+      endResponse: jest.fn(),
+      serverContext: { req: createRequest() },
+    } as never);
+    await plugin.onRequest?.({
+      endResponse: jest.fn(),
+      serverContext: { req: createRequest() },
+    } as never);
+
+    expect(cacheGetter.mock.calls[0][0]).not.toBe(cacheGetter.mock.calls[1][0]);
+  });
+
+  it('isolates cache entries by locale', async () => {
+    const cacheGetter = jest.fn().mockResolvedValue(undefined);
+    const plugin = createPlugin({ cacheGetter });
+    const firstRequest = createRequest({
+      body: {
+        operationName: 'FindAllViews',
+        query: 'query FindAllViews($viewTypes: [ViewType!]) { views { id } }',
+        variables: { viewTypes: ['TABLE'] },
+      },
+      locale: 'en',
+    });
+    const secondRequest = createRequest({
+      body: {
+        operationName: 'FindAllViews',
+        query: 'query FindAllViews($viewTypes: [ViewType!]) { views { id } }',
+        variables: { viewTypes: ['TABLE'] },
+      },
+      locale: 'fr-FR',
+    });
+
+    await plugin.onRequest?.({
+      endResponse: jest.fn(),
+      serverContext: { req: firstRequest },
+    } as never);
+    await plugin.onRequest?.({
+      endResponse: jest.fn(),
+      serverContext: { req: secondRequest },
+    } as never);
+
+    expect(cacheGetter.mock.calls[0][0]).not.toBe(cacheGetter.mock.calls[1][0]);
+  });
+
+  it('isolates cache entries by variables', async () => {
+    const cacheGetter = jest.fn().mockResolvedValue(undefined);
+    const plugin = createPlugin({ cacheGetter });
+    const tableRequest = createRequest({
+      body: {
+        operationName: 'FindAllViews',
+        query: 'query FindAllViews($viewTypes: [ViewType!]) { views { id } }',
+        variables: { viewTypes: ['TABLE'] },
+      },
+    });
+    const kanbanRequest = createRequest({
+      body: {
+        operationName: 'FindAllViews',
+        query: 'query FindAllViews($viewTypes: [ViewType!]) { views { id } }',
+        variables: { viewTypes: ['KANBAN'] },
+      },
+    });
+
+    await plugin.onRequest?.({
+      endResponse: jest.fn(),
+      serverContext: { req: tableRequest },
+    } as never);
+    await plugin.onRequest?.({
+      endResponse: jest.fn(),
+      serverContext: { req: kanbanRequest },
+    } as never);
+
+    expect(cacheGetter.mock.calls[0][0]).not.toBe(cacheGetter.mock.calls[1][0]);
+  });
+
+  it('isolates cache entries by user workspace', async () => {
+    const cacheGetter = jest.fn().mockResolvedValue(undefined);
+    const plugin = createPlugin({ cacheGetter });
+
+    await plugin.onRequest?.({
+      endResponse: jest.fn(),
+      serverContext: {
+        req: createRequest({ userWorkspaceId: 'first-user-workspace-id' }),
+      },
+    } as never);
+    await plugin.onRequest?.({
+      endResponse: jest.fn(),
+      serverContext: {
+        req: createRequest({ userWorkspaceId: 'second-user-workspace-id' }),
+      },
+    } as never);
+
+    expect(cacheGetter.mock.calls[0][0]).not.toBe(cacheGetter.mock.calls[1][0]);
   });
 
   it('does not trace client-controlled operations outside the cache allowlist', async () => {

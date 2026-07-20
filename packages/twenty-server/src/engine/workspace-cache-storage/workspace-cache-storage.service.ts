@@ -10,6 +10,7 @@ import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interf
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { FIND_ALL_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-views-graphql-operation.constant';
 
 export const METADATA_VERSIONED_WORKSPACE_CACHE_KEY = {
   GraphQLTypeDefs: 'graphql:type-defs',
@@ -19,7 +20,6 @@ export const METADATA_VERSIONED_WORKSPACE_CACHE_KEY = {
   ORMEntitySchemas: 'orm:entity-schemas',
 } as const;
 export const WORKSPACE_CACHE_KEYS = {
-  GraphQLOperations: 'graphql:operations',
   GraphQLFeatureFlag: 'graphql:feature-flag',
   FeatureFlagMap: 'feature-flag:feature-flag-map',
   FeatureFlagMapVersion: 'feature-flag:feature-flag-map-version',
@@ -36,6 +36,7 @@ export const WORKSPACE_CACHE_KEYS = {
 } as const;
 
 const TTL_ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
+export const FIND_ALL_VIEWS_CACHE_GENERATION_KEY_PREFIX = `graphql:operations:${FIND_ALL_VIEWS_GRAPHQL_OPERATION}`;
 
 @Injectable()
 export class WorkspaceCacheStorageService {
@@ -184,15 +185,40 @@ export class WorkspaceCacheStorageService {
     );
   }
 
-  async flushGraphQLOperation({
-    operationName,
-    workspaceId,
-  }: {
-    operationName: string;
-    workspaceId: string;
-  }): Promise<void> {
-    await this.cacheStorageService.flushByPattern(
-      `${WORKSPACE_CACHE_KEYS.GraphQLOperations}:${operationName}:${workspaceId}:*`,
+  private getFindAllViewsCacheGenerationKey(workspaceId: string): string {
+    return `${FIND_ALL_VIEWS_CACHE_GENERATION_KEY_PREFIX}:${workspaceId}:cache-generation`;
+  }
+
+  async getOrInitializeFindAllViewsCacheGeneration(
+    workspaceId: string,
+  ): Promise<string | undefined> {
+    const cacheKey = this.getFindAllViewsCacheGenerationKey(workspaceId);
+    const existingGeneration =
+      await this.cacheStorageService.get<string>(cacheKey);
+
+    if (isDefined(existingGeneration)) {
+      return existingGeneration;
+    }
+
+    const generation = crypto.randomUUID();
+    const generationWasInitialized = await this.cacheStorageService.setIfAbsent(
+      cacheKey,
+      generation,
+      0,
+    );
+
+    if (generationWasInitialized) {
+      return generation;
+    }
+
+    return this.cacheStorageService.get<string>(cacheKey);
+  }
+
+  async rotateFindAllViewsCacheGeneration(workspaceId: string): Promise<void> {
+    await this.cacheStorageService.set(
+      this.getFindAllViewsCacheGenerationKey(workspaceId),
+      crypto.randomUUID(),
+      0,
     );
   }
 
@@ -218,10 +244,12 @@ export class WorkspaceCacheStorageService {
     await this.flushVersionedMetadata(workspaceId, metadataVersion);
 
     await Promise.all(
-      Object.values(WORKSPACE_CACHE_KEYS).map(
-        async (key) =>
-          await this.cacheStorageService.del(`${key}:${workspaceId}`),
-      ),
+      [
+        ...Object.values(WORKSPACE_CACHE_KEYS).map(
+          (key) => `${key}:${workspaceId}`,
+        ),
+        this.getFindAllViewsCacheGenerationKey(workspaceId),
+      ].map(async (key) => await this.cacheStorageService.del(key)),
     );
   }
 }

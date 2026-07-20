@@ -7,39 +7,71 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
+type CacheMetadataOperationConfig = {
+  cacheGenerationGetter?: (workspaceId: string) => Promise<string | undefined>;
+  cacheTtlMilliseconds?: number;
+  variesByLocale?: boolean;
+  variesByUserWorkspace?: boolean;
+};
+
 export type CacheMetadataPluginConfig = {
   // oxlint-disable-next-line typescript/no-explicit-any
   cacheGetter: (key: string) => any;
-  // oxlint-disable-next-line typescript/no-explicit-any
-  cacheSetter: (key: string, value: any) => void;
-  operationsToCache: string[];
+  cacheSetterIfAbsent: (
+    key: string,
+    value: unknown,
+    ttlMilliseconds?: number,
+  ) => Promise<boolean>;
+  operationConfigs: Record<string, CacheMetadataOperationConfig>;
+  cacheKeySalt?: string;
 };
 
 export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
-  const computeCacheKey = ({
+  const computeCacheKey = async ({
     operationName,
+    operationConfig,
     request,
   }: {
     operationName: string;
+    operationConfig: CacheMetadataOperationConfig;
     request: Pick<Request, 'workspace' | 'locale' | 'body' | 'userWorkspaceId'>;
-  }) => {
+  }): Promise<string | undefined> => {
     const workspace = request.workspace;
 
     if (!isDefined(workspace)) {
       throw new InternalServerError('Workspace is not defined');
     }
 
-    const workspaceMetadataVersion = workspace.metadataVersion ?? '0';
-    const locale = request.locale;
-    const queryHash = createHash('sha256')
-      .update(request.body.query)
-      .digest('hex');
+    const cacheGeneration = await operationConfig.cacheGenerationGetter?.(
+      workspace.id,
+    );
 
-    if (operationName === 'FindAllViews') {
-      return `graphql:operations:${operationName}:${workspace.id}:${workspaceMetadataVersion}:${request.userWorkspaceId}:${queryHash}`;
+    if (
+      isDefined(operationConfig.cacheGenerationGetter) &&
+      !isDefined(cacheGeneration)
+    ) {
+      return undefined;
     }
 
-    return `graphql:operations:${operationName}:${workspace.id}:${workspaceMetadataVersion}:${locale}:${queryHash}`;
+    const requestHash = createHash('sha256')
+      .update(
+        JSON.stringify({
+          cacheGeneration,
+          cacheKeySalt: config.cacheKeySalt,
+          locale: operationConfig.variesByLocale
+            ? (request.locale ?? null)
+            : undefined,
+          query: request.body.query,
+          userWorkspaceId: operationConfig.variesByUserWorkspace
+            ? (request.userWorkspaceId ?? null)
+            : undefined,
+          variables: request.body.variables ?? null,
+        }),
+      )
+      .digest('hex');
+    const workspaceMetadataVersion = workspace.metadataVersion ?? '0';
+
+    return `graphql:operations:${operationName}:${workspace.id}:${workspaceMetadataVersion}:${requestHash}`;
   };
 
   // oxlint-disable-next-line typescript/no-explicit-any
@@ -47,15 +79,40 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
     serverContext?.req?.body?.operationName;
 
   const cacheHitRequests = new WeakSet<Request>();
+  const cacheKeyByRequest = new WeakMap<Request, Promise<string | undefined>>();
+
+  const getCacheKey = ({
+    operationName,
+    operationConfig,
+    request,
+  }: {
+    operationName: string;
+    operationConfig: CacheMetadataOperationConfig;
+    request: Request;
+  }): Promise<string | undefined> => {
+    const existingCacheKey = cacheKeyByRequest.get(request);
+
+    if (isDefined(existingCacheKey)) {
+      return existingCacheKey;
+    }
+
+    const cacheKey = computeCacheKey({
+      operationName,
+      operationConfig,
+      request,
+    });
+
+    cacheKeyByRequest.set(request, cacheKey);
+
+    return cacheKey;
+  };
 
   const getCachedResponse = ({
     cacheKey,
     operationName,
-    phase,
   }: {
     cacheKey: string;
     operationName: string;
-    phase: 'request' | 'response';
   }) =>
     Sentry.startSpan(
       {
@@ -63,7 +120,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
         op: 'cache.get',
         onlyIfParent: true,
         attributes: {
-          'cache.phase': phase,
+          'cache.phase': 'request',
           'graphql.operation.name': operationName,
           'graphql.operation.type': 'query',
         },
@@ -79,7 +136,6 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
 
   return {
     onRequest: async ({ endResponse, serverContext }) => {
-      // TODO: we should probably override the graphql-yoga request type to include the workspace and locale
       const request = (serverContext as unknown as { req: Request }).req;
 
       if (!request.workspace?.id) {
@@ -87,22 +143,28 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
       }
 
       const operationName = getOperationName(serverContext);
+      const operationConfig = config.operationConfigs[operationName];
 
-      if (!config.operationsToCache.includes(operationName)) {
+      if (!isDefined(operationConfig)) {
         return;
       }
 
       Sentry.setTags({ operationName, operation: 'query' });
       Sentry.getCurrentScope().setTransactionName(operationName);
 
-      const cacheKey = computeCacheKey({
+      const cacheKey = await getCacheKey({
         operationName,
+        operationConfig,
         request,
       });
+
+      if (!isDefined(cacheKey)) {
+        return;
+      }
+
       const cachedResponse = await getCachedResponse({
         cacheKey,
         operationName,
-        phase: 'request',
       });
 
       if (cachedResponse) {
@@ -121,8 +183,9 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
       }
 
       const operationName = getOperationName(serverContext);
+      const operationConfig = config.operationConfigs[operationName];
 
-      if (!config.operationsToCache.includes(operationName)) {
+      if (!isDefined(operationConfig)) {
         return;
       }
 
@@ -130,26 +193,27 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
         return;
       }
 
-      const cacheKey = computeCacheKey({
+      const cacheKey = await getCacheKey({
         operationName,
+        operationConfig,
         request,
       });
 
-      const cachedResponse = await getCachedResponse({
-        cacheKey,
-        operationName,
-        phase: 'response',
-      });
-
-      if (!cachedResponse) {
-        const responseBody = await response.json();
-
-        if (responseBody.errors) {
-          return;
-        }
-
-        config.cacheSetter(cacheKey, responseBody);
+      if (!isDefined(cacheKey)) {
+        return;
       }
+
+      const responseBody = await response.json();
+
+      if (responseBody.errors) {
+        return;
+      }
+
+      await config.cacheSetterIfAbsent(
+        cacheKey,
+        responseBody,
+        operationConfig.cacheTtlMilliseconds,
+      );
     },
   };
 }

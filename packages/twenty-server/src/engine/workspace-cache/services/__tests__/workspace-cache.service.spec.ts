@@ -59,6 +59,7 @@ describe('WorkspaceCacheService', () => {
           useValue: {
             mget: jest.fn(),
             mset: jest.fn(),
+            msetIfUnchanged: jest.fn().mockResolvedValue(true),
             mdel: jest.fn(),
             setIfAbsent: jest.fn(),
           },
@@ -185,7 +186,7 @@ describe('WorkspaceCacheService', () => {
         featureFlagsMap: { testData: 'fresh-computed-value' },
       });
       expect(mockProvider.computeForCache).toHaveBeenCalledWith(WORKSPACE_ID);
-      expect(cacheStorageService.mset).toHaveBeenCalled();
+      expect(cacheStorageService.msetIfUnchanged).toHaveBeenCalled();
     });
 
     it('should return data from redis when available', async () => {
@@ -256,6 +257,182 @@ describe('WorkspaceCacheService', () => {
       // Each getOrRecompute triggers: 1 hash check + 1 atomic data/hash fetch = 2 mget calls
       // Total: 4 mget calls (2 per getOrRecompute)
       expect(cacheStorageService.mget).toHaveBeenCalledTimes(4);
+    });
+
+    it('should not restore cache state from a recompute invalidated while pending', async () => {
+      let resolveComputation!: (value: { testData: string }) => void;
+      let markComputationStarted!: () => void;
+      const computationStarted = new Promise<void>((resolve) => {
+        markComputationStarted = resolve;
+      });
+
+      cacheStorageService.mget.mockResolvedValue([undefined]);
+
+      jest.spyOn(mockProvider, 'computeForCache').mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveComputation = resolve;
+            markComputationStarted();
+          }),
+      );
+
+      const staleRequest = service.getOrRecompute(WORKSPACE_ID, [
+        'featureFlagsMap',
+      ]);
+
+      await computationStarted;
+      await service.invalidateLocal(WORKSPACE_ID, ['featureFlagsMap']);
+
+      resolveComputation({ testData: 'stale-value' });
+
+      await expect(staleRequest).resolves.toEqual({
+        featureFlagsMap: { testData: 'stale-value' },
+      });
+      expect(cacheStorageService.mset).not.toHaveBeenCalled();
+      expect(cacheStorageService.msetIfUnchanged).not.toHaveBeenCalled();
+
+      cacheStorageService.mget
+        .mockReset()
+        .mockResolvedValueOnce([undefined])
+        .mockResolvedValueOnce([{ testData: 'fresh-value' }, 'fresh-hash']);
+
+      await expect(
+        service.getOrRecompute(WORKSPACE_ID, ['featureFlagsMap']),
+      ).resolves.toEqual({
+        featureFlagsMap: { testData: 'fresh-value' },
+      });
+      expect(mockProvider.computeForCache).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not refresh local cache TTL from hash validation invalidated while pending', async () => {
+      cacheStorageService.mget.mockResolvedValue([undefined]);
+
+      await service.getOrRecompute(WORKSPACE_ID, ['featureFlagsMap']);
+
+      const initialHash = cacheStorageService.msetIfUnchanged.mock.calls[0][0]
+        .entries[1].value as string;
+
+      jest.advanceTimersByTime(15_000);
+
+      let resolveHashValidation!: (value: (string | undefined)[]) => void;
+      let markHashValidationStarted!: () => void;
+      const hashValidationStarted = new Promise<void>((resolve) => {
+        markHashValidationStarted = resolve;
+      });
+
+      cacheStorageService.mget.mockReset().mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            resolveHashValidation = resolve;
+            markHashValidationStarted();
+          }),
+      );
+
+      const staleRequest = service.getOrRecompute(WORKSPACE_ID, [
+        'featureFlagsMap',
+      ]);
+
+      await hashValidationStarted;
+      await service.invalidateLocal(WORKSPACE_ID, ['featureFlagsMap']);
+      resolveHashValidation([initialHash]);
+      await staleRequest;
+
+      cacheStorageService.mget
+        .mockReset()
+        .mockResolvedValueOnce([undefined])
+        .mockResolvedValueOnce([{ testData: 'fresh-value' }, 'fresh-hash']);
+
+      await expect(
+        service.getOrRecompute(WORKSPACE_ID, ['featureFlagsMap']),
+      ).resolves.toEqual({
+        featureFlagsMap: { testData: 'fresh-value' },
+      });
+    });
+
+    it('should not seed local cache from a redis fetch invalidated while pending', async () => {
+      let resolveRedisFetch!: (value: (string | object | undefined)[]) => void;
+      let markRedisFetchStarted!: () => void;
+      const redisFetchStarted = new Promise<void>((resolve) => {
+        markRedisFetchStarted = resolve;
+      });
+
+      cacheStorageService.mget
+        .mockResolvedValueOnce([undefined])
+        .mockImplementationOnce(
+          () =>
+            new Promise((resolve) => {
+              resolveRedisFetch = resolve;
+              markRedisFetchStarted();
+            }),
+        );
+
+      const staleRequest = service.getOrRecompute(WORKSPACE_ID, [
+        'featureFlagsMap',
+      ]);
+
+      await redisFetchStarted;
+      await service.invalidateLocal(WORKSPACE_ID, ['featureFlagsMap']);
+      resolveRedisFetch([{ testData: 'stale-value' }, 'stale-hash']);
+
+      await expect(staleRequest).resolves.toEqual({
+        featureFlagsMap: { testData: 'stale-value' },
+      });
+
+      cacheStorageService.mget
+        .mockReset()
+        .mockResolvedValueOnce([undefined])
+        .mockResolvedValueOnce([{ testData: 'fresh-value' }, 'fresh-hash']);
+
+      await expect(
+        service.getOrRecompute(WORKSPACE_ID, ['featureFlagsMap']),
+      ).resolves.toEqual({
+        featureFlagsMap: { testData: 'fresh-value' },
+      });
+    });
+
+    it('should not cache a recovery result when the redis hash changed', async () => {
+      cacheStorageService.mget.mockResolvedValue([undefined]);
+      cacheStorageService.msetIfUnchanged.mockResolvedValue(false);
+
+      jest.spyOn(mockProvider, 'computeForCache').mockResolvedValue({
+        testData: 'stale-value',
+      });
+
+      await expect(
+        service.getOrRecompute(WORKSPACE_ID, ['featureFlagsMap']),
+      ).resolves.toEqual({
+        featureFlagsMap: { testData: 'stale-value' },
+      });
+      expect(cacheStorageService.msetIfUnchanged).toHaveBeenCalledWith({
+        guardKey:
+          'feature-flag:feature-flags-map:20202020-0000-4000-8000-000000000000:hash',
+        expectedGuardValue: undefined,
+        entries: [
+          {
+            key: 'feature-flag:feature-flags-map:20202020-0000-4000-8000-000000000000:data',
+            value: { testData: 'stale-value' },
+          },
+          {
+            key: 'feature-flag:feature-flags-map:20202020-0000-4000-8000-000000000000:hash',
+            value: expect.any(String),
+          },
+        ],
+        ttl: 604800000,
+      });
+
+      await service.invalidateLocal(WORKSPACE_ID, ['featureFlagsMap']);
+
+      cacheStorageService.mget
+        .mockReset()
+        .mockResolvedValueOnce([undefined])
+        .mockResolvedValueOnce([{ testData: 'fresh-value' }, 'fresh-hash']);
+
+      await expect(
+        service.getOrRecompute(WORKSPACE_ID, ['featureFlagsMap']),
+      ).resolves.toEqual({
+        featureFlagsMap: { testData: 'fresh-value' },
+      });
+      expect(mockProvider.computeForCache).toHaveBeenCalledTimes(1);
     });
   });
 

@@ -15,7 +15,6 @@ import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadat
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
 import { createSearchFieldMetadatasByTsVectorFieldIdAccessor } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/create-search-field-metadatas-by-ts-vector-field-id-accessor.util';
-import { FIND_ALL_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-views-graphql-operation.constant';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -28,6 +27,7 @@ import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine
 import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
 import { type AfterCommitSideEffect } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/after-commit-side-effect.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
+import { isFindAllViewsCacheInvalidationRequired } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/is-find-all-views-cache-invalidation-required.util';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
@@ -43,7 +43,7 @@ export class WorkspaceMigrationRunnerService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  private getLegacyCacheInvalidationPromises({
+  private getCacheInvalidationPromises({
     allFlatEntityMapsKeys,
     workspaceId,
   }: {
@@ -65,25 +65,11 @@ export class WorkspaceMigrationRunnerService {
       );
     }
 
-    const viewRelatedFlatMapsKeys: (keyof AllFlatEntityMaps)[] = [
-      'flatViewMaps',
-      'flatViewFilterMaps',
-      'flatViewGroupMaps',
-      'flatViewFieldMaps',
-      'flatViewFilterGroupMaps',
-    ];
-    const shouldInvalidateFindViewsGraphqlCacheOperation =
-      viewRelatedFlatMapsKeys.some((key) => flatMapsKeysSet.has(key));
-
-    if (
-      shouldInvalidateFindViewsGraphqlCacheOperation ||
-      shouldIncrementMetadataGraphqlSchemaVersion
-    ) {
+    if (isFindAllViewsCacheInvalidationRequired(allFlatEntityMapsKeys)) {
       asyncOperations.push(
-        this.workspaceCacheStorageService.flushGraphQLOperation({
-          operationName: FIND_ALL_VIEWS_GRAPHQL_OPERATION,
+        this.workspaceCacheStorageService.rotateFindAllViewsCacheGeneration(
           workspaceId,
-        }),
+        ),
       );
     }
 
@@ -146,7 +132,7 @@ export class WorkspaceMigrationRunnerService {
     });
 
     const invalidationResults = await Promise.allSettled(
-      this.getLegacyCacheInvalidationPromises({
+      this.getCacheInvalidationPromises({
         allFlatEntityMapsKeys,
         workspaceId,
       }),
