@@ -1,0 +1,27 @@
+packages/twenty-server/src/modules/connected-account-sync-webhooks/drivers/microsoft/microsoft-calendar-notification.handler.ts
+  s_db0de5da096547::t_b519703e4b6a3d 100-103
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service.ts
+  s_db0de5da096547::t_e744f1e6cb6b0c 105-111
+packages/twenty-server/src/modules/connected-account-sync-webhooks/drivers/microsoft/microsoft-messaging-notification.handler.ts
+  s_db0de5da096547::t_47aa83cea203fa 99-102
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service.ts
+  s_db0de5da096547::t_c08ea3b2b5379b 106-112
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/jobs/renew-webhook-subscription.job.ts
+  s_db0de5da096547::t_2986ead6bab0c8 28-29,31,34-35,37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "fc449ae343c494bd8f80d02d071cff581e345494",
+  "prompts": {},
+  "sessions": {
+    "s_db0de5da096547": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b7f7c885-8913-40f8-aa4b-08cbaef5ba93",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
