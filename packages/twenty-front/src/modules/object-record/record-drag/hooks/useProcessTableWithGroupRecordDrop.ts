@@ -100,17 +100,19 @@ export const useProcessTableWithGroupRecordDrop = () => {
       }
 
       processGroupDrop({
-        groupDropResult: result,
+        droppableId: destinationRecordGroupId,
+        draggableId: result.draggableId,
+        targetIndex: result.destination.index,
         store,
         selectedRecordIds,
         recordIdsByGroupFamilyState,
-        onUpdateRecord: ({ recordId, position }) => {
+        onUpdateRecord: ({ recordId, position }, targetRecordGroupId) => {
           updateOneRecord({
             objectNameSingular,
             idToUpdate: recordId,
             updateOneRecordInput: {
               position,
-              [recordGroupColumnName]: destinationRecordGroup.value,
+              [recordGroupColumnName]: targetRecordGroupId,
             },
           });
         },
