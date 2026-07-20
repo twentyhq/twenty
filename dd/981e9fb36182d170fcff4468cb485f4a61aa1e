@@ -1,0 +1,20 @@
+packages/twenty-server/src/modules/connected-account/webhook-subscription-manager/webhook-subscription.module.ts
+  s_db0de5da096547::t_ac1901ee7b8363 26
+  s_db0de5da096547::t_43dfce67b2229a 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "dd981e9fb36182d170fcff4468cb485f4a61aa1e",
+  "prompts": {},
+  "sessions": {
+    "s_db0de5da096547": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b7f7c885-8913-40f8-aa4b-08cbaef5ba93",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
