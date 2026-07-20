@@ -3,7 +3,7 @@ import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -42,7 +42,7 @@ const computeAvailableFieldName = (
   description:
     'Rename a pre-existing custom field whose name collides with the new generic standard field (Company annualRevenue), preserving its data, so the standard field can be added',
 })
-export class RenameConflictingCustomFieldsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class RenameConflictingCustomFieldsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -163,7 +163,7 @@ export class RenameConflictingCustomFieldsCommand extends ActiveOrSuspendedWorks
       );
 
       const validateAndBuildResult =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
             allFlatEntityOperationByMetadataName: {
               fieldMetadata: {

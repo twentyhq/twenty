@@ -8,7 +8,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
+import { isWorkspaceProvisioned } from 'twenty-shared/workspace';
 
 export const IsMinimalMetadataReadyEffect = () => {
   const hasAccessTokenPair = useHasAccessTokenPair();
@@ -40,7 +40,7 @@ export const IsMinimalMetadataReadyEffect = () => {
       return;
     }
 
-    const hasActiveWorkspace = isWorkspaceActiveOrSuspended(currentWorkspace);
+    const hasProvisionedWorkspace = isWorkspaceProvisioned(currentWorkspace);
 
     const areObjectsLoaded =
       metadataStoreObjectMetadataItems.status === 'up-to-date' &&
@@ -55,7 +55,7 @@ export const IsMinimalMetadataReadyEffect = () => {
     }
 
     const isReady =
-      isDefined(currentUser) && (!hasActiveWorkspace || areViewsLoaded);
+      isDefined(currentUser) && (!hasProvisionedWorkspace || areViewsLoaded);
 
     if (isReady) {
       setIsMinimalMetadataReady(true);

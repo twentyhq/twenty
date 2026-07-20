@@ -18,6 +18,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { STALED_RUNS_THRESHOLD_MS } from 'src/modules/workflow/workflow-runner/workflow-run-queue/constants/staled-runs-threshold';
+import { STUCK_STOPPING_RUNS_THRESHOLD_MS } from 'src/modules/workflow/workflow-runner/workflow-run-queue/constants/stuck-stopping-runs-threshold';
 import {
   WorkflowHandleStaledRunsJob,
   WorkflowHandleStaledRunsJobData,
@@ -100,9 +101,12 @@ export class WorkflowHandleStaledRunsCronJob {
   }
 
   private async checkAndEnqueue(workspaceId: string): Promise<boolean> {
-    const hasStaledRuns = await this.hasStaledRuns(workspaceId);
+    const [hasStaledRuns, hasStuckStoppingRuns] = await Promise.all([
+      this.hasStaledRuns(workspaceId),
+      this.hasStuckStoppingRuns(workspaceId),
+    ]);
 
-    if (hasStaledRuns) {
+    if (hasStaledRuns || hasStuckStoppingRuns) {
       await this.messageQueueService.add<WorkflowHandleStaledRunsJobData>(
         WorkflowHandleStaledRunsJob.name,
         { workspaceId },
@@ -136,6 +140,20 @@ export class WorkflowHandleStaledRunsCronJob {
     const result = await this.coreDataSource.query(
       `SELECT 1 FROM ${schemaName}."workflowRun" WHERE "status" = $1 AND ("enqueuedAt" < $2 OR "enqueuedAt" IS NULL) LIMIT 1`,
       [WorkflowRunStatus.ENQUEUED, thresholdDate],
+    );
+
+    return result.length > 0;
+  }
+
+  private async hasStuckStoppingRuns(workspaceId: string): Promise<boolean> {
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+    const thresholdDate = new Date(
+      Date.now() - STUCK_STOPPING_RUNS_THRESHOLD_MS,
+    );
+
+    const result = await this.coreDataSource.query(
+      `SELECT 1 FROM ${schemaName}."workflowRun" WHERE "status" = $1 AND "updatedAt" < $2 LIMIT 1`,
+      [WorkflowRunStatus.STOPPING, thresholdDate],
     );
 
     return result.length > 0;

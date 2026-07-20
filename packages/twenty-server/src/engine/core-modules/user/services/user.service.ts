@@ -7,7 +7,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import {
-  isWorkspaceActiveOrSuspended,
+  isWorkspaceProvisioned,
   WorkspaceActivationStatus,
 } from 'twenty-shared/workspace';
 import { type QueryRunner, In, IsNull, Not, Repository } from 'typeorm';
@@ -98,7 +98,7 @@ export class UserService {
     const refreshedWorkspace =
       await this.refreshWorkspaceIfPendingOrOngoingCreation(workspace);
 
-    if (!isWorkspaceActiveOrSuspended(refreshedWorkspace)) {
+    if (!isWorkspaceProvisioned(refreshedWorkspace)) {
       return null;
     }
 
@@ -131,7 +131,7 @@ export class UserService {
     const refreshedWorkspace =
       await this.refreshWorkspaceIfPendingOrOngoingCreation(workspace);
 
-    if (!isWorkspaceActiveOrSuspended(refreshedWorkspace)) {
+    if (!isWorkspaceProvisioned(refreshedWorkspace)) {
       return [];
     }
 
@@ -218,7 +218,7 @@ export class UserService {
     workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>;
     userIds: string[];
   }): Promise<WorkspaceMemberWorkspaceEntity[]> {
-    if (!isWorkspaceActiveOrSuspended(workspace) || userIds.length === 0) {
+    if (!isWorkspaceProvisioned(workspace) || userIds.length === 0) {
       return [];
     }
 
@@ -245,7 +245,7 @@ export class UserService {
   async loadDeletedWorkspaceMembersOnly(
     workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>,
   ) {
-    if (!isWorkspaceActiveOrSuspended(workspace)) {
+    if (!isWorkspaceProvisioned(workspace)) {
       return [];
     }
 

@@ -120,6 +120,7 @@ export class MicrosoftAPIsService {
             handle,
             userWorkspaceId: userWorkspaceId,
             workspaceId,
+            provider: ConnectedAccountProvider.MICROSOFT,
           },
         });
 

@@ -2,7 +2,7 @@ import { Command } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -19,7 +19,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
   description:
     'Rebuild the searchVector column of every installed-app TS_VECTOR field from its searchFieldMetadata rows, now that the GIN index and searchFieldMetadata rows exist (commands 1 and 2). Idempotent.',
 })
-export class RebuildInstalledAppSearchVectorsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class RebuildInstalledAppSearchVectorsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,

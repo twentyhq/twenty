@@ -16,7 +16,7 @@ import {
   createCallRecording,
   type ScheduledCallRecordingFields,
 } from 'src/logic-functions/data/create-call-recording.util';
-import { ensureCallRecorder } from 'src/logic-functions/flows/ensure-call-recorder.util';
+import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { fetchCalendarEventsByStartsAtValues } from 'src/logic-functions/data/fetch-calendar-events-by-starts-at-values.util';
 import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/data/find-call-recordings-by-calendar-event-ids.util';
@@ -345,7 +345,7 @@ const createPolicyManagedCallRecording = async ({
   }
 
   // Winning the deterministic-id insert elects this run as the single writer that creates the bot.
-  const didScheduleBot = await ensureCallRecorder(client, {
+  const didScheduleBot = await scheduleRecallBotForCallRecording(client, {
     callRecording: {
       id: callRecordingId,
       ...scheduledFields,

@@ -6,7 +6,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -102,7 +102,7 @@ export const buildActorSourceEnumBackfillTargets = ({
   description:
     'Backfill missing AGENT FieldActorSource values into the Postgres enums backing ACTOR fields (createdBy/updatedBy) of existing workspaces.',
 })
-export class BackfillActorSourceEnumValuesCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class BackfillActorSourceEnumValuesCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,

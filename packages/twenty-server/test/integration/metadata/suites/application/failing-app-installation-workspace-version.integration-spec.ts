@@ -8,7 +8,7 @@ import { scrubSemverVersions } from 'test/utils/scrub-semver-versions.util';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
-import { TWENTY_CURRENT_VERSION } from 'src/engine/core-modules/upgrade/constants/twenty-current-version.constant';
+import { extractVersionFromCommandName } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 // The full install flow runs cache-lock retries with real delays, so fake
@@ -70,29 +70,54 @@ const uploadTarballApp = async ({
 
 describe('Install application is gated by the workspace completed upgrade version', () => {
   let currentVersionCommandName: string;
+  let currentServerVersion: string;
   const createdApplicationUniversalIdentifiers: string[] = [];
 
   beforeAll(async () => {
     jest.useRealTimers();
 
-    // The seeded workspace's cursor is the last step of the current version.
-    // Re-injecting it as a failed attempt makes the workspace resolve to the
-    // previous completed version — i.e. behind the instance.
-    const [workspaceCursor] = await global.testDataSource.query(
-      `SELECT name FROM core."upgradeMigration"
-       WHERE "workspaceId" = $1
-       ORDER BY "createdAt" DESC, attempt DESC
+    // Derive the gate version from the last attempted instance command, which
+    // is exactly what the upload-time server-compat check uses
+    // (getInferredVersion). The seeded workspace cursor can sit a version ahead
+    // of the instance right after a version bump whose newest segment ends in
+    // workspace-scoped commands with no new instance command: requiring
+    // >=workspaceVersion would then fail the instance gate at upload time,
+    // before the workspace gate under test is reached.
+    const [instanceCommand] = await global.testDataSource.query(
+      `SELECT migration.name AS name
+       FROM core."upgradeMigration" migration
+       WHERE migration."workspaceId" IS NULL
+         AND migration."isInitial" = false
+         AND migration.attempt = (
+           SELECT MAX(sub.attempt)
+           FROM core."upgradeMigration" sub
+           WHERE sub.name = migration.name
+             AND sub."workspaceId" IS NULL
+         )
+       ORDER BY migration."createdAt" DESC
        LIMIT 1`,
-      [SEED_APPLE_WORKSPACE_ID],
     );
 
-    if (!isDefined(workspaceCursor)) {
+    if (!isDefined(instanceCommand)) {
+      throw new Error('Expected a seeded instance upgrade command');
+    }
+
+    // Re-injecting this command as a failed workspace attempt makes the
+    // workspace resolve to the previous completed version (behind the
+    // instance), so the install reaches the workspace gate.
+    currentVersionCommandName = instanceCommand.name;
+
+    const inferredServerVersion = extractVersionFromCommandName(
+      currentVersionCommandName,
+    );
+
+    if (!isDefined(inferredServerVersion)) {
       throw new Error(
-        `Expected a seeded upgrade cursor for workspace ${SEED_APPLE_WORKSPACE_ID}`,
+        `Could not extract a server version from upgrade cursor "${currentVersionCommandName}"`,
       );
     }
 
-    currentVersionCommandName = workspaceCursor.name;
+    currentServerVersion = inferredServerVersion;
   });
 
   afterEach(async () => {
@@ -116,7 +141,7 @@ describe('Install application is gated by the workspace completed upgrade versio
     await uploadTarballApp({
       universalIdentifier,
       roleId,
-      requiredServerVersion: `>=${TWENTY_CURRENT_VERSION}`,
+      requiredServerVersion: `>=${currentServerVersion}`,
     });
 
     createdApplicationUniversalIdentifiers.push(universalIdentifier);

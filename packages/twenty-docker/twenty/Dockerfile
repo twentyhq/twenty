@@ -90,7 +90,7 @@ FROM node:24.18.0-alpine3.23@sha256:595398b0081eacda8e1c4c5b97b76cd1020e4d58a8eb
 # 3.5.7-r0). Node bundles its own OpenSSL, but psql/curl link these system
 # libs, so the upgrade hardens runtime TLS and clears the scanner.
 RUN apk add --no-cache \
-    'curl>=8.19.0-r0' \
+    'curl>=8.20.0-r0' \
     'nghttp2-libs>=1.69.0-r0' \
     'libcrypto3>=3.5.7-r0' \
     'libssl3>=3.5.7-r0' \
@@ -233,7 +233,7 @@ RUN apk add --no-cache \
     redis \
     'libcrypto3>=3.5.7-r0' \
     'libssl3>=3.5.7-r0' \
-    curl jq su-exec
+    'curl>=8.20.0-r0' jq su-exec
 
 # Workspace root config
 COPY --from=twenty-server-build /app/package.json /app/yarn.lock /app/.yarnrc.yml /app/

@@ -205,6 +205,10 @@ export default defineApplication({
 任意纵横比的图库图片都会完整显示，且绝不会被裁剪，但相对于 `8:5` 明显更高或更窄的图片，两侧会出现空白边。
 </Note>
 
+#### 图片大小限制
+
+`logo` 和每个 `galleryImages` 文件大小不得超过 **10 MB**。 当 marketplace 重新托管你已发布的资源时，较大的文件将被跳过，因此将不会显示。
+
 ### 发布
 
 ```bash filename="Terminal"

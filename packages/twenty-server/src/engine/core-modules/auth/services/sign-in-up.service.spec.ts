@@ -4,10 +4,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import {
-  type PartialUserWithPicture,
-  type SignInUpNewUserPayload,
-} from 'src/engine/core-modules/auth/types/signInUp.type';
+import { type SignInUpNewUserPayload } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 import { SignInUpService } from './sign-in-up.service';
@@ -63,6 +60,20 @@ const createSignInUpServiceForTests = () => {
     release: jest.fn(),
   };
 
+  const mockUserWorkspaceService = {
+    create: jest.fn(),
+    checkUserWorkspaceExists: jest.fn(),
+    addUserToWorkspaceIfUserNotInWorkspace: jest.fn(),
+  };
+
+  const mockOnboardingService = {
+    setOnboardingConnectAccountPending: jest.fn(),
+    setOnboardingCreateProfilePending: jest.fn(),
+    setOnboardingInstallAppsPending: jest.fn(),
+    setOnboardingInviteTeamPending: jest.fn(),
+    createOnboardingStatusForWorkspaceMember: jest.fn(),
+  };
+
   const service = new SignInUpService(
     mockUserRepository as any,
     mockWorkspaceRepository as any,
@@ -70,18 +81,8 @@ const createSignInUpServiceForTests = () => {
       validatePersonalInvitation: jest.fn(),
       invalidateWorkspaceInvitation: jest.fn(),
     } as any,
-    {
-      create: jest.fn(),
-      checkUserWorkspaceExists: jest.fn(),
-      addUserToWorkspaceIfUserNotInWorkspace: jest.fn(),
-    } as any,
-    {
-      setOnboardingConnectAccountPending: jest.fn(),
-      setOnboardingCreateProfilePending: jest.fn(),
-      setOnboardingInstallAppsPending: jest.fn(),
-      setOnboardingInviteTeamPending: jest.fn(),
-      createOnboardingStatusForWorkspaceMember: jest.fn(),
-    } as any,
+    mockUserWorkspaceService as any,
+    mockOnboardingService as any,
     {
       emitCustomBatchEvent: jest.fn(),
     } as any,
@@ -135,6 +136,7 @@ const createSignInUpServiceForTests = () => {
     mockUserRepository,
     mockWorkspaceRepository,
     mockConfigurationValues,
+    mockOnboardingService,
   };
 };
 
@@ -324,19 +326,9 @@ describe('SignInUpService workspace-creation policy', () => {
   });
 });
 
-describe('SignInUpService onboarding install-apps step', () => {
-  const mockNewUserWithPicture: PartialUserWithPicture = {
-    email: 'invited.user@acme.dev',
-    firstName: 'Invited',
-    lastName: 'User',
-    picture: '',
-    locale: 'en',
-    isEmailVerified: true,
-  };
-
-  it('does not queue the install-apps step for a new user joining an existing workspace', async () => {
-    const { service } = createSignInUpServiceForTests();
-    const onboardingService = (service as any).onboardingService;
+describe('SignInUpService onboarding steps', () => {
+  it('does not flag the install-apps step for a new user joining an existing workspace', async () => {
+    const { service, mockOnboardingService } = createSignInUpServiceForTests();
 
     await service.signInUpOnExistingWorkspace({
       workspace: {
@@ -345,25 +337,32 @@ describe('SignInUpService onboarding install-apps step', () => {
       } as any,
       userData: {
         type: 'newUserWithPicture',
-        newUserWithPicture: mockNewUserWithPicture,
+        newUserWithPicture: {
+          email: 'invited.user@acme.dev',
+          firstName: 'Invited',
+          lastName: 'User',
+        },
       },
-    } as any);
+    });
 
     expect(
-      onboardingService.setOnboardingInstallAppsPending,
-    ).not.toHaveBeenCalled();
-    expect(
-      onboardingService.setOnboardingConnectAccountPending,
-    ).not.toHaveBeenCalled();
-    expect(
-      onboardingService.setOnboardingCreateProfilePending,
+      mockOnboardingService.setOnboardingCreateProfilePending,
     ).toHaveBeenCalledWith(expect.objectContaining({ value: true }), undefined);
+    expect(
+      mockOnboardingService.setOnboardingInstallAppsPending,
+    ).not.toHaveBeenCalled();
+    expect(
+      mockOnboardingService.setOnboardingConnectAccountPending,
+    ).not.toHaveBeenCalled();
   });
 
-  it('queues the install-apps step for a user creating a new workspace', async () => {
-    const { service, mockWorkspaceRepository, mockUserRepository } =
-      createSignInUpServiceForTests();
-    const onboardingService = (service as any).onboardingService;
+  it('flags the install-apps step for a user creating a new workspace', async () => {
+    const {
+      service,
+      mockOnboardingService,
+      mockWorkspaceRepository,
+      mockUserRepository,
+    } = createSignInUpServiceForTests();
 
     mockWorkspaceRepository.count.mockResolvedValue(0);
     mockUserRepository.count.mockResolvedValue(0);
@@ -372,15 +371,16 @@ describe('SignInUpService onboarding install-apps step', () => {
       {
         type: 'newUserWithPicture',
         newUserWithPicture: {
-          ...mockNewUserWithPicture,
           email: 'creator@gmail.com',
+          firstName: 'Creator',
+          lastName: 'User',
         },
       },
       { displayName: 'Acme Inc' },
     );
 
     expect(
-      onboardingService.setOnboardingInstallAppsPending,
+      mockOnboardingService.setOnboardingInstallAppsPending,
     ).toHaveBeenCalledWith(
       expect.objectContaining({ value: true }),
       expect.anything(),
