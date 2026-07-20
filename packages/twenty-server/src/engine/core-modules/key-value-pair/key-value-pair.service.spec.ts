@@ -41,7 +41,8 @@ describe('KeyValuePairService', () => {
       },
       {
         conflictPaths: ['key'],
-        indexPredicate: '"userId" IS NULL AND "workspaceId" IS NULL',
+        indexPredicate:
+          '"userId" IS NULL AND "workspaceId" IS NULL AND "applicationId" IS NULL',
       },
     );
     expect(keyValuePairRepository.findOne).not.toHaveBeenCalled();
@@ -91,7 +92,7 @@ describe('KeyValuePairService', () => {
       },
       {
         conflictPaths: ['key', 'workspaceId'],
-        indexPredicate: '"userId" IS NULL',
+        indexPredicate: '"userId" IS NULL AND "applicationId" IS NULL',
       },
     );
   });

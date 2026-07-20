@@ -86,10 +86,11 @@ export class KeyValuePairService<
     let indexPredicate: string | undefined;
 
     if (hasNullUserAndWorkspace) {
-      indexPredicate = '"userId" IS NULL AND "workspaceId" IS NULL';
+      indexPredicate =
+        '"userId" IS NULL AND "workspaceId" IS NULL AND "applicationId" IS NULL';
     } else if (normalizedUserId === null) {
       conflictPaths.push('workspaceId');
-      indexPredicate = '"userId" IS NULL';
+      indexPredicate = '"userId" IS NULL AND "applicationId" IS NULL';
     } else if (normalizedWorkspaceId === null) {
       conflictPaths.push('userId');
       indexPredicate = '"workspaceId" IS NULL';
