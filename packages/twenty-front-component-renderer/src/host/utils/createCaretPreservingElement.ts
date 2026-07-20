@@ -7,19 +7,28 @@ import { syncValuePreservingCaret } from '@/host/utils/syncValuePreservingCaret'
 
 type CaretPreservingElement = HTMLInputElement | HTMLTextAreaElement;
 
-export const createCaretPreservingElement = (
-  htmlTag: 'input' | 'textarea',
-  reactProps: Record<string, unknown>,
-  forcedProps: Record<string, unknown> | undefined,
-  setEditableFocused: SetEditableFocused | null,
-) => {
+type CreateCaretPreservingElementParams = {
+  htmlTag: 'input' | 'textarea';
+  reactBindableProps: Record<string, unknown>;
+  hostEnforcedProps: Record<string, unknown> | undefined;
+  setEditableFocused: SetEditableFocused | null;
+  reactUnsupportedEventListenerRef?: (node: Element | null) => void;
+};
+
+export const createCaretPreservingElement = ({
+  htmlTag,
+  reactBindableProps,
+  hostEnforcedProps,
+  setEditableFocused,
+  reactUnsupportedEventListenerRef,
+}: CreateCaretPreservingElementParams) => {
   const {
     value,
     defaultValue,
     onFocus: forwardedOnFocus,
     onBlur: forwardedOnBlur,
     ...rest
-  } = reactProps;
+  } = reactBindableProps;
   const initialValue = isNonEmptyString(defaultValue)
     ? defaultValue
     : isNonEmptyString(value)
@@ -42,11 +51,12 @@ export const createCaretPreservingElement = (
 
   return React.createElement(htmlTag, {
     ...rest,
-    ...forcedProps,
+    ...hostEnforcedProps,
     defaultValue: initialValue,
     onFocus: handleFocus,
     onBlur: handleBlur,
     ref: (node: CaretPreservingElement | null) => {
+      reactUnsupportedEventListenerRef?.(node);
       if (!isDefined(node)) {
         return;
       }

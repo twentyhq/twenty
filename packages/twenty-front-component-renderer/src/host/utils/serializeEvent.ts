@@ -1,6 +1,7 @@
 import { isBoolean, isNumber, isObject, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { applyFirstChangedTouchCoordinates } from '@/host/utils/applyFirstChangedTouchCoordinates';
 import { serializeFileList } from '@/host/utils/serializeFileList';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
@@ -69,6 +70,8 @@ export const serializeEvent = (event: unknown): SerializedEventData => {
   if (isNumber(domEvent.buttons)) {
     serialized.buttons = domEvent.buttons;
   }
+
+  applyFirstChangedTouchCoordinates(serialized, domEvent);
 
   if (isNumber(domEvent.pointerId)) {
     serialized.pointerId = domEvent.pointerId;

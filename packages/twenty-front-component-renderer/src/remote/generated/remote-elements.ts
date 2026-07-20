@@ -52,6 +52,21 @@ export type HtmlCommonEvents = {
   wheel(event: RemoteEvent<SerializedEventData>): void;
   contextmenu(event: RemoteEvent<SerializedEventData>): void;
   drag(event: RemoteEvent<SerializedEventData>): void;
+  dragstart(event: RemoteEvent<SerializedEventData>): void;
+  dragenter(event: RemoteEvent<SerializedEventData>): void;
+  dragleave(event: RemoteEvent<SerializedEventData>): void;
+  dragover(event: RemoteEvent<SerializedEventData>): void;
+  dragend(event: RemoteEvent<SerializedEventData>): void;
+  drop(event: RemoteEvent<SerializedEventData>): void;
+  touchstart(event: RemoteEvent<SerializedEventData>): void;
+  touchmove(event: RemoteEvent<SerializedEventData>): void;
+  touchend(event: RemoteEvent<SerializedEventData>): void;
+  touchcancel(event: RemoteEvent<SerializedEventData>): void;
+  focusin(event: RemoteEvent<SerializedEventData>): void;
+  focusout(event: RemoteEvent<SerializedEventData>): void;
+  animationend(event: RemoteEvent<SerializedEventData>): void;
+  transitionend(event: RemoteEvent<SerializedEventData>): void;
+  scrollend(event: RemoteEvent<SerializedEventData>): void;
 };
 
 const HTML_COMMON_EVENTS_ARRAY = [
@@ -84,6 +99,21 @@ const HTML_COMMON_EVENTS_ARRAY = [
   'wheel',
   'contextmenu',
   'drag',
+  'dragstart',
+  'dragenter',
+  'dragleave',
+  'dragover',
+  'dragend',
+  'drop',
+  'touchstart',
+  'touchmove',
+  'touchend',
+  'touchcancel',
+  'focusin',
+  'focusout',
+  'animationend',
+  'transitionend',
+  'scrollend',
 ] as const;
 const createSerializedEventConfig = (
   eventType: string,
@@ -401,7 +431,10 @@ export const HtmlImgElement = createRemoteElement<
   HtmlImgProperties,
   Record<string, never>,
   Record<string, never>,
-  HtmlCommonEvents
+  HtmlCommonEvents & {
+    load(event: RemoteEvent<SerializedEventData>): void;
+    error(event: RemoteEvent<SerializedEventData>): void;
+  }
 >({
   properties: {
     ...HTML_COMMON_PROPERTIES_CONFIG,
@@ -412,6 +445,8 @@ export const HtmlImgElement = createRemoteElement<
   },
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
+    load: createSerializedEventConfig('load'),
+    error: createSerializedEventConfig('error'),
   },
 });
 export const HtmlUlElement = createRemoteElement<
@@ -1332,7 +1367,7 @@ export const HtmlDetailsElement = createRemoteElement<
   HtmlDetailsProperties,
   Record<string, never>,
   Record<string, never>,
-  HtmlCommonEvents
+  HtmlCommonEvents & { toggle(event: RemoteEvent<SerializedEventData>): void }
 >({
   properties: {
     ...HTML_COMMON_PROPERTIES_CONFIG,
@@ -1340,6 +1375,7 @@ export const HtmlDetailsElement = createRemoteElement<
   },
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
+    toggle: createSerializedEventConfig('toggle'),
   },
 });
 export const HtmlSummaryElement = createRemoteElement<
@@ -1373,7 +1409,7 @@ export const HtmlDialogElement = createRemoteElement<
   HtmlDialogProperties,
   Record<string, never>,
   Record<string, never>,
-  HtmlCommonEvents
+  HtmlCommonEvents & { toggle(event: RemoteEvent<SerializedEventData>): void }
 >({
   properties: {
     ...HTML_COMMON_PROPERTIES_CONFIG,
@@ -1381,6 +1417,7 @@ export const HtmlDialogElement = createRemoteElement<
   },
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
+    toggle: createSerializedEventConfig('toggle'),
   },
 });
 export const HtmlHgroupElement = createRemoteElement<
