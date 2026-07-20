@@ -9,34 +9,26 @@ export type InstalledSdkMetadataModule = {
   checksum: string;
 };
 
-let installedSdkMetadataModulePromise:
-  | Promise<InstalledSdkMetadataModule>
-  | undefined;
+// Warmed once at bootstrap (SdkClientModule.onApplicationBootstrap) and treated
+// as a process-lifetime invariant: the module ships inside the server build and
+// never changes at runtime. A read/hash failure blocks boot, so a running
+// server always has a resolved value here.
+let installedSdkMetadataModule: InstalledSdkMetadataModule | undefined;
 
-// The metadata module of the twenty-client-sdk package is a static build
-// artifact: unlike the core module it is never regenerated per application,
-// so its content only changes when a new server release ships. It is
-// instance-wide: read and hashed once per process, then used both to serve
-// the module to browsers and as the metadata part of the content-addressed
-// SDK URLs returned to front components.
 export const getInstalledSdkMetadataModule =
-  (): Promise<InstalledSdkMetadataModule> => {
-    if (!installedSdkMetadataModulePromise) {
-      installedSdkMetadataModulePromise = fs
-        .readFile(join(SDK_CLIENT_PACKAGE_DIRNAME, 'dist', 'metadata.mjs'))
-        .then((moduleBuffer) => ({
-          moduleBuffer,
-          checksum: createHash('sha256').update(moduleBuffer).digest('hex'),
-        }));
+  async (): Promise<InstalledSdkMetadataModule> => {
+    if (!installedSdkMetadataModule) {
+      const moduleBuffer = await fs.readFile(
+        join(SDK_CLIENT_PACKAGE_DIRNAME, 'dist', 'metadata.mjs'),
+      );
 
-      // Don't memoize a rejection: a transient read failure should not break
-      // metadata module serving for the whole process lifetime.
-      installedSdkMetadataModulePromise.catch(() => {
-        installedSdkMetadataModulePromise = undefined;
-      });
+      installedSdkMetadataModule = {
+        moduleBuffer,
+        checksum: createHash('sha256').update(moduleBuffer).digest('hex'),
+      };
     }
 
-    return installedSdkMetadataModulePromise;
+    return installedSdkMetadataModule;
   };
 
 export const getCurrentSdkMetadataModuleChecksum =

@@ -23,13 +23,10 @@ export class ApplicationResolver {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  // Content-addressed SDK client checksums, keyed by application: the core
-  // checksum is persisted per application (application row) and the metadata
-  // checksum is instance-wide. Front components read this to build the
-  // content-addressed sdk-client URLs; null until the SDK is first generated.
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
   async applicationSdkClientChecksums(
-    @Args('applicationId', { type: () => UUIDScalarType }) applicationId: string,
+    @Args('applicationId', { type: () => UUIDScalarType })
+    applicationId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SdkClientChecksumsDTO | null> {
     const { flatApplicationMaps } =
