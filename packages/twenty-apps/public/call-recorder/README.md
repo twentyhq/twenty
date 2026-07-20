@@ -21,6 +21,21 @@ cost scales with how much was said in the meeting, typically **$0.02–$0.06 per
 meeting** on default models. Set the `CALL_RECORDER_SUMMARY_ENABLED` app
 variable to `false` to turn summaries off.
 
+## 🎥 Supported meeting platforms
+
+The recording bot can only join meetings on platforms supported by Recall:
+
+- ✅ Google Meet
+- ✅ Zoom
+- ✅ Microsoft Teams
+- ✅ Webex
+- ✅ GoTo Meeting
+
+Events whose conference link points to any other platform (e.g. ro.am, Daily,
+Whereby) or that only have a dial-in number are **ignored** — no bot is
+scheduled, since Recall cannot join the call. See the up-to-date list at
+[Recall's meeting platforms docs](https://docs.recall.ai/docs/meeting-platforms).
+
 ## 📌 Heads up
 
 - **Needs a synced calendar + video link** — ad-hoc calls that were never on
