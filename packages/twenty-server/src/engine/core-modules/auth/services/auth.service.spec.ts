@@ -13,6 +13,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import { type GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
@@ -699,11 +700,12 @@ describe('AuthService', () => {
   });
 
   describe('signInUpWithSocialSSO - redirect without a target workspace', () => {
-    const socialSSOUser = {
+    const socialSSOUser: GoogleRequest['user'] = {
       firstName: 'John',
       lastName: 'Doe',
       email: 'John.Doe@twenty.com',
       picture: 'picture',
+      action: 'list-available-workspaces',
       returnToPath: '/settings/profile',
     };
 
@@ -713,9 +715,8 @@ describe('AuthService', () => {
         .mockResolvedValue({ id: 'user-id' } as UserEntity);
     });
 
-    // Regression: the redirect used to carry `?tokenPair=` holding a 60-day
-    // refresh token, exposing it to browser history, Referer headers and
-    // access logs. Only an exchange-only token may travel in the URL.
+    // Regression: this redirect used to carry a 60-day refresh token in a
+    // `tokenPair` query param, exposing it to history, Referer and access logs.
     it('should not mint a refresh token nor put credentials in the redirect URL', async () => {
       const url = await service.signInUpWithSocialSSO(
         socialSSOUser,
