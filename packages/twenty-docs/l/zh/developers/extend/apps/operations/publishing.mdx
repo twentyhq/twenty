@@ -112,7 +112,7 @@ yarn twenty app:publish --private
 
 ## 自动化 CI/CD（脚手架生成的工作流）
 
-使用 `create-twenty-app` 生成的应用开箱即带有两个 GitHub Actions 工作流，位于 `.github/workflows/`。 当你将仓库推送到 GitHub 后即可运行——CI 无需额外设置，CD 只需要一个机密。
+使用 `create-twenty-app` 生成的应用开箱即带有三个 GitHub Actions 工作流，位于 `.github/workflows/`。 CI 可在无需任何设置的情况下运行，CD 只需要配置一个 secret，而发布到 npm 只需进行一次性的 npm trusted-publisher 设置。
 
 ### CI — `ci.yml`
 
@@ -157,9 +157,22 @@ yarn twenty app:publish --private
 
 为拉取请求添加 `deploy` 标签。 在 `cd.yml` 中的 `if:` 守卫会使用该 PR 的 head 提交为其运行作业，使你能在合并前在目标服务器上验证更改。
 
+### 发布 — `publish.yml`
+
+当你推送版本标签（例如 `v1.0.0`）时，或从 Actions 选项卡中手动运行该工作流时，会将你的应用附带来源证明发布到 npm。
+
+**作用:**
+
+1. 检出你的应用，设置 Node.js，并更新 npm（受信任发布需要 npm 11.5.1 或更高版本）。
+2. 运行 `yarn twenty app:publish`，它会构建应用并将 `.twenty/output` 发布到 npm。 在 CI 中，它会自动添加 `--provenance` 和 `--access public`，因此在工作流中不需要任何标志。
+
+**一次性设置：**
+
+在 npmjs.com 上打开你的包 > **Settings → Trusted Publisher**，并使用 `publish.yml` 工作流为此仓库注册（参见 [npm trusted publishing 文档](https://docs.npmjs.com/trusted-publishers)）。 带有 provenance 的发布会证明是哪个 GitHub 仓库构建了该包，这也同样是你在 Twenty 市场中声明应用所有权的方式。
+
 ### 固定可复用的 actions
 
-两个工作流都引用了位于 `@main` 的可复用 actions，因此会自动获取 `twentyhq/twenty` 仓库中的 action 更新。 如果你希望构建具有确定性，请在每个 `uses:` 行中将 `@main` 替换为某个提交的 SHA 或发行标签。
+`ci.yml` 和 `cd.yml` 工作流引用了 `@main` 上的可复用 actions，因此会自动获取 `twentyhq/twenty` 仓库中的 action 更新。 如果你希望构建具有确定性，请在每个 `uses:` 行中将 `@main` 替换为某个提交的 SHA 或发行标签。
 
 ## 发布到 npm
 
@@ -241,37 +254,12 @@ yarn twenty dev:catalog-sync
 
 ### CI 发布
 
-使用此 GitHub Actions 工作流，在每次发布时自动进行发布（使用 [OIDC](https://docs.npmjs.com/trusted-publishers)）：
+上文所述生成的 `publish.yml` 工作流会在打上版本标签时，自动将包连同 provenance 一并发布到 npm。 由于 `yarn twenty app:publish` 在 CI 中运行时会为你添加 `--provenance` 和 `--access public`，因此该工作流不需要任何 npm 标志——只需要一次性完成受信任发布者的设置。
 
-```yaml filename=".github/workflows/publish.yml"
-name: Publish
-on:
-  release:
-    types: [published]
-
-permissions:
-  contents: read
-  id-token: write
-
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          registry-url: https://registry.npmjs.org
-      - run: yarn install --immutable
-      - run: npx twenty dev:build
-      - run: npm publish --provenance --access public
-        working-directory: .twenty/output
-```
-
-对于其他 CI 系统（GitLab CI、CircleCI 等），同样适用以下三条命令：`yarn install`、`yarn twenty dev:build`，然后在 `.twenty/output` 目录下执行 `npm publish`。
+对于其他 CI 系统（GitLab CI、CircleCI 等），先运行 `yarn install`，然后运行 `yarn twenty app:publish`。 当环境可以生成 OIDC 令牌时会发出 provenance，否则会自动跳过。
 
 <Note>
-**npm provenance** 可选，但建议启用。 使用 `--provenance` 发布会在你的 npm 列表中添加可信徽章，使用户可以验证该包是由公共 CI 流水线中的特定提交构建的。 有关设置说明，请参见 [npm provenance 文档](https://docs.npmjs.com/generating-provenance-statements)。
+**npm provenance** 会在你的 npm 列表中添加可信徽章，使用户可以验证该包是由公共 CI 流水线中的特定提交构建的。 它也同样是你在 Twenty 市场中声明应用所有权的方式。 有关详细信息，请参见 [npm provenance 文档](https://docs.npmjs.com/generating-provenance-statements)。
 </Note>
 
 ## 安装应用
