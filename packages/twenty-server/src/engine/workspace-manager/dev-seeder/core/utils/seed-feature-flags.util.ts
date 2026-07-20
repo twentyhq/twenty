@@ -21,6 +21,11 @@ export const seedFeatureFlags = async ({
     .orIgnore()
     .values([
       {
+        key: FeatureFlagKey.IS_APP_CLAIMING_ENABLED,
+        workspaceId: workspaceId,
+        value: false,
+      },
+      {
         key: FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED,
         workspaceId: workspaceId,
         value: false,

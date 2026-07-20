@@ -327,7 +327,7 @@ describe('SignInUpService workspace-creation policy', () => {
 });
 
 describe('SignInUpService onboarding steps', () => {
-  it('does not flag the install-apps step for a new user joining an existing workspace', async () => {
+  it('flags the connect-account step but not the install-apps step for a new user joining an existing workspace', async () => {
     const { service, mockOnboardingService } = createSignInUpServiceForTests();
 
     await service.signInUpOnExistingWorkspace({
@@ -353,7 +353,7 @@ describe('SignInUpService onboarding steps', () => {
     ).not.toHaveBeenCalled();
     expect(
       mockOnboardingService.setOnboardingConnectAccountPending,
-    ).not.toHaveBeenCalled();
+    ).toHaveBeenCalledWith(expect.objectContaining({ value: true }), undefined);
   });
 
   it('flags the install-apps step for a user creating a new workspace', async () => {

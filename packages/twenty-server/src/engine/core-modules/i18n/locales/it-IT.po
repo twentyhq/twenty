@@ -1511,6 +1511,11 @@ msgstr "Rilevata dipendenza circolare nella gerarchia delle voci del menu di nav
 msgid "Circular dependency detected in view filter group hierarchy"
 msgstr "Rilevata dipendenza circolare nella gerarchia dei gruppi filtro vista"
 
+#. js-lingui-id: fDGNL3
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "Claiming is not configured on this server. Ask an administrator to configure the GitHub OAuth app."
+msgstr ""
+
 #. js-lingui-id: J7dFKa
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "Client credentials are not configured for this OAuth provider."
@@ -3223,6 +3228,11 @@ msgstr "Gli indici GIN funzionano su colonne multi-select, array, JSON e search-
 #: src/engine/metadata-modules/index-metadata/utils/validate-index-type-against-fields.util.ts
 msgid "GIN indexes work on multi-select, array, JSON, and search-vector columns. \"{0}\" sub-properties don't qualify."
 msgstr "Gli indici GIN funzionano su colonne multi-select, array, JSON e search-vector. Le sotto-proprietà di \"{0}\" non sono idonee."
+
+#. js-lingui-id: odCOaU
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "GitHub authentication failed. Try connecting your GitHub account again."
+msgstr ""
 
 #. js-lingui-id: cvJ2e6
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -5154,6 +5164,11 @@ msgstr "Non sono stati impostati permessi per questo ruolo sull'oggetto selezion
 msgid "No permissions found in datasource."
 msgstr "Nessun permesso trovato nell'origine dati."
 
+#. js-lingui-id: 9iQhTU
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "No provenance attestation was found for the published package. Publish it with npm trusted publishing from GitHub Actions, then try again."
+msgstr ""
+
 #. js-lingui-id: NcwTz7
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
 msgid "No records were affected."
@@ -5536,6 +5551,11 @@ msgstr "Uno o più scope richiesti non sono validi."
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
 msgstr "Solo gli amministratori possono impersonare utenti con privilegi di amministratore."
+
+#. js-lingui-id: JzXn58
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "Only applications published to npm can be claimed this way."
+msgstr ""
 
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -7644,6 +7664,11 @@ msgstr "L'oggetto per il quale si tenta di impostare i permessi non è stato tro
 msgid "The opportunity name"
 msgstr "Il nome dell'opportunità"
 
+#. js-lingui-id: D/w+3o
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "The package registry could not be reached to verify the package provenance. Try again later."
+msgstr ""
+
 #. js-lingui-id: NQP08Q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgid "The people this campaign was sent to"
@@ -7863,6 +7888,11 @@ msgstr "Questa app richiede una versione più recente del server Twenty. Aggiorn
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes."
 msgstr "Questa app richiede una versione più recente rispetto a quella a cui questo spazio di lavoro ha terminato l'aggiornamento. Riprova una volta completato l'aggiornamento dello spazio di lavoro."
+
+#. js-lingui-id: ecIX3O
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "This application is already owned by a workspace."
+msgstr ""
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
@@ -9736,6 +9766,11 @@ msgstr "La versione della tua app è obsoleta. Aggiorna la pagina per continuare
 #: src/engine/core-modules/billing/billing.validate.ts
 msgid "Your billing subscription is corrupted. Please contact support."
 msgstr "Il tuo abbonamento di fatturazione è danneggiato. Si prega di contattare il supporto."
+
+#. js-lingui-id: K48BuZ
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "Your GitHub account does not own the organization that publishes this package. If you are an owner, make sure you granted this app access to the organization on GitHub's authorization screen (Organization access section)."
+msgstr ""
 
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts

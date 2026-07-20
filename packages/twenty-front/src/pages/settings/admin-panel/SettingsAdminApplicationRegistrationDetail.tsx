@@ -81,6 +81,7 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
         return (
           <SettingsApplicationRegistrationDistributionTab
             registration={registration}
+            fromAdmin
           />
         );
       case 'general':
