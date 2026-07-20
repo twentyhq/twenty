@@ -6,8 +6,10 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { Fragment, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
-import { formatCompactCount, type CommunityStats } from '@/platform/community';
+import { formatCompactCount } from '@/platform/community/format-compact-count';
+import { type CommunityStats } from '@/platform/community';
 import { useLocale } from '@/platform/i18n';
 import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import {
@@ -276,6 +278,7 @@ export function MenuDrawer({
         <SocialRow>
           {socialLinks.map((link, index) => {
             const IconComponent = link.icon;
+            const statValue = link.statKey ? stats[link.statKey] : null;
             return (
               <Fragment key={link.href}>
                 {index > 0 && <VerticalDivider aria-hidden />}
@@ -284,8 +287,8 @@ export function MenuDrawer({
                   href={link.href}
                 >
                   <IconComponent aria-hidden size={16} />
-                  {link.statKey
-                    ? formatCompactCount(stats[link.statKey], locale)
+                  {isDefined(statValue)
+                    ? formatCompactCount(statValue, locale)
                     : null}
                   {link.statKey ? <ExternalArrow /> : null}
                 </SocialAnchor>
