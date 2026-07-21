@@ -17,12 +17,10 @@ const StyledFooter = styled(StyledOnboardingContentBlock)`
 `;
 
 type ChooseYourPlanErrorStateProps = {
-  isRetrying: boolean;
   onRetry: () => void;
 };
 
 export const ChooseYourPlanErrorState = ({
-  isRetrying,
   onRetry,
 }: ChooseYourPlanErrorStateProps) => {
   const { t } = useLingui();
@@ -45,12 +43,7 @@ export const ChooseYourPlanErrorState = ({
 
       <OnboardingStepAnimatedItem index={2}>
         <StyledFooter>
-          <MainButton
-            title={t`Try again`}
-            onClick={onRetry}
-            disabled={isRetrying}
-            fullWidth
-          />
+          <MainButton title={t`Try again`} onClick={onRetry} fullWidth />
           <ClickToActionLink onClick={signOut}>
             <Trans>Log out</Trans>
           </ClickToActionLink>

@@ -58,10 +58,7 @@ export const SettingsBillingPageLayout = ({
       ) : isPlansLoaded ? (
         children
       ) : (
-        <SettingsBillingPlansErrorState
-          isRetrying={arePlansLoading}
-          onRetry={() => void refetchPlans()}
-        />
+        <SettingsBillingPlansErrorState onRetry={() => void refetchPlans()} />
       )}
     </SettingsPageLayout>
   );

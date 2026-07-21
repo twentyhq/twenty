@@ -10,12 +10,10 @@ import { IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 
 type SettingsBillingPlansErrorStateProps = {
-  isRetrying: boolean;
   onRetry: () => void;
 };
 
 export const SettingsBillingPlansErrorState = ({
-  isRetrying,
   onRetry,
 }: SettingsBillingPlansErrorStateProps) => {
   const { t } = useLingui();
@@ -36,7 +34,6 @@ export const SettingsBillingPlansErrorState = ({
         title={t`Try again`}
         variant="secondary"
         onClick={onRetry}
-        disabled={isRetrying}
       />
     </AnimatedPlaceholderErrorContainer>
   );

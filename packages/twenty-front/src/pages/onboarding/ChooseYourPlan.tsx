@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { UpgradeFreeTrial } from '~/pages/onboarding/UpgradeFreeTrial';
 
 export const ChooseYourPlan = () => {
-  const { isPlansLoaded, error, loading, refetch } = usePlans();
+  const { isPlansLoaded, error, refetch } = usePlans();
   const billing = useAtomStateValue(billingState);
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
 
@@ -22,12 +22,7 @@ export const ChooseYourPlan = () => {
   }
 
   if (isDefined(error)) {
-    return (
-      <ChooseYourPlanErrorState
-        isRetrying={loading}
-        onRetry={() => void refetch()}
-      />
-    );
+    return <ChooseYourPlanErrorState onRetry={() => void refetch()} />;
   }
 
   return <OnboardingStepPageLoader />;
