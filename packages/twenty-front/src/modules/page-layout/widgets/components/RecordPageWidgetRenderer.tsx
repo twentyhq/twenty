@@ -16,7 +16,7 @@ export const RecordPageWidgetRenderer = ({
 
   const actions = useWidgetActions({ widget });
 
-  const isCanvasVariant = state.variant === 'canvas';
+  const isSoloVariant = state.variant === 'solo';
 
   return (
     <WidgetCardShell
@@ -37,8 +37,8 @@ export const RecordPageWidgetRenderer = ({
       isDeletingWidgetEnabled={true}
       onClick={isWidgetEditable ? state.handleClick : undefined}
       onRemove={state.handleRemove}
-      onMouseEnter={isCanvasVariant ? undefined : state.handleMouseEnter}
-      onMouseLeave={isCanvasVariant ? undefined : state.handleMouseLeave}
+      onMouseEnter={isSoloVariant ? undefined : state.handleMouseEnter}
+      onMouseLeave={isSoloVariant ? undefined : state.handleMouseLeave}
     />
   );
 };

@@ -10,6 +10,7 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
 import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
+import { getTabPresentation } from '@/page-layout/utils/getTabPresentation';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
@@ -51,6 +52,11 @@ const PageLayoutSingleTabRendererInner = () => {
     pageLayoutType: currentPageLayout.type,
   });
 
+  const presentation = getTabPresentation({
+    widgets: firstTabWithVisibleWidgets.widgets,
+    layoutMode,
+  });
+
   return (
     <>
       <SummaryCard
@@ -63,6 +69,7 @@ const PageLayoutSingleTabRendererInner = () => {
         value={{
           tabId: firstTab.id,
           layoutMode,
+          presentation,
         }}
       >
         <PageLayoutContent />

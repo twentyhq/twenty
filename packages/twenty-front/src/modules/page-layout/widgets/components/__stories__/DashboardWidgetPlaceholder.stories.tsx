@@ -59,6 +59,7 @@ const meta: Meta<typeof DashboardWidgetPlaceholder> = {
               value={{
                 tabId: 'tab-1',
                 layoutMode: PageLayoutTabLayoutMode.GRID,
+                presentation: 'stack',
               }}
             >
               <Story />

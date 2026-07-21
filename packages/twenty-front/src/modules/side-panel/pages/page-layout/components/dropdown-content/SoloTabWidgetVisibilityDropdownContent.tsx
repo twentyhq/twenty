@@ -13,17 +13,17 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
-type CanvasTabWidgetVisibilityDropdownContentProps = {
+type SoloTabWidgetVisibilityDropdownContentProps = {
   widgetId: string;
   currentExpression: string | null | undefined;
   pageLayoutId: string;
 };
 
-export const CanvasTabWidgetVisibilityDropdownContent = ({
+export const SoloTabWidgetVisibilityDropdownContent = ({
   widgetId,
   currentExpression,
   pageLayoutId,
-}: CanvasTabWidgetVisibilityDropdownContentProps) => {
+}: SoloTabWidgetVisibilityDropdownContentProps) => {
   const currentOptionId = expressionToOptionId(currentExpression);
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(

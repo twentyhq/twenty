@@ -46,7 +46,7 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
 
   const { hasAccess, restriction } = useWidgetPermissions(widget);
 
-  const { layoutMode } = usePageLayoutContentContext();
+  const { layoutMode, presentation } = usePageLayoutContentContext();
   const { isInPinnedTab } = useIsInPinnedTab();
   const { isInSidePanel } = useLayoutRenderingContext();
   const isMobile = useIsMobile();
@@ -61,8 +61,7 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
   const hideHeaderInViewMode =
     isHeaderHiddenInViewMode && !isPageLayoutInEditMode;
 
-  const showHeader =
-    layoutMode !== PageLayoutTabLayoutMode.CANVAS && !hideHeaderInViewMode;
+  const showHeader = presentation !== 'solo' && !hideHeaderInViewMode;
 
   const handleClick = () => {
     openWidgetSettingsInSidePanel({
@@ -90,7 +89,7 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
   };
 
   const variant = getWidgetCardVariant({
-    layoutMode,
+    presentation,
     isInPinnedTab,
     pageLayoutType: currentPageLayout.type,
     isMobile,
