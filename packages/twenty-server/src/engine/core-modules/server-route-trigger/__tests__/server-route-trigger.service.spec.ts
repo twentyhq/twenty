@@ -112,12 +112,13 @@ describe('ServerRouteTriggerService', () => {
     logicFunctionExecutorService = {
       execute: jest
         .fn()
-        // resolver returns { workspaceId, targetLogicFunctionUniversalIdentifier, payload }
+        // resolver result; dispatchMode 'sync' keeps the historical inline path
         .mockResolvedValueOnce(
           buildExecuteResult({
             workspaceId: 'target-ws',
             targetLogicFunctionUniversalIdentifier: TARGET_UID,
             payload: { from: 'resolver' },
+            dispatchMode: 'sync',
           }),
         )
         // target returns the final response body
@@ -261,13 +262,14 @@ describe('ServerRouteTriggerService', () => {
     });
   });
 
-  it('surfaces a target userError as a server-route exception', async () => {
+  it('surfaces a target userError as a server-route exception on sync dispatch', async () => {
     logicFunctionExecutorService.execute.mockReset();
     logicFunctionExecutorService.execute
       .mockResolvedValueOnce(
         buildExecuteResult({
           workspaceId: 'target-ws',
           targetLogicFunctionUniversalIdentifier: TARGET_UID,
+          dispatchMode: 'sync',
         }),
       )
       .mockResolvedValueOnce(
@@ -331,20 +333,19 @@ describe('ServerRouteTriggerService', () => {
     );
   });
 
-  it('does not enqueue anything on the default sync dispatch', async () => {
+  it('does not enqueue anything on sync dispatch', async () => {
     await handle();
 
     expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
-  it('enqueues the target and acks with 202 when the resolver requests queued dispatch', async () => {
+  it('defaults to queued dispatch when the resolver does not specify dispatchMode', async () => {
     logicFunctionExecutorService.execute.mockReset();
     logicFunctionExecutorService.execute.mockResolvedValueOnce(
       buildExecuteResult({
         workspaceId: 'target-ws',
         targetLogicFunctionUniversalIdentifier: TARGET_UID,
         payload: { from: 'resolver' },
-        dispatchMode: 'queued',
       }),
     );
 
@@ -359,7 +360,6 @@ describe('ServerRouteTriggerService', () => {
           logicFunctionId: 'target-id',
           workspaceId: 'target-ws',
           payload: { from: 'resolver' },
-          shouldRetryOnUserError: true,
         },
       ],
       { retryLimit: 3 },
@@ -370,6 +370,42 @@ describe('ServerRouteTriggerService', () => {
         body: { queued: true },
       }),
     );
+  });
+
+  it('passes the resolver retryLimit through to the queued job', async () => {
+    logicFunctionExecutorService.execute.mockReset();
+    logicFunctionExecutorService.execute.mockResolvedValueOnce(
+      buildExecuteResult({
+        workspaceId: 'target-ws',
+        targetLogicFunctionUniversalIdentifier: TARGET_UID,
+        dispatchMode: 'queued',
+        retryLimit: 7,
+      }),
+    );
+
+    await handle();
+
+    expect(messageQueueService.add).toHaveBeenCalledWith(
+      LogicFunctionTriggerJob.name,
+      expect.any(Array),
+      { retryLimit: 7 },
+    );
+  });
+
+  it('throws RESOLVER_INVALID_RESULT on an out-of-range retryLimit', async () => {
+    logicFunctionExecutorService.execute.mockReset();
+    logicFunctionExecutorService.execute.mockResolvedValueOnce(
+      buildExecuteResult({
+        workspaceId: 'target-ws',
+        targetLogicFunctionUniversalIdentifier: TARGET_UID,
+        retryLimit: 99,
+      }),
+    );
+
+    await expect(handle()).rejects.toMatchObject({
+      code: ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT,
+    });
+    expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
   it('still scopes the queued target lookup to the resolver application registration', async () => {
@@ -439,6 +475,7 @@ describe('ServerRouteTriggerService', () => {
         buildExecuteResult({
           workspaceId: 'target-ws',
           targetLogicFunctionUniversalIdentifier: TARGET_UID,
+          dispatchMode: 'sync',
         }),
       )
       .mockRejectedValueOnce(

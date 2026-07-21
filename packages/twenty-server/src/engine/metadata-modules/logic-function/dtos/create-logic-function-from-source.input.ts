@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import {
+  IsBoolean,
   IsNotEmpty,
   IsNumber,
   IsObject,
@@ -52,6 +53,11 @@ export class CreateLogicFunctionFromSourceInput {
   @Max(900)
   @IsOptional()
   timeoutSeconds?: number;
+
+  @IsBoolean()
+  @Field({ nullable: true })
+  @IsOptional()
+  shouldRetryOnFailure?: boolean;
 
   @IsObject()
   @Field(() => graphqlTypeJson, { nullable: true })

@@ -1,4 +1,3 @@
-import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -15,8 +14,6 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-
-const DATABASE_EVENT_JOBS_CHUNK_SIZE = 20;
 
 @Processor(MessageQueue.triggerQueue)
 export class CallDatabaseEventTriggerJobsJob {
@@ -63,18 +60,15 @@ export class CallDatabaseEventTriggerJobsJob {
       return;
     }
 
-    const logicFunctionPayloadsChunks = chunk(
-      logicFunctionPayloads,
-      DATABASE_EVENT_JOBS_CHUNK_SIZE,
+    await Promise.all(
+      logicFunctionPayloads.map((logicFunctionPayload) =>
+        this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+          LogicFunctionTriggerJob.name,
+          [logicFunctionPayload],
+          { retryLimit: 3 },
+        ),
+      ),
     );
-
-    for (const logicFunctionPayloadsChunk of logicFunctionPayloadsChunks) {
-      await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
-        LogicFunctionTriggerJob.name,
-        logicFunctionPayloadsChunk,
-        { retryLimit: 3 },
-      );
-    }
   }
 
   private shouldTriggerJob({

@@ -11,6 +11,7 @@ import {
   QueryOptions,
 } from '@ptc-org/nestjs-query-graphql';
 import {
+  IsBoolean,
   IsDateString,
   IsEnum,
   IsNotEmpty,
@@ -69,6 +70,10 @@ export class LogicFunctionDTO {
   @IsNumber()
   @Field()
   timeoutSeconds: number;
+
+  @IsBoolean()
+  @Field()
+  shouldRetryOnFailure: boolean;
 
   @IsEnum(LogicFunctionExecutionMode)
   @Field(() => LogicFunctionExecutionMode)

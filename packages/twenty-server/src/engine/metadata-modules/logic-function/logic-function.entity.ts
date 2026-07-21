@@ -63,6 +63,9 @@ export class LogicFunctionEntity
   @Check(`"timeoutSeconds" >= 1 AND "timeoutSeconds" <= 900`)
   timeoutSeconds: number;
 
+  @Column({ nullable: false, type: 'boolean', default: false })
+  shouldRetryOnFailure: boolean;
+
   @Column({ nullable: true, type: 'text' })
   checksum: string | null;
 

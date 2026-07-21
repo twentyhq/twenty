@@ -38,9 +38,11 @@ type ResolverResult = {
   targetLogicFunctionUniversalIdentifier: string;
   payload?: object;
   dispatchMode: ResolverDispatchMode;
+  retryLimit: number;
 };
 
-const QUEUED_TARGET_RETRY_LIMIT = 3;
+const DEFAULT_QUEUED_TARGET_RETRY_LIMIT = 3;
+const MAX_QUEUED_TARGET_RETRY_LIMIT = 10;
 
 @Injectable()
 export class ServerRouteTriggerService {
@@ -112,6 +114,7 @@ export class ServerRouteTriggerService {
         workspaceId: resolved.workspaceId,
         payload: resolved.payload ?? event,
         applicationRegistrationId,
+        retryLimit: resolved.retryLimit,
       });
     }
 
@@ -173,6 +176,7 @@ export class ServerRouteTriggerService {
       targetLogicFunctionUniversalIdentifier?: unknown;
       payload?: unknown;
       dispatchMode?: unknown;
+      retryLimit?: unknown;
     };
 
     if (
@@ -180,18 +184,32 @@ export class ServerRouteTriggerService {
       !isString(data?.targetLogicFunctionUniversalIdentifier)
     ) {
       throw new ServerRouteTriggerException(
-        'Resolver logic function must return { workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object; dispatchMode?: "sync" | "queued" }',
+        'Resolver logic function must return { workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object; dispatchMode?: "sync" | "queued"; retryLimit?: number }',
         ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT,
       );
     }
 
-    const dispatchMode = data.dispatchMode ?? 'sync';
+    const dispatchMode = data.dispatchMode ?? 'queued';
 
     if (
       !RESOLVER_DISPATCH_MODES.includes(dispatchMode as ResolverDispatchMode)
     ) {
       throw new ServerRouteTriggerException(
         `Resolver dispatchMode must be one of ${RESOLVER_DISPATCH_MODES.join(', ')}`,
+        ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT,
+      );
+    }
+
+    const retryLimit = data.retryLimit ?? DEFAULT_QUEUED_TARGET_RETRY_LIMIT;
+
+    if (
+      typeof retryLimit !== 'number' ||
+      !Number.isInteger(retryLimit) ||
+      retryLimit < 0 ||
+      retryLimit > MAX_QUEUED_TARGET_RETRY_LIMIT
+    ) {
+      throw new ServerRouteTriggerException(
+        `Resolver retryLimit must be an integer between 0 and ${MAX_QUEUED_TARGET_RETRY_LIMIT}`,
         ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT,
       );
     }
@@ -205,23 +223,22 @@ export class ServerRouteTriggerService {
           ? (data.payload as object)
           : undefined,
       dispatchMode: dispatchMode as ResolverDispatchMode,
+      retryLimit,
     };
   }
 
-  // Acknowledges the caller before the target runs: webhook senders like
-  // Svix only need a 2xx and must never observe target latency or failures,
-  // which would otherwise turn into external redelivery storms. Failures are
-  // retried on the queue instead.
   private async enqueueTargetFunction({
     logicFunctionUniversalIdentifier,
     workspaceId,
     payload,
     applicationRegistrationId,
+    retryLimit,
   }: {
     logicFunctionUniversalIdentifier: string;
     workspaceId: string;
     payload: object;
     applicationRegistrationId: string;
+    retryLimit: number;
   }): Promise<RouteTriggerResponse> {
     const logicFunction = await this.findLogicFunctionOrFail({
       logicFunctionUniversalIdentifier,
@@ -236,10 +253,9 @@ export class ServerRouteTriggerService {
           logicFunctionId: logicFunction.id,
           workspaceId,
           payload,
-          shouldRetryOnUserError: true,
         },
       ],
-      { retryLimit: QUEUED_TARGET_RETRY_LIMIT },
+      { retryLimit },
     );
 
     return { statusCode: 202, headers: {}, body: { queued: true } };
