@@ -6,11 +6,13 @@ import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/r
 import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { widgetUsesRecordTableView } from '@/page-layout/utils/widgetUsesRecordTableView';
+import { buildUpsertViewWidgetViewSettingsInput } from '@/page-layout/widgets/record-table/utils/buildUpsertViewWidgetViewSettingsInput';
 import { normalizeRecordTableWidgetViewFields } from '@/page-layout/widgets/record-table/utils/normalizeRecordTableWidgetViewFields';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import {
   type UpsertViewWidgetInput,
   type ViewFragmentFragment,
@@ -41,6 +43,12 @@ export const useSaveRecordTableWidgetViews = () => {
 
       const recordTableWidgetViewDraft = store.get(
         recordTableWidgetViewDraftComponentState.atomFamily({
+          instanceId: pageLayoutId,
+        }),
+      );
+
+      const recordTableWidgetViewPersisted = store.get(
+        recordTableWidgetViewPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
         }),
       );
@@ -84,15 +92,24 @@ export const useSaveRecordTableWidgetViews = () => {
           viewFields: normalizedViewFields,
         };
 
-        normalizedRecordTableWidgetViewDraft = {
-          ...normalizedRecordTableWidgetViewDraft,
-          [widget.id]: normalizedWidgetViewDraft,
-        };
+        const persistedView = recordTableWidgetViewPersisted[widget.id]?.view;
+        const draftView = widgetViewDraft.view;
 
-        await upsertViewWidgetMutation({
+        const draftViewSettings =
+          buildUpsertViewWidgetViewSettingsInput(draftView);
+
+        const hasViewSettingsChanges =
+          !isDefined(persistedView) ||
+          !isDeeplyEqual(
+            buildUpsertViewWidgetViewSettingsInput(persistedView),
+            draftViewSettings,
+          );
+
+        const { data } = await upsertViewWidgetMutation({
           variables: {
             input: {
               widgetId: widget.id,
+              ...(hasViewSettingsChanges ? { view: draftViewSettings } : {}),
               viewFields: normalizedWidgetViewDraft.viewFields.map((field) => ({
                 fieldMetadataId: field.fieldMetadataId,
                 isVisible: field.isVisible,
@@ -127,6 +144,28 @@ export const useSaveRecordTableWidgetViews = () => {
             },
           },
         });
+
+        // View groups are not part of the upsert input: the server
+        // regenerates them from mainGroupByFieldMetadataId. Store the
+        // server rows instead of the locally generated draft groups so
+        // the persisted snapshot never claims client-side ids were saved.
+        const upsertedViewGroups = data?.upsertViewWidget.viewGroups;
+
+        normalizedRecordTableWidgetViewDraft = {
+          ...normalizedRecordTableWidgetViewDraft,
+          [widget.id]: {
+            ...normalizedWidgetViewDraft,
+            viewGroups: isDefined(upsertedViewGroups)
+              ? upsertedViewGroups.map((viewGroup) => ({
+                  id: viewGroup.id,
+                  viewId: viewGroup.viewId,
+                  fieldValue: viewGroup.fieldValue,
+                  position: viewGroup.position,
+                  isVisible: viewGroup.isVisible,
+                }))
+              : normalizedWidgetViewDraft.viewGroups,
+          },
+        };
       }
 
       store.set(

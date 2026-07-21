@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService, Reflector } from '@nestjs/core';
 
+import * as Sentry from '@sentry/node';
 import crypto from 'crypto';
 
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
@@ -185,16 +186,26 @@ export class WorkspaceCacheService implements OnModuleInit {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<void> {
-    await this.memoizer.clearKeys(`${workspaceId}-`);
+    return Sentry.startSpan(
+      {
+        name: 'invalidate and recompute workspace metadata cache',
+        op: 'cache.invalidate',
+        onlyIfParent: true,
+        attributes: { 'cache.key_count': cacheKeyNames.length },
+      },
+      async () => {
+        await this.memoizer.clearKeys(`${workspaceId}-`);
 
-    await this.flush(workspaceId, cacheKeyNames);
-    await this.recomputeDataFromProvider(workspaceId, cacheKeyNames, {
-      strategy: 'mint',
-    });
+        await this.flush(workspaceId, cacheKeyNames);
+        await this.recomputeDataFromProvider(workspaceId, cacheKeyNames, {
+          strategy: 'mint',
+        });
 
-    // Clear memoizer again after recomputation to evict any stale entries
-    // cached by concurrent getOrRecompute calls during the flush window.
-    await this.memoizer.clearKeys(`${workspaceId}-`);
+        // Clear memoizer again after recomputation to evict any stale entries
+        // cached by concurrent getOrRecompute calls during the flush window.
+        await this.memoizer.clearKeys(`${workspaceId}-`);
+      },
+    );
   }
 
   public async getCacheHashes(
@@ -366,7 +377,20 @@ export class WorkspaceCacheService implements OnModuleInit {
 
     const computePromises = cacheKeyNames.map(async (keyName) => {
       const provider = this.getProviderOrThrow(keyName);
-      const data = await provider.computeForCache(workspaceId);
+      const isLocalDataOnly = this.localDataOnlyKeys.has(keyName);
+      const data = await Sentry.startSpan(
+        {
+          name: 'compute workspace metadata cache entry from provider',
+          op: 'cache.recompute',
+          onlyIfParent: true,
+          attributes: {
+            'cache.key_name': keyName,
+            'cache.recompute.strategy': hashResolution.strategy,
+            'cache.local_data_only': isLocalDataOnly,
+          },
+        },
+        () => provider.computeForCache(workspaceId),
+      );
 
       if (hashResolution.strategy === 'mint') {
         return { keyName, data, hash: crypto.randomUUID(), isAdopted: false };

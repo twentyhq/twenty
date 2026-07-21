@@ -3,7 +3,7 @@ import {
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   type DeleteResult,
   EntityManager,
@@ -1210,6 +1210,7 @@ export class WorkspaceEntityManager extends EntityManager {
         entityTarget,
         {
           where: { id: In(entityIds) },
+          withDeleted: true,
         },
         { shouldBypassPermissionChecks: true }, // Bypass as this is for event emission
       );
@@ -1301,12 +1302,24 @@ export class WorkspaceEntityManager extends EntityManager {
         this.internalContext.flatFieldMetadataMaps,
       );
 
-      const updatedEntities = formattedResult.filter(
-        (entity) => beforeUpdateMapById[entity.id],
-      );
       const createdEntities = formattedResult.filter(
         (entity) => !beforeUpdateMapById[entity.id],
       );
+
+      const updatedEntityIds = formattedResult
+        .map((entity) => entity.id)
+        .filter((entityId) => isDefined(beforeUpdateMapById[entityId]));
+
+      const updatedEntities = isNonEmptyArray(updatedEntityIds)
+        ? await this.find(
+            entityTarget,
+            {
+              where: { id: In(updatedEntityIds) },
+              withDeleted: true,
+            },
+            { shouldBypassPermissionChecks: true }, // Bypass as this is for event emission
+          )
+        : [];
 
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
         formatTwentyOrmEventToDatabaseBatchEvent({
@@ -1315,9 +1328,7 @@ export class WorkspaceEntityManager extends EntityManager {
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
           recordsAfter: updatedEntities,
-          recordsBefore: updatedEntities.map(
-            (entity) => beforeUpdateMapById[entity.id],
-          ),
+          recordsBefore: beforeUpdate,
         }),
       );
 

@@ -47,5 +47,10 @@ export const cloneRecordTableWidgetViewSnapshot = (
       id: uuidv4(),
       viewId: newViewId,
     })),
+    viewGroups: sourceSnapshot.viewGroups.map((viewGroup) => ({
+      ...viewGroup,
+      id: uuidv4(),
+      viewId: newViewId,
+    })),
   };
 };
