@@ -2062,11 +2062,6 @@ msgstr "Irányítópultok"
 msgid "Data structure is invalid."
 msgstr "Az adatszerkezet érvénytelen."
 
-#. js-lingui-id: /sRN4g
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Data version mismatch. Please refresh and try again."
-msgstr "Adatverzió-eltérés. Kérjük, frissítsen, majd próbálja újra."
-
 #. js-lingui-id: NhQiQx
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Database configuration is disabled."

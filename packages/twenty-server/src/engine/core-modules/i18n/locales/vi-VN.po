@@ -2062,11 +2062,6 @@ msgstr "Bảng điều khiển"
 msgid "Data structure is invalid."
 msgstr "Cấu trúc dữ liệu không hợp lệ."
 
-#. js-lingui-id: /sRN4g
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Data version mismatch. Please refresh and try again."
-msgstr "Phiên bản dữ liệu không khớp. Vui lòng làm mới và thử lại."
-
 #. js-lingui-id: NhQiQx
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Database configuration is disabled."
