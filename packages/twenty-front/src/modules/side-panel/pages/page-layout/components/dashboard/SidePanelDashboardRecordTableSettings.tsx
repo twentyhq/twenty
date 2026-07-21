@@ -197,6 +197,23 @@ export const SidePanelDashboardRecordTableSettings = () => {
         <StyledSettingsContainer>
           <SidePanelList selectableItemIds={selectableItemIds}>
             <SidePanelGroup heading={t`Settings`}>
+              <SelectableListItem itemId="record-table-source">
+                <CommandMenuItemDropdown
+                  Icon={IconBox}
+                  label={t`Source`}
+                  id="record-table-source"
+                  dropdownId="record-table-source"
+                  dropdownComponents={
+                    <DropdownContent>
+                      <RecordTableDataSourceDropdownContent />
+                    </DropdownContent>
+                  }
+                  dropdownPlacement="bottom-end"
+                  hasSubMenu
+                  description={sourceDescription}
+                  contextualTextPosition="right"
+                />
+              </SelectableListItem>
               <SelectableListItem itemId="object-view-layout">
                 <CommandMenuItemDropdown
                   Icon={
@@ -233,23 +250,6 @@ export const SidePanelDashboardRecordTableSettings = () => {
                         : t`Table`
                   }
                   disabled={!hasViewId}
-                  contextualTextPosition="right"
-                />
-              </SelectableListItem>
-              <SelectableListItem itemId="record-table-source">
-                <CommandMenuItemDropdown
-                  Icon={IconBox}
-                  label={t`Source`}
-                  id="record-table-source"
-                  dropdownId="record-table-source"
-                  dropdownComponents={
-                    <DropdownContent>
-                      <RecordTableDataSourceDropdownContent />
-                    </DropdownContent>
-                  }
-                  dropdownPlacement="bottom-end"
-                  hasSubMenu
-                  description={sourceDescription}
                   contextualTextPosition="right"
                 />
               </SelectableListItem>

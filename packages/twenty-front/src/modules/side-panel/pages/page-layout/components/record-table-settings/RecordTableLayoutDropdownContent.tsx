@@ -70,6 +70,12 @@ export const RecordTableLayoutDropdownContent = ({
   const handleSelectLayout = (
     targetViewType: RecordTableWidgetLayoutViewType,
   ) => {
+    if (targetViewType === ViewType.KANBAN_WIDGET && !isKanbanAvailable) {
+      return;
+    }
+    if (targetViewType === ViewType.CALENDAR_WIDGET && !isCalendarAvailable) {
+      return;
+    }
     handleLayoutChange({
       targetViewType,
       defaultGroupByFieldMetadataItem,
@@ -84,8 +90,8 @@ export const RecordTableLayoutDropdownContent = ({
         selectableListInstanceId={dropdownId}
         selectableItemIdArray={[
           ViewType.TABLE_WIDGET,
-          ...(isKanbanAvailable ? [ViewType.KANBAN_WIDGET] : []),
-          ...(isCalendarAvailable ? [ViewType.CALENDAR_WIDGET] : []),
+          ViewType.KANBAN_WIDGET,
+          ViewType.CALENDAR_WIDGET,
         ]}
         focusId={dropdownId}
       >
@@ -101,34 +107,40 @@ export const RecordTableLayoutDropdownContent = ({
             onClick={() => handleSelectLayout(ViewType.TABLE_WIDGET)}
           />
         </SelectableListItem>
-        {isKanbanAvailable && (
-          <SelectableListItem
-            itemId={ViewType.KANBAN_WIDGET}
-            onEnter={() => handleSelectLayout(ViewType.KANBAN_WIDGET)}
-          >
-            <MenuItemSelect
-              text={t`Kanban`}
-              LeftIcon={IconLayoutKanban}
-              selected={currentLayoutViewType === ViewType.KANBAN_WIDGET}
-              focused={selectedItemId === ViewType.KANBAN_WIDGET}
-              onClick={() => handleSelectLayout(ViewType.KANBAN_WIDGET)}
-            />
-          </SelectableListItem>
-        )}
-        {isCalendarAvailable && (
-          <SelectableListItem
-            itemId={ViewType.CALENDAR_WIDGET}
-            onEnter={() => handleSelectLayout(ViewType.CALENDAR_WIDGET)}
-          >
-            <MenuItemSelect
-              text={t`Calendar`}
-              LeftIcon={IconCalendar}
-              selected={currentLayoutViewType === ViewType.CALENDAR_WIDGET}
-              focused={selectedItemId === ViewType.CALENDAR_WIDGET}
-              onClick={() => handleSelectLayout(ViewType.CALENDAR_WIDGET)}
-            />
-          </SelectableListItem>
-        )}
+        <SelectableListItem
+          itemId={ViewType.KANBAN_WIDGET}
+          onEnter={() => handleSelectLayout(ViewType.KANBAN_WIDGET)}
+        >
+          <MenuItemSelect
+            text={t`Kanban`}
+            LeftIcon={IconLayoutKanban}
+            disabled={!isKanbanAvailable}
+            contextualText={
+              !isKanbanAvailable ? t`Needs a Select field` : undefined
+            }
+            contextualTextPosition="right"
+            selected={currentLayoutViewType === ViewType.KANBAN_WIDGET}
+            focused={selectedItemId === ViewType.KANBAN_WIDGET}
+            onClick={() => handleSelectLayout(ViewType.KANBAN_WIDGET)}
+          />
+        </SelectableListItem>
+        <SelectableListItem
+          itemId={ViewType.CALENDAR_WIDGET}
+          onEnter={() => handleSelectLayout(ViewType.CALENDAR_WIDGET)}
+        >
+          <MenuItemSelect
+            text={t`Calendar`}
+            LeftIcon={IconCalendar}
+            disabled={!isCalendarAvailable}
+            contextualText={
+              !isCalendarAvailable ? t`Needs a Date field` : undefined
+            }
+            contextualTextPosition="right"
+            selected={currentLayoutViewType === ViewType.CALENDAR_WIDGET}
+            focused={selectedItemId === ViewType.CALENDAR_WIDGET}
+            onClick={() => handleSelectLayout(ViewType.CALENDAR_WIDGET)}
+          />
+        </SelectableListItem>
       </SelectableList>
     </DropdownMenuItemsContainer>
   );
