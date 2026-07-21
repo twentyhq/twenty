@@ -1,10 +1,14 @@
-import { QueryRunner } from 'typeorm';
+import { DataSource, QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
-import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
-@RegisteredInstanceCommand('2.23.0', 1784650048045)
-export class AddStatusesToBillingSubscriptionIndexFastInstanceCommand implements FastInstanceCommand {
+@RegisteredInstanceCommand('2.23.0', 1784650048045, { type: 'slow' })
+export class AddStatusesToBillingSubscriptionIndexSlowInstanceCommand
+  implements SlowInstanceCommand
+{
+  async runDataMigration(_dataSource: DataSource): Promise<void> {}
+
   public async up(queryRunner: QueryRunner): Promise<void> {
     const tableExists = await queryRunner.query(
       `SELECT 1 FROM pg_tables WHERE schemaname = 'core' AND tablename = 'billingSubscription'`,
