@@ -14,15 +14,9 @@ type RecallWebhookResolverResult = {
   workspaceId: string;
   targetLogicFunctionUniversalIdentifier: string;
   payload: RecallWebhookBody;
-  dispatchMode: 'queued';
 };
 
-// A thrown error becomes a non-2xx, which makes Svix retry — reserve it for
-// deliveries Svix should redeliver (bad signature, missing metadata). A
-// returned result acks Svix with a 202 immediately and runs the target on the
-// worker queue: Svix must never observe processing latency or failures, which
-// under a burst of meeting-end events turn into a self-feeding redelivery
-// storm on the API.
+// A thrown error becomes a non-2xx, which makes Svix retry; a returned result dispatches to the target.
 export const recallWebhookRouteHandler = (
   routePayload: RoutePayload<RecallWebhookBody>,
 ): RecallWebhookResolverResult => {
@@ -73,7 +67,6 @@ export const recallWebhookRouteHandler = (
     targetLogicFunctionUniversalIdentifier:
       PROCESS_RECALL_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
     payload: body,
-    dispatchMode: 'queued',
   };
 };
 

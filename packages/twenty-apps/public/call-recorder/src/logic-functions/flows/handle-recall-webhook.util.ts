@@ -178,10 +178,6 @@ const queueCallRecordingArtifactsImport = async ({
   };
 };
 
-// This handler runs on the worker queue (queued dispatch), so a throw fails
-// the queued job and the queue retries it internally — Svix already got its
-// 202 and never redelivers. The preceding status update re-applies
-// idempotently on retry.
 const requestCallRecordingArtifactsImportOrThrow = async ({
   callRecordingId,
 }: {
