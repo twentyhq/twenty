@@ -8,6 +8,7 @@ import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError'
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { SettingsBillingContentSkeleton } from '@/settings/billing/components/SettingsBillingContentSkeleton';
+import { SettingsBillingPlansErrorState } from '@/settings/billing/components/SettingsBillingPlansErrorState';
 import { SettingsBillingTabBar } from '@/settings/billing/components/SettingsBillingTabBar';
 import { usePlans } from '@/settings/billing/hooks/usePlans';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -29,6 +30,7 @@ export const SettingsBillingPageLayout = ({
     error: plansError,
     isPlansLoaded,
     loading: arePlansLoading,
+    refetch: refetchPlans,
   } = usePlans({ skip: !isBillingEnabled });
 
   useSnackBarOnQueryError(plansError, t`Failed to load billing plans`);
@@ -56,7 +58,10 @@ export const SettingsBillingPageLayout = ({
       ) : isPlansLoaded ? (
         children
       ) : (
-        <></>
+        <SettingsBillingPlansErrorState
+          isRetrying={arePlansLoading}
+          onRetry={() => void refetchPlans()}
+        />
       )}
     </SettingsPageLayout>
   );

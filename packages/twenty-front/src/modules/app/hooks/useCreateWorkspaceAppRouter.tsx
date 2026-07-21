@@ -27,7 +27,7 @@ import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppL
 import { Verify } from '~/pages/onboarding/Verify';
 import { lazyWithPreload } from '~/utils/lazyWithPreload';
 
-const RecordIndexPage = lazyWithPreload(() =>
+const RecordIndexPage = lazy(() =>
   import('~/pages/object-record/RecordIndexPage').then((module) => ({
     default: module.RecordIndexPage,
   })),
@@ -124,13 +124,6 @@ const preloadOnboardingPages = () => {
   void InstallApps.preload();
   void InviteTeam.preload();
   void ChooseYourPlan.preload();
-
-  return null;
-};
-
-const preloadOnboardingStepPages = () => {
-  preloadOnboardingPages();
-  void RecordIndexPage.preload();
 
   return null;
 };
@@ -270,7 +263,7 @@ const createWorkspaceAppRouter = (
           </Route>
           <Route
             element={<OnboardingStepLayout />}
-            loader={preloadOnboardingStepPages}
+            loader={preloadOnboardingPages}
           >
             <Route
               path={AppPath.CreateProfile}

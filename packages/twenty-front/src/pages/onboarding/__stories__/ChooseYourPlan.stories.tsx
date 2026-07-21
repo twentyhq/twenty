@@ -48,3 +48,26 @@ export const Default: Story = {
     });
   },
 };
+
+export const PlansQueryError: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('ListPlans', () => {
+          return HttpResponse.json({
+            errors: [{ message: 'Internal server error' }],
+          });
+        }),
+        ...(meta.parameters?.msw.handlers ?? []),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText("We couldn't load the plans", undefined, {
+      timeout: 3000,
+    });
+    await canvas.findByText('Try again');
+  },
+};

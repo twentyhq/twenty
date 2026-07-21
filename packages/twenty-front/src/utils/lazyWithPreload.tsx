@@ -4,26 +4,55 @@ type PreloadableComponent = ComponentType & {
   preload: () => Promise<void>;
 };
 
+type LoaderState =
+  | { status: 'idle' }
+  | { status: 'pending'; promise: Promise<void> }
+  | { status: 'resolved'; Component: ComponentType }
+  | { status: 'rejected'; error: unknown };
+
 export const lazyWithPreload = (
   loader: () => Promise<{ default: ComponentType }>,
 ): PreloadableComponent => {
-  let LoadedComponent: ComponentType | null = null;
-  let loadingPromise: Promise<void> | null = null;
+  let state: LoaderState = { status: 'idle' };
 
-  const preload = () => {
-    loadingPromise ??= loader().then((loadedModule) => {
-      LoadedComponent = loadedModule.default;
-    });
+  const load = (): Promise<void> => {
+    switch (state.status) {
+      case 'pending':
+        return state.promise;
+      case 'resolved':
+        return Promise.resolve();
+      case 'rejected':
+        return Promise.reject(state.error);
+      case 'idle': {
+        const promise = loader().then(
+          (loadedModule) => {
+            state = { status: 'resolved', Component: loadedModule.default };
+          },
+          (error: unknown) => {
+            state = { status: 'rejected', error };
+            throw error;
+          },
+        );
 
-    return loadingPromise;
+        state = { status: 'pending', promise };
+
+        return promise;
+      }
+    }
   };
 
-  const PreloadableComponent = () => {
-    const Component = LoadedComponent;
+  const preload = () => load().catch(() => undefined);
 
-    if (Component === null) {
-      throw preload();
+  const PreloadableComponent = () => {
+    if (state.status === 'rejected') {
+      throw state.error;
     }
+
+    if (state.status !== 'resolved') {
+      throw load();
+    }
+
+    const { Component } = state;
 
     return <Component />;
   };
