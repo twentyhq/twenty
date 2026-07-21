@@ -104,6 +104,7 @@ describe('Microsoft get messages service', () => {
       messageFolderExternalIds: responseExample1.body.parentFolderId
         ? [responseExample1.body.parentFolderId]
         : [],
+      messageHeaders: [],
     });
 
     const responseExample2 =
@@ -151,6 +152,7 @@ describe('Microsoft get messages service', () => {
       messageFolderExternalIds: responseExample2.body.parentFolderId
         ? [responseExample2.body.parentFolderId]
         : [],
+      messageHeaders: [],
     });
   });
 
@@ -195,6 +197,7 @@ describe('Microsoft get messages service', () => {
       messageFolderExternalIds: responseExample.body.parentFolderId
         ? [responseExample.body.parentFolderId]
         : [],
+      messageHeaders: [],
     });
   });
 });
