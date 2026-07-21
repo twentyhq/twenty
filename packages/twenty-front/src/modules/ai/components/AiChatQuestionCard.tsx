@@ -330,6 +330,13 @@ export const AiChatQuestionCard = ({
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
+
+      if (!isLastQuestion) {
+        setCurrentIndex(currentIndex + 1);
+
+        return;
+      }
+
       handleSend();
     }
   };

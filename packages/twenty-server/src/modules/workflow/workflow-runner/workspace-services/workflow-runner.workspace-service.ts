@@ -28,6 +28,7 @@ import {
 import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRetryStepInfos } from 'src/modules/workflow/workflow-runner/utils/build-retry-step-infos.util';
+import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { getRunnableStepIds } from 'src/modules/workflow/workflow-runner/utils/get-runnable-step-ids.util';
 import {
   WorkflowRunEnqueueJob,
@@ -130,6 +131,7 @@ export class WorkflowRunnerWorkspaceService {
         workflowRunId,
         lastExecutedStepId,
       },
+      buildRunWorkflowJobOptions(workflowRunId),
     );
   }
 
@@ -350,6 +352,7 @@ export class WorkflowRunnerWorkspaceService {
           workflowRunId,
           stepIdsToRetry: stepIdsToRun,
         },
+        buildRunWorkflowJobOptions(workflowRunId),
       );
     } catch (error) {
       // The job couldn't be enqueued: revert to the previous failed state so
@@ -446,6 +449,7 @@ export class WorkflowRunnerWorkspaceService {
         workspaceId,
         workflowRunId,
       },
+      buildRunWorkflowJobOptions(workflowRunId),
     );
 
     return { workflowRunId };

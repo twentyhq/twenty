@@ -331,7 +331,7 @@ export class SignInUpService {
       await this.activateOnboardingForUser({
         user,
         workspace: params.workspace,
-        shouldShowConnectAccountStep: false,
+        shouldShowConnectAccountStep: true,
         shouldShowInstallAppsStep: false,
       });
 

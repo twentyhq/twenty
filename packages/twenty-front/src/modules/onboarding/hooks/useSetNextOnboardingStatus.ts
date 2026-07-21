@@ -9,6 +9,8 @@ import {
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
+import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
+import { getHasJustCompletedOnboarding } from '@/onboarding/utils/getHasJustCompletedOnboarding';
 import { getIsPlanRequired } from '@/onboarding/utils/getIsPlanRequired';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -82,5 +84,14 @@ export const useSetNextOnboardingStatus = () => {
       }
       return current;
     });
+
+    if (
+      getHasJustCompletedOnboarding({
+        previousOnboardingStatus: currentUser?.onboardingStatus,
+        nextOnboardingStatus,
+      })
+    ) {
+      store.set(isWelcomeAnimationVisibleState.atom, true);
+    }
   }, [currentUser, currentWorkspace, isBillingEnabled, store]);
 };

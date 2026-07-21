@@ -11,7 +11,12 @@ export default defineApplication({
   description:
     'Structured web search powered by Exa. Surfaces entity-aware results (companies, people, research, news) to Twenty AI agents.',
   author: 'Twenty',
+  category: 'Search',
   logoUrl: 'public/exa-logomark.svg',
+  websiteUrl: 'https://docs.twenty.com/developers/extend/apps/getting-started',
+  termsUrl: 'https://www.twenty.com/terms',
+  emailSupport: 'contact@twenty.com',
+  issueReportUrl: 'https://github.com/twentyhq/twenty/issues',
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   serverVariables: {
     EXA_API_KEY: {

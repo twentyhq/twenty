@@ -83,6 +83,52 @@ export default defineView({
   id は解決して、ハードコードしないでください。 サーバーはその値をアプリケーション id、オブジェクト id、フィールド名から導出するため、`getFieldUniversalIdentifier` を呼び出すことで、それらの入力が変更された場合でも参照を正しい状態に保ち、導出方法が将来変わった場合のずれも防ぐことができます。
 </Note>
 
+## システムリレーションフィールド
+
+<Note>
+  `getSystemRelationFieldUniversalIdentifier` は `twenty-sdk`
+  2.23 以降で利用可能であり、バージョン 2.23 以降の Twenty サーバーが必要です。
+</Note>
+
+上記のスカラー型システムフィールドに加えて、サーバーはすべてのオブジェクトに対して 4 つの**システムリレーションフィールド**を提供します。`timelineActivities`、`attachments`、`noteTargets`、`taskTargets` であり、それぞれが対応する標準リレーションオブジェクトを参照します。
+
+これらのフィールドは `getFieldUniversalIdentifier` では解決されません。フィールドを保持しているオブジェクトと、そのフィールドが参照するオブジェクトから、**名前に依存せず**識別子が導出されます。 この方法により、オブジェクトの名称を変更しても、そのリレーションフィールドの識別子は決して変わりません。
+
+それらを解決するには、`getSystemRelationFieldUniversalIdentifier` を使用します。
+
+```ts
+import {
+  getSystemRelationFieldUniversalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+// rocket.attachments — the relation field hosted on your custom object
+const rocketAttachmentsFieldId = getSystemRelationFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+});
+```
+
+* `objectUniversalIdentifier` は、そのフィールドを **保持している** オブジェクトです。
+* `relationTargetObjectUniversalIdentifier` は、そのフィールドが **参照している** オブジェクトです。
+
+方向は引数の順序によってエンコードされます。 逆方向（例: `attachment.targetRocket`。これは、標準リレーションオブジェクト上でサーバーが作成する morph フィールド）を解決するには、2 つを入れ替えます。
+
+```ts
+// attachment.targetRocket — the reverse morph field on Attachment
+const attachmentTargetRocketFieldId =
+  getSystemRelationFieldUniversalIdentifier({
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+    relationTargetObjectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  });
+```
+
+スカラーのシステムフィールドと同様に、解決された ID は `fieldMetadataUniversalIdentifier` が想定されるあらゆる場所で使用できます。
+
 ## 標準の Twenty オブジェクト
 
 **標準** の Twenty オブジェクト（Person、Company、Opportunity など）の場合、何も導出する必要はありません。システムフィールドの識別子はあらかじめ計算された定数として用意されており、直接インポートできます。

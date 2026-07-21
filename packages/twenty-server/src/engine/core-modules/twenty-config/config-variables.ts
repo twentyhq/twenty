@@ -2068,6 +2068,27 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Client ID of the GitHub OAuth app used to verify app ownership when claiming a marketplace application',
+    type: ConfigVariableType.STRING,
+  })
+  @IsString()
+  @IsOptional()
+  APP_CLAIM_GITHUB_CLIENT_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    isSensitive: true,
+    description:
+      'Client secret of the GitHub OAuth app used to verify app ownership when claiming a marketplace application',
+    type: ConfigVariableType.STRING,
+  })
+  @IsString()
+  @IsOptional()
+  APP_CLAIM_GITHUB_CLIENT_SECRET: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     isSensitive: true,
     description:
       'Auth token for the default npm registry (for private packages)',

@@ -502,13 +502,11 @@ export const buildManifest = async (
 
   if (applicationConfig) {
     for (const objectConfig of objectConfigs) {
-      const {
-        objectFields: objectFieldsWithDefaults,
-        fields: reverseRelationFields,
-      } = getDefaultFieldsInObjectFields({
-        objectConfig,
-        applicationUniversalIdentifier: applicationConfig.universalIdentifier,
-      });
+      const { objectFields: objectFieldsWithDefaults } =
+        getDefaultFieldsInObjectFields({
+          objectConfig,
+          applicationUniversalIdentifier: applicationConfig.universalIdentifier,
+        });
 
       const labelIdentifierFieldMetadataUniversalIdentifier =
         objectConfig.labelIdentifierFieldMetadataUniversalIdentifier ??
@@ -529,7 +527,6 @@ export const buildManifest = async (
       };
 
       objects.push(objectManifest);
-      fields.push(...reverseRelationFields);
     }
   }
 
