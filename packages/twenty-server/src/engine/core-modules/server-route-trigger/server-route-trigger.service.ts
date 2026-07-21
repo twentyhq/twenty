@@ -11,7 +11,14 @@ import {
   LogicFunctionExecutionExceptionCode,
   LogicFunctionExecutorService,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import {
+  LogicFunctionTriggerJob,
+  type LogicFunctionTriggerJobData,
+} from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   type RouteTriggerResponse,
   buildRouteTriggerResponse,
@@ -22,11 +29,18 @@ import {
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
+const RESOLVER_DISPATCH_MODES = ['sync', 'queued'] as const;
+
+type ResolverDispatchMode = (typeof RESOLVER_DISPATCH_MODES)[number];
+
 type ResolverResult = {
   workspaceId: string;
   targetLogicFunctionUniversalIdentifier: string;
   payload?: object;
+  dispatchMode: ResolverDispatchMode;
 };
+
+const QUEUED_TARGET_RETRY_LIMIT = 3;
 
 @Injectable()
 export class ServerRouteTriggerService {
@@ -36,6 +50,8 @@ export class ServerRouteTriggerService {
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
+    @InjectMessageQueue(MessageQueue.logicFunctionQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async handle({
@@ -88,6 +104,16 @@ export class ServerRouteTriggerService {
       payload: event,
     });
     const resolved = this.parseResolverResult(resolverResult);
+
+    if (resolved.dispatchMode === 'queued') {
+      return await this.enqueueTargetFunction({
+        logicFunctionUniversalIdentifier:
+          resolved.targetLogicFunctionUniversalIdentifier,
+        workspaceId: resolved.workspaceId,
+        payload: resolved.payload ?? event,
+        applicationRegistrationId,
+      });
+    }
 
     const targetResult = await this.runFunction({
       logicFunctionUniversalIdentifier:
@@ -146,6 +172,7 @@ export class ServerRouteTriggerService {
       workspaceId?: unknown;
       targetLogicFunctionUniversalIdentifier?: unknown;
       payload?: unknown;
+      dispatchMode?: unknown;
     };
 
     if (
@@ -153,7 +180,18 @@ export class ServerRouteTriggerService {
       !isString(data?.targetLogicFunctionUniversalIdentifier)
     ) {
       throw new ServerRouteTriggerException(
-        'Resolver logic function must return { workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }',
+        'Resolver logic function must return { workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object; dispatchMode?: "sync" | "queued" }',
+        ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT,
+      );
+    }
+
+    const dispatchMode = data.dispatchMode ?? 'sync';
+
+    if (
+      !RESOLVER_DISPATCH_MODES.includes(dispatchMode as ResolverDispatchMode)
+    ) {
+      throw new ServerRouteTriggerException(
+        `Resolver dispatchMode must be one of ${RESOLVER_DISPATCH_MODES.join(', ')}`,
         ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT,
       );
     }
@@ -166,10 +204,15 @@ export class ServerRouteTriggerService {
         typeof data.payload === 'object' && data.payload !== null
           ? (data.payload as object)
           : undefined,
+      dispatchMode: dispatchMode as ResolverDispatchMode,
     };
   }
 
-  private async runFunction({
+  // Acknowledges the caller before the target runs: webhook senders like
+  // Svix only need a 2xx and must never observe target latency or failures,
+  // which would otherwise turn into external redelivery storms. Failures are
+  // retried on the queue instead.
+  private async enqueueTargetFunction({
     logicFunctionUniversalIdentifier,
     workspaceId,
     payload,
@@ -178,8 +221,39 @@ export class ServerRouteTriggerService {
     logicFunctionUniversalIdentifier: string;
     workspaceId: string;
     payload: object;
+    applicationRegistrationId: string;
+  }): Promise<RouteTriggerResponse> {
+    const logicFunction = await this.findLogicFunctionOrFail({
+      logicFunctionUniversalIdentifier,
+      workspaceId,
+      applicationRegistrationId,
+    });
+
+    await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+      LogicFunctionTriggerJob.name,
+      [
+        {
+          logicFunctionId: logicFunction.id,
+          workspaceId,
+          payload,
+          shouldRetryOnUserError: true,
+        },
+      ],
+      { retryLimit: QUEUED_TARGET_RETRY_LIMIT },
+    );
+
+    return { statusCode: 202, headers: {}, body: { queued: true } };
+  }
+
+  private async findLogicFunctionOrFail({
+    logicFunctionUniversalIdentifier,
+    workspaceId,
+    applicationRegistrationId,
+  }: {
+    logicFunctionUniversalIdentifier: string;
+    workspaceId: string;
     applicationRegistrationId?: string;
-  }): Promise<{ data: object | null; error?: { errorMessage: string } }> {
+  }): Promise<LogicFunctionEntity> {
     const logicFunction = await this.logicFunctionRepository.findOne({
       where: {
         universalIdentifier: logicFunctionUniversalIdentifier,
@@ -199,6 +273,26 @@ export class ServerRouteTriggerService {
         ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
       );
     }
+
+    return logicFunction;
+  }
+
+  private async runFunction({
+    logicFunctionUniversalIdentifier,
+    workspaceId,
+    payload,
+    applicationRegistrationId,
+  }: {
+    logicFunctionUniversalIdentifier: string;
+    workspaceId: string;
+    payload: object;
+    applicationRegistrationId?: string;
+  }): Promise<{ data: object | null; error?: { errorMessage: string } }> {
+    const logicFunction = await this.findLogicFunctionOrFail({
+      logicFunctionUniversalIdentifier,
+      workspaceId,
+      applicationRegistrationId,
+    });
 
     try {
       return await this.logicFunctionExecutorService.execute({

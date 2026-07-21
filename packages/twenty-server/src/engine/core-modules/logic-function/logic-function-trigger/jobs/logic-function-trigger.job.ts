@@ -1,5 +1,7 @@
 import { Scope } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -11,6 +13,10 @@ export type LogicFunctionTriggerJobData = {
   payload?: object;
   userId?: string;
   userWorkspaceId?: string;
+  // A failed job is retried as a whole, so only set this on single-payload
+  // jobs whose target function is idempotent (e.g. queued server-route
+  // webhook dispatch, where queue retries replace the sender's redeliveries).
+  shouldRetryOnUserError?: boolean;
 };
 
 @Processor({
@@ -25,16 +31,24 @@ export class LogicFunctionTriggerJob {
   @Process(LogicFunctionTriggerJob.name)
   async handle(logicFunctionPayloads: LogicFunctionTriggerJobData[]) {
     await Promise.all(
-      logicFunctionPayloads.map(
-        async (logicFunctionPayload) =>
-          await this.logicFunctionExecutorService.execute({
-            logicFunctionId: logicFunctionPayload.logicFunctionId,
-            workspaceId: logicFunctionPayload.workspaceId,
-            payload: logicFunctionPayload.payload ?? {},
-            userId: logicFunctionPayload.userId,
-            userWorkspaceId: logicFunctionPayload.userWorkspaceId,
-          }),
-      ),
+      logicFunctionPayloads.map(async (logicFunctionPayload) => {
+        const result = await this.logicFunctionExecutorService.execute({
+          logicFunctionId: logicFunctionPayload.logicFunctionId,
+          workspaceId: logicFunctionPayload.workspaceId,
+          payload: logicFunctionPayload.payload ?? {},
+          userId: logicFunctionPayload.userId,
+          userWorkspaceId: logicFunctionPayload.userWorkspaceId,
+        });
+
+        if (
+          logicFunctionPayload.shouldRetryOnUserError === true &&
+          isDefined(result.error)
+        ) {
+          throw new Error(
+            `Logic function ${logicFunctionPayload.logicFunctionId} failed: ${result.error.errorMessage}`,
+          );
+        }
+      }),
     );
   }
 }

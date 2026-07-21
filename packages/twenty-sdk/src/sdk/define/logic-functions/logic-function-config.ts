@@ -9,12 +9,20 @@ export type LogicFunctionHandler = (...args: any[]) => any | Promise<any>;
 // owner workspace and must return BOTH the target workspace and the target
 // logic function to dispatch to. The server contract is
 // `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string;
-// payload?: object }`. The resolver is the single point of authorization —
-// the URL only carries the resolver's universalIdentifier.
+// payload?: object; dispatchMode?: 'sync' | 'queued' }`. The resolver is the
+// single point of authorization — the URL only carries the resolver's
+// universalIdentifier.
+//
+// dispatchMode 'queued' acknowledges the caller with a 202 as soon as the
+// resolver returns and runs the target on the worker queue (with internal
+// retries on failure). Use it for webhook ingestion so the external sender
+// never observes target latency or failures; the response body cannot carry
+// target output. Defaults to 'sync'.
 export type ServerRouteResolverResult = {
   workspaceId: string;
   targetLogicFunctionUniversalIdentifier: string;
   payload?: object;
+  dispatchMode?: 'sync' | 'queued';
 };
 
 export type ServerRouteResolverHandler = (

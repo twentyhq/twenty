@@ -7,6 +7,8 @@ import {
   LogicFunctionExecutionExceptionCode,
   type LogicFunctionExecutorService,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { LogicFunctionTriggerJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ServerRouteTriggerExceptionCode } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { ServerRouteTriggerService } from 'src/engine/core-modules/server-route-trigger/server-route-trigger.service';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -72,6 +74,7 @@ describe('ServerRouteTriggerService', () => {
   let logicFunctionExecutorService: jest.Mocked<
     Pick<LogicFunctionExecutorService, 'execute'>
   >;
+  let messageQueueService: jest.Mocked<Pick<MessageQueueService, 'add'>>;
 
   let resolverRow: unknown;
   let queryBuilder: QueryBuilderMock;
@@ -121,9 +124,14 @@ describe('ServerRouteTriggerService', () => {
         .mockResolvedValueOnce(buildExecuteResult({ ok: true })),
     };
 
+    messageQueueService = {
+      add: jest.fn().mockResolvedValue(undefined),
+    };
+
     service = new ServerRouteTriggerService(
       logicFunctionRepository as unknown as Repository<LogicFunctionEntity>,
       logicFunctionExecutorService as unknown as LogicFunctionExecutorService,
+      messageQueueService as unknown as MessageQueueService,
     );
   });
 
@@ -321,6 +329,107 @@ describe('ServerRouteTriggerService', () => {
         }),
       }),
     );
+  });
+
+  it('does not enqueue anything on the default sync dispatch', async () => {
+    await handle();
+
+    expect(messageQueueService.add).not.toHaveBeenCalled();
+  });
+
+  it('enqueues the target and acks with 202 when the resolver requests queued dispatch', async () => {
+    logicFunctionExecutorService.execute.mockReset();
+    logicFunctionExecutorService.execute.mockResolvedValueOnce(
+      buildExecuteResult({
+        workspaceId: 'target-ws',
+        targetLogicFunctionUniversalIdentifier: TARGET_UID,
+        payload: { from: 'resolver' },
+        dispatchMode: 'queued',
+      }),
+    );
+
+    const result = await handle();
+
+    // only the resolver ran synchronously
+    expect(logicFunctionExecutorService.execute).toHaveBeenCalledTimes(1);
+    expect(messageQueueService.add).toHaveBeenCalledWith(
+      LogicFunctionTriggerJob.name,
+      [
+        {
+          logicFunctionId: 'target-id',
+          workspaceId: 'target-ws',
+          payload: { from: 'resolver' },
+          shouldRetryOnUserError: true,
+        },
+      ],
+      { retryLimit: 3 },
+    );
+    expect(result).toEqual(
+      expect.objectContaining({
+        statusCode: 202,
+        body: { queued: true },
+      }),
+    );
+  });
+
+  it('still scopes the queued target lookup to the resolver application registration', async () => {
+    logicFunctionExecutorService.execute.mockReset();
+    logicFunctionExecutorService.execute.mockResolvedValueOnce(
+      buildExecuteResult({
+        workspaceId: 'target-ws',
+        targetLogicFunctionUniversalIdentifier: TARGET_UID,
+        dispatchMode: 'queued',
+      }),
+    );
+
+    await handle();
+
+    expect(logicFunctionRepository.findOne).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        where: expect.objectContaining({
+          universalIdentifier: TARGET_UID,
+          workspaceId: 'target-ws',
+          application: { applicationRegistrationId: 'reg-1' },
+        }),
+      }),
+    );
+  });
+
+  it('throws LOGIC_FUNCTION_NOT_FOUND and enqueues nothing when the queued target is missing', async () => {
+    logicFunctionExecutorService.execute.mockReset();
+    logicFunctionExecutorService.execute.mockResolvedValueOnce(
+      buildExecuteResult({
+        workspaceId: 'target-ws',
+        targetLogicFunctionUniversalIdentifier: TARGET_UID,
+        dispatchMode: 'queued',
+      }),
+    );
+    logicFunctionRepository.findOne.mockReset();
+    logicFunctionRepository.findOne
+      .mockResolvedValueOnce({ id: 'resolver-id' })
+      .mockResolvedValueOnce(null);
+
+    await expect(handle()).rejects.toMatchObject({
+      code: ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+    });
+    expect(messageQueueService.add).not.toHaveBeenCalled();
+  });
+
+  it('throws RESOLVER_INVALID_RESULT on an unknown dispatchMode', async () => {
+    logicFunctionExecutorService.execute.mockReset();
+    logicFunctionExecutorService.execute.mockResolvedValueOnce(
+      buildExecuteResult({
+        workspaceId: 'target-ws',
+        targetLogicFunctionUniversalIdentifier: TARGET_UID,
+        dispatchMode: 'later',
+      }),
+    );
+
+    await expect(handle()).rejects.toMatchObject({
+      code: ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT,
+    });
+    expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
   it('does not leak the raw executor error message to the caller', async () => {
