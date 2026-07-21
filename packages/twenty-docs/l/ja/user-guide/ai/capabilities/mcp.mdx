@@ -3,10 +3,6 @@ title: MCP サーバー
 description: Model Context Protocol を使用して、AI アシスタントを Twenty ワークスペースに接続します。
 ---
 
-<Warning>
-MCP は現在**アルファ**版で、一部のワークスペースでのみ利用可能です。 お使いのワークスペースでは、まだ有効化されていない可能性があります。
-</Warning>
-
 Twenty は [MCP](https://modelcontextprotocol.io/) サーバーを公開し、Claude Desktop、Claude Code、Cursor、ChatGPT などの AI アシスタントが自然言語で CRM データを読み書きできるようにします。
 
 MCP エンドポイントとして、あなたの**ワークスペース URL**（Twenty にアクセスするために使用している URL）を使用します。 Twenty Cloud では、ワークスペース URL は `https://{mycompany}.twenty.com` またはカスタムドメインの場合があります。 サーバーは次の場所で利用できます:
@@ -72,20 +68,20 @@ MCP クライアントが OAuth をサポートしていない場合、または
 API キーはワークスペース データへのアクセスを許可します。 バージョン管理や共有のドットファイルには含めないでください。
 </Warning>
 
-API キーを作成するには、**Settings > APIs & Webhooks > + Create key** に移動します。 詳細は[API](/l/ja/developers/extend/api#create-an-api-key)を参照してください。
+API キーを作成するには、**Settings → MCP & APIs → API → + Create key** に移動します。 詳細は[API](/l/ja/developers/extend/api#create-an-api-key)を参照してください。
 
 ## クイックスタート
 
 ### 1. 構成をコピー
 
-Twenty で **Settings > AI > More > MCP Server** に移動します。 認証方法（OAuth または API Key）を選択し、JSON スニペットをコピーして（ワークスペース URL は既に反映されています）、MCP クライアントの設定ファイルに貼り付けます。
+Twenty で **Settings → MCP & APIs → MCP** に移動します。 認証方法（OAuth または API Key）を選択し、JSON スニペットをコピーして（ワークスペース URL は既に反映されています）、MCP クライアントの設定ファイルに貼り付けます。
 
 | クライアント             | 設定ファイルの場所                                                                                                                                           |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows)                |
 | **Claude Code**    | `~/.claude.json` (ユーザー) または `.mcp.json` (プロジェクト)                                                                                                    |
 | **Cursor**         | プロジェクト内では `.cursor/mcp.json`、グローバルでは `~/.cursor/mcp.json`                                                                                           |
-| **ChatGPT**        | **Settings > Apps & Connectors > Advanced settings** で Developer Mode を有効にし、その後 **Settings > Apps & Connectors** の **Create** を使用して MCP サーバーを追加します。 |
+| **ChatGPT**        | **Settings → Apps & Connectors → Advanced settings** で Developer Mode を有効にし、その後 **Settings → Apps & Connectors** の **Create** を使用して MCP サーバーを追加します。 |
 
 ### 2. 接続
 
@@ -113,7 +109,7 @@ AI アシスタントに CRM とやり取りするよう依頼してください
 MCP 接続は、認証済みユーザー（OAuth）の権限、または API キーに割り当てられたロールを継承します。 MCP サーバーが実行できる操作を制限するには:
 
 * **OAuth**: ユーザーのワークスペース ロールが適用されます。
-* **API Key**: **Settings > Roles** で API キーにロールを割り当てます。 詳しくは[権限](/l/ja/user-guide/permissions-access/capabilities/permissions)を参照してください。
+* **API Key**: **Settings → Members → Roles** で API キーにロールを割り当てます。 詳しくは[権限](/l/ja/user-guide/permissions-access/capabilities/permissions)を参照してください。
 
 ## セルフホスト構成
 
