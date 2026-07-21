@@ -42,9 +42,9 @@ export class KeyValuePairService<
             ? { workspaceId: IsNull() }
             : { workspaceId }),
         ...(key === undefined ? {} : { key }),
-        // Application rows are isolated from core key-value pairs: without an
-        // explicit applicationId we only match rows where it is NULL.
-        ...(applicationId == null ? { applicationId: IsNull() } : { applicationId }),
+        ...(applicationId == null
+          ? { applicationId: IsNull() }
+          : { applicationId }),
         type,
       },
     })) as Array<KeyValueTypesMap[K]>;
@@ -97,8 +97,6 @@ export class KeyValuePairService<
     let indexPredicate: string | undefined;
 
     if (normalizedApplicationId !== null) {
-      // Application-scoped rows are unique per (key, applicationId), split by
-      // whether they are workspace-scoped or server-scoped (workspaceId NULL).
       conflictPaths.push('applicationId');
       indexPredicate =
         normalizedWorkspaceId === null
