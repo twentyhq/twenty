@@ -5,9 +5,8 @@ type GeometryFixture = {
   height: number;
 };
 
-const scheduledAnimationFrameCallbacks: FrameRequestCallback[] = [];
-
 export const setupGeometryGlobals = () => {
+  const scheduledAnimationFrameCallbacks: FrameRequestCallback[] = [];
   const resizeObserverCallbacks: ResizeObserverCallback[] = [];
   const mutationObserverCallbacks: MutationCallback[] = [];
 
