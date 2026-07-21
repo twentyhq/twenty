@@ -3,11 +3,16 @@ import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuIt
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { useRecordTableWidgetViewFieldItems } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewFieldItems';
+import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { FieldWidgetFieldDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetFieldDropdownContent';
 import { FieldWidgetLayoutDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent';
+import {
+  WidgetViewLayoutSettingsRows,
+  getWidgetViewLayoutSettingsItemIds,
+} from '@/side-panel/pages/page-layout/components/record-table-settings/WidgetViewLayoutSettingsRows';
 import { WidgetSettingsManageSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsManageSection';
 import { WidgetSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
@@ -17,6 +22,7 @@ import { useWidgetSettingsPlacementSelectableItemIds } from '@/side-panel/pages/
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -26,7 +32,9 @@ import {
   IconListDetails,
 } from 'twenty-ui/icon';
 import {
+  FeatureFlagKey,
   FieldDisplayMode,
+  ViewType,
   type FieldConfiguration,
 } from '~/generated-metadata/graphql';
 
@@ -74,11 +82,38 @@ export const SidePanelRecordPageFieldSettings = () => {
       pageLayoutId,
     });
 
+  // A relation field widget in table display mode embeds a widget view scoped to
+  // the current record's related records; its source object is the relation
+  // target, not the record page's own object.
+  const targetObjectMetadataId =
+    currentFieldMetadataItem?.relation?.targetObjectMetadata.id;
+
+  const { view: embeddedWidgetView } = useRecordTableWidgetViewForDisplay({
+    viewId: currentViewId ?? '',
+    widgetId: widgetInEditMode?.id ?? '',
+    pageLayoutId,
+  });
+
+  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
+  );
+
   if (!isDefined(widgetInEditMode)) {
     return null;
   }
 
   const isTableDisplayMode = currentDisplayMode === FieldDisplayMode.TABLE;
+
+  const showViewLayoutRows =
+    isTableDisplayMode &&
+    isDefined(targetObjectMetadataId) &&
+    isDefined(currentViewId);
+
+  const isEmbeddedViewCalendarLayout =
+    embeddedWidgetView?.type === ViewType.CALENDAR_WIDGET;
+  const embeddedViewHasGroupBy = isDefined(
+    embeddedWidgetView?.mainGroupByFieldMetadataId,
+  );
 
   const visibleFieldsCount = recordTableWidgetViewFieldItems.filter(
     (item) => item.viewField.isVisible,
@@ -106,6 +141,13 @@ export const SidePanelRecordPageFieldSettings = () => {
   const selectableItemIds = [
     'field',
     'layout',
+    ...(showViewLayoutRows
+      ? getWidgetViewLayoutSettingsItemIds({
+          isCalendarLayout: isEmbeddedViewCalendarLayout,
+          isCalendarWeekViewEnabled,
+          hasGroupBy: embeddedViewHasGroupBy,
+        })
+      : []),
     ...(isTableDisplayMode ? ['fields'] : []),
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
@@ -138,7 +180,7 @@ export const SidePanelRecordPageFieldSettings = () => {
             <SelectableListItem itemId="layout">
               <CommandMenuItemDropdown
                 id="layout"
-                label={t`Layout`}
+                label={t`Display as`}
                 Icon={IconLayoutSidebarRight}
                 dropdownId="layout"
                 dropdownComponents={
@@ -151,6 +193,16 @@ export const SidePanelRecordPageFieldSettings = () => {
                 contextualTextPosition="right"
               />
             </SelectableListItem>
+            {isTableDisplayMode &&
+              isDefined(targetObjectMetadataId) &&
+              isDefined(currentViewId) && (
+                <WidgetViewLayoutSettingsRows
+                  pageLayoutId={pageLayoutId}
+                  widgetId={widgetInEditMode.id}
+                  objectMetadataId={targetObjectMetadataId}
+                  viewId={currentViewId}
+                />
+              )}
             {isTableDisplayMode && (
               <SelectableListItem
                 itemId="fields"
