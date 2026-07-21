@@ -209,7 +209,7 @@ describe('application key-value store (e2e)', () => {
     expect(getAfterReleaseResponse.body.data.appKeyValue).toBeNull();
   });
 
-  it('rejects a SERVER claim whose value is not the caller workspaceId', async () => {
+  it('ignores a provided value for SERVER claims and stores the caller workspaceId', async () => {
     const response = await makeMetadataAPIRequest(
       {
         query: SET_APP_KEY_VALUE,
@@ -224,7 +224,7 @@ describe('application key-value store (e2e)', () => {
       appToken,
     );
 
-    expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].message).toContain('claiming workspaceId');
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.setAppKeyValue.value).toBe(SEED_APPLE_WORKSPACE_ID);
   });
 });

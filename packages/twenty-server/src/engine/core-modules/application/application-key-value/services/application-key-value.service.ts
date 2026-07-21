@@ -82,7 +82,7 @@ export class ApplicationKeyValueService {
     scope: AppKeyValueScope;
   }): Promise<AppKeyValue> {
     if (scope === AppKeyValueScope.SERVER) {
-      return this.claimServerKey({ application, workspaceId, key, value });
+      return this.claimServerKey({ application, workspaceId, key });
     }
 
     await this.keyValuePairRepository.upsert(
@@ -145,27 +145,17 @@ export class ApplicationKeyValueService {
     return (result.affected ?? 0) > 0;
   }
 
+  // SERVER keys are a claim registry: the stored value is always the caller's
+  // token-derived workspaceId, so any value passed by the caller is ignored.
   private async claimServerKey({
     application,
     workspaceId,
     key,
-    value,
   }: {
     application: FlatApplication;
     workspaceId: string;
     key: string;
-    value: unknown;
   }): Promise<AppKeyValue> {
-    if (isDefined(value) && value !== workspaceId) {
-      throw new ApplicationException(
-        'Server keys hold the claiming workspaceId: omit the value or pass your own workspaceId',
-        ApplicationExceptionCode.INVALID_INPUT,
-        {
-          userFriendlyMessage: msg`Server keys can only be claimed for your own workspace.`,
-        },
-      );
-    }
-
     const serverApplicationId =
       await this.resolveServerApplicationId(application);
     const claimValue: unknown = workspaceId;
