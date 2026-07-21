@@ -152,7 +152,7 @@ describe('recallWebhookRouteHandler', () => {
     ).toThrow('workspace id');
   });
 
-  it('resolves the target workspace for a correctly signed payload', () => {
+  it('resolves the target workspace with queued dispatch for a correctly signed payload', () => {
     const body = buildRecordingDoneWebhookBody();
     const rawBody = JSON.stringify(body);
 
@@ -169,6 +169,7 @@ describe('recallWebhookRouteHandler', () => {
       targetLogicFunctionUniversalIdentifier:
         PROCESS_RECALL_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
       payload: body,
+      dispatchMode: 'queued',
     });
   });
 });

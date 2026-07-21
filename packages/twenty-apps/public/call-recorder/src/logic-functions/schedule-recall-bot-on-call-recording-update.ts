@@ -19,7 +19,10 @@ const CALL_RECORDING_OBJECT_NAME = 'callRecording';
 // Only these fields can transition a row into the pending shape; ignoring the
 // rest keeps this trigger from re-firing on its own scheduling-progress
 // writes (botScheduleAttemptedAt, botScheduleIdempotencyKey, externalBotId
-// write-back) and on webhook artifact updates.
+// write-back) and on webhook artifact updates. Declared on the trigger
+// settings so the server drops irrelevant updates before spawning an
+// execution; the in-handler check stays as a fallback for servers that
+// predate updatedFields filtering.
 const PENDING_TRANSITION_FIELDS = [
   'recordingRequestStatus',
   'status',
@@ -125,5 +128,6 @@ export default defineLogicFunction({
   handler: scheduleRecallBotOnCallRecordingUpdateHandler,
   databaseEventTriggerSettings: {
     eventName: `${CALL_RECORDING_OBJECT_NAME}.updated`,
+    updatedFields: PENDING_TRANSITION_FIELDS,
   },
 });
